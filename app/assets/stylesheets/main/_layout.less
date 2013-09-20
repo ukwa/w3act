@@ -1,0 +1,49 @@
+// -----------------------------------
+// MAIN LAYOUT
+// -----------------------------------
+// w3act project
+// -----------------------------------
+
+body {
+    & > header {
+        position: absolute;
+        top: 0; // top header with title and logon
+        left: 0;
+        right: 0;
+        height: @headerHeight;
+    }
+    & > nav {
+        position: absolute;
+        top: @headerHeight;
+        left: 0;
+        width: @drawerWidth;
+        bottom: 0;
+        box-sizing: border-box;
+    }
+    & > section {
+        position: absolute;
+        top: @headerHeight;
+        left: @drawerWidth;
+        right: 0;
+        bottom: 0;
+    }
+}
+
+#main > header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: @breadcrumbHeight;
+    padding: 10px; // because of projects team button
+}
+
+#main > article {
+    position: absolute;
+    top: 60px; // instead of 40
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 20px;
+    overflow: auto;
+}

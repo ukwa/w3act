@@ -1,0 +1,40 @@
+@(title: String, user: User)(body: Html)
+
+<html>
+    <head>
+        <title>W3ACT</title>
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-play-1.7.1.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+        <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    </head>
+    <body>
+        <header>
+            <a href="@routes.About.index" id="logo"><span>W3</span>ACT</a>&nbsp;&nbsp;
+            <a href="@routes.About.index" id="logo">UK WEB ARCHIVE</a>
+            <dl id="user">
+                <dt>@user.name <span>(@user.email)</span></dt>
+                <dd>
+                    <a href="@routes.Application.logout()">Logout</a>
+                </dd>
+            </dl>
+			<div id=“menu“>
+				<ul class="inline">
+				   <li><a href="@routes.About.index">About</a></li>
+				   <li><a href="@routes.DCollections.index()">Collections</a></li> 
+				   <li><a href="@routes.Sites.index()">Sites</a></li>
+				   <li><a href="#">Curators</a></li>
+				   <li><a href="#">Contact</a></li>
+				</ul>
+            </div>
+        </header>
+        <section id="main">
+            @body
+        </section>
+    </body>
+</html>
+
