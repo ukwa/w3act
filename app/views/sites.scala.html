@@ -1,0 +1,25 @@
+@(title: String, user: User, sites: List[Site])
+
+@main(title, user){
+    
+    <header>
+        <hgroup>
+            <h2>Sites overview</h2>
+        </hgroup>
+    </header>
+    
+    <article  class="sites">
+		<div class="folder">
+			<header>
+				<span class="loader">Loading</span>
+			</header>
+			<ul class="list">
+				@sites.map { site =>
+					<h2>@site.name</2>&nbsp;<a class="brand" href="#">@site.folder</a></h2>
+				}
+			</ul>
+		</div>
+    </article>
+    
+}
+

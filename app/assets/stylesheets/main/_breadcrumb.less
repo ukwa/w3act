@@ -1,0 +1,171 @@
+// -----------------------------------
+// BREADCRUMB tabs
+// -----------------------------------
+// w3act project
+// -----------------------------------
+
+#main > header {
+    padding: 20px 0 0; // 20 instead of 10
+    height: 39px;
+    //background: url(/assets/images/breadcrumb.png);
+    border-bottom: 1px solid @layoutBorderColor;
+    hgroup {
+        height: inherit;
+        overflow: hidden;
+        float: left;
+	.radius(@radius:6px) {
+	    -webkit-border-radius: @radius;
+	    -moz-border-radius: @radius;
+	    border-radius: @radius;
+	}
+/*	.button(@radius:3px, @background: #e7ba64, @padding: 0px) {
+	    .radius(@radius);
+	    background:@background;
+	    border: 1px solid @background - #222;
+	    padding: @padding;
+	}*/
+	.rounded_top() {
+	    -webkit-border-top-left-radius: 6px;
+	    -webkit-border-top-right-radius: 6px;
+	    -moz-border-radius-topleft: 6px;
+	    -moz-border-radius-topright: 6px;
+	    border-top-left-radius: 6px;
+	    border-top-right-radius: 6px;
+//            .button();
+	}
+	.rounded_top(@radius:3px) {
+//	    -webkit-border-top-left-radius: 6px;
+	    -webkit-border-top-right-radius: @radius;
+//	    -moz-border-radius-topleft: 6px;
+	    -moz-border-radius-topright: @radius;
+//	    border-top-left-radius: 6px;
+	    border-top-right-radius: @radius;
+//            .button();
+	}
+	.button_v1(@radius:3px, @background: #e7ba64, @padding: 10px) {
+	    .rounded_top(@radius);
+	    background:@background;
+	    border: 1px solid @background - #222;
+	    padding: 0 @padding;
+            width: inherit;
+            font-size: 14px;
+	}
+	.button_tab(@radius:3px, @background: #e7ba64, @padding: 10px) {
+            .button();
+	    .rounded_top(@radius);
+	    //background:@background;
+	    //border: 1px solid @background - #222;
+	    padding: 0 @padding;
+            //width: inherit;
+            font-size: 14px;
+	    //background: lighten(@mainColor, 20%);
+            border: 2px solid #bbb;
+            //text-color: #ff0000;
+	}
+        > h1 {
+            &:before {
+                content: url(/assets/images/icons/user.png); // different icons possible
+                padding-right: 4px;
+                vertical-align: middle;
+            }
+            //.rounded_top;
+            .button_tab(10px); 
+            //.button(); 
+        }
+        > * {
+            float: inherit;
+            position: relative;
+            height: inherit;
+            line-height: 40px;
+            margin-left: -5px; // -5 instead of -25
+            padding: 10 6px 0 13px; // 10 instead of 0 for tabs
+            font-size: 18px;
+            text-shadow: 1px 1px 0 rgba(255,255,255,.5);
+            -webkit-border-image: url(/assets/images/breadcrumb-2.png) 0 30 0 20 stretch stretch;
+            -moz-border-image: url(/assets/images/breadcrumb-2.png) 0 30 0 20 stretch stretch;
+            border-image: url(/assets/images/breadcrumb-2.png) 0 30 0 20 stretch stretch;
+            border-width: 0 30px 0 25px;
+            color: @titleColor;
+            -webkit-user-select: text;
+            &:nth-child(2) {
+                -webkit-border-image: url(/assets/images/breadcrumb-1.png) 0 30 0 1 stretch stretch;
+                -moz-border-image: url(/assets/images/breadcrumb-1.png) 0 30 0 1 stretch stretch;
+                border-image: url(/assets/images/breadcrumb-1.png) 0 30 0 2 stretch stretch;
+            }
+            &:first-child {
+                padding-left: 20px;
+            }
+            &:nth-child(1) { z-index: 3; }
+            &:nth-child(2) { z-index: 2; }
+            &:nth-child(3) { z-index: 1; }
+        }
+    }
+    .users {
+        position: relative;
+        padding: 10px; // move button down
+        margin: 8px 10px;
+        float: right;
+        .pannel();
+        > dt {
+            &:before {
+                content: url(/assets/images/icons/user.png);
+                padding-right: 4px;
+                vertical-align: middle;
+            }
+            .button(); // this is a team button
+        }
+        > dd {
+            padding: 5px 10px;
+            width: 300px;
+            color: @panText;
+            z-index: 99;
+        }
+        .wrap {
+            overflow: auto;
+            max-height: 350px;
+            width: inherit;
+        }
+        h3 {
+            margin: 10px 0 0;
+            padding: 5px 0;
+            font-size: 16px;
+            color: @panTitle;
+            &:first-of-type {
+                margin: 0;
+            }
+        }
+        dl {
+            position: relative;
+            border-top: 1px solid @panBorder;
+            padding: 5px 17px 5px 0;
+            dt {
+                .ellipsis();
+                span {
+                    opacity: .5;
+                    font-size: 11px;
+                }
+            }
+        }
+        .action {
+            position: absolute;
+            top: 5px;
+            right: 0px;
+            width: 16px;
+            height: 16px;
+            overflow: hidden;
+            text-indent: -99em;
+            background: #444 url(/assets/images/icons/addRemove.png) 0 1 no-repeat;
+            border-radius: 10px;
+            &:hover {
+                background-color: green;
+            }
+        }
+        .list .action {
+            background-position: 0 -19px;
+            &:hover {
+                background-color: red;
+            }
+        }
+    }
+}
+

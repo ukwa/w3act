@@ -1,0 +1,25 @@
+@(title: String, user: User, dcollections: List[DCollection])
+
+@main(title, user){
+    
+    <header>
+        <hgroup>
+            <h2>Collections overview</h2>
+        </hgroup>
+    </header>
+    <article  class="sites">
+		<div class="folder">
+			<header>
+				<span class="loader">Loading</span>
+			</header>
+			<ul class="list">
+				@dcollections.map { dcollection =>
+					<h2>@dcollection.name</h2>
+				}
+			</ul>
+		</div>
+    </article>
+    
+}
+
+

@@ -1,0 +1,30 @@
+
+# Users
+
+users:
+
+    - !!models.User
+        email:      ross.king@ait.ac.at
+        name:       Ross King
+        password:   secret
+
+    - !!models.User
+        email:      andrew.jackson@bl.uk
+        name:       Andrew Jackson
+        password:   secret
+    
+    - !!models.User
+        email:      coram.roger@bl.uk
+        name:       Maxime Dantec
+        password:   secret
+    
+    - !!models.User
+        email:      rainer.simon@ait.ac.at
+        name:       Rainer Simon
+        password:   secret
+    
+    - !!models.User
+        email:      roman.graf@ait.ac.at
+        name:       Roman Graf
+        password:   secret
+    
