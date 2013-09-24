@@ -21,4 +21,4 @@ GET     /about                              controllers.About.index()
 
 # The home page
 GET     /collections                        controllers.DCollections.index()
-GET     /sites                              controllers.Sites.index()
+GET     /sites                              controllers.Targets.index()

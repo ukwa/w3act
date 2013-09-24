@@ -1,4 +1,4 @@
-@(title: String, user: User, sites: List[Site])
+@(title: String, user: User, targets: List[Target])
 
 @main(title, user){
     
@@ -14,7 +14,7 @@
 				<span class="loader">Loading</span>
 			</header>
 			<ul class="list">
-				@targets.map { site =>
+				@targets.map { target =>
 					<h2>@target.name</2>&nbsp;<a class="brand" href="#">@target.folder</a></h2>
 				}
 			</ul>
