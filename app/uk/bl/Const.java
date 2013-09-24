@@ -1,5 +1,6 @@
 package uk.bl;
 
+
 public final class Const {
   
     private Const() {}
@@ -25,4 +26,14 @@ public final class Const {
 		PAGE;  
     }
 	
+	public enum EnumCollection {
+        URL, 
+		COLLECTION,
+		ORGANISATION,
+		PAGE;  
+    }
+	
+	public enum Organisation {
+	}
+		
 }

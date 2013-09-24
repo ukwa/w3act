@@ -15,15 +15,15 @@ import views.html.*;
  * Manage sites.
  */
 @Security.Authenticated(Secured.class)
-public class Sites extends Controller {
+public class Targets extends Controller {
   
     /**
      * Display the sites.
      */
     public static Result index() {
         return ok(
-            sites.render(
-                "Sites", User.find.byId(request().username()), models.Site.findInvolving(request().username())
+            targets.render(
+                "Target", User.find.byId(request().username()), models.Target.findInvolving(request().username())
             )
         );
     }
@@ -34,8 +34,8 @@ public class Sites extends Controller {
      * Add a site.
      */
     public static Result add() {
-        Site newSite = Site.create(
-            "New site", 
+        Target newSite = Target.create(
+            "New target", 
             form().bindFromRequest().get("group"),
             request().username()
         );
@@ -48,7 +48,7 @@ public class Sites extends Controller {
     public static Result rename(Long site) {
         if(Secured.isMemberOf(site)) {
             return ok(
-                Site.rename(
+                Target.rename(
                     site, 
                     form().bindFromRequest().get("name")
                 )
@@ -63,7 +63,7 @@ public class Sites extends Controller {
      */
     public static Result delete(Long site) {
         if(Secured.isMemberOf(site)) {
-            Site.find.ref(site).delete();
+            Target.find.ref(site).delete();
             return ok();
         } else {
             return forbidden();
@@ -83,7 +83,7 @@ public class Sites extends Controller {
      * Delete a site group.
      */
     public static Result deleteGroup(String group) {
-        Site.deleteInFolder(group);
+        Target.deleteInFolder(group);
         return ok();
     }
   
@@ -92,7 +92,7 @@ public class Sites extends Controller {
      */
     public static Result renameGroup(String group) {
         return ok(
-            Site.renameFolder(group, form().bindFromRequest().get("name"))
+            Target.renameFolder(group, form().bindFromRequest().get("name"))
         );
     }
   
@@ -103,7 +103,7 @@ public class Sites extends Controller {
      */
     public static Result addUser(Long site) {
         if(Secured.isMemberOf(site)) {
-            Site.addMember(
+            Target.addMember(
                 site,
                 form().bindFromRequest().get("user")
             );
@@ -118,7 +118,7 @@ public class Sites extends Controller {
      */
     public static Result removeUser(Long site) {
         if(Secured.isMemberOf(site)) {
-            Site.removeMember(
+            Target.removeMember(
                 site,
                 form().bindFromRequest().get("user")
             );

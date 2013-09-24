@@ -10,10 +10,10 @@ import play.data.validation.*;
 import com.avaje.ebean.*;
 
 /**
- * DCollection entity managed by Ebean
+ * Organisation entity managed by Ebean
  */
 @Entity 
-public class DCollection extends Model {
+public class Organisation extends Model {
 
     @Id
     public Long id;
@@ -22,11 +22,7 @@ public class DCollection extends Model {
     
     public String folder; // additional field if we want groups - could be ignored or removed
     
-    public String value;
-    public String summary;
-    public String format;
-    public List<String> field_targets;
-    public List<String> field_sub_collections;
+    public String field_abbreviation;  
     public int nid;
     public int vid;
     public boolean is_new;
@@ -49,7 +45,7 @@ public class DCollection extends Model {
     @ManyToMany
     public List<User> members = new ArrayList<User>();
     
-    public DCollection(String name, String folder, User owner) {
+    public Organisation(String name, String folder, User owner) {
         this.name = name;
         this.folder = folder;
         this.members.add(owner);
@@ -57,43 +53,43 @@ public class DCollection extends Model {
     
     // -- Queries
     
-    public static Model.Finder<Long,DCollection> find = new Model.Finder(Long.class, DCollection.class);
+    public static Model.Finder<Long,Organisation> find = new Model.Finder(Long.class, Organisation.class);
     
     /**
-     * Retrieve dcollection for user
+     * Retrieve Organisation for user
      */
-    public static List<DCollection> findInvolving(String user) {
+    public static List<Organisation> findInvolving(String user) {
         return find.where()
             .eq("members.email", user)
             .findList();
     }
     
     /**
-     * Delete all dcollection in a folder
+     * Delete all Organisation in a folder
      */
     public static void deleteInFolder(String folder) {
         Ebean.createSqlUpdate(
-            "delete from dcollection where folder = :folder"
+            "delete from Organisation where folder = :folder"
         ).setParameter("folder", folder).execute();
     }
     
     /**
-     * Create a new dcollection.
+     * Create a new Organisation.
      */
-    public static DCollection create(String name, String folder, String owner) {
-        DCollection dcollection = new DCollection(name, folder, User.find.ref(owner));
-        dcollection.save();
-        dcollection.saveManyToManyAssociations("members");
-        return dcollection;
+    public static Organisation create(String name, String folder, String owner) {
+        Organisation Organisation = new Organisation(name, folder, User.find.ref(owner));
+        Organisation.save();
+        Organisation.saveManyToManyAssociations("members");
+        return Organisation;
     }
     
     /**
-     * Rename a dcollection
+     * Rename a Organisation
      */
-    public static String rename(Long dcollectionId, String newName) {
-        DCollection dcollection = find.ref(dcollectionId);
-        dcollection.name = newName;
-        dcollection.update();
+    public static String rename(Long OrganisationId, String newName) {
+        Organisation Organisation = find.ref(OrganisationId);
+        Organisation.name = newName;
+        Organisation.update();
         return newName;
     }
     
@@ -102,16 +98,16 @@ public class DCollection extends Model {
      */
     public static String renameFolder(String folder, String newName) {
         Ebean.createSqlUpdate(
-            "update dcollection set folder = :newName where folder = :folder"
+            "update Organisation set folder = :newName where folder = :folder"
         ).setParameter("folder", folder).setParameter("newName", newName).execute();
         return newName;
     }
     
     /**
-     * Add a member to this dcollection
+     * Add a member to this Organisation
      */
-    public static void addMember(Long dcollection, String user) {
-        DCollection p = DCollection.find.setId(dcollection).fetch("members", "email").findUnique();
+    public static void addMember(Long Organisation, String user) {
+        Organisation p = Organisation.find.setId(Organisation).fetch("members", "email").findUnique();
         p.members.add(
             User.find.ref(user)
         );
@@ -119,10 +115,10 @@ public class DCollection extends Model {
     }
     
     /**
-     * Remove a member from this dcollection
+     * Remove a member from this Organisation
      */
-    public static void removeMember(Long dcollection, String user) {
-        DCollection p = DCollection.find.setId(dcollection).fetch("members", "email").findUnique();
+    public static void removeMember(Long Organisation, String user) {
+        Organisation p = Organisation.find.setId(Organisation).fetch("members", "email").findUnique();
         p.members.remove(
             User.find.ref(user)
         );
@@ -130,19 +126,19 @@ public class DCollection extends Model {
     }
     
     /**
-     * Check if a user is a member of this dcollection
+     * Check if a user is a member of this Organisation
      */
-    public static boolean isMember(Long dcollection, String user) {
+    public static boolean isMember(Long Organisation, String user) {
         return find.where()
             .eq("members.email", user)
-            .eq("id", dcollection)
+            .eq("id", Organisation)
             .findRowCount() > 0;
     } 
     
     // --
     
     public String toString() {
-        return "DCollection(" + id + ") with " + (members == null ? "null" : members.size()) + " members";
+        return "Organisation(" + id + ") with " + (members == null ? "null" : members.size()) + " members";
     }
 
 }

@@ -4,18 +4,18 @@
     
     <header>
         <hgroup>
-            <h2>Sites overview</h2>
+            <h2>Targets overview</h2>
         </hgroup>
     </header>
     
-    <article  class="sites">
+    <article  class="targets">
 		<div class="folder">
 			<header>
 				<span class="loader">Loading</span>
 			</header>
 			<ul class="list">
-				@sites.map { site =>
-					<h2>@site.name</2>&nbsp;<a class="brand" href="#">@site.folder</a></h2>
+				@targets.map { site =>
+					<h2>@target.name</2>&nbsp;<a class="brand" href="#">@target.folder</a></h2>
 				}
 			</ul>
 		</div>

@@ -1,27 +1,25 @@
 package uk.bl.api;
 
-import play.*;
-import play.mvc.*;
-import play.data.*;
-import static play.data.Form.*;
-
-import java.util.*;
-
-import models.*;
-
-import views.html.*;
-import uk.bl.api.*;
-import java.net.URL;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.lang.StringBuilder;
 import java.io.FileNotFoundException;
-import play.libs.Json;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import models.DCollection;
+import models.Target;
+import models.User;
+
 import org.codehaus.jackson.JsonNode;
-import uk.bl.Const.*;
+
+import play.libs.Json;
 import uk.bl.Const;
+import uk.bl.Const.NodeType;
 
 /**
  * JSON object management.
@@ -47,7 +45,44 @@ public class JsonUtils {
 		}
 		return res;
     }
-
+    
+    /**
+     * This method extracts multiple items for JSON path
+     * @param node
+     * @param path
+     * @param field
+     * @return list of String items
+     */
+    public static List<String> getStringItems(JsonNode node, String path, String field) {
+		List<String> res = new ArrayList<String>();
+		JsonNode pathNode = node.path(path);
+		Iterator<JsonNode> it = pathNode.getElements();
+		while (it.hasNext()) {
+			JsonNode subNode = it.next();			
+			String item = subNode.findPath(field).getTextValue();
+			if(item != null) {
+				System.out.println("item: " + item);
+				res.add(item);
+			}
+		}
+		return res;
+    }
+    
+    /**
+     * This method extracts one item for JSON field
+     * @param node
+     * @param field
+     * @return String item
+     */
+    public static String getStringItem(JsonNode node, String field) {
+		String res = "";
+		res = node.findPath(field).getTextValue();
+		if(res != null) {
+			System.out.println("item: " + res);
+		}
+		return res;
+    }
+    
 	public static List<Object> parseJson(String content, NodeType type) {
 	    List<Object> res = new ArrayList();
 		JsonNode json = Json.parse(content);
@@ -57,34 +92,37 @@ public class JsonUtils {
 			System.out.println("rootNode elements count is: " + rootNode.size());
 
 			while (ite.hasNext()) {
-				JsonNode temp = ite.next();
-				System.out.println("\n\n\n");
+				JsonNode node = ite.next();
+				//System.out.println("\n");
 			
-				String nid = temp.findPath(Const.NID_NODE).getTextValue();
+				String nid = node.findPath(Const.NID_NODE).getTextValue();
 				if(nid != null) {
 					System.out.println("nid: " + nid);
 				}
-				String title = temp.findPath(Const.TITLE_NODE).getTextValue();
+				String title = node.findPath(Const.TITLE_NODE).getTextValue();
 				if(title != null) {
 					System.out.println("URL node title: " + title);
 				}
 				String url = "";
-				if (type.equals(Const.NodeType.URL)) {
-					JsonNode urlNode = temp.path(Const.FIELD_URL_NODE);
-					Iterator<JsonNode> itu = urlNode.getElements();
-					while (itu.hasNext()) {
-						JsonNode tempuri = itu.next();
-						//System.out.println("\n\n\n\n\n\ntemp: " + temp.getTextValue());
-				
-						url = temp.findPath(Const.URL_NODE).getTextValue();
-						if(url != null) {
-							System.out.println("URL: " + url);
-						}
-					}
-				}
+				//url = getStringItems(node, Const.NodeType.URL, Const.FIELD_URL_NODE, Const.URL_NODE);
+//				if (type.equals(Const.NodeType.URL)) {
+//					JsonNode urlNode = node.path(Const.FIELD_URL_NODE);
+//					Iterator<JsonNode> itu = urlNode.getElements();
+//					while (itu.hasNext()) {
+//						JsonNode tempuri = itu.next();			
+//						url = node.findPath(Const.URL_NODE).getTextValue();
+//						if(url != null) {
+//							System.out.println("URL: " + url);
+//						}
+//					}
+//				}
+				System.out.println("type: " + type);
 				if (type.equals(Const.NodeType.URL)) {					
 					//res.add(new Site(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
-					res.add(new Site(title, url, User.find.byId("ross.king@ait.ac.at")));
+					Target site = new Target(title, url, User.find.byId("ross.king@ait.ac.at"));
+					parseJsonSite(node, site);
+					System.out.println(site.toString());
+					res.add(site);
 				} else {
 					//res.add(new DCollection(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
 					res.add(new DCollection(title, url, User.find.byId("ross.king@ait.ac.at")));
@@ -94,6 +132,77 @@ public class JsonUtils {
 			System.out.println("json is null");
 		}			  
 		return res;
+	}
+
+/*	public static void parseJsonSite(JsonNode node, Site obj) {
+		for (FieldDefEnum field : obj.getFieldsEnum()) {
+			if (field.evalType().equals(String.class)) {
+				String jsonField = getStringItem(node, field.evalName());
+				Method[] methods = obj.getClass().getMethods();
+				for (Method m : methods) {
+					// find getter method for the passed field name
+					if (m.getName().equals(JSONMappingHelper.GETTER_METHOD + fieldName)) {
+		               value = (String) m.invoke(object);
+		               break;
+					}
+				}		
+			}
+				// store child objects recursively
+				FfmaDomainObject childObject = (FfmaDomainObject) ((BasicDBObject) object)
+						.get(field.evalName());
+		String nid = node.findPath(Const.NID_NODE).getTextValue();
+		if(nid != null) {
+			System.out.println("nid: " + nid);
+		}
+		String title = node.findPath(Const.TITLE_NODE).getTextValue();
+		if(title != null) {
+			System.out.println("URL node title: " + title);
+		}
+		String url = "";
+		//url = getStringItems(node, Const.NodeType.URL, Const.FIELD_URL_NODE, Const.URL_NODE);
+//				if (type.equals(Const.NodeType.URL)) {
+//					JsonNode urlNode = node.path(Const.FIELD_URL_NODE);
+//					Iterator<JsonNode> itu = urlNode.getElements();
+//					while (itu.hasNext()) {
+//						JsonNode tempuri = itu.next();			
+//						url = node.findPath(Const.URL_NODE).getTextValue();
+//						if(url != null) {
+//							System.out.println("URL: " + url);
+//						}
+//					}
+//				}
+		if (type.equals(Const.NodeType.URL)) {					
+			//res.add(new Site(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
+			Site site = new Site(title, url, User.find.byId("ross.king@ait.ac.at"));
+			parseJsonSite(node, site);
+			res.add(site);
+		} else {
+			//res.add(new DCollection(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
+			res.add(new DCollection(title, url, User.find.byId("ross.king@ait.ac.at")));
+		}
+	}
+
+*/	
+	
+	public static void parseJsonSite(JsonNode node, Target obj) {
+		System.out.println("parseJsonSite: " + obj.getClass());
+		Field[] fields = obj.getClass().getFields();
+		System.out.println("fields: " + fields.length);
+		for (Field f : fields) {
+			System.out.println("field name: " + f.getName() + ", class: " + f.getType());
+			if (f.getType().equals(String.class)) {
+				String jsonField = getStringItem(node, f.getName());
+				System.out.println("found value: " + jsonField);
+				try {
+					f.set(obj, jsonField);
+					System.out.println("parseJsonSite: " + jsonField);
+				} catch (IllegalArgumentException e) {
+					System.out.println("parseJsonSite error: " + e);
+				} catch (IllegalAccessException e) {
+					System.out.println("parseJsonSite error: " + e);
+				}
+			}
+		}
 	}
 
 	public static String readJsonFromFile(String outFilePath) {
@@ -110,7 +219,7 @@ public class JsonUtils {
 					line = br.readLine();
 				}
 				res = sb.toString();
-				System.out.println("JSON output: " + res);
+				//System.out.println("JSON output: " + res);
 			} finally {
 				br.close();
 			}
