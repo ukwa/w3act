@@ -12,7 +12,7 @@ import play.db.ebean.Model;
 import com.avaje.ebean.Ebean;
 
 /**
- * Site entity managed by Ebean
+ * Target entity managed by Ebean
  */
 @SuppressWarnings("serial")
 @Entity 
@@ -81,7 +81,7 @@ public class Target extends Model {
     public static Model.Finder<Long,Target> find = new Model.Finder(Long.class, Target.class);
     
     /**
-     * Retrieve site for user
+     * Retrieve target for user
      */
     public static List<Target> findInvolving(String user) {
         return find.where()
@@ -90,31 +90,31 @@ public class Target extends Model {
     }
     
     /**
-     * Delete all site in a folder
+     * Delete all target in a folder
      */
     public static void deleteInFolder(String folder) {
         Ebean.createSqlUpdate(
-            "delete from site where folder = :folder"
+            "delete from target where folder = :folder"
         ).setParameter("folder", folder).execute();
     }
     
     /**
-     * Create a new site.
+     * Create a new target.
      */
     public static Target create(String name, String folder, String owner) {
-        Target site = new Target(name, folder, User.find.ref(owner));
-        site.save();
-        site.saveManyToManyAssociations("members");
-        return site;
+        Target target = new Target(name, folder, User.find.ref(owner));
+        target.save();
+        target.saveManyToManyAssociations("members");
+        return target;
     }
     
     /**
-     * Rename a site
+     * Rename a target
      */
-    public static String rename(Long siteId, String newName) {
-        Target site = find.ref(siteId);
-        site.name = newName;
-        site.update();
+    public static String rename(Long targetId, String newName) {
+        Target target = find.ref(targetId);
+        target.name = newName;
+        target.update();
         return newName;
     }
     
@@ -123,16 +123,16 @@ public class Target extends Model {
      */
     public static String renameFolder(String folder, String newName) {
         Ebean.createSqlUpdate(
-            "update site set folder = :newName where folder = :folder"
+            "update target set folder = :newName where folder = :folder"
         ).setParameter("folder", folder).setParameter("newName", newName).execute();
         return newName;
     }
     
     /**
-     * Add a member to this site
+     * Add a member to this target
      */
-    public static void addMember(Long site, String user) {
-        Target p = Target.find.setId(site).fetch("members", "email").findUnique();
+    public static void addMember(Long target, String user) {
+        Target p = Target.find.setId(target).fetch("members", "email").findUnique();
         p.members.add(
             User.find.ref(user)
         );
@@ -140,10 +140,10 @@ public class Target extends Model {
     }
     
     /**
-     * Remove a member from this site
+     * Remove a member from this target
      */
-    public static void removeMember(Long site, String user) {
-        Target p = Target.find.setId(site).fetch("members", "email").findUnique();
+    public static void removeMember(Long target, String user) {
+        Target p = Target.find.setId(target).fetch("members", "email").findUnique();
         p.members.remove(
             User.find.ref(user)
         );
@@ -151,12 +151,12 @@ public class Target extends Model {
     }
     
     /**
-     * Check if a user is a member of this site
+     * Check if a user is a member of this target
      */
-    public static boolean isMember(Long site, String user) {
+    public static boolean isMember(Long target, String user) {
         return find.where()
             .eq("members.email", user)
-            .eq("id", site)
+            .eq("id", target)
             .findRowCount() > 0;
     } 
     

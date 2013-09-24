@@ -118,11 +118,11 @@ public class JsonUtils {
 //				}
 				System.out.println("type: " + type);
 				if (type.equals(Const.NodeType.URL)) {					
-					//res.add(new Site(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
-					Target site = new Target(title, url, User.find.byId("ross.king@ait.ac.at"));
-					parseJsonSite(node, site);
-					System.out.println(site.toString());
-					res.add(site);
+					//res.add(new target(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
+					Target target = new Target(title, url, User.find.byId("ross.king@ait.ac.at"));
+					parseJsonTarget(node, target);
+					System.out.println(target.toString());
+					res.add(target);
 				} else {
 					//res.add(new DCollection(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
 					res.add(new DCollection(title, url, User.find.byId("ross.king@ait.ac.at")));
@@ -134,7 +134,7 @@ public class JsonUtils {
 		return res;
 	}
 
-/*	public static void parseJsonSite(JsonNode node, Site obj) {
+/*	public static void parseJsontarget(JsonNode node, target obj) {
 		for (FieldDefEnum field : obj.getFieldsEnum()) {
 			if (field.evalType().equals(String.class)) {
 				String jsonField = getStringItem(node, field.evalName());
@@ -172,10 +172,10 @@ public class JsonUtils {
 //					}
 //				}
 		if (type.equals(Const.NodeType.URL)) {					
-			//res.add(new Site(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
-			Site site = new Site(title, url, User.find.byId("ross.king@ait.ac.at"));
-			parseJsonSite(node, site);
-			res.add(site);
+			//res.add(new target(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
+			target target = new target(title, url, User.find.byId("ross.king@ait.ac.at"));
+			parseJsontarget(node, target);
+			res.add(target);
 		} else {
 			//res.add(new DCollection(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
 			res.add(new DCollection(title, url, User.find.byId("ross.king@ait.ac.at")));
@@ -184,8 +184,8 @@ public class JsonUtils {
 
 */	
 	
-	public static void parseJsonSite(JsonNode node, Target obj) {
-		System.out.println("parseJsonSite: " + obj.getClass());
+	public static void parseJsonTarget(JsonNode node, Target obj) {
+		System.out.println("parseJsonTarget: " + obj.getClass());
 		Field[] fields = obj.getClass().getFields();
 		System.out.println("fields: " + fields.length);
 		for (Field f : fields) {
@@ -195,11 +195,11 @@ public class JsonUtils {
 				System.out.println("found value: " + jsonField);
 				try {
 					f.set(obj, jsonField);
-					System.out.println("parseJsonSite: " + jsonField);
+					System.out.println("parseJsonTarget: " + jsonField);
 				} catch (IllegalArgumentException e) {
-					System.out.println("parseJsonSite error: " + e);
+					System.out.println("parseJsonTarget error: " + e);
 				} catch (IllegalAccessException e) {
-					System.out.println("parseJsonSite error: " + e);
+					System.out.println("parseJsonTarget error: " + e);
 				}
 			}
 		}

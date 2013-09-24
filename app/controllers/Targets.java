@@ -12,13 +12,13 @@ import models.*;
 import views.html.*;
 
 /**
- * Manage sites.
+ * Manage targets.
  */
 @Security.Authenticated(Secured.class)
 public class Targets extends Controller {
   
     /**
-     * Display the sites.
+     * Display the targets.
      */
     public static Result index() {
         return ok(
@@ -28,13 +28,13 @@ public class Targets extends Controller {
         );
     }
 
-    // -- Sites
+    // -- targets
 
     /**
-     * Add a site.
+     * Add a target.
      */
     public static Result add() {
-        Target newSite = Target.create(
+        Target newTarget = Target.create(
             "New target", 
             form().bindFromRequest().get("group"),
             request().username()
@@ -43,13 +43,13 @@ public class Targets extends Controller {
     }
     
     /**
-     * Rename a site.
+     * Rename a target.
      */
-    public static Result rename(Long site) {
-        if(Secured.isMemberOf(site)) {
+    public static Result rename(Long target) {
+        if(Secured.isMemberOf(target)) {
             return ok(
                 Target.rename(
-                    site, 
+                    target, 
                     form().bindFromRequest().get("name")
                 )
             );
@@ -59,28 +59,28 @@ public class Targets extends Controller {
     }
     
     /**
-     * Delete a site.
+     * Delete a target.
      */
-    public static Result delete(Long site) {
-        if(Secured.isMemberOf(site)) {
-            Target.find.ref(site).delete();
+    public static Result delete(Long target) {
+        if(Secured.isMemberOf(target)) {
+            Target.find.ref(target).delete();
             return ok();
         } else {
             return forbidden();
         }
     }
 
-    // -- Site groups
+    // -- target groups
 
     /**
-     * Add a new site group.
+     * Add a new target group.
      */
     public static Result addGroup() {
         return ok();
     }
   
     /**
-     * Delete a site group.
+     * Delete a target group.
      */
     public static Result deleteGroup(String group) {
         Target.deleteInFolder(group);
@@ -88,7 +88,7 @@ public class Targets extends Controller {
     }
   
     /**
-     * Rename a site group.
+     * Rename a target group.
      */
     public static Result renameGroup(String group) {
         return ok(
@@ -99,12 +99,12 @@ public class Targets extends Controller {
     // -- Members
   
     /**
-     * Add a site member.
+     * Add a target member.
      */
-    public static Result addUser(Long site) {
-        if(Secured.isMemberOf(site)) {
+    public static Result addUser(Long target) {
+        if(Secured.isMemberOf(target)) {
             Target.addMember(
-                site,
+                target,
                 form().bindFromRequest().get("user")
             );
             return ok();
@@ -114,12 +114,12 @@ public class Targets extends Controller {
     }
   
     /**
-     * Remove a site member.
+     * Remove a target member.
      */
-    public static Result removeUser(Long site) {
-        if(Secured.isMemberOf(site)) {
+    public static Result removeUser(Long target) {
+        if(Secured.isMemberOf(target)) {
             Target.removeMember(
-                site,
+                target,
                 form().bindFromRequest().get("user")
             );
             return ok();

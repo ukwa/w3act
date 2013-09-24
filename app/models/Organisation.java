@@ -107,22 +107,22 @@ public class Organisation extends Model {
      * Add a member to this Organisation
      */
     public static void addMember(Long Organisation, String user) {
-        Organisation p = Organisation.find.setId(Organisation).fetch("members", "email").findUnique();
-        p.members.add(
-            User.find.ref(user)
-        );
-        p.saveManyToManyAssociations("members");
+//        Organisation p = Organisation.find.setId(Organisation).fetch("members", "email").findUnique();
+//        p.members.add(
+//            User.find.ref(user)
+//        );
+//        p.saveManyToManyAssociations("members");
     }
     
     /**
      * Remove a member from this Organisation
      */
     public static void removeMember(Long Organisation, String user) {
-        Organisation p = Organisation.find.setId(Organisation).fetch("members", "email").findUnique();
-        p.members.remove(
-            User.find.ref(user)
-        );
-        p.saveManyToManyAssociations("members");
+//        Organisation p = Organisation.find.setId(Organisation).fetch("members", "email").findUnique();
+//        p.members.remove(
+//            User.find.ref(user)
+//        );
+//        p.saveManyToManyAssociations("members");
     }
     
     /**

@@ -70,7 +70,7 @@ public class Application extends Controller {
             
 				controllers.routes.javascript.About.index(),
                 controllers.routes.javascript.DCollections.index(),
-                controllers.routes.javascript.Sites.index()
+                controllers.routes.javascript.Targets.index()
             )
         );
     }
