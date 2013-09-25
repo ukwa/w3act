@@ -23,7 +23,7 @@ public class DCollection extends Model {
     public List<String> field_targets;
     public List<String> field_sub_collections;
     public Long vid;
-    public boolean is_new;
+    public Boolean is_new;
     public String type;
     public String title;
     public String language;

@@ -20,7 +20,7 @@ public class Organisation extends Model {
     public Long nid;
     public String field_abbreviation;  
     public Long vid;
-    public boolean is_new;
+    public Boolean is_new;
     public String type;
     public String title;
     public String language;

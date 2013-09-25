@@ -19,8 +19,7 @@ public final class Const {
 	public enum NodeType {
         URL, 
 		COLLECTION,
-		ORGANISATION,
-		PAGE;  
+		ORGANISATION;
     }
 		
 }

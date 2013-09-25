@@ -33,17 +33,17 @@ public class Target extends Model {
     public List<String> field_suggested_collections;
     public List<String> field_collections;
     public String field_crawl_start_date;
-    public boolean field_uk_domain;
+    public Boolean field_uk_domain;
     public String field_license;
     public String field_crawl_permission;
     public List<String> field_collection_categories;
     public String field_special_dispensation;
     public List<String> field_notes;
     public List<String> field_instances;
-    public boolean field_uk_geoip;
+    public Boolean field_uk_geoip;
     public String field_professional_judgement;
     public Long vid;
-    public boolean is_new;
+    public Boolean is_new;
     public String type;
     public String title;
     public String language;
@@ -105,7 +105,8 @@ public class Target extends Model {
     }
         
     public String toString() {
-        return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type;
+        return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
+        ", field_uk_domain: " + field_uk_domain;
     }
 
 }

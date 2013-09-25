@@ -106,24 +106,18 @@ public class JsonUtils {
 			while (ite.hasNext()) {
 				JsonNode node = ite.next();
 				System.out.println("type: " + type);
+				Object obj = null;
 				if (type.equals(Const.NodeType.URL)) {					
-					Target target = new Target();
-					parseJsonNode(node, target);
-					System.out.println(target.toString());
-					res.add(target);
+					obj = new Target();
 				} 
 				if (type.equals(Const.NodeType.COLLECTION)) {
-					DCollection dcollection = new DCollection();
-					parseJsonNode(node, dcollection);
-					System.out.println(dcollection.toString());
-					res.add(dcollection);
+					obj = new DCollection();
 				}
 				if (type.equals(Const.NodeType.ORGANISATION)) {
-					Organisation organisation = new Organisation();
-					parseJsonNode(node, organisation);
-					System.out.println(organisation.toString());
-					res.add(organisation);
+					obj = new Organisation();
 				}
+				parseJsonNode(node, obj);
+				res.add(obj);
 			}
 		} else {
 			System.out.println("json is null");
@@ -154,6 +148,17 @@ public class JsonUtils {
 					Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
 					f.set(obj, jsonFieldLong);
 				}
+				if (f.getType().equals(Boolean.class)) {
+					if (jsonField.equals("Yes") 
+							|| jsonField.equals("yes") 
+							|| jsonField.equals("True") 
+							|| jsonField.equals("Y") 
+							|| jsonField.equals("y")) {
+						jsonField = "true";
+					}
+					Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
+					f.set(obj, jsonFieldBoolean);
+				}
 				System.out.println("parseJsonCollection: " + jsonField);
 			} catch (IllegalArgumentException e) {
 				System.out.println("parseJsonCollection error: " + e);
@@ -163,6 +168,7 @@ public class JsonUtils {
 				System.out.println("parseJsonCollection error: " + e);
 			}
 		}
+		System.out.println(obj.toString());
 	}
 
 	/**
