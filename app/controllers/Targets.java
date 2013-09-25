@@ -23,7 +23,7 @@ public class Targets extends Controller {
     public static Result index() {
         return ok(
             targets.render(
-                "Target", User.find.byId(request().username()), models.Target.findInvolving(request().username())
+                "Targets", User.find.byId(request().username()), models.Target.findInvolving(request().username())
             )
         );
     }

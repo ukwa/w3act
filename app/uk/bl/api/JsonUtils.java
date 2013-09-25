@@ -133,56 +133,6 @@ public class JsonUtils {
 		}			  
 		return res;
 	}
-
-/*	public static void parseJsontarget(JsonNode node, target obj) {
-		for (FieldDefEnum field : obj.getFieldsEnum()) {
-			if (field.evalType().equals(String.class)) {
-				String jsonField = getStringItem(node, field.evalName());
-				Method[] methods = obj.getClass().getMethods();
-				for (Method m : methods) {
-					// find getter method for the passed field name
-					if (m.getName().equals(JSONMappingHelper.GETTER_METHOD + fieldName)) {
-		               value = (String) m.invoke(object);
-		               break;
-					}
-				}		
-			}
-				// store child objects recursively
-				FfmaDomainObject childObject = (FfmaDomainObject) ((BasicDBObject) object)
-						.get(field.evalName());
-		String nid = node.findPath(Const.NID_NODE).getTextValue();
-		if(nid != null) {
-			System.out.println("nid: " + nid);
-		}
-		String title = node.findPath(Const.TITLE_NODE).getTextValue();
-		if(title != null) {
-			System.out.println("URL node title: " + title);
-		}
-		String url = "";
-		//url = getStringItems(node, Const.NodeType.URL, Const.FIELD_URL_NODE, Const.URL_NODE);
-//				if (type.equals(Const.NodeType.URL)) {
-//					JsonNode urlNode = node.path(Const.FIELD_URL_NODE);
-//					Iterator<JsonNode> itu = urlNode.getElements();
-//					while (itu.hasNext()) {
-//						JsonNode tempuri = itu.next();			
-//						url = node.findPath(Const.URL_NODE).getTextValue();
-//						if(url != null) {
-//							System.out.println("URL: " + url);
-//						}
-//					}
-//				}
-		if (type.equals(Const.NodeType.URL)) {					
-			//res.add(new target(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
-			target target = new target(title, url, User.find.byId("ross.king@ait.ac.at"));
-			parseJsontarget(node, target);
-			res.add(target);
-		} else {
-			//res.add(new DCollection(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
-			res.add(new DCollection(title, url, User.find.byId("ross.king@ait.ac.at")));
-		}
-	}
-
-*/	
 	
 	public static void parseJsonTarget(JsonNode node, Target obj) {
 		System.out.println("parseJsonTarget: " + obj.getClass());
