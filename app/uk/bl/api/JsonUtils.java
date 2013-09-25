@@ -104,22 +104,9 @@ public class JsonUtils {
 					System.out.println("URL node title: " + title);
 				}
 				String url = "";
-				//url = getStringItems(node, Const.NodeType.URL, Const.FIELD_URL_NODE, Const.URL_NODE);
-//				if (type.equals(Const.NodeType.URL)) {
-//					JsonNode urlNode = node.path(Const.FIELD_URL_NODE);
-//					Iterator<JsonNode> itu = urlNode.getElements();
-//					while (itu.hasNext()) {
-//						JsonNode tempuri = itu.next();			
-//						url = node.findPath(Const.URL_NODE).getTextValue();
-//						if(url != null) {
-//							System.out.println("URL: " + url);
-//						}
-//					}
-//				}
 				System.out.println("type: " + type);
 				if (type.equals(Const.NodeType.URL)) {					
-					//res.add(new target(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
-					Target target = new Target(title, url, User.find.byId("ross.king@ait.ac.at"));
+					Target target = new Target(title, url);
 					parseJsonTarget(node, target);
 					System.out.println(target.toString());
 					res.add(target);

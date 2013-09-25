@@ -18,13 +18,6 @@ import com.avaje.ebean.Ebean;
 @Entity 
 public class Target extends Model {
 
-    @Id
-    public Long id;
-    
-    public String name; // to remove
-    
-    public String folder; // additional field if we want groups - could be ignored or removed
-    
     public String field_scope;
     public List<String> field_url;
     public String field_depth;
@@ -47,7 +40,8 @@ public class Target extends Model {
     public List<String> field_instances;
     public boolean field_uk_geoip;
     public String field_professional_judgement;
-    public int nid;
+    @Id
+    public Long nid;
     public int vid;
     public boolean is_new;
     public String type;
@@ -67,15 +61,16 @@ public class Target extends Model {
     public int comment_count_new;
     public int feed_nid;
     
-    @ManyToMany
-    public List<User> members = new ArrayList<User>();
-    
-    public Target(String name, String folder, User owner) {
-        this.name = name;
-        this.folder = folder;
-        this.members.add(owner);
+    /**
+     * Constructor
+     * @param title
+     * @param url
+     */
+    public Target(String title, String url) {
+    	this.title = title;
+    	this.url = url;
     }
-    
+
     // -- Queries
     
     public static Model.Finder<Long,Target> find = new Model.Finder(Long.class, Target.class);
@@ -83,87 +78,31 @@ public class Target extends Model {
     /**
      * Retrieve target for user
      */
-    public static List<Target> findInvolving(String user) {
-        return find.where()
-            .eq("members.email", user)
-            .findList();
-    }
-    
-    /**
-     * Delete all target in a folder
-     */
-    public static void deleteInFolder(String folder) {
-        Ebean.createSqlUpdate(
-            "delete from target where folder = :folder"
-        ).setParameter("folder", folder).execute();
-    }
-    
+    public static List<Target> findInvolving() {
+	    return find.all();
+	}
+
     /**
      * Create a new target.
      */
-    public static Target create(String name, String folder, String owner) {
-        Target target = new Target(name, folder, User.find.ref(owner));
+    public static Target create(String title, String url) {
+        Target target = new Target(title, url);
         target.save();
-        target.saveManyToManyAssociations("members");
         return target;
     }
-    
-    /**
+
+   /**
      * Rename a target
      */
     public static String rename(Long targetId, String newName) {
-        Target target = find.ref(targetId);
-        target.name = newName;
+        Target target = (Target) find.ref(targetId);
+        target.title = newName;
         target.update();
         return newName;
     }
-    
-    /**
-     * Rename a folder
-     */
-    public static String renameFolder(String folder, String newName) {
-        Ebean.createSqlUpdate(
-            "update target set folder = :newName where folder = :folder"
-        ).setParameter("folder", folder).setParameter("newName", newName).execute();
-        return newName;
-    }
-    
-    /**
-     * Add a member to this target
-     */
-    public static void addMember(Long target, String user) {
-        Target p = Target.find.setId(target).fetch("members", "email").findUnique();
-        p.members.add(
-            User.find.ref(user)
-        );
-        p.saveManyToManyAssociations("members");
-    }
-    
-    /**
-     * Remove a member from this target
-     */
-    public static void removeMember(Long target, String user) {
-        Target p = Target.find.setId(target).fetch("members", "email").findUnique();
-        p.members.remove(
-            User.find.ref(user)
-        );
-        p.saveManyToManyAssociations("members");
-    }
-    
-    /**
-     * Check if a user is a member of this target
-     */
-    public static boolean isMember(Long target, String user) {
-        return find.where()
-            .eq("members.email", user)
-            .eq("id", target)
-            .findRowCount() > 0;
-    } 
-    
-    // --
-    
+        
     public String toString() {
-        return "Target(" + id + ") with " + (members == null ? "null" : members.size()) + " members" + ", url: " + url + ",field_crawl_frequency: " + field_crawl_frequency + ", type: " + type;
+        return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type;
     }
 
 }
