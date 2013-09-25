@@ -27,24 +27,24 @@ public class DCollection extends Model {
     public String format;
     public List<String> field_targets;
     public List<String> field_sub_collections;
-    public int nid;
-    public int vid;
+    public Long nid;
+    public Long vid;
     public boolean is_new;
     public String type;
     public String title;
     public String language;
     public String url;
     public String edit_url;
-    public int status;
-    public int promote;
-    public int sticky;
+    public Long status;
+    public Long promote;
+    public Long sticky;
     public String created;
     public String changed;
     public String author;
     public String log;
-    public int comment;
-    public int comment_count;
-    public int comment_count_new;
+    public Long comment;
+    public Long comment_count;
+    public Long comment_count_new;
     
     @ManyToMany
     public List<User> members = new ArrayList<User>();

@@ -95,10 +95,10 @@ public class JsonUtils {
 				JsonNode node = ite.next();
 				//System.out.println("\n");
 			
-				String nid = node.findPath(Const.NID_NODE).getTextValue();
-				if(nid != null) {
-					System.out.println("nid: " + nid);
-				}
+//				String nid = node.findPath(Const.NID_NODE).getTextValue();
+//				if(nid != null) {
+//					System.out.println("nid: " + nid);
+//				}
 				String title = node.findPath(Const.TITLE_NODE).getTextValue();
 				if(title != null) {
 					System.out.println("URL node title: " + title);
@@ -111,8 +111,8 @@ public class JsonUtils {
 					System.out.println(target.toString());
 					res.add(target);
 				} else {
-					//res.add(new DCollection(Long(id), title, url, User.find.byId("ross.king@ait.ac.at")));
 					res.add(new DCollection(title, url, User.find.byId("ross.king@ait.ac.at")));
+//					res.add(new DCollection(title, url));
 				}
 			}
 		} else {
@@ -129,13 +129,28 @@ public class JsonUtils {
 			System.out.println("field name: " + f.getName() + ", class: " + f.getType());
 			if (f.getType().equals(String.class)) {
 				String jsonField = getStringItem(node, f.getName());
-				System.out.println("found value: " + jsonField);
+//				System.out.println("found value: " + jsonField);
 				try {
 					f.set(obj, jsonField);
 					System.out.println("parseJsonTarget: " + jsonField);
 				} catch (IllegalArgumentException e) {
 					System.out.println("parseJsonTarget error: " + e);
 				} catch (IllegalAccessException e) {
+					System.out.println("parseJsonTarget error: " + e);
+				}
+			}
+			if (f.getType().equals(Long.class)) {
+				try {
+					String jsonField = getStringItem(node, f.getName());
+					Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
+					System.out.println("long value: " + jsonField);
+					f.set(obj, jsonFieldLong);
+					System.out.println("parseJsonTarget: " + jsonField);
+				} catch (IllegalArgumentException e) {
+					System.out.println("parseJsonTarget error: " + e);
+				} catch (IllegalAccessException e) {
+					System.out.println("parseJsonTarget error: " + e);
+				} catch (Exception e) {
 					System.out.println("parseJsonTarget error: " + e);
 				}
 			}

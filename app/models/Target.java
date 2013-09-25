@@ -18,6 +18,8 @@ import com.avaje.ebean.Ebean;
 @Entity 
 public class Target extends Model {
 
+    @Id
+    public Long nid;
     public String field_scope;
     public List<String> field_url;
     public String field_depth;
@@ -40,26 +42,24 @@ public class Target extends Model {
     public List<String> field_instances;
     public boolean field_uk_geoip;
     public String field_professional_judgement;
-    @Id
-    public Long nid;
-    public int vid;
+    public Long vid;
     public boolean is_new;
     public String type;
     public String title;
     public String language;
     public String url;
     public String edit_url;
-    public int status;
-    public int promote;
-    public int sticky;
+    public Long status;
+    public Long promote;
+    public Long sticky;
     public String created;
     public String changed;
     public String author;
     public String log;
-    public int comment;
-    public int comment_count;
-    public int comment_count_new;
-    public int feed_nid;
+    public Long comment;
+    public Long comment_count;
+    public Long comment_count_new;
+    public Long feed_nid;
     
     /**
      * Constructor
