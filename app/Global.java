@@ -35,7 +35,11 @@ public class Global extends GlobalSettings {
 		        List<Object> allCollections = JsonUtils.getDrupalData(Const.NodeType.COLLECTION);
 				// store collections in DB
                 Ebean.save(allCollections);
-                System.out.println("load projects");
+                System.out.println("load organisations");
+				// aggregate organisations data from drupal and store JSON content in a file
+		        List<Object> allOrganisations = JsonUtils.getDrupalData(Const.NodeType.ORGANISATION);
+				// store organisations in DB
+                Ebean.save(allOrganisations);
             }
         }
         

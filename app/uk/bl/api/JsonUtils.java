@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import models.DCollection;
+import models.Organisation;
 import models.Target;
 import models.User;
 
@@ -116,6 +117,12 @@ public class JsonUtils {
 					parseJsonNode(node, dcollection);
 					System.out.println(dcollection.toString());
 					res.add(dcollection);
+				}
+				if (type.equals(Const.NodeType.ORGANISATION)) {
+					Organisation organisation = new Organisation();
+					parseJsonNode(node, organisation);
+					System.out.println(organisation.toString());
+					res.add(organisation);
 				}
 			}
 		} else {

@@ -20,5 +20,6 @@ GET     /assets/*file                       controllers.Assets.at(path="/public"
 GET     /about                              controllers.About.index()
 GET     /collections                        controllers.DCollections.index()
 GET     /targets                            controllers.Targets.index()
+GET     /organisations                      controllers.Organisations.index()
 GET     /curators                           controllers.Curators.index()
 GET     /contact                            controllers.Contact.index()

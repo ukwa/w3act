@@ -22,7 +22,7 @@ public class DCollections extends Controller {
      */
     public static Result index() {
         return ok(
-            dcollectionsview.render(
+            dcollections.render(
                 "Collections", User.find.byId(request().username()), models.DCollection.findInvolving()
             )
         );

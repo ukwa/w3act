@@ -1,0 +1,25 @@
+@(title: String, user: User, organisations: List[Organisation])
+
+@main(title, user){
+    
+    <header>
+        <hgroup>
+            <h2>Organisations overview</h2>
+        </hgroup>
+    </header>
+    <article  class="collecitions">
+		<div class="folder">
+			<header>
+				<span class="loader">Loading</span>
+			</header>
+			<ul class="list">
+				@organisations.map { organisation =>
+					<h2>@organisation.title</h2>
+				}
+			</ul>
+		</div>
+    </article>
+    
+}
+
+
