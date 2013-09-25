@@ -16,7 +16,7 @@ import models.Organisation;
 import models.Target;
 import models.User;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import play.libs.Json;
 import uk.bl.Const;
@@ -62,10 +62,10 @@ public class JsonUtils {
     public static List<String> getStringItems(JsonNode node, String path, String field) {
 		List<String> res = new ArrayList<String>();
 		JsonNode pathNode = node.path(path);
-		Iterator<JsonNode> it = pathNode.getElements();
+		Iterator<JsonNode> it = pathNode.iterator();
 		while (it.hasNext()) {
 			JsonNode subNode = it.next();			
-			String item = subNode.findPath(field).getTextValue();
+			String item = subNode.findPath(field).textValue();
 			if(item != null) {
 				System.out.println("item: " + item);
 				res.add(item);
@@ -82,7 +82,7 @@ public class JsonUtils {
      */
     public static String getStringItem(JsonNode node, String field) {
 		String res = "";
-		res = node.findPath(field).getTextValue();
+		res = node.findPath(field).textValue();
 		if(res != null) {
 			System.out.println("item: " + res);
 		}
@@ -100,7 +100,7 @@ public class JsonUtils {
 		JsonNode json = Json.parse(content);
 		if(json != null) {
 			JsonNode rootNode = json.path(Const.LIST_NODE);
-			Iterator<JsonNode> ite = rootNode.getElements();
+			Iterator<JsonNode> ite = rootNode.iterator();
 			System.out.println("rootNode elements count is: " + rootNode.size());
 
 			while (ite.hasNext()) {
