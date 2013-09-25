@@ -93,26 +93,22 @@ public class JsonUtils {
 
 			while (ite.hasNext()) {
 				JsonNode node = ite.next();
-				//System.out.println("\n");
-			
-//				String nid = node.findPath(Const.NID_NODE).getTextValue();
-//				if(nid != null) {
-//					System.out.println("nid: " + nid);
-//				}
-				String title = node.findPath(Const.TITLE_NODE).getTextValue();
-				if(title != null) {
-					System.out.println("URL node title: " + title);
-				}
-				String url = "";
 				System.out.println("type: " + type);
 				if (type.equals(Const.NodeType.URL)) {					
-					Target target = new Target(title, url);
+					Target target = new Target();
 					parseJsonTarget(node, target);
 					System.out.println(target.toString());
 					res.add(target);
-				} else {
-					res.add(new DCollection(title, url, User.find.byId("ross.king@ait.ac.at")));
-//					res.add(new DCollection(title, url));
+				} 
+				if (type.equals(Const.NodeType.COLLECTION)) {
+					String title = node.findPath(Const.TITLE_NODE).getTextValue();
+					if(title != null) {
+						System.out.println("URL node title: " + title);
+					}
+					DCollection dcollection = new DCollection(title);
+//					parseJsonCollection(node, dcollection);
+					System.out.println(dcollection.toString());
+					res.add(dcollection);
 				}
 			}
 		} else {
@@ -128,9 +124,9 @@ public class JsonUtils {
 		for (Field f : fields) {
 			System.out.println("field name: " + f.getName() + ", class: " + f.getType());
 			if (f.getType().equals(String.class)) {
-				String jsonField = getStringItem(node, f.getName());
-//				System.out.println("found value: " + jsonField);
 				try {
+					String jsonField = getStringItem(node, f.getName());
+//					System.out.println("found value: " + jsonField);
 					f.set(obj, jsonField);
 					System.out.println("parseJsonTarget: " + jsonField);
 				} catch (IllegalArgumentException e) {
@@ -152,6 +148,42 @@ public class JsonUtils {
 					System.out.println("parseJsonTarget error: " + e);
 				} catch (Exception e) {
 					System.out.println("parseJsonTarget error: " + e);
+				}
+			}
+		}
+	}
+
+	public static void parseJsonCollection(JsonNode node, DCollection obj) {
+		System.out.println("parseJsonTarget: " + obj.getClass());
+		Field[] fields = obj.getClass().getFields();
+		System.out.println("fields: " + fields.length);
+		for (Field f : fields) {
+			System.out.println("field name: " + f.getName() + ", class: " + f.getType());
+			if (f.getType().equals(String.class)) {
+				try {
+					String jsonField = getStringItem(node, f.getName());
+//					System.out.println("found value: " + jsonField);
+					f.set(obj, jsonField);
+					System.out.println("parseJsonCollection: " + jsonField);
+				} catch (IllegalArgumentException e) {
+					System.out.println("parseJsonCollection error: " + e);
+				} catch (IllegalAccessException e) {
+					System.out.println("parseJsonCollection error: " + e);
+				}
+			}
+			if (f.getType().equals(Long.class)) {
+				try {
+					String jsonField = getStringItem(node, f.getName());
+					Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
+					System.out.println("long value: " + jsonField);
+					f.set(obj, jsonFieldLong);
+					System.out.println("parseJsonCollection: " + jsonField);
+				} catch (IllegalArgumentException e) {
+					System.out.println("parseJsonCollection error: " + e);
+				} catch (IllegalAccessException e) {
+					System.out.println("parseJsonCollection error: " + e);
+				} catch (Exception e) {
+					System.out.println("parseJsonCollection error: " + e);
 				}
 			}
 		}

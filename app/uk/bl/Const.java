@@ -16,7 +16,6 @@ public final class Const {
 	public static final String TITLE_NODE      = "title";
 	public static final String FIELD_URL_NODE  = "field_url";
 	public static final String URL_NODE        = "url";
-	public static final String NID_NODE        = "nid";
 	
 	// Types of the JSON nodes
 	public enum NodeType {
@@ -25,15 +24,5 @@ public final class Const {
 		ORGANISATION,
 		PAGE;  
     }
-	
-	public enum EnumCollection {
-        URL, 
-		COLLECTION,
-		ORGANISATION,
-		PAGE;  
-    }
-	
-	public enum Organisation {
-	}
 		
 }

@@ -71,12 +71,15 @@ public class Target extends Model {
     	this.url = url;
     }
 
+    public Target() {
+    }
+
     // -- Queries
     
     public static Model.Finder<Long,Target> find = new Model.Finder(Long.class, Target.class);
     
     /**
-     * Retrieve target for user
+     * Retrieve targets
      */
     public static List<Target> findInvolving() {
 	    return find.all();
