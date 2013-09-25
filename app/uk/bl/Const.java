@@ -13,9 +13,7 @@ public final class Const {
 	
 	// Names of the JSON nodes
 	public static final String LIST_NODE       = "list";
-	public static final String TITLE_NODE      = "title";
 	public static final String FIELD_URL_NODE  = "field_url";
-	public static final String URL_NODE        = "url";
 	
 	// Types of the JSON nodes
 	public enum NodeType {

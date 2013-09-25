@@ -1,0 +1,25 @@
+@(title: String, user: User, curators: List[User])
+
+@main(title, user){
+    
+    <header>
+        <hgroup>
+            <h2>Curators overview</h2>
+        </hgroup>
+    </header>
+    
+    <article  class="curators">
+		<div class="folder">
+			<header>
+				<span class="loader">Loading</span>
+			</header>
+			<ul class="list">
+				@curators.map { curator =>
+					<h2>@curator.name&nbsp;@curator.email</h2>
+				}
+			</ul>
+		</div>
+    </article>
+    
+}
+

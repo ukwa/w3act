@@ -26,6 +26,11 @@ import uk.bl.Const.NodeType;
  */
 public class JsonUtils {
 
+    /**
+     * This method retrieves JSON data from Drupal for particular domain object type (e.g. Target, Collection...)
+     * @param type
+     * @return a list of retrieved objects
+     */
     public static List<Object> getDrupalData(NodeType type) {
 	    List<Object> res = new ArrayList();
 	    try {
@@ -83,6 +88,12 @@ public class JsonUtils {
 		return res;
     }
     
+	/**
+	 * This method extracts JSON nodes and passes them to parser
+	 * @param content
+	 * @param type
+	 * @return object list for particualar domain object type
+	 */
 	public static List<Object> parseJson(String content, NodeType type) {
 	    List<Object> res = new ArrayList();
 		JsonNode json = Json.parse(content);
@@ -96,17 +107,13 @@ public class JsonUtils {
 				System.out.println("type: " + type);
 				if (type.equals(Const.NodeType.URL)) {					
 					Target target = new Target();
-					parseJsonTarget(node, target);
+					parseJsonNode(node, target);
 					System.out.println(target.toString());
 					res.add(target);
 				} 
 				if (type.equals(Const.NodeType.COLLECTION)) {
-					String title = node.findPath(Const.TITLE_NODE).getTextValue();
-					if(title != null) {
-						System.out.println("URL node title: " + title);
-					}
-					DCollection dcollection = new DCollection(title);
-//					parseJsonCollection(node, dcollection);
+					DCollection dcollection = new DCollection();
+					parseJsonNode(node, dcollection);
 					System.out.println(dcollection.toString());
 					res.add(dcollection);
 				}
@@ -117,78 +124,45 @@ public class JsonUtils {
 		return res;
 	}
 	
-	public static void parseJsonTarget(JsonNode node, Target obj) {
+	/**
+	 * This method parses JSON node and extracts fields
+	 * @param node
+	 * @param obj
+	 */
+	public static void parseJsonNode(JsonNode node, Object obj) {
 		System.out.println("parseJsonTarget: " + obj.getClass());
 		Field[] fields = obj.getClass().getFields();
 		System.out.println("fields: " + fields.length);
 		for (Field f : fields) {
 			System.out.println("field name: " + f.getName() + ", class: " + f.getType());
-			if (f.getType().equals(String.class)) {
-				try {
-					String jsonField = getStringItem(node, f.getName());
-//					System.out.println("found value: " + jsonField);
+			try {
+				String jsonField = getStringItem(node, f.getName());
+				if (f.getType().equals(String.class)) {
+					if (jsonField.length() > 255) { // TODO
+						jsonField = jsonField.substring(0, 254);
+					}
 					f.set(obj, jsonField);
-					System.out.println("parseJsonTarget: " + jsonField);
-				} catch (IllegalArgumentException e) {
-					System.out.println("parseJsonTarget error: " + e);
-				} catch (IllegalAccessException e) {
-					System.out.println("parseJsonTarget error: " + e);
 				}
-			}
-			if (f.getType().equals(Long.class)) {
-				try {
-					String jsonField = getStringItem(node, f.getName());
+				if (f.getType().equals(Long.class)) {
 					Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
-					System.out.println("long value: " + jsonField);
 					f.set(obj, jsonFieldLong);
-					System.out.println("parseJsonTarget: " + jsonField);
-				} catch (IllegalArgumentException e) {
-					System.out.println("parseJsonTarget error: " + e);
-				} catch (IllegalAccessException e) {
-					System.out.println("parseJsonTarget error: " + e);
-				} catch (Exception e) {
-					System.out.println("parseJsonTarget error: " + e);
 				}
+				System.out.println("parseJsonCollection: " + jsonField);
+			} catch (IllegalArgumentException e) {
+				System.out.println("parseJsonCollection error: " + e);
+			} catch (IllegalAccessException e) {
+				System.out.println("parseJsonCollection error: " + e);
+			} catch (Exception e) {
+				System.out.println("parseJsonCollection error: " + e);
 			}
 		}
 	}
 
-	public static void parseJsonCollection(JsonNode node, DCollection obj) {
-		System.out.println("parseJsonTarget: " + obj.getClass());
-		Field[] fields = obj.getClass().getFields();
-		System.out.println("fields: " + fields.length);
-		for (Field f : fields) {
-			System.out.println("field name: " + f.getName() + ", class: " + f.getType());
-			if (f.getType().equals(String.class)) {
-				try {
-					String jsonField = getStringItem(node, f.getName());
-//					System.out.println("found value: " + jsonField);
-					f.set(obj, jsonField);
-					System.out.println("parseJsonCollection: " + jsonField);
-				} catch (IllegalArgumentException e) {
-					System.out.println("parseJsonCollection error: " + e);
-				} catch (IllegalAccessException e) {
-					System.out.println("parseJsonCollection error: " + e);
-				}
-			}
-			if (f.getType().equals(Long.class)) {
-				try {
-					String jsonField = getStringItem(node, f.getName());
-					Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
-					System.out.println("long value: " + jsonField);
-					f.set(obj, jsonFieldLong);
-					System.out.println("parseJsonCollection: " + jsonField);
-				} catch (IllegalArgumentException e) {
-					System.out.println("parseJsonCollection error: " + e);
-				} catch (IllegalAccessException e) {
-					System.out.println("parseJsonCollection error: " + e);
-				} catch (Exception e) {
-					System.out.println("parseJsonCollection error: " + e);
-				}
-			}
-		}
-	}
-
+	/**
+	 * This method reads JSON content from a file for given path.
+	 * @param outFilePath
+	 * @return JSON as a String
+	 */
 	public static String readJsonFromFile(String outFilePath) {
 	    String res = "";
 		try {

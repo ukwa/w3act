@@ -15,7 +15,7 @@ users:
     
     - !!models.User
         email:      coram.roger@bl.uk
-        name:       Maxime Dantec
+        name:       Coram Roger
         password:   secret
     
     - !!models.User
