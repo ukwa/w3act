@@ -17,9 +17,9 @@ public class DCollection extends Model {
 
     @Id
     public Long nid;
-    public String value;
-    public String summary;
-    public String format;
+    public String value; // body TODO
+    public String summary; // body TODO
+    public String format; // body TODO
     public List<String> field_targets;
     public List<String> field_sub_collections;
     public Long vid;
@@ -39,6 +39,9 @@ public class DCollection extends Model {
     public Long comment;
     public Long comment_count;
     public Long comment_count_new;
+    // TODO difference between XML and JSON
+    public String revision;
+    public Long feed_nid;    
     
     /**
      * Constructor

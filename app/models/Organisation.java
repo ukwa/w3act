@@ -18,6 +18,9 @@ public class Organisation extends Model {
 
     @Id
     public Long nid;
+    public String value; // body TODO
+    public String summary; // body TODO
+    public String format; // body TODO
     public String field_abbreviation;  
     public Long vid;
     public Boolean is_new;
@@ -36,7 +39,11 @@ public class Organisation extends Model {
     public Long comment;
     public Long comment_count;
     public Long comment_count_new;
-      
+    // TODO difference between XML and JSON
+    public String revision;
+    public Long feed_nid;
+    
+    
     public Organisation(String title) {
         this.title = title;
     }
