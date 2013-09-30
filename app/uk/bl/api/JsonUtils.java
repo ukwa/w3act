@@ -27,6 +27,19 @@ import uk.bl.Const.NodeType;
  */
 public class JsonUtils {
 
+	/**
+	 * This method extracts page number from the JSON in order to evaluate first and last page numbers.
+	 * @param node
+	 * @param field
+	 * @return page number as int
+	 */
+	private static int getPageNumber(JsonNode node, String field) {
+		String page = getStringItem(node, field);
+		System.out.println("page url: " + page);
+		int idxPage = page.indexOf(Const.PAGE_IN_URL) + Const.PAGE_IN_URL.length();
+		return Integer.parseInt(page.substring(idxPage));
+	}
+	
     /**
      * This method retrieves JSON data from Drupal for particular domain object type (e.g. Target, Collection...)
      * @param type
@@ -36,19 +49,29 @@ public class JsonUtils {
 	    List<Object> res = new ArrayList();
 	    try {
 		    String urlStr = Const.URL_STR + type.toString().toLowerCase();
-        	URL url = new URL(urlStr);
 			// aggregate data from drupal and store JSON content in a file
 			HttpBasicAuth.downloadFileWithAuth(urlStr, Const.AUTH_USER, Const.AUTH_PASSWORD, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
 			// read file and store content in String
 			String content = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
-			res = JsonUtils.parseJson(content, type);
-		} catch (MalformedURLException e) {
-			System.out.println("document path error: " + e.getMessage());
-		} catch (IOException e) {
-			System.out.println("document path error: " + e.getMessage());
+			// extract page information
+			JsonNode mainNode = Json.parse(content);	
+			if(mainNode != null) {
+				int firstPage = getPageNumber(mainNode, Const.FIRST_PAGE);
+				int lastPage = getPageNumber(mainNode, Const.LAST_PAGE);
+				System.out.println("pages: " + firstPage + ", " + lastPage);
+				// aggregate data from drupal for all pages 
+				for (int i = firstPage; i <= lastPage; i++) {
+					HttpBasicAuth.downloadFileWithAuth(
+						urlStr + "&" + Const.PAGE_IN_URL + String.valueOf(i), Const.AUTH_USER, Const.AUTH_PASSWORD, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+					String pageContent = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+					List<Object> pageList = JsonUtils.parseJson(pageContent, type);
+					res.addAll(pageList);
+				}
+			}
     	} catch (Exception e) {
-			System.out.println("error: " + e);
+			System.out.println("data aggregation error: " + e);
 		}
+    	System.out.println("list size: " + res.size());
 		return res;
     }
     
@@ -67,7 +90,7 @@ public class JsonUtils {
 			JsonNode subNode = it.next();			
 			String item = subNode.findPath(field).textValue();
 			if(item != null) {
-				System.out.println("item: " + item);
+//				System.out.println("item: " + item);
 				res.add(item);
 			}
 		}
@@ -84,7 +107,7 @@ public class JsonUtils {
 		String res = "";
 		res = node.findPath(field).textValue();
 		if(res != null) {
-			System.out.println("item: " + res);
+//			System.out.println("item: " + res);
 		}
 		return res;
     }
@@ -105,7 +128,7 @@ public class JsonUtils {
 
 			while (ite.hasNext()) {
 				JsonNode node = ite.next();
-				System.out.println("type: " + type);
+//				System.out.println("type: " + type);
 				Object obj = null;
 				if (type.equals(Const.NodeType.URL)) {					
 					obj = new Target();
@@ -131,11 +154,11 @@ public class JsonUtils {
 	 * @param obj
 	 */
 	public static void parseJsonNode(JsonNode node, Object obj) {
-		System.out.println("parseJsonTarget: " + obj.getClass());
+//		System.out.println("parseJsonTarget: " + obj.getClass());
 		Field[] fields = obj.getClass().getFields();
-		System.out.println("fields: " + fields.length);
+//		System.out.println("fields: " + fields.length);
 		for (Field f : fields) {
-			System.out.println("field name: " + f.getName() + ", class: " + f.getType());
+//			System.out.println("field name: " + f.getName() + ", class: " + f.getType());
 			try {
 				String jsonField = getStringItem(node, f.getName());
 				if (f.getType().equals(String.class)) {
@@ -159,16 +182,16 @@ public class JsonUtils {
 					Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
 					f.set(obj, jsonFieldBoolean);
 				}
-				System.out.println("parseJsonCollection: " + jsonField);
+//				System.out.println("parseJsonNode: " + jsonField);
 			} catch (IllegalArgumentException e) {
-				System.out.println("parseJsonCollection error: " + e);
+//				System.out.println("parseJsonNode error: " + e);
 			} catch (IllegalAccessException e) {
-				System.out.println("parseJsonCollection error: " + e);
+//				System.out.println("parseJsonNode error: " + e);
 			} catch (Exception e) {
-				System.out.println("parseJsonCollection error: " + e);
+//				System.out.println("parseJsonNode error: " + e);
 			}
 		}
-		System.out.println(obj.toString());
+//		System.out.println(obj.toString());
 	}
 
 	/**
