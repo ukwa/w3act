@@ -61,6 +61,9 @@ public class JsonUtils {
 				System.out.println("pages: " + firstPage + ", " + lastPage);
 				// aggregate data from drupal for all pages 
 				for (int i = firstPage; i <= lastPage; i++) {
+					if (i == 1) {
+						break; // TODO just now for test take only the first page
+					}
 					HttpBasicAuth.downloadFileWithAuth(
 						urlStr + "&" + Const.PAGE_IN_URL + String.valueOf(i), Const.AUTH_USER, Const.AUTH_PASSWORD, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
 					String pageContent = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
@@ -184,11 +187,11 @@ public class JsonUtils {
 				}
 //				System.out.println("parseJsonNode: " + jsonField);
 			} catch (IllegalArgumentException e) {
-//				System.out.println("parseJsonNode error: " + e);
+//				System.out.println("parseJsonNode error: " + e); // TODO
 			} catch (IllegalAccessException e) {
-//				System.out.println("parseJsonNode error: " + e);
+//				System.out.println("parseJsonNode error: " + e); // TODO
 			} catch (Exception e) {
-//				System.out.println("parseJsonNode error: " + e);
+//				System.out.println("parseJsonNode error: " + e); // TODO
 			}
 		}
 //		System.out.println(obj.toString());
