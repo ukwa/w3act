@@ -15,7 +15,8 @@
 			</header>
 			<ul class="list">
 				@targets.map { target =>
-					<h2>@target.nid&nbsp;@target.vid&nbsp;@target.title&nbsp;@target.field_uk_domain&nbsp;<a class="brand" href="@target.url">@target.url</a></h2>
+					<h2>@target.nid&nbsp;@target.vid&nbsp;@target.title&nbsp;
+					@target.field_uk_domain&nbsp;@target.field_url&nbsp;<a class="brand" href="@target.url">@target.url</a></h2>
 				}
 			</ul>
 		</div>

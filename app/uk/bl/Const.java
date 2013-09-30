@@ -6,6 +6,8 @@ public final class Const {
     private Const() {}
 	
     // Authentification definitions
+    public static final String URI             = "uri";
+    public static final String URL             = "url";
     public static final String URL_STR         = "http://www.webarchive.org.uk/act/node.json?type=";
 	public static final String AUTH_USER       = "restws_robot";
 	public static final String AUTH_PASSWORD   = "r0b0UPDATE";

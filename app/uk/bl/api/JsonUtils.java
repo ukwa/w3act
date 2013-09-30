@@ -82,18 +82,21 @@ public class JsonUtils {
      * This method extracts multiple items for JSON path
      * @param node
      * @param path
-     * @param field
      * @return list of String items
      */
-    public static List<String> getStringItems(JsonNode node, String path, String field) {
+    public static List<String> getStringItems(JsonNode node, String path) {
 		List<String> res = new ArrayList<String>();
 		JsonNode pathNode = node.path(path);
 		Iterator<JsonNode> it = pathNode.iterator();
 		while (it.hasNext()) {
-			JsonNode subNode = it.next();			
+			JsonNode subNode = it.next();	
+			String field = Const.URI;
+			if (path.equals(Const.FIELD_URL_NODE)) {
+				field = Const.URL;
+			}
 			String item = subNode.findPath(field).textValue();
 			if(item != null) {
-//				System.out.println("item: " + item);
+				System.out.println("path: " + path + ", field: " + field + ", list item: " + item);
 				res.add(item);
 			}
 		}
@@ -157,35 +160,46 @@ public class JsonUtils {
 	 * @param obj
 	 */
 	public static void parseJsonNode(JsonNode node, Object obj) {
-//		System.out.println("parseJsonTarget: " + obj.getClass());
+//		System.out.println("parseJsonNode: " + obj.getClass());
 		Field[] fields = obj.getClass().getFields();
 //		System.out.println("fields: " + fields.length);
 		for (Field f : fields) {
 //			System.out.println("field name: " + f.getName() + ", class: " + f.getType());
 			try {
-				String jsonField = getStringItem(node, f.getName());
-				if (f.getType().equals(String.class)) {
-					if (jsonField.length() > 255) { // TODO
-						jsonField = jsonField.substring(0, 254);
+				if (f.getType().equals(java.util.List.class)) {
+//					System.out.println("process List for field: " + f.getName());
+					List<String> jsonFieldList = new ArrayList();
+					jsonFieldList.add("empty");
+					jsonFieldList = getStringItems(node, f.getName());
+					f.set(obj, jsonFieldList);
+//					if (f.getName().equals("field_url")) {
+//					System.out.println("Target with field_url: " + obj.toString());
+//					}
+				} else {
+					String jsonField = getStringItem(node, f.getName());
+					if (f.getType().equals(String.class)) {
+						if (jsonField.length() > 255) { // TODO
+							jsonField = jsonField.substring(0, 254);
+						}
+						f.set(obj, jsonField);
 					}
-					f.set(obj, jsonField);
-				}
-				if (f.getType().equals(Long.class)) {
-					Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
-					f.set(obj, jsonFieldLong);
-				}
-				if (f.getType().equals(Boolean.class)) {
-					if (jsonField.equals("Yes") 
-							|| jsonField.equals("yes") 
-							|| jsonField.equals("True") 
-							|| jsonField.equals("Y") 
-							|| jsonField.equals("y")) {
-						jsonField = "true";
+					if (f.getType().equals(Long.class)) {
+						Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
+						f.set(obj, jsonFieldLong);
 					}
-					Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
-					f.set(obj, jsonFieldBoolean);
+					if (f.getType().equals(Boolean.class)) {
+						if (jsonField.equals("Yes") 
+								|| jsonField.equals("yes") 
+								|| jsonField.equals("True") 
+								|| jsonField.equals("Y") 
+								|| jsonField.equals("y")) {
+							jsonField = "true";
+						}
+						Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
+						f.set(obj, jsonFieldBoolean);
+					}
+	//				System.out.println("parseJsonNode: " + jsonField);
 				}
-//				System.out.println("parseJsonNode: " + jsonField);
 			} catch (IllegalArgumentException e) {
 //				System.out.println("parseJsonNode error: " + e); // TODO
 			} catch (IllegalAccessException e) {
@@ -194,7 +208,7 @@ public class JsonUtils {
 //				System.out.println("parseJsonNode error: " + e); // TODO
 			}
 		}
-//		System.out.println(obj.toString());
+		System.out.println(obj.toString());
 	}
 
 	/**

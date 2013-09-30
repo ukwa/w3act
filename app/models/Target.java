@@ -121,7 +121,7 @@ public class Target extends Model {
         
     public String toString() {
         return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
-        ", field_uk_domain: " + field_uk_domain;
+        ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url;
     }
 
 }
