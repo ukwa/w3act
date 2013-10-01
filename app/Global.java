@@ -30,6 +30,9 @@ public class Global extends GlobalSettings {
 		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
 				// store urls in DB
                 Ebean.save(allUrls);
+                Target target = (Target) Target.find.where().eq("title", "Adoption UK").findUnique();
+                System.out.println(target.toString());
+//              Ebean.find(arg0)
 		        // aggregate collections data from drupal and store JSON content in a file
                 System.out.println("load collections");
 		        List<Object> allCollections = JsonUtils.getDrupalData(Const.NodeType.COLLECTION);

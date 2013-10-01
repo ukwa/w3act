@@ -34,6 +34,12 @@ public class User extends Model {
     public User(String name) {
     	this.name = name;
     }
+
+    public User(String name, String email, String password) {
+    	this.name = name;
+    	this.email = email;
+    	this.password = password;
+    }
     
     /**
      * Retrieve all users.

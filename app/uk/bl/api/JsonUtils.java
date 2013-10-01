@@ -96,7 +96,7 @@ public class JsonUtils {
 			}
 			String item = subNode.findPath(field).textValue();
 			if(item != null) {
-				System.out.println("path: " + path + ", field: " + field + ", list item: " + item);
+//				System.out.println("path: " + path + ", field: " + field + ", list item: " + item);
 				res.add(item);
 			}
 		}
@@ -208,7 +208,7 @@ public class JsonUtils {
 //				System.out.println("parseJsonNode error: " + e); // TODO
 			}
 		}
-		System.out.println(obj.toString());
+//		System.out.println(obj.toString());
 	}
 
 	/**
