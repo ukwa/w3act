@@ -1,15 +1,18 @@
 package models;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
+import play.Logger;
 import play.db.ebean.Model;
 
-import com.avaje.ebean.Ebean;
 
 /**
  * Target entity managed by Ebean
@@ -20,29 +23,37 @@ public class Target extends Model {
 
     @Id
     public Long nid;
-    public String value; // body[] TODO
-    public String summary; // body[]
-    public String format; // body[]
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Body> bodies = new ArrayList<Body>();
     public String field_scope;
-    public List<String> field_url;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_url = new ArrayList<Item>();
     public String field_depth;
     public String field_via_correspondence;
     public String field_uk_postal_address;
     public String field_uk_hosting;
-    public List<String> field_description;
-    public List<String> field_uk_postal_address_url;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_description;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_uk_postal_address_url;
     public String field_nominating_organisation;
     public String field_crawl_frequency;
-    public List<String> field_suggested_collections;
-    public List<String> field_collections;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_suggested_collections;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_collections;
     public String field_crawl_start_date;
     public Boolean field_uk_domain;
-    public List<String> field_license;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_license;
     public String field_crawl_permission;
-    public List<String> field_collection_categories;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_collection_categories;
     public String field_special_dispensation;
-    public List<String> field_notes;
-    public List<String> field_instances;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_notes;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_instances;
     public Boolean field_uk_geoip;
     public String field_professional_judgement;
     public Long vid;
@@ -64,7 +75,8 @@ public class Target extends Model {
     public Long comment_count_new;
     public Long feed_nid;
     //TODO difference between XML and JSON
-    public List<String> field_subject;
+    @OneToMany(cascade=CascadeType.ALL)  
+    public List<Item> field_subject;
     //public Taxonomy taxonomy_term; (id-Long, resource-String) TODO
     public String field_crawl_end_date;
     public Long field_live_site_status;
@@ -91,7 +103,8 @@ public class Target extends Model {
 
     // -- Queries
     
-    public static Model.Finder<Long,Target> find = new Model.Finder(Long.class, Target.class);
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Model.Finder<Long,Target> find = new Model.Finder(Long.class, Target.class);
     
     /**
      * Retrieve targets
@@ -119,9 +132,40 @@ public class Target extends Model {
         return newName;
     }
         
+    /**
+     * This method translates database view to the HTML view.
+     * @return list of Strings
+     */
+    @SuppressWarnings("unchecked")
+	public List<String> get_field_list(String fieldName) {
+    	List<String> res = new ArrayList<String>();
+    	try {
+			Field field = this.getClass().getField(fieldName); 
+	        Iterator<Item> itemItr = ((List<Item>) field.get(this)).iterator();
+	        while (itemItr.hasNext()) {
+	        	Item item = itemItr.next();
+	        	res.add(item.value);
+	        }
+		} catch (IllegalArgumentException e) {
+			Logger.info(e.getMessage());
+		} catch (IllegalAccessException e) {
+			Logger.info(e.getMessage());
+		} catch (SecurityException e) {
+			Logger.info(e.getMessage());
+		} catch (NoSuchFieldException e) {
+			Logger.info(e.getMessage());
+		}
+    	return res;
+    }
+    
     public String toString() {
         return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
-        ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url;
+        ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url.size() + ", bodies: " + bodies.size() +
+        ", field_description: " + field_description.size() + ", field_uk_postal_address_url: " + field_uk_postal_address_url.size() +
+        ", field_suggested_collections: " + field_suggested_collections.size() + ", field_collections: " + field_collections.size() +
+        ", field_license: " + field_license.size() + ", field_collection_categories: " + field_collection_categories.size() +
+        ", field_notes: " + field_notes.size() + ", field_instances: " + field_instances.size() + 
+        ", field_subject: " + field_subject.size();
     }
 
 }

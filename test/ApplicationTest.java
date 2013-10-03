@@ -32,7 +32,6 @@ public class ApplicationTest {
     
     @Test
     public void renderTemplate() {
-//        Content html = views.html.index.render("Your new application is ready.");
         Content html = views.html.about.render("W3ACT", new User("Ross King")); 
         assertThat(contentType(html)).isEqualTo("text/html");
         assertThat(contentAsString(html)).contains("W3ACT");
