@@ -83,7 +83,7 @@ public class JsonUtils {
 		Iterator<Object> itr = res.iterator();
 		while (itr.hasNext()) {
 			Object obj = itr.next();
-			Logger.info("res getDrupalData: " + obj.toString());
+//			Logger.info("res getDrupalData: " + obj.toString());
 		}
 		return res;
     }
@@ -106,7 +106,6 @@ public class JsonUtils {
 			}
 			String item = subNode.findPath(field).textValue();
 			if(item != null) {
-//				Logger.info("path: " + path + ", field: " + field + ", list item: " + item);
 				res.add(item);
 			}
 		}
@@ -121,7 +120,8 @@ public class JsonUtils {
      */
     public static String getStringItem(JsonNode node, String fieldName) {
 		String res = "";
-		if (fieldName.equals(Const.URL)) {
+		String nodeType = node.findPath(Const.NODE_TYPE).textValue();
+		if (fieldName.equals(Const.URL) && nodeType.equals(Const.NodeType.URL)) {
 			List<String> urls = node.findValuesAsText(fieldName);
 			res = urls.get(Const.URL_FIELD_POS_IN_JSON);
 		} else {
@@ -171,50 +171,30 @@ public class JsonUtils {
 	 * @param obj
 	 */
 	public static void parseJsonNode(JsonNode node, Object obj) {
-//		Logger.info("parseJsonNode: " + obj.getClass());
 		Field[] fields = obj.getClass().getFields();
-//		Logger.info("fields: " + fields.length);
 		for (Field f : fields) {
-//			Logger.info("field name: " + f.getName() + ", class: " + f.getType());
 			try {
 				if (f.getType().equals(java.util.List.class)) {
-//					Logger.info("process List for field: " + f.getName());
-//					Logger.info("process List for field: " + f.getDeclaringClass() + " " + f.getGenericType());
 					List<String> jsonFieldList = new ArrayList<String>();
-					jsonFieldList.add("empty");
+					jsonFieldList.add(Const.EMPTY);
 					jsonFieldList = getStringItems(node, f.getName());
-					if (f.getGenericType().toString().equals("java.util.List<models.Body>")) {
-						List<models.Body> itemList = new ArrayList<models.Body>();
-						Iterator<String> itemItr = jsonFieldList.iterator();
-						while (itemItr.hasNext()) {
-							models.Body item = new models.Body();
-							item.value = itemItr.next();
-							itemList.add(item);
-						}
-						f.set(obj, itemList);
-					} else if (f.getGenericType().toString().equals("java.util.List<models.Item>")) {
+				    if (f.getGenericType().toString().equals("java.util.List<models.Item>")) {
 						List<Item> itemList = new ArrayList<Item>();
-						Iterator<String> itemItr = jsonFieldList.iterator();
-						while (itemItr.hasNext()) {
-							Item item = new Item();
-							item.value = itemItr.next();
-							itemList.add(item);
+						if (jsonFieldList.size() > 0) {
+							Iterator<String> itemItr = jsonFieldList.iterator();
+							while (itemItr.hasNext()) {
+								Item item = new Item();
+								item.value = itemItr.next();
+								itemList.add(item);
+							}
 						}
 						f.set(obj, itemList);
 					} else {
 						f.set(obj, jsonFieldList);
-//					if (f.getName().equals("field_url") && obj.getClass().equals(models.Target.class)) {
-//						models.Body bodyTest = new models.Body();
-//						bodyTest.value = "test value";
-//						bodyTest.id = Long.valueOf(15555L);
-//						bodyTest.save();
-//						((Target) obj).bodies.add(bodyTest);
-//						Logger.info("Target with field_url: " + obj.toString() + ", nid: " + ((Target) obj).nid);
 					}
 					jsonFieldList.clear();
 				} else {
 					String jsonField = getStringItem(node, f.getName());
-//					Logger.info("parseJsonNode: " + jsonField + ", field: " + f.getName());
 					if (f.getType().equals(String.class)) {
 						if (jsonField == null || jsonField.length() == 0) {
 							jsonField = "";
@@ -275,7 +255,6 @@ public class JsonUtils {
 					line = br.readLine();
 				}
 				res = sb.toString();
-				//Logger.info("JSON output: " + res);
 			} finally {
 				br.close();
 			}

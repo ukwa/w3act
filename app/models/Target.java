@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 
 import play.Logger;
 import play.db.ebean.Model;
+import uk.bl.Const;
 
 
 /**
@@ -23,8 +24,9 @@ public class Target extends Model {
 
     @Id
     public Long nid;
-    @OneToMany(cascade=CascadeType.ALL)  
-    public List<Body> bodies = new ArrayList<Body>();
+    public String value;
+    public String summary;
+    public String format;
     public String field_scope;
     @OneToMany(cascade=CascadeType.ALL)  
     public List<Item> field_url = new ArrayList<Item>();
@@ -140,11 +142,15 @@ public class Target extends Model {
 	public List<String> get_field_list(String fieldName) {
     	List<String> res = new ArrayList<String>();
     	try {
+    		res.add(Const.EMPTY);
 			Field field = this.getClass().getField(fieldName); 
-	        Iterator<Item> itemItr = ((List<Item>) field.get(this)).iterator();
-	        while (itemItr.hasNext()) {
-	        	Item item = itemItr.next();
-	        	res.add(item.value);
+	        if (((List<Item>) field.get(this)).size() > 0) {
+	        	res.remove(Const.EMPTY);
+		        Iterator<Item> itemItr = ((List<Item>) field.get(this)).iterator();
+		        while (itemItr.hasNext()) {
+		        	Item item = itemItr.next();
+		        	res.add(item.value);
+		        }
 	        }
 		} catch (IllegalArgumentException e) {
 			Logger.info(e.getMessage());
@@ -154,18 +160,20 @@ public class Target extends Model {
 			Logger.info(e.getMessage());
 		} catch (NoSuchFieldException e) {
 			Logger.info(e.getMessage());
+		} catch (Exception e) {
+			Logger.info(e.getMessage());
 		}
     	return res;
     }
     
     public String toString() {
         return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
-        ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url.size() + ", bodies: " + bodies.size() +
+        ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url.size() + 
         ", field_description: " + field_description.size() + ", field_uk_postal_address_url: " + field_uk_postal_address_url.size() +
         ", field_suggested_collections: " + field_suggested_collections.size() + ", field_collections: " + field_collections.size() +
         ", field_license: " + field_license.size() + ", field_collection_categories: " + field_collection_categories.size() +
         ", field_notes: " + field_notes.size() + ", field_instances: " + field_instances.size() + 
-        ", field_subject: " + field_subject.size();
+        ", field_subject: " + field_subject.size() + ", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
 }

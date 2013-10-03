@@ -1,26 +1,27 @@
 package models;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import javax.persistence.*;
 
+import play.Logger;
 import play.db.ebean.*;
-import play.data.format.*;
-import play.data.validation.*;
+import uk.bl.Const;
 
-import com.avaje.ebean.*;
 
 /**
  * Organisation entity managed by Ebean
  */
+@SuppressWarnings("serial")
 @Entity 
 public class Organisation extends Model {
 
     @Id
     public Long nid;
-    public String value; // body TODO
-    public String summary; // body TODO
-    public String format; // body TODO
+    public String value;
+    public String summary;
+    public String format;
     public String field_abbreviation;  
     public Long vid;
     public Boolean is_new;
@@ -53,7 +54,8 @@ public class Organisation extends Model {
     
     // -- Queries
     
-    public static Model.Finder<Long,Organisation> find = new Model.Finder(Long.class, Organisation.class);
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Model.Finder<Long,Organisation> find = new Model.Finder(Long.class, Organisation.class);
     
     /**
      * Retrieve Organisation for user
@@ -81,8 +83,41 @@ public class Organisation extends Model {
         return newName;
     }
         
+    /**
+     * This method translates database view to the HTML view.
+     * @return list of Strings
+     */
+    @SuppressWarnings("unchecked")
+	public List<String> get_field_list(String fieldName) {
+    	List<String> res = new ArrayList<String>();
+    	try {
+    		res.add(Const.EMPTY);
+			Field field = this.getClass().getField(fieldName); 
+	        if (((List<Item>) field.get(this)).size() > 0) {
+	        	res.remove(Const.EMPTY);
+		        Iterator<Item> itemItr = ((List<Item>) field.get(this)).iterator();
+		        while (itemItr.hasNext()) {
+		        	Item item = itemItr.next();
+		        	res.add(item.value);
+		        }
+	        }
+		} catch (IllegalArgumentException e) {
+			Logger.info(e.getMessage());
+		} catch (IllegalAccessException e) {
+			Logger.info(e.getMessage());
+		} catch (SecurityException e) {
+			Logger.info(e.getMessage());
+		} catch (NoSuchFieldException e) {
+			Logger.info(e.getMessage());
+		} catch (Exception e) {
+			Logger.info(e.getMessage());
+		}
+    	return res;
+    }
+
     public String toString() {
-        return "Organisation(" + nid + ") with title: " + title;
+        return "Organisation(" + nid + ") with title: " + title + 
+        	", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
 }

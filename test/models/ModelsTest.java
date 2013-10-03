@@ -30,27 +30,23 @@ public class ModelsTest extends WithApplication {
     }
     
     @Test
-    public void createAndRetrieveTargetWithBody() {
+    public void createAndRetrieveTargetWithItem() {
         Target targetNew = new Target("My title", "http://target.at");
         targetNew.nid = Long.valueOf(777L);
         targetNew.save();
         Target target = (Target) Target.find.where().eq("title", "My title").findUnique();
-        Body body = new Body();
-        body.value = "body value";
-        body.format = "body format";
-        body.summary = "body summary";
-        body.id = Long.valueOf(11112L);
-        target.bodies.add(body);
-        Logger.info("Target test object: " + target.toString() + ", bodies: " + target.bodies.size());
-        target.saveManyToManyAssociations("bodies");
+        Item item = new Item();
+        item.value = "item value";
+        target.field_url.add(item);
+        Logger.info("Target test object: " + target.toString());
+//        target.saveManyToManyAssociations("field_url");
         Ebean.update(target);
         Ebean.save(target);
         target.save();
         Target res = (Target) Target.find.where().eq("title", "My title").findUnique();
-        Logger.info("target retrieved from db: " + res.toString() + ", bodies: " + res.bodies.size());
-        Body bodyRes = (Body) res.bodies.get(0);
-        Logger.info("body res: " + bodyRes.toString() + ", value: " + bodyRes.value + ", format: " + 
-        		bodyRes.format + ", id: " + bodyRes.id);
+        Logger.info("target retrieved from db: " + res.toString());
+        Item fieldUrlRes = (Item) res.field_url.get(0);
+        Logger.info("Item res: " + fieldUrlRes.toString() + ", value: " + fieldUrlRes.value);
         assertNotNull(res);
         assertEquals("http://target.at", res.url);
         Target.find.ref(777L).delete();

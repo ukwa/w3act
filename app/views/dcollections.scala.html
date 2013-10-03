@@ -14,7 +14,8 @@
 			</header>
 			<ul class="list">
 				@dcollections.map { dcollection =>
-					<h2>@dcollection.title</h2>
+					<h2>@dcollection.title&nbsp;@dcollection.get_field_list("field_targets")&nbsp;
+					@dcollection.format&nbsp;@dcollection.summary&nbsp;@dcollection.value&nbsp;</h2>
 				}
 			</ul>
 		</div>

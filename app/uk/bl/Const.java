@@ -19,6 +19,8 @@ public final class Const {
 	public static final String PAGE_IN_URL     = "page=";
 	public static final String LIST_NODE       = "list";
 	public static final String FIELD_URL_NODE  = "field_url";
+	public static final String NODE_TYPE       = "type";
+	public static final String EMPTY           = "empty";
 	
 	// Field position in JSON for similar names
 	public static final int URL_FIELD_POS_IN_JSON = 1;

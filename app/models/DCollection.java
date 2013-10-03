@@ -1,25 +1,27 @@
 package models;
 
+import java.lang.reflect.Field;
 import java.util.*;
+
 import javax.persistence.*;
 
+import play.Logger;
 import play.db.ebean.*;
-import play.data.format.*;
-import play.data.validation.*;
+import uk.bl.Const;
 
-import com.avaje.ebean.*;
 
 /**
  * DCollection entity managed by Ebean
  */
+@SuppressWarnings("serial")
 @Entity 
 public class DCollection extends Model {
 
     @Id
     public Long nid;
-    public String value; // body TODO
-    public String summary; // body TODO
-    public String format; // body TODO
+    public String value;
+    public String summary;
+    public String format;
     public List<String> field_targets;
     public List<String> field_sub_collections;
     public Long vid;
@@ -56,7 +58,8 @@ public class DCollection extends Model {
     
     // -- Queries
     
-    public static Model.Finder<Long,DCollection> find = new Model.Finder(Long.class, DCollection.class);
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Model.Finder<Long,DCollection> find = new Model.Finder(Long.class, DCollection.class);
     
     /**
      * Retrieve dcollections 
@@ -84,8 +87,41 @@ public class DCollection extends Model {
         return newName;
     }
         
+    /**
+     * This method translates database view to the HTML view.
+     * @return list of Strings
+     */
+    @SuppressWarnings("unchecked")
+	public List<String> get_field_list(String fieldName) {
+    	List<String> res = new ArrayList<String>();
+    	try {
+    		res.add(Const.EMPTY);
+			Field field = this.getClass().getField(fieldName); 
+	        if (((List<Item>) field.get(this)).size() > 0) {
+	        	res.remove(Const.EMPTY);
+		        Iterator<Item> itemItr = ((List<Item>) field.get(this)).iterator();
+		        while (itemItr.hasNext()) {
+		        	Item item = itemItr.next();
+		        	res.add(item.value);
+		        }
+	        }
+		} catch (IllegalArgumentException e) {
+			Logger.info(e.getMessage());
+		} catch (IllegalAccessException e) {
+			Logger.info(e.getMessage());
+		} catch (SecurityException e) {
+			Logger.info(e.getMessage());
+		} catch (NoSuchFieldException e) {
+			Logger.info(e.getMessage());
+		} catch (Exception e) {
+			Logger.info(e.getMessage());
+		}
+    	return res;
+    }
+    
     public String toString() {
-        return "DCollection(" + nid + ") with title: " + title;
+        return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets.size() +
+        	", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
 }

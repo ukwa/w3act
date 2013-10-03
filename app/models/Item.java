@@ -5,14 +5,12 @@ import java.util.*;
 import javax.persistence.*;
 
 import play.db.ebean.*;
-import play.data.format.*;
-import play.data.validation.*;
 
-import com.avaje.ebean.*;
 
 /**
  * Item entity managed by Ebean
  */
+@SuppressWarnings("serial")
 @Entity 
 @Table(name="item")
 public class Item extends Model {
@@ -21,7 +19,8 @@ public class Item extends Model {
        
     // -- Queries
     
-    public static Model.Finder<String,Item> find = new Model.Finder(String.class, Item.class);
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Model.Finder<String,Item> find = new Model.Finder(String.class, Item.class);
     
     public Item() {
     }
