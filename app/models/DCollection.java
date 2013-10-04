@@ -23,7 +23,11 @@ public class DCollection extends Model {
     public String value;
     public String summary;
     public String format;
+//    @OneToMany(cascade=CascadeType.ALL)  
+//    public List<Item> field_targets;
     public List<String> field_targets;
+//    @OneToMany(cascade=CascadeType.ALL)  
+//    public List<Item> field_sub_collections;
     public List<String> field_sub_collections;
     public Long vid;
     public Boolean is_new;
@@ -121,8 +125,8 @@ public class DCollection extends Model {
     }
     
     public String toString() {
-        return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets.size() +
-        	", format: " + format + ", summary: " + summary + ", value: " + value;
+        return "DCollection(" + nid + ") with title: " + title;// + ", field_targets: " + field_targets.size() +
+//        	", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
 }

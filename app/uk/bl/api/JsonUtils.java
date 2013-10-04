@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import models.DCollection;
 import models.Organisation;
@@ -17,14 +18,13 @@ import models.Target;
 import models.User;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.*;
 import com.ning.http.client.Body;
 
 import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.Const.NodeType;
-
 import models.*;
-
 import play.Logger;
 
 /**
@@ -80,10 +80,12 @@ public class JsonUtils {
 			Logger.info("data aggregation error: " + e);
 		}
     	Logger.info("list size: " + res.size());
+    	int idx = 0;
 		Iterator<Object> itr = res.iterator();
 		while (itr.hasNext()) {
 			Object obj = itr.next();
-//			Logger.info("res getDrupalData: " + obj.toString());
+			Logger.info("res getDrupalData: " + obj.toString() + ", idx: " + idx);
+			idx++;
 		}
 		return res;
     }
@@ -94,21 +96,59 @@ public class JsonUtils {
      * @param path
      * @return list of String items
      */
+//    public static List<String> getStringItems(JsonNode node, String path) {
+//		List<String> res = new ArrayList<String>();
+//		JsonNode pathNode = node.path(path);
+//		Iterator<JsonNode> it = pathNode.iterator();
+//		while (it.hasNext()) {
+//			JsonNode subNode = it.next();	
+//			String field = Const.URI;
+////			String field = Const.ITEM;
+//			if (path.equals(Const.FIELD_URL_NODE)) {
+//				field = Const.URL;
+//			}
+//			String item = subNode.findPath(field).textValue();
+//			if(item != null) {
+//				res.add(item);
+//			}
+//			Logger.info("subNode: " + subNode + ", path: " + path + ", field: " + field + ", item: " + item + ", res: " + res.size());
+//		}
+//		return res;
+//    }
+    
     public static List<String> getStringItems(JsonNode node, String path) {
 		List<String> res = new ArrayList<String>();
-		JsonNode pathNode = node.path(path);
-		Iterator<JsonNode> it = pathNode.iterator();
-		while (it.hasNext()) {
-			JsonNode subNode = it.next();	
-			String field = Const.URI;
-			if (path.equals(Const.FIELD_URL_NODE)) {
-				field = Const.URL;
-			}
-			String item = subNode.findPath(field).textValue();
-			if(item != null) {
-				res.add(item);
+		JsonNode resNode = getElement(node, path);
+//		Logger.info("getStringItems path: " + path + ", resNode: " + resNode);
+		if (resNode != null) {
+			Iterator<JsonNode> it = resNode.iterator();
+			while (it.hasNext()) {
+				String fieldName = "";
+				JsonNode subNode = it.next();	
+				if (subNode.has(Const.URI)) {
+					fieldName = Const.URI;
+				}
+				if (subNode.has(Const.URL)) {
+					fieldName = Const.URL;
+				}
+				String item = subNode.findPath(fieldName).textValue();
+				if(item != null) {
+					res.add(item);
+				}
+//				Logger.info("subNode: " + subNode + ", path: " + path + ", fieldName: " + fieldName + ", item: " + item + ", res: " + res.size());
 			}
 		}
+//		Logger.info("getStringItems res: " + res);
+		return res;
+    }
+
+    public static String getStringItem(JsonNode node, String fieldName) {
+		String res = "";
+		JsonNode resNode = getElement(node, fieldName);
+		if (resNode != null) {
+			res = resNode.textValue();
+		}
+//		Logger.info("getStringItem field name: " + fieldName + ", res: " + res);
 		return res;
     }
     
@@ -118,14 +158,67 @@ public class JsonUtils {
      * @param field
      * @return String item
      */
-    public static String getStringItem(JsonNode node, String fieldName) {
-		String res = "";
-		String nodeType = node.findPath(Const.NODE_TYPE).textValue();
-		if (fieldName.equals(Const.URL) && nodeType.equals(Const.NodeType.URL)) {
-			List<String> urls = node.findValuesAsText(fieldName);
-			res = urls.get(Const.URL_FIELD_POS_IN_JSON);
-		} else {
-			res = node.findPath(fieldName).textValue();
+//    public static String getStringItem(JsonNode node, String fieldName) {
+//		String res = "";
+//		String nodeType = node.findPath(Const.NODE_TYPE).textValue();
+//		if (fieldName.equals(Const.URL)) {//&& nodeType.equals(Const.NodeType.URL)) {
+////			if (fieldName.equals(Const.URL) && nodeType.equals(Const.NodeType.URL)) {
+//			List<String> urls = node.findValuesAsText(fieldName);
+//			res = urls.get(Const.URL_FIELD_POS_IN_JSON);
+//			if (fieldName.equals(Const.URL)) {
+//				Logger.info("values: " + node.findValue(fieldName));
+//				Iterator<Map.Entry<String, JsonNode>> elt = node.fields();
+//				while (elt.hasNext()) {
+//					Map.Entry<String, JsonNode> element = elt.next(); 
+//					Logger.info("element: " + element);
+//				}
+////				for (Map.Entry<String, JsonNode> elt : node.fields()) {
+////					for (Map.Entry<String, JsonNode> elt : node.fields()) {
+////					Logger.info("key: " + elt.getKey() + ", value: " + elt.getValue());
+////				    if ("foo".equals(elt.getKey()) {
+////					        // bar
+////				    }
+////				}
+////				<Map.Entry<String, JsonNode>> node.getFields();
+////				JsonParser jp = node.traverse();
+////				try {
+////				Logger.info("tree: " + node.readValueAsTree());
+////				while (jp.hasCurrentToken()) {
+////					Logger.info("next value: " + jp.nextTextValue() + ", next token: " + jp.nextToken().toString());
+////				}
+////				} catch (Exception e) {
+////					Logger.info(e.getMessage());
+////				}
+////				Logger.info("current location: " + jp.getCurrentLocation().toString());
+////				Logger.info("find parents: " + node.findParents(fieldName) + "find parent: " + node.findParent(fieldName) + ", find path: " + node.findPath(fieldName));
+////				Logger.info("traverse: " + node.traverse() + "\n, find parent: " + node.findParent(fieldName) + ", find path: " + node.findPath(fieldName));
+//				Logger.info("getStringItem res: " + res + ", nodeType: " + nodeType + ", fieldName: " + fieldName);
+//			}
+//		} else {
+//			res = node.findPath(fieldName).textValue();
+//			if (fieldName.equals(Const.URL)) {
+//				Logger.info("getStringItem else res: " + res + ", nodeType: " + nodeType + ", fieldName: " + fieldName);
+//			}
+//		}
+//		return res;
+//    }
+    
+    /**
+     * This method evaluates element from the root node associated with passed field name.
+     * @param node
+     * @param fieldName
+     * @return sub node
+     */
+    public static JsonNode getElement(JsonNode node, String fieldName) {
+		JsonNode res = null;
+		Iterator<Map.Entry<String, JsonNode>> elt = node.fields();
+		while (elt.hasNext()) {
+			Map.Entry<String, JsonNode> element = elt.next(); 
+//			Logger.info("element: " + element);
+			if (element.getKey().equals(fieldName)) {
+				res = element.getValue();
+				break;
+			}
 		}
 		return res;
     }
@@ -177,6 +270,9 @@ public class JsonUtils {
 				if (f.getType().equals(java.util.List.class)) {
 					List<String> jsonFieldList = new ArrayList<String>();
 					jsonFieldList.add(Const.EMPTY);
+					if (obj.getClass().equals(models.Target.class) && ((Target) obj).nid==13L) {
+						Logger.info("### field: " + f.getName() + " " + f.getType());
+					}
 					jsonFieldList = getStringItems(node, f.getName());
 				    if (f.getGenericType().toString().equals("java.util.List<models.Item>")) {
 						List<Item> itemList = new ArrayList<Item>();
@@ -188,39 +284,62 @@ public class JsonUtils {
 								itemList.add(item);
 							}
 						}
+						if (obj.getClass().equals(models.Target.class) && ((Target) obj).nid==13L) {
+							Logger.info("+++ obj: " + obj.toString() + ", itemList: " + itemList);
+						}
 						f.set(obj, itemList);
-					} else {
-						f.set(obj, jsonFieldList);
+					}
+					if (obj.getClass().equals(models.Target.class) && ((Target) obj).nid==13L) {
+						Logger.info("   res filed list: " + jsonFieldList.size());
 					}
 					jsonFieldList.clear();
 				} else {
-					String jsonField = getStringItem(node, f.getName());
-					if (f.getType().equals(String.class)) {
-						if (jsonField == null || jsonField.length() == 0) {
-							jsonField = "";
-						}
-						f.set(obj, jsonField);
+					if (f.getName().equals("field_collection_categories")) {
+						Logger.info("########## field_collection_categories");
 					}
-					if (f.getType().equals(Long.class)) {
-						if (jsonField == null || jsonField.length() == 0) {
-							jsonField = "0";
+
+					if (f.getName().equals(Const.VALUE) // body elements
+							|| f.getName().equals(Const.SUMMARY) 
+							|| f.getName().equals(Const.FORMAT)) {
+						JsonNode resNode = getElement(node, Const.BODY);
+						String jsonField = getStringItem(resNode, f.getName());
+//						Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
+						if (f.getType().equals(String.class)) {
+							if (jsonField == null || jsonField.length() == 0) {
+								jsonField = "";
+							}
+							f.set(obj, jsonField);
 						}
-						Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
-						f.set(obj, jsonFieldLong);
-					}
-					if (f.getType().equals(Boolean.class)) {
-						if (jsonField == null || jsonField.length() == 0) {
-							jsonField = "false";
+
+					} else {
+						String jsonField = getStringItem(node, f.getName());
+						if (f.getType().equals(String.class)) {
+							if (jsonField == null || jsonField.length() == 0) {
+								jsonField = "";
+							}
+							f.set(obj, jsonField);
 						}
-						if (jsonField.equals("Yes") 
-								|| jsonField.equals("yes") 
-								|| jsonField.equals("True") 
-								|| jsonField.equals("Y") 
-								|| jsonField.equals("y")) {
-							jsonField = "true";
+						if (f.getType().equals(Long.class)) {
+							if (jsonField == null || jsonField.length() == 0) {
+								jsonField = "0";
+							}
+							Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
+							f.set(obj, jsonFieldLong);
 						}
-						Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
-						f.set(obj, jsonFieldBoolean);
+						if (f.getType().equals(Boolean.class)) {
+							if (jsonField == null || jsonField.length() == 0) {
+								jsonField = "false";
+							}
+							if (jsonField.equals("Yes") 
+									|| jsonField.equals("yes") 
+									|| jsonField.equals("True") 
+									|| jsonField.equals("Y") 
+									|| jsonField.equals("y")) {
+								jsonField = "true";
+							}
+							Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
+							f.set(obj, jsonFieldBoolean);
+						}
 					}
 				}
 			} catch (IllegalArgumentException e) {

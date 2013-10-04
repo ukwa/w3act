@@ -152,6 +152,9 @@ public class Target extends Model {
 		        while (itemItr.hasNext()) {
 		        	Item item = itemItr.next();
 		        	res.add(item.value);
+		        	if (this.nid == 13L)
+		        		Logger.info("obj: " + this.toString());
+		        	Logger.info("get_field_list fieldName: " + fieldName + ", item: " + item.value + ", title: " + this.title);
 		        }
 	        }
 		} catch (IllegalArgumentException e) {
