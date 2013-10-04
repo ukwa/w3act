@@ -199,9 +199,6 @@ public class JsonUtils {
 						if (jsonField == null || jsonField.length() == 0) {
 							jsonField = "";
 						}
-						if (jsonField.length() > 255) { // TODO
-							jsonField = jsonField.substring(0, 254);
-						}
 						f.set(obj, jsonField);
 					}
 					if (f.getType().equals(Long.class)) {

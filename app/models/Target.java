@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -24,6 +25,7 @@ public class Target extends Model {
 
     @Id
     public Long nid;
+    @Column(columnDefinition = "TEXT")
     public String value;
     public String summary;
     public String format;

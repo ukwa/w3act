@@ -19,6 +19,7 @@ public class DCollection extends Model {
 
     @Id
     public Long nid;
+    @Column(columnDefinition = "TEXT")
     public String value;
     public String summary;
     public String format;
