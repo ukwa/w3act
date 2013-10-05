@@ -49,24 +49,24 @@ public final class Const {
 		ORGANISATION;
     }
 	
-//    public static final Map<String, Integer> targetMap = new HashMap<String, Integer>();
-//    static {
-//    	targetMap.put("field_url", 0);
-//    	targetMap.put("field_description", 1);
-//    	targetMap.put("field_uk_postal_address_url", 2);
-//    	targetMap.put("field_suggested_collections", 3);
-//    	targetMap.put("field_collections", 4);
-//    	targetMap.put("field_license", 5);
-//    	targetMap.put("field_collection_categories", 6);
-//    	targetMap.put("field_notes", 7);
-//    	targetMap.put("field_instances", 8);
-//    	targetMap.put("field_subject", 9);
-//    }
-//		
-//    public static final Map<String, Integer> collectionMap = new HashMap<String, Integer>();
-//    static {
-//    	collectionMap.put("field_targets", 0);
-//    	collectionMap.put("field_sub_collections", 1);
-//    }
+    public static final Map<String, Integer> targetMap = new HashMap<String, Integer>();
+    	static {
+    	targetMap.put("field_url", 0);
+    	targetMap.put("field_description", 1);
+    	targetMap.put("field_uk_postal_address_url", 2);
+    	targetMap.put("field_suggested_collections", 3);
+    	targetMap.put("field_collections", 4);
+    	targetMap.put("field_license", 5);
+    	targetMap.put("field_collection_categories", 6);
+    	targetMap.put("field_notes", 7);
+    	targetMap.put("field_instances", 8);
+    	targetMap.put("field_subject", 9);
+    }
+		
+    public static final Map<String, Integer> collectionMap = new HashMap<String, Integer>();
+    	static {
+    	collectionMap.put("field_targets", 0);
+    	collectionMap.put("field_sub_collections", 1);
+    }
 		
 }

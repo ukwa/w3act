@@ -96,26 +96,6 @@ public class JsonUtils {
      * @param path
      * @return list of String items
      */
-//    public static List<String> getStringItems(JsonNode node, String path) {
-//		List<String> res = new ArrayList<String>();
-//		JsonNode pathNode = node.path(path);
-//		Iterator<JsonNode> it = pathNode.iterator();
-//		while (it.hasNext()) {
-//			JsonNode subNode = it.next();	
-//			String field = Const.URI;
-////			String field = Const.ITEM;
-//			if (path.equals(Const.FIELD_URL_NODE)) {
-//				field = Const.URL;
-//			}
-//			String item = subNode.findPath(field).textValue();
-//			if(item != null) {
-//				res.add(item);
-//			}
-//			Logger.info("subNode: " + subNode + ", path: " + path + ", field: " + field + ", item: " + item + ", res: " + res.size());
-//		}
-//		return res;
-//    }
-    
     public static List<String> getStringItems(JsonNode node, String path) {
 		List<String> res = new ArrayList<String>();
 		JsonNode resNode = getElement(node, path);
@@ -142,6 +122,48 @@ public class JsonUtils {
 		return res;
     }
 
+    /**
+     * This method returns list objects from JSON node as a String
+     * @param resNode
+     * @param path
+     * @return list as a String
+     */
+    public static String getStringList(JsonNode resNode, String path) {
+		String res = "";
+//		Logger.info("getStringList path: " + path + ", resNode: " + resNode);
+		if (resNode != null) {
+			Iterator<JsonNode> it = resNode.iterator();
+			while (it.hasNext()) {
+				String fieldName = "";
+				JsonNode subNode = it.next();	
+//				Logger.info("subNode: " + subNode);
+				if (subNode.has(Const.URI)) {
+					fieldName = Const.URI;
+				}
+				if (subNode.has(Const.URL)) {
+					fieldName = Const.URL;
+				}
+				String item = subNode.findPath(fieldName).textValue();
+				if(item != null) {
+					if (res.length() > 0) {
+						res = res + "," + item;
+					} else {
+						res = item;
+					}
+				}
+//				Logger.info("list subNode: " + subNode + ", path: " + path + ", fieldName: " + fieldName + ", item: " + item + ", res: " + res);
+			}
+		}
+//		Logger.info("getStringList res: " + res);
+		return res;
+    }
+
+    /**
+     * This method extracts one item for JSON field
+     * @param node
+     * @param field
+     * @return String item
+     */
     public static String getStringItem(JsonNode node, String fieldName) {
 		String res = "";
 		JsonNode resNode = getElement(node, fieldName);
@@ -151,57 +173,6 @@ public class JsonUtils {
 //		Logger.info("getStringItem field name: " + fieldName + ", res: " + res);
 		return res;
     }
-    
-    /**
-     * This method extracts one item for JSON field
-     * @param node
-     * @param field
-     * @return String item
-     */
-//    public static String getStringItem(JsonNode node, String fieldName) {
-//		String res = "";
-//		String nodeType = node.findPath(Const.NODE_TYPE).textValue();
-//		if (fieldName.equals(Const.URL)) {//&& nodeType.equals(Const.NodeType.URL)) {
-////			if (fieldName.equals(Const.URL) && nodeType.equals(Const.NodeType.URL)) {
-//			List<String> urls = node.findValuesAsText(fieldName);
-//			res = urls.get(Const.URL_FIELD_POS_IN_JSON);
-//			if (fieldName.equals(Const.URL)) {
-//				Logger.info("values: " + node.findValue(fieldName));
-//				Iterator<Map.Entry<String, JsonNode>> elt = node.fields();
-//				while (elt.hasNext()) {
-//					Map.Entry<String, JsonNode> element = elt.next(); 
-//					Logger.info("element: " + element);
-//				}
-////				for (Map.Entry<String, JsonNode> elt : node.fields()) {
-////					for (Map.Entry<String, JsonNode> elt : node.fields()) {
-////					Logger.info("key: " + elt.getKey() + ", value: " + elt.getValue());
-////				    if ("foo".equals(elt.getKey()) {
-////					        // bar
-////				    }
-////				}
-////				<Map.Entry<String, JsonNode>> node.getFields();
-////				JsonParser jp = node.traverse();
-////				try {
-////				Logger.info("tree: " + node.readValueAsTree());
-////				while (jp.hasCurrentToken()) {
-////					Logger.info("next value: " + jp.nextTextValue() + ", next token: " + jp.nextToken().toString());
-////				}
-////				} catch (Exception e) {
-////					Logger.info(e.getMessage());
-////				}
-////				Logger.info("current location: " + jp.getCurrentLocation().toString());
-////				Logger.info("find parents: " + node.findParents(fieldName) + "find parent: " + node.findParent(fieldName) + ", find path: " + node.findPath(fieldName));
-////				Logger.info("traverse: " + node.traverse() + "\n, find parent: " + node.findParent(fieldName) + ", find path: " + node.findPath(fieldName));
-//				Logger.info("getStringItem res: " + res + ", nodeType: " + nodeType + ", fieldName: " + fieldName);
-//			}
-//		} else {
-//			res = node.findPath(fieldName).textValue();
-//			if (fieldName.equals(Const.URL)) {
-//				Logger.info("getStringItem else res: " + res + ", nodeType: " + nodeType + ", fieldName: " + fieldName);
-//			}
-//		}
-//		return res;
-//    }
     
     /**
      * This method evaluates element from the root node associated with passed field name.
@@ -259,6 +230,51 @@ public class JsonUtils {
 	}
 	
 	/**
+	 * This method parses String value from JSON and converts it in associated field type of the object.
+	 * @param f
+	 * @param node
+	 * @param obj
+	 */
+	public static void parseJsonString(Field f, JsonNode node, Object obj) {
+		try {
+			String jsonField = getStringItem(node, f.getName());
+			if (f.getType().equals(String.class)) {
+				if (jsonField == null || jsonField.length() == 0) {
+					jsonField = "";
+				}
+				f.set(obj, jsonField);
+			}
+			if (f.getType().equals(Long.class)) {
+				if (jsonField == null || jsonField.length() == 0) {
+					jsonField = "0";
+				}
+				Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
+				f.set(obj, jsonFieldLong);
+			}
+			if (f.getType().equals(Boolean.class)) {
+				if (jsonField == null || jsonField.length() == 0) {
+					jsonField = "false";
+				}
+				if (jsonField.equals("Yes") 
+						|| jsonField.equals("yes") 
+						|| jsonField.equals("True") 
+						|| jsonField.equals("Y") 
+						|| jsonField.equals("y")) {
+					jsonField = "true";
+				}
+				Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
+				f.set(obj, jsonFieldBoolean);
+			}
+		} catch (IllegalArgumentException e) {
+			Logger.info("parseJsonNode IllegalArgument error: " + e); 
+		} catch (IllegalAccessException e) {
+			Logger.info("parseJsonNode IllegalAccess error: " + e); 
+		} catch (Exception e) {
+			Logger.info("parseJsonNode error: " + e); 
+		}
+	}
+	
+	/**
 	 * This method parses JSON node and extracts fields
 	 * @param node
 	 * @param obj
@@ -267,79 +283,24 @@ public class JsonUtils {
 		Field[] fields = obj.getClass().getFields();
 		for (Field f : fields) {
 			try {
-				if (f.getType().equals(java.util.List.class)) {
-					List<String> jsonFieldList = new ArrayList<String>();
-					jsonFieldList.add(Const.EMPTY);
-					if (obj.getClass().equals(models.Target.class) && ((Target) obj).nid==13L) {
-						Logger.info("### field: " + f.getName() + " " + f.getType());
-					}
-					jsonFieldList = getStringItems(node, f.getName());
-				    if (f.getGenericType().toString().equals("java.util.List<models.Item>")) {
-						List<Item> itemList = new ArrayList<Item>();
-						if (jsonFieldList.size() > 0) {
-							Iterator<String> itemItr = jsonFieldList.iterator();
-							while (itemItr.hasNext()) {
-								Item item = new Item();
-								item.value = itemItr.next();
-								itemList.add(item);
-							}
+			    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
+					JsonNode resNode = getElement(node, f.getName());
+					String jsonField = getStringList(resNode, f.getName());
+//						Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
+					if (f.getType().equals(String.class)) {
+						if (jsonField == null || jsonField.length() == 0) {
+							jsonField = "";
 						}
-						if (obj.getClass().equals(models.Target.class) && ((Target) obj).nid==13L) {
-							Logger.info("+++ obj: " + obj.toString() + ", itemList: " + itemList);
-						}
-						f.set(obj, itemList);
+						f.set(obj, jsonField);
 					}
-					if (obj.getClass().equals(models.Target.class) && ((Target) obj).nid==13L) {
-						Logger.info("   res filed list: " + jsonFieldList.size());
-					}
-					jsonFieldList.clear();
-				} else {
-					if (f.getName().equals("field_collection_categories")) {
-						Logger.info("########## field_collection_categories");
-					}
-
+			    } else {
 					if (f.getName().equals(Const.VALUE) // body elements
 							|| f.getName().equals(Const.SUMMARY) 
 							|| f.getName().equals(Const.FORMAT)) {
 						JsonNode resNode = getElement(node, Const.BODY);
-						String jsonField = getStringItem(resNode, f.getName());
-//						Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
-						if (f.getType().equals(String.class)) {
-							if (jsonField == null || jsonField.length() == 0) {
-								jsonField = "";
-							}
-							f.set(obj, jsonField);
-						}
-
+						parseJsonString(f, resNode, obj);
 					} else {
-						String jsonField = getStringItem(node, f.getName());
-						if (f.getType().equals(String.class)) {
-							if (jsonField == null || jsonField.length() == 0) {
-								jsonField = "";
-							}
-							f.set(obj, jsonField);
-						}
-						if (f.getType().equals(Long.class)) {
-							if (jsonField == null || jsonField.length() == 0) {
-								jsonField = "0";
-							}
-							Long jsonFieldLong = new Long(Long.parseLong(jsonField, 10));
-							f.set(obj, jsonFieldLong);
-						}
-						if (f.getType().equals(Boolean.class)) {
-							if (jsonField == null || jsonField.length() == 0) {
-								jsonField = "false";
-							}
-							if (jsonField.equals("Yes") 
-									|| jsonField.equals("yes") 
-									|| jsonField.equals("True") 
-									|| jsonField.equals("Y") 
-									|| jsonField.equals("y")) {
-								jsonField = "true";
-							}
-							Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
-							f.set(obj, jsonFieldBoolean);
-						}
+						parseJsonString(f, node, obj);
 					}
 				}
 			} catch (IllegalArgumentException e) {

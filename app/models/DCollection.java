@@ -23,12 +23,6 @@ public class DCollection extends Model {
     public String value;
     public String summary;
     public String format;
-//    @OneToMany(cascade=CascadeType.ALL)  
-//    public List<Item> field_targets;
-    public List<String> field_targets;
-//    @OneToMany(cascade=CascadeType.ALL)  
-//    public List<Item> field_sub_collections;
-    public List<String> field_sub_collections;
     public Long vid;
     public Boolean is_new;
     public String type;
@@ -49,7 +43,10 @@ public class DCollection extends Model {
     // TODO difference between XML and JSON
     public String revision;
     public Long feed_nid;    
-    
+    // lists
+    public String field_targets; 
+    public String field_sub_collections; 
+
     /**
      * Constructor
      * @param title
@@ -96,20 +93,13 @@ public class DCollection extends Model {
      * This method translates database view to the HTML view.
      * @return list of Strings
      */
-    @SuppressWarnings("unchecked")
 	public List<String> get_field_list(String fieldName) {
     	List<String> res = new ArrayList<String>();
     	try {
     		res.add(Const.EMPTY);
 			Field field = this.getClass().getField(fieldName); 
-	        if (((List<Item>) field.get(this)).size() > 0) {
-	        	res.remove(Const.EMPTY);
-		        Iterator<Item> itemItr = ((List<Item>) field.get(this)).iterator();
-		        while (itemItr.hasNext()) {
-		        	Item item = itemItr.next();
-		        	res.add(item.value);
-		        }
-	        }
+			String content = (String) field.get(this);
+			res = Arrays.asList(content.split("\\s*,\\s*"));
 		} catch (IllegalArgumentException e) {
 			Logger.info(e.getMessage());
 		} catch (IllegalAccessException e) {
@@ -125,8 +115,8 @@ public class DCollection extends Model {
     }
     
     public String toString() {
-        return "DCollection(" + nid + ") with title: " + title;// + ", field_targets: " + field_targets.size() +
-//        	", format: " + format + ", summary: " + summary + ", value: " + value;
+        return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
+        	", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
 }

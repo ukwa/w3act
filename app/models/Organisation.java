@@ -84,38 +84,6 @@ public class Organisation extends Model {
         return newName;
     }
         
-    /**
-     * This method translates database view to the HTML view.
-     * @return list of Strings
-     */
-    @SuppressWarnings("unchecked")
-	public List<String> get_field_list(String fieldName) {
-    	List<String> res = new ArrayList<String>();
-    	try {
-    		res.add(Const.EMPTY);
-			Field field = this.getClass().getField(fieldName); 
-	        if (((List<Item>) field.get(this)).size() > 0) {
-	        	res.remove(Const.EMPTY);
-		        Iterator<Item> itemItr = ((List<Item>) field.get(this)).iterator();
-		        while (itemItr.hasNext()) {
-		        	Item item = itemItr.next();
-		        	res.add(item.value);
-		        }
-	        }
-		} catch (IllegalArgumentException e) {
-			Logger.info(e.getMessage());
-		} catch (IllegalAccessException e) {
-			Logger.info(e.getMessage());
-		} catch (SecurityException e) {
-			Logger.info(e.getMessage());
-		} catch (NoSuchFieldException e) {
-			Logger.info(e.getMessage());
-		} catch (Exception e) {
-			Logger.info(e.getMessage());
-		}
-    	return res;
-    }
-
     public String toString() {
         return "Organisation(" + nid + ") with title: " + title + 
         	", format: " + format + ", summary: " + summary + ", value: " + value;

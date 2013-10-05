@@ -16,7 +16,7 @@
 			<ul class="list">
 				@targets.map { target =>
 					<h2>@target.nid&nbsp;@target.vid&nbsp;@target.title&nbsp;
-					@target.field_uk_domain&nbsp;@target.get_field_list("field_url")&nbsp;
+					@target.field_uk_domain&nbsp;@target.field_url&nbsp;
 					@target.get_field_list("field_collection_categories")&nbsp;<a class="brand" href="@target.url">@target.url</a></h2>
 				}
 			</ul>
