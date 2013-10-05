@@ -4,7 +4,7 @@
     
     <header>
         <hgroup>
-            <h2>Curators overview</h2>
+            <h2>Curators</h2>
         </hgroup>
     </header>
     
@@ -14,12 +14,23 @@
 				<span class="loader">Loading</span>
 			</header>
 			<ul class="list">
-				@curators.map { curator =>
-					<h2>@curator.name&nbsp;@curator.email</h2>
-				}
+				<div class="panel panel-default" id="tables">
+		            <div class="panel-heading"></div>
+		            <table class="table table-striped table-bordered table-condensed">
+		              <tbody>
+		              	@curators.map { curator =>		              
+		                <tr>
+		                  <td>@curator.name</td>
+		                  <td>E-mail: @curator.email</td>
+		                  <!--<td><p><img src="aristoteles.jpg"></p></td>-->
+		                  <td><p><img src="http://www.webarchive.org.uk/act/sites/192.168.45.11.act/files/styles/thumbnail/public/pictures/picture-61-1360164183.jpg?itok=WJ9z5-oy" alt="Home" /></p></td>
+		                </tr>
+		                }
+		              </tbody>
+		            </table>
+		          </div>
 			</ul>
 		</div>
     </article>
-    
 }
 

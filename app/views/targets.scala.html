@@ -14,11 +14,55 @@
 				<span class="loader">Loading</span>
 			</header>
 			<ul class="list">
-				@targets.map { target =>
-					<h2>@target.nid&nbsp;@target.vid&nbsp;@target.title&nbsp;
-					@target.field_uk_domain&nbsp;@target.field_url&nbsp;
-					@target.get_field_list("field_collection_categories")&nbsp;<a class="brand" href="@target.url">@target.url</a></h2>
-				}
+				<div class="panel panel-default" id="tables">
+		            <div class="panel-heading"></div>
+		            <table class="table table-striped table-bordered table-condensed">
+		              <thead>
+		                <tr>
+		                  <th>#</th>
+		                  <th>Target name</th>
+		                  <th>Target URL</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		              	@targets.map { target =>		              
+		                <tr>
+		                  <td>@target.nid</td>
+		                  <td>@target.title</td>
+		                  <td><a class="brand" href="@target.get_field_list("field_url")">@target.get_field_list("field_url")</a></td>
+		                </tr>
+		                }
+		              </tbody>
+		            </table>
+		          </div>
+		          <div class="row">
+			        <div class="col-lg-6">
+			          <div class="panel panel-default" id="pagination">
+			            <div class="panel-heading">Pagination
+			            </div>
+			            <ul class="pagination" style="margin-right: 10px;">
+			              <li>
+			                <a href="#">Prev</a>
+			              </li>
+			              <li>
+			                <a href="#">1</a>
+			              </li>
+			              <li>
+			                <a href="#">2</a>
+			              </li>
+			              <li>
+			                <a href="#">3</a>
+			              </li>
+			              <li>
+			                <a href="#">4</a>
+			              </li>
+			              <li>
+			                <a href="#">Next</a>
+			              </li>
+			            </ul>
+			          </div>
+		          </div>
+	          </div>
 			</ul>
 		</div>
     </article>

@@ -4,7 +4,7 @@
     
     <header>
         <hgroup>
-            <h2>Collections overview</h2>
+            <h2>Collections</h2>
         </hgroup>
     </header>
     <article  class="collecitions">
@@ -13,10 +13,24 @@
 				<span class="loader">Loading</span>
 			</header>
 			<ul class="list">
-				@dcollections.map { dcollection =>
-					<h2>@dcollection.title&nbsp;@dcollection.get_field_list("field_targets")&nbsp;
-					@dcollection.format&nbsp;@dcollection.summary&nbsp;@dcollection.value&nbsp;</h2>
-				}
+				<div class="panel panel-default" id="tables">
+		            <div class="panel-heading"></div>
+		            <table class="table table-striped table-bordered table-condensed">
+		              <thead>
+		                <tr>
+		                  <th>Title</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		              	@dcollections.map { dcollection =>		              
+		                <tr>
+		                  <td><a class="brand" href="@dcollection.get_field_list("field_sub_collections")">@dcollection.title</a></td>
+		                </tr>
+		                }
+		              </tbody>
+		            </table>
+		          </div>
+	          </div>
 			</ul>
 		</div>
     </article>
