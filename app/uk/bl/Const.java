@@ -8,8 +8,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.OneToMany;
 
-import models.Item;
-
 
 public final class Const {
   
@@ -39,9 +37,6 @@ public final class Const {
 	public static final String FORMAT          = "format";
 	public static final String BODY            = "body";
 
-	// Field position in JSON for similar names
-//	public static final int URL_FIELD_POS_IN_JSON = 1; // for simple URL field
-	
 	// Types of the JSON nodes
 	public enum NodeType {
         URL, 
