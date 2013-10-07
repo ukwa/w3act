@@ -1,5 +1,8 @@
 package models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,27 +15,37 @@ import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.fakeApplication;
 
 public class ModelsTest extends WithApplication {
+	
+	private final Long TEST_NID = 7777L;
+	private final String TEST_EMAIL = "max.muster@ait.ac.at";
+	private final String TEST_PASSWORD = "secret2";
+			
+	Map<String, String> conf = new HashMap<String, String>();
+	
     @Before
     public void setUp() {
-        start(fakeApplication(inMemoryDatabase()));
+        conf.put("db.default.driver", "org.postgresql.Driver");
+        conf.put("db.default.url", "postgres://training:training@127.0.0.1/w3act");
+        start(fakeApplication(conf));
+//        start(fakeApplication(inMemoryDatabase()));
     }
     
     @Test
     public void createAndRetrieveTarget() {
         Target targetNew = new Target("My title", "http://target.at");
-        targetNew.nid = Long.valueOf(777);
+        targetNew.nid = Long.valueOf(TEST_NID);
         targetNew.save();
         Target target = (Target) Target.find.where().eq("title", "My title").findUnique();
         assertNotNull(target);
         assertEquals("http://target.at", target.url);
-        Target.find.ref(777L).delete();
+        Target.find.ref(TEST_NID).delete();
         assertNull(Target.find.where().eq("title", "My title").findUnique());
     }
     
     @Test
     public void createAndRetrieveTargetWithItem() {
         Target targetNew = new Target("My title", "http://target.at");
-        targetNew.nid = Long.valueOf(777L);
+        targetNew.nid = Long.valueOf(TEST_NID);
         targetNew.save();
         Target target = (Target) Target.find.where().eq("title", "My title").findUnique();
         target.field_url = "test field_url";
@@ -45,17 +58,17 @@ public class ModelsTest extends WithApplication {
         Logger.info("field_url res: " + res.toString() + ", value: " + field_url);
         assertNotNull(res);
         assertEquals("http://target.at", res.url);
-        Target.find.ref(777L).delete();
+        Target.find.ref(TEST_NID).delete();
         assertNull(Target.find.where().eq("title", "My title").findUnique());
     }
     
     @Test
     public void tryAuthenticateUser() {
-        new User("ross.king@ait.ac.at", "Ross King", "secret").save();
-        
-        assertNotNull(User.authenticate("ross.king@ait.ac.at", "secret"));
-        assertNull(User.authenticate("ross.king@ait.ac.at", "badpassword"));
-        assertNull(User.authenticate("peter.king@ait.ac.at", "secret"));
+        new User("Max Muster", TEST_EMAIL, TEST_PASSWORD).save();
+        assertNotNull(User.authenticate(TEST_EMAIL, TEST_PASSWORD));
+        assertNull(User.authenticate(TEST_EMAIL, "badpassword"));
+        assertNull(User.authenticate("peter.king@ait.ac.at", TEST_PASSWORD));
+        User.find.ref(TEST_EMAIL).delete();
     }
     
 }

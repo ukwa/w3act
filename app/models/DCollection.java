@@ -21,6 +21,7 @@ public class DCollection extends Model {
     public Long nid;
     @Column(columnDefinition = "TEXT")
     public String value;
+    @Column(columnDefinition = "TEXT")
     public String summary;
     public String format;
     public Long vid;
@@ -44,7 +45,9 @@ public class DCollection extends Model {
     public String revision;
     public Long feed_nid;    
     // lists
+    @Column(columnDefinition = "TEXT")
     public String field_targets; 
+    @Column(columnDefinition = "TEXT")
     public String field_sub_collections; 
 
     /**

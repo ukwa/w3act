@@ -25,6 +25,7 @@ public class Target extends Model {
     public Long nid;
     @Column(columnDefinition = "TEXT")
     public String value;
+    @Column(columnDefinition = "TEXT")
     public String summary;
     public String format;
     public String field_scope;
@@ -61,24 +62,35 @@ public class Target extends Model {
     //TODO difference between XML and JSON
     //public Taxonomy taxonomy_term; (id-Long, resource-String) TODO
     public String field_crawl_end_date;
-    public Long field_live_site_status;
+    public String field_live_site_status;
     public Long field_wct_id;
     public Long field_spt_id;
     public Boolean field_no_ld_criteria_met;
     public String field_key_site;
+    @Column(columnDefinition = "TEXT")
     public String field_professional_judgement_exp;
     public String field_ignore_robots_txt;
     public String revision;
     // lists
+    @Column(columnDefinition = "TEXT")
     public String field_url; 
+    @Column(columnDefinition = "TEXT")
     public String field_description; 
+    @Column(columnDefinition = "TEXT")
     public String field_uk_postal_address_url; 
+    @Column(columnDefinition = "TEXT")
     public String field_suggested_collections; 
+    @Column(columnDefinition = "TEXT")
     public String field_collections; 
+    @Column(columnDefinition = "TEXT")
     public String field_license; 
+    @Column(columnDefinition = "TEXT")
     public String field_collection_categories; 
+    @Column(columnDefinition = "TEXT")
     public String field_notes; 
+    @Column(columnDefinition = "TEXT")
     public String field_instances; 
+    @Column(columnDefinition = "TEXT")
     public String field_subject; 
     
     /**

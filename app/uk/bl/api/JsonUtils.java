@@ -66,9 +66,9 @@ public class JsonUtils {
 				Logger.info("pages: " + firstPage + ", " + lastPage);
 				// aggregate data from drupal for all pages 
 				for (int i = firstPage; i <= lastPage; i++) {
-					if (i == 1) {
-						break; // TODO just now for test take only the first page
-					}
+//					if (i == 1) {
+//						break; // TODO just now for test take only the first page
+//					}
 					HttpBasicAuth.downloadFileWithAuth(
 						urlStr + "&" + Const.PAGE_IN_URL + String.valueOf(i), Const.AUTH_USER, Const.AUTH_PASSWORD, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
 					String pageContent = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
@@ -80,13 +80,13 @@ public class JsonUtils {
 			Logger.info("data aggregation error: " + e);
 		}
     	Logger.info("list size: " + res.size());
-    	int idx = 0;
-		Iterator<Object> itr = res.iterator();
-		while (itr.hasNext()) {
-			Object obj = itr.next();
-			Logger.info("res getDrupalData: " + obj.toString() + ", idx: " + idx);
-			idx++;
-		}
+//    	int idx = 0;
+//		Iterator<Object> itr = res.iterator();
+//		while (itr.hasNext()) {
+//			Object obj = itr.next();
+//			Logger.info("res getDrupalData: " + obj.toString() + ", idx: " + idx);
+//			idx++;
+//		}
 		return res;
     }
     
@@ -185,7 +185,6 @@ public class JsonUtils {
 		Iterator<Map.Entry<String, JsonNode>> elt = node.fields();
 		while (elt.hasNext()) {
 			Map.Entry<String, JsonNode> element = elt.next(); 
-//			Logger.info("element: " + element);
 			if (element.getKey().equals(fieldName)) {
 				res = element.getValue();
 				break;
@@ -266,11 +265,11 @@ public class JsonUtils {
 				f.set(obj, jsonFieldBoolean);
 			}
 		} catch (IllegalArgumentException e) {
-			Logger.info("parseJsonNode IllegalArgument error: " + e); 
+			Logger.info("parseJsonString IllegalArgument error: " + e + ", f: " + f); 
 		} catch (IllegalAccessException e) {
-			Logger.info("parseJsonNode IllegalAccess error: " + e); 
+			Logger.info("parseJsonString IllegalAccess error: " + e + ", f: " + f); 
 		} catch (Exception e) {
-			Logger.info("parseJsonNode error: " + e); 
+			Logger.info("parseJsonString error: " + e + ", f: " + f); 
 		}
 	}
 	
@@ -304,11 +303,11 @@ public class JsonUtils {
 					}
 				}
 			} catch (IllegalArgumentException e) {
-				Logger.info("parseJsonNode IllegalArgument error: " + e); 
+				Logger.info("parseJsonNode IllegalArgument error: " + e + ", f: " + f); 
 			} catch (IllegalAccessException e) {
-				Logger.info("parseJsonNode IllegalAccess error: " + e); 
+				Logger.info("parseJsonNode IllegalAccess error: " + e + ", f: " + f); 
 			} catch (Exception e) {
-				Logger.info("parseJsonNode error: " + e); 
+				Logger.info("parseJsonNode error: " + e + ", f: " + f); 
 			}
 		}
 	}
