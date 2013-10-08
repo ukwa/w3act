@@ -13,6 +13,33 @@
 			<header>
 				<span class="loader">Loading</span>
 			</header>
+			<div class="row">
+		        <div class="col-lg-2">	        
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">Filter by search term:
+		            </div>
+      <div class="panel panel-default" id="forms">
+        <form>
+          <fieldset>
+            <legend>Legend</legend>
+            <div class="form-group">
+              <input class="form-control" id="inputName" placeholder="Subject" type="text">
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+          </fieldset>
+        </form>
+        <hr>
+      </div>
+		          </div>
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">Filter by subject:
+		            </div>
+		            <div class="panel-footer">This is a subject
+		            </div>
+		          </div>
+		        </div>
+		        <div class="col-lg-6">
+			
 			<ul class="list">
 				<div class="panel panel-default" id="tables">
 		            <div class="panel-heading">Targets</div>
@@ -29,7 +56,7 @@
 		                <tr>
 		                  <td>@target.nid</td>
 		                  <td>@target.title</td>
-		                  <td><a class="brand" href="@target.get_field_list("field_url")">@target.get_field_list("field_url")</a></td>
+		                  <td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 		                </tr>
 		                }
 		              </tbody>
@@ -62,6 +89,24 @@
 			            </ul>
 			          </div>
 		          </div>
+		         </div>
+		          	
+		        </div>
+		        <div class="col-lg-2">
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">Filter by curator:
+		            </div>
+		            <div class="panel-footer">This is a curator
+		            </div>
+		          </div>
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">Filter by nominating organisation:
+		            </div>
+		            <div class="panel-footer">This is an organisation
+		            </div>
+		          </div>
+		        </div>
+		          
 	          </div>
 			</ul>
 		</div>

@@ -37,6 +37,8 @@ public final class Const {
 	public static final String FORMAT          = "format";
 	public static final String BODY            = "body";
 
+	public static final int STRING_LIMIT       = 50;
+	
 	// Types of the JSON nodes
 	public enum NodeType {
         URL, 

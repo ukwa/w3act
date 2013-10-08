@@ -162,6 +162,43 @@ public class Target extends Model {
     	return res;
     }
     
+	public String get_field_list_as_str(String fieldName) {
+    	List<String> res = new ArrayList<String>();
+    	try {
+    		res.add(Const.EMPTY);
+			Field field = this.getClass().getField(fieldName); 
+			String content = (String) field.get(this);
+			res = Arrays.asList(content.split("\\s*,\\s*"));
+		} catch (IllegalArgumentException e) {
+			Logger.info(e.getMessage());
+		} catch (IllegalAccessException e) {
+			Logger.info(e.getMessage());
+		} catch (SecurityException e) {
+			Logger.info(e.getMessage());
+		} catch (NoSuchFieldException e) {
+			Logger.info(e.getMessage());
+		} catch (Exception e) {
+			Logger.info(e.getMessage());
+		}
+//    	String res_str = res.toString().substring(1,res.toString().length()-1);
+    	
+    	String res_str = res.toString().substring(1,res.toString().length()-1);
+    	if (res_str.length() > Const.STRING_LIMIT) {
+    		res_str = res_str.toString().substring(0,Const.STRING_LIMIT);
+    	}
+    	System.out.println(res_str.length());
+//		String res_str = "test";
+    	return res_str;
+    }
+
+    /**
+     * Retrieve targets
+     */
+    public static List<User> findAllUser() {
+	    return User.find.all();
+	}
+
+
     public String toString() {
         return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
