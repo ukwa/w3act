@@ -32,10 +32,13 @@ public final class Const {
 	public static final String ITEM            = "item";
 	
 	// Body elements in JSON node
-	public static final String VALUE           = "value";
-	public static final String SUMMARY         = "summary";
-	public static final String FORMAT          = "format";
-	public static final String BODY            = "body";
+	public static final String VALUE              = "value";
+	public static final String SUMMARY            = "summary";
+	public static final String FORMAT             = "format";
+	public static final String BODY               = "body";
+	public static final String AUTHOR             = "author";
+	public static final String FIELD_AFFILIATION  = "field_affiliation";
+	public static final String JSON               = ".json";
 
 	public static final int STRING_LIMIT       = 50;
 	
@@ -43,9 +46,16 @@ public final class Const {
 	public enum NodeType {
         URL, 
 		COLLECTION,
-		ORGANISATION;
+		ORGANISATION,
+		USER,
+		TAXONOMY,
+		TAXONOMY_VOCABULARY;
     }
 	
+    /**
+     * Help collections to read JSON lists like
+     * "field_url":[{"url":"http:\/\/www.adoptionuk.org\/"}]
+     */
     public static final Map<String, Integer> targetMap = new HashMap<String, Integer>();
     	static {
     	targetMap.put("field_url", 0);
@@ -64,6 +74,16 @@ public final class Const {
     	static {
     	collectionMap.put("field_targets", 0);
     	collectionMap.put("field_sub_collections", 1);
+    }
+		
+    /**
+     * Help collection to read JSON sub nodes like 
+     * "field_affiliation":{"uri":"http:\/\/www.webarchive.org.uk\/act\/node\/101","id":"101","resource":"node"}
+     */
+    public static final Map<String, String> subNodeMap = new HashMap<String, String>();
+    	static {
+    	subNodeMap.put(AUTHOR, URI);
+    	subNodeMap.put(FIELD_AFFILIATION, URI);
     }
 		
 }

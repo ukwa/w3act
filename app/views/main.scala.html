@@ -51,19 +51,35 @@
         </header>
         <nav>
             <h4 class="dashboard"><a href="#/">Home</a></h4>
-            <ul id="navlinks">
-				<li><a href="#">Add content</a></li>
-				<li><a href="#">Web Site</a></li>
-				<li><a href="#">Web Sites</a></li>
-				<li><a href="#">Alphabetical Index</a></li>
-				<li><a href="#">Duplicate URLs</a></li>
-				<li><a href="#">Key Sites</a></li>
-				<li><a href="#">Special Dispensation Sites</a></li>
-				<li><a href="#">URL Search</a></li>
-				<li><a href="#">URL Without Permissions</a></li>
-				<li><a href="#">Edit Taxonomies</a></li>
-				<li><a href="#">My bookmarks</a></li>
-            </ul>
+            <div class="row">
+			  <div class="span3">
+			    <div class="well">
+			        <div>
+			            <ul class="nav nav-list">
+			                <li><label class="tree-toggle nav-header"><a href="#">Add content</a></label>
+			                    <ul class="nav nav-list tree">
+			                        <li><a href="#">Web Site</a></li>
+			                    </ul>
+	                        </li>
+	                        <li><label class="tree-toggle nav-header"><a href="#">Web Sites</a></label>
+	                            <ul class="nav nav-list tree">
+	                                <li><a href="#">Alphabetical Index</a></li>
+	                                <li><a href="#">Duplicate URLs</a></li>
+									<li><a href="#">Key Sites</a></li>
+									<li><a href="#">Special Dispensation Sites</a></li>
+									<li><a href="#">URL Search</a></li>
+									<li><a href="#">URL Without Permissions</a></li>
+	                            </ul>
+			                </li>
+			                <li><label class="tree-toggle nav-header"><a href="#">Edit Taxonomies</a></label>
+	                        </li>
+			                <li><label class="tree-toggle nav-header"><a href="#">My bookmarks</a></label>
+	                        </li>
+			            </ul>
+			        </div>
+			    </div>
+			    </div>
+			</div>
         </nav>
         <section id="main">
             @body

@@ -5,24 +5,35 @@ import java.util.*;
 import javax.persistence.*;
 
 import play.db.ebean.*;
-import play.data.format.*;
-import play.data.validation.*;
 
-import com.avaje.ebean.*;
 
 /**
  * Taxonomy entity managed by Ebean
  */
+@SuppressWarnings("serial")
 @Entity 
 public class Taxonomy extends Model {
-
+     
     @Id
-    public Long vid;
+    public Long tid;
     public String name;  
-    public String machine_name;
+    @Column(columnDefinition = "TEXT")
     public String description;
-    public Long term_count;
-      
+    public Long weight;
+    public Long node_count;
+    @Column(columnDefinition = "TEXT")
+    public String url;
+    @Column(columnDefinition = "TEXT")
+    public String vocabulary;
+    public Long feed_nid;    
+    // lists
+    @Column(columnDefinition = "TEXT") 
+    public String field_owner;
+    @Column(columnDefinition = "TEXT") 
+    public String parent;
+    @Column(columnDefinition = "TEXT") 
+    public String parents_all;
+
     public Taxonomy(String name) {
         this.name = name;
     }
@@ -32,12 +43,20 @@ public class Taxonomy extends Model {
     
     // -- Queries
     
-    public static Model.Finder<Long,Taxonomy> find = new Model.Finder(Long.class, Taxonomy.class);
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Model.Finder<Long,Taxonomy> find = new Model.Finder(Long.class, Taxonomy.class);
     
     /**
      * Retrieve Taxonomy for user
      */
     public static List<Taxonomy> findInvolving() {
+        return find.all();
+    }
+    
+    /**
+     * Retrieve all Taxonomies
+     */
+    public static List<Taxonomy> findAll() {
         return find.all();
     }
     
@@ -61,7 +80,7 @@ public class Taxonomy extends Model {
     }
         
     public String toString() {
-        return "Taxonomy(" + vid + ") with name: " + name;
+        return "Taxonomy(" + tid + ") with name: " + name;
     }
 
 }

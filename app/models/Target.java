@@ -119,6 +119,13 @@ public class Target extends Model {
 	}
 
     /**
+     * Retrieve targets
+     */
+    public static List<Target> findAll() {
+	    return find.all();
+	}
+
+    /**
      * Create a new target.
      */
     public static Target create(String title, String url) {
@@ -180,24 +187,14 @@ public class Target extends Model {
 		} catch (Exception e) {
 			Logger.info(e.getMessage());
 		}
-//    	String res_str = res.toString().substring(1,res.toString().length()-1);
-    	
     	String res_str = res.toString().substring(1,res.toString().length()-1);
     	if (res_str.length() > Const.STRING_LIMIT) {
     		res_str = res_str.toString().substring(0,Const.STRING_LIMIT);
     	}
-    	System.out.println(res_str.length());
+//    	System.out.println(res_str.length());
 //		String res_str = "test";
     	return res_str;
     }
-
-    /**
-     * Retrieve targets
-     */
-    public static List<User> findAllUser() {
-	    return User.find.all();
-	}
-
 
     public String toString() {
         return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +

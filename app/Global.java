@@ -49,6 +49,24 @@ public class Global extends GlobalSettings {
 					// store organisations in DB
 	                Ebean.save(allOrganisations);
 	                Logger.info("organisations successfully loaded");
+	                Logger.info("load curators ...");
+	                // aggregate original curators from drupal extracting information from aggregated data
+			        List<Object> allCurators = JsonUtils.extractDrupalData(Const.NodeType.USER);
+					// store urls in DB
+	                Ebean.save(allCurators);
+	                Logger.info("curators successfully loaded");
+	                Logger.info("load taxonomies ...");
+	                // aggregate original taxonomies from drupal extracting information from aggregated data
+			        List<Object> allTaxonomies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY);
+					// store urls in DB
+	                Ebean.save(allTaxonomies);
+	                Logger.info("taxonomies successfully loaded");
+	                Logger.info("load taxonomy vocabularies ...");
+	                // aggregate original taxonomy vocabulary from drupal extracting information from aggregated data
+			        List<Object> allTaxonomyVocabularies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY_VOCABULARY);
+					// store urls in DB
+	                Ebean.save(allTaxonomyVocabularies);
+	                Logger.info("taxonomy vocabularies successfully loaded");
                 } catch (Exception e) {
                 	Logger.info("Store error: " + e);
                 }

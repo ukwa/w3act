@@ -45,7 +45,24 @@ public class JsonUtils {
 		return Integer.parseInt(page.substring(idxPage));
 	}
 	
-    /**
+	/**
+	 * This method downloads remote data using HTTP request and retrieves contentfor passed type.
+	 * @param urlStr
+	 * @param type
+	 * @return list of objects
+	 */
+	private static String downloadData(String urlStr, NodeType type) {
+	    String res = "";
+	    if (urlStr != null && urlStr.length() > 0) {
+			// aggregate data from drupal and store JSON content in a file
+			HttpBasicAuth.downloadFileWithAuth(urlStr, Const.AUTH_USER, Const.AUTH_PASSWORD, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+			// read file and store content in String
+			res = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+	    }
+        return res;
+	}
+
+	/**
      * This method retrieves JSON data from Drupal for particular domain object type (e.g. Target, Collection...)
      * @param type
      * @return a list of retrieved objects
@@ -67,11 +84,9 @@ public class JsonUtils {
 				// aggregate data from drupal for all pages 
 				for (int i = firstPage; i <= lastPage; i++) {
 //					if (i == 1) {
-//						break; // TODO just now for test take only the first page
+//						break; // if necessary for faster testing take only the first page
 //					}
-					HttpBasicAuth.downloadFileWithAuth(
-						urlStr + "&" + Const.PAGE_IN_URL + String.valueOf(i), Const.AUTH_USER, Const.AUTH_PASSWORD, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
-					String pageContent = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+					String pageContent = downloadData(urlStr + "&" + Const.PAGE_IN_URL + String.valueOf(i), type);
 					List<Object> pageList = JsonUtils.parseJson(pageContent, type);
 					res.addAll(pageList);
 				}
@@ -87,6 +102,86 @@ public class JsonUtils {
 //			Logger.info("res getDrupalData: " + obj.toString() + ", idx: " + idx);
 //			idx++;
 //		}
+		return res;
+    }
+    
+    /**
+     * This method aggregates object list from JSON data for particular domain object type.
+     * @param urlStr
+     * @param type
+     * @param res
+     */
+    private static void aggregateObjectList(String urlStr, NodeType type, List<Object> res) {
+	    Logger.info("extract data for: " + urlStr + " type: " + type);
+		String content = downloadData(urlStr, type);
+		JsonNode mainNode = Json.parse(content);	
+		if(mainNode != null) {
+			List<Object> pageList = JsonUtils.parseJsonExt(content, type);
+			res.addAll(pageList);
+		}
+    }
+    
+    /**
+     * This method retrieves secondary JSON data from Drupal for 
+     * particular domain object type (e.g. User, Taxonomy ...).
+     * The URL to the secondary JSON data is included in previosly 
+     * aggregated main domain objects (e.g. link to User is contained in Target).
+     * @param type
+     * @return a list of retrieved objects
+     */
+    public static List<Object> extractDrupalData(NodeType type) {
+	    List<Object> res = new ArrayList<Object>();
+	    try {
+	    	List<String> urlList = new ArrayList<String>();
+	    	List<Target> targets = Target.findAll();
+	    	Iterator<Target> itr = targets.iterator();
+	    	while (itr.hasNext()) {
+	    		Target target = itr.next();
+			    String urlStr = "";
+			    if (type.equals(NodeType.USER)) {
+			    	if (target.author != null && target.author.length() > 0) {
+				    	urlStr = target.author + Const.JSON;
+			    		if (!urlList.contains(urlStr)) {
+				    		urlList.add(urlStr);
+					    	aggregateObjectList(urlStr, type, res);
+			    		}
+			    	}
+			    }
+			    if (type.equals(NodeType.TAXONOMY)) {
+			    	if (target.field_collection_categories != null && target.field_collection_categories.length() > 0) {
+		    			urlStr = target.field_collection_categories + Const.JSON;
+			    		if (!urlList.contains(urlStr)) {
+				    		urlList.add(urlStr);
+			    			aggregateObjectList(urlStr, type, res);
+			    		}
+			    	}
+			    }
+			    if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
+			    	List<Taxonomy> taxonomies = Taxonomy.findAll();
+			    	Iterator<Taxonomy> taxonomyItr = taxonomies.iterator();
+			    	while (taxonomyItr.hasNext()) {
+			    		Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
+				    	if (taxonomy.vocabulary != null && taxonomy.vocabulary.length() > 0) {
+				    		urlStr = taxonomy.vocabulary + Const.JSON;
+				    		if (!urlList.contains(urlStr)) {
+					    		urlList.add(urlStr);
+						    	aggregateObjectList(urlStr, type, res);
+				    		}
+				    	}
+			    	}
+			    }
+	    	}
+    	} catch (Exception e) {
+			Logger.info("data aggregation error: " + e);
+		}
+    	Logger.info("list size: " + res.size());
+    	int idx = 0;
+		Iterator<Object> itr = res.iterator();
+		while (itr.hasNext()) {
+			Object obj = itr.next();
+			Logger.info("res getDrupalData: " + obj.toString() + ", idx: " + idx);
+			idx++;
+		}
 		return res;
     }
     
@@ -159,6 +254,25 @@ public class JsonUtils {
     }
 
     /**
+     * This method returns object from JSON sub node as a String
+     * @param resNode
+     * @param path
+     * @return list as a String
+     */
+    public static String getStringFromSubNode(JsonNode resNode, String path) {
+		String res = "";
+//		Logger.info("getStringList path: " + path + ", resNode: " + resNode);
+		if (resNode != null) {
+			String item = resNode.findPath(path).textValue();
+			if(item != null) {
+				res = item;
+			}
+		}
+//		Logger.info("getStringFromSubNode res: " + res);
+		return res;
+    }
+
+    /**
      * This method extracts one item for JSON field
      * @param node
      * @param field
@@ -197,7 +311,7 @@ public class JsonUtils {
 	 * This method extracts JSON nodes and passes them to parser
 	 * @param content
 	 * @param type
-	 * @return object list for particualar domain object type
+	 * @return object list for particular domain object type
 	 */
 	public static List<Object> parseJson(String content, NodeType type) {
 	    List<Object> res = new ArrayList<Object>();
@@ -220,6 +334,58 @@ public class JsonUtils {
 					obj = new Organisation();
 				}
 				parseJsonNode(node, obj);
+				res.add(obj);
+			}
+		} else {
+			Logger.info("json is null");
+		}			  
+		return res;
+	}
+	
+	/**
+	 * This method extracts JSON node without root node and passes them to parser
+	 * @param content
+	 * @param type
+	 * @return object list for particular domain object type
+	 */
+	public static List<Object> parseJsonExt(String content, NodeType type) {
+	    List<Object> res = new ArrayList<Object>();
+		JsonNode node = Json.parse(content);
+		if(node != null) {
+			Object obj = null;
+			if (type.equals(Const.NodeType.USER)) {					
+				obj = new User();
+			} 
+			if (type.equals(Const.NodeType.TAXONOMY)) {
+				obj = new Taxonomy();
+			}
+			if (type.equals(Const.NodeType.TAXONOMY_VOCABULARY)) {
+				obj = new TaxonomyVocabulary();
+			}
+			parseJsonNode(node, obj);
+			boolean isNew = true;
+			if (type.equals(Const.NodeType.USER)) {	
+			    User newUser = (User) obj;
+			    if (newUser.email == null || newUser.email.length() == 0) {
+			    	newUser.email = newUser.name.toLowerCase() + "@bl.uk";
+			    }
+			    User existingUser = User.findByName(newUser.name);
+			    if (existingUser != null && existingUser.name.length() > 0) {
+			    	isNew = false;
+			    	existingUser.field_affiliation = newUser.field_affiliation;
+			    	existingUser.uid = newUser.uid;
+			    	existingUser.url = newUser.url;
+			    	existingUser.edit_url = newUser.edit_url;
+			    	existingUser.last_access = newUser.last_access;
+			    	existingUser.last_login = newUser.last_login;
+			    	existingUser.created = newUser.created;
+			    	existingUser.status = newUser.status;
+			    	existingUser.language = newUser.language;
+			    	existingUser.feed_nid = newUser.feed_nid;
+			    	existingUser.update();
+			    }
+			}
+			if (isNew) {
 				res.add(obj);
 			}
 		} else {
@@ -274,6 +440,34 @@ public class JsonUtils {
 	}
 	
 	/**
+	 * This method checks if node is a sub node and processes it if that assumption is true
+	 * @param f
+	 * @param node
+	 * @param obj
+	 * @return check result
+	 */
+	private static boolean checkSubNode(Field f, JsonNode node, Object obj) {
+		boolean res = false;
+	    if (Const.subNodeMap.containsKey(f.getName())) {
+			res = true;
+			JsonNode resNode = getElement(node, f.getName());
+			String jsonField = getStringFromSubNode(resNode, Const.subNodeMap.get(f.getName()));
+//			Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
+			if (f.getType().equals(String.class)) {
+				if (jsonField == null || jsonField.length() == 0) {
+					jsonField = "";
+				}
+				try {
+					f.set(obj, jsonField);
+				} catch (Exception e) {
+					Logger.info("checkSubNode: " + e); 
+				}
+			}
+		}
+        return res;
+	}
+
+	/**
 	 * This method parses JSON node and extracts fields
 	 * @param node
 	 * @param obj
@@ -299,7 +493,9 @@ public class JsonUtils {
 						JsonNode resNode = getElement(node, Const.BODY);
 						parseJsonString(f, resNode, obj);
 					} else {
-						parseJsonString(f, node, obj);
+						if (!checkSubNode(f, node, obj)) {
+							parseJsonString(f, node, obj);
+						}
 					}
 				}
 			} catch (IllegalArgumentException e) {

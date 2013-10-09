@@ -1,4 +1,4 @@
-@(title: String, user: User, targets: List[Target])
+@(title: String, user: User, targets: List[Target], curators: List[User])
 
 @main(title, user){
     
@@ -18,23 +18,47 @@
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by search term:
 		            </div>
-      <div class="panel panel-default" id="forms">
-        <form>
-          <fieldset>
-            <legend>Legend</legend>
-            <div class="form-group">
-              <input class="form-control" id="inputName" placeholder="Subject" type="text">
-            </div>
-            <button type="submit" class="btn btn-default">Search</button>
-          </fieldset>
-        </form>
-        <hr>
-      </div>
+				      <div class="panel panel-default" id="forms">
+				        <form>
+				          <fieldset>
+				            <legend>Legend</legend>
+				            <div class="form-group">
+				              <input class="form-control" id="inputName" placeholder="Subject" type="text">
+				            </div>
+				            <button type="submit" class="btn btn-default">Search</button>
+				          </fieldset>
+				        </form>
+				        <hr>
+				      </div>
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by subject:
 		            </div>
 		            <div class="panel-footer">This is a subject
+		            </div>
+		          </div>
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">Filter by crawl frequency:
+		            </div>
+		            <div class="panel-footer">This is a crawl frequency
+		            </div>
+		          </div>
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">Filter by depth:
+		            </div>
+		            <div class="panel-footer">This is a depth
+		            </div>
+		          </div>
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">Filter by license:
+		            </div>
+		            <div class="panel-footer">This is a license
+		            </div>
+		          </div>
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">Filter by scope:
+		            </div>
+		            <div class="panel-footer">This is a scope
 		            </div>
 		          </div>
 		        </div>
@@ -96,8 +120,10 @@
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by curator:
 		            </div>
-		            <div class="panel-footer">This is a curator
-		            </div>
+		            @curators.map { curator =>		              
+			            <div class="panel-footer"><a class="brand" href="@curator.name">@curator.name</a>
+			            </div>
+		                }
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by nominating organisation:
@@ -105,6 +131,13 @@
 		            <div class="panel-footer">This is an organisation
 		            </div>
 		          </div>
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">Filter by collection categories:
+		            </div>
+		            <div class="panel-footer">This is collection categories
+		            </div>
+		          </div>
+		          
 		        </div>
 		          
 	          </div>

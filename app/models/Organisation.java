@@ -69,18 +69,18 @@ public class Organisation extends Model {
      * Create a new Organisation.
      */
     public static Organisation create(String title) {
-        Organisation Organisation = new Organisation(title);
-        Organisation.save();
-        return Organisation;
+        Organisation organisation = new Organisation(title);
+        organisation.save();
+        return organisation;
     }
     
     /**
      * Rename a Organisation
      */
     public static String rename(Long OrganisationId, String newName) {
-        Organisation Organisation = (Organisation) find.ref(OrganisationId);
-        Organisation.title = newName;
-        Organisation.update();
+        Organisation organisation = (Organisation) find.ref(OrganisationId);
+        organisation.title = newName;
+        organisation.update();
         return newName;
     }
         
