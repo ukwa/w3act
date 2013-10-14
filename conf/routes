@@ -23,3 +23,9 @@ GET     /targets                            controllers.Targets.index()
 GET     /organisations                      controllers.Organisations.index()
 GET     /curators                           controllers.Curators.index()
 GET     /contact                            controllers.Contact.index()
+
+# Navigation
+GET     /addcontent                         controllers.AddContent.index()
+GET     /article                            controllers.Article.index()
+GET     /basicpage                          controllers.BasicPage.index()
+GET     /tips                               controllers.Tips.index()

@@ -1,0 +1,69 @@
+@(title: String, user: User)
+
+@main(title, user){
+<header>
+    <hgroup>
+        <h2>Article</h2>
+    </hgroup>
+</header>
+
+    <article  class="about">
+		<div class="folder">
+            <h3>Create Article</h3>
+		</div>
+      <div class="panel panel-default" id="forms">
+        <div class="panel-heading">
+        </div>
+        <form>
+          <fieldset>
+            <legend>Legend</legend>
+            <div class="form-group">
+              <label for="inputTitle">Title*</label>
+              <input class="form-control" id="inputTitle" placeholder="My article title" type="text">
+            </div>
+            <div class="form-group">
+              <label for="inputTags">Tags</label>
+              <input class="form-control" id="inputTags" placeholder="sport, science" type="text">
+              <label">Enter a comma-separated list of words to describe your content.</label>
+            </div>            
+            <div class="form-group">
+              <label for="inputBody">Body <a href="#" class="navbar-brand">(Edit summary)</a></label>
+               <textarea name="user_eingabe" id="inputBody" cols="50" rows="10"></textarea>
+            </div>
+            <div class="container">
+				  <h3>Text format</h3>
+				  <select id="mySel">
+				    <option>Filtered HTML</option>
+				    <option>Plain text</option>
+				  </select>
+				  <br>
+				  <a href="@routes.Tips.index">More information about text formats</a>
+			</div>
+            <div class="form-group">
+              <label for="exampleInputFile">File input</label>
+              <input id="exampleInputFile" type="file">
+              <button type="upload" class="btn btn-default">Upload</button>
+              <p class="help-block">Upload an image to go with this article.
+				Files must be less than 2 MB.
+				Allowed file types: png gif jpg jpeg.</p>
+            </div>
+            <div class="form-group">
+                <li>Revision information</li>
+                <li>New revision(active tab)</li>
+	            <div class="form-group">
+	              <label for="inputBody">Revision log message</a></label>
+	               <textarea name="revision_input" id="inputRevision" cols="50" rows="10"></textarea>
+        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+	            </div>
+			</div>
+            
+            <button type="save" class="btn btn-default">Save</button>
+            <button type="preview" class="btn btn-default">Preview</button>
+          </fieldset>
+        </form>
+        <hr>
+      </div>
+
+    </article>
+}
+

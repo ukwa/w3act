@@ -1,0 +1,37 @@
+@(title: String, user: User)
+
+@main(title, user){
+<header>
+    <hgroup>
+        <h2>Basic Page</h2>
+    </hgroup>
+</header>
+
+    <article  class="about">
+		<div class="folder">
+            <h3>Create Basic Page</h3>
+		</div>
+      <div class="panel panel-default" id="forms">
+        <div class="panel-heading">
+        </div>
+        <form>
+          <fieldset>
+            <legend>Legend</legend>
+            <div class="form-group">
+              <label for="inputTitle">Title*</label>
+              <input class="form-control" id="inputTitle" placeholder="My article title" type="text">
+            </div>
+            <div class="form-group">
+              <label for="inputBody">Body <a href="#" class="navbar-brand">(Edit summary)</a></label>
+               <textarea name="user_eingabe" id="inputBody" cols="50" rows="10"></textarea>
+            </div>
+            <button type="save" class="btn btn-default">Save</button>
+            <button type="preview" class="btn btn-default">Preview</button>
+          </fieldset>
+        </form>
+        <hr>
+      </div>
+
+    </article>
+}
+
