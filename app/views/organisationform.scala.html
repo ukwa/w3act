@@ -1,0 +1,52 @@
+@(title: String, user: User)
+
+@main(title, user){
+<header>
+    <hgroup>
+        <h2>Organisation</h2>
+    </hgroup>
+</header>
+
+    <article  class="about">
+		<div class="folder">
+            <h3>Create Organisation</h3>
+		</div>
+      <div class="panel panel-default" id="forms">
+        <div class="panel-heading">
+        </div>
+        <form>
+          <fieldset>
+            <legend>Legend</legend>
+            <div class="form-group">
+              <label for="inputName">Name*</label>
+              <input class="form-control" id="inputName" placeholder="My name" type="text">
+            </div>
+            <div class="form-group">
+              <label for="inputAbbreviation">Abbreviation*</label>
+              <input class="form-control" id="inputAbbreviation" placeholder="BL" type="text">
+              <label">An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc.</label>
+            </div>            
+            <div class="form-group">
+              <label for="inputDescription">Description <a href="#" class="navbar-brand">(Edit summary)</a></label>
+               <textarea name="user_eingabe" id="inputDescription" cols="50" rows="10"></textarea>
+            </div>
+            <div class="form-group">
+                <li>Revision information</li>
+                <li>New revision(active tab)</li>
+	            <div class="form-group">
+	              <label for="inputBody">Revision log message</a></label>
+	               <textarea name="revision_input" id="inputRevision" cols="50" rows="10"></textarea>
+        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+	            </div>
+			</div>
+            
+            <button type="save" class="btn btn-default">Save</button>
+            <button type="preview" class="btn btn-default">Preview</button>
+          </fieldset>
+        </form>
+        <hr>
+      </div>
+
+    </article>
+}
+

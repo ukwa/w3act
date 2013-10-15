@@ -1,0 +1,140 @@
+@(title: String, user: User)
+
+@main(title, user){
+<header>
+    <hgroup>
+        <h2>Web Site</h2>
+    </hgroup>
+</header>
+
+    <article  class="about">
+		<div class="folder">
+            <h3>Create Web Site</h3>
+		</div>
+      <div class="panel panel-default" id="forms">
+        <div class="panel-heading">
+        </div>
+        <form>
+          <fieldset>
+            <legend>Legend</legend>
+            <div class="form-group">
+              <label for="inputTitle">Title*</label>
+              <input class="form-control" id="inputTitle" placeholder="My title" type="text">
+            </div>
+            <div class="form-group">
+              <label for="inputUrls">URL(s)*</label>
+              <input class="form-control" id="inputUrls" placeholder="url1, url2" type="text">
+              <h4>One or more URLs.</h4>
+              <button type="item" class="btn btn-default">Add another item</button>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox">Key Site</label>
+                <br>
+                Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management. 
+            </div>
+            <div class="container">
+			   <div class="row">
+			     <h4>QA Status</h4>
+			  		<label class="radio-inline">
+			          <input name="radioGroup" id="radio1" value="N/A" type="radio"> N/A
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio2" value="No QA issues found" type="radio"> No QA issues found
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio3" value="QA issue" type="radio"> QA issue
+			        </label>			      
+			  	</div>
+			</div>
+            <div class="container">
+			   <div class="row">
+			     <h4>Live Site Status </h4>
+			  		<label class="radio-inline">
+			          <input name="radioGroup2" id="radio1" value="N/A" type="radio"> N/A
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup2" id="radio2" value="Still live" type="radio"> Still live 
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup2" id="radio3" value="No longer updated" type="radio"> No longer updated 
+			        </label>			      
+			        <label class="radio-inline">
+			          <input name="radioGroup2" id="radio4" value="Vanished" type="radio"> Vanished
+			        </label>			      
+			  	</div>
+			  	<br>If know, please add the current status of the site.
+			</div>							  
+            <div class="form-group">
+              <a href="#">Show row weights</a><br>
+              <Pre>              
+              <h5>Snapshots</h5>
+              <label for="inputTimestamp">Timestamp*</label>
+              <input class="form-control" id="inputTimestamp" placeholder="10123305092013" type="text">
+              <br>The fourteen character timestamp of this snapshot.
+              	<div class="row">
+			     <h4>QA Status</h4>
+			  		<label class="radio-inline">
+			          <input name="radioGroup" id="radio1" value="N/A" type="radio"> N/A
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio2" value="No QA issues found" type="radio"> No QA issues found
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio3" value="QA issue" type="radio"> QA issue
+			        </label>			      
+			  	</div>
+              <br>Quality status of this snapshot.
+              <button type="item" class="btn btn-default">Remove</button>
+            </div>
+            <div class="form-group">
+            	Captured Instances of this site.<br>
+            	<button type="item" class="btn btn-default">Add another item</button>
+            </div>
+			
+            <div class="form-group">
+              <label for="inputTags">Tags</label>
+              <input class="form-control" id="inputTags" placeholder="sport, science" type="text">
+              <label">Enter a comma-separated list of words to describe your content.</label>
+            </div>            
+            <div class="form-group">
+              <label for="inputBody">Body <a href="#" class="navbar-brand">(Edit summary)</a></label>
+               <textarea name="user_eingabe" id="inputBody" cols="50" rows="10"></textarea>
+            </div>
+            <div class="container">
+				  <h3>Text format</h3>
+				  <select id="mySel">
+				    <option>Filtered HTML</option>
+				    <option>Plain text</option>
+				  </select>
+				  <br>
+				  <a href="@routes.Tips.index">More information about text formats</a>
+			</div>
+            <div class="form-group">
+              <label for="exampleInputFile">File input</label>
+              <input id="exampleInputFile" type="file">
+              <button type="upload" class="btn btn-default">Upload</button>
+              <p class="help-block">Upload an image to go with this article.
+				Files must be less than 2 MB.
+				Allowed file types: png gif jpg jpeg.</p>
+            </div>
+            <div class="form-group">
+                <li>Revision information</li>
+                <li>New revision(active tab)</li>
+	            <div class="form-group">
+	              <label for="inputBody">Revision log message</a></label>
+	               <textarea name="revision_input" id="inputRevision" cols="50" rows="10"></textarea>
+        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+	            </div>
+			</div>
+            
+            <button type="save" class="btn btn-default">Save</button>
+            <button type="preview" class="btn btn-default">Preview</button>
+          </fieldset>
+        </form>
+        <hr>
+      </div>
+
+    </article>
+}
+
