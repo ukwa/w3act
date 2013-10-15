@@ -214,6 +214,20 @@ public class Target extends Model {
     	return res_str;
     }
 
+	/**
+	 * This method retrieves user name for the passed author URL.
+	 * @return
+	 */
+	public String get_user_by_id() {
+		String res = "";
+		try {
+			res = User.findByName(author).name;
+		} catch (Exception e) {
+			Logger.info("no user found for url: " + author + ". " + e);
+		}
+		return res;
+	}
+	
     public String toString() {
         return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 

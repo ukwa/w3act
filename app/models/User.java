@@ -82,6 +82,15 @@ public class User extends Model {
     }
     
     /**
+     * Retrieve a User by URL.
+     * @param url
+     * @return user name
+     */
+    public static User findByUrl(String url) {
+        return find.where().eq("url", url).findUnique();
+    }
+
+    /**
      * Authenticate a User.
      */
     public static User authenticate(String email, String password) {
