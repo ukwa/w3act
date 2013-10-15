@@ -221,7 +221,7 @@ public class Target extends Model {
 	public String get_user_by_id() {
 		String res = "";
 		try {
-			res = User.findByName(author).name;
+			res = User.findByUrl(author).name;
 		} catch (Exception e) {
 			Logger.info("no user found for url: " + author + ". " + e);
 		}
