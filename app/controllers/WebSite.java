@@ -33,7 +33,8 @@ public class WebSite extends Controller {
      */
     public static Result index() {
 		return ok(
-            website.render("Website", User.find.byId(request().username()))
+            website.render("Website", User.find.byId(request().username()), 
+            		models.Organisation.findInvolving(), models.DCollection.findInvolving())
         );
     }
 	
