@@ -3,6 +3,7 @@ package models;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -169,6 +170,23 @@ public class Target extends Model {
     	return res;
     }
     
+	/**
+	 * This method computes duplicates for target URLs.
+	 * @return duplicate count
+	 */
+	public int getDuplicateNumber() {
+		int res = 0;
+    	List<Target> allTargetList = find.all();
+    	Iterator<Target> itr = allTargetList.iterator();
+    	while (itr.hasNext()) {
+    		Target target = itr.next();
+    		if (target.field_url.equals(this.field_url)) {
+    			res++;
+    		}
+    	}
+		return res;
+	}
+	
 	public String get_field_list_as_str(String fieldName) {
     	List<String> res = new ArrayList<String>();
     	try {
