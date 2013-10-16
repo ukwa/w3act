@@ -46,6 +46,22 @@ public class UserEdit extends Controller {
             );
     }
     
+    public static Result sites(String url) {
+        return ok(
+                usersites.render(
+                        User.findByUrl(url)
+                )
+            );
+    }
+    
+    public static Result bookmarks(String url) {
+        return ok(
+                userbookmarks.render(
+                        User.findByUrl(url)
+                )
+            );
+    }
+    
     /**
      * Add a target.
      */

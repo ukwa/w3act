@@ -19,6 +19,13 @@ header {
     margin-left: 160px;
 }
 
+#usermenu {
+    position:absolute;
+    margin-left: 0px;
+    top:40px;
+    background-color: #00FF00;
+}
+
 /* navigation tree */
 .well {
 	max-width:180px;

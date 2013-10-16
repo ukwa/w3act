@@ -43,6 +43,7 @@ GET     /bookmarks                          controllers.Bookmarks.index()
 GET     /tips                               controllers.Tips.index()
 
 # Domain objects
-GET     /user/:user                     controllers.UserEdit.edit(user)
-#GET     /user/:edituser                     controllers.UserEdit.edit(edituser: models.User)
+GET     /user/:user                         controllers.UserEdit.edit(user)
+GET     /user/:usersites                    controllers.UserEdit.sites(usersites)
+GET     /user/:userbookmarks                controllers.UserEdit.bookmarks(userbookmarks)
 
