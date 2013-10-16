@@ -229,7 +229,7 @@ public class Target extends Model {
 	}
 	
     public String toString() {
-        return "Target(" + nid + ") with" + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
+        return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
         ", field_description: " + field_description + ", field_uk_postal_address_url: " + field_uk_postal_address_url +
         ", field_suggested_collections: " + field_suggested_collections + ", field_collections: " + field_collections +

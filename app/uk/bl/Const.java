@@ -40,7 +40,10 @@ public final class Const {
 	public static final String FIELD_AFFILIATION  = "field_affiliation";
 	public static final String JSON               = ".json";
 
-	public static final int STRING_LIMIT       = 50;
+	public static final int STRING_LIMIT          = 50;
+
+	// Elements in HTML forms
+	public static final String TITLE              = "title";
 	
 	// Types of the JSON nodes
 	public enum NodeType {

@@ -58,3 +58,7 @@ header {
 .nav .nav-list {
 	max-width:180px;
 }
+
+.body > .header > span {
+    left: 20;
+}

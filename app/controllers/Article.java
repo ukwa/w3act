@@ -26,8 +26,10 @@ import uk.bl.Const;
  * Describe W3ACT project.
  */
 @Security.Authenticated(Secured.class)
-public class Article extends Controller {
+public class Article extends AbstractController {
   
+	private static Target previewObj;
+	
     /**
      * Display the About tab.
      */
@@ -35,6 +37,34 @@ public class Article extends Controller {
 		return ok(
             article.render("Article", User.find.byId(request().username()))
         );
+    }
+    
+    public static Result preview() {
+		return ok(
+            articlepreview.render("ArticlePreview", User.find.byId(request().username()), previewObj)
+        );
+    }
+    
+    public static Result addArticle() {
+    	Result res;
+        Target target = new Target();
+        target.title = getFormParam(Const.TITLE);
+        target.summary = getFormParam(Const.SUMMARY);
+        UUID id = UUID.randomUUID();
+        Logger.info("id: " + id.toString());
+        target.nid = id.getMostSignificantBits();
+        String save = getFormParam("save");
+        String preview = getFormParam("preview");
+//        Logger.info("save: " + save + ", preview: " + preview);
+        if (save != null) {
+	        target.save();
+	        Logger.info("add article: " + target.toString());
+	        res = redirect(routes.Article.index());
+        } else {
+        	previewObj = target;
+	        res = redirect(routes.Article.preview());
+        }
+        return res;
     }
 	
 }

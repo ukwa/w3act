@@ -27,6 +27,7 @@ GET     /contact                            controllers.Contact.index()
 # Navigation
 GET     /addcontent                         controllers.AddContent.index()
 GET     /article                            controllers.Article.index()
+GET     /articlepreview                     controllers.Article.preview()
 GET     /basicpage                          controllers.BasicPage.index()
 GET     /organisationform                   controllers.OrganisationForm.index()
 GET     /specialcollection                  controllers.SpecialCollection.index()
@@ -46,4 +47,7 @@ GET     /tips                               controllers.Tips.index()
 GET     /user/:user                         controllers.UserEdit.edit(user)
 GET     /user/:usersites                    controllers.UserEdit.sites(usersites)
 GET     /user/:userbookmarks                controllers.UserEdit.bookmarks(userbookmarks)
+
+# Forms
+POST    /article/add-article                controllers.Article.addArticle()
 

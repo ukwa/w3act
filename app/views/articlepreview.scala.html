@@ -1,4 +1,4 @@
-@(title: String, user: User)
+@(title: String, user: User, target: Target)
 
 @main(title, user){
 <header>
@@ -9,7 +9,12 @@
 
     <article  class="about">
 		<div class="folder">
-            <h3>Create Article</h3>
+            <h3>Create Article Preview</h3>
+            <h5>Preview trimmed version</5>
+            <br>@target.title
+            <h5>Preview full version</5>
+            <br>@target.title
+            <br>@target.summary
 		</div>
       <div class="panel panel-default" id="forms">
         <div class="panel-heading">
