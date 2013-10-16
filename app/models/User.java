@@ -144,7 +144,7 @@ public class User extends Model {
 //			Logger.info(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
 			Period period = new Period(dt1, dt2);
 			PeriodFormatterBuilder formaterBuilder = new PeriodFormatterBuilder()
-		        .appendMonths().appendSeparator(" months ")
+		        .appendMonths().appendSuffix(" months ")
 		        .appendWeeks().appendSuffix(" weeks");
 			PeriodFormatter pf = formaterBuilder.toFormatter();
 //	        Logger.info(pf.print(period));

@@ -17,13 +17,62 @@
     </header>
     
     <article  class="targets">
-        <div class="folder">
-            <h3>@user.name</h3>
-            <br>Affiliation: @Organisation.findByUrl(user.field_affiliation).title
-            <br>History
-            <br>Member for 
-            <br>@user.calculate_membership()
-		</div>
+		<div class="panel panel-default" id="tables">
+            <div class="panel-heading"></div>
+            <table class="table table-striped table-bordered table-condensed">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Categories</th>
+                  <th>Subject</th>
+                  <th>By</th>
+                  <th>Crawled Instances</th>
+                  <th>Crawled URLs</th>
+                </tr>
+              </thead>
+              <tbody>
+              	@Target.findAll().map { target =>		              
+                <tr>
+                  <td><a class="brand" href="@target.url">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+                  <td>@target.field_collection_categories</td>
+                  <td>@target.field_subject</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+	        <div class="col-lg-6">
+	          <div class="panel panel-default" id="pagination">
+	            <div class="panel-heading">Pagination
+	            </div>
+	            <ul class="pagination" style="margin-right: 10px;">
+	              <li>
+	                <a href="#">Prev</a>
+	              </li>
+	              <li>
+	                <a href="#">1</a>
+	              </li>
+	              <li>
+	                <a href="#">2</a>
+	              </li>
+	              <li>
+	                <a href="#">3</a>
+	              </li>
+	              <li>
+	                <a href="#">4</a>
+	              </li>
+	              <li>
+	                <a href="#">Next</a>
+	              </li>
+	            </ul>
+	          </div>
+          </div>
+         </div>
+
     </article>
     
 }
