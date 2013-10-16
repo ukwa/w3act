@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.avaje.ebean.ExpressionList;
+
 import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -124,6 +126,13 @@ public class Target extends Model {
      */
     public static List<Target> findAll() {
 	    return find.all();
+	}
+
+    public static List<Target> findAllforUser(String url) {
+    	List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().eq("author", url);
+        res = ll.findList();
+        return res;
 	}
 
     /**

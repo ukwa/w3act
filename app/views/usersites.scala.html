@@ -16,7 +16,7 @@
         </div>
     </header>
     
-    <article  class="targets">
+    <article  class="userdetails">
 		<div class="panel panel-default" id="tables">
             <div class="panel-heading"></div>
             <table class="table table-striped table-bordered table-condensed">
@@ -31,12 +31,12 @@
                 </tr>
               </thead>
               <tbody>
-              	@Target.findAll().map { target =>		              
+              	@Target.findAllforUser(user.url).map { target =>		              
                 <tr>
                   <td><a class="brand" href="@target.url">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
                   <td>@target.field_collection_categories</td>
                   <td>@target.field_subject</td>
-                  <td></td>
+                  <td><a href="@target.author">@User.findByUrl(target.author).name</a></td>
                   <td></td>
                   <td></td>
                 </tr>

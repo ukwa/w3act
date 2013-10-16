@@ -1,5 +1,4 @@
 dl {
-    /*margin-bottom: 20px;*/
     margin-left: 200px;
     position: absolute;
     right: 0;
@@ -32,24 +31,6 @@ header {
 	background: none repeat scroll 0 0 #E1E7EC;
 }
 
-/*
-.sub .nav {
-    max-height:10px !important;
-}
-
-.nav .nav-list {
-    max-height:10px;
-}
-
-.tree-toggle .nav-header > a {
-    max-height:10px;
-}*/
-
-/*.nav > li {
-    line-height: 50%;
-    font-size: 12;
-}*/
-
 .subnav {
     line-height: 90%;
     font-size: 12;
@@ -62,3 +43,13 @@ header {
 .body > .header > span {
     left: 20;
 }
+
+#main > .userdetails {
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    padding: 20px;
+    position: absolute;
+    right: 0;
+    top: 90px;
+}}
