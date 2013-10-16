@@ -1,0 +1,30 @@
+@(user: User)
+
+
+@main("", user){
+    
+    <header>
+        <hgroup>
+            <h2>User Edit</h2>
+        </hgroup>
+        <div id="menu">
+			<ul class="nav nav-tabs">
+			   <li><a href="@routes.About.index" class="navbar-brand">View</a></li>
+			   <li><a href="@routes.DCollections.index()" class="navbar-brand">My Sites</a></li> 
+			   <li><a href="@routes.Targets.index()" class="navbar-brand">Bookmarks</a></li>
+			</ul>
+        </div>
+    </header>
+    
+    <article  class="targets">
+        <div class="folder">
+            <h3>@user.name</h3>
+            <br>Affiliation: @Organisation.findByUrl(user.field_affiliation).title
+            <br>History
+            <br>Member for 
+            <br>@user.calculate_membership()
+		</div>
+    </article>
+    
+}
+

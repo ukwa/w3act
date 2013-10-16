@@ -1,8 +1,22 @@
 package models;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.persistence.*;
+
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+import org.joda.time.Months;
+import org.joda.time.Period;
+import org.joda.time.Seconds;
+import org.joda.time.Weeks;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import play.Logger;
 import play.db.ebean.*;
@@ -88,6 +102,8 @@ public class User extends Model {
      * @return user name
      */
     public static User findByUrl(String url) {
+//    	User tmp = find.where().eq("url", url).findUnique();
+//    	Logger.info("findByUrl: " + tmp.toString());
         return find.where().eq("url", url).findUnique();
     }
 
@@ -101,6 +117,43 @@ public class User extends Model {
             .findUnique();
     }
     
+    /**
+     * This method calculates memership period for the user.
+     * @return
+     */
+    public String calculate_membership() {
+    	String res = "";
+//    	Logger.info("created: " + created + ", last_access: " + last_access + ", last_login: " + last_login);
+    	try {
+    		long timestampCreated = Long.valueOf(created);
+    		Date dateCreated = new Date(timestampCreated * 1000);
+    		long timestampLastAccess = Long.valueOf(last_access);
+    		Date dateLastAccess = new Date(timestampLastAccess * 1000);
+			Logger.info("date created: " + dateCreated);
+			Logger.info("date last access: " + dateLastAccess);
+			 
+			DateTime dt1 = new DateTime(dateCreated);
+			DateTime dt2 = new DateTime(dateLastAccess);
+	 
+//			Logger.info(Months.monthsBetween(dt1, dt2).getMonths() + " months, ");
+//			Logger.info(Weeks.weeksBetween(dt1, dt2).getWeeks() + " weeks, ");			
+//			Logger.info(Weeks.weeksBetween(dt1, dt2).toPeriod() + " period, ");
+//			Logger.info(Days.daysBetween(dt1, dt2).getDays() + " days, ");
+//			Logger.info(Hours.hoursBetween(dt1, dt2).getHours() % 24 + " hours, ");
+//			Logger.info(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60 + " minutes, ");
+//			Logger.info(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
+			Period period = new Period(dt1, dt2);
+			PeriodFormatterBuilder formaterBuilder = new PeriodFormatterBuilder()
+		        .appendMonths().appendSeparator(" months ")
+		        .appendWeeks().appendSuffix(" weeks");
+			PeriodFormatter pf = formaterBuilder.toFormatter();
+//	        Logger.info(pf.print(period));
+	        res = pf.print(period);
+		} catch (Exception e) {
+			Logger.info("date difference calculation error: " + e);
+		}
+    	return res;
+    }
     // --
     
     public String toString() {

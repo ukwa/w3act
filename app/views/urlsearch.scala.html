@@ -53,7 +53,7 @@
 		                <tr>
 		                  <td><a class="brand" href="@target.url">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 		                  <td>@target.field_crawl_frequency</td>
-		                  <td>@target.get_user_by_id()</td>
+		                  <td><a class="brand" href="@routes.UserEdit.edit(target.author)">@target.get_user_by_id()</a></td>
 		                  <td>QA issue</td>
 		                </tr>
 		                }

@@ -84,6 +84,15 @@ public class Organisation extends Model {
         return newName;
     }
         
+    /**
+     * Retrieve an organisation name by URL.
+     * @param url
+     * @return organisation name
+     */
+    public static Organisation findByUrl(String url) {
+        return find.where().eq("url", url).findUnique();
+    }
+
     public String toString() {
         return "Organisation(" + nid + ") with title: " + title + 
         	", format: " + format + ", summary: " + summary + ", value: " + value;

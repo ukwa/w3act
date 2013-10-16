@@ -41,3 +41,8 @@ GET     /urlsnocrawl                        controllers.UrlsNoCrawl.index()
 GET     /taxonomies                         controllers.EditTaxonomies.index()
 GET     /bookmarks                          controllers.Bookmarks.index()
 GET     /tips                               controllers.Tips.index()
+
+# Domain objects
+GET     /user/:user                     controllers.UserEdit.edit(user)
+#GET     /user/:edituser                     controllers.UserEdit.edit(edituser: models.User)
+
