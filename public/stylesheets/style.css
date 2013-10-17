@@ -40,7 +40,17 @@ header {
     top: 40px;
 }
 
-#main > .collections {
+#main > .collections { 
+    position: absolute;
+    top: 40px;
+}
+
+#main > .duplicateurls {
+    position: absolute;
+    top: 40px;
+}
+
+#main > .keysites {
     position: absolute;
     top: 40px;
 }

@@ -45,9 +45,10 @@ GET     /tips                               controllers.Tips.index()
 
 # Domain objects
 GET     /user/:user                         controllers.UserEdit.edit(user)
-GET     /usersites/:usersites                    controllers.UserEdit.sites(usersites)
-GET     /userbookmarks/:userbookmarks                controllers.UserEdit.bookmarks(userbookmarks)
+GET     /usersites/:usersites               controllers.UserEdit.sites(usersites)
+GET     /userbookmarks/:userbookmarks       controllers.UserEdit.bookmarks(userbookmarks)
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()
+POST    /keysites/filter-url                controllers.KeySites.filterUrl()
 

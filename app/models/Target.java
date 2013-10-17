@@ -198,6 +198,22 @@ public class Target extends Model {
 		return res;
 	}
 	
+	/**
+	 * This method filters targets by given URLs.
+	 * @return duplicate count
+	 */
+	public static List<Target> filterUrl(String url) {
+		List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().contains("field_url", url);
+    	res = ll.findList();
+		return res;
+	}
+	
+	/**
+	 * This method retrieves value of the list field.
+	 * @param fieldName
+	 * @return list of strings as a String
+	 */
 	public String get_field_list_as_str(String fieldName) {
     	List<String> res = new ArrayList<String>();
     	try {
