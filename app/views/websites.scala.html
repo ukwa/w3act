@@ -31,65 +31,62 @@
 				        <hr>
 				      </div>
 		          </div>
-		        <div class="web-sites-table">
-			
-			<ul class="list">
-				<div id="tables">
-					<script >
-							$(function() {
-							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
-							});
-					</script>
-					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
-		              <thead>
-		                <tr>
-		                  <th>Title</th>
-		                  <th>Author</th>
-		                  <th>Organisation</th>
-		                </tr>
-		              </thead>
-		              <tbody>
-		              	@targets.map { target =>		              
-		                <tr>
-		                  <td><a href="#">@target.title</a></td>
-		                  <td><a href="@target.author">@User.findByUrl(target.author).name</a></td>
-		                  <td>@target.field_nominating_organisation</td>
-		                </tr>
-		                }
-		              </tbody>
-		            </table>
-		          </div>
-		          <div class="row">
-			        <div class="col-lg-6">
-			          <div class="panel panel-default" id="pagination">
-			            <div class="panel-heading">Pagination
-			            </div>
-			            <ul class="pagination" style="margin-right: 10px;">
-			              <li>
-			                <a href="#">Prev</a>
-			              </li>
-			              <li>
-			                <a href="#">1</a>
-			              </li>
-			              <li>
-			                <a href="#">2</a>
-			              </li>
-			              <li>
-			                <a href="#">3</a>
-			              </li>
-			              <li>
-			                <a href="#">4</a>
-			              </li>
-			              <li>
-			                <a href="#">Next</a>
-			              </li>
-			            </ul>
-			          </div>
-		          </div>
-		         </div>
-		          	
+		        <div class="web-sites-table">			
+					<ul class="list">
+						<div id="tables">
+							<script >
+									$(function() {
+									$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+									});
+							</script>
+							<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
+				              <thead>
+				                <tr>
+				                  <th>Title</th>
+				                  <th>Author</th>
+				                  <th>Organisation</th>
+				                </tr>
+				              </thead>
+				              <tbody>
+				              	@targets.map { target =>		              
+				                <tr>
+				                  <td><a href="#">@target.title</a></td>
+				                  <td><a href="@target.author">@User.findByUrl(target.author).name</a></td>
+				                  <td>@target.field_nominating_organisation</td>
+				                </tr>
+				                }
+				              </tbody>
+				            </table>
+				          </div>
+				          <div class="row">
+					        <div class="col-lg-6">
+					          <div class="panel panel-default" id="pagination">
+					            <div class="panel-heading">Pagination
+					            </div>
+					            <ul class="pagination" style="margin-right: 10px;">
+					              <li>
+					                <a href="#">Prev</a>
+					              </li>
+					              <li>
+					                <a href="#">1</a>
+					              </li>
+					              <li>
+					                <a href="#">2</a>
+					              </li>
+					              <li>
+					                <a href="#">3</a>
+					              </li>
+					              <li>
+					                <a href="#">4</a>
+					              </li>
+					              <li>
+					                <a href="#">Next</a>
+					              </li>
+					            </ul>
+					          </div>
+				          </div>
+				      </div>
 		        </div>
-		          
 	          </div>
 			</ul>
 		</div>

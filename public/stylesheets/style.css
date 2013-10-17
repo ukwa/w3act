@@ -35,6 +35,16 @@ header {
     top: 40px;
 }
 
+#main > .organisations {
+    position: absolute;
+    top: 40px;
+}
+
+#main > .collections {
+    position: absolute;
+    top: 40px;
+}
+
 /* navigation tree */
 .well {
 	max-width:180px;

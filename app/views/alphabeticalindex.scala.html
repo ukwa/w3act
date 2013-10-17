@@ -35,8 +35,12 @@
 			<br>(2) | " (2) | 1 (3) | 2 (1) | 3 (2) | 4 (1) | 5 (1) | 6 (1) | A (97) | B (299) | C (257) | D (199) | E (110) | F (80) | G (116) | H (286) | I (110) | J (23) | K (49) | L (151) | M (144) | N (621) | O (57) | P (116) | Q (3) | R (123) | S (319) | T (237) | U (55) | V (20) | W (149) | Y (20) | Z (1) | [ (1) 
 			<ul class="list">
 				<div class="panel panel-default" id="tables">
-		            <div class="panel-heading"></div>
-		            <table class="table table-striped table-bordered table-condensed">
+					<script >
+							$(function() {
+							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+							});
+					</script>
+					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
 		              <thead>
 		                <tr>
 		                  <th>Title</th>
@@ -55,7 +59,7 @@
 		                  	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url= http://@target.get_field_list_as_str("field_url")">(archival),</a>
 		                  	<a class="brand" href="@target.get_field_list_as_str("field_url")">(live)</a></td>
 		                  <td>0</td>
-		                  <td>@target.author</td>
+		                  <td><a href="@target.author">@User.findByUrl(target.author).name</a></td>
 		                  <td>@target.field_subject</td>
 		                  <td>@target.field_nominating_organisation</td>
 		                </tr>

@@ -185,14 +185,16 @@ public class Target extends Model {
 	 */
 	public int getDuplicateNumber() {
 		int res = 0;
-    	List<Target> allTargetList = find.all();
-    	Iterator<Target> itr = allTargetList.iterator();
-    	while (itr.hasNext()) {
-    		Target target = itr.next();
-    		if (target.field_url.equals(this.field_url)) {
-    			res++;
-    		}
-    	}
+        ExpressionList<Target> ll = find.where().eq("field_url", this.field_url);
+        res = ll.findRowCount();
+//    	List<Target> allTargetList = find.all();
+//    	Iterator<Target> itr = allTargetList.iterator();
+//    	while (itr.hasNext()) {
+//    		Target target = itr.next();
+//    		if (target.field_url.equals(this.field_url)) {
+//    			res++;
+//    		}
+//    	}
 		return res;
 	}
 	

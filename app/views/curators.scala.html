@@ -16,13 +16,17 @@
 			<ul class="list">
 				<div class="panel panel-default" id="tables">
 		            <div class="panel-heading"></div>
-		            <table class="table table-striped table-bordered table-condensed">
+		            <script >
+							$(function() {
+							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+							});
+					</script>
+					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
 		              <tbody>
 		              	@curators.map { curator =>		              
 		                <tr>
-		                  <td>@curator.name</td>
+		                  <td><a href="@curator.url">@curator.name</a></td>
 		                  <td>E-mail: @curator.email</td>
-		                  <!--<td><p><img src="aristoteles.jpg"></p></td>-->
 		                  <td><p><img src="http://www.webarchive.org.uk/act/sites/192.168.45.11.act/files/styles/thumbnail/public/pictures/picture-61-1360164183.jpg?itok=WJ9z5-oy" alt="Home" /></p></td>
 		                </tr>
 		                }

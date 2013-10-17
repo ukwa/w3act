@@ -21,8 +21,12 @@
 			
 			<ul class="list">
 				<div class="panel panel-default" id="tables">
-		            <div class="panel-heading"></div>
-		            <table class="table table-striped table-bordered table-condensed">
+					<script >
+							$(function() {
+							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+							});
+					</script>
+					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
 		              <thead>
 		                <tr>
 		                  <th>URL Count</th>
@@ -32,8 +36,10 @@
 		              <tbody>
 		              	@targets.map { target =>		              
 		                <tr>
+                          @if(target.getDuplicateNumber() > 1) { 
 		                  <td>@target.getDuplicateNumber()</td>
 		                  <td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+						}	
 		                </tr>
 		                }
 		              </tbody>
