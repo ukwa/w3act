@@ -23,7 +23,7 @@ public class Curators extends Controller {
     public static Result index() {
         return ok(
             curators.render(
-                "Collections", User.find.byId(request().username()), models.User.findAll()
+                "Curators", User.find.byId(request().username()), models.User.findAll()
             )
         );
     }

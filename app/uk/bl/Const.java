@@ -44,6 +44,7 @@ public final class Const {
 
 	// Elements in HTML forms
 	public static final String TITLE              = "title";
+	public static final String FILTER             = "filter";
 	
 	// Types of the JSON nodes
 	public enum NodeType {

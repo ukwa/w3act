@@ -53,4 +53,6 @@ POST    /article/add-article                controllers.Article.addArticle()
 POST    /keysites/filter-url                controllers.KeySites.filterUrl()
 POST    /urlsearch/filter-url               controllers.UrlSearch.filterUrl()
 POST    /urlsnocrawl/filter-url             controllers.UrlsNoCrawl.filterUrl()
+POST    /targets/filter                     controllers.Targets.filterUrl()
+#POST    /targets/filter-subjects            controllers.Targets.getSubjects()
 

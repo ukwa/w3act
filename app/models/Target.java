@@ -187,14 +187,28 @@ public class Target extends Model {
 		int res = 0;
         ExpressionList<Target> ll = find.where().eq("field_url", this.field_url);
         res = ll.findRowCount();
-//    	List<Target> allTargetList = find.all();
-//    	Iterator<Target> itr = allTargetList.iterator();
-//    	while (itr.hasNext()) {
-//    		Target target = itr.next();
-//    		if (target.field_url.equals(this.field_url)) {
-//    			res++;
-//    		}
-//    	}
+		return res;
+	}
+	
+	/**
+	 * This method computes a number of targets per user for given user URL.
+	 * @return
+	 */
+	public static int getTargetNumberByCuratorUrl(String url) {
+		int res = 0;
+        ExpressionList<Target> ll = find.where().eq("author", url);
+        res = ll.findRowCount();
+		return res;
+	}
+	
+	/**
+	 * This method computes a number of targets per organisation for given organisation URL.
+	 * @return
+	 */
+	public static int getTargetNumberByOrganisationUrl(String url) {
+		int res = 0;
+        ExpressionList<Target> ll = find.where().eq("field_nominating_organisation", url);
+        res = ll.findRowCount();
 		return res;
 	}
 	
@@ -207,6 +221,28 @@ public class Target extends Model {
         ExpressionList<Target> ll = find.where().contains("field_url", url);
     	res = ll.findList();
 		return res;
+	}
+	
+	/**
+	 * This method filters targets by given URLs.
+	 * @return duplicate count
+	 */
+	public static List<String> getSubjects() {
+		List<Target> res = new ArrayList<Target>();
+		List<String> subjects = new ArrayList<String>();
+		List<Target> allTargets = find.all();
+		Iterator<Target> itr = allTargets.iterator();
+		while (itr.hasNext()) {
+			Target target = itr.next();
+			if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
+		        ExpressionList<Target> ll = find.where().contains("field_subject", target.field_subject);
+		        if (ll.findRowCount() > 0) {
+		        	subjects.add(target.field_subject);
+		        }
+			}
+		}
+    	return subjects;
+//		return res;
 	}
 	
 	/**

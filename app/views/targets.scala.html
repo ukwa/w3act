@@ -1,4 +1,4 @@
-@(title: String, user: User, targets: List[Target], curators: List[User])
+@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation])
 
 @main(title, user){
     
@@ -8,7 +8,7 @@
         </hgroup>
     </header>
     
-    <article  class="targets">
+    <article class="targets">
 		<div class="folder">
 			<header>
 				<span class="loader">Loading</span>
@@ -19,11 +19,10 @@
 		            <div class="panel-heading">Filter by search term:
 		            </div>
 				      <div class="panel panel-default" id="forms">
-				        <form>
+				        <form class="filter-form" action="@routes.Targets.filterUrl()" method="POST">
 				          <fieldset>
-				            <legend>Legend</legend>
 				            <div class="form-group">
-				              <input class="form-control" id="inputName" placeholder="Subject" type="text">
+				              <input class="form-control" id="inputName" name="filter" placeholder="Subject" type="text">
 				            </div>
 				            <button type="submit" class="btn btn-default">Search</button>
 				          </fieldset>
@@ -34,8 +33,10 @@
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by subject:
 		            </div>
-		            <div class="panel-footer">This is a subject
+		            @for(subjecttarget <- Targets.getSubjects()) {
+		            <div class="panel-footer">@subjecttarget.field_subject
 		            </div>
+		            }
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by crawl frequency:
@@ -58,8 +59,10 @@
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by scope:
 		            </div>
-		            <div class="panel-footer">This is a scope
+		            @for(scopetarget <- Targets.getScope()) {
+		            <div class="panel-footer">@scopetarget.field_scope
 		            </div>
+		            }
 		          </div>
 		        </div>
 		        <div class="col-lg-6">
@@ -122,15 +125,19 @@
 		            <div class="panel-heading">Filter by curator:
 		            </div>
 		            @curators.map { curator =>		              
-			            <div class="panel-footer"><a class="brand" href="@curator.name">@curator.name</a>
+			            <div class="panel-footer"><a class="brand" href="@curator.url">
+			            	@curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())</a>
 			            </div>
 		                }
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by nominating organisation:
 		            </div>
-		            <div class="panel-footer">This is an organisation
-		            </div>
+		            @organisations.map { organisation =>		              
+			            <div class="panel-footer"><a class="brand" href="@organisation.url">
+			            	@organisation.title &nbsp;(@organisation.getTargetNumberByOrganisationUrl())</a>
+			            </div>
+		                }
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by collection categories:

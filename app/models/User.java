@@ -154,7 +154,16 @@ public class User extends Model {
 		}
     	return res;
     }
-    // --
+    
+    /**
+     * This method calculates target number for given user URL.
+     * @return
+     */
+    public int getTargetNumberByCuratorUrl() {
+    	int res = 0;
+    	res = Target.getTargetNumberByCuratorUrl(this.url);
+    	return res;
+    }
     
     public String toString() {
         return "User(" + name + ")" + ", url:" + url;
