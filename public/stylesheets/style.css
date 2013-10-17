@@ -55,6 +55,12 @@ header {
     top: 40px;
 }
 
+#main > .filter-form {
+    margin-left: 100px;
+    position: absolute;
+    top: 10px;
+}
+
 /* navigation tree */
 .well {
 	max-width:180px;

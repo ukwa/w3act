@@ -29,7 +29,6 @@ public class KeySites extends AbstractController {
     }
 
     public static Result filterUrl() {
-    	Result res;
         String url = getFormParam(Const.URL);
 //        Target.fi
 //        target.summary = getFormParam(Const.SUMMARY);
@@ -52,7 +51,6 @@ public class KeySites extends AbstractController {
                     "KeySites", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll()
                 )
             );
-//        return res;
     }
 	
 }

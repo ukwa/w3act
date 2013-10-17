@@ -13,20 +13,16 @@
             <h3>URLs With No Crawl Permissions</h3>
 		</div>
 		<div class="folder">
-			<header>
-				<span class="loader">Loading</span>
-			</header>
 			<div class="row">
-		        <div class="col-lg-2">	        
-		          <div class="panel panel-primary" id="panels">
+		          <div class="panel panel-primary col-lg-6" id="panels">
 		            <div class="panel-heading">URL
 		            </div>
-				      <div class="panel panel-default" id="forms">
-				        <form>
+				      <div class="panel panel-default col-lg-6" id="forms">
+			        	<form class="filter-form" action="@routes.UrlsNoCrawl.filterUrl()" method="POST">
 				          <fieldset>
 				            <legend>Legend</legend>
 				            <div class="form-group">
-				              <input class="form-control" id="inputName" placeholder="Subject" type="text">
+				              <input class="form-control" id="inputName" name="url" placeholder="http://www.bbc.co.uk" type="text">
 				              Enter URL to search for, e.g. 'http://www.bbc.co.uk' 
 				            </div>
 				            <button type="submit" class="btn btn-default">Apply</button>
@@ -36,10 +32,13 @@
 				      </div>
 		          </div>
 		        <div class="col-lg-6">
-			<ul class="list">
-				<div class="panel panel-default" id="tables">
-		            <div class="panel-heading"></div>
-		            <table class="table table-striped table-bordered table-condensed">
+				<ul class="list">
+					<script >
+							$(function() {
+							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+							});
+					</script>
+					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
 		              <thead>
 		                <tr>
 		                  <th>Title</th>
@@ -59,7 +58,6 @@
 		                }
 		              </tbody>
 		            </table>
-		          </div>
 		          <div class="row">
 			        <div class="col-lg-6">
 			          <div class="panel panel-default" id="pagination">

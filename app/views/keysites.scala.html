@@ -14,19 +14,16 @@
 		</div>
 		<div class="folder">
 			<div class="row">
-	          <div class="panel panel-primary" id="panels">
+	          <div class="panel panel-primary col-lg-6" id="panels">
 	            <div class="panel-heading">URL
 	            </div>
-			      <div class="panel panel-default" id="forms">
+			      <div class="panel panel-default col-lg-6" id="forms">
 			        <form class="filter-form" action="@routes.KeySites.filterUrl()" method="POST">
-			          <fieldset>
-			            <legend>Legend</legend>
-			            <div class="form-group">
-			              <input class="form-control" id="inputName" name="url" placeholder="http://www.bbc.co.uk" type="text">
-			              Enter URL to search for, e.g. 'http://www.bbc.co.uk' 
+			            <div class="filter-group">
+			              <input class="filter-control" id="inputName" name="url" placeholder="http://www.bbc.co.uk" type="text">
+			              <br>Enter URL to search for, e.g. 'http://www.bbc.co.uk' 
 			            </div>
 			            <button type="submit" class="btn btn-default">Apply</button>
-			          </fieldset>
 			        </form>
 			        <hr>
 		        </div>
