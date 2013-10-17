@@ -25,6 +25,16 @@ header {
     background-color: #00FF00;
 }
 
+.web-sites-table {
+    position: absolute;
+    min-width: 800px;
+}
+
+#main > .about {
+    position: absolute;
+    top: 40px;
+}
+
 /* navigation tree */
 .well {
 	max-width:180px;
@@ -34,6 +44,14 @@ header {
 .subnav {
     line-height: 90%;
     font-size: 12;
+}
+
+.col-lg-2 {
+    line-height: 80%;
+}
+
+.col-lg-6 {
+    width: 60%;
 }
 
 .nav .nav-list {
