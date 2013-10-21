@@ -41,20 +41,26 @@
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by crawl frequency:
 		            </div>
-		            <div class="panel-footer">This is a crawl frequency
+		            @for(scopetarget <- Targets.getCrawlFrequency()) {
+		            <div class="panel-footer">@scopetarget.field_crawl_frequency
 		            </div>
+		            }
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by depth:
 		            </div>
-		            <div class="panel-footer">This is a depth
+		            @for(scopetarget <- Targets.getDepth()) {
+		            <div class="panel-footer">@scopetarget.field_depth
 		            </div>
+		            }
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by license:
 		            </div>
-		            <div class="panel-footer">This is a license
+		            @for(scopetarget <- Targets.getLicense()) {
+		            <div class="panel-footer">@scopetarget.field_license
 		            </div>
+		            }
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by scope:
@@ -126,7 +132,7 @@
 		            </div>
 		            @curators.map { curator =>	
 		                @if(curator.url != null) {       
-			            <div class="panel-footer"><a class="brand" href="@routes.UserEdit.edit(curator.url)">
+			            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curator.url)">
 			            	@curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())</a>
 			            </div>
 			            }
@@ -144,8 +150,10 @@
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by collection categories:
 		            </div>
-		            <div class="panel-footer">This is collection categories
+		            @for(scopetarget <- Targets.getCollectionCategories()) {
+		            <div class="panel-footer">@scopetarget.name
 		            </div>
+		            }
 		          </div>
 		          
 		        </div>

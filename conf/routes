@@ -49,6 +49,7 @@ GET     /usersites/:usersites               controllers.UserEdit.sites(usersites
 GET     /userbookmarks/:userbookmarks       controllers.UserEdit.bookmarks(userbookmarks)
 GET     /organisation/:organisation         controllers.OrganisationEdit.view(organisation)
 GET     /organisationedit/:organisation     controllers.OrganisationEdit.edit(organisation)
+GET     /targets/:user                      controllers.Targets.edit(user)
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()

@@ -241,6 +241,17 @@ public class Target extends Model {
 	}
 	
 	/**
+	 * This method filters targets by given User URLs.
+	 * @return duplicate count
+	 */
+	public static List<Target> filterUserUrl(String url) {
+		List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().contains("author", url);
+    	res = ll.findList();
+		return res;
+	}
+	
+	/**
 	 * This method filters targets by given URLs.
 	 * @return duplicate count
 	 */
