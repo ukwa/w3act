@@ -57,6 +57,7 @@ POST    /dispensationsites/filter-url       controllers.DispensationSites.filter
 POST    /keysites/filter-url                controllers.KeySites.filterUrl()
 POST    /urlsearch/filter-url               controllers.UrlSearch.filterUrl()
 POST    /urlsnocrawl/filter-url             controllers.UrlsNoCrawl.filterUrl()
+POST    /websites/filter-url                controllers.WebSites.filterUrl()
 POST    /targets/filter                     controllers.Targets.filterUrl()
 #POST    /targets/filter-subjects            controllers.Targets.getSubjects()
 

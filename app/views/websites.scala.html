@@ -14,23 +14,24 @@
 				<span class="loader">Loading</span>
 			</header>
 			<div class="row">
-		        <div class="col-lg-6">	        
-		          <div class="panel panel-primary" id="panels">
+				<div class="panel panel-primary col-lg-6" id="panels">
 		            <div class="panel-heading">Filter by search term:
 		            </div>
-				      <div class="panel panel-default" id="forms">
-				        <form>
-				          <fieldset>
-				            <legend>Legend</legend>
-				            <div class="form-group">
-				              <input class="form-control" id="inputName" placeholder="Subject" type="text">
+				      <div class="panel panel-default col-lg-6" id="forms">
+				        <form class="filter-form" action="@routes.WebSites.filterUrl()" method="POST">
+				            <div class="filter-group">
+				              <input class="filter-control" id="inputName" name="url" placeholder="blue" type="text">
+				              <br>Enter term to search for, e.g. 'blue'. You must include at least one positive keyword with 3 characters or more.
 				            </div>
 				            <button type="submit" class="btn btn-default">Apply</button>
-				          </fieldset>
 				        </form>
 				        <hr>
-				      </div>
-		          </div>
+			        </div>
+		        </div>
+			
+			
+			
+		        <div class="col-lg-6">	        
 		        <div class="web-sites-table">			
 					<ul class="list">
 						<div id="tables">

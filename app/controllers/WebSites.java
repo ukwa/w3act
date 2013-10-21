@@ -8,14 +8,14 @@ import static play.data.Form.*;
 import java.util.*;
 
 import models.*;
-
+import uk.bl.Const;
 import views.html.*;
 
 /**
  * Manage targets.
  */
 @Security.Authenticated(Secured.class)
-public class WebSites extends Controller {
+public class WebSites extends AbstractController {
   
     /**
      * Display the targets.
@@ -29,35 +29,17 @@ public class WebSites extends Controller {
     }
 
     /**
-     * Add a target.
+     * This method is used for filtering where "url" is an input field from form.
+     * @return
      */
-    public static Result add() {
-        Target newTarget = Target.create(
-            "New target", 
-            "url"
-        );
-        return null;
-    }
-    
-    /**
-     * Rename a target.
-     */
-    public static Result rename(Long target) {
+    public static Result filterUrl() {
+        String url = getFormParam(Const.URL);
         return ok(
-            Target.rename(
-                target, 
-                form().bindFromRequest().get("title")
-            )
-        );
+                websites.render(
+                    "WebSites", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll()
+                )
+            );
     }
-    
-    /**
-     * Delete a target.
-     */
-    public static Result delete(Long target) {
-        Target.find.ref(target).delete();
-        return ok();
-    }
-    
+	
 }
 
