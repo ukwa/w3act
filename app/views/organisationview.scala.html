@@ -1,0 +1,88 @@
+@(organisation: Organisation, user: User)
+
+
+@main("", user){
+    
+    <header>
+        <hgroup>
+            <h2>Organisation View</h2>
+        </hgroup>
+        <div id="usermenu">
+			<ul class="nav nav-tabs">
+			   <li><a href="@routes.OrganisationEdit.view(organisation.url)" class="navbar-brand">View</a></li>
+			   <li><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand">Edit</a></li> 
+			</ul>
+        </div>
+    </header>
+    
+    <article class="organisationdetails">
+        <div class="folder">
+            <h3>@organisation.title</h3>
+		</div>
+		<script >
+				$(function() {
+				$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+				});
+		</script>
+		<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Categories</th>
+                  <th>Subject</th>
+                  <th>By</th>
+                  <th>Crawled Instances</th>
+                  <th>Crawled URLs</th>
+                </tr>
+              </thead>
+              <tbody>
+              	@Target.findAllforOrganisation(organisation.url).map { target =>		              
+                <tr>
+                  <td><a class="brand" href="@target.url">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+                  @if(target.field_collection_categories != null && Taxonomy.findByUrl(target.field_collection_categories).name != null) { 
+	                  <td>@Taxonomy.findByUrl(target.field_collection_categories).name</td>
+                  } else {
+	                  <td></td>
+                  }	
+                  <td>@target.field_subject</td>
+                  @if(target.field_nominating_organisation != null) { 
+    	              <td><a href="@routes.OrganisationEdit.edit(target.field_nominating_organisation)">@User.findByUrl(target.author).name</a></td>
+                  } else {
+	                  <td></td>
+                  }	
+                  <td></td>
+                  <td></td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          <div class="row">
+	        <div class="col-lg-6">
+	          <div class="panel panel-default" id="pagination">
+	            <div class="panel-heading">Pagination
+	            </div>
+	            <ul class="pagination" style="margin-right: 10px;">
+	              <li>
+	                <a href="#">Prev</a>
+	              </li>
+	              <li>
+	                <a href="#">1</a>
+	              </li>
+	              <li>
+	                <a href="#">2</a>
+	              </li>
+	              <li>
+	                <a href="#">3</a>
+	              </li>
+	              <li>
+	                <a href="#">4</a>
+	              </li>
+	              <li>
+	                <a href="#">Next</a>
+	              </li>
+	            </ul>
+	          </div>
+          </div>
+    
+}
+

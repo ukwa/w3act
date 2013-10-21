@@ -47,10 +47,13 @@ GET     /tips                               controllers.Tips.index()
 GET     /user/:user                         controllers.UserEdit.edit(user)
 GET     /usersites/:usersites               controllers.UserEdit.sites(usersites)
 GET     /userbookmarks/:userbookmarks       controllers.UserEdit.bookmarks(userbookmarks)
+GET     /organisation/:organisation         controllers.OrganisationEdit.view(organisation)
+GET     /organisationedit/:organisation     controllers.OrganisationEdit.edit(organisation)
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()
 POST    /alphabeticalindex/filter-url       controllers.AlphabeticalIndex.filterUrl()
+POST    /dispensationsites/filter-url       controllers.DispensationSites.filterUrl()
 POST    /keysites/filter-url                controllers.KeySites.filterUrl()
 POST    /urlsearch/filter-url               controllers.UrlSearch.filterUrl()
 POST    /urlsnocrawl/filter-url             controllers.UrlsNoCrawl.filterUrl()

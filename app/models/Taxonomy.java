@@ -4,6 +4,7 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import play.Logger;
 import play.db.ebean.*;
 
 
@@ -77,6 +78,23 @@ public class Taxonomy extends Model {
         Taxonomy.name = newName;
         Taxonomy.update();
         return newName;
+    }
+    
+    /**
+     * Retrieve a Taxonomy by URL.
+     * @param url
+     * @return taxonomy name
+     */
+    public static Taxonomy findByUrl(String url) {
+    	Taxonomy res = new Taxonomy();
+    	res.name = url;
+    	try {
+    		find.where().eq("url", url).findUnique();
+    	} catch (Exception e) {
+    		Logger.info("Cann't find taxonomy for url: " + url + ". " + e);
+    	}
+//        return find.where().eq("url", url).findUnique();
+    	return res;
     }
         
     public String toString() {

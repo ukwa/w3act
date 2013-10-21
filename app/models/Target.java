@@ -128,9 +128,26 @@ public class Target extends Model {
 	    return find.all();
 	}
 
+    /**
+     * This method retrieves all targets for given user.
+     * @param url
+     * @return
+     */
     public static List<Target> findAllforUser(String url) {
     	List<Target> res = new ArrayList<Target>();
         ExpressionList<Target> ll = find.where().eq("author", url);
+        res = ll.findList();
+        return res;
+	}
+
+    /**
+     * This method retrieves all targets for given organisation.
+     * @param url
+     * @return
+     */
+    public static List<Target> findAllforOrganisation(String url) {
+    	List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().eq("field_nominating_organisation", url);
         res = ll.findList();
         return res;
 	}

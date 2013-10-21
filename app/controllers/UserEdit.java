@@ -18,14 +18,10 @@ import views.html.*;
 public class UserEdit extends Controller {
   
     /**
-     * Display the targets.
+     * Display the users.
      */
     public static Result index() {
         return ok(
-//            useredit.render(
-//                    User.findByUrl("")
-////                    "UserEdit", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll()
-//            )
         );
     }
 
@@ -40,9 +36,6 @@ public class UserEdit extends Controller {
                 useredit.render(
                         User.findByUrl(url)
                 )
-//                useredit.render(
-//                    url, user.name
-//                )
             );
     }
     
@@ -60,37 +53,6 @@ public class UserEdit extends Controller {
                         User.findByUrl(url)
                 )
             );
-    }
-    
-    /**
-     * Add a target.
-     */
-    public static Result add() {
-        Target newTarget = Target.create(
-            "New target", 
-            "url"
-        );
-        return null;
-    }
-    
-    /**
-     * Rename a target.
-     */
-    public static Result rename(Long target) {
-        return ok(
-            Target.rename(
-                target, 
-                form().bindFromRequest().get("title")
-            )
-        );
-    }
-    
-    /**
-     * Delete a target.
-     */
-    public static Result delete(Long target) {
-        Target.find.ref(target).delete();
-        return ok();
     }
     
 }

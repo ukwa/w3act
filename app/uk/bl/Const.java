@@ -38,6 +38,8 @@ public final class Const {
 	public static final String BODY               = "body";
 	public static final String AUTHOR             = "author";
 	public static final String FIELD_AFFILIATION  = "field_affiliation";
+	public static final String FIELD_SUBJECT      = "field_subject";
+	public static final String FIELD_NOMINATING_ORGANISATION = "field_nominating_organisation";
 	public static final String JSON               = ".json";
 
 	public static final int STRING_LIMIT          = 50;
@@ -88,6 +90,8 @@ public final class Const {
     	static {
     	subNodeMap.put(AUTHOR, URI);
     	subNodeMap.put(FIELD_AFFILIATION, URI);
+    	subNodeMap.put(FIELD_NOMINATING_ORGANISATION, URI);
+    	subNodeMap.put(FIELD_SUBJECT, URI);
     }
 		
 }

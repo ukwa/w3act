@@ -51,8 +51,12 @@
 				              	@targets.map { target =>		              
 				                <tr>
 				                  <td><a href="#">@target.title</a></td>
-				                  <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>
-				                  <td>@target.field_nominating_organisation</td>
+				                  <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>				                  
+				                  @if(target.field_nominating_organisation != null && Organisation.findByUrl(target.field_nominating_organisation) != null) {
+				                  	<td><a href="@routes.OrganisationEdit.edit(Organisation.findByUrl(target.field_nominating_organisation).url)">@Organisation.findByUrl(target.field_nominating_organisation).title</a></td>
+				                  } else {
+				                    <td></td>
+				                  }
 				                </tr>
 				                }
 				              </tbody>

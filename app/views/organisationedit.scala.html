@@ -1,0 +1,136 @@
+@(organisation: Organisation, user: User)
+
+
+@main("", user){
+    
+    <header>
+        <hgroup>
+            <h2>Organisation Edit</h2>
+        </hgroup>
+        <div id="usermenu">
+			<ul class="nav nav-tabs">
+			   <li><a href="@routes.OrganisationEdit.view(organisation.url)" class="navbar-brand">View</a></li>
+			   <li><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand">Edit</a></li> 
+			</ul>
+        </div>
+    </header>
+    
+    <article class="organisationdetails">
+        <div class="folder">
+            <h3>@organisation.title</h3>
+		</div>
+		<script >
+				$(function() {
+				$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+				});
+		</script>
+		<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Categories</th>
+                  <th>Subject</th>
+                  <th>By</th>
+                  <th>Crawled Instances</th>
+                  <th>Crawled URLs</th>
+                </tr>
+              </thead>
+              <tbody>
+              	@Target.findAllforOrganisation(organisation.url).map { target =>		              
+                <tr>
+                  <td><a class="brand" href="@target.url">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+                  @if(target.field_collection_categories != null && Taxonomy.findByUrl(target.field_collection_categories).name != null) { 
+	                  <td>@Taxonomy.findByUrl(target.field_collection_categories).name</td>
+                  } else {
+	                  <td></td>
+                  }	
+                  <td>@target.field_subject</td>
+                  @if(target.field_nominating_organisation != null) { 
+    	              <td><a href="@routes.OrganisationEdit.edit(target.field_nominating_organisation)">@User.findByUrl(target.author).name</a></td>
+                  } else {
+	                  <td></td>
+                  }	
+                  <td></td>
+                  <td></td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          <div class="row">
+	        <div class="col-lg-6">
+	          <div class="panel panel-default" id="pagination">
+	            <div class="panel-heading">Pagination
+	            </div>
+	            <ul class="pagination" style="margin-right: 10px;">
+	              <li>
+	                <a href="#">Prev</a>
+	              </li>
+	              <li>
+	                <a href="#">1</a>
+	              </li>
+	              <li>
+	                <a href="#">2</a>
+	              </li>
+	              <li>
+	                <a href="#">3</a>
+	              </li>
+	              <li>
+	                <a href="#">4</a>
+	              </li>
+	              <li>
+	                <a href="#">Next</a>
+	              </li>
+	            </ul>
+	          </div>
+
+      <div class="panel panel-default" id="forms">
+        <div class="panel-heading">
+        </div>
+        <form>
+          <fieldset>
+            <legend>Legend</legend>
+            <div class="form-group">
+              <label for="inputName">Name*</label>
+              <input class="form-control" id="inputName" placeholder="My name" type="text">
+            </div>
+            <div class="form-group">
+              <label for="inputAbbreviation">Abbreviation*</label>
+              <input class="form-control" id="inputAbbreviation" placeholder="BL" type="text">
+              <label">An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc.</label>
+            </div>            
+            <div id="summary" class="collapse" data-toggle="collapse" data-target="#demo">
+			   <div class="form-group">
+                    <label for="inputSummary">Summary</a></label>
+               		<textarea name="summary" id="inputSummary" cols="50" rows="10"></textarea>
+               		<br>Leave blank to use trimmed value of full text as the summary.
+	           </div>
+            </div>
+            <div class="form-group">
+              <label for="inputDescription">Description</label><a href="#" data-toggle="collapse" data-target="#summary">(Edit Summary)</a>
+               <textarea name="user_eingabe" id="inputDescription" cols="50" rows="10"></textarea>
+            </div>
+            <div class="form-group">
+                <li>Revision information</li>
+                <li>New revision(active tab)</li>
+	            <div class="form-group">
+	              <label for="inputBody">Revision log message</a></label>
+	               <textarea name="revision_input" id="inputRevision" cols="50" rows="10"></textarea>
+        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+	            </div>
+			</div>
+            
+            <button type="save" class="btn btn-default">Save</button>
+            <button type="preview" class="btn btn-default">Preview</button>
+            <button type="delete" class="btn btn-default">Delete</button>
+          </fieldset>
+        </form>
+        <hr>
+      </div>
+
+          </div>
+
+    </article>
+    
+    
+}
+

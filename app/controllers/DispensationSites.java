@@ -8,14 +8,14 @@ import static play.data.Form.*;
 import java.util.*;
 
 import models.*;
-
+import uk.bl.Const;
 import views.html.*;
 
 /**
  * Manage targets.
  */
 @Security.Authenticated(Secured.class)
-public class DispensationSites extends Controller {
+public class DispensationSites extends AbstractController {
   
     /**
      * Display the targets.
@@ -28,36 +28,13 @@ public class DispensationSites extends Controller {
         );
     }
 
-    /**
-     * Add a target.
-     */
-    public static Result add() {
-        Target newTarget = Target.create(
-            "New target", 
-            "url"
-        );
-        return null;
-    }
-    
-    /**
-     * Rename a target.
-     */
-    public static Result rename(Long target) {
+    public static Result filterUrl() {
+        String url = getFormParam(Const.URL);
         return ok(
-            Target.rename(
-                target, 
-                form().bindFromRequest().get("title")
-            )
-        );
+                keysites.render(
+                    "DispensationSites", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll()
+                )
+            );
     }
-    
-    /**
-     * Delete a target.
-     */
-    public static Result delete(Long target) {
-        Target.find.ref(target).delete();
-        return ok();
-    }
-    
 }
 

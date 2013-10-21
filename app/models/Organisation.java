@@ -92,7 +92,7 @@ public class Organisation extends Model {
      * @return organisation name
      */
     public static Organisation findByUrl(String url) {
-        return find.where().eq("url", url).findUnique();
+        return find.where().eq(Const.URL, url).findUnique();
     }
 
 	/**
