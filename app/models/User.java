@@ -22,6 +22,7 @@ import play.Logger;
 import play.db.ebean.*;
 import play.data.format.*;
 import play.data.validation.*;
+import uk.bl.Const;
 
 import com.avaje.ebean.*;
 
@@ -104,7 +105,23 @@ public class User extends Model {
     public static User findByUrl(String url) {
 //    	User tmp = find.where().eq("url", url).findUnique();
 //    	Logger.info("findByUrl: " + tmp.toString());
-        return find.where().eq("url", url).findUnique();
+        return find.where().eq(Const.NONE, url).findUnique();
+    }
+
+    /**
+     * This method is used for filtering by URL.
+     * @param url
+     * @return
+     */
+    public static List<User> findFilteredByUrl(String url) {
+    	List<User> ll = new ArrayList<User>();
+    	if (url != null && url.length() > 0  && !url.equals(Const.NONE)) { 
+            User user = find.where().eq(Const.URL, url).findUnique();
+            ll.add(user);            
+    	} else {
+            ll = find.all();
+    	}
+    	return ll;
     }
 
     /**

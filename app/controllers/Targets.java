@@ -26,7 +26,8 @@ public class Targets extends AbstractController {
         return ok(
             targets.render(
                 "Targets", User.find.byId(request().username()), models.Target.findInvolving(), 
-                	User.findAll(), models.Organisation.findInvolving()
+                	User.findAll(), models.Organisation.findInvolving(),
+                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE
             )
         );
     }
@@ -36,19 +37,31 @@ public class Targets extends AbstractController {
         return ok(
                 targets.render(
                     "Targets", User.find.byId(request().username()), models.Target.filterUrl(filter), 
-                	User.findAll(), models.Organisation.findInvolving()
+                	User.findAll(), models.Organisation.findInvolving(),
+                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE
                 )
             );
     }
     
     /**
      * Display the targets panel for this user URL.
+     * @param curatorUrl
+     * @param organisationUrl
+     * @param collectionCategoryUrl
+     * @param subjectUrl
+     * @param crawlFrequency
+     * @param depth
+     * @param scope
+     * @return
      */
-    public static Result edit(String url) {
+    public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
+    		String subjectUrl, String crawlFrequency, String depth, String scope) {
         return ok(
                 targets.render(
-			        "Targets", User.find.byId(request().username()), models.Target.filterUserUrl(url), 
-			        	User.findAll(), models.Organisation.findInvolving()
+			        "Targets", User.find.byId(request().username()), models.Target.filterUserUrl(curatorUrl), 
+//		        	User.findAll(), models.Organisation.findInvolving(),
+		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
+			        	curatorUrl,  organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope
                         )
                 );
     }

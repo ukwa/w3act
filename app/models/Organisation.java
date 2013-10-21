@@ -95,6 +95,22 @@ public class Organisation extends Model {
         return find.where().eq(Const.URL, url).findUnique();
     }
 
+    /**
+     * This method is used for filtering by URL.
+     * @param url
+     * @return
+     */
+    public static List<Organisation> findFilteredByUrl(String url) {
+    	List<Organisation> ll = new ArrayList<Organisation>();
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) { 
+            Organisation organisation = find.where().eq(Const.URL, url).findUnique();
+            ll.add(organisation);            
+    	} else {
+            ll = find.all();
+    	}
+    	return ll;
+    }
+
 	/**
 	 * This method computes a number of targets per organisation for given organisation URL.
 	 * @return

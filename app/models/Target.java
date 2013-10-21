@@ -246,8 +246,12 @@ public class Target extends Model {
 	 */
 	public static List<Target> filterUserUrl(String url) {
 		List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().contains("author", url);
-    	res = ll.findList();
+		if (url == null || url.equals(Const.NONE)) {
+			res = find.all();
+		} else {
+	        ExpressionList<Target> ll = find.where().contains("author", url);
+	    	res = ll.findList();
+		}
 		return res;
 	}
 	

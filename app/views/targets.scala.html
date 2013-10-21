@@ -1,4 +1,4 @@
-@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation])
+@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, scope: String)
 
 @main(title, user){
     
@@ -131,21 +131,39 @@
 		            <div class="panel-heading">Filter by curator:
 		            </div>
 		            @curators.map { curator =>	
-		                @if(curator.url != null) {       
-			            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curator.url)">
-			            	@curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())</a>
-			            </div>
-			            }
-		                }
+		                @if(curatorUrl != null && !curatorUrl.equals("none")) {
+				            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit("none", organisationUrl, 
+				            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)">
+				            	(-) </a> @curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())
+				            </div>
+						} else {		                
+			                @if(curator.url != null) {       
+					            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curator.url, organisationUrl, 
+					            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)">
+					            	@curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())</a>
+					            </div>
+				            } 
+				        }
+	                }
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by nominating organisation:
 		            </div>
-		            @organisations.map { organisation =>		              
-			            <div class="panel-footer"><a class="brand" href="@organisation.url">
-			            	@organisation.title &nbsp;(@organisation.getTargetNumberByOrganisationUrl())</a>
-			            </div>
+		            @organisations.map { organisation =>	
+		                @if(organisationUrl != null && !organisationUrl.equals("none")) {
+				            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curatorUrl, "none", 
+				            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)">
+				            	(-) </a> @organisation.title &nbsp;(@organisation.getTargetNumberByOrganisationUrl())
+				            </div>
+						} else {		                
+			            	@if(organisation.url != null) { 	              
+					            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curatorUrl, organisation.url, 
+					            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)">
+					            	@organisation.title &nbsp;(@organisation.getTargetNumberByOrganisationUrl())</a>
+					            </div>
+			                }
 		                }
+		             }
 		          </div>
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by collection categories:
