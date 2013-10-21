@@ -50,6 +50,7 @@ GET     /userbookmarks/:userbookmarks       controllers.UserEdit.bookmarks(userb
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()
+POST    /alphabeticalindex/filter-url       controllers.AlphabeticalIndex.filterUrl()
 POST    /keysites/filter-url                controllers.KeySites.filterUrl()
 POST    /urlsearch/filter-url               controllers.UrlSearch.filterUrl()
 POST    /urlsnocrawl/filter-url             controllers.UrlsNoCrawl.filterUrl()

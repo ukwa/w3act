@@ -124,10 +124,12 @@
 		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">Filter by curator:
 		            </div>
-		            @curators.map { curator =>		              
-			            <div class="panel-footer"><a class="brand" href="@curator.url">
+		            @curators.map { curator =>	
+		                @if(curator.url != null) {       
+			            <div class="panel-footer"><a class="brand" href="@routes.UserEdit.edit(curator.url)">
 			            	@curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())</a>
 			            </div>
+			            }
 		                }
 		          </div>
 		          <div class="panel panel-primary" id="panels">

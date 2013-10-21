@@ -51,7 +51,7 @@
 				              	@targets.map { target =>		              
 				                <tr>
 				                  <td><a href="#">@target.title</a></td>
-				                  <td><a href="@target.author">@User.findByUrl(target.author).name</a></td>
+				                  <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>
 				                  <td>@target.field_nominating_organisation</td>
 				                </tr>
 				                }
