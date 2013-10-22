@@ -15,7 +15,7 @@ import views.html.*;
 public class TaxonomyEdit extends Controller {
   
     /**
-     * Display the organisation.
+     * Display the taxonomy.
      */
     public static Result index() {
         return ok(

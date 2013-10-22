@@ -51,6 +51,8 @@ GET     /organisation/:organisation         controllers.OrganisationEdit.view(or
 GET     /organisationedit/:organisation     controllers.OrganisationEdit.edit(organisation)
 GET     /taxonomy/:taxonomy                 controllers.TaxonomyEdit.view(taxonomy)
 GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxonomy)
+GET     /targetview/:target                 controllers.TargetEdit.view(target)
+GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
 #GET     /targets/:user                      controllers.Targets.edit(user)
 GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope                      controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)
 

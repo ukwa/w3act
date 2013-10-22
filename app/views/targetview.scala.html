@@ -1,0 +1,23 @@
+@(target: Target, user: User)
+
+
+@main("", user){
+    
+    <header>
+        <hgroup>
+            <h2>target.title</h2>
+        </hgroup>
+        <div id="usermenu">
+			<ul class="nav nav-tabs">
+			   <li><a href="@routes.TargetEdit.view(target.url)" class="navbar-brand">View</a></li>
+			   <li><a href="@routes.TargetEdit.edit(target.url)" class="navbar-brand">Edit</a></li> 
+			</ul>
+        </div>
+    </header>
+    
+    <article class="targetdetails">
+        <div class="folder">
+            <h3>@target.title</h3>
+		</div>
+    </article>    
+}

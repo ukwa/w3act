@@ -81,7 +81,7 @@
 					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
 		              <thead>
 		                <tr>
-		                  <th>#</th>
+		                  <!--<th>#</th>-->
 		                  <th>Target name</th>
 		                  <th>Target URL</th>
 		                </tr>
@@ -89,8 +89,14 @@
 		              <tbody>
 		              	@targets.map { target =>		              
 		                <tr>
-		                  <td>@target.nid</td>
-		                  <td><a href="@target.url">@target.title</a></td>
+		                  <!--<td>@target.nid</td>-->
+                  		  @if(target.url != null && target.title != null) {
+		                  	<td><a href="@routes.TargetEdit.edit(target.url)">
+		                  		@target.title</a></td>
+		                  } else {
+		                    <td></td>
+		                  }		                  
+		                  <!--<td><a href="@target.url">@target.title</a></td>-->
 		                  <td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 		                </tr>
 		                }

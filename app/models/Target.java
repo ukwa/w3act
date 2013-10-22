@@ -323,6 +323,27 @@ public class Target extends Model {
 		return res;
 	}
 	
+    /**
+     * Retrieve a Target by URL.
+     * @param url
+     * @return target 
+     */
+    public static Target findByUrl(String url) {
+    	Target res = new Target();
+//        Logger.info("target url: " + url);
+        
+        if (!url.contains(Const.COMMA)) {
+	        Target res2 = find.where().eq(Const.URL, url).findUnique();
+	        if (res2 == null) {
+	        	res.title = Const.NONE;
+	        } else {
+	        	res = res2;
+	        }
+	        Logger.info("target title: " + res.title);
+        }
+    	return res;
+    }          
+
     public String toString() {
         return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
