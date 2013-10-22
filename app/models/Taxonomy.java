@@ -7,6 +7,7 @@ import javax.persistence.*;
 import play.Logger;
 import play.db.ebean.*;
 import uk.bl.Const;
+import uk.bl.Const.NodeType;
 
 
 /**
@@ -87,12 +88,44 @@ public class Taxonomy extends Model {
      * @return taxonomy name
      */
     public static Taxonomy findByUrl(String url) {
-//        Logger.info("taxonomy url: " + url);
-        // in order to replace "taxonomy_term" read from target.collection_categories by "taxonomy/term"
-        url = url.replace("_", "/"); 
-        Taxonomy res = find.where().eq(Const.URL, url).findUnique();
-//        Logger.info("taxonomy name: " + res.name);
+    	Taxonomy res = new Taxonomy();
+        Logger.info("taxonomy url: " + url);
+        if (!url.contains(Const.COMMA)) {
+	        // in order to replace "taxonomy_term" read from target.collection_categories by "taxonomy/term"
+	        url = url.replace("_", "/"); 
+	        Taxonomy res2 = find.where().eq(Const.URL, url).findUnique();
+	        if (res2 == null) {
+	        	res.name = Const.NONE;
+	        } else {
+	        	res = res2;
+	        }
+	        Logger.info("taxonomy name: " + res.name);
+        }
 //        return find.where().eq(Const.URL, url).findUnique();
+    	return res;
+    }          
+
+    /**
+     * Retrieve a Taxonomy list by URL.
+     * @param url
+     * @return taxonomy name
+     */
+    public static List<Taxonomy> findListByUrl(String url) {
+    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+        Logger.info("taxonomy url: " + url);
+    	if (url != null && url.length() > 0) {
+    		if (url.contains(Const.COMMA)) {
+    			List<String> resList = Arrays.asList(url.split(Const.COMMA));
+    			Iterator<String> itr = resList.iterator();
+    			while (itr.hasNext()) {
+        			Taxonomy taxonomy = findByUrl(itr.next());
+        			res.add(taxonomy);
+    			}
+    		} else {
+    			Taxonomy taxonomy = findByUrl(url);
+    			res.add(taxonomy);
+    		}
+        }
     	return res;
     }
         
