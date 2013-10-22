@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +121,43 @@ public class JsonUtils {
 			res.addAll(pageList);
 		}
     }
+
+    /**
+     * This method executes JSON URL request for particular object.
+     * @param url The current URL
+     * @param urlList The list of aggregated URLs (to avoid duplicates)
+     * @param type The object type
+     * @param res Resulting list
+     */
+    public static void executeUrlRequest(String url, List<String> urlList, NodeType type, List<Object> res) {
+		String urlStr = url + Const.JSON;
+		if (!urlList.contains(urlStr)) {
+    		urlList.add(urlStr);
+			aggregateObjectList(urlStr, type, res);
+		}
+    }
+    
+    /**
+     * This method prepares URLs for JSON URL request.
+     * @param fieldName Contains one or many URLs separated by comma
+     * @param urlList The list of aggregated URLs (to avoid duplicates)
+     * @param type The object type
+     * @param res Resulting list
+     */
+    public static void readListFromString(String fieldName, List<String> urlList, NodeType type, List<Object> res) {
+//		Logger.info("fieldName: " + fieldName);
+    	if (fieldName != null && fieldName.length() > 0) {
+    		if (fieldName.contains(Const.COMMA)) {
+    			List<String> resList = Arrays.asList(fieldName.split(Const.COMMA));
+    			Iterator<String> itr = resList.iterator();
+    			while (itr.hasNext()) {
+        			executeUrlRequest(itr.next(), urlList, type, res);
+    			}
+    		} else {
+    			executeUrlRequest(fieldName, urlList, type, res);
+    		}
+    	}
+    }
     
     /**
      * This method retrieves secondary JSON data from Drupal for 
@@ -139,35 +177,17 @@ public class JsonUtils {
 	    		Target target = itr.next();
 			    String urlStr = "";
 			    if (type.equals(NodeType.USER)) {
-			    	if (target.author != null && target.author.length() > 0) {
-				    	urlStr = target.author + Const.JSON;
-			    		if (!urlList.contains(urlStr)) {
-				    		urlList.add(urlStr);
-					    	aggregateObjectList(urlStr, type, res);
-			    		}
-			    	}
+			    	readListFromString(target.author, urlList, type, res);
 			    }
 			    if (type.equals(NodeType.TAXONOMY)) {
-			    	if (target.field_collection_categories != null && target.field_collection_categories.length() > 0) {
-		    			urlStr = target.field_collection_categories + Const.JSON;
-			    		if (!urlList.contains(urlStr)) {
-				    		urlList.add(urlStr);
-			    			aggregateObjectList(urlStr, type, res);
-			    		}
-			    	}
+			    	readListFromString(target.field_collection_categories, urlList, type, res);
 			    }
 			    if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
 			    	List<Taxonomy> taxonomies = Taxonomy.findAll();
 			    	Iterator<Taxonomy> taxonomyItr = taxonomies.iterator();
 			    	while (taxonomyItr.hasNext()) {
 			    		Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
-				    	if (taxonomy.vocabulary != null && taxonomy.vocabulary.length() > 0) {
-				    		urlStr = taxonomy.vocabulary + Const.JSON;
-				    		if (!urlList.contains(urlStr)) {
-					    		urlList.add(urlStr);
-						    	aggregateObjectList(urlStr, type, res);
-				    		}
-				    	}
+				    	readListFromString(taxonomy.vocabulary, urlList, type, res);
 			    	}
 			    }
 	    	}
@@ -474,6 +494,9 @@ public class JsonUtils {
 	 */
 	public static void parseJsonNode(JsonNode node, Object obj) {
 		Field[] fields = obj.getClass().getFields();
+		if (obj.getClass().toString().contains("Taxonomy")) {
+			Logger.info("Taxonomy node: " + node.toString());
+		}
 		for (Field f : fields) {
 			try {
 			    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {

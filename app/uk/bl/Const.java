@@ -41,6 +41,7 @@ public final class Const {
 	public static final String FIELD_SUBJECT      = "field_subject";
 	public static final String FIELD_NOMINATING_ORGANISATION = "field_nominating_organisation";
 	public static final String JSON               = ".json";
+	public static final String COMMA              = ",";
 
 	public static final int STRING_LIMIT          = 50;
 
