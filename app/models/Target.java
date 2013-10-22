@@ -330,7 +330,7 @@ public class Target extends Model {
      */
     public static Target findByUrl(String url) {
     	Target res = new Target();
-//        Logger.info("target url: " + url);
+        Logger.info("target url: " + url);
         
         if (!url.contains(Const.COMMA)) {
 	        Target res2 = find.where().eq(Const.URL, url).findUnique();

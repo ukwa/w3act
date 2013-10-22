@@ -49,6 +49,7 @@ public final class Const {
 	public static final String TITLE              = "title";
 	public static final String FILTER             = "filter";
 	public static final String NONE               = "none";
+	public static final String DESCRIPTION        = "description";
 	
 	// Types of the JSON nodes
 	public enum NodeType {
