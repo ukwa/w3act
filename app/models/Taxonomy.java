@@ -1,5 +1,6 @@
 package models;
 
+import java.net.URI;
 import java.util.*;
 
 import javax.persistence.*;
@@ -89,10 +90,11 @@ public class Taxonomy extends Model {
      */
     public static Taxonomy findByUrl(String url) {
     	Taxonomy res = new Taxonomy();
-        Logger.info("taxonomy url: " + url);
+//        Logger.info("taxonomy url: " + url);
+        
         if (!url.contains(Const.COMMA)) {
 	        // in order to replace "taxonomy_term" read from target.collection_categories by "taxonomy/term"
-	        url = url.replace("_", "/"); 
+//	        url = url.replace("_", "/"); 
 	        Taxonomy res2 = find.where().eq(Const.URL, url).findUnique();
 	        if (res2 == null) {
 	        	res.name = Const.NONE;
@@ -112,7 +114,7 @@ public class Taxonomy extends Model {
      */
     public static List<Taxonomy> findListByUrl(String url) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
-        Logger.info("taxonomy url: " + url);
+//        Logger.info("taxonomy url: " + url);
     	if (url != null && url.length() > 0) {
     		if (url.contains(Const.COMMA)) {
     			List<String> resList = Arrays.asList(url.split(Const.COMMA));

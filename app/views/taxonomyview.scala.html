@@ -24,9 +24,14 @@
             <div class="panel-footer">
                <ul>
                   <li>@target.title</li>
-                  <li>@target.author</li>
-                  <li>@target.url</li>
-                  </ul>
+                  <li><a href="@target.url">@target.url</a></li>
+                  <li><a href="@routes.UserEdit.edit(target.author)">@target.get_user_by_id()</a></li>
+                  @if(target.field_nominating_organisation != null) { 
+    	              <li><a href="@routes.OrganisationEdit.edit(target.field_nominating_organisation)">@Organisation.findByUrl(target.field_nominating_organisation).title</a></li>
+                  } else {
+	                  <li></li>
+                  }	
+               </ul>
             </div>
          }
       </div>

@@ -428,10 +428,6 @@ public class JsonUtils {
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "";
 				}
-				// normalize URL if there is "_" e.g. in taxonomy_term
-				if (f.getName().equals("field_collection_categories") && jsonField.length() > 0) {
-					jsonField = jsonField.replace("_", "/");
-				}
 				f.set(obj, jsonField);
 			}
 			if (f.getType().equals(Long.class)) {

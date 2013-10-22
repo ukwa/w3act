@@ -17,6 +17,24 @@ public class Global extends GlobalSettings {
     
     static class InitialData {
         
+    	/**
+    	 * normalize URL if there is "_" e.g. in taxonomy_term
+    	 */
+    	public static void normalizeUrls() {
+            List<Target> targets = Target.findAll();
+            Iterator<Target> itr = targets.iterator();
+            while (itr.hasNext()) {
+            	Target target = itr.next();
+				if (target.field_collection_categories != null && target.field_collection_categories.contains("_")) {
+					target.field_collection_categories = target.field_collection_categories.replace("_", "/");
+				}
+				if (target.field_license != null && target.field_license.contains("_")) {
+					target.field_license = target.field_license.replace("_", "/");
+				}
+	            Ebean.update(target);
+			}
+    	}
+    	
         @SuppressWarnings("unchecked")
 		public static void insert(Application app) {
             if(Ebean.find(User.class).findRowCount() == 0) {
@@ -67,6 +85,7 @@ public class Global extends GlobalSettings {
 					// store urls in DB
 	                Ebean.save(allTaxonomyVocabularies);
 	                Logger.info("taxonomy vocabularies successfully loaded");
+	                normalizeUrls();
                 } catch (Exception e) {
                 	Logger.info("Store error: " + e);
                 }

@@ -92,7 +92,15 @@ public class Organisation extends Model {
      * @return organisation name
      */
     public static Organisation findByUrl(String url) {
-        return find.where().eq(Const.URL, url).findUnique();
+//    	Logger.info("organisation url: " + url);
+    	Organisation res = new Organisation();
+    	if (url != null && url.length() > 0) {
+    		res = find.where().eq(Const.URL, url).findUnique();
+    	} else {
+    		res.title = Const.NONE;
+    	}
+    	return res;
+//        return find.where().eq(Const.URL, url).findUnique();
     }
 
     /**
@@ -115,10 +123,6 @@ public class Organisation extends Model {
 	 * This method computes a number of targets per organisation for given organisation URL.
 	 * @return
 	 */
-    /**
-     * This method calculates target number for given user URL.
-     * @return
-     */
     public int getTargetNumberByOrganisationUrl() {
     	int res = 0;
     	res = Target.getTargetNumberByOrganisationUrl(this.url);
