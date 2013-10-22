@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 import play.Logger;
 import play.db.ebean.*;
+import uk.bl.Const;
 
 
 /**
@@ -86,14 +87,12 @@ public class Taxonomy extends Model {
      * @return taxonomy name
      */
     public static Taxonomy findByUrl(String url) {
-    	Taxonomy res = new Taxonomy();
-    	res.name = url;
-    	try {
-    		find.where().eq("url", url).findUnique();
-    	} catch (Exception e) {
-    		Logger.info("Cann't find taxonomy for url: " + url + ". " + e);
-    	}
-//        return find.where().eq("url", url).findUnique();
+//        Logger.info("taxonomy url: " + url);
+        // in order to replace "taxonomy_term" read from target.collection_categories by "taxonomy/term"
+        url = url.replace("_", "/"); 
+        Taxonomy res = find.where().eq(Const.URL, url).findUnique();
+//        Logger.info("taxonomy name: " + res.name);
+//        return find.where().eq(Const.URL, url).findUnique();
     	return res;
     }
         

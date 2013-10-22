@@ -105,7 +105,7 @@ public class User extends Model {
     public static User findByUrl(String url) {
 //    	User tmp = find.where().eq("url", url).findUnique();
 //    	Logger.info("findByUrl: " + tmp.toString());
-        return find.where().eq(Const.NONE, url).findUnique();
+        return find.where().eq(Const.URL, url).findUnique();
     }
 
     /**

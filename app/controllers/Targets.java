@@ -115,8 +115,8 @@ public class Targets extends AbstractController {
 	 * This method filters targets by given license.
 	 * @return scope list
 	 */
-	public static List<Target> getLicense() {
-		List<Target> res = new ArrayList<Target>();
+	public static List<Taxonomy> getLicense() {
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
 		List<String> subjects = new ArrayList<String>();
 		List<Target> allTargets = Target.find.all();
 		Iterator<Target> itr = allTargets.iterator();
@@ -125,7 +125,11 @@ public class Targets extends AbstractController {
 			if (target.field_license != null && target.field_license.length() > 0 && !subjects.contains(target.field_license)) {
 		        ExpressionList<Target> ll = Target.find.where().contains("field_license", target.field_license);
 		        if (ll.findRowCount() > 0) {
-		        	res.add(target);
+		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.field_license);
+		        	Logger.info("target.field_license: " + target.field_license + ".");
+		        	Logger.info("taxonomy url: " + taxonomy.url);
+		        	Logger.info("license: " + taxonomy.name);
+		        	res.add(taxonomy);
 		        	subjects.add(target.field_license);
 		        }
 			}

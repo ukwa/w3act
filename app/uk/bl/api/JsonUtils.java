@@ -181,6 +181,7 @@ public class JsonUtils {
 			    }
 			    if (type.equals(NodeType.TAXONOMY)) {
 			    	readListFromString(target.field_collection_categories, urlList, type, res);
+			    	readListFromString(target.field_license, urlList, type, res);
 			    }
 			    if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
 			    	List<Taxonomy> taxonomies = Taxonomy.findAll();
