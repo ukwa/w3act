@@ -49,6 +49,8 @@ GET     /usersites/:usersites               controllers.UserEdit.sites(usersites
 GET     /userbookmarks/:userbookmarks       controllers.UserEdit.bookmarks(userbookmarks)
 GET     /organisation/:organisation         controllers.OrganisationEdit.view(organisation)
 GET     /organisationedit/:organisation     controllers.OrganisationEdit.edit(organisation)
+GET     /taxonomy/:taxonomy                 controllers.TaxonomyEdit.view(taxonomy)
+GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxonomy)
 #GET     /targets/:user                      controllers.Targets.edit(user)
 GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope                      controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)
 

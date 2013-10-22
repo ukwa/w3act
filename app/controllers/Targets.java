@@ -112,6 +112,22 @@ public class Targets extends AbstractController {
 	}
 	
 	/**
+	 * This method retrieves targets from database for given taxonomy URL.
+	 * @param url
+	 * @return
+	 */
+	public static List<Target> getTargetsForTaxonomy(String url) {
+		List<Target> res = new ArrayList<Target>();
+		Logger.info("url: " + url);
+		if (url != null) {
+	        ExpressionList<Target> ll = Target.find.where().contains("field_collection_categories", url);
+	        res = ll.findList();
+		}
+		Logger.info("res size: " + res.size());
+		return res;
+	}
+	
+	/**
 	 * This method filters targets by given license.
 	 * @return scope list
 	 */
