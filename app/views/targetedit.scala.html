@@ -17,9 +17,282 @@
     
     <article class="targetdetails">
         <div class="folder">
-            <h3>@target.title</h3>
+            <h3>Edit target @target.title</h3>
 		</div>
+      <div class="panel panel-default" id="forms">
+        <div class="panel-heading">
+        </div>
+        <form>
+          <fieldset>
+            <legend>Legend</legend>
+            <div class="form-group">
+              <label for="inputTitle">Title*</label>
+              <input class="form-control" id="inputTitle" placeholder="My title" type="text">
+            </div>
+            <div class="form-group">
+              <label for="inputUrls">URL(s)*</label>
+              <input class="form-control" id="inputUrls" placeholder="url1, url2" type="text">
+              <h4>One or more URLs.</h4>
+              <button type="item" class="btn btn-default">Add another item</button>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox">Key Site</label>
+                <br>
+                Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management. 
+            </div>
+            <div class="container">
+			   <div class="row">
+			     <h4>QA Status</h4>
+			  		<label class="radio-inline">
+			          <input name="radioGroup" id="radio1" value="N/A" type="radio"> N/A
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio2" value="No QA issues found" type="radio"> No QA issues found
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio3" value="QA issue" type="radio"> QA issue
+			        </label>			      
+			  	</div>
+			</div>
+            <div class="container">
+			   <div class="row">
+			     <h4>Live Site Status </h4>
+			  		<label class="radio-inline">
+			          <input name="radioGroup2" id="radio1" value="N/A" type="radio"> N/A
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup2" id="radio2" value="Still live" type="radio"> Still live 
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup2" id="radio3" value="No longer updated" type="radio"> No longer updated 
+			        </label>			      
+			        <label class="radio-inline">
+			          <input name="radioGroup2" id="radio4" value="Vanished" type="radio"> Vanished
+			        </label>			      
+			  	</div>
+			  	<br>If know, please add the current status of the site.
+			</div>							  
+            <div class="form-group">
+              <a href="#">Show row weights</a><br>
+              <h5>Snapshots</h5>
+              <label for="inputTimestamp">Timestamp*</label>
+              <input class="form-control" id="inputTimestamp" placeholder="10123305092013" type="text">
+              <br>The fourteen character timestamp of this snapshot.
+              	<div class="row">
+			     <h4>QA Status</h4>
+			  		<label class="radio-inline">
+			          <input name="radioGroup" id="radio1" value="N/A" type="radio"> N/A
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio2" value="No QA issues found" type="radio"> No QA issues found
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio3" value="QA issue" type="radio"> QA issue
+			        </label>			      
+			  	</div>
+              <br>Quality status of this snapshot.
+              <button type="item" class="btn btn-default">Remove</button>
+            </div>
+            <div class="form-group">
+            	Captured Instances of this site.<br>
+            	<button type="item" class="btn btn-default">Add another item</button>
+            </div>
+            <div class="form-group">
+              <h4>Metadata</h4>
+              <label for="inputDescription">Description</label>
+               <textarea name="user_eingabe" id="inputDescription" cols="50" rows="10"></textarea>
+               <br>A description of this web site.
+	             <div class="container">
+					  <h3>Subject</h3>
+					  <select id="mySel">
+			                <option>- None -</option>
+			                <option value="10">Arts &amp; Humanities</option>
+			                <option value="11">Business, Economy &amp; Industry</option>
+			                <option value="12">Education &amp; Research</option>
+			                <option value="13">Government, Law &amp; Politics</option>
+			                <option value="14">Medicine &amp; Health</option>
+			                <option value="15">Science &amp; Technology</option>
+			                <option value="16">Society &amp; Culture</option>
+					  </select>
+				</div>
+	             <div class="container">
+					  <h3>Nominating Organisation</h3>
+					  <select id="mySel">
+			                <option>- None -</option>
+			                @for(organisation <- Organisation.findAll()) {
+			                <option>@organisation.title</option>
+			                }
+					  </select>
+					  <br>
+					  <h5>The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted.</h5>				  
+				</div>
+	            <div class="form-group">
+	              <label for="inputCollectionCategories">Collection Categories</label>
+	                @for(collection <- DCollection.findAll()) {
+			            <div class="checkbox">
+			              <label><input type="checkbox">@collection.title</label>
+			            </div>
+	                }
+		            <br>Selected items (click an item to uncheck it)
+		            <div class="container">
+						  <h3>Suggested Special Collections</h3>
+						  <select id="mySel">
+				                <option>- None -</option>
+				                @for(collection <- DCollection.findAll()) {
+				                <option>@collection.title</option>
+				                }
+						  </select>
+						  <br>
+						  <h5>Special collections that you think this web site should appear in.</h5>				  
+					</div>
+	            </div>                        
+	            <div class="form-group">
+	              <label for="inputWCT">WCT ID</label>
+	              <input class="form-control" id="inputWCT" placeholder="0" type="text">
+	              <label for="inputSPT">SPT ID</label>
+	              <input class="form-control" id="inputSPT" placeholder="0" type="text">
+	            </div>      
+            </div>    
+            <div class="form-group">
+              <h4>Crawl Policy</h4>
+	            <div class="container">
+					  <h3>Scope*</h3>
+					  <select id="mySel">
+			                <option value="resource">Just this URL.</option>
+			                <option value="plus1">This URL plus any directly linked resources.</option>
+			                <option value="root" selected="selected">All URLs that start like this.</option>
+			                <option value="subdomains">All URLs that match match this host or any subdomains.</option>
+					  </select>
+					  <br>
+					  <h5>Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option.</h5>				  
+				</div>
+				<div class="row">
+			     <h4>Depth*</h4>
+			  		<label class="radio-inline">
+			          <input name="radioGroup" id="radio1" value="Capped (small - 500MB)" type="radio"> Capped (small - 500MB) 
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio2" value="Capped (large - 2GB)" type="radio"> Capped (large - 2GB)
+			        </label>
+			        <label class="radio-inline">
+			          <input name="radioGroup" id="radio3" value="Uncapped" type="radio"> Uncapped
+			        </label>			      
+			  	</div>
+	            <div class="checkbox">
+	              <label><input type="checkbox">Ignore Robots.txt</label>
+	            </div>
+	            <br>Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems.
+ 				<label for="edit-field-crawl-frequency-und">Crawl Frequency <span class="form-required" title="This field is required.">*</span></label>
+ 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency[und]" class="form-select required">
+ 					<option value="domaincrawl" selected="selected">Domain Crawl Only</option>
+ 					<option value="annual">Annually</option>
+ 					<option value="sixmonthly">Six-monthly</option>
+ 					<option value="quarterly">Quarterly</option>
+ 					<option value="monthly">Monthly</option>
+ 					<option value="Monthly">Old-Monthly-DO-NOT-USE</option>
+ 					<option value="weekly">Weekly</option>
+ 					<option value="daily">Daily</option>
+ 				</select>
+				<div class="description">How often should this site be archived?</div>
+	        </div>    
+            <div class="form-group">
+              <h4>Crawl Permissions</h4>
+	            <div class="container">
+					  <h3>Scope*</h3>
+					  <select id="mySel">
+			                <option value="resource">Just this URL.</option>
+			                <option value="plus1">This URL plus any directly linked resources.</option>
+			                <option value="root" selected="selected">All URLs that start like this.</option>
+			                <option value="subdomains">All URLs that match match this host or any subdomains.</option>
+					  </select>
+					  <br>
+					  <h5>Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option.</h5>				  
+				</div>
+  <label for="edit-field-license-und">License </label>
+ <select multiple="multiple" name="field_license[und][]" id="edit-field-license-und" class="form-select"><option value="_none">- None -</option><option value="168">UKWA Selective Archive License</option></select>
+<div class="description">The license terms under which this site should be archived and made available.</div>
+</div>
+</div><fieldset class="field-group-fieldset group-legal-deposit collapsible required-fields  form-wrapper" id="node_url_form_group_legal_deposit"><legend><span class="fieldset-legend">Legal Deposit Criteria</span></legend><div class="fieldset-wrapper"><div class="field-type-computed field-name-field-uk-domain field-widget-computed form-wrapper" id="edit-field-uk-domain"></div><div class="field-type-list-boolean field-name-field-uk-hosting field-widget-options-onoff form-wrapper" id="edit-field-uk-hosting"><div class="form-item form-type-checkbox form-item-field-uk-hosting-und">
+ <input type="checkbox" id="edit-field-uk-hosting-und" name="field_uk_hosting[und]" value="1" class="form-checkbox" />  <label class="option" for="edit-field-uk-hosting-und">UK Hosting </label>
 
+<div class="description">The domain is hosted in the UK.</div>
+</div>
+</div><div class="field-type-computed field-name-field-uk-geoip field-widget-computed form-wrapper" id="edit-field-uk-geoip"></div><div class="field-type-list-boolean field-name-field-uk-postal-address field-widget-options-onoff form-wrapper" id="edit-field-uk-postal-address"><div class="form-item form-type-checkbox form-item-field-uk-postal-address-und">
+ <input type="checkbox" id="edit-field-uk-postal-address-und" name="field_uk_postal_address[und]" value="1" class="form-checkbox" />  <label class="option" for="edit-field-uk-postal-address-und">UK Postal Address </label>
+
+<div class="description">The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box).</div>
+</div>
+</div><div class="field-type-link-field field-name-field-uk-postal-address-url field-widget-link-field form-wrapper" id="edit-field-uk-postal-address-url"><div id="field-uk-postal-address-url-add-more-wrapper"><div class="form-item form-type-link-field form-item-field-uk-postal-address-url-und-0">
+  <label for="edit-field-uk-postal-address-url-und-0">Postal Address URL </label>
+ <div class="link-field-subrow clearfix"><div class="link-field-url"><div class="form-item form-type-textfield form-item-field-uk-postal-address-url-und-0-url">
+  <label class="element-invisible" for="edit-field-uk-postal-address-url-und-0-url">URL </label>
+ <input type="text" id="edit-field-uk-postal-address-url-und-0-url" name="field_uk_postal_address_url[und][0][url]" value="" size="60" maxlength="2048" class="form-text" />
+</div>
+</div></div>
+<div class="description">The URL on the site that contains the postal address used to determine that the site is in the UK.</div>
+</div>
+</div></div><div class="field-type-list-boolean field-name-field-via-correspondence field-widget-options-onoff form-wrapper" id="edit-field-via-correspondence"><div class="form-item form-type-checkbox form-item-field-via-correspondence-und">
+ <input type="checkbox" id="edit-field-via-correspondence-und" name="field_via_correspondence[und]" value="1" class="form-checkbox" />  <label class="option" for="edit-field-via-correspondence-und">Via Correspondence </label>
+
+<div class="description">Previous correspondence with the web site owner by a Curator contains evidence of a UK address.</div>
+</div>
+</div><div class="field-type-text-with-summary field-name-body field-widget-text-textarea-with-summary form-wrapper" id="edit-body"><div id="body-add-more-wrapper"><div class="text-format-wrapper"><div class="text-summary-wrapper"></div><div class="form-item form-type-textarea form-item-body-und-0-value">
+  <label for="edit-body-und-0-value">Notes </label>
+ <div class="form-textarea-wrapper resizable"><textarea class="text-full form-textarea" id="edit-body-und-0-value" name="body[und][0][value]" cols="60" rows="5"></textarea></div>
+</div>
+<div class="description">Any relevant notes, e.g. a more detailed description of this URL or set of URLs.</div></div>
+</div></div><div class="field-type-list-boolean field-name-field-professional-judgement field-widget-options-onoff form-wrapper" id="edit-field-professional-judgement"><div class="form-item form-type-checkbox form-item-field-professional-judgement-und">
+ <input type="checkbox" id="edit-field-professional-judgement-und" name="field_professional_judgement[und]" value="1" class="form-checkbox" />  <label class="option" for="edit-field-professional-judgement-und">Professional Judgement </label>
+
+<div class="description">In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below.</div>
+</div>
+</div><div class="field-type-text-long field-name-field-professional-judgement-exp field-widget-text-textarea form-wrapper" id="edit-field-professional-judgement-exp"><div id="field-professional-judgement-exp-add-more-wrapper"><div class="form-item form-type-textarea form-item-field-professional-judgement-exp-und-0-value">
+  <label for="edit-field-professional-judgement-exp-und-0-value">Professional Judgement Explanation </label>
+ <div class="form-textarea-wrapper resizable"><textarea class="text-full form-textarea" id="edit-field-professional-judgement-exp-und-0-value" name="field_professional_judgement_exp[und][0][value]" cols="60" rows="5"></textarea></div>
+<div class="description">Please describe the rational behind this decision, indicating any evidence used.</div>
+</div>
+</div></div><div class="field-type-list-boolean field-name-field-special-dispensation field-widget-options-onoff form-wrapper" id="edit-field-special-dispensation"><div class="form-item form-type-checkbox form-item-field-special-dispensation-und">
+ <input type="checkbox" id="edit-field-special-dispensation-und" name="field_special_dispensation[und]" value="1" class="form-checkbox" />  <label class="option" for="edit-field-special-dispensation-und">Special Dispensation </label>
+
+<div class="description">Tick this box to indicate that, although it falls under none of the other categories, special dispensation has been given to download this URL. Currently, this is allowed under limited circumstances in order to explore the process around archiving social media relating to UK organisations and individuals. </div>
+</div>
+</div><div class="field-type-text-long field-name-field-special-dispensation-reaso field-widget-text-textarea form-wrapper" id="edit-field-special-dispensation-reaso"><div id="field-special-dispensation-reaso-add-more-wrapper"><div class="form-item form-type-textarea form-item-field-special-dispensation-reaso-und-0-value">
+  <label for="edit-field-special-dispensation-reaso-und-0-value">Special Dispensation Reason </label>
+ <div class="form-textarea-wrapper resizable"><textarea class="text-full form-textarea" id="edit-field-special-dispensation-reaso-und-0-value" name="field_special_dispensation_reaso[und][0][value]" cols="60" rows="5"></textarea></div>
+<div class="description">If you have selected Special Dispensation as the reason, you must use this field to provide details of who has authorised this decision and why.</div>
+</div>
+</div></div><div class="field-type-list-boolean field-name-field-no-ld-criteria-met field-widget-options-onoff form-wrapper" id="edit-field-no-ld-criteria-met"><div class="form-item form-type-checkbox form-item-field-no-ld-criteria-met-und">
+ <input type="checkbox" id="edit-field-no-ld-criteria-met-und" name="field_no_ld_criteria_met[und]" value="1" class="form-checkbox" />  <label class="option" for="edit-field-no-ld-criteria-met-und">No LD Criteria Met </label>
+
+<div class="description">Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit.</div>
+</div>
+			</div>
+            
+            <div class="field-type-computed field-name-field-crawl-status field-widget-computed form-wrapper" id="edit-field-crawl-status"></div><div class="field-type-text-long field-name-field-notes field-widget-text-textarea form-wrapper" id="edit-field-notes"><div id="field-notes-add-more-wrapper"><div class="text-format-wrapper"><div class="form-item form-type-textarea form-item-field-notes-und-0-value">
+  <label for="edit-field-notes-und-0-value">Notes </label>
+ <div class="form-textarea-wrapper resizable"><textarea class="text-full form-textarea" id="edit-field-notes-und-0-value" name="field_notes[und][0][value]" cols="60" rows="5"></textarea></div>
+</div>
+<div class="description">Add any additional notes about this site here.</div></div>
+            
+            			
+            <div class="form-group">
+                <li>Revision information</li>
+                <li>New revision(active tab)</li>
+	            <div class="form-group">
+	              <label for="inputBody">Revision log message</a></label>
+	               <textarea name="revision_input" id="inputRevision" cols="50" rows="10"></textarea>
+        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+	            </div>
+			</div>
+            
+            <button type="save" class="btn btn-default">Save</button>
+            <button type="preview" class="btn btn-default">Preview</button>
+            <button type="delete" class="btn btn-default">Delete</button>
+          </fieldset>
+        </form>
+        <hr>
+      </div>
     </article>
     
     

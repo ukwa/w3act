@@ -74,6 +74,13 @@ public class DCollection extends Model {
     }
     
     /**
+     * Retrieve all collections.
+     */
+    public static List<DCollection> findAll() {
+        return find.all();
+    }
+    
+    /**
      * Create a new dcollection.
      */
     public static DCollection create(String title) {

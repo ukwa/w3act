@@ -129,6 +129,13 @@ public class Organisation extends Model {
     	return res;
     }	
 
+    /**
+     * Retrieve all organisations.
+     */
+    public static List<Organisation> findAll() {
+        return find.all();
+    }
+
     public String toString() {
         return "Organisation(" + nid + ") with title: " + title + 
         	", format: " + format + ", summary: " + summary + ", value: " + value;

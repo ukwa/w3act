@@ -19,5 +19,102 @@
         <div class="folder">
             <h3>@target.title</h3>
 		</div>
+		  <div class="form-group">
+               <a href="#" data-toggle="collapse" data-target="#urls">URLs</a>
+          </div>
+		
+		  <div class="panel panel-primary" id="urls" class="collapse in" data-toggle="collapse">
+	        <div class="panel-heading">URLs:
+	        </div>
+		      <div class="panel panel-default">
+		        <ul>
+		        <li>@target.url</li>
+		        <li>Crawl Status:</li>
+		        <li>Snapshots:</li>
+		        </ul>
+		        <hr>
+		      </div>
+	      </div>
+		
+		  <div class="form-group">
+               <a href="#" data-toggle="collapse" data-target="#metadata">Metadata</a>
+          </div>
+		
+		  <div class="panel panel-primary" id="metadata" class="collapse" data-toggle="collapse">
+	        <div class="panel-heading">Metadata:
+	        </div>
+		      <div class="panel panel-default">
+		        <ul>
+		        <li>Description:</li>
+		        <li>@target.field_description</li>
+		        <li>Subject:</li>
+		        <li>Nominating Organisation:</li>
+		        @if(target.field_nominating_organisation != null && Organisation.findByUrl(target.field_nominating_organisation).url != null 
+	              	&& Organisation.findByUrl(target.field_nominating_organisation).title != null) {
+	              	<li><a href="@routes.OrganisationEdit.edit(Organisation.findByUrl(target.field_nominating_organisation).url)">
+	              		@Organisation.findByUrl(target.field_nominating_organisation).title</a></li>
+	              } else {
+		        <li></li>
+	              }		        
+		        </ul>
+		        <hr>
+		      </div>
+	      </div>
+		
+		  <div class="form-group">
+               <a href="#" data-toggle="collapse" data-target="#crawlpolicy">Crawl Policy</a>
+          </div>
+		
+		  <div class="panel panel-primary" id="crawlpolicy" class="collapse" data-toggle="collapse">
+	        <div class="panel-heading">Crawl Policy:
+	        </div>
+		      <div class="panel panel-default">
+		        <ul>
+		        <li>Depth: &nbsp; @target.field_depth</li>
+		        <li>Scope: &nbsp; @target.field_scope</li>
+		        <li>Crawl Frequency: &nbsp; @target.field_crawl_frequency</li>
+		        </ul>
+		        <hr>
+		      </div>
+	      </div>
+		
+		  <div class="form-group">
+               <a href="#" data-toggle="collapse" data-target="#crawlpermissions">Crawl Permissions</a>
+          </div>
+		
+		  <div class="panel panel-primary" id="crawlpermissions" class="collapse" data-toggle="collapse">
+	        <div class="panel-heading">Crawl Permissions:
+	        </div>
+		      <div class="panel panel-default">
+		        <ul>
+		        <li>Crawl Permissions: &nbsp; @target.field_crawl_permission</li>
+		        </ul>
+		        <hr>
+		      </div>
+	      </div>
+		
+		  <div class="form-group">
+               <a href="#" data-toggle="collapse" data-target="#legaldepositcriteria">Legal Deposit Criteria</a>
+          </div>
+		
+		  <div class="panel panel-primary" id="legaldepositcriteria" class="collapse" data-toggle="collapse">
+	        <div class="panel-heading">Legal Deposit Criteria:
+	        </div>
+		      <div class="panel panel-default">
+		        <ul>
+		        <li>UK Domain: &nbsp; @target.field_uk_domain</li>
+		        <li>UK Hosting: &nbsp; @target.field_uk_hosting</li>
+		        <li>UK Geo IP: &nbsp; @target.field_uk_geoip</li>
+		        <li>UK Postal Address: &nbsp; @target.field_uk_postal_address</li>
+		        <li>Postal Address URL: &nbsp; @target.field_uk_postal_address_url		        
+		        <li>Via Correspondence: &nbsp; @target.field_via_correspondence</li>
+		        <li>Notes: &nbsp; @target.field_notes</li>
+		        <li>Professional Judgement: &nbsp; @target.field_professional_judgement</li>
+		        <li>Special Dispensation: &nbsp; @target.field_special_dispensation</li>
+		        </ul>
+		        <hr>
+		      </div>
+	      </div>
+		
     </article>    
 }
