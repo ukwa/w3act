@@ -34,13 +34,19 @@
             </div>
             <div class="form-group">
               <label for="inputUrls">URL(s) <font color="red">*</font></label>
-              <input class="form-control" name="url" id="url" placeholder="url1, url2" type="text" value=@target.url>
-              <h4>One or more URLs.</h4>
-              <button type="item" class="btn btn-success">Add another item</button>
+              @if(target.field_url != null) {
+              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value=@target.field_url>
+              <p>One or more URLs, separated by comma.<p>
+              <!--button type="item" class="btn btn-success">Add another item</button-->
+              }
             </div>
             <div class="checkbox">
               <label>
-                <input type="checkbox" value="@target.field_key_site">Key Site</label>
+                @if(target.field_key_site.equals("true")) {             
+                <input type="checkbox" name="keysite" value="true" checked=1>Key Site</label>
+                } else {
+                <input type="checkbox" name="keysite" value="true">Key Site</label>
+                }
                 <br>
                 Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management. 
             </div>
@@ -48,13 +54,25 @@
 			   <div class="row">
 			     <h4>QA Status</h4>
 			  		<label class="radio-inline">
-			          <input name="radioGroup" id="radio1" value="N/A" type="radio"> N/A
+			  		@if(target.status == 1) {
+			          <input name="status" id="radio1" value="N/A" type="radio" checked="true"> N/A
+			        } else {
+			          <input name="status" id="radio1" value="N/A" type="radio"> N/A
+			        }
 			        </label>
 			        <label class="radio-inline">
-			          <input name="radioGroup" id="radio2" value="No QA issues found" type="radio"> No QA issues found
+			  		@if(target.status == 2) {
+			          <input name="status" id="radio2" value="No QA issues found" type="radio" checked="true"> No QA issues found
+			        } else {
+			          <input name="status" id="radio2" value="No QA issues found" type="radio"> No QA issues found
+			        }
 			        </label>
 			        <label class="radio-inline">
-			          <input name="radioGroup" id="radio3" value="QA issue" type="radio"> QA issue
+			  		@if(target.status == 3) {
+			          <input name="status" id="radio3" value="QA issue" type="radio" checked="true"> QA issue
+			        } else {
+			          <input name="status" id="radio3" value="QA issue" type="radio"> QA issue
+			        }
 			        </label>			      
 			  	</div>
 			</div>
@@ -62,21 +80,37 @@
 			   <div class="row">
 			     <h4>Live Site Status </h4>
 			  		<label class="radio-inline">
-			          <input name="radioGroup2" id="radio1" value="N/A" type="radio"> N/A
+			  		@if(target.field_live_site_status.equals("N/A")) {
+			          <input name="livesitestatus" id="radio1" value="N/A" type="radio" checked="true"> N/A
+			        } else {
+			          <input name="livesitestatus" id="radio1" value="N/A" type="radio"> N/A
+			        }
 			        </label>
 			        <label class="radio-inline">
-			          <input name="radioGroup2" id="radio2" value="Still live" type="radio"> Still live 
+			  		@if(target.field_live_site_status.equals("Still live")) {
+			          <input name="livesitestatus" id="radio2" value="Still live" type="radio" checked="true"> Still live 
+			        } else {
+			          <input name="livesitestatus" id="radio2" value="Still live" type="radio"> Still live 
+			        }
 			        </label>
 			        <label class="radio-inline">
-			          <input name="radioGroup2" id="radio3" value="No longer updated" type="radio"> No longer updated 
+			  		@if(target.field_live_site_status.equals("No longer updated")) {
+			          <input name="livesitestatus" id="radio3" value="No longer updated" type="radio" checked="true"> No longer updated 
+			        } else {
+			          <input name="livesitestatus" id="radio3" value="No longer updated" type="radio"> No longer updated 
+			        }
 			        </label>			      
 			        <label class="radio-inline">
-			          <input name="radioGroup2" id="radio4" value="Vanished" type="radio"> Vanished
+			  		@if(target.field_live_site_status.equals("Vanished")) {
+			          <input name="livesitestatus" id="radio4" value="Vanished" type="radio" checked="true"> Vanished
+			        } else {
+			          <input name="livesitestatus" id="radio4" value="Vanished" type="radio"> Vanished
+			        }
 			        </label>			      
 			  	</div>
 			  	<br>If know, please add the current status of the site.
 			</div>							  
-            <div class="form-group">
+            <!--div class="form-group">
               <a href="#">Show row weights</a><br>
               <h5>Snapshots</h5>
               <label for="inputTimestamp">Timestamp <font color="red">*</font></label>
@@ -102,7 +136,7 @@
             <div class="form-group">
             	Captured Instances of this site.<br>
             	<button type="item" class="btn btn-success">Add another item</button>
-            </div>
+            </div-->
             <div class="form-group">
               <h4>Metadata</h4>
               <label for="inputDescription">Description</label>
@@ -110,11 +144,23 @@
                <br>A description of this web site.
 	             <div class="container">
 					  <h3>Subject</h3>
-					  <select id="mySel">
+					  <select name="subject" value="12" id="mySel">
 			                <option>- None -</option>
-			                <option value="10">Arts &amp; Humanities</option>
-			                <option value="11">Business, Economy &amp; Industry</option>
-			                <option value="12">Education &amp; Research</option>
+			                @if(target.field_subject.equals("Arts &amp; Humanities")) {
+				                <option value="10" selected>Arts &amp; Humanities</option>
+				            } else {
+				                <option value="10">Arts &amp; Humanities</option>
+				            }
+			                @if(target.field_subject.equals("Business, Economy &amp; Industry")) {
+			                	<option value="11" selected>Business, Economy &amp; Industry</option>
+				            } else {
+			                	<option value="11">Business, Economy &amp; Industry</option>
+				            }
+			                @if(target.field_subject.equals("Education &amp; Research")) {
+			                	<option value="12" selected>Education &amp; Research</option>
+				            } else {
+			                	<option value="12">Education &amp; Research</option>
+				            }
 			                <option value="13">Government, Law &amp; Politics</option>
 			                <option value="14">Medicine &amp; Health</option>
 			                <option value="15">Science &amp; Technology</option>
@@ -123,10 +169,14 @@
 				</div>
 	             <div class="container">
 					  <h3>Nominating Organisation</h3>
-					  <select id="mySel">
+					  <select name="organisation" id="mySel">
 			                <option>- None -</option>
 			                @for(organisation <- Organisation.findAll()) {
-			                <option>@organisation.title</option>
+				                @if(organisation.title.equals(target.field_nominating_organisation)) {
+					                <option selected>@organisation.title</option>
+					            } else {
+					                <option>@organisation.title</option>
+								}					            
 			                }
 					  </select>
 					  <br>

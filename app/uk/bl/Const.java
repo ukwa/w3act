@@ -46,12 +46,20 @@ public final class Const {
 	public static final int STRING_LIMIT          = 50;
 
 	// Elements in HTML forms
+	public static final String FALSE              = "false";
+	public static final String TRUE               = "true";
+	public static final String FILTER             = "filter";
+	public static final String NONE               = "none";
     // Target
 	public static final String NID                = "nid";
 	public static final String TITLE              = "title";
-	public static final String FILTER             = "filter";
-	public static final String NONE               = "none";
+	public static final String FIELD_URL          = "fieldurl";
+	public static final String KEYSITE            = "keysite";
+	public static final String STATUS             = "status";
+	public static final String LIVE_SITE_STATUS   = "livesitestatus";
 	public static final String DESCRIPTION        = "description";
+	public static final String SUBJECT            = "subject";
+	public static final String ORGANISATION       = "organisation";
 	
 	// Types of the JSON nodes
 	public enum NodeType {

@@ -56,23 +56,40 @@ public class TargetController extends AbstractController {
 	
     public static Result saveTarget() {
     	Result res = null;
-//        Target target = new Target();
-//        UUID id = UUID.randomUUID();
-//        Logger.info("id: " + id.toString());
-//        target.nid = id.getMostSignificantBits();
         String save = getFormParam("save");
         String preview = getFormParam("preview");
         String delete = getFormParam("delete");
 //        Logger.info("save: " + save + ", preview: " + preview);
         if (save != null) {
-        	Logger.info("save udated target nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + ", title: " + getFormParam(Const.TITLE) + 
-        			", description: " + getFormParam(Const.DESCRIPTION));
-//        	Logger.info("save url: " + getQueryParam(Const.URL) + ", title: " + getQueryParam(Const.TITLE));
-//        	Target target = Target.findByUrl(getFormParam(Const.URL));
+        	Logger.info("save udated target nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        			", title: " + getFormParam(Const.TITLE) + ", keysite: " + getFormParam(Const.KEYSITE) +
+        			", description: " + getFormParam(Const.DESCRIPTION) + 
+        			", status: " + getFormParam(Const.STATUS) +
+        			", subject: " + getFormParam(Const.SUBJECT) +
+        			", organisation: " + getFormParam(Const.ORGANISATION) +
+        			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
         	Target target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
             target.title = getFormParam(Const.TITLE);
-//            target.url = getFormParam(Const.URL);
+            target.field_url = getFormParam(Const.FIELD_URL);
+            if (getFormParam(Const.KEYSITE) == null) {
+            	target.field_key_site = Const.FALSE;
+            } else {
+            	target.field_key_site = Const.TRUE;
+            }
             target.field_description = getFormParam(Const.DESCRIPTION);
+            if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
+            	target.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
+            } 
+            if(getFormParam(Const.SUBJECT).equals("10")) {
+            	target.field_subject = "Arts &amp; Humanities";
+            }
+            if(getFormParam(Const.SUBJECT).equals("11")) {
+            	target.field_subject = "Business, Economy &amp; Industry";
+            }
+            if(getFormParam(Const.SUBJECT).equals("12")) {
+            	target.field_subject = "Education &amp; Research";
+            }
+        	target.field_nominating_organisation = getFormParam(Const.ORGANISATION);
 	        Ebean.update(target);
 	        Logger.info("save target: " + target.toString());
 	        res = redirect(routes.TargetEdit.edit(target.url));
@@ -82,9 +99,9 @@ public class TargetController extends AbstractController {
 	        res = redirect(routes.TargetEdit.edit(getFormParam(Const.URL))); // TODO preview
         }
         if (delete != null) {
-        	Target target = Target.findByUrl(getFormParam(Const.URL));
+        	Target target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
         	Ebean.delete(target);
-	        res = redirect(routes.TargetEdit.edit(getFormParam(Const.URL))); 
+	        res = redirect(routes.Targets.index()); 
         }
         return res;
     }

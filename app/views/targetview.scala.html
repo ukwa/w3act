@@ -39,16 +39,15 @@
 	        </div>
 		      <div class="panel panel-default">
 		        <ul>
-		        <li>Description:</li>
-		        <li>@target.field_description</li>
+		        <li>Description:&npsp;@target.field_description</li>
 		        <li>Subject:</li>
-		        <li>Nominating Organisation:</li>
+		        <li>Nominating Organisation:&nbsp;
 		        @if(target.field_nominating_organisation != null && Organisation.findByUrl(target.field_nominating_organisation).url != null 
 	              	&& Organisation.findByUrl(target.field_nominating_organisation).title != null) {
-	              	<li><a href="@routes.OrganisationEdit.edit(Organisation.findByUrl(target.field_nominating_organisation).url)">
+	              	<a href="@routes.OrganisationEdit.edit(Organisation.findByUrl(target.field_nominating_organisation).url)">
 	              		@Organisation.findByUrl(target.field_nominating_organisation).title</a></li>
 	              } else {
-		        <li></li>
+		          </li>
 	              }		        
 		        </ul>
 		        <hr>
