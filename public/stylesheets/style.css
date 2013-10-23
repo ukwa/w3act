@@ -81,11 +81,13 @@ header {
 }
 
 .col-lg-2 {
-    line-height: 80%;
+    #line-height: 80%;
+    width: 300px;
 }
 
 .col-lg-6 {
     width: 60%;
+    margin-top: -10px;
 }
 
 .nav .nav-list {
@@ -96,6 +98,26 @@ header {
     left: 20;
 }
 
+div.panel-footer {
+    padding: 4px 15px;
+#    !important
+    }
+    
+input#inputName.form-control {
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-top: 16px;
+    width: 250px;
+}
+
+button.btn.btn-success {
+    margin-left: 8px;
+}
+
+div#panels.panel.panel-primary.filter {
+    height: 160px;
+}
+
 #main > .userdetails {
     bottom: 0;
     left: 0;
@@ -104,4 +126,4 @@ header {
     position: absolute;
     right: 0;
     top: 90px;
-}}
+}
