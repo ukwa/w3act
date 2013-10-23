@@ -344,6 +344,17 @@ public class Target extends Model {
     	return res;
     }          
 
+    /**
+     * Retrieve a Target by Id (nid).
+     * @param nid
+     * @return target 
+     */
+    public static Target findById(Long nid) {
+        Logger.info("target nid: " + nid);       
+        Target res = find.where().eq(Const.NID, nid).findUnique();
+    	return res;
+    }          
+
     public String toString() {
         return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 

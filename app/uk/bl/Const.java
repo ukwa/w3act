@@ -46,6 +46,8 @@ public final class Const {
 	public static final int STRING_LIMIT          = 50;
 
 	// Elements in HTML forms
+    // Target
+	public static final String NID                = "nid";
 	public static final String TITLE              = "title";
 	public static final String FILTER             = "filter";
 	public static final String NONE               = "none";

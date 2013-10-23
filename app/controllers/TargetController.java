@@ -32,21 +32,6 @@ public class TargetController extends AbstractController {
   
 	private static Target previewObj;
 	
-    /**
-     * Display the About tab.
-     */
-//    public static Result index() {
-//		return ok(
-//            article.render("Article", User.find.byId(request().username()))
-//        );
-//    }
-//    
-//    public static Result preview() {
-//		return ok(
-//            articlepreview.render("ArticlePreview", User.find.byId(request().username()), previewObj)
-//        );
-//    }
-//    
     public static Result addTarget() {
     	Result res;
         Target target = new Target();
@@ -80,9 +65,11 @@ public class TargetController extends AbstractController {
         String delete = getFormParam("delete");
 //        Logger.info("save: " + save + ", preview: " + preview);
         if (save != null) {
-        	Logger.info("save url: " + getFormParam(Const.URL) + ", title: " + getFormParam(Const.TITLE));
-        	Logger.info("save url: " + getQueryParam(Const.URL) + ", title: " + getQueryParam(Const.TITLE));
-        	Target target = Target.findByUrl(getFormParam(Const.URL));
+        	Logger.info("save udated target nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + ", title: " + getFormParam(Const.TITLE) + 
+        			", description: " + getFormParam(Const.DESCRIPTION));
+//        	Logger.info("save url: " + getQueryParam(Const.URL) + ", title: " + getQueryParam(Const.TITLE));
+//        	Target target = Target.findByUrl(getFormParam(Const.URL));
+        	Target target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
             target.title = getFormParam(Const.TITLE);
 //            target.url = getFormParam(Const.URL);
             target.field_description = getFormParam(Const.DESCRIPTION);

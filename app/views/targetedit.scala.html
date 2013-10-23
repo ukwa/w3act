@@ -3,7 +3,7 @@
 
 @main("", user){
     
-    <h1>@target.title</h1>
+    <h1>Edit Target @target.title</h1>
     <!--<div class="btn-group" data-toggle="buttons">
 	  <label class="btn btn-primary">
 	    <input type="radio" name="options" id="option1"> <a href="@routes.TargetEdit.view(target.url)">View</a>
@@ -20,23 +20,14 @@
 	   <li><a href="@routes.TargetEdit.view(target.url)" class="navbar-brand btn btn-success">View</a></li>
 	   <li><a href="@routes.TargetEdit.edit(target.url)" class="navbar-brand btn btn-success">Edit</a></li> 
 	</ul>
-    <!--<div id="usermenu">
-		<ul class="nav nav-tabs">
-		   <li><a href="@routes.TargetEdit.view(target.url)" class="navbar-brand">View</a></li>
-		   <li><a href="@routes.TargetEdit.edit(target.url)" class="navbar-brand">Edit</a></li> 
-		</ul>
-    </div>-->
     
     <article class="targetdetails">
-        <div class="folder">
-            <h3>Edit target @target.title</h3>
-		</div>
       <div class="panel panel-default" id="forms">
         <div class="panel-heading">
         </div>
         <form action="@routes.TargetController.saveTarget()" method="POST">
           <fieldset>
-            <legend>Legend</legend>
+          	<input type="hidden" name="nid" value="@target.nid">
             <div class="form-group">
               <label for="inputTitle">Title <font color="red">*</font></label>
               <input class="form-control" name="title" id="inputTitle" placeholder="My title" type="text" value=@target.title>
@@ -115,7 +106,7 @@
             <div class="form-group">
               <h4>Metadata</h4>
               <label for="inputDescription">Description</label>
-               <textarea name="description" id="inputDescription" cols="50" rows="10" value="@target.field_description"></textarea>
+               <textarea name="description" id="inputDescription" cols="50" rows="10" value=@target.field_description>@target.field_description</textarea>
                <br>A description of this web site.
 	             <div class="container">
 					  <h3>Subject</h3>
