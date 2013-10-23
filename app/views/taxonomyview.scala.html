@@ -3,22 +3,13 @@
 
 @main("", user){
     
-    <header>
-        <hgroup>
-            <h2>taxonomy.name</h2>
-        </hgroup>
-        <div id="usermenu">
-			<ul class="nav nav-tabs">
-			   <li><a href="@routes.TaxonomyEdit.view(taxonomy.url)" class="navbar-brand">View</a></li>
-			   <li><a href="@routes.TaxonomyEdit.edit(taxonomy.url)" class="navbar-brand">Edit</a></li> 
-			</ul>
-        </div>
-    </header>
-    
+    <h1>@taxonomy.name</h1>
+    <ul class="nav nav-tabs">
+	   <li><a href="@routes.TaxonomyEdit.view(taxonomy.url)" class="navbar-brand btn btn-success">View</a></li>
+	   <li><a href="@routes.TaxonomyEdit.edit(taxonomy.url)" class="navbar-brand btn btn-success">Edit</a></li> 
+	</ul>
+        
     <article class="taxonomydetails">
-        <div class="folder">
-            <h3>@taxonomy.name</h3>
-		</div>
       <div class="panel panel-primary" id="panels">
          @for(target <- Targets.getTargetsForTaxonomy(taxonomy.url)) {
             <div class="panel-footer">

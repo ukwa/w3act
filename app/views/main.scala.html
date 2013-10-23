@@ -3,8 +3,8 @@
 <html>
     <head>
         <title>W3ACT</title>
+        <meta charset="utf-8">        
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/style.css")">
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/blue/style.css")">
@@ -18,9 +18,71 @@
         <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
     </head>
     <body>
+      <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">W3ACT</a>
+           </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="@routes.About.index">About</a></li>
+			  <li><a href="@routes.DCollections.index()">Collections</a></li> 
+			  <li><a href="@routes.Targets.index()">Targets</a></li>
+			  <li><a href="@routes.Organisations.index()">Organisations</a></li>
+			  <li><a href="@routes.Curators.index()">Curators</a></li>
+			  <li><a href="@routes.Contact.index">Contact</a></li>
+            </ul>
+            <div class="pull-right" style="color:#fff;">
+              @user.name <span style="margin-right:10px;">(@user.email)</span>
+	          <a class="btn btn-success navbar-btn" href="@routes.Application.logout()">Logout</a>
+	        </div>
+          </div><!-- /.nav-collapse -->
+        </div><!-- /.container -->
+      </div><!-- /.navbar -->
+      
+      <div class="container content-container">
+        <div class="sidebar-offcanvas pull-left" id="sidebar" role="navigation">
+          <div class="well sidebar-nav" style="max-width:280px; margin-right:10px;">
+            <ul class="nav">
+              <li>Add Content</li>
+              <li><a href="@routes.AddContent.index">Add Content</a></li>
+              <!-- li><a href="@routes.Article.index">Article</a></li -->
+              <!-- li><a href="@routes.BasicPage.index">Basic page</a></li -->
+              <!-- li><a href="@routes.OrganisationForm.index">Organisation</a></li -->
+              <li><a href="@routes.SpecialCollection.index">Collection</a></li>
+              <li><a href="@routes.WebSite.index">Target</a></li>
+              <li>Targets</li>
+              <li><a href="@routes.WebSites.index()">Targets</a></li>
+	          <li><a href="@routes.AlphabeticalIndex.index">Alphabetical Index</a></li>
+	          <li><a href="@routes.DuplicateUrls.index">Duplicate URLs</a></li>
+			  <li><a href="@routes.KeySites.index">Key Sites</a></li>
+			  <li><a href="@routes.DispensationSites.index">Special Dispensation Sites</a></li>
+			  <li><a href="@routes.UrlSearch.index">URL Search</a></li>
+			  <li><a href="@routes.UrlsNoCrawl.index">URL Without Permissions</a></li>
+              <li>Edit Taxonomies</li>
+              <li><a href="@routes.EditTaxonomies.index()">Edit Taxonomies</a></li>
+              <li>My Bookmarks</li>
+              <li><a href="@routes.Bookmarks.index()">My bookmarks</a></li>            
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+      
+        <div class="row row-offcanvas row-offcanvas-right">
+          <div class="col-xs-12 col-sm-9">
+            @body
+          </div>
+        </div>
+      </div>
+    
+    <!--
         <header>
           <div class="row">
-    	  <!--  <div class="col-lg-3">
+    	  <div class="col-lg-3">
 	            <div class="media">
 	              <a class="pull-left" href="@routes.About.index">    
 	              		<img class="media-object" src="http://www.webarchive.org.uk/act/sites/192.168.45.11.act/files/color/ukwa_basic-9609b610/logo.png">  </a>
@@ -28,12 +90,12 @@
 	                <h4 class="media-heading"><span>W3</span>ACT</a></h4>
 	                <p>Web archiving.</p>
 	              </div>
-	            </div>-->
-	      <!--  </div>
-	        <div class="col-lg-3">-->
+	            </div>>
+	      </div>
+	        <div class="col-lg-3">
 	            <a href="@routes.About.index" id="logo"><span>W3</span>ACT</a>&nbsp;&nbsp;
-	      <!--  </div>
-	        <div class="col-lg-3">-->
+	      </div>
+	        <div class="col-lg-3">
 	            <dl id="user">
 	                <dt>@user.name <span>(@user.email)</span></dt>
 	                <dd>
@@ -41,7 +103,7 @@
 	                </dd>
 	            </dl>
 	        </div>
-	    <!--  </div>       -->
+	     </div>   
 			<div id="menu">
 				<ul class="nav nav-tabs">
 				   <li><a href="@routes.About.index" class="navbar-brand">About</a></li>
@@ -52,7 +114,8 @@
 				   <li><a href="@routes.Contact.index" class="navbar-brand">Contact</a></li>
 				</ul>
             </div>
-        </header>
+        </header> 
+        
         <nav>
             <h4 class="dashboard"><a href="#/">Home</a></h4>
             <div class="row">
@@ -64,7 +127,7 @@
 			                    <ul class="nav nav-list tree">
 			                        <!--<li class="subnav"><a href="@routes.Article.index">Article</a></li>
 			                        <li class="subnav"><a href="@routes.BasicPage.index">Basic page</a></li>
-			                        <li class="subnav"><a href="@routes.OrganisationForm.index">Organisation</a></li>-->
+			                        <li class="subnav"><a href="@routes.OrganisationForm.index">Organisation</a></li>
 			                        <li class="subnav"><a href="@routes.SpecialCollection.index">Collection</a></li>
 			                        <li class="subnav"><a href="@routes.WebSite.index">Target</a></li>
 			                    </ul>
@@ -90,8 +153,8 @@
 			</div>
         </nav>
         <section id="main">
-            @body
-        </section>
+            
+        </section> -->
     </body>
 </html>
 

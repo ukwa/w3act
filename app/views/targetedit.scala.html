@@ -3,17 +3,29 @@
 
 @main("", user){
     
-    <header>
-        <hgroup>
-            <h2>target.title</h2>
-        </hgroup>
-        <div id="usermenu">
-			<ul class="nav nav-tabs">
-			   <li><a href="@routes.TargetEdit.view(target.url)" class="navbar-brand">View</a></li>
-			   <li><a href="@routes.TargetEdit.edit(target.url)" class="navbar-brand">Edit</a></li> 
-			</ul>
-        </div>
-    </header>
+    <h1>@target.title</h1>
+    <!--<div class="btn-group" data-toggle="buttons">
+	  <label class="btn btn-primary">
+	    <input type="radio" name="options" id="option1"> <a href="@routes.TargetEdit.view(target.url)">View</a>
+	  </label>
+	  <label class="btn btn-primary">
+	    <input type="radio" name="options" id="option2"> <a href="@routes.TargetEdit.edit(target.url)">Edit</a>
+	  </label>
+	  <script>
+	  	$('.nav-tabs').button()
+	  </script>	
+	</div>-->
+    
+	<ul class="nav nav-tabs">
+	   <li><a href="@routes.TargetEdit.view(target.url)" class="navbar-brand btn btn-success">View</a></li>
+	   <li><a href="@routes.TargetEdit.edit(target.url)" class="navbar-brand btn btn-success">Edit</a></li> 
+	</ul>
+    <!--<div id="usermenu">
+		<ul class="nav nav-tabs">
+		   <li><a href="@routes.TargetEdit.view(target.url)" class="navbar-brand">View</a></li>
+		   <li><a href="@routes.TargetEdit.edit(target.url)" class="navbar-brand">Edit</a></li> 
+		</ul>
+    </div>-->
     
     <article class="targetdetails">
         <div class="folder">
@@ -79,6 +91,7 @@
               <label for="inputTimestamp">Timestamp <font color="red">*</font></label>
               <input class="form-control" id="inputTimestamp" placeholder="10123305092013" type="text" value="@target.created">
               <br>The fourteen character timestamp of this snapshot.
+              <div class="container">
               	<div class="row">
 			     <h4>QA Status</h4>
 			  		<label class="radio-inline">
@@ -90,6 +103,7 @@
 			        <label class="radio-inline">
 			          <input name="radioGroup" id="radio3" value="QA issue" type="radio"> QA issue
 			        </label>			      
+			  	</div>
 			  	</div>
               <br>Quality status of this snapshot.
               <button type="item" class="btn btn-success">Remove</button>
@@ -167,6 +181,7 @@
 					  <br>
 					  <h5>Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option.</h5>				  
 				</div>
+              <div class="container">
 				<div class="row">
 			     <h4>Depth <font color="red">*</font></h4>
 			  		<label class="radio-inline">
@@ -178,6 +193,7 @@
 			        <label class="radio-inline">
 			          <input name="radioGroup" id="radio3" value="Uncapped" type="radio"> Uncapped
 			        </label>			      
+			  	</div>
 			  	</div>
 	            <div class="checkbox">
 	              <label><input type="checkbox">Ignore Robots.txt</label>

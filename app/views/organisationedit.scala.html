@@ -3,17 +3,11 @@
 
 @main("", user){
     
-    <header>
-        <hgroup>
-            <h2>Organisation Edit</h2>
-        </hgroup>
-        <div id="usermenu">
-			<ul class="nav nav-tabs">
-			   <li><a href="@routes.OrganisationEdit.view(organisation.url)" class="navbar-brand">View</a></li>
-			   <li><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand">Edit</a></li> 
-			</ul>
-        </div>
-    </header>
+    <h1>Edit Organisation @organisation.title</h1>
+    <ul class="nav nav-tabs">
+	   <li><a href="@routes.OrganisationEdit.view(organisation.url)" class="navbar-brand btn btn-success">View</a></li>
+	   <li><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand btn btn-success">Edit</a></li> 
+	</ul>
     
     <article class="organisationdetails">
         <div class="folder">
