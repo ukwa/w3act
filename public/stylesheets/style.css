@@ -100,22 +100,24 @@ header {
 
 div.panel-footer {
     padding: 4px 15px;
-#    !important
     }
     
 input#inputName.form-control {
     margin-left: 8px;
     margin-right: 8px;
-    margin-top: 16px;
+    margin-top: 8px;
     width: 250px;
+    padding: 4px 15px;
 }
 
 button.btn.btn-success {
     margin-left: 8px;
+    padding: 4px 15px;
+    margin-top: -8px;
 }
 
 div#panels.panel.panel-primary.filter {
-    height: 160px;
+    height: 130px;
 }
 
 #main > .userdetails {
