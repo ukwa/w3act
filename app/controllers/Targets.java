@@ -23,11 +23,29 @@ public class Targets extends AbstractController {
      * Display the targets.
      */
     public static Result index() {
+    	List<Target> targetsAll = models.Target.findAll();
+    	List<Target> targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
         return ok(
             targets.render(
-                "Targets", User.find.byId(request().username()), models.Target.findInvolving(), 
+//                    "Targets", User.find.byId(request().username()), models.Target.findInvolving(), 
+                    "Targets", User.find.byId(request().username()), targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
-                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE
+                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+                	Const.NONE, Const.NONE, 0, models.Target.findAll().size()
+            )
+        );
+    }
+
+    public static Result offset(int offset) {
+    	List<Target> targetsAll = models.Target.findAll();
+    	List<Target> targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
+        return ok(
+            targets.render(
+//                    "Targets", User.find.byId(request().username()), models.Target.findInvolving(), 
+                    "Targets", User.find.byId(request().username()), targetsRes, 
+                	User.findAll(), models.Organisation.findInvolving(),
+                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+                	Const.NONE, Const.NONE, offset, models.Target.findAll().size()
             )
         );
     }
@@ -38,7 +56,8 @@ public class Targets extends AbstractController {
                 targets.render(
                     "Targets", User.find.byId(request().username()), models.Target.filterUrl(filter), 
                 	User.findAll(), models.Organisation.findInvolving(),
-                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE
+                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+                	Const.NONE, Const.NONE, 0, models.Target.findAll().size()
                 )
             );
     }
@@ -55,13 +74,16 @@ public class Targets extends AbstractController {
      * @return
      */
     public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String scope) {
+    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit) {
+    	List<Target> targetsAll = models.Target.filterUserUrl(curatorUrl);
+    	List<Target> targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
         return ok(
                 targets.render(
-			        "Targets", User.find.byId(request().username()), models.Target.filterUserUrl(curatorUrl), 
-//		        	User.findAll(), models.Organisation.findInvolving(),
+   			        "Targets", User.find.byId(request().username()), targetsRes, 
+//   			        "Targets", User.find.byId(request().username()), models.Target.filterUserUrlExt(curatorUrl, offset), 
 		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
-			        	curatorUrl,  organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope
+			        	curatorUrl,  organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, 
+			        	scope, offset, models.Target.findAll().size()
                         )
                 );
     }

@@ -20,6 +20,7 @@ GET     /assets/*file                       controllers.Assets.at(path="/public"
 GET     /about                              controllers.About.index()
 GET     /collections                        controllers.DCollections.index()
 GET     /targets                            controllers.Targets.index()
+GET     /targets/:offset                    controllers.Targets.offset(offset:Int)
 GET     /organisations                      controllers.Organisations.index()
 GET     /curators                           controllers.Curators.index()
 GET     /contact                            controllers.Contact.index()
@@ -54,7 +55,7 @@ GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxono
 GET     /targetview/:target                 controllers.TargetEdit.view(target)
 GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
 #GET     /targets/:user                      controllers.Targets.edit(user)
-GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope                      controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)
+GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int)
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()

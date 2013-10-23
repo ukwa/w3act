@@ -45,6 +45,10 @@ public final class Const {
 
 	public static final int STRING_LIMIT          = 50;
 
+	// Help constants
+	public static final int PAGINATION_OFFSET     = 10; // offset is a page step from current page for pagination
+	public static final int ROWS_PER_PAGE         = 50;
+	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";
 	public static final String TRUE               = "true";

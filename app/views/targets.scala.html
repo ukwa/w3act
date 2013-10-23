@@ -1,4 +1,4 @@
-@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, scope: String)
+@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, scope: String, offset: Int, limit: Int)
 
 @main(title, user){
     
@@ -33,13 +33,13 @@
 				           @curators.map { curator =>	
 				               @if(curatorUrl != null && !curatorUrl.equals("none")) {
 						           <div class="panel-footer"><a class="brand" href="@routes.Targets.edit("none", organisationUrl, 
-						               collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)">
+						               collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
 						            	   (-) </a> @curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())
 						           </div>
 							   } else {		                
 					               @if(curator.url != null) {       
 							           <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curator.url, organisationUrl, 
-							               collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)">
+							               collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
 							               @curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())</a>
 							           </div>
 						           } 
@@ -60,13 +60,13 @@
 			            @organisations.map { organisation =>	
 			                @if(organisationUrl != null && !organisationUrl.equals("none")) {
 					            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curatorUrl, "none", 
-					            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)">
+					            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
 					            	(-) </a> @organisation.title &nbsp;(@organisation.getTargetNumberByOrganisationUrl())
 					            </div>
 							} else {		                
 				            	@if(organisation.url != null) { 	              
 						            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curatorUrl, organisation.url, 
-						            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope)">
+						            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
 						            	@organisation.title &nbsp;(@organisation.getTargetNumberByOrganisationUrl())</a>
 						            </div>
 				                }
@@ -205,14 +205,17 @@
 		            </table>
 		          <div class="row">
 			        <div class="col-lg-6">
-			            <ul class="pagination" style="margin-right: 10px;">
+			            <ul class="pagination" style="margin-right: 10px; width: 600px;">
 			              <li>
 			                <a href="#">Prev</a>
 			              </li>
+				          @for(i <- 0 until 9) {
 			              <li>
-			                <a href="#">1</a>
+			                <a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
+			                	subjectUrl, crawlFrequency, depth, scope, i, limit)">@i</a>
 			              </li>
-			              <li>
+			              }
+			              <!--li>
 			                <a href="#">2</a>
 			              </li>
 			              <li>
@@ -220,7 +223,7 @@
 			              </li>
 			              <li>
 			                <a href="#">4</a>
-			              </li>
+			              </li-->
 			              <li>
 			                <a href="#">Next</a>
 			              </li>
