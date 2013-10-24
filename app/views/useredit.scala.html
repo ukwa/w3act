@@ -3,22 +3,15 @@
 
 @main("", user){
     
-    <header>
-        <hgroup>
-            <h2>User Edit</h2>
-        </hgroup>
-        <div id="usermenu">
-			<ul class="nav nav-tabs">
-			   <li><a href="@routes.UserEdit.edit(user.url)" class="navbar-brand">View</a></li>
-			   <li><a href="@routes.UserEdit.sites(user.url)" class="navbar-brand">My Sites</a></li> 
-			   <li><a href="@routes.UserEdit.bookmarks(user.url)" class="navbar-brand">Bookmarks</a></li>
-			</ul>
-        </div>
-    </header>
+    <h1>Edit User @user.name</h1>
+	<ul class="nav nav-tabs">
+	   <li><a href="@routes.UserEdit.edit(user.url)" class="navbar-brand btn btn-success">View</a></li>
+	   <li><a href="@routes.UserEdit.sites(user.url)" class="navbar-brand btn btn-success">My Sites</a></li> 
+	   <li><a href="@routes.UserEdit.bookmarks(user.url)" class="navbar-brand btn btn-success">Bookmarks</a></li> 
+	</ul>
     
     <article class="userdetails">
         <div class="folder">
-            <h3>@user.name</h3>
             <br>Affiliation: @Organisation.findByUrl(user.field_affiliation).title
             <br>History
             <br>Member for 

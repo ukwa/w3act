@@ -83,7 +83,7 @@ public class Targets extends AbstractController {
      */
     public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
     		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit) {
-    	Logger.info("target edit curatorUrl: " + curatorUrl + ", organisationUrl: " + organisationUrl);
+//    	Logger.info("target edit curatorUrl: " + curatorUrl + ", organisationUrl: " + organisationUrl);
     	List<Target> targetsAll = new ArrayList<Target>();
     	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
     		targetsAll = models.Target.filterUserUrl(curatorUrl);
@@ -99,7 +99,7 @@ public class Targets extends AbstractController {
 //    			organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
 //    		targetsAll = models.Target.filterCuratorAndOrganisationUrl(curatorUrl, organisationUrl);
 //    	}
-    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
+//    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
     	int rowCount = Const.ROWS_PER_PAGE;
     	List<Target> targetsRes = new ArrayList<Target>();
     	if (targetsAll.size() < (offset+1)*Const.ROWS_PER_PAGE
@@ -111,8 +111,8 @@ public class Targets extends AbstractController {
     	} else {
     		targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
     	}
-       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
-    	Logger.info("target edit targetsRes: " + targetsRes.size());
+//       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
+//    	Logger.info("target edit targetsRes: " + targetsRes.size());
         return ok(
                 targets.render(
    			        "Targets", User.find.byId(request().username()), targetsRes, 
@@ -133,7 +133,7 @@ public class Targets extends AbstractController {
     public static int getStartPage(int offset) {
     	int res = 0;
     	res = offset/Const.PAGINATION_OFFSET; 
-    	Logger.info("get start page offset: " + offset + ", start page: " + res);
+//    	Logger.info("get start page offset: " + offset + ", start page: " + res);
     	return res*Const.PAGINATION_OFFSET;
     }
     
@@ -225,7 +225,7 @@ public class Targets extends AbstractController {
 		if (offset - (Const.PAGINATION_OFFSET) < 0) {
 			res = false;
 		}
-		Logger.info("check prev offset: " + offset + ", res: " + res);
+//		Logger.info("check prev offset: " + offset + ", res: " + res);
 		return res;
 	}
 	
@@ -239,7 +239,7 @@ public class Targets extends AbstractController {
 		if (offset > limit/Const.ROWS_PER_PAGE - 2) { // because of starting by 0 and already presented last page
 			res = false;
 		}
-		Logger.info("check next offset: " + offset + ", limit: " + limit + ", res: " + res);
+//		Logger.info("check next offset: " + offset + ", limit: " + limit + ", res: " + res);
 		return res;
 	}
 	
@@ -267,12 +267,12 @@ public class Targets extends AbstractController {
 	 */
 	public static List<Target> getTargetsForTaxonomy(String url) {
 		List<Target> res = new ArrayList<Target>();
-		Logger.info("url: " + url);
+//		Logger.info("url: " + url);
 		if (url != null) {
 	        ExpressionList<Target> ll = Target.find.where().contains("field_collection_categories", url);
 	        res = ll.findList();
 		}
-		Logger.info("res size: " + res.size());
+//		Logger.info("res size: " + res.size());
 		return res;
 	}
 	
@@ -291,9 +291,9 @@ public class Targets extends AbstractController {
 		        ExpressionList<Target> ll = Target.find.where().contains("field_license", target.field_license);
 		        if (ll.findRowCount() > 0) {
 		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.field_license);
-		        	Logger.info("target.field_license: " + target.field_license + ".");
-		        	Logger.info("taxonomy url: " + taxonomy.url);
-		        	Logger.info("license: " + taxonomy.name);
+//		        	Logger.info("target.field_license: " + target.field_license + ".");
+//		        	Logger.info("taxonomy url: " + taxonomy.url);
+//		        	Logger.info("license: " + taxonomy.name);
 		        	res.add(taxonomy);
 		        	subjects.add(target.field_license);
 		        }
@@ -351,7 +351,6 @@ public class Targets extends AbstractController {
 	 * @return scope list
 	 */
 	public static List<Taxonomy> getCollectionCategories() {
-//		public static List<Target> getCollectionCategories() {
 		List<Target> res = new ArrayList<Target>();
 		List<String> subjects = new ArrayList<String>();
 		List<Taxonomy> taxonomies = new ArrayList<Taxonomy>();
@@ -370,7 +369,6 @@ public class Targets extends AbstractController {
 			}
 		}
     	return taxonomies;
-//    	return res;
 	}
 	
 }

@@ -219,12 +219,78 @@ public class Target extends Model {
 	}
 	
 	/**
+	 * This method computes a number of targets per taxonomy for given taxonomy URL.
+	 * @return
+	 */
+	public static int getTargetNumberByTaxonomyUrl(String url) {
+		int res = 0;
+        ExpressionList<Target> ll = find.where().eq("field_collection_categories", url);
+        res = ll.findRowCount();
+		return res;
+	}
+	
+	/**
+	 * This method computes a number of targets per user for given subject URL.
+	 * @return
+	 */
+	public static int getTargetNumberBySubjectUrl(String url) {
+		int res = 0;
+        ExpressionList<Target> ll = find.where().eq("field_subject", url);
+        res = ll.findRowCount();
+		return res;
+	}
+	
+	/**
 	 * This method computes a number of targets per organisation for given organisation URL.
 	 * @return
 	 */
 	public static int getTargetNumberByOrganisationUrl(String url) {
 		int res = 0;
         ExpressionList<Target> ll = find.where().eq("field_nominating_organisation", url);
+        res = ll.findRowCount();
+		return res;
+	}
+	
+	/**
+	 * This method computes a number of targets for given crawl frequency.
+	 * @return
+	 */
+	public static int getTargetNumberByCrawlFrequency(String url) {
+		int res = 0;
+        ExpressionList<Target> ll = find.where().eq("field_crawl_frequency", url);
+        res = ll.findRowCount();
+		return res;
+	}
+	
+	/**
+	 * This method computes a number of targets for given depth.
+	 * @return
+	 */
+	public static int getTargetNumberByDepth(String url) {
+		int res = 0;
+        ExpressionList<Target> ll = find.where().eq("field_depth", url);
+        res = ll.findRowCount();
+		return res;
+	}
+	
+	/**
+	 * This method computes a number of targets for given license.
+	 * @return
+	 */
+	public static int getTargetNumberByLicense(String url) {
+		int res = 0;
+        ExpressionList<Target> ll = find.where().eq("field_license", url);
+        res = ll.findRowCount();
+		return res;
+	}
+	
+	/**
+	 * This method computes a number of targets for given scope.
+	 * @return
+	 */
+	public static int getTargetNumberByScope(String url) {
+		int res = 0;
+        ExpressionList<Target> ll = find.where().eq("field_scope", url);
         res = ll.findRowCount();
 		return res;
 	}

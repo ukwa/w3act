@@ -119,8 +119,11 @@
 			            	</a>
 			            </div>
 					    <div id="collapseCollectionCategories" class="panel-collapse collapse">
-				            @for(taxonomy <- Taxonomy.findAll()) {
-				            <div class="panel-footer">@taxonomy.name
+				            @for(curCollectionCategory <- Taxonomy.findAll()) {
+				            <div class="panel-footer">
+				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
+						            	curCollectionCategory.url, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
+						            	@curCollectionCategory.name &nbsp; (@Target.getTargetNumberByTaxonomyUrl(curCollectionCategory.url))</a>
 				            </div>
 				            }
 				          </div>
@@ -135,8 +138,11 @@
 				            	</a>
 				            </div>
 							<div id="collapseSubjects" class="panel-collapse collapse">
-				            @for(subjecttarget <- Targets.getSubjects()) {
-				            <div class="panel-footer">@subjecttarget.field_subject
+				            @for(curSubject <- Targets.getSubjects()) {
+				            <div class="panel-footer">
+				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
+						            	collectionCategoryUrl, curSubject.field_subject, crawlFrequency, depth, scope, offset, limit)">
+						            	@curSubject.field_subject &nbsp; (@Target.getTargetNumberBySubjectUrl(curSubject.field_subject))</a>
 				            </div>
 				            }
 				          </div>
@@ -151,8 +157,11 @@
 			            	</a>
 			            </div>
 						<div id="collapseCrawlFrequency" class="panel-collapse collapse">
-				            @for(scopetarget <- Targets.getCrawlFrequency()) {
-				            <div class="panel-footer">@scopetarget.field_crawl_frequency
+				            @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
+				            <div class="panel-footer">
+				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
+						            	collectionCategoryUrl, subjectUrl, curCrawlFrequency.field_crawl_frequency, depth, scope, offset, limit)">
+						            	@curCrawlFrequency.field_crawl_frequency &nbsp; (@Target.getTargetNumberByCrawlFrequency(curCrawlFrequency.field_crawl_frequency))</a>
 				            </div>
 				            }
 				          </div>
@@ -167,8 +176,11 @@
 			            	</a>
 			            </div>
 						<div id="collapseDepth" class="panel-collapse collapse">
-				            @for(scopetarget <- Targets.getDepth()) {
-				            <div class="panel-footer">@scopetarget.field_depth
+				            @for(curDepth <- Targets.getDepth()) {
+				            <div class="panel-footer">
+				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
+						            	collectionCategoryUrl, subjectUrl, crawlFrequency, curDepth.field_depth, scope, offset, limit)">
+						            	@curDepth.field_depth &nbsp; (@Target.getTargetNumberByDepth(curDepth.field_depth))</a>
 				            </div>
 				            }
 				          </div>
@@ -183,8 +195,11 @@
 				            	</a>
 				            </div>
 							<div id="collapseLicense" class="panel-collapse collapse">
-				            @for(taxonomy <- Targets.getLicense()) {
-				            <div class="panel-footer">@taxonomy.name
+				            @for(curLicense <- Targets.getLicense()) {
+				            <div class="panel-footer">
+				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
+						            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
+						            	@curLicense.name &nbsp; (@Target.getTargetNumberByLicense(curLicense.name))</a>
 				            </div>
 				            }
 				          </div>
@@ -199,8 +214,11 @@
 				            	</a>
 				            </div>
 							<div id="collapseScope" class="panel-collapse collapse">
-					            @for(scopetarget <- Targets.getScope()) {
-					            <div class="panel-footer">@scopetarget.field_scope
+					            @for(curScope <- Targets.getScope()) {
+					            <div class="panel-footer">
+				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
+						            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, curScope.field_scope, offset, limit)">
+						            	@curScope.field_scope &nbsp; (@Target.getTargetNumberByScope(curScope.field_scope))</a>
 					            </div>
 					            }
 				          </div>
