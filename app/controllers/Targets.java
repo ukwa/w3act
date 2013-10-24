@@ -90,6 +90,10 @@ public class Targets extends AbstractController {
     	}
     	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
     		targetsAll = models.Target.filterOrganisationUrl(organisationUrl);
+    	} 
+    	if ((curatorUrl == null || curatorUrl.equals(Const.NONE)) &&
+    			(organisationUrl == null || organisationUrl.equals(Const.NONE))) {
+    		targetsAll = models.Target.findAll();
     	}
 //    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE) &&
 //    			organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
