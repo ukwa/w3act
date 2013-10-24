@@ -71,6 +71,8 @@ public class Targets extends AbstractController {
      * @param crawlFrequency
      * @param depth
      * @param scope
+     * @param offset The current page number
+     * @param limit The maximal row count
      * @return
      */
     public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
@@ -86,6 +88,18 @@ public class Targets extends AbstractController {
 			        	scope, offset, models.Target.findAll().size()
                         )
                 );
+    }
+    
+    /**
+     * This method defines range for current page
+     * @param offset
+     * @return start page number for range
+     */
+    public static int getStartPage(int offset) {
+    	int res = 0;
+    	res = offset/Const.PAGINATION_OFFSET; 
+    	Logger.info("get start page offset: " + offset + ", start page: " + res);
+    	return res*Const.PAGINATION_OFFSET;
     }
     
 	/**
@@ -131,6 +145,84 @@ public class Targets extends AbstractController {
 			}
 		}
     	return res;
+	}
+	
+	/**
+	 * This method calculates current pagination range based on given current page number.
+	 * @param offset
+	 * @return a set of page numbers
+	 */
+	public static List<Integer> getRange(int offset) {
+		List<Integer> ll = new ArrayList<Integer>();
+		int i = offset;
+		while (i < offset + Const.PAGINATION_OFFSET) {
+			ll.add(i);
+			i++;
+		}
+		return ll;
+	}
+	
+	/**
+	 * This method calculates previous pagination range based on given current page number.
+	 * @param offset
+	 * @return a set of page numbers
+	 */
+	public static int getPrev(int offset) { 
+	    return offset - Const.PAGINATION_OFFSET;
+	}
+	
+	/**
+	 * This method calculates next pagination range based on given current page number.
+	 * @param offset
+	 * @return a set of page numbers
+	 */
+	public static int getNext(int offset) { 
+	    return offset + Const.PAGINATION_OFFSET;
+	}
+	
+	/**
+	 * This method checks if previous pages exist.
+	 * @param offset
+	 * @return
+	 */
+	public static boolean checkPrev(int offset) {
+		boolean res = true;
+		if (offset - (Const.PAGINATION_OFFSET) < 0) {
+			res = false;
+		}
+		Logger.info("check prev offset: " + offset + ", res: " + res);
+		return res;
+	}
+	
+	/**
+	 * This method checks if next pages exist.
+	 * @param offset
+	 * @return
+	 */
+	public static boolean checkNext(int offset, int limit) {
+		boolean res = true;
+		if (offset > limit/Const.ROWS_PER_PAGE - 2) { // because of starting by 0 and already presented last page
+			res = false;
+		}
+		Logger.info("check next offset: " + offset + ", limit: " + limit + ", res: " + res);
+		return res;
+	}
+	
+	/**
+	 * This method calculates maximal page number.
+	 * @param offset
+	 * @return a set of page numbers
+	 */
+	public static int getMaxPageNumber(int limit) { 
+	    return limit/Const.ROWS_PER_PAGE;
+	}
+	
+	/**
+	 * This method is required for checking of "Next" button in pagination.
+	 * @return
+	 */
+	public static int getPaginationOffset() { 
+	    return Const.PAGINATION_OFFSET;
 	}
 	
 	/**

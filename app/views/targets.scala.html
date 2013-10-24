@@ -1,5 +1,40 @@
 @(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, scope: String, offset: Int, limit: Int)
 
+@pagination = {
+  <div class="row">
+    <div class="col-lg-6">
+        <ul class="pagination" style="margin-right: 10px; width: 600px;">
+          @if(Targets.checkPrev(offset)) {
+          <li>
+            <a class="page" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
+            	subjectUrl, crawlFrequency, depth, scope, Targets.getPrev(Targets.getStartPage(offset)), limit)">Prev</a>
+          </li>
+          }
+          @for(i <- Targets.getRange(Targets.getStartPage(offset))) {
+              @if(Targets.checkNext(i, limit)) {
+              <li>
+                <a class="page" @if(offset==i){style="color:red";}" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
+                	subjectUrl, crawlFrequency, depth, scope, i, limit)">@(i+1)</a>
+              </li>
+              }
+          }
+          @if(Targets.checkNext(offset+Targets.getPaginationOffset(), limit)) {
+          <li>
+            <a class="page" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
+            	subjectUrl, crawlFrequency, depth, scope, Targets.getNext(Targets.getStartPage(offset)), limit)">Next</a>
+          </li>
+          }
+          <li>
+            <a class="page" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
+            	subjectUrl, crawlFrequency, depth, scope, Targets.getMaxPageNumber(limit)-1, limit)">
+            	@Targets.getMaxPageNumber(limit)</a>
+          </li>
+		</ul>
+		<!--p>Displayed page @(offset+1) from @Targets.getMaxPageNumber(limit)</p-->
+      </div>
+     </div>		          	
+}
+
 @main(title, user){
     
     <h1>Targets overview</h1>
@@ -174,6 +209,7 @@
 		        </div>
 		        
 		        <div class="col-lg-6">
+		        	@pagination
 					<script >
 							$(function() {
 							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
@@ -203,35 +239,9 @@
 		                }
 		              </tbody>
 		            </table>
-		          <div class="row">
-			        <div class="col-lg-6">
-			            <ul class="pagination" style="margin-right: 10px; width: 600px;">
-			              <li>
-			                <a href="#">Prev</a>
-			              </li>
-				          @for(i <- 0 until 9) {
-			              <li>
-			                <a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
-			                	subjectUrl, crawlFrequency, depth, scope, i, limit)">@i</a>
-			              </li>
-			              }
-			              <!--li>
-			                <a href="#">2</a>
-			              </li>
-			              <li>
-			                <a href="#">3</a>
-			              </li>
-			              <li>
-			                <a href="#">4</a>
-			              </li-->
-			              <li>
-			                <a href="#">Next</a>
-			              </li>
-		          </div>
-		         </div>		          	
-		        </div>
+		            @pagination
+			     </div>
 	          </div>
-			</ul>
 		</div>
     </article>
     

@@ -120,6 +120,20 @@ div#panels.panel.panel-primary.filter {
     height: 130px;
 }
 
+a.page {
+	#padding: 1px;
+    font-size: 10;
+#	color: green;
+#	background-color: green;
+#	border-color: green;
+#	background: green;
+}
+
+#a.page:link { color: #00f; }
+#a.page:hover { color: #0f0; }
+#a.page:active { color: #f00; }
+#a.page:visited { color: #f0f; } 
+
 #main > .userdetails {
     bottom: 0;
     left: 0;
