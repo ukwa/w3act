@@ -46,7 +46,7 @@
                   }	
                   <td>@target.field_subject</td>
                   @if(target.field_nominating_organisation != null) { 
-    	              <td><a href="@routes.OrganisationEdit.edit(target.field_nominating_organisation)">@User.findByUrl(target.author).name</a></td>
+    	              <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>
                   } else {
 	                  <td></td>
                   }	

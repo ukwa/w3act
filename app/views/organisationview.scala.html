@@ -30,14 +30,20 @@
               	@Target.findAllforOrganisation(organisation.url).map { target =>		              
                 <tr>
                   <td><a class="brand" href="@target.url">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
-                  @if(target.field_collection_categories != null && Taxonomy.findByUrl(target.field_collection_categories).name != null) { 
-	                  <td>@Taxonomy.findByUrl(target.field_collection_categories).name</td>
+                  @if(target.field_collection_categories != null && Taxonomy.findListByUrl(target.field_collection_categories) != null) { 
+	                <td>
+	                	@for(taxonomy <- Taxonomy.findListByUrl(target.field_collection_categories)) {
+	                	    @if(taxonomy.url != null) {
+		            		<a href="@routes.TaxonomyEdit.edit(taxonomy.url)">@taxonomy.name</a>,&nbsp;
+		            		}
+			            }
+    	            </td>
                   } else {
 	                  <td></td>
-                  }	
+                  }	                  
                   <td>@target.field_subject</td>
                   @if(target.field_nominating_organisation != null) { 
-    	              <td><a href="@routes.OrganisationEdit.edit(target.field_nominating_organisation)">@User.findByUrl(target.author).name</a></td>
+    	              <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>
                   } else {
 	                  <td></td>
                   }	
