@@ -256,6 +256,34 @@ public class Target extends Model {
 	}
 	
 	/**
+	 * This method filters targets by given Organisation URLs.
+	 * @return duplicate count
+	 */
+	public static List<Target> filterOrganisationUrl(String url) {
+		List<Target> res = new ArrayList<Target>();
+		if (url == null || url.equals(Const.NONE)) {
+			res = find.all();
+		} else {
+	        ExpressionList<Target> ll = find.where().contains("field_nominating_organisation", url);
+	    	res = ll.findList();
+		}
+		return res;
+	}
+	
+	/**
+	 * This method filters targets by given Curator and Organisation URLs.
+	 * @return duplicate count
+	 */
+	public static List<Target> filterCuratorAndOrganisationUrl(String curatorUrl, String organisationUrl) {
+		List<Target> res = new ArrayList<Target>();
+		if (curatorUrl != null && organisationUrl != null) {
+	        ExpressionList<Target> ll = find.where().contains("field_nominating_organisation", organisationUrl);
+	    	res = ll.findList(); // TODO
+		}
+		return res;
+	}
+	
+	/**
 	 * This method filters targets by given URLs.
 	 * @return duplicate count
 	 */

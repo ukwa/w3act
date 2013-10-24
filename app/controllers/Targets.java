@@ -45,19 +45,25 @@ public class Targets extends AbstractController {
                     "Targets", User.find.byId(request().username()), targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
                 	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, offset, models.Target.findAll().size()
+                	Const.NONE, Const.NONE, offset, targetsAll.size()
             )
         );
     }
 
     public static Result filterUrl() {
         String filter = getFormParam(Const.FILTER);
+    	List<Target> targetsAll = models.Target.filterUrl(filter);
+    	int rowCount = Const.ROWS_PER_PAGE;
+    	if (targetsAll.size() < Const.ROWS_PER_PAGE) {
+    		rowCount = targetsAll.size();
+    	}
+    	List<Target> targetsRes = targetsAll.subList(0, rowCount);
         return ok(
                 targets.render(
-                    "Targets", User.find.byId(request().username()), models.Target.filterUrl(filter), 
+                    "Targets", User.find.byId(request().username()), targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
                 	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, 0, models.Target.findAll().size()
+                	Const.NONE, Const.NONE, 0, targetsAll.size()
                 )
             );
     }
@@ -77,15 +83,40 @@ public class Targets extends AbstractController {
      */
     public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
     		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit) {
-    	List<Target> targetsAll = models.Target.filterUserUrl(curatorUrl);
-    	List<Target> targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
+    	Logger.info("target edit curatorUrl: " + curatorUrl + ", organisationUrl: " + organisationUrl);
+    	List<Target> targetsAll = new ArrayList<Target>();
+    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
+    		targetsAll = models.Target.filterUserUrl(curatorUrl);
+    	}
+    	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
+    		targetsAll = models.Target.filterOrganisationUrl(organisationUrl);
+    	}
+//    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE) &&
+//    			organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
+//    		targetsAll = models.Target.filterCuratorAndOrganisationUrl(curatorUrl, organisationUrl);
+//    	}
+    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
+    	int rowCount = Const.ROWS_PER_PAGE;
+    	List<Target> targetsRes = new ArrayList<Target>();
+    	if (targetsAll.size() < (offset+1)*Const.ROWS_PER_PAGE
+    			|| targetsAll.size() < offset*Const.ROWS_PER_PAGE
+    			|| targetsAll.size() < Const.ROWS_PER_PAGE) {
+    		rowCount = targetsAll.size();
+    		offset = 0;
+        	targetsRes = targetsAll.subList(0, rowCount);
+    	} else {
+    		targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
+    	}
+       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
+    	Logger.info("target edit targetsRes: " + targetsRes.size());
         return ok(
                 targets.render(
    			        "Targets", User.find.byId(request().username()), targetsRes, 
 //   			        "Targets", User.find.byId(request().username()), models.Target.filterUserUrlExt(curatorUrl, offset), 
 		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
 			        	curatorUrl,  organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, 
-			        	scope, offset, models.Target.findAll().size()
+			        	scope, offset, targetsAll.size()
+//			        	scope, offset, models.Target.findAll().size()
                         )
                 );
     }
