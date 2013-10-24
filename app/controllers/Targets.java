@@ -84,15 +84,35 @@ public class Targets extends AbstractController {
     public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
     		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit) {
 //    	Logger.info("target edit curatorUrl: " + curatorUrl + ", organisationUrl: " + organisationUrl);
+    	boolean isProcessed = false;
     	List<Target> targetsAll = new ArrayList<Target>();
     	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
     		targetsAll = models.Target.filterUserUrl(curatorUrl);
+    		isProcessed = true;
     	}
     	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
     		targetsAll = models.Target.filterOrganisationUrl(organisationUrl);
+    		isProcessed = true;
     	} 
-    	if ((curatorUrl == null || curatorUrl.equals(Const.NONE)) &&
-    			(organisationUrl == null || organisationUrl.equals(Const.NONE))) {
+    	if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
+    		targetsAll = models.Target.filter(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
+    		isProcessed = true;
+    	} 
+    	if (depth != null && !depth.equals(Const.NONE)) {
+    		targetsAll = models.Target.filter(Const.FIELD_DEPTH, depth);
+    		isProcessed = true;
+    	} 
+    	if (scope != null && !scope.equals(Const.NONE)) {
+    		targetsAll = models.Target.filter(Const.FIELD_SCOPE, scope);
+    		isProcessed = true;
+    	} 
+    	if (collectionCategoryUrl != null && !collectionCategoryUrl.equals(Const.NONE)) {
+    		targetsAll = models.Target.filter(Const.FIELD_COLLECTION_CATEGORIES, collectionCategoryUrl);
+    		isProcessed = true;
+    	} 
+        if (!isProcessed) {
+//    	if ((curatorUrl == null || curatorUrl.equals(Const.NONE)) &&
+//    			(organisationUrl == null || organisationUrl.equals(Const.NONE))) {
     		targetsAll = models.Target.findAll();
     	}
 //    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE) &&
@@ -269,7 +289,7 @@ public class Targets extends AbstractController {
 		List<Target> res = new ArrayList<Target>();
 //		Logger.info("url: " + url);
 		if (url != null) {
-	        ExpressionList<Target> ll = Target.find.where().contains("field_collection_categories", url);
+	        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, url);
 	        res = ll.findList();
 		}
 //		Logger.info("res size: " + res.size());
@@ -359,7 +379,7 @@ public class Targets extends AbstractController {
 		while (itr.hasNext()) {
 			Target target = itr.next();
 			if (target.field_collection_categories != null && target.field_collection_categories.length() > 0 && !subjects.contains(target.field_collection_categories)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_collection_categories", target.field_collection_categories);
+		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, target.field_collection_categories);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
 		        	subjects.add(target.field_collection_categories);

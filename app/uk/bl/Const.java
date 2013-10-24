@@ -64,6 +64,10 @@ public final class Const {
 	public static final String DESCRIPTION        = "description";
 	public static final String SUBJECT            = "subject";
 	public static final String ORGANISATION       = "organisation";
+	public static final String FIELD_CRAWL_FREQUENCY = "field_crawl_frequency";
+	public static final String FIELD_COLLECTION_CATEGORIES = "field_collection_categories";
+	public static final String FIELD_SCOPE = "field_scope";
+	public static final String FIELD_DEPTH = "field_depth";
 	
 	// Types of the JSON nodes
 	public enum NodeType {

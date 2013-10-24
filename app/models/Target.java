@@ -224,7 +224,7 @@ public class Target extends Model {
 	 */
 	public static int getTargetNumberByTaxonomyUrl(String url) {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("field_collection_categories", url);
+        ExpressionList<Target> ll = find.where().eq(Const.FIELD_COLLECTION_CATEGORIES, url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -331,6 +331,23 @@ public class Target extends Model {
 			res = find.all();
 		} else {
 	        ExpressionList<Target> ll = find.where().contains("field_nominating_organisation", url);
+	    	res = ll.findList();
+		}
+		return res;
+	}
+	
+	/**
+	 * This method filters database column by given parameter.
+	 * @param field The column name in database
+	 * @param par The search parameter
+	 * @return The found object list
+	 */
+	public static List<Target> filter(String field, String par) {
+		List<Target> res = new ArrayList<Target>();
+		if (par == null || par.equals(Const.NONE)) {
+			res = find.all();
+		} else {
+	        ExpressionList<Target> ll = find.where().contains(field, par);
 	    	res = ll.findList();
 		}
 		return res;
