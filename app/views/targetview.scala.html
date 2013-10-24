@@ -10,102 +10,104 @@
 	</ul>
     
     <article class="targetdetails">
-        <div class="folder">
-            <h3>@target.title</h3>
-		</div>
-		  <div class="form-group">
-               <a href="#" data-toggle="collapse" data-target="#urls">URLs</a>
-          </div>
-		
-		  <div class="panel panel-primary" id="urls" class="collapse in" data-toggle="collapse">
-	        <div class="panel-heading">URLs:
-	        </div>
-		      <div class="panel panel-default">
-		        <ul>
-		        <li>@target.url</li>
-		        <li>Crawl Status:</li>
-		        <li>Snapshots:</li>
-		        </ul>
-		        <hr>
+          <div class="panel-group" id="accordion">
+			  <div class="panel panel-primary" id="urls">
+		          <div class="panel-heading">
+		        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseUrls" style="color:#fff;">
+		        		  URLs
+		        	  </a>
+		          </div>
+				  <div id="collapseUrls" class="panel-collapse collapse in">
+			          <ul>
+			          <li>@target.url</li>
+			          <li>Crawl Status:</li>
+			          <li>Snapshots:</li>
+			          </ul>
+			          <hr>
+			      </div>
 		      </div>
 	      </div>
 		
-		  <div class="form-group">
-               <a href="#" data-toggle="collapse" data-target="#metadata">Metadata</a>
-          </div>
-		
-		  <div class="panel panel-primary" id="metadata" class="collapse" data-toggle="collapse">
-	        <div class="panel-heading">Metadata:
-	        </div>
-		      <div class="panel panel-default">
-		        <ul>
-		        <li>Description:&npsp;@target.field_description</li>
-		        <li>Subject:</li>
-		        <li>Nominating Organisation:&nbsp;
-		        @if(target.field_nominating_organisation != null && Organisation.findByUrl(target.field_nominating_organisation).url != null 
-	              	&& Organisation.findByUrl(target.field_nominating_organisation).title != null) {
-	              	<a href="@routes.OrganisationEdit.edit(Organisation.findByUrl(target.field_nominating_organisation).url)">
-	              		@Organisation.findByUrl(target.field_nominating_organisation).title</a></li>
-	              } else {
-		          </li>
-	              }		        
-		        </ul>
-		        <hr>
+          <div class="panel-group" id="accordion">
+			  <div class="panel panel-primary" id="metadata">
+			        <div class="panel-heading">
+			        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMetadata" style="color:#fff;">
+			        		  Metadata
+			        	  </a>	       
+			        </div>
+				    <div id="collapseMetadata" class="panel-collapse collapse in">
+				        <ul>
+				        <li>Description:&nbsp;@target.field_description</li>
+				        <li>Subject:</li>
+				        <li>Nominating Organisation:&nbsp;
+				        @if(target.field_nominating_organisation != null && Organisation.findByUrl(target.field_nominating_organisation).url != null 
+			              	&& Organisation.findByUrl(target.field_nominating_organisation).title != null) {
+			              	<a href="@routes.OrganisationEdit.edit(Organisation.findByUrl(target.field_nominating_organisation).url)">
+			              		@Organisation.findByUrl(target.field_nominating_organisation).title</a></li>
+			              } else {
+				          </li>
+			              }		        
+				        </ul>
+				        <hr>
+			      </div>
 		      </div>
 	      </div>
 		
-		  <div class="form-group">
-               <a href="#" data-toggle="collapse" data-target="#crawlpolicy">Crawl Policy</a>
-          </div>
-		
-		  <div class="panel panel-primary" id="crawlpolicy" class="collapse" data-toggle="collapse">
-	        <div class="panel-heading">Crawl Policy:
-	        </div>
-		      <div class="panel panel-default">
-		        <ul>
-		        <li>Depth: &nbsp; @target.field_depth</li>
-		        <li>Scope: &nbsp; @target.field_scope</li>
-		        <li>Crawl Frequency: &nbsp; @target.field_crawl_frequency</li>
-		        </ul>
-		        <hr>
+          <div class="panel-group" id="accordion">
+			  <div class="panel panel-primary" id="crawlpolicy">
+		        <div class="panel-heading">
+	        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseCrawlPolicy" style="color:#fff;">
+	        		  Crawl Policy
+	        	  </a>	       
+		        </div>
+			    <div id="collapseCrawlPolicy" class="panel-collapse collapse in">
+			        <ul>
+			        <li>Depth: &nbsp; @target.field_depth</li>
+			        <li>Scope: &nbsp; @target.field_scope</li>
+			        <li>Crawl Frequency: &nbsp; @target.field_crawl_frequency</li>
+			        </ul>
+			        <hr>
+			      </div>
 		      </div>
 	      </div>
 		
-		  <div class="form-group">
-               <a href="#" data-toggle="collapse" data-target="#crawlpermissions">Crawl Permissions</a>
-          </div>
-		
-		  <div class="panel panel-primary" id="crawlpermissions" class="collapse" data-toggle="collapse">
-	        <div class="panel-heading">Crawl Permissions:
-	        </div>
-		      <div class="panel panel-default">
-		        <ul>
-		        <li>Crawl Permissions: &nbsp; @target.field_crawl_permission</li>
-		        </ul>
-		        <hr>
+          <div class="panel-group" id="accordion">
+			  <div class="panel panel-primary" id="crawlpermissions">
+		        <div class="panel-heading">
+	        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseCrawlPermissions" style="color:#fff;">
+			        Crawl Permissions
+	        	  </a>	       
+		        </div>
+			    <div id="collapseCrawlPermissions" class="panel-collapse collapse in">
+			        <ul>
+			        <li>Crawl Permissions: &nbsp; @target.field_crawl_permission</li>
+			        </ul>
+			        <hr>
+			      </div>
 		      </div>
 	      </div>
 		
-		  <div class="form-group">
-               <a href="#" data-toggle="collapse" data-target="#legaldepositcriteria">Legal Deposit Criteria</a>
-          </div>
-		
-		  <div class="panel panel-primary" id="legaldepositcriteria" class="collapse" data-toggle="collapse">
-	        <div class="panel-heading">Legal Deposit Criteria:
-	        </div>
-		      <div class="panel panel-default">
-		        <ul>
-		        <li>UK Domain: &nbsp; @target.field_uk_domain</li>
-		        <li>UK Hosting: &nbsp; @target.field_uk_hosting</li>
-		        <li>UK Geo IP: &nbsp; @target.field_uk_geoip</li>
-		        <li>UK Postal Address: &nbsp; @target.field_uk_postal_address</li>
-		        <li>Postal Address URL: &nbsp; @target.field_uk_postal_address_url		        
-		        <li>Via Correspondence: &nbsp; @target.field_via_correspondence</li>
-		        <li>Notes: &nbsp; @target.field_notes</li>
-		        <li>Professional Judgement: &nbsp; @target.field_professional_judgement</li>
-		        <li>Special Dispensation: &nbsp; @target.field_special_dispensation</li>
-		        </ul>
-		        <hr>
+          <div class="panel-group" id="accordion">
+			  <div class="panel panel-primary" id="legaldepositcriteria">
+		        <div class="panel-heading">
+	        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseDepositCriteria" style="color:#fff;">
+			        Legal Deposit Criteria
+	        	  </a>	       
+		        </div>
+			    <div id="collapseDepositCriteria" class="panel-collapse collapse in">
+			        <ul>
+			        <li>UK Domain: &nbsp; @target.field_uk_domain</li>
+			        <li>UK Hosting: &nbsp; @target.field_uk_hosting</li>
+			        <li>UK Geo IP: &nbsp; @target.field_uk_geoip</li>
+			        <li>UK Postal Address: &nbsp; @target.field_uk_postal_address</li>
+			        <li>Postal Address URL: &nbsp; @target.field_uk_postal_address_url		        
+			        <li>Via Correspondence: &nbsp; @target.field_via_correspondence</li>
+			        <li>Notes: &nbsp; @target.field_notes</li>
+			        <li>Professional Judgement: &nbsp; @target.field_professional_judgement</li>
+			        <li>Special Dispensation: &nbsp; @target.field_special_dispensation</li>
+			        </ul>
+			        <hr>
+			      </div>
 		      </div>
 	      </div>
 		
