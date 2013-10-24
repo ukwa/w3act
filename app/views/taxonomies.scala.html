@@ -7,18 +7,17 @@
     <article  class="targets">
 		<div class="folder">
 			<div class="row">
-			    Taxonomy is for categorizing content. Terms are grouped into vocabularies. For example, a vocabulary called "Fruit" would contain the terms "Apple" and "Banana".
+			    <p class="taxonomiesp">Taxonomy is for categorizing content. Terms are grouped into vocabularies. For example, a vocabulary called "Fruit" would contain the terms "Apple" and "Banana".</p>
 		        <div class="col-lg-6">
-			
 				<ul class="list">
-				<a href="#">Add vocabulary</a><br>
-				<a href="#">Show row weights</a><br>
+				<!--a href="#">Add vocabulary</a><br>
+				<a href="#">Show row weights</a><br-->
 					<script >
 							$(function() {
 							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
 							});
 					</script>
-					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
+					<table id="taxonomiestable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
 		              <thead>
 		                <tr>
 		                  <th>Vocabulary name</th>
@@ -28,7 +27,7 @@
 		              <tbody>
 		              	@taxonomies.map { taxonomy =>		              
 		                <tr>
-		                  <td><a class="brand" href="#">@taxonomy.name</a></td>
+		                  <td><a class="brand" href="@routes.TaxonomyEdit.edit(taxonomy.url)">@taxonomy.name</a></td>
 		                  <td><a href="#">edit vocabulary</a></td>
 		                  <td><a href="#">list terms</a></td>
 		                  <td><a href="#">add terms</a></td>

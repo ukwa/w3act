@@ -143,3 +143,19 @@ a.page {
     right: 0;
     top: 90px;
 }
+
+table#urlsearchtable.tablesorter.table.table-striped.table-bordered.table-condensed.zebra-striped {
+    margin-left: -50px;
+}
+
+table#taxonomiestable.tablesorter.table.table-striped.table-bordered.table-condensed.zebra-striped {
+    margin-left: -50px;
+}
+
+p.urlsearchp {
+    margin-left: 10px;
+}
+
+p.taxonomiesp {
+    margin-left: 10px;
+}

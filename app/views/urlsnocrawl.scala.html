@@ -7,21 +7,18 @@
     <article  class="targets">
 		<div class="folder">
 			<div class="row">
-		          <div class="panel panel-primary col-lg-6" id="panels">
+		        <div class="col-lg-6">	        
+		          <div class="panel panel-primary" id="panels">
 		            <div class="panel-heading">URL
 		            </div>
-				      <div class="panel panel-default col-lg-6" id="forms">
-			        	<form class="filter-form" action="@routes.UrlsNoCrawl.filterUrl()" method="POST">
-				          <fieldset>
-				            <legend>Legend</legend>
+				      <div id="forms">
+				        <form class="filter-form" action="@routes.UrlsNoCrawl.filterUrl()" method="POST">
 				            <div class="form-group">
 				              <input class="form-control" id="inputName" name="url" placeholder="http://www.bbc.co.uk" type="text">
-				              Enter URL to search for, e.g. 'http://www.bbc.co.uk' 
+				              <p class="urlsearchp">Enter URL to search for, e.g. 'http://www.bbc.co.uk'</p> 
 				            </div>
-				            <button type="submit" class="btn btn-default">Apply</button>
-				          </fieldset>
+				            <button type="submit" class="btn btn-success">Apply</button>
 				        </form>
-				        <hr>
 				      </div>
 		          </div>
 		        <div class="col-lg-6">
@@ -31,7 +28,7 @@
 							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
 							});
 					</script>
-					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
+					<table id="urlsearchtable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
 		              <thead>
 		                <tr>
 		                  <th>Title</th>
