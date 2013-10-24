@@ -68,7 +68,15 @@ public class TargetController extends AbstractController {
         			", subject: " + getFormParam(Const.SUBJECT) +
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
-        	Target target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
+            Target target = new Target();
+            boolean isExisting = true;
+            try {
+        	    target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
+            } catch (Exception e) {
+            	Logger.info("is not existing");
+            	isExisting = false;
+         		target.nid = Long.valueOf(getFormParam(Const.NID));
+            }
             target.title = getFormParam(Const.TITLE);
             target.field_url = getFormParam(Const.FIELD_URL);
             if (getFormParam(Const.KEYSITE) == null) {
@@ -89,8 +97,13 @@ public class TargetController extends AbstractController {
             if(getFormParam(Const.SUBJECT).equals("12")) {
             	target.field_subject = "Education &amp; Research";
             }
-        	target.field_nominating_organisation = getFormParam(Const.ORGANISATION);
-	        Ebean.update(target);
+        	target.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+        	if (!isExisting) {
+        		target.url = "none.com/url";
+        		Ebean.save(target);
+        	} else {
+        		Ebean.update(target);
+        	}
 	        Logger.info("save target: " + target.toString());
 	        res = redirect(routes.TargetEdit.edit(target.url));
         } 

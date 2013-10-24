@@ -144,11 +144,27 @@ a.page {
     top: 90px;
 }
 
+table#websitestable.tablesorter.table.table-striped.table-bordered.table-condensed.zebra-striped {
+    margin-left: -50px;
+}
+
+table#alphabeticaltable.tablesorter.table.table-striped.table-bordered.table-condensed.zebra-striped {
+    margin-left: -50px;
+}
+
 table#urlsearchtable.tablesorter.table.table-striped.table-bordered.table-condensed.zebra-striped {
     margin-left: -50px;
 }
 
 table#taxonomiestable.tablesorter.table.table-striped.table-bordered.table-condensed.zebra-striped {
+    margin-left: -50px;
+}
+
+table#keysitestable.tablesorter.table.table-striped.table-bordered.table-condensed.zebra-striped {
+    margin-left: -50px;
+}
+
+table#duplicateurltable.tablesorter.table.table-striped.table-bordered.table-condensed.zebra-striped {
     margin-left: -50px;
 }
 

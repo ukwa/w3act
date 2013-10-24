@@ -16,6 +16,8 @@ import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
+import uk.bl.api.IdGenerator;
+
 
 /**
  * Target entity managed by Ebean
@@ -128,6 +130,14 @@ public class Target extends Model {
 	    return find.all();
 	}
 
+    /**
+     * Generate unique nid for target.
+     * @return
+     */
+    public static int generateId() {
+    	return IdGenerator.generateUniqueId();
+    }
+    
     /**
      * This method retrieves all targets for given user.
      * @param url

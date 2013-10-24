@@ -7,22 +7,21 @@
     <article  class="targets">
 		<div class="folder">
 			<div class="row">
-			  <div class="panel panel-primary col-lg-6" id="panels">
-	            <div class="panel-heading">URL
-	            </div>
-			      <div class="panel panel-default col-lg-6" id="forms">
-			        <form class="filter-form" action="@routes.DispensationSites.filterUrl()" method="POST">
-			            <div class="filter-group">
-			              <input class="filter-control" id="inputName" name="url" placeholder="http://www.bbc.co.uk" type="text">
-			              <br>Enter URL to search for, e.g. 'http://www.bbc.co.uk' 
-			              <br>No ACT entries match that URL.
-			            </div>
-			            <button type="submit" class="btn btn-default">Apply</button>
-			        </form>
-			        <hr>
-		        </div>
-		        </div>
-			</ul>
+		        <div class="col-lg-6">	        
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">URL
+		            </div>
+				      <div id="forms">
+				        <form class="filter-form" action="@routes.DispensationSites.filterUrl()" method="POST">
+				            <div class="form-group">
+				              <input class="form-control" id="inputName" name="url" placeholder="http://www.bbc.co.uk" type="text">
+				              <p class="urlsearchp">Enter URL to search for, e.g. 'http://www.bbc.co.uk'</p> 
+				              <p class="urlsearchp">No ACT entries match that URL.</p>
+				            </div>
+				            <button type="submit" class="btn btn-success">Apply</button>
+				        </form>
+				      </div>
+		          </div>
 		</div>
     </article>
     

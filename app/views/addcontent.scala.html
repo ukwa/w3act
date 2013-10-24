@@ -1,27 +1,20 @@
 @(title: String, user: User)
 
 @main(title, user){
-<header>
-    <hgroup>
-        <h2>Add Content</h2>
-    </hgroup>
-</header>
+
+    <h1>Add Content</h1>
 
     <article  class="about">
 		<div class="folder">
-            <h3>Add content</h3>
-		</div>
-		<div class="folder">
-		    <Pre> 
-			<h4><a href="@routes.Article.index">Article</a></h4>
+			<!--h4><a href="@routes.Article.index">Article</a></h4>
 			<h5>    Use articles for time-sensitive content like news, press releases or blog posts.</h5>
 			<h4><a href="@routes.BasicPage.index">Basic page</a></h4>
 			<h5>    Use basic pages for your static content, such as an 'About us' page.</h5>
 			<h4><a href="@routes.OrganisationForm.index">Organisation</a></h4>
-			<h5>    The organisation this user is affiliated to.</h5>
-			<h4><a href="@routes.SpecialCollection.index">Special Collection</a></h4>
+			<h5>    The organisation this user is affiliated to.</h5-->
+			<h4><a href="@routes.SpecialCollection.index">Collection</a></h4>
 			<h5>    A annotated collection of web sites and additional metadata.</h5>
-			<h4><a href="@routes.WebSite.index">Web Site</a></h4>
+			<h4><a href="@routes.WebSite.index">Target</a></h4>
 			<h5>    Metadata and crawl configuration associated with a given web site, identified by URL(s).</h5>
 		</div>
     </article>

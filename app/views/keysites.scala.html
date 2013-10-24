@@ -7,28 +7,28 @@
     <article  class="keysites">
 		<div class="folder">
 			<div class="row">
-	          <div class="panel panel-primary col-lg-6" id="panels">
-	            <div class="panel-heading">URL
-	            </div>
-			      <div class="panel panel-default col-lg-6" id="forms">
-			        <form class="filter-form" action="@routes.KeySites.filterUrl()" method="POST">
-			            <div class="filter-group">
-			              <input class="filter-control" id="inputName" name="url" placeholder="http://www.bbc.co.uk" type="text">
-			              <br>Enter URL to search for, e.g. 'http://www.bbc.co.uk' 
-			            </div>
-			            <button type="submit" class="btn btn-default">Apply</button>
-			        </form>
-			        <hr>
-		        </div>
-		        </div>
+		        <div class="col-lg-6">	        
+		          <div class="panel panel-primary" id="panels">
+		            <div class="panel-heading">URL
+		            </div>
+				      <div id="forms">
+				        <form class="filter-form" action="@routes.KeySites.filterUrl()" method="POST">
+				            <div class="form-group">
+				              <input class="form-control" id="inputName" name="url" placeholder="http://www.bbc.co.uk" type="text">
+				              <p class="urlsearchp">Enter URL to search for, e.g. 'http://www.bbc.co.uk'</p> 
+				            </div>
+				            <button type="submit" class="btn btn-success">Apply</button>
+				        </form>
+				      </div>
+		          </div>
 		        <div class="col-lg-6">
 					<ul class="list">
 					<script >
 							$(function() {
-							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+							$("table#keysitestable").tablesorter({ sortList: [[1,0]] });
 							});
 					</script>
-					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
+					<table id="keysitestable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped">
 		              <thead>
 		                <tr>
 		                  <th>Title</th>

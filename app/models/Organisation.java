@@ -104,6 +104,22 @@ public class Organisation extends Model {
     }
 
     /**
+     * Retrieve an organisation name by URL.
+     * @param url
+     * @return organisation name
+     */
+    public static Organisation findByTitle(String title) {
+//    	Logger.info("organisation title: " + title);
+    	Organisation res = new Organisation();
+    	if (title != null && title.length() > 0) {
+    		res = find.where().eq(Const.TITLE, title).findUnique();
+    	} else {
+    		res.title = Const.NONE;
+    	}
+    	return res;
+    }
+
+    /**
      * This method is used for filtering by URL.
      * @param url
      * @return

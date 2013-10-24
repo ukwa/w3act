@@ -60,6 +60,7 @@ GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()
 POST    /target/save-target                 controllers.TargetController.saveTarget()
+POST    /website/save-target                controllers.TargetController.saveTarget()
 POST    /alphabeticalindex/filter-url       controllers.AlphabeticalIndex.filterUrl()
 POST    /dispensationsites/filter-url       controllers.DispensationSites.filterUrl()
 POST    /keysites/filter-url                controllers.KeySites.filterUrl()

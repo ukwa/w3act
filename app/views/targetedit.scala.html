@@ -172,7 +172,7 @@
 					  <select name="organisation" id="mySel">
 			                <option>- None -</option>
 			                @for(organisation <- Organisation.findAll()) {
-				                @if(organisation.title.equals(target.field_nominating_organisation)) {
+				                @if(organisation.title.equals(Organisation.findByUrl(target.field_nominating_organisation).title)) {
 					                <option selected>@organisation.title</option>
 					            } else {
 					                <option>@organisation.title</option>
