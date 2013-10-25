@@ -73,6 +73,12 @@ public class TargetController extends AbstractController {
             try {
         	    target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
             } catch (Exception e) {
+            	Logger.info("is not existing exception");
+            	isExisting = false;
+         		target.nid = Long.valueOf(getFormParam(Const.NID));
+            }
+            if (target == null) {
+            	target = new Target();
             	Logger.info("is not existing");
             	isExisting = false;
          		target.nid = Long.valueOf(getFormParam(Const.NID));
