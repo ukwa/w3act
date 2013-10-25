@@ -10,12 +10,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Expression;
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Query;
 
 import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
-
 import uk.bl.api.IdGenerator;
 
 
@@ -325,7 +327,7 @@ public class Target extends Model {
 		if (url == null || url.equals(Const.NONE)) {
 			res = find.all();
 		} else {
-	        ExpressionList<Target> ll = find.where().contains("author", url);
+	        ExpressionList<Target> ll = find.where().contains(Const.AUTHOR, url);
 	    	res = ll.findList();
 		}
 		return res;
@@ -340,7 +342,7 @@ public class Target extends Model {
 		if (url == null || url.equals(Const.NONE)) {
 			res = find.all();
 		} else {
-	        ExpressionList<Target> ll = find.where().contains("field_nominating_organisation", url);
+	        ExpressionList<Target> ll = find.where().contains(Const.FIELD_NOMINATING_ORGANISATION, url);
 	    	res = ll.findList();
 		}
 		return res;
@@ -352,16 +354,28 @@ public class Target extends Model {
 	 * @param par The search parameter
 	 * @return The found object list
 	 */
-	public static List<Target> filter(String field, String par) {
-		List<Target> res = new ArrayList<Target>();
-		if (par == null || par.equals(Const.NONE)) {
-			res = find.all();
-		} else {
-	        ExpressionList<Target> ll = find.where().contains(field, par);
-	    	res = ll.findList();
-		}
-		return res;
-	}
+//	public static List<Target> filter(String field, String par) {
+//		List<Target> res = new ArrayList<Target>();
+//		if (par == null || par.equals(Const.NONE)) {
+//			res = find.all();
+//		} else {
+//	        ExpressionList<Target> ll = find.where().contains(field, par);
+//	    	res = ll.findList();
+//		}
+//		return res;
+//	}
+	
+	/**
+	 * This method fetches targets for given multiple filter parameters.
+	 * @param targetParameterList The filter parameter list
+	 * @return target list
+	 */
+//	public static List<Target> filterList(Expression targetParameterList) {
+//		 Query<Target> query = Ebean.createQuery(Target.class);
+//		 query.where().add(targetParameterList);
+//		 List<Target> list = query.findList();
+//		 return list;
+//	}
 	
 	/**
 	 * This method filters targets by given Curator and Organisation URLs.

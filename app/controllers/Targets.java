@@ -7,6 +7,8 @@ import static play.data.Form.*;
 
 import java.util.*;
 
+import com.avaje.ebean.Expr;
+import com.avaje.ebean.Expression;
 import com.avaje.ebean.ExpressionList;
 
 import models.*;
@@ -85,31 +87,47 @@ public class Targets extends AbstractController {
     		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit) {
 //    	Logger.info("target edit curatorUrl: " + curatorUrl + ", organisationUrl: " + organisationUrl);
     	boolean isProcessed = false;
+//    	Map<String, Object> propertyMap = new HashMap<String, Object>();
+    	ExpressionList<Target> exp = Target.find.where();
+//    	List<ExpressionList<Target>> expressions = new ArrayList<ExpressionList<Target>>();
+//    	ExpressionList<Expr> el;
     	List<Target> targetsAll = new ArrayList<Target>();
     	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
-    		targetsAll = models.Target.filterUserUrl(curatorUrl);
+    		exp = exp.eq(Const.AUTHOR, curatorUrl);
+//    		propertyMap.add(Const.AUTHOR, curatorUrl);
+//    		targetsAll = models.Target.filterUserUrl(curatorUrl);
     		isProcessed = true;
     	}
     	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
-    		targetsAll = models.Target.filterOrganisationUrl(organisationUrl);
+//    		el.add(Expr.eq(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl));
+    		exp = exp.eq(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
+//    		targetsAll = models.Target.filterOrganisationUrl(organisationUrl);
     		isProcessed = true;
     	} 
     	if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
-    		targetsAll = models.Target.filter(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
+    		exp = exp.eq(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
+//    		targetsAll = models.Target.filter(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
     		isProcessed = true;
     	} 
     	if (depth != null && !depth.equals(Const.NONE)) {
-    		targetsAll = models.Target.filter(Const.FIELD_DEPTH, depth);
+    		exp = exp.eq(Const.FIELD_DEPTH, depth);
+//    		targetsAll = models.Target.filter(Const.FIELD_DEPTH, depth);
     		isProcessed = true;
     	} 
     	if (scope != null && !scope.equals(Const.NONE)) {
-    		targetsAll = models.Target.filter(Const.FIELD_SCOPE, scope);
+    		exp = exp.eq(Const.FIELD_SCOPE, scope);
+//    		targetsAll = models.Target.filter(Const.FIELD_SCOPE, scope);
     		isProcessed = true;
     	} 
     	if (collectionCategoryUrl != null && !collectionCategoryUrl.equals(Const.NONE)) {
-    		targetsAll = models.Target.filter(Const.FIELD_COLLECTION_CATEGORIES, collectionCategoryUrl);
+    		exp = exp.eq(Const.FIELD_COLLECTION_CATEGORIES, collectionCategoryUrl);
+//    		targetsAll = models.Target.filter(Const.FIELD_COLLECTION_CATEGORIES, collectionCategoryUrl);
     		isProcessed = true;
     	} 
+//		 Expression targetParameterList = exp.;	 				 
+    	targetsAll = exp.query().findList();
+    	Logger.info("Expression list size: " + targetsAll.size());
+
         if (!isProcessed) {
 //    	if ((curatorUrl == null || curatorUrl.equals(Const.NONE)) &&
 //    			(organisationUrl == null || organisationUrl.equals(Const.NONE))) {
