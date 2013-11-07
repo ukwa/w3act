@@ -4,45 +4,82 @@
     <head>
         <title>W3ACT</title>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
+        <!--link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")"-->
+        
+        <meta charset="utf-8">        
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/style.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/blue/style.css")">
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-play-1.7.1.js")"></script>
+        <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.tablesorter.min.js")"></script>
+        <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+        
     </head>
     <body>
+      <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">W3ACT</a>
+           </div>
+        </div><!-- /.container -->
+      </div><!-- /.navbar -->
+      
+      <div class="container content-container">
+        <div class="sidebar-offcanvas pull-left" id="sidebar" role="navigation">
+          <div class="well sidebar-nav" style="max-width:280px; margin-right:10px;">
         
-        <header>
-            <a href="@routes.About.index" id="logo"><span>W3</span>ACT</a>
-        </header>
-        
-        @helper.form(routes.Application.authenticate) {
-            
-            <h1>Sign in</h1>
-            
-            @if(form.hasGlobalErrors) { 
-                <p class="error">
-                    @form.globalError.message
-                </p>
-            }
-            
-            @if(flash.contains("success")) {
-                <p class="success">
-                    @flash.get("success")
-                </p>
-            }
-            
-            <p>
-                <input type="email" name="email" placeholder="Email" value="@form("email").value">
-            </p>
-            <p>
-                <input type="password" name="password" placeholder="Password">
-            </p>
-            <p>
-                <button type="submit">Login</button>
-            </p>
-            
-        }
-        
-        <p class="note">
-            Please use your e-mail as a user name e.g. <em>sample@@sample.com</em> with your w3act password.
-        </p>
+	        @helper.form(routes.Application.authenticate) {
+	            
+	            <h1>Sign in</h1>
+	            
+	            @if(form.hasGlobalErrors) { 
+	                <p class="error">
+	                    @form.globalError.message
+	                </p>
+	            }
+	            
+	            @if(flash.contains("success")) {
+	                <p class="success">
+	                    @flash.get("success")
+	                </p>
+	            }
+	            
+	            <p>
+	                <input type="email" name="email" placeholder="Email" value="@form("email").value">
+	            </p>
+	            <p>
+	                <input type="password" name="password" placeholder="Password">
+	            </p>
+	            <p>
+	                <button class="btn btn-success navbar-btn loginbtn" type="submit">Login</button>
+	            </p>
+	            
+	        }
+	        
+	        <p class="note">
+	            Please use your e-mail as a user name e.g. <em>sample@@sample.com</em> with your w3act password.
+	        </p>
+          
+          </div><!--/.well -->
+        </div><!--/span-->
+      
+        <div class="row row-offcanvas row-offcanvas-right">
+          <div class="col-xs-12 col-sm-9 project-description">
+            <p>W3ACT description</p>
+          </div>
+        </div>
+      </div>
             
     </body>
 </html>

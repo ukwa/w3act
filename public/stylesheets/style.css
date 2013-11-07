@@ -175,3 +175,21 @@ p.urlsearchp {
 p.taxonomiesp {
     margin-left: 10px;
 }
+
+button.btn.btn-success.loginbtn {
+    margin-left: 0px;
+    margin-top: 0px;
+    padding: 4px 15px;
+}
+
+div.panel-footer {
+    padding: 4px 15px;
+    }
+      
+div.col-xs-12.col-sm-9.project-description {
+    margin-left: 500;
+    position: absolute;
+    margin-top: 150px;
+    }
+    
+    
