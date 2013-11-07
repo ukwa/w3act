@@ -6,8 +6,10 @@
 
     <article class="targetdetails">
       <div class="panel panel-default" id="forms">
-        <div class="panel-heading">
-        </div>
+       <div class="panel-heading">
+        <h3 class="panel-title">Basic Information</h3>
+       </div>      
+       <div class="panel-body">
         <form action="@routes.TargetController.saveTarget()" method="POST">
           <fieldset>
           	<input type="hidden" name="nid" value="@Target.generateId()">
@@ -300,6 +302,7 @@
           </fieldset>
         </form>
         <hr>
+       </div>
       </div>
     </article>
 }
