@@ -31,6 +31,8 @@ public class Instance extends Model {
     public String value;
     @Column(columnDefinition = "TEXT")
     public String summary;
+    public String act_url;
+    public String wct_url;
     public String format;
     public String field_scope;
     public String field_depth;

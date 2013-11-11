@@ -48,6 +48,10 @@ public final class Const {
 	// Help constants
 	public static final int PAGINATION_OFFSET     = 10; // offset is a page step from current page for pagination
 	public static final int ROWS_PER_PAGE         = 50;
+	public static final String WEBARCHIVE_LINK    = "www.webarchive.org.uk"; 
+	public static final String ACT_URL            = "act-";
+	public static final String WCT_URL            = "wct-";
+	public static final String EDIT_LINK          = "/edit";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";

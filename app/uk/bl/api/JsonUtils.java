@@ -103,6 +103,28 @@ public class JsonUtils {
 //			Logger.info("res getDrupalData: " + obj.toString() + ", idx: " + idx);
 //			idx++;
 //		}
+    	int idx = 0;
+		Iterator<Object> itr = res.iterator();
+		while (itr.hasNext()) {
+			if (type.equals(NodeType.URL)) {
+				Target obj = (Target) itr.next();
+				if (obj.vid > 0) {
+					obj.edit_url = Const.WCT_URL + obj.vid;
+				}
+			}
+			if (type.equals(NodeType.COLLECTION)) {
+				DCollection obj = (DCollection) itr.next();
+				if (obj.vid > 0) {
+					obj.edit_url = Const.WCT_URL + obj.vid;
+				}
+			}
+			if (type.equals(NodeType.ORGANISATION)) {
+				Organisation obj = (Organisation) itr.next();
+				if (obj.vid > 0) {
+					obj.edit_url = Const.WCT_URL + obj.vid;
+				}
+			}
+		}
 		return res;
     }
     
@@ -130,6 +152,7 @@ public class JsonUtils {
      * @param res Resulting list
      */
     public static void executeUrlRequest(String url, List<String> urlList, NodeType type, List<Object> res) {
+    	url = getWebarchiveCreatorUrl(url, type);
 		String urlStr = url + Const.JSON;
 		if (!urlList.contains(urlStr)) {
     		urlList.add(urlStr);
@@ -275,6 +298,53 @@ public class JsonUtils {
     }
 
     /**
+     * This method checks if given URL is a webarchive url from original Drupal ACT.
+     * If yes it is converted to the new url using NID at the end of the url e.g. "act-<NID>"
+     * If it is an edit URL (ends with "/edit") it is converted to the WCT URL e.g. "wct-<VID>"
+     * @param url
+     * @return identifier URL
+     */
+    public static String checkArchiveUrl(String url) {
+    	String res = url;
+		if(url != null) {
+			if(url.contains(Const.WEBARCHIVE_LINK)) {
+				if(url.contains(Const.EDIT_LINK)) {
+					String root = url.replace(Const.EDIT_LINK, "");
+					res = Const.WCT_URL + root.substring(root.lastIndexOf("/") + 1);
+				} else {
+					res = Const.ACT_URL + url.substring(url.lastIndexOf("/") + 1);
+				}
+			}
+		}
+		return res;
+    }
+        
+    /**
+     * This method converts the given W3ACT user URL in a webarchive URL using NID at the end of the url e.g. "act-<NID>"
+     * @param url The W3ACT identifier
+     * @return the Webarchive identifier URL
+     * @param type The node type
+     * @return
+     */
+    public static String getWebarchiveCreatorUrl(String url, NodeType type) {
+    	String res = url;
+		if(url != null) {
+			if(url.contains(Const.ACT_URL)) {
+				String entryType = "user";
+				if (type.equals(NodeType.TAXONOMY)) {
+					entryType = "taxonomy_term";
+				}
+				if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
+					entryType = "taxonomy_vocabulary";
+				}
+				res = "http://" + Const.WEBARCHIVE_LINK + "/act/" + entryType + "/" + 
+						url.substring(url.lastIndexOf(Const.ACT_URL) + Const.ACT_URL.length());
+			}
+		}
+		return res;
+    }
+        
+    /**
      * This method returns object from JSON sub node as a String
      * @param resNode
      * @param path
@@ -285,9 +355,7 @@ public class JsonUtils {
 //		Logger.info("getStringList path: " + path + ", resNode: " + resNode);
 		if (resNode != null) {
 			String item = resNode.findPath(path).textValue();
-			if(item != null) {
-				res = item;
-			}
+			res = checkArchiveUrl(item);
 		}
 //		Logger.info("getStringFromSubNode res: " + res);
 		return res;
@@ -424,6 +492,7 @@ public class JsonUtils {
 	public static void parseJsonString(Field f, JsonNode node, Object obj) {
 		try {
 			String jsonField = getStringItem(node, f.getName());
+			jsonField = checkArchiveUrl(jsonField);
 			if (f.getType().equals(String.class)) {
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "";
@@ -503,6 +572,9 @@ public class JsonUtils {
 			    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
 					JsonNode resNode = getElement(node, f.getName());
 					String jsonField = getStringList(resNode, f.getName());
+					if (!f.getName().equals(Const.targetMap.get("field_url"))) {
+						jsonField = checkArchiveUrl(jsonField);
+					}
 //						Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
 					if (f.getType().equals(String.class)) {
 						if (jsonField == null || jsonField.length() == 0) {

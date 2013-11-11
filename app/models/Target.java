@@ -100,7 +100,6 @@ public class Target extends Model {
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
     
-    
     /**
      * Constructor
      * @param title
