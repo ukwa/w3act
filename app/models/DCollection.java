@@ -49,6 +49,8 @@ public class DCollection extends Model {
     public String field_targets; 
     @Column(columnDefinition = "TEXT")
     public String field_sub_collections; 
+    @Column(columnDefinition = "TEXT")
+    public String field_instances; 
 
     /**
      * Constructor
@@ -126,7 +128,7 @@ public class DCollection extends Model {
     
     public String toString() {
         return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
-        	", format: " + format + ", summary: " + summary + ", value: " + value;
+        		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
 }

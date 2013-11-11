@@ -10,10 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.Expression;
 import com.avaje.ebean.ExpressionList;
-import com.avaje.ebean.Query;
 
 import play.Logger;
 import play.db.ebean.Model;
@@ -22,11 +19,11 @@ import uk.bl.api.IdGenerator;
 
 
 /**
- * Target entity managed by Ebean
+ * Target instance entity managed by Ebean
  */
 @SuppressWarnings("serial")
 @Entity 
-public class Target extends Model {
+public class Instance extends Model {
 
     @Id
     public Long nid;
@@ -100,36 +97,35 @@ public class Target extends Model {
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
     
-    
     /**
      * Constructor
      * @param title
      * @param url
      */
-    public Target(String title, String url) {
+    public Instance(String title, String url) {
     	this.title = title;
     	this.url = url;
     }
 
-    public Target() {
+    public Instance() {
     }
 
     // -- Queries
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Model.Finder<Long,Target> find = new Model.Finder(Long.class, Target.class);
+	public static Model.Finder<Long,Instance> find = new Model.Finder(Long.class, Instance.class);
     
     /**
      * Retrieve targets
      */
-    public static List<Target> findInvolving() {
+    public static List<Instance> findInvolving() {
 	    return find.all();
 	}
 
     /**
      * Retrieve targets
      */
-    public static List<Target> findAll() {
+    public static List<Instance> findAll() {
 	    return find.all();
 	}
 
@@ -146,9 +142,9 @@ public class Target extends Model {
      * @param url
      * @return
      */
-    public static List<Target> findAllforUser(String url) {
-    	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq("author", url);
+    public static List<Instance> findAllforUser(String url) {
+    	List<Instance> res = new ArrayList<Instance>();
+        ExpressionList<Instance> ll = find.where().eq("author", url);
         res = ll.findList();
         return res;
 	}
@@ -158,9 +154,9 @@ public class Target extends Model {
      * @param url
      * @return
      */
-    public static List<Target> findAllforOrganisation(String url) {
-    	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq("field_nominating_organisation", url);
+    public static List<Instance> findAllforOrganisation(String url) {
+    	List<Instance> res = new ArrayList<Instance>();
+        ExpressionList<Instance> ll = find.where().eq("field_nominating_organisation", url);
         res = ll.findList();
         return res;
 	}
@@ -168,8 +164,8 @@ public class Target extends Model {
     /**
      * Create a new target.
      */
-    public static Target create(String title, String url) {
-        Target target = new Target(title, url);
+    public static Instance create(String title, String url) {
+        Instance target = new Instance(title, url);
         target.save();
         return target;
     }
@@ -178,7 +174,7 @@ public class Target extends Model {
      * Rename a target
      */
     public static String rename(Long targetId, String newName) {
-        Target target = (Target) find.ref(targetId);
+        Instance target = (Instance) find.ref(targetId);
         target.title = newName;
         target.update();
         return newName;
@@ -215,7 +211,7 @@ public class Target extends Model {
 	 */
 	public int getDuplicateNumber() {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("field_url", this.field_url);
+        ExpressionList<Instance> ll = find.where().eq("field_url", this.field_url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -226,7 +222,7 @@ public class Target extends Model {
 	 */
 	public static int getTargetNumberByCuratorUrl(String url) {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("author", url);
+        ExpressionList<Instance> ll = find.where().eq("author", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -237,7 +233,7 @@ public class Target extends Model {
 	 */
 	public static int getTargetNumberByTaxonomyUrl(String url) {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq(Const.FIELD_COLLECTION_CATEGORIES, url);
+        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_COLLECTION_CATEGORIES, url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -248,7 +244,7 @@ public class Target extends Model {
 	 */
 	public static int getTargetNumberBySubjectUrl(String url) {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("field_subject", url);
+        ExpressionList<Instance> ll = find.where().eq("field_subject", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -259,7 +255,7 @@ public class Target extends Model {
 	 */
 	public static int getTargetNumberByOrganisationUrl(String url) {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("field_nominating_organisation", url);
+        ExpressionList<Instance> ll = find.where().eq("field_nominating_organisation", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -270,7 +266,7 @@ public class Target extends Model {
 	 */
 	public static int getTargetNumberByCrawlFrequency(String url) {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("field_crawl_frequency", url);
+        ExpressionList<Instance> ll = find.where().eq("field_crawl_frequency", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -281,7 +277,7 @@ public class Target extends Model {
 	 */
 	public static int getTargetNumberByDepth(String url) {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("field_depth", url);
+        ExpressionList<Instance> ll = find.where().eq("field_depth", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -292,7 +288,7 @@ public class Target extends Model {
 	 */
 	public static int getTargetNumberByLicense(String url) {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("field_license", url);
+        ExpressionList<Instance> ll = find.where().eq("field_license", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -303,7 +299,7 @@ public class Target extends Model {
 	 */
 	public static int getTargetNumberByScope(String url) {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("field_scope", url);
+        ExpressionList<Instance> ll = find.where().eq("field_scope", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -312,9 +308,9 @@ public class Target extends Model {
 	 * This method filters targets by given URLs.
 	 * @return duplicate count
 	 */
-	public static List<Target> filterUrl(String url) {
-		List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().contains("field_url", url);
+	public static List<Instance> filterUrl(String url) {
+		List<Instance> res = new ArrayList<Instance>();
+        ExpressionList<Instance> ll = find.where().contains("field_url", url);
     	res = ll.findList();
 		return res;
 	}
@@ -323,12 +319,12 @@ public class Target extends Model {
 	 * This method filters targets by given User URLs.
 	 * @return duplicate count
 	 */
-	public static List<Target> filterUserUrl(String url) {
-		List<Target> res = new ArrayList<Target>();
+	public static List<Instance> filterUserUrl(String url) {
+		List<Instance> res = new ArrayList<Instance>();
 		if (url == null || url.equals(Const.NONE)) {
 			res = find.all();
 		} else {
-	        ExpressionList<Target> ll = find.where().contains(Const.AUTHOR, url);
+	        ExpressionList<Instance> ll = find.where().contains(Const.AUTHOR, url);
 	    	res = ll.findList();
 		}
 		return res;
@@ -338,54 +334,25 @@ public class Target extends Model {
 	 * This method filters targets by given Organisation URLs.
 	 * @return duplicate count
 	 */
-	public static List<Target> filterOrganisationUrl(String url) {
-		List<Target> res = new ArrayList<Target>();
+	public static List<Instance> filterOrganisationUrl(String url) {
+		List<Instance> res = new ArrayList<Instance>();
 		if (url == null || url.equals(Const.NONE)) {
 			res = find.all();
 		} else {
-	        ExpressionList<Target> ll = find.where().contains(Const.FIELD_NOMINATING_ORGANISATION, url);
+	        ExpressionList<Instance> ll = find.where().contains(Const.FIELD_NOMINATING_ORGANISATION, url);
 	    	res = ll.findList();
 		}
 		return res;
 	}
 	
 	/**
-	 * This method filters database column by given parameter.
-	 * @param field The column name in database
-	 * @param par The search parameter
-	 * @return The found object list
-	 */
-//	public static List<Target> filter(String field, String par) {
-//		List<Target> res = new ArrayList<Target>();
-//		if (par == null || par.equals(Const.NONE)) {
-//			res = find.all();
-//		} else {
-//	        ExpressionList<Target> ll = find.where().contains(field, par);
-//	    	res = ll.findList();
-//		}
-//		return res;
-//	}
-	
-	/**
-	 * This method fetches targets for given multiple filter parameters.
-	 * @param targetParameterList The filter parameter list
-	 * @return target list
-	 */
-//	public static List<Target> filterList(Expression targetParameterList) {
-//		 Query<Target> query = Ebean.createQuery(Target.class);
-//		 query.where().add(targetParameterList);
-//		 List<Target> list = query.findList();
-//		 return list;
-//	}
-	
-	/**
 	 * This method filters targets by given Curator and Organisation URLs.
 	 * @return duplicate count
 	 */
-	public static List<Target> filterCuratorAndOrganisationUrl(String curatorUrl, String organisationUrl) {
-		List<Target> res = new ArrayList<Target>();
+	public static List<Instance> filterCuratorAndOrganisationUrl(String curatorUrl, String organisationUrl) {
+		List<Instance> res = new ArrayList<Instance>();
 		if (curatorUrl != null && organisationUrl != null) {
-	        ExpressionList<Target> ll = find.where().contains("field_nominating_organisation", organisationUrl);
+	        ExpressionList<Instance> ll = find.where().contains("field_nominating_organisation", organisationUrl);
 	    	res = ll.findList(); // TODO
 		}
 		return res;
@@ -396,21 +363,19 @@ public class Target extends Model {
 	 * @return duplicate count
 	 */
 	public static List<String> getSubjects() {
-		List<Target> res = new ArrayList<Target>();
 		List<String> subjects = new ArrayList<String>();
-		List<Target> allTargets = find.all();
-		Iterator<Target> itr = allTargets.iterator();
+		List<Instance> allTargets = find.all();
+		Iterator<Instance> itr = allTargets.iterator();
 		while (itr.hasNext()) {
-			Target target = itr.next();
+			Instance target = itr.next();
 			if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
-		        ExpressionList<Target> ll = find.where().contains("field_subject", target.field_subject);
+		        ExpressionList<Instance> ll = find.where().contains("field_subject", target.field_subject);
 		        if (ll.findRowCount() > 0) {
 		        	subjects.add(target.field_subject);
 		        }
 			}
 		}
     	return subjects;
-//		return res;
 	}
 	
 	/**
@@ -464,12 +429,12 @@ public class Target extends Model {
      * @param url
      * @return target 
      */
-    public static Target findByUrl(String url) {
-    	Target res = new Target();
+    public static Instance findByUrl(String url) {
+    	Instance res = new Instance();
         Logger.info("target url: " + url);
         
         if (!url.contains(Const.COMMA)) {
-	        Target res2 = find.where().eq(Const.URL, url).findUnique();
+	        Instance res2 = find.where().eq(Const.URL, url).findUnique();
 	        if (res2 == null) {
 	        	res.title = Const.NONE;
 	        } else {
@@ -485,14 +450,14 @@ public class Target extends Model {
      * @param nid
      * @return target 
      */
-    public static Target findById(Long nid) {
+    public static Instance findById(Long nid) {
         Logger.info("target nid: " + nid);       
-        Target res = find.where().eq(Const.NID, nid).findUnique();
+        Instance res = find.where().eq(Const.NID, nid).findUnique();
     	return res;
     }          
 
     public String toString() {
-        return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
+        return "Instance(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
         ", field_description: " + field_description + ", field_uk_postal_address_url: " + field_uk_postal_address_url +
         ", field_suggested_collections: " + field_suggested_collections + ", field_collections: " + field_collections +
