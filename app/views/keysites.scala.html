@@ -40,7 +40,7 @@
 		              <tbody>
 		              	@targets.map { target =>		              
 		                <tr>
-		                  <td><a class="brand" href="@target.url">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+		                  <td><a class="brand" href="@routes.TargetEdit.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 		                  <td>@target.field_crawl_frequency</td>
 		                  <td><a href="@routes.UserEdit.edit(target.author)">@target.get_user_by_id()</a></td>
 		                  <td>QA issue</td>

@@ -246,7 +246,7 @@
 		                <tr>
 		                  <!--<td>@target.nid</td>-->
                   		  @if(target.url != null && target.title != null) {
-		                  	<td><a href="@routes.TargetEdit.edit(target.url)">
+		                  	<td><a href="@routes.TargetEdit.view(target.url)">
 		                  		@target.title</a></td>
 		                  } else {
 		                    <td></td>

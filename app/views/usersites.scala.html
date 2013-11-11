@@ -30,7 +30,7 @@
               <tbody>
               	@Target.findAllforUser(user.url).map { target =>		              
                 <tr>
-                  <td><a class="brand" href="@target.url">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+                  <td><a class="brand" href="@routes.TargetEdit.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
                   <td>@target.field_collection_categories</td>
                   <td>@target.field_subject</td>
                   <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>

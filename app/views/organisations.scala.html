@@ -21,7 +21,7 @@
 		              <tbody>
 		              	@organisations.map { organisation =>		              
 		                <tr>
-		                  <td><a href="@routes.OrganisationEdit.edit(organisation.url)">@organisation.title</a></td>
+		                  <td><a href="@routes.OrganisationEdit.view(organisation.url)">@organisation.title</a></td>
 		                </tr>
 		                }
 		              </tbody>
