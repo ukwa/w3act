@@ -192,4 +192,6 @@ div.col-xs-12.col-sm-9.project-description {
     margin-top: 150px;
     }
     
-    
+table.table.table-striped.table-bordered.table-hover.table-condensed {
+    font-size: 10px;
+    }    
