@@ -37,5 +37,13 @@ public class UrlSearch extends AbstractController {
         );
     }
 	
+    public static Result addNewTarget() {
+        return ok(
+            urlsearch.render(
+                    "AddTarget", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll()
+            )
+        );
+    }
+	
 }
 
