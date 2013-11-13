@@ -119,4 +119,16 @@ public final class Const {
     	subNodeMap.put(FIELD_SUBJECT, URI);
     }
 		
+    /**
+     * DEFINITIONS FOR TESTING  	
+     */
+    
+    // test fields
+    public static String FIELD_EMAIL = "email";
+    public static String FIELD_PASSWORD = "password";
+    
+    // test values
+    public static String DEFAULT_EMAIL = "ross.king@ait.ac.at";    	
+    public static String DEFAULT_PASSWORD = "secret";  
+    public static String TEST_ORGANISATIONS_URL = "http://localhost:9000/organisations";
 }
