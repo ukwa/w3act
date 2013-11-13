@@ -51,7 +51,7 @@ public class IntegrationTest {
      * This test employs Selenium WebDriver in order to run in browser different W3ACT pages
      * starting with login page.
      */
-    @Test
+//    @Test
     public void runInBrowser() {
         running(testServer(9000), FIREFOX, new Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
