@@ -32,14 +32,14 @@
           	<input type="hidden" name="nid" value="@target.nid">
             <div class="form-group">
               <label for="inputTitle">Title <font color="red">*</font></label>
-              <input class="form-control" name="title" id="inputTitle" placeholder="My title" type="text" value=@target.title>
+              <input class="form-control" name="title" id="inputTitle" placeholder="My title" type="text" value="@target.title">
             </div>
             <div class="form-group">
               <label for="inputUrls">URL(s) <font color="red">*</font></label>
               @if(target.field_url != null) {
-              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value=@target.field_url>
+              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@target.field_url">
               } else {
-              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value=@target.field_url>
+              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@target.field_url">
               }
               <p>One or more URLs, separated by comma.<p>
               <!--button type="item" class="btn btn-success">Add another item</button-->
@@ -170,7 +170,7 @@
 				          <div class="panel-body">
 							  <div id="collapseMetadata" class="panel-collapse collapse">
 					              <label for="inputDescription">Description</label>
-					               <textarea name="description" id="inputDescription" cols="50" rows="10" value=@target.field_description>@target.field_description</textarea>
+					               <textarea name="description" id="inputDescription" cols="50" rows="10" value="@target.field_description">@target.field_description</textarea>
 					               <br>A description of this web site.
 						             <div class="container">
 										  <h3>Subject</h3>
