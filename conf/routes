@@ -55,6 +55,7 @@ GET     /taxonomy/:taxonomy                 controllers.TaxonomyEdit.view(taxono
 GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxonomy)
 GET     /target/:target                     controllers.TargetEdit.view(target)
 GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
+GET     /targetaddentry/:target             controllers.TargetEdit.addEntry(target)
 GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int)
 
 # Forms

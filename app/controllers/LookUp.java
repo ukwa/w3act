@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.UUID;
+
 import com.avaje.ebean.Ebean;
 
 import models.Organisation;
@@ -51,7 +53,15 @@ public class LookUp extends AbstractController {
         String url = getFormParam(Const.URL);
 //        Logger.info("addentry: " + addentry + ", search: " + search + ", url: " + url);
         if (addentry != null) {
-	        res = redirect(routes.WebSite.addEntry(url));
+//	        res = redirect(routes.WebSite.addEntry(url)); 
+//        	Target target = new Target();
+//        	target.title = url;
+//            UUID id = UUID.randomUUID();
+//            Logger.info("id: " + id.toString());
+//            target.nid = id.getMostSignificantBits();
+//            target.url = Const.ACT_URL + target.nid;
+//	        res = redirect(routes.TargetEdit.addEntry(target)); 
+	        res = redirect(routes.TargetEdit.addEntry(url));
         } else {
             res = ok(
 	            lookup.render(

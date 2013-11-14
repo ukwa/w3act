@@ -1,11 +1,14 @@
 package controllers;
 
+import java.util.UUID;
+
 import models.Target;
 import models.User;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
+import uk.bl.Const;
 import views.html.*;
 
 /**
@@ -32,6 +35,28 @@ public class TargetEdit extends Controller {
         return ok(
                 targetedit.render(
                         Target.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
+    
+    /**
+     * Add new entry.
+     * @param target
+     * @return
+     */
+    public static Result addEntry(String targettitle) {
+//        public static Result addEntry(Target target) {
+    	Target target = new Target();
+    	target.title = targettitle;
+        UUID id = UUID.randomUUID();
+        Logger.info("id: " + id.toString());
+        target.nid = id.getMostSignificantBits();
+        target.url = Const.ACT_URL + target.nid;
+		Logger.info("add entry with target url: " + target.url);
+		Logger.info("target name: " + target.title);
+        return ok(
+                targetedit.render(
+                        target, User.find.byId(request().username())
                 )
             );
     }
