@@ -1,4 +1,4 @@
-@(title: String, user: User, organisations: List[Organisation], dcollections: List[DCollection])
+@(title: String, user: User, organisations: List[Organisation], dcollections: List[DCollection], url: String)
 
 @main(title, user){
 
@@ -15,7 +15,11 @@
           	<input type="hidden" name="nid" value="@Target.generateId()">
             <div class="form-group">
               <label for="inputTitle">Title <font color="red">*</font></label>
+              @if(url != null) {
+              <input class="form-control" name="title" id="inputTitle" placeholder="My title" type="text" value=@url>
+              } else {
               <input class="form-control" name="title" id="inputTitle" placeholder="My title" type="text">
+              }
             </div>
             <div class="form-group">
               <label for="inputUrls">URL(s) <font color="red">*</font></label>

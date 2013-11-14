@@ -1,6 +1,11 @@
 package controllers;
 
+import com.avaje.ebean.Ebean;
+
+import models.Organisation;
+import models.Target;
 import models.User;
+import play.Logger;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -34,13 +39,27 @@ public class LookUp extends AbstractController {
         );
     }
 
+    /**
+     * This method enables searching for given URL and redirection in order to add new entry
+     * if required.
+     * @return
+     */
     public static Result filterUrl() {
+    	Result res = null;
+        String addentry = getFormParam("addentry");
+        String search = getFormParam("search");
         String url = getFormParam(Const.URL);
-        return ok(
-            lookup.render(
-                "LookUp", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll()
-            )
-        );
+//        Logger.info("addentry: " + addentry + ", search: " + search + ", url: " + url);
+        if (addentry != null) {
+	        res = redirect(routes.WebSite.addEntry(url));
+        } else {
+            res = ok(
+	            lookup.render(
+	                "LookUp", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll()
+                )
+            );
+        }
+        return res;
     }
 	
     public static Result addNewTarget() {

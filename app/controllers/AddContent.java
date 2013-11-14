@@ -29,7 +29,7 @@ import uk.bl.Const;
 public class AddContent extends Controller {
   
     /**
-     * Display the About tab.
+     * Display the add content page.
      */
     public static Result index() {
 		return ok(

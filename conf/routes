@@ -73,4 +73,6 @@ POST    /lookup/filter-url                  controllers.LookUp.filterUrl()
 POST    /targets/add-new                    controllers.UrlSearch.addNewTarget()
 #POST    /targets/add-new                    controllers.Targets.addNewTarget()
 #POST    /targets/filter-subjects            controllers.Targets.getSubjects()
+GET    /website/:url                        controllers.WebSite.addEntry(url)
+
 
