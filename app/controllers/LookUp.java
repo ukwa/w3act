@@ -61,7 +61,17 @@ public class LookUp extends AbstractController {
 //            target.nid = id.getMostSignificantBits();
 //            target.url = Const.ACT_URL + target.nid;
 //	        res = redirect(routes.TargetEdit.addEntry(target)); 
-	        res = redirect(routes.TargetEdit.addEntry(url));
+        	if (url != null && url.length() > 0) {
+        		res = redirect(routes.TargetEdit.addEntry(url));
+        	} else {
+        		Logger.info("Target title is empty. Please write title in search window.");
+//                res = ok();
+                res = ok(
+        	            lookup.render(
+        	                "LookUp", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll(), ""
+                        )
+                    );
+        	}
         } else {
             res = ok(
 	            lookup.render(
