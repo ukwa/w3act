@@ -490,6 +490,19 @@ public class Target extends Model {
     	return res;
     }          
 
+	/**
+	 * This method checks whether the passed URL is in scope.
+	 * @param url
+	 * @return result as a String
+	 */
+	public String checkScope(String url) {
+		String res = "false";
+		if (url.contains(".uk")) {
+			res = "true";
+		}
+    	return res;
+    }
+
     public String toString() {
         return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
