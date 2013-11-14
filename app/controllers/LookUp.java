@@ -36,7 +36,7 @@ public class LookUp extends AbstractController {
     public static Result index() {
         return ok(
             lookup.render(
-                "LookUp", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll()
+                "LookUp", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll(), ""
             )
         );
     }
@@ -65,20 +65,20 @@ public class LookUp extends AbstractController {
         } else {
             res = ok(
 	            lookup.render(
-	                "LookUp", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll()
+	                "LookUp", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll(), url
                 )
             );
         }
         return res;
     }
 	
-    public static Result addNewTarget() {
-        return ok(
-            lookup.render(
-                    "AddTarget", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll()
-            )
-        );
-    }
+//    public static Result addNewTarget() {
+//        return ok(
+//            lookup.render(
+//                    "AddTarget", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll()
+//            )
+//        );
+//    }
 	
 }
 
