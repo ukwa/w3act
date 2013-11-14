@@ -110,6 +110,14 @@ input#inputName.form-control {
     padding: 4px 15px;
 }
 
+input#inputName.lookup-form-control {
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-top: -20px;
+    width: 250px;
+    padding: 4px 15px;
+}
+
 button.btn.btn-success {
     margin-left: 8px;
     padding: 4px 15px;
@@ -166,6 +174,10 @@ table#keysitestable.tablesorter.table.table-striped.table-bordered.table-condens
 
 table#duplicateurltable.tablesorter.table.table-striped.table-bordered.table-condensed.zebra-striped {
     margin-left: -50px;
+}
+
+table#lookuptable.table.table-striped.table-bordered.table-hover.table-condensed {
+    margin-left: -55px;
 }
 
 p.urlsearchp {
