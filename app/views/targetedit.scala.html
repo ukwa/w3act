@@ -30,233 +30,268 @@
         <form action="@routes.TargetController.saveTarget()" method="POST">
           <fieldset>
           	<input type="hidden" name="nid" value="@target.nid">
-            <div class="form-group">
-              <label for="inputTitle">Title <font color="red">*</font></label>
-              <input class="form-control" name="title" id="inputTitle" placeholder="My title" type="text" value="@target.title">
-            </div>
-            <div class="form-group">
-              <label for="inputUrls">URL(s) <font color="red">*</font></label>
-              @if(target.field_url != null) {
-              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@target.field_url">
-              } else {
-              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text">
-              }
-              <p>One or more URLs, separated by comma.<p>
-              <!--button type="item" class="btn btn-success">Add another item</button-->
-            </div>
             
-            <div class="panel-group" id="accordion">
-			  <div class="panel panel-primary" id="status">
-		          <div class="panel-heading">
-		        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseStatus" style="color:#fff;">
-		        		  Status
-		        	  </a>
-		          </div>
-		          <div class="panel-body">
-					  <div id="collapseStatus" class="panel-collapse collapse">
-            
-		            <div class="checkbox">
-		              <label>
-		                @if(target.field_key_site != null && target.field_key_site.equals("true")) {             
-		                <input type="checkbox" name="keysite" value="true" checked=1>Key Site</label>
-		                } else {
-		                <input type="checkbox" name="keysite" value="true">Key Site</label>
-		                }
-		                <br>
-		                Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management. 
-		            </div>
-		            <div class="container">
-					   <div class="row">
-					     <h4>QA Status</h4>
-					  		<label class="radio-inline">
-					  		@if(target.status == 1) {
-					          <input name="status" id="radio1" value="N/A" type="radio" checked="true"> N/A
-					        } else {
-					          <input name="status" id="radio1" value="N/A" type="radio"> N/A
-					        }
-					        </label>
-					        <label class="radio-inline">
-					  		@if(target.status == 2) {
-					          <input name="status" id="radio2" value="No QA issues found" type="radio" checked="true"> No QA issues found
-					        } else {
-					          <input name="status" id="radio2" value="No QA issues found" type="radio"> No QA issues found
-					        }
-					        </label>
-					        <label class="radio-inline">
-					  		@if(target.status == 3) {
-					          <input name="status" id="radio3" value="QA issue" type="radio" checked="true"> QA issue
-					        } else {
-					          <input name="status" id="radio3" value="QA issue" type="radio"> QA issue
-					        }
-					        </label>			      
-					  	</div>
-					</div>
-		            <div class="container">
-					   <div class="row">
-					     <h4>Live Site Status </h4>
-					  		<label class="radio-inline">
-					  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("N/A")) {
-					          <input name="livesitestatus" id="radio1" value="N/A" type="radio" checked="true"> N/A
-					        } else {
-					          <input name="livesitestatus" id="radio1" value="N/A" type="radio"> N/A
-					        }
-					        </label>
-					        <label class="radio-inline">
-					  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("Still live")) {
-					          <input name="livesitestatus" id="radio2" value="Still live" type="radio" checked="true"> Still live 
-					        } else {
-					          <input name="livesitestatus" id="radio2" value="Still live" type="radio"> Still live 
-					        }
-					        </label>
-					        <label class="radio-inline">
-					  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("No longer updated")) {
-					          <input name="livesitestatus" id="radio3" value="No longer updated" type="radio" checked="true"> No longer updated 
-					        } else {
-					          <input name="livesitestatus" id="radio3" value="No longer updated" type="radio"> No longer updated 
-					        }
-					        </label>			      
-					        <label class="radio-inline">
-					  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("Vanished")) {
-					          <input name="livesitestatus" id="radio4" value="Vanished" type="radio" checked="true"> Vanished
-					        } else {
-					          <input name="livesitestatus" id="radio4" value="Vanished" type="radio"> Vanished
-					        }
-					        </label>			      
-					  	</div>
-					  	<br>If know, please add the current status of the site.
-					</div>							  
-		            <!--div class="form-group">
-		              <a href="#">Show row weights</a><br>
-		              <h5>Snapshots</h5>
-		              <label for="inputTimestamp">Timestamp <font color="red">*</font></label>
-		              <input class="form-control" id="inputTimestamp" placeholder="10123305092013" type="text" value="@target.created">
-		              <br>The fourteen character timestamp of this snapshot.
-		              <div class="container">
-		              	<div class="row">
-					     <h4>QA Status</h4>
-					  		<label class="radio-inline">
-					          <input name="radioGroup" id="radio1" value="N/A" type="radio"> N/A
-					        </label>
-					        <label class="radio-inline">
-					          <input name="radioGroup" id="radio2" value="No QA issues found" type="radio"> No QA issues found
-					        </label>
-					        <label class="radio-inline">
-					          <input name="radioGroup" id="radio3" value="QA issue" type="radio"> QA issue
-					        </label>			      
-					  	</div>
-					  	</div>
-		              <br>Quality status of this snapshot.
-		              <button type="item" class="btn btn-success">Remove</button>
-		            </div>
-		            <div class="form-group">
-		            	Captured Instances of this site.<br>
-		            	<button type="item" class="btn btn-success">Add another item</button>
-		            </div-->
-		            
-		            	      </div>
-					      </div>
-				      </div>
-			      </div>
-		            
-		            <div class="form-group">
-		            
-		          <div class="panel-group" id="accordion">
-					  <div class="panel panel-primary" id="metadata">
-				          <div class="panel-heading">
-				        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseMetadata" style="color:#fff;">
-				        		  Metadata
-				        	  </a>
-				          </div>
-				          <div class="panel-body">
-							  <div id="collapseMetadata" class="panel-collapse collapse">
-					              <label for="inputDescription">Description</label>
-					               <textarea name="description" id="inputDescription" cols="50" rows="10" value="@target.field_description">@target.field_description</textarea>
-					               <br>A description of this web site.
-						             <div class="container">
-										  <h3>Subject</h3>
-										  <select name="subject" value="12" id="mySel">
-								                <option>- None -</option>
-								                @if(target.field_subject !=null && target.field_subject.equals("Arts &amp; Humanities")) {
-									                <option value="10" selected>Arts &amp; Humanities</option>
-									            } else {
-									                <option value="10">Arts &amp; Humanities</option>
-									            }
-								                @if(target.field_subject !=null && target.field_subject.equals("Business, Economy &amp; Industry")) {
-								                	<option value="11" selected>Business, Economy &amp; Industry</option>
-									            } else {
-								                	<option value="11">Business, Economy &amp; Industry</option>
-									            }
-								                @if(target.field_subject !=null && target.field_subject.equals("Education &amp; Research")) {
-								                	<option value="12" selected>Education &amp; Research</option>
-									            } else {
-								                	<option value="12">Education &amp; Research</option>
-									            }
-								                <option value="13">Government, Law &amp; Politics</option>
-								                <option value="14">Medicine &amp; Health</option>
-								                <option value="15">Science &amp; Technology</option>
-								                <option value="16">Society &amp; Culture</option>
-										  </select>
-									</div>
-						             <div class="container">
-										  <h3>Nominating Organisation</h3>
-										  <select name="organisation" id="mySel">
-								                <option>- None -</option>
-								                @for(organisation <- Organisation.findAll()) {
-									                @if(organisation.title.equals(Organisation.findByUrl(target.field_nominating_organisation).title)) {
-										                <option selected>@organisation.title</option>
-										            } else {
-										                <option>@organisation.title</option>
-													}					            
-								                }
-										  </select>
-										  <br>
-										  <h5>The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted.</h5>				  
-									</div>
-						            <div class="form-group">
-						              <label for="inputCollectionCategories">Collection Categories</label>
-						                @for(collection <- DCollection.findAll()) {
-								            <div class="checkbox">
-								              <label><input type="checkbox">@collection.title</label>
-								            </div>
-						                }
-							            <br>Selected items (click an item to uncheck it)
-							            <div class="container">
-											  <h3>Suggested Special Collections</h3>
-											  <select id="mySel">
-									                <option>- None -</option>
-									                @for(collection <- DCollection.findAll()) {
-									                <option>@collection.title</option>
-									                }
-											  </select>
-											  <br>
-											  <h5>Special collections that you think this web site should appear in.</h5>				  
+			<div class="bs-example bs-example-tabs">
+		      <ul id="myTab" class="nav nav-tabs">
+		        <li class="active"><a href="#basicinformation" data-toggle="tab">Basic information</a></li>
+		        <li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
+		        <li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission</a></li>
+		        <li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy</a></li>
+		      </ul>
+		       <div id="myTabContent" class="tab-content">
+			        <div class="tab-pane fade active in" id="basicinformation">
+			            <div class="form-group">
+			              <label for="inputTitle">Title <font color="red">*</font></label>
+			              <input class="form-control" name="title" id="inputTitle" placeholder="My title" type="text" value="@target.title">
+			            </div>
+			            <div class="form-group">
+			              <label for="inputUrls">URL(s) <font color="red">*</font></label>
+			              @if(target.field_url != null) {
+			              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@target.field_url">
+			              } else {
+			              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text">
+			              }
+			              <p>One or more URLs, separated by comma.<p>
+			              <!--button type="item" class="btn btn-success">Add another item</button-->
+			            </div>
+			            <div class="container">
+						   <div class="row">
+						     <h4>QA Status</h4>
+						  		<label class="radio-inline">
+						  		@if(target.status == 1) {
+						          <input name="status" id="radio1" value="N/A" type="radio" checked="true"> N/A
+						        } else {
+						          <input name="status" id="radio1" value="N/A" type="radio"> N/A
+						        }
+						        </label>
+						        <label class="radio-inline">
+						  		@if(target.status == 2) {
+						          <input name="status" id="radio2" value="No QA issues found" type="radio" checked="true"> No QA issues found
+						        } else {
+						          <input name="status" id="radio2" value="No QA issues found" type="radio"> No QA issues found
+						        }
+						        </label>
+						        <label class="radio-inline">
+						  		@if(target.status == 3) {
+						          <input name="status" id="radio3" value="QA issue" type="radio" checked="true"> QA issue
+						        } else {
+						          <input name="status" id="radio3" value="QA issue" type="radio"> QA issue
+						        }
+						        </label>			      
+						  	</div>
+						</div>
+			            <div class="container">
+						   <div class="row">
+						     <h4>Live Site Status </h4>
+						  		<label class="radio-inline">
+						  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("N/A")) {
+						          <input name="livesitestatus" id="radio1" value="N/A" type="radio" checked="true"> N/A
+						        } else {
+						          <input name="livesitestatus" id="radio1" value="N/A" type="radio"> N/A
+						        }
+						        </label>
+						        <label class="radio-inline">
+						  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("Still live")) {
+						          <input name="livesitestatus" id="radio2" value="Still live" type="radio" checked="true"> Still live 
+						        } else {
+						          <input name="livesitestatus" id="radio2" value="Still live" type="radio"> Still live 
+						        }
+						        </label>
+						        <label class="radio-inline">
+						  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("No longer updated")) {
+						          <input name="livesitestatus" id="radio3" value="No longer updated" type="radio" checked="true"> No longer updated 
+						        } else {
+						          <input name="livesitestatus" id="radio3" value="No longer updated" type="radio"> No longer updated 
+						        }
+						        </label>			      
+						        <label class="radio-inline">
+						  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("Vanished")) {
+						          <input name="livesitestatus" id="radio4" value="Vanished" type="radio" checked="true"> Vanished
+						        } else {
+						          <input name="livesitestatus" id="radio4" value="Vanished" type="radio"> Vanished
+						        }
+						        </label>			      
+						  	</div>
+						  	<br>If know, please add the current status of the site.
+					  	</div>		
+					  	<div class="checkbox">
+			              <label>
+			                @if(target.field_key_site != null && target.field_key_site.equals("true")) {             
+			                <input type="checkbox" name="keysite" value="true" checked=1>Key Site</label>
+			                } else {
+			                <input type="checkbox" name="keysite" value="true">Key Site</label>
+			                }
+			                <br>
+			                Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management. 
+			            </div>
+			            <div class="form-group">
+			              <label for="inputWCT">WCT ID</label>
+			              <input class="form-control" id="inputWCT" placeholder="0" type="text" readonly>
+			              <label for="inputSPT">SPT ID</label>
+			              <input class="form-control" id="inputSPT" placeholder="0" type="text" readonly>
+			            </div> 
+			            <!-- div class="panel-group" id="accordion">
+						  <div class="panel panel-primary" id="notes">
+					          <div class="panel-heading">
+					        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseNotes" style="color:#fff;">
+					        		  Notes
+					        	  </a>
+					          </div>
+					          <div class="panel-body">
+								  <div id="collapseNotes" class="panel-collapse collapse">			            
+							            <div><div><div><div>
+										  <label for="edit-field-notes-und-0-value">Notes </label>
+							 			<div class="form-textarea-wrapper resizable">
+							 				<textarea class="text-full form-textarea" name="field_notes" cols="60" rows="5"></textarea></div>
 										</div>
-						            </div>                        
-						            <div class="form-group">
-						              <label for="inputWCT">WCT ID</label>
-						              <input class="form-control" id="inputWCT" placeholder="0" type="text">
-						              <label for="inputSPT">SPT ID</label>
-						              <input class="form-control" id="inputSPT" placeholder="0" type="text">
-						            </div>      
-					            </div>    
-            
-				      </div>
-			      </div>
-		      </div>
-	      </div>
-            
-            
-          <div class="form-group">
-          <div class="panel-group" id="accordion">
-			  <div class="panel panel-primary" id="crawlpolicy">
-		          <div class="panel-heading">
-		        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseCrawlPolicy" style="color:#fff;">
-		        		  Crawl Policy
-		        	  </a>
-		          </div>
-		          <div class="panel-body">
-					  <div id="collapseCrawlPolicy" class="panel-collapse collapse">
-					  
+										<div class="description">Add any additional notes about this site here.</div></div>							                        								
+						          </div>
+						      </div>
+					      </div>
+				      </div-->
+			                 				  						  
+			        </div>
+			        <div class="tab-pane fade" id="metadata">
+			            <div class="form-group">
+				             <div class="container">
+					              <label for="inputDescription">Description</label><br>
+					              <textarea name="description" id="inputDescription" cols="100" rows="3" value="@target.field_description">@target.field_description</textarea>
+					              <br>A description of this web site.
+								  <h3>Subject</h3>
+								  <select name="subject" value="12" id="mySel">
+						                <option>- None -</option>
+						                @if(target.field_subject !=null && target.field_subject.equals("Arts &amp; Humanities")) {
+							                <option value="10" selected>Arts &amp; Humanities</option>
+							            } else {
+							                <option value="10">Arts &amp; Humanities</option>
+							            }
+						                @if(target.field_subject !=null && target.field_subject.equals("Business, Economy &amp; Industry")) {
+						                	<option value="11" selected>Business, Economy &amp; Industry</option>
+							            } else {
+						                	<option value="11">Business, Economy &amp; Industry</option>
+							            }
+						                @if(target.field_subject !=null && target.field_subject.equals("Education &amp; Research")) {
+						                	<option value="12" selected>Education &amp; Research</option>
+							            } else {
+						                	<option value="12">Education &amp; Research</option>
+							            }
+						                <option value="13">Government, Law &amp; Politics</option>
+						                <option value="14">Medicine &amp; Health</option>
+						                <option value="15">Science &amp; Technology</option>
+						                <option value="16">Society &amp; Culture</option>
+								  </select>
+							</div>
+				            <div class="container">
+								  <h3>Suggested Collections</h3>
+								  <select id="mySel">
+						                <option>- None -</option>
+						                @for(collection <- DCollection.findAll()) {
+						                <option>@collection.title</option>
+						                }
+								  </select>
+								  <br>
+								  <h5>Special collections that you think this web site should appear in.</h5>				  
+							</div>
+				             <div class="container">
+								  <h3>Nominating Organisation</h3>
+								  <select name="organisation" id="mySel">
+						                <option>- None -</option>
+						                @for(organisation <- Organisation.findAll()) {
+							                @if(organisation.title.equals(Organisation.findByUrl(target.field_nominating_organisation).title)) {
+								                <option selected>@organisation.title</option>
+								            } else {
+								                <option>@organisation.title</option>
+											}					            
+						                }
+								  </select>
+								  <br>
+								  <h5>The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted.</h5>				  
+							</div>
+			            </div>                        
+			        </div>
+			        <div class="tab-pane fade" id="crawlpermission">
+			            <div class="form-group">
+							<label for="edit-field-license-und">License </label><br>
+							<select multiple="multiple" name="field_license" id="edit-field-license" class="form-select">
+							 	<option value="_none">- None -</option>
+							    @for(taxonomy <- Targets.getLicense()) {
+							 	<option>@taxonomy.name</option>
+							    }	
+							</select>
+							<!-- div class="description">The license terms under which this site should be archived and made available.</div>
+							<fieldset><legend><span class="fieldset-legend">Legal Deposit Criteria</span></legend>
+							<div class="fieldset-wrapper"><div></div><div><div>
+				 				<input type="checkbox" id="edit-field-uk-hosting" name="field_uk_hosting" value="1" class="form-checkbox" />  
+				 				<label class="option" for="edit-field-uk-hosting-und">UK Hosting </label>
+							<div class="description">The domain is hosted in the UK.</div>
+							</div>
+							</div>
+							<div id="edit-field-uk-geoip"></div><div><div class="form-item form-type-checkbox form-item-field-uk-postal-address">
+				 				<input type="checkbox" id="edit-field-uk-postal-address" name="field_uk_postal_address" value="1" />  
+				 				<label class="option" for="edit-field-uk-postal-address-und">UK Postal Address </label>
+							<div class="description">The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box).</div>
+							</div>
+							</div>
+							<div><div><div>
+				  				<label for="edit-field-uk-postal-address-url-und-0">Postal Address URL </label>
+				 				<div><div><div>
+				  				<label class="element-invisible" for="edit-field-uk-postal-address-url-und-0-url">URL </label>
+				 				<input type="text" name="field_uk_postal_address_url" value="" size="60" maxlength="2048" class="form-text" />
+								</div>
+								</div></div>
+								<div class="description">The URL on the site that contains the postal address used to determine that the site is in the UK.</div>
+							</div>
+							</div></div>
+							<div><div>
+				 				<input type="checkbox" name="field_via_correspondence" value="1" class="form-checkbox" />  
+				 				<label class="option" for="edit-field-via-correspondence-und">Via Correspondence </label>
+							<div class="description">Previous correspondence with the web site owner by a Curator contains evidence of a UK address.</div>
+							</div>
+							</div>
+							<div><div><div><div></div><div>
+				  				<label for="edit-body-und-0-value">Notes </label>
+				 			<div class="form-textarea-wrapper resizable">
+				 				<textarea name="body" cols="100" rows="3"></textarea></div>
+							</div>
+							<div class="description">Any relevant notes, e.g. a more detailed description of this URL or set of URLs.</div></div>
+							</div></div>
+							<div><div>
+				 				<input type="checkbox" name="field_professional_judgement" value="1" class="form-checkbox" />  
+				 				<label class="option" for="edit-field-professional-judgement-und">Professional Judgement </label>
+							<div class="description">In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below.</div>
+							</div>
+							</div>
+							<div><div><div>
+				  				<label for="edit-field-professional-judgement-exp-und-0-value">Professional Judgement Explanation </label>
+				 				<div class="form-textarea-wrapper resizable">
+				 					<textarea class="text-full form-textarea" name="field_professional_judgement_exp" cols="100" rows="3"></textarea></div>
+							<div class="description">Please describe the rational behind this decision, indicating any evidence used.</div>
+							</div>
+							</div></div>
+							<div><div>
+				 				<input type="checkbox" name="field_special_dispensation" value="1" class="form-checkbox" />  
+				 				<label class="option" for="edit-field-special-dispensation-und">Special Dispensation </label>
+							<div class="description">Tick this box to indicate that, although it falls under none of the other categories, special dispensation has been given to download this URL. Currently, this is allowed under limited circumstances in order to explore the process around archiving social media relating to UK organisations and individuals. </div>
+							</div>
+							</div>
+							<div><div><div>
+							    <label for="edit-field-special-dispensation-reaso-und-0-value">Special Dispensation Reason </label>
+				 			<div class="form-textarea-wrapper resizable">
+				 				<textarea name="field_special_dispensation_reaso" cols="100" rows="3"></textarea></div>
+							<div class="description">If you have selected Special Dispensation as the reason, you must use this field to provide details of who has authorised this decision and why.</div>
+							</div>
+							</div></div>
+							<div><div>
+				 				<input type="checkbox" name="field_no_ld_criteria_met" value="1" class="form-checkbox" />  
+				 				<label class="option" for="edit-field-no-ld-criteria-met-und">No LD Criteria Met </label>
+							<div class="description">Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit.</div>
+							</div>
+							</div-->          
+			            
+				        </div>
+			        </div>
+			        <div class="tab-pane fade" id="crawlpolicy">
+			            <div class="form-group">
 					            <div class="container">
 									  <h3>Scope <font color="red">*</font></h3>
 									  <select id="mySel">
@@ -299,139 +334,19 @@
 				 				</select>
 								<div class="description">How often should this site be archived?</div>
 					        </div>    
+				        </div>
+			        </div>
+			      </div>
+            </div>
+	        <div id="revision" class="revision">
+  				<div class="form-group">
+  			       <hr>
+	               <label for="inputBody">Revision log message</a></label>
+	               <textarea class="text-full form-textarea" name="revision_input" id="inputRevision" cols="100" rows="1"></textarea>
+        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+				</div>
+			</div>
 	        
-	        	      </div>
-			      </div>
-		      </div>
-	      </div>
-	        
-          <div class="form-group">
-          <div class="panel-group" id="accordion">
-			  <div class="panel panel-primary" id="crawlpermissions">
-		          <div class="panel-heading">
-		        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseCrawlPermissions" style="color:#fff;">
-		        		  Crawl Permissions
-		        	  </a>
-		          </div>
-		          <div class="panel-body">
-					  <div id="collapseCrawlPermissions" class="panel-collapse collapse">
-
-						  <label for="edit-field-license-und">License </label>
-						 <select multiple="multiple" name="field_license" id="edit-field-license" class="form-select">
-						 	<option value="_none">- None -</option>
-						    @for(taxonomy <- Targets.getLicense()) {
-						 	<option>@taxonomy.name</option>
-						    }	
-						 </select>
-						<div class="description">The license terms under which this site should be archived and made available.</div>
-						<fieldset><legend><span class="fieldset-legend">Legal Deposit Criteria</span></legend>
-						<div class="fieldset-wrapper"><div></div><div><div>
-			 				<input type="checkbox" id="edit-field-uk-hosting" name="field_uk_hosting" value="1" class="form-checkbox" />  
-			 				<label class="option" for="edit-field-uk-hosting-und">UK Hosting </label>
-						<div class="description">The domain is hosted in the UK.</div>
-						</div>
-						</div>
-						<div id="edit-field-uk-geoip"></div><div><div class="form-item form-type-checkbox form-item-field-uk-postal-address">
-			 				<input type="checkbox" id="edit-field-uk-postal-address" name="field_uk_postal_address" value="1" />  
-			 				<label class="option" for="edit-field-uk-postal-address-und">UK Postal Address </label>
-						<div class="description">The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box).</div>
-						</div>
-						</div>
-						<div><div><div>
-			  				<label for="edit-field-uk-postal-address-url-und-0">Postal Address URL </label>
-			 				<div><div><div>
-			  				<label class="element-invisible" for="edit-field-uk-postal-address-url-und-0-url">URL </label>
-			 				<input type="text" name="field_uk_postal_address_url" value="" size="60" maxlength="2048" class="form-text" />
-							</div>
-							</div></div>
-							<div class="description">The URL on the site that contains the postal address used to determine that the site is in the UK.</div>
-						</div>
-						</div></div>
-						<div><div>
-			 				<input type="checkbox" name="field_via_correspondence" value="1" class="form-checkbox" />  
-			 				<label class="option" for="edit-field-via-correspondence-und">Via Correspondence </label>
-						<div class="description">Previous correspondence with the web site owner by a Curator contains evidence of a UK address.</div>
-						</div>
-						</div>
-						<div><div><div><div></div><div>
-			  				<label for="edit-body-und-0-value">Notes </label>
-			 			<div class="form-textarea-wrapper resizable">
-			 				<textarea name="body" cols="60" rows="5"></textarea></div>
-						</div>
-						<div class="description">Any relevant notes, e.g. a more detailed description of this URL or set of URLs.</div></div>
-						</div></div>
-						<div><div>
-			 				<input type="checkbox" name="field_professional_judgement" value="1" class="form-checkbox" />  
-			 				<label class="option" for="edit-field-professional-judgement-und">Professional Judgement </label>
-						<div class="description">In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below.</div>
-						</div>
-						</div>
-						<div><div><div>
-			  				<label for="edit-field-professional-judgement-exp-und-0-value">Professional Judgement Explanation </label>
-			 				<div class="form-textarea-wrapper resizable">
-			 					<textarea class="text-full form-textarea" name="field_professional_judgement_exp" cols="60" rows="5"></textarea></div>
-						<div class="description">Please describe the rational behind this decision, indicating any evidence used.</div>
-						</div>
-						</div></div>
-						<div><div>
-			 				<input type="checkbox" name="field_special_dispensation" value="1" class="form-checkbox" />  
-			 				<label class="option" for="edit-field-special-dispensation-und">Special Dispensation </label>
-						<div class="description">Tick this box to indicate that, although it falls under none of the other categories, special dispensation has been given to download this URL. Currently, this is allowed under limited circumstances in order to explore the process around archiving social media relating to UK organisations and individuals. </div>
-						</div>
-						</div>
-						<div><div><div>
-						    <label for="edit-field-special-dispensation-reaso-und-0-value">Special Dispensation Reason </label>
-			 			<div class="form-textarea-wrapper resizable">
-			 				<textarea name="field_special_dispensation_reaso" cols="60" rows="5"></textarea></div>
-						<div class="description">If you have selected Special Dispensation as the reason, you must use this field to provide details of who has authorised this decision and why.</div>
-						</div>
-						</div></div>
-						<div><div>
-			 				<input type="checkbox" name="field_no_ld_criteria_met" value="1" class="form-checkbox" />  
-			 				<label class="option" for="edit-field-no-ld-criteria-met-und">No LD Criteria Met </label>
-						<div class="description">Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit.</div>
-						</div>
-						</div>          
-			            <div></div>
-                       
-            		</div>
-			      </div>
-		      </div>
-	      </div>
-            
-          <div class="panel-group" id="accordion">
-			  <div class="panel panel-primary" id="notes">
-		          <div class="panel-heading">
-		        	  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseNotes" style="color:#fff;">
-		        		  Notes
-		        	  </a>
-		          </div>
-		          <div class="panel-body">
-					  <div id="collapseNotes" class="panel-collapse collapse">
-            
-				            <div><div><div><div>
-							  <label for="edit-field-notes-und-0-value">Notes </label>
-				 			<div class="form-textarea-wrapper resizable">
-				 				<textarea class="text-full form-textarea" name="field_notes" cols="60" rows="5"></textarea></div>
-							</div>
-							<div class="description">Add any additional notes about this site here.</div></div>
-				                        			
-				            <div class="form-group">
-				                <li>Revision information</li>
-				                <li>New revision(active tab)</li>
-					            <div class="form-group">
-					              <label for="inputBody">Revision log message</a></label>
-					               <textarea name="revision_input" id="inputRevision" cols="50" rows="10"></textarea>
-				        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
-					            </div>
-							</div>
-			
-			          </div>
-			      </div>
-		      </div>
-	      </div>
-			
-            
             <button type="save" class="btn btn-primary" id="edit-save" name="save">Save</button>
             <!--button type="preview" class="btn btn-primary" name="preview">Preview</button-->
             <button type="delete" class="btn btn-primary" name="delete">Delete</button>
