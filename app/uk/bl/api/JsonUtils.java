@@ -13,9 +13,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Column;
+
 import models.DCollection;
 import models.Organisation;
 import models.Target;
+import models.Taxonomy;
 import models.User;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,6 +28,7 @@ import com.ning.http.client.Body;
 import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.Const.NodeType;
+import uk.bl.Const.TaxonomyType;
 import models.*;
 import play.Logger;
 
@@ -112,12 +116,12 @@ public class JsonUtils {
 					obj.edit_url = Const.WCT_URL + obj.vid;
 				}
 			}
-			if (type.equals(NodeType.COLLECTION)) {
-				DCollection obj = (DCollection) itr.next();
-				if (obj.vid > 0) {
-					obj.edit_url = Const.WCT_URL + obj.vid;
-				}
-			}
+//			if (type.equals(NodeType.COLLECTION)) { // TODO replace by taxonomies
+//				DCollection obj = (DCollection) itr.next();
+//				if (obj.vid > 0) {
+//					obj.edit_url = Const.WCT_URL + obj.vid;
+//				}
+//			}
 			if (type.equals(NodeType.ORGANISATION)) {
 				Organisation obj = (Organisation) itr.next();
 				if (obj.vid > 0) {
@@ -128,18 +132,47 @@ public class JsonUtils {
 		return res;
     }
     
+	/**
+     * This method retrieves collections. Due to merging of different original object models the resulting 
+	 * collection set is evaluated from particular taxonomy type.
+     * @return a list of retrieved collections
+     */
+    public static List<Object> readCollectionsFromTaxonomies() {
+	    List<Object> res = new ArrayList<Object>();
+		List<Taxonomy> taxonomyList = Taxonomy.findListByType(TaxonomyType.COLLECTION.toString().toLowerCase());
+		Iterator<Taxonomy> itr = taxonomyList.iterator();
+		while (itr.hasNext()) {
+			Taxonomy taxonomy = itr.next();
+			DCollection collection = new DCollection();
+			collection.nid         = taxonomy.tid;
+			collection.author      = taxonomy.field_owner;
+			collection.summary     = taxonomy.description;
+			collection.title       = taxonomy.name;
+			collection.feed_nid    = taxonomy.feed_nid;
+			collection.url         = taxonomy.url;
+		    collection.weight      = taxonomy.weight;
+		    collection.node_count  = taxonomy.node_count;
+		    collection.vocabulary  = taxonomy.vocabulary;
+		    collection.parent      = taxonomy.parent;
+		    collection.parents_all = taxonomy.parents_all;
+			res.add(collection);
+		}
+		return res;
+    }
+    
     /**
      * This method aggregates object list from JSON data for particular domain object type.
      * @param urlStr
      * @param type
+     * @param taxonomy_type The type of taxonomy
      * @param res
      */
-    private static void aggregateObjectList(String urlStr, NodeType type, List<Object> res) {
+    private static void aggregateObjectList(String urlStr, NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
 	    Logger.info("extract data for: " + urlStr + " type: " + type);
 		String content = downloadData(urlStr, type);
 		JsonNode mainNode = Json.parse(content);	
 		if(mainNode != null) {
-			List<Object> pageList = JsonUtils.parseJsonExt(content, type);
+			List<Object> pageList = JsonUtils.parseJsonExt(content, type, taxonomy_type);
 			res.addAll(pageList);
 		}
     }
@@ -149,14 +182,15 @@ public class JsonUtils {
      * @param url The current URL
      * @param urlList The list of aggregated URLs (to avoid duplicates)
      * @param type The object type
+     * @param taxonomy_type The type of taxonomy
      * @param res Resulting list
      */
-    public static void executeUrlRequest(String url, List<String> urlList, NodeType type, List<Object> res) {
+    public static void executeUrlRequest(String url, List<String> urlList, NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
     	url = getWebarchiveCreatorUrl(url, type);
 		String urlStr = url + Const.JSON;
 		if (!urlList.contains(urlStr)) {
     		urlList.add(urlStr);
-			aggregateObjectList(urlStr, type, res);
+			aggregateObjectList(urlStr, type, taxonomy_type, res);
 		}
     }
     
@@ -165,19 +199,20 @@ public class JsonUtils {
      * @param fieldName Contains one or many URLs separated by comma
      * @param urlList The list of aggregated URLs (to avoid duplicates)
      * @param type The object type
+     * @param taxonomy_type The type of taxonomy
      * @param res Resulting list
      */
-    public static void readListFromString(String fieldName, List<String> urlList, NodeType type, List<Object> res) {
+    public static void readListFromString(String fieldName, List<String> urlList, NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
 //		Logger.info("fieldName: " + fieldName);
     	if (fieldName != null && fieldName.length() > 0) {
     		if (fieldName.contains(Const.COMMA)) {
     			List<String> resList = Arrays.asList(fieldName.split(Const.COMMA));
     			Iterator<String> itr = resList.iterator();
     			while (itr.hasNext()) {
-        			executeUrlRequest(itr.next(), urlList, type, res);
+        			executeUrlRequest(itr.next(), urlList, type, taxonomy_type, res);
     			}
     		} else {
-    			executeUrlRequest(fieldName, urlList, type, res);
+    			executeUrlRequest(fieldName, urlList, type, taxonomy_type, res);
     		}
     	}
     }
@@ -200,18 +235,20 @@ public class JsonUtils {
 	    		Target target = itr.next();
 			    String urlStr = "";
 			    if (type.equals(NodeType.USER)) {
-			    	readListFromString(target.author, urlList, type, res);
+			    	readListFromString(target.author, urlList, type, null, res);
 			    }
 			    if (type.equals(NodeType.TAXONOMY)) {
-			    	readListFromString(target.field_collection_categories, urlList, type, res);
-			    	readListFromString(target.field_license, urlList, type, res);
+			    	readListFromString(target.field_collection_categories, urlList, type, TaxonomyType.COLLECTION, res);
+			    	readListFromString(target.field_suggested_collections, urlList, type, TaxonomyType.COLLECTION, res);
+			    	readListFromString(target.field_license, urlList, type, TaxonomyType.LICENSE, res);
+			    	readListFromString(target.field_subject, urlList, type, TaxonomyType.SUBJECT, res);
 			    }
 			    if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
 			    	List<Taxonomy> taxonomies = Taxonomy.findAll();
 			    	Iterator<Taxonomy> taxonomyItr = taxonomies.iterator();
 			    	while (taxonomyItr.hasNext()) {
 			    		Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
-				    	readListFromString(taxonomy.vocabulary, urlList, type, res);
+				    	readListFromString(taxonomy.vocabulary, urlList, type, null, res);
 			    	}
 			    }
 	    	}
@@ -435,9 +472,10 @@ public class JsonUtils {
 	 * This method extracts JSON node without root node and passes them to parser
 	 * @param content
 	 * @param type
-	 * @return object list for particular domain object type
+     * @param taxonomy_type The type of taxonomy
+     * @return object list for particular domain object type
 	 */
-	public static List<Object> parseJsonExt(String content, NodeType type) {
+	public static List<Object> parseJsonExt(String content, NodeType type, TaxonomyType taxonomy_type) {
 	    List<Object> res = new ArrayList<Object>();
 		JsonNode node = Json.parse(content);
 		if(node != null) {
@@ -452,6 +490,10 @@ public class JsonUtils {
 				obj = new TaxonomyVocabulary();
 			}
 			parseJsonNode(node, obj);
+			if (type.equals(Const.NodeType.TAXONOMY)) {
+				((Taxonomy) obj).type = taxonomy_type.toString().toLowerCase();
+//				Logger.info("taxonomy type: " + taxonomy_type.toString().toLowerCase());
+			}
 			boolean isNew = true;
 			if (type.equals(Const.NodeType.USER)) {	
 			    User newUser = (User) obj;

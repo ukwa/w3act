@@ -5,6 +5,8 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import com.avaje.ebean.ExpressionList;
+
 import play.Logger;
 import play.db.ebean.*;
 import uk.bl.Const;
@@ -20,7 +22,9 @@ public class Taxonomy extends Model {
      
     @Id
     public Long tid;
-    public String name;  
+    public String name; 
+    // additional field to make a difference between collection, subject, license and quality issue. 
+    public String type;  
     @Column(columnDefinition = "TEXT")
     public String description;
     public Long weight;
@@ -86,7 +90,7 @@ public class Taxonomy extends Model {
     /**
      * Retrieve a Taxonomy by URL.
      * @param url
-     * @return taxonomy name
+     * @return taxonomy object
      */
     public static Taxonomy findByUrl(String url) {
     	Taxonomy res = new Taxonomy();
@@ -106,6 +110,26 @@ public class Taxonomy extends Model {
 //        return find.where().eq(Const.URL, url).findUnique();
     	return res;
     }          
+
+//    /**
+//     * Retrieve a Taxonomy by taxonomy type (e.g. collection, subject, license).
+//     * @param type
+//     * @return taxonomy object
+//     */
+//    public static Taxonomy findByType(String type) {
+//    	Taxonomy res = new Taxonomy();
+//        
+//        if (type != null && type.length() > 0) {
+//	        Taxonomy resObj = find.where().eq(Const.TYPE, type).findUnique();
+//	        if (resObj == null) {
+//	        	res.name = Const.NONE;
+//	        } else {
+//	        	res = resObj;
+//	        }
+//	        Logger.info("taxonomy name: " + res.name);
+//        }
+//    	return res;
+//    }          
 
     /**
      * Retrieve a Taxonomy list by URL.
@@ -127,6 +151,23 @@ public class Taxonomy extends Model {
     			Taxonomy taxonomy = findByUrl(url);
     			res.add(taxonomy);
     		}
+        }
+    	return res;
+    }
+        
+    /**
+     * Retrieve a Taxonomy list by type.
+     * @param taxonomy type
+     * @return taxonomy list
+     */
+	public static List<Taxonomy> findListByType(String type) {
+    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	if (type != null && type.length() > 0) {
+//	        res = (List<Taxonomy>) find.where().eq(Const.TYPE, type);
+	        ExpressionList<Taxonomy> ll = find.where().eq(Const.TYPE, type);
+	    	res = ll.findList(); 
+//	        Taxonomy taxonomy = findByType(type);
+//   			res.add(taxonomy);
         }
     	return res;
     }

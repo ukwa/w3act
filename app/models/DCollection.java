@@ -51,6 +51,17 @@ public class DCollection extends Model {
     public String field_sub_collections; 
     @Column(columnDefinition = "TEXT")
     public String field_instances; 
+    // additional fields from taxonomy
+    public Long weight;
+    public Long node_count;
+    @Column(columnDefinition = "TEXT")
+    public String vocabulary;
+    // lists
+    @Column(columnDefinition = "TEXT") 
+    public String parent;
+    @Column(columnDefinition = "TEXT") 
+    public String parents_all;
+
 
     /**
      * Constructor
