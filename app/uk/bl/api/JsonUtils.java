@@ -137,19 +137,21 @@ public class JsonUtils {
 		Iterator<Taxonomy> itr = taxonomyList.iterator();
 		while (itr.hasNext()) {
 			Taxonomy taxonomy = itr.next();
-			DCollection collection = new DCollection();
-			collection.nid         = taxonomy.tid;
-			collection.author      = taxonomy.field_owner;
-			collection.summary     = taxonomy.description;
-			collection.title       = taxonomy.name;
-			collection.feed_nid    = taxonomy.feed_nid;
-			collection.url         = taxonomy.url;
-		    collection.weight      = taxonomy.weight;
-		    collection.node_count  = taxonomy.node_count;
-		    collection.vocabulary  = taxonomy.vocabulary;
-		    collection.parent      = taxonomy.parent;
-		    collection.parents_all = taxonomy.parents_all;
-			res.add(collection);
+			if (taxonomy.name != null && taxonomy.name.length() > 0) {
+				DCollection collection = new DCollection();
+				collection.nid         = taxonomy.tid;
+				collection.author      = taxonomy.field_owner;
+				collection.summary     = taxonomy.description;
+				collection.title       = taxonomy.name;
+				collection.feed_nid    = taxonomy.feed_nid;
+				collection.url         = taxonomy.url;
+			    collection.weight      = taxonomy.weight;
+			    collection.node_count  = taxonomy.node_count;
+			    collection.vocabulary  = taxonomy.vocabulary;
+			    collection.parent      = taxonomy.parent;
+			    collection.parents_all = taxonomy.parents_all;
+				res.add(collection);
+			}
 		}
 		return res;
     }
@@ -336,6 +338,7 @@ public class JsonUtils {
      * @return identifier URL
      */
     public static String checkArchiveUrl(String url) {
+//    	Logger.info("checkArchiveUrl() url: " + url);
     	String res = url;
 		if(url != null) {
 			if(url.contains(Const.WEBARCHIVE_LINK)) {
@@ -347,6 +350,9 @@ public class JsonUtils {
 				}
 			}
 		}
+//		if (!url.equals(res)) {
+//			Logger.info("checkArchiveUrl() res: " + res);
+//		}
 		return res;
     }
         
@@ -386,7 +392,7 @@ public class JsonUtils {
 //		Logger.info("getStringList path: " + path + ", resNode: " + resNode);
 		if (resNode != null) {
 			String item = resNode.findPath(path).textValue();
-			res = checkArchiveUrl(item);
+			res = normalizeArchiveUrl(item);
 		}
 //		Logger.info("getStringFromSubNode res: " + res);
 		return res;
@@ -528,7 +534,7 @@ public class JsonUtils {
 	public static void parseJsonString(Field f, JsonNode node, Object obj) {
 		try {
 			String jsonField = getStringItem(node, f.getName());
-			jsonField = checkArchiveUrl(jsonField);
+			jsonField = normalizeArchiveUrl(jsonField);
 			if (f.getType().equals(String.class)) {
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "";
@@ -594,22 +600,50 @@ public class JsonUtils {
 	}
 
 	/**
+	 * This method converts archiving URLs into W3ACT URLs.
+	 * @param str A single URL or multiple URLs separated by comma
+	 * @return W3ACT URLs as a string
+	 */
+	public static String normalizeArchiveUrl(String str) {
+		String res = "";
+    	if (str != null && str.length() > 0) {
+    		if (str.contains(Const.COMMA)) {
+    			List<String> resList = Arrays.asList(str.split(Const.COMMA));
+    			int idx = 0;
+    			Iterator<String> itr = resList.iterator();
+    			while (itr.hasNext()) {
+        			String urlItem = checkArchiveUrl(itr.next());
+        			if (idx == 0) {
+        			   res = urlItem;
+        			} else {
+        			   res = res + Const.COMMA + " " + urlItem;
+        			}
+        			idx++;
+    			}
+    		} else {
+    			res = checkArchiveUrl(str);
+    		}
+    	}
+    	return res;
+	}
+	
+	/**
 	 * This method parses JSON node and extracts fields
 	 * @param node
 	 * @param obj
 	 */
 	public static void parseJsonNode(JsonNode node, Object obj) {
 		Field[] fields = obj.getClass().getFields();
-		if (obj.getClass().toString().contains("Taxonomy")) {
-			Logger.info("Taxonomy node: " + node.toString());
-		}
+//		if (obj.getClass().toString().contains("Taxonomy")) {
+//			Logger.info("Taxonomy node: " + node.toString());
+//		}
 		for (Field f : fields) {
 			try {
 			    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
 					JsonNode resNode = getElement(node, f.getName());
 					String jsonField = getStringList(resNode, f.getName());
 					if (!f.getName().equals(Const.targetMap.get("field_url"))) {
-						jsonField = checkArchiveUrl(jsonField);
+						jsonField = normalizeArchiveUrl(jsonField);
 					}
 //						Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
 					if (f.getType().equals(String.class)) {
