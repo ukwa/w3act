@@ -165,6 +165,18 @@ public class Target extends Model {
 	}
 
     /**
+     * This method retrieves all targets for given collection.
+     * @param url
+     * @return
+     */
+    public static List<Target> findAllforCollection(String url) {
+    	List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().eq("field_collection_categories", url);
+        res = ll.findList();
+        return res;
+	}
+
+    /**
      * Create a new target.
      */
     public static Target create(String title, String url) {

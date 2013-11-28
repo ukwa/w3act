@@ -22,7 +22,7 @@
 		              <tbody>
 		              	@dcollections.map { dcollection =>		              
 		                <tr>
-		                  <td><a class="brand" href="@dcollection.get_field_list("field_sub_collections")">@dcollection.title</a></td>
+		                  <td><a class="brand" href="@routes.CollectionEdit.view(dcollection.url)">@dcollection.title</a></td>
 		                </tr>
 		                }
 		              </tbody>

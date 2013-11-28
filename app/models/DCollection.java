@@ -137,6 +137,21 @@ public class DCollection extends Model {
     	return res;
     }
     
+    /**
+     * Retrieve a collection object by URL.
+     * @param url
+     * @return collection
+     */
+    public static DCollection findByUrl(String url) {
+    	DCollection res = new DCollection();
+    	if (url != null && url.length() > 0) {
+    		res = find.where().eq(Const.URL, url).findUnique();
+    	} else {
+    		res.title = Const.NONE;
+    	}
+    	return res;
+    }
+
     public String toString() {
         return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
         		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;

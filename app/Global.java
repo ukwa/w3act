@@ -55,12 +55,6 @@ public class Global extends GlobalSettings {
 	//                	Target target = targetItr.next();
 	//                    Logger.info("Target test object: " + target.toString());
 	//                }
-			        // aggregate collections data from drupal and store JSON content in a file
-//	                Logger.info("load collections ..."); 
-//			        List<Object> allCollections = JsonUtils.getDrupalData(Const.NodeType.COLLECTION);
-//					// store collections in DB
-//	                Ebean.save(allCollections);
-//	                Logger.info("collections successfully loaded");
 	                Logger.info("load organisations ...");
 					// aggregate organisations data from drupal and store JSON content in a file
 			        List<Object> allOrganisations = JsonUtils.getDrupalData(Const.NodeType.ORGANISATION);

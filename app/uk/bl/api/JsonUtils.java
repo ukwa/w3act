@@ -116,12 +116,6 @@ public class JsonUtils {
 					obj.edit_url = Const.WCT_URL + obj.vid;
 				}
 			}
-//			if (type.equals(NodeType.COLLECTION)) { // TODO replace by taxonomies
-//				DCollection obj = (DCollection) itr.next();
-//				if (obj.vid > 0) {
-//					obj.edit_url = Const.WCT_URL + obj.vid;
-//				}
-//			}
 			if (type.equals(NodeType.ORGANISATION)) {
 				Organisation obj = (Organisation) itr.next();
 				if (obj.vid > 0) {

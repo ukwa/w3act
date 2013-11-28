@@ -111,26 +111,6 @@ public class Taxonomy extends Model {
     	return res;
     }          
 
-//    /**
-//     * Retrieve a Taxonomy by taxonomy type (e.g. collection, subject, license).
-//     * @param type
-//     * @return taxonomy object
-//     */
-//    public static Taxonomy findByType(String type) {
-//    	Taxonomy res = new Taxonomy();
-//        
-//        if (type != null && type.length() > 0) {
-//	        Taxonomy resObj = find.where().eq(Const.TYPE, type).findUnique();
-//	        if (resObj == null) {
-//	        	res.name = Const.NONE;
-//	        } else {
-//	        	res = resObj;
-//	        }
-//	        Logger.info("taxonomy name: " + res.name);
-//        }
-//    	return res;
-//    }          
-
     /**
      * Retrieve a Taxonomy list by URL.
      * @param url
@@ -163,11 +143,8 @@ public class Taxonomy extends Model {
 	public static List<Taxonomy> findListByType(String type) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (type != null && type.length() > 0) {
-//	        res = (List<Taxonomy>) find.where().eq(Const.TYPE, type);
 	        ExpressionList<Taxonomy> ll = find.where().eq(Const.TYPE, type);
 	    	res = ll.findList(); 
-//	        Taxonomy taxonomy = findByType(type);
-//   			res.add(taxonomy);
         }
     	return res;
     }
