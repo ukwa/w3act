@@ -12,94 +12,40 @@
 	</div>
     
     <article class="organisationdetails">
-        <div class="folder">
-            <h3>@organisation.title</h3>
-		</div>
-		<table class="table table-striped table-bordered table-hover table-condensed">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Categories</th>
-                  <th>Subject</th>
-                  <th>By</th>
-                  <th>Crawled Instances</th>
-                  <th>Crawled URLs</th>
-                </tr>
-              </thead>
-              <tbody>
-              	@Target.findAllforOrganisation(organisation.url).map { target =>		              
-                <tr>
-                  <td><a class="brand" href="@target.url">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
-                  @if(target.field_collection_categories != null && Taxonomy.findListByUrl(target.field_collection_categories) != null) { 
-	                <td>
-	                	@for(taxonomy <- Taxonomy.findListByUrl(target.field_collection_categories)) {
-	                	    @if(taxonomy.url != null) {
-		            		<a href="@routes.TaxonomyEdit.edit(taxonomy.url)">@taxonomy.name</a>,&nbsp;
-		            		}
-			            }
-    	            </td>
-                  } else {
-	                  <td></td>
-                  }	
-                  <td>@target.field_subject</td>
-                  @if(target.field_nominating_organisation != null) { 
-    	              <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>
-                  } else {
-	                  <td></td>
-                  }	
-                  <td></td>
-                  <td></td>
-                </tr>
-                }
-              </tbody>
-            </table>
-
       <div class="panel panel-default" id="forms">
         <div class="panel-heading">
         </div>
-        <form>
-          <fieldset>
-            <legend>Legend</legend>
-            <div class="form-group">
-              <label for="inputName">Name*</label>
-              <input class="form-control" id="inputName" placeholder="My name" type="text">
-            </div>
-            <div class="form-group">
-              <label for="inputAbbreviation">Abbreviation*</label>
-              <input class="form-control" id="inputAbbreviation" placeholder="BL" type="text">
-              <label">An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc.</label>
-            </div>            
-            <div id="summary" class="collapse" data-toggle="collapse" data-target="#demo">
-			   <div class="form-group">
-                    <label for="inputSummary">Summary</a></label>
-               		<textarea name="summary" id="inputSummary" cols="50" rows="10"></textarea>
-               		<br>Leave blank to use trimmed value of full text as the summary.
-	           </div>
-            </div>
-            <div class="form-group">
-              <label for="inputDescription">Description</label><a href="#" data-toggle="collapse" data-target="#summary">(Edit Summary)</a>
-               <textarea name="user_eingabe" id="inputDescription" cols="50" rows="10"></textarea>
-            </div>
-            <div class="form-group">
-                <li>Revision information</li>
-                <li>New revision(active tab)</li>
+        <div class="panel-body">
+	        <form>
+	          <fieldset>
 	            <div class="form-group">
-	              <label for="inputBody">Revision log message</a></label>
-	               <textarea name="revision_input" id="inputRevision" cols="50" rows="10"></textarea>
-        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+	              <label for="inputName">Name <font color="red">*</font></label>
+	              <input class="form-control" name="title" id="inputTitle" value="@organisation.title" type="text">
 	            </div>
-			</div>
-            
-            <button type="save" class="btn btn-default">Save</button>
-            <button type="preview" class="btn btn-default">Preview</button>
-            <button type="delete" class="btn btn-default">Delete</button>
-          </fieldset>
-        </form>
-        <hr>
-      </div>
-
-          </div>
-
+	            <div class="form-group">
+	              <label for="inputAbbreviation">Abbreviation <font color="red">*</font></label>
+	              <input class="form-control" id="inputAbbreviation" placeholder="BL" type="text">
+	              <label">An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc.</label>
+	            </div>            
+	            <div class="form-group">
+	               <label for="inputDescription">Description</label><br>
+	               <textarea name="description" id="inputDescription" value="@organisation.summary" cols="100" rows="1"></textarea>
+	            </div>
+		        <div id="revision" class="revision">
+	  				<div class="form-group">
+	  			       <hr>
+		               <label for="inputBody">Revision log message</label>
+		               <textarea class="text-full form-textarea" name="revision_input" id="inputRevision" cols="100" rows="1"></textarea>
+	        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+					</div>
+				</div>
+	            
+	            <button type="save" class="btn btn-primary">Save</button>
+	            <button type="delete" class="btn btn-primary">Delete</button>
+	          </fieldset>
+	        </form>
+	      </div>
+       </div>
     </article>
     
     

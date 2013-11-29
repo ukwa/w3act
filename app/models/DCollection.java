@@ -5,6 +5,8 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import com.avaje.ebean.ExpressionList;
+
 import play.Logger;
 import play.db.ebean.*;
 import uk.bl.Const;
@@ -152,6 +154,31 @@ public class DCollection extends Model {
     	return res;
     }
 
+    /**
+     * This method returns parent collections for given collection.
+     * @param quera collection
+     * @return parent collection list
+     */
+    public static List<DCollection> getParents(DCollection collection) {
+		List<DCollection> res = new ArrayList<DCollection>();
+		String parentStr = collection.parents_all;
+    	if (parentStr != null && parentStr.length() > 0) {
+    		if (parentStr.contains(Const.COMMA)) {
+    			List<String> resList = Arrays.asList(parentStr.split(Const.COMMA));
+    			Iterator<String> itr = resList.iterator();
+    			while (itr.hasNext()) {
+        			String parentUrl = itr.next();
+        	        DCollection parentCollection = find.where().eq(Const.URL, parentUrl).findUnique();
+        	        res.add(parentCollection);
+    			}
+    		} else {
+    	        DCollection parentCollection = find.where().eq(Const.URL, parentStr).findUnique();
+    	        res.add(parentCollection);
+    		}
+    	}
+		return res;
+    }
+    
     public String toString() {
         return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
         		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;

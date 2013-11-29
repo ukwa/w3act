@@ -17,7 +17,7 @@ GET     /assets/javascripts/routes          controllers.Application.javascriptRo
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)
 
 # Tabs
-GET     /about                              controllers.About.index()
+#GET     /about                              controllers.About.index()
 GET     /collections                        controllers.DCollections.index()
 GET     /targets                            controllers.Targets.index()
 GET     /targets/:offset                    controllers.Targets.offset(offset:Int)
@@ -63,7 +63,7 @@ GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()
 POST    /target/save-target                 controllers.TargetController.saveTarget()
-POST    /website/save-target                controllers.TargetController.saveTarget()
+#POST    /website/save-target                controllers.TargetController.saveTarget()
 POST    /alphabeticalindex/filter-url       controllers.AlphabeticalIndex.filterUrl()
 POST    /dispensationsites/filter-url       controllers.DispensationSites.filterUrl()
 POST    /keysites/filter-url                controllers.KeySites.filterUrl()
