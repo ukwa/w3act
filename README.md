@@ -24,17 +24,15 @@ To install you need:
 
 ### Install instructions
 
-Please refere to the istallation instructions of associated tool.
-
-### Use
+Please refer to the istallation instructions of associated tool.
 
 ## To use the tool:
 
-1. Open DOS window and run the following command:
+### Open DOS window and run the following command:
 
 play run
 
-2. Start browser and use URL: 
+### Start browser and use URL: 
 
 localhost:9000
 
@@ -44,7 +42,7 @@ play test
 
 ## Documentation
 
-Description of the domain object model and user flows can be find in wiki [wiki]
+Description of the domain object model and user flows can be find in [wiki]
 
 ### Develop
 
@@ -61,7 +59,7 @@ To build you require:
 
 For using the recommended IDE you require:
 
-* Eclipse Kepler Service Release 1 with m2eclipse plugin (http://eclipse.org/eclipse)
+* Eclipse Kepler Service Release 1 with m2eclipse plugin [eclipse]
 
 ### Troubleshooting
 
@@ -81,3 +79,4 @@ play clean
 [download-java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [build-status]: https://travis-ci.org/ukwa/w3act)](https://travis-ci.org/ukwa/w3act
 [wiki]: https://github.com/ukwa/w3act/wiki
+[eclipse]: http://eclipse.org/eclipse
