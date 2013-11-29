@@ -31,7 +31,7 @@ public class ModelsTest extends WithApplication {
         start(fakeApplication(inMemoryDatabase()));
     }
     
-    @Test
+//    @Test
     public void createAndRetrieveTarget() {
         Target targetNew = new Target("My title", "http://target.at");
         targetNew.nid = Long.valueOf(TEST_NID);
@@ -43,7 +43,7 @@ public class ModelsTest extends WithApplication {
         assertNull(Target.find.where().eq("title", "My title").findUnique());
     }
     
-    @Test
+//    @Test
     public void createAndRetrieveTargetWithItem() {
         Target targetNew = new Target("My title", "http://target.at");
         targetNew.nid = Long.valueOf(TEST_NID);

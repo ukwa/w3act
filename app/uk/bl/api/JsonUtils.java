@@ -163,12 +163,12 @@ public class JsonUtils {
      * @param taxonomy_type The type of taxonomy
      * @param res
      */
-    private static void aggregateObjectList(String urlStr, NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
+    private static void aggregateObjectList(String urlStr, List<String> urlList, NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
 	    Logger.info("extract data for: " + urlStr + " type: " + type);
 		String content = downloadData(urlStr, type);
 		JsonNode mainNode = Json.parse(content);	
 		if(mainNode != null) {
-			List<Object> pageList = JsonUtils.parseJsonExt(content, type, taxonomy_type);
+			List<Object> pageList = JsonUtils.parseJsonExt(content, type, taxonomy_type, urlList, res);
 			res.addAll(pageList);
 		}
     }
@@ -186,7 +186,7 @@ public class JsonUtils {
 		String urlStr = url + Const.JSON;
 		if (!urlList.contains(urlStr)) {
     		urlList.add(urlStr);
-			aggregateObjectList(urlStr, type, taxonomy_type, res);
+			aggregateObjectList(urlStr, urlList, type, taxonomy_type, res);
 		}
     }
     
@@ -300,7 +300,7 @@ public class JsonUtils {
      * @param path
      * @return list as a String
      */
-    public static String getStringList(JsonNode resNode, String path) {
+    public static String getStringList(JsonNode resNode, String path, boolean isArchived) {
 		String res = "";
 //		Logger.info("getStringList path: " + path + ", resNode: " + resNode);
 		if (resNode != null) {
@@ -316,6 +316,9 @@ public class JsonUtils {
 					fieldName = Const.URL;
 				}
 				String item = subNode.findPath(fieldName).textValue();
+				if (isArchived) {
+					item = normalizeArchiveUrl(item);
+				}
 				if(item != null) {
 					if (res.length() > 0) {
 						res = res + "," + item;
@@ -475,7 +478,7 @@ public class JsonUtils {
      * @param taxonomy_type The type of taxonomy
      * @return object list for particular domain object type
 	 */
-	public static List<Object> parseJsonExt(String content, NodeType type, TaxonomyType taxonomy_type) {
+	public static List<Object> parseJsonExt(String content, NodeType type, TaxonomyType taxonomy_type, List<String> urlList, List<Object> resList) {
 	    List<Object> res = new ArrayList<Object>();
 		JsonNode node = Json.parse(content);
 		if(node != null) {
@@ -489,7 +492,7 @@ public class JsonUtils {
 			if (type.equals(Const.NodeType.TAXONOMY_VOCABULARY)) {
 				obj = new TaxonomyVocabulary();
 			}
-			parseJsonNode(node, obj);
+			parseJsonNodeExt(node, obj, urlList, type, res);
 			if (type.equals(Const.NodeType.TAXONOMY)) {
 				((Taxonomy) obj).type = taxonomy_type.toString().toLowerCase();
 //				Logger.info("taxonomy type: " + taxonomy_type.toString().toLowerCase());
@@ -578,13 +581,19 @@ public class JsonUtils {
 	 * @param obj
 	 * @return check result
 	 */
-	private static boolean checkSubNode(Field f, JsonNode node, Object obj) {
+	private static boolean checkSubNode(Field f, JsonNode node, Object obj, List<String> urlList, NodeType type, List<Object> resList) {
 		boolean res = false;
 	    if (Const.subNodeMap.containsKey(f.getName())) {
 			res = true;
 			JsonNode resNode = getElement(node, f.getName());
 			String jsonField = getStringFromSubNode(resNode, Const.subNodeMap.get(f.getName()));
+			if (f.getName().equals(Const.PARENTS_ALL)) {
+				jsonField = getStringList(resNode, f.getName(), true);
+			}
 //			Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
+			if (urlList != null && type != null && type.equals(NodeType.TAXONOMY)) {
+				readListFromString(jsonField, urlList, type, TaxonomyType.COLLECTION, resList);
+			}
 			if (f.getType().equals(String.class)) {
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "";
@@ -633,6 +642,15 @@ public class JsonUtils {
 	 * @param obj
 	 */
 	public static void parseJsonNode(JsonNode node, Object obj) {
+	    parseJsonNodeExt(node, obj, null, null, null);	
+	}
+	
+	/**
+	 * This method parses JSON node and extracts fields
+	 * @param node
+	 * @param obj
+	 */
+	public static void parseJsonNodeExt(JsonNode node, Object obj, List<String> urlList, NodeType type, List<Object> resList) {
 		Field[] fields = obj.getClass().getFields();
 //		if (obj.getClass().toString().contains("Taxonomy")) {
 //			Logger.info("Taxonomy node: " + node.toString());
@@ -641,7 +659,7 @@ public class JsonUtils {
 			try {
 			    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
 					JsonNode resNode = getElement(node, f.getName());
-					String jsonField = getStringList(resNode, f.getName());
+					String jsonField = getStringList(resNode, f.getName(), false);
 					if (!f.getName().equals(Const.targetMap.get("field_url"))) {
 						jsonField = normalizeArchiveUrl(jsonField);
 					}
@@ -659,7 +677,7 @@ public class JsonUtils {
 						JsonNode resNode = getElement(node, Const.BODY);
 						parseJsonString(f, resNode, obj);
 					} else {
-						if (!checkSubNode(f, node, obj)) {
+						if (!checkSubNode(f, node, obj, urlList, type, resList)) {
 							parseJsonString(f, node, obj);
 						}
 					}

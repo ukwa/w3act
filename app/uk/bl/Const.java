@@ -74,6 +74,9 @@ public final class Const {
 	public static final String FIELD_DEPTH        = "field_depth";
 	// Taxonomy
 	public static final String TYPE               = "type";
+	public static final String FIELD_OWNER        = "field_owner";
+	public static final String PARENT             = "parent";
+	public static final String PARENTS_ALL        = "parents_all";
 	
 	// Types of the JSON nodes
 	public enum NodeType {
@@ -126,6 +129,10 @@ public final class Const {
     	subNodeMap.put(FIELD_AFFILIATION, URI);
     	subNodeMap.put(FIELD_NOMINATING_ORGANISATION, URI);
     	subNodeMap.put(FIELD_SUBJECT, URI);
+//    	subNodeMap.put(FIELD_COLLECTION_CATEGORIES, URI);
+    	subNodeMap.put(FIELD_OWNER, URI);
+    	subNodeMap.put(PARENT, URI);
+    	subNodeMap.put(PARENTS_ALL, URI);
     }
 		
     /**
