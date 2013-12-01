@@ -20,6 +20,7 @@
         <form action="@routes.TargetController.saveTarget()" method="POST">
           <fieldset>
           	<input type="hidden" name="nid" value="@target.nid">
+          	<input type="hidden" name="user" value="@user.url">
             
 			<div class="bs-example bs-example-tabs">
 		      <ul id="myTab" class="nav nav-tabs">
@@ -39,7 +40,7 @@
 			              @if(target.field_url != null) {
 			              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@target.field_url">
 			              } else {
-			              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text">
+			              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@target.title">
 			              }
 			              <p>One or more URLs, separated by comma.<p>
 			              <!--button type="item" class="btn btn-success">Add another item</button-->
@@ -302,11 +303,11 @@
 				        </div>
 			        </div>
             </div>
-	        <div id="revision" class="revision">
+	        <div id="revisionArea" class="revision">
   				<div class="form-group">
   			       <hr>
 	               <label for="inputBody">Revision log message</label>
-	               <textarea class="text-full form-textarea" name="revision_input" id="inputRevision" cols="100" rows="1"></textarea>
+	               <textarea class="text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1"></textarea>
         		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
 				</div>
 			</div>

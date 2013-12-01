@@ -30,36 +30,18 @@ import uk.bl.Const;
 @Security.Authenticated(Secured.class)
 public class TargetController extends AbstractController {
   
-	private static Target previewObj;
-	
-    public static Result addTarget() {
-    	Result res;
-        Target target = new Target();
-        target.title = getFormParam(Const.TITLE);
-        target.summary = getFormParam(Const.SUMMARY);
-        UUID id = UUID.randomUUID();
-        Logger.info("id: " + id.toString());
-        target.nid = id.getMostSignificantBits();
-        String save = getFormParam("save");
-        String preview = getFormParam("preview");
-//        Logger.info("save: " + save + ", preview: " + preview);
-        if (save != null) {
-	        target.save();
-	        Logger.info("add article: " + target.toString());
-	        res = redirect(routes.Article.index());
-        } else {
-        	previewObj = target;
-	        res = redirect(routes.Article.preview());
-        }
-        return res;
-    }
-	
+    /**
+     * This method saves changes on given target in a new target object
+     * completed by revision comment. The "version" field in the Target object
+     * contains the timestamp of the change and the last version is marked by
+     * flag "active". Remaining Target objects with the same URL are not active.
+     * @return
+     */
     public static Result saveTarget() {
     	Result res = null;
         String save = getFormParam("save");
-        String preview = getFormParam("preview");
         String delete = getFormParam("delete");
-//        Logger.info("save: " + save + ", preview: " + preview);
+//        Logger.info("save: " + save);
         if (save != null) {
         	Logger.info("save udated target nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
         			", title: " + getFormParam(Const.TITLE) + ", keysite: " + getFormParam(Const.KEYSITE) +
@@ -69,54 +51,95 @@ public class TargetController extends AbstractController {
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
             Target target = new Target();
+        	Target newTarget = new Target();
             boolean isExisting = true;
             try {
         	    target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
             } catch (Exception e) {
             	Logger.info("is not existing exception");
             	isExisting = false;
-         		target.nid = Long.valueOf(getFormParam(Const.NID));
             }
             if (target == null) {
             	target = new Target();
             	Logger.info("is not existing");
             	isExisting = false;
-         		target.nid = Long.valueOf(getFormParam(Const.NID));
             }
-            target.title = getFormParam(Const.TITLE);
-            target.field_url = getFormParam(Const.FIELD_URL);
+            newTarget.nid = Target.createId();
+            newTarget.url = target.url;
+            newTarget.author = target.author;
+            if (target.author == null) {
+            	newTarget.author = getFormParam(Const.USER);
+            }
+            newTarget.field_collection_categories = target.field_collection_categories;
+            newTarget.field_nominating_organisation = target.field_nominating_organisation;
+            Logger.info("new nid: " + newTarget.nid);
+            newTarget.title = getFormParam(Const.TITLE);
+            newTarget.field_url = getFormParam(Const.FIELD_URL);
             if (getFormParam(Const.KEYSITE) == null) {
-            	target.field_key_site = Const.FALSE;
+            	newTarget.field_key_site = Const.FALSE;
             } else {
-            	target.field_key_site = Const.TRUE;
+            	newTarget.field_key_site = Const.TRUE;
             }
-            target.field_description = getFormParam(Const.DESCRIPTION);
+            newTarget.field_description = getFormParam(Const.DESCRIPTION);
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
-            	target.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
+            	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
             if(getFormParam(Const.SUBJECT).equals("10")) {
-            	target.field_subject = "Arts &amp; Humanities";
+            	newTarget.field_subject = "Arts &amp; Humanities";
             }
             if(getFormParam(Const.SUBJECT).equals("11")) {
-            	target.field_subject = "Business, Economy &amp; Industry";
+            	newTarget.field_subject = "Business, Economy &amp; Industry";
             }
             if(getFormParam(Const.SUBJECT).equals("12")) {
-            	target.field_subject = "Education &amp; Research";
+            	newTarget.field_subject = "Education &amp; Research";
             }
-        	target.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+            if (getFormParam(Const.ORGANISATION) != null) {
+            	if (getFormParam(Const.ORGANISATION) != null && 
+            			!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
+//            		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
+            		newTarget.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+            	} else {
+            		newTarget.field_nominating_organisation = Const.NONE;
+            	}
+            }
+            newTarget.summary = getFormParam(Const.SUMMARY);
+            newTarget.revision = getFormParam(Const.REVISION);
+            newTarget.active = true;
         	if (!isExisting) {
-        		target.url = "none.com/url";
-        		Ebean.save(target);
+//        		if (newTarget.url == null) {
+//        		newTarget.url = "none.com/url";
+        		newTarget.url = Const.ACT_URL + newTarget.nid;
+        		newTarget.edit_url = Const.WCT_URL + newTarget.nid;
+        		if (newTarget.value == null) {
+        			newTarget.value = "";
+        		}
+        		if (newTarget.summary == null) {
+        			newTarget.summary = "";
+        		}
+        		if (newTarget.format == null) {
+        			newTarget.format = "";
+        		}
+        		if (newTarget.field_scope == null) {
+        			newTarget.field_scope = "root";
+        		}
+        		if (newTarget.field_depth == null) {
+        			newTarget.field_depth = "capped";
+        		}
+        		if (newTarget.type == null) {
+        			newTarget.type = Const.URL;
+        		}
+        		if (newTarget.field_collection_categories == null || newTarget.field_collection_categories.length() == 0) {
+        			newTarget.field_collection_categories = "";
+        		}
         	} else {
-        		Ebean.update(target);
+                target.active = false;
+        		Logger.info("update target: " + target.nid);
+            	Ebean.update(target);
         	}
-	        Logger.info("save target: " + target.toString());
-	        res = redirect(routes.TargetEdit.edit(target.url));
+        	Ebean.save(newTarget);
+	        Logger.info("save target: " + newTarget.toString());
+	        res = redirect(routes.TargetEdit.edit(newTarget.url));
         } 
-        if (preview != null) {
-//        	previewObj = target;
-	        res = redirect(routes.TargetEdit.edit(getFormParam(Const.URL))); // TODO preview
-        }
         if (delete != null) {
         	Target target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
         	Ebean.delete(target);

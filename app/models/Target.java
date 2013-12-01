@@ -1,6 +1,7 @@
 package models;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expression;
@@ -19,6 +21,7 @@ import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.IdGenerator;
+import uk.bl.api.Utils;
 
 
 /**
@@ -77,7 +80,8 @@ public class Target extends Model {
     @Column(columnDefinition = "TEXT")
     public String field_professional_judgement_exp;
     public String field_ignore_robots_txt;
-    public String revision;
+    public String revision; // revision comment for latest version of the target among targets with the same URL
+    public Boolean active; // flag for the latest version of the target among targets with the same URL
     // lists
     @Column(columnDefinition = "TEXT")
     public String field_url; 
@@ -100,6 +104,9 @@ public class Target extends Model {
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
     
+    @Version
+    public Timestamp lastUpdate;
+    
     /**
      * Constructor
      * @param title
@@ -111,6 +118,44 @@ public class Target extends Model {
     }
 
     public Target() {
+    	this.field_via_correspondence = "";
+    	this.field_uk_postal_address = "";    	
+    	this.field_uk_hosting = "";    	
+    	this.field_crawl_frequency = "domaincrawl";    	
+    	this.field_crawl_start_date = "";    	
+    	this.field_uk_domain = true;    	
+    	this.field_crawl_permission = "";    	
+    	this.field_special_dispensation = "";
+    	this.field_uk_geoip = true;
+    	this.field_professional_judgement = "";
+    	this.vid = 0L;
+    	this.is_new = false;
+    	this.language = "en";
+    	this.status = 1L;
+    	this.promote = 0L;
+    	this.sticky = 0L;
+    	this.created = "";
+    	this.changed = "";
+    	this.log = "";
+    	this.comment = 0L;
+    	this.comment_count = 0L;
+    	this.comment_count_new = 0L;
+    	this.feed_nid = 0L;
+    	this.field_crawl_end_date = "";
+    	this.field_live_site_status = "";
+    	this.field_spt_id = 0L;
+    	this.field_wct_id = 0L;
+    	this.field_no_ld_criteria_met = false;
+    	this.field_key_site = "";
+    	this.field_professional_judgement_exp = "";
+    	this.field_ignore_robots_txt = "";
+    	this.field_uk_postal_address_url = "";
+    	this.field_suggested_collections = "";
+    	this.field_collections = "";
+    	this.field_license = "";
+    	this.field_notes = "";
+    	this.field_instances = "";
+    	this.field_subject = "";
     }
 
     // -- Queries
@@ -122,6 +167,7 @@ public class Target extends Model {
      * Retrieve targets
      */
     public static List<Target> findInvolving() {
+    	Logger.info("Target.findInvolving()");
 	    return find.all();
 	}
 
@@ -240,6 +286,33 @@ public class Target extends Model {
         ExpressionList<Target> ll = find.where().eq("author", url);
         res = ll.findRowCount();
 		return res;
+	}
+	
+	/**
+	 * This method is checking whether target id already exists.
+	 * @param id
+	 * @return checking result
+	 */
+	public static boolean isTargetId(Long id) {
+		boolean res = false;
+		Target target = find.where().eq(Const.NID, id).findUnique();
+		if (target != null) {
+			res = true;
+		}
+		return res;
+	}
+	
+	/**
+	 * This method creates ID for new Target and proves that generated ID does not exists.
+	 * @return new Target ID
+	 */
+	public static Long createId() {
+		Long res = Utils.createId();
+	    if (Target.isTargetId(res)) {
+	    	Logger.info("Target with nid " + res + " already exists.");
+	    	res = createId();
+	    }
+	    return res;
 	}
 	
 	/**
@@ -477,16 +550,17 @@ public class Target extends Model {
      */
     public static Target findByUrl(String url) {
     	Target res = new Target();
-        Logger.info("target url: " + url);
+        Logger.info("findByUrl() target url: " + url);
         
         if (!url.contains(Const.COMMA)) {
-	        Target res2 = find.where().eq(Const.URL, url).findUnique();
+//	        Target res2 = find.where().eq(Const.URL, url).findUnique();
+	        Target res2 = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
 	        if (res2 == null) {
 	        	res.title = Const.NONE;
 	        } else {
 	        	res = res2;
 	        }
-	        Logger.info("target title: " + res.title);
+//	        Logger.info("target title: " + res.title);
         }
     	return res;
     }          
@@ -514,6 +588,16 @@ public class Target extends Model {
 		}
     	return res;
     }
+
+    /**
+     * This method returns the latest revision of a target for given URL.
+     * @param url
+     * @return target object
+     */
+    public static Target findLatestByUrl(String url) {
+        Target res = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
+    	return res;
+    }          
 
     public String toString() {
         return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +

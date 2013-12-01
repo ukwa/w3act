@@ -1,7 +1,5 @@
 package controllers;
 
-import java.util.UUID;
-
 import models.Target;
 import models.User;
 import play.Logger;
@@ -9,7 +7,8 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import views.html.*;
+import views.html.targetedit;
+import views.html.targetview;
 
 /**
  * Manage targets.
@@ -29,9 +28,9 @@ public class TargetEdit extends Controller {
      * Display the target edit panel for this URL.
      */
     public static Result edit(String url) {
-		Logger.info("target url: " + url);
+//		Logger.info("TargetEdit.edit() url: " + url);
 		Target target = Target.findByUrl(url);
-		Logger.info("target name: " + target.title + ", url: " + url);
+		Logger.info("TargetEdit.edit() target name: " + target.title + ", url: " + url);
         return ok(
                 targetedit.render(
                         Target.findByUrl(url), User.find.byId(request().username())
@@ -48,10 +47,10 @@ public class TargetEdit extends Controller {
 //        public static Result addEntry(Target target) {
     	Target target = new Target();
     	target.title = targettitle;
-        UUID id = UUID.randomUUID();
-        Logger.info("id: " + id.toString());
-        target.nid = id.getMostSignificantBits();
+        target.nid = Target.createId();
         target.url = Const.ACT_URL + target.nid;
+        target.revision = Const.INITIAL_REVISION;
+        target.active = true;
 		Logger.info("add entry with target url: " + target.url);
 		Logger.info("target name: " + target.title);
         return ok(

@@ -112,6 +112,8 @@ public class JsonUtils {
 		while (itr.hasNext()) {
 			if (type.equals(NodeType.URL)) {
 				Target obj = (Target) itr.next();
+		        obj.revision = Const.INITIAL_REVISION;
+		        obj.active = true;
 				if (obj.vid > 0) {
 					obj.edit_url = Const.WCT_URL + obj.vid;
 				}

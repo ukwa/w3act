@@ -52,13 +52,16 @@ public final class Const {
 	public static final String ACT_URL            = "act-";
 	public static final String WCT_URL            = "wct-";
 	public static final String EDIT_LINK          = "/edit";
+	public static final String INITIAL_REVISION   = "initial revision";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";
 	public static final String TRUE               = "true";
 	public static final String FILTER             = "filter";
 	public static final String NONE               = "none";
-    // Target
+	public static final String USER               = "user";
+
+	// Target
 	public static final String NID                = "nid";
 	public static final String TITLE              = "title";
 	public static final String FIELD_URL          = "fieldurl";
@@ -72,6 +75,8 @@ public final class Const {
 	public static final String FIELD_COLLECTION_CATEGORIES = "field_collection_categories";
 	public static final String FIELD_SCOPE        = "field_scope";
 	public static final String FIELD_DEPTH        = "field_depth";
+	public static final String REVISION           = "revision";
+	public static final String ACTIVE             = "active";
 	// Taxonomy
 	public static final String TYPE               = "type";
 	public static final String FIELD_OWNER        = "field_owner";

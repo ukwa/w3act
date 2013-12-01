@@ -34,6 +34,7 @@ public class LookUp extends AbstractController {
      * Display the targets.
      */
     public static Result index() {
+    	Logger.info("LookUp.index()");
         return ok(
             lookup.render(
                 "LookUp", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll(), ""
@@ -48,10 +49,11 @@ public class LookUp extends AbstractController {
      */
     public static Result filterUrl() {
     	Result res = null;
+    	Logger.info("LookUp.filterUrl()");
         String addentry = getFormParam("addentry");
         String search = getFormParam("search");
         String url = getFormParam(Const.URL);
-//        Logger.info("addentry: " + addentry + ", search: " + search + ", url: " + url);
+        Logger.info("addentry: " + addentry + ", search: " + search + ", url: " + url);
         if (addentry != null) {
 //	        res = redirect(routes.WebSite.addEntry(url)); 
 //        	Target target = new Target();
