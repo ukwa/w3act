@@ -1,5 +1,14 @@
 package uk.bl.scope;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+
 import play.Logger;
 
 /**
@@ -22,7 +31,8 @@ import play.Logger;
  */
 public class Scope {
 
-	public static final String UK_DOMAIN          = ".uk";
+	public static final String UK_DOMAIN      = ".uk";
+	public static final String GEO_IP_SERVICE = "http://whatismyipaddress.com/ip/";
 	
 	/**
 	 * This method checks if a given URL is in scope.
@@ -32,11 +42,107 @@ public class Scope {
         boolean res = false;
         Logger.info("check url: " + url);
         if (url.contains(UK_DOMAIN)) {
-        	return true;
+        	res = true;
+        }
+        // check geo IP
+        if (!res) {
+        	res = checkGeoIp(url);
         }
         // TODO read configuration files with manual entries and match to the given URL
         return res;
 	}
+	
+	/**
+	 * This method check geo IP using remote service.
+	 * @param url
+	 * @return
+	 */
+	public static boolean checkGeoIp(String url) {
+		boolean res = false;
+		String ip = getIpFromUrl(url);
+		String query = GEO_IP_SERVICE + ip;
+		String response = sendGet(query);
+		res = getCountry(response);
+		return res;
+	}
+	
+	/**
+	 * This method converts URL to IP address.
+	 * @param url
+	 * @return IP address as a string
+	 */
+	public static String getIpFromUrl(String url) {
+		String ip = "";
+		InetAddress address;
+		try {
+			address = InetAddress.getByName(new URL(url).getHost());
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			Logger.info("ip calculation unknown host error for url=" + url + ". " + e.getMessage());
+		} catch (MalformedURLException e) {
+			Logger.info("ip calculation error for url=" + url + ". " + e.getMessage());
+		}
+        return ip;
+	}
+	
+	/**
+	 * This method sends HTTP request for given URL
+	 * @param url
+	 * @return
+	 */
+	public static String sendGet(String url) {
+		String res = "";
+		//		String url = "http://www.google.com/search?q=mkyong";
+//		http://whatismyipaddress.com/ip/
+		 
+		try {
+			URL obj = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+	 
+			// optional default is GET
+			con.setRequestMethod("GET");
+	 
+			//add request header
+	//		con.setRequestProperty("User-Agent", USER_AGENT);
+	 
+			int responseCode = con.getResponseCode();
+	
+			Logger.info("\nSending 'GET' request to URL : " + url);
+			Logger.info("Response Code : " + responseCode);
+	 
+			BufferedReader in = new BufferedReader(
+			        new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+	 
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+	 
+			//print result
+			Logger.info(response.toString());
+			res = response.toString();
+		} catch (IOException e) {
+			Logger.info("HTTP request error: " + e.getMessage());
+		}
+		return res;
+	}
+
+	/**
+	 * This method parses HTTP response and extracts country.
+	 * @param response
+	 * @return true if in scope
+	 */
+	public static boolean getCountry(String response) {
+		boolean res = false;
+		 
+		if (response.contains("Country")) {
+			res = true;
+		}
+		return res;
+	}
+
 	
 }
 
