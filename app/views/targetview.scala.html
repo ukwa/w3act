@@ -142,12 +142,16 @@
 			        <div class="tab-pane fade active in" id="basicinformation">
 			            <div class="container">
 			            	<div class="row">
-			              		<label for="inputTitle">Title: @target.title</label>
+			              		<label for="inputTitle">Title: @target.title (@target.nid)</label>
 							</div>
 			            </div>
 			            <div class="container">
 			            	<div class="row">
-			              		<label for="inputUrls">URL(s): @target.field_url</label>
+			            	    @if(Target.isInScope(target.field_url)) {
+			              			<label for="inputUrls">URL(s): @target.field_url <font color="green">in scope</font></label>
+			              		} else {
+			              			<label for="inputUrls">URL(s): @target.field_url <font color="red">not in scope</font></label>
+			              		}
 							</div>
 			            </div>
 			            <div class="container">

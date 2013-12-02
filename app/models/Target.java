@@ -22,6 +22,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.IdGenerator;
 import uk.bl.api.Utils;
+import uk.bl.scope.Scope;
 
 
 /**
@@ -592,7 +593,7 @@ public class Target extends Model {
     }          
 
 	/**
-	 * This method checks whether the passed URL is in scope.
+	 * This method checks whether the passed URL is in scope. TODO boolean
 	 * @param url
 	 * @return result as a String
 	 */
@@ -614,6 +615,15 @@ public class Target extends Model {
     	return res;
     }          
 
+	/**
+	 * This method checks whether the passed URL is in scope.
+	 * @param url
+	 * @return result as a flag
+	 */
+    public static boolean isInScope(String url) {
+    	return Scope.check(url);
+    }
+    
     public String toString() {
         return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
