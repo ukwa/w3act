@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
+import models.Target;
 import play.Logger;
 
 /**
@@ -38,17 +39,21 @@ public class Scope {
 	 * This method checks if a given URL is in scope.
 	 * @return true if in scope
 	 */
-	public static boolean check(String url) {
+	public static boolean check(String url, String nidUrl) {
         boolean res = false;
-        Logger.info("check url: " + url);
-        if (url.contains(UK_DOMAIN)) {
-        	res = true;
+        Logger.info("check url: " + url + ", nid: " + nidUrl);
+        // check domain name
+        if (url != null && url.length() > 0) {
+	        if (url.contains(UK_DOMAIN)) {
+	        	res = true;
+	        }
+	        // check geo IP
+	        if (!res) {
+	        	res = checkGeoIp(url);
+	        }
+	        // read Target fields with manual entries and match to the given URL
+        	res = Target.checkManualScope(nidUrl);
         }
-        // check geo IP
-        if (!res) {
-        	res = checkGeoIp(url);
-        }
-        // TODO read configuration files with manual entries and match to the given URL
         return res;
 	}
 	
@@ -121,7 +126,7 @@ public class Scope {
 			in.close();
 	 
 			//print result
-			Logger.info(response.toString());
+//			Logger.info(response.toString());
 			res = response.toString();
 		} catch (IOException e) {
 			Logger.info("HTTP request error: " + e.getMessage());

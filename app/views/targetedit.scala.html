@@ -26,7 +26,11 @@
 		      <ul id="myTab" class="nav nav-tabs">
 		        <li class="active"><a href="#basicinformation" data-toggle="tab">Basic information</a></li>
 		        <li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
-		        <li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission</a></li>
+		        @if(Target.isInScope(target.field_url, target.url)) {
+			        <li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="green">(+)</font></a></li>
+			    } else {
+			        <li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="red">(-)</font></a></li>
+			    }		        
 		        <li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy</a></li>
 		      </ul>
 		       <div id="myTabContent" class="tab-content">
@@ -117,15 +121,15 @@
 			            </div>
 			            <div class="form-group">
 			              <label for="inputWCT">WCT ID</label>
-			              <input class="form-control" id="inputWCT" placeholder="0" type="text" readonly>
+			              <input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@target.field_wct_id">
 			              <label for="inputSPT">SPT ID</label>
-			              <input class="form-control" id="inputSPT" placeholder="0" type="text" readonly>
+			              <input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@target.field_spt_id">
 			            </div> 
-		  				<div class="form-group">
+		  				<!-- div class="form-group">
 			               <label for="notes">Notes</label>
-			               <textarea class="text-full form-textarea" name="field_notes" id="inputNotes" cols="100" rows="1"></textarea>
+			               <textarea name="field_notes" class="text-full form-textarea" name="field_notes" id="inputNotes" cols="100" rows="1" value="@target.field_notes">@target.field_notes</textarea>
 						   <div class="description">Add any additional notes about this site here.</div>							                        								
-						</div>		            		                 				  						  
+						</div-->		            		                 				  						  
 			        </div>
 			        <div class="tab-pane fade" id="metadata">
 			            <div class="form-group">
@@ -187,13 +191,16 @@
 			        </div>
 			        <div class="tab-pane fade" id="crawlpermission">
 			            <div class="form-group">
-							<label for="edit-field-license-und">License</label><br>
-							<select multiple="multiple" name="field_license" id="edit-field-license" class="form-select">
+							<label for="edit-field-license-und">License</label>
+			                <div>
+							<select multiple="multiple" name="license" id="edit-field-license" class="form-select" size="2">
 							 	<option value="_none">- None -</option>
 							    @for(taxonomy <- Targets.getLicense()) {
 							 	<option>@taxonomy.name</option>
 							    }	
 							</select>
+							<button type="submit" class="btn btn-success">Open License Request</button>
+							</div>
 							<div class="description">The license terms under which this site should be archived and made available.</div>
 							<label>Legal Deposit Criteria</label>
 							<div class="fieldset-wrapper">
@@ -202,7 +209,7 @@
 				 			</div>
 							<div class="description">The domain is hosted in the UK.</div>
 							<div class="form-item form-type-checkbox form-item-field-uk-postal-address">
-				 				<input type="checkbox" id="edit-field-uk-postal-address" name="field_uk_postal_address" value="1" />  
+				 				<input type="checkbox" id="edit-field-uk-postal-address" name="field_uk_postal_address" value="1" value="@target.field_uk_postal_address"/>  
 				 				<label class="option" for="edit-field-uk-postal-address-und">UK Postal Address </label>
 				 			</div>
 							<div class="description">The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box).</div>
@@ -215,30 +222,30 @@
 								<div class="description">The URL on the site that contains the postal address used to determine that the site is in the UK.</div>
 							</div>
 							<div>
-				 				<input type="checkbox" name="field_via_correspondence" value="1" class="form-checkbox" />  
+				 				<input type="checkbox" name="field_via_correspondence" value="1" class="form-checkbox" value="@target.field_via_correspondence"/>  
 				 				<label class="option" for="edit-field-via-correspondence-und">Via Correspondence </label>
 								<div class="description">Previous correspondence with the web site owner by a Curator contains evidence of a UK address.</div>
 							</div>
 							<div>
 				  				<label>Notes</label>
 					 			<div class="form-textarea-wrapper resizable">
-					 				<textarea name="body" cols="100" rows="1"></textarea>
+					 				<textarea name="field_notes" cols="100" rows="1"></textarea>
 								</div>
 								<div class="description">Any relevant notes, e.g. a more detailed description of this URL or set of URLs.</div>
 							</div>
 							<div>
-				 				<input type="checkbox" name="field_professional_judgement" value="1" class="form-checkbox" />  
+				 				<input type="checkbox" name="field_professional_judgement" value="1" class="form-checkbox" value="@target.field_professional_judgement"/>  
 				 				<label class="option" for="edit-field-professional-judgement-und">Professional Judgement </label>
 								<div class="description">In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below.</div>
 							</div>
 							<div>
 				  				<label>Professional Judgement Explanation</label>
 				 				<div class="form-textarea-wrapper resizable">
-				 					<textarea name="field_professional_judgement_exp" cols="100" rows="1"></textarea>
+				 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" value="@target.field_professional_judgement_exp"></textarea>
 				 				</div>
 								<div class="description">Please describe the rational behind this decision, indicating any evidence used.</div>
 							</div>
-							<div>
+							<!-- div>
 				 				<input type="checkbox" name="field_special_dispensation" value="1" class="form-checkbox" />  
 				 				<label class="option" for="edit-field-special-dispensation-und">Special Dispensation </label>
 								<div class="description">Tick this box to indicate that, although it falls under none of the other categories, special dispensation has been given to download this URL. Currently, this is allowed under limited circumstances in order to explore the process around archiving social media relating to UK organisations and individuals. </div>
@@ -248,9 +255,9 @@
 					 			<div class="form-textarea-wrapper resizable">
 					 				<textarea name="field_special_dispensation_reaso" cols="100" rows="1"></textarea></div>
 								<div class="description">If you have selected Special Dispensation as the reason, you must use this field to provide details of who has authorised this decision and why.</div>
-							</div>
+							</div-->
 							<div>
-				 				<input type="checkbox" name="field_no_ld_criteria_met" value="1" class="form-checkbox" />  
+				 				<input type="checkbox" name="field_no_ld_criteria_met" value="1" class="form-checkbox" value="@target.field_no_ld_criteria_met"/>  
 				 				<label class="option" for="edit-field-no-ld-criteria-met-und">No LD Criteria Met </label>
 								<div class="description">Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit.</div>
 							</div>      			            
@@ -259,6 +266,7 @@
 			        <div class="tab-pane fade" id="crawlpolicy">
 			            <div class="form-group">
 					         <div class="container">
+					         	<div class="row">
 								  <label>Scope<font color="red">*</font></label><br>								  
 								  <select id="mySel">
 						                <option value="resource">Just this URL.</option>
@@ -268,6 +276,7 @@
 								  </select>
 								  <br>
 								  <h5>Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option.</h5>				  
+							  	</div>
 							  </div>
 				              <div class="container">
 								<div class="row">
@@ -282,12 +291,12 @@
 							          <input name="radioGroup" id="radio3" value="Uncapped" type="radio"> Uncapped
 							        </label>			      
 							  	</div>
-							  	</div>
+							  </div>
 					            <div class="checkbox">
-					              <label><input type="checkbox">Ignore Robots.txt</label>
+					              <label><input name="field_ignore_robots_txt" type="checkbox" value="@target.field_ignore_robots_txt">Ignore Robots.txt</label>
 					            </div>
-					            <br>Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems.
-				 				<br><label for="edit-field-crawl-frequency-und">Crawl Frequency <span class="form-required" title="This field is required."><font color="red">*</font></span></label><br>
+					            <p>Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems.</p>
+				 				<label for="edit-field-crawl-frequency-und">Crawl Frequency <span class="form-required" title="This field is required."><font color="red">*</font></span></label><br>
 				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-select required">
 				 					<option value="domaincrawl" selected="selected">Domain Crawl Only</option>
 				 					<option value="annual">Annually</option>

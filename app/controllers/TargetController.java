@@ -104,33 +104,30 @@ public class TargetController extends AbstractController {
             }
             newTarget.summary = getFormParam(Const.SUMMARY);
             newTarget.revision = getFormParam(Const.REVISION);
+            newTarget.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
+            newTarget.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+            newTarget.field_license = getFormParam(Const.FIELD_LICENSE);
+            newTarget.field_uk_hosting = getFormParam(Const.FIELD_UK_HOSTING);
+            newTarget.field_uk_postal_address = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS);
+            newTarget.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
+            newTarget.field_via_correspondence = getFormParam(Const.FIELD_VIA_CORRESPONDENCE);
+            newTarget.field_notes = getFormParam(Const.FIELD_NOTES);
+            newTarget.field_professional_judgement = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT);
+            newTarget.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
+            String resNoLdCriteriaMet = getFormParam(Const.FIELD_NO_LD_CRITERIA_MET);
+            Logger.info("no ld criteria met: " + resNoLdCriteriaMet);
+            newTarget.field_no_ld_criteria_met = false;
+            if (resNoLdCriteriaMet != null && resNoLdCriteriaMet.equals("1")) {
+                newTarget.field_no_ld_criteria_met = true;
+            }
+//            newTarget.field_no_ld_criteria_met = Boolean.valueOf(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
+            newTarget.field_ignore_robots_txt = getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT);
             newTarget.active = true;
         	if (!isExisting) {
 //        		if (newTarget.url == null) {
 //        		newTarget.url = "none.com/url";
         		newTarget.url = Const.ACT_URL + newTarget.nid;
         		newTarget.edit_url = Const.WCT_URL + newTarget.nid;
-        		if (newTarget.value == null) {
-        			newTarget.value = "";
-        		}
-        		if (newTarget.summary == null) {
-        			newTarget.summary = "";
-        		}
-        		if (newTarget.format == null) {
-        			newTarget.format = "";
-        		}
-        		if (newTarget.field_scope == null) {
-        			newTarget.field_scope = "root";
-        		}
-        		if (newTarget.field_depth == null) {
-        			newTarget.field_depth = "capped";
-        		}
-        		if (newTarget.type == null) {
-        			newTarget.type = Const.URL;
-        		}
-        		if (newTarget.field_collection_categories == null || newTarget.field_collection_categories.length() == 0) {
-        			newTarget.field_collection_categories = "";
-        		}
         	} else {
                 target.active = false;
         		Logger.info("update target: " + target.nid);

@@ -94,7 +94,7 @@ public class Organisation extends Model {
     public static Organisation findByUrl(String url) {
 //    	Logger.info("organisation url: " + url);
     	Organisation res = new Organisation();
-    	if (url != null && url.length() > 0) {
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
     	} else {
     		res.title = Const.NONE;

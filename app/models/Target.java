@@ -157,6 +157,14 @@ public class Target extends Model {
     	this.field_notes = "";
     	this.field_instances = "";
     	this.field_subject = "";
+		this.value = "";
+		this.summary = "";
+		this.format = "";
+		this.field_scope = "root";
+		this.field_depth = "capped";
+		this.type = Const.URL;
+		this.field_collection_categories = "";
+//		this.field_nominating_organisation = Const.NONE;
     }
 
     // -- Queries
@@ -613,15 +621,35 @@ public class Target extends Model {
     public static Target findLatestByUrl(String url) {
         Target res = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
     	return res;
-    }          
+    }  
+    
+    /**
+     * This method analyzes manual scope settings for Target with given URL
+     * @param url
+     * @return true if one of manual settings is true
+     */
+    public static boolean checkManualScope(String url) {
+        Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
+        boolean res = false;  
+        if (target.field_uk_domain.booleanValue() == true 
+        		|| target.field_uk_postal_address.equals(Const.TRUE) 
+        		|| target.field_via_correspondence.equals(Const.TRUE)
+        		|| target.field_professional_judgement.equals(Const.TRUE)) {
+        	res = true;
+        }
+        if (target.field_no_ld_criteria_met) {
+        	res = false;
+        }
+        return res;
+        }
 
 	/**
 	 * This method checks whether the passed URL is in scope.
 	 * @param url
 	 * @return result as a flag
 	 */
-    public static boolean isInScope(String url) {
-    	return Scope.check(url);
+    public static boolean isInScope(String url, String nidUrl) {
+    	return Scope.check(url, nidUrl);
     }
     
     public String toString() {

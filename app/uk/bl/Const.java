@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.OneToMany;
 
-
 public final class Const {
   
     private Const() {}
@@ -77,6 +76,19 @@ public final class Const {
 	public static final String FIELD_DEPTH        = "field_depth";
 	public static final String REVISION           = "revision";
 	public static final String ACTIVE             = "active";
+	public static final String FIELD_WCT_ID       = "wct";
+	public static final String FIELD_SPT_ID       = "spt";
+	public static final String FIELD_LICENSE      = "license";
+	public static final String FIELD_UK_HOSTING   = "field_uk_hosting";
+	public static final String FIELD_UK_POSTAL_ADDRESS = "field_uk_postal_address";
+	public static final String FIELD_UK_POSTAL_ADDRESS_URL = "field_uk_postal_address_url";
+    public static final String FIELD_VIA_CORRESPONDENCE = "field_via_correspondence";
+    public static final String FIELD_NOTES        = "field_notes";
+    public static final String FIELD_PROFESSIONAL_JUDGEMENT = "field_professional_judgement";
+    public static final String FIELD_PROFESSIONAL_JUDGEMENT_EXP = "field_professional_judgement_exp";
+    public static final String FIELD_NO_LD_CRITERIA_MET = "field_no_ld_criteria_met";
+    public static final String FIELD_IGNORE_ROBOTS_TXT = "field_ingore_robots_txt";
+
 	// Taxonomy
 	public static final String TYPE               = "type";
 	public static final String FIELD_OWNER        = "field_owner";
