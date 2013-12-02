@@ -566,6 +566,21 @@ public class Target extends Model {
     }          
 
     /**
+     * This method returns previous Target revisions that are not more active for given URL
+     * @param url
+     * @return list of associated Targets
+     */
+    public static List<Target> findRevisions(String url) {
+        Logger.info("findRevisions() target url: " + url);
+		List<Target> res = new ArrayList<Target>();
+		if (url != null && url.length() > 0) {
+	        ExpressionList<Target> ll = find.where().eq(Const.URL, url);
+	    	res = ll.findList(); 
+		}
+		return res;
+    }          
+
+    /**
      * Retrieve a Target by Id (nid).
      * @param nid
      * @return target 
