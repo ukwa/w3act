@@ -309,6 +309,22 @@
 				 				</select>
 								<div class="description">How often should this site be archived?</div>
 					        </div>    
+				              <div class="container">
+				 				<div class="row">
+				  					<label class="element-invisible">Start date</label>
+				 					<input type="text" name="created" value="@target.created" size="30" maxlength="2048" class="form-text" />
+				  					<label class="element-invisible">End date</label>
+				 					<input type="text" name="changed" value="@target.changed" size="30" maxlength="2048" class="form-text" />
+								</div>
+							  </div>
+				              <div class="container">
+				 				<div class="row">
+				  					<label class="element-invisible">White list</label>
+				 					<input type="text" name="white_list" value="@target.white_list" size="30" maxlength="2048" class="form-text" />
+				  					<label class="element-invisible">Black list</label>
+				 					<input type="text" name="black_list" value="@target.black_list" size="30" maxlength="2048" class="form-text" />
+								</div>
+							  </div>
 				        </div>
 			        </div>
             </div>

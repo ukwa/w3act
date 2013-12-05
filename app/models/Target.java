@@ -64,14 +64,12 @@ public class Target extends Model {
     public Long sticky;
     public String created;
     public String changed;
-    public String author; // uri, id, resource TODO User
+    public String author; 
     public String log;
     public Long comment;
     public Long comment_count;
     public Long comment_count_new;
     public Long feed_nid;
-    //TODO difference between XML and JSON
-    //public Taxonomy taxonomy_term; (id-Long, resource-String) TODO
     public String field_crawl_end_date;
     public String field_live_site_status;
     public Long field_wct_id;
@@ -83,6 +81,8 @@ public class Target extends Model {
     public String field_ignore_robots_txt;
     public String revision; // revision comment for latest version of the target among targets with the same URL
     public Boolean active; // flag for the latest version of the target among targets with the same URL
+    public String white_list; // regex for white list URLs
+    public String black_list; // regex for black list URLs
     // lists
     @Column(columnDefinition = "TEXT")
     public String field_url; 
