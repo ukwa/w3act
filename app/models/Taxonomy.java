@@ -149,6 +149,25 @@ public class Taxonomy extends Model {
     	return res;
     }
         
+	/**
+	 * This method retrieves subject index by name.
+	 * @param subject
+	 * @return subject index in selection list
+	 */
+	public static int getSubjectIndexByName(String subject) {
+		int res = 0;
+		List<Taxonomy> subjectList = findListByType(Const.SUBJECT);
+		Iterator<Taxonomy> itr = subjectList.iterator();
+		while (itr.hasNext()) {
+			Taxonomy taxonomy = itr.next();
+			if (taxonomy.name.equals(subject)) {
+				break;
+			}
+			res++;			
+		}
+		return res;
+	}
+	
     public String toString() {
         return "Taxonomy(" + tid + ") with name: " + name;
     }

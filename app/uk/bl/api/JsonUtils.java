@@ -494,7 +494,7 @@ public class JsonUtils {
 			if (type.equals(Const.NodeType.TAXONOMY_VOCABULARY)) {
 				obj = new TaxonomyVocabulary();
 			}
-			parseJsonNodeExt(node, obj, urlList, type, res);
+			parseJsonNodeExt(node, obj, urlList, type, taxonomy_type, res);
 			if (type.equals(Const.NodeType.TAXONOMY)) {
 				((Taxonomy) obj).type = taxonomy_type.toString().toLowerCase();
 //				Logger.info("taxonomy type: " + taxonomy_type.toString().toLowerCase());
@@ -583,9 +583,13 @@ public class JsonUtils {
 	 * @param obj
 	 * @return check result
 	 */
-	private static boolean checkSubNode(Field f, JsonNode node, Object obj, List<String> urlList, NodeType type, List<Object> resList) {
+	private static boolean checkSubNode(Field f, JsonNode node, Object obj, List<String> urlList, NodeType type, 
+			TaxonomyType taxonomy_type, List<Object> resList) {
 		boolean res = false;
 	    if (Const.subNodeMap.containsKey(f.getName())) {
+	    	if (taxonomy_type != null && taxonomy_type.equals(TaxonomyType.SUBJECT)) {
+	    		int ll = 2;
+	    	}
 			res = true;
 			JsonNode resNode = getElement(node, f.getName());
 			String jsonField = getStringFromSubNode(resNode, Const.subNodeMap.get(f.getName()));
@@ -594,7 +598,7 @@ public class JsonUtils {
 			}
 //			Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
 			if (urlList != null && type != null && type.equals(NodeType.TAXONOMY)) {
-				readListFromString(jsonField, urlList, type, TaxonomyType.COLLECTION, resList);
+				readListFromString(jsonField, urlList, type, taxonomy_type, resList);
 			}
 			if (f.getType().equals(String.class)) {
 				if (jsonField == null || jsonField.length() == 0) {
@@ -644,7 +648,7 @@ public class JsonUtils {
 	 * @param obj
 	 */
 	public static void parseJsonNode(JsonNode node, Object obj) {
-	    parseJsonNodeExt(node, obj, null, null, null);	
+	    parseJsonNodeExt(node, obj, null, null, null, null);	
 	}
 	
 	/**
@@ -652,7 +656,8 @@ public class JsonUtils {
 	 * @param node
 	 * @param obj
 	 */
-	public static void parseJsonNodeExt(JsonNode node, Object obj, List<String> urlList, NodeType type, List<Object> resList) {
+	public static void parseJsonNodeExt(JsonNode node, Object obj, List<String> urlList, NodeType type, 
+			TaxonomyType taxonomy_type, List<Object> resList) {
 		Field[] fields = obj.getClass().getFields();
 //		if (obj.getClass().toString().contains("Taxonomy")) {
 //			Logger.info("Taxonomy node: " + node.toString());
@@ -660,6 +665,9 @@ public class JsonUtils {
 		for (Field f : fields) {
 			try {
 			    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
+			    	if (f.getName().equals("field_subject")) {
+			    		int ll = 9;
+			    	}
 					JsonNode resNode = getElement(node, f.getName());
 					String jsonField = getStringList(resNode, f.getName(), false);
 					if (!f.getName().equals(Const.targetMap.get("field_url"))) {
@@ -679,7 +687,7 @@ public class JsonUtils {
 						JsonNode resNode = getElement(node, Const.BODY);
 						parseJsonString(f, resNode, obj);
 					} else {
-						if (!checkSubNode(f, node, obj, urlList, type, resList)) {
+						if (!checkSubNode(f, node, obj, urlList, type, taxonomy_type, resList)) {
 							parseJsonString(f, node, obj);
 						}
 					}

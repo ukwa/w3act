@@ -127,7 +127,7 @@ public final class Const {
     	targetMap.put("field_collection_categories", 6);
     	targetMap.put("field_notes", 7);
     	targetMap.put("field_instances", 8);
-    	targetMap.put("field_subject", 9);
+//    	targetMap.put("field_subject", 9);
     }
 		
     public static final Map<String, Integer> collectionMap = new HashMap<String, Integer>();

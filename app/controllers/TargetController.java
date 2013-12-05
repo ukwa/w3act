@@ -84,15 +84,20 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
-            if(getFormParam(Const.SUBJECT).equals("10")) {
-            	newTarget.field_subject = "Arts &amp; Humanities";
-            }
-            if(getFormParam(Const.SUBJECT).equals("11")) {
-            	newTarget.field_subject = "Business, Economy &amp; Industry";
-            }
-            if(getFormParam(Const.SUBJECT).equals("12")) {
-            	newTarget.field_subject = "Education &amp; Research";
-            }
+//            int subjectIndex = Integer.valueOf(getFormParam(Const.SUBJECT));
+            newTarget.field_subject = getFormParam(Const.SUBJECT);
+//            int subjectIndex = Integer.valueOf(selectedStatusValue).intValue();
+//            List<Taxonomy> subjectList = Taxonomy.findListByType(Const.SUBJECT);
+//            newTarget.field_subject = subjectList.get(subjectIndex + 1).name; // + 1 because of 'None' value
+//            if(getFormParam(Const.SUBJECT).equals("10")) {
+//            	newTarget.field_subject = "Arts &amp; Humanities";
+//            }
+//            if(getFormParam(Const.SUBJECT).equals("11")) {
+//            	newTarget.field_subject = "Business, Economy &amp; Industry";
+//            }
+//            if(getFormParam(Const.SUBJECT).equals("12")) {
+//            	newTarget.field_subject = "Education &amp; Research";
+//            }
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (getFormParam(Const.ORGANISATION) != null && 
             			!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
