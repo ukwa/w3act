@@ -68,5 +68,18 @@ public class TargetEdit extends Controller {
             );
     }
     
+    /**
+     * This method shows selected revision of a Target by given ID.
+     * @param nid
+     * @return
+     */
+    public static Result viewrevision(Long nid) {
+        return ok(
+                targetview.render(
+                        Target.findById(nid), User.find.byId(request().username())
+                )
+            );
+    }
+    
 }
 

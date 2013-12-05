@@ -331,7 +331,7 @@
 				    <div id="collapseRevisions" class="panel-collapse collapse">
 			            @for(prevTarget <- Target.findRevisions(target.url)) {
 			            <div class="panel-footer">
-			            	<a class="brand" href="@routes.TargetEdit.view(prevTarget.url)">
+			            	<a class="brand" href="@routes.TargetEdit.viewrevision(prevTarget.nid)">
 					            	(@prevTarget.nid) &nbsp; @prevTarget.revision &nbsp; @prevTarget.lastUpdate</a>
 			            </div>
 			            }

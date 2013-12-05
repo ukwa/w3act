@@ -412,6 +412,13 @@ public class Target extends Model {
 		return res;
 	}
 	
+	public static List<Target> filterActiveUrl(String url) {
+		List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true).contains("field_url", url);
+    	res = ll.findList();
+		return res;
+	}
+	
 	/**
 	 * This method filters targets by given User URLs.
 	 * @return duplicate count
@@ -443,35 +450,6 @@ public class Target extends Model {
 	}
 	
 	/**
-	 * This method filters database column by given parameter.
-	 * @param field The column name in database
-	 * @param par The search parameter
-	 * @return The found object list
-	 */
-//	public static List<Target> filter(String field, String par) {
-//		List<Target> res = new ArrayList<Target>();
-//		if (par == null || par.equals(Const.NONE)) {
-//			res = find.all();
-//		} else {
-//	        ExpressionList<Target> ll = find.where().contains(field, par);
-//	    	res = ll.findList();
-//		}
-//		return res;
-//	}
-	
-	/**
-	 * This method fetches targets for given multiple filter parameters.
-	 * @param targetParameterList The filter parameter list
-	 * @return target list
-	 */
-//	public static List<Target> filterList(Expression targetParameterList) {
-//		 Query<Target> query = Ebean.createQuery(Target.class);
-//		 query.where().add(targetParameterList);
-//		 List<Target> list = query.findList();
-//		 return list;
-//	}
-	
-	/**
 	 * This method filters targets by given Curator and Organisation URLs.
 	 * @return duplicate count
 	 */
@@ -489,7 +467,6 @@ public class Target extends Model {
 	 * @return duplicate count
 	 */
 	public static List<String> getSubjects() {
-		List<Target> res = new ArrayList<Target>();
 		List<String> subjects = new ArrayList<String>();
 		List<Target> allTargets = find.all();
 		Iterator<Target> itr = allTargets.iterator();
@@ -503,7 +480,6 @@ public class Target extends Model {
 			}
 		}
     	return subjects;
-//		return res;
 	}
 	
 	/**
@@ -652,6 +628,17 @@ public class Target extends Model {
     	return Scope.check(url, nidUrl);
     }
     
+    /**
+     * This method returns the latest version of Target objects.
+     * @return
+     */
+    public static List<Target> findAllActive() {
+		List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true);
+    	res = ll.findList(); 
+		return res;
+    }          
+
     public String toString() {
         return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
