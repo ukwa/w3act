@@ -575,6 +575,9 @@ public class JsonUtils {
 				f.set(obj, jsonFieldLong);
 			}
 			if (f.getType().equals(Boolean.class)) {
+				if (jsonField.contains("hosting") || jsonField.contains("domain")) {
+					int ll = 0;
+				}
 				boolean flag = Utils.getNormalizeBooleanString(jsonField);
 //				if (jsonField == null || jsonField.length() == 0) {
 //					jsonField = "false";

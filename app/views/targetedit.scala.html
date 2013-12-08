@@ -188,7 +188,11 @@
 							<select multiple="multiple" name="license" id="edit-field-license" class="form-select" size="2">
 							 	<option value="_none">- None -</option>
 							    @for(taxonomy <- Targets.getLicense()) {
-							 	<option>@taxonomy.name</option>
+					                @if(target.field_license != null && target.field_license.equals(taxonomy.name)) {             
+								 	<option selected>@taxonomy.name</option>
+								 	} else {
+								 	<option>@taxonomy.name</option>
+								 	}
 							    }	
 							</select>
 							<button type="submit" class="btn btn-success">Open License Request</button>
@@ -297,15 +301,27 @@
 							  </div>
 				              <div class="container">
 								<div class="row">
-								    <label>Depth<font color="red">*</font></label><br>								  
+								    <label>Depth<font color="red">*</font></label><br>	
 							  		<label class="radio-inline">
-							          <input name="radioGroup" id="radio1" value="Capped (small - 500MB)" type="radio"> Capped (small - 500MB) 
+							  		  @if(target.field_depth != null && target.field_depth.equals("Capped (small - 500MB)")) {
+							          <input name="field_depth" id="radio1" value="Capped (small - 500MB)" type="radio" checked>Capped (small - 500MB)
+							          } else { 
+							          <input name="field_depth" id="radio1" value="Capped (small - 500MB)" type="radio">Capped (small - 500MB) 
+							          }
 							        </label>
 							        <label class="radio-inline">
-							          <input name="radioGroup" id="radio2" value="Capped (large - 2GB)" type="radio"> Capped (large - 2GB)
+							  		  @if(target.field_depth != null && target.field_depth.equals("Capped (large - 2GB)")) {
+							          <input name="field_depth" id="radio2" value="Capped (large - 2GB)" type="radio" checked>Capped (large - 2GB)
+							          } else {
+							          <input name="field_depth" id="radio2" value="Capped (large - 2GB)" type="radio">Capped (large - 2GB)
+							          }
 							        </label>
 							        <label class="radio-inline">
-							          <input name="radioGroup" id="radio3" value="Uncapped" type="radio"> Uncapped
+							  		  @if(target.field_depth != null && target.field_depth.equals("Uncapped")) {
+							          <input name="field_depth" id="radio3" value="Uncapped" type="radio" checked>Uncapped
+							          } else {
+							          <input name="field_depth" id="radio3" value="Uncapped" type="radio">Uncapped
+							          }
 							        </label>			      
 							  	</div>
 							  </div>
@@ -319,16 +335,48 @@
 						 			<label class="option">Ignore Robots.txt</label>
 						            <br>Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems.</p>
 					            </div>
-				 				<label for="edit-field-crawl-frequency-und">Crawl Frequency <span class="form-required" title="This field is required."><font color="red">*</font></span></label><br>
+				 				<label for="edit-field-crawl-frequency-und">Crawl Frequency<span class="form-required" title="This field is required."><font color="red">*</font></span></label><br>
 				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-select required">
-				 					<option value="domaincrawl" selected="selected">Domain Crawl Only</option>
-				 					<option value="annual">Annually</option>
-				 					<option value="sixmonthly">Six-monthly</option>
-				 					<option value="quarterly">Quarterly</option>
-				 					<option value="monthly">Monthly</option>
-				 					<option value="Monthly">Old-Monthly-DO-NOT-USE</option>
-				 					<option value="weekly">Weekly</option>
-				 					<option value="daily">Daily</option>
+				             		@if(target.field_crawl_frequency != null && target.field_crawl_frequency.equals("Domain Crawl Only")) {
+				 					<option selected>Domain Crawl Only</option>
+						            } else {						                
+				 					<option>Domain Crawl Only</option>
+					                }
+				             		@if(target.field_crawl_frequency != null && target.field_crawl_frequency.equals("Annually")) {
+				 					<option selected>Annually</option>
+						            } else {						                
+				 					<option>Annually</option>
+					                }
+				             		@if(target.field_crawl_frequency != null && target.field_crawl_frequency.equals("Six-monthly")) {
+				 					<option selected>Six-monthly</option>
+						            } else {						                
+				 					<option>Six-monthly</option>
+					                }
+				             		@if(target.field_crawl_frequency != null && target.field_crawl_frequency.equals("Quarterly")) {
+				 					<option selected>Quarterly</option>
+						            } else {						                
+				 					<option>Quarterly</option>
+					                }
+				             		@if(target.field_crawl_frequency != null && target.field_crawl_frequency.equals("Monthly")) {
+				 					<option selected>Monthly</option>
+						            } else {						                
+				 					<option>Monthly</option>
+					                }
+				             		@if(target.field_crawl_frequency != null && target.field_crawl_frequency.equals("Old-Monthly-DO-NOT-USE")) {
+				 					<option selected>Old-Monthly-DO-NOT-USE</option>
+						            } else {						                
+				 					<option>Old-Monthly-DO-NOT-USE</option>
+					                }
+				             		@if(target.field_crawl_frequency != null && target.field_crawl_frequency.equals("Weekly")) {
+				 					<option selected>Weekly</option>
+						            } else {						                
+				 					<option>Weekly</option>
+					                }
+				             		@if(target.field_crawl_frequency != null && target.field_crawl_frequency.equals("Daily")) {
+				 					<option selected>Daily</option>
+						            } else {						                
+				 					<option>Daily</option>
+					                }
 				 				</select>
 								<div class="description">How often should this site be archived?</div>
 					        </div>    
