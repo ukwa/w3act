@@ -21,6 +21,7 @@ import models.Target;
 import models.Taxonomy;
 import models.User;
 
+import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.core.*;
 import com.ning.http.client.Body;
@@ -140,19 +141,39 @@ public class JsonUtils {
 		while (itr.hasNext()) {
 			Taxonomy taxonomy = itr.next();
 			if (taxonomy.name != null && taxonomy.name.length() > 0) {
-				DCollection collection = new DCollection();
-				collection.nid         = taxonomy.tid;
-				collection.author      = taxonomy.field_owner;
-				collection.summary     = taxonomy.description;
-				collection.title       = taxonomy.name;
-				collection.feed_nid    = taxonomy.feed_nid;
-				collection.url         = taxonomy.url;
-			    collection.weight      = taxonomy.weight;
-			    collection.node_count  = taxonomy.node_count;
-			    collection.vocabulary  = taxonomy.vocabulary;
-			    collection.parent      = taxonomy.parent;
-			    collection.parents_all = taxonomy.parents_all;
-				res.add(collection);
+				// check if collection title already in list
+				boolean isInList = false;
+				Iterator<Object> itrCollection = res.iterator();
+				while (itrCollection.hasNext()) {
+					DCollection collection = (DCollection) itrCollection.next();
+					if (collection.title.equals(taxonomy.name)) {
+						isInList = true;
+						// replace collection URL in Targets with the existing one
+						List<Target> targets = Target.findAllByCollectionUrl(taxonomy.url);
+						Iterator<Target> itrTargets = targets.iterator();
+						while (itrTargets.hasNext()) {
+							Target target = itrTargets.next();
+							target.field_suggested_collections = collection.url;
+							Ebean.update(target);
+						}
+						break;
+					}
+				}
+				if (!isInList) {
+					DCollection collection = new DCollection();
+					collection.nid         = taxonomy.tid;
+					collection.author      = taxonomy.field_owner;
+					collection.summary     = taxonomy.description;
+					collection.title       = taxonomy.name;
+					collection.feed_nid    = taxonomy.feed_nid;
+					collection.url         = taxonomy.url;
+				    collection.weight      = taxonomy.weight;
+				    collection.node_count  = taxonomy.node_count;
+				    collection.vocabulary  = taxonomy.vocabulary;
+				    collection.parent      = taxonomy.parent;
+				    collection.parents_all = taxonomy.parents_all;
+					res.add(collection);
+				}
 			}
 		}
 		return res;

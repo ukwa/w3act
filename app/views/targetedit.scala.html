@@ -154,7 +154,11 @@
 								  <select name="field_suggested_collections">
 						                <option>- None -</option>
 						                @for(collection <- DCollection.findAll()) {
-						                <option>@collection.title</option>
+							                @if(collection.title.equals(DCollection.findByUrl(target.field_suggested_collections).title)) {
+							                <option selected>@collection.title</option>
+							                } else {
+							                <option>@collection.title</option>
+							                }
 						                }
 								  </select>
 								  <br>

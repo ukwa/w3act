@@ -218,6 +218,18 @@ public class Target extends Model {
         res = ll.findList();
         return res;
 	}
+    
+    /**
+     * This method returns all Targets that comprise link to given collection
+     * @param collectionUrl - The collection identifier
+     * @return Targets list
+     */
+    public static List<Target> findAllByCollectionUrl(String collectionUrl) {
+    	List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().contains(Const.FIELD_SUGGESTED_COLLECTIONS, collectionUrl);
+        res = ll.findList();
+        return res;
+    }
 
     /**
      * This method retrieves all targets for given collection.

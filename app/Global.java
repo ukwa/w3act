@@ -44,14 +44,12 @@ public class Global extends GlobalSettings {
 	                // Insert users first
 	                List<Object> userList = all.get("users");
 	                // add IDs for users described in initial-data file
-//	                List<User> userList = (List<User>) User.find.all();
 	                Iterator<Object> userItr = userList.iterator();
 	                while (userItr.hasNext()) {
 	                	User user = (User) userItr.next();
 	                	user.url = Const.ACT_URL + Utils.createId();
 	                    Logger.info("Predefined user: " + user.toString());
 	                }
-//	                Ebean.save(all.get("users"));
 	                Ebean.save(userList);
 	                Logger.info("load urls");
 					// aggregate url data from drupal and store JSON content in a file

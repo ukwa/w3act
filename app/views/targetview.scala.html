@@ -199,12 +199,12 @@
 							</div>
 				            <div class="container">
 				                <div class="row">
-				                  <label>Suggested Collections: @target.field_suggested_collections</label>
+				                  <label>Suggested Collections: @DCollection.findByUrl(target.field_suggested_collections).title</label>
 				                </div>
 							</div>
 				            <div class="container">
 				            	<div class="row">
-				                  <label>Nominating Organisation: @target.field_nominating_organisation</label>
+				                  <label>Nominating Organisation: @Organisation.findByUrl(target.field_nominating_organisation).title</label>
 				                </div>
 							</div>
 			            </div>                        
