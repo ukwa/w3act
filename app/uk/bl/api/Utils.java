@@ -3,6 +3,7 @@ package uk.bl.api;
 import java.util.UUID;
 
 import play.Logger;
+import uk.bl.Const;
 
 /**
  * Helper class.
@@ -23,5 +24,38 @@ public class Utils {
         return res;
 	}
 	
+	/**
+	 * This method normalizes boolean values expressed in different string values.
+	 * @param value
+	 * @return normalized boolean value (true or false)
+	 */
+	public static boolean getNormalizeBooleanString(String value) {
+		boolean res = false;	
+		if (value != null && value.length() > 0) {
+			if (value.equals("Yes") 
+					|| value.equals("yes") 
+					|| value.equals("True") 
+					|| value.equals("true") 
+					|| value.equals("Y") 
+					|| value.equals("y")) {
+				res = true;
+			}
+		}
+		return res;
+	}
+	
+    /**
+     * This method converts Boolean value to string
+     * @param value
+     * @return
+     */
+    public static String getStringFromBoolean(Boolean value) {
+    	String res = "";
+    	if (value != null && value.toString().length() > 0) {
+    		res = value.toString();
+    	}
+    	return res;
+    }
+    	
 }
 

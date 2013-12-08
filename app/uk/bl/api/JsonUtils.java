@@ -554,17 +554,19 @@ public class JsonUtils {
 				f.set(obj, jsonFieldLong);
 			}
 			if (f.getType().equals(Boolean.class)) {
-				if (jsonField == null || jsonField.length() == 0) {
-					jsonField = "false";
-				}
-				if (jsonField.equals("Yes") 
-						|| jsonField.equals("yes") 
-						|| jsonField.equals("True") 
-						|| jsonField.equals("Y") 
-						|| jsonField.equals("y")) {
-					jsonField = "true";
-				}
-				Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
+				boolean flag = Utils.getNormalizeBooleanString(jsonField);
+//				if (jsonField == null || jsonField.length() == 0) {
+//					jsonField = "false";
+//				}
+//				if (jsonField.equals("Yes") 
+//						|| jsonField.equals("yes") 
+//						|| jsonField.equals("True") 
+//						|| jsonField.equals("Y") 
+//						|| jsonField.equals("y")) {
+//					jsonField = "true";
+//				}
+//				Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
+				Boolean jsonFieldBoolean = new Boolean(flag);
 				f.set(obj, jsonFieldBoolean);
 			}
 		} catch (IllegalArgumentException e) {

@@ -104,9 +104,9 @@ public class Organisation extends Model {
     }
 
     /**
-     * Retrieve an organisation name by URL.
-     * @param url
-     * @return organisation name
+     * Retrieve an organisation name by title.
+     * @param title
+     * @return organisation object
      */
     public static Organisation findByTitle(String title) {
 //    	Logger.info("organisation title: " + title);

@@ -70,6 +70,7 @@ public final class Const {
 	public static final String DESCRIPTION        = "description";
 	public static final String SUBJECT            = "subject";
 	public static final String ORGANISATION       = "organisation";
+	public static final String FIELD_SUGGESTED_COLLECTIONS = "field_suggested_collections";
 	public static final String FIELD_CRAWL_FREQUENCY = "field_crawl_frequency";
 	public static final String FIELD_COLLECTION_CATEGORIES = "field_collection_categories";
 	public static final String FIELD_SCOPE        = "field_scope";
@@ -88,6 +89,11 @@ public final class Const {
     public static final String FIELD_PROFESSIONAL_JUDGEMENT_EXP = "field_professional_judgement_exp";
     public static final String FIELD_NO_LD_CRITERIA_MET = "field_no_ld_criteria_met";
     public static final String FIELD_IGNORE_ROBOTS_TXT = "field_ingore_robots_txt";
+    public static final String FIELD_CRAWL_START_DATE = "field_crawl_start_date";
+    public static final String FIELD_CRAWL_END_DATE = "field_crawl_end_date";
+    public static final String WHITE_LIST = "white_list";
+    public static final String BLACK_LIST = "black_list";
+    
 
 	// Taxonomy
 	public static final String TYPE               = "type";
@@ -134,6 +140,13 @@ public final class Const {
     	static {
     	collectionMap.put("field_targets", 0);
     	collectionMap.put("field_sub_collections", 1);
+    }
+		
+    public static final Map<String, Long> statusMap = new HashMap<String, Long>();
+    	static {
+    	statusMap.put("N/A", 1L);
+    	statusMap.put("No QA issues found", 2L);
+    	statusMap.put("QA issue", 3L);
     }
 		
     /**

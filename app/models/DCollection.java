@@ -179,6 +179,21 @@ public class DCollection extends Model {
 		return res;
     }
     
+    /**
+     * Retrieve a collection by title.
+     * @param title
+     * @return collection object
+     */
+    public static DCollection findByTitle(String title) {
+    	DCollection res = new DCollection();
+    	if (title != null && title.length() > 0) {
+    		res = find.where().eq(Const.TITLE, title).findUnique();
+    	} else {
+    		res.title = Const.NONE;
+    	}
+    	return res;
+    }
+    
     public String toString() {
         return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
         		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;

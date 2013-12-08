@@ -41,17 +41,17 @@ public class Target extends Model {
     public String format;
     public String field_scope;
     public String field_depth;
-    public String field_via_correspondence;
-    public String field_uk_postal_address;
-    public String field_uk_hosting;
+    public Boolean field_via_correspondence;
+    public Boolean field_uk_postal_address;
+    public Boolean field_uk_hosting;
     public String field_nominating_organisation;
     public String field_crawl_frequency;
     public String field_crawl_start_date;
     public Boolean field_uk_domain;
     public String field_crawl_permission;
-    public String field_special_dispensation;
+    public Boolean field_special_dispensation;
     public Boolean field_uk_geoip;
-    public String field_professional_judgement;
+    public Boolean field_professional_judgement;
     public Long vid;
     public Boolean is_new;
     public String type;
@@ -75,10 +75,10 @@ public class Target extends Model {
     public Long field_wct_id;
     public Long field_spt_id;
     public Boolean field_no_ld_criteria_met;
-    public String field_key_site;
+    public Boolean field_key_site;
     @Column(columnDefinition = "TEXT")
     public String field_professional_judgement_exp;
-    public String field_ignore_robots_txt;
+    public Boolean field_ignore_robots_txt;
     public String revision; // revision comment for latest version of the target among targets with the same URL
     public Boolean active; // flag for the latest version of the target among targets with the same URL
     public String white_list; // regex for white list URLs
@@ -119,16 +119,16 @@ public class Target extends Model {
     }
 
     public Target() {
-    	this.field_via_correspondence = "";
-    	this.field_uk_postal_address = "";    	
-    	this.field_uk_hosting = "";    	
+    	this.field_via_correspondence = false;
+    	this.field_uk_postal_address = false;    	
+    	this.field_uk_hosting = false;    	
     	this.field_crawl_frequency = "domaincrawl";    	
     	this.field_crawl_start_date = "";    	
     	this.field_uk_domain = true;    	
     	this.field_crawl_permission = "";    	
-    	this.field_special_dispensation = "";
+    	this.field_special_dispensation = false;
     	this.field_uk_geoip = true;
-    	this.field_professional_judgement = "";
+    	this.field_professional_judgement = false;
     	this.vid = 0L;
     	this.is_new = false;
     	this.language = "en";
@@ -147,9 +147,9 @@ public class Target extends Model {
     	this.field_spt_id = 0L;
     	this.field_wct_id = 0L;
     	this.field_no_ld_criteria_met = false;
-    	this.field_key_site = "";
+    	this.field_key_site = false;
     	this.field_professional_judgement_exp = "";
-    	this.field_ignore_robots_txt = "";
+    	this.field_ignore_robots_txt = false;
     	this.field_uk_postal_address_url = "";
     	this.field_suggested_collections = "";
     	this.field_collections = "";
