@@ -602,16 +602,6 @@ public class Target extends Model {
     }
 
     /**
-     * This method returns the latest revision of a target for given URL.
-     * @param url
-     * @return target object
-     */
-    public static Target findLatestByUrl(String url) {
-        Target res = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
-    	return res;
-    }  
-    
-    /**
      * This method analyzes manual scope settings for Target with given URL
      * @param url
      * @return true if one of manual settings is true
@@ -627,6 +617,22 @@ public class Target extends Model {
         }
         if (target.field_no_ld_criteria_met) {
         	res = false;
+        }
+        return res;
+        }
+
+    /**
+     * This method checks license for Target with given URL
+     * @param url
+     * @return true if license exists
+     */
+    public static boolean checkLicense(String url) {
+        Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
+        boolean res = false;  
+        if (target.field_license != null 
+        		&& target.field_license.length() > 0 
+        		&& !target.field_license.toLowerCase().contains(Const.NONE)) {
+        	res = true;
         }
         return res;
         }

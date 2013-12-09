@@ -445,25 +445,6 @@ public class JsonUtils {
 		return res;
     }
     
-//    public static String getStringItemBoolean(JsonNode node, String fieldName) {
-//		String res = "";
-//		JsonNode resNode = getElement(node, fieldName);
-//		if (resNode != null) {
-//			Logger.info("is boolean: " + resNode.isBoolean());
-//			Logger.info("is textual: " + resNode.isTextual());
-//			Logger.info("is valueNode: " + resNode.isValueNode());
-//			Logger.info("as boolean: " + resNode.asBoolean());
-//			Logger.info("as text: " + resNode.asText());
-////			Logger.info("get value as boolean: " + resNode.getValueAsBoolean());
-//			Logger.info("to string: " + resNode.toString());
-////			Logger.info("get text value: " + resNode.getTextValue());
-////			Logger.info("get boolean value: " + resNode.getBooleanValue());
-//			res = resNode.textValue();
-//		}
-////		Logger.info("getStringItem field name: " + fieldName + ", res: " + res);
-//		return res;
-//    }
-    
     /**
      * This method evaluates element from the root node associated with passed field name.
      * @param node
@@ -586,16 +567,12 @@ public class JsonUtils {
 			String jsonField = getStringItem(node, f.getName());
 			jsonField = normalizeArchiveUrl(jsonField);
 			if (f.getType().equals(String.class)) {
-//				String jsonField = getStringItem(node, f.getName());
-//				jsonField = normalizeArchiveUrl(jsonField);
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "";
 				}
 				f.set(obj, jsonField);
 			}
 			if (f.getType().equals(Long.class)) {
-//				String jsonField = getStringItem(node, f.getName());
-//				jsonField = normalizeArchiveUrl(jsonField);
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "0";
 				}
@@ -603,32 +580,7 @@ public class JsonUtils {
 				f.set(obj, jsonFieldLong);
 			}
 			if (f.getType().equals(Boolean.class)) {
-//				String jsonField = getStringItemBoolean(node, f.getName());
-//				if (f.getName().contains("hosting") || f.getName().contains("domain")) {
-				///if (jsonField.contains("hosting") || jsonField.contains("domain")) {
-//					Logger.info("is boolean: " + node.isBoolean());
-//					Logger.info("is textual: " + node.isTextual());
-//					Logger.info("is valueNode: " + node.isValueNode());
-//					Logger.info("as boolean: " + node.asBoolean());
-//					Logger.info("as text: " + node.asText());
-////					Logger.info("get value as boolean: " + node.getValueAsBoolean());
-//					Logger.info("to string: " + node.toString());
-////					Logger.info("get text value: " + resNode.getTextValue());
-////					Logger.info("get boolean value: " + resNode.getBooleanValue());
-			///		int ll = 0;
-			///	}
 				boolean flag = Utils.getNormalizeBooleanString(jsonField);
-//				if (jsonField == null || jsonField.length() == 0) {
-//					jsonField = "false";
-//				}
-//				if (jsonField.equals("Yes") 
-//						|| jsonField.equals("yes") 
-//						|| jsonField.equals("True") 
-//						|| jsonField.equals("Y") 
-//						|| jsonField.equals("y")) {
-//					jsonField = "true";
-//				}
-//				Boolean jsonFieldBoolean = new Boolean(Boolean.parseBoolean(jsonField));
 				Boolean jsonFieldBoolean = new Boolean(flag);
 				f.set(obj, jsonFieldBoolean);
 			}

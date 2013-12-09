@@ -1,6 +1,7 @@
 package uk.bl.scope;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -11,6 +12,10 @@ import java.net.UnknownHostException;
 
 import models.Target;
 import play.Logger;
+import uk.bl.Const;
+
+import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.model.CityResponse;
 
 /**
  * This class implements scope rule engine.
@@ -18,56 +23,115 @@ import play.Logger;
  *
  *   Legal Deposit
  *   =============
- *      1. All URLs for this Target meet at least one of the following automated criteria:
- *          1.a The authority of the URI (i.e. the hostname) end with '.uk'.
- *          1.b The IP address associated with the URI is geo-located in the UK (using this GeoIP2 database, in a manner similar to our H3 GeoIP module).
- *      2. The Target is known to be hosted in the UK (manual boolean field).
- *      3. The Target features an page that specified a UK postal address (a manual boolean field plus a text field to hold a specific URL that contains the address).
- *      4. The Target is known to be a UK publication, according to correspondence with a curator (a manual boolean field plus a text field to hold details of the correspondence).
- *      5. The Target is known to be a UK publication, in the professional judgement of a curator (a manual boolean field plus a text field to hold the justification).
- *  By permission
- *  =============
- *      The Target is one for which we have a license that gives us permission to crawl the site (and make it available), even if the Target does not fall under any Legal Deposit criteria.
+ *   1. Manual rules settings in Target edit page
+ *      1.1. The Target is known to be hosted in the UK (manual boolean field).
+ *      1.2. The Target features an page that specified a UK postal address 
+ *      	 (a manual boolean field plus a text field to hold a specific URL that contains the address).
+ *      1.3. The Target is known to be a UK publication, according to correspondence with a curator 
+ *      	 (a manual boolean field plus a text field to hold details of the correspondence).
+ *      1.4. The Target is known to be a UK publication, in the professional judgement of a curator 
+ *      	 (a manual boolean field plus a text field to hold the justification).
+ *      1.5. If no LD criteria met - checking result for scope is negativeTarget
+ *      	 (a manual boolean field).
+ *      
+ *   2. By permission
+ *      The Target is one for which we have a license that gives us permission to crawl the site 
+ *      (and make it available), even if the Target does not fall under any Legal Deposit criteria.
  *
+ *   3. All URLs for this Target meet at least one of the following automated criteria:
+ *      3.1 The authority of the URI (i.e. the hostname) end with '.uk'.
+ *      3.2 The IP address associated with the URI is geo-located in the UK 
+ *          (using this GeoIP2 database, in a manner similar to our H3 GeoIP module).
+ *          
  */
 public class Scope {
 
 	public static final String UK_DOMAIN      = ".uk";
-	public static final String GEO_IP_SERVICE = "http://whatismyipaddress.com/ip/";
+	public static final String GEO_IP_SERVICE = "GeoLite2-City.mmdb";
+	public static final String UK_COUNTRY_CODE = "GB";
+
+	/**
+	 * This method queries geo IP from database
+	 * @param ip - The host IP
+	 * @return true if in UK domain
+	 */
+	public static boolean queryDb(String ip) {
+		boolean res = false;
+		// A File object pointing to your GeoIP2 or GeoLite2 database
+		File database = new File(GEO_IP_SERVICE);
+	
+		try {
+			// This creates the DatabaseReader object, which should be reused across
+			// lookups.
+			DatabaseReader reader = new DatabaseReader.Builder(database).build();
+		
+			// Find city by given IP
+			CityResponse response = reader.city(InetAddress.getByName(ip));
+			Logger.info(response.getCountry().getIsoCode()); 
+			Logger.info(response.getCountry().getName()); 
+			// Check country code in city response
+			if (response.getCountry().getIsoCode().equals(UK_COUNTRY_CODE)) {
+				res = true;
+			}
+		} catch (Exception e) {
+			Logger.warn("GeoIP error. " + e);
+		}
+		return res;
+	}
 	
 	/**
-	 * This method checks if a given URL is in scope.
+	 * This method comprises rule engine for checking if a given URL is in scope.
 	 * @return true if in scope
 	 */
 	public static boolean check(String url, String nidUrl) {
         boolean res = false;
         Logger.info("check url: " + url + ", nid: " + nidUrl);
-        // check domain name
-        if (url != null && url.length() > 0) {
+        /**
+         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
+         *
+         *  Rule 1.1: "field_uk_domain"
+         *  Rule 1.2: "field_uk_postal_address"
+         *  Rule 1.3: "field_via_correspondence"
+         *  Rule 1.4: "field_professional_judgement"
+         *  
+         *  is true - checking result is positive.
+         *  
+         *  Rule 1.5: if the field "field_no_ld_criteria_met" is true - checking result is negative
+         * 
+         */
+        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
+        if (nidUrl != null && nidUrl.length() > 0) {
+        	res = Target.checkManualScope(nidUrl);
+        }
+
+    	// Rule 2: by permission
+        if (!res && nidUrl != null && nidUrl.length() > 0) {
+        	res = Target.checkLicense(nidUrl);
+        }
+
+        // Rule 3.1: check domain name
+        if (!res && url != null && url.length() > 0) {
 	        if (url.contains(UK_DOMAIN)) {
 	        	res = true;
 	        }
-	        // check geo IP
-	        if (!res) {
-	        	res = checkGeoIp(url);
-	        }
-	        // read Target fields with manual entries and match to the given URL
-        	res = Target.checkManualScope(nidUrl);
+        }
+        
+        // Rule 3.2: check geo IP
+        if (!res) {
+        	res = checkGeoIp(url);
         }
         return res;
 	}
 	
 	/**
-	 * This method check geo IP using remote service.
+	 * This method extracts host from the given URL and checks geo IP using database.
 	 * @param url
-	 * @return
+	 * @return true if in UK domain
 	 */
 	public static boolean checkGeoIp(String url) {
 		boolean res = false;
 		String ip = getIpFromUrl(url);
-		String query = GEO_IP_SERVICE + ip;
-		String response = sendGet(query);
-		res = getCountry(response);
+		res = queryDb(ip);
 		return res;
 	}
 	
@@ -89,65 +153,6 @@ public class Scope {
 		}
         return ip;
 	}
-	
-	/**
-	 * This method sends HTTP request for given URL
-	 * @param url
-	 * @return
-	 */
-	public static String sendGet(String url) {
-		String res = "";
-		//		String url = "http://www.google.com/search?q=mkyong";
-//		http://whatismyipaddress.com/ip/
-		 
-		try {
-			URL obj = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-	 
-			// optional default is GET
-			con.setRequestMethod("GET");
-	 
-			//add request header
-	//		con.setRequestProperty("User-Agent", USER_AGENT);
-	 
-			int responseCode = con.getResponseCode();
-	
-			Logger.info("\nSending 'GET' request to URL : " + url);
-			Logger.info("Response Code : " + responseCode);
-	 
-			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-	 
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-	 
-			//print result
-//			Logger.info(response.toString());
-			res = response.toString();
-		} catch (IOException e) {
-			Logger.info("HTTP request error: " + e.getMessage());
-		}
-		return res;
-	}
-
-	/**
-	 * This method parses HTTP response and extracts country.
-	 * @param response
-	 * @return true if in scope
-	 */
-	public static boolean getCountry(String response) {
-		boolean res = false;
-		 
-		if (response.contains("Country")) {
-			res = true;
-		}
-		return res;
-	}
-
 	
 }
 

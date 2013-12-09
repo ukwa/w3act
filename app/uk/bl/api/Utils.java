@@ -3,7 +3,6 @@ package uk.bl.api;
 import java.util.UUID;
 
 import play.Logger;
-import uk.bl.Const;
 
 /**
  * Helper class.
