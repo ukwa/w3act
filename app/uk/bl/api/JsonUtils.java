@@ -23,6 +23,7 @@ import models.User;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
+//import com.fasterxml.jackson.databind.BooleanNode;
 import com.fasterxml.jackson.core.*;
 import com.ning.http.client.Body;
 
@@ -434,11 +435,34 @@ public class JsonUtils {
 		String res = "";
 		JsonNode resNode = getElement(node, fieldName);
 		if (resNode != null) {
-			res = resNode.textValue();
+			if (resNode.isBoolean()) {
+				res = resNode.asText();
+			} else {
+				res = resNode.textValue();
+			}
 		}
 //		Logger.info("getStringItem field name: " + fieldName + ", res: " + res);
 		return res;
     }
+    
+//    public static String getStringItemBoolean(JsonNode node, String fieldName) {
+//		String res = "";
+//		JsonNode resNode = getElement(node, fieldName);
+//		if (resNode != null) {
+//			Logger.info("is boolean: " + resNode.isBoolean());
+//			Logger.info("is textual: " + resNode.isTextual());
+//			Logger.info("is valueNode: " + resNode.isValueNode());
+//			Logger.info("as boolean: " + resNode.asBoolean());
+//			Logger.info("as text: " + resNode.asText());
+////			Logger.info("get value as boolean: " + resNode.getValueAsBoolean());
+//			Logger.info("to string: " + resNode.toString());
+////			Logger.info("get text value: " + resNode.getTextValue());
+////			Logger.info("get boolean value: " + resNode.getBooleanValue());
+//			res = resNode.textValue();
+//		}
+////		Logger.info("getStringItem field name: " + fieldName + ", res: " + res);
+//		return res;
+//    }
     
     /**
      * This method evaluates element from the root node associated with passed field name.
@@ -562,12 +586,16 @@ public class JsonUtils {
 			String jsonField = getStringItem(node, f.getName());
 			jsonField = normalizeArchiveUrl(jsonField);
 			if (f.getType().equals(String.class)) {
+//				String jsonField = getStringItem(node, f.getName());
+//				jsonField = normalizeArchiveUrl(jsonField);
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "";
 				}
 				f.set(obj, jsonField);
 			}
 			if (f.getType().equals(Long.class)) {
+//				String jsonField = getStringItem(node, f.getName());
+//				jsonField = normalizeArchiveUrl(jsonField);
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "0";
 				}
@@ -575,9 +603,20 @@ public class JsonUtils {
 				f.set(obj, jsonFieldLong);
 			}
 			if (f.getType().equals(Boolean.class)) {
-				if (jsonField.contains("hosting") || jsonField.contains("domain")) {
-					int ll = 0;
-				}
+//				String jsonField = getStringItemBoolean(node, f.getName());
+//				if (f.getName().contains("hosting") || f.getName().contains("domain")) {
+				///if (jsonField.contains("hosting") || jsonField.contains("domain")) {
+//					Logger.info("is boolean: " + node.isBoolean());
+//					Logger.info("is textual: " + node.isTextual());
+//					Logger.info("is valueNode: " + node.isValueNode());
+//					Logger.info("as boolean: " + node.asBoolean());
+//					Logger.info("as text: " + node.asText());
+////					Logger.info("get value as boolean: " + node.getValueAsBoolean());
+//					Logger.info("to string: " + node.toString());
+////					Logger.info("get text value: " + resNode.getTextValue());
+////					Logger.info("get boolean value: " + resNode.getBooleanValue());
+			///		int ll = 0;
+			///	}
 				boolean flag = Utils.getNormalizeBooleanString(jsonField);
 //				if (jsonField == null || jsonField.length() == 0) {
 //					jsonField = "false";
@@ -613,9 +652,9 @@ public class JsonUtils {
 			TaxonomyType taxonomy_type, List<Object> resList) {
 		boolean res = false;
 	    if (Const.subNodeMap.containsKey(f.getName())) {
-	    	if (taxonomy_type != null && taxonomy_type.equals(TaxonomyType.SUBJECT)) {
-	    		int ll = 2;
-	    	}
+//	    	if (taxonomy_type != null && taxonomy_type.equals(TaxonomyType.SUBJECT)) {
+//	    		int ll = 2;
+//	    	}
 			res = true;
 			JsonNode resNode = getElement(node, f.getName());
 			String jsonField = getStringFromSubNode(resNode, Const.subNodeMap.get(f.getName()));
@@ -691,9 +730,9 @@ public class JsonUtils {
 		for (Field f : fields) {
 			try {
 			    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
-			    	if (f.getName().equals("field_subject")) {
-			    		int ll = 9;
-			    	}
+					if (f.getName().contains("hosting") || f.getName().contains("domain")) {
+						int ll = 0;
+					}
 					JsonNode resNode = getElement(node, f.getName());
 					String jsonField = getStringList(resNode, f.getName(), false);
 					if (!f.getName().equals(Const.targetMap.get("field_url"))) {
