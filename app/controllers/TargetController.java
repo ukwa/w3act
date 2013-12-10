@@ -114,7 +114,7 @@ public class TargetController extends AbstractController {
             newTarget.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
             newTarget.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
             newTarget.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
-            Logger.info("ignore robots: " + getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
+//            Logger.info("ignore robots: " + getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
             newTarget.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
             newTarget.field_crawl_start_date = getFormParam(Const.FIELD_CRAWL_START_DATE);
             newTarget.field_crawl_end_date = getFormParam(Const.FIELD_CRAWL_END_DATE);
@@ -144,5 +144,16 @@ public class TargetController extends AbstractController {
         return res;
     }
 	
+    /**
+     * This method is checking scope for given URL and returns result in JSON format.
+     * @param url
+     * @return JSON result
+     */
+    public static Result isInScope(String url) {
+//    	Logger.info("isInScope controller: " + url);
+    	boolean res = Target.isInScope(url, null);
+//    	Logger.info("isInScope res: " + res);
+    	return ok(Json.toJson(res));
+    }
 }
 

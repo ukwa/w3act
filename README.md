@@ -12,6 +12,7 @@ To install you need:
 * Play Framework
 * PostgreSQL
 * Java
+* Maxmind GeoIP2 database
 
 ### Download
 
@@ -21,6 +22,7 @@ To install you need:
 | v2.2.0     | 108.1 MB | Play Framework                                          |[download-play]       |
 | v9.3.1     | 51.6 MB  | PostgreSQL database                                     |[download-db]         |
 | v1.6.0_33  | 178 MB   | Java Developers Kit (e.g. JDK 6)                        |[download-java]       |
+| v0.7.0     | 13.6 MB  | Maxmind GeoIP2 database                                 |[download-geoip]      |
 
 ### Install instructions
 
@@ -77,6 +79,7 @@ play clean
 [download-play]: http://www.playframework.com/download
 [download-db]: http://www.postgresql.org/download/
 [download-java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+[download-geoip]: http://dev.maxmind.com/geoip/geoip2/downloadable/#MaxMind_APIs
 [build-status]: https://travis-ci.org/ukwa/w3act)](https://travis-ci.org/ukwa/w3act
 [wiki]: https://github.com/ukwa/w3act/wiki
 [eclipse]: http://eclipse.org/eclipse

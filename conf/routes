@@ -79,4 +79,5 @@ POST    /targets/add-new                    controllers.UrlSearch.addNewTarget()
 #POST    /targets/filter-subjects            controllers.Targets.getSubjects()
 GET    /website/:url                        controllers.WebSite.addEntry(url)
 
-
+# Scope
+GET     /api/scope:url                      controllers.TargetController.isInScope(url)
