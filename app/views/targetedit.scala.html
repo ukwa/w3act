@@ -41,7 +41,12 @@
 				          <input class="form-control" name="nid" value="@target.nid" size="30" readonly>
 			            </div>
 			            <div class="form-group">
-			              <label for="inputUrls">URL(s) <font color="red">*</font></label>
+			              <label for="inputUrls">Seed URL(s) <font color="red">*</font></label>
+					      @if(Target.isInScope(target.field_url, target.url)) {
+	                      	<label id="isInScope" style="color: green">is in scope</label>
+	                      } else {
+	                      	<label id="isInScope" style="color: red">is not in scope</label>
+	                      }
 			              @if(target.field_url != null) {
 			              <input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@target.field_url">
 			              } else {
@@ -50,6 +55,47 @@
 			              <p>One or more URLs, separated by comma.<p>
 			              <!--button type="item" class="btn btn-success">Add another item</button-->
 			            </div>
+			            <script>
+					          var idle_timeout,
+					          SCOPE_URI = '/api/scope',
+					          MIN_TEXT_LENGTH = 5, // minimum length annotation must have before being allowed to the doScope server
+					          TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+					          IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+				          
+					          // Does the Scope lookup
+					          var doScope = function(text) {
+					              $.getJSON(SCOPE_URI + text, function(data) {
+					              //alert("Is in scope: " + data);
+					              var lab = document.getElementById('isInScope'); 
+					              if (data) {
+						              lab.innerHTML = "is in scope";
+						              lab.style = "color: green";
+					              } else {
+						              lab.innerHTML = "is not in scope";
+						              lab.style = "color: red";
+					              }
+					            });
+					          };
+					          
+					          // Restarts the keyboard-idleness timeout
+					          var restartIdleTimeout = function(text) {
+					            if (idle_timeout)
+					              window.clearTimeout(idle_timeout);
+					            
+					            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
+					          };		
+					          
+							  $("#fieldurl").keyup(function() {
+									var text = $('input[name=fieldurl]').val();
+									
+								    if (text.length > MIN_TEXT_LENGTH) {
+								        restartIdleTimeout(text);
+								
+								    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+								        	doScope(text);
+								    }
+							  });
+						</script>			            
 			            <div class="container">
 						   <div class="row">
 				                <label>QA Status</label><br>
@@ -137,7 +183,7 @@
 				            <div class="container">
 				                  <br><label>Subject</label><br>
 								  <select name="subject" value="@target.field_subject">
-						                <option>- None -</option>
+						                <option>None</option>
 						                @for(subject <- Taxonomy.findListByType("subject")) {
 						             		@if(subject.name.equals(target.field_subject)) {
 								                <option selected>@subject.name</option>
@@ -152,7 +198,7 @@
 				            <div class="container">
 				                  <br><label>Suggested Collections</label><br>
 								  <select name="field_suggested_collections">
-						                <option>- None -</option>
+						                <option>None</option>
 						                @for(collection <- DCollection.findAll()) {
 							                @if(collection.title.equals(DCollection.findByUrl(target.field_suggested_collections).title)) {
 							                <option selected>@collection.title</option>
@@ -167,12 +213,13 @@
 				             <div class="container">
 				                  <label>Nominating Organisation</label><br>
 								  <select name="organisation" id="mySel">
-						                <option>- None -</option>
+						                <option>None</option>
 						                @for(organisation <- Organisation.findAll()) {
-							                @if(organisation.title.equals(Organisation.findByUrl(target.field_nominating_organisation).title)) {
+							                @if(organisation.title.equals(Organisation.findByUrl(target.field_nominating_organisation).title) 
+							                	|| organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
 								                <option selected>@organisation.title</option>
 								            } else {
-								                <option>@organisation.title</option>
+							                    <option>@organisation.title</option>
 											}					            
 						                }
 								  </select>
@@ -186,7 +233,7 @@
 							<label for="edit-field-license-und">License</label>
 			                <div>
 							<select multiple="multiple" name="license" id="edit-field-license" class="form-select" size="2">
-							 	<option value="_none">- None -</option>
+							 	<option value="_none">None</option>
 							    @for(taxonomy <- Targets.getLicense()) {
 					                @if(target.field_license != null && target.field_license.equals(taxonomy.name)) {             
 								 	<option selected>@taxonomy.name</option>

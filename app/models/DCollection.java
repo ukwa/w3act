@@ -145,8 +145,9 @@ public class DCollection extends Model {
      * @return collection
      */
     public static DCollection findByUrl(String url) {
+//    	Logger.info("collection findByUrl: " + url);
     	DCollection res = new DCollection();
-    	if (url != null && url.length() > 0) {
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
     	} else {
     		res.title = Const.NONE;

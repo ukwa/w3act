@@ -129,6 +129,25 @@ public class JsonUtils {
 		}
 		return res;
     }
+        
+    /**
+     * This method replace textual link in User to Organisation "field_affiliation" e.g. "BL" by
+     * generated Organisation URL e.g. "act-123".
+     */
+    public static void normalizeOrganisationUrlInUser() {
+    	List<Organisation> organisationList = Organisation.findAll();
+    	Iterator<Organisation> organisationItr = organisationList.iterator();
+    	while (organisationItr.hasNext()) {
+    		Organisation organisation = organisationItr.next();
+    		List<User> userList = User.findByOrganisation(organisation.field_abbreviation);
+        	Iterator<User> userItr = userList.iterator();
+        	while (userItr.hasNext()) {
+        		User user = userItr.next();
+        		user.field_affiliation = organisation.url;
+				Ebean.update(user);
+    		}
+    	}
+    }
     
 	/**
      * This method retrieves collections. Due to merging of different original object models the resulting 

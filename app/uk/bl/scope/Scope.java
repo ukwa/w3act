@@ -46,9 +46,11 @@ import com.maxmind.geoip2.model.CityResponse;
  */
 public class Scope {
 
-	public static final String UK_DOMAIN      = ".uk";
-	public static final String GEO_IP_SERVICE = "GeoLite2-City.mmdb";
+	public static final String UK_DOMAIN       = ".uk";
+	public static final String GEO_IP_SERVICE  = "GeoLite2-City.mmdb";
 	public static final String UK_COUNTRY_CODE = "GB";
+	public static final String HTTP            = "http://";
+	public static final String WWW             = "www.";
 
 	/**
 	 * This method queries geo IP from database
@@ -80,12 +82,30 @@ public class Scope {
 	}
 	
 	/**
+	 * This method normalizes passed URL that it is appropriate for IP calculation.
+	 * @param url The passed URL
+	 * @return normalized URL
+	 */
+	private static String normalizeUrl(String url) {
+		String res = url;
+        if (!res.contains(WWW)) {
+        	res = WWW + res;
+        }
+        if (!res.contains(HTTP)) {
+        	res = HTTP + res;
+        }
+        Logger.info("normalized URL: " + url);
+		return res;
+	}
+
+	/**
 	 * This method comprises rule engine for checking if a given URL is in scope.
 	 * @return true if in scope
 	 */
 	public static boolean check(String url, String nidUrl) {
         boolean res = false;
         Logger.info("check url: " + url + ", nid: " + nidUrl);
+        url = normalizeUrl(url);
         /**
          *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
          *

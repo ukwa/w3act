@@ -35,22 +35,52 @@ public class Global extends GlobalSettings {
 			}
     	}
     	
+	    /**
+	     * This method adds different section elements described in initial-data file.
+	     * @param sectionName
+	     * @param cls The current object type
+	     * @param all The whole data
+	     */
+	    private static void insertInitialData(String sectionName, Class<?> cls, Map<String,List<Object>> all) {
+            List<Object> sectionList = all.get(sectionName);
+            Iterator<Object> sectionItr = sectionList.iterator();
+            while (sectionItr.hasNext()) {
+    	        if (cls == User.class) {
+	            	User user = (User) sectionItr.next();
+	            	user.uid = Utils.createId();
+	            	user.url = Const.ACT_URL + user.uid;
+	                Logger.info("Predefined " + User.class.getSimpleName() + ": " + user.toString());
+    	        }
+    	        if (cls == Role.class) {
+                	Role role = (Role) sectionItr.next();
+                	role.id = Utils.createId();
+	                Logger.info("Predefined " + Role.class.getSimpleName() + ": " + role.toString());
+    	        }
+    	        if (cls == Permission.class) {
+    	        	Permission permission = (Permission) sectionItr.next();
+    	        	permission.id = Utils.createId();
+	                Logger.info("Predefined " + Permission.class.getSimpleName() + ": " + permission.toString());
+    	        }
+    	        if (cls == Organisation.class) {
+    	        	Organisation organisation = (Organisation) sectionItr.next();
+    	        	organisation.nid = Utils.createId();
+    	        	organisation.url= Const.ACT_URL + organisation.nid;
+	                Logger.info("Predefined " + Organisation.class.getSimpleName() + ": " + organisation.toString());
+    	        }
+            }
+            Ebean.save(sectionList);
+	    }
+	    
         @SuppressWarnings("unchecked")
 		public static void insert(Application app) {
             if(Ebean.find(User.class).findRowCount() == 0) {
                 try {
 	                Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
-	
-	                // Insert users first
-	                List<Object> userList = all.get("users");
-	                // add IDs for users described in initial-data file
-	                Iterator<Object> userItr = userList.iterator();
-	                while (userItr.hasNext()) {
-	                	User user = (User) userItr.next();
-	                	user.url = Const.ACT_URL + Utils.createId();
-	                    Logger.info("Predefined user: " + user.toString());
-	                }
-	                Ebean.save(userList);
+	                insertInitialData(Const.USERS, User.class, all);	
+	                insertInitialData(Const.ROLES, Role.class, all);	
+	                insertInitialData(Const.PERMISSIONS, Permission.class, all);	
+	                insertInitialData(Const.ORGANISATIONS, Organisation.class, all);
+
 	                Logger.info("load urls");
 					// aggregate url data from drupal and store JSON content in a file
 			        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
@@ -68,6 +98,7 @@ public class Global extends GlobalSettings {
 			        List<Object> allOrganisations = JsonUtils.getDrupalData(Const.NodeType.ORGANISATION);
 					// store organisations in DB
 	                Ebean.save(allOrganisations);
+	                JsonUtils.normalizeOrganisationUrlInUser();
 	                Logger.info("organisations successfully loaded");
 	                Logger.info("load curators ...");
 	                // aggregate original curators from drupal extracting information from aggregated data

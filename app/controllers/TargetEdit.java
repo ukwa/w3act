@@ -30,7 +30,7 @@ public class TargetEdit extends Controller {
     public static Result edit(String url) {
 //		Logger.info("TargetEdit.edit() url: " + url);
 		Target target = Target.findByUrl(url);
-		Logger.info("TargetEdit.edit() target name: " + target.title + ", url: " + url);
+		Logger.info("TargetEdit.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
         return ok(
                 targetedit.render(
                         Target.findByUrl(url), User.find.byId(request().username())
@@ -44,7 +44,7 @@ public class TargetEdit extends Controller {
      * @return
      */
     public static Result addEntry(String targettitle) {
-//        public static Result addEntry(Target target) {
+        Logger.info("addEntry()");
     	Target target = new Target();
     	target.title = targettitle;
         target.nid = Target.createId();
@@ -55,7 +55,7 @@ public class TargetEdit extends Controller {
 		Logger.info("target name: " + target.title);
         return ok(
                 targetedit.render(
-                        target, User.find.byId(request().username())
+                      target, User.find.byId(request().username())
                 )
             );
     }

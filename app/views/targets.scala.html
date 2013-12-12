@@ -51,8 +51,8 @@
 				            <div class="form-group">
 				              <input class="form-control" id="inputName" name="filter" type="text">
 				            </div>
-				            <button type="submit" class="btn btn-success">Search</button>
-		                    <label id="isInScope" style="color: green"></label>
+					        <button type="submit" class="btn btn-success" id="search" name="search"  title="Red color means that URL is not in scope, green color means that URL is in scope">Search</button>	
+		                    <!-- label id="isInScope" style="color: green"></label-->
 				        </form>
 				      </div>
 		          </div>
@@ -67,14 +67,21 @@
 			          var doScope = function(text) {
 			              $.getJSON(SCOPE_URI + text, function(data) {
 			              //alert("Is in scope: " + data);
-			              var lab = document.getElementById('isInScope'); 
+			              var btn = document.getElementById('search'); 
+			              if (data) {
+				              btn.style = "background-color: hell-green";
+			              } else {
+				              btn.style = "background-color: red";
+			              }
+
+			              /*var lab = document.getElementById('isInScope'); 
 			              if (data) {
 				              lab.innerHTML = "is in scope";
 				              lab.style = "color: green";
 			              } else {
 				              lab.innerHTML = "is not in scope";
 				              lab.style = "color: red";
-			              }
+			              }*/
 			            });
 			          };
 			          
@@ -97,13 +104,15 @@
 						    }
 					  });
 				  </script>
+				  @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		          <div class="add-button" id="add-button">
 				      <div id="addtargetform">
 				        <form class="filter-form" action="@routes.LookUp.index()" method="GET">
 				            <button type="submit" class="btn btn-success">Add new target</button>
 				        </form>
 				      </div>
-		          </div>          
+		          </div>   
+		          }       
 		          <div class="panel-group" id="accordion">
 			          <div class="panel panel-primary" id="panels">
 				           <div class="panel-heading">

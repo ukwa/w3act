@@ -609,13 +609,14 @@ public class Target extends Model {
     public static boolean checkManualScope(String url) {
         Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
         boolean res = false;  
-        if (target.field_uk_domain.booleanValue() == true 
+        if (target != null
+        		&& (target.field_uk_domain.booleanValue() == true 
         		|| target.field_uk_postal_address.equals(Const.TRUE) 
         		|| target.field_via_correspondence.equals(Const.TRUE)
-        		|| target.field_professional_judgement.equals(Const.TRUE)) {
+        		|| target.field_professional_judgement.equals(Const.TRUE))) {
         	res = true;
         }
-        if (target.field_no_ld_criteria_met) {
+        if (target != null && target.field_no_ld_criteria_met) {
         	res = false;
         }
         return res;
@@ -629,7 +630,8 @@ public class Target extends Model {
     public static boolean checkLicense(String url) {
         Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
         boolean res = false;  
-        if (target.field_license != null 
+        if (target != null 
+        		&& target.field_license != null 
         		&& target.field_license.length() > 0 
         		&& !target.field_license.toLowerCase().contains(Const.NONE)) {
         	res = true;

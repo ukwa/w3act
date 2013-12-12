@@ -1,17 +1,18 @@
 package uk.bl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.OneToMany;
 
 public final class Const {
   
     private Const() {}
 	
+	// Taxonomy
+	public static final String USERS           = "users";
+	public static final String ROLES           = "roles";
+	public static final String PERMISSIONS     = "permissions";
+	public static final String ORGANISATIONS   = "organisations";
+
     // Authentification definitions
     public static final String URI             = "uri";
     public static final String URL             = "url";

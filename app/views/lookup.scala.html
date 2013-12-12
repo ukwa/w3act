@@ -17,8 +17,10 @@
 				            <div class="form-group">
 					            <ul class="nav navbar-nav">
 					              <li><input class="lookup-form-control" id="inputName" name="url" placeholder="http://www.bbc.co.uk" type="text" value="@searchurl"></li>
-					              <li><button type="submit" class="btn btn-success" name="search">Apply</button></li>	
-					              <li><button type="addentry" class="btn btn-success" name="addentry">Add Entry</button></li>	
+					              <li><button type="submit" class="btn btn-success" id="search" name="search"  title="Red color means that URL is not in scope, green color means that URL is in scope">Apply</button></li>	
+								  @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+					              <li><button type="addentry" class="btn btn-success" id="addentry" name="addentry" title="Red color means that URL is not in scope, green color means that URL is in scope">Add Entry</button></li>
+					              }	
 					              <li><p class="urlsearchp">Enter URL to search for, e.g. 'http://www.bbc.co.uk'</p></li> 
 				                </ul>  			              
 				            </div>
@@ -26,6 +28,48 @@
 				      </div>
 				    </div>
 		        </div>
+		        <script>
+			          var idle_timeout,
+			          SCOPE_URI = '/api/scope',
+			          MIN_TEXT_LENGTH = 5, // minimum length annotation must have before being allowed to the doScope server
+			          TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+			          IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+		          
+			          // Does the Scope lookup
+			          var doScope = function(text) {
+			              $.getJSON(SCOPE_URI + text, function(data) {
+			              //alert("Is in scope: " + data);
+			              var btn = document.getElementById('addentry'); 
+			              var btnsearch = document.getElementById('search'); 
+			              if (data) {
+				              btn.style = "background-color: hell-green";
+				              btnsearch.style = "background-color: hell-green";
+			              } else {
+				              btn.style = "background-color: red";
+				              btnsearch.style = "background-color: red";
+			              }
+			            });
+			          };
+			          
+			          // Restarts the keyboard-idleness timeout
+			          var restartIdleTimeout = function(text) {
+			            if (idle_timeout)
+			              window.clearTimeout(idle_timeout);
+			            
+			            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
+			          };		
+			          
+					  $("#inputName").keyup(function() {
+							var text = $('input[name=url]').val();
+							
+						    if (text.length > MIN_TEXT_LENGTH) {
+						        restartIdleTimeout(text);
+						
+						    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+						        	doScope(text);
+						    }
+					  });
+				</script>		        
 		        <div class="col-lg-6">
 					<ul class="list">
 					<!-- script >

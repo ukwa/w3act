@@ -4,27 +4,72 @@
 users:
 
     - !!models.User
-        email:      ross.king@ait.ac.at
-        name:       Ross King
-        password:   secret
+        email:             ross.king@ait.ac.at
+        name:              Ross King
+        password:          secret
+        field_affiliation: AIT
+        roles:             sys_admin, archivist
+        permissions:       edit, view
+        
+    - !!models.User
+        email:             andrew.jackson@bl.uk
+        name:              Andrew Jackson
+        password:          secret
+        field_affiliation: BL
+    
+    - !!models.User
+        email:             coram.roger@bl.uk
+        name:              Coram Roger
+        password:          secret
+        field_affiliation: BL
+    
+    - !!models.User
+        email:             rainer.simon@ait.ac.at
+        name:              Rainer Simon
+        password:          secret
+        field_affiliation: AIT
+    
+    - !!models.User
+        email:             roman.graf@ait.ac.at
+        name:              Roman Graf
+        password:          secret
+        field_affiliation: AIT
+        roles:             viewer
+        permissions:       view
+    
+# Roles
 
-    - !!models.User
-        email:      andrew.jackson@bl.uk
-        name:       Andrew Jackson
-        password:   secret
+roles:
+
+    - !!models.Role
+        name:       sys_admin
     
-    - !!models.User
-        email:      coram.roger@bl.uk
-        name:       Coram Roger
-        password:   secret
+    - !!models.Role
+        name:       archivist
     
-    - !!models.User
-        email:      rainer.simon@ait.ac.at
-        name:       Rainer Simon
-        password:   secret
+    - !!models.Role
+        name:       expert_user
     
-    - !!models.User
-        email:      roman.graf@ait.ac.at
-        name:       Roman Graf
-        password:   secret
+    - !!models.Role
+        name:       user
     
+    - !!models.Role
+        name:       viewer
+    
+# Permissions
+
+permissions:
+
+    - !!models.Permission
+        name:       edit
+    
+    - !!models.Permission
+        name:       view
+    
+# Organisations
+
+organisations:
+
+    - !!models.Organisation
+        field_abbreviation:    AIT
+        title:                 Austrian Institute of Technology

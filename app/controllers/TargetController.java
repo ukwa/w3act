@@ -43,7 +43,7 @@ public class TargetController extends AbstractController {
         String delete = getFormParam("delete");
 //        Logger.info("save: " + save);
         if (save != null) {
-        	Logger.info("save udated target nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.info("save updated target nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
         			", title: " + getFormParam(Const.TITLE) + ", keysite: " + getFormParam(Const.KEYSITE) +
         			", description: " + getFormParam(Const.DESCRIPTION) + 
         			", status: " + getFormParam(Const.STATUS) +

@@ -26,6 +26,7 @@ import uk.bl.Const;
 
 import com.avaje.ebean.*;
 
+
 /**
  * User entity managed by Ebean
  */
@@ -56,6 +57,12 @@ public class User extends Model {
     public String language;
     public Long feed_nid;
     
+    // lists
+    @Column(columnDefinition = "TEXT")
+    public String roles;
+    @Column(columnDefinition = "TEXT")
+    public String permissions;
+    
     // -- Queries
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -72,6 +79,47 @@ public class User extends Model {
     	this.name = name;
     	this.email = email;
     	this.password = password;
+    }
+    
+    public boolean hasRole(String roleName) {
+    	boolean res = false;
+    	Logger.info("hasRole: " + roleName);
+    	if (roleName != null && roleName.length() > 0 
+    			&& roles.contains(roleName)) {
+    		res = true;
+    	}
+    	return res;
+    }
+    
+    public boolean hasPermission(String permissionName) {
+    	boolean res = false;
+    	if (permissionName != null && permissionName.length() > 0 
+    			&& permissions.contains(permissionName)) {
+    		res = true;
+    	}
+    	return res;
+    }
+    
+    public List<? extends Role> getRoles()
+    {
+    	List<Role> res = new ArrayList<Role>();
+		List<String> resList = Arrays.asList(roles.split(Const.COMMA));
+		Iterator<String> itr = resList.iterator();
+		while (itr.hasNext()) {
+			res.add(Role.findByName(itr.next()));
+		}
+        return res;
+    }
+
+    public List<? extends Permission> getPermissions()
+    {
+    	List<Permission> res = new ArrayList<Permission>();
+		List<String> resList = Arrays.asList(permissions.split(Const.COMMA));
+		Iterator<String> itr = resList.iterator();
+		while (itr.hasNext()) {
+			res.add(Permission.findByName(itr.next()));
+		}
+        return res;
     }
     
     /**
@@ -108,6 +156,18 @@ public class User extends Model {
         return find.where().eq(Const.URL, url).findUnique();
     }
 
+    /**
+     * This method returns all users related to given organisation.
+     * @param organisation The organisation URL
+     * @return user list
+     */
+    public static List<User> findByOrganisation(String organisation) {
+    	List<User> res = new ArrayList<User>();
+        ExpressionList<User> ll = find.where().eq(Const.FIELD_AFFILIATION, organisation);
+        res = ll.findList();
+        return res;
+    }
+    
     /**
      * This method is used for filtering by URL.
      * @param url
