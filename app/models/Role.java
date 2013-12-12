@@ -15,8 +15,15 @@
 */
 package models;
 
-import play.db.ebean.Model;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
+import play.db.ebean.Model;
+import uk.bl.Const;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -28,6 +35,9 @@ public class Role extends Model
 
     public String name;
 
+    @Column(columnDefinition = "TEXT")
+    public String permissions;
+    
     public static final Finder<Long, Role> find = new Finder<Long, Role>(Long.class, Role.class);
 
     public String getName()
@@ -41,6 +51,31 @@ public class Role extends Model
                    .eq("name",
                        name)
                    .findUnique();
+    }
+    
+    /**
+     * This method checks if this Role has a permission passed as string parameter.
+     * @param permissionName
+     * @return true if exists
+     */
+    public boolean hasPermission(String permissionName) {
+    	boolean res = false;
+    	if (permissionName != null && permissionName.length() > 0 
+    			&& permissions.contains(permissionName)) {
+    		res = true;
+    	}
+    	return res;
+    }
+    
+    public List<? extends Permission> getPermissions()
+    {
+    	List<Permission> res = new ArrayList<Permission>();
+		List<String> resList = Arrays.asList(permissions.split(Const.COMMA));
+		Iterator<String> itr = resList.iterator();
+		while (itr.hasNext()) {
+			res.add(Permission.findByName(itr.next()));
+		}
+        return res;
     }
     
     public String toString() {

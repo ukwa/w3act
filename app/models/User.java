@@ -60,8 +60,6 @@ public class User extends Model {
     // lists
     @Column(columnDefinition = "TEXT")
     public String roles;
-    @Column(columnDefinition = "TEXT")
-    public String permissions;
     
     // -- Queries
     
@@ -81,20 +79,16 @@ public class User extends Model {
     	this.password = password;
     }
     
+    /**
+     * This method checks if this User has a role passed as string parameter.
+     * @param roleName
+     * @return true if exists
+     */
     public boolean hasRole(String roleName) {
     	boolean res = false;
     	Logger.info("hasRole: " + roleName);
     	if (roleName != null && roleName.length() > 0 
     			&& roles.contains(roleName)) {
-    		res = true;
-    	}
-    	return res;
-    }
-    
-    public boolean hasPermission(String permissionName) {
-    	boolean res = false;
-    	if (permissionName != null && permissionName.length() > 0 
-    			&& permissions.contains(permissionName)) {
     		res = true;
     	}
     	return res;
@@ -111,17 +105,6 @@ public class User extends Model {
         return res;
     }
 
-    public List<? extends Permission> getPermissions()
-    {
-    	List<Permission> res = new ArrayList<Permission>();
-		List<String> resList = Arrays.asList(permissions.split(Const.COMMA));
-		Iterator<String> itr = resList.iterator();
-		while (itr.hasNext()) {
-			res.add(Permission.findByName(itr.next()));
-		}
-        return res;
-    }
-    
     /**
      * Retrieve all users.
      */
@@ -151,8 +134,6 @@ public class User extends Model {
      * @return user name
      */
     public static User findByUrl(String url) {
-//    	User tmp = find.where().eq("url", url).findUnique();
-//    	Logger.info("findByUrl: " + tmp.toString());
         return find.where().eq(Const.URL, url).findUnique();
     }
 
