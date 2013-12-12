@@ -51,6 +51,7 @@ public class Scope {
 	public static final String UK_COUNTRY_CODE = "GB";
 	public static final String HTTP            = "http://";
 	public static final String WWW             = "www.";
+	public static final String END_STR         = "/";
 
 	/**
 	 * This method queries geo IP from database
@@ -86,15 +87,20 @@ public class Scope {
 	 * @param url The passed URL
 	 * @return normalized URL
 	 */
-	private static String normalizeUrl(String url) {
+	public static String normalizeUrl(String url) {
 		String res = url;
-        if (!res.contains(WWW)) {
-        	res = WWW + res;
-        }
-        if (!res.contains(HTTP)) {
-        	res = HTTP + res;
-        }
-        Logger.info("normalized URL: " + url);
+		if (res != null && res.length() > 0) {
+	        if (!res.contains(WWW)) {
+	        	res = WWW + res;
+	        }
+	        if (!res.contains(HTTP)) {
+	        	res = HTTP + res;
+	        }
+	        if (!res.endsWith(END_STR)) {
+	        	res = res + END_STR;
+	        }
+		}
+        Logger.info("normalized URL: " + res);
 		return res;
 	}
 

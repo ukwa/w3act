@@ -42,7 +42,8 @@
 			            </div>
 			            <div class="form-group">
 			              <label for="inputUrls">Seed URL(s) <font color="red">*</font></label>
-					      @if(Target.isInScope(target.field_url, target.url)) {
+					      @if(Target.isInScope(target.field_url, target.url) || 
+					      		(target.field_url == null && Target.isInScope(target.title, target.url))) {
 	                      	<label id="isInScope" style="color: green">is in scope</label>
 	                      } else {
 	                      	<label id="isInScope" style="color: red">is not in scope</label>
@@ -58,7 +59,7 @@
 			            <script>
 					          var idle_timeout,
 					          SCOPE_URI = '/api/scope',
-					          MIN_TEXT_LENGTH = 5, // minimum length annotation must have before being allowed to the doScope server
+					          MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
 					          TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
 					          IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
 				          

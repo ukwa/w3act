@@ -10,6 +10,7 @@ import java.util.*;
 import models.*;
 import views.html.*;
 import uk.bl.api.*;
+import uk.bl.scope.Scope;
 
 import java.net.URL;
 import java.io.IOException;
@@ -74,7 +75,7 @@ public class TargetController extends AbstractController {
             newTarget.field_nominating_organisation = target.field_nominating_organisation;
 //            Logger.info("new nid: " + newTarget.nid);
             newTarget.title = getFormParam(Const.TITLE);
-            newTarget.field_url = getFormParam(Const.FIELD_URL);
+            newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
             newTarget.field_description = getFormParam(Const.DESCRIPTION);
             if (getFormParam(Const.STATUS) != null) {
