@@ -1,0 +1,57 @@
+@(user: User, admin: User)
+
+
+@main("", admin){
+    
+    <h1>User @user.name</h1>
+	<div class="targettabs">    
+		<ul class="nav nav-tabs">
+		   <li class="active"><a href="@routes.UserEdit.view(user.url)" class="navbar-brand btn btn-success">View</a></li>
+		   <li><a href="@routes.UserEdit.sites(user.url)" class="navbar-brand btn btn-success">My Sites</a></li> 
+		   @if(admin.hasRole("sys_admin") || user.url.equals(admin.url)) {
+		   <li><a href="@routes.UserEdit.edit(user.url)" class="navbar-brand btn btn-success">Edit</a></li>
+		   }
+		   <!-- li><a href="@routes.UserEdit.bookmarks(user.url)" class="navbar-brand btn btn-success">Bookmarks</a></li--> 
+		</ul>
+	</div>
+	
+    
+    <article class="userdetails">
+      <div class="panel panel-default" id="forms">
+       <div class="panel-heading">
+        <!--h3 class="panel-title">Basic Information</h3-->
+       </div>      
+       <div class="panel-body">
+        <form>
+            <fieldset>           
+		       <div id="myTabContent" class="tab-content">
+			        <div class="tab-pane fade active in" id="basicinformation">
+			            <div class="container">
+			            	<div class="row">
+			              		<label>Affiliation: @Organisation.findByUrl(user.field_affiliation).title</label>
+							</div>
+			            </div>
+			            <div class="container">
+			            	<div class="row">
+			              		<label>E-mail: @user.email</label>
+							</div>
+			            </div>
+			            <div class="container">
+			            	<div class="row">
+			              		<label>Roles: @user.roles</label>
+							</div>
+			            </div>
+			            <div class="container">
+						   <div class="row">
+				                <label>Member for: @user.calculate_membership()</label>
+						   </div>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</form>      
+	  </div>
+    </article>
+    
+}
+

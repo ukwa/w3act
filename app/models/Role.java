@@ -20,12 +20,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import play.db.ebean.Model;
-import uk.bl.Const;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import play.Logger;
+import play.db.ebean.Model;
+import uk.bl.Const;
 
 @Entity
 public class Role extends Model
@@ -76,6 +77,44 @@ public class Role extends Model
 			res.add(Permission.findByName(itr.next()));
 		}
         return res;
+    }
+    
+    /**
+     * Retrieve all roles.
+     */
+    public static List<Role> findAll() {
+        return find.all();
+    }
+
+    /**
+     * This method checks if a given role is included in the list of passed user roles.
+     * Simple "contains" method of string does not help for roles since part of the role name
+     * like "exper_user" could be a name of the other role like "user".
+     * @param roleName The given role name
+     * @param roles The user roles as a string separated by comma
+     * @return true if role name is included
+     */
+    public static boolean isIncluded(String roleName, String roles) {
+    	boolean res = false;
+    	if (roleName != null && roleName.length() > 0 && roles != null && roles.length() > 0 ) {
+    		if (roles.contains(Const.COMMA)) {
+    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
+    			Iterator<String> itr = resList.iterator();
+    			while (itr.hasNext()) {
+        			String currentRoleName = itr.next();
+        			currentRoleName = currentRoleName.replaceAll(" ", "");
+        			if (currentRoleName.equals(roleName)) {
+        				res = true;
+        				break;
+        			}
+    			}
+    		} else {
+    			if (roles.equals(roleName)) {
+    				res = true;
+    			}
+    		}
+    	}
+    	return res;
     }
     
     public String toString() {

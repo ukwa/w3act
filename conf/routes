@@ -46,7 +46,8 @@ GET     /tips                               controllers.Tips.index()
 GET     /lookup                             controllers.LookUp.index()
 
 # Domain objects
-GET     /user/:user                         controllers.UserEdit.edit(user)
+GET     /user/:user                         controllers.UserEdit.view(user)
+GET     /useredit/:user                     controllers.UserEdit.edit(user)
 GET     /usersites/:usersites               controllers.UserEdit.sites(usersites)
 GET     /userbookmarks/:userbookmarks       controllers.UserEdit.bookmarks(userbookmarks)
 GET     /collection/:collection             controllers.CollectionEdit.view(collection)
@@ -64,6 +65,7 @@ GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()
 POST    /target/save-target                 controllers.TargetController.saveTarget()
+POST    /user/save-user                     controllers.Curators.saveUser()
 #POST    /website/save-target                controllers.TargetController.saveTarget()
 POST    /alphabeticalindex/filter-url       controllers.AlphabeticalIndex.filterUrl()
 POST    /dispensationsites/filter-url       controllers.DispensationSites.filterUrl()

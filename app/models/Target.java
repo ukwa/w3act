@@ -79,6 +79,7 @@ public class Target extends Model {
     @Column(columnDefinition = "TEXT")
     public String field_professional_judgement_exp;
     public Boolean field_ignore_robots_txt;
+    @Column(columnDefinition = "TEXT")
     public String revision; // revision comment for latest version of the target among targets with the same URL
     public Boolean active; // flag for the latest version of the target among targets with the same URL
     public String white_list; // regex for white list URLs

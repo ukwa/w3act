@@ -95,6 +95,12 @@ public final class Const {
     public static final String WHITE_LIST = "white_list";
     public static final String BLACK_LIST = "black_list";
     
+    // Creator
+	public static final String UID                = "uid";
+	public static final String NAME               = "name";
+	public static final String EMAIL              = "email";
+	public static final String DEFAULT_ROLE       = "user";
+	public static final String PASSWORD           = "password";
 
 	// Taxonomy
 	public static final String TYPE               = "type";

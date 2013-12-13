@@ -25,7 +25,7 @@
 		              	@curators.map { curator =>	
 		              		@if(curator.url != null) {	              
 			                <tr>		                  
-			                  <td><a href="@routes.UserEdit.edit(curator.url)">@curator.name</a></td>
+			                  <td><a href="@routes.UserEdit.view(curator.url)">@curator.name</a></td>
 			                  <td>@curator.email</td>
 			                  <td><p><img src="http://www.webarchive.org.uk/act/sites/192.168.45.11.act/files/styles/thumbnail/public/pictures/picture-61-1360164183.jpg?itok=WJ9z5-oy" alt="Home" /></p></td>
 			                </tr>

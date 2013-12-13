@@ -7,15 +7,19 @@ import static play.data.Form.*;
 
 import java.util.*;
 
-import models.*;
+import com.avaje.ebean.Ebean;
 
+import models.*;
+import uk.bl.Const;
+import uk.bl.api.Utils;
+import uk.bl.scope.Scope;
 import views.html.*;
 
 /**
  * Manage curators.
  */
 @Security.Authenticated(Secured.class)
-public class Curators extends Controller {
+public class Curators extends AbstractController {
   
     /**
      * Display the Curators.
@@ -28,5 +32,81 @@ public class Curators extends Controller {
         );
     }
 
+    /**
+     * This method saves changes on given curator in the same object
+     * completed by revision comment. The "version" field in the User object
+     * contains the timestamp of the change. 
+     * @return
+     */
+    public static Result saveUser() {
+    	Result res = null;
+        String save = getFormParam("save");
+        String delete = getFormParam("delete");
+//        Logger.info("save: " + save);
+        if (save != null) {
+        	Logger.info("save updated user uid: " + getFormParam(Const.UID) + ", url: " + getFormParam(Const.URL) + 
+        			", name: " + getFormParam(Const.NAME) + ", roles: " + getFormParam(Const.ROLES) +
+        			", revision: " + getFormParam(Const.REVISION) + ", email: " + getFormParam(Const.EMAIL) +
+        			", organisation: " + getFormParam(Const.ORGANISATION));
+        	User user = null;
+            try {
+        	    user = User.findByUrl(getFormParam(Const.URL));
+        	    user.name = getFormParam(Const.NAME);
+        	    user.email = getFormParam(Const.EMAIL);
+        	    if (getFormParam(Const.PASSWORD) != null) {
+        	    	user.password = getFormParam(Const.PASSWORD);
+        	    }
+                if (getFormParam(Const.ORGANISATION) != null) {
+                	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
+//                		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
+                		user.field_affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+                	} else {
+                		user.field_affiliation = Const.NONE;
+                	}
+                }
+//                if (getFormParam(Const.ROLES) != null) {
+//                	user.roles = getFormParam(Const.ROLES);
+//                }
+                String roleStr = "";
+		        List<Role> roleList = Role.findAll();
+		        Iterator<Role> roleItr = roleList.iterator();
+		        while (roleItr.hasNext()) {
+		        	Role role = roleItr.next();
+	                if (getFormParam(role.name) != null) {
+		                boolean roleFlag = Utils.getNormalizeBooleanString(getFormParam(role.name));
+		                if (roleFlag) {
+		                	if (roleStr.length() == 0) {
+		                		roleStr = role.name;
+		                	} else {
+		                		roleStr = roleStr + ", " + role.name;
+		                	}
+		                }
+	                }
+		        }
+		        if (roleStr.length() == 0) {
+		        	user.roles = Const.DEFAULT_ROLE;
+		        } else {
+		        	user.roles = roleStr;
+		        }
+		        Logger.info("roleStr: "+ roleStr + ", user.roles: " + user.roles);
+                if (getFormParam(Const.REVISION) != null) {
+                	user.revision = user.revision.concat(", " + getFormParam(Const.REVISION));
+                }
+            } catch (Exception e) {
+            	Logger.info("is not existing exception");
+            }
+       		Logger.info("update user: " + user.uid);
+           	Ebean.update(user);
+	        Logger.info("save user: " + user.toString());
+	        res = redirect(routes.UserEdit.view(user.url));
+        } 
+        if (delete != null) {
+        	User user = User.findByUrl(getFormParam(Const.URL));
+        	Ebean.delete(user);
+	        res = redirect(routes.Curators.index()); 
+        }
+        return res;
+    }
+	
 }
 

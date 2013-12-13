@@ -8,7 +8,6 @@ import static play.data.Form.*;
 import java.util.*;
 
 import models.*;
-
 import views.html.*;
 
 /**
@@ -26,6 +25,20 @@ public class UserEdit extends Controller {
     }
 
     /**
+     * Display the user view panel for this URL.
+     */
+    public static Result view(String url) {
+		Logger.info("view user url: " + url);
+		User user = User.findByUrl(url);
+		Logger.info("user name: " + user.name + ", url: " + url);
+        return ok(
+                userview.render(
+                        User.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
+    
+    /**
      * Display the user edit panel for this URL.
      */
     public static Result edit(String url) {
@@ -34,7 +47,7 @@ public class UserEdit extends Controller {
 		Logger.info("user name: " + user.name + ", url: " + url);
         return ok(
                 useredit.render(
-                        User.findByUrl(url)
+                        User.findByUrl(url), User.find.byId(request().username())
                 )
             );
     }
@@ -42,7 +55,7 @@ public class UserEdit extends Controller {
     public static Result sites(String url) {
         return ok(
                 usersites.render(
-                        User.findByUrl(url)
+                        User.findByUrl(url), User.find.byId(request().username())
                 )
             );
     }

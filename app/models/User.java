@@ -1,30 +1,28 @@
 package models;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.Hours;
-import org.joda.time.Minutes;
-import org.joda.time.Months;
 import org.joda.time.Period;
-import org.joda.time.Seconds;
-import org.joda.time.Weeks;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 import play.Logger;
-import play.db.ebean.*;
-import play.data.format.*;
-import play.data.validation.*;
+import play.data.format.Formats;
+import play.data.validation.Constraints;
+import play.db.ebean.Model;
 import uk.bl.Const;
 
-import com.avaje.ebean.*;
+import com.avaje.ebean.ExpressionList;
 
 
 /**
@@ -60,6 +58,8 @@ public class User extends Model {
     // lists
     @Column(columnDefinition = "TEXT")
     public String roles;
+    @Column(columnDefinition = "TEXT")
+    public String revision; // revision comment for latest version of the target among targets with the same URL
     
     // -- Queries
     
@@ -67,16 +67,22 @@ public class User extends Model {
 	public static Model.Finder<String,User> find = new Model.Finder(String.class, User.class);
     
     public User() {
+    	this.revision = "";
+    	this.roles = Const.DEFAULT_ROLE;
     }
 
     public User(String name) {
     	this.name = name;
+    	this.revision = "";
+    	this.roles = Const.DEFAULT_ROLE;
     }
 
     public User(String name, String email, String password) {
     	this.name = name;
     	this.email = email;
     	this.password = password;
+    	this.revision = "";
+    	this.roles = Const.DEFAULT_ROLE;
     }
     
     /**

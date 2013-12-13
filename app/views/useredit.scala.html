@@ -1,22 +1,104 @@
-@(user: User)
+@(user: User, admin: User)
 
 
-@main("", user){
+@main("", admin){
     
     <h1>Edit User @user.name</h1>
-	<ul class="nav nav-tabs">
-	   <li><a href="@routes.UserEdit.edit(user.url)" class="navbar-brand btn btn-success">View</a></li>
-	   <li><a href="@routes.UserEdit.sites(user.url)" class="navbar-brand btn btn-success">My Sites</a></li> 
-	   <li><a href="@routes.UserEdit.bookmarks(user.url)" class="navbar-brand btn btn-success">Bookmarks</a></li> 
-	</ul>
+	<div class="targettabs">    
+		<ul class="nav nav-tabs">
+		   <li><a href="@routes.UserEdit.view(user.url)" class="navbar-brand btn btn-success">View</a></li>
+		   <li><a href="@routes.UserEdit.sites(user.url)" class="navbar-brand btn btn-success">My Sites</a></li> 
+		   @if(admin.hasRole("sys_admin") || user.url.equals(admin.url)) {
+		   <li class="active"><a href="@routes.UserEdit.edit(user.url)" class="navbar-brand btn btn-success">Edit</a></li>
+		   }
+		   <!-- li><a href="@routes.UserEdit.bookmarks(user.url)" class="navbar-brand btn btn-success">Bookmarks</a></li--> 
+		</ul>
+	</div>
     
     <article class="userdetails">
-        <div class="folder">
-            <br>Affiliation: @Organisation.findByUrl(user.field_affiliation).title
-            <br>History
-            <br>Member for 
-            <br>@user.calculate_membership()
-		</div>
+      <div class="panel panel-default" id="forms">
+       <div class="panel-heading">
+        <!--h3 class="panel-title">Basic Information</h3-->
+       </div>      
+       <div class="panel-body">
+          <form action="@routes.Curators.saveUser()" method="POST">
+             <fieldset>
+          		<input type="hidden" name="url" value="@user.url">
+            
+		        <div id="myTabContent" class="tab-content">
+			        <div class="tab-pane fade active in" id="basicinformation">
+			            <div class="form-group">
+			              <label>Name<font color="red">*</font></label>
+			              <input class="form-control" name="name" id="name" size="60" placeholder="My name" type="text" value="@user.name">
+				          <input class="form-control" name="uid" value="@user.uid" size="30" readonly>
+			            </div>
+			            <div class="form-group">
+			              <label>E-mail<font color="red">*</font></label>
+			              <input class="form-control" name="email" id="email" placeholder="sample@@domain.uk" type="text" value="@user.email">
+			            </div>
+		   				@if(user.url.equals(admin.url)) {
+			            <div class="form-group">
+			              <label>Password<font color="red">*</font></label>
+			              <input class="form-control" name="password" id="password" type="text" value="@user.password">
+			            </div>
+			            }
+			            <div class="form-group">
+			                <label>Roles</label><br>
+					        @for(role <- Role.findAll()) {
+					            <div>
+					            @if(Role.isIncluded(role.name, user.roles)) {
+				                <input type="checkbox" name="@role.name" value="true" checked/>
+				                } else {
+				                <input type="checkbox" name="@role.name" value="true"/>
+				                }
+					 			<label class="option">@role.name</label>
+					 			</div>
+				            }
+						</div>
+			            
+			            <!-- div class="form-group">
+			                  <label>Roles</label><br>
+							  <select name="roles" value="@user.roles" multiple>
+					                @for(role <- Role.findAll()) {
+					             		@if(user.roles.contains(role.name)) {
+							                <option selected>@role.name</option>
+							            } else {						                
+					                		<option>@role.name</option>
+					                	}
+					                }
+							  </select>
+						 </div-->
+			             <div class="form-group">
+			                  <label>Nominating Organisation</label><br>
+							  <select name="organisation" id="mySel">
+					                <option>None</option>
+					                @for(organisation <- Organisation.findAll()) {
+						                @if(organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
+							                <option selected>@organisation.title</option>
+							            } else {
+						                    <option>@organisation.title</option>
+										}					            
+					                }
+							  </select>
+							  <br>The organisation that nominated this user. Used to track down further information if the original user cannot be contacted.				  
+		            	</div>                        
+		        	</div>
+            </div>
+	        <div id="revisionArea" class="revision">
+  				<div class="form-group">
+  			       <hr>
+	               <label for="inputBody">Revision log message</label>
+	               <textarea class="text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1"></textarea>
+        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+				</div>
+			</div>
+	        
+            <button type="save" class="btn btn-primary" id="edit-save" name="save">Save</button>
+            <button type="delete" class="btn btn-primary" name="delete">Delete</button>
+          </fieldset>
+        </form>
+       </div>
+      </div>
     </article>
     
 }
