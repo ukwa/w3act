@@ -226,7 +226,8 @@ public class Targets extends AbstractController {
 //			        	scope, offset, targetsAll.size(), filterUrl
 //                        )
 //                );
-    	return ok();
+//    	return ok();
+    	return redirect(routes.Targets.index());
     }
     
     /**
