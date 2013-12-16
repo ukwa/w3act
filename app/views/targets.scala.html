@@ -1,4 +1,4 @@
-@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, scope: String, offset: Int, limit: Int)
+@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, scope: String, offset: Int, limit: Int, filterUrl: String)
 
 @pagination = {
   <div class="row">
@@ -49,9 +49,10 @@
 				      <div id="forms">
 				        <form class="filter-form" action="@routes.Targets.filterUrl()" method="POST">
 				            <div class="form-group">
-				              <input class="form-control" id="inputName" name="filter" type="text">
+				              <input class="form-control" id="inputName" name="filter" type="text" value="@filterUrl">
 				            </div>
-					        <button type="submit" class="btn btn-success" id="search" name="search"  title="Red color means that URL is not in scope, green color means that URL is in scope">Search</button>	
+					        <button type="submit" class="btn btn-success" id="search" name="search" title="Red color means that URL is not in scope, green color means that URL is in scope">Search</button>	
+					        <button type="clear" class="btn btn-success" id="clear" name="clear" title="Clear up search settings">Clear</button>	
 		                    <!-- label id="isInScope" style="color: green"></label-->
 				        </form>
 				      </div>
@@ -108,11 +109,23 @@
 		          <div class="add-button" id="add-button">
 				      <div id="addtargetform">
 				        <form class="filter-form" action="@routes.LookUp.index()" method="GET">
-				            <button type="submit" class="btn btn-success">Add new target</button>
+				            <button type="submit" class="btn btn-success" title="Look up and add new target">Add new target</button>
 				        </form>
 				      </div>
 		          </div>   
-		          }       
+		          }     
+		          		          
+		          <div class="export-button" id="export-button">
+				      <div id="exporttargetform">
+				        <form action="@routes.Targets.export()" method="POST">
+				            <fieldset>
+				                <input type="hidden" name="csv" value="@targets">
+				            	<button type="export" class="btn btn-success" id="export" name="export" title="Export results of filtered searches and reports to CSV file">Export</button>
+				            </fieldset>
+				        </form>
+				      </div>
+		          </div>   
+		          		           
 		          <div class="panel-group" id="accordion">
 			          <div class="panel panel-primary" id="panels">
 				           <div class="panel-heading">
@@ -198,7 +211,7 @@
 				            <div class="panel-footer">
 				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
 						            	collectionCategoryUrl, curSubject.field_subject, crawlFrequency, depth, scope, offset, limit)">
-						            	@curSubject.field_subject &nbsp; (@Target.getTargetNumberBySubjectUrl(curSubject.field_subject))</a>
+						            	@Taxonomy.findByUrl(curSubject.field_subject).name &nbsp; (@Target.getTargetNumberBySubjectUrl(curSubject.field_subject))</a>
 				            </div>
 				            }
 				          </div>

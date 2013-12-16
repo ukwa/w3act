@@ -1,8 +1,14 @@
 package uk.bl.api;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import play.Logger;
+import uk.bl.Const;
 
 /**
  * Helper class.
@@ -56,5 +62,35 @@ public class Utils {
     	return res;
     }
     	
+    /**
+     * This method creates CSV file for passed data.
+     * @param sFileName
+     */
+//    public static void generateCsvFile(String sFileName, List<List<String>> data)
+    public static void generateCsvFile(String sFileName, String data)
+    {
+	 	try
+	 	{
+	 	    FileWriter writer = new FileWriter(sFileName);
+
+//	 	    Iterator<List<String>> itr = data.iterator();
+//	 		while (itr.hasNext()) {
+//	 			List<String> elements = itr.next();
+//	 			Iterator<String> itrElem = elements.iterator();
+//	 			while (itrElem.hasNext()) {
+//	 				writer.append(itrElem.next());
+//	 			}
+//	 		}
+	  	    String decodedData = URLDecoder.decode(data, Const.STR_FORMAT);
+//	  	    Logger.info("generateCsvFile: " + decodedData);
+	 	    writer.append(decodedData);
+	 	    writer.flush();
+	 	    writer.close();
+	 	}
+	 	catch(IOException e)
+	 	{
+	 	     e.printStackTrace();
+	 	} 
+    }    
 }
 

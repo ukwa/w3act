@@ -43,6 +43,17 @@ public class LookUp extends AbstractController {
     }
 
     /**
+     * Export selected targets to CSV file.
+     */
+//    public static Result export() {
+//    	Logger.info("LookUp.export()");
+////        String export = getFormParam(Const.EXPORT);
+////        if (export != null) {
+//       	return redirect(routes.Targets.index()); 
+////        }
+//    }
+    
+    /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
      * @return
@@ -55,14 +66,6 @@ public class LookUp extends AbstractController {
         String url = getFormParam(Const.URL);
         Logger.info("addentry: " + addentry + ", search: " + search + ", url: " + url);
         if (addentry != null) {
-//	        res = redirect(routes.WebSite.addEntry(url)); 
-//        	Target target = new Target();
-//        	target.title = url;
-//            UUID id = UUID.randomUUID();
-//            Logger.info("id: " + id.toString());
-//            target.nid = id.getMostSignificantBits();
-//            target.url = Const.ACT_URL + target.nid;
-//	        res = redirect(routes.TargetEdit.addEntry(target)); 
         	if (url != null && url.length() > 0) {
         		res = redirect(routes.TargetEdit.addEntry(url));
         	} else {
@@ -83,14 +86,6 @@ public class LookUp extends AbstractController {
         }
         return res;
     }
-	
-//    public static Result addNewTarget() {
-//        return ok(
-//            lookup.render(
-//                    "AddTarget", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll()
-//            )
-//        );
-//    }
 	
 }
 

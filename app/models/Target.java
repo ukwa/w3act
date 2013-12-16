@@ -1,5 +1,6 @@
 package models;
 
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -661,13 +662,32 @@ public class Target extends Model {
     }          
 
     public String toString() {
-        return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
-        ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
-        ", field_description: " + field_description + ", field_uk_postal_address_url: " + field_uk_postal_address_url +
-        ", field_suggested_collections: " + field_suggested_collections + ", field_collections: " + field_collections +
-        ", field_license: " + field_license + ", field_collection_categories: " + field_collection_categories +
-        ", field_notes: " + field_notes + ", field_instances: " + field_instances + 
-        ", field_subject: " + field_subject + ", format: " + format + ", summary: " + summary + ", value: " + value;
+        StringWriter sw = new StringWriter();
+		sw.append(Const.TARGET_DEF);
+		Field[] fields = this.getClass().getFields();
+		for (Field f : fields) {
+			Object value;
+			try {
+				value = f.get(this);
+				String col = value.toString().replace("\n", "");
+	    		sw.append(col);
+		 	    sw.append(Const.CSV_SEPARATOR);
+			} catch (IllegalArgumentException e) {
+				Logger.info("reflection illegal argument. " + e);
+			} catch (IllegalAccessException e) {
+				Logger.info("reflection illegal access. " + e);
+			}
+		}
+ 	    sw.append(Const.CSV_LINE_END);
+ 	    return sw.toString();
+
+//        return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
+//        ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
+//        ", field_description: " + field_description + ", field_uk_postal_address_url: " + field_uk_postal_address_url +
+//        ", field_suggested_collections: " + field_suggested_collections + ", field_collections: " + field_collections +
+//        ", field_license: " + field_license + ", field_collection_categories: " + field_collection_categories +
+//        ", field_notes: " + field_notes + ", field_instances: " + field_instances + 
+//        ", field_subject: " + field_subject + ", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
 }

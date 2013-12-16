@@ -105,7 +105,7 @@ public class Taxonomy extends Model {
 	        } else {
 	        	res = res2;
 	        }
-	        Logger.info("taxonomy name: " + res.name);
+//	        Logger.info("taxonomy name: " + res.name);
         }
 //        return find.where().eq(Const.URL, url).findUnique();
     	return res;

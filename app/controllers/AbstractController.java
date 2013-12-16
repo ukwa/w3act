@@ -49,12 +49,13 @@ public class AbstractController extends Controller {
         }
         
         protected static String getFormParam(String name) {
+//        		Logger.info("getFormParam: " + request().body().asFormUrlEncoded());
                 Map<String, String[]> formParams = request().body().asFormUrlEncoded();
                 if (formParams == null)
                         return null;
 //                Logger.info("form params: " + formParams);
                 String[] values = formParams.get(name);
-//                Logger.info("values: " + values[0]);
+//                Logger.info("values: " + values);
                 if (values == null)
                         return null;
                 

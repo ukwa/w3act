@@ -53,6 +53,9 @@ public final class Const {
 	public static final String WCT_URL            = "wct-";
 	public static final String EDIT_LINK          = "/edit";
 	public static final String INITIAL_REVISION   = "initial revision";
+	public static final String STR_FORMAT         = "UTF-8";
+	public static final String CSV                = "csv";
+	public static final String TARGET_DEF         = "TARGETDEF";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";
@@ -107,6 +110,13 @@ public final class Const {
 	public static final String FIELD_OWNER        = "field_owner";
 	public static final String PARENT             = "parent";
 	public static final String PARENTS_ALL        = "parents_all";
+	
+	// Buttons
+	public static final String CLEAR              = "clear";
+	public static final String EXPORT             = "export";
+	public static final String EXPORT_FILE        = "export.csv";
+	public static final String CSV_SEPARATOR      = ";";
+	public static final String CSV_LINE_END       = "\n";
 	
 	// Types of the JSON nodes
 	public enum NodeType {
