@@ -207,11 +207,11 @@
 				            	</a>
 				            </div>
 							<div id="collapseSubjects" class="panel-collapse collapse">
-				            @for(curSubject <- Targets.getSubjects()) {
+				            @for(curSubject <- Taxonomy.findListByType("subject")) {
 				            <div class="panel-footer">
 				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
-						            	collectionCategoryUrl, curSubject.field_subject, crawlFrequency, depth, scope, offset, limit)">
-						            	@Taxonomy.findByUrl(curSubject.field_subject).name &nbsp; (@Target.getTargetNumberBySubjectUrl(curSubject.field_subject))</a>
+						            	collectionCategoryUrl, curSubject.url, crawlFrequency, depth, scope, offset, limit)">
+						            	@curSubject.name &nbsp; (@Target.getTargetNumberBySubjectUrl(curSubject.url))</a>
 				            </div>
 				            }
 				          </div>

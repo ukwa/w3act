@@ -306,6 +306,10 @@ public class Targets extends AbstractController {
     		exp = exp.eq(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
     		isProcessed = true;
     	} 
+    	if (subjectUrl != null && !subjectUrl.equals(Const.NONE)) {
+    		exp = exp.eq(Const.FIELD_SUBJECT, subjectUrl);
+    		isProcessed = true;
+    	} 
     	if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
     		exp = exp.eq(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
     		isProcessed = true;
