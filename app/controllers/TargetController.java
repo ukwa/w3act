@@ -102,6 +102,10 @@ public class TargetController extends AbstractController {
             		newTarget.field_nominating_organisation = Const.NONE;
             	}
             }
+//    		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);
+            if (getFormParam(Const.AUTHOR) != null) {
+           		newTarget.author = User.findByName(getFormParam(Const.AUTHOR)).url;
+            }
             newTarget.summary = getFormParam(Const.SUMMARY);
             newTarget.revision = getFormParam(Const.REVISION);
             newTarget.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
