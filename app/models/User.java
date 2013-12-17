@@ -92,7 +92,7 @@ public class User extends Model {
      */
     public boolean hasRole(String roleName) {
     	boolean res = false;
-    	Logger.info("hasRole: " + roleName);
+//    	Logger.info("hasRole: " + roleName);
     	if (roleName != null && roleName.length() > 0 
     			&& roles.contains(roleName)) {
     		res = true;

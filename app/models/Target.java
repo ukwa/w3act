@@ -106,6 +106,10 @@ public class Target extends Model {
     public String field_instances; 
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
+    @Column(columnDefinition = "TEXT")
+    public String keywords; 
+    @Column(columnDefinition = "TEXT")
+    public String synonyms; 
     
     @Version
     public Timestamp lastUpdate;

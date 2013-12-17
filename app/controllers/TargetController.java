@@ -128,6 +128,8 @@ public class TargetController extends AbstractController {
             newTarget.field_depth = getFormParam(Const.FIELD_DEPTH);
             newTarget.field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
             newTarget.field_scope = getFormParam(Const.FIELD_SCOPE);
+            newTarget.keywords = getFormParam(Const.KEYWORDS);
+            newTarget.synonyms = getFormParam(Const.SYNONYMS);
             newTarget.active = true;
         	if (!isExisting) {
         		newTarget.url = Const.ACT_URL + newTarget.nid;

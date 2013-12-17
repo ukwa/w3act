@@ -234,7 +234,7 @@ public class Targets extends AbstractController {
     public static Result export() {
 //    	Logger.info("export() before getFormParam. ");
         String exportBtn = getFormParam(Const.EXPORT);
-        Logger.info("export exportBtn: " + exportBtn);
+//        Logger.info("export exportBtn: " + exportBtn);
 
         StringWriter sw = new StringWriter();
 		Field[] fields = Target.class.getFields();
@@ -245,7 +245,7 @@ public class Targets extends AbstractController {
 		}
  	    sw.append(Const.CSV_LINE_END);
 		String csv = getFormParam(Const.CSV);
-        Logger.info("csv: " + csv);
+//        Logger.info("csv: " + csv);
         if (csv != null) {
 	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
 	        sw.append(content);

@@ -99,6 +99,8 @@ public final class Const {
     public static final String FIELD_CRAWL_END_DATE = "field_crawl_end_date";
     public static final String WHITE_LIST = "white_list";
     public static final String BLACK_LIST = "black_list";
+    public static final String KEYWORDS = "keywords";
+    public static final String SYNONYMS = "synonyms";
     
     // Creator
 	public static final String UID                = "uid";
