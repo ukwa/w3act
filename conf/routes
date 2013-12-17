@@ -79,9 +79,10 @@ POST    /targets/filter                     controllers.Targets.filterUrl()
 POST    /lookup/filter-url                  controllers.LookUp.filterUrl()
 POST    /targets/add-new                    controllers.UrlSearch.addNewTarget()
 GET     /website/:url                        controllers.WebSite.addEntry(url)
-#GET     /export/:targets                     controllers.Targets.export(targets)
+#GET     /export/:targets                     controllers.Targets.export(targets)s
 #GET     /export                             controllers.Targets.export()
-POST    /export                             controllers.Targets.export()
+##POST    /export                             controllers.Targets.export()
+POST    /export/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:license/:filterUrl/:offset   controllers.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, license, filterUrl, offset:Int)
 #POST    /export/:targets                    controllers.Targets.export(targets)
 
 # Scope

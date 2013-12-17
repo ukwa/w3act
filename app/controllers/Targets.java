@@ -231,10 +231,16 @@ public class Targets extends AbstractController {
      * @param limit The maximal row count
      * @return
      */
+    public static Result export(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
+    		String subjectUrl, String crawlFrequency, String depth, String scope, String license, String filterUrl, int offset) {
 //    public static Result export(String targetList) {
 //        public static Result export(List<Target> targetList) {
-        public static Result export() {
+///        public static Result export() {
     	Logger.info("export()");
+    	
+    	List<Target> targetList = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
+        		subjectUrl, crawlFrequency, depth, scope, 0, 0, filterUrl, license);
+    	Logger.info("export() targetList size: " + targetList.size());
 //        String exportBtn = getFormParam(Const.EXPORT);
 //        Logger.info("export exportBtn: " + exportBtn);
 
@@ -247,16 +253,16 @@ public class Targets extends AbstractController {
 		}
  	    sw.append(Const.CSV_LINE_END);
  	    
-// 	    String csv = "";
-// 	    if (targetList != null && targetList.size() > 0) {
-// 	    	Iterator<Target> itr = targetList.iterator();
-// 	    	while (itr.hasNext()) {
-// 	    		Target target = itr.next();
-// 	    		csv = csv + ", " + target.toString();
-// 	    	}
-// 	    }
-		String csv = getFormParam(Const.CSV);
-        Logger.info("csv: " + csv);
+ 	    String csv = "";
+ 	    if (targetList != null && targetList.size() > 0) {
+ 	    	Iterator<Target> itr = targetList.iterator();
+ 	    	while (itr.hasNext()) {
+ 	    		Target target = itr.next();
+ 	    		csv = csv + ", " + target.toString();
+ 	    	}
+ 	    }
+///		String csv = getFormParam(Const.CSV);
+//        Logger.info("csv: " + csv);
         if (csv != null) {
 	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
 	        sw.append(content);
@@ -264,7 +270,28 @@ public class Targets extends AbstractController {
         }
 
     	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
-    	return redirect(routes.Targets.index());
+//    	return redirect(routes.Targets.index());
+    	int rowCount = Const.ROWS_PER_PAGE;
+    	List<Target> targetsRes = new ArrayList<Target>();
+    	if (targetList.size() < (offset+1)*Const.ROWS_PER_PAGE
+    			|| targetList.size() < offset*Const.ROWS_PER_PAGE
+    			|| targetList.size() < Const.ROWS_PER_PAGE) {
+    		rowCount = targetList.size();
+    		offset = 0;
+        	targetsRes = targetList.subList(0, rowCount);
+    	} else {
+    		targetsRes = targetList.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
+    	}
+//       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
+//    	Logger.info("target edit targetsRes: " + targetsRes.size());
+        return ok(
+                targets.render(
+   			        "Targets", User.find.byId(request().username()), targetsRes, 
+		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
+			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, 
+			        	crawlFrequency, depth, scope, offset, targetList.size(), filterUrl, license
+                        )
+                );
     }
     
     /**

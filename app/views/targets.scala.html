@@ -114,8 +114,7 @@
 				        <!-- /form -->
 				      </div>
 		          </div>   
-		          }     
-		          <br>		          
+		          }    	          
 		          		         
          		  <div class="container">
 	                  <br><label>Filter by curator</label><br>
@@ -228,7 +227,8 @@
 			</form>	
 				   <div class="export-button" id="export-button">
 				      <div id="exporttargetform">
-				        <form action="@routes.Targets.export()" method="POST">
+				        <form action="@routes.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, 
+            	subjectUrl, crawlFrequency, depth, scope, license, filterUrl, offset)" method="POST">
 				            <fieldset>
 				                <input type="hidden" name="csv" value="@targets">
 				  				<label>&nbsp;&nbsp;&nbsp;Targets count</label>
