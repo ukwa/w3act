@@ -231,9 +231,9 @@
 				        <form action="@routes.Targets.export()" method="POST">
 				            <fieldset>
 				                <input type="hidden" name="csv" value="@targets">
-				            	<button type="export" class="btn btn-success" id="export" name="export" title="Export results of filtered searches and reports to CSV file">Export</button>
-				  				<label>#</label>
+				  				<label>&nbsp;&nbsp;&nbsp;Targets count</label>
 				 				<input type="text" name="count" value="@limit" size="60" maxlength="200" class="form-text" disabled  style="max-width:40%;" title="Number of selected targets"/>
+				            	<button type="export" class="btn btn-success" id="export" name="export" title="Export results of filtered searches and reports to CSV file">Export</button>
 				            </fieldset>
 				        </form>
 				      </div>
