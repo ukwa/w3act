@@ -180,6 +180,16 @@ table#lookuptable.table.table-striped.table-bordered.table-hover.table-condensed
     margin-left: -55px;
 }
 
+table#curatorstable.table.table-striped.table-bordered.table-hover.table-condensed {
+    margin-left: -55px;
+    max-width:800px;
+    width:800px;
+}
+
+div#usersearchpanel.panel.panel-primary {
+    margin-left: -15px;
+}
+
 p.urlsearchp {
     margin-left: 10px;
 }

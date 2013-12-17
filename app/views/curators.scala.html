@@ -1,10 +1,31 @@
-@(title: String, user: User, curators: List[User])
+@(title: String, user: User, curators: List[User], searchstr: String)
 
 @main(title, user){
     
     <h1>Curators</h1>
     
-    <article  class="curators">
+    <article class="curators">
+	        <div class="col-lg-6">	        
+	          <div class="panel panel-primary" id="usersearchpanel">
+	            <div class="panel-heading">Enter name to search for user
+	            </div>
+			    <div class="panel-body">		            
+			      <div id="forms">
+			        <form class="filter-form" action="@routes.UserEdit.filter()" method="POST">
+			            <div class="form-group">
+				            <ul class="nav navbar-nav">
+				              <li><input class="lookup-form-control" id="inputName" name="name" type="text" value="@searchstr"></li>
+				              <li><button type="submit" class="btn btn-success" id="search" name="search" title="Search for user by name">Search</button></li>	
+							  @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+				              <li><button type="addentry" class="btn btn-success" id="addentry" name="addentry" title="Add new user">Add</button></li>
+				              }	
+			                </ul>  			              
+			            </div>
+			        </form>
+			      </div>
+			    </div>
+	        </div>
+    
 		<div class="folder">
 			<ul class="list">
 		            <!-- >script >
@@ -13,12 +34,14 @@
 							});
 					</script>
 					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped"-->
-					<table class="table table-striped table-bordered table-hover table-condensed">
+					<table id="curatorstable" class="table table-striped table-bordered table-hover table-condensed">
 		              <thead>
 		                <tr>
 		                  <th>Name</th>
 		                  <th>E-mail</th>
-		                  <th>Picture</th>
+		                  <th>Roles</th>
+		                  <th>Organisation</th>
+		                  <!-- th>Picture</th-->
 		                </tr>
 		              </thead>
 		              <tbody>
@@ -27,7 +50,17 @@
 			                <tr>		                  
 			                  <td><a href="@routes.UserEdit.view(curator.url)">@curator.name</a></td>
 			                  <td>@curator.email</td>
-			                  <td><p><img src="http://www.webarchive.org.uk/act/sites/192.168.45.11.act/files/styles/thumbnail/public/pictures/picture-61-1360164183.jpg?itok=WJ9z5-oy" alt="Home" /></p></td>
+			                  <td>@curator.roles</td>
+			                  @if(curator.field_affiliation != null 
+			                  	&& Organisation.findByUrl(curator.field_affiliation).url != null
+			                  	&& Organisation.findByUrl(curator.field_affiliation).title != null) {
+			                  	<td><a href="@routes.OrganisationEdit.view(Organisation.findByUrl(curator.field_affiliation).url)">
+			                  		@Organisation.findByUrl(curator.field_affiliation).title</a></td>
+			                  } else {
+			                    <td></td>
+			                  }
+			                  
+			                  <!-- td><p><img src="http://www.webarchive.org.uk/act/sites/192.168.45.11.act/files/styles/thumbnail/public/pictures/picture-61-1360164183.jpg?itok=WJ9z5-oy" alt="Home" /></p></td-->
 			                </tr>
 			                }
 		                }

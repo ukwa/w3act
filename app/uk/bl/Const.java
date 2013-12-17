@@ -121,6 +121,8 @@ public final class Const {
 	public static final String EXPORT_FILE        = "export.csv";
 	public static final String CSV_SEPARATOR      = ";";
 	public static final String CSV_LINE_END       = "\n";
+	public static final String SEARCH             = "search";
+	public static final String ADDENTRY           = "addentry";
 	
 	// Types of the JSON nodes
 	public enum NodeType {

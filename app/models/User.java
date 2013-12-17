@@ -1,5 +1,6 @@
 package models;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -59,8 +61,11 @@ public class User extends Model {
     @Column(columnDefinition = "TEXT")
     public String roles;
     @Column(columnDefinition = "TEXT")
-    public String revision; // revision comment for latest version of the target among targets with the same URL
+    public String revision; // revision comment for latest version of the user among users with the same URL
     
+    @Version
+    public Timestamp lastUpdate;
+
     // -- Queries
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -228,6 +233,18 @@ public class User extends Model {
     	res = Target.getTargetNumberByCuratorUrl(this.url);
     	return res;
     }
+    
+	/**
+	 * This method filters users by name and returns a list of filtered User objects.
+	 * @param name
+	 * @return
+	 */
+	public static List<User> filterByName(String name) {
+		List<User> res = new ArrayList<User>();
+        ExpressionList<User> ll = find.where().contains(Const.EMAIL, name.toLowerCase());
+    	res = ll.findList();
+		return res;
+	}
     
     public String toString() {
         return "User(" + name + ")" + ", url:" + url;

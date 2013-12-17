@@ -27,7 +27,7 @@ public class Curators extends AbstractController {
     public static Result index() {
         return ok(
             curators.render(
-                "Curators", User.find.byId(request().username()), models.User.findAll()
+                "Curators", User.find.byId(request().username()), models.User.findAll(), ""
             )
         );
     }
@@ -49,10 +49,30 @@ public class Curators extends AbstractController {
         			", revision: " + getFormParam(Const.REVISION) + ", email: " + getFormParam(Const.EMAIL) +
         			", organisation: " + getFormParam(Const.ORGANISATION));
         	User user = null;
+            boolean isExisting = true;
             try {
-        	    user = User.findByUrl(getFormParam(Const.URL));
+                try {
+            	    user = User.findByUrl(getFormParam(Const.URL));
+                } catch (Exception e) {
+                	Logger.info("is not existing exception");
+                	isExisting = false;
+                	user = new User();
+            	    user.uid = Long.valueOf(getFormParam(Const.UID));
+            	    user.url = getFormParam(Const.URL);
+                }
+                if (user == null) {
+                	Logger.info("is not existing");
+                	isExisting = false;
+                	user = new User();
+            	    user.uid = Long.valueOf(getFormParam(Const.UID));
+            	    user.url = getFormParam(Const.URL);
+                }
+                
         	    user.name = getFormParam(Const.NAME);
-        	    user.email = getFormParam(Const.EMAIL);
+    	    	user.email = user.name + "@";
+        	    if (getFormParam(Const.EMAIL) != null) {
+        	    	user.email = getFormParam(Const.EMAIL);
+        	    }
         	    if (getFormParam(Const.PASSWORD) != null) {
         	    	user.password = getFormParam(Const.PASSWORD);
         	    }
@@ -93,11 +113,16 @@ public class Curators extends AbstractController {
                 	user.revision = user.revision.concat(", " + getFormParam(Const.REVISION));
                 }
             } catch (Exception e) {
-            	Logger.info("is not existing exception");
+            	Logger.info("User not existing exception");
             }
-       		Logger.info("update user: " + user.uid);
-           	Ebean.update(user);
-	        Logger.info("save user: " + user.toString());
+            
+        	if (!isExisting) {
+               	Ebean.save(user);
+    	        Logger.info("save user: " + user.toString());
+        	} else {
+           		Logger.info("update user: " + user.toString());
+               	Ebean.update(user);
+        	}
 	        res = redirect(routes.UserEdit.view(user.url));
         } 
         if (delete != null) {
