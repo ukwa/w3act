@@ -40,14 +40,14 @@
     <h1>Targets overview</h1>
     
     <article class="targets">
-    	<form class="filter-form" action="@routes.Targets.filterUrl()" method="POST">
-    	<fieldset>
 		<div class="folder">
 			<div class="row">
 		        <div class="col-lg-2">	        
 		          <div class="panel panel-primary filter" id="panels">
 		            <div class="panel-heading">Filter by search term:
 		            </div>
+		    	<form class="filter-form" action="@routes.Targets.filterUrl()" method="POST">
+		    	<fieldset>
 				      <div id="forms">
 				            <div class="form-group">
 				              <input class="form-control" id="inputName" name="filter" type="text" value="@filterUrl">
@@ -108,25 +108,14 @@
 				  @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		          <div class="add-button" id="add-button">
 				      <div id="addtargetform">
-				        <form class="filter-form" action="@routes.LookUp.index()" method="GET">
-				            <button type="submit" class="btn btn-success" title="Look up and add new target">Add new target</button>
-				        </form>
+				        <!--  form class="filter-form" action="@routes.LookUp.index()" method="GET" -->
+				            <!--  button onclick="location.href='@routes.LookUp.index()'" type="submit" class="btn btn-success" title="Look up and add new target">Add new target</button -->
+				            <a href="@routes.LookUp.index()" class="btn btn-success" title="Look up and add new target">Add new target</a>
+				        <!-- /form -->
 				      </div>
 		          </div>   
 		          }     
 		          <br>		          
-		          <div class="export-button" id="export-button">
-				      <div id="exporttargetform">
-				        <form action="@routes.Targets.export()" method="POST">
-				            <fieldset>
-				                <input type="hidden" name="csv" value="@targets">
-				            	<button type="export" class="btn btn-success" id="export" name="export" title="Export results of filtered searches and reports to CSV file">Export</button>
-				  				<label>#</label>
-				 				<input type="text" name="count" value="@limit" size="60" maxlength="200" class="form-text" disabled  style="max-width:40%;" title="Number of selected targets"/>
-				            </fieldset>
-				        </form>
-				      </div>
-		          </div>   
 		          		         
          		  <div class="container">
 	                  <br><label>Filter by curator</label><br>
@@ -235,6 +224,20 @@
 				  <input type="hidden" name="offset" value="@offset">
 				  <input type="hidden" name="limit" value="@limit">				  
 		        </div>
+		        </fieldset>
+			</form>	
+				   <div class="export-button" id="export-button">
+				      <div id="exporttargetform">
+				        <form action="@routes.Targets.export()" method="POST">
+				            <fieldset>
+				                <input type="hidden" name="csv" value="@targets">
+				            	<button type="export" class="btn btn-success" id="export" name="export" title="Export results of filtered searches and reports to CSV file">Export</button>
+				  				<label>#</label>
+				 				<input type="text" name="count" value="@limit" size="60" maxlength="200" class="form-text" disabled  style="max-width:40%;" title="Number of selected targets"/>
+				            </fieldset>
+				        </form>
+				      </div>
+		          </div>   
 		        
 		        <div class="col-lg-6">
 		        	@pagination
@@ -272,8 +275,7 @@
 			     </div>
 	          </div>
 		</div>
-		</fieldset>
-		</form>		
+			
     </article>
     
 }

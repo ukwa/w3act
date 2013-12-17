@@ -231,9 +231,11 @@ public class Targets extends AbstractController {
      * @param limit The maximal row count
      * @return
      */
-    public static Result export() {
-//    	Logger.info("export() before getFormParam. ");
-        String exportBtn = getFormParam(Const.EXPORT);
+//    public static Result export(String targetList) {
+//        public static Result export(List<Target> targetList) {
+        public static Result export() {
+    	Logger.info("export()");
+//        String exportBtn = getFormParam(Const.EXPORT);
 //        Logger.info("export exportBtn: " + exportBtn);
 
         StringWriter sw = new StringWriter();
@@ -244,8 +246,17 @@ public class Targets extends AbstractController {
 	 	    sw.append(Const.CSV_SEPARATOR);
 		}
  	    sw.append(Const.CSV_LINE_END);
+ 	    
+// 	    String csv = "";
+// 	    if (targetList != null && targetList.size() > 0) {
+// 	    	Iterator<Target> itr = targetList.iterator();
+// 	    	while (itr.hasNext()) {
+// 	    		Target target = itr.next();
+// 	    		csv = csv + ", " + target.toString();
+// 	    	}
+// 	    }
 		String csv = getFormParam(Const.CSV);
-//        Logger.info("csv: " + csv);
+        Logger.info("csv: " + csv);
         if (csv != null) {
 	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
 	        sw.append(content);

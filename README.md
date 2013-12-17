@@ -75,6 +75,8 @@ sometimes helps also:
 
 play clean
 
+or simply manually delete all "target" folders in your project
+
 [download-w3act]: https://github.com/ukwa/w3act/archive/master.zip
 [download-play]: http://www.playframework.com/download
 [download-db]: http://www.postgresql.org/download/
