@@ -76,7 +76,6 @@ public class Targets extends AbstractController {
         	filterUrl = "";
         	isClear = true;
         }
-        
 //		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);
         if (!isClear && getFormParam(Const.AUTHOR) != null && !getFormParam(Const.AUTHOR).toLowerCase().contains(Const.NONE)) {
        		author = User.findByName(getFormParam(Const.AUTHOR)).url;
@@ -141,7 +140,8 @@ public class Targets extends AbstractController {
    			        "Targets", User.find.byId(request().username()), targetsRes, 
 		        	User.findFilteredByUrl(author), models.Organisation.findFilteredByUrl(field_nominating_organisation),
 			        	author, field_nominating_organisation, field_collection_categories, field_subject, 
-			        	field_crawl_frequency, field_depth, field_scope, offset, targetsAll.size(), filterUrl, field_license
+			        	field_crawl_frequency, field_depth, field_scope, offset, targetsAll.size(), filterUrl, 
+			        	field_license
                         )
                 );
 
@@ -232,7 +232,7 @@ public class Targets extends AbstractController {
      * @return
      */
     public static Result export() {
-    	Logger.info("export() before getFormParam. ");
+//    	Logger.info("export() before getFormParam. ");
         String exportBtn = getFormParam(Const.EXPORT);
         Logger.info("export exportBtn: " + exportBtn);
 
@@ -245,10 +245,12 @@ public class Targets extends AbstractController {
 		}
  	    sw.append(Const.CSV_LINE_END);
 		String csv = getFormParam(Const.CSV);
-//        Logger.info("csv: " + csv);
-        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
-        sw.append(content);
+        Logger.info("csv: " + csv);
+        if (csv != null) {
+	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
+	        sw.append(content);
 //        Logger.info("content: " + content);
+        }
 
     	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
     	return redirect(routes.Targets.index());

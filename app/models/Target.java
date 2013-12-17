@@ -669,7 +669,10 @@ public class Target extends Model {
 			Object value;
 			try {
 				value = f.get(this);
-				String col = value.toString().replace("\n", "");
+				String col = "";
+				if (value != null && value.toString() != null) {
+					col = value.toString().replace("\n", "");
+				}
 	    		sw.append(col);
 		 	    sw.append(Const.CSV_SEPARATOR);
 			} catch (IllegalArgumentException e) {
