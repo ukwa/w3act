@@ -60,7 +60,7 @@ GET     /target/:target                     controllers.TargetEdit.view(target)
 GET     /targetrevision/:revision           controllers.TargetEdit.viewrevision(revision:Long)
 GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
 GET     /targetaddentry/:target             controllers.TargetEdit.addEntry(target)
-GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit/       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int)
+GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit/:license/       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int, license)
 #GET     /export/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit/       controllers.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int)
 
 # Forms

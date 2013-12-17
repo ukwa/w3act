@@ -39,7 +39,7 @@ public class Targets extends AbstractController {
                     "Targets", User.find.byId(request().username()), targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
                 	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), ""
+                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE
             )
         );
     }
@@ -53,7 +53,7 @@ public class Targets extends AbstractController {
                     "Targets", User.find.byId(request().username()), targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
                 	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, offset, targetsAll.size(), ""
+                	Const.NONE, Const.NONE, offset, targetsAll.size(), "", Const.NONE
             )
         );
     }
@@ -68,26 +68,46 @@ public class Targets extends AbstractController {
         String field_crawl_frequency = Const.NONE;
         String field_depth = Const.NONE;
         String field_scope = Const.NONE;
+        String field_license = Const.NONE;
         int offset = 0;
         int limit = 0;
+        boolean isClear = false;
         if (clear != null) {
         	filterUrl = "";
+        	isClear = true;
         }
         
-        if (getFormParam(Const.FIELD_COLLECTION_CATEGORIES) != null) {
-    		Logger.info("status: " + getFormParam(Const.FIELD_COLLECTION_CATEGORIES) + ".");
-        	if (!getFormParam(Const.FIELD_COLLECTION_CATEGORIES).toLowerCase().contains(Const.NONE)) {
-        		field_collection_categories = DCollection.findByTitle(getFormParam(Const.FIELD_COLLECTION_CATEGORIES)).url;
-        	}
-        }
-        if (getFormParam(Const.FIELD_NOMINATING_ORGANISATION) != null) {
-        	if (!getFormParam(Const.FIELD_NOMINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-        		field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.FIELD_NOMINATING_ORGANISATION)).url;
-        	}
-        }
 //		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);
-        if (getFormParam(Const.AUTHOR) != null) {
+        if (!isClear && getFormParam(Const.AUTHOR) != null && !getFormParam(Const.AUTHOR).toLowerCase().contains(Const.NONE)) {
        		author = User.findByName(getFormParam(Const.AUTHOR)).url;
+        }
+        if (!isClear && getFormParam(Const.FIELD_NOMINATING_ORGANISATION) != null
+        	&& !getFormParam(Const.FIELD_NOMINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
+       		field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.FIELD_NOMINATING_ORGANISATION)).url;
+        }
+        if (!isClear && getFormParam(Const.FIELD_COLLECTION_CATEGORIES) != null
+            	&& !getFormParam(Const.FIELD_COLLECTION_CATEGORIES).toLowerCase().contains(Const.NONE)) {
+       		field_collection_categories = DCollection.findByTitle(getFormParam(Const.FIELD_COLLECTION_CATEGORIES)).url;
+        }
+        if (!isClear && getFormParam(Const.FIELD_SUBJECT) != null
+            	&& !getFormParam(Const.FIELD_SUBJECT).toLowerCase().contains(Const.NONE)) {
+       		field_subject = Taxonomy.findByName(getFormParam(Const.FIELD_SUBJECT)).url;
+        }
+        if (!isClear && getFormParam(Const.FIELD_CRAWL_FREQUENCY) != null
+            	&& !getFormParam(Const.FIELD_CRAWL_FREQUENCY).toLowerCase().contains(Const.NONE)) {
+       		field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
+        }
+        if (!isClear && getFormParam(Const.FIELD_DEPTH) != null
+            	&& !getFormParam(Const.FIELD_DEPTH).toLowerCase().contains(Const.NONE)) {
+       		field_depth = getFormParam(Const.FIELD_DEPTH);
+        }
+        if (!isClear && getFormParam(Const.FIELD_LICENSE) != null
+            	&& !getFormParam(Const.FIELD_LICENSE).toLowerCase().contains(Const.NONE)) {
+       		field_license = getFormParam(Const.FIELD_LICENSE);
+        }
+        if (!isClear && getFormParam(Const.FIELD_SCOPE) != null
+            	&& !getFormParam(Const.FIELD_SCOPE).toLowerCase().contains(Const.NONE)) {
+       		field_scope = getFormParam(Const.FIELD_SCOPE);
         }
         Logger.info("filterUrl offset param: " + getFormParam(Const.OFFSET));
         String offsetStr = getFormParam(Const.OFFSET);
@@ -101,7 +121,7 @@ public class Targets extends AbstractController {
         Logger.info("filterUrl offset: " + offset + ", limit: " + limit);
 
     	List<Target> targetsAll = processTargets(author, field_nominating_organisation, field_collection_categories, 
-        		field_subject, field_crawl_frequency, field_depth, field_scope, offset, limit, filterUrl);
+        		field_subject, field_crawl_frequency, field_depth, field_scope, offset, limit, filterUrl, field_license);
 //    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
     	int rowCount = Const.ROWS_PER_PAGE;
     	List<Target> targetsRes = new ArrayList<Target>();
@@ -121,7 +141,7 @@ public class Targets extends AbstractController {
    			        "Targets", User.find.byId(request().username()), targetsRes, 
 		        	User.findFilteredByUrl(author), models.Organisation.findFilteredByUrl(field_nominating_organisation),
 			        	author, field_nominating_organisation, field_collection_categories, field_subject, 
-			        	field_crawl_frequency, field_depth, field_scope, offset, targetsAll.size(), filterUrl
+			        	field_crawl_frequency, field_depth, field_scope, offset, targetsAll.size(), filterUrl, field_license
                         )
                 );
 
@@ -245,16 +265,17 @@ public class Targets extends AbstractController {
      * @param scope
      * @param offset The current page number
      * @param limit The maximal row count
+     * @param license
      * @return
      */
     public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit) {
+    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, String license) {
     	
         String filterUrl = getFormParam(Const.FILTER);
         Logger.info("Filter: " + filterUrl);
 
     	List<Target> targetsAll = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
-        		subjectUrl, crawlFrequency, depth, scope, offset, limit, filterUrl);
+        		subjectUrl, crawlFrequency, depth, scope, offset, limit, filterUrl, license);
 //    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
     	int rowCount = Const.ROWS_PER_PAGE;
     	List<Target> targetsRes = new ArrayList<Target>();
@@ -274,7 +295,7 @@ public class Targets extends AbstractController {
    			        "Targets", User.find.byId(request().username()), targetsRes, 
 		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
 			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, 
-			        	scope, offset, targetsAll.size(), filterUrl
+			        	scope, offset, targetsAll.size(), filterUrl, license
                         )
                 );
     }
@@ -290,10 +311,12 @@ public class Targets extends AbstractController {
      * @param scope
      * @param offset The current page number
      * @param limit The maximal row count
+     * @param filterUrl
+     * @param license
      * @return
      */
     public static List<Target> processTargets(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, String filterUrl) {
+    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, String filterUrl, String license) {
 //    	Logger.info("target edit curatorUrl: " + curatorUrl + ", organisationUrl: " + organisationUrl);
     	boolean isProcessed = false;
     	ExpressionList<Target> exp = Target.find.where();
@@ -328,6 +351,10 @@ public class Targets extends AbstractController {
     	} 
     	if (collectionCategoryUrl != null && !collectionCategoryUrl.equals(Const.NONE)) {
     		exp = exp.eq(Const.FIELD_COLLECTION_CATEGORIES, collectionCategoryUrl);
+    		isProcessed = true;
+    	} 
+    	if (license != null && !license.equals(Const.NONE)) {
+    		exp = exp.eq(Const.FIELD_LICENSE, scope);
     		isProcessed = true;
     	} 
     	res = exp.query().findList();

@@ -1,4 +1,4 @@
-@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, scope: String, offset: Int, limit: Int, filterUrl: String)
+@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, scope: String, offset: Int, limit: Int, filterUrl: String, license: String)
 
 @pagination = {
   <div class="row">
@@ -7,26 +7,26 @@
           @if(Targets.checkPrev(offset)) {
           <li>
             <a class="page" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
-            	subjectUrl, crawlFrequency, depth, scope, Targets.getPrev(Targets.getStartPage(offset)), limit)">Prev</a>
+            	subjectUrl, crawlFrequency, depth, scope, Targets.getPrev(Targets.getStartPage(offset)), limit, license)">Prev</a>
           </li>
           }
           @for(i <- Targets.getRange(Targets.getStartPage(offset))) {
               @if(Targets.checkNext(i, limit)) {
               <li>
                 <a class="page" @if(offset==i){style="color:red";}" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
-                	subjectUrl, crawlFrequency, depth, scope, i, limit)">@(i+1)</a>
+                	subjectUrl, crawlFrequency, depth, scope, i, limit, license)">@(i+1)</a>
               </li>
               }
           }
           @if(Targets.checkNext(offset+Targets.getPaginationOffset(), limit)) {
           <li>
             <a class="page" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
-            	subjectUrl, crawlFrequency, depth, scope, Targets.getNext(Targets.getStartPage(offset)), limit)">Next</a>
+            	subjectUrl, crawlFrequency, depth, scope, Targets.getNext(Targets.getStartPage(offset)), limit, license)">Next</a>
           </li>
           }
           <li>
             <a class="page" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
-            	subjectUrl, crawlFrequency, depth, scope, Targets.getMaxPageNumber(limit)-1, limit)">
+            	subjectUrl, crawlFrequency, depth, scope, Targets.getMaxPageNumber(limit)-1, limit, license)">
             	@Targets.getMaxPageNumber(limit)</a>
           </li>
 		</ul>
@@ -40,6 +40,8 @@
     <h1>Targets overview</h1>
     
     <article class="targets">
+    	<form class="filter-form" action="@routes.Targets.filterUrl()" method="POST">
+    	<fieldset>
 		<div class="folder">
 			<div class="row">
 		        <div class="col-lg-2">	        
@@ -47,14 +49,12 @@
 		            <div class="panel-heading">Filter by search term:
 		            </div>
 				      <div id="forms">
-				        <form class="filter-form" action="@routes.Targets.filterUrl()" method="POST">
 				            <div class="form-group">
 				              <input class="form-control" id="inputName" name="filter" type="text" value="@filterUrl">
 				            </div>
 					        <button type="submit" class="btn btn-success" id="search" name="search" title="Red color means that URL is not in scope, green color means that URL is in scope">Search</button>	
 					        <button type="clear" class="btn btn-success" id="clear" name="clear" title="Clear up search settings">Clear</button>	
 		                    <!-- label id="isInScope" style="color: green"></label-->
-				        </form>
 				      </div>
 		          </div>
 		          <script>
@@ -114,7 +114,7 @@
 				      </div>
 		          </div>   
 		          }     
-		          		          
+		          <br>		          
 		          <div class="export-button" id="export-button">
 				      <div id="exporttargetform">
 				        <form action="@routes.Targets.export()" method="POST">
@@ -131,7 +131,11 @@
 					  <select name="author">
 			                <option>None</option>
 			                @for(curator <- User.findAll()) {
+                  		  		@if(curatorUrl != null && curatorUrl.equals(curator.url)) {
+		                		<option selected>@curator.name</option>
+		                		} else {
 		                		<option>@curator.name</option>
+		                		}
 			                }
 					  </select>
 				  </div>
@@ -140,7 +144,11 @@
 					  <select name="field_nominating_organisation">
 			                <option>None</option>
 			                @for(organisation <- Organisation.findAll()) {
+                  		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
+		                		<option selected>@organisation.title</option>
+		                		} else {
 		                		<option>@organisation.title</option>
+		                		}
 			                }
 					  </select>
 				  </div>
@@ -149,7 +157,11 @@
 					  <select name="field_collection_categories" style="max-width:90%;">
 			                <option>None</option>
 			                @for(collection <- DCollection.findAll()) {
+                  		  		@if(collectionCategoryUrl != null && collectionCategoryUrl.equals(collection.url)) {
+		                		<option selected>@collection.title</option>
+		                		} else {
 		                		<option>@collection.title</option>
+		                		}
 			                }
 					  </select>
 				  </div>
@@ -158,7 +170,11 @@
 					  <select name="field_subject">
 			                <option>None</option>
 			                @for(subject <- Taxonomy.findListByType("subject")) {
+                  		  		@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
+		                		<option selected>@subject.name</option>
+		                		} else {
 		                		<option>@subject.name</option>
+		                		}
 			                }
 					  </select>
 				  </div>
@@ -167,7 +183,11 @@
 					  <select name="field_crawl_frequency">
 			                <option>None</option>
 			                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
+                  		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
+		                		<option selected>@curCrawlFrequency.field_crawl_frequency</option>
+		                		} else {
 		                		<option>@curCrawlFrequency.field_crawl_frequency</option>
+		                		}
 			                }
 					  </select>
 				  </div>
@@ -176,16 +196,24 @@
 					  <select name="field_depth">
 			                <option>None</option>
 			                @for(curDepth <- Targets.getDepth()) {
+                  		  		@if(depth != null && depth.equals(curDepth.field_depth)) {
+		                		<option selected>@curDepth.field_depth</option>
+		                		} else {
 		                		<option>@curDepth.field_depth</option>
+		                		}
 			                }
 					  </select>
 				  </div>
          		  <div class="container">
 	                  <br><label>Filter by license</label><br>
-					  <select name="license">
+					  <select name="field_license">
 			                <option>None</option>
 			                @for(curLicense <- Targets.getLicense()) {
+                  		  		@if(license != null && license.equals(curLicense.name)) {
+		                		<option selected>@curLicense.name</option>
+		                		} else {
 		                		<option>@curLicense.name</option>
+		                		}
 			                }
 					  </select>
 				  </div>
@@ -194,7 +222,11 @@
 					  <select name="field_scope">
 			                <option>None</option>
 			                @for(curScope <- Targets.getScope()) {
+                  		  		@if(scope != null && scope.equals(curScope.field_scope)) {
+		                		<option selected>@curScope.field_scope</option>
+		                		} else {
 		                		<option>@curScope.field_scope</option>
+		                		}
 			                }
 					  </select>
 				  </div>
@@ -238,6 +270,8 @@
 			     </div>
 	          </div>
 		</div>
+		</fieldset>
+		</form>		
     </article>
     
 }

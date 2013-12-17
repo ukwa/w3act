@@ -103,7 +103,7 @@ public class Organisation extends Model {
     }
 
     /**
-     * Retrieve an organisation name by title.
+     * Retrieve an organisation by title.
      * @param title
      * @return organisation object
      */
