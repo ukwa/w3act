@@ -61,81 +61,142 @@ public class Targets extends AbstractController {
     public static Result filterUrl() {
         String filterUrl = getFormParam(Const.FILTER);
         String clear = getFormParam(Const.CLEAR);
+        String field_collection_categories = Const.NONE;
+        String field_nominating_organisation = Const.NONE;
+        String author = Const.NONE;
+        String field_subject = Const.NONE;
+        String field_crawl_frequency = Const.NONE;
+        String field_depth = Const.NONE;
+        String field_scope = Const.NONE;
+        int offset = 0;
+        int limit = 0;
         if (clear != null) {
         	filterUrl = "";
         }
-    	List<Target> targetsAll = models.Target.filterActiveUrl(filterUrl);
+        
+        if (getFormParam(Const.FIELD_COLLECTION_CATEGORIES) != null) {
+    		Logger.info("status: " + getFormParam(Const.FIELD_COLLECTION_CATEGORIES) + ".");
+        	if (!getFormParam(Const.FIELD_COLLECTION_CATEGORIES).toLowerCase().contains(Const.NONE)) {
+        		field_collection_categories = DCollection.findByTitle(getFormParam(Const.FIELD_COLLECTION_CATEGORIES)).url;
+        	}
+        }
+        if (getFormParam(Const.FIELD_NOMINATING_ORGANISATION) != null) {
+        	if (!getFormParam(Const.FIELD_NOMINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
+        		field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.FIELD_NOMINATING_ORGANISATION)).url;
+        	}
+        }
+//		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);
+        if (getFormParam(Const.AUTHOR) != null) {
+       		author = User.findByName(getFormParam(Const.AUTHOR)).url;
+        }
+        Logger.info("filterUrl offset param: " + getFormParam(Const.OFFSET));
+        String offsetStr = getFormParam(Const.OFFSET);
+        if (offsetStr != null) {
+        	offset = Integer.valueOf(offsetStr);
+        } 
+        String limitStr = getFormParam(Const.LIMIT);
+        if (limitStr != null) {
+        	limit = Integer.valueOf(limitStr);
+        }
+        Logger.info("filterUrl offset: " + offset + ", limit: " + limit);
+
+    	List<Target> targetsAll = processTargets(author, field_nominating_organisation, field_collection_categories, 
+        		field_subject, field_crawl_frequency, field_depth, field_scope, offset, limit, filterUrl);
+//    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
     	int rowCount = Const.ROWS_PER_PAGE;
-    	if (targetsAll.size() < Const.ROWS_PER_PAGE) {
+    	List<Target> targetsRes = new ArrayList<Target>();
+    	if (targetsAll.size() < (offset+1)*Const.ROWS_PER_PAGE
+    			|| targetsAll.size() < offset*Const.ROWS_PER_PAGE
+    			|| targetsAll.size() < Const.ROWS_PER_PAGE) {
     		rowCount = targetsAll.size();
+    		offset = 0;
+        	targetsRes = targetsAll.subList(0, rowCount);
+    	} else {
+    		targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
     	}
-    	List<Target> targetsRes = targetsAll.subList(0, rowCount);
+//       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
+//    	Logger.info("target edit targetsRes: " + targetsRes.size());
         return ok(
                 targets.render(
-                    "Targets", User.find.byId(request().username()), targetsRes, 
-                	User.findAll(), models.Organisation.findInvolving(),
-                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, 0, targetsAll.size(), filterUrl
-                )
-            );
+   			        "Targets", User.find.byId(request().username()), targetsRes, 
+		        	User.findFilteredByUrl(author), models.Organisation.findFilteredByUrl(field_nominating_organisation),
+			        	author, field_nominating_organisation, field_collection_categories, field_subject, 
+			        	field_crawl_frequency, field_depth, field_scope, offset, targetsAll.size(), filterUrl
+                        )
+                );
+
+//    	List<Target> targetsAll = models.Target.filterActiveUrl(filterUrl);
+//    	int rowCount = Const.ROWS_PER_PAGE;
+//    	if (targetsAll.size() < Const.ROWS_PER_PAGE) {
+//    		rowCount = targetsAll.size();
+//    	}
+//    	List<Target> targetsRes = targetsAll.subList(0, rowCount);
+//        return ok(
+//                targets.render(
+//                    "Targets", User.find.byId(request().username()), targetsRes, 
+//                	User.findAll(), models.Organisation.findAll(),
+//                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+//                	Const.NONE, Const.NONE, 0, targetsAll.size(), filterUrl
+//                )
+//            );
     }
     
-    /**
-     * This method converts Target list to string in order to export it in a CSV file.
-     * @param targetsList
-     * @return resulting string
-     */
-    public static String convertTargetListToString(List<Target> targetsList) {
-    	String res = "";
-        Logger.info("convertTargetListToString before getFormParam");
-        String exportBtn = getFormParam(Const.EXPORT);
-        Logger.info("convertTargetListToString exportBtn: " + exportBtn);
-//        if (exportBtn != null) {        
-	        StringWriter sw = new StringWriter();
-	        // header of CSV file
-    		sw.append(Const.NID);
-//    		Logger.info("res1: " + res);
-	 	    sw.append(Const.CSV_SEPARATOR);
-    		sw.append(Const.TITLE);
-	 	    sw.append(Const.CSV_SEPARATOR);
-    		sw.append(Const.URL);
-	 	    sw.append(Const.CSV_SEPARATOR);
-    		sw.append(Const.AUTHOR);
-	 	    sw.append(Const.CSV_SEPARATOR);
-    		sw.append(Const.FIELD_COLLECTION_CATEGORIES);
-	 	    sw.append(Const.CSV_SEPARATOR);
-    		sw.append(Const.FIELD_NOMINATING_ORGANISATION); //TODO url or name?
-	 	    sw.append(Const.CSV_SEPARATOR);
-	 	    sw.append(Const.CSV_LINE_END);
-
-	    	Logger.info("export list size: " + targetsList.size());
-	    	Iterator<Target> itrTargets = targetsList.iterator();
-	    	while (itrTargets.hasNext()) {
-	    		Target target = itrTargets.next();
-	    		sw.append(String.valueOf(target.nid));
-	//    		Logger.info("res1: " + res);
-		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.title);
-		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.url);
-		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.author);
-		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.field_collection_categories);
-		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.field_nominating_organisation);
-		 	    sw.append(Const.CSV_SEPARATOR);
-		 	    sw.append(Const.CSV_LINE_END);
-	    	}
-	    	try {
-				res = URLEncoder.encode(sw.toString(), Const.STR_FORMAT);
-			} catch (UnsupportedEncodingException e) {
-				Logger.info("Encoding error. " + e);
-			}
-//        }
-    	Logger.info("export string: " + res);
-    	return res;
-    }
+//    /**
+//     * This method converts Target list to string in order to export it in a CSV file.
+//     * @param targetsList
+//     * @return resulting string
+//     */
+//    public static String convertTargetListToString(List<Target> targetsList) {
+//    	String res = "";
+//        Logger.info("convertTargetListToString before getFormParam");
+//        String exportBtn = getFormParam(Const.EXPORT);
+//        Logger.info("convertTargetListToString exportBtn: " + exportBtn);
+////        if (exportBtn != null) {        
+//	        StringWriter sw = new StringWriter();
+//	        // header of CSV file
+//    		sw.append(Const.NID);
+////    		Logger.info("res1: " + res);
+//	 	    sw.append(Const.CSV_SEPARATOR);
+//    		sw.append(Const.TITLE);
+//	 	    sw.append(Const.CSV_SEPARATOR);
+//    		sw.append(Const.URL);
+//	 	    sw.append(Const.CSV_SEPARATOR);
+//    		sw.append(Const.AUTHOR);
+//	 	    sw.append(Const.CSV_SEPARATOR);
+//    		sw.append(Const.FIELD_COLLECTION_CATEGORIES);
+//	 	    sw.append(Const.CSV_SEPARATOR);
+//    		sw.append(Const.FIELD_NOMINATING_ORGANISATION); //TODO url or name?
+//	 	    sw.append(Const.CSV_SEPARATOR);
+//	 	    sw.append(Const.CSV_LINE_END);
+//
+//	    	Logger.info("export list size: " + targetsList.size());
+//	    	Iterator<Target> itrTargets = targetsList.iterator();
+//	    	while (itrTargets.hasNext()) {
+//	    		Target target = itrTargets.next();
+//	    		sw.append(String.valueOf(target.nid));
+//	//    		Logger.info("res1: " + res);
+//		 	    sw.append(Const.CSV_SEPARATOR);
+//	    		sw.append(target.title);
+//		 	    sw.append(Const.CSV_SEPARATOR);
+//	    		sw.append(target.url);
+//		 	    sw.append(Const.CSV_SEPARATOR);
+//	    		sw.append(target.author);
+//		 	    sw.append(Const.CSV_SEPARATOR);
+//	    		sw.append(target.field_collection_categories);
+//		 	    sw.append(Const.CSV_SEPARATOR);
+//	    		sw.append(target.field_nominating_organisation);
+//		 	    sw.append(Const.CSV_SEPARATOR);
+//		 	    sw.append(Const.CSV_LINE_END);
+//	    	}
+//	    	try {
+//				res = URLEncoder.encode(sw.toString(), Const.STR_FORMAT);
+//			} catch (UnsupportedEncodingException e) {
+//				Logger.info("Encoding error. " + e);
+//			}
+////        }
+//    	Logger.info("export string: " + res);
+//    	return res;
+//    }
     
     /**
      * This method exports selected targets to CSV file.
@@ -151,13 +212,6 @@ public class Targets extends AbstractController {
      * @return
      */
     public static Result export() {
-//        public static Result export(String data) {
-//        public static Result export(List<Target> targetsList) {
-//        public static Result export(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-//        		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit) {
-    	
-//        String filterUrl = getFormParam(Const.FILTER);
-//      Logger.info("export Filter: " + filterUrl);
     	Logger.info("export() before getFormParam. ");
         String exportBtn = getFormParam(Const.EXPORT);
         Logger.info("export exportBtn: " + exportBtn);
@@ -170,63 +224,13 @@ public class Targets extends AbstractController {
 	 	    sw.append(Const.CSV_SEPARATOR);
 		}
  	    sw.append(Const.CSV_LINE_END);
-//        Logger.info("header: " + sw.toString());
-        
 		String csv = getFormParam(Const.CSV);
 //        Logger.info("csv: " + csv);
         String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
         sw.append(content);
 //        Logger.info("content: " + content);
 
-//    	List<Target> targetsList = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
-//        		subjectUrl, crawlFrequency, depth, scope, offset, limit, filterUrl);
-//    	List<List<String>> data = new ArrayList<List<String>>();
-//    	Iterator<Target> itrTargets = targetsList.iterator();
-//    	while (itrTargets.hasNext()) {
-//        	List<String> targetList = new ArrayList<String>();
-//    		Target target = itrTargets.next();
-//    		targetList.add(String.valueOf(target.nid));
-//	 	    targetList.add(Const.CSV_SEPARATOR);
-//    		targetList.add(target.title);
-//	 	    targetList.add(Const.CSV_SEPARATOR);
-//    		targetList.add(target.url);
-//	 	    targetList.add(Const.CSV_SEPARATOR);
-//    		targetList.add(target.author);
-//	 	    targetList.add(Const.CSV_SEPARATOR);
-//    		targetList.add(target.field_collection_categories);
-//	 	    targetList.add(Const.CSV_SEPARATOR);
-//    		targetList.add(target.field_nominating_organisation);
-//	 	    targetList.add(Const.CSV_SEPARATOR);
-//	 	    targetList.add(Const.CSV_LINE_END);
-//    		data.add(targetList);
-//    	}
-//        if (exportBtn != null) {
-//    	Utils.generateCsvFile(Const.EXPORT_FILE, data);
     	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
-//        }
-//    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
-//    	int rowCount = Const.ROWS_PER_PAGE;
-//    	List<Target> targetsRes = new ArrayList<Target>();
-//    	if (targetsAll.size() < (offset+1)*Const.ROWS_PER_PAGE
-//    			|| targetsAll.size() < offset*Const.ROWS_PER_PAGE
-//    			|| targetsAll.size() < Const.ROWS_PER_PAGE) {
-//    		rowCount = targetsAll.size();
-//    		offset = 0;
-//        	targetsRes = targetsAll.subList(0, rowCount);
-//    	} else {
-//    		targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
-//    	}
-//       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
-//    	Logger.info("target edit targetsRes: " + targetsRes.size());
-//        return ok(
-//                targets.render(
-//   			        "Targets", User.find.byId(request().username()), targetsRes, 
-//		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
-//			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, 
-//			        	scope, offset, targetsAll.size(), filterUrl
-//                        )
-//                );
-//    	return ok();
     	return redirect(routes.Targets.index());
     }
     
@@ -295,7 +299,7 @@ public class Targets extends AbstractController {
     	ExpressionList<Target> exp = Target.find.where();
     	List<Target> res = new ArrayList<Target>();
     	if (filterUrl != null && filterUrl.length() > 0) {
-    		exp = exp.eq(Const.ACTIVE, true).contains(Const.FIELD_URL, filterUrl);
+    		exp = exp.eq(Const.ACTIVE, true).contains(Const.FIELD_URL_NODE, filterUrl);
     		isProcessed = true;
     	}
     	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {

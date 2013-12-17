@@ -56,6 +56,8 @@ public final class Const {
 	public static final String STR_FORMAT         = "UTF-8";
 	public static final String CSV                = "csv";
 	public static final String TARGET_DEF         = "TARGETDEF";
+	public static final String OFFSET             = "offset";
+	public static final String LIMIT              = "limit";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";

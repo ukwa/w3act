@@ -125,174 +125,81 @@
 				        </form>
 				      </div>
 		          </div>   
-		          		           
-		          <div class="panel-group" id="accordion">
-			          <div class="panel panel-primary" id="panels">
-				           <div class="panel-heading">
-				               <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseCurator" style="color:#fff;">
-				                   Filter by curator
-				               </a>
-				           </div>
-				           <div id="collapseCurator" class="panel-collapse collapse">
-				           @curators.map { curator =>	
-				               @if(curatorUrl != null && !curatorUrl.equals("none")) {
-						           <div class="panel-footer"><a class="brand" href="@routes.Targets.edit("none", organisationUrl, 
-						               collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
-						            	   (-) </a> @curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())
-						           </div>
-							   } else {		                
-					               @if(curator.url != null) {       
-							           <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curator.url, organisationUrl, 
-							               collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
-							               @curator.name &nbsp;(@curator.getTargetNumberByCuratorUrl())</a>
-							           </div>
-						           } 
-						       }
-			               }
-		                   </div>
-			          </div>
-		          </div>
-		          
-		          <div class="panel-group" id="accordion">
-			          <div class="panel panel-primary" id="panels">
-			            <div class="panel-heading">
-			                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOrganisation" style="color:#fff;">
-			            		Filter by nominating organisation
-			            	</a>
-			            </div>
-					    <div id="collapseOrganisation" class="panel-collapse collapse">
-			            @organisations.map { organisation =>	
-			                @if(organisationUrl != null && !organisationUrl.equals("none")) {
-					            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curatorUrl, "none", 
-					            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
-					            	(-) </a> @organisation.title &nbsp;(@organisation.getTargetNumberByOrganisationUrl())
-					            </div>
-							} else {		                
-				            	@if(organisation.url != null) { 	              
-						            <div class="panel-footer"><a class="brand" href="@routes.Targets.edit(curatorUrl, organisation.url, 
-						            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
-						            	@organisation.title &nbsp;(@organisation.getTargetNumberByOrganisationUrl())</a>
-						            </div>
-				                }
+		          		         
+         		  <div class="container">
+	                  <br><label>Filter by curator</label><br>
+					  <select name="author">
+			                <option>None</option>
+			                @for(curator <- User.findAll()) {
+		                		<option>@curator.name</option>
 			                }
-			             }
-				          </div>
-			          </div>
-		          </div>
-		          
-		          <div class="panel-group" id="accordion">
-			          <div class="panel panel-primary" id="panels">
-			            <div class="panel-heading">
-			            	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseCollectionCategories" style="color:#fff;">
-			            		Filter by collection categories
-			            	</a>
-			            </div>
-					    <div id="collapseCollectionCategories" class="panel-collapse collapse">
-				            @for(curCollectionCategory <- Taxonomy.findAll()) {
-				            <div class="panel-footer">
-				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
-						            	curCollectionCategory.url, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
-						            	@curCollectionCategory.name &nbsp; (@Target.getTargetNumberByTaxonomyUrl(curCollectionCategory.url))</a>
-				            </div>
-				            }
-				          </div>
-			          </div>
-		          </div>
-
-		          <div class="panel-group" id="accordion">
-			          <div class="panel panel-primary" id="panels">
-				            <div class="panel-heading">
-				            	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseSubjects" style="color:#fff;">
-				            		Filter by subject
-				            	</a>
-				            </div>
-							<div id="collapseSubjects" class="panel-collapse collapse">
-				            @for(curSubject <- Taxonomy.findListByType("subject")) {
-				            <div class="panel-footer">
-				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
-						            	collectionCategoryUrl, curSubject.url, crawlFrequency, depth, scope, offset, limit)">
-						            	@curSubject.name &nbsp; (@Target.getTargetNumberBySubjectUrl(curSubject.url))</a>
-				            </div>
-				            }
-				          </div>
-			          </div>
-		          </div>
-
-		          <div class="panel-group" id="accordion">
-			          <div class="panel panel-primary" id="panels">
-			            <div class="panel-heading">
-			            	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseCrawlFrequency" style="color:#fff;">
-			            		Filter by crawl frequency
-			            	</a>
-			            </div>
-						<div id="collapseCrawlFrequency" class="panel-collapse collapse">
-				            @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
-				            <div class="panel-footer">
-				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
-						            	collectionCategoryUrl, subjectUrl, curCrawlFrequency.field_crawl_frequency, depth, scope, offset, limit)">
-						            	@curCrawlFrequency.field_crawl_frequency &nbsp; (@Target.getTargetNumberByCrawlFrequency(curCrawlFrequency.field_crawl_frequency))</a>
-				            </div>
-				            }
-				          </div>
-			          </div>
-		          </div>
-		          
-		          <div class="panel-group" id="accordion">
-			          <div class="panel panel-primary" id="panels">
-			            <div class="panel-heading">
-			            	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseDepth" style="color:#fff;">
-			            		Filter by depth
-			            	</a>
-			            </div>
-						<div id="collapseDepth" class="panel-collapse collapse">
-				            @for(curDepth <- Targets.getDepth()) {
-				            <div class="panel-footer">
-				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
-						            	collectionCategoryUrl, subjectUrl, crawlFrequency, curDepth.field_depth, scope, offset, limit)">
-						            	@curDepth.field_depth &nbsp; (@Target.getTargetNumberByDepth(curDepth.field_depth))</a>
-				            </div>
-				            }
-				          </div>
-			          </div>
-		          </div>
-		          
-		          <div class="panel-group" id="accordion">
-			          <div class="panel panel-primary" id="panels">
-				            <div class="panel-heading">
-				            	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseLicense" style="color:#fff;">
-				            		Filter by license
-				            	</a>
-				            </div>
-							<div id="collapseLicense" class="panel-collapse collapse">
-				            @for(curLicense <- Targets.getLicense()) {
-				            <div class="panel-footer">
-				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
-						            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset, limit)">
-						            	@curLicense.name &nbsp; (@Target.getTargetNumberByLicense(curLicense.name))</a>
-				            </div>
-				            }
-				          </div>
-			          </div>
-		          </div>
-		          
-		          <div class="panel-group" id="accordion">
-			          <div class="panel panel-primary" id="panels">
-				            <div class="panel-heading">
-				            	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseScope" style="color:#fff;">
-				            		Filter by scope
-				            	</a>
-				            </div>
-							<div id="collapseScope" class="panel-collapse collapse">
-					            @for(curScope <- Targets.getScope()) {
-					            <div class="panel-footer">
-				            	<a class="brand" href="@routes.Targets.edit(curatorUrl, organisationUrl, 
-						            	collectionCategoryUrl, subjectUrl, crawlFrequency, depth, curScope.field_scope, offset, limit)">
-						            	@curScope.field_scope &nbsp; (@Target.getTargetNumberByScope(curScope.field_scope))</a>
-					            </div>
-					            }
-				          </div>
-			          </div>
-		          </div>
+					  </select>
+				  </div>
+         		  <div class="container">
+	                  <br><label>Filter by nominating organisation</label><br>
+					  <select name="field_nominating_organisation">
+			                <option>None</option>
+			                @for(organisation <- Organisation.findAll()) {
+		                		<option>@organisation.title</option>
+			                }
+					  </select>
+				  </div>
+         		  <div class="container">
+	                  <br><label>Filter by collection categories</label><br>
+					  <select name="field_collection_categories" style="max-width:90%;">
+			                <option>None</option>
+			                @for(collection <- DCollection.findAll()) {
+		                		<option>@collection.title</option>
+			                }
+					  </select>
+				  </div>
+         		  <div class="container">
+	                  <br><label>Filter by subject</label><br>
+					  <select name="field_subject">
+			                <option>None</option>
+			                @for(subject <- Taxonomy.findListByType("subject")) {
+		                		<option>@subject.name</option>
+			                }
+					  </select>
+				  </div>
+         		  <div class="container">
+	                  <br><label>Filter by crawl frequency</label><br>
+					  <select name="field_crawl_frequency">
+			                <option>None</option>
+			                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
+		                		<option>@curCrawlFrequency.field_crawl_frequency</option>
+			                }
+					  </select>
+				  </div>
+         		  <div class="container">
+	                  <br><label>Filter by depth</label><br>
+					  <select name="field_depth">
+			                <option>None</option>
+			                @for(curDepth <- Targets.getDepth()) {
+		                		<option>@curDepth.field_depth</option>
+			                }
+					  </select>
+				  </div>
+         		  <div class="container">
+	                  <br><label>Filter by license</label><br>
+					  <select name="license">
+			                <option>None</option>
+			                @for(curLicense <- Targets.getLicense()) {
+		                		<option>@curLicense.name</option>
+			                }
+					  </select>
+				  </div>
+         		  <div class="container">
+	                  <br><label>Filter by scope</label><br>
+					  <select name="field_scope">
+			                <option>None</option>
+			                @for(curScope <- Targets.getScope()) {
+		                		<option>@curScope.field_scope</option>
+			                }
+					  </select>
+				  </div>
+				  <input type="hidden" name="offset" value="@offset">
+				  <input type="hidden" name="limit" value="@limit">				  
 		        </div>
 		        
 		        <div class="col-lg-6">
