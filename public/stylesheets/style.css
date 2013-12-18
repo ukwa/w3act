@@ -186,7 +186,15 @@ table#curatorstable.table.table-striped.table-bordered.table-hover.table-condens
     width:800px;
 }
 
+table#organisationstable.table.table-striped.table-bordered.table-hover.table-condensed {
+    margin-left: -55px;
+}
+
 div#usersearchpanel.panel.panel-primary {
+    margin-left: -15px;
+}
+
+div#organisationsearchpanel.panel.panel-primary {
     margin-left: -15px;
 }
 

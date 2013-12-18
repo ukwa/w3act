@@ -1,15 +1,16 @@
 package models;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import play.db.ebean.Model;
+import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
-
-import play.Logger;
-import play.db.ebean.*;
-import uk.bl.Const;
 
 
 /**
@@ -117,6 +118,19 @@ public class Organisation extends Model {
     	}
     	return res;
     }
+
+	/**
+	 * This method filters organisations by title and returns a list of filtered Organisation objects.
+	 * @param title
+	 * @return
+	 */
+	public static List<Organisation> filterByName(String name) {
+		List<Organisation> res = new ArrayList<Organisation>();
+        ExpressionList<Organisation> ll = find.where().contains(Const.TITLE, name);
+    	res = ll.findList();
+		return res;
+	}
+    
 
     /**
      * This method is used for filtering by URL.

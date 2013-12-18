@@ -56,6 +56,8 @@ GET     /collection/:collection             controllers.CollectionEdit.view(coll
 GET     /collectionedit/:collection         controllers.CollectionEdit.edit(collection)
 GET     /organisation/:organisation         controllers.OrganisationEdit.view(organisation)
 GET     /organisationedit/:organisation     controllers.OrganisationEdit.edit(organisation)
+GET     /organisationadd/:organisation      controllers.OrganisationEdit.addEntry(organisation)
+POST    /organisation/filter/               controllers.OrganisationEdit.filter()
 GET     /taxonomy/:taxonomy                 controllers.TaxonomyEdit.view(taxonomy)
 GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxonomy)
 GET     /target/:target                     controllers.TargetEdit.view(target)

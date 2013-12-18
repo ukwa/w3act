@@ -23,7 +23,7 @@ public class Organisations extends Controller {
     public static Result index() {
         return ok(
             organisations.render(
-                "Organisations", User.find.byId(request().username()), models.Organisation.findInvolving()
+                "Organisations", User.find.byId(request().username()), models.Organisation.findInvolving(), ""
             )
         );
     }
