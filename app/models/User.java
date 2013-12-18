@@ -61,7 +61,7 @@ public class User extends Model {
     @Column(columnDefinition = "TEXT")
     public String roles;
     @Column(columnDefinition = "TEXT")
-    public String revision; // revision comment for latest version of the user among users with the same URL
+    public String revision; 
     
     @Version
     public Timestamp lastUpdate;

@@ -1,11 +1,13 @@
 package models;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -44,9 +46,12 @@ public class Organisation extends Model {
     public Long comment;
     public Long comment_count;
     public Long comment_count_new;
-    // TODO difference between XML and JSON
+    @Column(columnDefinition = "TEXT")
     public String revision;
     public Long feed_nid;
+    
+    @Version
+    public Timestamp lastUpdate;
     
     
     public Organisation(String title) {

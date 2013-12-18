@@ -115,7 +115,12 @@ public final class Const {
 	public static final String PARENT             = "parent";
 	public static final String PARENTS_ALL        = "parents_all";
 	
+	// Organisation
+	public static final String FIELD_ABBREVIATION = "field_abbreviation";
+	
 	// Buttons
+	public static final String SAVE               = "save";
+	public static final String DELETE             = "delete";
 	public static final String CLEAR              = "clear";
 	public static final String EXPORT             = "export";
 	public static final String EXPORT_FILE        = "export.csv";

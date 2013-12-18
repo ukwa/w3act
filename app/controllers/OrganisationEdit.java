@@ -46,6 +46,14 @@ public class OrganisationEdit extends AbstractController {
             );
     }
     
+    public static Result sites(String url) {
+        return ok(
+                organisationsites.render(
+                        Organisation.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
+    
     /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.

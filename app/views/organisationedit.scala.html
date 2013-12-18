@@ -3,11 +3,14 @@
 
 @main("", user){
     
-    <h1>Edit Organisation @organisation.title</h1>
-    <div class="targettabs">   
+    <h1>Edit organisation @organisation.title</h1>
+	<div class="targettabs">    
 		<ul class="nav nav-tabs">
 		   <li><a href="@routes.OrganisationEdit.view(organisation.url)" class="navbar-brand btn btn-success">View</a></li>
-		   <li class="active"><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand btn btn-success">Edit</a></li> 
+		   <li><a href="@routes.OrganisationEdit.sites(organisation.url)" class="navbar-brand btn btn-success">Sites</a></li> 
+		   @if(user.hasRole("sys_admin")) {
+		   <li class="active"><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand btn btn-success">Edit</a></li>
+		   }
 		</ul>
 	</div>
     
@@ -16,32 +19,35 @@
         <div class="panel-heading">
         </div>
         <div class="panel-body">
-	        <form>
+	        <form action="@routes.Organisations.save()" method="POST">
 	          <fieldset>
+          		<input type="hidden" name="url" value="@organisation.url">
+          	    <input type="hidden" name="nid" value="@organisation.nid">
+	          
 	            <div class="form-group">
-	              <label for="inputName">Name <font color="red">*</font></label>
+	              <label for="inputName">Title <font color="red">*</font></label>
 	              <input class="form-control" name="title" id="inputTitle" value="@organisation.title" type="text">
 	            </div>
 	            <div class="form-group">
 	              <label for="inputAbbreviation">Abbreviation <font color="red">*</font></label>
-	              <input class="form-control" id="inputAbbreviation" placeholder="BL" type="text">
-	              <label">An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc.</label>
+	              <input class="form-control" name="field_abbreviation" id="inputAbbreviation" placeholder="BL" type="text" value="@organisation.field_abbreviation">
+	              <label>An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc.</label>
 	            </div>            
 	            <div class="form-group">
 	               <label for="inputDescription">Description</label><br>
-	               <textarea name="description" id="inputDescription" value="@organisation.summary" cols="100" rows="1"></textarea>
+	               <textarea name="summary" id="inputDescription" value="@organisation.summary" cols="100" rows="1">@organisation.summary</textarea>
 	            </div>
 		        <div id="revision" class="revision">
 	  				<div class="form-group">
 	  			       <hr>
 		               <label for="inputBody">Revision log message</label>
-		               <textarea class="text-full form-textarea" name="revision_input" id="inputRevision" cols="100" rows="1"></textarea>
+		               <textarea class="text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1"></textarea>
 	        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
 					</div>
 				</div>
 	            
-	            <button type="save" class="btn btn-primary">Save</button>
-	            <button type="delete" class="btn btn-primary">Delete</button>
+	            <button type="save" class="btn btn-primary" name="save">Save</button>
+	            <button type="delete" class="btn btn-primary" name="delete">Delete</button>
 	          </fieldset>
 	        </form>
 	      </div>

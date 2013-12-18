@@ -3,53 +3,50 @@
 
 @main("", user){
     
-    <h1>@organisation.title</h1>
-    <div class="targettabs">   
+    <h1>Organisation @organisation.title</h1>
+	<div class="targettabs">    
 		<ul class="nav nav-tabs">
 		   <li class="active"><a href="@routes.OrganisationEdit.view(organisation.url)" class="navbar-brand btn btn-success">View</a></li>
-		   <li><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand btn btn-success">Edit</a></li> 
+		   <li><a href="@routes.OrganisationEdit.sites(organisation.url)" class="navbar-brand btn btn-success">Sites</a></li> 
+		   @if(user.hasRole("sys_admin")) {
+		   <li><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand btn btn-success">Edit</a></li>
+		   }
 		</ul>
 	</div>
     
     <article class="organisationdetails">
-		<table class="table table-striped table-bordered table-hover table-condensed">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Categories</th>
-                  <th>Subject</th>
-                  <th>By</th>
-                  <th>Crawled Instances</th>
-                  <th>Crawled URLs</th>
-                </tr>
-              </thead>
-              <tbody>
-              	@Target.findAllforOrganisation(organisation.url).map { target =>		              
-                <tr>
-                  <td><a class="brand" href="@routes.TargetEdit.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
-                  @if(target.field_collection_categories != null && Taxonomy.findListByUrl(target.field_collection_categories) != null) { 
-	                <td>
-	                	@for(taxonomy <- Taxonomy.findListByUrl(target.field_collection_categories)) {
-	                	    @if(taxonomy.url != null) {
-		            		<a href="@routes.TaxonomyEdit.edit(taxonomy.url)">@taxonomy.name</a>,&nbsp;
-		            		}
-			            }
-    	            </td>
-                  } else {
-	                  <td></td>
-                  }	                  
-                  <td>@target.field_subject</td>
-                  @if(target.field_nominating_organisation != null) { 
-    	              <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>
-                  } else {
-	                  <td></td>
-                  }	
-                  <td></td>
-                  <td></td>
-                </tr>
-                }
-              </tbody>
-         </table>
-	</article>    
+      <div class="panel panel-default" id="forms">
+        <div class="panel-heading">
+        </div>
+        <div class="panel-body">
+	        <form>
+	          <fieldset>
+	            <div class="container">
+	            	<div class="row">
+	              		<label>Title: @organisation.title</label>
+					</div>
+	            </div>
+	            <div class="container">
+	            	<div class="row">
+	              		<label>Abbreviation: @organisation.field_abbreviation</label>
+	              		<label>An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc.</label>
+					</div>
+	            </div>
+	            <div class="container">
+	            	<div class="row">
+	              		<label>Description: @organisation.summary</label>
+					</div>
+	            </div>
+	            <div class="container">
+	            	<div class="row">
+	              		<label>Revision log message: @organisation.revision</label>
+	        		    <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+					</div>
+	            </div>
+	          </fieldset>
+	        </form>
+	      </div>
+       </div>
+    </article>
 }
 
