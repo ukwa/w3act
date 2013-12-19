@@ -54,11 +54,13 @@ public class Global extends GlobalSettings {
     	        if (cls == Role.class) {
                 	Role role = (Role) sectionItr.next();
                 	role.id = Utils.createId();
+    	        	role.url= Const.ACT_URL + role.id;
 	                Logger.info("Predefined " + Role.class.getSimpleName() + ": " + role.toString());
     	        }
     	        if (cls == Permission.class) {
     	        	Permission permission = (Permission) sectionItr.next();
     	        	permission.id = Utils.createId();
+    	        	permission.url= Const.ACT_URL + permission.id;
 	                Logger.info("Predefined " + Permission.class.getSimpleName() + ": " + permission.toString());
     	        }
     	        if (cls == Organisation.class) {

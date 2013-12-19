@@ -15,6 +15,7 @@
 */
 package models;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -23,10 +24,12 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
-import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
+
+import com.avaje.ebean.ExpressionList;
 
 @Entity
 public class Role extends Model
@@ -34,11 +37,24 @@ public class Role extends Model
     @Id
     public Long id;
 
+    @Column(columnDefinition = "TEXT")
     public String name;
 
     @Column(columnDefinition = "TEXT")
+    public String url;
+
+    @Column(columnDefinition = "TEXT")
     public String permissions;
+
+    @Column(columnDefinition = "TEXT")
+    public String description;
     
+    @Column(columnDefinition = "TEXT")
+    public String revision; 
+    
+    @Version
+    public Timestamp lastUpdate;
+
     public static final Finder<Long, Role> find = new Finder<Long, Role>(Long.class, Role.class);
 
     public String getName()
@@ -54,6 +70,34 @@ public class Role extends Model
                    .findUnique();
     }
     
+    /**
+     * Retrieve a role by URL.
+     * @param url
+     * @return role name
+     */
+    public static Role findByUrl(String url) {
+//    	Logger.info("role findByUrl: " + url);
+    	Role res = new Role();
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
+    		res = find.where().eq(Const.URL, url).findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+    	return res;
+    }
+
+	/**
+	 * This method filters roles by name and returns a list of filtered Role objects.
+	 * @param name
+	 * @return
+	 */
+	public static List<Role> filterByName(String name) {
+		List<Role> res = new ArrayList<Role>();
+        ExpressionList<Role> ll = find.where().icontains(Const.NAME, name);
+    	res = ll.findList();
+		return res;
+	}
+        
     /**
      * This method checks if this Role has a permission passed as string parameter.
      * @param permissionName

@@ -1,0 +1,44 @@
+@(role: Role, user: User)
+
+
+@main("", user){
+    
+    <h1>Role @role.name</h1>
+	<div class="targettabs">    
+		<ul class="nav nav-tabs">
+		   <li><a href="@routes.RoleEdit.view(role.url)" class="navbar-brand btn btn-success">View</a></li>
+		   @if(user.hasRole("sys_admin")) {
+		   <li><a href="@routes.RoleEdit.edit(role.url)" class="navbar-brand btn btn-success">Edit</a></li>
+		   <li class="active"><a href="@routes.RoleEdit.admin(role.url)" class="navbar-brand btn btn-success">Role administration</a></li>
+		   }
+		</ul>
+	</div>
+    
+    <article class="roledetails">
+      <div class="panel panel-default" id="forms">
+        <div class="panel-heading">
+        </div>
+        <div class="panel-body">
+	        <form action="@routes.RoleEdit.adminrole()" method="POST">
+	          <fieldset>
+          		<input type="hidden" name="url" value="@role.url">
+	            <div class="form-group">
+	                <label style="color:green">EXISTING ROLES</label><br>
+			        @for(user <- Role.findAll()) {
+			            <div>
+		                <input type="checkbox" name="@role.name" value="true" checked/>
+			 			<label class="option">@role.name</label>
+			 			</div>
+		            }
+					<br>The users that are assigned to this role. Deselect user to remove this assignement and push "Save" button.				  
+				</div>
+	            <button type="save" class="btn btn-primary" name="save">Save</button>
+	          </fieldset>
+	        </form>
+	      </div>
+       </div>
+    </article>
+}
+	            
+
+

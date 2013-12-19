@@ -45,6 +45,9 @@
 			  <li><a href="@routes.Targets.index()">Targets</a></li>
 			  <li><a href="@routes.Organisations.index()">Organisations</a></li>
 			  <li><a href="@routes.Curators.index()">Curators</a></li>
+			  @if(user.hasRole("sys_admin")) {
+			  <li><a href="@routes.RoleEdit.index()">Roles</a></li>
+			  }
 			  <li><a href="@routes.Contact.index">Contact</a></li>
             </ul>
             <div class="pull-right" style="color:#fff;">

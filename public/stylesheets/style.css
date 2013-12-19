@@ -190,11 +190,19 @@ table#organisationstable.table.table-striped.table-bordered.table-hover.table-co
     margin-left: -55px;
 }
 
+table#rolestable.table.table-striped.table-bordered.table-hover.table-condensed {
+    margin-left: -55px;
+}
+
 div#usersearchpanel.panel.panel-primary {
     margin-left: -15px;
 }
 
 div#organisationsearchpanel.panel.panel-primary {
+    margin-left: -15px;
+}
+
+div#rolesearchpanel.panel.panel-primary {
     margin-left: -15px;
 }
 
