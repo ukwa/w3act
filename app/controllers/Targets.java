@@ -88,6 +88,7 @@ public class Targets extends AbstractController {
             	&& !getFormParam(Const.FIELD_COLLECTION_CATEGORIES).toLowerCase().contains(Const.NONE)) {
        		field_collection_categories = DCollection.findByTitle(getFormParam(Const.FIELD_COLLECTION_CATEGORIES)).url;
         }
+        Logger.info("field_subject param: " + getFormParam(Const.FIELD_SUBJECT) + ".");
         if (!isClear && getFormParam(Const.FIELD_SUBJECT) != null
             	&& !getFormParam(Const.FIELD_SUBJECT).toLowerCase().contains(Const.NONE)) {
        		field_subject = Taxonomy.findByName(getFormParam(Const.FIELD_SUBJECT)).url;

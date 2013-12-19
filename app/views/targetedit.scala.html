@@ -196,7 +196,7 @@
 								  <select name="subject" value="@target.field_subject">
 						                <option>None</option>
 						                @for(subject <- Taxonomy.findListByType("subject")) {
-						             		@if(subject.name.equals(target.field_subject)) {
+						             		@if(subject.url.equals(target.field_subject)) {
 								                <option selected>@subject.name</option>
 								            } else {						                
 						                		<option>@subject.name</option>

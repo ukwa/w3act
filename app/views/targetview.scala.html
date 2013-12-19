@@ -90,7 +90,7 @@
 					        </div>
 			            	<div class="container">
 			            		<div class="row">					             
-				                  <label>Subject: @target.field_subject</label>
+				                  <label>Subject: @Taxonomy.findByUrl(target.field_subject).name</label>
 				                </div>
 							</div>
 				            <div class="container">

@@ -96,7 +96,7 @@ public class Taxonomy extends Model {
     	Taxonomy res = new Taxonomy();
 //        Logger.info("taxonomy url: " + url);
         
-        if (!url.contains(Const.COMMA)) {
+        if (url != null && url.length() > 0 && !url.contains(Const.COMMA)) {
 	        // in order to replace "taxonomy_term" read from target.collection_categories by "taxonomy/term"
 //	        url = url.replace("_", "/"); 
 	        Taxonomy res2 = find.where().eq(Const.URL, url).findUnique();
@@ -106,6 +106,8 @@ public class Taxonomy extends Model {
 	        	res = res2;
 	        }
 //	        Logger.info("taxonomy name: " + res.name);
+        } else {
+        	res.name = Const.NONE;
         }
 //        return find.where().eq(Const.URL, url).findUnique();
     	return res;
@@ -143,10 +145,15 @@ public class Taxonomy extends Model {
     public static Taxonomy findByName(String name) {
     	Taxonomy res = new Taxonomy();
     	if (name != null && name.length() > 0) {
+//    		Logger.info("p1: " + name);
+    		if (name.contains(Const.COMMA)) {
+    			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+    		}
     		res = find.where().eq(Const.NAME, name).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
+		Logger.info("res: " + res);
     	return res;
     }
     
