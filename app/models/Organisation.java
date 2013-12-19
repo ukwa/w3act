@@ -131,7 +131,7 @@ public class Organisation extends Model {
 	 */
 	public static List<Organisation> filterByName(String name) {
 		List<Organisation> res = new ArrayList<Organisation>();
-        ExpressionList<Organisation> ll = find.where().contains(Const.TITLE, name);
+        ExpressionList<Organisation> ll = find.where().icontains(Const.TITLE, name);
     	res = ll.findList();
 		return res;
 	}

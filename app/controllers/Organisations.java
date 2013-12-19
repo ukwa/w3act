@@ -132,6 +132,89 @@ public class Organisations extends AbstractController {
         return res;
     }
 	
+    /**
+     * This method checks if given user belongs to given organisation. This objects 
+     * are linked by organisation URL.
+     * @param user
+     * @param organisation
+     * @return
+     */
+    private static boolean isOrganisationLink(User user, Organisation organisation) {
+    	boolean res = false;
+		if (user.field_affiliation != null && organisation.url != null 
+				&& user.field_affiliation.equals(organisation.url)) {
+			res = true;
+		} 
+		return res;
+	}
     
+    /**
+     * This method adds link to passed organisation in given User object if 
+     * link does not already exists.
+     * @param user
+     * @param organisation
+     */
+    private static void addLink(User user, Organisation organisation) {
+//		Logger.info("flag true add link: " + user.name);
+    	if (!isOrganisationLink(user, organisation)) {
+    		user.field_affiliation = organisation.url;
+        	Ebean.update(user);
+    	}
+	}
+    
+    /**
+     * This method removes link to passed organisation from given User object if 
+     * link exists.
+     * @param user
+     * @param organisation
+     */
+    private static void removeLink(User user, Organisation organisation) {
+//		Logger.info("flag false remove link: " + user.name);
+    	if (isOrganisationLink(user, organisation)) {
+    		Logger.info("remove link: " + user.name);
+    		user.field_affiliation = "";
+        	Ebean.update(user);
+    	}
+	}
+    
+    /**
+     * This method implements administration for users associated with particular organisation.
+     * @return
+     */
+    public static Result admin() {
+    	Result res = null;
+        String save = getFormParam(Const.SAVE);
+        if (save != null) {
+        	Organisation organisation = null;
+            boolean isExisting = true;
+            try {
+               	organisation = Organisation.findByUrl(getFormParam(Const.URL));
+               	
+		        List<User> userList = User.findAll();
+		        Iterator<User> userItr = userList.iterator();
+		        while (userItr.hasNext()) {
+		        	User user = userItr.next();
+	                if (getFormParam(user.name) != null) {
+//                		Logger.info("getFormParam(user.name): " + getFormParam(user.name) + " " + user.name);
+		                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(user.name));
+		                if (userFlag) {
+		                	addLink(user, organisation); 
+		                } else {
+		                	removeLink(user, organisation); 
+		                }
+	                } else {
+	                	removeLink(user, organisation); 	                	
+	                }
+		        }
+            } catch (Exception e) {
+            	Logger.info("User not existing exception");
+            }
+	        res = redirect(routes.OrganisationEdit.admin(organisation.url));
+        } else {
+        	res = ok();
+        }
+        return res;
+    }
+	    
 }
 

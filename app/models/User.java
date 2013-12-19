@@ -161,6 +161,18 @@ public class User extends Model {
     }
     
     /**
+     * This method returns all users related to given organisation.
+     * @param organisation The organisation URL
+     * @return user list
+     */
+    public static List<User> findByNotEqualOrganisation(String organisation) {
+    	List<User> res = new ArrayList<User>();
+        ExpressionList<User> ll = find.where().ne(Const.FIELD_AFFILIATION, organisation);
+        res = ll.findList();
+        return res;
+    }
+    
+    /**
      * This method is used for filtering by URL.
      * @param url
      * @return

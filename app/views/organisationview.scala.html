@@ -10,6 +10,7 @@
 		   <li><a href="@routes.OrganisationEdit.sites(organisation.url)" class="navbar-brand btn btn-success">Sites</a></li> 
 		   @if(user.hasRole("sys_admin")) {
 		   <li><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand btn btn-success">Edit</a></li>
+		   <li><a href="@routes.OrganisationEdit.admin(organisation.url)" class="navbar-brand btn btn-success">User administration</a></li>
 		   }
 		</ul>
 	</div>
@@ -29,7 +30,7 @@
 	            <div class="container">
 	            	<div class="row">
 	              		<label>Abbreviation: @organisation.field_abbreviation</label>
-	              		<label>An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc.</label>
+	              		<br>An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc.
 					</div>
 	            </div>
 	            <div class="container">
@@ -49,4 +50,7 @@
        </div>
     </article>
 }
+                   
+	            
+
 

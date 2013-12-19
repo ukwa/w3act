@@ -55,6 +55,19 @@ public class OrganisationEdit extends AbstractController {
     }
     
     /**
+     * Administer users
+     * @param url
+     * @return
+     */
+    public static Result admin(String url) {
+        return ok(
+                organisationadmin.render(
+                        Organisation.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
+    
+    /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
      * @return

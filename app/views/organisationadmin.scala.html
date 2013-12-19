@@ -1,0 +1,55 @@
+@(organisation: Organisation, user: User)
+
+
+@main("", user){
+    
+    <h1>Organisation @organisation.title</h1>
+	<div class="targettabs">    
+		<ul class="nav nav-tabs">
+		   <li><a href="@routes.OrganisationEdit.view(organisation.url)" class="navbar-brand btn btn-success">View</a></li>
+		   <li><a href="@routes.OrganisationEdit.sites(organisation.url)" class="navbar-brand btn btn-success">Sites</a></li> 
+		   @if(user.hasRole("sys_admin")) {
+		   <li><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand btn btn-success">Edit</a></li>
+		   <li class="active"><a href="@routes.OrganisationEdit.admin(organisation.url)" class="navbar-brand btn btn-success">User administration</a></li>
+		   }
+		</ul>
+	</div>
+    
+    <article class="organisationdetails">
+      <div class="panel panel-default" id="forms">
+        <div class="panel-heading">
+        </div>
+        <div class="panel-body">
+	        <form action="@routes.Organisations.admin()" method="POST">
+	          <fieldset>
+          		<input type="hidden" name="url" value="@organisation.url">
+	            <div class="form-group">
+	                <label style="color:green">ASSIGNED USERS</label><br>
+			        @for(user <- User.findByOrganisation(organisation.url)) {
+			            <div>
+		                <input type="checkbox" name="@user.name" value="true" checked/>
+			 			<label class="option">@user.name</label>
+			 			</div>
+		            }
+					<br>The users that are assigned to this organisation. Deselect user to remove this assignement and push "Save" button.				  
+				</div>
+	            <div class="form-group">
+	                <label style="color:red">NOT ASSIGNED USERS</label><br>
+			        @for(user <- User.findByNotEqualOrganisation(organisation.url)) {
+			            <div>
+		                <input type="checkbox" name="@user.name" value="true"/>
+			 			<label class="option">@user.name</label>
+			 			</div>
+		            }
+					<br>The users that are not assigned to this organisation. Select user to assign it to organisation and push "Save" button.				  
+				</div>
+	            <button type="save" class="btn btn-primary" name="save">Save</button>
+	          </fieldset>
+	        </form>
+	      </div>
+       </div>
+    </article>
+}
+	            
+
+

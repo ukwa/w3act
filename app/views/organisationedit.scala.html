@@ -10,6 +10,7 @@
 		   <li><a href="@routes.OrganisationEdit.sites(organisation.url)" class="navbar-brand btn btn-success">Sites</a></li> 
 		   @if(user.hasRole("sys_admin")) {
 		   <li class="active"><a href="@routes.OrganisationEdit.edit(organisation.url)" class="navbar-brand btn btn-success">Edit</a></li>
+		   <li><a href="@routes.OrganisationEdit.admin(organisation.url)" class="navbar-brand btn btn-success">User administration</a></li>
 		   }
 		</ul>
 	</div>
