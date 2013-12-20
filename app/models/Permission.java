@@ -1,14 +1,18 @@
 package models;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import play.db.ebean.Model;
+import uk.bl.Const;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
+
+import com.avaje.ebean.ExpressionList;
 
 @Entity
 public class Permission extends Model
@@ -46,6 +50,34 @@ public class Permission extends Model
                    .findUnique();
     }
     
+    /**
+     * Retrieve a permission by URL.
+     * @param url
+     * @return permission name
+     */
+    public static Permission findByUrl(String url) {
+//    	Logger.info("permission findByUrl: " + url);
+    	Permission res = new Permission();
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
+    		res = find.where().eq(Const.URL, url).findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+    	return res;
+    }
+
+	/**
+	 * This method filters permissions by name and returns a list of filtered Permission objects.
+	 * @param name
+	 * @return
+	 */
+	public static List<Permission> filterByName(String name) {
+		List<Permission> res = new ArrayList<Permission>();
+        ExpressionList<Permission> ll = find.where().icontains(Const.NAME, name);
+    	res = ll.findList();
+		return res;
+	}
+        
     /**
      * Retrieve all permissions.
      */

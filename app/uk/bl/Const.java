@@ -118,6 +118,10 @@ public final class Const {
 	// Organisation
 	public static final String FIELD_ABBREVIATION = "field_abbreviation";
 	
+	// Permission
+	public static final String ID                 = "id";
+
+	
 	// Buttons
 	public static final String SAVE               = "save";
 	public static final String DELETE             = "delete";

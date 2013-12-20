@@ -1,40 +1,35 @@
-@(role: Role, user: User)
+@(permission: Permission, user: User)
 
 
 @main("", user){
     
-    <h1>Edit role @role.name</h1>
+    <h1>Edit permission @permission.name</h1>
 	<div class="targettabs">    
 		<ul class="nav nav-tabs">
-		   <li><a href="@routes.RoleEdit.view(role.url)" class="navbar-brand btn btn-success">View</a></li>
+		   <li><a href="@routes.PermissionEdit.view(permission.url)" class="navbar-brand btn btn-success">View</a></li>
 		   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.RoleEdit.edit(role.url)" class="navbar-brand btn btn-success">Edit</a></li>
-		   <li><a href="@routes.RoleEdit.admin(role.url)" class="navbar-brand btn btn-success">Role administration</a></li>
+		   <li class="active"><a href="@routes.PermissionEdit.edit(permission.url)" class="navbar-brand btn btn-success">Edit</a></li>
 		   }
 		</ul>
 	</div>
     
-    <article class="roledetails">
+    <article class="permissiondetails">
       <div class="panel panel-default" id="forms">
         <div class="panel-heading">
         </div>
         <div class="panel-body">
-	        <form action="@routes.RoleEdit.save()" method="POST">
+	        <form action="@routes.PermissionEdit.save()" method="POST">
 	          <fieldset>
-          		<input type="hidden" name="url" value="@role.url">
-          	    <input type="hidden" name="nid" value="@role.id">
+          		<input type="hidden" name="url" value="@permission.url">
+          	    <input type="hidden" name="id" value="@permission.id">
 	          
 	            <div class="form-group">
 	              <label for="inputName">Name <font color="red">*</font></label>
-	              <input class="form-control" name="name" id="inputTitle" value="@role.name" type="text">
+	              <input class="form-control" name="name" id="inputTitle" value="@permission.name" type="text">
 	            </div>
 	            <div class="form-group">
-	              <label>Permissions</label>
-	              <input class="form-control" name="permsissions" type="text" value="@role.permissions">
-	            </div>            
-	            <div class="form-group">
 	               <label for="inputDescription">Description</label><br>
-	               <textarea name="description" id="inputDescription" value="@role.description" cols="100" rows="1">@role.description</textarea>
+	               <textarea name="description" id="inputDescription" value="@permission.description" cols="100" rows="1">@permission.description</textarea>
 	            </div>
 		        <div id="revision" class="revision">
 	  				<div class="form-group">

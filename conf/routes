@@ -24,6 +24,7 @@ GET     /targets/:offset                    controllers.Targets.offset(offset:In
 GET     /organisations                      controllers.Organisations.index()
 GET     /curators                           controllers.Curators.index()
 GET     /roles                              controllers.RoleEdit.index()
+GET     /permissions                        controllers.PermissionEdit.index()
 GET     /contact                            controllers.Contact.index()
 
 # Navigation
@@ -74,6 +75,10 @@ GET     /roleedit/:role                     controllers.RoleEdit.edit(role)
 GET     /roleadd/:role                      controllers.RoleEdit.addEntry(role)
 GET     /roleadmin/:role                    controllers.RoleEdit.admin(role)
 POST    /role/filter/                       controllers.RoleEdit.filter()
+GET     /permission/:permission             controllers.PermissionEdit.view(permission)
+GET     /permissionedit/:permission         controllers.PermissionEdit.edit(permission)
+GET     /permissionadd/:permission          controllers.PermissionEdit.addEntry(permission)
+POST    /permission/filter/                 controllers.PermissionEdit.filter()
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()
@@ -81,6 +86,7 @@ POST    /target/save-target                 controllers.TargetController.saveTar
 POST    /user/save-user                     controllers.Curators.saveUser()
 POST    /organisation/save                  controllers.Organisations.save()
 POST    /role/save                          controllers.RoleEdit.save()
+POST    /permission/save                    controllers.PermissionEdit.save()
 POST    /organisationadminuser/             controllers.Organisations.admin()
 POST    /roleadmin/                         controllers.RoleEdit.adminrole()
 POST    /alphabeticalindex/filter-url       controllers.AlphabeticalIndex.filterUrl()

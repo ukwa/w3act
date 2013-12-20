@@ -19,7 +19,7 @@ import uk.bl.api.Utils;
 import views.html.*;
 
 /**
- * Manage targets.
+ * Manage roles.
  */
 @Security.Authenticated(Secured.class)
 public class RoleEdit extends AbstractController {
@@ -122,8 +122,8 @@ public class RoleEdit extends AbstractController {
     }
       
     /**
-     * This method saves new object or changes on given Organisation in the same object
-     * completed by revision comment. The "version" field in the Organisation object
+     * This method saves new object or changes on given Role in the same object
+     * completed by revision comment. The "version" field in the Role object
      * contains the timestamp of the change. 
      * @return
      */
@@ -133,9 +133,8 @@ public class RoleEdit extends AbstractController {
         String delete = getFormParam(Const.DELETE);
 //        Logger.info("save: " + save);
         if (save != null) {
-        	Logger.info("save organisation nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
-        			", title: " + getFormParam(Const.TITLE) + ", revision: " + getFormParam(Const.REVISION) + 
-        			", abbreviation: " + getFormParam(Const.FIELD_ABBREVIATION));
+        	Logger.info("save role nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
         	Role role = null;
             boolean isExisting = true;
             try {
