@@ -313,6 +313,9 @@ public class Targets extends AbstractController {
     		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, String license) {
     	
         String filterUrl = getFormParam(Const.FILTER);
+        if (filterUrl == null) {
+        	filterUrl = "";
+        }
         Logger.info("Filter: " + filterUrl);
 
     	List<Target> targetsAll = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
@@ -331,6 +334,8 @@ public class Targets extends AbstractController {
     	}
 //       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
 //    	Logger.info("target edit targetsRes: " + targetsRes.size());
+//    	Logger.info("target render targetsAll.size(): " + targetsAll.size() +
+//    			", filterUrl: " + filterUrl);
         return ok(
                 targets.render(
    			        "Targets", User.find.byId(request().username()), targetsRes, 

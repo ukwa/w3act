@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -144,6 +145,7 @@ public class Organisation extends Model {
      */
     public static List<Organisation> findFilteredByUrl(String url) {
     	List<Organisation> ll = new ArrayList<Organisation>();
+//    	Logger.info("organisation findFilteredByUrl(): " + url);
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) { 
             Organisation organisation = find.where().eq(Const.URL, url).findUnique();
             ll.add(organisation);            

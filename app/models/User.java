@@ -179,6 +179,7 @@ public class User extends Model {
      */
     public static List<User> findFilteredByUrl(String url) {
     	List<User> ll = new ArrayList<User>();
+//    	Logger.info("user findFilteredByUrl(): " + url);
     	if (url != null && url.length() > 0  && !url.equals(Const.NONE)) { 
             User user = find.where().eq(Const.URL, url).findUnique();
             ll.add(user);            
