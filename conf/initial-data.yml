@@ -44,33 +44,108 @@ roles:
 
     - !!models.Role
         name:              sys_admin
-        permissions:       edit, view
+        permissions:       create_roles_and_organisations, create_user, administer_user, modify_metadata, administer_collections, administer_subjects, administer_target, edit_foreign_target, check_duplicate_targets, edit_collections, administer_flags, assign_flags_to_targets, exercise_proffesional_judgement, edit_template_email, queue_permissions_emails, send_permissions_email, send_follow_up_email, request_permissions, populate_crawl_permissions_field, set_crawl_schedules, all_qa_actions, search_existing_targets, obtain_reports_on_summary_schedules, obtain_reports_on_numbers_targets, obtain_user_report_own_activity, obtain_reports_on_flagged_targets, filter_searches_by_qa_status
     
     - !!models.Role
         name:              archivist
-        permissions:       edit, view
+        permissions:       create_user, administer_user, administer_collections, administer_target, edit_foreign_target, check_duplicate_targets, edit_collections, assign_flags_to_targets, exercise_proffesional_judgement, queue_permissions_emails, send_permissions_email, send_follow_up_email, request_permissions, populate_crawl_permissions_field, set_crawl_schedules, all_qa_actions, search_existing_targets, obtain_reports_on_summary_schedules, obtain_reports_on_numbers_targets, obtain_user_report_own_activity, obtain_reports_on_flagged_targets, filter_searches_by_qa_status
     
     - !!models.Role
         name:              expert_user
-        permissions:       edit, view
+        permissions:       administer_target, edit_foreign_target, check_duplicate_targets, edit_collections, assign_flags_to_targets, exercise_proffesional_judgement, request_permissions, search_existing_targets, obtain_user_report_own_activity, filter_searches_by_qa_status
     
     - !!models.Role
         name:              user
-        permissions:       view
+        permissions:       administer_target, check_duplicate_targets, assign_flags_to_targets, request_permissions, search_existing_targets, obtain_user_report_own_activity
     
     - !!models.Role
         name:              viewer
-        permissions:       view
+        permissions:       search_existing_targets
     
 # Permissions
 
 permissions:
 
     - !!models.Permission
-        name:       edit
+        name:       create_roles_and_organisations
     
     - !!models.Permission
-        name:       view
+        name:       create_user
+    
+    - !!models.Permission
+        name:       administer_user
+    
+    - !!models.Permission
+        name:       modify_metadata
+    
+    - !!models.Permission
+        name:       administer_collections
+    
+    - !!models.Permission
+        name:       administer_subjects
+    
+    - !!models.Permission
+        name:       administer_target
+    
+    - !!models.Permission
+        name:       edit_foreign_target
+    
+    - !!models.Permission
+        name:       check_duplicate_targets
+    
+    - !!models.Permission
+        name:       edit_collections
+    
+    - !!models.Permission
+        name:       administer_flags
+    
+    - !!models.Permission
+        name:       assign_flags_to_targets
+    
+    - !!models.Permission
+        name:       exercise_proffesional_judgement
+    
+    - !!models.Permission
+        name:       edit_template_email
+    
+    - !!models.Permission
+        name:       queue_permissions_emails
+    
+    - !!models.Permission
+        name:       send_permissions_email
+    
+    - !!models.Permission
+        name:       send_follow_up_email
+    
+    - !!models.Permission
+        name:       request_permissions
+    
+    - !!models.Permission
+        name:       populate_crawl_permissions_field
+    
+    - !!models.Permission
+        name:       set_crawl_schedules
+    
+    - !!models.Permission
+        name:       all_qa_actions
+    
+    - !!models.Permission
+        name:       search_existing_targets
+    
+    - !!models.Permission
+        name:       obtain_reports_on_summary_schedules
+    
+    - !!models.Permission
+        name:       obtain_reports_on_numbers_targets
+    
+    - !!models.Permission
+        name:       obtain_user_report_own_activity
+    
+    - !!models.Permission
+        name:       obtain_reports_on_flagged_targets
+    
+    - !!models.Permission
+        name:       filter_searches_by_qa_status
     
 # Organisations
 

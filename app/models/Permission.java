@@ -1,6 +1,7 @@
 package models;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import play.db.ebean.Model;
 
@@ -43,6 +44,13 @@ public class Permission extends Model
                    .eq("name",
                        name)
                    .findUnique();
+    }
+    
+    /**
+     * Retrieve all permissions.
+     */
+    public static List<Permission> findAll() {
+        return find.all();
     }
     
     public String toString() {

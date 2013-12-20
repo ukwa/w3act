@@ -46,6 +46,8 @@ play test
 
 Description of the domain object model and user flows can be find in [wiki]
 
+Initial permissions and roles definition according to the requirements document is in initial-data.yml
+
 ### Develop
 
 Build status is supported by Travis [build-status]

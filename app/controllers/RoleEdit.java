@@ -6,6 +6,7 @@ import java.util.List;
 import com.avaje.ebean.Ebean;
 
 import models.Organisation;
+import models.Permission;
 import models.Role;
 import models.Target;
 import models.User;
@@ -201,23 +202,26 @@ public class RoleEdit extends AbstractController {
             boolean isExisting = true;
             try {
                	role = Role.findByUrl(getFormParam(Const.URL));
-               	
-//		        List<User> userList = User.findAll();
-//		        Iterator<User> userItr = userList.iterator();
-//		        while (userItr.hasNext()) {
-//		        	User user = userItr.next();
-//	                if (getFormParam(user.name) != null) {
-////                		Logger.info("getFormParam(user.name): " + getFormParam(user.name) + " " + user.name);
-//		                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(user.name));
-//		                if (userFlag) {
-//		                	addLink(user, role); 
-//		                } else {
-//		                	removeLink(user, organisation); 
-//		                }
-//	                } else {
-//	                	removeLink(user, organisation); 	                	
-//	                }
-//		        }
+               	String assignedPermissions = "";
+		        List<Permission> permissionList = Permission.findAll();
+		        Iterator<Permission> permissionItr = permissionList.iterator();
+		        while (permissionItr.hasNext()) {
+		        	Permission permission = permissionItr.next();
+	                if (getFormParam(permission.name) != null) {
+                		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+		                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+		                if (userFlag) {
+		                	if (assignedPermissions.length() == 0) {
+		                		assignedPermissions = permission.name;
+		                	} else {
+		                		assignedPermissions = assignedPermissions + Const.COMMA + " " + permission.name;
+		                	}
+		                }
+	                }
+		        }
+        		Logger.info("assignedPermissions: " + assignedPermissions);
+		        role.permissions = assignedPermissions;
+               	Ebean.update(role);
             } catch (Exception e) {
             	Logger.info("User not existing exception");
             }

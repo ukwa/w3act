@@ -23,16 +23,27 @@
 	          <fieldset>
           		<input type="hidden" name="url" value="@role.url">
 	            <div class="form-group">
-	                <label style="color:green">EXISTING ROLES</label><br>
-			        @for(user <- Role.findAll()) {
+	                <label style="color:green">ASSIGNED PERMISSIONS</label><br>
+			        @for(permission <- role.getPermissions()) {
 			            <div>
-		                <input type="checkbox" name="@role.name" value="true" checked/>
-			 			<label class="option">@role.name</label>
+		                <input type="checkbox" name="@permission.name" value="true" checked/>
+			 			<label class="option">@permission.name</label>
 			 			</div>
 		            }
-					<br>The users that are assigned to this role. Deselect user to remove this assignement and push "Save" button.				  
+					<br>The permissions that are assigned to this role. Deselect permission to remove this assignement and push "Save" button.				  
+				</div>
+	            <div class="form-group">
+	                <label style="color:red">NOT ASSIGNED USERS</label><br>
+			        @for(notpermission <- Role.getNotAssignedPermissions(role.permissions)) {
+			            <div>
+		                <input type="checkbox" name="@notpermission.name" value="true"/>
+			 			<label class="option">@notpermission.name</label>
+			 			</div>
+			 		}
+					<br>The permissions that are not assigned to this role. Select permission to assign it to role and push "Save" button.				  
 				</div>
 	            <button type="save" class="btn btn-primary" name="save">Save</button>
+	            
 	          </fieldset>
 	        </form>
 	      </div>

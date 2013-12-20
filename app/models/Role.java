@@ -26,6 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -112,14 +113,45 @@ public class Role extends Model
     	return res;
     }
     
-    public List<? extends Permission> getPermissions()
+    /**
+     * This method returns permissions assigned to this role.
+     * @return list of Permission objects
+     */
+    public List<Permission> getPermissions()
     {
     	List<Permission> res = new ArrayList<Permission>();
-		List<String> resList = Arrays.asList(permissions.split(Const.COMMA));
-		Iterator<String> itr = resList.iterator();
-		while (itr.hasNext()) {
-			res.add(Permission.findByName(itr.next()));
-		}
+    	if (permissions != null && permissions.length() > 0) {
+			List<String> resList = Arrays.asList(permissions.split(Const.COMMA + " "));
+			Iterator<String> itr = resList.iterator();
+			while (itr.hasNext()) {
+				res.add(Permission.findByName(itr.next()));
+			}
+    	}
+        return res;
+    }
+    
+    /**
+     * This method returns permissions that are not assigned to this role.
+     * @return list of Permission objects
+     */
+    public static List<Permission> getNotAssignedPermissions(String permissionsStr)
+    {
+    	List<Permission> allPermissionList = Permission.findAll();
+//    	Logger.info("Permissions count: " + allPermissionList.size());
+        List<Permission> res = new ArrayList<Permission>();
+    	if (permissionsStr != null && permissionsStr.length() > 0) {
+			List<String> assignedList = Arrays.asList(permissionsStr.split(Const.COMMA + " "));
+//			Logger.info("original permissions: " + permissionsStr);
+//			Logger.info("assignedList: " + assignedList);
+			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
+			while (itrAllPermissions.hasNext()) {
+				Permission curPermission = itrAllPermissions.next();
+//		    	Logger.info("curPermission: " + curPermission.name);
+				if (!assignedList.contains(curPermission.name)) {
+					res.add(curPermission);
+				}
+			}
+    	}
         return res;
     }
     
