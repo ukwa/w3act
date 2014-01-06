@@ -2,13 +2,6 @@
 # Users
 
 users:
-
-    - !!models.User
-        email:             ross.king@ait.ac.at
-        name:              Ross King
-        password:          secret
-        field_affiliation: AIT
-        roles:             sys_admin, archivist
         
     - !!models.User
         email:             andrew.jackson@bl.uk
@@ -18,10 +11,24 @@ users:
         roles:             sys_admin, archivist
     
     - !!models.User
-        email:             coram.roger@bl.uk
-        name:              Coram Roger
+        email:             roger.coram@bl.uk
+        name:              Roger Coram
         password:          secret
         field_affiliation: BL
+        roles:             sys_admin, archivist
+    
+    - !!models.User
+        email:             gil.hoggarth@bl.uk
+        name:              Gil Hoggarth
+        password:          secret
+        field_affiliation: BL
+        roles:             sys_admin, archivist
+
+    - !!models.User
+        email:             ross.king@ait.ac.at
+        name:              Ross King
+        password:          secret
+        field_affiliation: AIT
         roles:             sys_admin, archivist
     
     - !!models.User
