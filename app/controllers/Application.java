@@ -17,8 +17,12 @@ public class Application extends Controller {
         public String email;
         public String password;
         
+        /**
+         * We only store lowercase emails and transform user input to lowercase for this field.
+         * @return null if authentication ok.
+         */
         public String validate() {
-            if(User.authenticate(email, password) == null) {
+            if(User.authenticate(email.toLowerCase(), password) == null) {
                 return "Invalid user or password";
             }
             return null;
@@ -37,13 +41,14 @@ public class Application extends Controller {
     
     /**
      * Handle login form submission.
+     * We only store lowercase emails and transform user input to lowercase for this field.
      */
     public static Result authenticate() {
         Form<Login> loginForm = form(Login.class).bindFromRequest();
         if(loginForm.hasErrors()) {
             return badRequest(login.render(loginForm));
         } else {
-            session("email", loginForm.get().email);
+            session("email", loginForm.get().email.toLowerCase());
             return redirect(
                 routes.About.index()
             );

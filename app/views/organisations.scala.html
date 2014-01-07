@@ -1,58 +1,59 @@
 @(title: String, user: User, organisations: List[Organisation], searchstr: String)
 
 @main(title, user){
-    
-    <h1>Organisations</h1>
-
-    <article class="organisations">
-	        <div class="col-lg-6">	        
-	          <div class="panel panel-primary" id="organisationsearchpanel">
-	            <div class="panel-heading">Enter name to search for organisation
-	            </div>
-			    <div class="panel-body">		            
-			      <div id="forms">
-			        <form class="filter-form" action="@routes.OrganisationEdit.filter()" method="POST">
-			            <div class="form-group">
-				            <ul class="nav navbar-nav">
-				              <li><input class="lookup-form-control" id="inputName" name="name" type="text" value="@searchstr"></li>
-				              <li><button type="submit" class="btn btn-success" id="search" name="search" title="Search for organisation by name">Search</button></li>	
-							  @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-				              <li><button type="addentry" class="btn btn-success" id="addentry" name="addentry" title="Add new organisation">Add</button></li>
-				              }	
-			                </ul>  			              
-			            </div>
-			        </form>
-			      </div>
-			    </div>
-	        </div>
-    
-		<div class="folder">
-			<ul class="list">
-		            <!-- script >
-							$(function() {
-							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
-							});
-					</script>
-					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped"-->
-					<table id="organisationstable" class="table table-striped table-bordered table-hover table-condensed">
-		              <thead>
-		                <tr>
-		                  <th>Title</th>
-		                </tr>
-		              </thead>
-		              <tbody>
-		              	@organisations.map { organisation =>		              
-		                <tr>
-		                  <td><a href="@routes.OrganisationEdit.view(organisation.url)">@organisation.title</a></td>
-		                </tr>
-		                }
-		              </tbody>
-		            </table>
-		          </div>
-			</ul>
-		</div>
-    </article>
-    
+    <div id="content">
+	    
+	    <h1>Organisations</h1>
+	
+	    <article class="organisations">
+		        <div class="col-lg-6">	        
+		          <div class="panel panel-primary" id="organisationsearchpanel">
+		            <div class="panel-heading">Enter name to search for organisation
+		            </div>
+				    <div class="panel-body">		            
+				      <div id="forms">
+				        <form class="filter-form" action="@routes.OrganisationEdit.filter()" method="POST">
+				            <div class="form-group">
+					            <ul class="nav navbar-nav">
+					              <li><input class="lookup-form-control" id="inputName" name="name" type="text" value="@searchstr"></li>
+					              <li><button type="submit" class="btn btn-success" id="search" name="search" title="Search for organisation by name">Search</button></li>	
+								  @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+					              <li><button type="addentry" class="btn btn-success" id="addentry" name="addentry" title="Add new organisation">Add</button></li>
+					              }	
+				                </ul>  			              
+				            </div>
+				        </form>
+				      </div>
+				    </div>
+		        </div>
+	    
+			<div class="folder">
+				<ul class="list">
+			            <!-- script >
+								$(function() {
+								$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+								});
+						</script>
+						<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped"-->
+						<table id="organisationstable" class="table table-striped table-bordered table-hover table-condensed">
+			              <thead>
+			                <tr>
+			                  <th>Title</th>
+			                </tr>
+			              </thead>
+			              <tbody>
+			              	@organisations.map { organisation =>		              
+			                <tr>
+			                  <td><a href="@routes.OrganisationEdit.view(organisation.url)">@organisation.title</a></td>
+			                </tr>
+			                }
+			              </tbody>
+			            </table>
+			          </div>
+				</ul>
+			</div>
+	    </article>
+	</div>    
     
 }
 

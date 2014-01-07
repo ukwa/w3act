@@ -21,64 +21,67 @@
         
     </head>
     <body>
-      <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
-        <div class="container">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">W3ACT</a>
-           </div>
-        </div><!-- /.container -->
-      </div><!-- /.navbar -->
-      
-      <div class="container content-container">
-        <div class="sidebar-offcanvas pull-left" id="sidebar" role="navigation">
-          <div class="well sidebar-nav" style="max-width:280px; margin-right:10px;">
-        
-	        @helper.form(routes.Application.authenticate) {
-	            
-	            <h1>Sign in</h1>
-	            
-	            @if(form.hasGlobalErrors) { 
-	                <p class="error">
-	                    @form.globalError.message
-	                </p>
-	            }
-	            
-	            @if(flash.contains("success")) {
-	                <p class="success">
-	                    @flash.get("success")
-	                </p>
-	            }
-	            
-	            <p>
-	                <input type="email" name="email" placeholder="Email" value="@form("email").value">
-	            </p>
-	            <p>
-	                <input type="password" name="password" placeholder="Password">
-	            </p>
-	            <p>
-	                <button class="btn btn-success navbar-btn loginbtn" type="submit" name="submit" id="submit">Login</button>
-	            </p>
-	            
-	        }
+      <div id="outer">
+        <div id="main">
+	      <div class="navbanner navbar navbar-fixed-top navbar-inverse" role="navigation">
+	        <div class="container">
+	          <div class="navbar-header">
+	            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	              <span class="icon-bar"></span>
+	              <span class="icon-bar"></span>
+	              <span class="icon-bar"></span>
+	            </button>
+	            <a class="navbar-brand" href="#">W3ACT</a>
+	           </div>
+	        </div><!-- /.container -->
+	      </div><!-- /.navbar -->
+	      
+	      <div class="container content-container">
+	        <div class="sidebar-offcanvas pull-left" id="sidebar" role="navigation">
+	          <div class="well sidebar-nav" style="max-width:280px; margin-right:10px;">
 	        
-	        <p class="note">
-	            Please use your e-mail as a user name e.g. <em>sample@@sample.com</em> with your w3act password.
-	        </p>
-          
-          </div><!--/.well -->
-        </div><!--/span-->
+		        @helper.form(routes.Application.authenticate) {
+		            
+		            <h1>Sign in</h1>
+		            
+		            @if(form.hasGlobalErrors) { 
+		                <p class="error">
+		                    @form.globalError.message
+		                </p>
+		            }
+		            
+		            @if(flash.contains("success")) {
+		                <p class="success">
+		                    @flash.get("success")
+		                </p>
+		            }
+		            
+		            <p>
+		                <input type="email" name="email" placeholder="Email" value="@form("email").value">
+		            </p>
+		            <p>
+		                <input type="password" name="password" placeholder="Password">
+		            </p>
+		            <p>
+		                <button class="btn btn-success navbar-btn loginbtn" type="submit" name="submit" id="submit">Login</button>
+		            </p>
+		            
+		        }
+		        
+		        <p class="note">
+		            Please use your e-mail as a user name e.g. <em>sample@@sample.com</em> with your w3act password.
+		        </p>
+	          
+	          </div><!--/.well -->
+	        </div><!--/span-->
       
-        <div class="row row-offcanvas row-offcanvas-right">
-          <div class="col-xs-12 col-sm-9 project-description">
-            <p>W3ACT description</p>
-          </div>
-        </div>
-      </div>
+	        <div class="row row-offcanvas row-offcanvas-right">
+	          <div class="col-xs-12 col-sm-9 project-description">
+	            <p>W3ACT description</p>
+	          </div>
+	        </div>
+	      </div>
+      </div><!-- /main -->  
             
     </body>
 </html>

@@ -14,7 +14,8 @@ header {
 }
 
 .content-container {
-  margin-top:70px;
+   margin-top: 0px;
+   #margin-top:70px;
 }
 
 .nav nav-tabs {
@@ -194,16 +195,28 @@ table#rolestable.table.table-striped.table-bordered.table-hover.table-condensed 
     margin-left: -55px;
 }
 
+table#permissionstable.table.table-striped.table-bordered.table-hover.table-condensed {
+    margin-left: -55px;
+}
+
 div#usersearchpanel.panel.panel-primary {
     margin-left: -15px;
+    max-width:500px;
 }
 
 div#organisationsearchpanel.panel.panel-primary {
     margin-left: -15px;
+    max-width:500px;
 }
 
 div#rolesearchpanel.panel.panel-primary {
     margin-left: -15px;
+    max-width:500px;
+}
+
+div#permissionsearchpanel.panel.panel-primary {
+    margin-left: -15px;
+    max-width:500px;
 }
 
 p.urlsearchp {
@@ -232,4 +245,56 @@ div.col-xs-12.col-sm-9.project-description {
     
 table.table.table-striped.table-bordered.table-hover.table-condensed {
     font-size: 10px;
-    }    
+    } 
+    
+#outer {
+	position: relative;
+	width: 1180px;
+	#margin: 40px auto 0 auto;
+	margin: 0px auto 0 auto;
+}
+    
+#header {
+	position: relative;
+	#padding: 35px;
+	##padding: 15px;
+	#height: 130px;
+}
+
+#main {
+	position: relative;
+	padding: 0px;
+	#width: 580px;
+	width: 1180px;
+	#color: #262626;
+}  
+
+#sidebar1 {
+	#width: 215px;
+	#float: left;
+	#padding: 35px;
+	#background: #b09792 url('images/bg3.jpg');
+	#color: #ede9e8;
+	#border: solid 1px #C1B0AC;
+	#text-shadow: 0px 1px 1px #705752;
+}
+
+#content {
+	#width: 480px;
+	width: 1100px;
+	#float: right;
+	#padding: 35px;
+	#background: #fff;
+}
+
+#aboutinfo {
+	width: 480px;
+	float: right;
+	padding: 35px;
+	#background: #fff;
+}
+
+.navbanner {
+    position: static !important;
+}
+     

@@ -1,5 +1,7 @@
 @(title: String, user: User)
 
+@main(title, user){
+	<div id="sidebar1">
         <div class="sidebar-offcanvas pull-left" id="sidebar" role="navigation">
           <div class="well sidebar-nav" style="max-width:280px; margin-right:10px;">
             <ul class="nav">
@@ -25,10 +27,10 @@
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
-
-@main(title, user){
-    <h1>About</h1>
-
-    <p>This is a prototype web archive curation and annotation interface</p>
+    </div>
+    <div id="aboutinfo">
+      <h1>About</h1>
+      <p>This is a prototype web archive curation and annotation interface</p>
+    </div>
 }
 

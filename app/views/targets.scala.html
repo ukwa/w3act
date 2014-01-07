@@ -36,247 +36,248 @@
 }
 
 @main(title, user){
-    
-    <h1>Targets overview</h1>
-    
-    <article class="targets">
-		<div class="folder">
-			<div class="row">
-		        <div class="col-lg-2">	        
-		          <div class="panel panel-primary filter" id="panels">
-		            <div class="panel-heading">Filter by search term:
-		            </div>
-		    	<form class="filter-form" action="@routes.Targets.filterUrl()" method="POST">
-		    	<fieldset>
-				      <div id="forms">
-				            <div class="form-group">
-				              <input class="form-control" id="inputName" name="filter" type="text" value="@filterUrl">
-				            </div>
-					        <button type="submit" class="btn btn-success" id="search" name="search" title="Red color means that URL is not in scope, green color means that URL is in scope">Search</button>	
-					        <button type="clear" class="btn btn-success" id="clear" name="clear" title="Clear up search settings">Clear</button>	
-		                    <!-- label id="isInScope" style="color: green"></label-->
-				      </div>
-		          </div>
-		          <script>
-			          var idle_timeout,
-			          SCOPE_URI = '/api/scope',
-			          MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
-			          TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
-			          IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
-		          
-			          // Does the Scope lookup
-			          var doScope = function(text) {
-			              $.getJSON(SCOPE_URI + text, function(data) {
-			              //alert("Is in scope: " + data);
-			              var btn = document.getElementById('search'); 
-			              if (data) {
-				              btn.style = "background-color: hell-green";
-			              } else {
-				              btn.style = "background-color: red";
-			              }
-
-			              /*var lab = document.getElementById('isInScope'); 
-			              if (data) {
-				              lab.innerHTML = "is in scope";
-				              lab.style = "color: green";
-			              } else {
-				              lab.innerHTML = "is not in scope";
-				              lab.style = "color: red";
-			              }*/
-			            });
-			          };
+    <div id="content">
+	    
+	    <h1>Targets overview</h1>
+	    
+	    <article class="targets">
+			<div class="folder">
+				<div class="row">
+			        <div class="col-lg-2">	        
+			          <div class="panel panel-primary filter" id="panels">
+			            <div class="panel-heading">Filter by search term:
+			            </div>
+			    	<form class="filter-form" action="@routes.Targets.filterUrl()" method="POST">
+			    	<fieldset>
+					      <div id="forms">
+					            <div class="form-group">
+					              <input class="form-control" id="inputName" name="filter" type="text" value="@filterUrl">
+					            </div>
+						        <button type="submit" class="btn btn-success" id="search" name="search" title="Red color means that URL is not in scope, green color means that URL is in scope">Search</button>	
+						        <button type="clear" class="btn btn-success" id="clear" name="clear" title="Clear up search settings">Clear</button>	
+			                    <!-- label id="isInScope" style="color: green"></label-->
+					      </div>
+			          </div>
+			          <script>
+				          var idle_timeout,
+				          SCOPE_URI = '/api/scope',
+				          MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
+				          TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+				          IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
 			          
-			          // Restarts the keyboard-idleness timeout
-			          var restartIdleTimeout = function(text) {
-			            if (idle_timeout)
-			              window.clearTimeout(idle_timeout);
-			            
-			            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
-			          };		
-			          
-					  $("#inputName").keyup(function() {
-							var text = $('input[name=filter]').val();
+				          // Does the Scope lookup
+				          var doScope = function(text) {
+				              $.getJSON(SCOPE_URI + text, function(data) {
+				              //alert("Is in scope: " + data);
+				              var btn = document.getElementById('search'); 
+				              if (data) {
+					              btn.style = "background-color: hell-green";
+				              } else {
+					              btn.style = "background-color: red";
+				              }
+	
+				              /*var lab = document.getElementById('isInScope'); 
+				              if (data) {
+					              lab.innerHTML = "is in scope";
+					              lab.style = "color: green";
+				              } else {
+					              lab.innerHTML = "is not in scope";
+					              lab.style = "color: red";
+				              }*/
+				            });
+				          };
+				          
+				          // Restarts the keyboard-idleness timeout
+				          var restartIdleTimeout = function(text) {
+				            if (idle_timeout)
+				              window.clearTimeout(idle_timeout);
+				            
+				            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
+				          };		
+				          
+						  $("#inputName").keyup(function() {
+								var text = $('input[name=filter]').val();
+								
+							    if (text.length > MIN_TEXT_LENGTH) {
+							        restartIdleTimeout(text);
 							
-						    if (text.length > MIN_TEXT_LENGTH) {
-						        restartIdleTimeout(text);
-						
-						    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
-						        	doScope(text);
-						    }
-					  });
-				  </script>
-				  @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		          <div class="add-button" id="add-button">
-				      <div id="addtargetform">
-				        <!--  form class="filter-form" action="@routes.LookUp.index()" method="GET" -->
-				            <!--  button onclick="location.href='@routes.LookUp.index()'" type="submit" class="btn btn-success" title="Look up and add new target">Add new target</button -->
-				            <a href="@routes.LookUp.index()" class="btn btn-success" title="Look up and add new target">Add new target</a>
-				        <!-- /form -->
-				      </div>
-		          </div>   
-		          }    	          
-		          		         
-         		  <div class="container">
-	                  <br><label>Filter by curator</label><br>
-					  <select name="author">
-			                <option>None</option>
-			                @for(curator <- User.findAll()) {
-                  		  		@if(curatorUrl != null && curatorUrl.equals(curator.url)) {
-		                		<option selected>@curator.name</option>
-		                		} else {
-		                		<option>@curator.name</option>
-		                		}
+							    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+							        	doScope(text);
+							    }
+						  });
+					  </script>
+					  @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+			          <div class="add-button" id="add-button">
+					      <div id="addtargetform">
+					        <!--  form class="filter-form" action="@routes.LookUp.index()" method="GET" -->
+					            <!--  button onclick="location.href='@routes.LookUp.index()'" type="submit" class="btn btn-success" title="Look up and add new target">Add new target</button -->
+					            <a href="@routes.LookUp.index()" class="btn btn-success" title="Look up and add new target">Add new target</a>
+					        <!-- /form -->
+					      </div>
+			          </div>   
+			          }    	          
+			          		         
+	         		  <div class="container">
+		                  <br><label>Filter by curator</label><br>
+						  <select name="author">
+				                <option>None</option>
+				                @for(curator <- User.findAll()) {
+	                  		  		@if(curatorUrl != null && curatorUrl.equals(curator.url)) {
+			                		<option selected>@curator.name</option>
+			                		} else {
+			                		<option>@curator.name</option>
+			                		}
+				                }
+						  </select>
+					  </div>
+	         		  <div class="container">
+		                  <br><label>Filter by nominating organisation</label><br>
+						  <select name="field_nominating_organisation">
+				                <option>None</option>
+				                @for(organisation <- Organisation.findAll()) {
+	                  		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
+			                		<option selected>@organisation.title</option>
+			                		} else {
+			                		<option>@organisation.title</option>
+			                		}
+				                }
+						  </select>
+					  </div>
+	         		  <div class="container">
+		                  <br><label>Filter by collection categories</label><br>
+						  <select name="field_collection_categories" style="max-width:90%;">
+				                <option>None</option>
+				                @for(collection <- DCollection.findAll()) {
+	                  		  		@if(collectionCategoryUrl != null && collectionCategoryUrl.equals(collection.url)) {
+			                		<option selected>@collection.title</option>
+			                		} else {
+			                		<option>@collection.title</option>
+			                		}
+				                }
+						  </select>
+					  </div>
+	         		  <div class="container">
+		                  <br><label>Filter by subject</label><br>
+						  <select name="field_subject">
+				                <option>None</option>
+				                @for(subject <- Taxonomy.findListByType("subject")) {
+	                  		  		@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
+			                		<option selected>@subject.name</option>
+			                		} else {
+			                		<option>@subject.name</option>
+			                		}
+				                }
+						  </select>
+					  </div>
+	         		  <div class="container">
+		                  <br><label>Filter by crawl frequency</label><br>
+						  <select name="field_crawl_frequency">
+				                <option>None</option>
+				                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
+	                  		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
+			                		<option selected>@curCrawlFrequency.field_crawl_frequency</option>
+			                		} else {
+			                		<option>@curCrawlFrequency.field_crawl_frequency</option>
+			                		}
+				                }
+						  </select>
+					  </div>
+	         		  <div class="container">
+		                  <br><label>Filter by depth</label><br>
+						  <select name="field_depth">
+				                <option>None</option>
+				                @for(curDepth <- Targets.getDepth()) {
+	                  		  		@if(depth != null && depth.equals(curDepth.field_depth)) {
+			                		<option selected>@curDepth.field_depth</option>
+			                		} else {
+			                		<option>@curDepth.field_depth</option>
+			                		}
+				                }
+						  </select>
+					  </div>
+	         		  <div class="container">
+		                  <br><label>Filter by license</label><br>
+						  <select name="field_license">
+				                <option>None</option>
+				                @for(curLicense <- Targets.getLicense()) {
+	                  		  		@if(license != null && license.equals(curLicense.name)) {
+			                		<option selected>@curLicense.name</option>
+			                		} else {
+			                		<option>@curLicense.name</option>
+			                		}
+				                }
+						  </select>
+					  </div>
+	         		  <div class="container">
+		                  <br><label>Filter by scope</label><br>
+						  <select name="field_scope">
+				                <option>None</option>
+				                @for(curScope <- Targets.getScope()) {
+	                  		  		@if(scope != null && scope.equals(curScope.field_scope)) {
+			                		<option selected>@curScope.field_scope</option>
+			                		} else {
+			                		<option>@curScope.field_scope</option>
+			                		}
+				                }
+						  </select>
+					  </div>
+					  <input type="hidden" name="offset" value="@offset">
+					  <input type="hidden" name="limit" value="@limit">				  
+			        </div>
+			        </fieldset>
+				</form>	
+					   <div class="export-button" id="export-button">
+					      <div id="exporttargetform">
+					        <form action="@routes.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, 
+	            	subjectUrl, crawlFrequency, depth, scope, license, filterUrl, offset)" method="POST">
+					            <fieldset>
+					                <input type="hidden" name="csv" value="@targets">
+					  				<label>&nbsp;&nbsp;&nbsp;Targets count</label>
+					 				<input type="text" name="count" value="@limit" size="60" maxlength="200" class="form-text" disabled  style="max-width:40%;" title="Number of selected targets"/>
+					            	<button type="export" class="btn btn-success" id="export" name="export" title="Export results of filtered searches and reports to CSV file">Export</button>
+					            </fieldset>
+					        </form>
+					      </div>
+			          </div>   
+			        
+			        <div class="col-lg-6">
+			        	@pagination
+						<!--script >
+								$(function() {
+								$("table#targetstable").tablesorter({ sortList: [[1,0]] });
+								});
+						</script>
+						<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped"-->
+						<table class="table table-striped table-bordered table-hover table-condensed">
+			              <thead>
+			                <tr>
+			                  <!--<th>#</th>-->
+			                  <th>Target name</th>
+			                  <th>Target URL</th>
+			                </tr>
+			              </thead>
+			              <tbody>
+			              	@targets.map { target =>		              
+			                <tr>
+			                  <!--<td>@target.nid</td>-->
+	                  		  @if(target.url != null && target.title != null) {
+			                  	<td><a href="@routes.TargetEdit.view(target.url)">
+			                  		@target.title</a></td>
+			                  } else {
+			                    <td></td>
+			                  }		                  
+			                  <!--<td><a href="@target.url">@target.title</a></td>-->
+			                  <td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+			                </tr>
 			                }
-					  </select>
-				  </div>
-         		  <div class="container">
-	                  <br><label>Filter by nominating organisation</label><br>
-					  <select name="field_nominating_organisation">
-			                <option>None</option>
-			                @for(organisation <- Organisation.findAll()) {
-                  		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
-		                		<option selected>@organisation.title</option>
-		                		} else {
-		                		<option>@organisation.title</option>
-		                		}
-			                }
-					  </select>
-				  </div>
-         		  <div class="container">
-	                  <br><label>Filter by collection categories</label><br>
-					  <select name="field_collection_categories" style="max-width:90%;">
-			                <option>None</option>
-			                @for(collection <- DCollection.findAll()) {
-                  		  		@if(collectionCategoryUrl != null && collectionCategoryUrl.equals(collection.url)) {
-		                		<option selected>@collection.title</option>
-		                		} else {
-		                		<option>@collection.title</option>
-		                		}
-			                }
-					  </select>
-				  </div>
-         		  <div class="container">
-	                  <br><label>Filter by subject</label><br>
-					  <select name="field_subject">
-			                <option>None</option>
-			                @for(subject <- Taxonomy.findListByType("subject")) {
-                  		  		@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
-		                		<option selected>@subject.name</option>
-		                		} else {
-		                		<option>@subject.name</option>
-		                		}
-			                }
-					  </select>
-				  </div>
-         		  <div class="container">
-	                  <br><label>Filter by crawl frequency</label><br>
-					  <select name="field_crawl_frequency">
-			                <option>None</option>
-			                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
-                  		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
-		                		<option selected>@curCrawlFrequency.field_crawl_frequency</option>
-		                		} else {
-		                		<option>@curCrawlFrequency.field_crawl_frequency</option>
-		                		}
-			                }
-					  </select>
-				  </div>
-         		  <div class="container">
-	                  <br><label>Filter by depth</label><br>
-					  <select name="field_depth">
-			                <option>None</option>
-			                @for(curDepth <- Targets.getDepth()) {
-                  		  		@if(depth != null && depth.equals(curDepth.field_depth)) {
-		                		<option selected>@curDepth.field_depth</option>
-		                		} else {
-		                		<option>@curDepth.field_depth</option>
-		                		}
-			                }
-					  </select>
-				  </div>
-         		  <div class="container">
-	                  <br><label>Filter by license</label><br>
-					  <select name="field_license">
-			                <option>None</option>
-			                @for(curLicense <- Targets.getLicense()) {
-                  		  		@if(license != null && license.equals(curLicense.name)) {
-		                		<option selected>@curLicense.name</option>
-		                		} else {
-		                		<option>@curLicense.name</option>
-		                		}
-			                }
-					  </select>
-				  </div>
-         		  <div class="container">
-	                  <br><label>Filter by scope</label><br>
-					  <select name="field_scope">
-			                <option>None</option>
-			                @for(curScope <- Targets.getScope()) {
-                  		  		@if(scope != null && scope.equals(curScope.field_scope)) {
-		                		<option selected>@curScope.field_scope</option>
-		                		} else {
-		                		<option>@curScope.field_scope</option>
-		                		}
-			                }
-					  </select>
-				  </div>
-				  <input type="hidden" name="offset" value="@offset">
-				  <input type="hidden" name="limit" value="@limit">				  
-		        </div>
-		        </fieldset>
-			</form>	
-				   <div class="export-button" id="export-button">
-				      <div id="exporttargetform">
-				        <form action="@routes.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, 
-            	subjectUrl, crawlFrequency, depth, scope, license, filterUrl, offset)" method="POST">
-				            <fieldset>
-				                <input type="hidden" name="csv" value="@targets">
-				  				<label>&nbsp;&nbsp;&nbsp;Targets count</label>
-				 				<input type="text" name="count" value="@limit" size="60" maxlength="200" class="form-text" disabled  style="max-width:40%;" title="Number of selected targets"/>
-				            	<button type="export" class="btn btn-success" id="export" name="export" title="Export results of filtered searches and reports to CSV file">Export</button>
-				            </fieldset>
-				        </form>
-				      </div>
-		          </div>   
-		        
-		        <div class="col-lg-6">
-		        	@pagination
-					<!--script >
-							$(function() {
-							$("table#targetstable").tablesorter({ sortList: [[1,0]] });
-							});
-					</script>
-					<table id="targetstable" class="tablesorter table table-striped table-bordered table-condensed zebra-striped"-->
-					<table class="table table-striped table-bordered table-hover table-condensed">
-		              <thead>
-		                <tr>
-		                  <!--<th>#</th>-->
-		                  <th>Target name</th>
-		                  <th>Target URL</th>
-		                </tr>
-		              </thead>
-		              <tbody>
-		              	@targets.map { target =>		              
-		                <tr>
-		                  <!--<td>@target.nid</td>-->
-                  		  @if(target.url != null && target.title != null) {
-		                  	<td><a href="@routes.TargetEdit.view(target.url)">
-		                  		@target.title</a></td>
-		                  } else {
-		                    <td></td>
-		                  }		                  
-		                  <!--<td><a href="@target.url">@target.title</a></td>-->
-		                  <td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
-		                </tr>
-		                }
-		              </tbody>
-		            </table>
-		            @pagination
-			     </div>
-	          </div>
-		</div>
-			
-    </article>
-    
+			              </tbody>
+			            </table>
+			            @pagination
+				     </div>
+		          </div>
+			</div>
+				
+	    </article>
+	</div>    
 }
 
