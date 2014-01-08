@@ -195,6 +195,18 @@ public class DCollection extends Model {
     	return res;
     }
     
+	/**
+	 * This method filters collections by title and returns a list of filtered Collection objects.
+	 * @param title
+	 * @return
+	 */
+	public static List<DCollection> filterByName(String name) {
+		List<DCollection> res = new ArrayList<DCollection>();
+        ExpressionList<DCollection> ll = find.where().icontains(Const.TITLE, name);
+    	res = ll.findList();
+		return res;
+	}       
+    
     public String toString() {
         return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
         		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;

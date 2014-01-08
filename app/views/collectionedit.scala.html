@@ -3,29 +3,36 @@
 
 @main("", user){
     
-    <h1>Edit Collection @collection.title</h1>
-    <div class="targettabs">   
+    <h1>Edit collection @collection.title</h1>
+    
+	<div class="targettabs">    
 		<ul class="nav nav-tabs">
 		   <li><a href="@routes.CollectionEdit.view(collection.url)" class="navbar-brand btn btn-success">View</a></li>
-		   <li class="active"><a href="@routes.CollectionEdit.edit(collection.url)" class="navbar-brand btn btn-success">Edit</a></li> 
+		   <li><a href="@routes.CollectionEdit.sites(collection.url)" class="navbar-brand btn btn-success">Sites</a></li> 
+		   @if(user.hasRole("sys_admin")) {
+		   <li class="active"><a href="@routes.CollectionEdit.edit(collection.url)" class="navbar-brand btn btn-success">Edit</a></li>
+		   }
 		</ul>
 	</div>
-	
+    
     <article class="collectiondetails">
       <div class="panel panel-default" id="forms">
         <div class="panel-heading">
         </div>
         <div class="panel-body">
-	        <form>
-	          <fieldset>     
+	        <form action="@routes.DCollections.save()" method="POST">
+	          <fieldset>
+          		<input type="hidden" name="url" value="@collection.url">
+          	    <input type="hidden" name="nid" value="@collection.nid">
+	          
 	            <div class="form-group">
-	              <label for="inputName">Name <font color="red">*</font></label>
-	              <input class="form-control" name="title" id="inputTitle" placeholder="Collection name" type="text" value="@collection.title">
-	            </div>          
+	              <label for="inputName">Title <font color="red">*</font></label>
+	              <input class="form-control" name="title" id="inputTitle" value="@collection.title" type="text">
+	            </div>       
 	            <div class="form-group">
 	               <label for="inputDescription">Description</label><br>
-	               <textarea name="description" id="inputDescription" value="@collection.summary" cols="100" rows="1"></textarea>
-	            </div>
+	               <textarea name="summary" id="inputDescription" value="@collection.summary" cols="100" rows="1">@collection.summary</textarea>
+	            </div>	            
 	            <div class="panel-group" id="accordion">
 			          <div class="panel panel-primary" id="panels">
 				            <div class="panel-heading">
@@ -43,25 +50,22 @@
 				          </div>
 			          </div>
 		        </div>
-	            
 		        <div id="revision" class="revision">
 	  				<div class="form-group">
 	  			       <hr>
 		               <label for="inputBody">Revision log message</label>
-		               <textarea class="text-full form-textarea" name="revision_input" id="inputRevision" cols="100" rows="1"></textarea>
+		               <textarea class="text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1"></textarea>
 	        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
 					</div>
 				</div>
 	            
-	            <button type="save" class="btn btn-primary">Save</button>
-	            <button type="delete" class="btn btn-primary">Delete</button>
+	            <button type="save" class="btn btn-primary" name="save">Save</button>
+	            <button type="delete" class="btn btn-primary" name="delete">Delete</button>
 	          </fieldset>
 	        </form>
-         </div>
-     </div>
-
+	      </div>
+       </div>
     </article>
-    
     
 }
 
