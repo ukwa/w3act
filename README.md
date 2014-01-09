@@ -34,8 +34,14 @@ Please refer to the istallation instructions of associated tool.
 
 The configuration file prod.conf for production should include necessary database entries for PostgreSQL or import them from application.conf:
 
+#### For H2
+db.default.driver=org.h2.Driver
+db.default.url="jdbc:h2:mem:play;DB_CLOSE_DELAY=-1"
+
+#### For PostgreSQL
 db.default.driver=org.postgresql.Driver
-# created database 'w3actprod' with user 'training' and password 'training'
+
+To create database 'w3actprod' with user 'training' and password 'training'
 db.default.url="postgres://training:training@127.0.0.1/w3actprod"
 
 ### Open terminal and execute the following command:
