@@ -17,61 +17,41 @@
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
         <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/script.js")"></script>
         <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
-        <script>
-		$(function() {
-			$( "#datepicker" ).datepicker();
-		});
-		$(function() {
-			$( "#datepicker2" ).datepicker();
-		});
-		</script>
     </head>
     <body>
-      <div id="outer">
-        <div id="header">
-	      <div class="navbanner navbar navbar-fixed-top navbar-inverse" role="navigation">
-	        <div class="container">
-	          <div class="navbar-header">
-	            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-	              <span class="icon-bar"></span>
-	              <span class="icon-bar"></span>
-	              <span class="icon-bar"></span>
-	            </button>
+		<nav class="navbar navbar-default navbar-inverse" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span> <span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
 	            <a class="navbar-brand" href="@routes.About.index">W3ACT</a>
-	           </div>
-	          <div class="collapse navbar-collapse">
-	            <ul class="nav navbar-nav">
-	              <!-- li><a href="@routes.About.index">About</a></li-->
-				  <li><a href="@routes.DCollections.index()">Collections</a></li> 
-				  <li><a href="@routes.Targets.index()">Targets</a></li>
-				  <li><a href="@routes.Organisations.index()">Organisations</a></li>
-				  <li><a href="@routes.Curators.index()">Curators</a></li>
-				  @if(user.hasRole("sys_admin")) {
-				  <li><a href="@routes.RoleEdit.index()">Roles</a></li>
-				  <li><a href="@routes.PermissionEdit.index()">Permissions</a></li>
-				  }
-				  <li><a href="@routes.Contact.index">Contact</a></li>
-	            </ul>
-	            <div class="pull-right" style="color:#fff;">
-	              @user.name <span style="margin-right:10px;">(@user.email)</span>
-		          <a class="btn btn-success navbar-btn" href="@routes.Application.logout()">Logout</a>
-		        </div>
-	          </div><!-- /.nav-collapse -->
-	        </div><!-- /.container -->
-	      </div><!-- /.navbar -->
-        </div><!-- /.header -->
-       
-        <div id="main">
-	      <div class="container content-container">      
-	        <div class="row row-offcanvas row-offcanvas-right">
-	          <div class="col-xs-12 col-sm-9">
-	            @body
-	          </div>
-	        </div>
-	      </div>
-	    </div><!-- /.main -->
-      </div>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<!-- li><a href="@routes.About.index">About</a></li-->
+					<li><a href="@routes.DCollections.index()">Collections</a></li> 
+					<li><a href="@routes.Targets.index()">Targets</a></li>
+					<li><a href="@routes.Organisations.index()">Organisations</a></li>
+					<li><a href="@routes.Curators.index()">Curators</a></li>
+					@if(user.hasRole("sys_admin")) {
+						<li><a href="@routes.RoleEdit.index()">Roles</a></li>
+						<li><a href="@routes.PermissionEdit.index()">Permissions</a></li>
+					}
+					<li><a href="@routes.Contact.index">Contact</a></li>
+				</ul>
+				<div class="navbar-right">
+					<p class="navbar-text">@user.name (@user.email)&nbsp;&nbsp;</p> 
+					<a class="btn btn-success navbar-btn" href="@routes.Application.logout()">Logout</a>
+				</div>
+			</div><!-- /.nav-collapse -->
+		</nav>
+		<div class="container">      
+			@body
+		</div>
     </body>
 </html>
 
