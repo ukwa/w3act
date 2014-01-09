@@ -28,7 +28,32 @@ To install you need:
 
 Please refer to the istallation instructions of associated tool.
 
-## To use the tool:
+## To use the application in production mode:
+
+### Configuration details
+
+The configuration file prod.conf for production should include necessary database entries for PostgreSQL or import them from application.conf:
+
+db.default.driver=org.postgresql.Driver
+# created database 'w3actprod' with user 'training' and password 'training'
+db.default.url="postgres://training:training@127.0.0.1/w3actprod"
+
+### Open terminal and execute the following command:
+
+play clean stage
+
+This command creates BAT file for Windows or SH file for Linux that can be started then. 
+
+Note that if you want to use "play start" instead that could cause a problem with not killed PIDs if you close application. 
+Also RUNNING_PID file will be created in root directory of the project that should be also removed then.
+
+For the case you use application on Windows, in order to see processes you could use “tasklist” command. 
+And for killing process with e.g. PID 1304 use “taskkill /pid 1304 /F” command.
+
+### Execution steps for Linux
+TBD
+
+## To use the application in development mode:
 
 ### Open DOS window and run the following command:
 
