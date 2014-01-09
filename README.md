@@ -26,7 +26,7 @@ To install you need:
 
 ### Install instructions
 
-Please refer to the istallation instructions of associated tool.
+Please refer to the installation instructions of associated tool.
 
 ## To use the application in production mode:
 
@@ -43,6 +43,13 @@ db.default.driver=org.postgresql.Driver
 
 To create database 'w3actprod' with user 'training' and password 'training'
 db.default.url="postgres://training:training@127.0.0.1/w3actprod"
+
+In order to add and activate Travis CI application profile please add a new configuration file: conf/travis-ci.conf
+This file overrides the default application.conf database (PostgreSQL) with the H2 one.
+Then edit .travis.yml to pass the new config to play, i.e. change this line:
+script: play-${PLAY_VERSION}/play test
+to this
+script: play-${PLAY_VERSION}/play -Dconfig.file=conf/travis-ci.conf test
 
 ### Open terminal and execute the following command:
 
@@ -67,7 +74,7 @@ play run
 
 ### Start browser and use URL: 
 
-localhost:9000
+localhost:9000/actdev/
 
 ## Testing
 
