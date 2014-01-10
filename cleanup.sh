@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -rf target/ project/target/ project/project/target/ conf/evolutions/
+rm -rf target/ project/target/ project/project/target/ 
 echo Project generated target folders clean up completed. 
 
 # replace psql path, database name (-d), host (-h), port (-p) and user (-U) if needed
