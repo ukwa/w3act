@@ -280,23 +280,27 @@ create sequence creator_seq;
 
 # --- !Downs
 
-drop table if exists dcollection cascade;
+SET REFERENTIAL_INTEGRITY FALSE;
 
-drop table if exists instance cascade;
+drop table if exists dcollection;
 
-drop table if exists organisation cascade;
+drop table if exists instance;
 
-drop table if exists permission cascade;
+drop table if exists organisation;
 
-drop table if exists role cascade;
+drop table if exists permission;
 
-drop table if exists target cascade;
+drop table if exists role;
 
-drop table if exists taxonomy cascade;
+drop table if exists target;
 
-drop table if exists taxonomy_vocabulary cascade;
+drop table if exists taxonomy;
 
-drop table if exists creator cascade;
+drop table if exists taxonomy_vocabulary;
+
+drop table if exists creator;
+
+SET REFERENTIAL_INTEGRITY TRUE;
 
 drop sequence if exists dcollection_seq;
 

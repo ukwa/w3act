@@ -10,7 +10,7 @@ import com.avaje.ebean.ExpressionList;
 import play.Logger;
 import play.db.ebean.*;
 import uk.bl.Const;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * DCollection entity managed by Ebean
@@ -19,49 +19,69 @@ import uk.bl.Const;
 @Entity 
 public class DCollection extends Model {
 
-    @Id
+    @Id @JsonIgnore
     public Long nid;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") @JsonIgnore
     public String value;
-    @Column(columnDefinition = "TEXT")
-    public String summary;
+    @Column(columnDefinition = "TEXT") @JsonIgnore
+    public String summary; 
+    @JsonIgnore
     public String format;
+    @JsonIgnore
     public Long vid;
+    @JsonIgnore
     public Boolean is_new;
+    @JsonIgnore
     public String type;
     public String title;
+    @JsonIgnore
     public String language;
     public String url;
+    @JsonIgnore
     public String edit_url;
+    @JsonIgnore
     public Long status;
+    @JsonIgnore
     public Long promote;
+    @JsonIgnore
     public Long sticky;
+    @JsonIgnore
     public String created;
+    @JsonIgnore
     public String changed;
+    @JsonIgnore
     public String author;
+    @JsonIgnore
     public String log;
+    @JsonIgnore
     public Long comment;
+    @JsonIgnore
     public Long comment_count;
+    @JsonIgnore
     public Long comment_count_new;
     // TODO difference between XML and JSON
+    @JsonIgnore
     public String revision;
+    @JsonIgnore
     public Long feed_nid;    
     // lists
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") @JsonIgnore
     public String field_targets; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") @JsonIgnore
     public String field_sub_collections; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") @JsonIgnore
     public String field_instances; 
     // additional fields from taxonomy
+    @JsonIgnore
     public Long weight;
+    @JsonIgnore
     public Long node_count;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") @JsonIgnore
     public String vocabulary;
     // lists
-    @Column(columnDefinition = "TEXT") 
+    @Column(columnDefinition = "TEXT")  @JsonIgnore
     public String parent;
-    @Column(columnDefinition = "TEXT") 
+    @Column(columnDefinition = "TEXT")  @JsonIgnore
     public String parents_all;
 
 
