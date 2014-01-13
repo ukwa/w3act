@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -rf target/ project/target/ project/project/target/ conf/evolutions/
+rm -rf target/ project/target/ project/project/target/
 echo Project generated folders clean up completed. 
 
 # postgres setup:
