@@ -1,8 +1,10 @@
 #!/bin/bash
 
-rm -rf target/ project/target/ project/project/target/ 
-echo Project generated target folders clean up completed. 
+rm -rf target/ project/target/ project/project/target/ conf/evolutions/
+echo Project generated folders clean up completed. 
 
-# replace psql path, database name (-d), host (-h), port (-p) and user (-U) if needed
-#psql -d w3act -h localhost -p 5432 -U training -f cleanupDB.sql
-#echo PostgreSQL schema clean up completed. 
+psql -d w3act -U postgres -f cleanDB.sql
+su - postgres -c "dropdb w3act"
+su - postgres -c "createdb --owner=training --username=training w3act"
+su - postgres -c "psql -c 'grant all on database w3act to training'"
+echo PostgreSQL schema clean up completed. 

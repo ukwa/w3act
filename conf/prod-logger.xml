@@ -1,7 +1,7 @@
 <configuration>
 	<conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-		<file>/var/log/production.log</file>
+		<file>/var/log/w3act.log</file>
 		<encoder>
 			<pattern>%date - [%level] - from %logger in %thread %n%message%n%xException%n</pattern>
 		</encoder>
