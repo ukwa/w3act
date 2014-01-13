@@ -6,6 +6,3 @@ REM replace psql path, database name (-d), host (-h), port (-p) and user (-U) if
 D:\install\PostgreSQL\9.3\bin\psql -d w3act -h localhost -p 5432 -U training -f cleanupDB.sql
 echo PostgreSQL schema clean up completed. 
 
-REM This script removes all generated evolutions in W3ACT
-rmdir /S /Q conf\evolutions
-echo Project generated evolutions folder clean up completed. 
