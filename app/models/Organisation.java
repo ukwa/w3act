@@ -103,8 +103,16 @@ public class Organisation extends Model {
     	Organisation res = new Organisation();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
+//    		Logger.info("found: " + res);
+    		if (res == null) {
+    			res = new Organisation();
+        		res.title = Const.NONE;
+        		res.url = Const.NONE;
+    		}
     	} else {
     		res.title = Const.NONE;
+    		res.url = Const.NONE;
+//    		Logger.info("not found: " + res);
     	}
     	return res;
     }
@@ -119,8 +127,14 @@ public class Organisation extends Model {
     	Organisation res = new Organisation();
     	if (title != null && title.length() > 0) {
     		res = find.where().eq(Const.TITLE, title).findUnique();
+    		if (res == null) {
+    			res = new Organisation();
+        		res.title = Const.NONE;
+        		res.url = Const.NONE;
+    		}
     	} else {
     		res.title = Const.NONE;
+    		res.url = Const.NONE;
     	}
     	return res;
     }
