@@ -21,3 +21,10 @@ test-result
 server.pid
 *.iml
 *.eml
+/collectionres.txt
+/export.csv
+/organisationres.txt
+/taxonomy_vocabularyres.txt
+/taxonomyres.txt
+/urlres.txt
+/userres.txt

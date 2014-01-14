@@ -77,8 +77,9 @@ public class Global extends GlobalSettings {
 		public static void insert(Application app) {
             if(Ebean.find(User.class).findRowCount() == 0) {
                 try {
+	                Map<String,List<Object>> allusers = (Map<String,List<Object>>)Yaml.load("users.yml");
+	                insertInitialData(Const.USERS, User.class, allusers);	
 	                Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
-	                insertInitialData(Const.USERS, User.class, all);	
 	                insertInitialData(Const.ROLES, Role.class, all);	
 	                insertInitialData(Const.PERMISSIONS, Permission.class, all);	
 	                insertInitialData(Const.ORGANISATIONS, Organisation.class, all);

@@ -1,0 +1,11 @@
+
+# Users
+
+users:
+        
+    - !!models.User
+        email:             max.mustermann@domain.com
+        name:              Max Mustermann
+        password:          secret
+        field_affiliation: COM
+        roles:             sys_admin, archivist
