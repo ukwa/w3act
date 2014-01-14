@@ -1,15 +1,20 @@
 package controllers;
 
+import java.util.List;
+
 import models.DCollection;
-import models.Organisation;
 import models.Target;
 import models.User;
 import play.Logger;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import views.html.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import play.mvc.BodyParser;                     
+import play.libs.Json;
 
 /**
  * Manage collections.
@@ -80,7 +85,8 @@ public class CollectionEdit extends AbstractController {
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
         Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);
-        if (addentry != null) {
+        
+		if (addentry != null) {
         	if (name != null && name.length() > 0) {
         		res = redirect(routes.CollectionEdit.addEntry(name));
         	} else {
@@ -118,7 +124,16 @@ public class CollectionEdit extends AbstractController {
                 )
             );
     }
-        
+
+  @BodyParser.Of(BodyParser.Json.class)
+    public static Result filterByJson(String name) {
+        JsonNode jsonData = null;
+        if (name != null) {
+	        List<DCollection> dCollections = DCollection.filterByName(name);
+	        jsonData = Json.toJson(dCollections);
+        }
+        return ok(jsonData);
+    }
     
 }
 

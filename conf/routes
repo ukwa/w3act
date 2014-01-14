@@ -65,6 +65,7 @@ GET     /collectionedit/:collection         controllers.CollectionEdit.edit(coll
 GET     /collectionsites/:sites             controllers.CollectionEdit.sites(sites)
 GET     /collectionadd/:collection          controllers.CollectionEdit.addEntry(collection)
 POST    /collection/filter/                 controllers.CollectionEdit.filter()
+GET    	/collection/filterbyjson/:name		controllers.CollectionEdit.filterByJson(name)
 GET     /taxonomy/:taxonomy                 controllers.TaxonomyEdit.view(taxonomy)
 GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxonomy)
 GET     /target/:target                     controllers.TargetEdit.view(target)
