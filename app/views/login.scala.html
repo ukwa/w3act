@@ -1,11 +1,15 @@
 @(form: Form[Application.Login])
-
-<html>
-<head>
+<!DOCTYPE html>
+<html lang="en"><head>
 <title>W3ACT</title>
-<!--link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")"-->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<!--link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")"-->
 <!-- link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")"-->
 <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")">
 <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/style.css")">
@@ -13,7 +17,7 @@
 	href="@routes.Assets.at("stylesheets/blue/style.css")">
 <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.js")"></script>
 <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-play-1.7.1.js")"></script>
-<script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
+<script src="@routes.Assets.at("bootstrap/dist/js/bootstrap.min.js")"></script>
 <script type="text/javascript" src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
 <script type="text/javascript" src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
 <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
@@ -56,14 +60,6 @@
 				<div class="col-sm-10">
 					<input type="password" name="password" placeholder="Password"
 						class="form-control">
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<div class="checkbox">
-						<label> <input type="checkbox"> Remember me
-						</label>
-					</div>
 				</div>
 			</div>
 			<div class="form-group">

@@ -3,7 +3,11 @@
 <html>
     <head>
         <title>W3ACT</title>
-        <meta charset="utf-8">        
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/style.css")">
 		<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")">
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/blue/style.css")">
@@ -42,10 +46,8 @@
 					<li><a href="@routes.Targets.index()">Targets</a></li>
 					<li><a href="@routes.Organisations.index()">Organisations</a></li>
 					<li><a href="@routes.Curators.index()">Curators</a></li>
-					@if(user.hasRole("sys_admin")) {
 						<li><a href="@routes.RoleEdit.index()">Roles</a></li>
 						<li><a href="@routes.PermissionEdit.index()">Permissions</a></li>
-					}
 					<li><a href="@routes.Contact.index">Contact</a></li>
 				</ul>
 				<div class="navbar-right">

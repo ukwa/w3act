@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
-import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 

@@ -322,3 +322,7 @@ table.table.table-striped.table-bordered.table-hover.table-condensed {
 .white-text {
     color: #fff !important;
 }
+
+.tab-content {
+	padding: 20px;
+}
