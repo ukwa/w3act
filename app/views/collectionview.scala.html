@@ -1,48 +1,34 @@
-@(collection: DCollection, user: User)
+@(collection: DCollection, user: User) @main("", user) {
 
-
-@main("", user){
-    
-    <h1>Collection @collection.title</h1>
-    
-	<div class="targettabs">    
-		<ul class="nav nav-tabs">
-		   <li class="active"><a href="@routes.CollectionEdit.view(collection.url)" class="navbar-brand btn btn-success">View</a></li>
-		   <li><a href="@routes.CollectionEdit.sites(collection.url)" class="navbar-brand btn btn-success">Sites</a></li> 
-		   @if(user.hasRole("sys_admin")) {
-		   <li><a href="@routes.CollectionEdit.edit(collection.url)" class="navbar-brand btn btn-success">Edit</a></li>
-		   }
-		</ul>
+	<div class="page-header">
+		<h1>Collection @collection.title</h1>
 	</div>
-    
-    <article class="collectiondetails">
-      <div class="panel panel-default" id="forms">
-        <div class="panel-heading">
-        </div>
-        <div class="panel-body">
-	        <form>
-	          <fieldset>
-	            <div class="container">
-	            	<div class="row">
-	              		<label>Title: @collection.title</label>
-					</div>
-	            </div>
-	            <div class="container">
-	            	<div class="row">
-	              		<label>Description: @collection.summary</label>
-					</div>
-	            </div>
-	            <div class="container">
-	            	<div class="row">
-	              		<label>Revision log message: @collection.revision</label>
-	        		    <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
-					</div>
-	            </div>
-	          </fieldset>
-	        </form>
-	      </div>
-       </div>
-    </article>
-    
+
+	<ul class="nav nav-tabs">
+		<li class="active"><a
+			href="@routes.CollectionEdit.view(collection.url)">View</a></li>
+		<li><a href="@routes.CollectionEdit.sites(collection.url)">Sites</a></li>
+			@if(user.hasRole("sys_admin")) {
+		<li><a href="@routes.CollectionEdit.edit(collection.url)">Edit</a></li>
+		}
+	</ul>
+
+	<div class="tab-content padding-20">
+		<div class="tab-pane active" id="home">
+			<dl class="dl-horizontal text-overflow">
+				<dt>Description lists</dt>
+				<dd>@collection.title</dd>
+				<dt>Description</dt>
+				<dd>@collection.summary</dd>
+				<dt>Revision log message</dt>
+				<dd>@collection.revision</dd>
+			</dl>
+		</div>
+	</div>
+	<div class="padding-20">
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+		</div>
+	</div>
 }
 
