@@ -1,283 +1,179 @@
 @(target: Target, user: User)
 
-
-@main("", user){
-    
-    <h1>@target.title</h1>
-	<div class="targettabs">    
-		<ul class="nav nav-tabs">
-		   <li class="active"><a href="@routes.TargetEdit.view(target.url)" class="navbar-brand btn btn-success">View</a></li>
-		   <li><a href="@routes.TargetEdit.edit(target.url)" class="navbar-brand btn btn-success">Edit</a></li> 
-		</ul>
+@main("", user) {
+   	<div class="page-header">
+	    <h1>@target.title</h1>
 	</div>
-    
-    <article class="targetdetails">
-      <div class="panel panel-default" id="forms">
-       <div class="panel-heading">
-        <!--h3 class="panel-title">Basic Information</h3-->
-       </div>      
-       <div class="panel-body">
-        <form>
-          <fieldset>
-          	<input type="hidden" name="nid" value="@target.nid">
-          	<input type="hidden" name="user" value="@user.url">
-            
-			<div class="bs-example bs-example-tabs">
-		      <ul id="myTab" class="nav nav-tabs">
-		        <li class="active"><a href="#basicinformation" data-toggle="tab">Basic information</a></li>
-		        <li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
-		        @if(Target.isInScope(target.field_url, target.url)) {
-			        <li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="green">(+)</font></a></li>
-			    } else {
-			        <li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="red">(-)</font></a></li>
-			    }		        
-		        <li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy</a></li>
-		      </ul>
-		       <div id="myTabContent" class="tab-content">
-			        <div class="tab-pane fade active in" id="basicinformation">
-			            <div class="container">
-			            	<div class="row">
-			              		<label for="inputTitle">Title: @target.title (@target.nid)</label>
-							</div>
-			            </div>
-			            <div class="container">
-			            	<div class="row">
-			            	    @if(Target.isInScope(target.field_url, target.url)) {
-			              			<label for="inputUrls">Seed URL(s): @target.field_url <font color="green">in scope</font></label>
-			              		} else {
-			              			<label for="inputUrls">Seed URL(s): @target.field_url <font color="red">not in scope</font></label>
-			              		}
-							</div>
-			            </div>
-			            <div class="container">
-						   <div class="row">
-				                <label>QA Status: @target.status</label>
-						  	</div>
-						</div>
-			            <div class="container">
-			            	<div class="row">
-				           		<label>Live Site Status: @target.field_live_site_status</label>
-				           	</div>
-					  	</div>		
-					  	<div class="container">
-					  		<div class="row">
-						    	<label>Key Site: @target.field_key_site</label>
-						    </div>
-			            </div>
-			            <div class="container">
-			            	<div class="row">
-			              		<label for="inputWCT">WCT ID: @target.field_wct_id</label><br>
-			              		<label for="inputSPT">SPT ID: @target.field_spt_id</label>
-							</div>
-			            </div> 
-			            <div class="container">
-			            	<div class="row">
-			              		<label>Keywords: @target.keywords</label><br>
-							</div>
-			            </div> 
-			            <div class="container">
-			            	<div class="row">
-			              		<label>Synonyms: @target.synonyms</label>
-							</div>
-			            </div> 
-			        </div>
-			        <div class="tab-pane fade" id="metadata">
-			            <div class="form-group">
-				            <div class="container">
-				            	<div class="row">
-					              <label for="inputDescription">Description: @target.field_description</label>
-					            </div>
-					        </div>
-			            	<div class="container">
-			            		<div class="row">					             
-				                  <label>Subject: @Taxonomy.findByUrl(target.field_subject).name</label>
-				                </div>
-							</div>
-				            <div class="container">
-				                <div class="row">
-				                  <label>Suggested Collections: @DCollection.findByUrl(target.field_suggested_collections).title</label>
-				                </div>
-							</div>
-				            <div class="container">
-				            	<div class="row">
-				                  <label>Nominating Organisation: @Organisation.findByUrl(target.field_nominating_organisation).title</label>
-				                </div>
-							</div>
-				            <div class="container">
-				            	<div class="row">
-				                  <label>User: @User.findByUrl(target.author).name</label>
-				                </div>
-							</div>
-			            </div>                        
-			        </div>
-			        <div class="tab-pane fade" id="crawlpermission">
-			            <div class="form-group">
-				            <div class="container">
-				            	<div class="row">
-									<label for="edit-field-license-und">License: @target.field_license</label>
-								</div>
-							</div>
-							<div class="description">The license terms under which this site should be archived and made available.</div>
-							<label>Legal Deposit Criteria</label>
-				            <div class="container">
-				            	<div class="row">
-				 					<label class="option" for="edit-field-uk-hosting-und">UK Hosting: @target.field_uk_hosting</label>
-				 				</div>
-				 			</div>
-							<div class="description">The domain is hosted in the UK.</div>
-				            <div class="container">
-				            	<div class="row">
-					 				<label class="option" for="edit-field-uk-postal-address-und">UK Postal Address: @target.field_uk_postal_address</label>
-					 			</div>
-				 			</div>
-							<div class="description">The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box).</div>
-				            <div class="container">
-				            	<div class="row">
-					  				<label for="edit-field-uk-postal-address-url-und-0">Postal Address URL: @target.field_uk_postal_address_url</label>
-					  			</div>
-					  		</div>
-							<div class="description">The URL on the site that contains the postal address used to determine that the site is in the UK.</div>
-				            <div class="container">
-				            	<div class="row">
-					 				<label class="option" for="edit-field-via-correspondence-und">Via Correspondence: @target.field_via_correspondence</label>
-									<div class="description">Previous correspondence with the web site owner by a Curator contains evidence of a UK address.</div>
-								</div>
-							</div>
-				            <div class="container">
-				            	<div class="row">
-					  				<label>Notes: @target.field_notes</label>
-									<div class="description">Any relevant notes, e.g. a more detailed description of this URL or set of URLs.</div>
-								</div>
-							</div>
-				            <div class="container">
-				            	<div class="row">
-					 				<label class="option" for="edit-field-professional-judgement-und">Professional Judgement: @target.field_professional_judgement</label>
-									<div class="description">In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below.</div>
-								</div>
-							</div>
-				            <div class="container">
-				            	<div class="row">
-					  				<label>Professional Judgement Explanation: @target.field_professional_judgement_exp</label>
-									<div class="description">Please describe the rational behind this decision, indicating any evidence used.</div>
-								</div>
-							</div>
-				            <!-- div class="container">
-				            	<div class="row">
-					 				<label class="option">Special Dispensation: @target.field_special_dispensation</label>
-									<div class="description">Tick this box to indicate that, although it falls under none of the other categories, special dispensation has been given to download this URL. Currently, this is allowed under limited circumstances in order to explore the process around archiving social media relating to UK organisations and individuals. </div>
-								</div>
-							</div-->
-				            <!-- div class="container">
-				            	<div class="row">
-					 			<label class="option">Special Dispensation Reason: target.field_special_dispensation_reason</label>
-								<div class="description">If you have selected Special Dispensation as the reason, you must use this field to provide details of who has authorised this decision and why.</div>
-							</div-->
-				            <div class="container">
-				            	<div class="row">
-					 				<label class="option">No LD Criteria Met: @target.field_no_ld_criteria_met</label>
-									<div class="description">Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit.</div>
-								</div>
-							</div>      			            
-				        </div>
-			        </div>
-			        <div class="tab-pane fade" id="crawlpolicy">
-			            <div class="form-group">
-				            <div class="container">
-				            	<div class="row">
-								  <label>Scope: @target.field_scope</label>								  
-								  <h5>Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option.</h5>
-								</div>  				  
-							 </div>
-				             <div class="container">
-								<div class="row">
-								    <label>Depth: @target.field_depth</label>							  
-							  	</div>
-						  	</div>
-				            <div class="container">
-				            	<div class="row">
-	     	            	        <label>Ignore Robots.txt: @target.field_ignore_robots_txt</label>
-						            <p>Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems.</p>
-					            </div>
-					        </div>
-				            <div class="container">
-				            	<div class="row">						        
-				 					<label for="edit-field-crawl-frequency-und">Crawl Frequency: @target.field_crawl_frequency</label>
-									<div class="description">How often should this site be archived?</div>
-				 				</div>
-				 			</div>
-				              <div class="container">
-				 				<div class="row">
-				  					<label class="element-invisible">Start date: @target.field_crawl_start_date</label>
-								</div>
-				 				<div class="row">
-				  					<label class="element-invisible">End date: @target.field_crawl_end_date</label>
-								</div>
-							  </div>
-				              <div class="container">
-				 				<div class="row">
-				  					<label class="element-invisible">White list: @target.white_list</label>
-								</div>
-				 				<div class="row">
-				  					<label class="element-invisible">Black list: @target.black_list</label>
-								</div>
-							  </div>
-				        </div>
-			        </div>
-            </div>
-	        <div id="revisionArea" class="revision">
-		       <hr>
-              <div class="container">
-				<div class="row">		       
-	               <label>Revision log message: @target.revision</label>
+	
+	<ul class="nav nav-tabs">
+	   <li class="active"><a href="@routes.TargetEdit.view(target.url)">View</a></li>
+	   <li><a href="@routes.TargetEdit.edit(target.url)">Edit</a></li> 
+	</ul>
+	
+	<div class="tab-content padding-20">
+		<input type="hidden" name="nid" value="@target.nid">
+        <input type="hidden" name="user" value="@user.url">
+           
+		<ul class="nav nav-pills">
+        	<li class="active"><a href="#basicinformation" data-toggle="tab">Basic information</a></li>
+        	<li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
+        		@if(Target.isInScope(target.field_url, target.url)) {
+	        		<li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="green">(+)</font></a></li>
+	    		} else {
+	        		<li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="red">(-)</font></a></li>
+	    		}		        
+        	<li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy</a></li>
+      	</ul>
+	</div>
+	
+	<div id="myTabContent" class="tab-content">
+		<div class="tab-pane padding-20 fade active in" id="basicinformation">
+			<dl class="dl-horizontal">
+				<dt>Title:</dt>
+				<dd>@target.title (@target.nid)</dd>
+				<dt>Seed URL(s):</dt>
+				@if(Target.isInScope(target.field_url, target.url)) {
+					<dd>@target.field_url <font color="green">in scope</font></dd>
+	          		} else {
+					<dd>@target.field_url <font color="red">not in scope</font></dd>
+	          		}
+				<dt>QA Status:</dt>
+				<dd>@target.status</dd>
+				<dt>Live Site Status:</dt>
+				<dd>@target.field_live_site_status</dd>
+				<dt>Key Site:</dt>
+				<dd>@target.field_key_site</dd>
+				<dt>WCT ID:</dt>
+				<dd>@target.field_wct_id</dd>
+				<dt>SPT ID:</dt>
+				<dd>@target.field_spt_id</dd>
+				<dt>Keywords:</dt>
+				<dd>@target.keywords</dd>
+				<dt>Synonyms:</dt>
+				<dd>@target.synonyms&nbsp;</dd>
+			</dl>
+		</div>
+		
+		<div class="tab-pane fade padding-20" id="metadata">
+			<dl class="dl-horizontal">
+				<dt>Description:</dt>
+				<dd>@target.field_description</dd>
+				<dt>Subject:</dt>
+				<dd>@Taxonomy.findByUrl(target.field_subject).name</dd>
+				<dt>Suggested Collections:</dt>
+				<dd>@DCollection.findByUrl(target.field_suggested_collections).title</dd>
+				<dt>Nominating Organisation:</dt>
+				<dd>@Organisation.findByUrl(target.field_nominating_organisation).title</dd>
+				<dt>User:</dt>
+				<dd>@User.findByUrl(target.author).name&nbsp;</dd>
+			</dl>
+		</div>
+	
+		<div class="tab-pane fade padding-20" id="crawlpermission">
+			<dl class="dl-horizontal">
+				<dt>License:</dt>
+				<dd>The license terms under which this site should be archived and made available.</dd>
+			</dl>
+			<h4>Legal Deposit Criteria</h4>
+			<dl class="dl-horizontal">
+				<dt>UK Hosting:</dt>
+				<dd>@target.field_uk_hosting - The domain is hosted in the UK.</dd>
+				<dt>UK Postal Address:</dt>
+				<dd>
+					@target.field_uk_postal_address <br> The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box).
+				</dd>
+				<dt>Postal Address URL:</dt>
+				<dd>
+					@target.field_uk_postal_address_url @if(!target.field_uk_postal_address_url.isEmpty) {<br>} The URL on the site that contains the postal address used to determine that the site is in the UK.
+				</dd>
+				<dt>Via Correspondence:</dt>
+				<dd>
+					@target.field_via_correspondence <br> Previous correspondence with the web site owner by a Curator contains evidence of a UK address.
+				</dd>
+				<dt>Notes:</dt>
+				<dd>@target.field_notes  @if(!target.field_notes.isEmpty) {<br>} Any relevant notes, e.g. a more detailed description of this URL or set of URLs.</dd>
+				<dt>Professional Judgement:</dt>
+				<dd>@target.field_professional_judgement <br> In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below.</dd>
+				<dt>Professional Judgement Explanation:</dt>
+				<dd>@target.@target.field_professional_judgement_exp @if(!target.field_professional_judgement_exp.isEmpty) {<br>} Please describe the rational behind this decision, indicating any evidence used.</dd>
+				<dt>No LD Criteria Met:</dt>
+				<dd>@target.field_no_ld_criteria_met <br> Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit.&nbsp;</dd>
+			</dl>
+		</div>
+
+        <div class="tab-pane fade padding-20" id="crawlpolicy">
+			<dl class="dl-horizontal">
+				<dt>Scope:</dt>
+				<dd>@target.field_scope  @if(!target.field_scope.isEmpty) {<br>} Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option.</dd>
+				<dt>Depth:</dt>
+				<dd>@target.field_depth</dd>
+				<dt>Ignore Robots.txt:</dt>
+				<dd>@target.field_ignore_robots_txt <br> Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems.</dd>
+				<dt>Crawl Frequency:</dt>
+				<dd>@target.field_crawl_frequency @if(!target.field_crawl_frequency.isEmpty) {<br>} How often should this site be archived?</dd>
+				<dt>Start date:</dt>
+				<dd>@target.field_crawl_start_date</dd>
+				<dt>End date:</dt>
+				<dd>@target.field_crawl_end_date</dd>
+				<dt>White list:</dt>
+				<dd>@target.white_list</dd>
+				<dt>Black list:</dt>
+				<dd>@target.black_list&nbsp;</dd>
+			</dl>
+		</div>
+	</div>
+	<hr>
+	<div id="revisionArea" class="revision">
+		<dl class="dl-horizontal">
+			<dt>Revision log message:</dt>
+			<dd>@target.revision</dd>
+		</dl>
+	</div>
+	
+	
+	<div class="padding-20">
+		<div class="panel-group" id="accordion">
+			<div class="panel panel-primary" id="panels">
+				<div class="panel-heading">
+	  				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseRevisions" style="color:#fff;">
+	      				Target revisions
+	      			</a>
+	      		</div>
+				<div id="collapseRevisions" class="panel-collapse collapse">
+	       			@for(prevTarget <- Target.findRevisions(target.url)) {
+	       			<div class="panel-footer">
+	       				<a class="brand" href="@routes.TargetEdit.viewrevision(prevTarget.nid)">
+	         				(@prevTarget.nid) &nbsp; @prevTarget.revision &nbsp; @prevTarget.lastUpdate</a>
+	       			</div>
+	       			}
+	     		</div>
+	    	</div>
+		</div>
+	</div>    
+   	
+	<div class="padding-20">
+		<div class="panel-group" id="accordion">
+			<div class="panel panel-primary" id="panels">
+				<div class="panel-heading">
+			    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
+			        	Target instances
+					</a>
+				</div>
+				<div id="collapseInstances" class="panel-collapse collapse">
+					<div class="panel-footer">
+						<a class="brand" href="opera.bl.uk:/8080/wayback/*@target.field_url">wayback-crawl</a>
+					</div>
+					<div class="panel-footer">
+						<a class="brand" href="http://www.webarchive.org.uk/mementos/search/@target.field_url">mementos-crawl</a>
+					</div>
+				    <div class="panel-footer">
+			        	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url= http://@target.field_url">archival</a>
+					</div>
+				    <div class="panel-footer">
+			        	<a class="brand" href="@target.field_url">live</a>
+					</div>
 				</div>
 			</div>
-          </fieldset>
-        </form>
-       </div>
-      </div>
-    </article>
-    
-   		       <div class="panel-group" id="accordion">
-		          <div class="panel panel-primary" id="panels">
-		            <div class="panel-heading">
-		            	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseRevisions" style="color:#fff;">
-		            		Target revisions
-		            	</a>
-		            </div>
-				    <div id="collapseRevisions" class="panel-collapse collapse">
-			            @for(prevTarget <- Target.findRevisions(target.url)) {
-			            <div class="panel-footer">
-			            	<a class="brand" href="@routes.TargetEdit.viewrevision(prevTarget.nid)">
-					            	(@prevTarget.nid) &nbsp; @prevTarget.revision &nbsp; @prevTarget.lastUpdate</a>
-			            </div>
-			            }
-			          </div>
-		          </div>
-	          </div>
-    
-   		       <div class="panel-group" id="accordion">
-		          <div class="panel panel-primary" id="panels">
-		            <div class="panel-heading">
-		            	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
-		            		Target instances
-		            	</a>
-		            </div>
-				    <div id="collapseInstances" class="panel-collapse collapse">
-			            <div class="panel-footer">
-					        <a class="brand" href="opera.bl.uk:/8080/wayback/*@target.field_url">wayback-crawl</a>
-			            </div>
-			            <div class="panel-footer">
-					        <a class="brand" href="http://www.webarchive.org.uk/mementos/search/@target.field_url">mementos-crawl</a>
-			            </div>
-			            <div class="panel-footer">
-		                  	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url= http://@target.field_url">archival</a>
-			            </div>
-			            <div class="panel-footer">
-		                  	<a class="brand" href="@target.field_url">live</a>
-			            </div>
-			          </div>
-		          </div>
-	          </div>
-    
-      
+		</div>
+	</div>
 }
