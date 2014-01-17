@@ -13,6 +13,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 /**
@@ -22,35 +23,55 @@ import com.avaje.ebean.ExpressionList;
 @Entity 
 public class Organisation extends Model {
 
-    @Id
+    @Id @JsonIgnore
     public Long nid;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") @JsonIgnore
     public String value;
+    @JsonIgnore
     public String summary;
+    @JsonIgnore
     public String format;
-    public String field_abbreviation;  
+    @JsonIgnore
+    public String field_abbreviation;
+    @JsonIgnore
     public Long vid;
+    @JsonIgnore
     public Boolean is_new;
+    @JsonIgnore
     public String type;
     public String title;
+    @JsonIgnore
     public String language;
+    @JsonIgnore
     public String url;
+    @JsonIgnore
     public String edit_url;
+    @JsonIgnore
     public Long status;
+    @JsonIgnore
     public Long promote;
+    @JsonIgnore
     public Long sticky;
+    @JsonIgnore
     public String created;
+    @JsonIgnore
     public String changed;
+    @JsonIgnore
     public String author;
+    @JsonIgnore
     public String log;
+    @JsonIgnore
     public Long comment;
+    @JsonIgnore
     public Long comment_count;
+    @JsonIgnore
     public Long comment_count_new;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") @JsonIgnore
     public String revision;
+    @JsonIgnore
     public Long feed_nid;
     
-    @Version
+    @Version @JsonIgnore
     public Timestamp lastUpdate;
     
     

@@ -121,7 +121,9 @@ public class DCollections extends AbstractController {
 	        res = redirect(routes.CollectionEdit.view(collection.url));
         } 
         if (delete != null) {
-        	DCollection collection = DCollection.findByUrl(getFormParam(Const.URL));
+        	String url = getFormParam(Const.URL);
+        	Logger.info("deleting: " + url);
+        	DCollection collection = DCollection.findByUrl(url);
         	Ebean.delete(collection);
 	        res = redirect(routes.DCollections.index()); 
         }

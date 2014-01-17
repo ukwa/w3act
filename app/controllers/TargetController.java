@@ -42,7 +42,8 @@ public class TargetController extends AbstractController {
     	Result res = null;
         String save = getFormParam("save");
         String delete = getFormParam("delete");
-//        Logger.info("save: " + save);
+        Logger.info("save: " + save);
+        Logger.info("delete: " + delete);
         if (save != null) {
         	Logger.info("save updated target nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
         			", title: " + getFormParam(Const.TITLE) + ", keysite: " + getFormParam(Const.KEYSITE) +
@@ -144,7 +145,9 @@ public class TargetController extends AbstractController {
 	        res = redirect(routes.TargetEdit.edit(newTarget.url));
         } 
         if (delete != null) {
-        	Target target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
+        	Long id = Long.valueOf(getFormParam(Const.NID));
+        	Logger.info("deleting: " + id);
+        	Target target = Target.findById(id);
         	Ebean.delete(target);
 	        res = redirect(routes.Targets.index()); 
         }

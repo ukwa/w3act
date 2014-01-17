@@ -1,10 +1,15 @@
 package controllers;
 
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import models.Organisation;
 import models.Target;
 import models.User;
 import play.Logger;
-import play.mvc.Controller;
+import play.libs.Json;
+import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -117,7 +122,16 @@ public class OrganisationEdit extends AbstractController {
                 )
             );
     }
-        
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result filterByJson(String name) {
+        JsonNode jsonData = null;
+        if (name != null) {
+	        List<Organisation> organisations = Organisation.filterByName(name);
+	        jsonData = Json.toJson(organisations);
+        }
+        return ok(jsonData);
+    }
     
 }
 
