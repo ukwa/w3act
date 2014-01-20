@@ -49,7 +49,7 @@
 						<div>
 							<label class="checkbox-inline">
             			        @for(user <- User.findByNotEqualOrganisation(organisation.url)) {
-					                <input type="checkbox" name="@user.name" value="true" checked/> @user.name<br>
+					                <input type="checkbox" name="@user.name" value="true" checked /> @user.name<br>
 					            }
 							</label>
 						</div>

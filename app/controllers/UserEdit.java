@@ -1,14 +1,19 @@
 package controllers;
 
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import models.Organisation;
 import models.Target;
 import models.User;
 import play.Logger;
+import play.libs.Json;
+import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import views.html.curators;
-import views.html.lookup;
-import views.html.targetedit;
 import views.html.userbookmarks;
 import views.html.useredit;
 import views.html.usersites;
@@ -122,6 +127,15 @@ public class UserEdit extends AbstractController {
                 )
             );
     }
-        
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result filterByJson(String name) {
+        JsonNode jsonData = null;
+        if (name != null) {
+	        List<User> users = User.filterByName(name);
+	        jsonData = Json.toJson(users);
+        }
+        return ok(jsonData);
+    }    
 }
 

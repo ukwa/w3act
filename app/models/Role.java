@@ -26,33 +26,42 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
-import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Role extends Model
 {
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5670206529564297517L;
+
+	@Id @JsonIgnore
     public Long id;
 
-    @Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT")
     public String name;
 
     @Column(columnDefinition = "TEXT")
     public String url;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String permissions;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String description;
     
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String revision; 
     
+    @JsonIgnore
     @Version
     public Timestamp lastUpdate;
 

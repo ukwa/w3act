@@ -2,6 +2,8 @@ package models;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import play.db.ebean.Model;
@@ -87,6 +89,29 @@ public class Permission extends Model
     
     public String toString() {
         return "Permission(" + name + ")" + ", id:" + id;
+    }
+    
+    public static boolean isIncluded(String permissionName, String permissions) {
+    	boolean res = false;
+    	if (permissionName != null && permissionName.length() > 0 && permissions != null && permissions.length() > 0 ) {
+    		if (permissions.contains(Const.COMMA)) {
+    			List<String> resList = Arrays.asList(permissions.split(Const.COMMA));
+    			Iterator<String> itr = resList.iterator();
+    			while (itr.hasNext()) {
+        			String currentRoleName = itr.next();
+        			currentRoleName = currentRoleName.replaceAll(" ", "");
+        			if (currentRoleName.equals(permissionName)) {
+        				res = true;
+        				break;
+        			}
+    			}
+    		} else {
+    			if (permissions.equals(permissionName)) {
+    				res = true;
+    			}
+    		}
+    	}
+    	return res;
     }
 
 }

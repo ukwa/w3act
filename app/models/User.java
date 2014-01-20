@@ -25,6 +25,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 /**
@@ -35,7 +36,7 @@ import com.avaje.ebean.ExpressionList;
 @Table(name="creator")
 public class User extends Model {
 
-    @Id
+    @Id @JsonIgnore
     @Constraints.Required
     @Formats.NonEmpty
     public String email;
@@ -44,25 +45,38 @@ public class User extends Model {
     public String name;
     
     @Constraints.Required
+    @JsonIgnore
     public String password;
     
+    @JsonIgnore
     public String field_affiliation;
+    @JsonIgnore
     public Long uid;
     public String url;
+    @JsonIgnore
     public String edit_url;
+    @JsonIgnore
     public String last_access;
+    @JsonIgnore
     public String last_login;
+    @JsonIgnore
     public String created;
+    @JsonIgnore
     public Long status;
+    @JsonIgnore
     public String language;
+    @JsonIgnore
     public Long feed_nid;
     
     // lists
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String roles;
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String revision; 
     
+    @JsonIgnore
     @Version
     public Timestamp lastUpdate;
 

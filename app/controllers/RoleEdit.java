@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import models.Organisation;
 import models.Permission;
@@ -11,6 +12,8 @@ import models.Role;
 import models.Target;
 import models.User;
 import play.Logger;
+import play.libs.Json;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -231,6 +234,13 @@ public class RoleEdit extends AbstractController {
         return res;
     }
 	    
-    
-}
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result filterByJson(String name) {
+        JsonNode jsonData = null;
+        if (name != null) {
+	        List<Role> roles = Role.filterByName(name);
+	        jsonData = Json.toJson(roles);
+        }
+        return ok(jsonData);
+    }}
 

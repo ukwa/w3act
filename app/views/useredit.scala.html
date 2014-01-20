@@ -3,104 +3,131 @@
 
 @main("", admin){
     
-    <h1>Edit User @user.name</h1>
-	<div class="targettabs">    
-		<ul class="nav nav-tabs">
-		   <li><a href="@routes.UserEdit.view(user.url)" class="navbar-brand btn btn-success">View</a></li>
-		   <li><a href="@routes.UserEdit.sites(user.url)" class="navbar-brand btn btn-success">My Sites</a></li> 
-		   @if(admin.hasRole("sys_admin") || user.url.equals(admin.url)) {
-		   <li class="active"><a href="@routes.UserEdit.edit(user.url)" class="navbar-brand btn btn-success">Edit</a></li>
-		   }
-		   <!-- li><a href="@routes.UserEdit.bookmarks(user.url)" class="navbar-brand btn btn-success">Bookmarks</a></li--> 
-		</ul>
+   	<div class="page-header">
+	    <h1>Edit User @user.name</h1>
 	</div>
+	<ul class="nav nav-tabs">
+	   <li><a href="@routes.UserEdit.view(user.url)">View</a></li>
+	   <li><a href="@routes.UserEdit.sites(user.url)">My Sites</a></li> 
+	   @if(admin.hasRole("sys_admin") || user.url.equals(admin.url)) {
+		   <li class="active"><a href="@routes.UserEdit.edit(user.url)">Edit</a></li>
+	   }
+	</ul>
     
-    <article class="userdetails">
-      <div class="panel panel-default" id="forms">
-       <div class="panel-heading">
-        <!--h3 class="panel-title">Basic Information</h3-->
-       </div>      
-       <div class="panel-body">
-          <form action="@routes.Curators.saveUser()" method="POST">
-             <fieldset>
-          		<input type="hidden" name="url" value="@user.url">
-          	    <input type="hidden" name="uid" value="@user.uid">
-            
-		        <div id="myTabContent" class="tab-content">
-			        <div class="tab-pane fade active in" id="basicinformation">
-			            <div class="form-group">
-			              <label>Name<font color="red">*</font></label>
+	<form action="@routes.Curators.saveUser()" method="POST">
+		<input type="hidden" name="url" value="@user.url">
+		<input type="hidden" name="uid" value="@user.uid">
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
+				    <div class="col-sm-6">
 			              <input class="form-control" name="name" id="name" size="60" placeholder="My name" type="text" value="@user.name">
-				          <input class="form-control" name="uid" value="@user.uid" size="30" readonly>
-			            </div>
-			            <div class="form-group">
-			              <label>E-mail<font color="red">*</font></label>
-			              <input class="form-control" name="email" id="email" placeholder="sample@@domain.uk" type="text" value="@user.email">
-			            </div>
-		   				@if(user.url.equals(admin.url)) {
-			            <div class="form-group">
-			              <label>Password<font color="red">*</font></label>
-			              <input class="form-control" name="password" id="password" type="text" value="@user.password">
-			            </div>
-			            }
-			            <div class="form-group">
-			                <label>Roles</label><br>
-					        @for(role <- Role.findAll()) {
-					            <div>
-					            @if(Role.isIncluded(role.name, user.roles)) {
-				                <input type="checkbox" name="@role.name" value="true" checked/>
-				                } else {
-				                <input type="checkbox" name="@role.name" value="true"/>
-				                }
-					 			<label class="option">@role.name</label>
-					 			</div>
-				            }
-						</div>
-			            
-			            <!-- div class="form-group">
-			                  <label>Roles</label><br>
-							  <select name="roles" value="@user.roles" multiple>
-					                @for(role <- Role.findAll()) {
-					             		@if(user.roles.contains(role.name)) {
-							                <option selected>@role.name</option>
-							            } else {						                
-					                		<option>@role.name</option>
-					                	}
-					                }
-							  </select>
-						 </div-->
-			             <div class="form-group">
-			                  <label>Nominating Organisation</label><br>
-							  <select name="organisation" id="mySel">
-					                <option>None</option>
-					                @for(organisation <- Organisation.findAll()) {
-						                @if(organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
-							                <option selected>@organisation.title</option>
-							            } else {
-						                    <option>@organisation.title</option>
-										}					            
-					                }
-							  </select>
-							  <br>The organisation that nominated this user. Used to track down further information if the original user cannot be contacted.				  
-		            	</div>                        
-		        	</div>
-            </div>
-	        <div id="revisionArea" class="revision">
-  				<div class="form-group">
-  			       <hr>
-	               <label for="inputBody">Revision log message</label>
-	               <textarea class="text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1"></textarea>
-        		   <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+					</div>
 				</div>
 			</div>
-	        
-            <button type="save" class="btn btn-primary" id="edit-save" name="save">Save</button>
-            <button type="delete" class="btn btn-primary" name="delete">Delete</button>
-          </fieldset>
-        </form>
-       </div>
-      </div>
-    </article>
-    
-}
+     	</div>
+     	
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label"></label>
+				    <div class="col-sm-6">
+				          <input class="form-control" name="uid" value="@user.uid" size="30" readonly>
+					</div>
+				</div>
+			</div>
+     	</div>
 
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="email" class="col-sm-6 control-label">E-mail <font color="red">*</font></label>
+				    <div class="col-sm-6">
+						<input class="form-control" name="email" id="email" placeholder="sample@@domain.uk" type="text" value="@user.email">
+					</div>
+				</div>
+			</div>
+     	</div>
+
+		@if(user.url.equals(admin.url)) {
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="password" class="col-sm-6 control-label">E-Password <font color="red">*</font></label>
+					    <div class="col-sm-6">
+							<input class="form-control" name="password" id="password" type="text" value="@user.password">
+						</div>
+					</div>
+				</div>
+	     	</div>
+		}
+		
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Roles</label>
+				    <div class="col-sm-6">
+				        @for(role <- Role.findAll()) {
+							<label class="checkbox-inline">
+					            @if(Role.isIncluded(role.name, user.roles)) {
+				                	<input type="checkbox" name="@role.name" value="true" checked />
+				                } else {
+				                	<input type="checkbox" name="@role.name" value="true" />
+				                }
+				                 @role.name
+			                </label>
+			            }
+					</div>
+				</div>
+			</div>
+     	</div>	     		
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="nom-org" class="col-sm-6 control-label">Nominating Organisation</label>
+				    <div class="col-sm-6">
+						<select name="organisation" id="nom-org" class="form-control">
+			            <option>None</option>
+							@for(organisation <- Organisation.findAll()) {
+								@if(organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
+             						<option selected>@organisation.title</option>
+         						} else {
+                					<option>@organisation.title</option>
+								}					            
+			            	}
+						</select>
+					</div>
+				</div>
+			</div>
+     	</div>
+     	
+        <div id="revisionArea" class="revision">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message <small class="text-center">(Provide an explanation of the changes you are making. This will help other authors understand your motivations)</small></label>
+					    <div class="col-sm-6">
+               				<textarea class="form-control" name="revision" id="inputRevision">@user.revision</textarea>
+						</div>
+					</div>
+				</div>
+	     	</div>
+		</div>
+
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+		</div>
+
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+					<button type="submit" class="btn btn-primary" name="save">Save</button>
+					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
+		       </div>
+			</div>
+		</div>
+	</form>
+}

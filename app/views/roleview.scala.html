@@ -1,52 +1,41 @@
 @(role: Role, user: User)
 
 
-@main("", user){
+@main("", user) {
     
-    <h1>Role @role.name</h1>
-	<div class="targettabs">    
-		<ul class="nav nav-tabs">
-		   <li class="active"><a href="@routes.RoleEdit.view(role.url)" class="navbar-brand btn btn-success">View</a></li>
-		   @if(user.hasRole("sys_admin")) {
-		   <li><a href="@routes.RoleEdit.edit(role.url)" class="navbar-brand btn btn-success">Edit</a></li>
-		   <li><a href="@routes.RoleEdit.admin(role.url)" class="navbar-brand btn btn-success">Role administration</a></li>
-		   }
-		</ul>
+	<div class="page-header">
+	    <h1>Role @role.name</h1>
 	</div>
+	
+	<ul class="nav nav-tabs">
+	   <li class="active"><a href="@routes.RoleEdit.view(role.url)">View</a></li>
+	   @if(user.hasRole("sys_admin")) {
+	   <li><a href="@routes.RoleEdit.edit(role.url)">Edit</a></li>
+	   <li><a href="@routes.RoleEdit.admin(role.url)">Role administration</a></li>
+	   }
+	</ul>
     
-    <article class="roledetails">
-      <div class="panel panel-default" id="forms">
-        <div class="panel-heading">
-        </div>
-        <div class="panel-body">
-	        <form>
-	          <fieldset>
-	            <div class="container">
-	            	<div class="row">
-	              		<label>Name: @role.name</label>
-					</div>
-	            </div>
-	            <div class="container">
-	            	<div class="row">
-	              		<label>Permissions: @role.permissions</label>
-					</div>
-	            </div>
-	            <div class="container">
-	            	<div class="row">
-	              		<label>Description: @role.description</label>
-					</div>
-	            </div>
-	            <div class="container">
-	            	<div class="row">
-	              		<label>Revision log message: @role.revision</label>
-	        		    <br>Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
-					</div>
-	            </div>
-	          </fieldset>
-	        </form>
-	      </div>
-       </div>
-    </article>
+	<div class="padding-20">
+		<div class="tab-pane active">
+			<dl class="dl-horizontal text-overflow">    
+				<dt>Name:</dt>
+				<dd>@role.name</dd>
+				<dt>Permissions:</dt>
+				<dd>@role.permissions</dd>
+				<dt>Description:</dt>
+				<dd>@role.description</dd>
+				<dt>Revision log message:</dt>
+				<dd>@role.revision</dd>
+			</dl>
+		</div>
+	</div>
+
+	<div class="padding-20">
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+		</div>
+	</div>
+
 }
                    
 	            
