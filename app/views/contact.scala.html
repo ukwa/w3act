@@ -5,38 +5,73 @@
 @main(title, user){
     <h1>Contact</h1>
 
-    <article class="contact">
-      <div class="panel panel-default" id="forms">
-        <div class="panel-heading">
-        </div>
-        <div class="panel-body">
-	        <form>
-	            <fieldset>
-		            <div class="form-group">
-		              <label>Your name</label>
-		              <input class="form-control" id="name" type="text" value="@user.name">
-		            </div>            
-		            <div class="form-group">
-		              <label for="inputEmail">Your e-mail address</label>
-		              <input class="form-control" id="inputEmail" type="text" value="@user.email">
-		            </div>            
-		            <div class="form-group">
-		              <label for="inputSubject">Subject</label>
-		              <input class="form-control" id="inputSubject" placeholder="" type="text">
-		            </div>
-		            <div class="form-group">
-		               <label for="inputMessage">Message</label>
-		               <textarea  class="text-full form-textarea" name="user_eingabe" id="inputMessage" cols="100" rows="1"></textarea>
-		            </div>
-		            <div class="checkbox">
-		              <label>
-		                <input type="checkbox">Send yourself a copy.
-		              </label>
-		            </div>
-	            	<button type="submit" class="btn btn-primary" name="send">Send message</button>		            
-	            </fieldset>
-	        </form>
-         </div>
-      </div>
-    </article>
+	<form>
+		<fieldset>
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputName" class="col-sm-6 control-label">Your name</label>
+					    <div class="col-sm-6">
+	       					<input class="form-control" id="name" type="text" value="@user.name">
+						</div>
+					</div>
+				</div>
+	     	</div>
+		</fieldset>
+		<fieldset>
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputName" class="col-sm-6 control-label">Your e-mail address</label>
+					    <div class="col-sm-6">
+					       <input class="form-control" id="inputEmail" type="text" value="@user.email">
+						</div>
+					</div>
+				</div>
+	     	</div>
+		</fieldset>
+		<fieldset>
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputName" class="col-sm-6 control-label">Subject</label>
+					    <div class="col-sm-6">
+					       <input class="form-control" id="inputSubject" placeholder="" type="text">
+						</div>
+					</div>
+				</div>
+	     	</div>
+		</fieldset>
+		<fieldset>
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputName" class="col-sm-6 control-label">Message</label>
+					    <div class="col-sm-6">
+	        				<textarea  class="form-control" name="user_eingabe" id="inputMessage"></textarea>
+						</div>
+					</div>
+				</div>
+	     	</div>
+		</fieldset>
+		<fieldset>
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputName" class="col-sm-6 control-label">Send yourself a copy</label>
+					    <div class="col-sm-6">
+							<input type="checkbox" name="checkbox">
+						</div>
+					</div>
+				</div>
+	     	</div>
+		</fieldset>
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+    				<button type="submit" class="btn btn-primary" name="send">Send message</button>		            
+		       </div>
+			</div>
+		</div>
+	</form>
 }

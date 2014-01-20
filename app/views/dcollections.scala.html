@@ -45,7 +45,7 @@
 		<div id="forms">
 			<form class="form-inline" action="@routes.CollectionEdit.filter()" method="POST" role="form">
 	   			<div class="input-group">
-					<input type="text" class="form-control lookup-form-control" name="name" type="text" placeholder="Enter Collection Name" value="@searchstr" id="search-query">
+					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Collection Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="search" title="Search for collection by name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
