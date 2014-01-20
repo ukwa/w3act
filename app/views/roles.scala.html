@@ -6,34 +6,12 @@
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
-		// bootstrap typeahead
 		$(document).ready(function() {
-	        var resultMap = {};
-
-			$('#search-query').typeahead({
-				remote: {
-					url: '@play.api.Play.current.configuration.getString("application.context")role/filterbyjson/%QUERY',
-					filter: function(data) {
-						var searchResults = [];
-						$.each(data, function(event, element) {
-							var label = element.name;
-							console.log(element.url + ":" + label);
-							searchResults.push(label);
-							resultMap[label] = element;
-						});
-			          	return searchResults;
-					}
-				}
-			});
-			
-			$('#search-query').on('typeahead:selected', function(event, element) {
-				var key = element.value;
-				var url = resultMap[key].url;
-				document.location = @play.api.Play.current.configuration.getString("application.context") + "role/" + url; 
-			});			
+			context = @play.api.Play.current.configuration.getString("application.context") + 'role';
+			applySearch(context); 
 		});
-		
 	</script>
 }
 

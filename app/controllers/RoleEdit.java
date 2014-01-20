@@ -242,5 +242,6 @@ public class RoleEdit extends AbstractController {
 	        jsonData = Json.toJson(roles);
         }
         return ok(jsonData);
-    }}
+    }
+}
 

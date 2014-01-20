@@ -1,21 +1,19 @@
 package controllers;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import models.Organisation;
-import models.Permission;
 import models.Permission;
 import models.Target;
 import models.User;
 import play.Logger;
-import play.mvc.Controller;
+import play.libs.Json;
+import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.*;
 
 /**
@@ -172,6 +170,15 @@ public class PermissionEdit extends AbstractController {
         }
         return res;
     }	   
-    
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result filterByJson(String name) {
+        JsonNode jsonData = null;
+        if (name != null) {
+	        List<Permission> permissions = Permission.filterByName(name);
+	        jsonData = Json.toJson(permissions);
+        }
+        return ok(jsonData);
+    }
 }
 

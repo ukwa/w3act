@@ -42,7 +42,6 @@ public class Organisation extends Model {
     public String title;
     @JsonIgnore
     public String language;
-    @JsonIgnore
     public String url;
     @JsonIgnore
     public String edit_url;

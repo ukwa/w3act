@@ -15,11 +15,17 @@ import javax.persistence.Id;
 import javax.persistence.Version;
 
 import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Permission extends Model
 {
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2250099575468302989L;
+
+	@Id @JsonIgnore
     public Long id;
 
     @Column(columnDefinition = "TEXT")
@@ -28,12 +34,15 @@ public class Permission extends Model
     @Column(columnDefinition = "TEXT")
     public String url;
     
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String description;
     
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String revision; 
     
+    @JsonIgnore
     @Version
     public Timestamp lastUpdate;
 
