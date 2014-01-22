@@ -15,9 +15,7 @@ import play.mvc.Security;
 import uk.bl.Const;
 import views.html.curators;
 import views.html.userbookmarks;
-import views.html.useredit;
-import views.html.usersites;
-import views.html.userview;
+import views.html.users.*;
 
 /**
  * Manage targets.

@@ -9,7 +9,7 @@ import play.Logger;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import views.html.*;
+import views.html.collections.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -29,7 +29,7 @@ public class CollectionEdit extends AbstractController {
         return ok(
         );
     }
-
+    
     /**
      * Display the collection edit panel for this URL.
      */

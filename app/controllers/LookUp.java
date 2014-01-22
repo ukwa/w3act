@@ -1,13 +1,14 @@
 package controllers;
 
-import java.util.UUID;
+import java.util.List;
 
-import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import models.Organisation;
 import models.Target;
 import models.User;
 import play.Logger;
+import play.libs.Json;
+import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -86,6 +87,15 @@ public class LookUp extends AbstractController {
         }
         return res;
     }
-	
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result filterByJson(String url) {
+        JsonNode jsonData = null;
+        if (url != null) {
+	        List<Target> targets = Target.filterUrl(url);
+	        jsonData = Json.toJson(targets);
+        }
+        return ok(jsonData);
+    }
 }
 

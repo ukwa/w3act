@@ -1,0 +1,70 @@
+@(permission: Permission, user: User)
+
+
+@main("", user) {
+
+   	<div class="page-header">
+    	<h1>Edit permission @permission.name</h1>
+	</div>
+
+	<ul class="nav nav-tabs">
+	   <li><a href="@routes.PermissionEdit.view(permission.url)">View</a></li>
+	   @if(user.hasRole("sys_admin")) {
+		   <li class="active"><a href="@routes.PermissionEdit.edit(permission.url)">Edit</a></li>
+	   }
+	</ul>
+    
+	<form action="@routes.PermissionEdit.save()" method="POST">
+		<input type="hidden" name="url" value="@permission.url">
+		<input type="hidden" name="id" value="@permission.id">
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="name" id="inputName" value="@permission.name" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
+				    <div class="col-sm-6">
+						<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1">@permission.description</textarea>
+					</div>
+				</div>
+			</div>
+     	</div>
+
+        <div id="revisionArea" class="revision">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
+					    <div class="col-sm-6">
+               				<textarea class="form-control" name="revision" id="inputRevision">@permission.revision</textarea>
+						</div>
+					</div>
+				</div>
+	     	</div>
+		</div>
+		
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+		</div>
+
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+					<button type="submit" class="btn btn-primary" name="save">Save</button>
+					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
+		       </div>
+			</div>
+		</div>
+	</form>
+}
+

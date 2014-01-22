@@ -2,7 +2,6 @@ package controllers;
 
 import java.util.Map;
 
-import play.Logger;
 import play.mvc.Controller;
 
 public class AbstractController extends Controller {

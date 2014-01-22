@@ -24,7 +24,7 @@
 				<div class="form-group">
 					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 				    <div class="col-sm-6">
-	              		<input class="form-control" name="name" id="inputTitle" value="@role.name" type="text">
+	              		<input class="form-control" name="name" id="inputName" value="@role.name" type="text">
 					</div>
 				</div>
 			</div>
@@ -65,7 +65,7 @@
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message <small class="text-center">(Provide an explanation of the changes you are making. This will help other authors understand your motivations)</small></label>
+		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
 					    <div class="col-sm-6">
                				<textarea class="form-control" name="revision" id="inputRevision">@role.revision</textarea>
 						</div>
@@ -86,5 +86,6 @@
 		       </div>
 			</div>
 		</div>
+	</form>
 }
 

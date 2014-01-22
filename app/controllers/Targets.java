@@ -2,24 +2,18 @@ package controllers;
 
 import play.*;
 import play.mvc.*;
-import play.data.*;
-import static play.data.Form.*;
 
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import com.avaje.ebean.Expr;
-import com.avaje.ebean.Expression;
 import com.avaje.ebean.ExpressionList;
 
 import models.*;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.*;
+import views.html.targets.*;
 
 import java.lang.reflect.Field;
-import java.net.URLEncoder;
 
 /**
  * Manage targets.

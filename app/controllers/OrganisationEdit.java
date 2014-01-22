@@ -13,7 +13,7 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import views.html.*;
+import views.html.organisations.*;
 
 /**
  * Manage targets.

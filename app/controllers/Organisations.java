@@ -2,7 +2,6 @@ package controllers;
 
 import play.*;
 import play.mvc.*;
-import play.data.*;
 import static play.data.Form.*;
 
 import java.util.*;
@@ -12,7 +11,7 @@ import com.avaje.ebean.Ebean;
 import models.*;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.*;
+import views.html.organisations.*;;
 
 /**
  * Manage organisations.

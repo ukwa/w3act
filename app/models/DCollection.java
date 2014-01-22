@@ -8,8 +8,10 @@ import javax.persistence.*;
 import com.avaje.ebean.ExpressionList;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.*;
 import uk.bl.Const;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -33,6 +35,7 @@ public class DCollection extends Model {
     public Boolean is_new;
     @JsonIgnore
     public String type;
+    @Required
     public String title;
     @JsonIgnore
     public String language;

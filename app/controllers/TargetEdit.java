@@ -7,8 +7,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import views.html.targetedit;
-import views.html.targetview;
+import views.html.targets.*;
 
 /**
  * Manage targets.

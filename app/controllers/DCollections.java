@@ -2,17 +2,15 @@ package controllers;
 
 import play.*;
 import play.mvc.*;
-import play.data.*;
 import static play.data.Form.*;
 
-import java.util.*;
+import org.apache.commons.lang3.StringUtils;
 
 import com.avaje.ebean.Ebean;
 
 import models.*;
 import uk.bl.Const;
-import uk.bl.api.Utils;
-import views.html.*;
+import views.html.collections.*;
 
 /**
  * Manage dcollections.
@@ -105,7 +103,11 @@ public class DCollections extends AbstractController {
         	    	collection.revision = "";
         	    }
                 if (getFormParam(Const.REVISION) != null) {
-                	collection.revision = collection.revision.concat(", " + getFormParam(Const.REVISION));
+                	String comma = "";
+                	if (StringUtils.isNotBlank(collection.revision)) {
+                		comma = Const.COMMA + " ";
+                	}
+                	collection.revision = collection.revision.concat(comma + getFormParam(Const.REVISION));
                 }
             } catch (Exception e) {
             	Logger.info("User not existing exception");
