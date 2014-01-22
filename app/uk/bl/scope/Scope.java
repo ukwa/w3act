@@ -9,6 +9,8 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import models.Target;
 import play.Logger;
@@ -16,6 +18,9 @@ import uk.bl.Const;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
+
+import uk.bl.wa.whois.JRubyWhois;
+import uk.bl.wa.whois.WhoisResult;
 
 /**
  * This class implements scope rule engine.
@@ -50,6 +55,7 @@ public class Scope {
 	public static final String GEO_IP_SERVICE  = "GeoLite2-City.mmdb";
 	public static final String UK_COUNTRY_CODE = "GB";
 	public static final String HTTP            = "http://";
+	public static final String HTTPS           = "https://";
 	public static final String WWW             = "www.";
 	public static final String END_STR         = "/";
 
@@ -94,7 +100,9 @@ public class Scope {
 	        	res = WWW + res;
 	        }
 	        if (!res.contains(HTTP)) {
-	        	res = HTTP + res;
+		        if (!res.contains(HTTPS)) {
+		        	res = HTTP + res;
+		        }
 	        }
 	        if (!res.endsWith(END_STR)) {
 	        	res = res + END_STR;
@@ -127,7 +135,18 @@ public class Scope {
          */
         // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
         if (nidUrl != null && nidUrl.length() > 0) {
-        	res = Target.checkManualScope(nidUrl);
+        	try {
+	        	JRubyWhois whoIs = new JRubyWhois();
+	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
+//	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl("marksandspencer.com"));
+	        	res = whoIsRes.isUKRegistrant();
+        	} catch (Exception e) {
+        		Logger.info("whois lookup message: " + e.getMessage());
+        	}
+        	Logger.info("whois res: " + res);        	
+        	if (!res) {
+        		res = Target.checkManualScope(nidUrl);
+        	}
         }
 
     	// Rule 2: by permission
@@ -178,6 +197,24 @@ public class Scope {
 			Logger.info("ip calculation error for url=" + url + ". " + e.getMessage());
 		}
         return ip;
+	}
+	
+	/**
+	 * This method extracts domain name from the given URL.
+	 * @param url
+	 * @return
+	 */
+	public static String getDomainFromUrl(String url) {
+		String domain = "";
+		try {
+//			Logger.info("get host: " + new URL(url).getHost());
+			domain = new URL(url).getHost().replace(WWW, "");
+			Logger.info("whois lookup for domain: " + domain);
+		} catch (Exception e) {
+			Logger.info("domain calculation error for url=" + url + ". " + e.getMessage());
+			domain = url;
+		}
+        return domain;
 	}
 	
 }
