@@ -13,10 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.Expression;
 import com.avaje.ebean.ExpressionList;
-import com.avaje.ebean.Query;
+import com.avaje.ebean.Page;
 
 import play.Logger;
 import play.db.ebean.Model;
@@ -697,5 +695,26 @@ public class Target extends Model {
 //        ", field_subject: " + field_subject + ", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
+    /**
+     * Return a page of Target
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Target> page(int page, int pageSize, String sortBy, String order, String filter) {
+
+        return find.where().contains("field_url", filter)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }
+    
+    public Organisation getOrganisation() {
+    	return Organisation.findByUrl(field_nominating_organisation);
+    }
 }
 

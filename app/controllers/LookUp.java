@@ -12,7 +12,8 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import views.html.*;
+import views.html.lookup;
+import views.html.targets.*;
 
 /**
  * Look up the URL of interest. This gives a status check, and allows the user to decide 
@@ -36,13 +37,18 @@ public class LookUp extends AbstractController {
      */
     public static Result index() {
     	Logger.info("LookUp.index()");
-        return ok(
-            lookup.render(
-                "LookUp", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll(), ""
-            )
-        );
+//        return ok(
+//            lookup.render(
+//                "LookUp", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll(), ""
+//            )
+//        );
+        return GO_HOME;
     }
 
+    public static Result GO_HOME = redirect(
+        routes.LookUp.list(0, "title", "asc", "")
+    );
+    
     /**
      * Export selected targets to CSV file.
      */
@@ -80,9 +86,13 @@ public class LookUp extends AbstractController {
         	}
         } else {
             res = ok(
-	            lookup.render(
-	                "LookUp", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll(), url
-                )
+    			list.render(
+            			"Lookup",
+            			User.find.byId(request().username()), 
+            			url,
+            			Target.page(0, 10, "title", "asc", url), 
+            			"title", 
+            			"asc")
             );
         }
         return res;
@@ -96,6 +106,27 @@ public class LookUp extends AbstractController {
 	        jsonData = Json.toJson(targets);
         }
         return ok(jsonData);
+    }
+    
+    /**
+     * Display the paginated list of targets.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     */
+    public static Result list(int pageNo, String sortBy, String order, String filter) {
+    	Logger.info("LookUp.list()");
+        return ok(
+        	list.render(
+        			"Lookup", 
+        			User.find.byId(request().username()), 
+        			filter, 
+        			Target.page(pageNo, 10, sortBy, order, filter), 
+        			sortBy, 
+        			order)
+        	);
     }
 }
 
