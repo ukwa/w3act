@@ -26,6 +26,7 @@ To install you need:
 | v1.6.0_33  | 178 MB   | Java Developers Kit (e.g. JDK 6)                        |[download-java]       |
 | v0.7.0     | 13.6 MB  | Maxmind GeoIP2 database                                 |[download-geoip]      |
 | v1.7.9     | 12.9 MB  | Whois mapping between domain and country                |[download-whois]      |
+| v3.1.1     | 2.8 MB   | Maven tool                                              |[download-maven]      |
 
 ### Install instructions
 
@@ -34,7 +35,14 @@ Please refer to the installation instructions of associated tool.
 #### Whois
 In order to install Whois lookup functionality:
 
-Download JRuby JARs from [download-whois] and copy them to the "lib" folder of the project. We need jruby.jar and jruby-complete-1.7.9.jar.
+Download JRuby JARs from [download-whois].
+Extract ZIP and in folder jruby-1.7.9 execute:
+
+gem install whois
+
+in order to download whois gem for JRuby.
+
+Then copy JRuby JARs to the "lib" folder of the project. We need jruby.jar and jruby-complete-1.7.9.jar.
 Download [ukwa-whois] maven project. Compile it using command
 
 mvn clean install
@@ -145,3 +153,4 @@ or simply manually delete all "target" folders in your project
 [download-whois]: http://www.jruby.org/files/downloads/1.7.9/index.html
 [RHEL installation]: https://github.com/ukwa/w3act/wiki/Installation-instructions
 [ukwa-whois]: https://github.com/ukwa/jruby-whois/blob/master/src/main/java/uk/bl/wa/whois/JRubyWhois.java
+[download-maven]: http://maven.apache.org/download.cgi
