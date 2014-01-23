@@ -13,6 +13,8 @@ To install you need:
 * PostgreSQL
 * Java
 * Maxmind GeoIP2 database
+* Whois gem
+* Maven
 
 ### Download
 
@@ -23,10 +25,25 @@ To install you need:
 | v9.3.1     | 51.6 MB  | PostgreSQL database                                     |[download-db]         |
 | v1.6.0_33  | 178 MB   | Java Developers Kit (e.g. JDK 6)                        |[download-java]       |
 | v0.7.0     | 13.6 MB  | Maxmind GeoIP2 database                                 |[download-geoip]      |
+| v1.7.9     | 12.9 MB  | Whois mapping between domain and country                |[download-whois]      |
 
 ### Install instructions
 
 Please refer to the installation instructions of associated tool.
+
+#### Whois
+In order to install Whois lookup functionality:
+
+Download JRuby JARs from [download-whois] and copy them to the "lib" folder of the project. We need jruby.jar and jruby-complete-1.7.9.jar.
+Download [ukwa-whois] maven project. Compile it using command
+
+mvn clean install
+
+Create JAR package
+
+mvn package
+
+Copy generated project to the "lib" folder of the project. We will get a jruby-whois-3.4.2.2-SNAPSHOT.jar
 
 ## To use the application in production mode:
 
@@ -64,7 +81,7 @@ For the case you use application on Windows, in order to see processes you could
 And for killing process with e.g. PID 1304 use “taskkill /pid 1304 /F” command.
 
 ### Execution steps for Linux
-TBD
+[RHEL installation] wiki describes exact commands with comments for deployment on Linux. 
 
 ## To use the application in development mode:
 
@@ -125,3 +142,6 @@ or simply manually delete all "target" folders in your project
 [build-status]: https://travis-ci.org/ukwa/w3act)](https://travis-ci.org/ukwa/w3act
 [wiki]: https://github.com/ukwa/w3act/wiki
 [eclipse]: http://eclipse.org/eclipse
+[download-whois]: http://www.jruby.org/files/downloads/1.7.9/index.html
+[RHEL installation]: https://github.com/ukwa/w3act/wiki/Installation-instructions
+[ukwa-whois]: https://github.com/ukwa/jruby-whois/blob/master/src/main/java/uk/bl/wa/whois/JRubyWhois.java
