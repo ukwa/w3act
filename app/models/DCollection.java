@@ -6,6 +6,7 @@ import java.util.*;
 import javax.persistence.*;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
@@ -235,5 +236,22 @@ public class DCollection extends Model {
         		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
+    /**
+     * Return a page of Target
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     */
+    public static Page<DCollection> page(int page, int pageSize, String sortBy, String order, String filter) {
+
+        return find.where().contains("title", filter)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }
 }
 

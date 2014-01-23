@@ -12,7 +12,6 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import views.html.lookup;
 import views.html.targets.*;
 
 /**
@@ -37,28 +36,12 @@ public class LookUp extends AbstractController {
      */
     public static Result index() {
     	Logger.info("LookUp.index()");
-//        return ok(
-//            lookup.render(
-//                "LookUp", User.find.byId(request().username()), models.Target.findInvolving(), User.findAll(), ""
-//            )
-//        );
         return GO_HOME;
     }
 
     public static Result GO_HOME = redirect(
         routes.LookUp.list(0, "title", "asc", "")
     );
-    
-    /**
-     * Export selected targets to CSV file.
-     */
-//    public static Result export() {
-//    	Logger.info("LookUp.export()");
-////        String export = getFormParam(Const.EXPORT);
-////        if (export != null) {
-//       	return redirect(routes.Targets.index()); 
-////        }
-//    }
     
     /**
      * This method enables searching for given URL and redirection in order to add new entry
@@ -77,10 +60,14 @@ public class LookUp extends AbstractController {
         		res = redirect(routes.TargetEdit.addEntry(url));
         	} else {
         		Logger.info("Target title is empty. Please write title in search window.");
-//                res = ok();
                 res = ok(
-        	            lookup.render(
-        	                "LookUp", User.find.byId(request().username()), models.Target.filterUrl(url), User.findAll(), ""
+        	            list.render(
+        	                "LookUp", 
+        	                User.find.byId(request().username()),
+        	                url,
+                			Target.page(0, 10, "title", "asc", url), 
+                			"title",
+                			"asc"
                         )
                     );
         	}

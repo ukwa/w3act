@@ -22,12 +22,13 @@ public class DCollections extends AbstractController {
      * Display the dcollections.
      */
     public static Result index() {
-        return ok(
-            dcollections.render(
-                "Collections", User.find.byId(request().username()), models.DCollection.findInvolving(), ""
-            )
-        );
+    	Logger.info("DCollections.index()");
+        return GO_HOME;
     }
+    
+    public static Result GO_HOME = redirect(
+            routes.DCollections.list(0, "title", "asc", "")
+        );
 
     // -- DCollections
 
@@ -132,6 +133,27 @@ public class DCollections extends AbstractController {
         return res;
     }
 	
+    /**
+     * Display the paginated list of collections.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     */
+    public static Result list(int pageNo, String sortBy, String order, String filter) {
+    	Logger.info("LookUp.list()");
+        return ok(
+        	list.render(
+        			"Collections", 
+        			User.find.byId(request().username()), 
+        			filter, 
+        			DCollection.page(pageNo, 10, sortBy, order, filter), 
+        			sortBy, 
+        			order)
+        	);
+    }
+    
     /**
      * This method adds link to passed collection in given User object if 
      * link does not already exists.
