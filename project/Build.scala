@@ -6,14 +6,16 @@ import play.Project._
 object ApplicationBuild extends Build {
 
     val appName         = "w3act"
-    val appVersion      = "0.1"
+    val appVersion      = "0.2"
 
     val appDependencies = Seq(
       javaCore,
       javaJdbc,
       javaEbean,
       "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
-      "com.maxmind.geoip2" % "geoip2" % "0.7.0"
+      "com.maxmind.geoip2" % "geoip2" % "0.7.0",
+      "org.apache.commons" % "commons-email" % "1.3.2",
+      "commons-io" % "commons-io" % "2.3"
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(

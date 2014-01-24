@@ -43,6 +43,13 @@ public class CommunicationLog extends Model
     public String name;
     
     /**
+     * The name of the curator with whom the communication took place.
+     * This name should be auto-populated with name of logged-in user.
+     */
+    @Column(columnDefinition = "TEXT")
+    public String curator;
+    
+    /**
      * The date of communication in format (dd/mm/yyyy).
      */
     @Column(columnDefinition = "TEXT")

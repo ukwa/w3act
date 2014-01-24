@@ -11,10 +11,24 @@ import models.User;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.BodyParser;
+//import play.mvc.Http.Session;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import views.html.crawlpermissions.*;
+
+import javax.mail.*;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+
+import java.io.*;
+import java.util.*;
+import java.util.*;
+
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.InternetAddress;
+import javax.activation.*;
 
 /**
  * Manage permissions.
@@ -94,6 +108,8 @@ public class CrawlPermissionEdit extends AbstractController {
      * @return
      */
     public static Result addEntry(String name) {
+    	sendEmail();
+
     	CrawlPermission permission = new CrawlPermission();
     	permission.name = name;
         permission.id = Target.createId();
@@ -106,6 +122,41 @@ public class CrawlPermissionEdit extends AbstractController {
             );
     }
       
+    public static void sendEmail() {
+    	try {
+            Logger.info("send mail1");
+            String host = "smtp.gmail.com";
+            String username = "test@gmail.com";
+            String password = "1234";
+            InternetAddress[] addresses = {new InternetAddress("roman.graf@ait.ac.at")};
+//            InternetAddress[] addresses = {new InternetAddress("user@anymail.com"),
+//                    new InternetAddress(bid.email), connect to SMTP host: smtp.gmail.com, port: 465;
+//                    new InternetAddress("another-user@anymail.com")};
+            Properties props = new Properties();
+
+            // set any needed mail.smtps.* properties here
+            Session session = Session.getInstance(props);
+            MimeMessage message = new MimeMessage(session);
+            message.setSubject("my subject placed here");
+            message.setContent("my message placed here:\n\n"
+                    , "text/plain");
+//            + part.toString(), "text/plain");
+            message.setRecipients(Message.RecipientType.TO, addresses);
+
+            // set the message content here
+            Transport t = session.getTransport("smtps");
+            try {
+                t.connect(host, username, password);
+                Logger.info("send mail");
+                t.sendMessage(message, message.getAllRecipients());
+            } finally {
+                t.close();
+            }          
+        } catch (MessagingException me) {
+            me.printStackTrace();
+        }
+    }
+    
     /**
      * This method saves new object or changes on given Permission in the same object
      * completed by revision comment. The "version" field in the Permission object
@@ -114,7 +165,9 @@ public class CrawlPermissionEdit extends AbstractController {
      */
     public static Result save() {
     	Result res = null;
-        String save = getFormParam(Const.SAVE);
+    	sendEmail();
+    	
+/*        String save = getFormParam(Const.SAVE);
         String delete = getFormParam(Const.DELETE);
 //        Logger.info("save: " + save);
         if (save != null) {
@@ -167,10 +220,27 @@ public class CrawlPermissionEdit extends AbstractController {
         	CrawlPermission permission = CrawlPermission.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(permission);
 	        res = redirect(routes.CrawlPermissionEdit.index()); 
-        }
+        }*/
+    	res = redirect(routes.CrawlPermissionEdit.index()); 
         return res;
     }	   
 
+    public static Result templates() {
+        return ok(
+                templates.render(
+                    "MailTemplates", User.find.byId(request().username()), models.MailTemplate.findAll(), ""
+                )
+            );
+    }
+    
+//    public static Result licenses() {
+//        return ok(
+//                licenses.render(
+//                		User.find.byId(request().username())
+//                )
+//            );
+//    }
+    
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;

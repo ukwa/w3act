@@ -1,4 +1,4 @@
-@(title: String, user: User, permissions: List[Permission], searchstr: String)
+@(title: String, user: User, templates: List[MailTemplate], searchstr: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -18,17 +18,22 @@
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1>Permissions</h1>
+	    <h1>Crawl Permissions</h1>
 	</div>
+	
+    <ul class="nav nav-tabs">
+	   <li><a href="@routes.CrawlPermissionEdit.index()">Permissions</a></li>
+	   <li class="active"><a href="@routes.CrawlPermissionEdit.templates()">Templates</a></li> 
+	</ul>
 		
     <article class="permissions">
 
 		<div id="forms">
-	   		<form class="form-inline" action="@routes.PermissionEdit.filter()" method="POST" role="form">
+	   		<form class="form-inline" action="@routes.CrawlPermissionEdit.filter()" method="POST" role="form">
 	   			<div class="input-group">
-					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Permission Name" value="@searchstr" id="search-query">
+					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Template Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="search" title="Search for permission by name">Search</button>
+						<button type="submit" class="btn btn-primary" id="search" name="search" title="Search for template by name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 							<button type="submit" class="btn btn-primary" id="addentry" name="addentry" title="Add new permission">Add</button>
 						}
@@ -44,9 +49,9 @@
 				</tr>
 			</thead>
 			<tbody>
-			@permissions.map { permission =>		              
+			@templates.map { template =>		              
 				<tr>
-					<td><a href="@routes.PermissionEdit.view(permission.url)">@permission.name</a></td>
+					<td><a href="@routes.CrawlPermissionEdit.view(template.url)">@template.name</a></td>
 				</tr>
 			}
 			</tbody>
