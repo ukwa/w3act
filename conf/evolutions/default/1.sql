@@ -3,6 +3,53 @@
 
 # --- !Ups
 
+create table communication_log (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  date                      TEXT,
+  type                      TEXT,
+  notes                     TEXT,
+  last_update               timestamp not null,
+  constraint pk_communication_log primary key (id))
+;
+
+create table contact_person (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  position                  TEXT,
+  phone                     TEXT,
+  email                     TEXT,
+  postal_address            TEXT,
+  web_form                  TEXT,
+  description               TEXT,
+  contact_organisation      TEXT,
+  default_contact           boolean,
+  permission_checked        boolean,
+  last_update               timestamp not null,
+  constraint pk_contact_person primary key (id))
+;
+
+create table crawl_permission (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  target                    TEXT,
+  description               TEXT,
+  status                    TEXT,
+  contact_person            TEXT,
+  creator_user              TEXT,
+  assigned_archivist        TEXT,
+  template                  TEXT,
+  license                   TEXT,
+  license_date              TEXT,
+  request_followup          boolean,
+  number_requests           bigint,
+  last_update               timestamp not null,
+  constraint pk_crawl_permission primary key (id))
+;
+
 create table dcollection (
   nid                       bigint not null,
   value                     TEXT,
@@ -98,6 +145,20 @@ create table instance (
   constraint pk_instance primary key (nid))
 ;
 
+create table mail_template (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  type                      TEXT,
+  subject                   TEXT,
+  from_email                TEXT,
+  place_holders             TEXT,
+  default_email             boolean,
+  text                      TEXT,
+  last_update               timestamp not null,
+  constraint pk_mail_template primary key (id))
+;
+
 create table organisation (
   nid                       bigint not null,
   value                     TEXT,
@@ -135,6 +196,17 @@ create table permission (
   revision                  TEXT,
   last_update               timestamp not null,
   constraint pk_permission primary key (id))
+;
+
+create table permission_refusal (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  date                      TEXT,
+  type                      TEXT,
+  reason                    TEXT,
+  last_update               timestamp not null,
+  constraint pk_permission_refusal primary key (id))
 ;
 
 create table role (
@@ -257,13 +329,23 @@ create table creator (
   constraint pk_creator primary key (email))
 ;
 
+create sequence communication_log_seq;
+
+create sequence contact_person_seq;
+
+create sequence crawl_permission_seq;
+
 create sequence dcollection_seq;
 
 create sequence instance_seq;
 
+create sequence mail_template_seq;
+
 create sequence organisation_seq;
 
 create sequence permission_seq;
+
+create sequence permission_refusal_seq;
 
 create sequence role_seq;
 
@@ -280,35 +362,51 @@ create sequence creator_seq;
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+drop table if exists communication_log cascade;
 
-drop table if exists dcollection;
+drop table if exists contact_person cascade;
 
-drop table if exists instance;
+drop table if exists crawl_permission cascade;
 
-drop table if exists organisation;
+drop table if exists dcollection cascade;
 
-drop table if exists permission;
+drop table if exists instance cascade;
 
-drop table if exists role;
+drop table if exists mail_template cascade;
 
-drop table if exists target;
+drop table if exists organisation cascade;
 
-drop table if exists taxonomy;
+drop table if exists permission cascade;
 
-drop table if exists taxonomy_vocabulary;
+drop table if exists permission_refusal cascade;
 
-drop table if exists creator;
+drop table if exists role cascade;
 
-SET REFERENTIAL_INTEGRITY TRUE;
+drop table if exists target cascade;
+
+drop table if exists taxonomy cascade;
+
+drop table if exists taxonomy_vocabulary cascade;
+
+drop table if exists creator cascade;
+
+drop sequence if exists communication_log_seq;
+
+drop sequence if exists contact_person_seq;
+
+drop sequence if exists crawl_permission_seq;
 
 drop sequence if exists dcollection_seq;
 
 drop sequence if exists instance_seq;
 
+drop sequence if exists mail_template_seq;
+
 drop sequence if exists organisation_seq;
 
 drop sequence if exists permission_seq;
+
+drop sequence if exists permission_refusal_seq;
 
 drop sequence if exists role_seq;
 
