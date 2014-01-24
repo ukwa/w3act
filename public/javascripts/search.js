@@ -1,29 +1,32 @@
-function applySearch(context) {
+function applySearch(contextSearch, contextTo) {
 	
     var resultMap = {};
 
 	$('#search-query').typeahead({
 		remote: {
-			url: context + '/filterbyjson/%QUERY',
-			filter: function(data) {
+			url: contextSearch + '/filterbyjson/%QUERY',
+			filter: function(items) {
 				var searchResults = [];
-				$.each(data, function(event, element) {
-					var label = element.name;
+				for (var i = 0; i < items.length; i++) {
+					var item = items[i];
+					var label = item.name;
 					if (label === undefined) {
-						label = element.title;
+						label = item.title;
 					}
-					console.log(element.url + ":" + label);
-					searchResults.push(label);
-					resultMap[label] = element;
-				});
+					searchResults[i] = {
+						value: label,
+						url: item.url
+					};
+				}				
 	          	return searchResults;
 			}
 		}
-	});
-
-	$('#search-query').on('typeahead:selected', function(event, element) {
-		var key = element.value;
-		var url = resultMap[key].url;
-		document.location = context + "/" + url; 
+	}).on('typeahead:selected', function(event, datum) {
+		console.log("contextTo: " + contextTo);
+		if (contextTo !== undefined) {
+			document.location = contextTo + "/" + datum.url; 
+		} else {
+			document.location = contextSearch + "/" + datum.url; 
+		}
 	});
 }

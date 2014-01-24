@@ -6,7 +6,8 @@
 	<script>
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context") + 'lookup';
-			applySearch(context); 
+			contextTo = @play.api.Play.current.configuration.getString("application.context") + 'target';
+			applySearch(context, contextTo); 
 		});
 		
         var idle_timeout,
