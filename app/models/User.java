@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.joda.time.DateTime;
@@ -25,6 +26,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -276,6 +278,28 @@ public class User extends Model {
     public String toString() {
         return "User(" + name + ")" + ", url:" + url;
     }
+    
+    // Could really do with many_to_one relationship
+    public Organisation getOrganisation() {
+    	return Organisation.findByUrl(field_affiliation);
+    }
 
+    /**
+     * Return a page of User
+     *
+     * @param page Page to display
+     * @param pageSize Number of Users per page
+     * @param sortBy User property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     */
+    public static Page<User> page(int page, int pageSize, String sortBy, String order, String filter) {
+
+        return find.where().contains("name", filter)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }
 }
 

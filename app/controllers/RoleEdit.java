@@ -29,13 +29,14 @@ public class RoleEdit extends AbstractController {
      * Display the role.
      */
     public static Result index() {
-        return ok(
-                roles.render(
-                    "Roles", User.find.byId(request().username()), models.Role.findAll(), ""
-                )
-            );
+    	Logger.info("Roles.index()");
+        return GO_HOME;
     }
-
+    
+    public static Result GO_HOME = redirect(
+            routes.RoleEdit.list(0, "name", "asc", "")
+        );
+    
     /**
      * Display the role edit panel for this URL.
      */
@@ -241,5 +242,26 @@ public class RoleEdit extends AbstractController {
         }
         return ok(jsonData);
     }
+    
+    /**
+     * Display the paginated list of Curators.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     */
+    public static Result list(int pageNo, String sortBy, String order, String filter) {
+    	Logger.info("Roles.list()");
+        return ok(
+        	list.render(
+        			"Roles", 
+        			User.find.byId(request().username()), 
+        			filter, 
+        			Role.page(pageNo, 10, sortBy, order, filter), 
+        			sortBy, 
+        			order)
+        	);
+    }    
 }
 

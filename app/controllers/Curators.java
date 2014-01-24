@@ -2,8 +2,6 @@ package controllers;
 
 import play.*;
 import play.mvc.*;
-import play.data.*;
-import static play.data.Form.*;
 
 import java.util.*;
 
@@ -12,8 +10,7 @@ import com.avaje.ebean.Ebean;
 import models.*;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import uk.bl.scope.Scope;
-import views.html.*;
+import views.html.users.*;
 
 /**
  * Manage curators.
@@ -25,13 +22,14 @@ public class Curators extends AbstractController {
      * Display the Curators.
      */
     public static Result index() {
-        return ok(
-            curators.render(
-                "Curators", User.find.byId(request().username()), models.User.findAll(), ""
-            )
-        );
+    	Logger.info("Curators.index()");
+        return GO_HOME;
     }
-
+    
+    public static Result GO_HOME = redirect(
+            routes.Curators.list(0, "name", "asc", "")
+        );
+    
     /**
      * This method saves changes on given curator in the same object
      * completed by revision comment. The "version" field in the User object
@@ -133,5 +131,25 @@ public class Curators extends AbstractController {
         return res;
     }
 	
+    /**
+     * Display the paginated list of Curators.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     */
+    public static Result list(int pageNo, String sortBy, String order, String filter) {
+    	Logger.info("Curators.list()");
+        return ok(
+        	list.render(
+        			"Curators", 
+        			User.find.byId(request().username()), 
+        			filter, 
+        			User.page(pageNo, 10, sortBy, order, filter), 
+        			sortBy, 
+        			order)
+        	);
+    }
 }
 

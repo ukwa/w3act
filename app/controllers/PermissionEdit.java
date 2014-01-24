@@ -26,13 +26,14 @@ public class PermissionEdit extends AbstractController {
      * Display the permission.
      */
     public static Result index() {
-        return ok(
-                permissions.render(
-                    "Permissions", User.find.byId(request().username()), models.Permission.findAll(), ""
-                )
-            );
+    	Logger.info("Permissions.index()");
+        return GO_HOME;
     }
-
+    
+    public static Result GO_HOME = redirect(
+            routes.PermissionEdit.list(0, "name", "asc", "")
+        );
+    
     /**
      * Display the permission edit panel for this URL.
      */
@@ -180,5 +181,26 @@ public class PermissionEdit extends AbstractController {
         }
         return ok(jsonData);
     }
+    
+    /**
+     * Display the paginated list of Curators.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     */
+    public static Result list(int pageNo, String sortBy, String order, String filter) {
+    	Logger.info("Permissions.list()");
+        return ok(
+        	list.render(
+        			"Permissions", 
+        			User.find.byId(request().username()), 
+        			filter, 
+        			Permission.page(pageNo, 10, sortBy, order, filter), 
+        			sortBy, 
+        			order)
+        	);
+    }    
 }
 

@@ -695,6 +695,11 @@ public class Target extends Model {
 //        ", field_subject: " + field_subject + ", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
+    // Could really do with many_to_one relationship
+    public Organisation getOrganisation() {
+    	return Organisation.findByUrl(field_nominating_organisation);
+    }
+
     /**
      * Return a page of Target
      *
@@ -711,10 +716,6 @@ public class Target extends Model {
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
-    }
-    
-    public Organisation getOrganisation() {
-    	return Organisation.findByUrl(field_nominating_organisation);
-    }
+    }    
 }
 

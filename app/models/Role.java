@@ -30,6 +30,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -204,5 +205,23 @@ public class Role extends Model
     
     public String toString() {
         return "Role(" + name + ")" + ", id:" + id;
+    }
+    
+    /**
+     * Return a page of User
+     *
+     * @param page Page to display
+     * @param pageSize Number of Roles per page
+     * @param sortBy User property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Role> page(int page, int pageSize, String sortBy, String order, String filter) {
+
+        return find.where().contains("name", filter)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
     }
 }
