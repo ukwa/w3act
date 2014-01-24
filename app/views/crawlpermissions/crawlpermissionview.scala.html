@@ -1,0 +1,37 @@
+@(permission: CrawlPermission, user: User)
+
+
+@main("", user) {
+    
+	<div class="page-header">
+	    <h1>Crawl Permission @permission.name</h1>
+	</div>
+	
+	<ul class="nav nav-tabs">
+	   <li class="active"><a href="@routes.CrawlPermissionEdit.view(permission.url)">View</a></li>
+	   @if(user.hasRole("sys_admin")) {
+	   	<li><a href="@routes.CrawlPermissionEdit.edit(permission.url)">Edit</a></li>
+	   }
+	</ul>
+
+	<div class="padding-20">
+		<div class="tab-pane active">
+			<dl class="dl-horizontal text-overflow">    
+				<dt>Name:</dt>
+				<dd>@permission.name</dd>
+				<dt>Description:</dt>
+				<dd>@permission.description</dd>
+			</dl>
+		</div>
+	</div>
+
+	<div class="padding-20">
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+		</div>
+	</div>
+}
+                   
+	            
+
+

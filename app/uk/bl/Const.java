@@ -12,6 +12,7 @@ public final class Const {
 	public static final String ROLES           = "roles";
 	public static final String PERMISSIONS     = "permissions";
 	public static final String ORGANISATIONS   = "organisations";
+	public static final String MAILTEMPLATES   = "mailtemplates";
 
     // Authentification definitions
     public static final String URI             = "uri";
