@@ -132,4 +132,4 @@ POST    /export/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/
 #POST    /export/:targets                    controllers.Targets.export(targets)
 
 # Scope
-GET     /api/scope:url                      controllers.TargetController.isInScope(url)
+GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
