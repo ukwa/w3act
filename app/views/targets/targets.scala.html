@@ -36,6 +36,53 @@
 @script = {
 	<script>
 		$(document).ready(function() {
+			
+            var idle_timeout,
+            SCOPE_URI = '/api/scope',
+            MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
+            TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+            IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+   
+            // Does the Scope lookup
+            var doScope = function(text) {
+            $.getJSON(SCOPE_URI + text, function(data) {
+            //alert("Is in scope: " + data);
+            var btn = document.getElementById('search');
+            if (data) {
+                    btn.style = "background-color: hell-green";
+            } else {
+                    btn.style = "background-color: red";
+            }
+
+            /*var lab = document.getElementById('isInScope');
+            if (data) {
+                    lab.innerHTML = "is in scope";
+                    lab.style = "color: green";
+            } else {
+                    lab.innerHTML = "is not in scope";
+                    lab.style = "color: red";
+            }*/
+            });
+            };
+           
+            // Restarts the keyboard-idleness timeout
+            var restartIdleTimeout = function(text) {
+            if (idle_timeout)
+            window.clearTimeout(idle_timeout);
+           
+            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
+            };                
+           
+               $("#inputName").keyup(function() {
+                              var text = $('input[name=filter]').val();
+                              
+                       if (text.length > MIN_TEXT_LENGTH) {
+                       restartIdleTimeout(text);
+                      
+                               if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+                               doScope(text);
+                       }
+               });
 		});
 	</script>
 }
