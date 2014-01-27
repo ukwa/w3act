@@ -16,6 +16,11 @@ GET     /assets/javascripts/routes          controllers.Application.javascriptRo
 # Map static resources from the /public folder to the /public path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)
 
+# Licence form
+GET     /ukwa/licence                       controllers.LicenceController.index()
+POST    /ukwa/licence/submit                controllers.LicenceController.submit()
+GET     /ukwa/licence/result                controllers.LicenceController.result()
+
 # Tabs
 GET     /collections                        controllers.DCollections.index()
 GET    	/collections/list                  	controllers.DCollections.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")

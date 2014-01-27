@@ -3,6 +3,8 @@ package uk.bl.api;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -92,5 +94,9 @@ public class Utils {
 	 	     e.printStackTrace();
 	 	} 
     }    
+    
+    public static String getCurrentDate() {
+    	return new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+    }
 }
 
