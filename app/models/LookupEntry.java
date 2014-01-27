@@ -89,7 +89,7 @@ public class LookupEntry extends Model
     public static boolean getValueByUrl(String url) {
     	boolean res = false;
     	LookupEntry resLookupEntry = findByUrl(url);    	
-    	if (resLookupEntry.value != null) {
+    	if (resLookupEntry != null && resLookupEntry.value != null) {
     		res = resLookupEntry.value;
     	}
     	return res;
