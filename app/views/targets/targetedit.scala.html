@@ -64,11 +64,12 @@
 	        <li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
 	        <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
 			@if(Target.isInScope(target.field_url, target.url)) {
-				<li><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="green">(+)</font></a></li>
+				<li><a href="#crawlpermission" data-toggle="tab">NPLD scope <font color="green">(+)</font></a></li>
 			} else {
-				<li><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="red">(-)</font></a></li>
+				<li><a href="#crawlpermission" data-toggle="tab">NPLD scope <font color="red">(-)</font></a></li>
 			}		        
-		    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy</a></li>
+		    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
+		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
 	  	</ul>
 	</div>
 	
@@ -362,40 +363,13 @@
 			</div>
 			
 			<div class="tab-pane fade" id="crawlpermission">
-			
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site should be archived and made available)</small></label>
-						    <div class="col-sm-6">
-								<select multiple="multiple" name="license" id="edit-field-license" class="form-control" size="2">
-								 	<option value="_none">None</option>
-								    @for(taxonomy <- Targets.getLicense()) {
-						                @if(target.field_license != null && target.field_license.equals(taxonomy.name)) {             
-										 	<option selected>@taxonomy.name</option>
-									 	} else {
-										 	<option>@taxonomy.name</option>
-									 	}
-								    }	
-								</select>
-							</div>
-						</div>
-					</div>
-		     	</div>	
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label"></label>
-						    <div class="col-sm-6">
-								<button type="submit" class="btn btn-success">Open License Request</button>
-							</div>
+							<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
 						</div>
 					</div>
 		     	</div>
-		     	
-    			<h4>Legal Deposit Criteria</h4>
-				
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -681,8 +655,43 @@
 					</div>
 		     	</div>	
 	        </div>
+	        
+	        <div class="tab-pane fade" id="licensing">
+			
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site should be archived and made available)</small></label>
+						    <div class="col-sm-6">
+								<select multiple="multiple" name="license" id="edit-field-license" class="form-control" size="2">
+								 	<option value="_none">None</option>
+								    @for(taxonomy <- Targets.getLicense()) {
+						                @if(target.field_license != null && target.field_license.equals(taxonomy.name)) {             
+										 	<option selected>@taxonomy.name</option>
+									 	} else {
+										 	<option>@taxonomy.name</option>
+									 	}
+								    }	
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label"></label>
+						    <div class="col-sm-6">
+								<button type="submit" class="btn btn-success">Open License Request</button>
+							</div>
+						</div>
+					</div>
+		     	</div>
+			</div>		     	
+	        
 		</div>
-            
+                        
         <div id="revisionArea" class="revision">
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">

@@ -18,11 +18,12 @@
         	<li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
         	<li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
         		@if(Target.isInScope(target.field_url, target.url)) {
-	        		<li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="green">(+)</font></a></li>
+	        		<li class=""><a href="#crawlpermission" data-toggle="tab">NPLD scope <font color="green">(+)</font></a></li>
 	    		} else {
-	        		<li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="red">(-)</font></a></li>
+	        		<li class=""><a href="#crawlpermission" data-toggle="tab">NPLD scope <font color="red">(-)</font></a></li>
 	    		}		        
-        	<li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy</a></li>
+        	<li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
+		    <li class=""><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
       	</ul>
 	</div>
 	
@@ -72,10 +73,6 @@
 		</div>
 	
 		<div class="tab-pane fade padding-20" id="crawlpermission">
-			<dl class="dl-horizontal">
-				<dt>License:</dt>
-				<dd>The license terms under which this site should be archived and made available.</dd>
-			</dl>
 			<h4>Legal Deposit Criteria</h4>
 			<dl class="dl-horizontal">
 				<dt>UK Hosting:</dt>
@@ -123,6 +120,12 @@
 				<dd>@target.black_list&nbsp;</dd>
 			</dl>
 		</div>
+		<div class="tab-pane fade padding-20" id="licensing">
+			<dl class="dl-horizontal">
+				<dt>License:</dt>
+				<dd>The license terms under which this site should be archived and made available.</dd>
+			</dl>
+		</div>
 	</div>
 	<hr>
 	<div id="revisionArea" class="revision">
@@ -131,7 +134,32 @@
 			<dd>@target.revision</dd>
 		</dl>
 	</div>
-	
+		
+	<div class="padding-20">
+		<div class="panel-group" id="accordion">
+			<div class="panel panel-primary" id="panels">
+				<div class="panel-heading">
+			    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
+			        	Target instances
+					</a>
+				</div>
+				<div id="collapseInstances" class="panel-collapse collapse">
+					<div class="panel-footer">
+						<a class="brand" href="opera.bl.uk:/8080/wayback/*@target.field_url">In Legal Deposit Web Archive</a>
+					</div>
+				    <div class="panel-footer">
+			        	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url= http://@target.field_url">In Open UK Web Archive</a>
+					</div>
+					<div class="panel-footer">
+						<a class="brand" href="http://www.webarchive.org.uk/mementos/search/@target.field_url">In other web archives</a>
+					</div>
+				    <div class="panel-footer">
+			        	<a class="brand" href="@target.field_url">Live site</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	
 	<div class="padding-20">
 		<div class="panel-group" id="accordion">
@@ -152,30 +180,5 @@
 	    	</div>
 		</div>
 	</div>    
-   	
-	<div class="padding-20">
-		<div class="panel-group" id="accordion">
-			<div class="panel panel-primary" id="panels">
-				<div class="panel-heading">
-			    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
-			        	Target instances
-					</a>
-				</div>
-				<div id="collapseInstances" class="panel-collapse collapse">
-					<div class="panel-footer">
-						<a class="brand" href="opera.bl.uk:/8080/wayback/*@target.field_url">wayback-crawl</a>
-					</div>
-					<div class="panel-footer">
-						<a class="brand" href="http://www.webarchive.org.uk/mementos/search/@target.field_url">mementos-crawl</a>
-					</div>
-				    <div class="panel-footer">
-			        	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url= http://@target.field_url">archival</a>
-					</div>
-				    <div class="panel-footer">
-			        	<a class="brand" href="@target.field_url">live</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+   		
 }
