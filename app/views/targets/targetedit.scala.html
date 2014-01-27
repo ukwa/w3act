@@ -92,7 +92,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label"></label>
+							<label class="col-sm-6 control-label">ID</label>
 						    <div class="col-sm-6">
 								<input class="form-control" name="nid" value="@target.nid" size="30" readonly>
 							</div>
@@ -370,6 +370,11 @@
 						</div>
 					</div>
 		     	</div>
+				<div class="padding-20">
+					<div class="alert alert-info">
+						In order to be considered as in scope for Non-Print Legal Deposit, a resource must pass one of a series of tests.
+					</div>
+				</div>		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -403,7 +408,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK))</small></label>
+							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
 						    <div class="col-sm-6">
 		 						<input type="text" name="field_uk_postal_address_url" value="@target.field_uk_postal_address_url" size="60" maxlength="2048" class="form-control" />
 							</div>
@@ -414,7 +419,7 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address))</small></label>
+							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 						    <div class="col-sm-6">
 				                @if(target.field_via_correspondence != null && target.field_via_correspondence) {             
 					                <input type="checkbox" name="field_via_correspondence" value="true" checked />
