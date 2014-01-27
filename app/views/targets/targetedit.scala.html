@@ -61,7 +61,7 @@
         <input type="hidden" name="user" value="@user.url">
            
 		<ul class="nav nav-pills">
-	        <li class="active"><a href="#basicinformation" data-toggle="tab">Basic information</a></li>
+	        <li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
 	        <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
 			@if(Target.isInScope(target.field_url, target.url)) {
 				<li><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="green">(+)</font></a></li>
@@ -104,11 +104,6 @@
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
 								Seed URL(s) <font color="red">*</font>
-								@if(Target.isInScope(target.field_url, target.url) || (target.field_url == null && Target.isInScope(target.title, target.url))) {
-					            	<font id="isInScope" style="color: green">is in scope</font>
-								} else {
-									<font id="isInScope" style="color: red">is not in scope</font>
-								}
 								<small class="text-center">(One or more URLs, separated by comma)</small>
 							</label>
 						    <div class="col-sm-6">
@@ -116,6 +111,23 @@
 									<input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@target.field_url">
 								} else {
 									<input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@target.title">
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	 
+		     	    	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Hosting
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScope(target.field_url, target.url) || (target.field_url == null && Target.isInScope(target.title, target.url))) {
+					            	<font id="isInScope" style="color: green">true</font>
+								} else {
+									<font id="isInScope" style="color: red">false</font>
 								}
 							</div>
 						</div>

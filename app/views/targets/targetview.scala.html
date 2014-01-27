@@ -15,7 +15,7 @@
         <input type="hidden" name="user" value="@user.url">
            
 		<ul class="nav nav-pills">
-        	<li class="active"><a href="#basicinformation" data-toggle="tab">Basic information</a></li>
+        	<li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
         	<li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
         		@if(Target.isInScope(target.field_url, target.url)) {
 	        		<li class=""><a href="#crawlpermission" data-toggle="tab">Crawl permission <font color="green">(+)</font></a></li>
@@ -32,11 +32,13 @@
 				<dt>Title:</dt>
 				<dd>@target.title (@target.nid)</dd>
 				<dt>Seed URL(s):</dt>
+				<dd>@target.field_url</dd>
+				<dt>UK Hosting:</dt>
 				@if(Target.isInScope(target.field_url, target.url)) {
-					<dd>@target.field_url <font color="green">in scope</font></dd>
-	          		} else {
-					<dd>@target.field_url <font color="red">not in scope</font></dd>
-	          		}
+				<dd><font color="green">true</font></dd>
+          		} else {
+				<dd><font color="red">false</font></dd>
+          		}
 				<dt>QA Status:</dt>
 				<dd>@target.status</dd>
 				<dt>Live Site Status:</dt>
