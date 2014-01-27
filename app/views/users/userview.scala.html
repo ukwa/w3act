@@ -24,9 +24,10 @@
 				<dd>@user.email</dd>
 				<dt>Roles:</dt>
 				<dd>@user.roles</dd>
+				<dt>Count of targets:</dt>
+				<dd>@Target.findAllforUser(user.url).size()</dd>
 				<dt>Member for:</dt>
 				<dd>@user.calculate_membership()</dd>
-
 			</dl>
 		</div>
 	</div>
