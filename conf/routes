@@ -97,6 +97,7 @@ GET     /crawlpermissionadd/:permission     controllers.CrawlPermissionEdit.addE
 POST    /crawlpermission/filter/            controllers.CrawlPermissionEdit.filter()
 GET    	/crawlpermission/filterbyjson/:name	controllers.CrawlPermissionEdit.filterByJson(name)
 GET    	/crawlpermission/templates/     	controllers.CrawlPermissionEdit.templates()
+POST    /crawlpermission/send/              controllers.CrawlPermissionEdit.send()
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()

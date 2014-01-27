@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -144,6 +146,19 @@ public class CrawlPermission extends Model
 		return res;
 	}
         
+	/**
+	 * This method filters crawl permissions by status and returns a list 
+	 * of filtered CrawlPermission objects.
+	 * @param status
+	 * @return
+	 */
+	public static List<CrawlPermission> filterByStatus(String status) {
+		List<CrawlPermission> res = new ArrayList<CrawlPermission>();
+        ExpressionList<CrawlPermission> ll = find.where().icontains(Const.STATUS, status);
+    	res = ll.findList();
+		return res;
+	}
+        
     /**
      * Retrieve all crawl permissions.
      */
@@ -151,6 +166,19 @@ public class CrawlPermission extends Model
         return find.all();
     }
     
+    /**
+     * This method returns a list of all status values for crawl permission record.
+     * @return
+     */
+    public static List<String> getAllStatus() {
+    	List<String> res = new ArrayList<String>();
+	    Const.CrawlPermissionStatus[] resArray = Const.CrawlPermissionStatus.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+
     public String toString() {
         return "CrawlPermission(" + name + ")" + ", id:" + id;
     }    

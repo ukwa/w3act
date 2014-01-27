@@ -3,10 +3,16 @@ package controllers;
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.CrawlPermission;
+import models.DCollection;
+import models.Organisation;
+import models.Permission;
+import models.Role;
 import models.Target;
+import models.Taxonomy;
 import models.User;
 import play.Logger;
 import play.libs.Json;
@@ -15,12 +21,12 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.Utils;
 import views.html.crawlpermissions.*;
+import views.html.permissions.permissions;
+import views.html.targets.targets;
 
 import javax.mail.*;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
 
 import java.io.*;
 import java.util.*;
@@ -40,9 +46,11 @@ public class CrawlPermissionEdit extends AbstractController {
      * Display the permission.
      */
     public static Result index() {
+        List<CrawlPermission> resList = processFilterCrawlPermissions("", Const.DEFAULT_CRAWL_PERMISSION_STATUS);
         return ok(
                 crawlpermissions.render(
-                    "CrawlPermissions", User.find.byId(request().username()), models.CrawlPermission.findAll(), ""
+                    "CrawlPermissions", User.find.byId(request().username()), resList, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS
+//                        "CrawlPermissions", User.find.byId(request().username()), models.CrawlPermission.findAll(), "", Const.DEFAULT_CRAWL_PERMISSION_STATUS
                 )
             );
     }
@@ -80,7 +88,12 @@ public class CrawlPermissionEdit extends AbstractController {
         String addentry = getFormParam(Const.ADDENTRY);
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
-        Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);
+        String status = getFormParam(Const.STATUS);
+        if (status == null) {
+        	status = Const.DEFAULT_CRAWL_PERMISSION_STATUS;
+        }
+        List<CrawlPermission> resList = processFilterCrawlPermissions(name, status);
+        Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name + ", status: " + status);
         if (addentry != null) {
         	if (name != null && name.length() > 0) {
         		res = redirect(routes.CrawlPermissionEdit.addEntry(name));
@@ -88,20 +101,52 @@ public class CrawlPermissionEdit extends AbstractController {
         		Logger.info("CrawlPermission name is empty. Please write name in search window.");
                 res = ok(
                         crawlpermissions.render(
-                            "CrawlPermissions", User.find.byId(request().username()), models.CrawlPermission.filterByName(name), ""
+                            "CrawlPermissions", User.find.byId(request().username()), resList, "", status
+//                                "CrawlPermissions", User.find.byId(request().username()), models.CrawlPermission.filterByName(name), ""
                         )
                     );
         	}
         } else {
             res = ok(
             		crawlpermissions.render(
-                        "CrawlPermissions", User.find.byId(request().username()), models.CrawlPermission.filterByName(name), name
+                        "CrawlPermissions", User.find.byId(request().username()), resList, name, status
+//                            "CrawlPermissions", User.find.byId(request().username()), models.CrawlPermission.filterByName(name), name
                     )
                 );
         }
         return res;
     }	   
     
+    /**
+     * This method applyies filters to the list of crawl permissions.
+     * @param filterUrl
+     * @param status
+     * @return
+     */
+    public static List<CrawlPermission> processFilterCrawlPermissions(String filterUrl, String status) {
+//    	Logger.info("process filter filterUrl: " + filterUrl + ", status: " + status);
+    	boolean isProcessed = false;
+    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
+    	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
+    	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
+    		Logger.info("name: " + filterUrl);
+    		exp = exp.contains(Const.NAME, filterUrl);
+    		isProcessed = true;
+    	}
+    	if (status != null && !status.toLowerCase().equals(Const.NONE)) {
+    		Logger.info("status: " + status);
+    		exp = exp.eq(Const.STATUS, status);
+    		isProcessed = true;
+    	} 
+    	res = exp.query().findList();
+    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+
+        if (!isProcessed) {
+    		res = models.CrawlPermission.findAll();
+    	}
+        return res;
+    }
+        
     /**
      * Add new permission entry.
      * @param permission title
@@ -114,6 +159,9 @@ public class CrawlPermissionEdit extends AbstractController {
     	permission.name = name;
         permission.id = Target.createId();
         permission.url = Const.ACT_URL + permission.id;
+        permission.creatorUser = User.find.byId(request().username()).url;
+        permission.status = Const.CrawlPermissionStatus.NOT_INITIATED.name();
+        permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
 		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
         return ok(
                 crawlpermissionedit.render(
@@ -167,12 +215,12 @@ public class CrawlPermissionEdit extends AbstractController {
     	Result res = null;
     	sendEmail();
     	
-/*        String save = getFormParam(Const.SAVE);
+        String save = getFormParam(Const.SAVE);
         String delete = getFormParam(Const.DELETE);
 //        Logger.info("save: " + save);
         if (save != null) {
         	Logger.info("save permission id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
+        			", name: " + getFormParam(Const.NAME));
         	CrawlPermission permission = null;
             boolean isExisting = true;
             try {
@@ -197,21 +245,36 @@ public class CrawlPermissionEdit extends AbstractController {
         	    if (getFormParam(Const.DESCRIPTION) != null) {
         	    	permission.description = getFormParam(Const.DESCRIPTION);
         	    }
-//        	    if (permission.revision == null) {
-//        	    	permission.revision = "";
-//        	    }
-//                if (getFormParam(Const.REVISION) != null) {
-//                	permission.revision = permission.revision.concat(", " + getFormParam(Const.REVISION));
-//                }
+        	    if (getFormParam(Const.TARGET) != null) {
+        	    	permission.target = getFormParam(Const.TARGET);
+        	    }
+        	    if (getFormParam(Const.CONTACT_PERSON) != null) {
+        	    	permission.contactPerson = getFormParam(Const.CONTACT_PERSON);
+        	    }
+        	    Logger.info("creator user: " + getFormParam(Const.CREATOR_USER));
+        	    Logger.info("creator user url: " + User.findByName(getFormParam(Const.CREATOR_USER)).url);
+        	    if (getFormParam(Const.CREATOR_USER) != null) {
+        	    	permission.creatorUser = User.findByName(getFormParam(Const.CREATOR_USER)).url;
+        	    }
+        	    if (getFormParam(Const.TEMPLATE) != null) {
+        	    	permission.template = getFormParam(Const.TEMPLATE);
+        	    }
+        	    if (getFormParam(Const.STATUS) != null) {
+        	    	permission.status = getFormParam(Const.STATUS);
+        	    }
+        	    if (getFormParam(Const.REQUEST_FOLLOW_UP) != null) {
+        	    	permission.requestFollowup = Utils.getNormalizeBooleanString(getFormParam(Const.REQUEST_FOLLOW_UP));
+        	    }
+// TODO license
             } catch (Exception e) {
-            	Logger.info("Permission not existing exception");
+            	Logger.info("CrawlPermission not existing exception");
             }
             
         	if (!isExisting) {
                	Ebean.save(permission);
-    	        Logger.info("save permission: " + permission.toString());
+    	        Logger.info("save crawl permission: " + permission.toString());
         	} else {
-           		Logger.info("update permission: " + permission.toString());
+           		Logger.info("update crawl permission: " + permission.toString());
                	Ebean.update(permission);
         	}
 	        res = redirect(routes.CrawlPermissionEdit.view(permission.url));
@@ -220,7 +283,7 @@ public class CrawlPermissionEdit extends AbstractController {
         	CrawlPermission permission = CrawlPermission.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(permission);
 	        res = redirect(routes.CrawlPermissionEdit.index()); 
-        }*/
+        }
     	res = redirect(routes.CrawlPermissionEdit.index()); 
         return res;
     }	   
@@ -240,6 +303,103 @@ public class CrawlPermissionEdit extends AbstractController {
 //                )
 //            );
 //    }
+
+    /**
+     * This method selects crawl permissions selected using checkboxes 
+     * on the crawl permission overview page.
+     * @return
+     */
+    public static String getAssignedPermissions() {
+    	String assignedPermissions = "";
+		try {		   	
+		    List<CrawlPermission> permissionList = CrawlPermission.findAll();
+		    Iterator<CrawlPermission> permissionItr = permissionList.iterator();
+		    while (permissionItr.hasNext()) {
+		    	CrawlPermission permission = permissionItr.next();
+		        if (getFormParam(permission.name) != null) {
+		    		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+		            boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+		            if (userFlag) {
+		            	if (assignedPermissions.length() == 0) {
+		            		assignedPermissions = permission.name;
+		            	} else {
+		            		assignedPermissions = assignedPermissions + Const.COMMA + " " + permission.name;
+		            	}
+		            }
+		        }
+		    }
+			Logger.info("assignedPermissions: " + assignedPermissions);
+		} catch (Exception e) {
+			Logger.info("send some exception" + e);
+		}    
+		return assignedPermissions;
+    }
+    
+    /**
+     * This method selects crawl permissions selected using checkboxes 
+     * on the crawl permission overview page.
+     * @return
+     */
+    public static List<CrawlPermission> getAssignedPermissionsList() {
+    	List<CrawlPermission> assignedPermissionsList = new ArrayList<CrawlPermission>();
+		try {		   	
+		    List<CrawlPermission> permissionList = CrawlPermission.findAll();
+		    Iterator<CrawlPermission> permissionItr = permissionList.iterator();
+		    while (permissionItr.hasNext()) {
+		    	CrawlPermission permission = permissionItr.next();
+		        if (getFormParam(permission.name) != null) {
+		    		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+		            boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+		            if (userFlag) {
+	            		assignedPermissionsList.add(CrawlPermission.findByName(permission.name));
+		            }
+		        }
+		    }
+			Logger.info("assignedPermissions: " + assignedPermissionsList);
+		} catch (Exception e) {
+			Logger.info("send some exception" + e);
+		}    
+		return assignedPermissionsList;
+    }
+    
+    /**
+     * This method handles queued crawl permissions.
+     */
+    public static Result send() {
+		Logger.info("send crawl permission");
+    	Result res = ok();
+        String send = getFormParam(Const.SEND);
+        String sendall = getFormParam(Const.SEND_ALL);
+        String sendsome = getFormParam(Const.SEND_SOME);
+        String preview = getFormParam(Const.PREVIEW);
+        String reject = getFormParam(Const.REJECT);
+        Logger.info("send: " + send + ", sendall: " + sendall + ", sendsome: " + sendsome + ", preview: " + preview + ", reject: " + reject);
+        if (send != null) {
+        	Logger.info("send some crawl permission requests");
+	        res = ok(
+		        crawlpermissionsend.render(
+		            CrawlPermission.filterByStatus(Const.DEFAULT_CRAWL_PERMISSION_STATUS), User.find.byId(request().username())
+		            )
+		        );
+        }
+        if (sendsome != null) {
+        	Logger.info("send some crawl permission requests");
+	        res = ok(
+		        crawlpermissionsend.render(
+		            getAssignedPermissionsList(), User.find.byId(request().username())
+		            )
+		        );
+        }
+        if (preview != null) {
+        	Logger.info("preview crawl permission requests");
+	        res = ok(
+	            crawlpermissionpreview.render(
+	            	getAssignedPermissionsList(), User.find.byId(request().username())
+	            )
+	        );
+        }
+        return res;
+    }
     
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {

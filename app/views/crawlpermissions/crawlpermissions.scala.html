@@ -1,4 +1,4 @@
-@(title: String, user: User, permissions: List[CrawlPermission], searchstr: String)
+@(title: String, user: User, permissions: List[CrawlPermission], searchstr: String, cur_status: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -24,6 +24,8 @@
     <ul class="nav nav-tabs">
 	   <li class="active"><a href="@routes.CrawlPermissionEdit.index()">Permissions</a></li>
 	   <li><a href="@routes.CrawlPermissionEdit.templates()">Templates</a></li> 
+	   <li><a href="@routes.CrawlPermissionEdit.templates()">Contact Persons</a></li> 
+	   <li><a href="@routes.CrawlPermissionEdit.templates()">Licenses</a></li> 
 	</ul>
 		
     <article class="permissions">
@@ -39,23 +41,83 @@
 						}
 					</span>
 				</div>
+				
+				<div class="padding-20">
+					<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel">
+						<span id="toggle">&#9660; Filters &#9650;</span>
+					</a>
+				</div>
+						
+				<div id="accordion">
+					<div id="filter-panel" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="curator" class="col-sm-6 control-label">Filter by status</label>
+									    <div class="col-sm-6">
+											<select name="status" id="status" class="form-control">
+												<option>None</option>
+								                @for(status <- CrawlPermission.getAllStatus()) {
+									                @if(status.equals(cur_status)) {
+									                	<option selected>@status</option>
+									                } else {
+									                	<option>@status</option>
+									                }
+								                }
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>				
 		    </form>
 		</div>	        
 
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					<th>Title</th>
-				</tr>
-			</thead>
-			<tbody>
-			@permissions.map { permission =>		              
-				<tr>
-					<td><a href="@routes.CrawlPermissionEdit.view(permission.url)">@permission.name</a></td>
-				</tr>
-			}
-			</tbody>
-		</table>
+	<form action="@routes.CrawlPermissionEdit.send()" method="POST">
+	   	<div class="row padding-20">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Target</th>
+						<th>Contact Person</th>
+					</tr>
+				</thead>
+				<tbody>
+				@permissions.map { permission =>		              
+					<tr>
+						<td>
+							<label class="checkbox-inline">
+				                <input type="checkbox" name="@permission.name" value="true" checked /> <a href="@routes.CrawlPermissionEdit.view(permission.url)">@permission.name</a> 
+							</label>
+						</td>
+						<td>
+			                @permission.target
+						</td>
+						<td>
+			                @permission.contactPerson
+						</td>
+					</tr>
+				}
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="row padding-20 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">		
+					<button type="submit" class="btn btn-primary" name="send">Send</button>
+					<button type="submit" class="btn btn-primary" name="sendall">Send all</button>
+					<button type="submit" class="btn btn-primary" name="sendsome">Send some</button>
+					<button type="submit" class="btn btn-primary" name="preview">Preview</button>
+					<button type="submit" class="btn btn-primary" name="reject">Reject</button>
+		       </div>
+			</div>
+		</div>
+		
 	</article>
 }
 

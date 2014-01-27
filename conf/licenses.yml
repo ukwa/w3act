@@ -1,0 +1,7 @@
+# Licenses
+
+licenses:
+
+    - !!models.License
+        name:         Default License
+        text:         defaultlicense.txt

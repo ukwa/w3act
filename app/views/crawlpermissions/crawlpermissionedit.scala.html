@@ -1,5 +1,58 @@
 @(permission: CrawlPermission, user: User)
 
+@script = {
+	<script>
+		$(document).ready(function() {
+			
+            var idle_timeout,
+            SCOPE_URI = @play.api.Play.current.configuration.getString("application.context") + 'api/scope/',
+            MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
+            TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+            IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+   
+            // Does the consistance check
+            var doCheck = function(text) {
+            $.getJSON(SCOPE_URI + text, function(data) {
+            //alert("Is in scope: " + data);
+            var btn = document.getElementById('save');
+            if (data) {
+                    btn.style = "background-color: hell-green";
+            } else {
+                    btn.style = "background-color: red";
+            }
+
+            /*var lab = document.getElementById('isInScope');
+            if (data) {
+                    lab.innerHTML = "is in scope";
+                    lab.style = "color: green";
+            } else {
+                    lab.innerHTML = "is not in scope";
+                    lab.style = "color: red";
+            }*/
+            });
+            };
+           
+            // Restarts the keyboard-idleness timeout
+            var restartIdleTimeout = function(text) {
+            if (idle_timeout)
+            window.clearTimeout(idle_timeout);
+           
+            idle_timeout = window.setTimeout(function() { doCheck(text); }, IDLE_THRESHOLD);
+            };                
+           
+               $("#inputName").keyup(function() {
+                              var text = $('input[name=name]').val();
+                              
+                       if (text.length > MIN_TEXT_LENGTH) {
+                       restartIdleTimeout(text);
+                      
+                               if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+                               doCheck(text);
+                       }
+               });
+		});
+	</script>
+}
 
 @main("", user) {
 
@@ -32,6 +85,92 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
+					<label for="inputTarget" class="col-sm-6 control-label">Target <font color="red">*</font></label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="target" id="inputTarget" value="@permission.target" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputContactPerson" class="col-sm-6 control-label">Contact Person <font color="red">*</font></label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="contactPerson" id="contactPerson" value="@permission.contactPerson" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputCreatorUser" class="col-sm-6 control-label">Creator User </label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="creatorUser" id="creatorUser" value="@User.findByUrl(permission.creatorUser).name" type="text" readonly>
+					</div>
+				</div>
+			</div>
+     	</div>
+	          		     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+	              	<label for="inputTemplate" class="col-sm-6 control-label">Template <small class="text-center">(Select template type for permission request)</small></label>
+				    <div class="col-sm-6">
+						<select name="template" id="template" class="form-control">
+			                @for(template <- MailTemplate.getAllTypes()) {
+				                @if(template.equals(permission.template)) {
+				                	<option selected>@permission.template</option>
+				                } else {
+				                	<option>@template</option>
+				                }
+			                }
+						</select>
+					</div>
+				</div>
+			</div>
+     	</div>		   
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+	              	<label for="status" class="col-sm-6 control-label">Status <small class="text-center">(Records status of permission process)</small></label>
+				    <div class="col-sm-6">
+						<select name="status" id="status" class="form-control">
+			                @for(status <- CrawlPermission.getAllStatus()) {
+				                @if(status.equals(permission.status)) {
+				                	<option selected>@permission.status</option>
+				                } else {
+				                	<option>@status</option>
+				                }
+			                }
+						</select>
+					</div>
+				</div>
+			</div>
+     	</div>		   
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Request Followup <small class="text-center">(Should automated followup requests be send)</small></label>
+				    <div class="col-sm-6">
+		                @if(permission.requestFollowup != null && permission.requestFollowup) {             
+			                <input type="checkbox" name="requestFollowup" value="true" checked />
+		                } else {
+			                <input type="checkbox" name="requestFollowup" value="true"/>
+		                }
+					</div>
+				</div>
+			</div>
+     	</div>	  
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
 					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
 				    <div class="col-sm-6">
 						<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1">@permission.description</textarea>
@@ -46,7 +185,7 @@
 
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">
+				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" name="save">Save</button>
 					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
 		       </div>

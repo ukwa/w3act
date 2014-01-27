@@ -14,22 +14,114 @@
 	   }
 	</ul>
 
-	<div class="padding-20">
-		<div class="tab-pane active">
-			<dl class="dl-horizontal text-overflow">    
-				<dt>Name:</dt>
-				<dd>@permission.name</dd>
-				<dt>Description:</dt>
-				<dd>@permission.description</dd>
-			</dl>
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputCreatorUser" class="col-sm-6 control-label">Name</label>
+			    <div class="col-sm-6">
+					<label for="inputContactPerson" class="col-sm-6 control-label">@permission.name</label>
+				</div>
+			</div>
 		</div>
-	</div>
+    </div>
+	          	
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputTarget" class="col-sm-6 control-label">Target</label>
+			    <div class="col-sm-6">
+					<label for="valueTarget" class="col-sm-6 control-label">@permission.target</label>
+				</div>
+			</div>
+		</div>
+    </div>
+	          	
+	<div class="row padding-10">
+   		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputContactPerson" class="col-sm-6 control-label">Contact Person </label>
+		    	<div class="col-sm-6">
+					<label for="valueContactPerson" class="col-sm-6 control-label">@permission.contactPerson</label>
+				</div>
+			</div>
+		</div>
+   	</div>
 
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputCreatorUser" class="col-sm-6 control-label">Creator User </label>
+			    <div class="col-sm-6">
+					<label for="valueCreatorUser" class="col-sm-6 control-label">@User.findByUrl(permission.creatorUser).name</label>
+				</div>
+			</div>
+		</div>
+    </div>
+	          	
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputTemplate" class="col-sm-6 control-label">Template </label>
+			    <div class="col-sm-6">
+					<label for="valueTemplate" class="col-sm-6 control-label">@permission.template</label>
+				</div>
+			</div>
+		</div>
+    </div>
+	          	
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputCreatorUser" class="col-sm-6 control-label">Status</label>
+			    <div class="col-sm-6">
+					<label for="valueStatus" class="col-sm-6 control-label">@permission.status</label>
+				</div>
+			</div>
+		</div>
+    </div>
+	          	
+ 	<div class="row padding-10">
+   		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label class="col-sm-6 control-label">Request Followup <small class="text-center">(Should automated followup requests be send)</small></label>
+		    	<div class="col-sm-6">
+	                @if(permission.requestFollowup != null && permission.requestFollowup) {             
+                    <input type="checkbox" name="requestFollowup" value="true" checked disabled/>
+	                } else {
+		            <input type="checkbox" name="requestFollowup" value="true" disabled/>
+	                }
+				</div>
+			</div>
+		</div>
+   	</div>	  
+	  
+	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputDescription" class="col-sm-6 control-label">Description</label>
+			    <div class="col-sm-6">
+					<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" readonly>@permission.description</textarea>
+				</div>
+			</div>
+		</div>
+    </div>
+	          		               	
 	<div class="padding-20">
 		<div class="alert alert-info">
 			Provide an explanation of the changes you are making. This will help other authors understand your motivations.
 		</div>
 	</div>
+	
+	<div class="row padding-10 pull-right">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="btn-group">		
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+					<a href="@routes.LookUp.index()" class="btn btn-primary" title="Look up and add new target">Send </a>
+				}
+	       </div>
+		</div>
+	</div>	
+	
 }
                    
 	            

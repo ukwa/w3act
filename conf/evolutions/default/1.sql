@@ -7,6 +7,7 @@ create table communication_log (
   id                        bigint not null,
   url                       TEXT,
   name                      TEXT,
+  curator                   TEXT,
   date                      TEXT,
   type                      TEXT,
   notes                     TEXT,
@@ -143,6 +144,26 @@ create table instance (
   field_instances           TEXT,
   field_subject             TEXT,
   constraint pk_instance primary key (nid))
+;
+
+create table license (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  type                      TEXT,
+  text                      TEXT,
+  last_update               timestamp not null,
+  constraint pk_license primary key (id))
+;
+
+create table lookup_entry (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  type                      TEXT,
+  value                     boolean,
+  last_update               timestamp not null,
+  constraint pk_lookup_entry primary key (id))
 ;
 
 create table mail_template (
@@ -339,6 +360,10 @@ create sequence dcollection_seq;
 
 create sequence instance_seq;
 
+create sequence license_seq;
+
+create sequence lookup_entry_seq;
+
 create sequence mail_template_seq;
 
 create sequence organisation_seq;
@@ -372,6 +397,10 @@ drop table if exists dcollection cascade;
 
 drop table if exists instance cascade;
 
+drop table if exists license cascade;
+
+drop table if exists lookup_entry cascade;
+
 drop table if exists mail_template cascade;
 
 drop table if exists organisation cascade;
@@ -399,6 +428,10 @@ drop sequence if exists crawl_permission_seq;
 drop sequence if exists dcollection_seq;
 
 drop sequence if exists instance_seq;
+
+drop sequence if exists license_seq;
+
+drop sequence if exists lookup_entry_seq;
 
 drop sequence if exists mail_template_seq;
 

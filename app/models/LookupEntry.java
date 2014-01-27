@@ -1,4 +1,4 @@
-package uk.bl.scope;
+package models;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -31,6 +31,9 @@ public class LookupEntry extends Model
     @Column(columnDefinition = "TEXT")
     public String url;
 
+    /**
+     * This field contains stored lookup URLs.
+     */
     @Column(columnDefinition = "TEXT")
     public String name;
 
@@ -74,6 +77,20 @@ public class LookupEntry extends Model
     		res = find.where().eq(Const.URL, url).findUnique();
     	} else {
     		res.name = Const.NONE;
+    	}
+    	return res;
+    }
+
+    /**
+     * Retrieve a lookup entry value by URL.
+     * @param url
+     * @return lookup entry value (true or false)
+     */
+    public static boolean getValueByUrl(String url) {
+    	boolean res = false;
+    	LookupEntry resLookupEntry = findByUrl(url);    	
+    	if (resLookupEntry.value != null) {
+    		res = resLookupEntry.value;
     	}
     	return res;
     }

@@ -11,14 +11,19 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import models.LookupEntry;
 import models.Target;
+import models.User;
 import play.Logger;
 import uk.bl.Const;
 
+import com.avaje.ebean.Ebean;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 
+import uk.bl.api.Utils;
 import uk.bl.wa.whois.JRubyWhois;
 import uk.bl.wa.whois.WhoisResult;
 
@@ -47,6 +52,7 @@ import uk.bl.wa.whois.WhoisResult;
  *      3.1 The authority of the URI (i.e. the hostname) end with '.uk'.
  *      3.2 The IP address associated with the URI is geo-located in the UK 
  *          (using this GeoIP2 database, in a manner similar to our H3 GeoIP module).
+ *      3.3 Use whois lookup service to check whether the given domain name is associated with the UK. 
  *          
  */
 public class Scope {
@@ -120,56 +126,70 @@ public class Scope {
         boolean res = false;
         Logger.info("check url: " + url + ", nid: " + nidUrl);
         url = normalizeUrl(url);
+        
         /**
-         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
-         *
-         *  Rule 1.1: "field_uk_domain"
-         *  Rule 1.2: "field_uk_postal_address"
-         *  Rule 1.3: "field_via_correspondence"
-         *  Rule 1.4: "field_professional_judgement"
-         *  
-         *  is true - checking result is positive.
-         *  
-         *  Rule 1.5: if the field "field_no_ld_criteria_met" is true - checking result is negative
-         * 
+         * Check if given URL is already in project database in a table LookupEntry. 
+         * If this is in return associated value, otherwise process lookup using expert rules.
          */
-        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-        if (nidUrl != null && nidUrl.length() > 0) {
-        	try {
-	        	JRubyWhois whoIs = new JRubyWhois();
-	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
-//	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl("marksandspencer.com"));
-	        	res = whoIsRes.isUKRegistrant();
-        	} catch (Exception e) {
-        		Logger.info("whois lookup message: " + e.getMessage());
+        boolean inProjectDb = false;
+        if (url != null && url.length() > 0) {
+        	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
+        	if (lookupEntryCount.size() > 0) {
+        		inProjectDb = true;
+        		res = LookupEntry.getValueByUrl(url);
         	}
-        	Logger.info("whois res: " + res);        	
-        	if (!res) {
-        		res = Target.checkManualScope(nidUrl);
-        	}
-        }
-
-    	// Rule 2: by permission
-        if (!res && nidUrl != null && nidUrl.length() > 0) {
-        	res = Target.checkLicense(nidUrl);
-        }
-
-        // Rule 3.1: check domain name
-        if (!res && url != null && url.length() > 0) {
-	        if (url.contains(UK_DOMAIN)) {
-	        	res = true;
-	        }
         }
         
-        // Rule 3.2: check geo IP
-        if (!res) {
-        	res = checkGeoIp(url);
+        if (!inProjectDb) {
+	        /**
+	         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
+	         *
+	         *  Rule 1.1: "field_uk_domain"
+	         *  Rule 1.2: "field_uk_postal_address"
+	         *  Rule 1.3: "field_via_correspondence"
+	         *  Rule 1.4: "field_professional_judgement"
+	         *  
+	         *  is true - checking result is positive.
+	         *  
+	         *  Rule 1.5: if the field "field_no_ld_criteria_met" is true - checking result is negative
+	         * 
+	         */
+	        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
+	        if (nidUrl != null && nidUrl.length() > 0) {
+	        	if (!res) {
+	        		res = Target.checkManualScope(nidUrl);
+	        	}
+	        }
+	
+	    	// Rule 2: by permission
+	        if (!res && nidUrl != null && nidUrl.length() > 0) {
+	        	res = Target.checkLicense(nidUrl);
+	        }
+	
+	        // Rule 3.1: check domain name
+	        if (!res && url != null && url.length() > 0) {
+		        if (url.contains(UK_DOMAIN)) {
+		        	res = true;
+		        }
+	        }
+	        
+	        // Rule 3.2: check geo IP
+	        if (!res && url != null && url.length() > 0) {
+	        	res = checkGeoIp(url);
+	        }
+	        
+	        // Rule 3.3: check whois lookup service
+	        if (!res && url != null && url.length() > 0) {
+	        	res = checkWhois(url);
+	        }
+	        // store in project DB
+	        storeInProjectDb(url, res);
         }
         return res;
 	}
 	
 	/**
-	 * This method extracts host from the given URL and checks geo IP using database.
+	 * This method extracts host from the given URL and checks geo IP using geo IP database.
 	 * @param url
 	 * @return true if in UK domain
 	 */
@@ -179,6 +199,42 @@ public class Scope {
 		res = queryDb(ip);
 		return res;
 	}
+	
+	/**
+	 * This method extracts domain name from the given URL and checks country or country code
+	 * in response using whois lookup service.
+	 * @param url
+	 * @return true if in UK domain
+	 */
+	public static boolean checkWhois(String url) {
+		boolean res = false;
+    	try {
+        	JRubyWhois whoIs = new JRubyWhois();
+        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
+//        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl("marksandspencer.com"));
+        	res = whoIsRes.isUKRegistrant();
+    	} catch (Exception e) {
+    		Logger.info("whois lookup message: " + e.getMessage());
+    	}
+    	Logger.info("whois res: " + res);        	
+		return res;
+	}
+	
+	/**
+	 * This method saves result of scope lookup for given URL if it is 
+	 * not yet in a project database.
+	 * @param url The search URL
+	 * @param res The evaluated result after checking by expert rules
+	 */
+	public static void storeInProjectDb(String url, boolean res) {
+		LookupEntry lookupEntry = new LookupEntry();
+		lookupEntry.id = Utils.createId();
+		lookupEntry.url = Const.ACT_URL + lookupEntry.id;
+		lookupEntry.name = url;
+		lookupEntry.value = res;
+        Logger.info("Save lookup entry " + lookupEntry.toString());
+    	Ebean.save(lookupEntry);	
+    }
 	
 	/**
 	 * This method converts URL to IP address.

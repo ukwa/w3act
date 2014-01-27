@@ -13,6 +13,8 @@ public final class Const {
 	public static final String PERMISSIONS     = "permissions";
 	public static final String ORGANISATIONS   = "organisations";
 	public static final String MAILTEMPLATES   = "mailtemplates";
+	public static final String CONTACTPERSONS  = "contactpersons";
+	public static final String LICENSES        = "licenses";
 
     // Authentification definitions
     public static final String URI             = "uri";
@@ -121,7 +123,15 @@ public final class Const {
 	
 	// Permission
 	public static final String ID                 = "id";
-
+	
+	// Crawl Permission
+	public static final String TARGET             = "target";
+	public static final String CONTACT_PERSON     = "contactPerson";
+	public static final String CREATOR_USER       = "creatorUser";
+	public static final String TEMPLATE           = "template";
+	public static final String REQUEST_FOLLOW_UP  = "requestFollowup";
+	
+	public static final String DEFAULT_CRAWL_PERMISSION_STATUS = "QUEUED";
 	
 	// Buttons
 	public static final String SAVE               = "save";
@@ -133,6 +143,11 @@ public final class Const {
 	public static final String CSV_LINE_END       = "\n";
 	public static final String SEARCH             = "search";
 	public static final String ADDENTRY           = "addentry";
+	public static final String SEND               = "send";
+	public static final String SEND_ALL           = "sendall";
+	public static final String SEND_SOME          = "sendsome";
+	public static final String PREVIEW            = "preview";
+	public static final String REJECT             = "reject";
 	
 	// Types of the JSON nodes
 	public enum NodeType {
@@ -151,6 +166,27 @@ public final class Const {
 		QUALITY_ISSUE;
     }
 	
+	/**
+	 * Records status of permission process.
+	 */
+	public enum CrawlPermissionStatus {
+		NOT_INITIATED,
+		QUEUED,
+		PENDING,
+		REFUSED,
+		GRANTED;
+    }
+    
+    /**
+     * E-mail type
+     */
+	public enum MailTemplateType {
+		PERMISSION_REQUEST,
+		THANK_YOU_ONLINE_PERMISSION_FORM,
+		THANK_YOU_ONLINE_NOMINATION_BY_OWNER,
+		OPT_OUT;
+    }
+	    
     /**
      * Help collections to read JSON lists like
      * "field_url":[{"url":"http:\/\/www.adoptionuk.org\/"}]

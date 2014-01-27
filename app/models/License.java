@@ -15,16 +15,16 @@ import uk.bl.Const;
 import com.avaje.ebean.ExpressionList;
 
 /**
- * This class supports the management of e-mail templates.
+ * This class supports the management of licenses.
  */
 @Entity
-public class MailTemplate extends Model
+public class License extends Model
 {
 
 	/**
 	 * file id
 	 */
-	private static final long serialVersionUID = -2157694575463302989L;
+	private static final long serialVersionUID = -2157694575433302989L;
 
 	@Id 
     public Long id;
@@ -42,35 +42,10 @@ public class MailTemplate extends Model
     public String name;
        
     /**
-     * E-mail type: Permission Request, Thank you - Online Permission Form, 
-     * Thank you - Online Nomination by Owner, Opt out.
+     * License type.
      */
     @Column(columnDefinition = "TEXT")
     public String type;
-    
-    /**
-     * E-mail subject.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String subject;
-
-    /**
-     * E-mail from field.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String fromEmail;
-
-    /**
-     * The place holders in E-mail that should be rewritten by user.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String placeHolders;
-
-    /**
-     * This is a checkbox defining whether this e-mail
-     * should be regarded as a default mail.
-     */
-    public Boolean defaultEmail;
     
     /**
      * Either text as a string or name of the associated text file.
@@ -81,14 +56,14 @@ public class MailTemplate extends Model
     @Version
     public Timestamp lastUpdate;
 
-    public static final Model.Finder<Long, MailTemplate> find = new Model.Finder<Long, MailTemplate>(Long.class, MailTemplate.class);
+    public static final Model.Finder<Long, License> find = new Model.Finder<Long, License>(Long.class, License.class);
 
     public String getName()
     {
         return name;
     }
 
-    public static MailTemplate findByName(String name)
+    public static License findByName(String name)
     {
         return find.where()
                    .eq("name",
@@ -101,8 +76,8 @@ public class MailTemplate extends Model
      * @param url
      * @return mail template name
      */
-    public static MailTemplate findByUrl(String url) {
-    	MailTemplate res = new MailTemplate();
+    public static License findByUrl(String url) {
+    	License res = new License();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
     	} else {
@@ -117,9 +92,9 @@ public class MailTemplate extends Model
 	 * @param name
 	 * @return
 	 */
-	public static List<MailTemplate> filterByName(String name) {
-		List<MailTemplate> res = new ArrayList<MailTemplate>();
-        ExpressionList<MailTemplate> ll = find.where().icontains(Const.NAME, name);
+	public static List<License> filterByName(String name) {
+		List<License> res = new ArrayList<License>();
+        ExpressionList<License> ll = find.where().icontains(Const.NAME, name);
     	res = ll.findList();
 		return res;
 	}
@@ -127,7 +102,7 @@ public class MailTemplate extends Model
     /**
      * Retrieve all templates.
      */
-    public static List<MailTemplate> findAll() {
+    public static List<License> findAll() {
         return find.all();
     }
     
@@ -145,7 +120,7 @@ public class MailTemplate extends Model
     }    
     
     public String toString() {
-        return "MailTemplate(" + name + ")" + ", id:" + id;
+        return "License(" + name + ")" + ", id:" + id;
     }    
 
 }
