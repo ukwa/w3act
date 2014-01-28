@@ -36,7 +36,7 @@
 @script = {
 	<script>
 		$(document).ready(function() {
-			
+			alert("Is in scope()");
             var idle_timeout,
             SCOPE_URI = @play.api.Play.current.configuration.getString("application.context") + 'api/scope/',
             MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
@@ -46,7 +46,7 @@
             // Does the Scope lookup
             var doScope = function(text) {
             $.getJSON(SCOPE_URI + text, function(data) {
-            //alert("Is in scope: " + data);
+            alert("Is in scope: " + data);
             var btn = document.getElementById('search');
             if (data) {
                     btn.style = "background-color: hell-green";
@@ -95,10 +95,10 @@
     	<div id="forms">
 			<form class="form-horizontal" action="@routes.Targets.filterUrl()" method="POST" role="form">
 	   			<div class="input-group">
-					<input class="form-control" id="inputName" name="filter" type="text" value="@filterUrl">
+					<input class="form-control" id="inputName" name="filter" type="text" id="filter" value="@filterUrl">
 		   			<span class="input-group-btn">
 				        <button type="submit" class="btn btn-primary" id="search" name="search" title="Red color means that URL is not in scope, green color means that URL is in scope">Search</button>	
-				        <button type="reset" class="btn btn-primary" title="Clear up search settings">Clear</button>
+				        <button type="submit" class="btn btn-primary" name="clear" title="Clear up search settings">Clear</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 							<!--  form class="filter-form" action="@routes.LookUp.index()" method="GET" -->
 							<!--  button onclick="location.href='@routes.LookUp.index()'" type="submit" class="btn btn-success" title="Look up and add new target">Add new target</button -->
@@ -238,7 +238,7 @@
 											<select name="field_scope" class="form-control" id="scope">
 									        	<option>None</option>
 									            @for(curScope <- Targets.getScope()) {
-							                 			@if(scope != null && scope.equals(curScope.field_scope)) {
+							                 		@if(scope != null && scope.equals(curScope.field_scope)) {
 								                		<option selected>@curScope.field_scope</option>
 													} else {
 								                		<option>@curScope.field_scope</option>
@@ -267,6 +267,20 @@
 									</div>
 								</div>
 							</div>
+							
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<div class="row padding-10">
+											<label class="col-sm-6 control-label">Sort alphabetically</label>
+										    <div class="col-sm-6">
+								                <input type="checkbox" name="alphabet" value="true"/>
+											</div>
+								     	</div>	 
+								     </div>
+								 </div>
+						    </div>
+		     	
 						</div>
 					</div>
 				</div>

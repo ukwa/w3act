@@ -1,20 +1,13 @@
+import static org.fest.assertions.Assertions.assertThat;
+import static play.test.Helpers.contentAsString;
+import static play.test.Helpers.contentType;
 import models.User;
 
 import org.junit.Test;
 
+import play.Logger;
 import play.mvc.Content;
-import play.mvc.*;
-
-import play.test.*;
-import play.data.DynamicForm;
-import play.data.validation.ValidationError;
-import play.data.validation.Constraints.RequiredValidator;
-import play.i18n.Lang;
-import play.libs.F;
-import play.libs.F.*;
-
-import static play.test.Helpers.*;
-import static org.fest.assertions.Assertions.*;
+import uk.bl.scope.Scope;
 
 /**
 *
@@ -24,10 +17,42 @@ import static org.fest.assertions.Assertions.*;
 */
 public class ApplicationTest {
 
-    @Test 
+	private static String URL1 = "bbc.co.uk";
+	private static String URL2 = "marksandspencer.com";
+	private static String URL3 = "google.com";
+
+	@Test 
     public void simpleCheck() {
         int a = 1 + 1;
         assertThat(a).isEqualTo(2);
+    }
+    
+    /**
+     * This is a test for whois service (UK domain) that requires Internet connection.
+     */
+    @Test 
+    public void testWhoisUk() {
+    	boolean res = Scope.checkWhois(URL1);
+    	Logger.info("test whois res: " + res);
+        assertThat(res).isEqualTo(true);
+    }
+    
+    /**
+     * This is a test for whois service (UK COM domain) that requires Internet connection.
+     */
+    @Test 
+    public void testWhoisUkCom() {
+    	boolean res = Scope.checkWhois(URL2);
+        assertThat(res).isEqualTo(true);
+    }
+    
+    /**
+     * This is a test for whois service (not UK domain) that requires Internet connection.
+     */
+    @Test 
+    public void testWhoisNotUk() {
+    	boolean res = Scope.checkWhois(URL3);
+        assertThat(res).isEqualTo(false);
     }
     
     @Test

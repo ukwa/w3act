@@ -3,33 +3,31 @@
 @main(title, user){
 
 	<div class="row row-offcanvas row-offcanvas-right">
-		<div class="col-xs-12 col-sm-4 col-md-4" role="navigation">
-			<div class="list-group">
-				<a class="list-group-item active" href="@routes.AddContent.index">Add Content</a>
-				<a class="list-group-item" href="@routes.DCollections.index"> -> Collection</a>
-				<a class="list-group-item" href="@routes.LookUp.index()"> -> Target</a>
-				<!-- li><a href="@routes.Article.index">Article</a></li -->
-				<!-- li><a href="@routes.BasicPage.index">Basic page</a></li -->
-				<!-- li><a href="@routes.OrganisationForm.index">Organisation</a></li -->
-				<!-- li>Targets</li>
-				<li><a href="@routes.WebSites.index()">Targets</a></li>
-				<li><a href="@routes.AlphabeticalIndex.index">Alphabetical Index</a></li>
-				<li><a href="@routes.DuplicateUrls.index">Duplicate URLs</a></li>
-				<li><a href="@routes.KeySites.index">Key Sites</a></li>
-				<li><a href="@routes.DispensationSites.index">Special Dispensation Sites</a></li>
-				<li><a href="@routes.UrlSearch.index">URL Search</a></li>
-				<li><a href="@routes.UrlsNoCrawl.index">URL Without Permissions</a></li>
-				<li>Edit Taxonomies</li>
-				<li><a href="@routes.EditTaxonomies.index()">Edit Taxonomies</a></li>
-				<li>My Bookmarks</li>
-				<li><a href="@routes.Bookmarks.index()">My bookmarks</a></li-->     
-			</div>
-		</div>
-		
 		<div class="col-xs-12 col-sm-8 col-md-8" role="main">
 			<h1>About</h1>
 			<p>This is a prototype web archive curation and annotation interface</p>
 		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="form-group">
+			<div class="col-xs-12 col-sm-4 col-md-4" role="navigation">
+				<div class="list-group">
+					<a class="list-group-item active" href="@routes.AddContent.index">Add Content</a>
+					<a class="list-group-item" href="@routes.DCollections.index"> -> Collection</a>
+					<a class="list-group-item" href="@routes.LookUp.index()"> -> Target</a>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-4 col-md-4" role="navigation">
+				<div class="list-group">
+					<a class="list-group-item active" href="@routes.FindContent.index">Find Content</a>
+					<a class="list-group-item" href="@routes.DCollections.index"> -> Browse Collections</a>
+					<a class="list-group-item" href="@routes.LookUp.index()"> -> Browse Targets</a>
+				</div>
+			</div>
+			</div>
+			</div>
+		</div>
+		
 	</div>
 }
 

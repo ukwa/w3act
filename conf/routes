@@ -38,6 +38,7 @@ GET     /contact                            controllers.Contact.index()
 
 # Navigation
 GET     /addcontent                         controllers.AddContent.index()
+GET     /findcontent                        controllers.FindContent.index()
 GET     /article                            controllers.Article.index()
 GET     /articlepreview                     controllers.Article.preview()
 GET     /basicpage                          controllers.BasicPage.index()

@@ -25,10 +25,10 @@ public class ModelsTest extends WithApplication {
     @Before
     public void setUp() {
     	/* use this settings to connect to postgresql database */
-//        conf.put("db.default.driver", "org.postgresql.Driver");
-//        conf.put("db.default.url", "postgres://training:training@127.0.0.1/w3act");
-//        start(fakeApplication(conf));
-        start(fakeApplication(inMemoryDatabase()));
+        conf.put("db.default.driver", "org.postgresql.Driver");
+        conf.put("db.default.url", "postgres://training:training@127.0.0.1/w3act");
+        start(fakeApplication(conf));
+//        start(fakeApplication(inMemoryDatabase()));
     }
     
 //    @Test

@@ -1,0 +1,16 @@
+@(title: String, user: User)
+
+@main(title, user){
+
+    <h1>Find Content</h1>
+
+    <article  class="about">
+		<div class="folder">
+			<h4><a href="@routes.DCollections.index">Browse Collections</a></h4>
+			<h5>    A list of annotated collections of web sites.</h5>
+			<h4><a href="@routes.Targets.index">Browse Targets</a></h4>
+			<h5>    A list of annotated web sites, identified by URL(s).</h5>
+		</div>
+    </article>
+}
+

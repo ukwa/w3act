@@ -66,9 +66,11 @@ public class Targets extends AbstractController {
         int offset = 0;
         int limit = 0;
         boolean isClear = false;
+    	Logger.info("Targets filterUrl() search: " + filterUrl + ", clear: " + clear);    	
         if (clear != null) {
         	filterUrl = "";
         	isClear = true;
+        	Logger.info("Clear button pushed.");
         }
 //		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);
         if (!isClear && getFormParam(Const.AUTHOR) != null && !getFormParam(Const.AUTHOR).toLowerCase().contains(Const.NONE)) {
@@ -140,78 +142,7 @@ public class Targets extends AbstractController {
                         )
                 );
 
-//    	List<Target> targetsAll = models.Target.filterActiveUrl(filterUrl);
-//    	int rowCount = Const.ROWS_PER_PAGE;
-//    	if (targetsAll.size() < Const.ROWS_PER_PAGE) {
-//    		rowCount = targetsAll.size();
-//    	}
-//    	List<Target> targetsRes = targetsAll.subList(0, rowCount);
-//        return ok(
-//                targets.render(
-//                    "Targets", User.find.byId(request().username()), targetsRes, 
-//                	User.findAll(), models.Organisation.findAll(),
-//                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-//                	Const.NONE, Const.NONE, 0, targetsAll.size(), filterUrl
-//                )
-//            );
     }
-    
-//    /**
-//     * This method converts Target list to string in order to export it in a CSV file.
-//     * @param targetsList
-//     * @return resulting string
-//     */
-//    public static String convertTargetListToString(List<Target> targetsList) {
-//    	String res = "";
-//        Logger.info("convertTargetListToString before getFormParam");
-//        String exportBtn = getFormParam(Const.EXPORT);
-//        Logger.info("convertTargetListToString exportBtn: " + exportBtn);
-////        if (exportBtn != null) {        
-//	        StringWriter sw = new StringWriter();
-//	        // header of CSV file
-//    		sw.append(Const.NID);
-////    		Logger.info("res1: " + res);
-//	 	    sw.append(Const.CSV_SEPARATOR);
-//    		sw.append(Const.TITLE);
-//	 	    sw.append(Const.CSV_SEPARATOR);
-//    		sw.append(Const.URL);
-//	 	    sw.append(Const.CSV_SEPARATOR);
-//    		sw.append(Const.AUTHOR);
-//	 	    sw.append(Const.CSV_SEPARATOR);
-//    		sw.append(Const.FIELD_COLLECTION_CATEGORIES);
-//	 	    sw.append(Const.CSV_SEPARATOR);
-//    		sw.append(Const.FIELD_NOMINATING_ORGANISATION); //TODO url or name?
-//	 	    sw.append(Const.CSV_SEPARATOR);
-//	 	    sw.append(Const.CSV_LINE_END);
-//
-//	    	Logger.info("export list size: " + targetsList.size());
-//	    	Iterator<Target> itrTargets = targetsList.iterator();
-//	    	while (itrTargets.hasNext()) {
-//	    		Target target = itrTargets.next();
-//	    		sw.append(String.valueOf(target.nid));
-//	//    		Logger.info("res1: " + res);
-//		 	    sw.append(Const.CSV_SEPARATOR);
-//	    		sw.append(target.title);
-//		 	    sw.append(Const.CSV_SEPARATOR);
-//	    		sw.append(target.url);
-//		 	    sw.append(Const.CSV_SEPARATOR);
-//	    		sw.append(target.author);
-//		 	    sw.append(Const.CSV_SEPARATOR);
-//	    		sw.append(target.field_collection_categories);
-//		 	    sw.append(Const.CSV_SEPARATOR);
-//	    		sw.append(target.field_nominating_organisation);
-//		 	    sw.append(Const.CSV_SEPARATOR);
-//		 	    sw.append(Const.CSV_LINE_END);
-//	    	}
-//	    	try {
-//				res = URLEncoder.encode(sw.toString(), Const.STR_FORMAT);
-//			} catch (UnsupportedEncodingException e) {
-//				Logger.info("Encoding error. " + e);
-//			}
-////        }
-//    	Logger.info("export string: " + res);
-//    	return res;
-//    }
     
     /**
      * This method exports selected targets to CSV file.
@@ -228,9 +159,6 @@ public class Targets extends AbstractController {
      */
     public static Result export(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
     		String subjectUrl, String crawlFrequency, String depth, String scope, String license, String filterUrl, int offset) {
-//    public static Result export(String targetList) {
-//        public static Result export(List<Target> targetList) {
-///        public static Result export() {
     	Logger.info("export()");
     	
     	List<Target> targetList = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
