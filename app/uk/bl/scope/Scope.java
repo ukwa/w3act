@@ -1,31 +1,24 @@
 package uk.bl.scope;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import models.LookupEntry;
 import models.Target;
-import models.User;
 import play.Logger;
 import uk.bl.Const;
+import uk.bl.api.Utils;
+import uk.bl.exception.WhoisException;
+import uk.bl.wa.whois.JRubyWhois;
+import uk.bl.wa.whois.WhoisResult;
 
 import com.avaje.ebean.Ebean;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
-
-import uk.bl.api.Utils;
-import uk.bl.wa.whois.JRubyWhois;
-import uk.bl.wa.whois.WhoisResult;
 
 /**
  * This class implements scope rule engine.
@@ -121,8 +114,9 @@ public class Scope {
 	/**
 	 * This method comprises rule engine for checking if a given URL is in scope.
 	 * @return true if in scope
+	 * @throws WhoisException 
 	 */
-	public static boolean check(String url, String nidUrl) {
+	public static boolean check(String url, String nidUrl) throws WhoisException {
         boolean res = false;
         Logger.info("check url: " + url + ", nid: " + nidUrl);
         url = normalizeUrl(url);
@@ -207,16 +201,21 @@ public class Scope {
 	 * in response using whois lookup service.
 	 * @param url
 	 * @return true if in UK domain
+	 * @throws WhoisException 
 	 */
-	public static boolean checkWhois(String url) {
+	public static boolean checkWhois(String url) throws WhoisException {
 		boolean res = false;
     	try {
         	JRubyWhois whoIs = new JRubyWhois();
+    		System.out.println("checkWhois: " + whoIs + " " + url);
         	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
+    		System.out.println("whoIsRes: " + whoIsRes);
 //        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl("marksandspencer.com"));
         	res = whoIsRes.isUKRegistrant();
+    		System.out.println("isUKRegistrant?: " + res);
     	} catch (Exception e) {
     		Logger.info("whois lookup message: " + e.getMessage());
+    		throw new WhoisException(e);
     	}
     	Logger.info("whois res: " + res);        	
 		return res;

@@ -2,9 +2,9 @@ package controllers;
 
 import play.*;
 import play.mvc.*;
-
 import models.*;
 import uk.bl.api.*;
+import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
@@ -155,10 +155,12 @@ public class TargetController extends AbstractController {
      * This method is checking scope for given URL and returns result in JSON format.
      * @param url
      * @return JSON result
+     * @throws WhoisException 
      */
-    public static Result isInScope(String url) {
+    public static Result isInScope(String url) throws WhoisException {
 //    	Logger.info("isInScope controller: " + url);
     	boolean res = Target.isInScope(url, null);
+    	res = true;
 //    	Logger.info("isInScope res: " + res);
     	return ok(Json.toJson(res));
     }

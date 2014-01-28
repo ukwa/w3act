@@ -21,6 +21,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.IdGenerator;
 import uk.bl.api.Utils;
+import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
 
@@ -648,7 +649,7 @@ public class Target extends Model {
 	 * @param url
 	 * @return result as a flag
 	 */
-    public static boolean isInScope(String url, String nidUrl) {
+    public static boolean isInScope(String url, String nidUrl) throws WhoisException {
     	return Scope.check(url, nidUrl);
     }
     

@@ -42,22 +42,27 @@ function scopeCheck(context) {
     TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
     IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
 
+	addButton = $('#addentry')
+	searchButton = $('#search')
+
     // Does the Scope lookup
     var doScope = function(text) {
-	    $.getJSON(SCOPE_URI + text, function(data) {
-		    //alert("Is in scope: " + data);
-		    var btn = document.getElementById('addentry');
-		    var btnsearch = document.getElementById('search');
-		    if (data) {
-		            btn.style = "background-color: hell-green";
-		            btnsearch.style = "background-color: hell-green";
-		    } else {
-		            btn.style = "background-color: red";
-		            btnsearch.style = "background-color: red";
-		    }
+	    $.ajax({
+	    	url: SCOPE_URI + text,
+	    	dataType: 'json',
+	    	success: function(data) {
+		    	addButton.css('background-color','green');
+		    	searchButton.css('background-color', 'green');
+		    	console.log("success " + data);
+	    	},
+	    	error: function(jqXHR, textStatus, errorThrown) {
+		    	addButton.css('background-color','red');
+		    	searchButton.css('background-color', 'red');
+		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+	    	}
 	    });
     };
-   
+    
     // Restarts the keyboard-idleness timeout
     var restartIdleTimeout = function(text) {
 	    if (idle_timeout) {
