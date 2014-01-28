@@ -61,6 +61,7 @@ public final class Const {
 	public static final String TARGET_DEF         = "TARGETDEF";
 	public static final String OFFSET             = "offset";
 	public static final String LIMIT              = "limit";
+	public static final String LIST_DELIMITER     = ", ";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";

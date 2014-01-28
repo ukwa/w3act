@@ -62,9 +62,13 @@
 		<div class="tab-pane fade padding-20" id="metadata">
 			<dl class="dl-horizontal">
 				<dt>Description:</dt>
+				@if(target.field_description != null && target.field_description.length() > 0) {
 				<dd>@target.field_description</dd>
+				} else {
+				<dd>none</dd>
+				}
 				<dt>Subject:</dt>
-				<dd>@Taxonomy.findByUrl(target.field_subject).name</dd>
+				<dd>@Taxonomy.findNamesByUrls(target.field_subject)</dd>
 				<dt>Suggested Collections:</dt>
 				<dd>@DCollection.findByUrl(target.field_suggested_collections).title</dd>
 				<dt>Nominating Organisation:</dt>

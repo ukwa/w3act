@@ -95,8 +95,33 @@ public class Utils {
 	 	} 
     }    
     
+    /**
+     * This method generates current date for e.g. licence form.
+     * @return
+     */
     public static String getCurrentDate() {
     	return new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
     }
+    
+    /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param elem The given element for searching
+     * @param list The list that contains elements
+     * @return true if in list
+     */
+    public static boolean hasElementInList(String elem, String list) {
+    	boolean res = false;
+    	String[] parts = list.split(Const.LIST_DELIMITER);
+    	for (String part: parts)
+        {
+    		if (part.equals(elem)) {
+    			res = true;
+    			break;
+    		}
+        }
+
+    	return res;
+    }
+    
 }
 

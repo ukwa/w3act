@@ -701,6 +701,17 @@ public class Target extends Model {
     }
 
     /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+    public boolean hasSubject(String subject) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(subject, field_subject);
+    	return res;
+    }
+    
+    /**
      * Return a page of Target
      *
      * @param page Page to display

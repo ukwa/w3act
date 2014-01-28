@@ -36,7 +36,7 @@ public class TargetController extends AbstractController {
         			", title: " + getFormParam(Const.TITLE) + ", keysite: " + getFormParam(Const.KEYSITE) +
         			", description: " + getFormParam(Const.DESCRIPTION) + 
         			", status: " + getFormParam(Const.STATUS) +
-        			", subject: " + getFormParam(Const.SUBJECT) +
+        			", subject: " + getFormParams(Const.SUBJECT) +
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
             Target target = new Target();
@@ -73,7 +73,17 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
-            newTarget.field_subject = getFormParam(Const.SUBJECT);
+            if (getFormParam(Const.SUBJECT) != null) {
+            	String[] subjects = getFormParams(Const.SUBJECT);
+//            	Logger.info("subjects: " + subjects[0] + subjects[1]);
+            	String resSubject = "";
+            	for (String subject: subjects)
+                {
+//                	Logger.info("add subjects: " + subjects + ", " + Taxonomy.findByName(subject).url);
+           			resSubject = resSubject + Taxonomy.findByName(subject).url + Const.LIST_DELIMITER;
+                }
+            	newTarget.field_subject = resSubject;
+            }
             if (getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) != null) {
         		Logger.info("status: " + getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) + ".");
             	if (!getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS).toLowerCase().contains(Const.NONE)) {

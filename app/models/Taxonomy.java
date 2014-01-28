@@ -1,16 +1,19 @@
 package models;
 
-import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
-import javax.persistence.*;
-
-import com.avaje.ebean.ExpressionList;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 import play.Logger;
-import play.db.ebean.*;
+import play.db.ebean.Model;
 import uk.bl.Const;
-import uk.bl.Const.NodeType;
+
+import com.avaje.ebean.ExpressionList;
 
 
 /**
@@ -110,6 +113,22 @@ public class Taxonomy extends Model {
         	res.name = Const.NONE;
         }
 //        return find.where().eq(Const.URL, url).findUnique();
+    	return res;
+    }          
+
+    /**
+     * Retrieve a Taxonomy names by URL list given as a string.
+     * @param url
+     * @return taxonomy object
+     */
+    public static String findNamesByUrls(String urls) {
+    	String res = "";
+    	String[] parts = urls.split(Const.LIST_DELIMITER);
+    	for (String part: parts)
+        {
+    		String name = findByUrl(part).name;
+    		res = res + name + Const.LIST_DELIMITER;
+        }
     	return res;
     }          
 
