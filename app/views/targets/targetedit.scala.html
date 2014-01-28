@@ -610,6 +610,11 @@
 						            } else {						                
 					 					<option>Daily</option>
 					                }
+				             		@if(target.field_crawl_frequency != null && target.field_crawl_frequency.equals("Never Crawl")) {
+					 					<option selected>Never Crawl</option>
+						            } else {						                
+					 					<option>Never Crawl</option>
+					                }
 				 				</select>
 				 			</div>
 						</div>
