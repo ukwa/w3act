@@ -67,10 +67,10 @@
 				} else {
 				<dd>none</dd>
 				}
-				<dt>Subject:</dt>
+				<dt>Subjects:</dt>
 				<dd>@Taxonomy.findNamesByUrls(target.field_subject)</dd>
 				<dt>Suggested Collections:</dt>
-				<dd>@DCollection.findByUrl(target.field_suggested_collections).title</dd>
+				<dd>@DCollection.findTitlesByUrls(target.field_suggested_collections)</dd>
 				<dt>Nominating Organisation:</dt>
 				<dd>@Organisation.findByUrl(target.field_nominating_organisation).title</dd>
 				<dt>User:</dt>

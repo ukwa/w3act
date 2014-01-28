@@ -231,6 +231,22 @@ public class DCollection extends Model {
 		return res;
 	}       
     
+    /**
+     * Retrieve the Collection names by URL list given as a string.
+     * @param url
+     * @return taxonomy object
+     */
+    public static String findTitlesByUrls(String urls) {
+    	String res = "";
+    	String[] parts = urls.split(Const.LIST_DELIMITER);
+    	for (String part: parts)
+        {
+    		String name = findByUrl(part).title;
+    		res = res + name + Const.LIST_DELIMITER;
+        }
+    	return res;
+    }          
+	
     public String toString() {
         return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
         		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;

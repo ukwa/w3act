@@ -74,20 +74,30 @@ public class TargetController extends AbstractController {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
             if (getFormParam(Const.SUBJECT) != null) {
-            	String[] subjects = getFormParams(Const.SUBJECT);
-//            	Logger.info("subjects: " + subjects[0] + subjects[1]);
-            	String resSubject = "";
-            	for (String subject: subjects)
-                {
-//                	Logger.info("add subjects: " + subjects + ", " + Taxonomy.findByName(subject).url);
-           			resSubject = resSubject + Taxonomy.findByName(subject).url + Const.LIST_DELIMITER;
-                }
-            	newTarget.field_subject = resSubject;
+            	if (!getFormParam(Const.SUBJECT).toLowerCase().contains(Const.NONE)) {
+	            	String[] subjects = getFormParams(Const.SUBJECT);
+	//            	Logger.info("subjects: " + subjects[0] + subjects[1]);
+	            	String resSubject = "";
+	            	for (String subject: subjects)
+	                {
+	//                	Logger.info("add subjects: " + subjects + ", " + Taxonomy.findByName(subject).url);
+	           			resSubject = resSubject + Taxonomy.findByName(subject).url + Const.LIST_DELIMITER;
+	                }
+	            	newTarget.field_subject = resSubject;
+            	} else {
+            		newTarget.field_subject = Const.NONE;
+            	}
             }
             if (getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) != null) {
-        		Logger.info("status: " + getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) + ".");
             	if (!getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS).toLowerCase().contains(Const.NONE)) {
-            		newTarget.field_suggested_collections = DCollection.findByTitle(getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS)).url;
+	            	String[] elems = getFormParams(Const.FIELD_SUGGESTED_COLLECTIONS);
+	            	String resElem = "";
+	            	for (String elem: elems)
+	                {
+	           			resElem = resElem + DCollection.findByTitle(elem).url + Const.LIST_DELIMITER;
+	                }
+	            	newTarget.field_suggested_collections = resElem;
+//            		newTarget.field_suggested_collections = DCollection.findByTitle(getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS)).url;
             	} else {
             		newTarget.field_suggested_collections = Const.NONE;
             	}

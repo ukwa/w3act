@@ -301,10 +301,10 @@
 						<div class="form-group">
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Suggested Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
-								<select name="field_suggested_collections" id="suggestions-collections" class="form-control">
+								<select multiple name="field_suggested_collections" id="suggestions-collections" class="form-control">
 					                <option>None</option>
 					                @for(collection <- DCollection.findAll()) {
-						                @if(collection.title.equals(DCollection.findByUrl(target.field_suggested_collections).title)) {
+						                @if(target.hasCollection(collection.url)) {
 						                	<option selected>@collection.title</option>
 						                } else {
 						                	<option>@collection.title</option>
