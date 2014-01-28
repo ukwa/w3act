@@ -85,7 +85,7 @@ GET     /target/:target                     controllers.TargetEdit.view(target)
 GET     /targetrevision/:revision           controllers.TargetEdit.viewrevision(revision:Long)
 GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
 GET     /targetaddentry/:target             controllers.TargetEdit.addEntry(target)
-GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit/:license/       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int, license)
+GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit/:license/:sorted/       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int, license, sorted:Boolean)
 GET     /role/:role                         controllers.RoleEdit.view(role)
 GET     /roleedit/:role                     controllers.RoleEdit.edit(role)
 GET     /roleadd/:role                      controllers.RoleEdit.addEntry(role)
@@ -129,7 +129,7 @@ GET    	/lookup/list/                  		controllers.LookUp.list(p:Int ?= 0, s ?
 
 POST    /targets/add-new                    controllers.UrlSearch.addNewTarget()
 GET     /website/:url                        controllers.WebSite.addEntry(url)
-POST    /export/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:license/:filterUrl/:offset   controllers.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, license, filterUrl, offset:Int)
+POST    /export/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:license/:filterUrl/:offset/:sorted   controllers.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, license, filterUrl, offset:Int, sorted:Boolean)
 
 # Scope
 GET     /api/scope/:url                      controllers.TargetController.isInScope(url)

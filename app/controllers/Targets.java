@@ -6,6 +6,7 @@ import play.mvc.*;
 import java.io.StringWriter;
 import java.util.*;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 
 import models.*;
@@ -29,11 +30,10 @@ public class Targets extends AbstractController {
     	List<Target> targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
         return ok(
             targets.render(
-//                    "Targets", User.find.byId(request().username()), models.Target.findInvolving(), 
                     "Targets", User.find.byId(request().username()), targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
                 	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE
+                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, false
             )
         );
     }
@@ -43,11 +43,10 @@ public class Targets extends AbstractController {
     	List<Target> targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
         return ok(
             targets.render(
-//                    "Targets", User.find.byId(request().username()), models.Target.findInvolving(), 
                     "Targets", User.find.byId(request().username()), targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
                 	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, offset, targetsAll.size(), "", Const.NONE
+                	Const.NONE, Const.NONE, offset, targetsAll.size(), "", Const.NONE, false
             )
         );
     }
@@ -63,6 +62,7 @@ public class Targets extends AbstractController {
         String field_depth = Const.NONE;
         String field_scope = Const.NONE;
         String field_license = Const.NONE;
+        boolean isSorted = false;
         int offset = 0;
         int limit = 0;
         boolean isClear = false;
@@ -105,6 +105,12 @@ public class Targets extends AbstractController {
             	&& !getFormParam(Const.FIELD_SCOPE).toLowerCase().contains(Const.NONE)) {
        		field_scope = getFormParam(Const.FIELD_SCOPE);
         }
+        if (!isClear && getFormParam(Const.SORTED) != null
+            	&& !getFormParam(Const.SORTED).toLowerCase().contains(Const.NONE)) {
+       		isSorted = Utils.getNormalizeBooleanString(getFormParam(Const.SORTED));
+        }
+//        Logger.info("SORTED: " + getFormParam(Const.SORTED) + ", isSorted: " + isSorted);
+        
         Logger.info("filterUrl offset param: " + getFormParam(Const.OFFSET));
         String offsetStr = getFormParam(Const.OFFSET);
         if (offsetStr != null) {
@@ -117,7 +123,7 @@ public class Targets extends AbstractController {
         Logger.info("filterUrl offset: " + offset + ", limit: " + limit);
 
     	List<Target> targetsAll = processTargets(author, field_nominating_organisation, field_collection_categories, 
-        		field_subject, field_crawl_frequency, field_depth, field_scope, offset, limit, filterUrl, field_license);
+        		field_subject, field_crawl_frequency, field_depth, field_scope, offset, limit, filterUrl, field_license, isSorted);
 //    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
     	int rowCount = Const.ROWS_PER_PAGE;
     	List<Target> targetsRes = new ArrayList<Target>();
@@ -138,7 +144,7 @@ public class Targets extends AbstractController {
 		        	User.findFilteredByUrl(author), models.Organisation.findFilteredByUrl(field_nominating_organisation),
 			        	author, field_nominating_organisation, field_collection_categories, field_subject, 
 			        	field_crawl_frequency, field_depth, field_scope, offset, targetsAll.size(), filterUrl, 
-			        	field_license
+			        	field_license, isSorted
                         )
                 );
 
@@ -158,11 +164,12 @@ public class Targets extends AbstractController {
      * @return
      */
     public static Result export(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String scope, String license, String filterUrl, int offset) {
+    		String subjectUrl, String crawlFrequency, String depth, String scope, String license, String filterUrl, 
+    		int offset, boolean isSorted) {
     	Logger.info("export()");
     	
     	List<Target> targetList = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
-        		subjectUrl, crawlFrequency, depth, scope, 0, 0, filterUrl, license);
+        		subjectUrl, crawlFrequency, depth, scope, 0, 0, filterUrl, license, isSorted);
     	Logger.info("export() targetList size: " + targetList.size());
 //        String exportBtn = getFormParam(Const.EXPORT);
 //        Logger.info("export exportBtn: " + exportBtn);
@@ -212,7 +219,7 @@ public class Targets extends AbstractController {
    			        "Targets", User.find.byId(request().username()), targetsRes, 
 		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
 			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, 
-			        	crawlFrequency, depth, scope, offset, targetList.size(), filterUrl, license
+			        	crawlFrequency, depth, scope, offset, targetList.size(), filterUrl, license, isSorted
                         )
                 );
     }
@@ -232,7 +239,8 @@ public class Targets extends AbstractController {
      * @return
      */
     public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, String license) {
+    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, 
+    		String license, boolean isSorted) {
     	
         String filterUrl = getFormParam(Const.FILTER);
         if (filterUrl == null) {
@@ -241,7 +249,7 @@ public class Targets extends AbstractController {
         Logger.info("Filter: " + filterUrl);
 
     	List<Target> targetsAll = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
-        		subjectUrl, crawlFrequency, depth, scope, offset, limit, filterUrl, license);
+        		subjectUrl, crawlFrequency, depth, scope, offset, limit, filterUrl, license, isSorted);
 //    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
     	int rowCount = Const.ROWS_PER_PAGE;
     	List<Target> targetsRes = new ArrayList<Target>();
@@ -263,7 +271,7 @@ public class Targets extends AbstractController {
    			        "Targets", User.find.byId(request().username()), targetsRes, 
 		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
 			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, 
-			        	scope, offset, targetsAll.size(), filterUrl, license
+			        	scope, offset, targetsAll.size(), filterUrl, license, isSorted
                         )
                 );
     }
@@ -284,7 +292,8 @@ public class Targets extends AbstractController {
      * @return
      */
     public static List<Target> processTargets(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, String filterUrl, String license) {
+    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, String filterUrl, 
+    		String license, boolean isSorted) {
 //    	Logger.info("target edit curatorUrl: " + curatorUrl + ", organisationUrl: " + organisationUrl);
     	boolean isProcessed = false;
     	ExpressionList<Target> exp = Target.find.where();
@@ -327,6 +336,10 @@ public class Targets extends AbstractController {
     	} 
     	res = exp.query().findList();
     	Logger.info("Expression list size: " + res.size());
+    	if (isSorted) {
+    		Ebean.sort(res, Const.TITLE);
+    		isProcessed = true;
+    	}
 
         if (!isProcessed) {
     		res = models.Target.findAllActive();

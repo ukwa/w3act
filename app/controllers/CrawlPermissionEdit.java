@@ -22,6 +22,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import uk.bl.scope.EmailHelper;
 import views.html.crawlpermissions.*;
 import views.html.permissions.permissions;
 import views.html.targets.targets;
@@ -153,8 +154,6 @@ public class CrawlPermissionEdit extends AbstractController {
      * @return
      */
     public static Result addEntry(String name) {
-    	sendEmail();
-
     	CrawlPermission permission = new CrawlPermission();
     	permission.name = name;
         permission.id = Target.createId();
@@ -170,41 +169,6 @@ public class CrawlPermissionEdit extends AbstractController {
             );
     }
       
-    public static void sendEmail() {
-    	try {
-            Logger.info("send mail1");
-            String host = "smtp.gmail.com";
-            String username = "test@gmail.com";
-            String password = "1234";
-            InternetAddress[] addresses = {new InternetAddress("roman.graf@ait.ac.at")};
-//            InternetAddress[] addresses = {new InternetAddress("user@anymail.com"),
-//                    new InternetAddress(bid.email), connect to SMTP host: smtp.gmail.com, port: 465;
-//                    new InternetAddress("another-user@anymail.com")};
-            Properties props = new Properties();
-
-            // set any needed mail.smtps.* properties here
-            Session session = Session.getInstance(props);
-            MimeMessage message = new MimeMessage(session);
-            message.setSubject("my subject placed here");
-            message.setContent("my message placed here:\n\n"
-                    , "text/plain");
-//            + part.toString(), "text/plain");
-            message.setRecipients(Message.RecipientType.TO, addresses);
-
-            // set the message content here
-            Transport t = session.getTransport("smtps");
-            try {
-                t.connect(host, username, password);
-                Logger.info("send mail");
-                t.sendMessage(message, message.getAllRecipients());
-            } finally {
-                t.close();
-            }          
-        } catch (MessagingException me) {
-            me.printStackTrace();
-        }
-    }
-    
     /**
      * This method saves new object or changes on given Permission in the same object
      * completed by revision comment. The "version" field in the Permission object
@@ -213,8 +177,6 @@ public class CrawlPermissionEdit extends AbstractController {
      */
     public static Result save() {
     	Result res = null;
-    	sendEmail();
-    	
         String save = getFormParam(Const.SAVE);
         String delete = getFormParam(Const.DELETE);
 //        Logger.info("save: " + save);
@@ -374,9 +336,12 @@ public class CrawlPermissionEdit extends AbstractController {
         String preview = getFormParam(Const.PREVIEW);
         String reject = getFormParam(Const.REJECT);
         Logger.info("send: " + send + ", sendall: " + sendall + ", sendsome: " + sendsome + ", preview: " + preview + ", reject: " + reject);
-        if (send != null) {
+        if (sendall != null) {
         	Logger.info("send some crawl permission requests");
-	        res = ok(
+            String[] to = {"roman@ait.ac.at","roman@ait.ac.at"};
+            EmailHelper.sendMessage(to,"Message test","Message body");
+        	
+        	res = ok(
 		        crawlpermissionsend.render(
 		            CrawlPermission.filterByStatus(Const.DEFAULT_CRAWL_PERMISSION_STATUS), User.find.byId(request().username())
 		            )

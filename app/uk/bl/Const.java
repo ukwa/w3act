@@ -104,6 +104,7 @@ public final class Const {
     public static final String BLACK_LIST = "black_list";
     public static final String KEYWORDS = "keywords";
     public static final String SYNONYMS = "synonyms";
+    public static final String SORTED = "sorted";
     
     // Creator
 	public static final String UID                = "uid";
