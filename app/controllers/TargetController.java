@@ -80,8 +80,11 @@ public class TargetController extends AbstractController {
 	            	String resSubject = "";
 	            	for (String subject: subjects)
 	                {
-	//                	Logger.info("add subjects: " + subjects + ", " + Taxonomy.findByName(subject).url);
-	           			resSubject = resSubject + Taxonomy.findByName(subject).url + Const.LIST_DELIMITER;
+	            		if (subject != null && subject.length() > 0) {
+	                		Logger.info("add subject: " + subject);
+//	                		Logger.info("add subject: " + subject + ", " + Taxonomy.findByName(subject).url);
+	            			resSubject = resSubject + Taxonomy.findByFullName(subject).url + Const.LIST_DELIMITER;
+	            		}
 	                }
 	            	newTarget.field_subject = resSubject;
             	} else {
@@ -94,7 +97,9 @@ public class TargetController extends AbstractController {
 	            	String resElem = "";
 	            	for (String elem: elems)
 	                {
-	           			resElem = resElem + DCollection.findByTitle(elem).url + Const.LIST_DELIMITER;
+	            		if (elem != null && elem.length() > 0) {
+	            			resElem = resElem + DCollection.findByTitle(elem).url + Const.LIST_DELIMITER;
+	            		}
 	                }
 	            	newTarget.field_suggested_collections = resElem;
 //            		newTarget.field_suggested_collections = DCollection.findByTitle(getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS)).url;

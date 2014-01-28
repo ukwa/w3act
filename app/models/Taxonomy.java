@@ -177,6 +177,22 @@ public class Taxonomy extends Model {
     }
     
     /**
+     * Retrieve a taxonomy by title.
+     * @param title
+     * @return taxonomy object
+     */
+    public static Taxonomy findByFullName(String name) {
+    	Taxonomy res = new Taxonomy();
+    	if (name != null && name.length() > 0) {
+    		res = find.where().eq(Const.NAME, name).findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+		Logger.info("res: " + res);
+    	return res;
+    }
+    
+    /**
      * Retrieve a Taxonomy list by type.
      * @param taxonomy type
      * @return taxonomy list
