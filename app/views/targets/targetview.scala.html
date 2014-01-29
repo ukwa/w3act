@@ -78,54 +78,219 @@
 			</dl>
 		</div>
 	
-		<div class="tab-pane fade padding-20" id="crawlpermission">
-			<h4>Legal Deposit Criteria</h4>
-			<dl class="dl-horizontal">
-				<dt>UK Hosting:</dt>
-				<dd>@target.field_uk_hosting - The domain is hosted in the UK.</dd>
-				<dt>UK Postal Address:</dt>
-				<dd>
-					@target.field_uk_postal_address <br> The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box).
-				</dd>
-				<dt>Postal Address URL:</dt>
-				<dd>
-					@target.field_uk_postal_address_url @if(!target.field_uk_postal_address_url.isEmpty) {<br>} The URL on the site that contains the postal address used to determine that the site is in the UK.
-				</dd>
-				<dt>Via Correspondence:</dt>
-				<dd>
-					@target.field_via_correspondence <br> Previous correspondence with the web site owner by a Curator contains evidence of a UK address.
-				</dd>
-				<dt>Notes:</dt>
-				<dd>@target.field_notes  @if(!target.field_notes.isEmpty) {<br>} Any relevant notes, e.g. a more detailed description of this URL or set of URLs.</dd>
-				<dt>Professional Judgement:</dt>
-				<dd>@target.field_professional_judgement <br> In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below.</dd>
-				<dt>Professional Judgement Explanation:</dt>
-				<dd>@target.@target.field_professional_judgement_exp @if(!target.field_professional_judgement_exp.isEmpty) {<br>} Please describe the rational behind this decision, indicating any evidence used.</dd>
-				<dt>No LD Criteria Met:</dt>
-				<dd>@target.field_no_ld_criteria_met <br> Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit.&nbsp;</dd>
-			</dl>
-		</div>
+		<div class="tab-pane fade" id="crawlpermission">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
+					</div>
+				</div>
+	     	</div>
+    	
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">UK Hosting <small class="text-center">(The domain is hosted in the UK)</small></label>
+					    <div class="col-sm-6">
+			                @if(target.field_uk_hosting != null && target.field_uk_hosting) {             
+				                <input type="checkbox" name="field_uk_hosting" value="true" checked disabled/>
+			                } else {
+				                <input type="checkbox" name="field_uk_hosting" value="true" disabled/>
+			                }
+						</div>
+					</div>
+				</div>
+	     	</div>
 
-        <div class="tab-pane fade padding-20" id="crawlpolicy">
-			<dl class="dl-horizontal">
-				<dt>Scope:</dt>
-				<dd>@target.field_scope  @if(!target.field_scope.isEmpty) {<br>} Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option.</dd>
-				<dt>Depth:</dt>
-				<dd>@target.field_depth</dd>
-				<dt>Ignore Robots.txt:</dt>
-				<dd>@target.field_ignore_robots_txt <br> Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems.</dd>
-				<dt>Crawl Frequency:</dt>
-				<dd>@target.field_crawl_frequency @if(!target.field_crawl_frequency.isEmpty) {<br>} How often should this site be archived?</dd>
-				<dt>Start date:</dt>
-				<dd>@target.field_crawl_start_date</dd>
-				<dt>End date:</dt>
-				<dd>@target.field_crawl_end_date</dd>
-				<dt>White list:</dt>
-				<dd>@target.white_list</dd>
-				<dt>Black list:</dt>
-				<dd>@target.black_list&nbsp;</dd>
-			</dl>
-		</div>
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
+					    <div class="col-sm-6">
+			                @if(target.field_uk_postal_address != null && target.field_uk_postal_address) {             
+				                <input type="checkbox" name="field_uk_postal_address" value="true" checked disabled/>
+			                } else {
+				                <input type="checkbox" name="field_uk_postal_address" value="true" disabled/>
+			                }
+						</div>
+					</div>
+				</div>
+	     	</div>		     				     	
+
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
+					    <div class="col-sm-6">
+	 						<input type="text" name="field_uk_postal_address_url" value="@target.field_uk_postal_address_url" size="60" maxlength="2048" class="form-control"  readonly/>
+						</div>
+					</div>
+				</div>
+	     	</div>
+	     	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
+					    <div class="col-sm-6">
+			                @if(target.field_via_correspondence != null && target.field_via_correspondence) {             
+				                <input type="checkbox" name="field_via_correspondence" value="true" checked disabled/>
+			                } else {
+				                <input type="checkbox" name="field_via_correspondence" value="true" disabled/>
+			                }
+						</div>
+					</div>
+				</div>
+	     	</div>		
+
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Notes <small class="text-center">(Any relevant notes, e.g. a more detailed description of this URL or set of URLs)</small></label>
+					    <div class="col-sm-6">
+	 						<textarea name="field_notes" cols="100" rows="1" class="form-control" readonly>@target.field_notes</textarea>
+						</div>
+					</div>
+				</div>
+	     	</div>	
+
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
+					    <div class="col-sm-6">
+			                @if(target.field_professional_judgement != null && target.field_professional_judgement) {             
+				                <input type="checkbox" name="field_professional_judgement" value="true" checked disabled/>
+			                } else {
+				                <input type="checkbox" name="field_professional_judgement" value="true" disabled/>
+			                }
+						</div>
+					</div>
+				</div>
+	     	</div>	
+	     	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
+					    <div class="col-sm-6">
+		 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control" readonly>@target.field_professional_judgement_exp</textarea>
+						</div>
+					</div>
+				</div>
+	     	</div>	
+
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
+					    <div class="col-sm-6">
+			                @if(target.field_no_ld_criteria_met != null && target.field_no_ld_criteria_met) {             
+				                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked disabled/>
+			                } else {
+			                	<input type="checkbox" name="field_no_ld_criteria_met" value="true" disabled/>
+			                }
+                		</div>
+					</div>
+				</div>
+	     	</div>	
+        </div>
+        
+        <div class="tab-pane fade" id="crawlpolicy">
+
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Scope<font color="red">*</font> <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
+					    <div class="col-sm-6">
+	 						<input type="text" name="field_scope" value="@target.field_scope" size="60" maxlength="2048" class="form-control" readonly/>
+						</div>
+					</div>
+				</div>
+	     	</div>
+	     	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Depth<font color="red">*</font> <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
+					    <div class="col-sm-6">
+	 						<input type="text" name="field_depth" value="@target.field_depth" size="60" maxlength="2048" class="form-control" readonly/>
+						</div>
+					</div>
+				</div>
+	     	</div>	
+
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
+					    <div class="col-sm-6">
+			                @if(target.field_ignore_robots_txt != null && target.field_ignore_robots_txt) {             
+				                <input type="checkbox" name="field_ignore_robots_txt" value="true" checked disabled/>
+			                } else {
+				                <input type="checkbox" name="field_ignore_robots_txt" value="true" disabled/>
+			                }
+                		</div>
+					</div>
+				</div>
+	     	</div>	
+	     	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."><font color="red">*</font></span> <small class="text-center">(How often should this site be archived?)</small></label>
+					    <div class="col-sm-6">
+	 						<input type="text" name="field_crawl_frequency" value="@target.field_crawl_frequency" size="60" maxlength="2048" class="form-control" readonly/>
+						</div>
+					</div>
+				</div>
+	     	</div>	
+	     	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Start date</label>
+					    <div class="col-sm-6">
+	 						<input type="text" name="field_crawl_start_date" value="@target.field_crawl_start_date" size="30" maxlength="2048" class="form-control" id="start-date" readonly/>
+                		</div>
+					</div>
+				</div>
+	     	</div>	
+
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">End date</label>
+					    <div class="col-sm-6">
+	 						<input type="text" name="field_crawl_end_date" value="@target.field_crawl_end_date" size="30" maxlength="2048" class="form-control" id="end-date" readonly/>
+                		</div>
+					</div>
+				</div>
+	     	</div>	
+
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">White list</label>
+					    <div class="col-sm-6">
+	 						<input type="text" name="white_list" value="@target.white_list" size="30" maxlength="2048" class="form-control" readonly/>
+                		</div>
+					</div>
+				</div>
+	     	</div>	
+
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Black list</label>
+					    <div class="col-sm-6">
+	 						<input type="text" name="black_list" value="@target.black_list" size="30" maxlength="2048" class="form-control" readonly/>
+                		</div>
+					</div>
+				</div>
+	     	</div>	
+        </div>
+	        
 		<div class="tab-pane fade padding-20" id="licensing">
 			<dl class="dl-horizontal">
 				<dt>License:</dt>
