@@ -103,7 +103,17 @@ GET     /crawlpermissionadd/:permission     controllers.CrawlPermissionEdit.addE
 POST    /crawlpermission/filter/            controllers.CrawlPermissionEdit.filter()
 GET    	/crawlpermission/filterbyjson/:name	controllers.CrawlPermissionEdit.filterByJson(name)
 GET    	/crawlpermission/templates/     	controllers.CrawlPermissionEdit.templates()
+GET    	/crawlpermission/contactpersons/    controllers.CrawlPermissionEdit.contactpersons()
 POST    /crawlpermission/send/              controllers.CrawlPermissionEdit.send()
+
+GET     /contactperson                      controllers.ContactPersonEdit.index()
+GET     /contactperson/:person              controllers.ContactPersonEdit.view(person)
+GET     /contactpersonedit/:person          controllers.ContactPersonEdit.edit(person)
+GET     /contactpersonadd/:person           controllers.ContactPersonEdit.addEntry(person)
+POST    /contactperson/filter/              controllers.ContactPersonEdit.filter()
+GET    	/contactperson/filterbyjson/:name	controllers.ContactPersonEdit.filterByJson(name)
+POST    /contactperson/save                 controllers.ContactPersonEdit.save()
+
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()

@@ -175,7 +175,6 @@ public class TargetController extends AbstractController {
     public static Result isInScope(String url) throws WhoisException {
 //    	Logger.info("isInScope controller: " + url);
     	boolean res = Target.isInScope(url, null);
-    	res = true;
 //    	Logger.info("isInScope res: " + res);
     	return ok(Json.toJson(res));
     }

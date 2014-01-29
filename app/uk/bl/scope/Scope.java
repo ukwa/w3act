@@ -215,7 +215,11 @@ public class Scope {
     		System.out.println("isUKRegistrant?: " + res);
     	} catch (Exception e) {
     		Logger.info("whois lookup message: " + e.getMessage());
-    		throw new WhoisException(e);
+    		/**
+    		 * On this place throwing exception could destroy the result of other rules.
+    		 * We just return false if domain is not UK.
+    		 */
+//    		throw new WhoisException(e);
     	}
     	Logger.info("whois res: " + res);        	
 		return res;

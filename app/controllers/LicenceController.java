@@ -30,7 +30,6 @@ import uk.bl.Const;
 /**
  * Support for adding owner licence.
  */
-@Security.Authenticated(Secured.class)
 public class LicenceController extends AbstractController {
   
     /**

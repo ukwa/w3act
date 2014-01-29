@@ -1,0 +1,48 @@
+@(person: ContactPerson, user: User)
+
+
+@main("", user) {
+    
+	<div class="page-header">
+	    <h1>Contact Person @person.name</h1>
+	</div>
+	
+	<ul class="nav nav-tabs">
+	   <li class="active"><a href="@routes.ContactPersonEdit.view(person.url)">View</a></li>
+	   @if(user.hasRole("sys_admin")) {
+	   	<li><a href="@routes.ContactPersonEdit.edit(person.url)">Edit</a></li>
+	   }
+	</ul>
+
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputCreatorUser" class="col-sm-6 control-label">Name</label>
+			    <div class="col-sm-6">
+					<label for="inputContactPerson" class="col-sm-6 control-label">@person.name</label>
+				</div>
+			</div>
+		</div>
+    </div>
+	          	
+	<div class="padding-20">
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+		</div>
+	</div>
+	
+	<div class="row padding-10 pull-right">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="btn-group">		
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+					<a href="@routes.LookUp.index()" class="btn btn-primary" title="Look up and add new target">Send </a>
+				}
+	       </div>
+		</div>
+	</div>	
+	
+}
+                   
+	            
+
+

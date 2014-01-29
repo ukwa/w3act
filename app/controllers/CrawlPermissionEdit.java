@@ -23,6 +23,7 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.scope.EmailHelper;
+import views.html.contactpersons.*;
 import views.html.crawlpermissions.*;
 import views.html.permissions.permissions;
 import views.html.targets.targets;
@@ -254,6 +255,14 @@ public class CrawlPermissionEdit extends AbstractController {
         return ok(
                 templates.render(
                     "MailTemplates", User.find.byId(request().username()), models.MailTemplate.findAll(), ""
+                )
+            );
+    }
+    
+    public static Result contactpersons() {
+        return ok(
+                contactpersons.render(
+                    "", User.find.byId(request().username()), models.ContactPerson.findAll(), ""
                 )
             );
     }

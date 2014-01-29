@@ -1,0 +1,67 @@
+@(person: ContactPerson, user: User)
+
+@main("", user) {
+
+   	<div class="page-header">
+    	<h1>Edit contact person @person.name</h1>
+	</div>
+
+	<ul class="nav nav-tabs">
+	   <li><a href="@routes.ContactPersonEdit.view(person.url)">View</a></li>
+	   @if(user.hasRole("sys_admin")) {
+		   <li class="active"><a href="@routes.ContactPersonEdit.edit(person.url)">Edit</a></li>
+	   }
+	</ul>
+    
+	<form action="@routes.ContactPersonEdit.save()" method="POST">
+		<input type="hidden" name="url" value="@person.url">
+		<input type="hidden" name="id" value="@person.id">
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Name<font color="red">*</font></label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="name" id="inputName" value="@person.name" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputPosition" class="col-sm-6 control-label">Position</label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="position" id="position" value="@person.position" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputEmail" class="col-sm-6 control-label">E-mail<font color="red">*</font></label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="email" id="email" value="@person.email" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+		</div>
+
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">		
+					<button type="submit" class="btn btn-primary" name="save">Save</button>
+					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
+		       </div>
+			</div>
+		</div>
+	</form>
+}
+

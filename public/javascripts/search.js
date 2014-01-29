@@ -40,7 +40,7 @@ function scopeCheck(context) {
     SCOPE_URI = context + 'api/scope/',
     MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
     TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
-    IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+    IDLE_THRESHOLD = 2000; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
 
 	addButton = $('#addentry')
 	searchButton = $('#search')
@@ -51,9 +51,15 @@ function scopeCheck(context) {
 	    	url: SCOPE_URI + text,
 	    	dataType: 'json',
 	    	success: function(data) {
-		    	addButton.css('background-color','green');
-		    	searchButton.css('background-color', 'green');
-		    	console.log("success " + data);
+	    		if (data) {
+			    	addButton.css('background-color','green');
+			    	searchButton.css('background-color', 'green');
+			    	console.log("success " + data);
+	    		} else {
+			    	addButton.css('background-color','red');
+			    	searchButton.css('background-color', 'red');
+			    	console.log("success " + data);
+	    		}
 	    	},
 	    	error: function(jqXHR, textStatus, errorThrown) {
 		    	addButton.css('background-color','red');

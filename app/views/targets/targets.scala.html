@@ -41,28 +41,22 @@
             SCOPE_URI = @play.api.Play.current.configuration.getString("application.context") + 'api/scope/',
             MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
             TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
-            IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+            IDLE_THRESHOLD = 2000; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
    
             // Does the Scope lookup
             var doScope = function(text) {
+            	
+            var btn = document.getElementById('search');
+
             $.getJSON(SCOPE_URI + text, function(data) {
             //alert("Is in scope: " + data);
-            var btn = document.getElementById('search');
             if (data) {
-                    btn.style = "background-color: hell-green";
+                    btn.style = "background-color: #00CC00";
             } else {
                     btn.style = "background-color: red";
             }
 
-            /*var lab = document.getElementById('isInScope');
-            if (data) {
-                    lab.innerHTML = "is in scope";
-                    lab.style = "color: green";
-            } else {
-                    lab.innerHTML = "is not in scope";
-                    lab.style = "color: red";
-            }*/
-            });
+            }).fail(function() { btn.style = "background-color: red"; });
             };
            
             // Restarts the keyboard-idleness timeout
@@ -102,7 +96,7 @@
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 							<!--  form class="filter-form" action="@routes.LookUp.index()" method="GET" -->
 							<!--  button onclick="location.href='@routes.LookUp.index()'" type="submit" class="btn btn-success" title="Look up and add new target">Add new target</button -->
-							<a href="@routes.LookUp.index()" class="btn btn-primary" title="Look up and add new target">Add new target</a>
+							<a href="@routes.LookUp.index()" name="addentry" class="btn btn-primary" title="Look up and add new target">Add new target</a>
 							<!-- /form -->
 						}
 					</span>	
