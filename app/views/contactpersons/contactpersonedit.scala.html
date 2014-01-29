@@ -50,6 +50,91 @@
 			</div>
      	</div>
 	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputContactOrganisation" class="col-sm-6 control-label">Contact Organisation</label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="contactOrganisation" id="contactOrganisation" value="@person.contactOrganisation" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputPhone" class="col-sm-6 control-label">Phone</label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="phone" id="phone" value="@person.phone" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputPostalAddress" class="col-sm-6 control-label">Postal Address</label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="postalAddress" id="postalAddress" value="@person.postalAddress" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputWebForm" class="col-sm-6 control-label">Web Form</label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="webForm" id="webForm" value="@person.webForm" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Default Contact</label>
+				    <div class="col-sm-6">
+		                @if(person.defaultContact != null && person.defaultContact) {             
+			                <input type="checkbox" name="defaultContact" value="true" checked />
+		                } else {
+			                <input type="checkbox" name="defaultContact" value="true"/>
+		                }
+					</div>
+				</div>
+			</div>
+     	</div>	  
+	          
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Permission Checked</label>
+				    <div class="col-sm-6">
+		                @if(person.permissionChecked!= null && person.permissionChecked) {             
+			                <input type="checkbox" name="permissionChecked" value="true" checked />
+		                } else {
+			                <input type="checkbox" name="permissionChecked" value="true"/>
+		                }
+					</div>
+				</div>
+			</div>
+     	</div>	  
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
+				    <div class="col-sm-6">
+						<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1">@person.description</textarea>
+					</div>
+				</div>
+			</div>
+     	</div>
+			          
 		<div class="alert alert-info">
 			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
 		</div>
