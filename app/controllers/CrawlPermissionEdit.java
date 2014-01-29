@@ -160,7 +160,7 @@ public class CrawlPermissionEdit extends AbstractController {
         permission.id = Target.createId();
         permission.url = Const.ACT_URL + permission.id;
         permission.creatorUser = User.find.byId(request().username()).url;
-        permission.status = Const.CrawlPermissionStatus.NOT_INITIATED.name();
+        permission.status = Const.CrawlPermissionStatus.QUEUED.name();
         permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
 		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
         return ok(
