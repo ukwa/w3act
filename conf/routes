@@ -65,6 +65,7 @@ GET     /useradd/:user                      controllers.UserEdit.addEntry(user)
 POST    /user/filter/                       controllers.UserEdit.filter()
 GET    	/user/filterbyjson/:name			controllers.UserEdit.filterByJson(name)
 GET     /userbookmarks/:userbookmarks       controllers.UserEdit.bookmarks(userbookmarks)
+
 GET     /organisation/:organisation         controllers.OrganisationEdit.view(organisation)
 GET     /organisationedit/:organisation     controllers.OrganisationEdit.edit(organisation)
 GET     /organisationsites/:sites           controllers.OrganisationEdit.sites(sites)
@@ -79,31 +80,36 @@ GET     /collectionsites/:sites             controllers.CollectionEdit.sites(sit
 GET     /collectionadd/:collection          controllers.CollectionEdit.addEntry(collection)
 POST    /collection/filter/                 controllers.CollectionEdit.filter()
 GET    	/collection/filterbyjson/:name		controllers.CollectionEdit.filterByJson(name)
+
 GET     /taxonomy/:taxonomy                 controllers.TaxonomyEdit.view(taxonomy)
 GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxonomy)
+
 GET     /target/:target                     controllers.TargetEdit.view(target)
 GET     /targetrevision/:revision           controllers.TargetEdit.viewrevision(revision:Long)
 GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
 GET     /targetaddentry/:target             controllers.TargetEdit.addEntry(target)
 GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit/:license/:sorted/       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int, license, sorted:Boolean)
+
 GET     /role/:role                         controllers.RoleEdit.view(role)
 GET     /roleedit/:role                     controllers.RoleEdit.edit(role)
 GET     /roleadd/:role                      controllers.RoleEdit.addEntry(role)
 GET     /roleadmin/:role                    controllers.RoleEdit.admin(role)
 POST    /role/filter/                       controllers.RoleEdit.filter()
 GET    	/role/filterbyjson/:name			controllers.RoleEdit.filterByJson(name)
+
 GET     /permission/:permission             controllers.PermissionEdit.view(permission)
 GET     /permissionedit/:permission         controllers.PermissionEdit.edit(permission)
 GET     /permissionadd/:permission          controllers.PermissionEdit.addEntry(permission)
 POST    /permission/filter/                 controllers.PermissionEdit.filter()
 GET    	/permission/filterbyjson/:name		controllers.PermissionEdit.filterByJson(name)
+
 GET     /crawlpermission/:permission        controllers.CrawlPermissionEdit.view(permission)
 GET     /crawlpermissionedit/:permission    controllers.CrawlPermissionEdit.edit(permission)
 GET     /crawlpermissionadd/:permission     controllers.CrawlPermissionEdit.addEntry(permission)
 POST    /crawlpermission/filter/            controllers.CrawlPermissionEdit.filter()
 GET    	/crawlpermission/filterbyjson/:name	controllers.CrawlPermissionEdit.filterByJson(name)
 GET    	/crawlpermission/templates/     	controllers.CrawlPermissionEdit.templates()
-GET    	/crawlpermission/contactpersons/    controllers.CrawlPermissionEdit.contactpersons()
+GET    	/crawlpermission/contacttemplates/    controllers.CrawlPermissionEdit.contactpersons()
 POST    /crawlpermission/send/              controllers.CrawlPermissionEdit.send()
 
 GET     /contactperson                      controllers.ContactPersonEdit.index()
@@ -113,6 +119,14 @@ GET     /contactpersonadd/:person           controllers.ContactPersonEdit.addEnt
 POST    /contactperson/filter/              controllers.ContactPersonEdit.filter()
 GET    	/contactperson/filterbyjson/:name	controllers.ContactPersonEdit.filterByJson(name)
 POST    /contactperson/save                 controllers.ContactPersonEdit.save()
+
+GET     /mailtemplate                       controllers.MailTemplateEdit.index()
+GET     /mailtemplate/:template             controllers.MailTemplateEdit.view(template)
+GET     /mailtemplateedit/:template         controllers.MailTemplateEdit.edit(template)
+GET     /mailtemplateadd/:template          controllers.MailTemplateEdit.addEntry(template)
+POST    /mailtemplate/filter/               controllers.MailTemplateEdit.filter()
+GET    	/mailtemplate/filterbyjson/:name	controllers.MailTemplateEdit.filterByJson(name)
+POST    /mailtemplate/save                  controllers.MailTemplateEdit.save()
 
 
 # Forms

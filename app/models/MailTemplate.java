@@ -14,6 +14,8 @@ import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
 
+import uk.bl.api.Utils;
+
 /**
  * This class supports the management of e-mail templates.
  */
@@ -46,7 +48,7 @@ public class MailTemplate extends Model
      * Thank you - Online Nomination by Owner, Opt out.
      */
     @Column(columnDefinition = "TEXT")
-    public String type;
+    public String ttype;
     
     /**
      * E-mail subject.
@@ -143,6 +145,14 @@ public class MailTemplate extends Model
 	    }
 	    return res;
     }    
+    
+    /**
+     * This file retrieves template text.
+     * @return
+     */
+    public String readTemplate() {
+    	return Utils.readTextFile(Const.TEMPLATES_PATH + text);
+    }
     
     public String toString() {
         return "MailTemplate(" + name + ")" + ", id:" + id;

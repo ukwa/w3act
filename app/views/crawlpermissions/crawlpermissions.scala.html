@@ -106,6 +106,26 @@
 			</table>
 		</div>
 		
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+	              	<label for="selectTemplate" class="col-sm-6 control-label">Template</label>
+				    <div class="col-sm-6">
+						<select name="template" value="General" class="form-control">
+							<option>None</option>
+							@for(template <- MailTemplate.findAll()) {
+								@if(template.name.equals("General")) {
+  										<option value="@template.name" selected>@template.name</option>
+								} else {						                
+									<option value="@template.name">@template.name</option>
+								}
+							}
+					  	</select>
+					</div>
+				</div>
+			</div>
+     	</div>		    
+
 		<div class="row padding-20 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		

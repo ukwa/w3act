@@ -170,7 +170,7 @@ create table mail_template (
   id                        bigint not null,
   url                       TEXT,
   name                      TEXT,
-  type                      TEXT,
+  ttype                     TEXT,
   subject                   TEXT,
   from_email                TEXT,
   place_holders             TEXT,

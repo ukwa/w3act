@@ -144,6 +144,13 @@ public final class Const {
 	public static final String DEFAULT_CONTACT   = "defaultContact";
 	public static final String PERMISSION_CHECKED = "permissionChecked";
 	
+	// Mail Template
+	public static final String TEXT              = "text";
+	public static final String FROM_EMAIL        = "fromEmail";
+	public static final String PLACE_HOLDERS     = "placeHolders";
+	public static final String DEFAULT_EMAIL_FLAG = "defaultEmail";
+	public static final String TEMPLATES_PATH    = "";
+	
 	// Buttons
 	public static final String SAVE               = "save";
 	public static final String DELETE             = "delete";

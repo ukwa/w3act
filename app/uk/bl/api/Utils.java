@@ -14,6 +14,11 @@ import uk.bl.Const;
 
 import java.lang.StringBuilder;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.lang.System;
+
 /**
  * Helper class.
  */
@@ -142,6 +147,34 @@ public class Utils {
     	    builder.append(s);
     	}
     	return builder.toString();
+    }
+    
+    /**
+     * This class reads text from a given text file.
+     * @param fileName
+     * @return string value
+     */
+    public static String readTextFile(String fileName) {
+    	String res = "";
+    	try {
+	    	BufferedReader br = new BufferedReader(new FileReader(fileName));
+	        try {
+	            StringBuilder sb = new StringBuilder();
+	            String line = br.readLine();
+	
+	            while (line != null) {
+	                sb.append(line);
+	                sb.append(System.getProperty("line.separator"));
+	                line = br.readLine();
+	            }
+	            String everything = sb.toString();
+	        } finally {
+	            br.close();
+	        }
+    	} catch (Exception e) {
+    		System.out.println("read text file error: " + e);
+    	}
+        return res;
     }
 }
 

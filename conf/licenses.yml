@@ -3,5 +3,5 @@
 licenses:
 
     - !!models.License
-        name:         Default License
-        text:         defaultlicense.txt
+        name:         UKWA License
+        text:         http://localhost:9000/actdev/ukwa/licence

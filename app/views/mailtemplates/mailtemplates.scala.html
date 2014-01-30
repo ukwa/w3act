@@ -31,7 +31,7 @@
     <article class="permissions">
 
 		<div id="forms">
-	   		<form class="form-inline" action="@routes.CrawlPermissionEdit.filter()" method="POST" role="form">
+	   		<form class="form-inline" action="@routes.MailTemplateEdit.filter()" method="POST" role="form">
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Template Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
@@ -53,7 +53,7 @@
 			<tbody>
 			@templates.map { template =>		              
 				<tr>
-					<td><a href="@routes.CrawlPermissionEdit.view(template.url)">@template.name</a></td>
+					<td><a href="@routes.MailTemplateEdit.view(template.url)">@template.name</a></td>
 				</tr>
 			}
 			</tbody>

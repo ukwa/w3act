@@ -4,7 +4,7 @@ mailtemplates:
 
     - !!models.MailTemplate
         name:         General
-        type:         Permission Request
+        ttype:        Permission Request
         subject:      Our Archive
         placeHolders: url, name
         fromEmail:    my@email.com
