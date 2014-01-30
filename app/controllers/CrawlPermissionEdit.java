@@ -377,6 +377,28 @@ public class CrawlPermissionEdit extends AbstractController {
     }
     
     /**
+     * This method rejects selected crawl permissions and changes their status to 'EMAIL_REJECTED'.
+     * @return
+     */
+    public static void rejectSelectedCrawlPermissions() {
+        List<CrawlPermission> permissionList = CrawlPermission.findAll();
+        Iterator<CrawlPermission> permissionItr = permissionList.iterator();
+        while (permissionItr.hasNext()) {
+        	CrawlPermission permission = permissionItr.next();
+            if (getFormParam(permission.name) != null) {
+//        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+                if (userFlag) {
+                	permission.status = Const.CrawlPermissionStatus.EMAIL_REJECTED.name();
+                	Logger.info("new permission staus: " + permission.status);
+                   	Ebean.update(permission);                	
+                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+                }
+            }
+        }
+    }
+    
+    /**
      * This method handles queued crawl permissions.
      */
     public static Result send() {
@@ -420,6 +442,11 @@ public class CrawlPermissionEdit extends AbstractController {
 	            	getAssignedPermissionsList(), User.find.byId(request().username()), mails
 	            )
 	        );
+        }
+        if (reject != null) {
+        	Logger.info("reject crawl permission requests");
+        	rejectSelectedCrawlPermissions();        	
+	        res = redirect(routes.CrawlPermissionEdit.index()); 
         }
         return res;
     }

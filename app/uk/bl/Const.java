@@ -186,6 +186,7 @@ public final class Const {
 		QUEUED,
 		PENDING,
 		REFUSED,
+		EMAIL_REJECTED,
 		GRANTED;
     }
     
