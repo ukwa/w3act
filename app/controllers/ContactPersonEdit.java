@@ -187,28 +187,32 @@ public class ContactPersonEdit extends AbstractController {
                 	person.url = getFormParam(Const.URL);
                 }
                 
-//                person.name = getFormParam(Const.NAME);
-//        	    if (getFormParam(Const.DESCRIPTION) != null) {
-//        	    	person.description = getFormParam(Const.DESCRIPTION);
-//        	    }
-//        	    if (getFormParam(Const.TARGET) != null) {
-//        	    	person.target = getFormParam(Const.TARGET);
-//        	    }
-//        	    if (getFormParam(Const.CONTACT_PERSON) != null) {
-//        	    	person.contactPerson = getFormParam(Const.CONTACT_PERSON);
-//        	    }
-//        	    Logger.info("creator user: " + getFormParam(Const.CREATOR_USER));
-//        	    Logger.info("creator user url: " + User.findByName(getFormParam(Const.CREATOR_USER)).url);
-//        	    if (getFormParam(Const.CREATOR_USER) != null) {
-//        	    	person.creatorUser = User.findByName(getFormParam(Const.CREATOR_USER)).url;
-//        	    }
-//        	    if (getFormParam(Const.TEMPLATE) != null) {
-//        	    	person.template = getFormParam(Const.TEMPLATE);
-//        	    }
-//        	    if (getFormParam(Const.REQUEST_FOLLOW_UP) != null) {
-//        	    	person.requestFollowup = Utils.getNormalizeBooleanString(getFormParam(Const.REQUEST_FOLLOW_UP));
-//        	    }
-// TODO license
+        	    if (getFormParam(Const.NAME) != null) {
+        	    	person.name = getFormParam(Const.NAME);
+        	    }
+        	    if (getFormParam(Const.DESCRIPTION) != null) {
+        	    	person.description = getFormParam(Const.DESCRIPTION);
+        	    }
+        	    if (getFormParam(Const.POSITION) != null) {
+        	    	person.position = getFormParam(Const.POSITION);
+        	    }
+        	    if (getFormParam(Const.EMAIL) != null) {
+        	    	person.email = getFormParam(Const.EMAIL);
+        	    }
+        	    if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
+        	    	person.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
+        	    }
+        	    if (getFormParam(Const.PHONE) != null) {
+        	    	person.phone = getFormParam(Const.PHONE);
+        	    }
+        	    if (getFormParam(Const.POSTAL_ADDRESS) != null) {
+        	    	person.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
+        	    }
+        	    if (getFormParam(Const.WEB_FORM) != null) {
+        	    	person.webForm = getFormParam(Const.WEB_FORM);
+        	    }
+       	    	person.defaultContact = Utils.getNormalizeBooleanString(getFormParam(Const.DEFAULT_CONTACT));
+       	    	person.permissionChecked = Utils.getNormalizeBooleanString(getFormParam(Const.PERMISSION_CHECKED));
             } catch (Exception e) {
             	Logger.info("ContactPerson not existing exception");
             }

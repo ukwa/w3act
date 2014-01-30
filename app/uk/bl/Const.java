@@ -135,6 +135,15 @@ public final class Const {
 	
 	public static final String DEFAULT_CRAWL_PERMISSION_STATUS = "QUEUED";
 	
+	// Contact Person
+	public static final String POSITION          = "position";
+	public static final String CONTACT_ORGANISATION = "contactOrganisation";
+	public static final String PHONE             = "phone";
+	public static final String POSTAL_ADDRESS    = "postalAddress";
+	public static final String WEB_FORM          = "webForm";
+	public static final String DEFAULT_CONTACT   = "defaultContact";
+	public static final String PERMISSION_CHECKED = "permissionChecked";
+	
 	// Buttons
 	public static final String SAVE               = "save";
 	public static final String DELETE             = "delete";
