@@ -207,19 +207,15 @@ public class Scope {
 		boolean res = false;
     	try {
         	JRubyWhois whoIs = new JRubyWhois();
-    		System.out.println("checkWhois: " + whoIs + " " + url);
+        	Logger.info("checkWhois: " + whoIs + " " + url);
         	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
-    		System.out.println("whoIsRes: " + whoIsRes);
+        	Logger.info("whoIsRes: " + whoIsRes);
 //        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl("marksandspencer.com"));
         	res = whoIsRes.isUKRegistrant();
-    		System.out.println("isUKRegistrant?: " + res);
+        	Logger.info("isUKRegistrant?: " + res);
     	} catch (Exception e) {
     		Logger.info("whois lookup message: " + e.getMessage());
-    		/**
-    		 * On this place throwing exception could destroy the result of other rules.
-    		 * We just return false if domain is not UK.
-    		 */
-//    		throw new WhoisException(e);
+    		throw new WhoisException(e);
     	}
     	Logger.info("whois res: " + res);        	
 		return res;
