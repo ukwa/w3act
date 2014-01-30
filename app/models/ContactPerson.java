@@ -179,6 +179,30 @@ public class ContactPerson extends Model
     	return res;
     }          
 	    
+    /**
+     * Retrieve the contact person emails by URL list given as a string.
+     * @param urls
+     * @param allMails
+     * @return contact person email list
+     */
+    public static String findEmailsByUrls(String urls, String allMails) {
+    	String res = "";
+    	String[] parts = urls.split(Const.LIST_DELIMITER);
+    	for (String part: parts)
+        {
+    		try {
+	    		String email = findByUrl(part).email;
+	    		if (email != null && !res.contains(email) && !allMails.contains(email)) {
+//	    			System.out.println("test mail: " + email + ", res: " + res);
+	    			res = res + email + Const.LIST_DELIMITER;
+	    		}
+    		} catch (Exception e) {
+    			System.out.println("findEmailsByUrls error: " + e);
+    		}
+        }
+    	return res;
+    }          
+	    
     public String toString() {
         return "ContactPerson(" + name + ")" + ", id:" + id;
     }    

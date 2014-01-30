@@ -118,6 +118,20 @@ public class Utils {
     }
     
     /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param elem The given element for searching
+     * @param list The list that contains elements
+     * @return true if in list
+     */
+    public static String[] getMailArray(String list) {
+    	String[] mailArray = {"None"};
+    	if (list != null) {
+	    	mailArray = list.split(Const.LIST_DELIMITER);
+    	}
+    	return mailArray;
+    }
+    
+    /**
      * This method converts string array to a string.
      * @param arr
      * @return string value

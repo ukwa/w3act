@@ -1,4 +1,4 @@
-@(permissions: List[CrawlPermission], user: User)
+@(permissions: List[CrawlPermission], user: User, emails: String)
 
 @main("", user) {
 
@@ -6,30 +6,15 @@
     	<h1>Crawl Permission Preview</h1>
 	</div>
 
-	<form action="@routes.CrawlPermissionEdit.save()" method="POST">
-
-		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
-				    <div class="col-sm-6">
-	              		<input class="form-control" name="name" id="inputName" value="" type="text">
-						@permissions.map { permission =>		              
-				           	<a href="@routes.CrawlPermissionEdit.view(permission.url)">@permission.name </a>
-				        }	              		
-					</div>
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputName" class="col-sm-6 control-label">Selected E-mail Addresses</label>
+			    <div class="col-sm-6">
+					<label for="valueMails" class="col-sm-6 control-label">@emails</label>
 				</div>
 			</div>
-     	</div>
-	          
-		<div class="row padding-10 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">		
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
-		       </div>
-			</div>
 		</div>
-	</form>
+   	</div>
 }
 

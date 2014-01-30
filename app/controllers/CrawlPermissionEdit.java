@@ -349,6 +349,34 @@ public class CrawlPermissionEdit extends AbstractController {
     }
     
     /**
+     * This method aggregates 'to' emails.
+     * @return
+     */
+    public static String evaluateToEmails() {
+       	String assignedPermissions = "";
+        List<CrawlPermission> permissionList = CrawlPermission.findAll();
+        Iterator<CrawlPermission> permissionItr = permissionList.iterator();
+        while (permissionItr.hasNext()) {
+        	CrawlPermission permission = permissionItr.next();
+            if (getFormParam(permission.name) != null) {
+//        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+                if (userFlag) {
+                	if (assignedPermissions.length() == 0) {
+                		assignedPermissions = ContactPerson.findEmailsByUrls(permission.contactPerson, assignedPermissions);
+                	} else {
+                		assignedPermissions = assignedPermissions + Const.COMMA + " " + 
+                				ContactPerson.findEmailsByUrls(permission.contactPerson, assignedPermissions);
+                	}
+                }
+            }
+        }
+        assignedPermissions = assignedPermissions.replace(" ,", "");
+		Logger.info("assignedPermissions: " + assignedPermissions);
+        return assignedPermissions;
+    }
+    
+    /**
      * This method handles queued crawl permissions.
      */
     public static Result send() {
@@ -360,8 +388,13 @@ public class CrawlPermissionEdit extends AbstractController {
         String preview = getFormParam(Const.PREVIEW);
         String reject = getFormParam(Const.REJECT);
         Logger.info("send: " + send + ", sendall: " + sendall + ", sendsome: " + sendsome + ", preview: " + preview + ", reject: " + reject);
-        if (sendall != null) {
-        	Logger.info("send some crawl permission requests");
+    	String mails = evaluateToEmails();
+
+    	if (sendall != null) {
+        	Logger.info("send all crawl permission requests");
+        	Logger.info("emails: " + mails);
+        	String[] mailArr = Utils.getMailArray(mails);
+        	Logger.info("mailArr: " + mailArr[0]);
             String[] to = {"roman@ait.ac.at","roman@ait.ac.at"};
             EmailHelper.sendMessage(to,"Message test","Message body");
         	
@@ -381,9 +414,10 @@ public class CrawlPermissionEdit extends AbstractController {
         }
         if (preview != null) {
         	Logger.info("preview crawl permission requests");
+        	
 	        res = ok(
 	            crawlpermissionpreview.render(
-	            	getAssignedPermissionsList(), User.find.byId(request().username())
+	            	getAssignedPermissionsList(), User.find.byId(request().username()), mails
 	            )
 	        );
         }
