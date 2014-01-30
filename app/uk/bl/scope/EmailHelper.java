@@ -13,6 +13,8 @@ import javax.mail.PasswordAuthentication;
 
 import play.Logger;
 
+import uk.bl.api.Utils;
+
 //import org.junit.Test;
 
 
@@ -61,13 +63,13 @@ public class EmailHelper {
 	        message.setFrom(new InternetAddress(FROM));
 	        message.setRecipients(Message.RecipientType.TO,
 	            InternetAddress.parse(TO));
-	        message.setSubject("Testing Subject");
-	        message.setText("Dear x,"
-	            + "\n\n test2!");
+	        message.setSubject(subject);
+	        message.setText(msg);
 
 	        Transport.send(message);
 
-	        System.out.println("Done");
+	        Logger.info("E-mail message to " + Utils.convertStringArrayToString(to) + ", with subject '" +
+	        		subject + "' was sent");
 
 	    } catch (MessagingException e) {
 	        throw new RuntimeException(e);

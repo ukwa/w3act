@@ -44,9 +44,9 @@
 				<div class="form-group">
 					<label for="inputContactPerson" class="col-sm-6 control-label">Contact Person <font color="red">*</font></label>
 				    <div class="col-sm-6">
-						<select name="contactPerson" id="contactPerson" class="form-control">
+						<select multiple name="contactPerson" id="contactPerson" class="form-control">
 			                @for(person <- ContactPerson.findAll()) {
-				                @if(person.url.equals(permission.contactPerson)) {
+								@if(permission.hasContactPerson(person.url)) {
 				                	<option selected>@person.name</option>
 				                } else {
 				                	<option>@person.name</option>

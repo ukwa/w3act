@@ -17,6 +17,8 @@ import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
 
+import uk.bl.api.Utils;
+
 /**
  * This calls supports crawl permissions workflow and
  * handles crawl permission requests sent by e-mail to the owner.
@@ -179,6 +181,17 @@ public class CrawlPermission extends Model
 	    return res;
     }         
 
+    /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+    public boolean hasContactPerson(String curContactPerson) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(curContactPerson, contactPerson);
+    	return res;
+    }
+        
     public String toString() {
         return "CrawlPermission(" + name + ")" + ", id:" + id;
     }    

@@ -234,7 +234,7 @@ public class DCollection extends Model {
     /**
      * Retrieve the Collection names by URL list given as a string.
      * @param url
-     * @return taxonomy object
+     * @return collection title list
      */
     public static String findTitlesByUrls(String urls) {
     	String res = "";

@@ -14,6 +14,7 @@ import models.Role;
 import models.Target;
 import models.Taxonomy;
 import models.User;
+import models.ContactPerson;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -211,9 +212,23 @@ public class CrawlPermissionEdit extends AbstractController {
         	    if (getFormParam(Const.TARGET) != null) {
         	    	permission.target = getFormParam(Const.TARGET);
         	    }
-        	    if (getFormParam(Const.CONTACT_PERSON) != null) {
-        	    	permission.contactPerson = getFormParam(Const.CONTACT_PERSON);
-        	    }
+                if (getFormParam(Const.CONTACT_PERSON) != null) {
+                	if (!getFormParam(Const.CONTACT_PERSON).toLowerCase().contains(Const.NONE)) {
+    	            	String[] contactPersons = getFormParams(Const.CONTACT_PERSON);
+    	            	String resContactPersons = "";
+    	            	for (String contactPerson : contactPersons)
+    	                {
+    	            		if (contactPerson != null && contactPerson.length() > 0) {
+//    	                		Logger.info("add contactPerson: " + contactPerson);
+    	                		resContactPersons = resContactPersons + ContactPerson.findByName(contactPerson).url + Const.LIST_DELIMITER;
+    	            		}
+    	                }
+    	            	permission.contactPerson = resContactPersons;
+                	} else {
+                		permission.contactPerson = Const.NONE;
+                	}
+                }
+        	    
         	    Logger.info("creator user: " + getFormParam(Const.CREATOR_USER));
         	    Logger.info("creator user url: " + User.findByName(getFormParam(Const.CREATOR_USER)).url);
         	    if (getFormParam(Const.CREATOR_USER) != null) {
@@ -228,7 +243,7 @@ public class CrawlPermissionEdit extends AbstractController {
         	    if (getFormParam(Const.REQUEST_FOLLOW_UP) != null) {
         	    	permission.requestFollowup = Utils.getNormalizeBooleanString(getFormParam(Const.REQUEST_FOLLOW_UP));
         	    }
-// TODO license
+
             } catch (Exception e) {
             	Logger.info("CrawlPermission not existing exception");
             }

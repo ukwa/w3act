@@ -144,6 +144,41 @@ public class ContactPerson extends Model
         return find.all();
     }
     
+    /**
+     * Retrieve a contact person by name.
+     * @param name
+     * @return contact person object
+     */
+//    public static ContactPerson findByName(String name) {
+//    	ContactPerson res = new ContactPerson();
+//    	if (name != null && name.length() > 0) {
+//    		res = find.where().eq(Const.NAME, name).findUnique();
+//    	} else {
+//    		res.name = Const.NONE;
+//    	}
+//    	return res;
+//    }
+       
+    /**
+     * Retrieve the contact person names by URL list given as a string.
+     * @param url
+     * @return contact person name list
+     */
+    public static String findNamesByUrls(String urls) {
+    	String res = "";
+    	String[] parts = urls.split(Const.LIST_DELIMITER);
+    	for (String part: parts)
+        {
+    		try {
+	    		String name = findByUrl(part).name;
+	    		res = res + name + Const.LIST_DELIMITER;
+    		} catch (Exception e) {
+    			System.out.println("findNamesByUrls error: " + e);
+    		}
+        }
+    	return res;
+    }          
+	    
     public String toString() {
         return "ContactPerson(" + name + ")" + ", id:" + id;
     }    

@@ -12,6 +12,8 @@ import java.util.UUID;
 import play.Logger;
 import uk.bl.Const;
 
+import java.lang.StringBuilder;
+
 /**
  * Helper class.
  */
@@ -68,21 +70,12 @@ public class Utils {
      * This method creates CSV file for passed data.
      * @param sFileName
      */
-//    public static void generateCsvFile(String sFileName, List<List<String>> data)
     public static void generateCsvFile(String sFileName, String data)
     {
 	 	try
 	 	{
 	 	    FileWriter writer = new FileWriter(sFileName);
 
-//	 	    Iterator<List<String>> itr = data.iterator();
-//	 		while (itr.hasNext()) {
-//	 			List<String> elements = itr.next();
-//	 			Iterator<String> itrElem = elements.iterator();
-//	 			while (itrElem.hasNext()) {
-//	 				writer.append(itrElem.next());
-//	 			}
-//	 		}
 	  	    String decodedData = URLDecoder.decode(data, Const.STR_FORMAT);
 //	  	    Logger.info("generateCsvFile: " + decodedData);
 	 	    writer.append(decodedData);
@@ -111,17 +104,30 @@ public class Utils {
      */
     public static boolean hasElementInList(String elem, String list) {
     	boolean res = false;
-    	String[] parts = list.split(Const.LIST_DELIMITER);
-    	for (String part: parts)
-        {
-    		if (part.equals(elem)) {
-    			res = true;
-    			break;
-    		}
-        }
-
+    	if (list != null) {
+	    	String[] parts = list.split(Const.LIST_DELIMITER);
+	    	for (String part: parts)
+	        {
+	    		if (part.equals(elem)) {
+	    			res = true;
+	    			break;
+	    		}
+	        }
+    	}
     	return res;
     }
     
+    /**
+     * This method converts string array to a string.
+     * @param arr
+     * @return string value
+     */
+    public static String convertStringArrayToString(String[] arr) {
+    	StringBuilder builder = new StringBuilder();
+    	for(String s : arr) {
+    	    builder.append(s);
+    	}
+    	return builder.toString();
+    }
 }
 
