@@ -94,6 +94,7 @@ GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
 GET     /targetaddentry/:target             controllers.TargetEdit.addEntry(target)
 GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit/:license/:sorted/       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int, license, sorted:Boolean)
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissionEdit.showCrawlPermissions(target)
+GET     /target/licencerequest/:name/:target  controllers.CrawlPermissionEdit.licenceRequestForTarget(name, target)
 
 GET     /role/:role                         controllers.RoleEdit.view(role)
 GET     /roleedit/:role                     controllers.RoleEdit.edit(role)

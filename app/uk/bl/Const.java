@@ -186,7 +186,7 @@ public final class Const {
 	public static final String REJECT             = "reject";
 	public static final String SUBMIT             = "submit";
 	public static final String UPDATE             = "update";
-	
+	public static final String REQUEST            = "request";	
 
 	// Sorting/Pagination
 	public static final String PAGE_NO             	= "p";

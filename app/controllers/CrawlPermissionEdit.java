@@ -204,6 +204,29 @@ public class CrawlPermissionEdit extends AbstractController {
     }
       
     /**
+     * Create new crawl permission request for particular target.
+     * @param permission title
+     * @param target
+     * @return
+     */
+    public static Result licenceRequestForTarget(String name, String target) {
+    	CrawlPermission permission = new CrawlPermission();
+    	permission.name = name;
+        permission.id = Utils.createId();
+        permission.url = Const.ACT_URL + permission.id;
+        permission.creatorUser = User.find.byId(request().username()).url;
+        permission.status = Const.CrawlPermissionStatus.QUEUED.name();
+        permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
+        permission.target = target;
+		Logger.info("add entry with url: " + permission.url + ", name: " + permission.name + ", and target: " + permission.target);
+        return ok(
+                crawlpermissionedit.render(
+                      permission, User.find.byId(request().username())
+                )
+            );
+    }
+      
+    /**
      * This method saves new object or changes on given Permission in the same object
      * completed by revision comment. The "version" field in the Permission object
      * contains the timestamp of the change. 

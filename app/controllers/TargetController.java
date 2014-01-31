@@ -29,6 +29,7 @@ public class TargetController extends AbstractController {
     	Result res = null;
         String save = getFormParam("save");
         String delete = getFormParam("delete");
+        String request = getFormParam(Const.REQUEST);
         Logger.info("save: " + save);
         Logger.info("delete: " + delete);
         if (save != null) {
@@ -162,6 +163,13 @@ public class TargetController extends AbstractController {
         	Target target = Target.findById(id);
         	Ebean.delete(target);
 	        res = redirect(routes.Targets.index()); 
+        }
+        if (request != null) {
+        	if (getFormParam(Const.TITLE) != null && getFormParam(Const.FIELD_URL) != null) {
+                String name = getFormParam(Const.TITLE);
+                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
+    	        res = redirect(routes.CrawlPermissionEdit.licenceRequestForTarget(name, target)); 
+        	}
         }
         return res;
     }
