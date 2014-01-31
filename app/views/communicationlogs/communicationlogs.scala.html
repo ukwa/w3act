@@ -1,4 +1,4 @@
-@(title: String, user: User, logs: List[CommunicationLog], searchstr: String)
+@(title: String, user: User, logs: List[CommunicationLog], searchstr: String, cur_permission: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -43,6 +43,38 @@
 						}
 					</span>
 				</div>
+				
+				<div class="padding-20">
+					<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel">
+						<span id="toggle">&#9660; Filters &#9650;</span>
+					</a>
+				</div>
+						
+				<div id="accordion">
+					<div id="filter-panel" class="panel-collapse collapse">
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="crawlPermissions" class="col-sm-6 control-label">Filter by permission</label>
+									    <div class="col-sm-6">
+											<select name="permissions" id="permissions" class="form-control">
+												<option>None</option>
+								                @for(permission <- CrawlPermission.findAll()) {
+									                @if(permission.url.equals(cur_permission)) {
+									                	<option selected>@permission.name</option>
+									                } else {
+									                	<option>@permission.name</option>
+									                }
+								                }
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>				
 		    </form>
 		</div>	        
 

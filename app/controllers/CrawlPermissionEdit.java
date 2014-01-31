@@ -305,7 +305,7 @@ public class CrawlPermissionEdit extends AbstractController {
     public static Result communicationLogs() {
         return ok(
                 communicationlogs.render(
-                	"CommunicationLogs", User.find.byId(request().username()), models.CommunicationLog.findAll(), ""
+                	"CommunicationLogs", User.find.byId(request().username()), models.CommunicationLog.findAll(), "", ""
                 )
             );
     }

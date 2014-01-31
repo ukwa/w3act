@@ -68,6 +68,26 @@
 				</div>
 			</div>
      	</div>		   
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+	              	<label for="status" class="col-sm-6 control-label">Crawl Permission</label>
+				    <div class="col-sm-6">
+						<select name="permissions" id="permissions" class="form-control">
+							<option>None</option>
+			                @for(permission <- CrawlPermission.findAll()) {
+				                @if(permission.url.equals(log.permission)) {
+				                	<option selected>@permission.name</option>
+				                } else {
+				                	<option>@permission.name</option>
+				                }
+			                }
+						</select>
+					</div>
+				</div>
+			</div>
+     	</div>		   	               
 	          
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">

@@ -13,10 +13,10 @@ import models.Role;
 import models.Target;
 import models.Taxonomy;
 import models.User;
+import models.CrawlPermission;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.BodyParser;
-
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -45,10 +45,10 @@ public class CommunicationLogEdit extends AbstractController {
      * Display the log.
      */
     public static Result index() {
-        List<CommunicationLog> resList = processFilterCommunicationLogs("");
+        List<CommunicationLog> resList = processFilterCommunicationLogs("", "");
         return ok(
         		communicationlogs.render(
-                    "CommunicationLogs", User.find.byId(request().username()), resList, ""
+                    "CommunicationLogs", User.find.byId(request().username()), resList, "", ""
                 )
             );
     }
@@ -86,9 +86,13 @@ public class CommunicationLogEdit extends AbstractController {
         String addentry = getFormParam(Const.ADDENTRY);
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
+        String permissions = getFormParam(Const.PERMISSIONS);
+        if (permissions == null) {
+        	permissions = Const.NONE;
+        }
 
-        List<CommunicationLog> resList = processFilterCommunicationLogs(name);
-        Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);
+        List<CommunicationLog> resList = processFilterCommunicationLogs(name, permissions);
+        Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name + ", permissions: " + permissions);
         if (addentry != null) {
         	if (name != null && name.length() > 0) {
         		res = redirect(routes.CommunicationLogEdit.addEntry(name));
@@ -96,14 +100,14 @@ public class CommunicationLogEdit extends AbstractController {
         		Logger.info("CommunicationLog name is empty. Please write name in search window.");
                 res = ok(
                         communicationlogs.render(
-                            "CommunicationLogs", User.find.byId(request().username()), resList, ""
+                            "CommunicationLogs", User.find.byId(request().username()), resList, "", permissions
                         )
                     );
         	}
         } else {
             res = ok(
             		communicationlogs.render(
-                        "CommunicationLogs", User.find.byId(request().username()), resList, name
+                        "CommunicationLogs", User.find.byId(request().username()), resList, name, permissions
                     )
                 );
         }
@@ -116,16 +120,21 @@ public class CommunicationLogEdit extends AbstractController {
      * @param status
      * @return
      */
-    public static List<CommunicationLog> processFilterCommunicationLogs(String filterUrl) {
+    public static List<CommunicationLog> processFilterCommunicationLogs(String filterUrl, String permission) {
 //    	Logger.info("process filter filterUrl: " + filterUrl);
     	boolean isProcessed = false;
     	ExpressionList<CommunicationLog> exp = CommunicationLog.find.where();
     	List<CommunicationLog> res = new ArrayList<CommunicationLog>();
     	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
-    		Logger.info("name: " + filterUrl);
+    		Logger.info("process name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);
     		isProcessed = true;
     	}
+    	if (permission != null && !permission.toLowerCase().equals(Const.NONE)) {
+    		Logger.info("process permission: " + permission);
+    		exp = exp.eq(Const.PERMISSION, CrawlPermission.findByName(permission).url);
+    		isProcessed = true;
+    	} 
     	res = exp.query().findList();
     	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
@@ -197,6 +206,11 @@ public class CommunicationLogEdit extends AbstractController {
         	    if (getFormParam(Const.TYPE) != null) {
         	    	log.ttype = getFormParam(Const.TYPE);
         	    }
+        	    Logger.info("permission: " + getFormParam(Const.PERMISSIONS));
+        	    if (getFormParam(Const.PERMISSIONS) != null) {
+        	    	log.permission = CrawlPermission.findByName(getFormParam(Const.PERMISSIONS)).url;
+            	    Logger.info("log.permission: " + log.permission);
+        	    }
         	    if (getFormParam(Const.NOTES) != null) {
         	    	log.notes = getFormParam(Const.NOTES);
         	    }
@@ -215,6 +229,7 @@ public class CommunicationLogEdit extends AbstractController {
                	Ebean.update(log);
         	}
 	        res = redirect(routes.CommunicationLogEdit.view(log.url));
+	        return res;
         } 
         if (delete != null) {
         	CommunicationLog log = CommunicationLog.findByUrl(getFormParam(Const.URL));

@@ -125,6 +125,7 @@ public final class Const {
 	
 	// Permission
 	public static final String ID                 = "id";
+	public static final String PERMISSION         = "permission";
 	
 	// Crawl Permission
 	public static final String TARGET             = "target";
