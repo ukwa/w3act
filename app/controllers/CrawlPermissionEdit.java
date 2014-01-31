@@ -233,7 +233,7 @@ public class CrawlPermissionEdit extends AbstractController {
                 }
         	    
         	    Logger.info("creator user: " + getFormParam(Const.CREATOR_USER));
-        	    Logger.info("creator user url: " + User.findByName(getFormParam(Const.CREATOR_USER)).url);
+//        	    Logger.info("creator user url: " + User.findByName(getFormParam(Const.CREATOR_USER)).url);
         	    if (getFormParam(Const.CREATOR_USER) != null) {
         	    	permission.creatorUser = User.findByName(getFormParam(Const.CREATOR_USER)).url;
         	    }

@@ -86,6 +86,7 @@
 						<th>Name</th>
 						<th>Target</th>
 						<th>Contact Person</th>
+						<th>Communication Log</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -101,6 +102,9 @@
 						</td>
 						<td>
 			                @ContactPerson.findNamesByUrls(permission.contactPerson)
+						</td>
+						<td>
+			                <a href="@routes.CommunicationLogEdit.showLogs(permission.name)">Log</a>
 						</td>
 					</tr>
 				}

@@ -135,6 +135,30 @@ public class CrawlPermission extends Model
     	return res;
     }
 
+    /**
+     * This method is used to show crawl permission in a table.
+     * It shows none value if no entry was found in database.
+     * @param url
+     * @return
+     */
+    public static CrawlPermission showByUrl(String url) {
+//    	Logger.info("permission findByUrl: " + url);
+    	CrawlPermission res = new CrawlPermission();
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
+    		try {
+    			res = find.where().eq(Const.URL, url).findUnique();
+            	if (res == null) {
+                	res = new CrawlPermission();
+                	res.name = Const.NONE;            	}
+    		} catch (Exception e) {
+    			Logger.info("crawl permission could not be find in database: " + e);
+    		}
+    	} else {
+        	res.name = Const.NONE;
+    	}
+    	return res;
+    }
+    
 	/**
 	 * This method filters crawl permissions by name and returns a list 
 	 * of filtered CrawlPermission objects.

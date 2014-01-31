@@ -154,6 +154,7 @@ GET     /communicationlogadd/:log           controllers.CommunicationLogEdit.add
 POST    /communicationlog/filter/           controllers.CommunicationLogEdit.filter()
 GET    	/communicationlog/filterbyjson/:name  controllers.CommunicationLogEdit.filterByJson(name)
 POST    /communicationlog/save              controllers.CommunicationLogEdit.save()
+GET     /communicationlog/link/:permission       controllers.CommunicationLogEdit.showLogs(permission)
 
 
 # Forms

@@ -240,6 +240,22 @@ public class CommunicationLogEdit extends AbstractController {
         return res;
     }	   
 
+    /**
+     * This method supports link in crawl permissions view.
+     * @param permission
+     * @return
+     */
+    public static Result showLogs(String permission) {
+    	Result res = null;
+        List<CommunicationLog> resList = processFilterCommunicationLogs("", permission);
+        res = ok(
+        		communicationlogs.render(
+                    "CommunicationLogs", User.find.byId(request().username()), resList, "", permission
+                )
+            );
+        return res;
+    }	   
+        
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;

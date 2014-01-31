@@ -75,7 +75,7 @@
 	              	<label for="status" class="col-sm-6 control-label">Crawl Permission</label>
 				    <div class="col-sm-6">
 						<select name="permissions" id="permissions" class="form-control">
-							<option>None</option>
+							<!-- option>None</option-->
 			                @for(permission <- CrawlPermission.findAll()) {
 				                @if(permission.url.equals(log.permission)) {
 				                	<option selected>@permission.name</option>

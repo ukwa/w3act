@@ -85,6 +85,7 @@
 					<th>Date</th>
 					<th>Type</th>
 					<th>Curator</th>
+					<th>Permission</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -94,6 +95,11 @@
 					<td>@log.date</td>
 					<td>@log.ttype</td>
 					<td>@log.curator</td>
+					@if(log.permission != null && log.permission.length() > 0) {
+					<td>@CrawlPermission.showByUrl(log.permission).name</td>
+					} else {
+					<td></td>
+					}
 				</tr>
 			}
 			</tbody>
