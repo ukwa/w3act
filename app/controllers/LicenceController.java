@@ -101,6 +101,8 @@ public class LicenceController extends AbstractController {
                     }
                     permission.status = Const.CrawlPermissionStatus.GRANTED.name();
                 	Ebean.update(permission);
+        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
+        	        Ebean.save(log);
         	        Logger.info("update crawl permission: " + permission.toString());                    
         	    }
             } 

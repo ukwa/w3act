@@ -185,6 +185,7 @@ public final class Const {
 	public static final String PREVIEW            = "preview";
 	public static final String REJECT             = "reject";
 	public static final String SUBMIT             = "submit";
+	public static final String UPDATE             = "update";
 	
 	// Types of the JSON nodes
 	public enum NodeType {

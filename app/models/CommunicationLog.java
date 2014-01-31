@@ -14,6 +14,8 @@ import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
 
+import uk.bl.api.Utils;
+
 /**
  * This class supports the management of logging communications occurring
  * outside ACT. Archivist is treating each individual communication as a unique record.
@@ -139,6 +141,29 @@ public class CommunicationLog extends Model
 	    return res;
     }         
         
+    /**
+     * This method is used for automated logging of crawl permission events
+     * like creation of permission, date when permission was queued, send and granted
+     * or refused. 
+     * @param name The title of the log entry
+     * @param permission The crawl permission
+     * @param user The responsible user
+     * @param notes Additional information about log entry like save, update, remove
+     */
+    public static CommunicationLog logHistory(String name, String permission, String user, String notes) {
+        CommunicationLog log = new CommunicationLog();
+        log.id = Utils.createId();
+        log.url = Const.ACT_URL + log.id;
+//        log.curator = User.find.byId(request().username()).url; 
+        log.curator = user;
+        log.ttype = Const.CommunicationLogTypes.OTHER.name();
+        log.date = Utils.getCurrentDate();
+        log.name = name;
+        log.permission = permission;
+        log.notes = notes;
+       	return log;
+    }
+    
     public String toString() {
         return "CommunicationLog(" + name + ")" + ", id:" + id;
     }    

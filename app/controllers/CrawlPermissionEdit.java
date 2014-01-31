@@ -21,7 +21,6 @@ import models.CommunicationLog;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.BodyParser;
-
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -255,9 +254,13 @@ public class CrawlPermissionEdit extends AbstractController {
         	if (!isExisting) {
                	Ebean.save(permission);
     	        Logger.info("save crawl permission: " + permission.toString());
+    	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.SAVE);
+    	        Ebean.save(log);
         	} else {
            		Logger.info("update crawl permission: " + permission.toString());
                	Ebean.update(permission);
+               	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
+    	        Ebean.save(log);
         	}
 	        res = redirect(routes.CrawlPermissionEdit.view(permission.url));
         } 
@@ -412,6 +415,8 @@ public class CrawlPermissionEdit extends AbstractController {
                 	permission.status = Const.CrawlPermissionStatus.EMAIL_REJECTED.name();
                 	Logger.info("new permission staus: " + permission.status);
                    	Ebean.update(permission);                	
+        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
+        	        Ebean.save(log);
                 	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
                 }
             }
@@ -435,7 +440,9 @@ public class CrawlPermissionEdit extends AbstractController {
                 if (userFlag || all) {
                 	permission.status = Const.CrawlPermissionStatus.PENDING.name();
                 	Logger.info("new permission staus: " + permission.status);
-                   	Ebean.update(permission);                	
+                   	Ebean.update(permission);   
+        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
+        	        Ebean.save(log);
                 	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
                 }
             }
