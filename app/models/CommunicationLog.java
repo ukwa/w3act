@@ -59,7 +59,13 @@ public class CommunicationLog extends Model
      * Communication type: Email, Phone, Letter, Web Form, Contact Detail Request, Other.
      */
     @Column(columnDefinition = "TEXT")
-    public String type;
+    public String ttype;
+    
+    /**
+     * This field is for associated crawl permission ID.
+     */
+    @Column(columnDefinition = "TEXT")
+    public String permission;
     
     /**
      * Allows the addition of further notes regarding communication.
@@ -120,6 +126,19 @@ public class CommunicationLog extends Model
         return find.all();
     }
     
+    /**
+     * This method returns a list of all refusal type values for crawl permission record.
+     * @return
+     */
+    public static List<String> getAllTypes() {
+    	List<String> res = new ArrayList<String>();
+	    Const.CommunicationLogTypes[] resArray = Const.CommunicationLogTypes.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+        
     public String toString() {
         return "CommunicationLog(" + name + ")" + ", id:" + id;
     }    

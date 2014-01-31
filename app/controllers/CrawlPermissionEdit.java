@@ -16,6 +16,8 @@ import models.Taxonomy;
 import models.User;
 import models.ContactPerson;
 import models.MailTemplate;
+import models.PermissionRefusal;
+import models.CommunicationLog;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -31,6 +33,8 @@ import views.html.crawlpermissions.*;
 import views.html.permissions.permissions;
 import views.html.targets.targets;
 import views.html.licence.*;
+import views.html.refusals.*;
+import views.html.communicationlogs.*;
 
 import javax.mail.*;
 
@@ -286,6 +290,22 @@ public class CrawlPermissionEdit extends AbstractController {
         return ok(
                 licences.render(
                 	"Licences", User.find.byId(request().username()), models.License.findAll(), ""
+                )
+            );
+    }
+
+    public static Result refusals() {
+        return ok(
+                refusals.render(
+                	"Refusals", User.find.byId(request().username()), models.PermissionRefusal.findAll(), ""
+                )
+            );
+    }
+
+    public static Result communicationLogs() {
+        return ok(
+                communicationlogs.render(
+                	"CommunicationLogs", User.find.byId(request().username()), models.CommunicationLog.findAll(), ""
                 )
             );
     }

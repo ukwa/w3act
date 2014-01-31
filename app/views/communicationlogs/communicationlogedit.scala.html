@@ -1,0 +1,97 @@
+@(log: CommunicationLog, user: User)
+
+@main("", user) {
+
+   	<div class="page-header">
+    	<h1>Edit communication log @log.name</h1>
+	</div>
+
+	<ul class="nav nav-tabs">
+	   <li><a href="@routes.CommunicationLogEdit.view(log.url)">View</a></li>
+	   @if(user.hasRole("sys_admin")) {
+		   <li class="active"><a href="@routes.CommunicationLogEdit.edit(log.url)">Edit</a></li>
+	   }
+	</ul>
+    
+	<form action="@routes.CommunicationLogEdit.save()" method="POST">
+		<input type="hidden" name="url" value="@log.url">
+		<input type="hidden" name="id" value="@log.id">
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Name<font color="red">*</font></label>
+				    <div class="col-sm-6">
+	              		<input class="form-control" name="name" id="inputName" value="@log.name" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+     	
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Curator</label>
+				    <div class="col-sm-6">
+ 						<input type="text" name="curator" value="@User.findByUrl(log.curator).name" size="30" maxlength="2048" class="form-control" id="curator"/>
+               		</div>
+				</div>
+			</div>
+     	</div>	     	
+     	
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Date</label>
+				    <div class="col-sm-6">
+ 						<input type="text" name="log-date" value="@log.date" size="30" maxlength="2048" class="form-control" id="log-date"/>
+               		</div>
+				</div>
+			</div>
+     	</div>	     	
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+	              	<label for="status" class="col-sm-6 control-label">Type</label>
+				    <div class="col-sm-6">
+						<select name="type" id="type" class="form-control">
+			                @for(ttype <- CommunicationLog.getAllTypes()) {
+				                @if(ttype.equals(log.ttype)) {
+				                	<option selected>@log.ttype</option>
+				                } else {
+				                	<option>@ttype</option>
+				                }
+			                }
+						</select>
+					</div>
+				</div>
+			</div>
+     	</div>		   
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputNotes" class="col-sm-6 control-label">Notes</label>
+				    <div class="col-sm-6">
+						<textarea class="form-control" name="notes" id="notes" cols="100" rows="1">@log.notes</textarea>
+					</div>
+				</div>
+			</div>
+     	</div>
+			          
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+		</div>
+
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">		
+					<button type="submit" class="btn btn-primary" name="save">Save</button>
+					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
+		       </div>
+			</div>
+		</div>
+	</form>
+}
+

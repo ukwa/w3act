@@ -112,6 +112,8 @@ GET    	/crawlpermission/templates/     	controllers.CrawlPermissionEdit.templat
 GET    	/crawlpermission/contacttemplates/    controllers.CrawlPermissionEdit.contactpersons()
 POST    /crawlpermission/send/              controllers.CrawlPermissionEdit.send()
 GET    	/crawlpermission/licences/        	controllers.CrawlPermissionEdit.licences()
+GET    	/crawlpermission/refusals/        	controllers.CrawlPermissionEdit.refusals()
+GET    	/crawlpermission/communicationlogs/    	controllers.CrawlPermissionEdit.communicationLogs()
 
 GET     /contactperson                      controllers.ContactPersonEdit.index()
 GET     /contactperson/:person              controllers.ContactPersonEdit.view(person)
@@ -132,6 +134,23 @@ POST    /mailtemplate/save                  controllers.MailTemplateEdit.save()
 GET     /licence                            controllers.LicenceEdit.index()
 POST    /licence/filter/                    controllers.LicenceEdit.filter()
 GET    	/licence/filterbyjson/:name	        controllers.LicenceEdit.filterByJson(name)
+
+GET     /refusal                            controllers.PermissionRefusalEdit.index()
+GET     /refusal/:refusal                   controllers.PermissionRefusalEdit.view(refusal)
+GET     /refusaledit/:refusal               controllers.PermissionRefusalEdit.edit(refusal)
+GET     /refusaladd/:refusal                controllers.PermissionRefusalEdit.addEntry(refusal)
+POST    /refusal/filter/                    controllers.PermissionRefusalEdit.filter()
+GET    	/refusal/filterbyjson/:name	        controllers.PermissionRefusalEdit.filterByJson(name)
+POST    /refusal/save                       controllers.PermissionRefusalEdit.save()
+
+GET     /communicationlog                   controllers.CommunicationLogEdit.index()
+GET     /communicationlog/:log              controllers.CommunicationLogEdit.view(log)
+GET     /communicationlogedit/:log          controllers.CommunicationLogEdit.edit(log)
+GET     /communicationlogadd/:log           controllers.CommunicationLogEdit.addEntry(log)
+POST    /communicationlog/filter/           controllers.CommunicationLogEdit.filter()
+GET    	/communicationlog/filterbyjson/:name  controllers.CommunicationLogEdit.filterByJson(name)
+POST    /communicationlog/save              controllers.CommunicationLogEdit.save()
+
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()

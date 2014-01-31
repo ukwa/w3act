@@ -151,6 +151,15 @@ public final class Const {
 	public static final String DATE              = "date";
 	public static final String ON                = "on";
 	
+	// Permission Refusals
+	public static final String REFUSAL_DATE      = "refusal-date";
+	public static final String REASON            = "reason";
+
+	// Communications Logging
+	public static final String LOG_DATE          = "log-date";
+	public static final String NOTES             = "notes";
+	public static final String CURATOR           = "curator";
+
 	// Mail Template
 	public static final String TEXT              = "text";
 	public static final String FROM_EMAIL        = "fromEmail";
@@ -215,6 +224,31 @@ public final class Const {
 		OPT_OUT;
     }
 	    
+	/**
+	 * Types of permission refusal.
+	 */
+	public enum RefusalType {
+		THIRD_PARTY_CONTENT,
+		IMPRACTICALITY,
+		INTERNAL_REASONS,
+		LEGALISTIC_FORM,
+		NO_REASON,
+		PRIVACY,
+		OTHER;
+    }
+    	
+	/**
+	 * Types of communication logs.
+	 */
+	public enum CommunicationLogTypes {
+		EMAIL,
+		PHONE,
+		LETTER,
+		WEB_FORM,
+		CONTACT_DETAIL_REQUEST,
+		OTHER;
+    }
+    	
     /**
      * Help collections to read JSON lists like
      * "field_url":[{"url":"http:\/\/www.adoptionuk.org\/"}]

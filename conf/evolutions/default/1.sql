@@ -9,7 +9,8 @@ create table communication_log (
   name                      TEXT,
   curator                   TEXT,
   date                      TEXT,
-  type                      TEXT,
+  ttype                     TEXT,
+  permission                TEXT,
   notes                     TEXT,
   last_update               timestamp not null,
   constraint pk_communication_log primary key (id))
@@ -224,7 +225,7 @@ create table permission_refusal (
   url                       TEXT,
   name                      TEXT,
   date                      TEXT,
-  type                      TEXT,
+  ttype                     TEXT,
   reason                    TEXT,
   last_update               timestamp not null,
   constraint pk_permission_refusal primary key (id))

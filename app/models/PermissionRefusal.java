@@ -53,7 +53,7 @@ public class PermissionRefusal extends Model
      * Legalistic form, No reason, Privacy, Other.
      */
     @Column(columnDefinition = "TEXT")
-    public String type;
+    public String ttype;
     
     /**
      * Allows the addition of further notes regarding refusal reason.
@@ -114,6 +114,19 @@ public class PermissionRefusal extends Model
     public static List<PermissionRefusal> findAll() {
         return find.all();
     }
+    
+    /**
+     * This method returns a list of all refusal type values for crawl permission record.
+     * @return
+     */
+    public static List<String> getAllTypes() {
+    	List<String> res = new ArrayList<String>();
+	    Const.RefusalType[] resArray = Const.RefusalType.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
     
     public String toString() {
         return "PermissionRefusal(" + name + ")" + ", id:" + id;

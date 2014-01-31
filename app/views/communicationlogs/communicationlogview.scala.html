@@ -1,0 +1,76 @@
+@(log: CommunicationLog, user: User)
+
+
+@main("", user) {
+    
+	<div class="page-header">
+	    <h1>Communication log @log.name</h1>
+	</div>
+	
+	<ul class="nav nav-tabs">
+	   <li class="active"><a href="@routes.CommunicationLogEdit.view(log.url)">View</a></li>
+	   @if(user.hasRole("sys_admin")) {
+	   	<li><a href="@routes.CommunicationLogEdit.edit(log.url)">Edit</a></li>
+	   }
+	</ul>
+
+	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputName" class="col-sm-6 control-label">Name<font color="red">*</font></label>
+			    <div class="col-sm-6">
+              		<input class="form-control" name="name" id="inputName" value="@log.name" type="text" readonly>
+				</div>
+			</div>
+		</div>
+    </div>
+          
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label class="col-sm-6 control-label">Curator</label>
+			    <div class="col-sm-6">
+					<input type="text" name="curator" value="@User.findByUrl(log.curator).name" size="30" maxlength="2048" class="form-control" id="curator" readonly/>
+           		</div>
+			</div>
+		</div>
+   	</div>	     	
+    	
+	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label class="col-sm-6 control-label">Date</label>
+			    <div class="col-sm-6">
+					<input type="text" name="log-date" value="@log.date" size="30" maxlength="2048" class="form-control" id="log-date" readonly/>
+           		</div>
+			</div>
+		</div>
+    </div>	     	
+    	
+  	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+              	<label for="status" class="col-sm-6 control-label">Type</label>
+			    <div class="col-sm-6">
+					<input type="text" name="type" value="@log.ttype" size="30" maxlength="2048" class="form-control" id="type" readonly/>
+           		</div>
+			</div>
+		</div>
+    </div>		   
+          
+	<div class="row padding-10">
+   		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputNotes" class="col-sm-6 control-label">Notes</label>
+			    <div class="col-sm-6">
+					<textarea class="form-control" name="notes" id="notes" cols="100" rows="1" readonly>@log.notes</textarea>
+				</div>
+			</div>
+		</div>
+   	</div>
+          
+}
+                   
+	            
+
+

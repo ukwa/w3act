@@ -1,0 +1,65 @@
+@(refusal: PermissionRefusal, user: User)
+
+
+@main("", user) {
+    
+	<div class="page-header">
+	    <h1>Permission refusal @refusal.name</h1>
+	</div>
+	
+	<ul class="nav nav-tabs">
+	   <li class="active"><a href="@routes.PermissionRefusalEdit.view(refusal.url)">View</a></li>
+	   @if(user.hasRole("sys_admin")) {
+	   	<li><a href="@routes.PermissionRefusalEdit.edit(refusal.url)">Edit</a></li>
+	   }
+	</ul>
+
+	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputName" class="col-sm-6 control-label">Name<font color="red">*</font></label>
+			    <div class="col-sm-6">
+              		<input class="form-control" name="name" id="inputName" value="@refusal.name" type="text" readonly>
+				</div>
+			</div>
+		</div>
+    </div>
+          
+	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label class="col-sm-6 control-label">Date</label>
+			    <div class="col-sm-6">
+					<input type="text" name="refusal-date" value="@refusal.date" size="30" maxlength="2048" class="form-control" id="refusal-date" readonly/>
+              	</div>
+			</div>
+		</div>
+    </div>	     	
+    	
+  	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+              	<label for="status" class="col-sm-6 control-label">Type</label>
+			    <div class="col-sm-6">
+					<input type="text" name="type" value="@refusal.ttype" size="30" maxlength="2048" class="form-control" id="refusal-type" readonly/>
+           		</div>
+			</div>
+		</div>
+    </div>		   
+          
+	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputReason" class="col-sm-6 control-label">Reason</label>
+			    <div class="col-sm-6">
+					<textarea class="form-control" name="reason" id="reason" cols="100" rows="1" readonly>@refusal.reason</textarea>
+				</div>
+			</div>
+		</div>
+    </div>
+		          
+}
+                   
+	            
+
+
