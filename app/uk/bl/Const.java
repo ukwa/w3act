@@ -185,7 +185,13 @@ public final class Const {
 	public static final String PREVIEW            = "preview";
 	public static final String REJECT             = "reject";
 	public static final String SUBMIT             = "submit";
-	
+
+	// Sorting/Pagination
+	public static final String PAGE_NO             	= "p";
+	public static final String SORT_BY				= "s";
+	public static final String ORDER             	= "o";
+	public static final String QUERY             	= "q";
+
 	// Types of the JSON nodes
 	public enum NodeType {
         URL, 

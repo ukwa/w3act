@@ -119,7 +119,7 @@
 					@if(curator.field_affiliation != null 
 						&& curator.getOrganisation.url != null
 						&& curator.getOrganisation.title != null) {
-						<td><a href="@routes.OrganisationEdit.view(curator.getOrganisation.url)">
+						<td><a href="@routes.Organisations.view(curator.getOrganisation.url)">
 							@curator.getOrganisation.title</a></td>
 					} else {
 					  <td></td>

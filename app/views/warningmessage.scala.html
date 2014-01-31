@@ -1,0 +1,10 @@
+@(flash: play.mvc.Http.Flash)
+
+@if(flash.get("message") != null) {
+	<div class="padding-20">
+		<div class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			@flash.get("message")
+		</div>
+	</div>
+}

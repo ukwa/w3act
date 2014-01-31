@@ -13,6 +13,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -224,6 +225,23 @@ public class Organisation extends Model {
     public String toString() {
         return "Organisation(" + nid + ") with title: " + title + 
         	", format: " + format + ", summary: " + summary + ", value: " + value;
+    }
+
+    /**
+     * Return a page of Organisations
+     *
+     * @param page Page to display
+     * @param pageSize Number of Organisations per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Organisation> page(int page, int pageSize, String sortBy, String order, String query) {
+    	return find.where().icontains(Const.TITLE, query)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
     }
 
 }

@@ -26,7 +26,16 @@ GET     /collections                        controllers.DCollections.index()
 GET    	/collections/list                  	controllers.DCollections.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET     /targets                            controllers.Targets.index()
 GET     /targets/:offset                    controllers.Targets.offset(offset:Int)
+
 GET     /organisations                      controllers.Organisations.index()
+GET     /organisations/list                 controllers.Organisations.list(p:Int ?= 0, s ?= "name", o ?= "asc", q ?= "")
+GET     /organisations/search               controllers.Organisations.search()
+GET     /organisations/new/:title      		controllers.Organisations.create(title)
+GET     /organisations/:url     			controllers.Organisations.edit(url)
+POST    /organisations                 		controllers.Organisations.save()
+GET    	/organisations/filterbyjson/:title	controllers.Organisations.filterByJson(title)
+GET     /organisations/:url        			controllers.Organisations.view(url)
+
 GET     /curators                           controllers.Curators.index()
 GET     /curators/list                      controllers.Curators.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET     /roles                              controllers.RoleEdit.index()
@@ -66,13 +75,8 @@ POST    /user/filter/                       controllers.UserEdit.filter()
 GET    	/user/filterbyjson/:name			controllers.UserEdit.filterByJson(name)
 GET     /userbookmarks/:userbookmarks       controllers.UserEdit.bookmarks(userbookmarks)
 
-GET     /organisation/:organisation         controllers.OrganisationEdit.view(organisation)
-GET     /organisationedit/:organisation     controllers.OrganisationEdit.edit(organisation)
 GET     /organisationsites/:sites           controllers.OrganisationEdit.sites(sites)
-GET     /organisationadd/:organisation      controllers.OrganisationEdit.addEntry(organisation)
 GET     /organisationadmin/:organisation    controllers.OrganisationEdit.admin(organisation)
-POST    /organisation/filter/               controllers.OrganisationEdit.filter()
-GET    	/organisation/filterbyjson/:name	controllers.OrganisationEdit.filterByJson(name)
 
 GET     /collection/:collection             controllers.CollectionEdit.view(collection)
 GET     /collectionedit/:collection         controllers.CollectionEdit.edit(collection)
@@ -156,7 +160,6 @@ POST    /communicationlog/save              controllers.CommunicationLogEdit.sav
 POST    /article/add-article                controllers.Article.addArticle()
 POST    /target/save-target                 controllers.TargetController.saveTarget()
 POST    /user/save-user                     controllers.Curators.saveUser()
-POST    /organisation/save                  controllers.Organisations.save()
 POST    /collection/save                    controllers.DCollections.save()
 POST    /role/save                          controllers.RoleEdit.save()
 POST    /permission/save                    controllers.PermissionEdit.save()
@@ -180,3 +183,4 @@ POST    /export/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/
 
 # Scope
 GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
+

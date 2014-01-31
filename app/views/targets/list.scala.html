@@ -129,7 +129,7 @@
 					@if(target.getOrganisation != null 
 						&& target.getOrganisation.url != null
 						&& target.getOrganisation.title != null) {
-						<td><a href="@routes.OrganisationEdit.view(target.getOrganisation.url)">
+						<td><a href="@routes.Organisations.view(target.getOrganisation.url)">
 							@target.getOrganisation.title</a></td>
 					} else {
 						<td></td>
