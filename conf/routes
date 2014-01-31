@@ -111,6 +111,7 @@ GET    	/crawlpermission/filterbyjson/:name	controllers.CrawlPermissionEdit.filt
 GET    	/crawlpermission/templates/     	controllers.CrawlPermissionEdit.templates()
 GET    	/crawlpermission/contacttemplates/    controllers.CrawlPermissionEdit.contactpersons()
 POST    /crawlpermission/send/              controllers.CrawlPermissionEdit.send()
+GET    	/crawlpermission/licences/        	controllers.CrawlPermissionEdit.licences()
 
 GET     /contactperson                      controllers.ContactPersonEdit.index()
 GET     /contactperson/:person              controllers.ContactPersonEdit.view(person)
@@ -128,6 +129,9 @@ POST    /mailtemplate/filter/               controllers.MailTemplateEdit.filter(
 GET    	/mailtemplate/filterbyjson/:name	controllers.MailTemplateEdit.filterByJson(name)
 POST    /mailtemplate/save                  controllers.MailTemplateEdit.save()
 
+GET     /licence                            controllers.LicenceEdit.index()
+POST    /licence/filter/                    controllers.LicenceEdit.filter()
+GET    	/licence/filterbyjson/:name	        controllers.LicenceEdit.filterByJson(name)
 
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()

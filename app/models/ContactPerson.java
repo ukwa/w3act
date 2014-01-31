@@ -143,21 +143,6 @@ public class ContactPerson extends Model
     public static List<ContactPerson> findAll() {
         return find.all();
     }
-    
-    /**
-     * Retrieve a contact person by name.
-     * @param name
-     * @return contact person object
-     */
-//    public static ContactPerson findByName(String name) {
-//    	ContactPerson res = new ContactPerson();
-//    	if (name != null && name.length() > 0) {
-//    		res = find.where().eq(Const.NAME, name).findUnique();
-//    	} else {
-//    		res.name = Const.NONE;
-//    	}
-//    	return res;
-//    }
        
     /**
      * Retrieve the contact person names by URL list given as a string.
@@ -166,16 +151,22 @@ public class ContactPerson extends Model
      */
     public static String findNamesByUrls(String urls) {
     	String res = "";
-    	String[] parts = urls.split(Const.LIST_DELIMITER);
-    	for (String part: parts)
-        {
-    		try {
-	    		String name = findByUrl(part).name;
-	    		res = res + name + Const.LIST_DELIMITER;
-    		} catch (Exception e) {
-    			System.out.println("findNamesByUrls error: " + e);
-    		}
-        }
+    	if (urls != null) {
+    		if (urls.contains(Const.LIST_DELIMITER)) {
+		    	String[] parts = urls.split(Const.LIST_DELIMITER);
+		    	for (String part: parts)
+		        {
+		    		try {
+			    		String name = findByUrl(part).name;
+			    		res = res + name + Const.LIST_DELIMITER;
+		    		} catch (Exception e) {
+		    			System.out.println("findNamesByUrls error: " + e);
+		    		}
+		        }
+	    	} else {
+	    		res = urls;    	
+	    	}
+    	}
     	return res;
     }          
 	    
@@ -187,19 +178,25 @@ public class ContactPerson extends Model
      */
     public static String findEmailsByUrls(String urls, String allMails) {
     	String res = "";
-    	String[] parts = urls.split(Const.LIST_DELIMITER);
-    	for (String part: parts)
-        {
-    		try {
-	    		String email = findByUrl(part).email;
-	    		if (email != null && !res.contains(email) && !allMails.contains(email)) {
-//	    			System.out.println("test mail: " + email + ", res: " + res);
-	    			res = res + email + Const.LIST_DELIMITER;
-	    		}
-    		} catch (Exception e) {
-    			System.out.println("findEmailsByUrls error: " + e);
-    		}
-        }
+    	if (urls != null) {
+	    	if (urls.contains(Const.LIST_DELIMITER)) {
+		    	String[] parts = urls.split(Const.LIST_DELIMITER);
+		    	for (String part: parts)
+		        {
+		    		try {
+			    		String email = findByUrl(part).email;
+			    		if (email != null && !res.contains(email) && !allMails.contains(email)) {
+		//	    			System.out.println("test mail: " + email + ", res: " + res);
+			    			res = res + email + Const.LIST_DELIMITER;
+			    		}
+		    		} catch (Exception e) {
+		    			System.out.println("findEmailsByUrls error: " + e);
+		    		}
+		        }
+	    	} else {
+	    		res = urls;
+	    	}
+    	}
     	return res;
     }          
 	    

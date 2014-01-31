@@ -144,12 +144,20 @@ public final class Const {
 	public static final String DEFAULT_CONTACT   = "defaultContact";
 	public static final String PERMISSION_CHECKED = "permissionChecked";
 	
+	// Licence
+	public static final String AGREE             = "agree";
+	public static final String CONTENT           = "content";
+	public static final String PUBLISH           = "publish";
+	public static final String DATE              = "date";
+	public static final String ON                = "on";
+	
 	// Mail Template
 	public static final String TEXT              = "text";
 	public static final String FROM_EMAIL        = "fromEmail";
 	public static final String PLACE_HOLDERS     = "placeHolders";
 	public static final String DEFAULT_EMAIL_FLAG = "defaultEmail";
-	public static final String TEMPLATES_PATH    = "";
+	public static final String TEMPLATES_PATH    = "conf\\templates\\";
+	public static final String DEFAULT_TEMPLATE  = "General";
 	
 	// Buttons
 	public static final String SAVE               = "save";

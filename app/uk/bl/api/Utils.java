@@ -50,6 +50,8 @@ public class Utils {
 					|| value.equals("yes") 
 					|| value.equals("True") 
 					|| value.equals("true") 
+					|| value.equals("On") 
+					|| value.equals("on") 
 					|| value.equals("Y") 
 					|| value.equals("y")) {
 				res = true;
@@ -110,14 +112,20 @@ public class Utils {
     public static boolean hasElementInList(String elem, String list) {
     	boolean res = false;
     	if (list != null) {
-	    	String[] parts = list.split(Const.LIST_DELIMITER);
-	    	for (String part: parts)
-	        {
-	    		if (part.equals(elem)) {
-	    			res = true;
-	    			break;
-	    		}
-	        }
+    		if (list.contains(Const.LIST_DELIMITER)) {   	
+		    	String[] parts = list.split(Const.LIST_DELIMITER);
+		    	for (String part: parts)
+		        {
+		    		if (part.equals(elem)) {
+		    			res = true;
+		    			break;
+		    		}
+		        }
+    		} else {
+    			if (list.equals(elem)) {
+    				res = true;
+    			}
+    		}
     	}
     	return res;
     }
@@ -131,7 +139,11 @@ public class Utils {
     public static String[] getMailArray(String list) {
     	String[] mailArray = {"None"};
     	if (list != null) {
-	    	mailArray = list.split(Const.LIST_DELIMITER);
+    		if (list.contains(Const.LIST_DELIMITER)) {
+    			mailArray = list.split(Const.LIST_DELIMITER);
+    		} else {
+    			mailArray[0] = list;
+    		}
     	}
     	return mailArray;
     }
@@ -157,6 +169,8 @@ public class Utils {
     public static String readTextFile(String fileName) {
     	String res = "";
     	try {
+    		fileName = "conf\\templates\\default.txt";
+    		System.out.println("template path: " + fileName);
 	    	BufferedReader br = new BufferedReader(new FileReader(fileName));
 	        try {
 	            StringBuilder sb = new StringBuilder();
@@ -167,7 +181,7 @@ public class Utils {
 	                sb.append(System.getProperty("line.separator"));
 	                line = br.readLine();
 	            }
-	            String everything = sb.toString();
+	            res = sb.toString();
 	        } finally {
 	            br.close();
 	        }

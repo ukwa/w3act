@@ -16,5 +16,28 @@
 			</div>
 		</div>
    	</div>
+   	
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="templateSubject" class="col-sm-6 control-label">Subject</label>
+			    <div class="col-sm-6">
+					<label for="subject" class="col-sm-6 control-label">@MailTemplate.findByName(template).subject</label>
+				</div>
+			</div>
+		</div>
+   	</div>
+   	
+	<div class="row padding-10">
+    		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputText" class="col-sm-6 control-label">Text</label>
+			    <div class="col-sm-6">
+					<textarea class="form-control" name="text" id="text" cols="100" rows="10" readonly>@MailTemplate.findByName(template).readTemplate()</textarea>
+				</div>
+			</div>
+		</div>
+   	</div>
+   	
 }
 

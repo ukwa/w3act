@@ -238,12 +238,18 @@ public class DCollection extends Model {
      */
     public static String findTitlesByUrls(String urls) {
     	String res = "";
-    	String[] parts = urls.split(Const.LIST_DELIMITER);
-    	for (String part: parts)
-        {
-    		String name = findByUrl(part).title;
-    		res = res + name + Const.LIST_DELIMITER;
-        }
+    	if (urls != null) {
+	    	if (urls.contains(Const.LIST_DELIMITER)) {
+		    	String[] parts = urls.split(Const.LIST_DELIMITER);
+		    	for (String part: parts)
+		        {
+		    		String name = findByUrl(part).title;
+		    		res = res + name + Const.LIST_DELIMITER;
+		        }
+	    	} else {
+	    		res = urls;    	
+	    	}
+    	}
     	return res;
     }          
 	

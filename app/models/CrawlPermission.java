@@ -149,6 +149,18 @@ public class CrawlPermission extends Model
 	}
         
 	/**
+	 * Find out crawl permission by target that was submitted by owner.
+	 * @param cur_target
+	 * @return permission list
+	 */
+	public static List<CrawlPermission> filterByTarget(String cur_target) {
+		List<CrawlPermission> res = new ArrayList<CrawlPermission>();
+        ExpressionList<CrawlPermission> ll = find.where().icontains(Const.TARGET, cur_target);
+    	res = ll.findList();
+		return res;
+	}
+        
+	/**
 	 * This method filters crawl permissions by status and returns a list 
 	 * of filtered CrawlPermission objects.
 	 * @param status

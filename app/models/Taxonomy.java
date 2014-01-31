@@ -123,12 +123,18 @@ public class Taxonomy extends Model {
      */
     public static String findNamesByUrls(String urls) {
     	String res = "";
-    	String[] parts = urls.split(Const.LIST_DELIMITER);
-    	for (String part: parts)
-        {
-    		String name = findByUrl(part).name;
-    		res = res + name + Const.LIST_DELIMITER;
-        }
+    	if (urls != null) {
+	    	if (urls.contains(Const.LIST_DELIMITER)) {
+		    	String[] parts = urls.split(Const.LIST_DELIMITER);
+		    	for (String part: parts)
+		        {
+		    		String name = findByUrl(part).name;
+		    		res = res + name + Const.LIST_DELIMITER;
+		        }
+	    	} else {
+	    		res = urls;    	
+	    	}
+    	}
     	return res;
     }          
 

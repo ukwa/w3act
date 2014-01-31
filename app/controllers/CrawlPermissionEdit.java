@@ -15,6 +15,7 @@ import models.Target;
 import models.Taxonomy;
 import models.User;
 import models.ContactPerson;
+import models.MailTemplate;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -29,6 +30,7 @@ import views.html.mailtemplates.*;
 import views.html.crawlpermissions.*;
 import views.html.permissions.permissions;
 import views.html.targets.targets;
+import views.html.licence.*;
 
 import javax.mail.*;
 
@@ -280,13 +282,13 @@ public class CrawlPermissionEdit extends AbstractController {
             );
     }
     
-//    public static Result licenses() {
-//        return ok(
-//                licenses.render(
-//                		User.find.byId(request().username())
-//                )
-//            );
-//    }
+    public static Result licences() {
+        return ok(
+                licences.render(
+                	"Licences", User.find.byId(request().username()), models.License.findAll(), ""
+                )
+            );
+    }
 
     /**
      * This method selects crawl permissions selected using checkboxes 
@@ -397,6 +399,30 @@ public class CrawlPermissionEdit extends AbstractController {
     }
     
     /**
+     * This method sets status "PENDING" for selected crawl permissions.
+     * If parameter all is true - do it for all queued permissions,
+     * otherwise only selected by checkbox.
+     * @return
+     */
+    public static void setPendingSelectedCrawlPermissions(boolean all) {
+        List<CrawlPermission> permissionList = CrawlPermission.findAll();
+        Iterator<CrawlPermission> permissionItr = permissionList.iterator();
+        while (permissionItr.hasNext()) {
+        	CrawlPermission permission = permissionItr.next();
+            if (getFormParam(permission.name) != null) {
+//        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+                if (userFlag || all) {
+                	permission.status = Const.CrawlPermissionStatus.PENDING.name();
+                	Logger.info("new permission staus: " + permission.status);
+                   	Ebean.update(permission);                	
+                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+                }
+            }
+        }
+    }
+    
+    /**
      * This method handles queued crawl permissions.
      */
     public static Result send() {
@@ -408,20 +434,21 @@ public class CrawlPermissionEdit extends AbstractController {
         String preview = getFormParam(Const.PREVIEW);
         String reject = getFormParam(Const.REJECT);
         Logger.info("send: " + send + ", sendall: " + sendall + ", sendsome: " + sendsome + ", preview: " + preview + ", reject: " + reject);
-	    String template = "";
+	    String template = Const.DEFAULT_TEMPLATE;
         if (getFormParam(Const.TEMPLATE) != null) {
 	    	template = getFormParam(Const.TEMPLATE);
 	    }
-    	String mails = evaluateToEmails();
+    	String toMails = evaluateToEmails();
+    	Logger.info("toMails: " + toMails);
+    	String[] toMailAddresses = Utils.getMailArray(toMails);
+//    	Logger.info("toMailAddresses: " + toMailAddresses[0]);
+    	String messageSubject = MailTemplate.findByName(template).subject;
+    	String messageBody = MailTemplate.findByName(template).readTemplate();
 
     	if (sendall != null) {
         	Logger.info("send all crawl permission requests");
-        	Logger.info("emails: " + mails);
-        	String[] mailArr = Utils.getMailArray(mails);
-        	Logger.info("mailArr: " + mailArr[0]);
-            String[] to = {"roman@ait.ac.at","roman@ait.ac.at"};
-            EmailHelper.sendMessage(to,"Message test","Message body");
-        	
+            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
+            setPendingSelectedCrawlPermissions(true); 
         	res = ok(
 		        crawlpermissionsend.render(
 		            CrawlPermission.filterByStatus(Const.DEFAULT_CRAWL_PERMISSION_STATUS), User.find.byId(request().username())
@@ -430,6 +457,8 @@ public class CrawlPermissionEdit extends AbstractController {
         }
         if (sendsome != null) {
         	Logger.info("send some crawl permission requests");
+            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
+            setPendingSelectedCrawlPermissions(false); 
 	        res = ok(
 		        crawlpermissionsend.render(
 		            getAssignedPermissionsList(), User.find.byId(request().username())
@@ -437,11 +466,10 @@ public class CrawlPermissionEdit extends AbstractController {
 		        );
         }
         if (preview != null) {
-        	Logger.info("preview crawl permission requests");
-        	
+        	Logger.info("preview crawl permission requests");        	
 	        res = ok(
 	            crawlpermissionpreview.render(
-	            	getAssignedPermissionsList(), User.find.byId(request().username()), mails, template
+	            	getAssignedPermissionsList(), User.find.byId(request().username()), toMails, template
 	            )
 	        );
         }

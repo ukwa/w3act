@@ -113,6 +113,22 @@ public class Organisation extends Model {
     }
         
     /**
+     * Check if given by URL organisation exists in database.
+     * @param url
+     * @return true if exists
+     */
+    public static boolean existsByUrl(String url) {
+    	boolean res = false;
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
+    		Organisation organisation = find.where().eq(Const.URL, url).findUnique();
+    		if (organisation != null) {
+    			res = true;
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
      * Retrieve an organisation name by URL.
      * @param url
      * @return organisation name

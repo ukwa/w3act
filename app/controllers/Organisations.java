@@ -81,7 +81,9 @@ public class Organisations extends AbstractController {
             boolean isExisting = true;
             try {
                 try {
-                	organisation = Organisation.findByUrl(getFormParam(Const.URL));
+                	if (Organisation.existsByUrl(getFormParam(Const.URL))) {
+                		organisation = Organisation.findByUrl(getFormParam(Const.URL));
+                	}
                 } catch (Exception e) {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
@@ -97,7 +99,9 @@ public class Organisations extends AbstractController {
                 	organisation.url = getFormParam(Const.URL);
                 }
                 
-                organisation.title = getFormParam(Const.TITLE);
+        	    if (getFormParam(Const.TITLE) != null) {
+        	    	organisation.title = getFormParam(Const.TITLE);
+        	    }
         	    if (getFormParam(Const.FIELD_ABBREVIATION) != null) {
         	    	organisation.field_abbreviation = getFormParam(Const.FIELD_ABBREVIATION);
         	    }
