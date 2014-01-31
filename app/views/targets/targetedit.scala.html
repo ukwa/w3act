@@ -693,7 +693,10 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
-								<button type="submit" class="btn btn-success">Open License Request</button>
+								<button type="submit" name="request" class="btn btn-success">Open License Request</button>
+								@if(target.url != null) {
+								<a href="@routes.CrawlPermissionEdit.showCrawlPermissions(target.url)">Crawl Permissions</a>
+								}
 							</div>
 						</div>
 					</div>

@@ -55,7 +55,7 @@ public class CrawlPermissionEdit extends AbstractController {
      * Display the permission.
      */
     public static Result index() {
-        List<CrawlPermission> resList = processFilterCrawlPermissions("", Const.DEFAULT_CRAWL_PERMISSION_STATUS);
+        List<CrawlPermission> resList = processFilterCrawlPermissions("", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "");
         return ok(
                 crawlpermissions.render(
                     "CrawlPermissions", User.find.byId(request().username()), resList, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS
@@ -86,6 +86,29 @@ public class CrawlPermissionEdit extends AbstractController {
     }
     
     /**
+     * This method shows crawl permissions associated with given target. It is called from
+     * target edit page.
+     * @param targetUrl
+     * @return
+     */
+    public static Result showCrawlPermissions(String targetUrl) {
+    	Result res = null;
+    	String target = "";
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		target = Target.findByUrl(targetUrl).field_url;
+    	}
+    	Logger.info("showCrawlPermissions: " + targetUrl + ", target: " + target);
+        List<CrawlPermission> resList = processFilterCrawlPermissions("", "", target);
+    	Logger.info("showCrawlPermissions count: " + resList.size());
+        res = ok(
+        		crawlpermissions.render(
+                    "CrawlPermissions", User.find.byId(request().username()), resList, "", ""
+                )
+            );
+        return res;    	
+    }
+    
+    /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
      * @return
@@ -100,7 +123,7 @@ public class CrawlPermissionEdit extends AbstractController {
         if (status == null) {
         	status = Const.DEFAULT_CRAWL_PERMISSION_STATUS;
         }
-        List<CrawlPermission> resList = processFilterCrawlPermissions(name, status);
+        List<CrawlPermission> resList = processFilterCrawlPermissions(name, status, "");
         Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name + ", status: " + status);
         if (addentry != null) {
         	if (name != null && name.length() > 0) {
@@ -125,23 +148,29 @@ public class CrawlPermissionEdit extends AbstractController {
     
     /**
      * This method applyies filters to the list of crawl permissions.
-     * @param filterUrl
-     * @param status
+     * @param filterUrl The search string
+     * @param status The status of the permission workflow
+     * @param target The domain name (URL)
      * @return
      */
-    public static List<CrawlPermission> processFilterCrawlPermissions(String filterUrl, String status) {
+    public static List<CrawlPermission> processFilterCrawlPermissions(String filterUrl, String status, String target) {
 //    	Logger.info("process filter filterUrl: " + filterUrl + ", status: " + status);
     	boolean isProcessed = false;
     	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
     	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
-    	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
+    	if (filterUrl != null && !filterUrl.equals(Const.NONE) && filterUrl.length() > 0) {
     		Logger.info("name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);
     		isProcessed = true;
     	}
-    	if (status != null && !status.toLowerCase().equals(Const.NONE)) {
+    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
     		Logger.info("status: " + status);
     		exp = exp.eq(Const.STATUS, status);
+    		isProcessed = true;
+    	} 
+    	if (target != null && !target.toLowerCase().equals(Const.NONE) && target.length() > 0) {
+    		Logger.info("target: " + target);
+    		exp = exp.eq(Const.TARGET, target);
     		isProcessed = true;
     	} 
     	res = exp.query().findList();
