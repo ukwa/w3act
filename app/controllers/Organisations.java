@@ -1,12 +1,16 @@
 package controllers;
 
 import play.*;
+import play.libs.Json;
 import play.mvc.*;
 import static play.data.Form.*;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import models.*;
 import uk.bl.Const;
@@ -22,25 +26,132 @@ public class Organisations extends AbstractController {
     /**
      * Display the organisations.
      */
-    public static Result index() {
-        return ok(
-            organisations.render(
-                "Organisations", User.find.byId(request().username()), models.Organisation.findInvolving(), ""
-            )
-        );
-    }
 
-    // -- Organisations
+    public static Result index() {
+    	Logger.info("DCollections.index()");
+        return GO_HOME;
+    }
+    
+    public static Result GO_HOME = redirect(
+            routes.Organisations.list(0, "title", "asc", "")
+        );
 
     /**
-     * Add a organisation.
+     * Searching
      */
-    public static Result add() {
-        Organisation newOrganisation = Organisation.create(
-            "New organisation"
-        );
-        return ok();
+    public static Result search() {
+    	
+    	String action = form().bindFromRequest().get("action");
+		Logger.info("action: " + action);
+    	String query = getQueryParam(Const.QUERY);
+    	
+    	if (StringUtils.isBlank(query)) {
+			Logger.info("Organisation name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+	        flash("success", "You've been logged out");
+	        return redirect(
+	        		routes.Organisations.list(0, "title", "asc", "")
+	        );
+    	}
+
+    	int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
+    	String sort = getQueryParam(Const.SORT_BY);
+    	String order = getQueryParam(Const.ORDER);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.ADDENTRY.equals(action)) {
+        		return redirect(routes.Organisations.create(query));
+    		} 
+    		else if (Const.SEARCH.equals(action)) {
+    	    	return redirect(routes.Organisations.list(pageNo, sort, order, query));
+		    } else {
+		      return badRequest("This action is not allowed");
+		    }
+    	}
     }
+
+    /**
+     * Add an organisation.
+     */
+    public static Result create(String title) {
+//        Form<Organisation> organisationForm = form(Organisation.class);
+//        return ok(
+//            organisationedit.render(User.find.byId(request().username(), organisationForm))
+//        );
+    	
+    	Organisation organisation = new Organisation();
+    	organisation.title = title;
+        organisation.nid = Target.createId();
+        organisation.url = Const.ACT_URL + organisation.nid;
+		Logger.info("add entry with url: " + organisation.url + ", and title: " + organisation.title);
+        return ok(
+                organisationedit.render(
+                      organisation, User.find.byId(request().username())
+                )
+            );
+    }
+    
+    /**
+     * Display the organisation edit panel for this URL.
+     */
+    public static Result edit(String url) {
+		Logger.info("organisation url: " + url);
+		Organisation organisation = Organisation.findByUrl(url);
+		Logger.info("organisation title: " + organisation.title + ", url: " + url);
+        return ok(
+                organisationedit.render(
+                        Organisation.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
+    
+    /**
+     * filter for typeahead lookup
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result filterByJson(String name) {
+        JsonNode jsonData = null;
+        if (name != null) {
+	        List<Organisation> organisations = Organisation.filterByName(name);
+	        jsonData = Json.toJson(organisations);
+        }
+        return ok(jsonData);
+    }
+
+    /**
+     * Display the paginated list of Organisations.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     */
+    public static Result list(int pageNo, String sortBy, String order, String query) {
+    	Logger.info("Organisations.list() " + query);
+        return ok(
+        	list.render(
+        			"Organisations", 
+        			User.find.byId(request().username()), 
+        			query, 
+        			Organisation.page(pageNo, 10, sortBy, order, query), 
+        			sortBy, 
+        			order)
+        	);
+    }
+
+    /**
+     * Get View based on url
+     */
+    public static Result view(String url) {
+        return ok(
+                organisationview.render(
+                        Organisation.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }    
+    
     
     /**
      * Rename a organisation.
@@ -125,7 +236,7 @@ public class Organisations extends AbstractController {
            		Logger.info("update organisation: " + organisation.toString());
                	Ebean.update(organisation);
         	}
-	        res = redirect(routes.OrganisationEdit.view(organisation.url));
+	        res = redirect(routes.Organisations.view(organisation.url));
         } 
         if (delete != null) {
         	Organisation organisation = Organisation.findByUrl(getFormParam(Const.URL));
@@ -217,7 +328,5 @@ public class Organisations extends AbstractController {
         	res = ok();
         }
         return res;
-    }
-	    
+    }	    
 }
-

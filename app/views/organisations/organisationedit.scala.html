@@ -7,10 +7,10 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.OrganisationEdit.view(organisation.url)">View</a></li>
+	   <li><a href="@routes.Organisations.view(organisation.url)">View</a></li>
 	   <li><a href="@routes.OrganisationEdit.sites(organisation.url)">Sites</a></li> 
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.OrganisationEdit.edit(organisation.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.Organisations.edit(organisation.url)">Edit</a></li>
 		   <li><a href="@routes.OrganisationEdit.admin(organisation.url)">User administration</a></li>
 	   }
 	</ul>

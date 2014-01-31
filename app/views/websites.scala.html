@@ -46,7 +46,7 @@
 				                  <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>				                  
 				                  @if(target.field_nominating_organisation != null && Organisation.findByUrl(target.field_nominating_organisation).url != null 
 				                  	&& Organisation.findByUrl(target.field_nominating_organisation).title != null) {
-				                  	<td><a href="@routes.OrganisationEdit.view(Organisation.findByUrl(target.field_nominating_organisation).url)">
+				                  	<td><a href="@routes.Organisations.view(Organisation.findByUrl(target.field_nominating_organisation).url)">
 				                  		@Organisation.findByUrl(target.field_nominating_organisation).title</a></td>
 				                  } else {
 				                    <td></td>

@@ -55,7 +55,7 @@
 					@if(curator.field_affiliation != null 
 						&& Organisation.findByUrl(curator.field_affiliation).url != null
 						&& Organisation.findByUrl(curator.field_affiliation).title != null) {
-						<td><a href="@routes.OrganisationEdit.view(Organisation.findByUrl(curator.field_affiliation).url)">
+						<td><a href="@routes.Organisations.view(Organisation.findByUrl(curator.field_affiliation).url)">
 							@Organisation.findByUrl(curator.field_affiliation).title</a></td>
 					} else {
 					  <td></td>

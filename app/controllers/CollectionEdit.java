@@ -91,11 +91,8 @@ public class CollectionEdit extends AbstractController {
         		res = redirect(routes.CollectionEdit.addEntry(name));
         	} else {
         		Logger.info("DCollection name is empty. Please write name in search window.");
-                res = ok(
-                        dcollections.render(
-                            "DCollections", User.find.byId(request().username()), models.DCollection.filterByName(name), ""
-                        )
-                    );
+        		flash("message", "Please enter a name in the Search Text Field");
+        		return redirect(routes.DCollections.list(0, "title", "asc", ""));
         	}
         } else {
             res = ok(
