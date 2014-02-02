@@ -195,6 +195,9 @@ public class CrawlPermissionEdit extends AbstractController {
         permission.creatorUser = User.find.byId(request().username()).url;
         permission.status = Const.CrawlPermissionStatus.QUEUED.name();
         permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
+        permission.thirdPartyContent = false;
+        permission.agree = false;
+        permission.publish = true;
 		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
         return ok(
                 crawlpermissionedit.render(
@@ -304,6 +307,9 @@ public class CrawlPermissionEdit extends AbstractController {
             }
             
         	if (!isExisting) {
+                permission.thirdPartyContent = false;
+                permission.agree = false;
+                permission.publish = true;
                	Ebean.save(permission);
     	        Logger.info("save crawl permission: " + permission.toString());
     	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.SAVE);
@@ -344,7 +350,7 @@ public class CrawlPermissionEdit extends AbstractController {
     public static Result licences() {
         return ok(
                 licences.render(
-                	"Licences", User.find.byId(request().username()), models.License.findAll(), ""
+                	"Licences", User.find.byId(request().username()), models.Taxonomy.findListByType("license"), ""
                 )
             );
     }
@@ -481,7 +487,7 @@ public class CrawlPermissionEdit extends AbstractController {
      * otherwise only selected by checkbox.
      * @return
      */
-    public static void setPendingSelectedCrawlPermissions(boolean all) {
+    public static void setPendingSelectedCrawlPermissions(boolean all, String messageBody, String messageSubject) {
         List<CrawlPermission> permissionList = CrawlPermission.findAll();
         Iterator<CrawlPermission> permissionItr = permissionList.iterator();
         while (permissionItr.hasNext()) {
@@ -490,6 +496,13 @@ public class CrawlPermissionEdit extends AbstractController {
 //        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
                 boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag || all) {
+                	Logger.info("mail to contact person:" + permission.contactPerson.replace(Const.LIST_DELIMITER,"") + ".");
+            		String email = ContactPerson.findByUrl(permission.contactPerson.replace(Const.LIST_DELIMITER,"")).email;
+//                	String[] toMailAddresses = Utils.getMailArray(email);
+                	messageBody = CrawlPermission.replaceStringInText(messageBody, "||URL||", 
+                			routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
+                    EmailHelper.sendMessage(email, messageSubject, messageBody);                	
+//                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
                 	permission.status = Const.CrawlPermissionStatus.PENDING.name();
                 	Logger.info("new permission staus: " + permission.status);
                    	Ebean.update(permission);   
@@ -526,29 +539,32 @@ public class CrawlPermissionEdit extends AbstractController {
 
     	if (sendall != null) {
         	Logger.info("send all crawl permission requests");
-            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
-            setPendingSelectedCrawlPermissions(true); 
-        	res = ok(
-		        crawlpermissionsend.render(
-		            CrawlPermission.filterByStatus(Const.DEFAULT_CRAWL_PERMISSION_STATUS), User.find.byId(request().username())
-		            )
-		        );
+//            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
+            setPendingSelectedCrawlPermissions(true, messageBody, messageSubject); 
+	        res = redirect(routes.CrawlPermissionEdit.index()); 
+//        	res = ok(
+//		        crawlpermissionsend.render(
+//		            CrawlPermission.filterByStatus(Const.DEFAULT_CRAWL_PERMISSION_STATUS), User.find.byId(request().username())
+//		            )
+//		        );
         }
         if (sendsome != null) {
         	Logger.info("send some crawl permission requests");
-            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
-            setPendingSelectedCrawlPermissions(false); 
-	        res = ok(
-		        crawlpermissionsend.render(
-		            getAssignedPermissionsList(), User.find.byId(request().username())
-		            )
-		        );
+//            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
+            setPendingSelectedCrawlPermissions(false, messageBody, messageSubject); 
+	        res = redirect(routes.CrawlPermissionEdit.index()); 
+//	        res = ok(
+//		        crawlpermissionsend.render(
+//		            getAssignedPermissionsList(), User.find.byId(request().username())
+//		            )
+//		        );
         }
         if (preview != null) {
         	Logger.info("preview crawl permission requests");        	
 	        res = ok(
 	            crawlpermissionpreview.render(
-	            	getAssignedPermissionsList(), User.find.byId(request().username()), toMails, template
+		            	getAssignedPermissionsList().get(0), User.find.byId(request().username()), toMails, template
+//		            	getAssignedPermissionsList(), User.find.byId(request().username()), toMails, template
 	            )
 	        );
         }

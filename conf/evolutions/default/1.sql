@@ -48,6 +48,9 @@ create table crawl_permission (
   license_date              TEXT,
   request_followup          boolean,
   number_requests           bigint,
+  third_party_content       boolean,
+  publish                   boolean,
+  agree                     boolean,
   last_update               timestamp not null,
   constraint pk_crawl_permission primary key (id))
 ;
@@ -145,16 +148,6 @@ create table instance (
   field_instances           TEXT,
   field_subject             TEXT,
   constraint pk_instance primary key (nid))
-;
-
-create table license (
-  id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  type                      TEXT,
-  text                      TEXT,
-  last_update               timestamp not null,
-  constraint pk_license primary key (id))
 ;
 
 create table lookup_entry (
@@ -361,8 +354,6 @@ create sequence dcollection_seq;
 
 create sequence instance_seq;
 
-create sequence license_seq;
-
 create sequence lookup_entry_seq;
 
 create sequence mail_template_seq;
@@ -398,8 +389,6 @@ drop table if exists dcollection cascade;
 
 drop table if exists instance cascade;
 
-drop table if exists license cascade;
-
 drop table if exists lookup_entry cascade;
 
 drop table if exists mail_template cascade;
@@ -429,8 +418,6 @@ drop sequence if exists crawl_permission_seq;
 drop sequence if exists dcollection_seq;
 
 drop sequence if exists instance_seq;
-
-drop sequence if exists license_seq;
 
 drop sequence if exists lookup_entry_seq;
 

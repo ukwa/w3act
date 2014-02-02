@@ -37,7 +37,32 @@ public class LicenceController extends AbstractController {
      */
     public static Result index() {
 		return ok(
-            ukwalicence.render()
+            ukwalicence.render("")
+        );
+    }
+    
+    /**
+     * This method presents licence form for selected premission request
+     * that is identified by the given permission URL. 
+     * @param permissionUrl
+     * @return
+     */
+    public static Result form(String permissionUrl) {
+		return ok(
+            ukwalicence.render(permissionUrl)
+        );
+    }
+    
+    /**
+     * This method presents licence form view for selected premission request
+     * that is identified by the given permission URL. All fields are disabled. 
+     * @param permissionUrl
+     * @return
+     */
+    public static Result formview(String permissionUrl) {
+    	Logger.info("formview: " + permissionUrl);
+		return ok(
+            ukwalicenceview.render(permissionUrl)
         );
     }
     
@@ -75,15 +100,12 @@ public class LicenceController extends AbstractController {
             	}
             } 
         	Logger.info("flags isAgreed: " + isAgreed + ", noThirdPartyContent: " + noThirdPartyContent + ", mayPublish: " + mayPublish);
-            if (getFormParam(Const.TARGET) != null && isAgreed && noThirdPartyContent && mayPublish) {
+            if (getFormParam(Const.TARGET) != null) {
         	    String target = getFormParam(Const.TARGET);
         	    List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target);
         	    if (permissionList != null && permissionList.size() > 0) {
         	    	CrawlPermission permission = permissionList.get(0);
                 	Logger.info("found crawl permission: " + permission);
-                    if (getFormParam(Const.NAME) != null) {
-                        permission.name = getFormParam(Const.NAME);
-                    }
                     if (getFormParam(Const.NAME) != null) {
                         permission.name = getFormParam(Const.NAME);
                     }
@@ -96,10 +118,18 @@ public class LicenceController extends AbstractController {
                     if (getFormParam(Const.CONTACT_PERSON) != null) {
                         permission.contactPerson = getFormParam(Const.CONTACT_PERSON);
                     }
-                    if (getFormParam(Const.DATE) != null) {
-                        permission.licenseDate = getFormParam(Const.DATE);
+                    if (getFormParam(Const.LOG_DATE) != null) {
+                        permission.licenseDate = getFormParam(Const.LOG_DATE);
                     }
-                    permission.status = Const.CrawlPermissionStatus.GRANTED.name();
+                    if (isAgreed) {
+//                        if (isAgreed && noThirdPartyContent && mayPublish) {
+                    	permission.status = Const.CrawlPermissionStatus.GRANTED.name();
+                    } else {
+                    	permission.status = Const.CrawlPermissionStatus.REFUSED.name();
+                    }
+                    permission.agree = isAgreed;
+                    permission.thirdPartyContent = noThirdPartyContent;
+                    permission.publish = mayPublish;
                 	Ebean.update(permission);
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);

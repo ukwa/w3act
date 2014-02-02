@@ -6,7 +6,7 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import models.License;
+import models.Taxonomy;
 import models.DCollection;
 import models.Organisation;
 import models.Role;
@@ -45,7 +45,7 @@ public class LicenceEdit extends AbstractController {
      * Display the person.
      */
     public static Result index() {
-        List<License> resList = processFilterLicences("");
+        List<Taxonomy> resList = processFilterLicences("");
         return ok(
                 licences.render(
                     "Licences", User.find.byId(request().username()), resList, ""
@@ -64,7 +64,7 @@ public class LicenceEdit extends AbstractController {
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
 
-        List<License> resList = processFilterLicences(name);
+        List<Taxonomy> resList = processFilterLicences(name);
         Logger.info("search: " + search + ", name: " + name);
         if (search != null) {
             res = ok(
@@ -82,21 +82,22 @@ public class LicenceEdit extends AbstractController {
      * @param status
      * @return
      */
-    public static List<License> processFilterLicences(String filterUrl) {
+    public static List<Taxonomy> processFilterLicences(String filterUrl) {
 //    	Logger.info("process filter filterUrl: " + filterUrl);
     	boolean isProcessed = false;
-    	ExpressionList<License> exp = License.find.where();
-    	List<License> res = new ArrayList<License>();
+    	ExpressionList<Taxonomy> exp = Taxonomy.find.where();
+    	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
     		Logger.info("name: " + filterUrl);
-    		exp = exp.contains(Const.NAME, filterUrl);
+    		exp = exp.contains(Const.NAME, filterUrl);    		
+    		exp = exp.contains(Const.TYPE, Const.LICENCE);
     		isProcessed = true;
     	}
     	res = exp.query().findList();
     	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
-    		res = models.License.findAll();
+    		res = models.Taxonomy.findListByType(Const.LICENCE);
     	}
         return res;
     }        
@@ -105,7 +106,7 @@ public class LicenceEdit extends AbstractController {
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;
         if (name != null) {
-	        List<License> licences = License.filterByName(name);
+	        List<Taxonomy> licences = Taxonomy.filterByName(name);
 	        jsonData = Json.toJson(licences);
         }
         return ok(jsonData);

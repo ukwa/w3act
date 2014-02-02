@@ -14,6 +14,8 @@ import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
 
+import play.Logger;
+
 /**
  * This class describes the contact person details.
  */
@@ -137,6 +139,30 @@ public class ContactPerson extends Model
 		return res;
 	}
         
+    /**
+     * This method is used to show contact person in a table.
+     * It shows none value if no entry was found in database.
+     * @param url
+     * @return
+     */
+    public static ContactPerson showByUrl(String url) {
+    	Logger.info("person findByUrl: " + url);
+    	ContactPerson res = new ContactPerson();
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
+    		try {
+    			res = find.where().eq(Const.URL, url).findUnique();
+            	if (res == null) {
+                	res = new ContactPerson();
+                	res.name = Const.NONE;            	}
+    		} catch (Exception e) {
+    			Logger.info("contact person could not be find in database: " + e);
+    		}
+    	} else {
+        	res.name = Const.NONE;
+    	}
+    	return res;
+    }
+    	
     /**
      * Retrieve all contact persons.
      */
