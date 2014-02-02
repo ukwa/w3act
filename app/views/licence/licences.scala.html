@@ -1,4 +1,4 @@
-@(title: String, user: User, licences: List[License], searchstr: String)
+@(title: String, user: User, licences: List[Taxonomy], searchstr: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -47,14 +47,14 @@
 			<thead>
 				<tr>
 					<th>Name</th>
-					<th>Text</th>
+					<th>Description</th>
 				</tr>
 			</thead>
 			<tbody>
 			@licences.map { licence =>		              
 				<tr>
-					<td>@licence.name</a></td>
-					<td><a href="@licence.text">@licence.text</a></td>
+					<td><a href="@routes.LicenceController.index()">@licence.name</a></td>
+					<td>@licence.description</td>
 				</tr>
 			}
 			</tbody>

@@ -81,12 +81,6 @@ public class Global extends GlobalSettings {
     	        	contactPerson.url = Const.ACT_URL + contactPerson.id;
 	                Logger.info("Predefined " + ContactPerson.class.getSimpleName() + ": " + contactPerson.toString());
     	        }
-    	        if (cls == License.class) {
-    	        	License license = (License) sectionItr.next();
-    	        	license.id = Utils.createId();
-    	        	license.url = Const.ACT_URL + license.id;
-	                Logger.info("Predefined " + License.class.getSimpleName() + ": " + license.toString());
-    	        }
             }
             Ebean.save(sectionList);
 	    }
@@ -101,9 +95,6 @@ public class Global extends GlobalSettings {
 	                Logger.info("loading contact persons from configuration ...");
 	                Map<String,List<Object>> allContactPersons = (Map<String,List<Object>>)Yaml.load("contact-persons.yml");
 	                insertInitialData(Const.CONTACTPERSONS, ContactPerson.class, allContactPersons);	
-	                Logger.info("loading licenses from configuration ...");
-	                Map<String,List<Object>> allLicenses = (Map<String,List<Object>>)Yaml.load("licenses.yml");
-	                insertInitialData(Const.LICENSES, License.class, allLicenses);	
 	                Logger.info("loading users from configuration ...");
 	                Map<String,List<Object>> allusers = (Map<String,List<Object>>)Yaml.load("users.yml");
 	                insertInitialData(Const.USERS, User.class, allusers);	

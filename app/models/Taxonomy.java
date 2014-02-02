@@ -231,6 +231,19 @@ public class Taxonomy extends Model {
 		return res;
 	}
 	
+	/**
+	 * This method filters taxonomies by name and returns a list 
+	 * of filtered taxonomy objects.
+	 * @param name
+	 * @return
+	 */
+	public static List<Taxonomy> filterByName(String name) {
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+        ExpressionList<Taxonomy> ll = find.where().icontains(Const.NAME, name);
+    	res = ll.findList();
+		return res;
+	}
+        	
     public String toString() {
         return "Taxonomy(" + tid + ") with name: " + name;
     }

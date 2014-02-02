@@ -15,6 +15,7 @@ public final class Const {
 	public static final String MAILTEMPLATES   = "mailtemplates";
 	public static final String CONTACTPERSONS  = "contactpersons";
 	public static final String LICENSES        = "licenses";
+	public static final String LICENCE         = "license";
 
     // Authentification definitions
     public static final String URI             = "uri";
@@ -62,6 +63,10 @@ public final class Const {
 	public static final String OFFSET             = "offset";
 	public static final String LIMIT              = "limit";
 	public static final String LIST_DELIMITER     = ", ";
+	public static final String PROJECT_PROPERTY_FILE = "conf\\w3act.properties";
+	public static final String HOST               = "host";
+	public static final String PORT               = "port";
+	public static final String FROM               = "from";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";

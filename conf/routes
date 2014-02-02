@@ -20,6 +20,8 @@ GET     /assets/*file                       controllers.Assets.at(path="/public"
 GET     /ukwa/licence                       controllers.LicenceController.index()
 POST    /ukwa/licence/submit                controllers.LicenceController.submit()
 GET     /ukwa/licence/result                controllers.LicenceController.result()
+GET     /ukwa/licenceform/:url              controllers.LicenceController.form(url)
+GET     /ukwa/licenceformview/:url          controllers.LicenceController.formview(url)
 
 # Tabs
 GET     /collections                        controllers.DCollections.index()

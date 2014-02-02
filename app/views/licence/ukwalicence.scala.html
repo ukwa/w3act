@@ -1,3 +1,5 @@
+@(permissionUrl: String)
+
 <html>
     <head>
         <title>W3ACT</title>
@@ -51,7 +53,7 @@
 						<div class="form-group">
 							<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" type="text">
+				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" value="@CrawlPermission.showByUrl(permissionUrl).name" type="text">
 							</div>
 						</div>
 					</div>
@@ -62,7 +64,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="target" placeholder="http://www.londonbusinessforum.com/" type="text">
+								<input class="form-control" name="target" value="@CrawlPermission.showByUrl(permissionUrl).target" placeholder="http://www.londonbusinessforum.com/" type="text">
 							</div>
 						</div>
 					</div>
@@ -81,7 +83,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Name: <font color="red">*</font><small class="text-center">(organisation or individual)</small></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="contactPerson" placeholder="Max Mustermann" type="text">
+								<input class="form-control" name="contactPerson" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).name" placeholder="Max Mustermann" type="text">
 							</div>
 						</div>
 					</div>
@@ -92,7 +94,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Position: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="position" type="text">
+								<input class="form-control" name="position" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).position" type="text">
 							</div>
 						</div>
 					</div>
@@ -103,7 +105,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="email" placeholder="max.mustermann@@domain.com" type="text">
+								<input class="form-control" name="email" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).email" placeholder="max.mustermann@@domain.com" type="text">
 							</div>
 						</div>
 					</div>
@@ -114,7 +116,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Tel:</label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="phone" placeholder="0041889923456" type="text">
+								<input class="form-control" name="phone" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).phone" placeholder="0041889923456" type="text">
 							</div>
 						</div>
 					</div>
@@ -125,7 +127,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Any other information:</label>
 						    <div class="col-sm-6">
-		 						<textarea name="description" cols="100" rows="1" class="form-control"></textarea>
+		 						<textarea name="description" value="@CrawlPermission.showByUrl(permissionUrl).description" cols="100" rows="1" class="form-control"></textarea>
 							</div>
 						</div>
 					</div>
@@ -148,7 +150,7 @@
    						            <input name="content" id="radio1" value="1" type="radio"> Yes
 								</label>
 								<label class="radio-inline">
-							        <input name="content" id="radio2" value="2" type="radio"> No
+							        <input name="content" id="radio2" value="2" type="radio" checked> No
 								</label>
 							</div>
 						</div>
@@ -168,7 +170,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">I / We agree: <font color="red">*</font> Yes</label>
 						    <div class="col-sm-6">
-				                <input type="checkbox" name="agree"/>
+				                <input type="checkbox" name="agree" checked/>
 							</div>
 						</div>
 					</div>
@@ -179,7 +181,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="date" class="form-control" id="date" value="@LicenceController.getCurrentDate()" readonly/>
+		 						<input type="text" name="log-date" class="form-control" id="log-date" value="@LicenceController.getCurrentDate()"/>
 	                		</div>
 						</div>
 					</div>
@@ -198,7 +200,7 @@
 							 
 						    <div class="col-sm-6">
 								<label class="radio-inline">
-   						            <input name="publish" id="radio1" value="1" type="radio"> Yes
+   						            <input name="publish" id="radio1" value="1" type="radio" checked> Yes
 								</label>
 								<label class="radio-inline">
 							        <input name="publish" id="radio2" value="2" type="radio"> No

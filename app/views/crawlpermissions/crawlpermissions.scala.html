@@ -87,6 +87,7 @@
 						<th>Target</th>
 						<th>Contact Person</th>
 						<th>Communication Log</th>
+						<th>Licence</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -105,6 +106,9 @@
 						</td>
 						<td>
 			                <a href="@routes.CommunicationLogEdit.showLogs(permission.name)">Log</a>
+						</td>
+						<td>
+			                <a href="@routes.LicenceController.formview(permission.url)">Licence</a>
 						</td>
 					</tr>
 				}

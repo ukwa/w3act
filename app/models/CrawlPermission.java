@@ -100,6 +100,26 @@ public class CrawlPermission extends Model
     @JsonIgnore
     public Long numberRequests;
     
+    /**
+     * This is a checkbox defining whether any content on this web site subject 
+     * to copyright and/or the database right held by another party.
+     */
+    @JsonIgnore
+    public Boolean thirdPartyContent;
+    
+    /**
+     * This is a checkbox defining whether owner allows the archived web site 
+     * to be used in any future publicity for the Web Archive.
+     */
+    @JsonIgnore
+    public Boolean publish;
+    
+    /**
+     * This is a checkbox defining whether owner agrees to archive web site.
+     */
+    @JsonIgnore
+    public Boolean agree;
+    
     @JsonIgnore
     @Version
     public Timestamp lastUpdate;
@@ -227,7 +247,20 @@ public class CrawlPermission extends Model
     	res = Utils.hasElementInList(curContactPerson, contactPerson);
     	return res;
     }
-        
+
+    /**
+     * This method enables replacing of placeholders in mail text by given value.
+     * @param text The text of an email.
+     * @param placeHolder The placeholder string e.g. ||URL||
+     * @param value The value that overwrites placeholder
+     * @return updated text
+     */
+    public static String replaceStringInText(String text, String placeHolder, String value) {
+    	String res = text;
+    	res = text.replace(placeHolder, value);
+    	return res;
+    }
+    
     public String toString() {
         return "CrawlPermission(" + name + ")" + ", id:" + id;
     }    

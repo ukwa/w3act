@@ -1,7 +1,0 @@
-# Licenses
-
-licenses:
-
-    - !!models.License
-        name:         UKWA License
-        text:         http://localhost:9000/actdev/ukwa/licence
