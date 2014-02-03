@@ -29,14 +29,6 @@ import uk.bl.Const;
  */
 public class EmailHelper {
 
-//    private static final String HOST = "0.0.0.0";
-//    private static final String USER = "username";
-//    private static final String FROM = "roman@ait.ac.at";
-//    private static final String TO   = "max@ait.ac.at";
-//    private static final String PASS = "***";
-//    private static final String PORT = "25";
-//    private static final String AUTH = "true";
-
 //    @Test
 //    public void sendMail(){
 //        String[] to = {"roman@ait.ac.at","max@ait.ac.at"};
@@ -79,21 +71,12 @@ public class EmailHelper {
     		throw new RuntimeException(e);
     	}
     	
-//        Properties props = System.getProperties();
         props.put("mail.smtp.starttls.enable", Const.TRUE); 
-//        props.put("mail.smtp.host", HOST);
-//        props.put("mail.smtp.user", USER);
-//        props.put("mail.smtp.password", PASS);
-//        props.put("mail.smtp.port", PORT);
-//        props.put("mail.smtp.auth", AUTH);
         props.put("mail.smtp.auth", Const.TRUE);
-//        props.put("mail.smtp.ssl.trust", HOST);
 
         Session session = Session.getInstance(props,
 	      new javax.mail.Authenticator() {
 	        public PasswordAuthentication getPasswordAuthentication() {
-//	        	String user = props.get("mail.smtp.user");
-//	        	String password = props.get("mail.smtp.password");
 	        	String user = "";
 	        	String password = "";
 	        	try {
@@ -112,7 +95,6 @@ public class EmailHelper {
 	        		throw new RuntimeException(e);
 	        	}
 	            return new PasswordAuthentication(user, password);
-//	            return new PasswordAuthentication(USER, PASS);
 	        }
 	      });
 

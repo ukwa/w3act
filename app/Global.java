@@ -147,6 +147,12 @@ public class Global extends GlobalSettings {
 					// store collections in DB
 	                Ebean.save(allCollections);
 	                Logger.info("collections successfully loaded");
+	                Logger.info("load instances");
+					// aggregate instances data from drupal and store JSON content in a file
+			        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
+					// store instances in DB
+	                Ebean.save(allInstances);
+	                Logger.info("instances successfully loaded");
 	                normalizeUrls();
                 } catch (Exception e) {
                 	Logger.info("Store error: " + e);

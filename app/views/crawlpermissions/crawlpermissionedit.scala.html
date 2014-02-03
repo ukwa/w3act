@@ -1,5 +1,50 @@
 @(permission: CrawlPermission, user: User)
 
+@script = {
+    <script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+	<script>
+		$(document).ready(function() {
+	          var idle_timeout,
+	          LICENCE_URI = '/api/licence',
+	          MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doLicence server
+	          TRIGGER_CHARS = ". ,", // characters that force an doLicence lookup
+	          IDLE_THRESHOLD = 500; // doLicence is also done after IDLE_THRESHOLD milliseconds of key idleness
+        
+	          // Does the licence lookup
+	          var doLicence = function(text) {
+	              $.getJSON(LICENCE_URI + text, function(data) {
+	              alert("Check existing licences: " + data);
+	              var lab = document.getElementById('save'); 
+	              if (data) {
+		              lab.style = "color: green";
+	              } else {
+		              lab.style = "color: red";
+	              }
+	            });
+	          };
+	          
+	          // Restarts the keyboard-idleness timeout
+	          var restartIdleTimeout = function(text) {
+	            if (idle_timeout)
+	              window.clearTimeout(idle_timeout);
+	            
+	            idle_timeout = window.setTimeout(function() { doLicence(text); }, IDLE_THRESHOLD);
+	          };		
+	          
+			  $("#inputTarget").keyup(function() {
+					var text = $('input[name=target]').val();
+					
+				    if (text.length > MIN_TEXT_LENGTH) {
+				        restartIdleTimeout(text);
+				
+				    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+				        	doLicence(text);
+				    }
+			  });
+		});
+	</script>
+}
+
 @main("", user) {
 
    	<div class="page-header">
@@ -140,7 +185,7 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
+					<button type="submit" class="btn btn-primary" id="save" name="save">Save</button>
 					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
 		       </div>
 			</div>

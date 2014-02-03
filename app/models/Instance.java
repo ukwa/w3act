@@ -59,14 +59,12 @@ public class Instance extends Model {
     public Long sticky;
     public String created;
     public String changed;
-    public String author; // uri, id, resource TODO User
+    public String author; 
     public String log;
     public Long comment;
     public Long comment_count;
     public Long comment_count_new;
     public Long feed_nid;
-    //TODO difference between XML and JSON
-    //public Taxonomy taxonomy_term; (id-Long, resource-String) TODO
     public String field_crawl_end_date;
     public String field_live_site_status;
     public Long field_wct_id;
@@ -77,6 +75,12 @@ public class Instance extends Model {
     public String field_professional_judgement_exp;
     public String field_ignore_robots_txt;
     public String revision;
+    @Column(columnDefinition = "TEXT")
+    public String field_qa_issues;
+    @Column(columnDefinition = "TEXT")
+    public String field_target;
+    @Column(columnDefinition = "TEXT")
+    public String field_description_of_qa_issues;
     // lists
     @Column(columnDefinition = "TEXT")
     public String field_url; 

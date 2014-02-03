@@ -2,6 +2,7 @@ package pages;
 
 import org.fluentlenium.core.FluentPage;
 import org.openqa.selenium.WebDriver;
+
 // Although Eclipse marks the following two methods as deprecated,
 // the no-arg versions of the methods used here are not deprecated. (as of May, 2013).
 

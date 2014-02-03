@@ -1,38 +1,34 @@
 package uk.bl.api;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.Column;
+import java.util.Properties;
 
 import models.DCollection;
+import models.Instance;
 import models.Organisation;
 import models.Target;
 import models.Taxonomy;
+import models.TaxonomyVocabulary;
 import models.User;
-
-import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
-//import com.fasterxml.jackson.databind.BooleanNode;
-import com.fasterxml.jackson.core.*;
-import com.ning.http.client.Body;
-
+import play.Logger;
 import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.Const.NodeType;
 import uk.bl.Const.TaxonomyType;
-import models.*;
-import play.Logger;
+
+import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
+//import com.fasterxml.jackson.databind.BooleanNode;
 
 /**
  * JSON object management.
@@ -53,6 +49,36 @@ public class JsonUtils {
 	}
 	
 	/**
+	 * This method authenticates Drupal and loads data for particular node type.
+	 * @param urlStr The Drupal data response
+	 * @param type The node type
+	 * @return extracted data
+	 */
+	private static String authenticateAndLoadDrupal(String urlStr, NodeType type) {
+		String res = urlStr;
+    	try {
+        	String user = "";
+        	String password = "";
+        	Properties customProps = new Properties();
+    		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
+    	    for(String key : customProps.stringPropertyNames()) {
+    	    	  String value = customProps.getProperty(key);
+    	    	  if (key.equals(Const.DRUPAL_USER)) {
+  	    	          user = value;
+    	    	  }
+    	    	  if (key.equals(Const.DRUPAL_PASSWORD)) {
+  	    	          password = value;
+    	    	  }
+    	    }
+			HttpBasicAuth.downloadFileWithAuth(urlStr, user, password, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+			res = urlStr;
+    	} catch (IOException e) {
+    		throw new RuntimeException("Drupal authentification failed: " + e);
+    	}
+    	return res;
+	}
+	
+	/**
 	 * This method downloads remote data using HTTP request and retrieves contentfor passed type.
 	 * @param urlStr
 	 * @param type
@@ -62,7 +88,8 @@ public class JsonUtils {
 	    String res = "";
 	    if (urlStr != null && urlStr.length() > 0) {
 			// aggregate data from drupal and store JSON content in a file
-			HttpBasicAuth.downloadFileWithAuth(urlStr, Const.AUTH_USER, Const.AUTH_PASSWORD, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+	    	urlStr = authenticateAndLoadDrupal(urlStr, type);
+//			HttpBasicAuth.downloadFileWithAuth(urlStr, Const.AUTH_USER, Const.AUTH_PASSWORD, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
 			// read file and store content in String
 			res = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
 	    }
@@ -79,7 +106,7 @@ public class JsonUtils {
 	    try {
 		    String urlStr = Const.URL_STR + type.toString().toLowerCase();
 			// aggregate data from drupal and store JSON content in a file
-			HttpBasicAuth.downloadFileWithAuth(urlStr, Const.AUTH_USER, Const.AUTH_PASSWORD, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+	    	urlStr = authenticateAndLoadDrupal(urlStr, type);
 			// read file and store content in String
 			String content = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
 			// extract page information
@@ -110,8 +137,10 @@ public class JsonUtils {
 //			idx++;
 //		}
     	int idx = 0;
+    	Logger.info("res list size: " + res.size());
 		Iterator<Object> itr = res.iterator();
 		while (itr.hasNext()) {
+			Logger.info("itr.next: " + itr.next() + ", idx: " + idx);
 			if (type.equals(NodeType.URL)) {
 				Target obj = (Target) itr.next();
 		        obj.revision = Const.INITIAL_REVISION;
@@ -126,6 +155,7 @@ public class JsonUtils {
 					obj.edit_url = Const.WCT_URL + obj.vid;
 				}
 			}
+			idx++;
 		}
 		return res;
     }
@@ -259,7 +289,7 @@ public class JsonUtils {
     /**
      * This method retrieves secondary JSON data from Drupal for 
      * particular domain object type (e.g. User, Taxonomy ...).
-     * The URL to the secondary JSON data is included in previosly 
+     * The URL to the secondary JSON data is included in previously 
      * aggregated main domain objects (e.g. link to User is contained in Target).
      * @param type
      * @return a list of retrieved objects
@@ -272,7 +302,7 @@ public class JsonUtils {
 	    	Iterator<Target> itr = targets.iterator();
 	    	while (itr.hasNext()) {
 	    		Target target = itr.next();
-			    String urlStr = "";
+//			    String urlStr = "";
 			    if (type.equals(NodeType.USER)) {
 			    	readListFromString(target.author, urlList, type, null, res);
 			    }
@@ -290,6 +320,9 @@ public class JsonUtils {
 				    	readListFromString(taxonomy.vocabulary, urlList, type, null, res);
 			    	}
 			    }
+//			    if (type.equals(NodeType.INSTANCE)) {
+//			    	readListFromString(target.field_qa_issues, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
+//			    }
 	    	}
     	} catch (Exception e) {
 			Logger.info("data aggregation error: " + e);
@@ -509,6 +542,9 @@ public class JsonUtils {
 				if (type.equals(Const.NodeType.ORGANISATION)) {
 					obj = new Organisation();
 				}
+				if (type.equals(Const.NodeType.INSTANCE)) {
+					obj = new Instance();
+				}
 				parseJsonNode(node, obj);
 				res.add(obj);
 			}
@@ -701,9 +737,9 @@ public class JsonUtils {
 		for (Field f : fields) {
 			try {
 			    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
-					if (f.getName().contains("hosting") || f.getName().contains("domain")) {
-						int ll = 0;
-					}
+//					if (f.getName().contains("hosting") || f.getName().contains("domain")) {
+//						int ll = 0;
+//					}
 					JsonNode resNode = getElement(node, f.getName());
 					String jsonField = getStringList(resNode, f.getName(), false);
 					if (!f.getName().equals(Const.targetMap.get("field_url"))) {

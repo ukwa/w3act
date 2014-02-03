@@ -137,6 +137,9 @@ create table instance (
   field_professional_judgement_exp TEXT,
   field_ignore_robots_txt   varchar(255),
   revision                  varchar(255),
+  field_qa_issues           TEXT,
+  field_target              TEXT,
+  field_description_of_qa_issues TEXT,
   field_url                 TEXT,
   field_description         TEXT,
   field_uk_postal_address_url TEXT,
@@ -310,6 +313,8 @@ create table taxonomy (
   vocabulary                TEXT,
   feed_nid                  bigint,
   field_owner               TEXT,
+  field_dates               TEXT,
+  field_publish             TEXT,
   parent                    TEXT,
   parents_all               TEXT,
   constraint pk_taxonomy primary key (tid))

@@ -41,6 +41,10 @@ public class Taxonomy extends Model {
     @Column(columnDefinition = "TEXT") 
     public String field_owner;
     @Column(columnDefinition = "TEXT") 
+    public String field_dates;
+    @Column(columnDefinition = "TEXT") 
+    public String field_publish;
+    @Column(columnDefinition = "TEXT") 
     public String parent;
     @Column(columnDefinition = "TEXT") 
     public String parents_all;
