@@ -133,15 +133,21 @@ public class LicenceController extends AbstractController {
                 	Ebean.update(permission);
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);
-                    if (getFormParam(Const.LICENCE) != null) {
-                    	String licenceName = getFormParam(Const.LICENCE);
-                    	Taxonomy licenceTaxonomy = Taxonomy.findByName(licenceName);
-                    	Target targetObj = Target.findByUrl(permission.target);
-                    	if (targetObj != null) {
-                    		targetObj.field_license = licenceTaxonomy.url;
-                    		Ebean.update(targetObj);
-                    	}
-                    }
+        	        try {
+	                    if (getFormParam(Const.LICENCE) != null) {
+	                    	String licenceName = getFormParam(Const.LICENCE);
+	                    	Taxonomy licenceTaxonomy = Taxonomy.findByName(licenceName);
+	                    	Logger.info("Permission target: " + permission.target);
+	                    	Target targetObj = Target.findByTarget(permission.target);
+	                    	Logger.info("Target object: " + targetObj);
+	                    	if (targetObj != null) {
+	                    		targetObj.field_license = licenceTaxonomy.url;
+	                    		Ebean.update(targetObj);
+	                    	}
+	                    }
+        	        } catch (Exception e) {
+        	        	Logger.info("Update target for licence failed. " + e);
+        	        }
         	        Logger.info("update crawl permission: " + permission.toString());                    
         	    }
             } 

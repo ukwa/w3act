@@ -673,14 +673,14 @@
 						<div class="form-group">
 							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site should be archived and made available)</small></label>
 						    <div class="col-sm-6">
-								<select multiple="multiple" name="license" id="edit-field-license" class="form-control" size="2">
-								 	<option value="_none">None</option>
+								<select name="license" id="edit-field-license" class="form-control" size="2">
+								 	<option>None</option>
 								    @for(taxonomy <- Targets.getLicense()) {
-						                @if(target.field_license != null && target.field_license.equals(taxonomy.name)) {             
+						                @if(target.field_license != null && target.field_license.equals(taxonomy.url)) {             
 										 	<option selected>@taxonomy.name</option>
 									 	} else {
 										 	<option>@taxonomy.name</option>
-									 	}
+									 	}									 	
 								    }	
 								</select>
 							</div>
