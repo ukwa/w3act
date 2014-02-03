@@ -576,6 +576,21 @@ public class CrawlPermissionEdit extends AbstractController {
         return res;
     }
     
+    /**
+     * This method is checking if crawl permission for given target already exists and returns result in JSON format.
+     * @param target
+     * @return JSON result
+     */
+    public static Result crawlPermissionExist(String target) {
+    	boolean res = false;
+    	List<CrawlPermission> list = CrawlPermission.filterByTarget(target);
+        if (list != null && list.size() > 0) {
+        	res = true;
+        }
+    	Logger.info("crawl permission exists res: " + res + ", target: " + target);
+    	return ok(Json.toJson(res));
+    }
+    
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;

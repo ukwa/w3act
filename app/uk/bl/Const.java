@@ -17,12 +17,12 @@ public final class Const {
 	public static final String LICENSES        = "licenses";
 	public static final String LICENCE         = "license";
 
-    // Authentification definitions
+    // Drupal connection definitions
     public static final String URI             = "uri";
     public static final String URL             = "url";
     public static final String URL_STR         = "http://www.webarchive.org.uk/act/node.json?type=";
-	public static final String AUTH_USER       = "restws_robot";
-	public static final String AUTH_PASSWORD   = "r0b0UPDATE";
+	public static final String DRUPAL_USER     = "drupal_user";
+	public static final String DRUPAL_PASSWORD = "drupal_password";
 	public static final String OUT_FILE_PATH   = "res.txt"; // res files are stored in root directory of the project
 	
 	// Names of the JSON nodes
@@ -206,7 +206,8 @@ public final class Const {
 		ORGANISATION,
 		USER,
 		TAXONOMY,
-		TAXONOMY_VOCABULARY;
+		TAXONOMY_VOCABULARY,
+		INSTANCE;
     }
 	
 	public enum TaxonomyType {

@@ -128,6 +128,10 @@ For using the recommended IDE you require:
 
 * Eclipse Kepler Service Release 1 with m2eclipse plugin [eclipse]
 
+In order to setup Java project with W3ACT sources use command:
+
+play eclipse
+
 ### Troubleshooting
 
 **Getting SQL errors in browser**
