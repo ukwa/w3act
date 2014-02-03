@@ -513,7 +513,7 @@ public class Targets extends AbstractController {
 		        ExpressionList<Target> ll = Target.find.where().contains("field_license", target.field_license);
 		        if (ll.findRowCount() > 0) {
 		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.field_license);
-//		        	Logger.info("target.field_license: " + target.field_license + ".");
+		        	Logger.info("target.field_license: " + target.field_license + ".");
 //		        	Logger.info("taxonomy url: " + taxonomy.url);
 //		        	Logger.info("license: " + taxonomy.name);
 		        	res.add(taxonomy);
@@ -521,6 +521,7 @@ public class Targets extends AbstractController {
 		        }
 			}
 		}
+		Logger.info("getLicense res: " + res);
     	return res;
 	}
 	

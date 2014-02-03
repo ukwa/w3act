@@ -568,6 +568,27 @@ public class Target extends Model {
     }          
 
     /**
+     * Retrieve a Target by target URL.
+     * @param target URL
+     * @return target object
+     */
+    public static Target findByTarget(String target) {
+    	Target res = new Target();
+        Logger.info("findByTarget() target url: " + target);
+        
+        if (!target.contains(Const.COMMA)) {
+	        Target res2 = find.where().eq(Const.FIELD_URL_NODE, target).eq(Const.ACTIVE, true).findUnique();
+	        if (res2 == null) {
+	        	res.title = Const.NONE;
+	        } else {
+	        	res = res2;
+	        }
+//	        Logger.info("target title: " + res.title);
+        }
+    	return res;
+    }          
+
+    /**
      * This method returns previous Target revisions that are not more active for given URL
      * @param url
      * @return list of associated Targets
