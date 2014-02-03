@@ -48,7 +48,6 @@ public class Organisations extends AbstractController {
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
-	        flash("success", "You've been logged out");
 	        return redirect(
 	        		routes.Organisations.list(0, "title", "asc", "")
 	        );
