@@ -6,7 +6,7 @@
 	<script>
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
-			searchContext = 'lookup';
+			searchContext = 'targets';
 			urlTo = 'target';
 			applySearch(context, searchContext, urlTo);
 			scopeCheck(context);
@@ -40,7 +40,7 @@
     }
     
     // Generate the link
-    routes.LookUp.list(newPage, sortBy, order, searchurl)
+    routes.Targets.list(newPage, sortBy, order, searchurl)
     
 }
 
@@ -89,17 +89,21 @@
     <article class="lookup">
     
 		<div id="forms">
-			<form class="form-inline" action="@routes.LookUp.filterUrl()" method="POST" role="form">
+			@warningmessage(flash)
+			@helper.form(action=routes.Targets.search, 'class -> "form-inline") {
 	   			<div class="input-group">
+	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
+   					<input type="hidden" name="s" value="@currentSortBy">
+   					<input type="hidden" name="o" value="@currentOrder">
 					<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
 		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="search" title="Search for url">Search</button>
+						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
 						@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="addentry" title="Add new url">Add Target</button>
+							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new url">Add Target</button>
 						}
 					</span>
 				</div>
-		    </form>
+			}
 		</div>
 		
 		@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {

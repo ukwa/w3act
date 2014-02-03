@@ -26,8 +26,6 @@ GET     /ukwa/licenceformview/:url          controllers.LicenceController.formvi
 # Tabs
 GET     /collections                        controllers.DCollections.index()
 GET    	/collections/list                  	controllers.DCollections.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
-GET     /targets                            controllers.Targets.index()
-GET     /targets/:offset                    controllers.Targets.offset(offset:Int)
 
 GET     /organisations                      controllers.Organisations.index()
 GET     /organisations/list                 controllers.Organisations.list(p:Int ?= 0, s ?= "name", o ?= "asc", q ?= "")
@@ -66,7 +64,6 @@ GET     /urlsnocrawl                        controllers.UrlsNoCrawl.index()
 GET     /taxonomies                         controllers.EditTaxonomies.index()
 GET     /bookmarks                          controllers.Bookmarks.index()
 GET     /tips                               controllers.Tips.index()
-GET     /lookup                             controllers.LookUp.index()
 
 # Domain objects
 GET     /user/:user                         controllers.UserEdit.view(user)
@@ -93,7 +90,6 @@ GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxono
 GET     /target/:target                     controllers.TargetEdit.view(target)
 GET     /targetrevision/:revision           controllers.TargetEdit.viewrevision(revision:Long)
 GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
-GET     /targetaddentry/:target             controllers.TargetEdit.addEntry(target)
 GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit/:license/:sorted/       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int, license, sorted:Boolean)
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissionEdit.showCrawlPermissions(target)
 GET     /target/licencerequest/:name/:target  controllers.CrawlPermissionEdit.licenceRequestForTarget(name, target)
@@ -177,10 +173,16 @@ POST    /keysites/filter-url                controllers.KeySites.filterUrl()
 POST    /urlsearch/filter-url               controllers.UrlSearch.filterUrl()
 POST    /urlsnocrawl/filter-url             controllers.UrlsNoCrawl.filterUrl()
 POST    /websites/filter-url                controllers.WebSites.filterUrl()
+
+GET     /targets                            controllers.Targets.index()
 POST    /targets/filter                     controllers.Targets.filterUrl()
-POST    /lookup/filter-url                  controllers.LookUp.filterUrl()
-GET    	/lookup/filterbyjson/:url			controllers.LookUp.filterByJson(url)
-GET    	/lookup/list/                  		controllers.LookUp.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+POST    /targets/search          			controllers.Targets.search()
+GET    	/targets/filterbyjson/:url			controllers.Targets.filterByJson(url)
+GET    	/targets/list/                  	controllers.Targets.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET     /targets/lookup						controllers.Targets.lookup()
+GET     /targets/new/:title      			controllers.Targets.create(title)
+GET     /targets/:offset                    controllers.Targets.offset(offset:Int)
+
 
 POST    /targets/add-new                    controllers.UrlSearch.addNewTarget()
 GET     /website/:url                        controllers.WebSite.addEntry(url)

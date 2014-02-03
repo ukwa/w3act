@@ -6,7 +6,6 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import uk.bl.Const;
 import views.html.targets.*;
 
 /**
@@ -33,28 +32,6 @@ public class TargetEdit extends Controller {
         return ok(
                 targetedit.render(
                         Target.findByUrl(url), User.find.byId(request().username())
-                )
-            );
-    }
-    
-    /**
-     * Add new entry.
-     * @param target
-     * @return
-     */
-    public static Result addEntry(String targettitle) {
-        Logger.info("addEntry()");
-    	Target target = new Target();
-    	target.title = targettitle;
-        target.nid = Target.createId();
-        target.url = Const.ACT_URL + target.nid;
-        target.revision = Const.INITIAL_REVISION;
-        target.active = true;
-		Logger.info("add entry with target url: " + target.url);
-		Logger.info("target name: " + target.title);
-        return ok(
-                targetedit.render(
-                      target, User.find.byId(request().username())
                 )
             );
     }
