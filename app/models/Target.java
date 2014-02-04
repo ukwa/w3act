@@ -670,8 +670,13 @@ public class Target extends Model {
 	 * @param url
 	 * @return result as a flag
 	 */
-    public static boolean isInScope(String url, String nidUrl) throws WhoisException {
-    	return Scope.check(url, nidUrl);
+    public static boolean isInScope(String url, String nidUrl) {
+    	try {
+    		return Scope.check(url, nidUrl);
+    	} catch (WhoisException ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
     }
     
     /**
