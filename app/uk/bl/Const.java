@@ -63,6 +63,7 @@ public final class Const {
 	public static final String OFFSET             = "offset";
 	public static final String LIMIT              = "limit";
 	public static final String LIST_DELIMITER     = ", ";
+	public static final String SLASH_DELIMITER    = "/";
 	public static final String PROJECT_PROPERTY_FILE = "conf\\w3act.properties";
 	public static final String HOST               = "host";
 	public static final String PORT               = "port";

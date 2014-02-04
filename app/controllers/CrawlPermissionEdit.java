@@ -577,18 +577,60 @@ public class CrawlPermissionEdit extends AbstractController {
     }
     
     /**
+     * This method checks if crawl permission for given target already exists.
+     * @param target
+     * @return true if exists false otherwise
+     */
+    public static boolean checkCrawlPermissionTarget(String target) {
+    	Logger.info("checkCrawlPermissionTarget target: " + target);
+    	boolean res = false;
+    	List<CrawlPermission> list = CrawlPermission.filterByTarget(target);
+        if (list != null && list.size() > 0) {
+        	res = true;
+        }
+        return res;
+    }
+    
+    /**
      * This method is checking if crawl permission for given target already exists and returns result in JSON format.
      * @param target
      * @return JSON result
      */
     public static Result crawlPermissionExist(String target) {
     	Logger.info("crawlPermissionExist target: " + target);
-    	boolean res = false;
-    	List<CrawlPermission> list = CrawlPermission.filterByTarget(target);
-        if (list != null && list.size() > 0) {
-        	res = true;
-        }
+    	boolean res = checkCrawlPermissionTarget(target);
     	Logger.info("crawl permission exists res: " + res + ", target: " + target);
+    	return ok(Json.toJson(res));
+    }
+    
+    /**
+     * This method is checking if crawl permission for given target already exists and returns result in JSON format.
+     * @param target
+     * @return JSON result
+     */
+    public static Result crawlPermissionExistAtHigherLevel(String target) {
+    	Logger.info("crawlPermissionExistAtHigherLevel target: " + target);
+    	boolean res = false;
+    	String path = "";
+    	if (target != null) {
+    		if (target.contains(Const.SLASH_DELIMITER)) {
+		    	String[] parts = target.split(Const.SLASH_DELIMITER);
+		    	for (String part: parts)
+		        {
+		    		try {
+		    			res = checkCrawlPermissionTarget(path + part);
+		    			if (res) {
+		    				break;
+		    			} else {
+		    				path = path + part + Const.SLASH_DELIMITER;
+		    			}
+		    		} catch (Exception e) {
+		    			Logger.info("crawlPermissionExistAtHigherLevel error: " + e);
+		    		}
+		        }
+	    	}
+    	}
+    	Logger.info("crawl permission in higher level exists res: " + res + ", target: " + target);
     	return ok(Json.toJson(res));
     }
     

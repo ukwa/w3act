@@ -6,6 +6,7 @@
 		$(document).ready(function() {
              context = @play.api.Play.current.configuration.getString("application.context");
              licenceCheck(context);
+             licenceHigherLevelCheck(context);
 		});
 	</script>
 }
