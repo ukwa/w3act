@@ -267,8 +267,8 @@ public class CrawlPermissionEdit extends AbstractController {
         	    if (getFormParam(Const.DESCRIPTION) != null) {
         	    	permission.description = getFormParam(Const.DESCRIPTION);
         	    }
-        	    if (getFormParam(Const.TARGET) != null) {
-        	    	permission.target = getFormParam(Const.TARGET);
+        	    if (getFormParam(Const.FILTER) != null) {
+        	    	permission.target = getFormParam(Const.FILTER);
         	    }
                 if (getFormParam(Const.CONTACT_PERSON) != null) {
                 	if (!getFormParam(Const.CONTACT_PERSON).toLowerCase().contains(Const.NONE)) {
@@ -582,6 +582,7 @@ public class CrawlPermissionEdit extends AbstractController {
      * @return JSON result
      */
     public static Result crawlPermissionExist(String target) {
+    	Logger.info("crawlPermissionExist target: " + target);
     	boolean res = false;
     	List<CrawlPermission> list = CrawlPermission.filterByTarget(target);
         if (list != null && list.size() > 0) {

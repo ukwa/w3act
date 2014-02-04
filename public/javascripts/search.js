@@ -90,3 +90,55 @@ function scopeCheck(context) {
             }
     });
 }
+
+function licenceCheck(context) {
+    var idle_timeout,
+    LICENCE_URI = context + 'api/licence/',
+    MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
+    TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+    IDLE_THRESHOLD = 2000; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+
+	saveButton = $('#save')
+
+    // Does the Licence lookup
+    var doLicence = function(text) {
+	    $.ajax({
+	    	url: LICENCE_URI + text,
+	    	dataType: 'json',
+	    	success: function(data) {
+	    		if (data) {
+			    	saveButton.css('background-color','red');
+			    	console.log("success " + data);
+	    		} else {
+			    	saveButton.css('background-color','green');
+			    	console.log("success " + data);
+	    		}
+	    	},
+	    	error: function(jqXHR, textStatus, errorThrown) {
+		    	saveButton.css('background-color','red');
+		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+	    	}
+	    });
+    };
+    
+    // Restarts the keyboard-idleness timeout
+    var restartIdleTimeout = function(text) {
+	    if (idle_timeout) {
+		    window.clearTimeout(idle_timeout);
+	    }
+	    idle_timeout = window.setTimeout(function() { 
+	    	doLicence(text); 
+	    }, IDLE_THRESHOLD);
+    };                
+   
+    $("#search-query").keyup(function() {
+    	var text = $(this).val();
+
+    	if (text.length > MIN_TEXT_LENGTH) {
+    		restartIdleTimeout(text);
+           
+            if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+	            doLicence(text);
+            }
+    });
+}
