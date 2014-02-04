@@ -191,4 +191,5 @@ POST    /export/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/
 # Scope
 GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
 GET     /api/licence/:url                    controllers.CrawlPermissionEdit.crawlPermissionExist(url)
+GET     /api/licencelevel/:url               controllers.CrawlPermissionEdit.crawlPermissionExistAtHigherLevel(url)
 
