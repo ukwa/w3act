@@ -7,7 +7,7 @@
 	    <h1>Edit User @user.name</h1>
 	</div>
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.UserEdit.view(user.url)">View</a></li>
+	   <li><a href="@routes.Curators.view(user.url)">View</a></li>
 	   <li><a href="@routes.UserEdit.sites(user.url)">My Targets</a></li> 
 	   @if(admin.hasRole("sys_admin") || user.url.equals(admin.url)) {
 		   <li class="active"><a href="@routes.UserEdit.edit(user.url)">Edit</a></li>

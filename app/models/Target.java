@@ -760,7 +760,7 @@ public class Target extends Model {
      */
     public static Page<Target> page(int page, int pageSize, String sortBy, String order, String filter) {
 
-        return find.where().contains("field_url", filter)
+        return find.where().icontains("field_url", filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
