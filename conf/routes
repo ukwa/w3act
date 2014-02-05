@@ -38,6 +38,11 @@ GET     /organisations/:url        			controllers.Organisations.view(url)
 
 GET     /curators                           controllers.Curators.index()
 GET     /curators/list                      controllers.Curators.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET     /curators/search               		controllers.Curators.search()
+GET     /curators/new/:title      			controllers.Curators.create(title)
+GET    	/curators/filterbyjson/:name		controllers.Curators.filterByJson(name)
+GET     /curators/:url        				controllers.Curators.view(url)
+
 GET     /roles                              controllers.RoleEdit.index()
 GET     /roles/list							controllers.RoleEdit.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET     /permissions                        controllers.PermissionEdit.index()
@@ -66,12 +71,8 @@ GET     /bookmarks                          controllers.Bookmarks.index()
 GET     /tips                               controllers.Tips.index()
 
 # Domain objects
-GET     /user/:user                         controllers.UserEdit.view(user)
 GET     /useredit/:user                     controllers.UserEdit.edit(user)
 GET     /usersites/:usersites               controllers.UserEdit.sites(usersites)
-GET     /useradd/:user                      controllers.UserEdit.addEntry(user)
-POST    /user/filter/                       controllers.UserEdit.filter()
-GET    	/user/filterbyjson/:name			controllers.UserEdit.filterByJson(name)
 GET     /userbookmarks/:userbookmarks       controllers.UserEdit.bookmarks(userbookmarks)
 
 GET     /organisationsites/:sites           controllers.OrganisationEdit.sites(sites)

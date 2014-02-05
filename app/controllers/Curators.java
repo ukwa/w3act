@@ -1,15 +1,21 @@
 package controllers;
 
+import static play.data.Form.form;
 import play.*;
+import play.libs.Json;
 import play.mvc.*;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import models.*;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import views.html.organisations.organisationedit;
 import views.html.users.*;
 
 /**
@@ -29,6 +35,111 @@ public class Curators extends AbstractController {
     public static Result GO_HOME = redirect(
             routes.Curators.list(0, "name", "asc", "")
         );
+    
+    /**
+     * Display the paginated list of Curators.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     */
+    public static Result list(int pageNo, String sortBy, String order, String filter) {
+    	Logger.info("Curators.list() " + filter);
+        return ok(
+        	list.render(
+        			"Curators", 
+        			User.find.byId(request().username()), 
+        			filter, 
+        			User.page(pageNo, 10, sortBy, order, filter), 
+        			sortBy, 
+        			order)
+        	);
+    }
+    
+    /**
+     * Searching
+     */
+    public static Result search() {
+    	
+    	String action = form().bindFromRequest().get("action");
+		Logger.info("action: " + action);
+    	String query = getQueryParam(Const.NAME);
+		Logger.info("query: " + query);
+    	
+    	if (StringUtils.isBlank(query)) {
+			Logger.info("Curator's name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+	        return redirect(
+	        		routes.Organisations.list(0, "title", "asc", "")
+	        );
+    	}
+
+    	int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
+    	String sort = getQueryParam(Const.SORT_BY);
+    	String order = getQueryParam(Const.ORDER);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.ADDENTRY.equals(action)) {
+        		return redirect(routes.Curators.create(query));
+    		} 
+    		else if (Const.SEARCH.equals(action)) {
+    	    	return redirect(routes.Curators.list(pageNo, sort, order, query));
+		    } else {
+		      return badRequest("This action is not allowed");
+		    }
+    	}
+    }
+    
+    /**
+     * Add an organisation.
+     */
+    public static Result create(String title) {
+
+    	User user = new User();
+    	user.name = title;
+        user.uid = Target.createId();
+        user.url = Const.ACT_URL + user.uid;
+		Logger.info("add entry with url: " + user.url + ", and name: " + user.name);
+        return ok(
+                useredit.render(
+                      user, User.find.byId(request().username())
+                )
+            );
+    }
+    
+    /**
+     * Add new user entry.
+     * @param user
+     * @return
+     */
+
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result filterByJson(String name) {
+        JsonNode jsonData = null;
+        if (name != null) {
+	        List<User> users = User.filterByName(name);
+	        jsonData = Json.toJson(users);
+        }
+        return ok(jsonData);
+    }
+    
+    /**
+     * Display the user view panel for this URL.
+     */
+    public static Result view(String url) {
+		Logger.info("view user url: " + url);
+		User user = User.findByUrl(url);
+		Logger.info("user name: " + user.name + ", url: " + url);
+        return ok(
+                userview.render(
+                        User.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
     
     /**
      * This method saves changes on given curator in the same object
@@ -121,7 +232,7 @@ public class Curators extends AbstractController {
            		Logger.info("update user: " + user.toString());
                	Ebean.update(user);
         	}
-	        res = redirect(routes.UserEdit.view(user.url));
+	        res = redirect(routes.Curators.view(user.url));
         } 
         if (delete != null) {
         	User user = User.findByUrl(getFormParam(Const.URL));
@@ -129,27 +240,6 @@ public class Curators extends AbstractController {
 	        res = redirect(routes.Curators.index()); 
         }
         return res;
-    }
-	
-    /**
-     * Display the paginated list of Curators.
-     *
-     * @param page Current page number (starts from 0)
-     * @param sortBy Column to be sorted
-     * @param order Sort order (either asc or desc)
-     * @param filter Filter applied on target urls
-     */
-    public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("Curators.list()");
-        return ok(
-        	list.render(
-        			"Curators", 
-        			User.find.byId(request().username()), 
-        			filter, 
-        			User.page(pageNo, 10, sortBy, order, filter), 
-        			sortBy, 
-        			order)
-        	);
     }
 }
 
