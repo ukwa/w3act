@@ -8,11 +8,11 @@
 
 	<ul class="nav nav-tabs">
 		<li><a href="@routes.Curators.view(user.url)">View</a></li>
-		<li class="active"><a href="@routes.UserEdit.sites(user.url)">My Targets</a></li> 
+		<li class="active"><a href="@routes.Curators.sites(user.url)">My Targets</a></li> 
 		@if(admin.hasRole("sys_admin") || user.url.equals(admin.url)) {
-			<li><a href="@routes.UserEdit.edit(user.url)">Edit</a></li>
+			<li><a href="@routes.Curators.edit(user.url)">Edit</a></li>
 		}
-	   <!-- li><a href="@routes.UserEdit.bookmarks(user.url)" class="navbar-brand btn btn-success">Bookmarks</a></li--> 
+	   <!-- li><a href="@routes.Curators.bookmarks(user.url)" class="navbar-brand btn btn-success">Bookmarks</a></li--> 
 	</ul>
     
 	<table class="table table-hover">
@@ -32,7 +32,7 @@
 				<td><a class="brand" href="@routes.TargetEdit.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 				<td>@target.field_collection_categories</td>
 				<td>@target.field_subject</td>
-				<td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>
+				<td><a href="@routes.Curators.edit(target.author)">@User.findByUrl(target.author).name</a></td>
 				<td></td>
 				<td></td>
                </tr>
