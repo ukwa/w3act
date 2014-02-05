@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import models.*;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import views.html.userbookmarks;
 import views.html.organisations.organisationedit;
 import views.html.users.*;
 
@@ -141,6 +142,35 @@ public class Curators extends AbstractController {
             );
     }
     
+    /**
+     * Display the user edit panel for this URL.
+     */
+    public static Result edit(String url) {
+		Logger.info("user url: " + url);
+		User user = User.findByUrl(url);
+		Logger.info("user name: " + user.name + ", url: " + url);
+        return ok(
+                useredit.render(
+                        User.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
+    
+    public static Result sites(String url) {
+        return ok(
+                usersites.render(
+                        User.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
+    
+    public static Result bookmarks(String url) {
+        return ok(
+                userbookmarks.render(
+                        User.findByUrl(url)
+                )
+            );
+    }
     /**
      * This method saves changes on given curator in the same object
      * completed by revision comment. The "version" field in the User object
