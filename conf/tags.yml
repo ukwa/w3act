@@ -1,0 +1,12 @@
+# Open tags
+
+tags:
+
+    - !!models.Tag
+        name:         science
+        description:  This site is related to science
+
+    - !!models.Tag
+        name:         sport
+        description:  This site is related to sport
+

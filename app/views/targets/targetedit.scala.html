@@ -244,7 +244,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="keywords" class="col-sm-6 control-label">Keywords <small class="text-center">(The multiple uncontrolled keywords)</small></label>
+			              	<label for="keywords" class="col-sm-6 control-label">Keyword(s) <small class="text-center">(The multiple private uncontrolled keywords)</small></label>
 						    <div class="col-sm-6">
 		 				  		<input id="keywords" type="text" name="keywords" value="@target.keywords" size="60" maxlength="2048" class="form-control" />
 							</div>
@@ -252,6 +252,25 @@
 					</div>
 		     	</div>
 	
+		   		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="tags" id="tags" class="form-control">
+					                @for(tag <- CrawlPermission.getAllStatus()) {
+						                @if(target.tags.contains(tag)) {
+						                	<option selected>@tag</option>
+						                } else {
+						                	<option>@tag</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">

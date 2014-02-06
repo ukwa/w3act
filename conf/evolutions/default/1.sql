@@ -238,6 +238,15 @@ create table role (
   constraint pk_role primary key (id))
 ;
 
+create table tag (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  description               TEXT,
+  last_update               timestamp not null,
+  constraint pk_tag primary key (id))
+;
+
 create table target (
   nid                       bigint not null,
   value                     TEXT,
@@ -286,6 +295,12 @@ create table target (
   active                    boolean,
   white_list                varchar(255),
   black_list                varchar(255),
+  date_of_publication       varchar(255),
+  justification             TEXT,
+  selector_notes            TEXT,
+  archivist_notes           TEXT,
+  selection_type            varchar(255),
+  selector                  varchar(255),
   field_url                 TEXT,
   field_description         TEXT,
   field_uk_postal_address_url TEXT,
@@ -297,7 +312,10 @@ create table target (
   field_instances           TEXT,
   field_subject             TEXT,
   keywords                  TEXT,
+  tags                      TEXT,
   synonyms                  TEXT,
+  originating_organisation  TEXT,
+  flags                     TEXT,
   last_update               timestamp not null,
   constraint pk_target primary key (nid))
 ;
@@ -371,6 +389,8 @@ create sequence permission_refusal_seq;
 
 create sequence role_seq;
 
+create sequence tag_seq;
+
 create sequence target_seq;
 
 create sequence taxonomy_seq;
@@ -406,6 +426,8 @@ drop table if exists permission_refusal cascade;
 
 drop table if exists role cascade;
 
+drop table if exists tag cascade;
+
 drop table if exists target cascade;
 
 drop table if exists taxonomy cascade;
@@ -435,6 +457,8 @@ drop sequence if exists permission_seq;
 drop sequence if exists permission_refusal_seq;
 
 drop sequence if exists role_seq;
+
+drop sequence if exists tag_seq;
 
 drop sequence if exists target_seq;
 
