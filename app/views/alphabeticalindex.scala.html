@@ -49,7 +49,7 @@
 		                  	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url= http://@target.get_field_list_as_str("field_url")">(archival),</a>
 		                  	<a class="brand" href="@target.get_field_list_as_str("field_url")">(live)</a></td>
 		                  <td>0</td>
-		                  <td><a href="@routes.UserEdit.edit(target.author)">@User.findByUrl(target.author).name</a></td>
+		                  <td><a href="@routes.Curators.edit(target.author)">@User.findByUrl(target.author).name</a></td>
 		                  <td>@target.field_subject</td>
 		                  @if(target.field_nominating_organisation != null 
 		                  	&& Organisation.findByUrl(target.field_nominating_organisation).url != null
