@@ -10,7 +10,7 @@
 	<script>
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
-			applySearch(context, 'user'); 
+			applySearch(context, 'curators'); 
 		});
 	</script>
 }
@@ -86,17 +86,21 @@
 	
 	<article class="curators">
 		<div id="forms">
-			<form class="form-inline" action="@routes.UserEdit.filter()" method="POST" role="form">
+   			@warningmessage(flash)
+			@helper.form(action=routes.Curators.search, 'class -> "form-inline") {
 	   			<div class="input-group">
+	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
+   					<input type="hidden" name="s" value="@currentSortBy">
+   					<input type="hidden" name="o" value="@currentOrder">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="search" title="Search for name">Search</button>
+						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="addentry" title="Add new ">Add</button>
+							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new">Add</button>
 						}
 					</span>
 				</div>
-		    </form>
+			}
 		</div>	    
 	    
 	    @pagination
@@ -113,7 +117,7 @@
 			<tbody>
 			@for(curator <- currentPage.getList) {
 				<tr>		                  
-					<td><a href="@routes.UserEdit.view(curator.url)">@curator.name</a></td>
+					<td><a href="@routes.Curators.view(curator.url)">@curator.name</a></td>
 					<td>@curator.email</td>
 					<td>@curator.roles</td>
 					@if(curator.field_affiliation != null 

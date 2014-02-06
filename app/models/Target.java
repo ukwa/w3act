@@ -686,8 +686,13 @@ public class Target extends Model {
 	 * @param url
 	 * @return result as a flag
 	 */
-    public static boolean isInScope(String url, String nidUrl) throws WhoisException {
-    	return Scope.check(url, nidUrl);
+    public static boolean isInScope(String url, String nidUrl) {
+    	try {
+    		return Scope.check(url, nidUrl);
+    	} catch (WhoisException ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
     }
     
     /**
@@ -782,7 +787,7 @@ public class Target extends Model {
      */
     public static Page<Target> page(int page, int pageSize, String sortBy, String order, String filter) {
 
-        return find.where().contains("field_url", filter)
+        return find.where().icontains("field_url", filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

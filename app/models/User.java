@@ -295,7 +295,7 @@ public class User extends Model {
      */
     public static Page<User> page(int page, int pageSize, String sortBy, String order, String filter) {
 
-        return find.where().contains("name", filter)
+        return find.where().icontains("name", filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
