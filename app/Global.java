@@ -81,6 +81,12 @@ public class Global extends GlobalSettings {
     	        	contactPerson.url = Const.ACT_URL + contactPerson.id;
 	                Logger.info("Predefined " + ContactPerson.class.getSimpleName() + ": " + contactPerson.toString());
     	        }
+    	        if (cls == Tag.class) {
+    	        	Tag tag = (Tag) sectionItr.next();
+    	        	tag.id = Utils.createId();
+    	        	tag.url = Const.ACT_URL + tag.id;
+	                Logger.info("Predefined " + Tag.class.getSimpleName() + ": " + tag.toString());
+    	        }
             }
             Ebean.save(sectionList);
 	    }
@@ -89,6 +95,9 @@ public class Global extends GlobalSettings {
 		public static void insert(Application app) {
             if(Ebean.find(User.class).findRowCount() == 0) {
                 try {
+	                Logger.info("loading open tags from configuration ...");
+	                Map<String,List<Object>> alltags = (Map<String,List<Object>>)Yaml.load("tags.yml");
+	                insertInitialData(Const.TAGS, Tag.class, alltags);	
 	                Logger.info("loading e-mail templates from configuration ...");
 	                Map<String,List<Object>> alltemplates = (Map<String,List<Object>>)Yaml.load("templates.yml");
 	                insertInitialData(Const.MAILTEMPLATES, MailTemplate.class, alltemplates);	

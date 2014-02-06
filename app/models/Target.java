@@ -33,7 +33,7 @@ import uk.bl.scope.Scope;
 public class Target extends Model {
 
     @Id
-    public Long nid;
+    public Long nid; // Legacy Site ID
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")
@@ -84,6 +84,16 @@ public class Target extends Model {
     public Boolean active; // flag for the latest version of the target among targets with the same URL
     public String white_list; // regex for white list URLs
     public String black_list; // regex for black list URLs
+    public String date_of_publication;
+    @Column(columnDefinition = "TEXT")
+    public String justification; 
+    @Column(columnDefinition = "TEXT")
+    public String selector_notes; 
+    @Column(columnDefinition = "TEXT")
+    public String archivist_notes; 
+    public String selection_type; 
+    public String selector;     
+    
     // lists
     @Column(columnDefinition = "TEXT")
     public String field_url; 
@@ -108,7 +118,13 @@ public class Target extends Model {
     @Column(columnDefinition = "TEXT")
     public String keywords; 
     @Column(columnDefinition = "TEXT")
+    public String tags; 
+    @Column(columnDefinition = "TEXT")
     public String synonyms; 
+    @Column(columnDefinition = "TEXT")
+    public String originating_organisation; 
+    @Column(columnDefinition = "TEXT")
+    public String flags; 
     
     @Version
     public Timestamp lastUpdate;
@@ -681,6 +697,17 @@ public class Target extends Model {
     public static List<Target> findAllActive() {
 		List<Target> res = new ArrayList<Target>();
         ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true);
+    	res = ll.findList(); 
+		return res;
+    }          
+
+    /**
+     * This method finds all targets that have higher level domain containing in
+     * their path on order to extend licence obtained for higher level to the lower levels.
+     */
+    public static List<Target> findAllTargetsWithLowerLevel(String target) {
+		List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, target).eq(Const.ACTIVE, true);
     	res = ll.findList(); 
 		return res;
     }          

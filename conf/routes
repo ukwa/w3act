@@ -147,6 +147,14 @@ POST    /refusal/filter/                    controllers.PermissionRefusalEdit.fi
 GET    	/refusal/filterbyjson/:name	        controllers.PermissionRefusalEdit.filterByJson(name)
 POST    /refusal/save                       controllers.PermissionRefusalEdit.save()
 
+GET     /tag                                controllers.TagEdit.index()
+GET     /tag/:tag                           controllers.TagEdit.view(tag)
+GET     /tagedit/:tag                       controllers.TagEdit.edit(tag)
+GET     /tagadd/:tag                        controllers.TagEdit.addEntry(tag)
+POST    /tag/filter/                        controllers.TagEdit.filter()
+GET    	/tag/filterbyjson/:name	            controllers.TagEdit.filterByJson(name)
+POST    /tag/save                           controllers.TagEdit.save()
+
 GET     /communicationlog                   controllers.CommunicationLogEdit.index()
 GET     /communicationlog/:log              controllers.CommunicationLogEdit.view(log)
 GET     /communicationlogedit/:log          controllers.CommunicationLogEdit.edit(log)
@@ -192,4 +200,5 @@ POST    /export/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/
 GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
 GET     /api/licence/:url                    controllers.CrawlPermissionEdit.crawlPermissionExist(url)
 GET     /api/licencelevel/:url               controllers.CrawlPermissionEdit.crawlPermissionExistAtHigherLevel(url)
+GET     /api/licenceprompthigherlevel/:url   controllers.CrawlPermissionEdit.checkForHigherLevelPrompt(url)
 

@@ -1,0 +1,43 @@
+@(tag: Tag, user: User)
+
+
+@main("", user) {
+    
+	<div class="page-header">
+	    <h1>Open tag @tag.name</h1>
+	</div>
+	
+	<ul class="nav nav-tabs">
+	   <li class="active"><a href="@routes.TagEdit.view(tag.url)">View</a></li>
+	   @if(user.hasRole("sys_admin")) {
+	   	<li><a href="@routes.TagEdit.edit(tag.url)">Edit</a></li>
+	   }
+	</ul>
+
+	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="inputName" class="col-sm-6 control-label">Name<font color="red">*</font></label>
+			    <div class="col-sm-6">
+              		<input class="form-control" name="name" id="inputName" value="@tag.name" type="text" readonly>
+				</div>
+			</div>
+		</div>
+    </div>
+          
+	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+               <label class="col-sm-6 control-label" for="inputDescription">Description</label>
+			    <div class="col-sm-6">
+               		<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" readonly>@tag.description</textarea>
+				</div>
+			</div>
+		</div>
+   	</div>
+		          
+}
+                   
+	            
+
+

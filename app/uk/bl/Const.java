@@ -68,6 +68,7 @@ public final class Const {
 	public static final String HOST               = "host";
 	public static final String PORT               = "port";
 	public static final String FROM               = "from";
+	public static final String TAGS               = "tags";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";

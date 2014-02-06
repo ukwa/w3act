@@ -634,6 +634,28 @@ public class CrawlPermissionEdit extends AbstractController {
     	return ok(Json.toJson(res));
     }
     
+    /**
+     * This method is checking if crawl permission for given target for higher level
+     * would be possible and returns result in JSON format.
+     * @param target
+     * @return JSON result
+     */
+    public static Result checkForHigherLevelPrompt(String target) {
+    	Logger.info("checkForHigherLevelPrompt target: " + target);
+    	boolean res = false;
+    	String path = "";
+    	if (target != null) {
+    		if (target.contains(Const.SLASH_DELIMITER)) {
+		    	String[] parts = target.split(Const.SLASH_DELIMITER);
+		    	if (parts.length > 1) {
+		    		res = true;
+		    	}
+	    	}
+    	}
+    	Logger.info("crawl permission in higher level exists res: " + res + ", target: " + target);
+    	return ok(Json.toJson(res));
+    }
+    
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;
