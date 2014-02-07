@@ -125,6 +125,8 @@ public class Target extends Model {
     public String originating_organisation; 
     @Column(columnDefinition = "TEXT")
     public String flags; 
+    @Column(columnDefinition = "TEXT")
+    public String authors; 
     
     @Version
     public Timestamp lastUpdate;
@@ -776,6 +778,30 @@ public class Target extends Model {
     	return res;
     }
     
+    /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+    public boolean hasContactPerson(String curContactPerson) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(curContactPerson, authors);
+    	return res;
+    }
+    
+    /**
+     * This method returns a list of all language values for target record.
+     * @return
+     */
+    public static List<String> getAllLanguage() {
+    	List<String> res = new ArrayList<String>();
+	    Const.TargetLanguage[] resArray = Const.TargetLanguage.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+
     /**
      * Return a page of Target
      *

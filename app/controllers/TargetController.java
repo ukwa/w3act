@@ -71,6 +71,29 @@ public class TargetController extends AbstractController {
 //        		Logger.info("status: " + getFormParam(Const.STATUS) + ".");
             	newTarget.status = Long.valueOf(getFormParam(Const.STATUS));
             } 
+            if (getFormParam(Const.LANGUAGE) != null) {
+//        		Logger.info("language: " + getFormParam(Const.LANGUAGE) + ".");
+            	newTarget.language = getFormParam(Const.LANGUAGE);
+            } 
+    		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
+            if (getFormParam(Const.AUTHORS) != null) {
+            	if (!getFormParam(Const.AUTHORS).toLowerCase().contains(Const.NONE)) {
+	            	String[] contactPersons = getFormParams(Const.AUTHORS);
+	            	Logger.info("param: " + contactPersons.length + contactPersons.toString());
+	            	String resContactPersons = "";
+	            	for (String contactPerson : contactPersons)
+	                {
+                		Logger.info("contactPerson: " + contactPerson);
+                		if (contactPerson != null && contactPerson.length() > 0) {
+//		                		Logger.info("add contactPerson: " + contactPerson);
+	                		resContactPersons = resContactPersons + ContactPerson.findByName(contactPerson).url + Const.LIST_DELIMITER;
+	            		}
+	                }
+	            	target.authors = resContactPersons;
+            	} else {
+            		target.authors = Const.NONE;
+            	}
+            }            
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
@@ -114,6 +137,14 @@ public class TargetController extends AbstractController {
             		newTarget.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
             	} else {
             		newTarget.field_nominating_organisation = Const.NONE;
+            	}
+            }
+            if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
+            	if (!getFormParam(Const.ORIGINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
+//            		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
+            		newTarget.originating_organisation = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
+            	} else {
+            		newTarget.originating_organisation = Const.NONE;
             	}
             }
 //    		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);

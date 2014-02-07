@@ -87,6 +87,7 @@ public final class Const {
 	public static final String DESCRIPTION        = "description";
 	public static final String SUBJECT            = "subject";
 	public static final String ORGANISATION       = "organisation";
+	public static final String ORIGINATING_ORGANISATION = "originating_organisation";
 	public static final String FIELD_SUGGESTED_COLLECTIONS = "field_suggested_collections";
 	public static final String FIELD_CRAWL_FREQUENCY = "field_crawl_frequency";
 	public static final String FIELD_COLLECTION_CATEGORIES = "field_collection_categories";
@@ -113,6 +114,8 @@ public final class Const {
     public static final String KEYWORDS = "keywords";
     public static final String SYNONYMS = "synonyms";
     public static final String SORTED = "sorted";
+    public static final String LANGUAGE = "language";
+    public static final String AUTHORS = "authors";
     
     // Creator
 	public static final String UID                = "uid";
@@ -266,6 +269,14 @@ public final class Const {
 		OTHER;
     }
     	
+	/**
+	 * The predominant language of target.
+	 */
+	public enum TargetLanguage {
+		EN,
+		DE;
+    }
+    
     /**
      * Help collections to read JSON lists like
      * "field_url":[{"url":"http:\/\/www.adoptionuk.org\/"}]

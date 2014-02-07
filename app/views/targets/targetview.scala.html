@@ -54,6 +54,8 @@
 				<dd>@target.field_spt_id</dd>
 				<dt>Keywords:</dt>
 				<dd>@target.keywords</dd>
+				<dt>Tag(s):</dt>
+				<dd>@target.tags</dd>
 				<dt>Synonyms:</dt>
 				<dd>@target.synonyms&nbsp;</dd>
 			</dl>
@@ -73,8 +75,14 @@
 				<dd>@DCollection.findTitlesByUrls(target.field_suggested_collections)</dd>
 				<dt>Nominating Organisation:</dt>
 				<dd>@Organisation.findByUrl(target.field_nominating_organisation).title</dd>
+				<dt>Originating Organisation:</dt>
+				<dd>@Organisation.findByUrl(target.originating_organisation).title</dd>
 				<dt>User:</dt>
 				<dd>@User.findByUrl(target.author).name&nbsp;</dd>
+				<dt>Language:</dt>
+				<dd>target.language</dd>
+				<dt>Author(s):</dt>
+				<dd>target.authors</dd>
 			</dl>
 		</div>
 	
