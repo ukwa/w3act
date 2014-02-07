@@ -258,11 +258,11 @@
 			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
 						    <div class="col-sm-6">
 								<select multiple name="tags" id="tags" class="form-control">
-					                @for(tag <- CrawlPermission.getAllStatus()) {
-						                @if(target.tags.contains(tag)) {
-						                	<option selected>@tag</option>
+					                @for(tag <- Tag.findAll()) {
+						                @if(target.tags != null && target.tags.contains(tag)) {
+						                	<option selected>@tag.name</option>
 						                } else {
-						                	<option>@tag</option>
+						                	<option>@tag.name</option>
 						                }
 					                }
 								</select>
