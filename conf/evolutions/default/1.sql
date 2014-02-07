@@ -316,6 +316,7 @@ create table target (
   synonyms                  TEXT,
   originating_organisation  TEXT,
   flags                     TEXT,
+  authors                   TEXT,
   last_update               timestamp not null,
   constraint pk_target primary key (nid))
 ;
