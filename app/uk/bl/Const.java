@@ -116,6 +116,7 @@ public final class Const {
     public static final String SORTED = "sorted";
     public static final String LANGUAGE = "language";
     public static final String AUTHORS = "authors";
+    public static final String FLAGS = "flags";
     
     // Creator
 	public static final String UID                = "uid";
@@ -275,6 +276,20 @@ public final class Const {
 	public enum TargetLanguage {
 		EN,
 		DE;
+    }
+    
+	/**
+	 * The flag types of target.
+	 */
+	public enum TargetFlags {
+	    PRIORITY_PERMISSION,
+	    PRIORITY_CRAWL_AND_QA, 
+	    PRIORITY_QA,
+	    QA_ISSUE_APPEARANCE,
+	    QA_ISSUE_FUNCTIONALITY,
+	    QA_ISSUE_CONTENT,
+	    FOLLOW_UP_PEMISSION,
+	    GENERAL_CHANGE_REQUEST;
     }
     
     /**
