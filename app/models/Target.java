@@ -803,6 +803,19 @@ public class Target extends Model {
     }         
 
     /**
+     * This method returns a list of all flag values for target record.
+     * @return
+     */
+    public static List<String> getAllFlags() {
+    	List<String> res = new ArrayList<String>();
+	    Const.TargetFlags[] resArray = Const.TargetFlags.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+
+    /**
      * Return a page of Target
      *
      * @param page Page to display

@@ -385,7 +385,26 @@
 						</div>
 					</div>
 		     	</div>		   
-     			     		
+     			     	
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="status" class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
+						    <div class="col-sm-6">
+								<select name="flags" id="flags" class="form-control">
+					                @for(flag <- Target.getAllFlags()) {
+						                @if(flag.equals(target.flags)) {
+						                	<option selected disabled>@target.flags</option>
+						                } else {
+						                	<option disabled>@flag</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+		     	     			     		
 			</div>
 			
 			<div class="tab-pane fade" id="crawlpermission">

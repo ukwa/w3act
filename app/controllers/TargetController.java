@@ -75,6 +75,9 @@ public class TargetController extends AbstractController {
 //        		Logger.info("language: " + getFormParam(Const.LANGUAGE) + ".");
             	newTarget.language = getFormParam(Const.LANGUAGE);
             } 
+            if (getFormParam(Const.FLAGS) != null) {
+            	newTarget.flags = getFormParam(Const.FLAGS);
+            } 
     		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
             if (getFormParam(Const.AUTHORS) != null) {
             	if (!getFormParam(Const.AUTHORS).toLowerCase().contains(Const.NONE)) {
