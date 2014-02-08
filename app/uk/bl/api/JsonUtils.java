@@ -138,25 +138,29 @@ public class JsonUtils {
 //		}
     	int idx = 0;
     	Logger.info("res list size: " + res.size());
-		Iterator<Object> itr = res.iterator();
-		while (itr.hasNext()) {
-			Logger.info("itr.next: " + itr.next() + ", idx: " + idx);
-			if (type.equals(NodeType.URL)) {
-				Target obj = (Target) itr.next();
-		        obj.revision = Const.INITIAL_REVISION;
-		        obj.active = true;
-				if (obj.vid > 0) {
-					obj.edit_url = Const.WCT_URL + obj.vid;
+    	if (!type.equals(NodeType.INSTANCE)) {
+			Iterator<Object> itr = res.iterator();
+			while (itr.hasNext()) {
+				if (type.equals(NodeType.URL)) {
+					Target obj = (Target) itr.next();
+			        obj.revision = Const.INITIAL_REVISION;
+			        obj.active = true;
+					if (obj.vid > 0) {
+						obj.edit_url = Const.WCT_URL + obj.vid;
+					}
 				}
-			}
-			if (type.equals(NodeType.ORGANISATION)) {
-				Organisation obj = (Organisation) itr.next();
-				if (obj.vid > 0) {
-					obj.edit_url = Const.WCT_URL + obj.vid;
+				if (type.equals(NodeType.ORGANISATION)) {
+					Organisation obj = (Organisation) itr.next();
+					if (obj.vid > 0) {
+						obj.edit_url = Const.WCT_URL + obj.vid;
+					}
+//				} else {
+//					Object obj = itr.next();
+//					Logger.info("itr.next: " + obj + ", idx: " + idx);
 				}
+				idx++;
 			}
-			idx++;
-		}
+    	}
 		return res;
     }
         
