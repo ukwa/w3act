@@ -26,7 +26,7 @@ public class TargetEdit extends Controller {
      * Display the target edit panel for this URL.
      */
     public static Result edit(String url) {
-//		Logger.info("TargetEdit.edit() url: " + url);
+		Logger.info("TargetEdit.edit() url: " + url);
 		Target target = Target.findByUrl(url);
 		Logger.info("TargetEdit.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
         return ok(

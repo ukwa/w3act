@@ -75,9 +75,17 @@ public class TargetController extends AbstractController {
 //        		Logger.info("language: " + getFormParam(Const.LANGUAGE) + ".");
             	newTarget.language = getFormParam(Const.LANGUAGE);
             } 
-            if (getFormParam(Const.FLAGS) != null) {
-            	newTarget.flags = getFormParam(Const.FLAGS);
+            if (getFormParam(Const.SELECTION_TYPE) != null) {
+            	newTarget.selection_type = getFormParam(Const.SELECTION_TYPE);
             } 
+            if (getFormParam(Const.SELECTOR_NOTES) != null) {
+            	newTarget.selector_notes = getFormParam(Const.SELECTOR_NOTES);
+            } 
+            if (getFormParam(Const.ARCHIVIST_NOTES) != null) {
+            	newTarget.archivist_notes = getFormParam(Const.ARCHIVIST_NOTES);
+            } 
+            newTarget.legacy_site_id = Long.valueOf(getFormParam(Const.LEGACY_CITE_ID));
+
     		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
             if (getFormParam(Const.AUTHORS) != null) {
             	if (!getFormParam(Const.AUTHORS).toLowerCase().contains(Const.NONE)) {
@@ -154,6 +162,39 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.AUTHOR) != null) {
            		newTarget.author = User.findByName(getFormParam(Const.AUTHOR)).url;
             }
+            if (getFormParam(Const.TAGS) != null) {
+            	if (!getFormParam(Const.TAGS).toLowerCase().contains(Const.NONE)) {
+	            	String[] tags = getFormParams(Const.TAGS);
+	            	String resTags = "";
+	            	for (String tag: tags)
+	                {
+	            		if (tag != null && tag.length() > 0) {
+	                		Logger.info("add tag: " + tag);
+	            			resTags = resTags + Tag.findByName(tag).url + Const.LIST_DELIMITER;
+	            		}
+	                }
+	            	newTarget.tags = resTags;
+            	} else {
+            		newTarget.tags = Const.NONE;
+            	}
+            }
+            if (getFormParam(Const.FLAGS) != null) {
+            	if (!getFormParam(Const.FLAGS).toLowerCase().contains(Const.NONE)) {
+	            	String[] flags = getFormParams(Const.FLAGS);
+	            	String resFlags = "";
+	            	for (String flag: flags)
+	                {
+	            		if (flag != null && flag.length() > 0) {
+	                		Logger.info("add flag: " + flag);
+	            			resFlags = resFlags + Flag.findByName(flag).url + Const.LIST_DELIMITER;
+	            		}
+	                }
+	            	newTarget.flags = resFlags;
+            	} else {
+            		newTarget.flags = Const.NONE;
+            	}
+            }
+            newTarget.justification = getFormParam(Const.JUSTIFICATION);
             newTarget.summary = getFormParam(Const.SUMMARY);
             newTarget.revision = getFormParam(Const.REVISION);
             newTarget.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
@@ -170,6 +211,7 @@ public class TargetController extends AbstractController {
 //            Logger.info("ignore robots: " + getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
             newTarget.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
             newTarget.field_crawl_start_date = getFormParam(Const.FIELD_CRAWL_START_DATE);
+            newTarget.date_of_publication = getFormParam(Const.DATE_OF_PUBLICATION);
             newTarget.field_crawl_end_date = getFormParam(Const.FIELD_CRAWL_END_DATE);
             newTarget.white_list = getFormParam(Const.WHITE_LIST);
             newTarget.black_list = getFormParam(Const.BLACK_LIST);
@@ -184,12 +226,12 @@ public class TargetController extends AbstractController {
         		newTarget.edit_url = Const.WCT_URL + newTarget.nid;
         	} else {
                 target.active = false;
-        		Logger.info("update target: " + target.nid);
+        		Logger.info("update target: " + target.nid + ", obj: " + target.toString());
             	Ebean.update(target);
         	}
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
-	        res = redirect(routes.TargetEdit.edit(newTarget.url));
+	        res = redirect(routes.TargetEdit.view(newTarget.url));
         } 
         if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.NID));

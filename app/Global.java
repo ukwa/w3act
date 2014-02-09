@@ -87,6 +87,12 @@ public class Global extends GlobalSettings {
     	        	tag.url = Const.ACT_URL + tag.id;
 	                Logger.info("Predefined " + Tag.class.getSimpleName() + ": " + tag.toString());
     	        }
+    	        if (cls == Flag.class) {
+    	        	Flag flag = (Flag) sectionItr.next();
+    	        	flag.id = Utils.createId();
+    	        	flag.url = Const.ACT_URL + flag.id;
+	                Logger.info("Predefined " + Flag.class.getSimpleName() + ": " + flag.toString());
+    	        }
             }
             Ebean.save(sectionList);
 	    }
@@ -98,6 +104,9 @@ public class Global extends GlobalSettings {
 	                Logger.info("loading open tags from configuration ...");
 	                Map<String,List<Object>> alltags = (Map<String,List<Object>>)Yaml.load("tags.yml");
 	                insertInitialData(Const.TAGS, Tag.class, alltags);	
+	                Logger.info("loading flags from configuration ...");
+	                Map<String,List<Object>> allflags = (Map<String,List<Object>>)Yaml.load("flags.yml");
+	                insertInitialData(Const.FLAGS, Flag.class, allflags);	
 	                Logger.info("loading e-mail templates from configuration ...");
 	                Map<String,List<Object>> alltemplates = (Map<String,List<Object>>)Yaml.load("templates.yml");
 	                insertInitialData(Const.MAILTEMPLATES, MailTemplate.class, alltemplates);	
