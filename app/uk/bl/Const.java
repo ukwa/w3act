@@ -117,6 +117,12 @@ public final class Const {
     public static final String LANGUAGE = "language";
     public static final String AUTHORS = "authors";
     public static final String FLAGS = "flags";
+	public static final String DATE_OF_PUBLICATION = "date_of_publication";
+	public static final String JUSTIFICATION = "justification";
+	public static final String SELECTION_TYPE = "selection_type";
+	public static final String SELECTOR_NOTES = "selector_notes";
+	public static final String ARCHIVIST_NOTES = "archivist_notes";
+	public static final String LEGACY_CITE_ID = "legacy_cite_id";
     
     // Creator
 	public static final String UID                = "uid";
@@ -292,6 +298,11 @@ public final class Const {
 	    GENERAL_CHANGE_REQUEST;
     }
     
+	public enum SelectionType {
+		NOMINATION, // when created from UKWA
+		SELECTION;
+    }
+	
     /**
      * Help collections to read JSON lists like
      * "field_url":[{"url":"http:\/\/www.adoptionuk.org\/"}]

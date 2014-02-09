@@ -136,7 +136,7 @@ public class JsonUtils {
 //			Logger.info("res getDrupalData: " + obj.toString() + ", idx: " + idx);
 //			idx++;
 //		}
-    	int idx = 0;
+//    	int idx = 0;
     	Logger.info("res list size: " + res.size());
     	if (!type.equals(NodeType.INSTANCE)) {
 			Iterator<Object> itr = res.iterator();
@@ -145,6 +145,7 @@ public class JsonUtils {
 					Target obj = (Target) itr.next();
 			        obj.revision = Const.INITIAL_REVISION;
 			        obj.active = true;
+			        obj.selection_type = Const.SelectionType.NOMINATION.name();
 					if (obj.vid > 0) {
 						obj.edit_url = Const.WCT_URL + obj.vid;
 					}
@@ -158,7 +159,7 @@ public class JsonUtils {
 //					Object obj = itr.next();
 //					Logger.info("itr.next: " + obj + ", idx: " + idx);
 				}
-				idx++;
+//				idx++;
 			}
     	}
 		return res;

@@ -90,6 +90,15 @@ create table dcollection (
   constraint pk_dcollection primary key (nid))
 ;
 
+create table flag (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  description               TEXT,
+  last_update               timestamp not null,
+  constraint pk_flag primary key (id))
+;
+
 create table instance (
   nid                       bigint not null,
   value                     TEXT,
@@ -287,6 +296,7 @@ create table target (
   field_live_site_status    varchar(255),
   field_wct_id              bigint,
   field_spt_id              bigint,
+  legacy_site_id            bigint,
   field_no_ld_criteria_met  boolean,
   field_key_site            boolean,
   field_professional_judgement_exp TEXT,
@@ -376,6 +386,8 @@ create sequence crawl_permission_seq;
 
 create sequence dcollection_seq;
 
+create sequence flag_seq;
+
 create sequence instance_seq;
 
 create sequence lookup_entry_seq;
@@ -413,6 +425,8 @@ drop table if exists crawl_permission cascade;
 
 drop table if exists dcollection cascade;
 
+drop table if exists flag cascade;
+
 drop table if exists instance cascade;
 
 drop table if exists lookup_entry cascade;
@@ -444,6 +458,8 @@ drop sequence if exists contact_person_seq;
 drop sequence if exists crawl_permission_seq;
 
 drop sequence if exists dcollection_seq;
+
+drop sequence if exists flag_seq;
 
 drop sequence if exists instance_seq;
 

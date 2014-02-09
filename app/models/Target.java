@@ -74,6 +74,7 @@ public class Target extends Model {
     public String field_live_site_status;
     public Long field_wct_id;
     public Long field_spt_id;
+    public Long legacy_site_id;
     public Boolean field_no_ld_criteria_met;
     public Boolean field_key_site;
     @Column(columnDefinition = "TEXT")
@@ -125,6 +126,8 @@ public class Target extends Model {
     public String originating_organisation; 
     @Column(columnDefinition = "TEXT")
     public String flags; 
+//    @Column(columnDefinition = "TEXT")
+//    public String flagnote; 
     @Column(columnDefinition = "TEXT")
     public String authors; 
     
@@ -796,6 +799,19 @@ public class Target extends Model {
     public static List<String> getAllLanguage() {
     	List<String> res = new ArrayList<String>();
 	    Const.TargetLanguage[] resArray = Const.TargetLanguage.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+
+    /**
+     * This method returns a list of all selection type values for target record.
+     * @return
+     */
+    public static List<String> getAllSelectionTypes() {
+    	List<String> res = new ArrayList<String>();
+	    Const.SelectionType[] resArray = Const.SelectionType.values();
 	    for (int i=0; i < resArray.length; i++) {
 		    res.add(resArray[i].name());
 	    }
