@@ -40,6 +40,7 @@ public class Organisation extends Model {
     public Boolean is_new;
     @JsonIgnore
     public String type;
+    @Id 
     public String title;
     @JsonIgnore
     public String language;
@@ -122,6 +123,22 @@ public class Organisation extends Model {
     	boolean res = false;
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		Organisation organisation = find.where().eq(Const.URL, url).findUnique();
+    		if (organisation != null) {
+    			res = true;
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+     * Check if given by title organisation exists in database.
+     * @param url
+     * @return true if exists
+     */
+    public static boolean existsByTitle(String title) {
+    	boolean res = false;
+    	if (title != null && title.length() > 0 && !title.equals(Const.NONE)) {
+    		Organisation organisation = find.where().eq(Const.TITLE, title).findUnique();
     		if (organisation != null) {
     			res = true;
     		}

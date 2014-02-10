@@ -1,13 +1,27 @@
-import play.*;
-import play.libs.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-
-import com.avaje.ebean.*;
-
-import models.*;
+import models.ContactPerson;
+import models.Flag;
+import models.MailTemplate;
+import models.Organisation;
+import models.Permission;
+import models.Role;
+import models.Tag;
+import models.Target;
+import models.User;
+import play.Application;
+import play.GlobalSettings;
+import play.Logger;
+import play.libs.Yaml;
 import uk.bl.Const;
-import uk.bl.api.*;
+import uk.bl.api.JsonUtils;
+import uk.bl.api.Utils;
+
+import com.avaje.ebean.Ebean;
+
+import controllers.Organisations;
 
 public class Global extends GlobalSettings {
     
@@ -136,8 +150,9 @@ public class Global extends GlobalSettings {
 	                Logger.info("load organisations ...");
 					// aggregate organisations data from drupal and store JSON content in a file
 			        List<Object> allOrganisations = JsonUtils.getDrupalData(Const.NodeType.ORGANISATION);
+			        List<Object> allSingleOrganisations = Organisations.skipExistingObjects(allOrganisations);
 					// store organisations in DB
-	                Ebean.save(allOrganisations);
+	                Ebean.save(allSingleOrganisations);
 	                JsonUtils.normalizeOrganisationUrlInUser();
 	                Logger.info("organisations successfully loaded");
 	                Logger.info("load curators ...");

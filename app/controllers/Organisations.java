@@ -1,21 +1,30 @@
 package controllers;
 
-import play.*;
-import play.libs.Json;
-import play.mvc.*;
-import static play.data.Form.*;
+import static play.data.Form.form;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import models.Organisation;
+import models.Target;
+import models.User;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import models.*;
+import play.Logger;
+import play.libs.Json;
+import play.mvc.BodyParser;
+import play.mvc.Result;
+import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.organisations.*;;
+import views.html.organisations.list;
+import views.html.organisations.organisationedit;
+import views.html.organisations.organisationview;
+
+import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Manage organisations.
@@ -229,13 +238,20 @@ public class Organisations extends AbstractController {
             }
             
         	if (!isExisting) {
-               	Ebean.save(organisation);
-    	        Logger.info("save organisation: " + organisation.toString());
+            	boolean inDb = isInDb(organisation);
+                if (!inDb) {
+	               	Ebean.save(organisation);
+	    	        Logger.info("save organisation: " + organisation.toString());
+                } else {
+	    	        Logger.info("Organisation title already exists in database: " + organisation.toString());
+        	        return redirect(routes.Organisations.index()); 
+                }
         	} else {
            		Logger.info("update organisation: " + organisation.toString());
                	Ebean.update(organisation);
         	}
-	        res = redirect(routes.Organisations.view(organisation.url));
+	        res = redirect(routes.Organisations.index());
+//	        res = redirect(routes.Organisations.view(organisation.url));
         } 
         if (delete != null) {
         	Organisation organisation = Organisation.findByUrl(getFormParam(Const.URL));
@@ -245,6 +261,46 @@ public class Organisations extends AbstractController {
         return res;
     }
 	
+    /**
+     * This method checks if organisation object with given title already
+     * exists in database.
+     * @param newOrganisation
+     * @return true if exists
+     */
+    public static boolean isInDb(Organisation newOrganisation) {
+    	boolean res = true;
+    	if (newOrganisation.title != null && newOrganisation.title.length() > 0) {
+    		/**
+    		 * Check if this organisation title already exists in database
+    		 */
+    		res = Organisation.existsByTitle(newOrganisation.title);
+    	}
+		Logger.info("isInDb() res: " + res);
+        return res;
+    }
+    
+    /**
+     * This method ensures that no multiple organisations with the same name can be stored in 
+     * database during the data import from the Drupal.
+     * @return
+     */
+    public static List<Object> skipExistingObjects(List<Object> newOrganisations) {
+    	List<Object> res = new ArrayList<Object>();
+    	
+    	/**
+    	 * Iterate over all new organisations that supposed to be stored in database
+    	 */
+    	Iterator<Object> newItr = newOrganisations.iterator();
+        while (newItr.hasNext()) {
+        	Organisation newOrganisation = (Organisation) newItr.next();
+        	boolean inDb = isInDb(newOrganisation);
+       		if (!inDb) {
+    			res.add(newOrganisation);
+    		}
+        }
+        return res;
+    }	   
+    
     /**
      * This method checks if given user belongs to given organisation. This objects 
      * are linked by organisation URL.
