@@ -1,47 +1,59 @@
 #!/bin/bash
-#
+
 # /etc/init.d/w3act
 #
 # This SysV init script manages w3act services on RHEL
 #
-# Deploy w3act zip created by "play dist" in /opt folder and use commands:
-# 
-# cd /etc/init.d
-# ln -s /opt/w3act/sysv/w3act w3act
-# cd /etc/init.d
+# 1. If needed change Linux run level to e.g. 5 use command 
+#     init 5 
 #
-# To execute the script use e.g. "service w3act start"
+# 2. Copy this script from /opt/w3act/sysv/ folder to the /etc/init.d/ folder using command 
+#     cp /opt/w3act/sysv/w3act /etc/init.d/ 
+#
+# 3. Add rights using command
+#     chmod 755 /etc/init.d/w3act
+#
+# 4. Create symlink to the /etc/init.d/w3act script in required /etc/rc5.d level folder e.g. for the level 5 use commands
+#     cd /etc/rc5.d
+#     ln -s /etc/init.d/w3act S99w3act
+#
+# 5. To execute the script use e.g.
+#     service w3act start
+# 
 #
 # chkconfig: 2345 85 15
 # description: W3ACT SysV init script
-
+#
 # Source function library.
 . /etc/init.d/functions
 
+PROJECT_ROOT=/opt/w3act
+PLAY_DIR=/etc/default/play-2.2.0
+
 case "$1" in
-	start)
-		echo -n "Starting w3act services: "
-		/opt/w3act/play start &
-		touch /var/lock/subsys/w3act
-		success $"W3ACT server startup"
-		echo
-	;;
-	stop)
-		echo -n "Shutting down w3act services: "
-		/opt/w3act/play stop
-		rm -f /var/lock/subsys/w3act
-	;;
-	status)
-		/opt/w3act/play status
-	;;
-	restart)
-		/opt/w3act/play restart
-	;;
-	probe)
-		/opt/w3act/play check
-	;;
-	*)
-		echo "Usage: w3act {start|stop|status|restart[|probe]"
-		exit 1
-	;;
+start)
+	echo -n "Starting w3act services: "
+        cd $PROJECT_ROOT
+	$PLAY_DIR/play start &
+	touch /var/lock/subsys/w3act
+;;
+stop)
+	echo -n "Shutting down w3act services: "
+	cd $PROJECT_ROOT
+	$PLAY_DIR/play stop
+	rm -f /var/lock/subsys/w3act
+;;
+status)
+	$PLAY_DIR/play status
+;;
+restart)
+	$PLAY_DIR/play restart
+;;
+probe)
+	$PLAY_DIR/play check
+;;
+*)
+	echo "Usage: w3act {start|stop|status|restart[|probe]"
+	exit 1
+;;
 esac
