@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# /etc/init.d/w3act
+#
+# This SysV init script manages w3act services on RHEL
+#
+# Deploy w3act zip created by "play dist" in /opt folder and use commands:
+# 
+# cd /etc/init.d
+# ln -s /opt/w3act/sysv/w3act w3act
+# cd /etc/init.d
+#
+# To execute the script use e.g. "service w3act start"
+#
+# chkconfig: 2345 85 15
+# description: W3ACT SysV init script
+
+# Source function library.
+. /etc/init.d/functions
+
+case "$1" in
+	start)
+		echo -n "Starting w3act services: "
+		/opt/w3act/play start &
+		touch /var/lock/subsys/w3act
+		success $"W3ACT server startup"
+		echo
+	;;
+	stop)
+		echo -n "Shutting down w3act services: "
+		/opt/w3act/play stop
+		rm -f /var/lock/subsys/w3act
+	;;
+	status)
+		/opt/w3act/play status
+	;;
+	restart)
+		/opt/w3act/play restart
+	;;
+	probe)
+		/opt/w3act/play check
+	;;
+	*)
+		echo "Usage: w3act {start|stop|status|restart[|probe]"
+		exit 1
+	;;
+esac
