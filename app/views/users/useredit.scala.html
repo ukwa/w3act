@@ -8,7 +8,7 @@
 	</div>
 	<ul class="nav nav-tabs">
 	   <li><a href="@routes.Curators.view(user.url)">View</a></li>
-	   <li><a href="@routes.Curators.sites(user.url)">My Targets</a></li> 
+	   <li><a href="@routes.Curators.sites(user.url)">Targets</a></li> 
 	   @if(admin.hasRole("sys_admin") || user.url.equals(admin.url)) {
 		   <li class="active"><a href="@routes.Curators.edit(user.url)">Edit</a></li>
 	   }
