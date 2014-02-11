@@ -393,7 +393,7 @@
 						    <div class="col-sm-6">
 								<select multiple name="flags" id="flags" class="form-control">
 					                @for(flag <- Flag.findAll()) {
-						                @if(target.flags.contains(flag.url)) {
+						                @if(target.flags != null && target.flags.contains(flag.url)) {
 						                	<option selected disabled>@flag.name</option>
 						                } else {
 						                	<option disabled>@flag.name</option>
@@ -474,9 +474,9 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="legacy_cite_id" class="col-sm-6 control-label">Legacy cite ID <small class="text-center">(ID used to identify paper licences.)</small></label>
+							<label for="legacy_site_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
 						    <div class="col-sm-6">
-			              		<input name="legacy_cite_id" class="form-control" id="legacy_cite_id" placeholder="0" type="text" value="@target.legacy_site_id" readonly>
+			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@target.legacy_site_id" readonly>
 							</div>
 						</div>
 					</div>
