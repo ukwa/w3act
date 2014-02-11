@@ -8,10 +8,10 @@
 
 	<ul class="nav nav-tabs">
 		<li><a
-			href="@routes.CollectionEdit.view(collection.url)">View</a></li>
-		<li class="active"><a href="@routes.CollectionEdit.sites(collection.url)">Sites</a></li>
+			href="@routes.Collections.view(collection.url)">View</a></li>
+		<li class="active"><a href="@routes.Collections.sites(collection.url)">Sites</a></li>
 			@if(user.hasRole("sys_admin")) {
-		<li><a href="@routes.CollectionEdit.edit(collection.url)">Edit</a></li>
+		<li><a href="@routes.Collections.edit(collection.url)">Edit</a></li>
 		}
 	</ul>
     

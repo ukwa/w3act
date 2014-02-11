@@ -74,7 +74,7 @@ public class Application extends Controller {
             Routes.javascriptRouter("jsRoutes",
             
 				controllers.routes.javascript.About.index(),
-                controllers.routes.javascript.DCollections.index(),
+                controllers.routes.javascript.Collections.index(),
                 controllers.routes.javascript.Targets.index(),
                 controllers.routes.javascript.Organisations.index(),
                 controllers.routes.javascript.Curators.index(),

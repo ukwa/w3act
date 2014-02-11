@@ -1,35 +1,17 @@
 package controllers;
 
-import play.*;
 import play.mvc.*;
 import static play.data.Form.*;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.avaje.ebean.Ebean;
-
 import models.*;
-import uk.bl.Const;
-import views.html.collections.*;
 
 /**
  * Manage dcollections.
  */
+@Deprecated
 @Security.Authenticated(Secured.class)
 public class DCollections extends AbstractController {
   
-    /**
-     * Display the dcollections.
-     */
-    public static Result index() {
-    	Logger.info("DCollections.index()");
-        return GO_HOME;
-    }
-    
-    public static Result GO_HOME = redirect(
-            routes.DCollections.list(0, "title", "asc", "")
-        );
-
     // -- DCollections
 
     /**
@@ -62,98 +44,7 @@ public class DCollections extends AbstractController {
         return ok();
     }
 
-    /**
-     * This method saves new object or changes on given Collection in the same object
-     * completed by revision comment. The "version" field in the Collection object
-     * contains the timestamp of the change. 
-     * @return
-     */
-    public static Result save() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save collection nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
-        			", title: " + getFormParam(Const.TITLE) + ", revision: " + getFormParam(Const.REVISION));
-        	DCollection collection = null;
-            boolean isExisting = true;
-            try {
-                try {
-                	collection = DCollection.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	collection = new DCollection();
-                	collection.nid = Long.valueOf(getFormParam(Const.NID));
-                	collection.url = getFormParam(Const.URL);
-                }
-                if (collection == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	collection = new DCollection();
-                	collection.nid = Long.valueOf(getFormParam(Const.NID));
-                	collection.url = getFormParam(Const.URL);
-                }
-                
-                collection.title = getFormParam(Const.TITLE);
-        	    if (getFormParam(Const.SUMMARY) != null) {
-        	    	collection.summary = getFormParam(Const.SUMMARY);
-        	    }
-        	    if (collection.revision == null) {
-        	    	collection.revision = "";
-        	    }
-                if (getFormParam(Const.REVISION) != null) {
-                	String comma = "";
-                	if (StringUtils.isNotBlank(collection.revision)) {
-                		comma = Const.COMMA + " ";
-                	}
-                	collection.revision = collection.revision.concat(comma + getFormParam(Const.REVISION));
-                }
-            } catch (Exception e) {
-            	Logger.info("User not existing exception");
-            }
-            
-        	if (!isExisting) {
-               	Ebean.save(collection);
-    	        Logger.info("save collection: " + collection.toString());
-        	} else {
-           		Logger.info("update collection: " + collection.toString());
-               	Ebean.update(collection);
-        	}
-	        res = redirect(routes.CollectionEdit.view(collection.url));
-        } 
-        if (delete != null) {
-        	String url = getFormParam(Const.URL);
-        	Logger.info("deleting: " + url);
-        	DCollection collection = DCollection.findByUrl(url);
-        	Ebean.delete(collection);
-	        res = redirect(routes.DCollections.index()); 
-        }
-        return res;
-    }
-	
-    /**
-     * Display the paginated list of collections.
-     *
-     * @param page Current page number (starts from 0)
-     * @param sortBy Column to be sorted
-     * @param order Sort order (either asc or desc)
-     * @param filter Filter applied on target urls
-     */
-    public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("LookUp.list()");
-        return ok(
-        	list.render(
-        			"Collections", 
-        			User.find.byId(request().username()), 
-        			filter, 
-        			DCollection.page(pageNo, 10, sortBy, order, filter), 
-        			sortBy, 
-        			order)
-        	);
-    }
-    
+
     /**
      * This method adds link to passed collection in given User object if 
      * link does not already exists.

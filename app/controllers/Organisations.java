@@ -20,7 +20,9 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.organisations.list;
+import views.html.organisations.organisationadmin;
 import views.html.organisations.organisationedit;
+import views.html.organisations.organisationsites;
 import views.html.organisations.organisationview;
 
 import com.avaje.ebean.Ebean;
@@ -160,7 +162,27 @@ public class Organisations extends AbstractController {
             );
     }    
     
+    public static Result sites(String url) {
+        return ok(
+                organisationsites.render(
+                        Organisation.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
     
+    /**
+     * Administer users
+     * @param url
+     * @return
+     */
+    public static Result admin(String url) {
+        return ok(
+                organisationadmin.render(
+                        Organisation.findByUrl(url), User.find.byId(request().username())
+                )
+            );
+    }
+
     /**
      * Rename a organisation.
      */
@@ -350,7 +372,7 @@ public class Organisations extends AbstractController {
      * This method implements administration for users associated with particular organisation.
      * @return
      */
-    public static Result admin() {
+    public static Result saveAdmin() {
     	Result res = null;
         String save = getFormParam(Const.SAVE);
         if (save != null) {
@@ -378,10 +400,10 @@ public class Organisations extends AbstractController {
             } catch (Exception e) {
             	Logger.info("User not existing exception");
             }
-	        res = redirect(routes.OrganisationEdit.admin(organisation.url));
+	        res = redirect(routes.Organisations.admin(organisation.url));
         } else {
         	res = ok();
         }
         return res;
-    }	    
+    }
 }
