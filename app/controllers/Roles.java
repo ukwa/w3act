@@ -202,7 +202,7 @@ public class Roles extends AbstractController {
      * This method implements administration for roles associated with particular organisation.
      * @return
      */
-    public static Result adminrole() {
+    public static Result saveAdmin() {
     	Result res = null;
         String save = getFormParam(Const.SAVE);
         if (save != null) {
