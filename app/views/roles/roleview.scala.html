@@ -8,10 +8,10 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.RoleEdit.view(role.url)">View</a></li>
+	   <li class="active"><a href="@routes.Roles.view(role.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   <li><a href="@routes.RoleEdit.edit(role.url)">Edit</a></li>
-	   <li><a href="@routes.RoleEdit.admin(role.url)">Role administration</a></li>
+	   <li><a href="@routes.Roles.edit(role.url)">Edit</a></li>
+	   <li><a href="@routes.Roles.admin(role.url)">Role administration</a></li>
 	   }
 	</ul>
     
