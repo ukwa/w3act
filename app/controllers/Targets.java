@@ -32,8 +32,9 @@ public class Targets extends AbstractController {
      * Display the targets.
      */
     public static Result index() {
-    	List<Target> targetsAll = models.Target.findAllActive();
     	List<Target> targetsRes = new ArrayList<Target>();
+    	List<Target> targetsAll = processTargets(Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+            	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true);
     	if (!targetsAll.isEmpty()) {
     		targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
     	}
@@ -42,7 +43,7 @@ public class Targets extends AbstractController {
                     "Targets", User.find.byId(request().username()), targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
                 	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, false
+                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true
             )
         );
     }
@@ -55,7 +56,7 @@ public class Targets extends AbstractController {
                     "Targets", User.find.byId(request().username()), targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
                 	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, offset, targetsAll.size(), "", Const.NONE, false
+                	Const.NONE, Const.NONE, offset, targetsAll.size(), "", Const.NONE, true
             )
         );
     }
@@ -71,7 +72,7 @@ public class Targets extends AbstractController {
         String field_depth = Const.NONE;
         String field_scope = Const.NONE;
         String field_license = Const.NONE;
-        boolean isSorted = false;
+        boolean isSorted = true;
         int offset = 0;
         int limit = 0;
         boolean isClear = false;
