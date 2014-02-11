@@ -70,7 +70,7 @@ public class Targets extends AbstractController {
         String field_subject = Const.NONE;
         String field_crawl_frequency = Const.NONE;
         String field_depth = Const.NONE;
-        String field_scope = Const.NONE;
+        String field_suggested_collections = Const.NONE;
         String field_license = Const.NONE;
         boolean isSorted = true;
         int offset = 0;
@@ -111,9 +111,10 @@ public class Targets extends AbstractController {
             	&& !getFormParam(Const.FIELD_LICENSE).toLowerCase().contains(Const.NONE)) {
        		field_license = getFormParam(Const.FIELD_LICENSE);
         }
-        if (!isClear && getFormParam(Const.FIELD_SCOPE) != null
-            	&& !getFormParam(Const.FIELD_SCOPE).toLowerCase().contains(Const.NONE)) {
-       		field_scope = getFormParam(Const.FIELD_SCOPE);
+        if (!isClear && getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) != null
+            	&& !getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS).toLowerCase().contains(Const.NONE)) {
+       		field_suggested_collections = DCollection.findByTitle(getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS)).url;
+       		Logger.info("field_suggested_collections: " + field_suggested_collections);
         }
         if (!isClear && getFormParam(Const.SORTED) != null
             	&& !getFormParam(Const.SORTED).toLowerCase().contains(Const.NONE)) {
@@ -133,7 +134,7 @@ public class Targets extends AbstractController {
         Logger.info("filterUrl offset: " + offset + ", limit: " + limit);
 
     	List<Target> targetsAll = processTargets(author, field_nominating_organisation, field_collection_categories, 
-        		field_subject, field_crawl_frequency, field_depth, field_scope, offset, limit, filterUrl, field_license, isSorted);
+        		field_subject, field_crawl_frequency, field_depth, field_suggested_collections, offset, limit, filterUrl, field_license, isSorted);
 //    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
     	int rowCount = Const.ROWS_PER_PAGE;
     	List<Target> targetsRes = new ArrayList<Target>();
@@ -153,7 +154,7 @@ public class Targets extends AbstractController {
    			        "Targets", User.find.byId(request().username()), targetsRes, 
 		        	User.findFilteredByUrl(author), models.Organisation.findFilteredByUrl(field_nominating_organisation),
 			        	author, field_nominating_organisation, field_collection_categories, field_subject, 
-			        	field_crawl_frequency, field_depth, field_scope, offset, targetsAll.size(), filterUrl, 
+			        	field_crawl_frequency, field_depth, field_suggested_collections, offset, targetsAll.size(), filterUrl, 
 			        	field_license, isSorted
                         )
                 );
@@ -168,18 +169,18 @@ public class Targets extends AbstractController {
      * @param subjectUrl
      * @param crawlFrequency
      * @param depth
-     * @param scope
+     * @param suggested_collections
      * @param offset The current page number
      * @param limit The maximal row count
      * @return
      */
     public static Result export(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String scope, String license, String filterUrl, 
+    		String subjectUrl, String crawlFrequency, String depth, String suggested_collections, String license, String filterUrl, 
     		int offset, boolean isSorted) {
     	Logger.info("export()");
     	
     	List<Target> targetList = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
-        		subjectUrl, crawlFrequency, depth, scope, 0, 0, filterUrl, license, isSorted);
+        		subjectUrl, crawlFrequency, depth, suggested_collections, 0, 0, filterUrl, license, isSorted);
     	Logger.info("export() targetList size: " + targetList.size());
 //        String exportBtn = getFormParam(Const.EXPORT);
 //        Logger.info("export exportBtn: " + exportBtn);
@@ -229,7 +230,7 @@ public class Targets extends AbstractController {
    			        "Targets", User.find.byId(request().username()), targetsRes, 
 		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
 			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, 
-			        	crawlFrequency, depth, scope, offset, targetList.size(), filterUrl, license, isSorted
+			        	crawlFrequency, depth, suggested_collections, offset, targetList.size(), filterUrl, license, isSorted
                         )
                 );
     }
@@ -242,14 +243,14 @@ public class Targets extends AbstractController {
      * @param subjectUrl
      * @param crawlFrequency
      * @param depth
-     * @param scope
+     * @param suggested_collections
      * @param offset The current page number
      * @param limit The maximal row count
      * @param license
      * @return
      */
     public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, 
+    		String subjectUrl, String crawlFrequency, String depth, String suggested_collections, int offset, int limit, 
     		String license, boolean isSorted) {
     	
         String filterUrl = getFormParam(Const.FILTER);
@@ -259,7 +260,7 @@ public class Targets extends AbstractController {
         Logger.info("Filter: " + filterUrl);
 
     	List<Target> targetsAll = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
-        		subjectUrl, crawlFrequency, depth, scope, offset, limit, filterUrl, license, isSorted);
+        		subjectUrl, crawlFrequency, depth, suggested_collections, offset, limit, filterUrl, license, isSorted);
 //    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
     	int rowCount = Const.ROWS_PER_PAGE;
     	List<Target> targetsRes = new ArrayList<Target>();
@@ -281,7 +282,7 @@ public class Targets extends AbstractController {
    			        "Targets", User.find.byId(request().username()), targetsRes, 
 		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
 			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, 
-			        	scope, offset, targetsAll.size(), filterUrl, license, isSorted
+			        	suggested_collections, offset, targetsAll.size(), filterUrl, license, isSorted
                         )
                 );
     }
@@ -294,7 +295,7 @@ public class Targets extends AbstractController {
      * @param subjectUrl
      * @param crawlFrequency
      * @param depth
-     * @param scope
+     * @param suggested_collections
      * @param offset The current page number
      * @param limit The maximal row count
      * @param filterUrl
@@ -302,7 +303,7 @@ public class Targets extends AbstractController {
      * @return
      */
     public static List<Target> processTargets(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String scope, int offset, int limit, String filterUrl, 
+    		String subjectUrl, String crawlFrequency, String depth, String suggested_collections, int offset, int limit, String filterUrl, 
     		String license, boolean isSorted) {
 //    	Logger.info("target edit curatorUrl: " + curatorUrl + ", organisationUrl: " + organisationUrl);
     	boolean isProcessed = false;
@@ -332,8 +333,8 @@ public class Targets extends AbstractController {
     		exp = exp.eq(Const.FIELD_DEPTH, depth);
     		isProcessed = true;
     	} 
-    	if (scope != null && !scope.equals(Const.NONE)) {
-    		exp = exp.eq(Const.FIELD_SCOPE, scope);
+    	if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
+    		exp = exp.eq(Const.FIELD_SUGGESTED_COLLECTIONS, suggested_collections);
     		isProcessed = true;
     	} 
     	if (collectionCategoryUrl != null && !collectionCategoryUrl.equals(Const.NONE)) {
@@ -341,7 +342,7 @@ public class Targets extends AbstractController {
     		isProcessed = true;
     	} 
     	if (license != null && !license.equals(Const.NONE)) {
-    		exp = exp.eq(Const.FIELD_LICENSE, scope);
+    		exp = exp.eq(Const.FIELD_LICENSE, suggested_collections);
     		isProcessed = true;
     	} 
     	res = exp.query().findList();
@@ -510,7 +511,7 @@ public class Targets extends AbstractController {
 	
 	/**
 	 * This method filters targets by given license.
-	 * @return scope list
+	 * @return license list
 	 */
 	public static List<Taxonomy> getLicense() {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
@@ -537,7 +538,7 @@ public class Targets extends AbstractController {
 	
 	/**
 	 * This method filters targets by crawl frequency.
-	 * @return scope list
+	 * @return crawl frequency list
 	 */
 	public static List<Target> getCrawlFrequency() {
 		List<Target> res = new ArrayList<Target>();
@@ -559,7 +560,7 @@ public class Targets extends AbstractController {
 	
 	/**
 	 * This method filters targets by depth.
-	 * @return scope list
+	 * @return depth list
 	 */
 	public static List<Target> getDepth() {
 		List<Target> res = new ArrayList<Target>();
@@ -581,7 +582,7 @@ public class Targets extends AbstractController {
 	
 	/**
 	 * This method filters targets by collection categories.
-	 * @return scope list
+	 * @return collection categories list
 	 */
 	public static List<Taxonomy> getCollectionCategories() {
 		List<Target> res = new ArrayList<Target>();
