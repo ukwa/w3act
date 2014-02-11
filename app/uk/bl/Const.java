@@ -122,7 +122,7 @@ public final class Const {
 	public static final String SELECTION_TYPE = "selection_type";
 	public static final String SELECTOR_NOTES = "selector_notes";
 	public static final String ARCHIVIST_NOTES = "archivist_notes";
-	public static final String LEGACY_CITE_ID = "legacy_cite_id";
+	public static final String LEGACY_SITE_ID = "legacy_site_id";
     
     // Creator
 	public static final String UID                = "uid";
