@@ -4,13 +4,21 @@
 #
 # This script supports W3ACT RHEL deployment
 # The default run level is 3 (/etc/inittab)
-# The location of the W3ACT project should be /opt/w3act
+# The location of the W3ACT project after unzipping of the distribution ZIP should be /opt/w3act-1.0
+# The structure of the W3ACT project related files under the "opt" folder should be:
+#     sysv
+#     w3act-1.0
+#         |_bin
+#         |_conf
+#         |_lib
+#         |_share
+#
 # We assume that PostgresQL, Java and Play Framework are already installed in folder /etc/default
 # Distribution package contains: 
 # 
-#       1. Project sources (a ZIP file resulting from “play dist” command)
-#       2. Configuration files (*.yml, *.conf …)
-#       3. SysV init script
+#       1. Project sources (a ZIP file resulting from “play dist” command) e.g. w3act-1.0.zip
+#       2. Configuration files (*.yml, *.conf …) in folder "conf/"
+#       3. SysV init script in folder "sysv/"
 #       4. This script that extracts supporting software and configuration files in required directories like (/etc/init.d, /etc/default/ and /etc/sysconfig) 
 #
 # Usage: ./w3act-rhel-deployment 
@@ -40,7 +48,7 @@ if [ -f "$SYSV_DIR"/w3act ]; then
 fi
 
 echo "deploy SysV init script..."
-cp -rf "$ROOT"/w3act "$SYSV_DIR"
+cp -rf "$ROOT"/sysv/w3act "$SYSV_DIR"
 
 echo "create run level link..."
 RUN_LEVEL_DIR=/etc/rc3.d
