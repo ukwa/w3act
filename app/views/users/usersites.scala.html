@@ -3,7 +3,7 @@
 @main("", admin){
     
    	<div class="page-header">
-    	<h1>User @user.name Targets</h1>
+    	<h1>User @user.name @Target.findAllforUser(user.url).size() Targets</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
@@ -19,21 +19,19 @@
 		<thead>
 			<tr>
 				<th>Title</th>
-				<th>Categories</th>
+				<th>Collections</th>
 				<th>Subject</th>
 				<th>By</th>
 				<th>Crawled Instances</th>
-				<th>Crawled URLs</th>
 			</tr>
 		</thead>
 		<tbody>
        		@Target.findAllforUser(user.url).map { target =>		              
             <tr>
 				<td><a class="brand" href="@routes.TargetEdit.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
-				<td>@target.field_collection_categories</td>
-				<td>@target.field_subject</td>
+				<td>@Taxonomy.findByUrl(target.field_collection_categories).name</td>
+				<td>@Taxonomy.findByUrl(target.field_subject).name</td>
 				<td><a href="@routes.Curators.edit(target.author)">@User.findByUrl(target.author).name</a></td>
-				<td></td>
 				<td></td>
                </tr>
                }
