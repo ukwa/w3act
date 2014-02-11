@@ -227,9 +227,11 @@ public class Target extends Model {
      * @return
      */
     public static List<Target> findAllforUser(String url) {
+    	Logger.info("findAllforUser() url: " + url);
     	List<Target> res = new ArrayList<Target>();
         ExpressionList<Target> ll = find.where().eq("author", url);
         res = ll.findList();
+    	Logger.info("findAllforUser() number: " + res.size());
         return res;
 	}
 
