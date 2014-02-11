@@ -14,7 +14,7 @@
 	   }
 	</ul>
 
-	<form action="@routes.Roles.adminrole()" method="POST">
+	@helper.form(action=routes.Roles.saveAdmin, 'class -> "form-inline") {
 		<input type="hidden" name="url" value="@role.url">
 		
 		<div class="row padding-10">
@@ -70,7 +70,7 @@
 		       </div>
 			</div>
 		</div>
-	</form>		
+	}
 }
 	            
 
