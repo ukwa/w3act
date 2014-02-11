@@ -73,6 +73,11 @@ GET     /permissions/list					controllers.PermissionEdit.list(p:Int ?= 0, s ?= "
 GET     /crawlpermissions                   controllers.CrawlPermissionEdit.index()
 GET     /contact                            controllers.Contact.index()
 
+GET     /qa                                 controllers.QA.index()
+GET     /qa/list                            controllers.QA.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET     /qa/search               		    controllers.QA.search()
+GET    	/qa/filterbyjson/:name		        controllers.QA.filterByJson(name)
+
 # Navigation
 GET     /addcontent                         controllers.AddContent.index()
 GET     /findcontent                        controllers.FindContent.index()
