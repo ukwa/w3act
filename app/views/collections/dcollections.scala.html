@@ -21,7 +21,7 @@
 	</div>
  	<article class="collections">
 		<div id="forms">
-			<form class="form-inline" action="@routes.CollectionEdit.filter()" method="POST" role="form">
+			<form class="form-inline" action="@routes.Collections.search()" method="POST" role="form">
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Collection Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
@@ -43,7 +43,7 @@
 			<tbody>
 				@dcollections.map { dcollection =>		              
 		           <tr>
-		           	<td><a href="@routes.CollectionEdit.view(dcollection.url)">@dcollection.title</a></td>
+		           	<td><a href="@routes.Collections.view(dcollection.url)">@dcollection.title</a></td>
 				</tr>
 		           }
 			</tbody>

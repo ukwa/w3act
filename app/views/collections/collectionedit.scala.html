@@ -8,14 +8,14 @@
     
 	<ul class="nav nav-tabs">
 		<li><a
-			href="@routes.CollectionEdit.view(collection.url)">View</a></li>
-		<li><a href="@routes.CollectionEdit.sites(collection.url)">Sites</a></li>
+			href="@routes.Collections.view(collection.url)">View</a></li>
+		<li><a href="@routes.Collections.sites(collection.url)">Sites</a></li>
 		@if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.CollectionEdit.edit(collection.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.Collections.edit(collection.url)">Edit</a></li>
 		}
 	</ul>
 	
-    <form action="@routes.DCollections.save()" method="POST">
+    <form action="@routes.Collections.save()" method="POST">
    		<input type="hidden" name="url" value="@collection.url">
    	    <input type="hidden" name="nid" value="@collection.nid">
 
@@ -54,7 +54,7 @@
 					<div id="parent-panel" class="panel-collapse collapse">
 						<ul>
 		            		@for(curParent <- DCollection.getParents(collection)) {
-		            			<li><a class="brand" href="@routes.CollectionEdit.view(curParent.url)">(@curParent.nid) &nbsp; @curParent.title</a></li>
+		            			<li><a class="brand" href="@routes.Collections.view(curParent.url)">(@curParent.nid) &nbsp; @curParent.title</a></li>
 				            }
 			            </ul>
 					</div>
