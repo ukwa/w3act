@@ -1,4 +1,4 @@
-@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, scope: String, offset: Int, limit: Int, filterUrl: String, license: String, sorted: Boolean)
+@(title: String, user: User, targets: List[Target], curators: List[User], organisations: List[Organisation], curatorUrl: String, organisationUrl: String, collectionCategoryUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, collection: String, offset: Int, limit: Int, filterUrl: String, license: String, sorted: Boolean)
 
 @pagination = {
 	<div class="text-center">
@@ -6,26 +6,26 @@
 			@if(Targets.checkPrev(offset)) {
 				<li>
 					<a class="page" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
-						subjectUrl, crawlFrequency, depth, scope, Targets.getPrev(Targets.getStartPage(offset)), limit, license, sorted)">Prev</a>
+						subjectUrl, crawlFrequency, depth, collection, Targets.getPrev(Targets.getStartPage(offset)), limit, license, sorted)">Prev</a>
 				</li>
 	         }
 	         @for(i <- Targets.getRange(Targets.getStartPage(offset))) {
 	             @if(Targets.checkNext(i, limit)) {
 					<li>
 						<a class="page" @if(offset==i){style="color:red";}" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
-							subjectUrl, crawlFrequency, depth, scope, i, limit, license, sorted)">@(i+1)</a>
+							subjectUrl, crawlFrequency, depth, collection, i, limit, license, sorted)">@(i+1)</a>
 					</li>
 	             }
 	         }
 	         @if(Targets.checkNext(offset+Targets.getPaginationOffset(), limit)) {
 	         <li>
 				<a class="page" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
-	           		subjectUrl, crawlFrequency, depth, scope, Targets.getNext(Targets.getStartPage(offset)), limit, license, sorted)">Next</a>
+	           		subjectUrl, crawlFrequency, depth, collection, Targets.getNext(Targets.getStartPage(offset)), limit, license, sorted)">Next</a>
 	         </li>
 	         }
 	         <li>
 				<a class="page" href="@routes.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, 
-					subjectUrl, crawlFrequency, depth, scope, Targets.getMaxPageNumber(limit)-1, limit, license, sorted)">
+					subjectUrl, crawlFrequency, depth, collection, Targets.getMaxPageNumber(limit)-1, limit, license, sorted)">
 	           		@Targets.getMaxPageNumber(limit)</a>
 	         </li>
 		</ul>
@@ -68,13 +68,11 @@
 			</div>
 
 				<div class="padding-20">
-					<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel">
-						<span id="toggle">&#9660; Filters &#9650;</span>
-					</a>
+				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
 						
 				<div id="accordion">
-					<div id="filter-panel" class="panel-collapse collapse">
+					<div id="filter-panel" class="panel-collapse collapse in">
 						<div class="panel-body">
 							<div class="row">
 								<div class="col-md-6">
@@ -189,24 +187,24 @@
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
-						            	<label for="scope" class="col-sm-6 control-label">Filter by scope</label>
+						            	<label for="suggested_collections" class="col-sm-6 control-label">Filter by collection</label>
 						            	<div class="col-sm-6">
-											<select name="field_scope" class="form-control" id="scope">
-									        	<option>None</option>
-									            @for(curScope <- Targets.getScope()) {
-							                 		@if(scope != null && scope.equals(curScope.field_scope)) {
-								                		<option selected>@curScope.field_scope</option>
-													} else {
-								                		<option>@curScope.field_scope</option>
-								                	}
-												}
+											<select name="field_suggested_collections" id="suggested_collections" class="form-control">
+								                <option>None</option>
+								                @for(cur_collection <- DCollection.findAll()) {
+									                @if(collection != null && collection.equals(cur_collection.url)) {
+									                	<option selected>@cur_collection.title</option>
+									                } else {
+									                	<option>@cur_collection.title</option>
+									                }
+								                }
 											</select>
 										</div>
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-							        	<form action="@routes.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, license, filterUrl, offset, sorted)" method="POST">
+							        	<form action="@routes.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, collection, license, filterUrl, offset, sorted)" method="POST">
 							  				<label for="export" class="col-sm-6 control-label">Targets count</label>
 							            	<div class="col-sm-6">
 									   			<div class="input-group">
