@@ -1,0 +1,62 @@
+#!/bin/bash
+
+#############################################################################################
+#
+# This script creates RHEL deployment package for W3ACT project
+#
+# The structure of the W3ACT project package should be:
+#     sysv
+#     w3act-1.0
+#         |_bin
+#         |_conf
+#         |_lib
+#         |_share
+#
+# Distribution package should contain: 
+# 
+#       1. Project sources (a ZIP file resulting from “play dist” command) e.g. w3act-1.0.zip
+#       2. Configuration files (*.yml, *.conf …) in folder "conf/" of the zip
+#       3. SysV init scripts in folder "sysv/"
+#
+# This script should be executed in a root directory of the project.
+# We assume that zip and unzip program is installed and play software is installed in /etc/default/play-2.2.0
+#
+# Usage: ./create-deployment-package
+#
+##############################################################################################
+
+clear
+echo "W3ACT RHEL deployment package creation started..."
+
+PROJECT_NAME=w3act
+VERSION="$PROJECT_NAME"-1.0
+SOURCES_ZIP="$VERSION".zip
+PLAY_DIR=/etc/default/play-2.2.0
+SOURCE_DIR=target/universal
+DIST_ZIP="$PROJECT_NAME"-dist.zip
+SYSV_DIR=sysv
+
+# Clean up old distribution package 
+if [ -f "$SOURCE_ZIP" ]; then
+    rm "$SOURCE_ZIP"
+fi
+
+# Build a binary version of the application in order to deploy it to the server without any dependency on Play itself
+echo "Create standalone version of appliation using dist..."
+"$PLAY_DIR"/play dist
+cd "$SOURCE_DIR"
+echo "Extract created sources ZIP..."
+unzip "$SOURCES_ZIP"
+#echo "Add rights to the start script in bin folder..."
+#chmod 755 "$SOURCE_DIR"/"$VERSION"/bin/"$PROJECT_NAME"
+
+echo "Add SysV init scripts..."
+cp -rf ../../conf/"$SYSV_DIR" .
+
+echo "Create distribution package that can be copied to opt folder on RHEL and unzipped there..."
+zip -r "$DIST_ZIP" "$SYSV_DIR" "$VERSION" 
+
+echo "RHEL deployment package creation completed"
+
+
+
