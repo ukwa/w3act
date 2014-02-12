@@ -98,10 +98,10 @@ POST    /flags/save                         controllers.Flags.save()
 GET     /crawlpermissions                   controllers.CrawlPermissionEdit.index()
 GET     /contact                            controllers.Contact.index()
 
-GET     /qa                                 controllers.QA.index()
-GET     /qa/list                            controllers.QA.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
-GET     /qa/search               		    controllers.QA.search()
-GET    	/qa/filterbyjson/:name		        controllers.QA.filterByJson(name)
+GET     /qa                                 controllers.QAController.index()
+GET     /qa/list                            controllers.QAController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET     /qa/search               		    controllers.QAController.search()
+GET    	/qa/filterbyjson/:name		        controllers.QAController.filterByJson(name)
 
 # Navigation
 GET     /addcontent                         controllers.AddContent.index()
