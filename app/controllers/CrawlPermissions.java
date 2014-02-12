@@ -1,5 +1,7 @@
 package controllers;
 
+import static play.data.Form.form;
+
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
@@ -19,6 +21,7 @@ import models.MailTemplate;
 import models.PermissionRefusal;
 import models.CommunicationLog;
 import play.Logger;
+import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -44,11 +47,13 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.InternetAddress;
 import javax.activation.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Manage permissions.
  */
 @Security.Authenticated(Secured.class)
-public class CrawlPermissionEdit extends AbstractController {
+public class CrawlPermissions extends AbstractController {
   
     /**
      * Display the permission.
@@ -112,37 +117,48 @@ public class CrawlPermissionEdit extends AbstractController {
      * if required.
      * @return
      */
-    public static Result filter() {
-    	Result res = null;
-    	Logger.info("CrawlPermissionEdit.filter()");
-        String addentry = getFormParam(Const.ADDENTRY);
-        String search = getFormParam(Const.SEARCH);
-        String name = getFormParam(Const.NAME);
-        String status = getFormParam(Const.STATUS);
+    public static Result search() {
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String name = form.get(Const.NAME);
+        String status = form.get(Const.STATUS);
+        
         if (status == null) {
         	status = Const.DEFAULT_CRAWL_PERMISSION_STATUS;
         }
+
         List<CrawlPermission> resList = processFilterCrawlPermissions(name, status, "");
-        Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name + ", status: " + status);
-        if (addentry != null) {
-        	if (name != null && name.length() > 0) {
-        		res = redirect(routes.CrawlPermissionEdit.addEntry(name));
-        	} else {
-        		Logger.info("CrawlPermission name is empty. Please write name in search window.");
-                res = ok(
-                        crawlpermissions.render(
-                            "CrawlPermissions", User.find.byId(request().username()), resList, "", status
-                        )
-                    );
-        	}
-        } else {
-            res = ok(
+
+        if (StringUtils.isBlank(name)) {
+			Logger.info("Organisation name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+			return ok(
             		crawlpermissions.render(
-                        "CrawlPermissions", User.find.byId(request().username()), resList, name, status
+                        "CrawlPermissions", User.find.byId(request().username()), resList, "", status
                     )
                 );
-        }
-        return res;
+		}
+
+        int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
+    	String sort = getQueryParam(Const.SORT_BY);
+    	String order = getQueryParam(Const.ORDER);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.ADDENTRY.equals(action)) {
+        		return redirect(routes.CrawlPermissions.create(name));
+    		} 
+    		else if (Const.SEARCH.equals(action)) {
+    			return ok(
+                		crawlpermissions.render(
+                            "CrawlPermissions", User.find.byId(request().username()), resList, name, status
+                        )
+                    );
+		    } else {
+		      return badRequest("This action is not allowed");
+		    }
+    	}
     }	   
     
     /**
@@ -186,7 +202,7 @@ public class CrawlPermissionEdit extends AbstractController {
      * @param permission title
      * @return
      */
-    public static Result addEntry(String name) {
+    public static Result create(String name) {
     	CrawlPermission permission = new CrawlPermission();
     	permission.name = name;
         permission.id = Target.createId();
@@ -319,14 +335,14 @@ public class CrawlPermissionEdit extends AbstractController {
                	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
     	        Ebean.save(log);
         	}
-	        res = redirect(routes.CrawlPermissionEdit.view(permission.url));
+	        res = redirect(routes.CrawlPermissions.view(permission.url));
         } 
         if (delete != null) {
         	CrawlPermission permission = CrawlPermission.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(permission);
-	        res = redirect(routes.CrawlPermissionEdit.index()); 
+	        res = redirect(routes.CrawlPermissions.index()); 
         }
-    	res = redirect(routes.CrawlPermissionEdit.index()); 
+    	res = redirect(routes.CrawlPermissions.index()); 
         return res;
     }	   
 
@@ -540,7 +556,7 @@ public class CrawlPermissionEdit extends AbstractController {
         	Logger.info("send all crawl permission requests");
 //            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
             setPendingSelectedCrawlPermissions(true, messageBody, messageSubject); 
-	        res = redirect(routes.CrawlPermissionEdit.index()); 
+	        res = redirect(routes.CrawlPermissions.index()); 
 //        	res = ok(
 //		        crawlpermissionsend.render(
 //		            CrawlPermission.filterByStatus(Const.DEFAULT_CRAWL_PERMISSION_STATUS), User.find.byId(request().username())
@@ -551,7 +567,7 @@ public class CrawlPermissionEdit extends AbstractController {
         	Logger.info("send some crawl permission requests");
 //            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
             setPendingSelectedCrawlPermissions(false, messageBody, messageSubject); 
-	        res = redirect(routes.CrawlPermissionEdit.index()); 
+	        res = redirect(routes.CrawlPermissions.index()); 
 //	        res = ok(
 //		        crawlpermissionsend.render(
 //		            getAssignedPermissionsList(), User.find.byId(request().username())
@@ -570,7 +586,7 @@ public class CrawlPermissionEdit extends AbstractController {
         if (reject != null) {
         	Logger.info("reject crawl permission requests");
         	rejectSelectedCrawlPermissions();        	
-	        res = redirect(routes.CrawlPermissionEdit.index()); 
+	        res = redirect(routes.CrawlPermissions.index()); 
         }
         return res;
     }
