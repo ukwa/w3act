@@ -6,7 +6,7 @@
     	<h1>Crawl Permission Send</h1>
 	</div>
 
-	<form action="@routes.CrawlPermissionEdit.save()" method="POST">
+	<form action="@routes.CrawlPermissions.save()" method="POST">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -15,7 +15,7 @@
 				    <div class="col-sm-6">
 	              		<input class="form-control" name="name" id="inputName" value="" type="text">
 						@permissions.map { permission =>		              
-				           	<a href="@routes.CrawlPermissionEdit.view(permission.url)">@permission.name </a>
+				           	<a href="@routes.CrawlPermissions.view(permission.url)">@permission.name </a>
 				        }	              		
 					</div>
 				</div>
