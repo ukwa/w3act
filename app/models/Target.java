@@ -447,7 +447,7 @@ public class Target extends Model {
 	 */
 	public static List<Target> filterUrl(String url) {
 		List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().contains("field_url", url);
+        ExpressionList<Target> ll = find.where().icontains("field_url", url);
     	res = ll.findList();
 		return res;
 	}
