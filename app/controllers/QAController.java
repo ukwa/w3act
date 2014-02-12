@@ -2,6 +2,7 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import models.Target;
@@ -35,7 +36,7 @@ public class QAController extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.QAController.list(0, "title", "asc", "")
+            routes.QAController.list(0, "title", "asc", "", "", "")
         );
     
     /**
@@ -46,7 +47,7 @@ public class QAController extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter) {
+    public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus) {
     	Logger.info("Targets.list()");
         return ok(
         	list.render(
@@ -55,7 +56,9 @@ public class QAController extends AbstractController {
         			filter, 
         			Target.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 
-        			order)
+        			order,
+        			collection,
+        			qaStatus)
         	);
     }
 	
@@ -74,7 +77,7 @@ public class QAController extends AbstractController {
 			Logger.info("Target name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.QAController.list(0, "title", "asc", "")
+	        		routes.QAController.list(0, "title", "asc", "", "", "")
 	        );
     	}    	
 
@@ -87,7 +90,7 @@ public class QAController extends AbstractController {
     	} else {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.QAController.list(pageNo, sort, order, query));
+    	    	return redirect(routes.QAController.list(pageNo, sort, order, query, "", ""));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -104,5 +107,18 @@ public class QAController extends AbstractController {
         return ok(jsonData);
     }
         
+    /**
+     * This method returns a list of all QA status types.
+     * @return
+     */
+    public static List<String> getAllQAStatusTypes() {
+    	List<String> res = new ArrayList<String>();
+	    Const.QAStatusType[] resArray = Const.QAStatusType.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+    
 }
 
