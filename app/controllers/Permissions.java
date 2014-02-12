@@ -1,6 +1,10 @@
 package controllers;
 
+import static play.data.Form.form;
+
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,6 +13,7 @@ import models.Permission;
 import models.Target;
 import models.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -20,7 +25,7 @@ import views.html.permissions.*;
  * Manage permissions.
  */
 @Security.Authenticated(Secured.class)
-public class PermissionEdit extends AbstractController {
+public class Permissions extends AbstractController {
   
     /**
      * Display the permission.
@@ -31,7 +36,7 @@ public class PermissionEdit extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.PermissionEdit.list(0, "name", "asc", "")
+            routes.Permissions.list(0, "name", "asc", "")
         );
     
     /**
@@ -61,32 +66,39 @@ public class PermissionEdit extends AbstractController {
      * if required.
      * @return
      */
-    public static Result filter() {
-    	Result res = null;
-    	Logger.info("PermissionEdit.filter()");
-        String addentry = getFormParam(Const.ADDENTRY);
-        String search = getFormParam(Const.SEARCH);
-        String name = getFormParam(Const.NAME);
-        Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);
-        if (addentry != null) {
-        	if (name != null && name.length() > 0) {
-        		res = redirect(routes.PermissionEdit.addEntry(name));
-        	} else {
-        		Logger.info("Permission name is empty. Please write name in search window.");
-                res = ok(
-                        permissions.render(
-                            "Permissions", User.find.byId(request().username()), models.Permission.filterByName(name), ""
-                        )
-                    );
-        	}
-        } else {
-            res = ok(
-            		permissions.render(
-                        "Permissions", User.find.byId(request().username()), models.Permission.filterByName(name), name
-                    )
-                );
-        }
-        return res;
+    public static Result search() {
+        
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get(Const.QUERY);
+		Logger.info("query: " + query);
+		Logger.info("action: " + action);
+    	
+    	if (StringUtils.isBlank(query)) {
+			Logger.info("Permission name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+	        return redirect(
+	        		routes.Permissions.list(0, "name", "asc", "")
+	        );
+    	}
+
+    	int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
+    	String sort = getQueryParam(Const.SORT_BY);
+    	String order = getQueryParam(Const.ORDER);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.ADDENTRY.equals(action)) {
+        		return redirect(routes.Permissions.create(query));
+    		} 
+    		else if (Const.SEARCH.equals(action)) {
+    	    	return redirect(routes.Permissions.list(pageNo, sort, order, query));
+		    } else {
+		      return badRequest("This action is not allowed");
+		    }
+    	}               
+        
     }	   
     
     /**
@@ -94,7 +106,7 @@ public class PermissionEdit extends AbstractController {
      * @param permission title
      * @return
      */
-    public static Result addEntry(String name) {
+    public static Result create(String name) {
     	Permission permission = new Permission();
     	permission.name = name;
         permission.id = Target.createId();
@@ -162,12 +174,12 @@ public class PermissionEdit extends AbstractController {
            		Logger.info("update permission: " + permission.toString());
                	Ebean.update(permission);
         	}
-	        res = redirect(routes.PermissionEdit.view(permission.url));
+	        res = redirect(routes.Permissions.view(permission.url));
         } 
         if (delete != null) {
         	Permission permission = Permission.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(permission);
-	        res = redirect(routes.PermissionEdit.index()); 
+	        res = redirect(routes.Permissions.index()); 
         }
         return res;
     }	   

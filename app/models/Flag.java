@@ -13,6 +13,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 
 /**
  * This class allows archivist to manage open flags.
@@ -103,6 +104,24 @@ public class Flag extends Model
     
     public String toString() {
         return "Flag(" + name + ")" + ", id:" + id;
+    }
+    
+    /**
+     * Return a page of User
+     *
+     * @param page Flag to display
+     * @param pageSize Number of Flags per page
+     * @param sortBy User property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Flag> page(int page, int pageSize, String sortBy, String order, String filter) {
+
+        return find.where().icontains("name", filter)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
     }    
 
 }

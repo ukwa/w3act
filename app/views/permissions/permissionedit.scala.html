@@ -8,13 +8,13 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.PermissionEdit.view(permission.url)">View</a></li>
+	   <li><a href="@routes.Permissions.view(permission.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.PermissionEdit.edit(permission.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.Permissions.edit(permission.url)">Edit</a></li>
 	   }
 	</ul>
     
-	<form action="@routes.PermissionEdit.save()" method="POST">
+	<form action="@routes.Permissions.save()" method="POST">
 		<input type="hidden" name="url" value="@permission.url">
 		<input type="hidden" name="id" value="@permission.id">
 

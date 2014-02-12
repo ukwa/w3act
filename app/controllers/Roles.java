@@ -15,6 +15,7 @@ import models.Role;
 import models.Target;
 import models.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -82,15 +83,17 @@ public class Roles extends AbstractController {
      * @return
      */
     public static Result search() {
-    	String action = form().bindFromRequest().get("action");
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get(Const.QUERY);
+		Logger.info("query: " + query);
 		Logger.info("action: " + action);
-    	String query = getQueryParam(Const.NAME);
     	
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Role name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Roles.list(0, "title", "asc", "")
+	        		routes.Roles.list(0, "name", "asc", "")
 	        );
     	}
 
@@ -207,7 +210,6 @@ public class Roles extends AbstractController {
         String save = getFormParam(Const.SAVE);
         if (save != null) {
         	Role role = null;
-            boolean isExisting = true;
             try {
                	role = Role.findByUrl(getFormParam(Const.URL));
                	String assignedPermissions = "";

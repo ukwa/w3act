@@ -7,13 +7,13 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.FlagEdit.view(flag.url)">View</a></li>
+	   <li><a href="@routes.Flags.view(flag.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.FlagEdit.edit(flag.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.Flags.edit(flag.url)">Edit</a></li>
 	   }
 	</ul>
-    
-	<form action="@routes.FlagEdit.save()" method="POST">
+
+	@helper.form(action=routes.Flags.save) {
 		<input type="hidden" name="url" value="@flag.url">
 		<input type="hidden" name="id" value="@flag.id">
 
@@ -51,6 +51,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 
