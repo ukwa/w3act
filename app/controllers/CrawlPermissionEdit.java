@@ -29,7 +29,6 @@ import uk.bl.scope.EmailHelper;
 import views.html.contactpersons.*;
 import views.html.mailtemplates.*;
 import views.html.crawlpermissions.*;
-import views.html.permissions.permissions;
 import views.html.targets.targets;
 import views.html.licence.*;
 import views.html.refusals.*;

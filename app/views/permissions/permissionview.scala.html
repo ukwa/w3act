@@ -8,9 +8,9 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.PermissionEdit.view(permission.url)">View</a></li>
+	   <li class="active"><a href="@routes.Permissions.view(permission.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   	<li><a href="@routes.PermissionEdit.edit(permission.url)">Edit</a></li>
+	   	<li><a href="@routes.Permissions.edit(permission.url)">Edit</a></li>
 	   }
 	</ul>
 

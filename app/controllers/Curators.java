@@ -2,6 +2,7 @@ package controllers;
 
 import static play.data.Form.form;
 import play.*;
+import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.*;
 
@@ -63,11 +64,12 @@ public class Curators extends AbstractController {
      */
     public static Result search() {
     	
-    	String action = form().bindFromRequest().get("action");
-		Logger.info("action: " + action);
-    	String query = getQueryParam(Const.NAME);
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get(Const.NAME);
 		Logger.info("query: " + query);
-    	
+		Logger.info("action: " + action);
+		
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Curator's name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");

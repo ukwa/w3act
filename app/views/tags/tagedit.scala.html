@@ -7,13 +7,13 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.TagEdit.view(tag.url)">View</a></li>
+	   <li><a href="@routes.Tags.view(tag.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.TagEdit.edit(tag.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.Tags.edit(tag.url)">Edit</a></li>
 	   }
 	</ul>
     
-	<form action="@routes.TagEdit.save()" method="POST">
+	<form action="@routes.Tags.save()" method="POST">
 		<input type="hidden" name="url" value="@tag.url">
 		<input type="hidden" name="id" value="@tag.id">
 

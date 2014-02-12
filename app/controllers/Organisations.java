@@ -13,6 +13,7 @@ import models.User;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
+import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -51,10 +52,11 @@ public class Organisations extends AbstractController {
      * Searching
      */
     public static Result search() {
-    	
-    	String action = form().bindFromRequest().get("action");
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get(Const.QUERY);
+		Logger.info("query: " + query);
 		Logger.info("action: " + action);
-    	String query = getQueryParam(Const.QUERY);
     	
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Organisation name is empty. Please write name in search window.");
