@@ -1,0 +1,87 @@
+@(title: String, user: User, scripts: Html = Html(""), styles: Html = Html(""))(body: Html)
+
+<html>
+    <head>
+        <title>W3ACT</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/style.css")">
+		<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/blue/style.css")">
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-play-1.7.1.js")"></script>
+        <script src="@routes.Assets.at("bootstrap/dist/js/bootstrap.min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.tablesorter.min.js")"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		<script src="@routes.Assets.at("javascripts/hogan.js/hogan-2.0.0.min.js")" type="text/javascript"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/script.js")"></script>
+        <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+        @scripts
+        @styles
+    </head>
+    <body>
+		<nav class="navbar navbar-default" role="navigation">
+  			<div class="navbar-header">				
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span> <span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="@routes.About.index">
+					<image src="@routes.Assets.at("images/ukwa-icon-nobg-16.png")" />
+						W3ACT
+				</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<!-- li><a href="@routes.About.index">About</a></li-->
+					<li><a href="@routes.Collections.index()">Collections</a></li> 
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Targets<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="@routes.Targets.lookup()">Look Up URL</a></li>
+							<li><a href="@routes.Targets.index()">List Targets</a></li>
+						</ul>
+					</li>
+					<li><a href="@routes.Organisations.index()">Organisations</a></li>
+					<li><a href="@routes.Curators.index()">Curators</a></li>
+                    @if(user.hasRole("sys_admin")) {
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Access Control<b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="@routes.Roles.index()">Roles</a></li>
+								<li><a href="@routes.Permissions.index()">Permissions</a></li>
+								<li><a href="@routes.CrawlPermissions.index()">Crawl Permissions</a></li>
+								<li><a href="@routes.QAController.index()">QA</a></li>
+							</ul>
+						</li>					
+					}
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="@routes.Tags.index()">Tags</a></li>
+							<li><a href="@routes.Flags.index()">Flags</a></li>
+							<li><a href="@routes.Tags.index()">Export</a></li>
+						</ul>
+					</li>					
+					<li><a href="@routes.Contact.index">Contact</a></li>
+				</ul>
+				<div class="navbar-right">
+					<span class="navbar-text white-text">@user.name (@user.email)&nbsp;&nbsp;</span> 
+					<a class="btn btn-success navbar-btn" href="@routes.Application.logout()">Logout</a>
+				</div>
+			</div><!-- /.nav-collapse -->
+		</nav>
+		<div class="container">      
+			@body
+		</div>
+    </body>
+</html>
