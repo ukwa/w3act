@@ -303,6 +303,17 @@ public final class Const {
 		SELECTION;
     }
 	
+	/**
+	 * The QA status types.
+	 */
+	public enum QAStatusType {
+		PASSED_PUBLISH_NO_ACTION_REQUIRED,
+		FAILED_DO_NOT_PUBLISH,
+		FAILED_PASS_TO_ENGINEER,
+		RECRAWL_REQUESTED,
+		ISSUE_NOTED;
+    }
+    
     /**
      * Help collections to read JSON lists like
      * "field_url":[{"url":"http:\/\/www.adoptionuk.org\/"}]
