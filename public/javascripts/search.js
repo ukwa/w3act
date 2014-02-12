@@ -22,14 +22,17 @@ function applySearch(context, searchContext, urlTo) {
 		          	return searchResults;
 				}
 			},
-			 template: '<p><strong>{{value}}</strong></p><p><a href="{{field_url}}">{{field_url}}</a></p>',
+			 template: '<p><strong>{{value}}</strong></p><p>{{field_url}}</p>',
 			 engine: Hogan
 		}).on('typeahead:selected', function(event, datum) {
 			console.log("contextTo: " + urlTo);
+			if (datum.field_url !== undefined) {
+				$(this).val(datum.field_url);
+			}
 			if (urlTo !== undefined) {
-				document.location = context + urlTo + "/" + datum.url; 
+				window.location.replace(context + urlTo + "/" + datum.url);
 			} else {
-				document.location = context + searchContext + "/" + datum.url; 
+				window.location.replace(context + searchContext + "/" + datum.url); 
 			}
 		});
 	}

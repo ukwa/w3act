@@ -247,7 +247,7 @@ public class TargetController extends AbstractController {
         	if (getFormParam(Const.TITLE) != null && getFormParam(Const.FIELD_URL) != null) {
                 String name = getFormParam(Const.TITLE);
                 String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
-    	        res = redirect(routes.CrawlPermissionEdit.licenceRequestForTarget(name, target)); 
+    	        res = redirect(routes.CrawlPermissions.licenceRequestForTarget(name, target)); 
         	}
         }
         return res;

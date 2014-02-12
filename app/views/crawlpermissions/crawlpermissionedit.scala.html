@@ -19,13 +19,13 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.CrawlPermissionEdit.view(permission.url)">View</a></li>
+	   <li><a href="@routes.CrawlPermissions.view(permission.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.CrawlPermissionEdit.edit(permission.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.CrawlPermissions.edit(permission.url)">Edit</a></li>
 	   }
 	</ul>
     
-	<form action="@routes.CrawlPermissionEdit.save()" method="POST">
+	<form action="@routes.CrawlPermissions.save()" method="POST">
 		<input type="hidden" name="url" value="@permission.url">
 		<input type="hidden" name="id" value="@permission.id">
 
