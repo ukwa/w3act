@@ -116,7 +116,7 @@ GET     /target/licencerequest/:name/:target  	controllers.CrawlPermissions.lice
 GET     /contact                            controllers.Contact.index()
 
 GET     /qa                                 controllers.QAController.index()
-GET     /qa/list                            controllers.QAController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", c ?= "", q ?= "")
+GET     /qa/list                            controllers.QAController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_collection ?= "", query_qa_status ?= "")
 GET     /qa/search               		    controllers.QAController.search()
 GET    	/qa/filterbyjson/:name		        controllers.QAController.filterByJson(name)
 

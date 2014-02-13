@@ -5,6 +5,7 @@ import static play.data.Form.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.DCollection;
 import models.Target;
 import models.User;
 
@@ -48,13 +49,13 @@ public class QAController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus) {
-    	Logger.info("Targets.list()");
+    	Logger.info("QAController.list() collection: " + collection);
         return ok(
         	list.render(
         			"QA", 
         			User.find.byId(request().username()), 
         			filter, 
-        			Target.page(pageNo, 10, sortBy, order, filter), 
+        			Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus), 
         			sortBy, 
         			order,
         			collection,
@@ -72,6 +73,7 @@ public class QAController extends AbstractController {
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get("url");
+    	Logger.info("QAController.search() query: " + query);
 
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Target name is empty. Please write name in search window.");
@@ -84,13 +86,24 @@ public class QAController extends AbstractController {
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
     	String order = form.get(Const.ORDER);
-
+    	String query_qa_status = form.get(Const.QUERY_QA_STATUS);
+    	String query_collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
+//    	Logger.info("QAController.search() query_collection_name: " + query_collection_name);
+    	String query_collection = "";
+    	if (query_collection_name != null && !query_collection_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			query_collection = DCollection.findByTitle(query_collection_name).url;
+    		} catch (Exception e) {
+    			Logger.info("Can't find collection for title: " + query_collection_name + ". " + e);
+    		}
+    	} 
+    	
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.QAController.list(pageNo, sort, order, query, "", ""));
+    	    	return redirect(routes.QAController.list(pageNo, sort, order, query, query_collection, query_qa_status));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }

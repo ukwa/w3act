@@ -850,5 +850,27 @@ public class Target extends Model {
         		.setFetchAhead(false)
         		.getPage(page);
     }    
+
+    /**
+     * Return a page of Target
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Target> pageQa(int page, int pageSize, String sortBy, String order, String filter, 
+    		String collection, String qaStatus) {
+
+//    	Logger.info("pageQa() collection: " + collection);
+
+        return find.where().icontains(Const.FIELD_URL_NODE, filter)
+        		.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
 }
 
