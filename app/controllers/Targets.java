@@ -32,32 +32,36 @@ public class Targets extends AbstractController {
      * Display the targets.
      */
     public static Result index() {
-    	List<Target> targetsRes = new ArrayList<Target>();
-    	List<Target> targetsAll = processTargets(Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-            	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true);
-    	if (!targetsAll.isEmpty()) {
-    		targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
-    	}
-        return ok(
-            targets.render(
-                    "Targets", User.find.byId(request().username()), targetsRes, 
-                	User.findAll(), models.Organisation.findInvolving(),
-                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true
-            )
-        );
+        return redirect(
+                routes.Targets.targets(0, "title", "asc", "", "")
+            );
+
+//    	List<Target> targetsRes = new ArrayList<Target>();
+//    	List<Target> targetsAll = processTargets(Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+//            	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true);
+//    	if (!targetsAll.isEmpty()) {
+//    		targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
+//    	}
+//        return ok(
+//            targets.render(
+//                    "Targets", User.find.byId(request().username()), targetsRes, 
+//                	User.findAll(), models.Organisation.findInvolving(),
+//                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+//                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true
+//            )
+//        );
     }
 
     public static Result offset(int offset) {
     	List<Target> targetsAll = models.Target.findAllActive();
     	List<Target> targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
         return ok(
-            targets.render(
-                    "Targets", User.find.byId(request().username()), targetsRes, 
-                	User.findAll(), models.Organisation.findInvolving(),
-                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, offset, targetsAll.size(), "", Const.NONE, true
-            )
+//            targets.render(
+//                    "Targets", User.find.byId(request().username()), targetsRes, 
+//                	User.findAll(), models.Organisation.findInvolving(),
+//                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+//                	Const.NONE, Const.NONE, offset, targetsAll.size(), "", Const.NONE, true
+//            )
         );
     }
 
@@ -150,13 +154,13 @@ public class Targets extends AbstractController {
 //       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
 //    	Logger.info("target edit targetsRes: " + targetsRes.size());
         return ok(
-                targets.render(
-   			        "Targets", User.find.byId(request().username()), targetsRes, 
-		        	User.findFilteredByUrl(author), models.Organisation.findFilteredByUrl(field_nominating_organisation),
-			        	author, field_nominating_organisation, field_collection_categories, field_subject, 
-			        	field_crawl_frequency, field_depth, field_suggested_collections, offset, targetsAll.size(), filterUrl, 
-			        	field_license, isSorted
-                        )
+//                targets.render(
+//   			        "Targets", User.find.byId(request().username()), targetsRes, 
+//		        	User.findFilteredByUrl(author), models.Organisation.findFilteredByUrl(field_nominating_organisation),
+//			        	author, field_nominating_organisation, field_collection_categories, field_subject, 
+//			        	field_crawl_frequency, field_depth, field_suggested_collections, offset, targetsAll.size(), filterUrl, 
+//			        	field_license, isSorted
+//                        )
                 );
 
     }
@@ -226,12 +230,12 @@ public class Targets extends AbstractController {
 //       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
 //    	Logger.info("target edit targetsRes: " + targetsRes.size());
         return ok(
-                targets.render(
-   			        "Targets", User.find.byId(request().username()), targetsRes, 
-		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
-			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, 
-			        	crawlFrequency, depth, suggested_collections, offset, targetList.size(), filterUrl, license, isSorted
-                        )
+//                targets.render(
+//   			        "Targets", User.find.byId(request().username()), targetsRes, 
+//		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
+//			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, 
+//			        	crawlFrequency, depth, suggested_collections, offset, targetList.size(), filterUrl, license, isSorted
+//                        )
                 );
     }
     
@@ -278,12 +282,12 @@ public class Targets extends AbstractController {
 //    	Logger.info("target render targetsAll.size(): " + targetsAll.size() +
 //    			", filterUrl: " + filterUrl);
         return ok(
-                targets.render(
-   			        "Targets", User.find.byId(request().username()), targetsRes, 
-		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
-			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, 
-			        	suggested_collections, offset, targetsAll.size(), filterUrl, license, isSorted
-                        )
+//                targets.render(
+//   			        "Targets", User.find.byId(request().username()), targetsRes, 
+//		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
+//			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, 
+//			        	suggested_collections, offset, targetsAll.size(), filterUrl, license, isSorted
+//                        )
                 );
     }
     
@@ -637,6 +641,87 @@ public class Targets extends AbstractController {
         	);
     }
 	
+    /**
+     * Display the paginated list of targets.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     */
+    public static Result targets(int pageNo, String sortBy, String order, String filter, String curator) {
+    	Logger.info("Targets.targets()");
+    	
+    	List<Target> targetsRes = new ArrayList<Target>();
+    	List<Target> targetsAll = processTargets(Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+            	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true);
+    	if (!targetsAll.isEmpty()) {
+    		targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
+    	}   	    	
+        return ok(
+        	targets.render(
+        			"Targets", 
+        			User.find.byId(request().username()), 
+        			filter, 
+        			Target.pageTargets(pageNo, 10, sortBy, order, filter, curator), 
+        			sortBy, 
+        			order, 
+        			null, //targetsRes, 
+                	User.findAll(), models.Organisation.findInvolving(),
+                	curator, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true)
+        	);
+    }
+	
+    /**
+     * This method enables searching for given URL and redirection in order to add new entry
+     * if required.
+     * @return
+     */
+    public static Result searchTargets() {
+    	
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get("url");
+
+    	if (StringUtils.isBlank(query)) {
+			Logger.info("Target name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+	        return redirect(
+	        		routes.Targets.targets(0, "title", "asc", "", "")
+//	        		routes.Targets.targets(0, "title", "asc", "")
+	        );
+    	}    	
+
+    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
+    	String sort = form.get(Const.SORT_BY);
+    	String order = form.get(Const.ORDER);
+    	String curator_name = form.get(Const.AUTHOR);
+    	String curator = "";
+    	if (curator_name != null && !curator_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			curator = User.findByName(curator_name).url;
+    		} catch (Exception e) {
+    			Logger.info("Can't find curator for name: " + curator_name + ". " + e);
+    		}
+    	} 
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+//    		if (Const.ADDENTRY.equals(action)) {
+//        		return redirect(routes.Targets.create(query));
+//    		} 
+    		if (Const.SEARCH.equals(action)) {
+    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator));
+//    	    	return redirect(routes.Targets.targets(pageNo, sort, order, query));
+		    } else {
+		      return badRequest("This action is not allowed");
+		    }
+    	}
+    }
+    
     /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
