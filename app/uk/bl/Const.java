@@ -210,6 +210,8 @@ public final class Const {
 	public static final String SORT_BY				= "s";
 	public static final String ORDER             	= "o";
 	public static final String QUERY             	= "q";
+	public static final String QUERY_COLLECTION    	= "query_collection";
+	public static final String QUERY_QA_STATUS     	= "query_qa_status";
 
 	// Types of the JSON nodes
 	public enum NodeType {
