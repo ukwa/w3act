@@ -89,7 +89,7 @@
     <article class="targets">
     
 		@warningmessage(flash)
-		@helper.form(action=routes.QAController.search, 'class -> "form-inline") {
+		@helper.form(action=routes.QAController.search) {
 		<div id="forms">
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
