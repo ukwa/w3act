@@ -32,9 +32,7 @@ public class Targets extends AbstractController {
      * Display the targets.
      */
     public static Result index() {
-        return redirect(
-                routes.Targets.targets(0, "title", "asc", "", "")
-            );
+        return GO_TARGETS_HOME;
 
 //    	List<Target> targetsRes = new ArrayList<Target>();
 //    	List<Target> targetsAll = processTargets(Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
@@ -649,26 +647,27 @@ public class Targets extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
      */
-    public static Result targets(int pageNo, String sortBy, String order, String filter, String curator) {
+    public static Result targets(int pageNo, String sortBy, String order, String filter, String curator,
+    		String organisation) {
     	Logger.info("Targets.targets()");
     	
-    	List<Target> targetsRes = new ArrayList<Target>();
-    	List<Target> targetsAll = processTargets(Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-            	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true);
-    	if (!targetsAll.isEmpty()) {
-    		targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
-    	}   	    	
+//    	List<Target> targetsRes = new ArrayList<Target>();
+//    	List<Target> targetsAll = processTargets(Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+//            	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true);
+//    	if (!targetsAll.isEmpty()) {
+//    		targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
+//    	}   	    	
         return ok(
         	targets.render(
         			"Targets", 
         			User.find.byId(request().username()), 
         			filter, 
-        			Target.pageTargets(pageNo, 10, sortBy, order, filter, curator), 
+        			Target.pageTargets(pageNo, 10, sortBy, order, filter, curator, organisation), 
         			sortBy, 
         			order, 
         			null, //targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
-                	curator, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
+                	curator, organisation, Const.NONE, Const.NONE, Const.NONE, 
                 	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true)
         	);
     }
@@ -687,10 +686,7 @@ public class Targets extends AbstractController {
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Target name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
-	        return redirect(
-	        		routes.Targets.targets(0, "title", "asc", "", "")
-//	        		routes.Targets.targets(0, "title", "asc", "")
-	        );
+	        return GO_TARGETS_HOME;
     	}    	
 
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
@@ -705,6 +701,15 @@ public class Targets extends AbstractController {
     			Logger.info("Can't find curator for name: " + curator_name + ". " + e);
     		}
     	} 
+    	String organisation_name = form.get(Const.FIELD_NOMINATING_ORGANISATION);
+    	String organisation = "";
+    	if (organisation_name != null && !organisation_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			organisation = Organisation.findByTitle(organisation_name).url;
+    		} catch (Exception e) {
+    			Logger.info("Can't find organisation for title: " + organisation_name + ". " + e);
+    		}
+    	} 
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
@@ -714,8 +719,7 @@ public class Targets extends AbstractController {
 //    		} 
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator));
-//    	    	return redirect(routes.Targets.targets(pageNo, sort, order, query));
+    	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -791,7 +795,11 @@ public class Targets extends AbstractController {
     }
 
     public static Result GO_HOME = redirect(
-        routes.Targets.list(0, "title", "asc", "")
-    );
+            routes.Targets.list(0, "title", "asc", "")
+        );
+    
+    public static Result GO_TARGETS_HOME = redirect(
+            routes.Targets.targets(0, "title", "asc", "", "", "")
+        );
 }
 
