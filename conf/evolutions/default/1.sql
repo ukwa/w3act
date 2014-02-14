@@ -159,6 +159,11 @@ create table instance (
   field_notes               TEXT,
   field_instances           TEXT,
   field_subject             TEXT,
+  field_qa_status           TEXT,
+  qa_status                 TEXT,
+  qa_issue_category         TEXT,
+  qa_notes                  TEXT,
+  quality_notes             TEXT,
   constraint pk_instance primary key (nid))
 ;
 
@@ -326,6 +331,11 @@ create table target (
   originating_organisation  TEXT,
   flags                     TEXT,
   authors                   TEXT,
+  field_qa_status           TEXT,
+  qa_status                 TEXT,
+  qa_issue_category         TEXT,
+  qa_notes                  TEXT,
+  quality_notes             TEXT,
   last_update               timestamp not null,
   constraint pk_target primary key (nid))
 ;
@@ -416,43 +426,39 @@ create sequence creator_seq;
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+drop table if exists communication_log cascade;
 
-drop table if exists communication_log;
+drop table if exists contact_person cascade;
 
-drop table if exists contact_person;
+drop table if exists crawl_permission cascade;
 
-drop table if exists crawl_permission;
+drop table if exists dcollection cascade;
 
-drop table if exists dcollection;
+drop table if exists flag cascade;
 
-drop table if exists flag;
+drop table if exists instance cascade;
 
-drop table if exists instance;
+drop table if exists lookup_entry cascade;
 
-drop table if exists lookup_entry;
+drop table if exists mail_template cascade;
 
-drop table if exists mail_template;
+drop table if exists organisation cascade;
 
-drop table if exists organisation;
+drop table if exists permission cascade;
 
-drop table if exists permission;
+drop table if exists permission_refusal cascade;
 
-drop table if exists permission_refusal;
+drop table if exists role cascade;
 
-drop table if exists role;
+drop table if exists tag cascade;
 
-drop table if exists tag;
+drop table if exists target cascade;
 
-drop table if exists target;
+drop table if exists taxonomy cascade;
 
-drop table if exists taxonomy;
+drop table if exists taxonomy_vocabulary cascade;
 
-drop table if exists taxonomy_vocabulary;
-
-drop table if exists creator;
-
-SET REFERENTIAL_INTEGRITY TRUE;
+drop table if exists creator cascade;
 
 drop sequence if exists communication_log_seq;
 
