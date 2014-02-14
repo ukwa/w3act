@@ -98,6 +98,7 @@ public final class Const {
 	public static final String FIELD_WCT_ID       = "wct";
 	public static final String FIELD_SPT_ID       = "spt";
 	public static final String FIELD_LICENSE      = "license";
+	public static final String FIELD_LICENSE_NODE = "field_license";
 	public static final String FIELD_UK_HOSTING   = "field_uk_hosting";
 	public static final String FIELD_UK_POSTAL_ADDRESS = "field_uk_postal_address";
 	public static final String FIELD_UK_POSTAL_ADDRESS_URL = "field_uk_postal_address_url";
@@ -207,6 +208,7 @@ public final class Const {
 
 	// Sorting/Pagination
 	public static final String PAGE_NO             	= "p";
+	public static final String PAGE_SIZE          	= "page_size";
 	public static final String SORT_BY				= "s";
 	public static final String ORDER             	= "o";
 	public static final String QUERY             	= "q";

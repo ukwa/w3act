@@ -881,15 +881,27 @@ public class Target extends Model {
      * @param sortBy Target property used for sorting
      * @param order Sort order (either or asc or desc)
      * @param filter Filter applied on the name column
+     * @param curator Author of the target
+     * @param organisation The author's organisation
+     * @param subject Target subject
+     * @param crawlFrequency The crawl frequency
+     * @param depth The crawl depth
+     * @param collection The associated collection
+     * @param license The license name
+     * @return
      */
     public static Page<Target> pageTargets(int page, int pageSize, String sortBy, String order, String filter, 
-    		String curator, String organisation) {
-
-//    	Logger.info("pageQa() collection: " + collection);
+    		String curator, String organisation, String subject, String crawlFrequency, String depth, String collection, 
+    		String license) {
 
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
         		.icontains(Const.AUTHOR, curator)
         		.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation)
+        		.icontains(Const.FIELD_SUBJECT, subject)
+//        		.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency)
+//        		.icontains(Const.FIELD_DEPTH, depth)
+        		.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)
+//        		.icontains(Const.FIELD_LICENSE_NODE, license)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
