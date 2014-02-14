@@ -646,9 +646,18 @@ public class Targets extends AbstractController {
      * @param sortBy Column to be sorted
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
+     * @param curator Author of the target
+     * @param organisation The author's organisation
+     * @param subject Target subject
+     * @param crawlFrequency The crawl frequency
+     * @param depth The crawl depth
+     * @param collection The associated collection
+     * @param license The license name
+     * @param pageSize The number of Target entries on the page
      */
     public static Result targets(int pageNo, String sortBy, String order, String filter, String curator,
-    		String organisation) {
+    		String organisation, String subject, String crawlFrequency, String depth, String collection, 
+    		String license, int pageSize) {
     	Logger.info("Targets.targets()");
     	
 //    	List<Target> targetsRes = new ArrayList<Target>();
@@ -662,13 +671,15 @@ public class Targets extends AbstractController {
         			"Targets", 
         			User.find.byId(request().username()), 
         			filter, 
-        			Target.pageTargets(pageNo, 10, sortBy, order, filter, curator, organisation), 
+        			Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
+//                			Target.pageTargets(pageNo, 10, sortBy, order, filter, curator, organisation, 
+        					subject, crawlFrequency, depth, collection, license), 
         			sortBy, 
         			order, 
         			null, //targetsRes, 
                 	User.findAll(), models.Organisation.findInvolving(),
-                	curator, organisation, Const.NONE, Const.NONE, Const.NONE, 
-                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true)
+                	curator, organisation, Const.NONE, subject, crawlFrequency, 
+                	depth, collection, 0, models.Target.findAllActive().size(), "", license, pageSize)
         	);
     }
 	
@@ -692,6 +703,7 @@ public class Targets extends AbstractController {
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
     	String order = form.get(Const.ORDER);
+    	int pageSize = Integer.parseInt(form.get(Const.PAGE_SIZE));
     	String curator_name = form.get(Const.AUTHOR);
     	String curator = "";
     	if (curator_name != null && !curator_name.toLowerCase().equals(Const.NONE)) {
@@ -710,18 +722,53 @@ public class Targets extends AbstractController {
     			Logger.info("Can't find organisation for title: " + organisation_name + ". " + e);
     		}
     	} 
+    	String subject_name = form.get(Const.FIELD_SUBJECT);
+    	String subject = "";
+    	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			subject = Taxonomy.findByFullName(subject_name).url;
+    		} catch (Exception e) {
+    			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
+    		}
+    	} 
+    	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
+    	String collection = "";
+    	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			collection = DCollection.findByTitle(collection_name).url;
+    		} catch (Exception e) {
+    			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
+    		}
+    	} 
+    	String license_name = form.get(Const.FIELD_LICENSE_NODE);
+    	String license = "";
+    	if (license_name != null && !license_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			license = Taxonomy.findByFullName(license_name).url;
+    		} catch (Exception e) {
+    			Logger.info("Can't find license for name: " + license_name + ". " + e);
+    		}
+    	} 
+    	String depth = form.get(Const.FIELD_DEPTH);
+    	String crawlFrequency = form.get(Const.FIELD_CRAWL_FREQUENCY);
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-//    		if (Const.ADDENTRY.equals(action)) {
-//        		return redirect(routes.Targets.create(query));
-//    		} 
-    		if (Const.SEARCH.equals(action)) {
+    		if (Const.ADDENTRY.equals(action)) {
+    			return redirect(
+    	        		routes.Targets.list(0, "title", "asc", query)
+    			        );
+    		} 
+    		else if (Const.CLEAR.equals(action)) {
+    			return GO_TARGETS_HOME;
+    		} 
+    		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation));
+    	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation, 
+    	    			subject, crawlFrequency, depth, collection, license, pageSize));
 		    } else {
-		      return badRequest("This action is not allowed");
+		    	return badRequest("This action is not allowed");
 		    }
     	}
     }
@@ -799,7 +846,7 @@ public class Targets extends AbstractController {
         );
     
     public static Result GO_TARGETS_HOME = redirect(
-            routes.Targets.targets(0, "title", "asc", "", "", "")
+            routes.Targets.targets(0, "title", "asc", "", "", "", "", "", "", "", "", Const.PAGINATION_OFFSET)
         );
 }
 
