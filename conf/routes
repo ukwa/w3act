@@ -212,8 +212,7 @@ GET     /targets/:offset                    controllers.Targets.offset(offset:In
 
 
 POST    /targets/add-new                    controllers.UrlSearch.addNewTarget()
-GET     /website/:url                        controllers.WebSite.addEntry(url)
-POST    /export/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:license/:filterUrl/:offset/:sorted   controllers.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, license, filterUrl, offset:Int, sorted:Boolean)
+GET     /website/:url                       controllers.WebSite.addEntry(url)
 
 # Scope
 GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
