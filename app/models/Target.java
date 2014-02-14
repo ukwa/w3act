@@ -883,12 +883,13 @@ public class Target extends Model {
      * @param filter Filter applied on the name column
      */
     public static Page<Target> pageTargets(int page, int pageSize, String sortBy, String order, String filter, 
-    		String curator) {
+    		String curator, String organisation) {
 
 //    	Logger.info("pageQa() collection: " + collection);
 
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
         		.icontains(Const.AUTHOR, curator)
+        		.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

@@ -40,7 +40,7 @@
     }
     
     // Generate the link
-    routes.Targets.targets(newPage, sortBy, order, searchurl, curatorUrl)
+    routes.Targets.targets(newPage, sortBy, order, searchurl, curatorUrl, organisationUrl)
     
 }
 
@@ -102,7 +102,7 @@
    					<input type="hidden" name="query_depth" value="@depth">
    					<input type="hidden" name="query_collection" value="@collection">
    					<input type="hidden" name="query_license" value="@license">
-   					filterUrl: String, license: String, sorted: Boolean
+   					<input type="hidden" name="query_sorted" value="@sorted">
 					<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
