@@ -256,7 +256,7 @@
 							  				<label for="export" class="col-sm-6 control-label">Targets count</label>
 							            	<div class="col-sm-6">
 									   			<div class="input-group">
-									 				<input type="text" name="count" value="@limit" maxlength="200" class="form-control target-form-control" disabled id="export" title="Number of selected targets" />
+									 				<input type="text" name="count" value="@currentPage.getTotalRowCount" maxlength="200" class="form-control target-form-control" disabled id="export" title="Number of selected targets" />
 									 				<span class="input-group-btn">
 								            			<button type="submit" class="btn btn-primary" id="export" name="export" title="Export results of filtered searches and reports to CSV file">Export</button>
 								            		</span>
