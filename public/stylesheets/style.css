@@ -336,3 +336,8 @@ table.table.table-striped.table-bordered.table-hover.table-condensed {
 #pagination ul .current a {
     color: #666;
 }
+
+.target-form-control {
+	margin-bottom:8px;
+}
+
