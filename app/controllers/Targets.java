@@ -727,8 +727,7 @@ public class Targets extends AbstractController {
     	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
     		try {
     			Logger.info("find subject for title: " + subject_name + ". " + subject_name.length());
-//           		subject = Taxonomy.findByName(subject_name).url;
-    			subject = Taxonomy.findByFullName(subject_name).url;
+           		subject = Taxonomy.findByName(subject_name).url;
     		} catch (Exception e) {
     			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
     		}
@@ -746,7 +745,7 @@ public class Targets extends AbstractController {
     	String license = "";
     	if (license_name != null && !license_name.toLowerCase().equals(Const.NONE)) {
     		try {
-    			license = Taxonomy.findByFullName(license_name).url;
+    			license = Taxonomy.findByName(license_name).url;
     		} catch (Exception e) {
     			Logger.info("Can't find license for name: " + license_name + ". " + e);
     		}

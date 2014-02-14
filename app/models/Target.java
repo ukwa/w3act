@@ -126,10 +126,19 @@ public class Target extends Model {
     public String originating_organisation; 
     @Column(columnDefinition = "TEXT")
     public String flags; 
-//    @Column(columnDefinition = "TEXT")
-//    public String flagnote; 
     @Column(columnDefinition = "TEXT")
     public String authors; 
+    @Column(columnDefinition = "TEXT")
+    public String field_qa_status; 
+    @Column(columnDefinition = "TEXT")
+    public String qa_status; 
+    @Column(columnDefinition = "TEXT")
+    public String qa_issue_category; 
+    @Column(columnDefinition = "TEXT")
+    public String qa_notes; 
+    @Column(columnDefinition = "TEXT")
+    public String quality_notes; 
+
     
     @Version
     public Timestamp lastUpdate;
@@ -894,7 +903,13 @@ public class Target extends Model {
     		String curator, String organisation, String subject, String crawlFrequency, String depth, String collection, 
     		String license) {
 
-//    	Logger.info("crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
+    	Logger.info("crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
+    	if (crawlFrequency != null && crawlFrequency.length() > 0 && crawlFrequency.toLowerCase().equals(Const.NONE)) {
+    		crawlFrequency = ""; 
+    	}
+    	if (depth != null && depth.length() > 0 && depth.toLowerCase().equals(Const.NONE)) {
+    		depth = ""; 
+    	}
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
         		.icontains(Const.AUTHOR, curator)
         		.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation)

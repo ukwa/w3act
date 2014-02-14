@@ -102,6 +102,16 @@ public class Instance extends Model {
     public String field_instances; 
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
+    @Column(columnDefinition = "TEXT")
+    public String field_qa_status; 
+    @Column(columnDefinition = "TEXT")
+    public String qa_status; 
+    @Column(columnDefinition = "TEXT")
+    public String qa_issue_category; 
+    @Column(columnDefinition = "TEXT")
+    public String qa_notes; 
+    @Column(columnDefinition = "TEXT")
+    public String quality_notes; 
     
     /**
      * Constructor
