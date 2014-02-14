@@ -95,6 +95,14 @@
    					<input type="hidden" name="s" value="@currentSortBy">
    					<input type="hidden" name="o" value="@currentOrder">
    					<input type="hidden" name="query_curator" value="@curatorUrl">
+   					<input type="hidden" name="query_organisation" value="organisationUrl">
+   					<input type="hidden" name="query_collection_category" value="@collectionCategoryUrl">
+   					<input type="hidden" name="query_subject" value="@subjectUrl">
+   					<input type="hidden" name="query_crawl_frequency" value="@crawlFrequency">
+   					<input type="hidden" name="query_depth" value="@depth">
+   					<input type="hidden" name="query_collection" value="@collection">
+   					<input type="hidden" name="query_license" value="@license">
+   					filterUrl: String, license: String, sorted: Boolean
 					<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
@@ -121,7 +129,7 @@
 									<div class="form-group">
 										<label for="curator" class="col-sm-6 control-label">Filter by curator</label>
 									    <div class="col-sm-6">
-											<select name="author" class="form-control" id="curator">
+											<select name="author" class="form-control target-form-control" id="curator">
 												<option>None</option>
 												@for(curator <- User.findAll()) {
 													@if(curatorUrl != null && curatorUrl.equals(curator.url)) {
@@ -138,7 +146,7 @@
 									<div class="form-group">					
 						            	<label for="organisation" class="col-sm-6 control-label">Filter by nominating organisation</label>
 						            	<div class="col-sm-6">
-											<select name="field_nominating_organisation" class="form-control" id="organisation">
+											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
 									        	<option>None</option>
 									            	@for(organisation <- Organisation.findAll()) {
 							                 		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
@@ -158,7 +166,7 @@
 									<div class="form-group">
 						            	<label for="subject" class="col-sm-6 control-label">Filter by subject</label>
 						            	<div class="col-sm-6">
-											<select name="field_subject" class="form-control" id="subject">
+											<select name="field_subject" class="form-control target-form-control" id="subject">
 									        	<option>None</option>
 									            @for(subject <- Taxonomy.findListByType("subject")) {
 							                 			@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
@@ -175,7 +183,7 @@
 									<div class="form-group">					
 						            	<label for="frequency" class="col-sm-6 control-label">Filter by crawl frequency</label>
 						            	<div class="col-sm-6">
-											<select name="field_crawl_frequency" class="form-control" id="frequency">
+											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
 								                <option>None</option>
 								                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
 						                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
@@ -195,7 +203,7 @@
 									<div class="form-group">
 						            	<label for="field-depth" class="col-sm-6 control-label">Filter by depth</label>
 						            	<div class="col-sm-6">
-											<select name="field_depth" class="form-control" id="field-depth">
+											<select name="field_depth" class="form-control target-form-control" id="field-depth">
 									        	<option>None</option>
 									            @for(curDepth <- Targets.getDepth()) {
 							                  		@if(depth != null && depth.equals(curDepth.field_depth)) {
@@ -212,7 +220,7 @@
 									<div class="form-group">
 						            	<label for="license" class="col-sm-6 control-label">Filter by license</label>
 						            	<div class="col-sm-6">
-											<select name="field_license" class="form-control" id="license">
+											<select name="field_license" class="form-control target-form-control" id="license">
 									        	<option>None</option>
 									            @for(curLicense <- Targets.getLicense()) {
 							                 			@if(license != null && license.equals(curLicense.name)) {
@@ -231,7 +239,7 @@
 									<div class="form-group">
 						            	<label for="suggested_collections" class="col-sm-6 control-label">Filter by collection</label>
 						            	<div class="col-sm-6">
-											<select name="field_suggested_collections" id="suggested_collections" class="form-control">
+											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
 								                <option>None</option>
 								                @for(cur_collection <- DCollection.findAll()) {
 									                @if(collection != null && collection.equals(cur_collection.url)) {

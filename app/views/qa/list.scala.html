@@ -121,7 +121,7 @@
 									<div class="form-group">
 						            	<label for="suggested_collections" class="col-sm-6 control-label">By Collection</label>
 						            	<div class="col-sm-6">
-											<select name="field_suggested_collections" id="suggested_collections" class="form-control">
+											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
 								                <option>None</option>
 								                @for(collection <- DCollection.findAll()) {
 									                @if(currentCollection != null && currentCollection.equals(collection.url)) {
@@ -140,7 +140,7 @@
 									<div class="form-group">
 						            	<label for="qa_status" class="col-sm-6 control-label">By QA Status</label>
 						            	<div class="col-sm-6">
-											<select name="qa_status" class="form-control" id="qa_status">
+											<select name="qa_status" class="form-control target-form-control" id="qa_status">
 									        	<option>None</option>
 									            @for(qaStatus <- QAController.getAllQAStatusTypes()) {
 							                 			@if(currentQaStatus != null && currentQaStatus.equals(qaStatus)) {
