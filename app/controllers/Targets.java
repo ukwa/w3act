@@ -726,6 +726,8 @@ public class Targets extends AbstractController {
     	String subject = "";
     	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
     		try {
+    			Logger.info("find subject for title: " + subject_name + ". " + subject_name.length());
+//           		subject = Taxonomy.findByName(subject_name).url;
     			subject = Taxonomy.findByFullName(subject_name).url;
     		} catch (Exception e) {
     			Logger.info("Can't find subject for name: " + subject_name + ". " + e);

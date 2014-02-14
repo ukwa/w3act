@@ -894,7 +894,7 @@ public class Target extends Model {
     		String curator, String organisation, String subject, String crawlFrequency, String depth, String collection, 
     		String license) {
 
-    	Logger.info("crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
+//    	Logger.info("crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
         		.icontains(Const.AUTHOR, curator)
         		.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation)
