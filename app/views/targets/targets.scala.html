@@ -252,20 +252,15 @@
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-							        	<form action="@routes.Targets.export(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, collection, license, filterUrl, offset, true)" method="POST">
-							  				<label for="export" class="col-sm-6 control-label">Targets count</label>
-							            	<div class="col-sm-6">
-									   			<div class="input-group">
-									 				<input type="text" name="count" value="@currentPage.getTotalRowCount" maxlength="200" class="form-control target-form-control" disabled id="export" title="Number of selected targets" />
-									 				<span class="input-group-btn">
-								            			<button type="submit" class="btn btn-primary" id="export" name="export" title="Export results of filtered searches and reports to CSV file">Export</button>
-								            		</span>
-								            	</div>
-								            </div>
-											<input type="hidden" name="offset" value="@offset">
-											<input type="hidden" name="limit" value="@limit">
-							                <input type="hidden" name="csv" value="@targets">
-						                </form>
+						  				<label for="export" class="col-sm-6 control-label">Targets count</label>
+						            	<div class="col-sm-6">
+								   			<div class="input-group">
+								 				<input type="text" name="count" value="@currentPage.getTotalRowCount" maxlength="200" class="form-control target-form-control" disabled id="export" title="Number of selected targets" />
+								 				<span class="input-group-btn">
+								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file">Export</button>									 			
+							            		</span>
+							            	</div>
+							            </div>
 									</div>
 								</div>
 							</div>

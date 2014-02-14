@@ -11,6 +11,7 @@ import java.util.*;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.*;
@@ -163,79 +164,79 @@ public class Targets extends AbstractController {
 
     }
     
-    /**
-     * This method exports selected targets to CSV file.
-     * @param curatorUrl
-     * @param organisationUrl
-     * @param collectionCategoryUrl
-     * @param subjectUrl
-     * @param crawlFrequency
-     * @param depth
-     * @param suggested_collections
-     * @param offset The current page number
-     * @param limit The maximal row count
-     * @return
-     */
-    public static Result export(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String suggested_collections, String license, String filterUrl, 
-    		int offset, boolean isSorted) {
-    	Logger.info("export()");
-    	
-    	List<Target> targetList = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
-        		subjectUrl, crawlFrequency, depth, suggested_collections, 0, 0, filterUrl, license, isSorted);
-    	Logger.info("export() targetList size: " + targetList.size());
-//        String exportBtn = getFormParam(Const.EXPORT);
-//        Logger.info("export exportBtn: " + exportBtn);
-
-        StringWriter sw = new StringWriter();
-		Field[] fields = Target.class.getFields();
-		for (Field f : fields) {
-//			Logger.info("Target fields: " + f.getName());
-    		sw.append(f.getName());
-	 	    sw.append(Const.CSV_SEPARATOR);
-		}
- 	    sw.append(Const.CSV_LINE_END);
- 	    
- 	    String csv = "";
- 	    if (targetList != null && targetList.size() > 0) {
- 	    	Iterator<Target> itr = targetList.iterator();
- 	    	while (itr.hasNext()) {
- 	    		Target target = itr.next();
- 	    		csv = csv + ", " + target.toString();
- 	    	}
- 	    }
-///		String csv = getFormParam(Const.CSV);
-//        Logger.info("csv: " + csv);
-        if (csv != null) {
-	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
-	        sw.append(content);
-//        Logger.info("content: " + content);
-        }
-
-    	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
-//    	return redirect(routes.Targets.index());
-    	int rowCount = Const.ROWS_PER_PAGE;
-    	List<Target> targetsRes = new ArrayList<Target>();
-    	if (targetList.size() < (offset+1)*Const.ROWS_PER_PAGE
-    			|| targetList.size() < offset*Const.ROWS_PER_PAGE
-    			|| targetList.size() < Const.ROWS_PER_PAGE) {
-    		rowCount = targetList.size();
-    		offset = 0;
-        	targetsRes = targetList.subList(0, rowCount);
-    	} else {
-    		targetsRes = targetList.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
-    	}
-//       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
-//    	Logger.info("target edit targetsRes: " + targetsRes.size());
-        return ok(
-//                targets.render(
-//   			        "Targets", User.find.byId(request().username()), targetsRes, 
-//		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
-//			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, 
-//			        	crawlFrequency, depth, suggested_collections, offset, targetList.size(), filterUrl, license, isSorted
-//                        )
-                );
-    }
+//    /**
+//     * This method exports selected targets to CSV file.
+//     * @param curatorUrl
+//     * @param organisationUrl
+//     * @param collectionCategoryUrl
+//     * @param subjectUrl
+//     * @param crawlFrequency
+//     * @param depth
+//     * @param suggested_collections
+//     * @param offset The current page number
+//     * @param limit The maximal row count
+//     * @return
+//     */
+//    public static Result export(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
+//    		String subjectUrl, String crawlFrequency, String depth, String suggested_collections, String license, String filterUrl, 
+//    		int offset, boolean isSorted) {
+//    	Logger.info("export()");
+//    	
+//    	List<Target> targetList = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
+//        		subjectUrl, crawlFrequency, depth, suggested_collections, 0, 0, filterUrl, license, isSorted);
+//    	Logger.info("export() targetList size: " + targetList.size());
+////        String exportBtn = getFormParam(Const.EXPORT);
+////        Logger.info("export exportBtn: " + exportBtn);
+//
+//        StringWriter sw = new StringWriter();
+//		Field[] fields = Target.class.getFields();
+//		for (Field f : fields) {
+////			Logger.info("Target fields: " + f.getName());
+//    		sw.append(f.getName());
+//	 	    sw.append(Const.CSV_SEPARATOR);
+//		}
+// 	    sw.append(Const.CSV_LINE_END);
+// 	    
+// 	    String csv = "";
+// 	    if (targetList != null && targetList.size() > 0) {
+// 	    	Iterator<Target> itr = targetList.iterator();
+// 	    	while (itr.hasNext()) {
+// 	    		Target target = itr.next();
+// 	    		csv = csv + ", " + target.toString();
+// 	    	}
+// 	    }
+/////		String csv = getFormParam(Const.CSV);
+////        Logger.info("csv: " + csv);
+//        if (csv != null) {
+//	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
+//	        sw.append(content);
+////        Logger.info("content: " + content);
+//        }
+//
+//    	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
+////    	return redirect(routes.Targets.index());
+//    	int rowCount = Const.ROWS_PER_PAGE;
+//    	List<Target> targetsRes = new ArrayList<Target>();
+//    	if (targetList.size() < (offset+1)*Const.ROWS_PER_PAGE
+//    			|| targetList.size() < offset*Const.ROWS_PER_PAGE
+//    			|| targetList.size() < Const.ROWS_PER_PAGE) {
+//    		rowCount = targetList.size();
+//    		offset = 0;
+//        	targetsRes = targetList.subList(0, rowCount);
+//    	} else {
+//    		targetsRes = targetList.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
+//    	}
+////       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
+////    	Logger.info("target edit targetsRes: " + targetsRes.size());
+//        return ok(
+////                targets.render(
+////   			        "Targets", User.find.byId(request().username()), targetsRes, 
+////		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
+////			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, 
+////			        	crawlFrequency, depth, suggested_collections, offset, targetList.size(), filterUrl, license, isSorted
+////                        )
+//                );
+//    }
     
     /**
      * Display the targets panel for this user URL.
@@ -672,7 +673,6 @@ public class Targets extends AbstractController {
         			User.find.byId(request().username()), 
         			filter, 
         			Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
-//                			Target.pageTargets(pageNo, 10, sortBy, order, filter, curator, organisation, 
         					subject, crawlFrequency, depth, collection, license), 
         			sortBy, 
         			order, 
@@ -764,6 +764,18 @@ public class Targets extends AbstractController {
     		else if (Const.CLEAR.equals(action)) {
     			return GO_TARGETS_HOME;
     		} 
+    		else if (Const.EXPORT.equals(action)) {
+    			List<Target> exportTargets = new ArrayList<Target>();
+    			Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, 
+    					subject, crawlFrequency, depth, collection, license); 
+    			exportTargets.addAll(page.getList());
+    			while (page.hasNext()) {
+    				exportTargets.addAll(page.getList());
+    			}
+    			export(exportTargets);
+    	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation, 
+    	    			subject, crawlFrequency, depth, collection, license, pageSize));
+    		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation, 
@@ -772,6 +784,40 @@ public class Targets extends AbstractController {
 		    	return badRequest("This action is not allowed");
 		    }
     	}
+    }
+    
+    /**
+     * This method exports selected targets to CSV file.
+     * @param list of Target objects
+     * @return
+     */
+    public static void export(List<Target> targetList) {
+    	Logger.info("export() targetList size: " + targetList.size());
+
+        StringWriter sw = new StringWriter();
+		Field[] fields = Target.class.getFields();
+		for (Field f : fields) {
+//			Logger.info("Target fields: " + f.getName());
+    		sw.append(f.getName());
+	 	    sw.append(Const.CSV_SEPARATOR);
+		}
+ 	    sw.append(Const.CSV_LINE_END);
+ 	    
+ 	    String csv = "";
+ 	    if (targetList != null && targetList.size() > 0) {
+ 	    	Iterator<Target> itr = targetList.iterator();
+ 	    	while (itr.hasNext()) {
+ 	    		Target target = itr.next();
+ 	    		csv = csv + ", " + target.toString();
+ 	    	}
+ 	    }
+        if (csv != null) {
+	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
+	        sw.append(content);
+//        Logger.info("content: " + content);
+        }
+
+    	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
     }
     
     /**
