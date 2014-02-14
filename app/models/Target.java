@@ -894,14 +894,15 @@ public class Target extends Model {
     		String curator, String organisation, String subject, String crawlFrequency, String depth, String collection, 
     		String license) {
 
+    	Logger.info("crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
         		.icontains(Const.AUTHOR, curator)
         		.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation)
         		.icontains(Const.FIELD_SUBJECT, subject)
-//        		.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency)
-//        		.icontains(Const.FIELD_DEPTH, depth)
+        		.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency)
+        		.icontains(Const.FIELD_DEPTH, depth)
         		.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)
-//        		.icontains(Const.FIELD_LICENSE_NODE, license)
+        		.icontains(Const.FIELD_LICENSE_NODE, license)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
