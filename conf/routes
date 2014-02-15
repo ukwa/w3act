@@ -148,7 +148,6 @@ GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxono
 GET     /target/:target                     controllers.TargetEdit.view(target)
 GET     /targetrevision/:revision           controllers.TargetEdit.viewrevision(revision:Long)
 GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
-GET     /targets/:curatorUrl/:organisationUrl/:collectionCategoryUrl/:subjectUrl/:crawlFrequency/:depth/:scope/:offset/:limit/:license/:sorted/       controllers.Targets.edit(curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, scope, offset:Int, limit:Int, license, sorted:Boolean)
 
 GET     /contactperson                      controllers.ContactPersonEdit.index()
 GET     /contactperson/:person              controllers.ContactPersonEdit.view(person)
@@ -200,7 +199,6 @@ POST    /urlsnocrawl/filter-url             controllers.UrlsNoCrawl.filterUrl()
 POST    /websites/filter-url                controllers.WebSites.filterUrl()
 
 GET     /targets                            controllers.Targets.index()
-POST    /targets/filter                     controllers.Targets.filterUrl()
 POST    /targets/search          			controllers.Targets.search()
 POST    /targets/search-targets    			controllers.Targets.searchTargets()
 GET    	/targets/filterbyjson/:url			controllers.Targets.filterByJson(url)
@@ -208,7 +206,6 @@ GET    	/targets/list/                  	controllers.Targets.list(p:Int ?= 0, s 
 GET    	/targets/targets/                  	controllers.Targets.targets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_curator ?= "", query_organisation ?= "", query_subject ?= "", query_crawl_frequency ?= "", query_depth ?= "", query_collection ?= "", query_license ?= "", page_size:Int ?= 10)
 GET     /targets/lookup						controllers.Targets.lookup()
 GET     /targets/new/:title      			controllers.Targets.create(title)
-GET     /targets/:offset                    controllers.Targets.offset(offset:Int)
 
 
 POST    /targets/add-new                    controllers.UrlSearch.addNewTarget()

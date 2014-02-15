@@ -1,27 +1,36 @@
 package controllers;
 
 import static play.data.Form.form;
-import play.*;
-import play.data.DynamicForm;
-import play.libs.Json;
-import play.mvc.*;
 
 import java.io.StringWriter;
-import java.util.*;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import com.avaje.ebean.Ebean;
+import models.DCollection;
+import models.Organisation;
+import models.Target;
+import models.Taxonomy;
+import models.User;
+
+import org.apache.commons.lang3.StringUtils;
+
+import play.Logger;
+import play.data.DynamicForm;
+import play.libs.Json;
+import play.mvc.BodyParser;
+import play.mvc.Result;
+import play.mvc.Security;
+import uk.bl.Const;
+import uk.bl.api.Utils;
+import views.html.targets.list;
+import views.html.targets.targetedit;
+import views.html.targets.targets;
+
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import models.*;
-import uk.bl.Const;
-import uk.bl.api.Utils;
-import views.html.targets.*;
-
-import java.lang.reflect.Field;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Manage targets.
@@ -34,345 +43,8 @@ public class Targets extends AbstractController {
      */
     public static Result index() {
         return GO_TARGETS_HOME;
-
-//    	List<Target> targetsRes = new ArrayList<Target>();
-//    	List<Target> targetsAll = processTargets(Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-//            	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true);
-//    	if (!targetsAll.isEmpty()) {
-//    		targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
-//    	}
-//        return ok(
-//            targets.render(
-//                    "Targets", User.find.byId(request().username()), targetsRes, 
-//                	User.findAll(), models.Organisation.findInvolving(),
-//                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-//                	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true
-//            )
-//        );
     }
 
-    public static Result offset(int offset) {
-    	List<Target> targetsAll = models.Target.findAllActive();
-    	List<Target> targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
-        return ok(
-//            targets.render(
-//                    "Targets", User.find.byId(request().username()), targetsRes, 
-//                	User.findAll(), models.Organisation.findInvolving(),
-//                	Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-//                	Const.NONE, Const.NONE, offset, targetsAll.size(), "", Const.NONE, true
-//            )
-        );
-    }
-
-    public static Result filterUrl() {
-        String filterUrl = getFormParam(Const.FILTER);
-        String clear = getFormParam(Const.CLEAR);
-        String field_collection_categories = Const.NONE;
-        String field_nominating_organisation = Const.NONE;
-        String author = Const.NONE;
-        String field_subject = Const.NONE;
-        String field_crawl_frequency = Const.NONE;
-        String field_depth = Const.NONE;
-        String field_suggested_collections = Const.NONE;
-        String field_license = Const.NONE;
-        boolean isSorted = true;
-        int offset = 0;
-        int limit = 0;
-        boolean isClear = false;
-    	Logger.info("Targets filterUrl() search: " + filterUrl + ", clear: " + clear);    	
-        if (clear != null) {
-        	filterUrl = "";
-        	isClear = true;
-        	Logger.info("Clear button pushed.");
-        }
-//		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);
-        if (!isClear && getFormParam(Const.AUTHOR) != null && !getFormParam(Const.AUTHOR).toLowerCase().contains(Const.NONE)) {
-       		author = User.findByName(getFormParam(Const.AUTHOR)).url;
-        }
-        if (!isClear && getFormParam(Const.FIELD_NOMINATING_ORGANISATION) != null
-        	&& !getFormParam(Const.FIELD_NOMINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-       		field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.FIELD_NOMINATING_ORGANISATION)).url;
-        }
-        if (!isClear && getFormParam(Const.FIELD_COLLECTION_CATEGORIES) != null
-            	&& !getFormParam(Const.FIELD_COLLECTION_CATEGORIES).toLowerCase().contains(Const.NONE)) {
-       		field_collection_categories = DCollection.findByTitle(getFormParam(Const.FIELD_COLLECTION_CATEGORIES)).url;
-        }
-        Logger.info("field_subject param: " + getFormParam(Const.FIELD_SUBJECT) + ".");
-        if (!isClear && getFormParam(Const.FIELD_SUBJECT) != null
-            	&& !getFormParam(Const.FIELD_SUBJECT).toLowerCase().contains(Const.NONE)) {
-       		field_subject = Taxonomy.findByName(getFormParam(Const.FIELD_SUBJECT)).url;
-        }
-        if (!isClear && getFormParam(Const.FIELD_CRAWL_FREQUENCY) != null
-            	&& !getFormParam(Const.FIELD_CRAWL_FREQUENCY).toLowerCase().contains(Const.NONE)) {
-       		field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
-        }
-        if (!isClear && getFormParam(Const.FIELD_DEPTH) != null
-            	&& !getFormParam(Const.FIELD_DEPTH).toLowerCase().contains(Const.NONE)) {
-       		field_depth = getFormParam(Const.FIELD_DEPTH);
-        }
-        if (!isClear && getFormParam(Const.FIELD_LICENSE) != null
-            	&& !getFormParam(Const.FIELD_LICENSE).toLowerCase().contains(Const.NONE)) {
-       		field_license = getFormParam(Const.FIELD_LICENSE);
-        }
-        if (!isClear && getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) != null
-            	&& !getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS).toLowerCase().contains(Const.NONE)) {
-       		field_suggested_collections = DCollection.findByTitle(getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS)).url;
-       		Logger.info("field_suggested_collections: " + field_suggested_collections);
-        }
-        if (!isClear && getFormParam(Const.SORTED) != null
-            	&& !getFormParam(Const.SORTED).toLowerCase().contains(Const.NONE)) {
-       		isSorted = Utils.getNormalizeBooleanString(getFormParam(Const.SORTED));
-        }
-//        Logger.info("SORTED: " + getFormParam(Const.SORTED) + ", isSorted: " + isSorted);
-        
-        Logger.info("filterUrl offset param: " + getFormParam(Const.OFFSET));
-        String offsetStr = getFormParam(Const.OFFSET);
-        if (offsetStr != null) {
-        	offset = Integer.valueOf(offsetStr);
-        } 
-        String limitStr = getFormParam(Const.LIMIT);
-        if (limitStr != null) {
-        	limit = Integer.valueOf(limitStr);
-        }
-        Logger.info("filterUrl offset: " + offset + ", limit: " + limit);
-
-    	List<Target> targetsAll = processTargets(author, field_nominating_organisation, field_collection_categories, 
-        		field_subject, field_crawl_frequency, field_depth, field_suggested_collections, offset, limit, filterUrl, field_license, isSorted);
-//    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
-    	int rowCount = Const.ROWS_PER_PAGE;
-    	List<Target> targetsRes = new ArrayList<Target>();
-    	if (targetsAll.size() < (offset+1)*Const.ROWS_PER_PAGE
-    			|| targetsAll.size() < offset*Const.ROWS_PER_PAGE
-    			|| targetsAll.size() < Const.ROWS_PER_PAGE) {
-    		rowCount = targetsAll.size();
-    		offset = 0;
-        	targetsRes = targetsAll.subList(0, rowCount);
-    	} else {
-    		targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
-    	}
-//       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
-//    	Logger.info("target edit targetsRes: " + targetsRes.size());
-        return ok(
-//                targets.render(
-//   			        "Targets", User.find.byId(request().username()), targetsRes, 
-//		        	User.findFilteredByUrl(author), models.Organisation.findFilteredByUrl(field_nominating_organisation),
-//			        	author, field_nominating_organisation, field_collection_categories, field_subject, 
-//			        	field_crawl_frequency, field_depth, field_suggested_collections, offset, targetsAll.size(), filterUrl, 
-//			        	field_license, isSorted
-//                        )
-                );
-
-    }
-    
-//    /**
-//     * This method exports selected targets to CSV file.
-//     * @param curatorUrl
-//     * @param organisationUrl
-//     * @param collectionCategoryUrl
-//     * @param subjectUrl
-//     * @param crawlFrequency
-//     * @param depth
-//     * @param suggested_collections
-//     * @param offset The current page number
-//     * @param limit The maximal row count
-//     * @return
-//     */
-//    public static Result export(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-//    		String subjectUrl, String crawlFrequency, String depth, String suggested_collections, String license, String filterUrl, 
-//    		int offset, boolean isSorted) {
-//    	Logger.info("export()");
-//    	
-//    	List<Target> targetList = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
-//        		subjectUrl, crawlFrequency, depth, suggested_collections, 0, 0, filterUrl, license, isSorted);
-//    	Logger.info("export() targetList size: " + targetList.size());
-////        String exportBtn = getFormParam(Const.EXPORT);
-////        Logger.info("export exportBtn: " + exportBtn);
-//
-//        StringWriter sw = new StringWriter();
-//		Field[] fields = Target.class.getFields();
-//		for (Field f : fields) {
-////			Logger.info("Target fields: " + f.getName());
-//    		sw.append(f.getName());
-//	 	    sw.append(Const.CSV_SEPARATOR);
-//		}
-// 	    sw.append(Const.CSV_LINE_END);
-// 	    
-// 	    String csv = "";
-// 	    if (targetList != null && targetList.size() > 0) {
-// 	    	Iterator<Target> itr = targetList.iterator();
-// 	    	while (itr.hasNext()) {
-// 	    		Target target = itr.next();
-// 	    		csv = csv + ", " + target.toString();
-// 	    	}
-// 	    }
-/////		String csv = getFormParam(Const.CSV);
-////        Logger.info("csv: " + csv);
-//        if (csv != null) {
-//	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
-//	        sw.append(content);
-////        Logger.info("content: " + content);
-//        }
-//
-//    	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
-////    	return redirect(routes.Targets.index());
-//    	int rowCount = Const.ROWS_PER_PAGE;
-//    	List<Target> targetsRes = new ArrayList<Target>();
-//    	if (targetList.size() < (offset+1)*Const.ROWS_PER_PAGE
-//    			|| targetList.size() < offset*Const.ROWS_PER_PAGE
-//    			|| targetList.size() < Const.ROWS_PER_PAGE) {
-//    		rowCount = targetList.size();
-//    		offset = 0;
-//        	targetsRes = targetList.subList(0, rowCount);
-//    	} else {
-//    		targetsRes = targetList.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
-//    	}
-////       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
-////    	Logger.info("target edit targetsRes: " + targetsRes.size());
-//        return ok(
-////                targets.render(
-////   			        "Targets", User.find.byId(request().username()), targetsRes, 
-////		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
-////			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, 
-////			        	crawlFrequency, depth, suggested_collections, offset, targetList.size(), filterUrl, license, isSorted
-////                        )
-//                );
-//    }
-    
-    /**
-     * Display the targets panel for this user URL.
-     * @param curatorUrl
-     * @param organisationUrl
-     * @param collectionCategoryUrl
-     * @param subjectUrl
-     * @param crawlFrequency
-     * @param depth
-     * @param suggested_collections
-     * @param offset The current page number
-     * @param limit The maximal row count
-     * @param license
-     * @return
-     */
-    public static Result edit(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String suggested_collections, int offset, int limit, 
-    		String license, boolean isSorted) {
-    	
-        String filterUrl = getFormParam(Const.FILTER);
-        if (filterUrl == null) {
-        	filterUrl = "";
-        }
-        Logger.info("Filter: " + filterUrl);
-
-    	List<Target> targetsAll = processTargets(curatorUrl, organisationUrl, collectionCategoryUrl, 
-        		subjectUrl, crawlFrequency, depth, suggested_collections, offset, limit, filterUrl, license, isSorted);
-//    	Logger.info("target edit targetsAll: " + targetsAll.size() + ", offset: " + offset + ", limit: " + limit);
-    	int rowCount = Const.ROWS_PER_PAGE;
-    	List<Target> targetsRes = new ArrayList<Target>();
-    	if (targetsAll.size() < (offset+1)*Const.ROWS_PER_PAGE
-    			|| targetsAll.size() < offset*Const.ROWS_PER_PAGE
-    			|| targetsAll.size() < Const.ROWS_PER_PAGE) {
-    		rowCount = targetsAll.size();
-    		offset = 0;
-        	targetsRes = targetsAll.subList(0, rowCount);
-    	} else {
-    		targetsRes = targetsAll.subList(offset*Const.ROWS_PER_PAGE, (offset+1)*Const.ROWS_PER_PAGE);
-    	}
-//       	Logger.info("target edit rowCount: " + rowCount + ", offset: " + offset);
-//    	Logger.info("target edit targetsRes: " + targetsRes.size());
-//    	Logger.info("target render targetsAll.size(): " + targetsAll.size() +
-//    			", filterUrl: " + filterUrl);
-        return ok(
-//                targets.render(
-//   			        "Targets", User.find.byId(request().username()), targetsRes, 
-//		        	User.findFilteredByUrl(curatorUrl), models.Organisation.findFilteredByUrl(organisationUrl),
-//			        	curatorUrl, organisationUrl, collectionCategoryUrl, subjectUrl, crawlFrequency, depth, 
-//			        	suggested_collections, offset, targetsAll.size(), filterUrl, license, isSorted
-//                        )
-                );
-    }
-    
-    /**
-     * Process targets according to passed filter parameters.
-     * @param curatorUrl
-     * @param organisationUrl
-     * @param collectionCategoryUrl
-     * @param subjectUrl
-     * @param crawlFrequency
-     * @param depth
-     * @param suggested_collections
-     * @param offset The current page number
-     * @param limit The maximal row count
-     * @param filterUrl
-     * @param license
-     * @return
-     */
-    public static List<Target> processTargets(String curatorUrl, String organisationUrl, String collectionCategoryUrl, 
-    		String subjectUrl, String crawlFrequency, String depth, String suggested_collections, int offset, int limit, String filterUrl, 
-    		String license, boolean isSorted) {
-//    	Logger.info("target edit curatorUrl: " + curatorUrl + ", organisationUrl: " + organisationUrl);
-    	boolean isProcessed = false;
-    	ExpressionList<Target> exp = Target.find.where();
-    	List<Target> res = new ArrayList<Target>();
-    	if (filterUrl != null && filterUrl.length() > 0) {
-    		exp = exp.eq(Const.ACTIVE, true).contains(Const.FIELD_URL_NODE, filterUrl);
-    		isProcessed = true;
-    	}
-    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
-    		exp = exp.eq(Const.AUTHOR, curatorUrl);
-    		isProcessed = true;
-    	}
-    	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
-    		exp = exp.eq(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
-    		isProcessed = true;
-    	} 
-    	if (subjectUrl != null && !subjectUrl.equals(Const.NONE)) {
-    		exp = exp.eq(Const.FIELD_SUBJECT, subjectUrl);
-    		isProcessed = true;
-    	} 
-    	if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
-    		exp = exp.eq(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
-    		isProcessed = true;
-    	} 
-    	if (depth != null && !depth.equals(Const.NONE)) {
-    		exp = exp.eq(Const.FIELD_DEPTH, depth);
-    		isProcessed = true;
-    	} 
-    	if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
-    		exp = exp.eq(Const.FIELD_SUGGESTED_COLLECTIONS, suggested_collections);
-    		isProcessed = true;
-    	} 
-    	if (collectionCategoryUrl != null && !collectionCategoryUrl.equals(Const.NONE)) {
-    		exp = exp.eq(Const.FIELD_COLLECTION_CATEGORIES, collectionCategoryUrl);
-    		isProcessed = true;
-    	} 
-    	if (license != null && !license.equals(Const.NONE)) {
-    		exp = exp.eq(Const.FIELD_LICENSE, suggested_collections);
-    		isProcessed = true;
-    	} 
-    	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size());
-    	if (isSorted) {
-    		Ebean.sort(res, Const.TITLE);
-    		isProcessed = true;
-    	}
-
-        if (!isProcessed) {
-    		res = models.Target.findAllActive();
-    	}
-        return res;
-    }
-    
-    /**
-     * This method defines range for current page
-     * @param offset
-     * @return start page number for range
-     */
-    public static int getStartPage(int offset) {
-    	int res = 0;
-    	res = offset/Const.PAGINATION_OFFSET; 
-//    	Logger.info("get start page offset: " + offset + ", start page: " + res);
-    	return res*Const.PAGINATION_OFFSET;
-    }
-    
 	/**
 	 * This method filters targets by given URLs.
 	 * @return duplicate count
@@ -416,84 +88,6 @@ public class Targets extends AbstractController {
 			}
 		}
     	return res;
-	}
-	
-	/**
-	 * This method calculates current pagination range based on given current page number.
-	 * @param offset
-	 * @return a set of page numbers
-	 */
-	public static List<Integer> getRange(int offset) {
-		List<Integer> ll = new ArrayList<Integer>();
-		int i = offset;
-		while (i < offset + Const.PAGINATION_OFFSET) {
-			ll.add(i);
-			i++;
-		}
-		return ll;
-	}
-	
-	/**
-	 * This method calculates previous pagination range based on given current page number.
-	 * @param offset
-	 * @return a set of page numbers
-	 */
-	public static int getPrev(int offset) { 
-	    return offset - Const.PAGINATION_OFFSET;
-	}
-	
-	/**
-	 * This method calculates next pagination range based on given current page number.
-	 * @param offset
-	 * @return a set of page numbers
-	 */
-	public static int getNext(int offset) { 
-	    return offset + Const.PAGINATION_OFFSET;
-	}
-	
-	/**
-	 * This method checks if previous pages exist.
-	 * @param offset
-	 * @return
-	 */
-	public static boolean checkPrev(int offset) {
-		boolean res = true;
-		if (offset - (Const.PAGINATION_OFFSET) < 0) {
-			res = false;
-		}
-//		Logger.info("check prev offset: " + offset + ", res: " + res);
-		return res;
-	}
-	
-	/**
-	 * This method checks if next pages exist.
-	 * @param offset
-	 * @return
-	 */
-	public static boolean checkNext(int offset, int limit) {
-		boolean res = true;
-		if (offset > limit/Const.ROWS_PER_PAGE - 2) { // because of starting by 0 and already presented last page
-			res = false;
-		}
-//		Logger.info("check next offset: " + offset + ", limit: " + limit + ", res: " + res);
-		return res;
-	}
-	
-	/**
-	 * This method calculates maximal page number.
-	 * @param offset
-	 * @return a set of page numbers
-	 */
-	public static int getMaxPageNumber(int limit) { 
-	    return limit/Const.ROWS_PER_PAGE;
-	}
-	
-	/**
-	 * This method is required for checking of "Next" button in pagination.
-	 * @return
-	 */
-	public static int getPaginationOffset() { 
-	    return Const.PAGINATION_OFFSET;
 	}
 	
 	/**
@@ -661,12 +255,6 @@ public class Targets extends AbstractController {
     		String license, int pageSize) {
     	Logger.info("Targets.targets()");
     	
-//    	List<Target> targetsRes = new ArrayList<Target>();
-//    	List<Target> targetsAll = processTargets(Const.NONE, Const.NONE, Const.NONE, Const.NONE, Const.NONE, 
-//            	Const.NONE, Const.NONE, 0, models.Target.findAllActive().size(), "", Const.NONE, true);
-//    	if (!targetsAll.isEmpty()) {
-//    		targetsRes = targetsAll.subList(0, Const.ROWS_PER_PAGE);
-//    	}   	    	
         return ok(
         	targets.render(
         			"Targets", 
@@ -676,10 +264,14 @@ public class Targets extends AbstractController {
         					subject, crawlFrequency, depth, collection, license), 
         			sortBy, 
         			order, 
-        			null, //targetsRes, 
-                	User.findAll(), models.Organisation.findInvolving(),
-                	curator, organisation, Const.NONE, subject, crawlFrequency, 
-                	depth, collection, 0, models.Target.findAllActive().size(), "", license, pageSize)
+                	curator, 
+                	organisation, 
+                	subject, 
+                	crawlFrequency, 
+                	depth, 
+                	collection, 
+                	license, 
+                	pageSize)
         	);
     }
 	
