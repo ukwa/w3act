@@ -316,6 +316,7 @@ public class JsonUtils {
 			    	readListFromString(target.field_suggested_collections, urlList, type, TaxonomyType.COLLECTION, res);
 			    	readListFromString(target.field_license, urlList, type, TaxonomyType.LICENSE, res);
 			    	readListFromString(target.field_subject, urlList, type, TaxonomyType.SUBJECT, res);
+			    	readListFromString(target.field_qa_status, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
 			    }
 			    if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
 			    	List<Taxonomy> taxonomies = Taxonomy.findAll();
