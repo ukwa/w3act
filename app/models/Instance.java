@@ -3,6 +3,7 @@ package models;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.IdGenerator;
+import uk.bl.api.Utils;
 
 
 /**
@@ -373,7 +375,7 @@ public class Instance extends Model {
 		List<Instance> res = new ArrayList<Instance>();
 		if (curatorUrl != null && organisationUrl != null) {
 	        ExpressionList<Instance> ll = find.where().contains("field_nominating_organisation", organisationUrl);
-	    	res = ll.findList(); // TODO
+	    	res = ll.findList(); 
 		}
 		return res;
 	}
@@ -476,6 +478,46 @@ public class Instance extends Model {
     	return res;
     }          
 
+	/**
+	 * This method computes a number of instances for given target url.
+	 * @return
+	 */
+	public static int findAllByTarget(String url) {
+		int res = 0;
+        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
+        res = ll.findRowCount();
+		return res;
+	}
+	
+	public static String showLatestTimestamp(String url) {
+		String res = "";
+		if (url != null && url.length() > 0) {
+			List<Instance> instanceList = new ArrayList<Instance>();
+	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
+	        instanceList = ll.findList(); 
+	        Iterator<Instance> itr = instanceList.iterator();
+//	        Date lastDate = new Date();
+	        String lastDate = "";
+	        while (itr.hasNext()) {
+	        	Instance instance = itr.next();
+	        	String curDate = instance.field_timestamp;
+//	        	Date curDate = new Date(instance.field_timestamp);
+	        	if (lastDate == null || lastDate.equals("")) {
+	        		lastDate = curDate;
+	        	}
+//	        	Date lastDateTime = new Date(lastDate);
+//	        	Date curDateTime = new Date(curDate);
+	        	long lastDateTime = Long.parseLong(lastDate);
+	        	long curDateTime = Long.parseLong(curDate);
+	        	if (curDateTime > lastDateTime) {
+	        		lastDate = curDate;
+	        	}
+	        }
+	        res = Utils.showTimestamp(lastDate);
+		}
+		return res;		
+	}
+	
     public String toString() {
         return "Instance(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
