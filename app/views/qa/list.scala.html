@@ -181,7 +181,7 @@
 					<td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 					<td></td>
 					<td>0</td>
-					<td>0</td>
+					<td>@Taxonomy.findByUrl(target.field_qa_status).name</td>
 				</tr>
 				}
 			</tbody>
