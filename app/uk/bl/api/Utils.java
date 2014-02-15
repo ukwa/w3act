@@ -1,23 +1,19 @@
 package uk.bl.api;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.UUID;
 
 import play.Logger;
 import uk.bl.Const;
-
-import java.lang.StringBuilder;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
-import java.lang.System;
 
 /**
  * Helper class.
@@ -102,6 +98,28 @@ public class Utils {
     public static String getCurrentDate() {
     	return new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
     }
+    
+    /**
+     * Retrieve formatted timestamp
+     * @param timestamp
+     * @return formatted timestamp
+     */
+    public static String showTimestamp(String timestamp) {
+    	String res = "";
+		try {
+			Date resDate = new SimpleDateFormat("yyyyMMddHHMMss").parse(timestamp);
+			if (resDate != null) {
+				Calendar mydate = new GregorianCalendar();
+				mydate.setTime(resDate);
+				res = Integer.toString(mydate.get(Calendar.DAY_OF_MONTH)) + "/" +
+						Integer.toString(mydate.get(Calendar.MONTH)) + "/" +
+						Integer.toString(mydate.get(Calendar.YEAR));
+			}
+		} catch (ParseException e) {
+			Logger.info("QA timestamp conversion error: " + e);
+		}
+    	return res;
+    }              
     
     /**
      * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
