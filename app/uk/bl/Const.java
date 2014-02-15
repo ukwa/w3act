@@ -43,6 +43,7 @@ public final class Const {
 	public static final String AUTHOR             = "author";
 	public static final String FIELD_AFFILIATION  = "field_affiliation";
 	public static final String FIELD_SUBJECT      = "field_subject";
+	public static final String FIELD_QA_STATUS    = "field_qa_status";
 	public static final String FIELD_NOMINATING_ORGANISATION = "field_nominating_organisation";
 	public static final String JSON               = ".json";
 	public static final String COMMA              = ",";
@@ -359,6 +360,7 @@ public final class Const {
     	subNodeMap.put(FIELD_AFFILIATION, URI);
     	subNodeMap.put(FIELD_NOMINATING_ORGANISATION, URI);
     	subNodeMap.put(FIELD_SUBJECT, URI);
+    	subNodeMap.put(FIELD_QA_STATUS, URI);
 //    	subNodeMap.put(FIELD_COLLECTION_CATEGORIES, URI);
     	subNodeMap.put(FIELD_OWNER, URI);
     	subNodeMap.put(PARENT, URI);
