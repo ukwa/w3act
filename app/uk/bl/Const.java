@@ -45,6 +45,8 @@ public final class Const {
 	public static final String FIELD_SUBJECT      = "field_subject";
 	public static final String FIELD_QA_STATUS    = "field_qa_status";
 	public static final String FIELD_NOMINATING_ORGANISATION = "field_nominating_organisation";
+	public static final String FIELD_TARGET       = "field_target";
+	public static final String FIELD_QA_ISSUE     = "field_qa_issue";
 	public static final String JSON               = ".json";
 	public static final String COMMA              = ",";
 
@@ -334,7 +336,6 @@ public final class Const {
     	targetMap.put("field_collection_categories", 6);
     	targetMap.put("field_notes", 7);
     	targetMap.put("field_instances", 8);
-//    	targetMap.put("field_subject", 9);
     }
 		
     public static final Map<String, Integer> collectionMap = new HashMap<String, Integer>();
@@ -365,6 +366,8 @@ public final class Const {
     	subNodeMap.put(FIELD_OWNER, URI);
     	subNodeMap.put(PARENT, URI);
     	subNodeMap.put(PARENTS_ALL, URI);
+    	subNodeMap.put(FIELD_TARGET, URI);
+    	subNodeMap.put(FIELD_QA_ISSUE, URI);
     }
 		
     /**

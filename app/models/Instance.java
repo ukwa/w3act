@@ -81,6 +81,10 @@ public class Instance extends Model {
     public String field_target;
     @Column(columnDefinition = "TEXT")
     public String field_description_of_qa_issues;
+    @Column(columnDefinition = "TEXT")
+    public String field_timestamp;
+    public Long field_published;
+    public Long field_to_be_published;
     // lists
     @Column(columnDefinition = "TEXT")
     public String field_url; 
