@@ -84,7 +84,7 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.ARCHIVIST_NOTES) != null) {
             	newTarget.archivist_notes = getFormParam(Const.ARCHIVIST_NOTES);
             } 
-            if (getFormParam(Const.LEGACY_SITE_ID) != null) {
+            if (getFormParam(Const.LEGACY_SITE_ID) != null && getFormParam(Const.LEGACY_SITE_ID).length() > 0) {
         		Logger.info("legacy site id: " + getFormParam(Const.LEGACY_SITE_ID) + ".");
             	newTarget.legacy_site_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
             }
