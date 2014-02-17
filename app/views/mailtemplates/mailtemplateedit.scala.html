@@ -92,7 +92,11 @@
 				<div class="form-group">
 					<label for="inputText" class="col-sm-6 control-label">Text</label>
 				    <div class="col-sm-6">
+				    	@if(user.hasRole("sys_admin")) {
 						<textarea class="form-control" name="text" id="text" cols="100" rows="1">@template.text</textarea>
+						} else {
+						<textarea class="form-control" name="text" id="text" cols="100" rows="1" readonly>@template.text</textarea>
+						}
 					</div>
 				</div>
 			</div>
