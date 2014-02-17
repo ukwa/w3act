@@ -8,9 +8,9 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.MailTemplateEdit.view(template.url)">View</a></li>
+	   <li class="active"><a href="@routes.MailTemplates.view(template.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   	<li><a href="@routes.MailTemplateEdit.edit(template.url)">Edit</a></li>
+	   	<li><a href="@routes.MailTemplates.edit(template.url)">Edit</a></li>
 	   }
 	</ul>
 

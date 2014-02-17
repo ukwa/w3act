@@ -1,5 +1,7 @@
 package controllers;
 
+import static play.data.Form.form;
+
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
@@ -14,32 +16,32 @@ import models.Target;
 import models.Taxonomy;
 import models.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
-
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.scope.EmailHelper;
 import views.html.mailtemplates.*;
-import views.html.targets.targets;
 
 import javax.mail.*;
 
 import java.io.*;
-import java.util.*;
 import java.util.*;
 
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.InternetAddress;
 import javax.activation.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Manage templates.
  */
 @Security.Authenticated(Secured.class)
-public class MailTemplateEdit extends AbstractController {
+public class MailTemplates extends AbstractController {
   
     /**
      * Display the template.
@@ -48,7 +50,7 @@ public class MailTemplateEdit extends AbstractController {
         List<MailTemplate> resList = processFilterMailTemplates("");
         return ok(
                 mailtemplates.render(
-                    "MailTemplates", User.find.byId(request().username()), resList, ""
+                    "MailTemplates", User.find.byId(request().username()), resList, "", ""
                 )
             );
     }
@@ -80,34 +82,46 @@ public class MailTemplateEdit extends AbstractController {
      * if required.
      * @return
      */
-    public static Result filter() {
-    	Result res = null;
-    	Logger.info("MailTemplateEdit.filter()");
-        String addentry = getFormParam(Const.ADDENTRY);
-        String search = getFormParam(Const.SEARCH);
-        String name = getFormParam(Const.NAME);
+    public static Result search() {
+    	Logger.info("MailTemplates.search()");
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get(Const.NAME);
+		Logger.info("query: " + query);
+		Logger.info("action: " + action);
+    	
+        List<MailTemplate> resList = processFilterMailTemplates(query);
 
-        List<MailTemplate> resList = processFilterMailTemplates(name);
-        Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);
-        if (addentry != null) {
-        	if (name != null && name.length() > 0) {
-        		res = redirect(routes.MailTemplateEdit.addEntry(name));
-        	} else {
-        		Logger.info("MailTemplate name is empty. Please write name in search window.");
-                res = ok(
-                        mailtemplates.render(
-                            "MailTemplates", User.find.byId(request().username()), resList, ""
-                        )
-                    );
-        	}
-        } else {
-            res = ok(
-            		mailtemplates.render(
-                        "MailTemplates", User.find.byId(request().username()), resList, name
-                    )
-                );
-        }
-        return res;
+        if (StringUtils.isBlank(query)) {
+			Logger.info("Role name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+	        return ok(
+	                mailtemplates.render(
+	                    "MailTemplates", User.find.byId(request().username()), resList, "", ""
+	                )
+	            );
+    	}
+
+    	int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
+    	String sort = getQueryParam(Const.SORT_BY);
+    	String order = getQueryParam(Const.ORDER);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.ADDENTRY.equals(action)) {
+        		return redirect(routes.Roles.create(query));
+    		} 
+    		else if (Const.SEARCH.equals(action)) {
+    	        return ok(
+    	                mailtemplates.render(
+    	                    "MailTemplates", User.find.byId(request().username()), resList, "", ""
+    	                )
+    	            );
+    	    } else {
+		      return badRequest("This action is not allowed");
+		    }
+    	}
     }	   
     
     /**
@@ -140,7 +154,7 @@ public class MailTemplateEdit extends AbstractController {
      * @param template title
      * @return
      */
-    public static Result addEntry(String name) {
+    public static Result create(String name) {
     	MailTemplate template = new MailTemplate();
     	template.name = name;
         template.id = Target.createId();
@@ -214,14 +228,14 @@ public class MailTemplateEdit extends AbstractController {
            		Logger.info("update crawl template: " + template.toString());
                	Ebean.update(template);
         	}
-	        res = redirect(routes.MailTemplateEdit.view(template.url));
+	        res = redirect(routes.MailTemplates.view(template.url));
         } 
         if (delete != null) {
         	MailTemplate template = MailTemplate.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(template);
-	        res = redirect(routes.MailTemplateEdit.index()); 
+	        res = redirect(routes.MailTemplates.index()); 
         }
-    	res = redirect(routes.MailTemplateEdit.index()); 
+    	res = redirect(routes.MailTemplates.index()); 
         return res;
     }	   
 

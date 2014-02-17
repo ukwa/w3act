@@ -109,6 +109,13 @@ GET    	/crawlpermissions/communicationlogs    	controllers.CrawlPermissions.com
 GET     /crawlpermissions/:permission        	controllers.CrawlPermissions.view(permission)
 GET     /crawlpermissions/:permission/edit    	controllers.CrawlPermissions.edit(permission)
 
+GET     /mailtemplates                       	controllers.MailTemplates.index()
+GET     /mailtemplates/search               	controllers.MailTemplates.search()
+GET    	/mailtemplates/filterbyjson/:name		controllers.MailTemplates.filterByJson(name)
+GET     /mailtemplates/new/:template         	controllers.MailTemplates.create(template)
+GET     /mailtemplates/:template             	controllers.MailTemplates.view(template)
+GET     /mailtemplates/:template/edit        	controllers.MailTemplates.edit(template)
+POST    /mailtemplates                  		controllers.MailTemplates.save()
 
 GET     /target/crawlpermissions/:target    	controllers.CrawlPermissions.showCrawlPermissions(target)
 GET     /target/licencerequest/:name/:target  	controllers.CrawlPermissions.licenceRequestForTarget(name, target)
@@ -156,14 +163,6 @@ GET     /contactpersonadd/:person           controllers.ContactPersonEdit.addEnt
 POST    /contactperson/filter/              controllers.ContactPersonEdit.filter()
 GET    	/contactperson/filterbyjson/:name	controllers.ContactPersonEdit.filterByJson(name)
 POST    /contactperson/save                 controllers.ContactPersonEdit.save()
-
-GET     /mailtemplate                       controllers.MailTemplateEdit.index()
-GET     /mailtemplate/:template             controllers.MailTemplateEdit.view(template)
-GET     /mailtemplateedit/:template         controllers.MailTemplateEdit.edit(template)
-GET     /mailtemplateadd/:template          controllers.MailTemplateEdit.addEntry(template)
-POST    /mailtemplate/filter/               controllers.MailTemplateEdit.filter()
-GET    	/mailtemplate/filterbyjson/:name	controllers.MailTemplateEdit.filterByJson(name)
-POST    /mailtemplate/save                  controllers.MailTemplateEdit.save()
 
 GET     /licence                            controllers.LicenceEdit.index()
 POST    /licence/filter/                    controllers.LicenceEdit.filter()

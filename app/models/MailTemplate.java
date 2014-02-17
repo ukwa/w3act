@@ -13,6 +13,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 
 import uk.bl.api.Utils;
 
@@ -156,6 +157,5 @@ public class MailTemplate extends Model
     
     public String toString() {
         return "MailTemplate(" + name + ")" + ", id:" + id;
-    }    
-
+    }
 }
