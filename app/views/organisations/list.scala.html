@@ -94,7 +94,7 @@
 					<input type="text" class="form-control lookup-form-control" name="q" type="text" placeholder="Enter name to search for organisation" value="@query" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for organisation by name">Search</button>
-						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+						@if(user.hasRole("sys_admin")) {
 							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new organisation">Add</button>
 						}
 					</span>
