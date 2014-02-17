@@ -9,16 +9,11 @@ import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.CrawlPermission;
-import models.DCollection;
-import models.Organisation;
-import models.Permission;
-import models.Role;
+
 import models.Target;
-import models.Taxonomy;
 import models.User;
 import models.ContactPerson;
 import models.MailTemplate;
-import models.PermissionRefusal;
 import models.CommunicationLog;
 import play.Logger;
 import play.data.DynamicForm;
@@ -32,21 +27,11 @@ import uk.bl.scope.EmailHelper;
 import views.html.contactpersons.*;
 import views.html.mailtemplates.*;
 import views.html.crawlpermissions.*;
-import views.html.targets.targets;
 import views.html.licence.*;
 import views.html.refusals.*;
 import views.html.communicationlogs.*;
 
-import javax.mail.*;
-
-import java.io.*;
 import java.util.*;
-import java.util.*;
-
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.InternetAddress;
-import javax.activation.*;
-
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -349,7 +334,7 @@ public class CrawlPermissions extends AbstractController {
     public static Result templates() {
         return ok(
                 mailtemplates.render(
-                    "MailTemplates", User.find.byId(request().username()), models.MailTemplate.findAll(), ""
+                    "MailTemplates", User.find.byId(request().username()), models.MailTemplate.findAll(), "", ""
                 )
             );
     }

@@ -7,13 +7,13 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.MailTemplateEdit.view(template.url)">View</a></li>
+	   <li><a href="@routes.MailTemplates.view(template.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.MailTemplateEdit.edit(template.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.MailTemplates.edit(template.url)">Edit</a></li>
 	   }
 	</ul>
     
-	<form action="@routes.MailTemplateEdit.save()" method="POST">
+	<form action="@routes.MailTemplates.save()" method="POST">
 		<input type="hidden" name="url" value="@template.url">
 		<input type="hidden" name="id" value="@template.id">
 
