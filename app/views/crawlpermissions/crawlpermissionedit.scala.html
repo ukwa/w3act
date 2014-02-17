@@ -119,6 +119,7 @@
 			</div>
      	</div>		   
      	
+     	@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
@@ -132,7 +133,8 @@
 					</div>
 				</div>
 			</div>
-     	</div>	  
+     	</div>	 
+		}
 	          
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
