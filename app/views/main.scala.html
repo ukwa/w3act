@@ -60,7 +60,9 @@
 								<li><a href="@routes.Roles.index()">Roles</a></li>
 								<li><a href="@routes.Permissions.index()">Permissions</a></li>
 								<li><a href="@routes.CrawlPermissions.index()">Crawl Permissions</a></li>
+								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 								<li><a href="@routes.QAController.index()">QA</a></li>
+								}
 							</ul>
 						</li>					
 					}
