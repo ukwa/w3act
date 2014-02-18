@@ -1,24 +1,32 @@
 package controllers;
 
 import static play.data.Form.form;
-import play.*;
-import play.data.DynamicForm;
-import play.libs.Json;
-import play.mvc.*;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+
+import models.Organisation;
+import models.Role;
+import models.Target;
+import models.User;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import models.*;
+import play.Logger;
+import play.data.DynamicForm;
+import play.libs.Json;
+import play.mvc.BodyParser;
+import play.mvc.Result;
+import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.userbookmarks;
-import views.html.organisations.organisationedit;
-import views.html.users.*;
+import views.html.users.list;
+import views.html.users.useredit;
+import views.html.users.userview;
+
+import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Manage curators.
@@ -159,7 +167,7 @@ public class Curators extends AbstractController {
     }
     
     public static Result sites(String url) {
-        return redirect(routes.Targets.userTargets(0, "title", "asc", "", url));
+        return redirect(routes.Targets.userTargets(0, "title", "asc", "", url, "", ""));
     }
     
     public static Result bookmarks(String url) {

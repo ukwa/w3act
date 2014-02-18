@@ -540,9 +540,11 @@ public class Targets extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
      * @param user_url User for whom targets search occurs
+     * @param subject Taxonomy of type subject
+     * @param collection Taxonomy of type collection
      */
     public static Result userTargets(int pageNo, String sortBy, String order, String filter, 
-    		String user_url) {
+    		String user_url, String subject, String collection) {
     	Logger.info("Targets.collectionTargets()");
     	
         return ok(
@@ -550,9 +552,11 @@ public class Targets extends AbstractController {
         			User.findByUrl(user_url),  
         			User.find.byId(request().username()), 
         			filter, 
-        			Target.pageUserTargets(pageNo, 10, sortBy, order, filter, user_url), 
+        			Target.pageUserTargets(pageNo, 10, sortBy, order, filter, user_url, subject, collection), 
         			sortBy, 
-        			order)
+        			order,
+        			subject,
+        			collection)
         	);
     }	        
         
@@ -566,23 +570,43 @@ public class Targets extends AbstractController {
     	String action = form.get("action");
     	String query = form.get("url");
 
+    	String user_url = form.get(Const.USER_URL);
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Target name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
-	        return redirect(routes.Collections.list(0, "title", "asc", ""));
+	        return redirect(routes.Targets.userTargets(0, "title", "asc", "", user_url, "", ""));
     	}    	
 
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
     	String order = form.get(Const.ORDER);
-    	String user_url = form.get(Const.USER_URL);
 
+    	String subject_name = form.get(Const.FIELD_SUBJECT);
+    	String subject = "";
+    	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			Logger.info("find subject for title: " + subject_name + ". " + subject_name.length());
+           		subject = Taxonomy.findByName(subject_name).url;
+    		} catch (Exception e) {
+    			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
+    		}
+    	} 
+    	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
+    	String collection = "";
+    	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			collection = DCollection.findByTitle(collection_name).url;
+    		} catch (Exception e) {
+    			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
+    		}
+    	} 
+    	
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.Targets.userTargets(pageNo, sort, order, query, user_url));
+    	    	return redirect(routes.Targets.userTargets(pageNo, sort, order, query, user_url, subject, collection));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }

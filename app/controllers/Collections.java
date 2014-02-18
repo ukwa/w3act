@@ -17,7 +17,6 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import views.html.collections.collectionedit;
-import views.html.collections.collectionsites;
 import views.html.collections.collectionview;
 import views.html.collections.list;
 
