@@ -74,9 +74,9 @@
 							</label>
 						    <div class="col-sm-6">
 								@if(Target.isInScope(target.field_url, target.url) || (target.field_url == null && Target.isInScope(target.title, target.url))) {
-					            	<font id="isInScope" style="color: green">true</font>
+					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
-									<font id="isInScope" style="color: red">false</font>
+									<font id="isInScope" style="color: red">no</font>
 								}
 							</div>
 						</div>
