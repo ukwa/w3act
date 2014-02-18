@@ -159,11 +159,7 @@ public class Curators extends AbstractController {
     }
     
     public static Result sites(String url) {
-        return ok(
-                usersites.render(
-                        User.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+        return redirect(routes.Targets.userTargets(0, "title", "asc", "", url));
     }
     
     public static Result bookmarks(String url) {

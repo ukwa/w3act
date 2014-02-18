@@ -33,6 +33,8 @@ import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import views.html.users.*;
+
 /**
  * Manage targets.
  */
@@ -480,7 +482,7 @@ public class Targets extends AbstractController {
      * @param sortBy Column to be sorted
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
-     * @param collection_url Collection where targets search occures
+     * @param collection_url Collection where targets search occurs
      */
     public static Result collectionTargets(int pageNo, String sortBy, String order, String filter, 
     		String collection_url) {
@@ -493,8 +495,7 @@ public class Targets extends AbstractController {
         			filter, 
         			Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection_url), 
         			sortBy, 
-        			order)//, 
-//        			collection_url)
+        			order) 
         	);
     }
 	    
@@ -525,6 +526,63 @@ public class Targets extends AbstractController {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.Targets.collectionTargets(pageNo, sort, order, query, collection_url));
+		    } else {
+		    	return badRequest("This action is not allowed");
+		    }
+    	}
+    }
+    
+    /**
+     * Display the paginated list of targets.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     * @param user_url User for whom targets search occurs
+     */
+    public static Result userTargets(int pageNo, String sortBy, String order, String filter, 
+    		String user_url) {
+    	Logger.info("Targets.collectionTargets()");
+    	
+        return ok(
+        		usersites.render(
+        			User.findByUrl(user_url),  
+        			User.find.byId(request().username()), 
+        			filter, 
+        			Target.pageUserTargets(pageNo, 10, sortBy, order, filter, user_url), 
+        			sortBy, 
+        			order)
+        	);
+    }	        
+        
+    /**
+     * This method enables searching for given URL and particular user.
+     * @return
+     */
+    public static Result searchTargetsByUser() {
+    	
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get("url");
+
+    	if (StringUtils.isBlank(query)) {
+			Logger.info("Target name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+	        return redirect(routes.Collections.list(0, "title", "asc", ""));
+    	}    	
+
+    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
+    	String sort = form.get(Const.SORT_BY);
+    	String order = form.get(Const.ORDER);
+    	String user_url = form.get(Const.USER_URL);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.SEARCH.equals(action)) {
+    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    	    	return redirect(routes.Targets.userTargets(pageNo, sort, order, query, user_url));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }

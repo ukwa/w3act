@@ -3,7 +3,7 @@
 @main("", admin) {
     
 	<div class="page-header">
-    	<h1>User @user.name</h1>
+    	<h1>User @user.name (@Target.findAllforUser(user.url).size() targets)</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
