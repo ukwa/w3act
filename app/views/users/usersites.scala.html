@@ -133,7 +133,7 @@
 				<td>@Taxonomy.findByUrl(target.field_collection_categories).name</td>
 				<td>@Taxonomy.findByUrl(target.field_subject).name</td>
 				<td><a href="@routes.Curators.edit(target.author)">@User.findByUrl(target.author).name</a></td>
-				<td></td>
+				<td><a class="brand" href="@routes.TargetEdit.view(target.url)">@Instance.findAllByTarget(target.url)</a></td>
             </tr>
             }
 		</tbody>
