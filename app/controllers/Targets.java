@@ -27,6 +27,7 @@ import uk.bl.api.Utils;
 import views.html.targets.list;
 import views.html.targets.targetedit;
 import views.html.targets.targets;
+import views.html.collections.collectionsites;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -472,6 +473,64 @@ public class Targets extends AbstractController {
             );
     }
     
+    /**
+     * Display the paginated list of targets.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     * @param collection_url Collection where targets search occures
+     */
+    public static Result collectionTargets(int pageNo, String sortBy, String order, String filter, 
+    		String collection_url) {
+    	Logger.info("Targets.collectionTargets()");
+    	
+        return ok(
+        		collectionsites.render(
+        			DCollection.findByUrl(collection_url),  
+        			User.find.byId(request().username()), 
+        			filter, 
+        			Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection_url), 
+        			sortBy, 
+        			order)//, 
+//        			collection_url)
+        	);
+    }
+	    
+    /**
+     * This method enables searching for given URL and particular collection.
+     * @return
+     */
+    public static Result searchTargetsByCollection() {
+    	
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get("url");
+
+    	if (StringUtils.isBlank(query)) {
+			Logger.info("Target name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+	        return redirect(routes.Collections.list(0, "title", "asc", ""));
+    	}    	
+
+    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
+    	String sort = form.get(Const.SORT_BY);
+    	String order = form.get(Const.ORDER);
+    	String collection_url = form.get(Const.COLLECTION_URL);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.SEARCH.equals(action)) {
+    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    	    	return redirect(routes.Targets.collectionTargets(pageNo, sort, order, query, collection_url));
+		    } else {
+		    	return badRequest("This action is not allowed");
+		    }
+    	}
+    }
+        
     /**
      * Display the targets.
      */

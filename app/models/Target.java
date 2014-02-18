@@ -275,7 +275,7 @@ public class Target extends Model {
      */
     public static List<Target> findAllforCollection(String url) {
     	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq("field_collection_categories", url);
+        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_COLLECTION_CATEGORIES, url);
         res = ll.findList();
         return res;
 	}
@@ -922,6 +922,29 @@ public class Target extends Model {
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
+    }
+    
+    /**
+     * Return a page of Target
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     * @param collection_url Collection where targets search occurs
+     * @return
+     */
+    public static Page<Target> pageCollectionTargets(int page, int pageSize, String sortBy, String order, 
+    		String filter, String collection_url) {
+
+        return find.where().icontains(Const.FIELD_URL_NODE, filter)
+        		.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
     }    
+    
 }
 

@@ -4,14 +4,12 @@ import static play.data.Form.form;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
-
 import models.DCollection;
 import models.Target;
 import models.User;
+
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -21,8 +19,10 @@ import uk.bl.Const;
 import views.html.collections.collectionedit;
 import views.html.collections.collectionsites;
 import views.html.collections.collectionview;
-import views.html.collections.dcollections;
 import views.html.collections.list;
+
+import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Security.Authenticated(Secured.class)
 public class Collections extends AbstractController {
@@ -219,11 +219,7 @@ public class Collections extends AbstractController {
     }
 	    
     public static Result sites(String url) {
-        return ok(
-                collectionsites.render(
-                        DCollection.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+        return redirect(routes.Targets.collectionTargets(0, "title", "asc", "", url));
     }    
 
 }

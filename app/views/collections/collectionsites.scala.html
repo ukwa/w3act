@@ -1,34 +1,133 @@
-@(collection: DCollection, user: User)
+@(collection: DCollection, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String)
 
-@main("", user) {
+@scripts = {
+	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+	<script>
+		$(document).ready(function() {
+			context = @play.api.Play.current.configuration.getString("application.context");
+			searchContext = 'targets';
+			urlTo = 'target';
+			applySearch(context, searchContext, urlTo);
+			scopeCheck(context);
+		});
+	</script>
+}
+
+@styles = {
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+}
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    
+    // Generate the link
+    routes.Targets.collectionTargets(newPage, sortBy, order, searchurl, collection.url)
+    
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+    <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
+        <a href="@link(0, key)">@title</a>
+    </th>
+}
+
+@pagination = {
+		<div class="text-center">
+			<ul class="pagination">
+	        	@if(currentPage.hasPrev) {
+	            	<li class="prev">
+	                    <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
+	                </li>
+	            } else {
+	                <li class="prev disabled">
+	                    <a>&larr; Previous</a>
+	                </li>
+	            }
+	            <li class="current">
+	                <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+	            </li>
+	            @if(currentPage.hasNext) {
+	                <li class="next">
+	                    <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
+	                </li>
+	            } else {
+	                <li class="next disabled">
+	                    <a>Next &rarr;</a>
+	                </li>
+				}
+			</ul>
+		</div>
+}
+
+@main("", user, scripts, styles) {
     
    	<div class="page-header">
-		<h1>Collection @collection.title Targets</h1>
+		<h1>Collection @collection.title (@currentPage.getTotalRowCount targets)</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
 		<li><a
 			href="@routes.Collections.view(collection.url)">View</a></li>
 		<li class="active"><a href="@routes.Collections.sites(collection.url)">Sites</a></li>
-			@if(user.hasRole("sys_admin")) {
+		@if(user.hasRole("sys_admin")) {
 		<li><a href="@routes.Collections.edit(collection.url)">Edit</a></li>
 		}
 	</ul>
     
-
+	<div id="forms">
+		@warningmessage(flash)
+		@helper.form(action=routes.Targets.searchTargetsByCollection, 'class -> "form-inline") {
+   			<div class="input-group">
+   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
+  					<input type="hidden" name="s" value="@currentSortBy">
+  					<input type="hidden" name="o" value="@currentOrder">
+  					<input type="hidden" name="collection_url" value="@collection.url">
+				<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
+	   			<span class="input-group-btn">
+					@if(user.hasRole("sys_admin")) {
+					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
+					}
+				</span>
+			</div>
+		}
+	</div>
+	
+	@if(user.hasRole("sys_admin")) {
+	@pagination
+    
 	<table class="table table-hover">
 		<thead>
 			<tr>
-	            <th>Title</th>
+				@header("title", "Title")			
 	            <th>Categories</th>
 	            <th>Subject</th>
 	            <th>By</th>
-	            <th>Crawled Instances</th>
-	            <th>Crawled URLs</th>
 			</tr>
 		</thead>
 		<tbody>
-			@Target.findAllforCollection(collection.url).map { target =>		              
+			@for(target <- currentPage.getList) {
             <tr>
             	<td>
             		<a class="brand" href="@routes.TargetEdit.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a>
@@ -50,11 +149,12 @@
                 } else {
 	            	<td></td>
 				}	
-                <td></td>
-                <td></td>
 			</tr>
             }
 		</tbody>
 	</table>
+	
+		@pagination
+	}
 }
 
