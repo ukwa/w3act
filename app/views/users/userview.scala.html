@@ -17,18 +17,114 @@
 	
 	<div class="padding-20">
 		<div class="tab-pane active">
-			<dl class="dl-horizontal text-overflow">    
-				<dt>Affiliation:</dt>
-				<dd>@Organisation.findByUrl(user.field_affiliation).title</dd>
-				<dt>E-mail:</dt>
-				<dd>@user.email</dd>
-				<dt>Roles:</dt>
-				<dd>@user.roles</dd>
-				<dt>Count of targets:</dt>
-				<dd>@Target.findAllforUser(user.url).size()</dd>
-				<dt>Member for:</dt>
-				<dd>@user.calculate_membership()</dd>
-			</dl>
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputName" class="col-sm-6 control-label">Name<font color="red">*</font></label>
+					    <div class="col-sm-6">
+				              <input class="form-control" name="name" id="name" size="60" placeholder="My name" type="text" value="@user.name" readonly>
+						</div>
+					</div>
+				</div>
+	     	</div>
+	     	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputName" class="col-sm-6 control-label">ID</label>
+					    <div class="col-sm-6">
+					          <input class="form-control" name="uid" value="@user.uid" size="30" readonly>
+						</div>
+					</div>
+				</div>
+	     	</div>
+	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="email" class="col-sm-6 control-label">E-mail <font color="red">*</font></label>
+					    <div class="col-sm-6">
+							<input class="form-control" name="email" id="email" placeholder="sample@@domain.uk" type="text" value="@user.email" readonly>
+						</div>
+					</div>
+				</div>
+	     	</div>
+	
+	   		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Roles</label>
+					    <div class="col-sm-6">
+					        @for(role <- Role.findAll()) {
+								<label class="checkbox-inline">
+						            @if(Role.isIncluded(role.name, user.roles)) {
+					                	<input type="checkbox" name="@role.name" value="true" checked disabled/>
+					                } else {
+					                	<input type="checkbox" name="@role.name" value="true" disabled/>
+					                }
+					                 @role.name
+				                </label>
+				            }
+						</div>
+					</div>
+				</div>
+	     	</div>	     		
+	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="nom-org" class="col-sm-6 control-label">Nominating Organisation</label>
+					    <div class="col-sm-6">
+							<select name="organisation" id="nom-org" class="form-control">
+				            <option>None</option>
+								@for(organisation <- Organisation.findAll()) {
+									@if(organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
+	             						<option selected disabled>@organisation.title</option>
+	         						} else {
+	                					<option disabled>@organisation.title</option>
+									}					            
+				            	}
+							</select>
+						</div>
+					</div>
+				</div>
+	     	</div>
+	     	
+	        <div id="revisionArea" class="revision">
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputBody" class="col-sm-6 control-label">Revision log message <small class="text-center">(Provide an explanation of the changes you are making. This will help other authors understand your motivations)</small></label>
+						    <div class="col-sm-6">
+	               				<textarea class="form-control" name="revision" id="inputRevision" readonly>@user.revision</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>
+			</div>
+			
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="targetCount" class="col-sm-6 control-label">Count of targets<font color="red">*</font></label>
+					    <div class="col-sm-6">
+							<input class="form-control" name="targetCount" id="targetCount" type="text" value="@Target.findAllforUser(user.url).size()" readonly>
+						</div>
+					</div>
+				</div>
+	     	</div>
+			
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="membership" class="col-sm-6 control-label">Member for<font color="red">*</font></label>
+					    <div class="col-sm-6">
+							<input class="form-control" name="membership" id="membership" type="text" value="@user.calculate_membership()" readonly>
+						</div>
+					</div>
+				</div>
+	     	</div>
+
 		</div>
 	</div>
 }
