@@ -16,6 +16,7 @@ public final class Const {
 	public static final String CONTACTPERSONS  = "contactpersons";
 	public static final String LICENSES        = "licenses";
 	public static final String LICENCE         = "license";
+	public static final String COLLECTION_URL  = "collection_url";
 
     // Drupal connection definitions
     public static final String URI             = "uri";
