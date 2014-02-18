@@ -107,12 +107,14 @@
 			<thead>
 				<tr>
 					@header("title", "Title")
+					<th>Targets Count</th>					
 				</tr>
 			</thead>
 			<tbody>
 				@for(dcollection <- currentPage.getList) {
 		           <tr>
 		           	<td><a href="@routes.Collections.view(dcollection.url)">@dcollection.title</a></td>
+		           	<td>@Target.findAllforCollection(dcollection.url).size() </td>
 				</tr>
 		           }
 			</tbody>
