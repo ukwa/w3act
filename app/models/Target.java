@@ -238,7 +238,7 @@ public class Target extends Model {
     public static List<Target> findAllforUser(String url) {
     	Logger.info("findAllforUser() url: " + url);
     	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq("author", url);
+        ExpressionList<Target> ll = find.where().eq(Const.AUTHOR, url);
         res = ll.findList();
     	Logger.info("findAllforUser() number: " + res.size());
         return res;
@@ -275,7 +275,7 @@ public class Target extends Model {
      */
     public static List<Target> findAllforCollection(String url) {
     	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_COLLECTION_CATEGORIES, url);
+        ExpressionList<Target> ll = find.where().eq(Const.FIELD_COLLECTION_CATEGORIES, url);
         res = ll.findList();
         return res;
 	}
@@ -939,7 +939,29 @@ public class Target extends Model {
     		String filter, String collection_url) {
 
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
-        		.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
+        		.eq(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * Return a page of Target
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     * @param user_url User for whom targets search occurs
+     * @return
+     */
+    public static Page<Target> pageUserTargets(int page, int pageSize, String sortBy, String order, 
+    		String filter, String user_url) {
+
+        return find.where().icontains(Const.FIELD_URL_NODE, filter)
+        		.eq(Const.AUTHOR, user_url)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

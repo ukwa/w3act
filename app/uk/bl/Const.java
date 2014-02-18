@@ -135,6 +135,7 @@ public final class Const {
 	public static final String EMAIL              = "email";
 	public static final String DEFAULT_ROLE       = "user";
 	public static final String PASSWORD           = "password";
+	public static final String USER_URL           = "user_url";
 
 	// Taxonomy
 	public static final String TYPE               = "type";
