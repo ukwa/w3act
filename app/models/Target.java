@@ -955,13 +955,17 @@ public class Target extends Model {
      * @param order Sort order (either or asc or desc)
      * @param filter Filter applied on the name column
      * @param user_url User for whom targets search occurs
+     * @param subject Taxonomy of type subject
+     * @param collection Taxonomy of type collection
      * @return
      */
     public static Page<Target> pageUserTargets(int page, int pageSize, String sortBy, String order, 
-    		String filter, String user_url) {
+    		String filter, String user_url, String subject, String collection) {
 
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
         		.eq(Const.AUTHOR, user_url)
+        		.icontains(Const.FIELD_SUBJECT, subject)
+        		.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)        		
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

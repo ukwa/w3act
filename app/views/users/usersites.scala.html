@@ -1,4 +1,4 @@
-@(user: User, admin: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String)
+@(user: User, admin: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, subjectUrl: String, collection: String)
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
@@ -40,7 +40,7 @@
     }
     
     // Generate the link
-    routes.Targets.userTargets(newPage, sortBy, order, searchurl, user.url)
+    routes.Targets.userTargets(newPage, sortBy, order, searchurl, user.url, subjectUrl, collection)
     
 }
 
@@ -93,7 +93,6 @@
 	    @if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || user.url.equals(admin.url)) {
 			<li><a href="@routes.Curators.edit(user.url)">Edit</a></li>
 		}
-	   <!-- li><a href="@routes.Curators.bookmarks(user.url)" class="navbar-brand btn btn-success">Bookmarks</a></li--> 
 	</ul>
     
 	<div id="forms">
@@ -104,6 +103,8 @@
   					<input type="hidden" name="s" value="@currentSortBy">
   					<input type="hidden" name="o" value="@currentOrder">
   					<input type="hidden" name="user_url" value="@user.url">
+   					<input type="hidden" name="query_subject" value="@subjectUrl">
+   					<input type="hidden" name="query_collection" value="@collection">  					
 				<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
 	   			<span class="input-group-btn">
 					@if(user.hasRole("sys_admin")) {
@@ -111,6 +112,61 @@
 					}
 				</span>
 			</div>
+			
+			<div class="alert alert-info">
+				Search here for all or part of the name of the target, or its URL.
+			</div>
+
+			<div class="padding-20">
+			    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
+			</div>
+					
+			<div id="accordion">
+				<div id="filter-panel" class="panel-collapse collapse in">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+					            	<label for="subject" class="col-sm-6 control-label">Filter by subject</label>
+					            	<div class="col-sm-6">
+										<select name="field_subject" class="form-control target-form-control" id="subject">
+								        	<option>None</option>
+								            @for(subject <- Taxonomy.findListByType("subject")) {
+						                 			@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
+						                			<option selected>@subject.name</option>
+						                		} else {
+													<option>@subject.name</option>
+							                		}
+								                }
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+					            	<label for="suggested_collections" class="col-sm-6 control-label">Filter by collection</label>
+					            	<div class="col-sm-6">
+										<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
+							                <option>None</option>
+							                @for(cur_collection <- DCollection.findAll()) {
+								                @if(collection != null && collection.equals(cur_collection.url)) {
+								                	<option selected>@cur_collection.title</option>
+								                } else {
+								                	<option>@cur_collection.title</option>
+								                }
+							                }
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			
 		}
 	</div>
 	
