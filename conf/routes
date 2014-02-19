@@ -34,6 +34,14 @@ GET     /collections/:collection/edit       controllers.Collections.edit(collect
 GET     /collections/:sites/sites			controllers.Collections.sites(sites)
 POST    /collections             			controllers.Collections.save()
 
+GET     /taxonomy                           controllers.TaxonomiesController.index()
+GET    	/taxonomy/list                  	controllers.TaxonomiesController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+POST    /taxonomy/search                    controllers.TaxonomiesController.search()
+GET    	/taxonomy/filterbyjson/:name		controllers.TaxonomiesController.filterByJson(name)
+GET     /taxonomy/new/:name      		    controllers.TaxonomiesController.create(name)
+GET     /taxonomy/:collection               controllers.TaxonomiesController.view(collection)
+GET     /taxonomy/:collection/edit          controllers.TaxonomiesController.edit(collection)
+POST    /taxonomy             			    controllers.TaxonomiesController.save()
 
 GET     /organisations                      controllers.Organisations.index()
 GET     /organisations/list                 controllers.Organisations.list(p:Int ?= 0, s ?= "name", o ?= "asc", q ?= "")
@@ -143,14 +151,14 @@ GET     /keysites                           controllers.KeySites.index()
 GET     /dispensationsites                  controllers.DispensationSites.index()
 GET     /urlsearch                          controllers.UrlSearch.index()
 GET     /urlsnocrawl                        controllers.UrlsNoCrawl.index()
-GET     /taxonomies                         controllers.EditTaxonomies.index()
+#GET     /taxonomies                         controllers.EditTaxonomies.index()
 GET     /bookmarks                          controllers.Bookmarks.index()
 GET     /tips                               controllers.Tips.index()
 
 # Domain objects
 
-GET     /taxonomy/:taxonomy                 controllers.TaxonomyEdit.view(taxonomy)
-GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxonomy)
+#GET     /taxonomy/:taxonomy                 controllers.TaxonomyEdit.view(taxonomy)
+#GET     /taxonomyedit/:taxonomy             controllers.TaxonomyEdit.edit(taxonomy)
 
 GET     /target/:target                     controllers.TargetEdit.view(target)
 GET     /targetrevision/:revision           controllers.TargetEdit.viewrevision(revision:Long)

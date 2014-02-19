@@ -11,6 +11,7 @@ import models.User;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
+import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -65,9 +66,12 @@ public class Collections extends AbstractController {
 	 * @return
 	 */
 	public static Result search() {
-    	String action = form().bindFromRequest().get("action");
+    	DynamicForm form = form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get(Const.URL);
+
 		Logger.info("action: " + action);
-    	String query = getQueryParam(Const.NAME);
+    	Logger.info("collections search() query: " + query);
     	
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Collection name is empty. Please write name in search window.");
@@ -76,10 +80,11 @@ public class Collections extends AbstractController {
 	        		routes.Collections.list(0, "title", "asc", "")
 	        );
     	}
+    	
+    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
+    	String sort = form.get(Const.SORT_BY);
+    	String order = form.get(Const.ORDER);
 
-    	int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
-    	String sort = getQueryParam(Const.SORT_BY);
-    	String order = getQueryParam(Const.ORDER);
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");

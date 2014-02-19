@@ -582,8 +582,12 @@ public class JsonUtils {
 				obj = new TaxonomyVocabulary();
 			}
 			parseJsonNodeExt(node, obj, urlList, type, taxonomy_type, res);
+			boolean hasEmptyName = false;
 			if (type.equals(Const.NodeType.TAXONOMY)) {
-				((Taxonomy) obj).type = taxonomy_type.toString().toLowerCase();
+				((Taxonomy) obj).ttype = taxonomy_type.toString().toLowerCase();
+				if (((Taxonomy) obj).name == null || ((Taxonomy) obj).name.length() == 0) {
+					hasEmptyName = true;
+				}
 //				Logger.info("taxonomy type: " + taxonomy_type.toString().toLowerCase());
 			}
 			boolean isNew = true;
@@ -608,7 +612,7 @@ public class JsonUtils {
 			    	existingUser.update();
 			    }
 			}
-			if (isNew) {
+			if (isNew && !hasEmptyName) {
 				res.add(obj);
 			}
 		} else {

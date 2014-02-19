@@ -14,6 +14,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 
 
 /**
@@ -27,7 +28,7 @@ public class Taxonomy extends Model {
     public Long tid;
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 
-    public String type;  
+    public String ttype;  
     @Column(columnDefinition = "TEXT")
     public String description;
     public Long weight;
@@ -119,6 +120,21 @@ public class Taxonomy extends Model {
 //        return find.where().eq(Const.URL, url).findUnique();
     	return res;
     }          
+    
+    /**
+     * Get a taxonomy by URL if exists in database.
+     * @param url
+     * @return
+     */
+    public static Taxonomy getByUrl(String url) {
+    	Taxonomy res = new Taxonomy();
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
+    		res = find.where().eq(Const.URL, url).findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+    	return res;
+    }    
 
     /**
      * Retrieve a Taxonomy names by URL list given as a string.
@@ -210,7 +226,7 @@ public class Taxonomy extends Model {
 	public static List<Taxonomy> findListByType(String type) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (type != null && type.length() > 0) {
-	        ExpressionList<Taxonomy> ll = find.where().eq(Const.TYPE, type);
+	        ExpressionList<Taxonomy> ll = find.where().eq(Const.TTYPE, type);
 	    	res = ll.findList(); 
         }
     	return res;
@@ -247,7 +263,25 @@ public class Taxonomy extends Model {
     	res = ll.findList();
 		return res;
 	}
-        	
+
+    /**
+     * Return a page of Taxonomy
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Taxonomy> page(int page, int pageSize, String sortBy, String order, String filter) {
+
+        return find.where().icontains(Const.NAME, filter)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+
     public String toString() {
         return "Taxonomy(" + tid + ") with name: " + name;
     }
