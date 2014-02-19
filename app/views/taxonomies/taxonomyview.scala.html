@@ -1,0 +1,53 @@
+@(taxonomy: Taxonomy, user: User) @main("", user) {
+
+	<div class="page-header">
+		<h1>Taxonomy @taxonomy.name</h1>
+	</div>
+
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="@routes.TaxonomiesController.view(taxonomy.url)">View</a></li>
+		@if(user.hasRole("sys_admin")) {
+		<li><a href="@routes.TaxonomiesController.edit(taxonomy.url)">Edit</a></li>
+		}
+	</ul>
+
+	<div class="padding-20">
+		<div class="tab-pane active" id="home">
+		
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
+					    <div class="col-sm-6">
+							<input class="form-control" name="title" id="inputTitle" value="@taxonomy.name" type="text" readonly>
+						</div>
+					</div>
+				</div>
+	     	</div>
+	     	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputType" class="col-sm-6 control-label">Type</label>
+					    <div class="col-sm-6">
+							<input class="form-control" name="type" id="type" value="@taxonomy.ttype" type="text" readonly>
+						</div>
+					</div>
+				</div>
+	     	</div>
+     	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputDescription" class="col-sm-6 control-label">Description</label>
+					    <div class="col-sm-6">
+			          		<textarea class="form-control" name="summary" id="inputDescription" value="@taxonomy.description" cols="100" rows="1" readonly>@taxonomy.description</textarea>
+						</div>
+					</div>
+				</div>
+			</div>		
+		</div>
+	</div>
+
+}
+
