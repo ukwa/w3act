@@ -139,6 +139,7 @@ public final class Const {
 
 	// Taxonomy
 	public static final String TYPE               = "type";
+	public static final String TTYPE              = "ttype";
 	public static final String FIELD_OWNER        = "field_owner";
 	public static final String PARENT             = "parent";
 	public static final String PARENTS_ALL        = "parents_all";

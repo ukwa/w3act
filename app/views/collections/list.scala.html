@@ -90,7 +90,7 @@
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   				<input type="hidden" name="s" value="@currentSortBy">
 	   				<input type="hidden" name="o" value="@currentOrder">
-					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Collection Name" value="@searchstr" id="search-query">
+					<input type="text" class="form-control lookup-form-control" name="url" placeholder="Enter collection name" value="@searchstr" id="search-query">
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for collection by name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {

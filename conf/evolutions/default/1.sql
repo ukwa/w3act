@@ -346,7 +346,7 @@ create table target (
 create table taxonomy (
   tid                       bigint not null,
   name                      varchar(255),
-  type                      varchar(255),
+  ttype                     varchar(255),
   description               TEXT,
   weight                    bigint,
   node_count                bigint,
