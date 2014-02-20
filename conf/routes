@@ -155,6 +155,9 @@ GET     /urlsnocrawl                        controllers.UrlsNoCrawl.index()
 GET     /bookmarks                          controllers.Bookmarks.index()
 GET     /tips                               controllers.Tips.index()
 
+GET     /exportlookup                       controllers.Export.index()
+GET     /exportlookup/csv                   controllers.Export.search()
+
 # Domain objects
 
 #GET     /taxonomy/:taxonomy                 controllers.TaxonomyEdit.view(taxonomy)
