@@ -220,6 +220,14 @@ public final class Const {
 	public static final String QUERY             	= "q";
 	public static final String QUERY_COLLECTION    	= "query_collection";
 	public static final String QUERY_QA_STATUS     	= "query_qa_status";
+	
+	// Export settings
+	public static final String ACTION               = "action";   
+	public static final String EXPORT_LOOKUPS       = "export_lookups";  
+	public static final String EXPORT_LOOKUP_FILE   = "exportlookups.csv"; 
+	public static final String LOOKUP_DEF           = "lookup_def"; 
+	public static final String YES                  = "yes"; 
+	public static final String NO                   = "no"; 
 
 	// Types of the JSON nodes
 	public enum NodeType {

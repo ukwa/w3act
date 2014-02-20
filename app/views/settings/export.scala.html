@@ -1,0 +1,36 @@
+@(title: String, user: User)
+
+@main(title, user) {
+	<div class="page-header">
+	    <h1>Export LookUps</h1>
+	</div>	    
+    <article class="settings">
+		@helper.form(action=routes.Export.search) {
+    
+    	<div id="forms">
+			<div id="filter-panel" class="panel-collapse collapse in">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+				  				<label for="export" class="col-sm-6 control-label">Export LookUps</label>
+				            	<div class="col-sm-6">
+						   			<div class="input-group">
+						 				<input type="text" name="count" value="@LookupEntry.findAll().size()" maxlength="200" class="form-control target-form-control" disabled id="export" title="Number of lookup entries" />
+						 				<span class="input-group-btn">
+						 					<button type="submit" class="btn btn-primary" id="export_lookups" name="action" value="export_lookups" title="Export results of scope calculations to CSV file">Export</button>									 			
+					            		</span>
+					            	</div>
+					            </div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		} <!-- end of search form -->
+
+   	</article>
+}
+

@@ -883,47 +883,63 @@ public class Target extends Model {
     }    
     
     /**
-     * Return a page of Target
-     *
+     * Return a page of Target objects.
      * @param page Page to display
      * @param pageSize Number of targets per page
      * @param sortBy Target property used for sorting
      * @param order Sort order (either or asc or desc)
-     * @param filter Filter applied on the name column
-     * @param curator Author of the target
-     * @param organisation The author's organisation
-     * @param subject Target subject
-     * @param crawlFrequency The crawl frequency
-     * @param depth The crawl depth
-     * @param collection The associated collection
-     * @param license The license name
+     * @param curatorUrl
+     * @param organisationUrl
+     * @param collectionCategoryUrl
+     * @param subjectUrl
+     * @param crawlFrequency
+     * @param depth
+     * @param suggested_collections
+     * @param offset The current page number
+     * @param limit The maximal row count
+     * @param filterUrl
+     * @param license
      * @return
      */
-    public static Page<Target> pageTargets(int page, int pageSize, String sortBy, String order, String filter, 
-    		String curator, String organisation, String subject, String crawlFrequency, String depth, String collection, 
-    		String license) {
-
-    	Logger.info("crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
-    	if (crawlFrequency != null && crawlFrequency.length() > 0 && crawlFrequency.toLowerCase().equals(Const.NONE)) {
-    		crawlFrequency = ""; 
+    public static Page<Target> pageTargets(int page, int pageSize, String sortBy, String order, String filterUrl, 
+    		String curatorUrl, String organisationUrl, String subjectUrl, String crawlFrequency, String depth, 
+    		String suggested_collections, String license) {
+    	ExpressionList<Target> exp = Target.find.where();
+    	Page<Target> res = null;
+    	if (filterUrl != null && filterUrl.length() > 0) {
+    		exp = exp.eq(Const.ACTIVE, true).contains(Const.FIELD_URL_NODE, filterUrl);
     	}
-    	if (depth != null && depth.length() > 0 && depth.toLowerCase().equals(Const.NONE)) {
-    		depth = ""; 
+    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.AUTHOR, curatorUrl);
     	}
-        return find.where().icontains(Const.FIELD_URL_NODE, filter)
-        		.icontains(Const.AUTHOR, curator)
-        		.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation)
-        		.icontains(Const.FIELD_SUBJECT, subject)
-        		.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency)
-        		.icontains(Const.FIELD_DEPTH, depth)
-        		.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)
-        		.icontains(Const.FIELD_LICENSE_NODE, license)
+    	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
+    	} 
+    	if (subjectUrl != null && !subjectUrl.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_SUBJECT, subjectUrl);
+    	} 
+    	Logger.info("pageTargets() crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
+    	if (crawlFrequency != null && !crawlFrequency.equals("") && !crawlFrequency.toLowerCase().equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
+    	} 
+    	if (depth != null && !depth.equals("") && !depth.toLowerCase().equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_DEPTH, depth);
+    	} 
+    	if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, suggested_collections);
+    	} 
+    	if (license != null && !license.equals("") && !license.toLowerCase().equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_LICENSE_NODE, suggested_collections);
+    	} 
+    	res = exp.query()
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
+    	Logger.info("Expression list size: " + res.getTotalRowCount());
+        return res;
     }
-    
+        
     /**
      * Return a page of Target
      *
