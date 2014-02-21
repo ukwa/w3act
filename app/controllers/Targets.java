@@ -371,7 +371,7 @@ public class Targets extends AbstractController {
     	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation, 
     	    			subject, crawlFrequency, depth, collection, license, pageSize));
     		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		else if (Const.SEARCH.equals(action) || Const.APPLY.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation, 
     	    			subject, crawlFrequency, depth, collection, license, pageSize));
