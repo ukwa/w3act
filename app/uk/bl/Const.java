@@ -128,6 +128,7 @@ public final class Const {
 	public static final String SELECTOR_NOTES = "selector_notes";
 	public static final String ARCHIVIST_NOTES = "archivist_notes";
 	public static final String LEGACY_SITE_ID = "legacy_site_id";
+	public static final String FIELD_TIMESTAMP = "field_timestamp";
     
     // Creator
 	public static final String UID                = "uid";
