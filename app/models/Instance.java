@@ -467,6 +467,24 @@ public class Instance extends Model {
     }          
 
     /**
+     * Retrieve an Instance by timestamp.
+     * @param url
+     * @return instance object 
+     */
+    public static Instance findByTimestamp(String timestamp) {
+    	Instance res = new Instance();
+        Logger.info("instance timestamp: " + timestamp);
+        
+        Instance instance = find.where().eq(Const.FIELD_TIMESTAMP, timestamp).findUnique();
+        if (instance == null) {
+        	res.url = Const.NONE;
+        } else {
+        	res = instance;
+        }
+    	return res;
+    }          
+
+    /**
      * Retrieve a Target by Id (nid).
      * @param nid
      * @return target 
@@ -488,6 +506,11 @@ public class Instance extends Model {
 		return res;
 	}
 	
+	/**
+	 * This method evaluates the latest timestamp for given target.
+	 * @param url
+	 * @return timestamp value
+	 */
 	public static String showLatestTimestamp(String url) {
 		String res = "";
 		if (url != null && url.length() > 0) {
@@ -515,6 +538,37 @@ public class Instance extends Model {
 	        res = Utils.showTimestamp(lastDate);
 		}
 		return res;		
+	}
+	
+	/**
+	 * This method evaluates the latest Instance object for given target.
+	 * @param url
+	 * @return link to the instance
+	 */
+	public static String getLatestInstance(String url) {
+		String res = "";
+		String lastDate = "";
+		if (url != null && url.length() > 0) {
+			List<Instance> instanceList = new ArrayList<Instance>();
+	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
+	        instanceList = ll.findList(); 
+	        Iterator<Instance> itr = instanceList.iterator();
+	        while (itr.hasNext()) {
+	        	Instance instance = itr.next();
+	        	String curDate = instance.field_timestamp;
+	        	if (lastDate == null || lastDate.equals("")) {
+	        		lastDate = curDate;
+	        	}
+	        	long lastDateTime = Long.parseLong(lastDate);
+	        	long curDateTime = Long.parseLong(curDate);
+	        	if (curDateTime > lastDateTime) {
+	        		lastDate = curDate;
+	        	}
+	        }
+		}
+		Instance instance = Instance.findByTimestamp(lastDate);
+		res = instance.url;	
+		return res;
 	}
 	
     public String toString() {
