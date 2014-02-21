@@ -122,6 +122,23 @@ public class Taxonomy extends Model {
     }          
     
     /**
+     * Retrieve a QA status by URL.
+     * @param url
+     * @return QA status string
+     */
+    public static String findQaStatus(String url) {
+    	Taxonomy taxonomy = findByUrl(url);
+    	String res = taxonomy.name;
+    	if (taxonomy.name.equals("No QA Issues found (OK to publish)")) {
+    		res = Const.QAStatusType.PASSED_PUBLISH_NO_ACTION_REQUIRED.name();
+    	}
+    	if (taxonomy.name.equals("QA issues found")) {
+    		res = Const.QAStatusType.ISSUE_NOTED.name();
+    	}
+    	return res;
+    }          
+    
+    /**
      * Get a taxonomy by URL if exists in database.
      * @param url
      * @return
