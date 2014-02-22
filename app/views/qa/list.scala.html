@@ -180,7 +180,7 @@
 					<td><a class="brand" href="@routes.TargetEdit.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 					<td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 					<td>@Instance.findAllByTarget(target.url)</td>
-					<td><a class="brand" href="@Instance.getLatestInstance(target.url)">@Instance.showLatestTimestamp(target.url)</a></td>
+					<td><a class="brand" href="@routes.InstanceController.view(Instance.getLatestInstance(target.url))">@Instance.showLatestTimestamp(target.url)</a></td>
 					<td>@Taxonomy.findQaStatus(target.field_qa_status)</td>
 				</tr>
 				}

@@ -816,5 +816,22 @@ public class JsonUtils {
 		return res;
 	}
 
+	/**
+	 * This method fills field_url for instance object in order to create
+	 * mapping to target object.
+	 */
+	public static void mapInstancesToTargets() {
+        List<Instance> instanceList = (List<Instance>) Instance.find.all();
+        Iterator<Instance> instanceItr = instanceList.iterator();
+        while (instanceItr.hasNext()) {
+        	Instance instance = instanceItr.next();
+        	if (instance.field_target != null) {
+        		Target target = Target.findByUrl(instance.field_target);
+        		instance.field_url = target.field_url;
+        		Logger.info("Instance mapped to Target object: " + instance.field_url);
+        		Ebean.update(instance);
+        	}
+        }		
+	}
 }
 

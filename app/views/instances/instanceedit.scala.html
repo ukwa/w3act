@@ -1,0 +1,921 @@
+@(instance: Instance, user: User)
+
+@script = {
+	<script>
+		$(document).ready(function() {
+	          var idle_timeout,
+	          SCOPE_URI = '/api/scope',
+	          MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
+	          TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+	          IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+        
+	          // Does the Scope lookup
+	          var doScope = function(text) {
+	              $.getJSON(SCOPE_URI + text, function(data) {
+	              //alert("Is in scope: " + data);
+	              var lab = document.getElementById('isInScope'); 
+	              if (data) {
+		              lab.innerHTML = "is in scope";
+		              lab.style = "color: green";
+	              } else {
+		              lab.innerHTML = "is not in scope";
+		              lab.style = "color: red";
+	              }
+	            });
+	          };
+	          
+	          // Restarts the keyboard-idleness timeout
+	          var restartIdleTimeout = function(text) {
+	            if (idle_timeout)
+	              window.clearTimeout(idle_timeout);
+	            
+	            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
+	          };		
+	          
+			  $("#fieldurl").keyup(function() {
+					var text = $('input[name=fieldurl]').val();
+					
+				    if (text.length > MIN_TEXT_LENGTH) {
+				        restartIdleTimeout(text);
+				
+				    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+				        	doScope(text);
+				    }
+			  });
+		});
+	</script>
+}
+
+@main("", user, script) {
+    
+   	<div class="page-header">
+	    <h1>Edit Instance @instance.title</h1>
+	</div>  
+	<ul class="nav nav-tabs">
+	   <li><a href="@routes.InstanceController.view(instance.url)">View</a></li>
+	   @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) {
+	   <li class="active"><a href="@routes.InstanceController.edit(instance.url)">Edit</a></li> 
+	   }
+	</ul>
+
+	<div class="tab-content padding-20">
+		<input type="hidden" name="nid" value="@instance.nid">
+        <input type="hidden" name="user" value="@user.url">
+           
+		<ul class="nav nav-pills">
+	        <li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
+	        <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
+			@if(Instance.isInScope(instance.field_url, instance.url)) {
+				<li><a href="#crawlpermission" data-toggle="tab">NPLD scope <font color="green">(+)</font></a></li>
+			} else {
+				<li><a href="#crawlpermission" data-toggle="tab">NPLD scope <font color="red">(-)</font></a></li>
+			}		        
+		    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
+		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
+	  	</ul>
+	</div>
+	
+	<form action="@routes.InstanceController.saveInstance()" method="POST">
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane padding-20 fade active in" id="basicinformation">
+				<input type="hidden" name="user" value="@user.url">
+	   
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
+						    <div class="col-sm-6">
+				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@instance.title">
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">ID</label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="nid" value="@instance.nid" size="30" readonly>
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								Seed URL(s) <font color="red">*</font>
+								<small class="text-center">(One or more URLs, separated by comma)</small>
+							</label>
+						    <div class="col-sm-6">
+								@if(instance.field_url != null) {
+									<input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@instance.field_url">
+								} else {
+									<input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@instance.title">
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	 
+		     	    	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Hosting
+							</label>
+						    <div class="col-sm-6">
+								@if(Instance.isInScope(instance.field_url, instance.url) || (instance.field_url == null && Instance.isInScope(instance.title, instance.url))) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">QA Status</label>
+						    <div class="col-sm-6">
+								<label class="radio-inline">
+							  		@if(instance.status == 1) {
+							          <input name="status" id="radio1" value="1" type="radio" checked="checked"> N/A
+							        } else {
+							          <input name="status" id="radio1" value="1" type="radio"> N/A
+							        }
+								</label>
+								<label class="radio-inline">
+							  		@if(instance.status == 2) {
+							          <input name="status" id="radio2" value="2" type="radio" checked="checked"> No QA issues found
+							        } else {
+							          <input name="status" id="radio2" value="2" type="radio"> No QA issues found
+							        }
+								</label>
+								<label class="radio-inline">
+							  		@if(instance.status == 3) {
+							        	<input name="status" id="radio3" value="3" type="radio" checked="checked"> QA issue
+							        } else {
+							        	<input name="status" id="radio3" value="3" type="radio"> QA issue
+									}
+								</label>
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If know, please add the current status of the site)</small></label>
+						    <div class="col-sm-6">
+								<label class="radio-inline">
+							  		@if(instance.field_live_site_status != null && instance.field_live_site_status.equals("N/A")) {
+							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio" checked="checked"> N/A
+							        } else {
+							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio"> N/A
+							        }
+								</label>
+								<label class="radio-inline">
+							  		@if(instance.field_live_site_status != null && instance.field_live_site_status.equals("Still live")) {
+							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio" checked="checked"> Still live 
+							        } else {
+							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio"> Still live 
+							        }
+								</label>
+								<label class="radio-inline">
+							  		@if(instance.field_live_site_status != null && instance.field_live_site_status.equals("No longer updated")) {
+							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio" checked="checked"> No longer updated 
+							        } else {
+							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio"> No longer updated 
+							        }
+								</label>
+								<label class="radio-inline">
+							  		@if(instance.field_live_site_status != null && instance.field_live_site_status.equals("Vanished")) {
+							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio" checked="checked"> Vanished
+							        } else {
+							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio"> Vanished
+							        }
+								</label>
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
+						    <div class="col-sm-6">
+				                @if(instance.field_key_site != null && instance.field_key_site) {             
+					                <input type="checkbox" name="keysite" value="true" checked />
+				                } else {
+					                <input type="checkbox" name="keysite" value="true"/>
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
+						    <div class="col-sm-6">
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@instance.field_wct_id">
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
+						    <div class="col-sm-6">
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@instance.field_spt_id">
+							</div>
+						</div>
+					</div>
+		     	</div>
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="keywords" class="col-sm-6 control-label">Keyword(s) <small class="text-center">(The multiple private uncontrolled keywords)</small></label>
+						    <div class="col-sm-6">
+		 				  		<input id="keywords" type="text" name="keywords" value="@instance.keywords" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+	
+		   		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="tags" id="tags" class="form-control">
+					                @for(tag <- Tag.findAll()) {
+						                @if(instance.tags != null && instance.tags.contains(tag.url)) {
+						                	<option selected>@tag.name</option>
+						                } else {
+						                	<option>@tag.name</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="Synonyms" class="col-sm-6 control-label">Synonyms <small class="text-center">(The synonyms support manual logging of identical content hosted on multiple domains)</small></label>
+						    <div class="col-sm-6">
+		 				  		<input type="text" name="synonyms" value="@instance.synonyms" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+			</div>
+			
+		    <div class="tab-pane fade" id="metadata">
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputDescription" class="col-sm-6 control-label">Description <small class="text-center">(A description of this web site)</small></label>
+						    <div class="col-sm-6">
+				            	<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" value="@instance.field_description">@instance.field_description</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>		    
+		    
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {		    
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="subject" value="@instance.field_subject" class="form-control">
+									<option>None</option>
+  									@for(subject <- Taxonomy.findListByType("subject")) {
+										@if(instance.hasSubject(subject.url)) {
+    										<option value="@subject.name" selected>@subject.name</option>
+										} else {						                
+  											<option value="@subject.name">@subject.name</option>
+  										}
+									}
+							  	</select>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	}	    
+
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="suggestions-collections" class="col-sm-6 control-label">Suggested Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="field_suggested_collections" id="suggestions-collections" class="form-control">
+					                <option>None</option>
+					                @for(collection <- DCollection.findAll()) {
+						                @if(instance.hasCollection(collection.url)) {
+						                	<option selected>@collection.title</option>
+						                } else {
+						                	<option>@collection.title</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	}	   
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
+						    <div class="col-sm-6">
+								<select name="organisation" id="mySel" class="form-control">
+					            	<option>None</option>
+					                @for(organisation <- Organisation.findAll()) {
+						                @if(organisation.title.equals(Organisation.findByUrl(instance.field_nominating_organisation).title) 
+						                	|| organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
+							                <option selected>@organisation.title</option>
+							            } else {
+						                    <option>@organisation.title</option>
+										}					            
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="mySel" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="originating_organisation" id="mySel" class="form-control">
+					            	<option>None</option>
+					                @for(organisation <- Organisation.findAll()) {
+						                @if(organisation.title.equals(Organisation.findByUrl(instance.originating_organisation).title)) {
+							                <option selected>@organisation.title</option>
+							            } else {
+						                    <option>@organisation.title</option>
+										}					            
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="userSel" class="col-sm-6 control-label">Selector <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
+						    <div class="col-sm-6">
+								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+							  		<select name="author" id="userSel" class="form-control">
+							  	} else {
+							  		<select name="author" id="userSel" disabled class="form-control">
+							  	}
+					            @for(selUser <- User.findAll()) {
+						        	@if((instance.author != null && selUser.url.equals(instance.author))
+						            	|| (instance.author == null && selUser.url.equals(user.url))) {
+							            <option selected>@selUser.name</option>
+									} else {
+						            	<option>@selUser.name</option>
+									}
+								}
+									</select>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="status" class="col-sm-6 control-label">Language <small class="text-center">(The predominant language in which the page is written)</small></label>
+						    <div class="col-sm-6">
+								<select name="language" id="language" class="form-control">
+					                @for(language <- Instance.getAllLanguage()) {
+						                @if(language.equals(instance.language)) {
+						                	<option selected>@instance.language</option>
+						                } else {
+						                	<option>@language</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+		     	
+		   		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputContactPerson" class="col-sm-6 control-label">Author(s) <small class="text-center">(A named individual responsible for creating the content)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="authors" id="authors" class="form-control">
+					                @for(person <- ContactPerson.findAll()) {
+										@if(instance.hasContactPerson(person.url)) {
+						                	<option selected>@person.name</option>
+						                } else {
+						                	<option>@person.name</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+     			     		
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {     			     		
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="status" class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="flags" id="flags" class="form-control">
+					                @for(flag <- Flag.findAll()) {
+						                @if(instance.flags != null && instance.flags.contains(flag.url)) {
+						                	<option selected>@flag.name</option>
+						                } else {
+						                	<option>@flag.name</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	}	   
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Date of publication</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="date_of_publication" value="@instance.date_of_publication" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Justification <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="justification" value="@instance.justification" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	}	     			     
+
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
+						    <div class="col-sm-6">
+								<select name="selection_type" id="selection_type" class="form-control">
+					                @for(selection_type <- Instance.getAllSelectionTypes()) {
+						                @if(selection_type.equals(instance.selection_type)) {
+						                	<option selected>@instance.selection_type</option>
+						                } else {
+						                	<option>@selection_type</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+		     			     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(This field allows further notes to selection for WA team, not captured in Justification field.)</small></label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="selector_notes" value="@instance.selector_notes" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="archivist_notes" value="@instance.archivist_notes" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>	
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="legacy_cite_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
+						    <div class="col-sm-6">
+			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@instance.legacy_site_id">
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+			</div>
+			
+			<div class="tab-pane fade" id="crawlpermission">
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
+						</div>
+					</div>
+		     	</div>
+				<div class="padding-20">
+					<div class="alert alert-info">
+						In order to be considered as in scope for Non-Print Legal Deposit, a resource must pass one of a series of tests.
+					</div>
+				</div>		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">UK Hosting <small class="text-center">(The domain is hosted in the UK)</small></label>
+						    <div class="col-sm-6">
+				                @if(instance.field_uk_hosting != null && instance.field_uk_hosting) {             
+					                <input type="checkbox" name="field_uk_hosting" value="true" checked />
+				                } else {
+					                <input type="checkbox" name="field_uk_hosting" value="true" />
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
+						    <div class="col-sm-6">
+				                @if(instance.field_uk_postal_address != null && instance.field_uk_postal_address) {             
+					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
+				                } else {
+					                <input type="checkbox" name="field_uk_postal_address" value="true"/>
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>		     				     	
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="field_uk_postal_address_url" value="@instance.field_uk_postal_address_url" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
+						    <div class="col-sm-6">
+				                @if(instance.field_via_correspondence != null && instance.field_via_correspondence) {             
+					                <input type="checkbox" name="field_via_correspondence" value="true" checked />
+				                } else {
+					                <input type="checkbox" name="field_via_correspondence" value="true" />
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>		
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Notes <small class="text-center">(Any relevant notes, e.g. a more detailed description of this URL or set of URLs)</small></label>
+						    <div class="col-sm-6">
+		 						<textarea name="field_notes" cols="100" rows="1" class="form-control">@instance.field_notes</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
+						    <div class="col-sm-6">
+				                @if(instance.field_professional_judgement != null && instance.field_professional_judgement) {             
+					                <input type="checkbox" name="field_professional_judgement" value="true" checked />
+				                } else {
+					                <input type="checkbox" name="field_professional_judgement" value="true" />
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	}
+		     	
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
+						    <div class="col-sm-6">
+			 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@instance.field_professional_judgement_exp</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
+						    <div class="col-sm-6">
+				                @if(instance.field_no_ld_criteria_met != null && instance.field_no_ld_criteria_met) {             
+					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked />
+				                } else {
+				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true"/>
+				                }
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+	        </div>
+	        
+	        <div class="tab-pane fade" id="crawlpolicy">
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Scope<font color="red">*</font> <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
+						    <div class="col-sm-6">
+								<select name="field_scope" class="form-control">
+					        		@if(instance.field_scope.equals("Just this URL.")) {
+							            <option selected>Just this URL.</option>
+									} else {						                
+								    	<option>Just this URL.</option>
+								    }
+								    @if(instance.field_scope.equals("This URL plus any directly linked resources.")) {
+								    	<option selected>This URL plus any directly linked resources.</option>
+									} else {						                
+								    	<option>This URL plus any directly linked resources.</option>
+									}
+								    @if(instance.field_scope.equals("All URLs that start like this.")) {
+								    	<option selected>All URLs that start like this.</option>
+									} else {						                
+								    	<option>All URLs that start like this.</option>
+									}
+								    @if(instance.field_scope.equals("All URLs that match match this host or any subdomains.")) {
+								    	<option selected>All URLs that match match this host or any subdomains.</option>
+									} else {						                
+								    	<option>All URLs that match match this host or any subdomains.</option>
+									}
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Depth<font color="red">*</font> <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
+						    <div class="col-sm-6">
+						  		<label class="radio-inline">
+						  			@if(instance.field_depth != null && instance.field_depth.equals("Capped (small - 500MB)")) {
+										<input name="field_depth" id="radio1" value="Capped (small - 500MB)" type="radio" checked> Capped (small - 500MB)
+						          	} else { 
+						          		<input name="field_depth" id="radio1" value="Capped (small - 500MB)" type="radio"> Capped (small - 500MB) 
+						          	}
+						        </label>
+						        <label class="radio-inline">
+						  			@if(instance.field_depth != null && instance.field_depth.equals("Capped (large - 2GB)")) {
+										<input name="field_depth" id="radio2" value="Capped (large - 2GB)" type="radio" checked> Capped (large - 2GB)
+						          	} else {
+						          		<input name="field_depth" id="radio2" value="Capped (large - 2GB)" type="radio"> Capped (large - 2GB)
+						          	}
+						        </label>
+						        <label class="radio-inline">
+						  			@if(instance.field_depth != null && instance.field_depth.equals("Uncapped")) {
+										<input name="field_depth" id="radio3" value="Uncapped" type="radio" checked> Uncapped
+						          	} else {
+						          		<input name="field_depth" id="radio3" value="Uncapped" type="radio"> Uncapped
+						          	}
+						        </label>			      
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
+						    <div class="col-sm-6">
+				                @if(instance.field_ignore_robots_txt != null && instance.field_ignore_robots_txt) {             
+					                <input type="checkbox" name="field_ignore_robots_txt" value="true" checked />
+				                } else {
+					                <input type="checkbox" name="field_ignore_robots_txt" value="true"/>
+				                }
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+		     	
+		     	@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."><font color="red">*</font></span> <small class="text-center">(How often should this site be archived?)</small></label>
+						    <div class="col-sm-6">
+				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
+				             		@if(instance.field_crawl_frequency != null && instance.field_crawl_frequency.equals("Domain Crawl Only")) {
+					 					<option selected>Domain Crawl Only</option>
+						            } else {						                
+					 					<option>Domain Crawl Only</option>
+					                }
+				             		@if(instance.field_crawl_frequency != null && instance.field_crawl_frequency.equals("Annually")) {
+					 					<option selected>Annually</option>
+						            } else {						                
+					 					<option>Annually</option>
+					                }
+				             		@if(instance.field_crawl_frequency != null && instance.field_crawl_frequency.equals("Six-monthly")) {
+					 					<option selected>Six-monthly</option>
+						            } else {						                
+					 					<option>Six-monthly</option>
+					                }
+				             		@if(instance.field_crawl_frequency != null && instance.field_crawl_frequency.equals("Quarterly")) {
+					 					<option selected>Quarterly</option>
+						            } else {						                
+					 					<option>Quarterly</option>
+					                }
+				             		@if(instance.field_crawl_frequency != null && instance.field_crawl_frequency.equals("Monthly")) {
+					 					<option selected>Monthly</option>
+						            } else {						                
+					 					<option>Monthly</option>
+					                }
+				             		@if(instance.field_crawl_frequency != null && instance.field_crawl_frequency.equals("Old-Monthly-DO-NOT-USE")) {
+					 					<option selected>Old-Monthly-DO-NOT-USE</option>
+						            } else {						                
+					 					<option>Old-Monthly-DO-NOT-USE</option>
+					                }
+				             		@if(instance.field_crawl_frequency != null && instance.field_crawl_frequency.equals("Weekly")) {
+					 					<option selected>Weekly</option>
+						            } else {						                
+					 					<option>Weekly</option>
+					                }
+				             		@if(instance.field_crawl_frequency != null && instance.field_crawl_frequency.equals("Daily")) {
+					 					<option selected>Daily</option>
+						            } else {						                
+					 					<option>Daily</option>
+					                }
+				             		@if(instance.field_crawl_frequency != null && instance.field_crawl_frequency.equals("Never Crawl")) {
+					 					<option selected>Never Crawl</option>
+						            } else {						                
+					 					<option>Never Crawl</option>
+					                }
+				 				</select>
+				 			</div>
+						</div>
+					</div>
+		     	</div>	
+		     	}
+		     	
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Start date</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="field_crawl_start_date" value="@instance.field_crawl_start_date" size="30" maxlength="2048" class="form-control" id="start-date"/>
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">End date</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="field_crawl_end_date" value="@instance.field_crawl_end_date" size="30" maxlength="2048" class="form-control" id="end-date"/>
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">White list</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="white_list" value="@instance.white_list" size="30" maxlength="2048" class="form-control" />
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Black list</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="black_list" value="@instance.black_list" size="30" maxlength="2048" class="form-control" />
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+	        </div>
+	        
+	        <div class="tab-pane fade" id="licensing">
+			
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site should be archived and made available)</small></label>
+						    <div class="col-sm-6">
+								<select name="license" id="edit-field-license" class="form-control" size="2">
+								 	<option>None</option>
+								    @for(taxonomy <- Instances.getLicense()) {
+						                @if(instance.field_license != null && instance.field_license.equals(taxonomy.url)) {             
+										 	<option selected>@taxonomy.name</option>
+									 	} else {
+										 	<option>@taxonomy.name</option>
+									 	}									 	
+								    }	
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label"></label>
+						    <div class="col-sm-6">
+								@if(instance.url != null) {
+								<a href="@routes.CrawlPermissions.showCrawlPermissions(instance.url)">Crawl Permissions</a>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>
+			</div>		     	
+	        
+		</div>
+                        
+        <div id="revisionArea" class="revision">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
+					    <div class="col-sm-6">
+               				<textarea class="form-control" name="revision" id="inputRevision">@instance.revision</textarea>
+						</div>
+					</div>
+				</div>
+	     	</div>
+		</div>
+
+		<div class="padding-20">
+			<div class="alert alert-info">
+				Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+			</div>
+		</div>
+
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
+					<button type="submit" class="btn btn-primary" name="delete" id="delete">Delete</button>
+		       </div>
+			</div>
+		</div>
+	</form>
+}
+
