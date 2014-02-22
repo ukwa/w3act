@@ -123,13 +123,17 @@ public final class Const {
     public static final String AUTHORS = "authors";
     public static final String FLAGS = "flags";
 	public static final String DATE_OF_PUBLICATION = "date_of_publication";
-	public static final String JUSTIFICATION = "justification";
-	public static final String SELECTION_TYPE = "selection_type";
-	public static final String SELECTOR_NOTES = "selector_notes";
-	public static final String ARCHIVIST_NOTES = "archivist_notes";
-	public static final String LEGACY_SITE_ID = "legacy_site_id";
-	public static final String FIELD_TIMESTAMP = "field_timestamp";
-    
+	public static final String JUSTIFICATION      = "justification";
+	public static final String SELECTION_TYPE     = "selection_type";
+	public static final String SELECTOR_NOTES     = "selector_notes";
+	public static final String ARCHIVIST_NOTES    = "archivist_notes";
+	public static final String LEGACY_SITE_ID     = "legacy_site_id";
+	public static final String FIELD_TIMESTAMP    = "field_timestamp";
+	public static final String QA_STATUS          = "qa_status";
+	public static final String QA_ISSUE_CATEGORY  = "qa_issue_category";
+	public static final String QA_NOTES           = "qa_notes";
+	public static final String QUALITY_NOTES      = "quality_notes";
+	
     // Creator
 	public static final String UID                = "uid";
 	public static final String NAME               = "name";
@@ -327,12 +331,31 @@ public final class Const {
 	/**
 	 * The QA status types.
 	 */
-	public enum QAStatusType {
+	public enum QAStatusType { 
 		PASSED_PUBLISH_NO_ACTION_REQUIRED,
 		FAILED_DO_NOT_PUBLISH,
 		FAILED_PASS_TO_ENGINEER,
 		RECRAWL_REQUESTED,
 		ISSUE_NOTED;
+    }
+    
+	/**
+	 * The QA issue category.
+	 */
+	public enum QAIssueCategory { 
+		APPEARANCE_BACKGROUND_TEXT_COLOUR_AND_FONT,
+		APPEARANCE_CHARACTERS,
+		APPEARANCE_FORMATTING_OF_THE_PAGE,
+		FUNCTIONALITY_LANGUAGE,
+		FUNCTIONALITY_ACCESSIBILITY,
+		FUNCTIONALITY_NAVIGATION,
+		FUNCTIONALITY_MEDIA,
+		CONTENT_IMAGES,
+		CONTENT_VIDEO,
+		CONTENT_DOCUMENTS,
+		CONTENT_PAGES_SUB_SECTIONS,
+		CONTENT_MENUS,
+		OTHER;
     }
     
     /**
