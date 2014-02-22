@@ -83,28 +83,37 @@ public class InstanceController extends AbstractController {
         			", subject: " + getFormParams(Const.SUBJECT) +
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
-            Instance instance = new Instance();
+//            Instance instance = new Instance();
         	Instance newInstance = new Instance();
             boolean isExisting = true;
             try {
-        	    instance = Instance.findById(Long.valueOf(getFormParam(Const.NID)));
+        	    newInstance = Instance.findById(Long.valueOf(getFormParam(Const.NID)));
             } catch (Exception e) {
             	Logger.info("is not existing exception");
             	isExisting = false;
+            	newInstance = new Instance();
+            	newInstance.nid = Long.valueOf(getFormParam(Const.NID));
+//            	newInstance.url = getFormParam(Const.URL);            	
+        		newInstance.url = Const.ACT_URL + newInstance.nid;
+        		newInstance.edit_url = Const.WCT_URL + newInstance.nid;            	
             }
-            if (instance == null) {
-            	instance = new Instance();
+            if (newInstance == null) {
+            	newInstance = new Instance();
+            	newInstance.nid = Long.valueOf(getFormParam(Const.NID));
+//            	newInstance.url = getFormParam(Const.URL);      
+        		newInstance.url = Const.ACT_URL + newInstance.nid;
+        		newInstance.edit_url = Const.WCT_URL + newInstance.nid;            	
             	Logger.info("is not existing");
             	isExisting = false;
             }
-            newInstance.nid = Utils.createId();
-            newInstance.url = instance.url;
-            newInstance.author = instance.author;
-            if (instance.author == null) {
+//            newInstance.nid = Utils.createId();
+//            newInstance.url = instance.url;
+//            newInstance.author = instance.author;
+            if (newInstance.author == null) {
             	newInstance.author = getFormParam(Const.USER);
             }
-            newInstance.field_collection_categories = instance.field_collection_categories;
-            newInstance.field_nominating_organisation = instance.field_nominating_organisation;
+//            newInstance.field_collection_categories = instance.field_collection_categories;
+//            newInstance.field_nominating_organisation = instance.field_nominating_organisation;
 //            Logger.info("new nid: " + newInstance.nid);
             newInstance.title = getFormParam(Const.TITLE);
             newInstance.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
@@ -143,9 +152,9 @@ public class InstanceController extends AbstractController {
 	                		resContactPersons = resContactPersons + ContactPerson.findByName(contactPerson).url + Const.LIST_DELIMITER;
 	            		}
 	                }
-	            	instance.authors = resContactPersons;
+	            	newInstance.authors = resContactPersons;
             	} else {
-            		instance.authors = Const.NONE;
+            		newInstance.authors = Const.NONE;
             	}
             }            
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
@@ -234,8 +243,12 @@ public class InstanceController extends AbstractController {
             newInstance.justification = getFormParam(Const.JUSTIFICATION);
             newInstance.summary = getFormParam(Const.SUMMARY);
             newInstance.revision = getFormParam(Const.REVISION);
-            newInstance.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
-            newInstance.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+            if (getFormParam(Const.FIELD_WCT_ID) != null  && getFormParam(Const.FIELD_WCT_ID).length() > 0) {
+            	newInstance.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
+            }
+            if (getFormParam(Const.FIELD_SPT_ID) != null && getFormParam(Const.FIELD_SPT_ID).length() > 0) {
+            	newInstance.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+            }
             newInstance.field_license = getFormParam(Const.FIELD_LICENSE);
             newInstance.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
             newInstance.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
@@ -257,18 +270,41 @@ public class InstanceController extends AbstractController {
             newInstance.keywords = getFormParam(Const.KEYWORDS);
             Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
             newInstance.synonyms = getFormParam(Const.SYNONYMS);
+            if (getFormParam(Const.QA_STATUS) != null) {
+            	if (!getFormParam(Const.QA_STATUS).toLowerCase().contains(Const.NONE)) {
+            		Logger.info("Instance qa status: " + getFormParam(Const.QA_STATUS));
+            		newInstance.qa_status = getFormParam(Const.QA_STATUS);
+            	} else {
+            		newInstance.qa_status = Const.NONE;
+            	}
+            }
+            if (getFormParam(Const.QA_ISSUE_CATEGORY) != null) {
+            	if (!getFormParam(Const.QA_ISSUE_CATEGORY).toLowerCase().contains(Const.NONE)) {
+            		Logger.info("Instance qa issue category: " + getFormParam(Const.QA_ISSUE_CATEGORY));
+	            	String[] issueCategories = getFormParams(Const.QA_ISSUE_CATEGORY);
+	            	String resIssueCategories = "";
+	            	for (String issueCategory: issueCategories)
+	                {
+	            		if (issueCategory != null && issueCategory.length() > 0) {
+	                		Logger.info("add issueCategory: " + issueCategory);
+	            			resIssueCategories = resIssueCategories + issueCategory + Const.LIST_DELIMITER;
+	            		}
+	                }
+	            	newInstance.qa_issue_category = resIssueCategories;
+            	} else {
+            		newInstance.qa_issue_category = Const.NONE;
+            	}
+            }
+            newInstance.qa_notes = getFormParam(Const.QA_NOTES);
+            newInstance.quality_notes = getFormParam(Const.QUALITY_NOTES);
+
         	if (!isExisting) {
-        		newInstance.url = Const.ACT_URL + newInstance.nid;
-        		newInstance.edit_url = Const.WCT_URL + newInstance.nid;
+            	Ebean.save(newInstance);
+    	        Logger.info("save instance: " + newInstance.toString());
         	} else {
-        		Logger.info("update instance: " + instance.nid + ", obj: " + instance.toString());
-                instance.keywords = getFormParam(Const.KEYWORDS);
-            	Ebean.update(instance);
-    	        res = redirect(routes.InstanceController.view(instance.url));
-    	        return res;
+        		Logger.info("update instance: " + newInstance.nid + ", obj: " + newInstance.toString());
+            	Ebean.update(newInstance);
         	}
-        	Ebean.save(newInstance);
-	        Logger.info("save instance: " + newInstance.toString());
 	        res = redirect(routes.InstanceController.view(newInstance.url));
         } 
         if (delete != null) {

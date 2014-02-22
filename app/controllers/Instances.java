@@ -161,6 +161,7 @@ public class Instances extends AbstractController {
     	instance.title = title;
         instance.nid = Utils.createId();
         instance.url = Const.ACT_URL + instance.nid;
+        instance.field_scope = "";
         instance.revision = Const.INITIAL_REVISION;
 		Logger.info("add entry with instance url: " + instance.url);
 		Logger.info("instance name: " + instance.title);

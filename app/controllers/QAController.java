@@ -133,5 +133,18 @@ public class QAController extends AbstractController {
 	    return res;
     }    
     
+    /**
+     * This method returns a list of all QA issue categories.
+     * @return
+     */
+    public static List<String> getAllQaIssueCategories() {
+    	List<String> res = new ArrayList<String>();
+	    Const.QAIssueCategory[] resArray = Const.QAIssueCategory.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }    
+    
 }
 

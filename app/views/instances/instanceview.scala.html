@@ -24,6 +24,7 @@
 	    		}		        
         	<li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
 		    <li class=""><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
+		    <li><a href="#qa" data-toggle="tab">QA</a></li>
       	</ul>
 	</div>
 	
@@ -83,7 +84,7 @@
 					</div>
 		     	</div>	     	
 	
-	    		<div class="row padding-10">
+	    		<!-- div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">QA Status</label>
@@ -112,7 +113,7 @@
 							</div>
 						</div>
 					</div>
-		     	</div>	     
+		     	</div-->	     
 	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -825,6 +826,71 @@
 				<dd>The license terms under which this site should be archived and made available.</dd>
 			</dl>
 		</div>
+		
+		<div class="tab-pane padding-20 fade active in" id="qa">    	
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		            	<label for="qa_status" class="col-sm-6 control-label">QA Status</label>
+		            	<div class="col-sm-6">
+							<select name="qa_status" class="form-control target-form-control" id="qa_status">
+					        	<option>None</option>
+					            @for(qaStatus <- QAController.getAllQAStatusTypes()) {
+			                 			@if(qaStatus != null && qaStatus.equals(instance.field_qa_status)) {
+				                		<option selected disabled>@qaStatus</option>
+				                	} else {
+				                		<option disabled>@qaStatus</option>
+				                	}
+								}
+							</select>
+						</div>
+		         	</div>
+				</div>
+			</div>
+
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		            	<label for="qa_issue_category" class="col-sm-6 control-label">QA Issue Category</label>
+		            	<div class="col-sm-6">
+							<select multiple name="qa_issue_category" class="form-control target-form-control" id="qa_issue_category">
+					        	<option>None</option>
+					            @for(qaIssueCategory <- QAController.getAllQaIssueCategories()) {
+			                 			@if(qaIssueCategory != null && qaIssueCategory.equals(instance.qa_issue_category)) {
+				                		<option selected disabled>@qaIssueCategory</option>
+				                	} else {
+				                		<option disabled>@qaIssueCategory</option>
+				                	}
+								}
+							</select>
+						</div>
+		         	</div>
+				</div>
+			</div>
+
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		            	<label for="qa_notes" class="col-sm-6 control-label">QA Notes</label>
+		            	<div class="col-sm-6">
+			            	<textarea class="form-control" name="qa_notes" id="qa_notes" cols="100" rows="1" value="@instance.qa_notes" readonly>@instance.qa_notes</textarea>
+						</div>
+		         	</div>
+				</div>
+			</div>
+
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		            	<label for="quality_notes" class="col-sm-6 control-label">Quality Notes</label>
+		            	<div class="col-sm-6">
+			            	<textarea class="form-control" name="quality_notes" id="quality_notes" cols="100" rows="1" value="@instance.quality_notes" readonly>@instance.quality_notes</textarea>
+						</div>
+		         	</div>
+				</div>
+			</div>	
+		</div>
+		
 	</div>
 	<hr>
 	<div id="revisionArea" class="revision">
