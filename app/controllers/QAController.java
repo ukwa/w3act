@@ -142,6 +142,7 @@ public class QAController extends AbstractController {
 	    Const.QAIssueCategory[] resArray = Const.QAIssueCategory.values();
 	    for (int i=0; i < resArray.length; i++) {
 		    res.add(resArray[i].name());
+//		    Logger.info("add category: " + resArray[i].name());
 	    }
 	    return res;
     }    
