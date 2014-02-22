@@ -897,7 +897,7 @@
 								<select name="qa_status" class="form-control target-form-control" id="qa_status">
 						        	<option>None</option>
 						            @for(qaStatus <- QAController.getAllQAStatusTypes()) {
-				                 			@if(qaStatus != null && qaStatus.equals(instance.field_qa_status)) {
+				                 		@if(qaStatus != null && qaStatus.equals(instance.qa_status)) {
 					                		<option selected>@qaStatus</option>
 					                	} else {
 					                		<option>@qaStatus</option>
@@ -917,7 +917,7 @@
 								<select multiple name="qa_issue_category" class="form-control target-form-control" id="qa_issue_category">
 						        	<option>None</option>
 						            @for(qaIssueCategory <- QAController.getAllQaIssueCategories()) {
-				                 			@if(qaIssueCategory != null && qaIssueCategory.equals(instance.qa_issue_category)) {
+				                 		@if(instance.qa_issue_category != null && instance.qa_issue_category.contains(qaIssueCategory)) {
 					                		<option selected>@qaIssueCategory</option>
 					                	} else {
 					                		<option>@qaIssueCategory</option>

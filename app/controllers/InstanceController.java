@@ -268,7 +268,7 @@ public class InstanceController extends AbstractController {
             newInstance.field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
             newInstance.field_scope = getFormParam(Const.FIELD_SCOPE);
             newInstance.keywords = getFormParam(Const.KEYWORDS);
-            Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
+//            Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
             newInstance.synonyms = getFormParam(Const.SYNONYMS);
             if (getFormParam(Const.QA_STATUS) != null) {
             	if (!getFormParam(Const.QA_STATUS).toLowerCase().contains(Const.NONE)) {
