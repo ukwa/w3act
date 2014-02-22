@@ -1,6 +1,7 @@
 package models;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -9,18 +10,22 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.IdGenerator;
 import uk.bl.api.Utils;
+import uk.bl.exception.WhoisException;
+import uk.bl.scope.Scope;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 
 
 /**
- * Target instance entity managed by Ebean
+ * Instance instance entity managed by Ebean
  */
 @SuppressWarnings("serial")
 @Entity 
@@ -37,9 +42,9 @@ public class Instance extends Model {
     public String format;
     public String field_scope;
     public String field_depth;
-    public String field_via_correspondence;
-    public String field_uk_postal_address;
-    public String field_uk_hosting;
+    public Boolean field_via_correspondence;
+    public Boolean field_uk_postal_address;
+    public Boolean field_uk_hosting;
     public String field_nominating_organisation;
     public String field_crawl_frequency;
     public String field_crawl_start_date;
@@ -47,7 +52,7 @@ public class Instance extends Model {
     public String field_crawl_permission;
     public String field_special_dispensation;
     public Boolean field_uk_geoip;
-    public String field_professional_judgement;
+    public Boolean field_professional_judgement;
     public Long vid;
     public Boolean is_new;
     public String type;
@@ -71,10 +76,10 @@ public class Instance extends Model {
     public Long field_wct_id;
     public Long field_spt_id;
     public Boolean field_no_ld_criteria_met;
-    public String field_key_site;
+    public Boolean field_key_site;
     @Column(columnDefinition = "TEXT")
     public String field_professional_judgement_exp;
-    public String field_ignore_robots_txt;
+    public Boolean field_ignore_robots_txt;
     public String revision;
     @Column(columnDefinition = "TEXT")
     public String field_qa_issues;
@@ -84,8 +89,24 @@ public class Instance extends Model {
     public String field_description_of_qa_issues;
     @Column(columnDefinition = "TEXT")
     public String field_timestamp;
-    public Long field_published;
-    public Long field_to_be_published;
+    public Boolean field_published;
+    public Boolean field_to_be_published;
+    public String date_of_publication;
+    @Column(columnDefinition = "TEXT")
+    public String justification; 
+    @Column(columnDefinition = "TEXT")
+    public String selector_notes; 
+    @Column(columnDefinition = "TEXT")
+    public String archivist_notes; 
+    public String selection_type; 
+    public String selector;     
+    public Long legacy_site_id;
+    public String white_list; // regex for white list URLs
+    public String black_list; // regex for black list URLs
+    
+    @Version
+    public Timestamp lastUpdate;
+    
     // lists
     @Column(columnDefinition = "TEXT")
     public String field_url; 
@@ -117,7 +138,19 @@ public class Instance extends Model {
     public String qa_notes; 
     @Column(columnDefinition = "TEXT")
     public String quality_notes; 
-    
+    @Column(columnDefinition = "TEXT")
+    public String keywords; 
+    @Column(columnDefinition = "TEXT")
+    public String tags; 
+    @Column(columnDefinition = "TEXT")
+    public String synonyms; 
+    @Column(columnDefinition = "TEXT")
+    public String originating_organisation; 
+    @Column(columnDefinition = "TEXT")
+    public String flags; 
+    @Column(columnDefinition = "TEXT")
+    public String authors; 
+
     /**
      * Constructor
      * @param title
@@ -241,7 +274,7 @@ public class Instance extends Model {
 	 * This method computes a number of targets per user for given user URL.
 	 * @return
 	 */
-	public static int getTargetNumberByCuratorUrl(String url) {
+	public static int getInstanceNumberByCuratorUrl(String url) {
 		int res = 0;
         ExpressionList<Instance> ll = find.where().eq("author", url);
         res = ll.findRowCount();
@@ -252,7 +285,7 @@ public class Instance extends Model {
 	 * This method computes a number of targets per taxonomy for given taxonomy URL.
 	 * @return
 	 */
-	public static int getTargetNumberByTaxonomyUrl(String url) {
+	public static int getInstanceNumberByTaxonomyUrl(String url) {
 		int res = 0;
         ExpressionList<Instance> ll = find.where().eq(Const.FIELD_COLLECTION_CATEGORIES, url);
         res = ll.findRowCount();
@@ -263,7 +296,7 @@ public class Instance extends Model {
 	 * This method computes a number of targets per user for given subject URL.
 	 * @return
 	 */
-	public static int getTargetNumberBySubjectUrl(String url) {
+	public static int getInstanceNumberBySubjectUrl(String url) {
 		int res = 0;
         ExpressionList<Instance> ll = find.where().eq("field_subject", url);
         res = ll.findRowCount();
@@ -274,7 +307,7 @@ public class Instance extends Model {
 	 * This method computes a number of targets per organisation for given organisation URL.
 	 * @return
 	 */
-	public static int getTargetNumberByOrganisationUrl(String url) {
+	public static int getInstanceNumberByOrganisationUrl(String url) {
 		int res = 0;
         ExpressionList<Instance> ll = find.where().eq("field_nominating_organisation", url);
         res = ll.findRowCount();
@@ -285,7 +318,7 @@ public class Instance extends Model {
 	 * This method computes a number of targets for given crawl frequency.
 	 * @return
 	 */
-	public static int getTargetNumberByCrawlFrequency(String url) {
+	public static int getInstanceNumberByCrawlFrequency(String url) {
 		int res = 0;
         ExpressionList<Instance> ll = find.where().eq("field_crawl_frequency", url);
         res = ll.findRowCount();
@@ -296,7 +329,7 @@ public class Instance extends Model {
 	 * This method computes a number of targets for given depth.
 	 * @return
 	 */
-	public static int getTargetNumberByDepth(String url) {
+	public static int getInstanceNumberByDepth(String url) {
 		int res = 0;
         ExpressionList<Instance> ll = find.where().eq("field_depth", url);
         res = ll.findRowCount();
@@ -307,7 +340,7 @@ public class Instance extends Model {
 	 * This method computes a number of targets for given license.
 	 * @return
 	 */
-	public static int getTargetNumberByLicense(String url) {
+	public static int getInstanceNumberByLicense(String url) {
 		int res = 0;
         ExpressionList<Instance> ll = find.where().eq("field_license", url);
         res = ll.findRowCount();
@@ -318,7 +351,7 @@ public class Instance extends Model {
 	 * This method computes a number of targets for given scope.
 	 * @return
 	 */
-	public static int getTargetNumberByScope(String url) {
+	public static int getInstanceNumberByScope(String url) {
 		int res = 0;
         ExpressionList<Instance> ll = find.where().eq("field_scope", url);
         res = ll.findRowCount();
@@ -385,8 +418,8 @@ public class Instance extends Model {
 	 */
 	public static List<String> getSubjects() {
 		List<String> subjects = new ArrayList<String>();
-		List<Instance> allTargets = find.all();
-		Iterator<Instance> itr = allTargets.iterator();
+		List<Instance> allInstances = find.all();
+		Iterator<Instance> itr = allInstances.iterator();
 		while (itr.hasNext()) {
 			Instance target = itr.next();
 			if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
@@ -438,7 +471,9 @@ public class Instance extends Model {
 	public String get_user_by_id() {
 		String res = "";
 		try {
-			res = User.findByUrl(author).name;
+			if (author.length() > 0) {
+				res = User.findByUrl(author).name;
+			}
 		} catch (Exception e) {
 			Logger.info("no user found for url: " + author + ". " + e);
 		}
@@ -446,13 +481,13 @@ public class Instance extends Model {
 	}
 	
     /**
-     * Retrieve a Target by URL.
+     * Retrieve a Instance by URL.
      * @param url
-     * @return target 
+     * @return instance object 
      */
     public static Instance findByUrl(String url) {
     	Instance res = new Instance();
-        Logger.info("target url: " + url);
+        Logger.info("instance url: " + url);
         
         if (!url.contains(Const.COMMA)) {
 	        Instance res2 = find.where().eq(Const.URL, url).findUnique();
@@ -461,7 +496,7 @@ public class Instance extends Model {
 	        } else {
 	        	res = res2;
 	        }
-	        Logger.info("target title: " + res.title);
+	        Logger.info("instance title: " + res.title);
         }
     	return res;
     }          
@@ -485,7 +520,7 @@ public class Instance extends Model {
     }          
 
     /**
-     * Retrieve a Target by Id (nid).
+     * Retrieve a Instance by Id (nid).
      * @param nid
      * @return target 
      */
@@ -571,6 +606,144 @@ public class Instance extends Model {
 		return res;
 	}
 	
+
+	/**
+	 * This method checks whether the passed URL is in scope.
+	 * @param url
+	 * @return result as a flag
+	 */
+    public static boolean isInScope(String url, String nidUrl) {
+    	try {
+    		return Scope.check(url, nidUrl);
+    	} catch (WhoisException ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+    /**
+     * Return a page of Instance
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Instance property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Instance> page(int page, int pageSize, String sortBy, String order, String filter) {
+
+//    	Logger.info("Instnce.page() filter: " + filter);
+        return find.where().icontains(Const.FIELD_URL_NODE, filter)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+    public boolean hasSubject(String subject) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(subject, field_subject);
+    	return res;
+    }
+        
+    /**
+     * This method evaluates if a collection is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+    public boolean hasCollection(String collection) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(collection, field_suggested_collections);
+    	return res;
+    }
+    
+    /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+    public boolean hasContactPerson(String curContactPerson) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(curContactPerson, authors);
+    	return res;
+    }
+    
+    /**
+     * This method returns a list of all language values for target record.
+     * @return
+     */
+    public static List<String> getAllLanguage() {
+    	List<String> res = new ArrayList<String>();
+	    Const.TargetLanguage[] resArray = Const.TargetLanguage.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+
+    /**
+     * This method returns a list of all selection type values for target record.
+     * @return
+     */
+    public static List<String> getAllSelectionTypes() {
+    	List<String> res = new ArrayList<String>();
+	    Const.SelectionType[] resArray = Const.SelectionType.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+
+    /**
+     * This method returns a list of all flag values for target record.
+     * @return
+     */
+    public static List<String> getAllFlags() {
+    	List<String> res = new ArrayList<String>();
+	    Const.TargetFlags[] resArray = Const.TargetFlags.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+    
+    /**
+     * This method returns previous Instance revisions that are not more active for given URL
+     * @param url
+     * @return list of associated Instances
+     */
+    public static List<Instance> findRevisions(String url) {
+        Logger.info("findRevisions() target url: " + url);
+		List<Instance> res = new ArrayList<Instance>();
+		if (url != null && url.length() > 0) {
+	        ExpressionList<Instance> ll = find.where().eq(Const.URL, url);
+	    	res = ll.findList(); 
+		}
+		return res;
+    }          
+    
+    public Organisation getOrganisation() {
+    	return Organisation.findByUrl(field_nominating_organisation);
+    }
+    
+	/**
+	 * This method checks whether the passed URL is in scope. 
+	 * @param url
+	 * @return result as a String
+	 */
+	public String checkScope(String url) {
+		String res = "false";
+		if (url.contains(".uk")) {
+			res = "true";
+		}
+    	return res;
+    }
+    
     public String toString() {
         return "Instance(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 

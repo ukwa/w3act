@@ -185,6 +185,7 @@ public class Global extends GlobalSettings {
 			        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 					// store instances in DB
 	                Ebean.save(allInstances);
+	                JsonUtils.mapInstancesToTargets();
 	                Logger.info("instances successfully loaded");
 	                normalizeUrls();
                 } catch (Exception e) {

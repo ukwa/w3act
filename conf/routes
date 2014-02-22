@@ -167,6 +167,10 @@ GET     /target/:target                     controllers.TargetEdit.view(target)
 GET     /targetrevision/:revision           controllers.TargetEdit.viewrevision(revision:Long)
 GET     /targetedit/:target                 controllers.TargetEdit.edit(target)
 
+GET     /instance/:instance                 controllers.InstanceController.view(instance)
+GET     /instancerevision/:revision         controllers.InstanceController.viewrevision(revision:Long)
+GET     /instanceedit/:instance             controllers.InstanceController.edit(instance)
+
 GET     /contactperson                      controllers.ContactPersonEdit.index()
 GET     /contactperson/:person              controllers.ContactPersonEdit.view(person)
 GET     /contactpersonedit/:person          controllers.ContactPersonEdit.edit(person)
@@ -200,6 +204,7 @@ GET     /communicationlog/link/:permission       controllers.CommunicationLogEdi
 # Forms
 POST    /article/add-article                controllers.Article.addArticle()
 POST    /target/save-target                 controllers.TargetController.saveTarget()
+POST    /instance/save-instance             controllers.InstanceController.saveInstance()
 POST    /user/save-user                     controllers.Curators.saveUser()
 POST    /alphabeticalindex/filter-url       controllers.AlphabeticalIndex.filterUrl()
 POST    /dispensationsites/filter-url       controllers.DispensationSites.filterUrl()
@@ -221,12 +226,19 @@ GET    	/targets/usertargets/           	controllers.Targets.userTargets(p:Int ?
 GET     /targets/lookup						controllers.Targets.lookup()
 GET     /targets/new/:title      			controllers.Targets.create(title)
 
+GET     /instances                          controllers.Instances.index()
+POST    /instances/search          			controllers.Instances.search()
+GET    	/instances/filterbyjson/:url		controllers.Instances.filterByJson(url)
+GET    	/instances/list/                  	controllers.Instances.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET     /instances/new/:title      			controllers.Instances.create(title)
+
 
 POST    /targets/add-new                    controllers.UrlSearch.addNewTarget()
 GET     /website/:url                       controllers.WebSite.addEntry(url)
 
 # Scope
 GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
+GET     /api/scopeintance/:url               controllers.InstanceController.isInScope(url)
 GET     /api/licence/:url                    controllers.CrawlPermissions.crawlPermissionExist(url)
 GET     /api/licencelevel/:url               controllers.CrawlPermissions.crawlPermissionExistAtHigherLevel(url)
 GET     /api/licenceprompthigherlevel/:url   controllers.CrawlPermissions.checkForHigherLevelPrompt(url)

@@ -200,6 +200,7 @@ public final class Const {
 	public static final String CLEAR              = "clear";
 	public static final String EXPORT             = "export";
 	public static final String EXPORT_FILE        = "export.csv";
+	public static final String EXPORT_INSTANCE_FILE = "exportinstances.csv";
 	public static final String CSV_SEPARATOR      = ";";
 	public static final String CSV_LINE_END       = "\n";
 	public static final String SEARCH             = "search";

@@ -129,7 +129,7 @@ public class Taxonomy extends Model {
     public static String findQaStatus(String url) {
     	Taxonomy taxonomy = findByUrl(url);
     	String res = taxonomy.name;
-    	if (taxonomy.name.equals("No QA Issues found (OK to publish)")) {
+    	if (taxonomy.name.equals("No QA issues found (OK to publish)")) {
     		res = Const.QAStatusType.PASSED_PUBLISH_NO_ACTION_REQUIRED.name();
     	}
     	if (taxonomy.name.equals("QA issues found")) {
