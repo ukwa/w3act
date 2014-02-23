@@ -99,6 +99,8 @@ public class Target extends Model {
     @Column(columnDefinition = "TEXT")
     public String field_url; 
     @Column(columnDefinition = "TEXT")
+    public String domain; 
+    @Column(columnDefinition = "TEXT")
     public String field_description; 
     @Column(columnDefinition = "TEXT")
     public String field_uk_postal_address_url; 
