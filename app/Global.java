@@ -187,6 +187,8 @@ public class Global extends GlobalSettings {
 	                Ebean.save(allInstances);
 	                JsonUtils.mapInstancesToTargets();
 	                Logger.info("instances successfully loaded");
+	                JsonUtils.getDomainForTargets();
+	                Logger.info("Target domains extracted");
 	                normalizeUrls();
                 } catch (Exception e) {
                 	Logger.info("Store error: " + e);

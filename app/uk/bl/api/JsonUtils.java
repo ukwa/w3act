@@ -25,6 +25,7 @@ import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.Const.NodeType;
 import uk.bl.Const.TaxonomyType;
+import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -820,7 +821,7 @@ public class JsonUtils {
 	 * This method fills field_url for instance object in order to create
 	 * mapping to target object.
 	 */
-	public static void mapInstancesToTargets() {
+	public static void mapInstancesToTargets() { 
         List<Instance> instanceList = (List<Instance>) Instance.find.all();
         Iterator<Instance> instanceItr = instanceList.iterator();
         while (instanceItr.hasNext()) {
@@ -830,6 +831,22 @@ public class JsonUtils {
         		instance.field_url = target.field_url;
         		Logger.info("Instance mapped to Target object: " + instance.field_url);
         		Ebean.update(instance);
+        	}
+        }		
+	}
+
+	/**
+	 * This method extracts domain name for Targets.
+	 */
+	public static void getDomainForTargets() { 
+        List<Target> targetList = (List<Target>) Target.find.all();
+        Iterator<Target> targetItr = targetList.iterator();
+        while (targetItr.hasNext()) {
+        	Target target = targetItr.next();
+        	if (target.field_url != null) {
+        		target.domain = Scope.getDomainFromUrl(target.field_url);
+        		Logger.info("Target domain: " + target.domain + " mapped to Target field URL: " + target.field_url);
+        		Ebean.update(target);
         	}
         }		
 	}

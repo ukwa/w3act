@@ -335,6 +335,7 @@ create table target (
   selection_type            varchar(255),
   selector                  varchar(255),
   field_url                 TEXT,
+  domain                    TEXT,
   field_description         TEXT,
   field_uk_postal_address_url TEXT,
   field_suggested_collections TEXT,

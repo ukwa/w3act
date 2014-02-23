@@ -266,7 +266,7 @@ public class Scope {
 		try {
 //			Logger.info("get host: " + new URL(url).getHost());
 			domain = new URL(url).getHost().replace(WWW, "");
-			Logger.info("whois lookup for domain: " + domain);
+			Logger.info("extracted domain: " + domain);
 		} catch (Exception e) {
 			Logger.info("domain calculation error for url=" + url + ". " + e.getMessage());
 			domain = url;
