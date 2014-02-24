@@ -7,6 +7,7 @@ import java.util.List;
 
 import models.DCollection;
 import models.Target;
+import models.Taxonomy;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +60,7 @@ public class QAController extends AbstractController {
         			sortBy, 
         			order,
         			collection,
-        			qaStatus)
+        			Taxonomy.findQaStatus(qaStatus))
         	);
     }
 	
@@ -86,17 +87,27 @@ public class QAController extends AbstractController {
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
     	String order = form.get(Const.ORDER);
-    	String query_qa_status = form.get(Const.QUERY_QA_STATUS);
+    	String query_qa_status_name = form.get(Const.QA_STATUS);
     	String query_collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
 //    	Logger.info("QAController.search() query_collection_name: " + query_collection_name);
+    	Logger.info("QAController.search() query_qa_status_name: " + query_qa_status_name);
     	String query_collection = "";
     	if (query_collection_name != null && !query_collection_name.toLowerCase().equals(Const.NONE)) {
     		try {
     			query_collection = DCollection.findByTitle(query_collection_name).url;
     		} catch (Exception e) {
-    			Logger.info("Can't find collection for title: " + query_collection_name + ". " + e);
+    			Logger.info("Can't find collection for URL: " + query_collection_name + ". " + e);
     		}
     	} 
+    	String query_qa_status = "";
+    	if (query_qa_status_name != null && !query_qa_status_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			query_qa_status = Taxonomy.findQaStatusUrl(query_qa_status_name);
+    		} catch (Exception e) {
+    			Logger.info("Can't find QA status for URL: " + query_qa_status_name + ". " + e);
+    		}
+    	} 
+    	Logger.info("QAController.search() query_qa_status: " + query_qa_status);
     	
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
