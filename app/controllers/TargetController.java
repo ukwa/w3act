@@ -230,13 +230,15 @@ public class TargetController extends AbstractController {
         	} else {
                 target.active = false;
             	if (target.field_url != null) {
+                	Logger.info("current target field_url: " + target.field_url);
             		target.domain = Scope.getDomainFromUrl(target.field_url);
             	}
         		Logger.info("update target: " + target.nid + ", obj: " + target.toString());
             	Ebean.update(target);
         	}
         	if (newTarget.field_url != null) {
-        		newTarget.domain = Scope.getDomainFromUrl(target.field_url);
+            	Logger.info("current target field_url: " + newTarget.field_url);
+        		newTarget.domain = Scope.getDomainFromUrl(newTarget.field_url);
         	}
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
