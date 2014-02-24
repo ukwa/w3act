@@ -878,6 +878,7 @@ public class Target extends Model {
 
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
         		.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)
+        		.icontains(Const.FIELD_QA_STATUS, qaStatus)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
@@ -935,6 +936,7 @@ public class Target extends Model {
     	} 
     	res = exp.query()
         		.orderBy(sortBy + " " + order)
+        		.orderBy(Const.DOMAIN)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);

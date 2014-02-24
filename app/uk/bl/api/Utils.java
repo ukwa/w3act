@@ -106,18 +106,20 @@ public class Utils {
      */
     public static String showTimestamp(String timestamp) {
     	String res = "";
-		try {
-			Date resDate = new SimpleDateFormat("yyyyMMddHHMMss").parse(timestamp);
-			if (resDate != null) {
-				Calendar mydate = new GregorianCalendar();
-				mydate.setTime(resDate);
-				res = Integer.toString(mydate.get(Calendar.DAY_OF_MONTH)) + "/" +
-						Integer.toString(mydate.get(Calendar.MONTH)) + "/" +
-						Integer.toString(mydate.get(Calendar.YEAR));
+    	if (timestamp.length() > 0) {
+			try {
+				Date resDate = new SimpleDateFormat("yyyyMMddHHMMss").parse(timestamp);
+				if (resDate != null) {
+					Calendar mydate = new GregorianCalendar();
+					mydate.setTime(resDate);
+					res = Integer.toString(mydate.get(Calendar.DAY_OF_MONTH)) + "/" +
+							Integer.toString(mydate.get(Calendar.MONTH)) + "/" +
+							Integer.toString(mydate.get(Calendar.YEAR));
+				}
+			} catch (ParseException e) {
+				Logger.info("QA timestamp conversion error: " + e);
 			}
-		} catch (ParseException e) {
-			Logger.info("QA timestamp conversion error: " + e);
-		}
+    	}
     	return res;
     }              
     

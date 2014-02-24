@@ -122,6 +122,27 @@ public class Taxonomy extends Model {
     }          
     
     /**
+     * Retrieve a Taxonomy by name.
+     * @param QA status name
+     * @return taxonomy object
+     */
+    public static Taxonomy findQaIssueByName(String name) {
+    	Taxonomy res = new Taxonomy();
+        if (name != null && name.length() > 0 && !name.contains(Const.COMMA)) {
+	        Taxonomy res2 = find.where().eq(Const.NAME, name).findUnique();
+	        if (res2 == null) {
+	        	res.name = Const.NONE;
+	        } else {
+	        	res = res2;
+	        }
+//	        Logger.info("taxonomy name: " + res.name);
+        } else {
+        	res.name = Const.NONE;
+        }
+    	return res;
+    }          
+    
+    /**
      * Retrieve a QA status by URL.
      * @param url
      * @return QA status string
@@ -134,6 +155,26 @@ public class Taxonomy extends Model {
     	}
     	if (taxonomy.name.equals("QA issues found")) {
     		res = Const.QAStatusType.ISSUE_NOTED.name();
+    	}
+    	return res;
+    }          
+    
+    /**
+     * Retrieve a QA status by Name.
+     * @param QA status name
+     * @return QA status string
+     */
+    public static String findQaStatusUrl(String name) {
+    	if (name.equals(Const.QAStatusType.PASSED_PUBLISH_NO_ACTION_REQUIRED.name())) {
+    		name = "No QA issues found (OK to publish)";
+    	}
+    	if (name.equals(Const.QAStatusType.ISSUE_NOTED.name())) {
+    		name = "QA issues found";
+    	}
+    	Taxonomy taxonomy = findQaIssueByName(name);
+    	String res = taxonomy.url;
+    	if (res == null) {
+    		res = "";
     	}
     	return res;
     }          
