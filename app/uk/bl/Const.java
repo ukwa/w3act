@@ -133,6 +133,7 @@ public final class Const {
 	public static final String QA_ISSUE_CATEGORY  = "qa_issue_category";
 	public static final String QA_NOTES           = "qa_notes";
 	public static final String QUALITY_NOTES      = "quality_notes";
+	public static final String DOMAIN             = "domain";
 	
     // Creator
 	public static final String UID                = "uid";

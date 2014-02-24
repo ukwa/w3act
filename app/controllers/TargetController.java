@@ -229,8 +229,14 @@ public class TargetController extends AbstractController {
         		newTarget.edit_url = Const.WCT_URL + newTarget.nid;
         	} else {
                 target.active = false;
+            	if (target.field_url != null) {
+            		target.domain = Scope.getDomainFromUrl(target.field_url);
+            	}
         		Logger.info("update target: " + target.nid + ", obj: " + target.toString());
             	Ebean.update(target);
+        	}
+        	if (newTarget.field_url != null) {
+        		newTarget.domain = Scope.getDomainFromUrl(target.field_url);
         	}
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
