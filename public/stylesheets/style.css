@@ -350,3 +350,8 @@ table.table.table-striped.table-bordered.table-hover.table-condensed {
     font-size: 18;
     font-family: 'Arial', cursive;
 }
+
+@font-face {
+	font-family: "Righteous"; 
+    src: url("/public/stylesheets/Righteous-Regular.ttf"); 
+}
