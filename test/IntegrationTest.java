@@ -25,7 +25,7 @@ public class IntegrationTest {
     /**
      * in this example we just check if the welcome page is being shown
      */   
-//    @Test
+    @Test
     public void test() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), HTMLUNIT, new Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
