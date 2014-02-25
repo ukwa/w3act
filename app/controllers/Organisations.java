@@ -88,11 +88,6 @@ public class Organisations extends AbstractController {
      * Add an organisation.
      */
     public static Result create(String title) {
-//        Form<Organisation> organisationForm = form(Organisation.class);
-//        return ok(
-//            organisationedit.render(User.find.byId(request().username(), organisationForm))
-//        );
-    	
     	Organisation organisation = new Organisation();
     	organisation.title = title;
         organisation.nid = Target.createId();
