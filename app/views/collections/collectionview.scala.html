@@ -1,7 +1,7 @@
 @(collection: DCollection, user: User) @main("", user) {
 
 	<div class="page-header">
-		<h1>Collection @collection.title (@Target.findAllforCollection(collection.url).size() targets)</h1>
+		<h1><a href="@routes.Collections.index()">Collections > </a>Collection @collection.title (@Target.findAllforCollection(collection.url).size() targets)</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
