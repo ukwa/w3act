@@ -20,7 +20,6 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.userbookmarks;
 import views.html.users.list;
 import views.html.users.useredit;
 import views.html.users.userview;
@@ -170,13 +169,6 @@ public class Curators extends AbstractController {
         return redirect(routes.Targets.userTargets(0, "title", "asc", "", url, "", ""));
     }
     
-    public static Result bookmarks(String url) {
-        return ok(
-                userbookmarks.render(
-                        User.findByUrl(url)
-                )
-            );
-    }
     /**
      * This method saves changes on given curator in the same object
      * completed by revision comment. The "version" field in the User object
