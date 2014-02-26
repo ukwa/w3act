@@ -7,7 +7,7 @@
              context = @play.api.Play.current.configuration.getString("application.context");
              licenceCheck(context);
              licenceHigherLevelCheck(context);
-             licencePromptHigherLevel(context);
+             //licencePromptHigherLevel(context);
 		});
 	</script>
 }
@@ -154,7 +154,7 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
-					<button type="submit" class="btn btn-primary" id="save" name="save">Save</button>
+					<button type="submit" class="btn btn-primary" id="save" name="save" title="If crawl permission is required button is green, if crawl permission for given target already exists it is red, if it exists in higher domain level it is yellow">Save</button>
 					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
 		       </div>
 			</div>
