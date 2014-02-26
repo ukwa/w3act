@@ -392,11 +392,9 @@ public class Targets extends AbstractController {
     	Logger.info("export() targetList size: " + targetList.size());
 
         StringWriter sw = new StringWriter();
-//        int i = 0;
         for (int i = 0; i < Const.targetExportMap.size(); i++) {
         {
             for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet())
-//            System.out.println(entry.getKey() + "/" + entry.getValue());
 //        	Logger.info("export key: " + entry.getKey());
             	if (entry.getValue() == i) {
 	            	sw.append(entry.getKey());
@@ -404,32 +402,34 @@ public class Targets extends AbstractController {
             	}
             }
         }
-//		Field[] fields = Target.class.getFields();
-//		for (Field f : fields) {
-////			Logger.info("Target fields: " + f.getName());
-//		    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
-//    		sw.append(f.getName());
-//	 	    sw.append(Const.CSV_SEPARATOR);
-//		}
- 	    sw.append(Const.CSV_LINE_END);
+
+        sw.append(Const.CSV_LINE_END);
  	    
-// 	    String csv = "";
  	    if (targetList != null && targetList.size() > 0) {
  	    	Iterator<Target> itr = targetList.iterator();
  	    	while (itr.hasNext()) {
  	    		Target target = itr.next();
- 	        	Logger.info("export target: " + target); 	    		
+// 	        	Logger.info("export target: " + target); 	    		
  	            for (int i = 0; i < Const.targetExportMap.size(); i++) {
 		 	        for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet()) {
 			 	   		Field[] fields = Target.class.getFields();
 			 			for (Field field : fields) {
-//			 				Logger.info("field: " + field);
 		 	               if (entry.getValue() == i) {
-		 	                   Logger.info("field.name: " + field.getName() + ", entry.getkey: " + entry.getKey());
+//		 	                   Logger.info("field.name: " + field.getName() + ", entry.getkey: " + entry.getKey());
 		 	                   if (field.getName().equals(entry.getKey())) {
 		 	                	   try {
 										Object value = field.get(target);
-				 	                    Logger.info("value: " + value);
+//				 	                    Logger.info("value: " + value);
+				 	                    if (field.getName().equals(Const.AUTHOR)) {
+				 	                    	if (value != null) {
+				 	                    		value = User.findByUrl((String) value).name;
+				 	                    	}
+				 	                    }
+				 	                    if (field.getName().equals(Const.CREATED)) {
+				 	                    	if (value != null) {
+				 	                    		value = Utils.showTimestampInTable((String) value);
+				 	                    	}
+				 	                    }
 										if (field.getType().equals(String.class)) {
 								    		sw.append((String) value);
 									 	    sw.append(Const.CSV_SEPARATOR);
@@ -446,17 +446,11 @@ public class Targets extends AbstractController {
 		 	                   }
 		 	               }
 			 			}
-	//	 	        	csv = csv + ", " + target.toString();
 		 	        }
 	            }
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
  	    }
-//        if (csv != null) {
-//	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
-//	        sw.append(content);
-////        Logger.info("content: " + content);
-//        }
 
     	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
     }
