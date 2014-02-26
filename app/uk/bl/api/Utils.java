@@ -124,6 +124,30 @@ public class Utils {
     }              
     
     /**
+     * Convert long timestamp to a date for presentation in a table.
+     * @param long timestamp
+     * @return formatted timestamp "dd/MM/yyyy"
+     */
+    public static String showTimestampInTable(String timestamp) {
+    	String res = "";
+    	if (timestamp.length() > 0) {
+			try {
+				Date resDate = new Date(Long.parseLong(timestamp));
+				if (resDate != null) {
+					Calendar mydate = new GregorianCalendar();
+					mydate.setTime(resDate);
+					res = Integer.toString(mydate.get(Calendar.DAY_OF_MONTH)) + "/" +
+							Integer.toString(mydate.get(Calendar.MONTH)) + "/" +
+							Integer.toString(mydate.get(Calendar.YEAR));
+				}
+			} catch (Exception e) {
+				Logger.info("Long timestamp conversion error: " + e);
+			}
+    	}
+    	return res;
+    }              
+    
+    /**
      * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
      * @param elem The given element for searching
      * @param list The list that contains elements

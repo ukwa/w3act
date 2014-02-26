@@ -135,6 +135,7 @@ public final class Const {
 	public static final String QA_NOTES           = "qa_notes";
 	public static final String QUALITY_NOTES      = "quality_notes";
 	public static final String DOMAIN             = "domain";
+	public static final String CREATED            = "created";
 	
     // Creator
 	public static final String UID                = "uid";
