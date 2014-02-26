@@ -41,12 +41,12 @@ public class LookupEntry extends Model
      * The type of lookup can be e.g. WHOIS, GEOIP ...
      */
     @Column(columnDefinition = "TEXT")
-    public String type;
+    public String ttype;
     
     /**
      * Value is true or false.
      */
-    public Boolean value;
+    public Boolean scopevalue;
     
     @Version
     public Timestamp lastUpdate;
@@ -89,8 +89,8 @@ public class LookupEntry extends Model
     public static boolean getValueByUrl(String url) {
     	boolean res = false;
     	LookupEntry resLookupEntry = findByUrl(url);    	
-    	if (resLookupEntry != null && resLookupEntry.value != null) {
-    		res = resLookupEntry.value;
+    	if (resLookupEntry != null && resLookupEntry.scopevalue != null) {
+    		res = resLookupEntry.scopevalue;
     	}
     	return res;
     }
@@ -116,7 +116,7 @@ public class LookupEntry extends Model
     }
     
     public String toString() {
-        return "LookupEntry(" + url + ")" + ", id:" + id;
+        return "LookupEntry(" + url + ")" + ", id:" + id + ", scopevalue: " + scopevalue;
     }
     
 }

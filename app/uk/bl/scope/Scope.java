@@ -131,11 +131,12 @@ public class Scope {
         	if (lookupEntryCount.size() > 0) {
         		inProjectDb = true;
         		res = LookupEntry.getValueByUrl(url);
-        		Logger.info("lookup entry for '" + url + "' is in database with value: " + res);
+//        		Logger.info("lookup entry for '" + url + "' is in database with value: " + res);
         	}
         }
         
         if (!inProjectDb) {
+        	Logger.info("URL not in database - calculate scope");
 	        /**
 	         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
 	         *
@@ -215,6 +216,8 @@ public class Scope {
         	Logger.info("isUKRegistrant?: " + res);
     	} catch (Exception e) {
     		Logger.info("whois lookup message: " + e.getMessage());
+	        // store in project DB
+	        storeInProjectDb(url, false);
     		throw new WhoisException(e);
     	}
     	Logger.info("whois res: " + res);        	
@@ -232,7 +235,7 @@ public class Scope {
 		lookupEntry.id = Utils.createId();
 		lookupEntry.url = Const.ACT_URL + lookupEntry.id;
 		lookupEntry.name = url;
-		lookupEntry.value = res;
+		lookupEntry.scopevalue = res;
         Logger.info("Save lookup entry " + lookupEntry.toString());
     	Ebean.save(lookupEntry);	
     }
