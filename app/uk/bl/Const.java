@@ -237,6 +237,7 @@ public final class Const {
 	public static final String LOOKUP_DEF           = "lookup_def"; 
 	public static final String YES                  = "yes"; 
 	public static final String NO                   = "no"; 
+	public static final String MAX_COUNT            = "max_count"; 
 
 	// Types of the JSON nodes
 	public enum NodeType {
@@ -365,18 +366,28 @@ public final class Const {
      * "field_url":[{"url":"http:\/\/www.adoptionuk.org\/"}]
      */
     public static final Map<String, Integer> targetMap = new HashMap<String, Integer>();
-    	static {
-    	targetMap.put("field_url", 0);
-    	targetMap.put("field_description", 1);
-    	targetMap.put("field_uk_postal_address_url", 2);
-    	targetMap.put("field_suggested_collections", 3);
-    	targetMap.put("field_collections", 4);
-    	targetMap.put("field_license", 5);
-    	targetMap.put("field_collection_categories", 6);
-    	targetMap.put("field_notes", 7);
-    	targetMap.put("field_instances", 8);
-    }
-		
+		static {
+		targetMap.put("field_url", 0);
+		targetMap.put("field_description", 1);
+		targetMap.put("field_uk_postal_address_url", 2);
+		targetMap.put("field_suggested_collections", 3);
+		targetMap.put("field_collections", 4);
+		targetMap.put("field_license", 5);
+		targetMap.put("field_collection_categories", 6);
+		targetMap.put("field_notes", 7);
+		targetMap.put("field_instances", 8);
+	}
+	
+    public static final Map<String, Integer> targetExportMap = new HashMap<String, Integer>();
+		static {
+		targetExportMap.put("nid", 0);
+		targetExportMap.put("title", 1);
+		targetExportMap.put("field_url", 2);
+		targetExportMap.put("author", 3);
+		targetExportMap.put("field_crawl_frequency", 4);
+		targetExportMap.put("created", 5);
+	}
+	
     public static final Map<String, Integer> collectionMap = new HashMap<String, Integer>();
     	static {
     	collectionMap.put("field_targets", 0);
