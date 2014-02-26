@@ -190,8 +190,8 @@ create table lookup_entry (
   id                        bigint not null,
   url                       TEXT,
   name                      TEXT,
-  type                      TEXT,
-  value                     boolean,
+  ttype                     TEXT,
+  scopevalue                boolean,
   last_update               timestamp not null,
   constraint pk_lookup_entry primary key (id))
 ;
