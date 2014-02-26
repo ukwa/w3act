@@ -128,6 +128,7 @@ GET     /target/crawlpermissions/:target    	controllers.CrawlPermissions.showCr
 GET     /target/licencerequest/:name/:target  	controllers.CrawlPermissions.licenceRequestForTarget(name, target)
 
 GET     /contact                                controllers.Contact.index()
+POST    /contact/send              	            controllers.Contact.send()
 
 GET     /qa                                     controllers.QAController.index()
 GET     /qa/list                                controllers.QAController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_collection ?= "", query_qa_status ?= "")
