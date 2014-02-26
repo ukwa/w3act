@@ -124,10 +124,6 @@ public class CrawlPermissions extends AbstractController {
                 );
 		}
 
-        int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
-    	String sort = getQueryParam(Const.SORT_BY);
-    	String order = getQueryParam(Const.ORDER);
-
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
@@ -532,7 +528,7 @@ public class CrawlPermissions extends AbstractController {
 	    }
     	String toMails = evaluateToEmails();
     	Logger.info("toMails: " + toMails);
-    	String[] toMailAddresses = Utils.getMailArray(toMails);
+//    	String[] toMailAddresses = Utils.getMailArray(toMails);
 //    	Logger.info("toMailAddresses: " + toMailAddresses[0]);
     	String messageSubject = MailTemplate.findByName(template).subject;
     	String messageBody = MailTemplate.findByName(template).readTemplate();
@@ -643,7 +639,6 @@ public class CrawlPermissions extends AbstractController {
     public static Result checkForHigherLevelPrompt(String target) {
     	Logger.info("checkForHigherLevelPrompt target: " + target);
     	boolean res = false;
-    	String path = "";
     	if (target != null) {
     		if (target.contains(Const.SLASH_DELIMITER)) {
 		    	String[] parts = target.split(Const.SLASH_DELIMITER);
@@ -654,6 +649,25 @@ public class CrawlPermissions extends AbstractController {
     	}
     	Logger.info("crawl permission in higher level exists res: " + res + ", target: " + target);
     	return ok(Json.toJson(res));
+    }
+    
+    /**
+     * This method checks if permission contains a contact person. It is
+     * necessary in order to send permission request to this person.
+     * Otherwise send buttons are disabled.
+     * @param list
+     * @return check result
+     */
+    public static boolean haveContactPerson(List<CrawlPermission> permissionList) {
+    	boolean res = true;
+	    Iterator<CrawlPermission> permissionItr = permissionList.iterator();
+	    while (permissionItr.hasNext()) {
+	    	CrawlPermission permission = permissionItr.next();
+	        if (permission.contactPerson == null || permission.contactPerson.length() == 0) {
+	        	res = false;
+	        }
+	    }
+    	return res;
     }
     
     @BodyParser.Of(BodyParser.Json.class)

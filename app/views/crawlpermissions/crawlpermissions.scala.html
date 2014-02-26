@@ -137,19 +137,29 @@
 			</div>
      	</div>		    
 
+		<div class="alert alert-info">
+			In order to enable send buttons check that crawl permission list is not empty and that these crawl permissions contain a contact person. 
+		</div>
+
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		<div class="row padding-20 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
-					<!-- button type="submit" class="btn btn-primary" name="send">Send one</button-->
+				@if(permissions.size() > 0 && CrawlPermissions.haveContactPerson(permissions)) {
 					<button type="submit" class="btn btn-primary" name="sendall">Send all</button>
 					<button type="submit" class="btn btn-primary" name="sendsome">Send some</button>
 					<button type="submit" class="btn btn-primary" name="preview">Preview</button>
 					<button type="submit" class="btn btn-primary" name="reject">Reject</button>
+				} else {
+					<button type="submit" class="btn btn-primary" name="sendall" disabled>Send all</button>
+					<button type="submit" class="btn btn-primary" name="sendsome" disabled>Send some</button>
+					<button type="submit" class="btn btn-primary" name="preview" disabled>Preview</button>
+					<button type="submit" class="btn btn-primary" name="reject" disabled>Reject</button>
+				}
 		       </div>
 			</div>
 		</div>
-		}
+		}		
 	}
 	</article>
 }
