@@ -1,75 +1,65 @@
 @(title: String, user: User)
 
-@import helper.twitterBootstrap._
-
 @main(title, user){
-    <h1>Contact</h1>
+	<div class="page-header">
+	    <h1>Contact</h1>
+	</div>
 
-	<form>
-		<fieldset>
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputName" class="col-sm-6 control-label">Your name</label>
-					    <div class="col-sm-6">
-	       					<input class="form-control" id="name" type="text" value="@user.name">
-						</div>
-					</div>
-				</div>
-	     	</div>
-		</fieldset>
-		<fieldset>
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputName" class="col-sm-6 control-label">Your e-mail address</label>
-					    <div class="col-sm-6">
-					       <input class="form-control" id="inputEmail" type="text" value="@user.email">
-						</div>
-					</div>
-				</div>
-	     	</div>
-		</fieldset>
-		<fieldset>
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputName" class="col-sm-6 control-label">Subject</label>
-					    <div class="col-sm-6">
-					       <input class="form-control" id="inputSubject" placeholder="" type="text">
-						</div>
-					</div>
-				</div>
-	     	</div>
-		</fieldset>
-		<fieldset>
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputName" class="col-sm-6 control-label">Message</label>
-					    <div class="col-sm-6">
-	        				<textarea  class="form-control" name="user_eingabe" id="inputMessage"></textarea>
-						</div>
-					</div>
-				</div>
-	     	</div>
-		</fieldset>
-		<fieldset>
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputName" class="col-sm-6 control-label">Send yourself a copy</label>
-					    <div class="col-sm-6">
-							<input type="checkbox" name="checkbox">
-						</div>
-					</div>
-				</div>
-	     	</div>
-		</fieldset>
-		<div class="row padding-10 pull-right">
+	<form action="@routes.Contact.send()" method="POST">
+		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Your name</label>
+				    <div class="col-sm-6">
+       					<input class="form-control" name="name" id="name" type="text" value="@user.name">
+					</div>
+				</div>
+			</div>
+     	</div>
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Your e-mail address</label>
+				    <div class="col-sm-6">
+				       <input class="form-control" name="from" id="inputEmail" type="text" value="@user.email">
+					</div>
+				</div>
+			</div>
+     	</div>
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Subject</label>
+				    <div class="col-sm-6">
+				       <input class="form-control" name="subject" id="subject" placeholder="" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Message</label>
+				    <div class="col-sm-6">
+        				<textarea  class="form-control" name="content" id="inputMessage"></textarea>
+					</div>
+				</div>
+			</div>
+     	</div>
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Send yourself a copy</label>
+				    <div class="col-sm-6">
+						<input type="checkbox" name="checkbox">
+					</div>
+				</div>
+			</div>
+     	</div>
+		<div class="row padding-10 pull-right">
+	    		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-    				<button type="submit" class="btn btn-primary" name="send">Send message</button>		            
+	   				<button type="submit" class="btn btn-primary" name="send">Send message</button>		            
 		       </div>
 			</div>
 		</div>
