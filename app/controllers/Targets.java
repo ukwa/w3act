@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import models.DCollection;
 import models.Organisation;
@@ -132,7 +133,7 @@ public class Targets extends AbstractController {
 		        }
 			}
 		}
-		Logger.info("getLicense res: " + res);
+//		Logger.info("getLicense res: " + res);
     	return res;
 	}
 	
@@ -361,12 +362,13 @@ public class Targets extends AbstractController {
     		} 
     		else if (Const.EXPORT.equals(action)) {
     			List<Target> exportTargets = new ArrayList<Target>();
-    			Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, 
+    	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, 
     					subject, crawlFrequency, depth, collection, license); 
-    			exportTargets.addAll(page.getList());
-    			while (page.hasNext()) {
-    				exportTargets.addAll(page.getList());
-    			}
+    			int rowCount = page.getTotalRowCount();
+    	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, 
+    					subject, crawlFrequency, depth, collection, license); 
+    			exportTargets.addAll(pageAll.getList());
+				Logger.info("export size: " + exportTargets.size());
     			export(exportTargets);
     	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation, 
     	    			subject, crawlFrequency, depth, collection, license, pageSize));
@@ -390,27 +392,71 @@ public class Targets extends AbstractController {
     	Logger.info("export() targetList size: " + targetList.size());
 
         StringWriter sw = new StringWriter();
-		Field[] fields = Target.class.getFields();
-		for (Field f : fields) {
-//			Logger.info("Target fields: " + f.getName());
-    		sw.append(f.getName());
-	 	    sw.append(Const.CSV_SEPARATOR);
-		}
+//        int i = 0;
+        for (int i = 0; i < Const.targetExportMap.size(); i++) {
+        {
+            for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet())
+//            System.out.println(entry.getKey() + "/" + entry.getValue());
+//        	Logger.info("export key: " + entry.getKey());
+            	if (entry.getValue() == i) {
+	            	sw.append(entry.getKey());
+		 	    	sw.append(Const.CSV_SEPARATOR);
+            	}
+            }
+        }
+//		Field[] fields = Target.class.getFields();
+//		for (Field f : fields) {
+////			Logger.info("Target fields: " + f.getName());
+//		    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
+//    		sw.append(f.getName());
+//	 	    sw.append(Const.CSV_SEPARATOR);
+//		}
  	    sw.append(Const.CSV_LINE_END);
  	    
- 	    String csv = "";
+// 	    String csv = "";
  	    if (targetList != null && targetList.size() > 0) {
  	    	Iterator<Target> itr = targetList.iterator();
  	    	while (itr.hasNext()) {
  	    		Target target = itr.next();
- 	    		csv = csv + ", " + target.toString();
+ 	        	Logger.info("export target: " + target); 	    		
+ 	            for (int i = 0; i < Const.targetExportMap.size(); i++) {
+		 	        for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet()) {
+			 	   		Field[] fields = Target.class.getFields();
+			 			for (Field field : fields) {
+//			 				Logger.info("field: " + field);
+		 	               if (entry.getValue() == i) {
+		 	                   Logger.info("field.name: " + field.getName() + ", entry.getkey: " + entry.getKey());
+		 	                   if (field.getName().equals(entry.getKey())) {
+		 	                	   try {
+										Object value = field.get(target);
+				 	                    Logger.info("value: " + value);
+										if (field.getType().equals(String.class)) {
+								    		sw.append((String) value);
+									 	    sw.append(Const.CSV_SEPARATOR);
+										}
+										if (field.getType().equals(Long.class)) {
+								    		sw.append(String.valueOf(((Long) value)));
+									 	    sw.append(Const.CSV_SEPARATOR);
+										}
+									} catch (IllegalArgumentException e) {
+										e.printStackTrace();
+									} catch (IllegalAccessException e) {
+										e.printStackTrace();
+									}
+		 	                   }
+		 	               }
+			 			}
+	//	 	        	csv = csv + ", " + target.toString();
+		 	        }
+	            }
+	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
  	    }
-        if (csv != null) {
-	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
-	        sw.append(content);
-//        Logger.info("content: " + content);
-        }
+//        if (csv != null) {
+//	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
+//	        sw.append(content);
+////        Logger.info("content: " + content);
+//        }
 
     	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
     }
