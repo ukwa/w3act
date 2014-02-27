@@ -37,7 +37,7 @@ public class Tag extends Model
     public String url;
 	
     /**
-     * The name of the refusal.
+     * The name of the tag.
      */
     @Column(columnDefinition = "TEXT")
     public String name;
