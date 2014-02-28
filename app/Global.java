@@ -10,6 +10,7 @@ import models.Permission;
 import models.Role;
 import models.Tag;
 import models.Target;
+import models.Taxonomy;
 import models.User;
 import play.Application;
 import play.GlobalSettings;
@@ -107,6 +108,12 @@ public class Global extends GlobalSettings {
     	        	flag.url = Const.ACT_URL + flag.id;
 	                Logger.info("Predefined " + Flag.class.getSimpleName() + ": " + flag.toString());
     	        }
+    	        if (cls == Taxonomy.class) {
+    	        	Taxonomy taxonomy = (Taxonomy) sectionItr.next();
+    	        	taxonomy.tid = Utils.createId();
+    	        	taxonomy.url = Const.ACT_URL + taxonomy.tid;
+	                Logger.info("Predefined " + Taxonomy.class.getSimpleName() + ": " + taxonomy.toString());
+    	        }
             }
             Ebean.save(sectionList);
 	    }
@@ -115,6 +122,9 @@ public class Global extends GlobalSettings {
 		public static void insert(Application app) {
             if(Ebean.find(User.class).findRowCount() == 0) {
                 try {
+	                Logger.info("loading taxonomies from configuration ...");
+	                Map<String,List<Object>> alltaxonomies = (Map<String,List<Object>>)Yaml.load("taxonomies.yml");
+	                insertInitialData(Const.TAXONOMIES, Taxonomy.class, alltaxonomies);	
 	                Logger.info("loading open tags from configuration ...");
 	                Map<String,List<Object>> alltags = (Map<String,List<Object>>)Yaml.load("tags.yml");
 	                insertInitialData(Const.TAGS, Tag.class, alltags);	

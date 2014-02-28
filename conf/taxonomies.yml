@@ -1,0 +1,34 @@
+# Taxonomies
+
+taxonomies:
+
+    - !!models.Taxonomy
+        ttype:        SUBJECT
+        parent:       Arts & Humanities        
+        name:         Architecture
+
+    - !!models.Taxonomy
+        ttype:        SUBJECT
+        parent:       Arts & Humanities        
+        name:         Art and Design
+
+    - !!models.Taxonomy
+        ttype:        SUBJECT
+        parent:       Arts & Humanities        
+        name:         Comedy and Humour
+
+    - !!models.Taxonomy
+        ttype:        SUBJECT
+        parent:       Business, Economy & Industry        
+        name:         Agriculture, Fishing, and Forestry
+
+    - !!models.Taxonomy
+        ttype:        SUBJECT
+        parent:       Business, Economy & Industry        
+        name:         Banking, Insurance, Accountancy and Financial Economics
+
+    - !!models.Taxonomy
+        ttype:        SUBJECT
+        parent:       Business, Economy & Industry        
+        name:         Business Studies and Management Theory
+

@@ -74,6 +74,7 @@ public final class Const {
 	public static final String FROM               = "from";
 	public static final String BL_MAIL_ADDRESS    = "office@webarchive.org.uk";
 	public static final String TAGS               = "tags";
+	public static final String TAXONOMIES         = "taxonomies";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";

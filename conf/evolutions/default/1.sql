@@ -210,6 +210,24 @@ create table mail_template (
   constraint pk_mail_template primary key (id))
 ;
 
+create table nomination (
+  id                        bigint not null,
+  url                       TEXT,
+  name                      TEXT,
+  title                     TEXT,
+  website_url               TEXT,
+  email                     TEXT,
+  tel                       TEXT,
+  address                   TEXT,
+  nominated_website_owner   boolean,
+  justification             TEXT,
+  notes                     TEXT,
+  nomination_date           varchar(255),
+  nomination_checked        boolean,
+  last_update               timestamp not null,
+  constraint pk_nomination primary key (id))
+;
+
 create table organisation (
   nid                       bigint not null,
   title                     varchar(255) not null,
@@ -423,6 +441,8 @@ create sequence lookup_entry_seq;
 
 create sequence mail_template_seq;
 
+create sequence nomination_seq;
+
 create sequence organisation_seq;
 
 create sequence permission_seq;
@@ -462,6 +482,8 @@ drop table if exists lookup_entry cascade;
 
 drop table if exists mail_template cascade;
 
+drop table if exists nomination cascade;
+
 drop table if exists organisation cascade;
 
 drop table if exists permission cascade;
@@ -495,6 +517,8 @@ drop sequence if exists instance_seq;
 drop sequence if exists lookup_entry_seq;
 
 drop sequence if exists mail_template_seq;
+
+drop sequence if exists nomination_seq;
 
 drop sequence if exists organisation_seq;
 
