@@ -316,6 +316,29 @@
 							</div>
 						</div>
 					</div>
+		     	</div>
+		     		
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputSubSubject" class="col-sm-6 control-label">Subject 2 level <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="subsubject" value="@target.field_subject" class="form-control">
+									<option>None</option>
+									@for(subject <- Taxonomy.findListByType("subject")) {
+										<option value="@subject.name" disabled>@subject.name</option>
+  										@for(subsubject <- Taxonomy.findSubSubjectsList(subject.name)) {
+											@if(target.hasSubSubject(subsubject.url)) {
+	    										<option value="@subsubject.name" selected>-> @subsubject.name</option>
+											} else {						                
+	  											<option value="@subsubject.name">-> @subsubject.name</option>
+	  										}
+	  									}
+									}
+							  	</select>
+							</div>
+						</div>
+					</div>
 		     	</div>	
 		     	}	    
 

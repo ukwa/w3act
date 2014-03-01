@@ -92,6 +92,7 @@ public final class Const {
 	public static final String LIVE_SITE_STATUS   = "livesitestatus";
 	public static final String DESCRIPTION        = "description";
 	public static final String SUBJECT            = "subject";
+	public static final String SUBSUBJECT         = "subsubject";
 	public static final String ORGANISATION       = "organisation";
 	public static final String ORIGINATING_ORGANISATION = "originating_organisation";
 	public static final String FIELD_SUGGESTED_COLLECTIONS = "field_suggested_collections";

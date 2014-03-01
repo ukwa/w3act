@@ -129,6 +129,22 @@ public class TargetController extends AbstractController {
             		newTarget.field_subject = Const.NONE;
             	}
             }
+            if (getFormParam(Const.SUBSUBJECT) != null) {
+            	if (!getFormParam(Const.SUBSUBJECT).toLowerCase().contains(Const.NONE)) {
+	            	String[] subjects = getFormParams(Const.SUBSUBJECT);
+	            	String resSubject = "";
+	            	for (String subject: subjects)
+	                {
+	            		if (subject != null && subject.length() > 0) {
+	                		Logger.info("add subsubject: " + subject);
+	            			resSubject = resSubject + Taxonomy.findByFullName(subject).url + Const.LIST_DELIMITER;
+	            		}
+	                }
+	            	newTarget.field_subsubject = resSubject;
+            	} else {
+            		newTarget.field_subsubject = Const.NONE;
+            	}
+            }
             if (getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) != null) {
             	if (!getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS).toLowerCase().contains(Const.NONE)) {
 	            	String[] elems = getFormParams(Const.FIELD_SUGGESTED_COLLECTIONS);
