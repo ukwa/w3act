@@ -259,7 +259,39 @@ public class Taxonomy extends Model {
 		Logger.info("res: " + res);
     	return res;
     }
-    
+
+    /**
+     * This method normalize database entries with comma e.g. subjects. 
+     * @param name
+     * @return normalized name
+     */
+    public static String normalizeComma(String name) {
+    	String res = "";
+    	if (name != null && name.length() > 0) {
+    		if (name.contains(Const.COMMA)) {
+    			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+    		}
+    		res = name;
+    	} 
+        return res;
+    }
+    	
+    /**
+     * This method formats taxonomy comma for database entries e.g. subjects. 
+     * @param name
+     * @return normalized name
+     */
+    public static String formatDbComma(String name) {
+    	String res = "";
+    	if (name != null && name.length() > 0) {
+    		if (name.contains(Const.COMMA)) {
+    			name = name.replace(Const.COMMA + " ", Const.COMMA); // in database entry with comma has additional space after comma
+    		}
+    		res = name;
+    	} 
+        return res;
+    }
+    	
     /**
      * Retrieve a taxonomy by title.
      * @param title
@@ -286,6 +318,25 @@ public class Taxonomy extends Model {
     	if (type != null && type.length() > 0) {
 	        ExpressionList<Taxonomy> ll = find.where().eq(Const.TTYPE, type);
 	    	res = ll.findList(); 
+        }
+    	return res;
+    }
+        
+    /**
+     * Retrieve a list of the 2nd level subjects by parent name.
+     * @param parent name as a string
+     * @return 2nd level subjects list
+     */
+	public static List<Taxonomy> findSubSubjectsList(String parent) {
+    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	if (parent != null && parent.length() > 0) {
+    		Logger.info("parent: " + parent);
+    		parent = formatDbComma(parent);
+	        ExpressionList<Taxonomy> ll = find.where()
+	        		.eq(Const.TTYPE, Const.TaxonomyType.SUBJECT.name().toLowerCase())
+	        		.eq(Const.PARENT, parent);
+	    	res = ll.findList(); 
+	    	Logger.info("size: " + res.size());
         }
     	return res;
     }

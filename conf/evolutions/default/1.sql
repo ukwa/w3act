@@ -363,6 +363,7 @@ create table target (
   field_notes               TEXT,
   field_instances           TEXT,
   field_subject             TEXT,
+  field_subsubject          TEXT,
   keywords                  TEXT,
   tags                      TEXT,
   synonyms                  TEXT,
