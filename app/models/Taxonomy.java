@@ -299,8 +299,26 @@ public class Taxonomy extends Model {
      */
     public static Taxonomy findByFullName(String name) {
     	Taxonomy res = new Taxonomy();
+    	Logger.info("findByFullName: " + name);
     	if (name != null && name.length() > 0) {
     		res = find.where().eq(Const.NAME, name).findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+		Logger.info("res: " + res);
+    	return res;
+    }
+    
+    /**
+     * Retrieve a taxonomy by name and type.
+     * @param title
+     * @return taxonomy object
+     */
+    public static Taxonomy findByFullNameExt(String name, String ttype) {
+    	Taxonomy res = new Taxonomy();
+    	Logger.info("findByFullNameExt: " + name);
+    	if (name != null && name.length() > 0) {
+    		res = find.where().eq(Const.NAME, name).eq(Const.TTYPE, ttype).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
@@ -330,13 +348,13 @@ public class Taxonomy extends Model {
 	public static List<Taxonomy> findSubSubjectsList(String parent) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (parent != null && parent.length() > 0) {
-    		Logger.info("parent: " + parent);
+//    		Logger.info("parent: " + parent);
     		parent = formatDbComma(parent);
 	        ExpressionList<Taxonomy> ll = find.where()
-	        		.eq(Const.TTYPE, Const.TaxonomyType.SUBJECT.name().toLowerCase())
+	        		.eq(Const.TTYPE, Const.TaxonomyType.SUBSUBJECT.name().toLowerCase())
 	        		.eq(Const.PARENT, parent);
 	    	res = ll.findList(); 
-	    	Logger.info("size: " + res.size());
+//	    	Logger.info("size: " + res.size());
         }
     	return res;
     }

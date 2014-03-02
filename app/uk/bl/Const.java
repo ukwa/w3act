@@ -257,6 +257,7 @@ public final class Const {
 		COLLECTION,
 		LICENSE,
 		SUBJECT,
+		SUBSUBJECT,
 		QUALITY_ISSUE;
     }
 	
