@@ -121,7 +121,7 @@ public class TargetController extends AbstractController {
 	            		if (subject != null && subject.length() > 0) {
 	                		Logger.info("add subject: " + subject);
 //	                		Logger.info("add subject: " + subject + ", " + Taxonomy.findByName(subject).url);
-	            			resSubject = resSubject + Taxonomy.findByFullName(subject).url + Const.LIST_DELIMITER;
+	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBJECT).url + Const.LIST_DELIMITER;
 	            		}
 	                }
 	            	newTarget.field_subject = resSubject;
@@ -137,7 +137,7 @@ public class TargetController extends AbstractController {
 	                {
 	            		if (subject != null && subject.length() > 0) {
 	                		Logger.info("add subsubject: " + subject);
-	            			resSubject = resSubject + Taxonomy.findByFullName(subject).url + Const.LIST_DELIMITER;
+	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBSUBJECT).url + Const.LIST_DELIMITER;
 	            		}
 	                }
 	            	newTarget.field_subsubject = resSubject;
