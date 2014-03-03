@@ -156,6 +156,7 @@ public final class Const {
 	
 	// Organisation
 	public static final String FIELD_ABBREVIATION = "field_abbreviation";
+	public static final String ALL_AGENCIES       = "All Agencies";
 	
 	// Permission
 	public static final String ID                 = "id";
@@ -210,6 +211,7 @@ public final class Const {
 	public static final String EXPORT             = "export";
 	public static final String EXPORT_FILE        = "export.csv";
 	public static final String EXPORT_INSTANCE_FILE = "exportinstances.csv";
+	public static final String EXPORT_LICENCE_FILE = "exportlicences.csv";
 	public static final String CSV_SEPARATOR      = ";";
 	public static final String CSV_LINE_END       = "\n";
 	public static final String SEARCH             = "search";
@@ -391,7 +393,13 @@ public final class Const {
 		targetExportMap.put("field_crawl_frequency", 4);
 		targetExportMap.put("created", 5);
 	}
-	
+		
+    public static final Map<String, Integer> permissionExportMap = new HashMap<String, Integer>();
+		static {
+		targetExportMap.put("target", 0);
+		targetExportMap.put("licenseDate", 1);
+	}
+		
     public static final Map<String, Integer> collectionMap = new HashMap<String, Integer>();
     	static {
     	collectionMap.put("field_targets", 0);

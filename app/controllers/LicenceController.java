@@ -1,31 +1,22 @@
 package controllers;
 
-import play.*;
-import play.mvc.*;
-import play.data.*;
-import static play.data.Form.*;
+import java.util.Iterator;
+import java.util.List;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import models.*;
-import views.html.*;
-import views.html.licence.*;
-import uk.bl.api.*;
-import uk.bl.scope.Scope;
-
-import java.net.URL;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.lang.StringBuilder;
-import java.io.FileNotFoundException;
+import models.CommunicationLog;
+import models.ContactPerson;
+import models.CrawlPermission;
+import models.Target;
+import models.Taxonomy;
+import play.Logger;
+import play.mvc.Result;
+import uk.bl.Const;
+import uk.bl.api.Utils;
+import views.html.licence.ukwalicence;
+import views.html.licence.ukwalicenceresult;
+import views.html.licence.ukwalicenceview;
 
 import com.avaje.ebean.Ebean;
-
-import play.libs.Json;
-import uk.bl.Const;
 
 /**
  * Support for adding owner licence.
@@ -106,6 +97,7 @@ public class LicenceController extends AbstractController {
         	    if (permissionList != null && permissionList.size() > 0) {
         	    	CrawlPermission permission = permissionList.get(0);
                 	Logger.info("found crawl permission: " + permission);
+            	    permission.target = target;
                     if (getFormParam(Const.NAME) != null) {
                         permission.name = getFormParam(Const.NAME);
                     }
