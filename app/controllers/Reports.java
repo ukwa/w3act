@@ -51,10 +51,10 @@ public class Reports extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS);
+        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "");
         return ok(
                 reports.render(
-                    "Reports", User.find.byId(request().username()), resList, "", "", "", ""
+                    "Reports", User.find.byId(request().username()), resList, "", "", "", "", ""
                 )
             );
     }
@@ -87,8 +87,14 @@ public class Reports extends AbstractController {
     			Logger.info("Can't find organisation for title: " + organisation_name + ". " + e);
     		}
     	} 
+    	String request_name = form.get(Const.REQUEST);
+    	String request = "";
+    	if (request_name != null && !request_name.toLowerCase().equals(Const.NONE) 
+    			&& !request_name.toLowerCase().equals(Const.ALL)) {
+   			request = request_name;
+    	} 
 
-        List<CrawlPermission> resList = processFilterReports(curator, organisation, Const.DEFAULT_CRAWL_PERMISSION_STATUS);
+        List<CrawlPermission> resList = processFilterReports(curator, organisation, Const.DEFAULT_CRAWL_PERMISSION_STATUS, request);
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
@@ -98,14 +104,14 @@ public class Reports extends AbstractController {
     			export(resList);
     			return ok(
                 		reports.render(
-                            "Reports", User.find.byId(request().username()), resList, curator, organisation, "", ""
+                            "Reports", User.find.byId(request().username()), resList, curator, organisation, "", "", request
                         )
                     );
     		}
     		else if (Const.SEARCH.equals(action)) {
     			return ok(
                 		reports.render(
-                            "Reports", User.find.byId(request().username()), resList, curator, organisation, "", ""
+                            "Reports", User.find.byId(request().username()), resList, curator, organisation, "", "", request
                         )
                     );
 		    } else {
@@ -150,12 +156,14 @@ public class Reports extends AbstractController {
             	
     /**
      * This method applies filters to the list of crawl reports.
-     * @param filterUrl The search string
+     * @param curator The curator URL
+     * @param organisation The organisation URL
      * @param status The status of the report workflow
-     * @param target The domain name (URL)
+     * @param request The request type (first request/folloup/all)
      * @return
      */
-    public static List<CrawlPermission> processFilterReports(String curator, String organisation, String status) {
+    public static List<CrawlPermission> processFilterReports(String curator, String organisation, 
+    		String status, String request) {
     	boolean isProcessed = false;
     	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
     	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
@@ -167,6 +175,15 @@ public class Reports extends AbstractController {
     	if (curator != null && !curator.toLowerCase().equals(Const.NONE) && curator.length() > 0) {
     		Logger.info("curator: " + curator);
     		exp = exp.eq(Const.CREATOR_USER, curator);
+    		isProcessed = true;
+    	} 
+    	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
+    		Logger.info("request: " + request);
+    		if (request.equals(Const.RequestTypes.FOLLOW_UP.name())) {
+    			exp = exp.eq(Const.REQUEST_FOLLOW_UP, true);
+    		} else {
+    			exp = exp.eq(Const.REQUEST_FOLLOW_UP, null);
+    		}
     		isProcessed = true;
     	} 
     	res = exp.query().findList();
@@ -182,37 +199,37 @@ public class Reports extends AbstractController {
      * Display the report.
      */
     public static Result summary() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS);
+        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "");
         return ok(
                 reports.render(
-                    "Reports", User.find.byId(request().username()), resList, "", "", "", ""
+                    "Reports", User.find.byId(request().username()), resList, "", "", "", "", ""
                 )
             );
     }
 
     public static Result openLicences() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS);
+        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "");
         return ok(
                 reports.render(
-                    "Reports", User.find.byId(request().username()), resList, "", "", "", ""
+                    "Reports", User.find.byId(request().username()), resList, "", "", "", "", ""
                 )
             );
     }
 
     public static Result recordCreation() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS);
+        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "");
         return ok(
                 reports.render(
-                    "Reports", User.find.byId(request().username()), resList, "", "", "", ""
+                    "Reports", User.find.byId(request().username()), resList, "", "", "", "", ""
                 )
             );
     }
 
     public static Result qa() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS);
+        List<CrawlPermission> resList = processFilterReports("", "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "");
         return ok(
                 reports.render(
-                    "Reports", User.find.byId(request().username()), resList, "", "", "", ""
+                    "Reports", User.find.byId(request().username()), resList, "", "", "", "", ""
                 )
             );
     }

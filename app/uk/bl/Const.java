@@ -82,6 +82,7 @@ public final class Const {
 	public static final String FILTER             = "filter";
 	public static final String NONE               = "none";
 	public static final String USER               = "user";
+	public static final String ALL                = "all";
 
 	// Target
 	public static final String NID                = "nid";
@@ -316,6 +317,15 @@ public final class Const {
 	public enum TargetLanguage {
 		EN,
 		DE;
+    }
+    
+	/**
+	 * The predominant language of target.
+	 */
+	public enum RequestTypes {
+		ALL,
+		FIRST_REQUEST,
+		FOLLOW_UP;
     }
     
 	/**

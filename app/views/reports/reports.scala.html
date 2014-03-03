@@ -1,4 +1,4 @@
-@(title: String, user: User, permissions: List[CrawlPermission], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String)
+@(title: String, user: User, permissions: List[CrawlPermission], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, requestType: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -30,10 +30,12 @@
 		
     <article class="reports">
 
+		@helper.form(action=routes.Reports.search, 'class -> "form-inline") {
 		<div id="forms">
-			<input type="hidden" name="query_curator" value="@curatorUrl">
-			<input type="hidden" name="query_organisation" value="organisationUrl">
-   			@helper.form(action=routes.Reports.search, 'class -> "form-inline") {								
+			<div class="input-group">
+				<input type="hidden" name="query_curator" value="@curatorUrl">
+				<input type="hidden" name="query_organisation" value="organisationUrl">
+   			</div>				
 				<div class="padding-20">
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
@@ -41,6 +43,7 @@
 				<div id="accordion">
 					<div id="filter-panel" class="panel-collapse collapse in">
 						<div class="panel-body">
+							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
 										<label for="curator" class="col-sm-6 control-label">Filter by curator</label>
@@ -75,25 +78,51 @@
 										</div>
 						         	</div>
 								</div>
+							</div>
+							<div class="row">
 								<div class="col-md-6">
 										<div class="form-group">
 											<label class="col-sm-6 control-label">Filter by time period from </label>
 										    <div class="col-sm-6">
-						 						<input type="text" name="field_crawl_start_date" value="@startDate" size="30" maxlength="2048" class="form-control" id="start-date"/>
+										    	<div class="input-group">
+						 							<input type="text" name="field_crawl_start_date" value="@startDate" size="30" maxlength="2048" class="form-control  target-form-control" id="start-date"/>
+						 						</div>
 					                		</div>
 										</div>
-
 						     	</div>	
 				
 								<div class="col-md-6">
 										<div class="form-group">
 											<label class="col-sm-6 control-label">to </label>
 										    <div class="col-sm-6">
-						 						<input type="text" name="field_crawl_end_date" value="@endDate" size="30" maxlength="2048" class="form-control" id="end-date"/>
+										    	<div class="input-group">
+						 							<input type="text" name="field_crawl_end_date" value="@endDate" size="30" maxlength="2048" class="form-control target-form-control" id="end-date"/>
+						 						</div>
 					                		</div>
 										</div>
 						     	</div>	
-
+							</div>
+							<div class="row">
+								<div class="row padding-10">
+						     		<div class="col-md-12 col-xs-12 col-sm-12">
+										<div class="form-group">
+							              	<label for="request" class="col-sm-6 control-label">Request type </label>
+										    <div class="col-sm-6">
+												<select name="request" id="request" class="form-control">
+									                @for(request <- CrawlPermission.getAllRequestTypes()) {
+										                @if(request.equals(requestType)) {
+										                	<option selected>@request</option>
+										                } else {
+										                	<option>@request</option>
+										                }
+									                }
+												</select>
+											</div>
+										</div>
+									</div>
+						     	</div>	     
+									
+							</div>
 						</div>
 					</div>
 				</div>				
