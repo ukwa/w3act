@@ -3,43 +3,26 @@ package controllers;
 import static play.data.Form.form;
 
 import java.io.StringWriter;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.ExpressionList;
-import com.avaje.ebean.Page;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import models.CrawlPermission;
 import models.Organisation;
 import models.Target;
 import models.User;
-import models.ContactPerson;
-import models.MailTemplate;
-import models.CommunicationLog;
+
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.data.DynamicForm;
-import play.libs.Json;
-import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import uk.bl.scope.EmailHelper;
-import views.html.contactpersons.*;
-import views.html.mailtemplates.*;
-import views.html.reports.*;
-import views.html.licence.*;
-import views.html.refusals.*;
-import views.html.communicationlogs.*;
+import views.html.reports.reports;
 
-import java.util.*;
-
-import org.apache.commons.lang3.StringUtils;
+import com.avaje.ebean.ExpressionList;
 
 /**
  * Manage reports.
@@ -111,8 +94,12 @@ public class Reports extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.EXPORT.equals(action)) {
-				Logger.info("export size: " + resList.size());
-    			export(resList);
+				Logger.info("export requested size: " + resList.size());
+    			export(resList, Const.EXPORT_REQUESTED_LICENCE_FILE);
+				Logger.info("export granted size: " + resListGranted.size());
+    			export(resListGranted, Const.EXPORT_GRANTED_LICENCE_FILE);
+				Logger.info("export refused size: " + resListRefused.size());
+    			export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
     			return ok(
                 		reports.render(
                             "Reports", User.find.byId(request().username()), resList, resListGranted,
@@ -137,9 +124,10 @@ public class Reports extends AbstractController {
     /**
      * This method exports selected crawl permissions to CSV file.
      * @param list of Target objects
+     * @param file name
      * @return
      */
-    public static void export(List<CrawlPermission> permissionList) {
+    public static void export(List<CrawlPermission> permissionList, String fileName) {
     	Logger.info("export() permissionList size: " + permissionList.size());
 
         StringWriter sw = new StringWriter();
@@ -164,7 +152,7 @@ public class Reports extends AbstractController {
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
  	    }
-    	Utils.generateCsvFile(Const.EXPORT_LICENCE_FILE, sw.toString());
+    	Utils.generateCsvFile(fileName, sw.toString());
     }
             	
     /**

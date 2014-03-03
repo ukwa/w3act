@@ -306,6 +306,7 @@ public class CrawlPermissions extends AbstractController {
                 permission.thirdPartyContent = false;
                 permission.agree = false;
                 permission.publish = true;
+            	permission.licenseDate = LicenceController.getCurrentDate();
                	Ebean.save(permission);
     	        Logger.info("save crawl permission: " + permission.toString());
     	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.SAVE);
@@ -467,6 +468,7 @@ public class CrawlPermissions extends AbstractController {
                 boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag) {
                 	permission.status = Const.CrawlPermissionStatus.EMAIL_REJECTED.name();
+                	permission.licenseDate = LicenceController.getCurrentDate();
                 	Logger.info("new permission staus: " + permission.status);
                    	Ebean.update(permission);                	
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);

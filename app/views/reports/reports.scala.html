@@ -141,7 +141,7 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Apply filters">Apply</button>
-					@if(permissions.size() > 0) {
+					@if(permissions.size() > 0 || permissionsGranted.size() > 0 || permissionsRefused.size() > 0) {
 						<button type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
 					} else {
 						<button disabled type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
