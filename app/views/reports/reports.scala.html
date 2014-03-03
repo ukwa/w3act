@@ -1,4 +1,4 @@
-@(title: String, user: User, permissions: List[CrawlPermission], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, requestType: String)
+@(title: String, user: User, permissions: List[CrawlPermission], permissionsGranted: List[CrawlPermission], permissionsRefused: List[CrawlPermission], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, requestType: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -28,6 +28,14 @@
 	   <li><a href="@routes.Reports.qa()">QA</a></li> 
 	</ul>
 		
+	<div class="tab-content padding-20">          
+		<ul class="nav nav-pills">
+	        <li class="active"><a href="#requested" data-toggle="tab">Requested</a></li>
+	        <li><a href="#granted" data-toggle="tab">Granted</a></li>
+		    <li><a href="#refused" data-toggle="tab">Refused</a></li>
+	  	</ul>
+	</div>
+	
     <article class="reports">
 
 		@helper.form(action=routes.Reports.search, 'class -> "form-inline") {
@@ -143,32 +151,97 @@
 		</div>
 		}				
 
-	   	<div class="row padding-20">
-			<table class="table table-hover">
-				<thead>
-					<tr>
-						<th>Target Title</th>
-						<th>Target URL</th>
-						<th>Date requested</th>
-					</tr>
-				</thead>
-				<tbody>
-				@permissions.map { permission =>		              
-					<tr>
-						<td>
-			                @Target.findByUrl(permission.target).title
-						</td>
-						<td>
-			                @permission.target
-						</td>
-						<td>
-			                @permission.licenseDate
-						</td>
-					</tr>
-				}
-				</tbody>
-			</table>
-		</div>		  
+		<div id="myTabContent" class="tab-content">
+		
+			<div class="tab-pane padding-20 fade active in" id="requested">
+			   	<div class="row padding-20">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Target Title</th>
+								<th>Target URL</th>
+								<th>Date requested</th>
+							</tr>
+						</thead>
+						<tbody>
+						@permissions.map { permission =>		              
+							<tr>
+								<td>
+					                @Target.findByUrl(permission.target).title
+								</td>
+								<td>
+					                @permission.target
+								</td>
+								<td>
+					                @permission.licenseDate
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>	
+			</div>
+			
+			<div class="tab-pane padding-20 fade" id="granted">
+				<input type="hidden" name="status" value="granted">
+			   	<div class="row padding-20">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Target Title</th>
+								<th>Target URL</th>
+								<th>Date requested</th>
+							</tr>
+						</thead>
+						<tbody>
+						@permissionsGranted.map { permission =>		              
+							<tr>
+								<td>
+					                @Target.findByUrl(permission.target).title
+								</td>
+								<td>
+					                @permission.target
+								</td>
+								<td>
+					                @permission.licenseDate
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>	
+			</div>  
+
+			<div class="tab-pane padding-20 fade" id="refused">
+			   	<div class="row padding-20">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Target Title</th>
+								<th>Target URL</th>
+								<th>Date requested</th>
+							</tr>
+						</thead>
+						<tbody>
+						@permissionsRefused.map { permission =>		              
+							<tr>
+								<td>
+					                @Target.findByUrl(permission.target).title
+								</td>
+								<td>
+					                @permission.target
+								</td>
+								<td>
+					                @permission.licenseDate
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>	
+			</div>
+			
+		</div>	  
 
 	}
 	</article>
