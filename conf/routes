@@ -116,6 +116,13 @@ GET    	/crawlpermissions/communicationlogs    	controllers.CrawlPermissions.com
 GET     /crawlpermissions/:permission        	controllers.CrawlPermissions.view(permission)
 GET     /crawlpermissions/:permission/edit    	controllers.CrawlPermissions.edit(permission)
 
+GET     /reports                   	            controllers.Reports.index()
+GET    	/reports/search            	            controllers.Reports.search()
+GET    	/reports/summary     		            controllers.Reports.summary()
+GET    	/reports/openLicences    	            controllers.Reports.openLicences()
+GET    	/reports/recordCreation        		    controllers.Reports.recordCreation()
+GET    	/reports/qa                         	controllers.Reports.qa()
+
 GET     /mailtemplates                       	controllers.MailTemplates.index()
 GET     /mailtemplates/search               	controllers.MailTemplates.search()
 GET    	/mailtemplates/filterbyjson/:name		controllers.MailTemplates.filterByJson(name)
