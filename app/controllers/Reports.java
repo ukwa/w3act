@@ -35,11 +35,11 @@ public class Reports extends AbstractController {
      */
     public static Result index() {
         List<CrawlPermission> resList = 
-        		processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "");
+        		processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
         List<CrawlPermission> resListGranted = 
-        		processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "");
+        		processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
         List<CrawlPermission> resListRefused = 
-        		processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "");
+        		processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
         return ok(
                 reports.render(
                     "Reports", User.find.byId(request().username()), resList, 
@@ -82,13 +82,19 @@ public class Reports extends AbstractController {
     			&& !request_name.toLowerCase().equals(Const.ALL)) {
    			request = request_name;
     	} 
-
+        String start_date = form.get(Const.FIELD_CRAWL_START_DATE);
+        Logger.info("start_date: " + start_date);
+        String end_date = form.get(Const.FIELD_CRAWL_END_DATE);
+        
         List<CrawlPermission> resList = 
-        		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.PENDING.name(), request);
+        		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.PENDING.name(), 
+        				request, start_date, end_date);
         List<CrawlPermission> resListGranted = 
-        		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.GRANTED.name(), request);
+        		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.GRANTED.name(), 
+        				request, start_date, end_date);
         List<CrawlPermission> resListRefused = 
-        		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.REFUSED.name(), request);
+        		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.REFUSED.name(), 
+        				request, start_date, end_date);
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
@@ -103,7 +109,7 @@ public class Reports extends AbstractController {
     			return ok(
                 		reports.render(
                             "Reports", User.find.byId(request().username()), resList, resListGranted,
-                            resListRefused, curator, organisation, "", "", request
+                            resListRefused, curator, organisation, start_date, end_date, request
                         )
                     );
     		}
@@ -111,7 +117,7 @@ public class Reports extends AbstractController {
     			return ok(
                 		reports.render(
                             "Reports", User.find.byId(request().username()), resList, resListGranted,
-                            resListRefused, curator, organisation, "", "", request
+                            resListRefused, curator, organisation, start_date, end_date, request
                         )
                     );
 		    } else {
@@ -164,7 +170,7 @@ public class Reports extends AbstractController {
      * @return
      */
     public static List<CrawlPermission> processFilterReports(String curator, String organisation, 
-    		String status, String request) {
+    		String status, String request, String start_date, String end_date) {
     	boolean isProcessed = false;
     	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
     	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
@@ -187,6 +193,16 @@ public class Reports extends AbstractController {
     		}
     		isProcessed = true;
     	} 
+    	if (start_date != null && start_date.length() > 0) {
+    		Logger.info("start_date: " + start_date);
+    		exp = exp.ge(Const.LICENSE_DATE, start_date);
+    		isProcessed = true;
+    	} 
+    	if (end_date != null && end_date.length() > 0) {
+    		Logger.info("start_date: " + end_date);
+    		exp = exp.le(Const.LICENSE_DATE, end_date);
+    		isProcessed = true;
+    	} 
     	res = exp.query().findList();
     	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
@@ -200,20 +216,24 @@ public class Reports extends AbstractController {
      * Display the report.
      */
     public static Result summary() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "");
+        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), 
+        		"", "", "");
+        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), 
+        		"", "", "");
+        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), 
+        		"", "", "");
         return ok(
                 reports.render(
-                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
+                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, 
+                    "", "", "", "", ""
                 )
             );
     }
 
     public static Result openLicences() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "");
+        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
+        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
+        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
         return ok(
                 reports.render(
                     "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
@@ -222,9 +242,9 @@ public class Reports extends AbstractController {
     }
 
     public static Result recordCreation() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "");
+        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
+        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
+        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
         return ok(
                 reports.render(
                     "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
@@ -233,9 +253,9 @@ public class Reports extends AbstractController {
     }
 
     public static Result qa() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "");
+        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
+        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
+        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
         return ok(
                 reports.render(
                     "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
