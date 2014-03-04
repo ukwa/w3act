@@ -33,7 +33,7 @@
     <article class="permissions">
 
 		<div id="forms">
-	   		<form class="form-inline" action="@routes.ContactPersonEdit.filter()" method="POST" role="form">
+   			@helper.form(action=routes.ContactPersons.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Contact Person Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
@@ -43,7 +43,7 @@
 						}
 					</span>
 				</div>
-		    </form>
+			}
 		</div>	        
 
 		<table class="table table-hover">
@@ -56,7 +56,7 @@
 			<tbody>
 			@contactpersons.map { contactperson =>		              
 				<tr>
-					<td><a href="@routes.ContactPersonEdit.view(contactperson.url)">@contactperson.name</a></td>
+					<td><a href="@routes.ContactPersons.view(contactperson.url)">@contactperson.name</a></td>
 					<td>@contactperson.email</td>
 				</tr>
 			}

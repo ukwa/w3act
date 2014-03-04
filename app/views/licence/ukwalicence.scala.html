@@ -39,7 +39,7 @@
 		</div>
 	</div>	
 
-	<form action="@routes.LicenceController.submit()" method="POST">
+	@helper.form(action=routes.LicenceController.submit) {
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="basicinformation">
 			    <input type="hidden" name="license" value="UKWA Selective Archive License">
@@ -235,8 +235,8 @@
 		       </div>
 			</div>
 		</div>
-	</form>
-		</div>
+	}
+			</div>
     </body>
 </html>	
 

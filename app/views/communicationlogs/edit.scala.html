@@ -7,13 +7,13 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.CommunicationLogEdit.view(log.url)">View</a></li>
+	   <li><a href="@routes.CommunicationLogs.view(log.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.CommunicationLogEdit.edit(log.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.CommunicationLogs.edit(log.url)">Edit</a></li>
 	   }
 	</ul>
     
-	<form action="@routes.CommunicationLogEdit.save()" method="POST">
+	@helper.form(action=routes.CommunicationLogs.save) {
 		<input type="hidden" name="url" value="@log.url">
 		<input type="hidden" name="id" value="@log.id">
 
@@ -112,6 +112,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

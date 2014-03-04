@@ -13,7 +13,7 @@
 	   }
 	</ul>
     
-	<form action="@routes.MailTemplates.save()" method="POST">
+   	@helper.form(action=routes.MailTemplates.save) {
 		<input type="hidden" name="url" value="@template.url">
 		<input type="hidden" name="id" value="@template.id">
 
@@ -110,6 +110,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

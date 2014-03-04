@@ -17,8 +17,8 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import views.html.collections.collectionedit;
-import views.html.collections.collectionview;
+import views.html.collections.edit;
+import views.html.collections.view;
 import views.html.collections.list;
 
 import com.avaje.ebean.Ebean;
@@ -113,7 +113,7 @@ public class Collections extends AbstractController {
 	  
     public static Result view(String url) {
         return ok(
-                collectionview.render(
+                view.render(
                         DCollection.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -131,7 +131,7 @@ public class Collections extends AbstractController {
         collection.url = Const.ACT_URL + collection.nid;
 		Logger.info("add entry with url: " + collection.url + ", and title: " + collection.title);
         return ok(
-                collectionedit.render(
+                edit.render(
                       collection, User.find.byId(request().username())
                 )
             );
@@ -145,7 +145,7 @@ public class Collections extends AbstractController {
 		DCollection collection = DCollection.findByUrl(url);
 		Logger.info("collection title: " + collection.title + ", url: " + url);
         return ok(
-                collectionedit.render(
+                edit.render(
                         DCollection.findByUrl(url), User.find.byId(request().username())
                 )
             );

@@ -7,13 +7,13 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.ContactPersonEdit.view(person.url)">View</a></li>
+	   <li><a href="@routes.ContactPersons.view(person.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.ContactPersonEdit.edit(person.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.ContactPersons.edit(person.url)">Edit</a></li>
 	   }
 	</ul>
     
-	<form action="@routes.ContactPersonEdit.save()" method="POST">
+	@helper.form(action=routes.ContactPersons.save) {
 		<input type="hidden" name="url" value="@person.url">
 		<input type="hidden" name="id" value="@person.id">
 
@@ -147,6 +147,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

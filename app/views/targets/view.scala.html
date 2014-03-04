@@ -6,8 +6,8 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.TargetEdit.view(target.url)">View</a></li>
-	   <li><a href="@routes.TargetEdit.edit(target.url)">Edit</a></li> 
+	   <li class="active"><a href="@routes.Targets.view(target.url)">View</a></li>
+	   <li><a href="@routes.Targets.edit(target.url)">Edit</a></li> 
 	</ul>
 	
 	<div class="tab-content padding-20">
@@ -894,7 +894,7 @@
 				<div id="collapseRevisions" class="panel-collapse collapse">
 	       			@for(prevTarget <- Target.findRevisions(target.url)) {
 	       			<div class="panel-footer">
-	       				<a class="brand" href="@routes.TargetEdit.viewrevision(prevTarget.nid)">
+	       				<a class="brand" href="@routes.Targets.viewrevision(prevTarget.nid)">
 	         				(@prevTarget.nid) &nbsp; @prevTarget.revision &nbsp; @prevTarget.lastUpdate</a>
 	       			</div>
 	       			}

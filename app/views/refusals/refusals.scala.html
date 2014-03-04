@@ -33,7 +33,7 @@
     <article class="permissions">
 
 		<div id="forms">
-	   		<form class="form-inline" action="@routes.PermissionRefusalEdit.filter()" method="POST" role="form">
+   			@helper.form(action=routes.PermissionRefusalEdit.filter, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Permission Refusal Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
@@ -43,7 +43,7 @@
 						}
 					</span>
 				</div>
-		    </form>
+			}
 		</div>	        
 
 		<table class="table table-hover">

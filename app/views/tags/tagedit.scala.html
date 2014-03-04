@@ -13,7 +13,7 @@
 	   }
 	</ul>
     
-	<form action="@routes.Tags.save()" method="POST">
+	@helper.form(action=routes.Tags.save) {
 		<input type="hidden" name="url" value="@tag.url">
 		<input type="hidden" name="id" value="@tag.id">
 
@@ -51,6 +51,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

@@ -258,7 +258,7 @@ public class TargetController extends AbstractController {
         	}
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
-	        res = redirect(routes.TargetEdit.view(newTarget.url));
+	        res = redirect(routes.Targets.view(newTarget.url));
         } 
         if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.NID));
