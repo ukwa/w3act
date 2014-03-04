@@ -23,6 +23,11 @@ GET     /ukwa/licence/result                controllers.LicenceController.result
 GET     /ukwa/licenceform/:url              controllers.LicenceController.form(url)
 GET     /ukwa/licenceformview/:url          controllers.LicenceController.formview(url)
 
+# Nomination form
+POST    /ukwa/nomination/submit             controllers.Nominations.submit()
+GET     /ukwa/nomination/result             controllers.Nominations.result()
+GET     /ukwa/nominationform                controllers.Nominations.formpage()
+
 # Tabs
 GET     /collections                        controllers.Collections.index()
 GET    	/collections/list                  	controllers.Collections.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
@@ -200,6 +205,15 @@ GET     /communicationlogs/:log/edit        controllers.CommunicationLogs.edit(l
 GET     /communicationlogs/new/:log         controllers.CommunicationLogs.create(log)
 POST    /communicationlogs		            controllers.CommunicationLogs.save()
 GET     /communicationlogs/link/:permission controllers.CommunicationLogs.showLogs(permission)
+
+GET     /nominations                        controllers.Nominations.index()
+GET     /nominations/list					controllers.Nominations.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET		/nominations/search                 controllers.Nominations.search()
+GET    	/nominations/filterbyjson/:name		controllers.Nominations.filterByJson(name)
+GET     /nominations/:nomination            controllers.Nominations.view(nomination)
+GET     /nominations/:nomination/edit       controllers.Nominations.edit(nomination)
+GET     /nominations/create/:nomination     controllers.Nominations.create(nomination)
+POST    /nominations                   		controllers.Nominations.save()
 
 
 # Forms
