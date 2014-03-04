@@ -213,7 +213,8 @@ public class Utils {
     public static String readTextFile(String fileName) {
     	String res = "";
     	try {
-    		fileName = "conf\\templates\\default.txt";
+    		fileName = "conf" + System.getProperty("file.separator") + "templates" + 
+    					System.getProperty("file.separator") + "default.txt";
     		System.out.println("template path: " + fileName);
 	    	BufferedReader br = new BufferedReader(new FileReader(fileName));
 	        try {
