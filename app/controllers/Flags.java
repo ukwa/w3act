@@ -51,7 +51,7 @@ public class Flags extends AbstractController {
 		Flag flag = Flag.findByUrl(url);
 		Logger.info("flag name: " + flag.name + ", url: " + url);
         return ok(
-                flagedit.render(
+                edit.render(
                 		models.Flag.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -59,7 +59,7 @@ public class Flags extends AbstractController {
     
     public static Result view(String url) {
         return ok(
-                flagview.render(
+                view.render(
                 		models.Flag.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -140,7 +140,7 @@ public class Flags extends AbstractController {
         flag.url = Const.ACT_URL + flag.id;
 		Logger.info("add entry with url: " + flag.url + ", and name: " + flag.name);
         return ok(
-                flagedit.render(
+                edit.render(
                       flag, User.find.byId(request().username())
                 )
             );

@@ -47,7 +47,7 @@ public class Permissions extends AbstractController {
 		Permission permission = Permission.findByUrl(url);
 		Logger.info("permission name: " + permission.name + ", url: " + url);
         return ok(
-                permissionedit.render(
+                edit.render(
                         Permission.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -55,7 +55,7 @@ public class Permissions extends AbstractController {
     
     public static Result view(String url) {
         return ok(
-                permissionview.render(
+                view.render(
                         Permission.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -113,7 +113,7 @@ public class Permissions extends AbstractController {
         permission.url = Const.ACT_URL + permission.id;
 		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
         return ok(
-                permissionedit.render(
+                edit.render(
                       permission, User.find.byId(request().username())
                 )
             );
