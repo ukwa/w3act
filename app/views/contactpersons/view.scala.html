@@ -8,9 +8,9 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.ContactPersonEdit.view(person.url)">View</a></li>
+	   <li class="active"><a href="@routes.ContactPersons.view(person.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   	<li><a href="@routes.ContactPersonEdit.edit(person.url)">Edit</a></li>
+	   	<li><a href="@routes.ContactPersons.edit(person.url)">Edit</a></li>
 	   }
 	</ul>
 

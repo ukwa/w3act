@@ -15,7 +15,7 @@
 		}
 	</ul>
 
-	<form action="@routes.Organisations.saveAdmin()" method="POST">
+	@helper.form(action=routes.Organisations.saveAdmin) {
 		<input type="hidden" name="url" value="@organisation.url">
 
 		<div class="row padding-10">
@@ -71,7 +71,7 @@
 		       </div>
 			</div>
 		</div>		
-	</form>
+	}
 }
 	            
 

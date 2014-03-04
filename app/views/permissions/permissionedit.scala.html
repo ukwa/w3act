@@ -14,7 +14,7 @@
 	   }
 	</ul>
     
-	<form action="@routes.Permissions.save()" method="POST">
+	@helper.form(action=routes.Permissions.save) {
 		<input type="hidden" name="url" value="@permission.url">
 		<input type="hidden" name="id" value="@permission.id">
 
@@ -65,6 +65,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

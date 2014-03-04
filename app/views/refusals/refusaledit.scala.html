@@ -13,7 +13,7 @@
 	   }
 	</ul>
     
-	<form action="@routes.PermissionRefusalEdit.save()" method="POST">
+	@helper.form(action=routes.PermissionRefusalEdit.save) {
 		<input type="hidden" name="url" value="@refusal.url">
 		<input type="hidden" name="id" value="@refusal.id">
 
@@ -81,6 +81,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

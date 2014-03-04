@@ -26,7 +26,6 @@ import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.instances.list;
 import views.html.instances.instanceedit;
-import views.html.collections.collectionsites;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;

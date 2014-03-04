@@ -16,7 +16,7 @@
 	</ul>
     
 
-	<form action="@routes.Organisations.save()" method="POST">
+	@helper.form(action=routes.Organisations.save) {
 		<input type="hidden" name="url" value="@organisation.url">
 		<input type="hidden" name="nid" value="@organisation.nid">
 
@@ -78,6 +78,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

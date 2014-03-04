@@ -24,7 +24,6 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.scope.EmailHelper;
-import views.html.contactpersons.*;
 import views.html.mailtemplates.*;
 import views.html.crawlpermissions.*;
 import views.html.licence.*;
@@ -46,7 +45,7 @@ public class CrawlPermissions extends AbstractController {
     public static Result index() {
         List<CrawlPermission> resList = processFilterCrawlPermissions("", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "");
         return ok(
-                crawlpermissions.render(
+        		views.html.crawlpermissions.list.render(
                     "CrawlPermissions", User.find.byId(request().username()), resList, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS
                 )
             );
@@ -60,7 +59,7 @@ public class CrawlPermissions extends AbstractController {
 		CrawlPermission permission = CrawlPermission.findByUrl(url);
 		Logger.info("permission name: " + permission.name + ", url: " + url);
         return ok(
-                crawlpermissionedit.render(
+        		views.html.crawlpermissions.edit.render(
                 		models.CrawlPermission.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -68,7 +67,7 @@ public class CrawlPermissions extends AbstractController {
     
     public static Result view(String url) {
         return ok(
-                crawlpermissionview.render(
+        		views.html.crawlpermissions.view.render(
                 		models.CrawlPermission.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -90,7 +89,7 @@ public class CrawlPermissions extends AbstractController {
         List<CrawlPermission> resList = processFilterCrawlPermissions("", "", target);
     	Logger.info("showCrawlPermissions count: " + resList.size());
         res = ok(
-        		crawlpermissions.render(
+        		views.html.crawlpermissions.list.render(
                     "CrawlPermissions", User.find.byId(request().username()), resList, "", ""
                 )
             );
@@ -118,7 +117,7 @@ public class CrawlPermissions extends AbstractController {
 			Logger.info("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 			return ok(
-            		crawlpermissions.render(
+					views.html.crawlpermissions.list.render(
                         "CrawlPermissions", User.find.byId(request().username()), resList, "", status
                     )
                 );
@@ -132,7 +131,7 @@ public class CrawlPermissions extends AbstractController {
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			return ok(
-                		crawlpermissions.render(
+    					views.html.crawlpermissions.list.render(
                             "CrawlPermissions", User.find.byId(request().username()), resList, name, status
                         )
                     );
@@ -196,7 +195,7 @@ public class CrawlPermissions extends AbstractController {
         permission.publish = true;
 		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
         return ok(
-                crawlpermissionedit.render(
+        		views.html.crawlpermissions.edit.render(
                       permission, User.find.byId(request().username())
                 )
             );
@@ -219,7 +218,7 @@ public class CrawlPermissions extends AbstractController {
         permission.target = target;
 		Logger.info("add entry with url: " + permission.url + ", name: " + permission.name + ", and target: " + permission.target);
         return ok(
-                crawlpermissionedit.render(
+        		views.html.crawlpermissions.edit.render(
                       permission, User.find.byId(request().username())
                 )
             );
@@ -338,7 +337,7 @@ public class CrawlPermissions extends AbstractController {
     
     public static Result contactpersons() {
         return ok(
-                contactpersons.render(
+                views.html.contactpersons.list.render(
                     "ContactPersons", User.find.byId(request().username()), models.ContactPerson.findAll(), ""
                 )
             );
@@ -362,7 +361,7 @@ public class CrawlPermissions extends AbstractController {
 
     public static Result communicationLogs() {
         return ok(
-                communicationlogs.render(
+                logs.render(
                 	"CommunicationLogs", User.find.byId(request().username()), models.CommunicationLog.findAll(), "", ""
                 )
             );

@@ -130,7 +130,7 @@
 			@for(target <- currentPage.getList) {
             <tr>
             	<td>
-            		<a class="brand" href="@routes.TargetEdit.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a>
+            		<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a>
 				</td>
                	@if(target.field_collection_categories != null && Taxonomy.findListByUrl(target.field_collection_categories) != null) { 
                	<td>

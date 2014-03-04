@@ -7,11 +7,7 @@ import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.ContactPerson;
-import models.DCollection;
-import models.Organisation;
-import models.Role;
 import models.Target;
-import models.Taxonomy;
 import models.User;
 import play.Logger;
 import play.libs.Json;
@@ -21,25 +17,15 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import uk.bl.scope.EmailHelper;
 import views.html.contactpersons.*;
-import views.html.targets.targets;
 
-import javax.mail.*;
-
-import java.io.*;
 import java.util.*;
-import java.util.*;
-
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.InternetAddress;
-import javax.activation.*;
 
 /**
  * Manage persons.
  */
 @Security.Authenticated(Secured.class)
-public class ContactPersonEdit extends AbstractController {
+public class ContactPersons extends AbstractController {
   
     /**
      * Display the person.
@@ -47,7 +33,7 @@ public class ContactPersonEdit extends AbstractController {
     public static Result index() {
         List<ContactPerson> resList = processFilterContactPersons("");
         return ok(
-                contactpersons.render(
+                list.render(
                     "ContactPersons", User.find.byId(request().username()), resList, ""
                 )
             );
@@ -61,7 +47,7 @@ public class ContactPersonEdit extends AbstractController {
 		ContactPerson person = ContactPerson.findByUrl(url);
 		Logger.info("person name: " + person.name + ", url: " + url);
         return ok(
-                contactpersonedit.render(
+                edit.render(
                 		models.ContactPerson.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -69,7 +55,7 @@ public class ContactPersonEdit extends AbstractController {
     
     public static Result view(String url) {
         return ok(
-                contactpersonview.render(
+                view.render(
                 		models.ContactPerson.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -80,9 +66,9 @@ public class ContactPersonEdit extends AbstractController {
      * if required.
      * @return
      */
-    public static Result filter() {
+    public static Result search() {
     	Result res = null;
-    	Logger.info("ContactPersonEdit.filter()");
+    	Logger.info("ContactPersons.filter()");
         String addentry = getFormParam(Const.ADDENTRY);
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
@@ -91,18 +77,18 @@ public class ContactPersonEdit extends AbstractController {
         Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);
         if (addentry != null) {
         	if (name != null && name.length() > 0) {
-        		res = redirect(routes.ContactPersonEdit.addEntry(name));
+        		res = redirect(routes.ContactPersons.create(name));
         	} else {
-        		Logger.info("ContactPerson name is empty. Please write name in search window.");
+        		Logger.info("ContactPersons name is empty. Please write name in search window.");
                 res = ok(
-                        contactpersons.render(
+                        list.render(
                             "ContactPersons", User.find.byId(request().username()), resList, ""
                         )
                     );
         	}
         } else {
             res = ok(
-            		contactpersons.render(
+            		list.render(
                         "ContactPersons", User.find.byId(request().username()), resList, name
                     )
                 );
@@ -140,14 +126,14 @@ public class ContactPersonEdit extends AbstractController {
      * @param person title
      * @return
      */
-    public static Result addEntry(String name) {
+    public static Result create(String name) {
     	ContactPerson person = new ContactPerson();
     	person.name = name;
         person.id = Target.createId();
         person.url = Const.ACT_URL + person.id;
 		Logger.info("add entry with url: " + person.url + ", and name: " + person.name);
         return ok(
-                contactpersonedit.render(
+                edit.render(
                       person, User.find.byId(request().username())
                 )
             );
@@ -224,14 +210,14 @@ public class ContactPersonEdit extends AbstractController {
            		Logger.info("update crawl person: " + person.toString());
                	Ebean.update(person);
         	}
-	        res = redirect(routes.ContactPersonEdit.view(person.url));
+	        res = redirect(routes.ContactPersons.view(person.url));
         } 
         if (delete != null) {
         	ContactPerson person = ContactPerson.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(person);
-	        res = redirect(routes.ContactPersonEdit.index()); 
+	        res = redirect(routes.ContactPersons.index()); 
         }
-    	res = redirect(routes.ContactPersonEdit.index()); 
+    	res = redirect(routes.ContactPersons.index()); 
         return res;
     }	   
 

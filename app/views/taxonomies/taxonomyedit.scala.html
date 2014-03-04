@@ -13,7 +13,7 @@
 		}
 	</ul>
 	
-    <form action="@routes.TaxonomiesController.save()" method="POST">
+	@helper.form(action=routes.TaxonomiesController.save) {
    		<input type="hidden" name="url" value="@taxonomy.url">
    	    <input type="hidden" name="nid" value="@taxonomy.tid">
 
@@ -60,6 +60,6 @@
 			</div>
 		</div>
 		}
-	</form>
+	}
 }
 

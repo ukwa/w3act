@@ -7,11 +7,7 @@ import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.CommunicationLog;
-import models.DCollection;
-import models.Organisation;
-import models.Role;
 import models.Target;
-import models.Taxonomy;
 import models.User;
 import models.CrawlPermission;
 import play.Logger;
@@ -20,26 +16,15 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
-import uk.bl.scope.EmailHelper;
 import views.html.communicationlogs.*;
-import views.html.targets.targets;
 
-import javax.mail.*;
-
-import java.io.*;
 import java.util.*;
-import java.util.*;
-
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.InternetAddress;
-import javax.activation.*;
 
 /**
  * Manage logs.
  */
 @Security.Authenticated(Secured.class)
-public class CommunicationLogEdit extends AbstractController {
+public class CommunicationLogs extends AbstractController {
   
     /**
      * Display the log.
@@ -47,7 +32,7 @@ public class CommunicationLogEdit extends AbstractController {
     public static Result index() {
         List<CommunicationLog> resList = processFilterCommunicationLogs("", "");
         return ok(
-        		communicationlogs.render(
+        		logs.render(
                     "CommunicationLogs", User.find.byId(request().username()), resList, "", ""
                 )
             );
@@ -61,7 +46,7 @@ public class CommunicationLogEdit extends AbstractController {
 		CommunicationLog log = CommunicationLog.findByUrl(url);
 		Logger.info("log name: " + log.name + ", url: " + url);
         return ok(
-                communicationlogedit.render(
+                edit.render(
                 		models.CommunicationLog.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -69,7 +54,7 @@ public class CommunicationLogEdit extends AbstractController {
     
     public static Result view(String url) {
         return ok(
-                communicationlogview.render(
+                view.render(
                 		models.CommunicationLog.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -80,9 +65,9 @@ public class CommunicationLogEdit extends AbstractController {
      * if required.
      * @return
      */
-    public static Result filter() {
+    public static Result search() {
     	Result res = null;
-    	Logger.info("CommunicationLogEdit.filter()");
+    	Logger.info("Edit.filter()");
         String addentry = getFormParam(Const.ADDENTRY);
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
@@ -95,18 +80,18 @@ public class CommunicationLogEdit extends AbstractController {
         Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name + ", permissions: " + permissions);
         if (addentry != null) {
         	if (name != null && name.length() > 0) {
-        		res = redirect(routes.CommunicationLogEdit.addEntry(name));
+        		res = redirect(routes.CommunicationLogs.create(name));
         	} else {
         		Logger.info("CommunicationLog name is empty. Please write name in search window.");
                 res = ok(
-                        communicationlogs.render(
+                        logs.render(
                             "CommunicationLogs", User.find.byId(request().username()), resList, "", permissions
                         )
                     );
         	}
         } else {
             res = ok(
-            		communicationlogs.render(
+            		logs.render(
                         "CommunicationLogs", User.find.byId(request().username()), resList, name, permissions
                     )
                 );
@@ -149,7 +134,7 @@ public class CommunicationLogEdit extends AbstractController {
      * @param log title
      * @return
      */
-    public static Result addEntry(String name) {
+    public static Result create(String name) {
     	CommunicationLog log = new CommunicationLog();
     	log.name = name;
         log.id = Target.createId();
@@ -157,7 +142,7 @@ public class CommunicationLogEdit extends AbstractController {
         log.curator = User.find.byId(request().username()).url;        
 		Logger.info("add entry with url: " + log.url + ", and name: " + log.name + ", curator: " + log.curator);
         return ok(
-                communicationlogedit.render(
+                edit.render(
                       log, User.find.byId(request().username())
                 )
             );
@@ -228,15 +213,15 @@ public class CommunicationLogEdit extends AbstractController {
            		Logger.info("update log: " + log.toString());
                	Ebean.update(log);
         	}
-	        res = redirect(routes.CommunicationLogEdit.view(log.url));
+	        res = redirect(routes.CommunicationLogs.view(log.url));
 	        return res;
         } 
         if (delete != null) {
         	CommunicationLog log = CommunicationLog.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(log);
-	        res = redirect(routes.CommunicationLogEdit.index()); 
+	        res = redirect(routes.CommunicationLogs.index()); 
         }
-    	res = redirect(routes.CommunicationLogEdit.index()); 
+    	res = redirect(routes.CommunicationLogs.index()); 
         return res;
     }	   
 
@@ -249,7 +234,7 @@ public class CommunicationLogEdit extends AbstractController {
     	Result res = null;
         List<CommunicationLog> resList = processFilterCommunicationLogs("", permission);
         res = ok(
-        		communicationlogs.render(
+        		logs.render(
                     "CommunicationLogs", User.find.byId(request().username()), resList, "", permission
                 )
             );

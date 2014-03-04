@@ -25,7 +25,7 @@
 	   }
 	</ul>
     
-	<form action="@routes.CrawlPermissions.save()" method="POST">
+	@helper.form(action=routes.CrawlPermissions.save) {
 		<input type="hidden" name="url" value="@permission.url">
 		<input type="hidden" name="id" value="@permission.id">
 
@@ -159,6 +159,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

@@ -15,7 +15,7 @@
 	   }
 	</ul>
     
-	<form action="@routes.Roles.save()" method="POST">
+	@helper.form(action=routes.Roles.save) {
 		<input type="hidden" name="url" value="@role.url">
 	    <input type="hidden" name="nid" value="@role.id">
 
@@ -86,6 +86,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

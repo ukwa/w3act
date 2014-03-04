@@ -15,7 +15,7 @@
 		}
 	</ul>
 	
-    <form action="@routes.Collections.save()" method="POST">
+	@helper.form(action=routes.Collections.save) {
    		<input type="hidden" name="url" value="@collection.url">
    	    <input type="hidden" name="nid" value="@collection.nid">
 
@@ -83,6 +83,6 @@
 			</div>
 		</div>
 		}
-	</form>
+	}
 }
 

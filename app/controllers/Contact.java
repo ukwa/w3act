@@ -4,7 +4,6 @@ import models.User;
 import play.Logger;
 import play.mvc.Result;
 import play.mvc.Security;
-//import com.fasterxml.jackson.databind.JsonNode;
 import uk.bl.Const;
 import uk.bl.scope.EmailHelper;
 import views.html.contact;

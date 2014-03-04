@@ -13,7 +13,7 @@
 	          var doScope = function(text) {
 	              $.getJSON(SCOPE_URI + text, function(data) {
 	              //alert("Is in scope: " + data);
-	              var lab = document.getElementById('isInScope'); 
+	              var lab = document.querySelector('isInScope'); 
 	              if (data) {
 		              lab.innerHTML = "is in scope";
 		              lab.style = "color: green";
@@ -52,9 +52,9 @@
 	    <h1><a href="@routes.Targets.index()">Targets > </a>Target @target.title</h1>
 	</div>  
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.TargetEdit.view(target.url)">View</a></li>
+	   <li><a href="@routes.Targets.view(target.url)">View</a></li>
 	   @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) {
-	   <li class="active"><a href="@routes.TargetEdit.edit(target.url)">Edit</a></li> 
+	   <li class="active"><a href="@routes.Targets.edit(target.url)">Edit</a></li> 
 	   }
 	</ul>
 
@@ -75,7 +75,7 @@
 	  	</ul>
 	</div>
 	
-	<form action="@routes.TargetController.saveTarget()" method="POST">
+	@helper.form(action=routes.TargetController.saveTarget, 'class -> "form-inline") {
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="basicinformation">
 				<input type="hidden" name="user" value="@user.url">
@@ -940,6 +940,6 @@
 		       </div>
 			</div>
 		</div>
-	</form>
+	}
 }
 

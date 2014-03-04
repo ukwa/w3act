@@ -81,7 +81,7 @@ public class Curators extends AbstractController {
 			Logger.info("Curator's name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Organisations.list(0, "title", "asc", "")
+	        		routes.Curators.list(0, "name", "asc", "")
 	        );
     	}
 
@@ -175,7 +175,7 @@ public class Curators extends AbstractController {
      * contains the timestamp of the change. 
      * @return
      */
-    public static Result saveUser() {
+    public static Result save() {
     	Result res = null;
         String save = getFormParam("save");
         String delete = getFormParam("delete");
