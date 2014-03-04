@@ -7,13 +7,13 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.PermissionRefusalEdit.view(refusal.url)">View</a></li>
+	   <li><a href="@routes.PermissionRefusals.view(refusal.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.PermissionRefusalEdit.edit(refusal.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.PermissionRefusals.edit(refusal.url)">Edit</a></li>
 	   }
 	</ul>
     
-	@helper.form(action=routes.PermissionRefusalEdit.save) {
+	@helper.form(action=routes.PermissionRefusals.save) {
 		<input type="hidden" name="url" value="@refusal.url">
 		<input type="hidden" name="id" value="@refusal.id">
 

@@ -21,10 +21,10 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.organisations.list;
-import views.html.organisations.organisationadmin;
-import views.html.organisations.organisationedit;
-import views.html.organisations.organisationsites;
-import views.html.organisations.organisationview;
+import views.html.organisations.admin;
+import views.html.organisations.edit;
+import views.html.organisations.sites;
+import views.html.organisations.view;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -94,7 +94,7 @@ public class Organisations extends AbstractController {
         organisation.url = Const.ACT_URL + organisation.nid;
 		Logger.info("add entry with url: " + organisation.url + ", and title: " + organisation.title);
         return ok(
-                organisationedit.render(
+                edit.render(
                       organisation, User.find.byId(request().username())
                 )
             );
@@ -108,7 +108,7 @@ public class Organisations extends AbstractController {
 		Organisation organisation = Organisation.findByUrl(url);
 		Logger.info("organisation title: " + organisation.title + ", url: " + url);
         return ok(
-                organisationedit.render(
+                edit.render(
                         Organisation.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -153,7 +153,7 @@ public class Organisations extends AbstractController {
      */
     public static Result view(String url) {
         return ok(
-                organisationview.render(
+                view.render(
                         Organisation.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -161,7 +161,7 @@ public class Organisations extends AbstractController {
     
     public static Result sites(String url) {
         return ok(
-                organisationsites.render(
+                sites.render(
                         Organisation.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -174,7 +174,7 @@ public class Organisations extends AbstractController {
      */
     public static Result admin(String url) {
         return ok(
-                organisationadmin.render(
+                admin.render(
                         Organisation.findByUrl(url), User.find.byId(request().username())
                 )
             );

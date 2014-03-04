@@ -26,13 +26,8 @@ import uk.bl.api.Utils;
 import uk.bl.scope.EmailHelper;
 import views.html.mailtemplates.*;
 
-import javax.mail.*;
-
 import java.io.*;
 import java.util.*;
-
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.InternetAddress;
 import javax.activation.*;
 
 import org.apache.commons.lang3.StringUtils;
@@ -63,7 +58,7 @@ public class MailTemplates extends AbstractController {
 		MailTemplate template = MailTemplate.findByUrl(url);
 		Logger.info("template name: " + template.name + ", url: " + url);
         return ok(
-                mailtemplateedit.render(
+                edit.render(
                 		models.MailTemplate.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -71,7 +66,7 @@ public class MailTemplates extends AbstractController {
     
     public static Result view(String url) {
         return ok(
-                mailtemplateview.render(
+                view.render(
                 		models.MailTemplate.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -161,7 +156,7 @@ public class MailTemplates extends AbstractController {
         template.url = Const.ACT_URL + template.id;
 		Logger.info("add entry with url: " + template.url + ", and name: " + template.name);
         return ok(
-                mailtemplateedit.render(
+                edit.render(
                       template, User.find.byId(request().username())
                 )
             );

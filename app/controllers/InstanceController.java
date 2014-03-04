@@ -11,8 +11,8 @@ import com.avaje.ebean.Ebean;
 
 import play.libs.Json;
 import uk.bl.Const;
-import views.html.instances.instanceedit;
-import views.html.instances.instanceview;
+import views.html.instances.edit;
+import views.html.instances.view;
 
 /**
  * Describe W3ACT project.
@@ -36,7 +36,7 @@ public class InstanceController extends AbstractController {
 		Instance instance = Instance.findByUrl(url);
 		Logger.info("InstanceController.edit() instance name: " + instance.title + ", url: " + url + ", username: " + request().username());
         return ok(
-                instanceedit.render(
+                edit.render(
                         Instance.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -44,7 +44,7 @@ public class InstanceController extends AbstractController {
     
     public static Result view(String url) {
         return ok(
-                instanceview.render(
+                view.render(
                         Instance.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -57,7 +57,7 @@ public class InstanceController extends AbstractController {
      */
     public static Result viewrevision(Long nid) {
         return ok(
-                instanceview.render(
+                view.render(
                         Instance.findById(nid), User.find.byId(request().username())
                 )
             );

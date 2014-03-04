@@ -25,13 +25,11 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.instances.list;
-import views.html.instances.instanceedit;
+import views.html.instances.edit;
 
 import com.avaje.ebean.ExpressionList;
-import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import views.html.users.*;
 
 /**
  * Manage instances.
@@ -165,7 +163,7 @@ public class Instances extends AbstractController {
 		Logger.info("add entry with instance url: " + instance.url);
 		Logger.info("instance name: " + instance.title);
         return ok(
-                instanceedit.render(
+                edit.render(
                       instance, User.find.byId(request().username())
                 )
             );

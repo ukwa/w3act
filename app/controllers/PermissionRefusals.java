@@ -6,9 +6,9 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import models.PermissionRefusal;
 import models.DCollection;
 import models.Organisation;
+import models.PermissionRefusal;
 import models.Role;
 import models.Target;
 import models.Taxonomy;
@@ -25,21 +25,18 @@ import uk.bl.scope.EmailHelper;
 import views.html.refusals.*;
 import views.html.targets.targets;
 
-import javax.mail.*;
+
 
 import java.io.*;
 import java.util.*;
-import java.util.*;
 
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.InternetAddress;
 import javax.activation.*;
 
 /**
  * Manage refusals.
  */
 @Security.Authenticated(Secured.class)
-public class PermissionRefusalEdit extends AbstractController {
+public class PermissionRefusals extends AbstractController {
   
     /**
      * Display the refusal.
@@ -61,7 +58,7 @@ public class PermissionRefusalEdit extends AbstractController {
 		PermissionRefusal refusal = PermissionRefusal.findByUrl(url);
 		Logger.info("refusal name: " + refusal.name + ", url: " + url);
         return ok(
-                refusaledit.render(
+                edit.render(
                 		models.PermissionRefusal.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -69,7 +66,7 @@ public class PermissionRefusalEdit extends AbstractController {
     
     public static Result view(String url) {
         return ok(
-                refusalview.render(
+                view.render(
                 		models.PermissionRefusal.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -80,9 +77,9 @@ public class PermissionRefusalEdit extends AbstractController {
      * if required.
      * @return
      */
-    public static Result filter() {
+    public static Result search() {
     	Result res = null;
-    	Logger.info("PermissionRefusalEdit.filter()");
+    	Logger.info("PermissionRefusals.filter()");
         String addentry = getFormParam(Const.ADDENTRY);
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
@@ -91,7 +88,7 @@ public class PermissionRefusalEdit extends AbstractController {
         Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);
         if (addentry != null) {
         	if (name != null && name.length() > 0) {
-        		res = redirect(routes.PermissionRefusalEdit.addEntry(name));
+        		res = redirect(routes.PermissionRefusals.create(name));
         	} else {
         		Logger.info("PermissionRefusal name is empty. Please write name in search window.");
                 res = ok(
@@ -140,14 +137,14 @@ public class PermissionRefusalEdit extends AbstractController {
      * @param refusal title
      * @return
      */
-    public static Result addEntry(String name) {
+    public static Result create(String name) {
     	PermissionRefusal refusal = new PermissionRefusal();
     	refusal.name = name;
         refusal.id = Target.createId();
         refusal.url = Const.ACT_URL + refusal.id;
 		Logger.info("add entry with url: " + refusal.url + ", and name: " + refusal.name);
         return ok(
-                refusaledit.render(
+                edit.render(
                       refusal, User.find.byId(request().username())
                 )
             );
@@ -210,14 +207,14 @@ public class PermissionRefusalEdit extends AbstractController {
            		Logger.info("update refusal: " + refusal.toString());
                	Ebean.update(refusal);
         	}
-	        res = redirect(routes.PermissionRefusalEdit.view(refusal.url));
+	        res = redirect(routes.PermissionRefusals.view(refusal.url));
         } 
         if (delete != null) {
         	PermissionRefusal refusal = PermissionRefusal.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(refusal);
-	        res = redirect(routes.PermissionRefusalEdit.index()); 
+	        res = redirect(routes.PermissionRefusals.index()); 
         }
-    	res = redirect(routes.PermissionRefusalEdit.index()); 
+    	res = redirect(routes.PermissionRefusals.index()); 
         return res;
     }	   
 
