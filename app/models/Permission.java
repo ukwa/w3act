@@ -125,7 +125,7 @@ public class Permission extends Model
     }
 
     /**
-     * Return a page of User
+     * Return a page of Permissions
      *
      * @param page Page to display
      * @param pageSize Number of Permissions per page
