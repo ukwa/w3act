@@ -68,7 +68,8 @@ public final class Const {
 	public static final String LIMIT              = "limit";
 	public static final String LIST_DELIMITER     = ", ";
 	public static final String SLASH_DELIMITER    = "/";
-	public static final String PROJECT_PROPERTY_FILE = "conf\\w3act.properties";
+	public static final String PROJECT_PROPERTY_FILE = "conf" + System.getProperty("file.separator") + 
+														"w3act.properties";
 	public static final String HOST               = "host";
 	public static final String PORT               = "port";
 	public static final String FROM               = "from";
@@ -203,7 +204,8 @@ public final class Const {
 	public static final String FROM_EMAIL        = "fromEmail";
 	public static final String PLACE_HOLDERS     = "placeHolders";
 	public static final String DEFAULT_EMAIL_FLAG = "defaultEmail";
-	public static final String TEMPLATES_PATH    = "conf\\templates\\";
+	public static final String TEMPLATES_PATH    = "conf" + System.getProperty("file.separator") +
+													"templates" + System.getProperty("file.separator");
 	public static final String DEFAULT_TEMPLATE  = "General";
 	
 	// Buttons
