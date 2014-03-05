@@ -9,7 +9,7 @@
 	
 	<ul class="nav nav-tabs">
 	   <li class="active"><a href="@routes.ContactPersons.view(person.url)">View</a></li>
-	   @if(user.hasRole("sys_admin")) {
+	   @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 	   	<li><a href="@routes.ContactPersons.edit(person.url)">Edit</a></li>
 	   }
 	</ul>
