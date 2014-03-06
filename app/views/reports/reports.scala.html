@@ -38,7 +38,7 @@
 	
     <article class="reports">
 
-		@helper.form(action=routes.Reports.search, 'class -> "form-inline") {
+		@helper.form(action=routes.Reports.search) {
 		<div id="forms">
 			<div class="input-group">
 				<input type="hidden" name="query_curator" value="@curatorUrl">
