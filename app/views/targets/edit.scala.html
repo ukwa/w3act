@@ -75,7 +75,7 @@
 	  	</ul>
 	</div>
 	
-	@helper.form(action=routes.TargetController.saveTarget, 'class -> "form-inline") {
+	@helper.form(action=routes.TargetController.saveTarget) {
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="basicinformation">
 				<input type="hidden" name="user" value="@user.url">
