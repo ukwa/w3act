@@ -3,10 +3,10 @@
 contactpersons:
 
     - !!models.ContactPerson
-        name:                  Max Mustermann
+        name:                  Peter Webster
         position:              archivist
-        phone:                 +419892345678
-        email:                 max.mustermann@domain.com
-        postalAddress:         Victory Street 3/4, 187, London, UK
-        webForm:               www.domain.com/contacts
+        phone:                 +44 (0)20 7412 7274
+        email:                 peter.webster@bl.uk
+        postalAddress:         The British Library, London, UK
+        webForm:               www.webarchive.org.uk/ukwa/info/contact
         contactOrganisation:   Main Archive
