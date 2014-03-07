@@ -1,5 +1,7 @@
 package controllers;
 
+import static play.data.Form.form;
+
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
@@ -10,6 +12,7 @@ import models.ContactPerson;
 import models.Target;
 import models.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
 //import play.mvc.Http.Session;
@@ -69,9 +72,10 @@ public class ContactPersons extends AbstractController {
     public static Result search() {
     	Result res = null;
     	Logger.info("ContactPersons.filter()");
-        String addentry = getFormParam(Const.ADDENTRY);
-        String search = getFormParam(Const.SEARCH);
-        String name = getFormParam(Const.NAME);
+    	DynamicForm form = form().bindFromRequest();
+        String addentry = form.get(Const.ADDENTRY);
+        String search = form.get(Const.SEARCH);
+        String name = form.get(Const.NAME);
 
         List<ContactPerson> resList = processFilterContactPersons(name);
         Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);

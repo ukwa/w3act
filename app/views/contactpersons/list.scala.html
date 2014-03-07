@@ -37,10 +37,10 @@
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Contact Person Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="search" title="Search for contact person by name">Search</button>
+						<button type="submit" class="btn btn-primary" id="search" name="search" title="Search for contact person by name" value="search">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 
-							<button type="submit" class="btn btn-primary" id="addentry" name="addentry" title="Add new contact person">Add</button>
+							<button type="submit" class="btn btn-primary" id="addentry" name="addentry" title="Add new contact person" value="addentry">Add</button>
 						}
 					</span>
 				</div>
