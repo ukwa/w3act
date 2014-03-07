@@ -3,6 +3,13 @@
 
 users:
     - !!models.User
+        email:             wa-sysadm@bl.uk
+        name:              Systems Administrator
+        password:          sysAdmin
+        field_affiliation: BL
+        roles:             sys_admin
+
+    - !!models.User
         email:             archivist@bl.uk
         name:              Archivist
         password:          secret
