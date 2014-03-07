@@ -28,3 +28,4 @@ server.pid
 /urlres.txt
 /userres.txt
 /bin
+conf/w3act.properties
