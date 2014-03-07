@@ -2,10 +2,37 @@
 # Users
 
 users:
-        
     - !!models.User
-        email:             max.mustermann@domain.com
-        name:              Max Mustermann
+        email:             archivist@bl.uk
+        name:              Archivist
         password:          secret
-        field_affiliation: COM
-        roles:             sys_admin, archivist
+        field_affiliation: BL
+        roles:             archivist
+
+    - !!models.User
+        email:             expert@bl.uk
+        name:              Expert
+        password:          secret
+        field_affiliation: BL
+        roles:             expert_user
+
+    - !!models.User
+        email:             user@bl.uk
+        name:              User
+        password:          secret
+        field_affiliation: BL
+        roles:             user
+    
+    - !!models.User
+        email:             viewer@bl.uk
+        name:              Viewer
+        password:          secret
+        field_affiliation: BL
+        roles:             viewer
+    
+    - !!models.User
+        email:             Roman.Graf@ait.ac.at
+        name:              Roman Graf
+        password:          secret
+        field_affiliation: AIT
+        roles:             archivist
