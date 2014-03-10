@@ -38,7 +38,7 @@ users:
         roles:             viewer
     
     - !!models.User
-        email:             Roman.Graf@ait.ac.at
+        email:             roman.graf@ait.ac.at
         name:              Roman Graf
         password:          secret
         field_affiliation: AIT
