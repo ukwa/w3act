@@ -12,7 +12,7 @@ import pages.BasicTestPage;
 import play.libs.F.Callback;
 import play.test.TestBrowser;
 import uk.bl.Const;
-
+import uk.bl.scope.EmailHelper;
 import static play.test.Helpers.*;
 
 
@@ -35,6 +35,16 @@ public class IntegrationTest {
             }
         });
     }
+    
+//    @Test
+    /**
+     * This test is for testing of the basic email functionality. 
+     * You need to replace the fist parameter of the sendMessage method with the 
+     * valid email address that you can check for test results.
+     */
+	public void sendMail(){
+	    EmailHelper.sendMessage("roman.graf@ait.ac.at","Message test","Message body");	
+	}    
     
 	/**
 	 * This method enables an expert to see the current page if required.
