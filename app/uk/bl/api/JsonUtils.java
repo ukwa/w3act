@@ -595,7 +595,7 @@ public class JsonUtils {
 			if (type.equals(Const.NodeType.USER)) {	
 			    User newUser = (User) obj;
 			    if (newUser.email == null || newUser.email.length() == 0) {
-			    	newUser.email = newUser.name.toLowerCase() + "@bl.uk";
+			    	newUser.email = newUser.name.toLowerCase().replace(" ", ".") + "@bl.uk";
 			    }
 			    User existingUser = User.findByName(newUser.name);
 			    if (existingUser != null && existingUser.name.length() > 0) {
