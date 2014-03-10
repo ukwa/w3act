@@ -15,7 +15,6 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
-//import play.mvc.Http.Session;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -57,6 +56,7 @@ public class ContactPersons extends AbstractController {
     }
     
     public static Result view(String url) {
+    	Logger.info("view contact person");
         return ok(
                 view.render(
                 		models.ContactPerson.findByUrl(url), User.find.byId(request().username())
@@ -71,11 +71,15 @@ public class ContactPersons extends AbstractController {
      */
     public static Result search() {
     	Result res = null;
-    	Logger.info("ContactPersons.filter()");
-    	DynamicForm form = form().bindFromRequest();
-        String addentry = form.get(Const.ADDENTRY);
-        String search = form.get(Const.SEARCH);
-        String name = form.get(Const.NAME);
+    	Logger.info("ContactPersons.search()");
+//    	DynamicForm form = form().bindFromRequest();
+//        String addentry = form.get(Const.ADDENTRY);
+//        String search = form.get(Const.SEARCH);
+//        String name = form.get(Const.NAME);
+        
+        String addentry = getFormParam(Const.ADDENTRY);
+        String search = getFormParam(Const.SEARCH);
+        String name = getFormParam(Const.NAME);
 
         List<ContactPerson> resList = processFilterContactPersons(name);
         Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);
@@ -131,6 +135,7 @@ public class ContactPersons extends AbstractController {
      * @return
      */
     public static Result create(String name) {
+    	Logger.info("create contact person");
     	ContactPerson person = new ContactPerson();
     	person.name = name;
         person.id = Target.createId();
@@ -153,7 +158,7 @@ public class ContactPersons extends AbstractController {
     	Result res = null;
         String save = getFormParam(Const.SAVE);
         String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
+        Logger.info("save: " + save);
         if (save != null) {
         	Logger.info("save person id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME));
