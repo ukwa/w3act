@@ -19,7 +19,7 @@
 			<div class="form-group">
 				<label for="inputCreatorUser" class="col-sm-6 control-label">Name</label>
 			    <div class="col-sm-6">
-					<label for="inputContactPerson" class="col-sm-6 control-label">@permission.name</label>
+					<label for="inputPermissionName" class="col-sm-6 control-label">@permission.name</label>
 				</div>
 			</div>
 		</div>
@@ -36,17 +36,63 @@
 		</div>
     </div>
 	          	
-	<div class="row padding-10">
-   		<div class="col-md-12 col-xs-12 col-sm-12">
-			<div class="form-group">
-				<label for="inputContactPerson" class="col-sm-6 control-label">Contact Person </label>
-		    	<div class="col-sm-6">
-					<label for="valueContactPerson" class="col-sm-6 control-label">@ContactPerson.findNamesByUrls(permission.contactPerson)</label>
+	<div class="form-group contactperson">
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Contact Person Name<font color="red">*</font></label>
+				    <div class="col-sm-6">
+	              		<input readonly class="form-control" name="contactPerson" id="contactPerson" value="@ContactPerson.findByUrl(permission.contactPerson).name" type="text">
+					</div>
 				</div>
 			</div>
-		</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputEmail" class="col-sm-6 control-label">E-mail<font color="red">*</font></label>
+				    <div class="col-sm-6">
+	              		<input readonly class="form-control" name="email" id="email" value="@ContactPerson.findByUrl(permission.contactPerson).email" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputContactOrganisation" class="col-sm-6 control-label">Contact Organisation</label>
+				    <div class="col-sm-6">
+	              		<input readonly class="form-control" name="contactOrganisation" id="contactOrganisation" value="@ContactPerson.findByUrl(permission.contactPerson).contactOrganisation" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputPhone" class="col-sm-6 control-label">Phone</label>
+				    <div class="col-sm-6">
+	              		<input readonly class="form-control" name="phone" id="phone" value="@ContactPerson.findByUrl(permission.contactPerson).phone" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputPostalAddress" class="col-sm-6 control-label">Postal Address</label>
+				    <div class="col-sm-6">
+	              		<input readonly class="form-control" name="postalAddress" id="postalAddress" value="@ContactPerson.findByUrl(permission.contactPerson).postalAddress" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
    	</div>
-
+     		          
 	<div class="row padding-10">
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">

@@ -35,7 +35,7 @@
 		<div id="forms">
    			@helper.form(action=routes.CrawlPermissions.search, 'class -> "form-inline") {
 	   			<div class="input-group">
-					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Crawl Permission Name" value="@searchstr" id="search-query">
+					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter crawl permission name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for crawl permission by name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {

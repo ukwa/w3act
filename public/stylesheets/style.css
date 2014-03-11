@@ -356,5 +356,11 @@ table.table.table-striped.table-bordered.table-hover.table-condensed {
     src: url("Righteous-Regular.ttf"); 
 }
 
+.contactperson {
+	background-color: #EEE;
+	padding: 10px 0;
+	border-radius: 4px;  
+	margin-top: 5px;
+
 
 

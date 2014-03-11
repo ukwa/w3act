@@ -9,7 +9,6 @@ import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.CrawlPermission;
-
 import models.Target;
 import models.User;
 import models.ContactPerson;
@@ -31,6 +30,7 @@ import views.html.refusals.*;
 import views.html.communicationlogs.*;
 
 import java.util.*;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -267,20 +267,59 @@ public class CrawlPermissions extends AbstractController {
         	    if (getFormParam(Const.FILTER) != null) {
         	    	permission.target = getFormParam(Const.FILTER);
         	    }
+        		permission.contactPerson = Const.NONE;
                 if (getFormParam(Const.CONTACT_PERSON) != null) {
                 	if (!getFormParam(Const.CONTACT_PERSON).toLowerCase().contains(Const.NONE)) {
-    	            	String[] contactPersons = getFormParams(Const.CONTACT_PERSON);
-    	            	String resContactPersons = "";
-    	            	for (String contactPerson : contactPersons)
-    	                {
-    	            		if (contactPerson != null && contactPerson.length() > 0) {
-//    	                		Logger.info("add contactPerson: " + contactPerson);
-    	                		resContactPersons = resContactPersons + ContactPerson.findByName(contactPerson).url + Const.LIST_DELIMITER;
-    	            		}
-    	                }
-    	            	permission.contactPerson = resContactPersons;
-                	} else {
-                		permission.contactPerson = Const.NONE;
+                		/**
+                		 * Save or update contact person
+                		 */
+                    	ContactPerson person = null;
+                        boolean isContactPersonExisting = true;
+                        try {
+                            try {
+                            	person = ContactPerson.findByName(getFormParam(Const.CONTACT_PERSON));
+                            } catch (Exception e) {
+                            	Logger.info("contact person is not existing exception");
+                            	isContactPersonExisting = false;
+                            	person = new ContactPerson();
+                            	person.id = Utils.createId();
+                            	person.url = Const.ACT_URL + person.id;
+                            }
+                            if (person == null) {
+                            	Logger.info("contact person is not existing");
+                            	isContactPersonExisting = false;
+                            	person = new ContactPerson();
+                            	person.id = Utils.createId();
+                            	person.url = Const.ACT_URL + person.id;
+                            }
+                            
+                    	    if (getFormParam(Const.CONTACT_PERSON) != null) {
+                    	    	person.name = getFormParam(Const.CONTACT_PERSON);
+                    	    }
+                    	    if (getFormParam(Const.EMAIL) != null) {
+                    	    	person.email = getFormParam(Const.EMAIL);
+                    	    }
+                    	    if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
+                    	    	person.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
+                    	    }
+                    	    if (getFormParam(Const.PHONE) != null) {
+                    	    	person.phone = getFormParam(Const.PHONE);
+                    	    }
+                    	    if (getFormParam(Const.POSTAL_ADDRESS) != null) {
+                    	    	person.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
+                    	    }
+                        } catch (Exception e) {
+                        	Logger.info("ContactPerson not existing exception");
+                        }
+                        
+                        permission.contactPerson = person.url;
+                    	if (!isContactPersonExisting) {
+                           	Ebean.save(person);
+                	        Logger.info("save contact person: " + person.toString());
+                    	} else {
+                       		Logger.info("update contact person: " + person.toString());
+                           	Ebean.update(person);
+                    	}
                 	}
                 }
         	    
