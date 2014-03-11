@@ -3,6 +3,13 @@
 
 users:
     - !!models.User
+        email:             wa-sysadm@bl.uk
+        name:              Systems Administrator
+        password:          sysAdmin
+        field_affiliation: BL
+        roles:             sys_admin
+
+    - !!models.User
         email:             archivist@bl.uk
         name:              Archivist
         password:          secret
@@ -31,7 +38,7 @@ users:
         roles:             viewer
     
     - !!models.User
-        email:             Roman.Graf@ait.ac.at
+        email:             roman.graf@ait.ac.at
         name:              Roman Graf
         password:          secret
         field_affiliation: AIT

@@ -268,6 +268,8 @@ public class TargetController extends AbstractController {
 	        res = redirect(routes.Targets.index()); 
         }
         if (request != null) {
+            Logger.debug("request permission for title: " + getFormParam(Const.TITLE) + 
+            		" and target: " + getFormParam(Const.FIELD_URL));
         	if (getFormParam(Const.TITLE) != null && getFormParam(Const.FIELD_URL) != null) {
                 String name = getFormParam(Const.TITLE);
                 String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));

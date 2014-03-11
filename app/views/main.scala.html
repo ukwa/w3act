@@ -59,7 +59,7 @@
 					</li>
 					<li><a href="@routes.Organisations.index()">Organisations</a></li>
 					<li><a href="@routes.Curators.index()">Curators</a></li>
-                    @if(user.hasRole("sys_admin")) {
+                    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Access Control<b class="caret"></b></a>
 							<ul class="dropdown-menu">

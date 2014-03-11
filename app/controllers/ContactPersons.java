@@ -15,7 +15,6 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
-//import play.mvc.Http.Session;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -23,6 +22,8 @@ import uk.bl.api.Utils;
 import views.html.contactpersons.*;
 
 import java.util.*;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Manage persons.
@@ -57,6 +58,7 @@ public class ContactPersons extends AbstractController {
     }
     
     public static Result view(String url) {
+    	Logger.info("view contact person");
         return ok(
                 view.render(
                 		models.ContactPerson.findByUrl(url), User.find.byId(request().username())
@@ -70,34 +72,38 @@ public class ContactPersons extends AbstractController {
      * @return
      */
     public static Result search() {
-    	Result res = null;
-    	Logger.info("ContactPersons.filter()");
+
+    	Logger.info("ContactPersons.search()");
     	DynamicForm form = form().bindFromRequest();
-        String addentry = form.get(Const.ADDENTRY);
-        String search = form.get(Const.SEARCH);
-        String name = form.get(Const.NAME);
+    	String action = form.get("action");
+    	String name = form.get(Const.NAME);
+
+        if (StringUtils.isBlank(name)) {
+			Logger.info("Contact Person name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+	        return redirect(
+	        		routes.ContactPersons.index()
+	        );
+    	}
 
         List<ContactPerson> resList = processFilterContactPersons(name);
-        Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name);
-        if (addentry != null) {
-        	if (name != null && name.length() > 0) {
-        		res = redirect(routes.ContactPersons.create(name));
-        	} else {
-        		Logger.info("ContactPersons name is empty. Please write name in search window.");
-                res = ok(
-                        list.render(
-                            "ContactPersons", User.find.byId(request().username()), resList, ""
-                        )
-                    );
-        	}
-        } else {
-            res = ok(
-            		list.render(
-                        "ContactPersons", User.find.byId(request().username()), resList, name
-                    )
-                );
-        }
-        return res;
+
+        if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.ADDENTRY.equals(action)) {
+        		return redirect(routes.ContactPersons.create(name));
+    		} 
+    		else if (Const.SEARCH.equals(action)) {
+    			return ok(
+                		list.render(
+                                "ContactPersons", User.find.byId(request().username()), resList, name
+                            )
+                        );
+		    } else {
+		      return badRequest("This action is not allowed");
+		    }
+    	}
     }	   
     
     /**
@@ -131,6 +137,7 @@ public class ContactPersons extends AbstractController {
      * @return
      */
     public static Result create(String name) {
+    	Logger.info("create contact person");
     	ContactPerson person = new ContactPerson();
     	person.name = name;
         person.id = Target.createId();
@@ -153,7 +160,7 @@ public class ContactPersons extends AbstractController {
     	Result res = null;
         String save = getFormParam(Const.SAVE);
         String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
+        Logger.info("save: " + save);
         if (save != null) {
         	Logger.info("save person id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME));

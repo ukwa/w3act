@@ -153,8 +153,8 @@ GET     /targets/:target                    controllers.Targets.view(target)
 GET     /targets/:revision/revision         controllers.Targets.viewrevision(revision:Long)
 GET     /targets/:target/edit               controllers.Targets.edit(target)
 
-GET     /target/crawlpermissions/:target    	controllers.CrawlPermissions.showCrawlPermissions(target)
-GET     /target/licencerequest/:name/:target  	controllers.CrawlPermissions.licenceRequestForTarget(name, target)
+GET     /target/crawlpermissions/:target    controllers.CrawlPermissions.showCrawlPermissions(target)
+GET     /target/licencerequest          	controllers.CrawlPermissions.licenceRequestForTarget(name, target)
 
 GET     /contact                                controllers.Contact.index()
 POST    /contact/send              	            controllers.Contact.send()

@@ -29,15 +29,9 @@ import uk.bl.Const;
  */
 public class EmailHelper {
 
-//    @Test
-//    public void sendMail(){
-//        String[] to = {"roman@ait.ac.at","max@ait.ac.at"};
-//        sendMessage(to,"Message test","Message body");
-//
-//    }
-
     public static void sendMessage(String to, String subject, String msg) {
 
+    	Logger.debug("sendMessage() to: " + to + ", subject: " + subject + ", message body: " + msg);
         Properties props = System.getProperties();
     	Properties customProps = new Properties();
     	String user = "";
@@ -48,23 +42,29 @@ public class EmailHelper {
     	    for(String key : customProps.stringPropertyNames()) {
     	    	  String value = customProps.getProperty(key);
     	    	  System.out.println(key + " => " + value);
+    	      	  Logger.debug("sendMessage() key: " + key + " => " + value);
     	    	  if (key.equals(Const.HOST)) {
   	    	          props.put("mail.smtp.host", value);
   	    	          props.put("mail.smtp.ssl.trust", value);
+  	    	      	  Logger.debug("sendMessage() host: " + value);
     	    	  }
     	    	  if (key.equals(Const.USER)) {
   	    	          props.put("mail.smtp.user", value);
   	    	          user = value;
+  	    	      	  Logger.debug("sendMessage() user: " + user);
     	    	  }
     	    	  if (key.equals(Const.PASSWORD)) {
   	    	          props.put("mail.smtp.password", value);
   	    	          password = value;
+  	    	      	  Logger.debug("sendMessage() password: " + password);
     	    	  }
     	    	  if (key.equals(Const.PORT)) {
     	    	      props.put("mail.smtp.port", value);
+  	    	      	  Logger.debug("sendMessage() port: " + value);
       	    	  }
     	    	  if (key.equals(Const.FROM)) {
     	    	      from = value;
+  	    	      	  Logger.debug("sendMessage() from: " + value);
       	    	  }
     	    }
     	} catch (IOException e) {
@@ -92,6 +92,7 @@ public class EmailHelper {
 	        	    	  }
 	        	    }
 	        	} catch (IOException e) {
+	    	      	Logger.debug("sendMessage() error: " + e);
 	        		throw new RuntimeException(e);
 	        	}
 	            return new PasswordAuthentication(user, password);
@@ -111,11 +112,11 @@ public class EmailHelper {
 
 	        Transport.send(message);
 
-	        Logger.info("E-mail message to " + to + ", with subject '" +
-//	    	        Logger.info("E-mail message to " + Utils.convertStringArrayToString(to) + ", with subject '" +
-	        		subject + "' was sent");
+	        Logger.info("E-mail message to " + to + ", with subject '" + subject + "' was sent");
+	        Logger.debug("E-mail message to " + to + ", with subject '" + subject + "' was sent");
 
 	    } catch (MessagingException e) {
+	        Logger.debug("E-mail message error: " + e);
 	        throw new RuntimeException(e);
 	    }
     }

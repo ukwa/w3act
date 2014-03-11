@@ -212,7 +212,9 @@ public class CrawlPermissions extends AbstractController {
     	permission.name = name;
         permission.id = Utils.createId();
         permission.url = Const.ACT_URL + permission.id;
+        Logger.debug("licenceRequestForTarget url: " + permission.url);
         permission.creatorUser = User.find.byId(request().username()).url;
+        Logger.debug("licenceRequestForTarget user: " + permission.creatorUser);
         permission.status = Const.CrawlPermissionStatus.QUEUED.name();
         permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
         permission.target = target;

@@ -95,7 +95,7 @@ public class Scope {
 	public static String normalizeUrl(String url) {
 		String res = url;
 		if (res != null && res.length() > 0) {
-	        if (!res.contains(WWW)) {
+	        if (!res.contains(WWW) && !res.contains(HTTP) && !res.contains(HTTPS)) {
 	        	res = WWW + res;
 	        }
 	        if (!res.contains(HTTP)) {
