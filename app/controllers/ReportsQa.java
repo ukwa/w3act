@@ -28,7 +28,7 @@ import com.avaje.ebean.ExpressionList;
  * Manage reports.
  */
 @Security.Authenticated(Secured.class)
-public class Reports extends AbstractController {
+public class ReportsQa extends AbstractController {
   
     /**
      * Display the report.
@@ -55,7 +55,7 @@ public class Reports extends AbstractController {
      */
     public static Result search() {
     	DynamicForm form = form().bindFromRequest();
-    	String action = form.get("action");
+    	String action = form.get(Const.ACTION);
     	Logger.info("action: " + action);
     	String curator_name = form.get(Const.AUTHOR);
     	String curator = "";
@@ -107,16 +107,16 @@ public class Reports extends AbstractController {
 				Logger.info("export refused size: " + resListRefused.size());
     			export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
     			return ok(
-                		reports.render(
-                            "Reports", User.find.byId(request().username()), resList, resListGranted,
+                		reportsqa.render(
+                            "ReportsQa", User.find.byId(request().username()), resList, resListGranted,
                             resListRefused, curator, organisation, start_date, end_date, request
                         )
                     );
     		}
     		else if (Const.SEARCH.equals(action)) {
     			return ok(
-                		reports.render(
-                            "Reports", User.find.byId(request().username()), resList, resListGranted,
+                		reportsqa.render(
+                            "ReportsQa", User.find.byId(request().username()), resList, resListGranted,
                             resListRefused, curator, organisation, start_date, end_date, request
                         )
                     );
