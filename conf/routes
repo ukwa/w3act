@@ -178,11 +178,11 @@ GET     /instancerevision/:revision         controllers.InstanceController.viewr
 GET     /instanceedit/:instance             controllers.InstanceController.edit(instance)
 
 GET     /contactpersons                     controllers.ContactPersons.index()
-GET     /contactpersons/:person             controllers.ContactPersons.view(person)
-GET     /contactpersons/:person/edit        controllers.ContactPersons.edit(person)
-GET     /contactpersons/new/:person         controllers.ContactPersons.create(person)
 GET    	/contactpersons/search              controllers.ContactPersons.search()
 GET    	/contactpersons/filterbyjson/:name	controllers.ContactPersons.filterByJson(name)
+GET     /contactpersons/new/:person         controllers.ContactPersons.create(person)
+GET     /contactpersons/:person/edit        controllers.ContactPersons.edit(person)
+GET     /contactpersons/:person             controllers.ContactPersons.view(person)
 POST    /contactpersons                 	controllers.ContactPersons.save()
 
 GET     /licence                            controllers.LicenceEdit.index()
