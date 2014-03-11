@@ -1,26 +1,19 @@
 package uk.bl.scope;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.mail.PasswordAuthentication;
 
 import play.Logger;
-
-import uk.bl.api.Utils;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-
 import uk.bl.Const;
-
-//import org.junit.Test;
 
 
 /**
@@ -72,49 +65,46 @@ public class EmailHelper {
     	}
     	
         props.put("mail.smtp.starttls.enable", Const.TRUE); 
-        props.put("mail.smtp.auth", Const.TRUE);
-
-        Session session = Session.getInstance(props,
-	      new javax.mail.Authenticator() {
-	        public PasswordAuthentication getPasswordAuthentication() {
-	        	String user = "";
-	        	String password = "";
-	        	try {
-	            	Properties customProps = new Properties();
-	        		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
-	        	    for(String key : customProps.stringPropertyNames()) {
-	        	    	  String value = customProps.getProperty(key);
-	        	    	  if (key.equals(Const.USER)) {
-	      	    	          user = value;
-	        	    	  }
-	        	    	  if (key.equals(Const.PASSWORD)) {
-	      	    	          password = value;
-	        	    	  }
-	        	    }
-	        	} catch (IOException e) {
-	    	      	Logger.debug("sendMessage() error: " + e);
-	        		throw new RuntimeException(e);
-	        	}
-	            return new PasswordAuthentication(user, password);
-	        }
-	      });
+        props.put("mail.smtp.auth", Const.FALSE);
+        Session session = Session.getInstance(props);
+    	if (user != null && user.length() > 0 && password != null && password.length() > 0) {
+	        props.put("mail.smtp.auth", Const.TRUE);
+	        session = Session.getInstance(props,
+		      new javax.mail.Authenticator() {
+		        public PasswordAuthentication getPasswordAuthentication() {
+		        	String user = "";
+		        	String password = "";
+		        	try {
+		            	Properties customProps = new Properties();
+		        		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
+		        	    for(String key : customProps.stringPropertyNames()) {
+		        	    	  String value = customProps.getProperty(key);
+		        	    	  if (key.equals(Const.USER)) {
+		      	    	          user = value;
+		        	    	  }
+		        	    	  if (key.equals(Const.PASSWORD)) {
+		      	    	          password = value;
+		        	    	  }
+		        	    }
+		        	} catch (IOException e) {
+		    	      	Logger.debug("sendMessage() error: " + e);
+		        		throw new RuntimeException(e);
+		        	}
+		            return new PasswordAuthentication(user, password);
+		        }
+		      });
+    	}
 
 	    try {
-
 	        Message message = new MimeMessage(session);
 	        message.setFrom(new InternetAddress(from));
-//	        message.setFrom(new InternetAddress(FROM));
 	        message.setRecipients(Message.RecipientType.TO,
 		            InternetAddress.parse(to));
-//            InternetAddress.parse(TO));
 	        message.setSubject(subject);
 	        message.setText(msg);
-
 	        Transport.send(message);
-
 	        Logger.info("E-mail message to " + to + ", with subject '" + subject + "' was sent");
 	        Logger.debug("E-mail message to " + to + ", with subject '" + subject + "' was sent");
-
 	    } catch (MessagingException e) {
 	        Logger.debug("E-mail message error: " + e);
 	        throw new RuntimeException(e);
