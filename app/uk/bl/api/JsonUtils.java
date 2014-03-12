@@ -28,8 +28,9 @@ import uk.bl.Const.TaxonomyType;
 import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.QueryIterator;
 import com.fasterxml.jackson.databind.JsonNode;
-//import com.fasterxml.jackson.databind.BooleanNode;
+
 
 /**
  * JSON object management.
@@ -71,6 +72,7 @@ public class JsonUtils {
   	    	          password = value;
     	    	  }
     	    }
+			Logger.info("authenticateAndLoadDrupal() url: " + urlStr);
 			HttpBasicAuth.downloadFileWithAuth(urlStr, user, password, type.toString().toLowerCase() + Const.OUT_FILE_PATH);
 			res = urlStr;
     	} catch (IOException e) {
@@ -192,7 +194,8 @@ public class JsonUtils {
 //					if (i == 1) {
 //						break; // if necessary for faster testing take only the first page
 //					}
-					String pageContent = downloadData(urlStr + "&" + Const.PAGE_IN_URL + String.valueOf(i), type);
+//					String pageContent = downloadData(urlStr + "&" + Const.PAGE_IN_URL + String.valueOf(i), type);
+					String pageContent = downloadData(urlStr, type);
 //					Logger.info("users content: " + pageContent);
 					List<Object> pageList = JsonUtils.parseJson(pageContent, type);
 					res.addAll(pageList);
@@ -885,14 +888,21 @@ public class JsonUtils {
 	 * mapping to target object.
 	 */
 	public static void mapInstancesToTargets() { 
-        List<Instance> instanceList = (List<Instance>) Instance.find.all();
-        Iterator<Instance> instanceItr = instanceList.iterator();
-        while (instanceItr.hasNext()) {
-        	Instance instance = instanceItr.next();
+		Logger.info("mapInstancesToTargets");
+//        List<Instance> instanceList = Instance.findAll();
+        QueryIterator<Instance> iter = Instance.getIterator();
+//		Logger.info("Instance list size: " + instanceList.size());
+//        Iterator<Instance> instanceItr = instanceList.iterator();
+        while (iter.hasNext()) {
+//            while (instanceItr.hasNext()) {
+//        	Instance instance = instanceItr.next();
+        	Instance instance = iter.next();
+//    		Logger.info("map instance: " + instance.toString());
         	if (instance.field_target != null) {
+        		Logger.info("map instance.field_target: " + instance.field_target);
         		Target target = Target.findByUrl(instance.field_target);
         		instance.field_url = target.field_url;
-        		Logger.info("Instance mapped to Target object: " + instance.field_url);
+//        		Logger.info("Instance mapped to Target object: " + instance.field_url);
         		Ebean.update(instance);
         	}
         }		

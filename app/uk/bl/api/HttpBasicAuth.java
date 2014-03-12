@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import play.Logger;
+
 public class HttpBasicAuth {
 
 public static void downloadFileWithAuth(String urlStr, String user, String pass, String outFilePath) {
@@ -31,6 +33,7 @@ public static void downloadFileWithAuth(String urlStr, String user, String pass,
         in.close();
     }
     catch (Exception e) {
+		Logger.info("downloadFileWithAuth() error: " + e);
         e.printStackTrace();
     }
 }

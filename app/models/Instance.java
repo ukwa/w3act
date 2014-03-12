@@ -22,6 +22,7 @@ import uk.bl.scope.Scope;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.avaje.ebean.QueryIterator;
 
 
 /**
@@ -174,6 +175,18 @@ public class Instance extends Model {
      */
     public static List<Instance> findInvolving() {
 	    return find.all();
+	}
+
+    /**
+     * This method returns a list of ids
+     * @return
+     */
+    public static List<Object> findIds() {
+	    return find.findIds();
+	}
+
+    public static QueryIterator<Instance> getIterator() {
+	    return find.findIterate();
 	}
 
     /**
