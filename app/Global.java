@@ -1,3 +1,5 @@
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,7 @@ import play.Logger;
 import play.libs.Yaml;
 import uk.bl.Const;
 import uk.bl.api.JsonUtils;
+import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
 
 import com.avaje.ebean.Ebean;
@@ -64,6 +67,14 @@ public class Global extends GlobalSettings {
 	            	User user = (User) sectionItr.next();
 	            	user.uid = Utils.createId();
 	            	user.url = Const.ACT_URL + user.uid;
+	        		try {
+						user.password = PasswordHash.createHash(user.password);
+						Logger.info("hash password: " + user.password);
+					} catch (NoSuchAlgorithmException e) {
+						Logger.info("initial password creation - no algorithm error: " + e);
+					} catch (InvalidKeySpecException e) {
+						Logger.info("initial password creation - key specification error: " + e);
+					}
 	                Logger.info("Predefined " + User.class.getSimpleName() + ": " + user.toString());
     	        }
     	        if (cls == Role.class) {
@@ -170,24 +181,12 @@ public class Global extends GlobalSettings {
 	                Ebean.save(allSingleOrganisations);
 	                JsonUtils.normalizeOrganisationUrlInUser();
 	                Logger.info("organisations successfully loaded");
-	                /*Logger.info("load curators ...");
-	                // aggregate original curators from drupal extracting information from aggregated data
-//			        List<Object> allCurators = JsonUtils.extractDrupalData(Const.NodeType.USER);
-					// store urls in DB
-	                Ebean.save(allCurators);
-	                Logger.info("curators successfully loaded");*/
 	                Logger.info("load taxonomies ...");
 	                // aggregate original taxonomies from drupal extracting information from aggregated data
 			        List<Object> allTaxonomies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY);
 					// store urls in DB
 	                Ebean.save(allTaxonomies);
 	                Logger.info("taxonomies successfully loaded");
-//	                Logger.info("load taxonomy vocabularies ...");
-	                // aggregate original taxonomy vocabulary from drupal extracting information from aggregated data
-//			        List<Object> allTaxonomyVocabularies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY_VOCABULARY);
-					// store urls in DB
-//	                Ebean.save(allTaxonomyVocabularies);
-//	                Logger.info("taxonomy vocabularies successfully loaded");
 	                // due to merging of different original object models the resulting 
 	                // collection set is evaluated from particular taxonomy type
 	                Logger.info("load collections ..."); 

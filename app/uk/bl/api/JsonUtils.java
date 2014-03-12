@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -217,7 +219,18 @@ public class JsonUtils {
 			    }
 			    if (newUser.password == null || newUser.password.length() == 0) {
 			    	newUser.password = Const.DEFAULT_PASSWORD;
-			    }			
+			    }	
+				Logger.info("initial password: " + newUser.password);
+			    if (newUser.password.length() > 0) {
+			    	try {
+						newUser.password = PasswordHash.createHash(newUser.password);
+						Logger.info("hash password: " + newUser.password);
+					} catch (NoSuchAlgorithmException e) {
+						Logger.info("initial password creation - no algorithm error: " + e);
+					} catch (InvalidKeySpecException e) {
+						Logger.info("initial password creation - key specification error: " + e);
+					}
+			    }
 //				Logger.info("id: " + newUser.uid  + ", url: " + newUser.url + ", email: " + newUser.email + 
 //						", name: " + newUser.name + ", password: " + newUser.password);
 			}

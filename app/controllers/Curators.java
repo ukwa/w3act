@@ -2,6 +2,8 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,6 +21,7 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
 import views.html.users.list;
 import views.html.users.useredit;
@@ -212,6 +215,13 @@ public class Curators extends AbstractController {
         	    }
         	    if (getFormParam(Const.PASSWORD) != null) {
         	    	user.password = getFormParam(Const.PASSWORD);
+			    	try {
+						user.password = PasswordHash.createHash(user.password);
+					} catch (NoSuchAlgorithmException e) {
+						Logger.info("change password - no algorithm error: " + e);
+					} catch (InvalidKeySpecException e) {
+						Logger.info("change password - key specification error: " + e);
+					}
         	    }
                 if (getFormParam(Const.ORGANISATION) != null) {
                 	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {

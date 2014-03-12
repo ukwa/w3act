@@ -1,11 +1,14 @@
 package controllers;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import play.*;
 import play.mvc.*;
 import play.data.*;
 import static play.data.Form.*;
-
 import models.*;
+import uk.bl.api.PasswordHash;
 import views.html.*;
 
 public class Application extends Controller {
@@ -22,7 +25,19 @@ public class Application extends Controller {
          * @return null if authentication ok.
          */
         public String validate() {
-            if(User.authenticate(email.toLowerCase(), password) == null) {
+        	boolean res = false;
+        	try {
+				Logger.info("validate() inserted password: " + password);
+				String inputPassword = password;
+				Logger.info("validate() db hash for email: " + email.toLowerCase() + ", password: " + User.findByEmail(email.toLowerCase()).password);
+        		res = PasswordHash.validatePassword(inputPassword, User.findByEmail(email.toLowerCase()).password);
+			} catch (NoSuchAlgorithmException e) {
+				Logger.info("validate() no algorithm error: " + e);
+			} catch (InvalidKeySpecException e) {
+				Logger.info("validate() key specification error: " + e);
+			}
+        	Logger.info("res: " + res);
+            if(!res || User.authenticate(email.toLowerCase(), User.findByEmail(email.toLowerCase()).password) == null) {
                 return "Invalid user or password";
             }
             return null;

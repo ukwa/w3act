@@ -11,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.joda.time.DateTime;
@@ -77,7 +76,7 @@ public class User extends Model {
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String revision; 
-    
+
     @JsonIgnore
     @Version
     public Timestamp lastUpdate;
