@@ -22,6 +22,7 @@ public final class Const {
     public static final String URI             = "uri";
     public static final String URL             = "url";
     public static final String URL_STR         = "http://www.webarchive.org.uk/act/node.json?type=";
+    public static final String URL_STR_BASE    = "http://www.webarchive.org.uk/act/";
 	public static final String DRUPAL_USER     = "drupal_user";
 	public static final String DRUPAL_PASSWORD = "drupal_password";
 	public static final String OUT_FILE_PATH   = "res.txt"; // res files are stored in root directory of the project

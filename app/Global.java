@@ -145,6 +145,11 @@ public class Global extends GlobalSettings {
 	                insertInitialData(Const.PERMISSIONS, Permission.class, all);	
 	                insertInitialData(Const.ORGANISATIONS, Organisation.class, all);
 
+	                Logger.info("test load curators ...");
+			        List<Object> allCurators = JsonUtils.getDrupalDataBase(Const.NodeType.USER);
+					// store curators in DB
+	                Ebean.save(allCurators);
+	                Logger.info("test curators successfully loaded");
 	                Logger.info("load urls");
 					// aggregate url data from drupal and store JSON content in a file
 			        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
@@ -165,24 +170,24 @@ public class Global extends GlobalSettings {
 	                Ebean.save(allSingleOrganisations);
 	                JsonUtils.normalizeOrganisationUrlInUser();
 	                Logger.info("organisations successfully loaded");
-	                Logger.info("load curators ...");
+	                /*Logger.info("load curators ...");
 	                // aggregate original curators from drupal extracting information from aggregated data
-			        List<Object> allCurators = JsonUtils.extractDrupalData(Const.NodeType.USER);
+//			        List<Object> allCurators = JsonUtils.extractDrupalData(Const.NodeType.USER);
 					// store urls in DB
 	                Ebean.save(allCurators);
-	                Logger.info("curators successfully loaded");
+	                Logger.info("curators successfully loaded");*/
 	                Logger.info("load taxonomies ...");
 	                // aggregate original taxonomies from drupal extracting information from aggregated data
 			        List<Object> allTaxonomies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY);
 					// store urls in DB
 	                Ebean.save(allTaxonomies);
 	                Logger.info("taxonomies successfully loaded");
-	                Logger.info("load taxonomy vocabularies ...");
+//	                Logger.info("load taxonomy vocabularies ...");
 	                // aggregate original taxonomy vocabulary from drupal extracting information from aggregated data
-			        List<Object> allTaxonomyVocabularies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY_VOCABULARY);
+//			        List<Object> allTaxonomyVocabularies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY_VOCABULARY);
 					// store urls in DB
-	                Ebean.save(allTaxonomyVocabularies);
-	                Logger.info("taxonomy vocabularies successfully loaded");
+//	                Ebean.save(allTaxonomyVocabularies);
+//	                Logger.info("taxonomy vocabularies successfully loaded");
 	                // due to merging of different original object models the resulting 
 	                // collection set is evaluated from particular taxonomy type
 	                Logger.info("load collections ..."); 
@@ -195,8 +200,9 @@ public class Global extends GlobalSettings {
 			        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 					// store instances in DB
 	                Ebean.save(allInstances);
-	                JsonUtils.mapInstancesToTargets();
 	                Logger.info("instances successfully loaded");
+	                JsonUtils.mapInstancesToTargets();
+	                Logger.info("map instances to targets");
 	                JsonUtils.getDomainForTargets();
 	                Logger.info("Target domains extracted");
 	                normalizeUrls();

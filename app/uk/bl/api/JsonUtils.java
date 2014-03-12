@@ -99,6 +99,7 @@ public class JsonUtils {
 
 	/**
      * This method retrieves JSON data from Drupal for particular domain object type (e.g. Target, Collection...)
+     * with parameters e.g. http://www.webarchive.org.uk/act/node.json?type=organisation&page=0
      * @param type
      * @return a list of retrieved objects
      */
@@ -163,6 +164,64 @@ public class JsonUtils {
 //				idx++;
 			}
     	}
+		return res;
+    }
+        
+	/**
+     * This method retrieves JSON data from Drupal for particular domain object type (e.g. Curator...)
+     * without parameter e.g. http://www.webarchive.org.uk/act/user.json
+     * @param type
+     * @return a list of retrieved objects
+     */
+    public static List<Object> getDrupalDataBase(NodeType type) {
+	    List<Object> res = new ArrayList<Object>();
+	    try {
+		    String urlStr = Const.URL_STR_BASE + type.toString().toLowerCase() + Const.JSON;
+			// aggregate data from drupal and store JSON content in a file
+	    	urlStr = authenticateAndLoadDrupal(urlStr, type);
+			// read file and store content in String
+			String content = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+			// extract page information
+			JsonNode mainNode = Json.parse(content);	
+			if(mainNode != null) {
+				int firstPage = getPageNumber(mainNode, Const.FIRST_PAGE);
+				int lastPage = getPageNumber(mainNode, Const.LAST_PAGE);
+				Logger.info("pages: " + firstPage + ", " + lastPage);
+				// aggregate data from drupal for all pages 
+				for (int i = firstPage; i <= lastPage; i++) {
+//					if (i == 1) {
+//						break; // if necessary for faster testing take only the first page
+//					}
+					String pageContent = downloadData(urlStr + "&" + Const.PAGE_IN_URL + String.valueOf(i), type);
+//					Logger.info("users content: " + pageContent);
+					List<Object> pageList = JsonUtils.parseJson(pageContent, type);
+					res.addAll(pageList);
+				}
+			}
+    	} catch (Exception e) {
+			Logger.info("data aggregation error: " + e);
+		}
+    	Logger.info("list size: " + res.size());
+    	
+    	int idx = 0;
+		Iterator<Object> itr = res.iterator();
+		while (itr.hasNext()) {
+			Object obj = itr.next();
+			if (type.equals(NodeType.USER)) {
+				User newUser = (User) obj;
+			    if (newUser.email == null || newUser.email.length() == 0) {
+			    	newUser.email = newUser.name.toLowerCase().replace(" ", ".") + "@bl.uk";
+			    }
+			    if (newUser.password == null || newUser.password.length() == 0) {
+			    	newUser.password = Const.DEFAULT_PASSWORD;
+			    }			
+//				Logger.info("id: " + newUser.uid  + ", url: " + newUser.url + ", email: " + newUser.email + 
+//						", name: " + newUser.name + ", password: " + newUser.password);
+			}
+			Logger.info("res getDrupalData: " + obj.toString() + ", idx: " + idx);
+			idx++;
+		}
+    	Logger.info("res list size: " + res.size());
 		return res;
     }
         
@@ -552,6 +611,9 @@ public class JsonUtils {
 				if (type.equals(Const.NodeType.INSTANCE)) {
 					obj = new Instance();
 				}
+				if (type.equals(Const.NodeType.USER)) {
+					obj = new User();
+				}
 				parseJsonNode(node, obj);
 				res.add(obj);
 			}
@@ -614,6 +676,7 @@ public class JsonUtils {
 			    }
 			}
 			if (isNew && !hasEmptyName) {
+				Logger.info("parseJsonExt()" + obj.toString());
 				res.add(obj);
 			}
 		} else {
