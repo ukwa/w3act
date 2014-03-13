@@ -390,24 +390,16 @@
 					</div>
 		     	</div>		   
 		     	
-		   		<div class="row padding-10">
+	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="inputContactPerson" class="col-sm-6 control-label">Author(s) <small class="text-center">(a named individual responsible for creating the content)</small></label>
+			              	<label for="inputAuthors" class="col-sm-6 control-label">Author(s) <small class="text-center">(A named individual responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="authors" id="authors" class="form-control">
-					                @for(person <- ContactPerson.findAll()) {
-										@if(target.hasContactPerson(person.url)) {
-						                	<option selected disabled>@person.name</option>
-						                } else {
-						                	<option disabled>@person.name</option>
-						                }
-					                }
-								</select>
+				            	<textarea readonly class="form-control" name="authors" id="authors" cols="100" rows="1" value="@target.authors">@target.authors</textarea>
 							</div>
 						</div>
 					</div>
-		     	</div>		   
+		     	</div>		    		    
      			     	
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">

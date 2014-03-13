@@ -94,23 +94,8 @@ public class TargetController extends AbstractController {
 
     		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
             if (getFormParam(Const.AUTHORS) != null) {
-            	if (!getFormParam(Const.AUTHORS).toLowerCase().contains(Const.NONE)) {
-	            	String[] contactPersons = getFormParams(Const.AUTHORS);
-	            	Logger.info("param: " + contactPersons.length + contactPersons.toString());
-	            	String resContactPersons = "";
-	            	for (String contactPerson : contactPersons)
-	                {
-                		Logger.info("contactPerson: " + contactPerson);
-                		if (contactPerson != null && contactPerson.length() > 0) {
-//		                		Logger.info("add contactPerson: " + contactPerson);
-	                		resContactPersons = resContactPersons + ContactPerson.findByName(contactPerson).url + Const.LIST_DELIMITER;
-	            		}
-	                }
-	            	target.authors = resContactPersons;
-            	} else {
-            		target.authors = Const.NONE;
-            	}
-            }            
+            	newTarget.authors = getFormParam(Const.AUTHORS);
+            } 
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
