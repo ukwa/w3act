@@ -2,19 +2,15 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.ExpressionList;
-import com.fasterxml.jackson.databind.JsonNode;
-
 import models.MailTemplate;
-import models.DCollection;
-import models.Organisation;
-import models.Role;
 import models.Target;
-import models.Taxonomy;
 import models.User;
+
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.data.DynamicForm;
 import play.libs.Json;
@@ -23,14 +19,13 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import uk.bl.scope.EmailHelper;
-import views.html.mailtemplates.*;
+import views.html.mailtemplates.edit;
+import views.html.mailtemplates.mailtemplates;
+import views.html.mailtemplates.view;
 
-import java.io.*;
-import java.util.*;
-import javax.activation.*;
-
-import org.apache.commons.lang3.StringUtils;
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Manage templates.
@@ -97,15 +92,11 @@ public class MailTemplates extends AbstractController {
 	            );
     	}
 
-    	int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
-    	String sort = getQueryParam(Const.SORT_BY);
-    	String order = getQueryParam(Const.ORDER);
-
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.Roles.create(query));
+        		return redirect(routes.MailTemplates.create(query));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	        return ok(
