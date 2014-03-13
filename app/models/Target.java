@@ -1005,5 +1005,19 @@ public class Target extends Model {
         		.getPage(page);
     }    
     
+	/**
+     * This method provides data exports for given crawl-frequency. 
+     * Method returns a list of Targets and associated crawl metadata.
+     * @param frequency The crawl frequency e.g. 'daily'
+     * @return list of Target objects
+	 */
+	public static List<Target> exportByFrequency(String frequency) {
+		List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true)
+        		.icontains(Const.FIELD_CRAWL_FREQUENCY, frequency);
+    	res = ll.findList();
+		return res;
+	}
+	
 }
 

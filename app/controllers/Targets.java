@@ -705,5 +705,22 @@ public class Targets extends AbstractController {
             );
     }
     
+    /**
+     * This method provides data exports for each possible crawl-frequency. 
+     * For each frequency this contains a list of Targets and associated 
+     * crawl metadata.
+     * @param frequency The crawl frequency e.g. 'daily'
+     * @return list of Target objects
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result exportByFrequencyJson(String frequency) {
+        JsonNode jsonData = null;
+        if (frequency != null) {
+	        List<Target> targets = Target.filterUrl(frequency);
+	        jsonData = Json.toJson(targets);
+        }
+        return ok(jsonData);
+    }
+    
 }
 
