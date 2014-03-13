@@ -94,6 +94,8 @@ public class Target extends Model {
     public String archivist_notes; 
     public String selection_type; 
     public String selector;     
+    @Column(columnDefinition = "TEXT")
+    public String flag_notes; 
     
     // lists
     @Column(columnDefinition = "TEXT")

@@ -476,9 +476,9 @@
 								<select multiple name="flags" id="flags" class="form-control">
 					                @for(flag <- Flag.findAll()) {
 						                @if(target.flags != null && target.flags.contains(flag.url)) {
-						                	<option selected>@flag.name</option>
+						                	<option selected>@Flags.getGuiName(flag.name)</option>
 						                } else {
-						                	<option>@flag.name</option>
+						                	<option>@Flags.getGuiName(flag.name)</option>
 						                }
 					                }
 								</select>
@@ -486,6 +486,17 @@
 						</div>
 					</div>
 		     	</div>	
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputFlagNotes" class="col-sm-6 control-label">Flag notes <small class="text-center">(More details about the flagged issue)</small></label>
+						    <div class="col-sm-6">
+				            	<textarea class="form-control" name="flag_notes" id="flag_notes" cols="100" rows="1" value="@target.flag_notes">@target.flag_notes</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>		    		    
 		     	}	   
 
 				<div class="row padding-10">

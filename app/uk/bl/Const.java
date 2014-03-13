@@ -142,6 +142,7 @@ public final class Const {
 	public static final String QUALITY_NOTES      = "quality_notes";
 	public static final String DOMAIN             = "domain";
 	public static final String CREATED            = "created";
+	public static final String FLAG_NOTES         = "flag_notes";
 	
     // Creator
 	public static final String UID                = "uid";
@@ -345,10 +346,25 @@ public final class Const {
 	    QA_ISSUE_APPEARANCE,
 	    QA_ISSUE_FUNCTIONALITY,
 	    QA_ISSUE_CONTENT,
-	    FOLLOW_UP_PEMISSION,
+	    FOLLOW_UP_PERMISSION,
 	    GENERAL_CHANGE_REQUEST;
     }
     
+    /**
+     * Help mapping to present predefined Flag values in GUI.
+     */
+    public static final Map<String, String> guiFlagMap = new HashMap<String, String>();
+    	static {
+    	guiFlagMap.put("PRIORITY_PERMISSION",    "Priority Permission");
+    	guiFlagMap.put("PRIORITY_CRAWL_AND_QA",  "Priority Crawl & QA");
+    	guiFlagMap.put("PRIORITY_QA",            "Priority QA");
+    	guiFlagMap.put("QA_ISSUE_APPEARANCE",    "QA Issue - Appearance");
+    	guiFlagMap.put("QA_ISSUE_FUNCTIONALITY", "QA Issue - Functionality");
+    	guiFlagMap.put("QA_ISSUE_CONTENT",       "QA Issue - Content");
+    	guiFlagMap.put("FOLLOW_UP_PERMISSION",   "Follow Up Permission");
+    	guiFlagMap.put("GENERAL_CHANGE_REQUEST", "General Change Request");
+    }
+		
 	public enum SelectionType {
 		NOMINATION, // when created from UKWA
 		SELECTION;
@@ -441,7 +457,6 @@ public final class Const {
     	subNodeMap.put(FIELD_NOMINATING_ORGANISATION, URI);
     	subNodeMap.put(FIELD_SUBJECT, URI);
     	subNodeMap.put(FIELD_QA_STATUS, URI);
-//    	subNodeMap.put(FIELD_COLLECTION_CATEGORIES, URI);
     	subNodeMap.put(FIELD_OWNER, URI);
     	subNodeMap.put(PARENT, URI);
     	subNodeMap.put(PARENTS_ALL, URI);

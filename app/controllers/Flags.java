@@ -219,6 +219,40 @@ public class Flags extends AbstractController {
     }
     
     /**
+     * This method maps flag value to present predefined Flag values in GUI.
+     * @param name The predefined flag value.
+     * @return flag name that should be presented in GUI
+     */
+    public static String getGuiName(String name) {
+    	String res = name;
+    	if (name != null && name.length() > 0) {
+    		String guiName = Const.guiFlagMap.get(name);
+    		if (guiName != null && guiName.length() > 0) {
+    			res = guiName;
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method calculates flag value from the GUI flag name.
+     * @param name The GUI flag value.
+     * @return original flag name 
+     */
+    public static String getNameFromGuiName(String name) {
+    	String res = name;
+    	if (name != null && name.length() > 0) {
+			for (Map.Entry<String, String> entry : Const.guiFlagMap.entrySet()) {
+				if (entry.getValue().equals(name)) {
+					res = entry.getKey();
+					break;
+				}
+			}
+    	}
+    	return res;
+    }
+    
+    /**
      * Display the paginated list of Flags.
      *
      * @param page Current page number (starts from 0)

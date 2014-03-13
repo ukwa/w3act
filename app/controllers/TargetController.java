@@ -67,6 +67,9 @@ public class TargetController extends AbstractController {
             newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
             newTarget.field_description = getFormParam(Const.DESCRIPTION);
+            if (getFormParam(Const.FLAG_NOTES) != null) {
+            	newTarget.flag_notes = getFormParam(Const.FLAG_NOTES);
+            } 
             if (getFormParam(Const.STATUS) != null) {
 //        		Logger.info("status: " + getFormParam(Const.STATUS) + ".");
             	newTarget.status = Long.valueOf(getFormParam(Const.STATUS));
@@ -205,7 +208,9 @@ public class TargetController extends AbstractController {
 	                {
 	            		if (flag != null && flag.length() > 0) {
 	                		Logger.info("add flag: " + flag);
-	            			resFlags = resFlags + Flag.findByName(flag).url + Const.LIST_DELIMITER;
+	                		String origFlag = Flags.getNameFromGuiName(flag);
+	                		Logger.info("original flag name: " + origFlag);
+	            			resFlags = resFlags + Flag.findByName(origFlag).url + Const.LIST_DELIMITER;
 	            		}
 	                }
 	            	newTarget.flags = resFlags;

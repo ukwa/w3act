@@ -352,6 +352,7 @@ create table target (
   archivist_notes           TEXT,
   selection_type            varchar(255),
   selector                  varchar(255),
+  flag_notes                TEXT,
   field_url                 TEXT,
   domain                    TEXT,
   field_description         TEXT,
