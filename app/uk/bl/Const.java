@@ -3,6 +3,8 @@ package uk.bl;
 import java.util.HashMap;
 import java.util.Map;
 
+import play.Logger;
+
 public final class Const {
   
     private Const() {}
@@ -143,6 +145,7 @@ public final class Const {
 	public static final String DOMAIN             = "domain";
 	public static final String CREATED            = "created";
 	public static final String FLAG_NOTES         = "flag_notes";
+	public static final String LAST_UPDATE        = "lastUpdate";
 	
     // Creator
 	public static final String UID                = "uid";
@@ -217,6 +220,18 @@ public final class Const {
 	public static final String ADDRESS                  = "address";
 	public static final String NOMINATED_WEBSITE_OWNER  = "nominated_website_owner";
 	public static final String NOMINATION_DATE          = "nomination_date";
+	
+	/**
+	 * Reports
+	 */
+	public static final String EXPORT_TARGETS_WITH_QAED_INSTANCES     = "export_targets_with_qaed_instances.csv";
+	public static final String EXPORT_TARGETS_WITH_AWAITING_QA        = "export_targets_with_awaiting_qa.csv";
+	public static final String EXPORT_TARGETS_WITH_QA_ISSUES          = "export_targets_with_qa_issues.csv";
+	public static final String EXPORT_TARGETS_WITH_NO_QA_ISSUES       = "export_targets_with_no_qa_issues.csv";
+	public static final String EXPORT_TARGETS_WITH_FAILED_INSTANCES   = "export_targets_with_failed_instances.csv";
+	public static final String EXPORT_TARGETS_WITH_PASSED_INSTANCES   = "export_targets_with_passed_instances.csv";
+	public static final String EXPORT_TARGETS_WITH_QA_ISSUES_RESOLVED = "export_targets_with_qa_issues_resolved.csv";
+
 	
 	// Buttons
 	public static final String SAVE               = "save";

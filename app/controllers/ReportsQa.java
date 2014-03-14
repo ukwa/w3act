@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import models.CrawlPermission;
+import models.DCollection;
 import models.Organisation;
 import models.Target;
 import models.User;
@@ -34,16 +35,18 @@ public class ReportsQa extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-        List<CrawlPermission> resList = 
-        		processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<CrawlPermission> resListGranted = 
-        		processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<CrawlPermission> resListRefused = 
-        		processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
+        List<Target> resListQaed = processFilterReports("", "", "", "", "");
+        List<Target> resListAwaitingQa = processFilterReports("", "", "", "", "");
+        List<Target> resListWithQaIssues = processFilterReports("", "", "", "", "");
+        List<Target> resListWithNoQaIssues = processFilterReports("", "", "", "", "");
+        List<Target> resListFailedInstances = processFilterReports("", "", "", "", "");
+        List<Target> resListPassedInstances = processFilterReports("", "", "", "", "");
+        List<Target> resListWithQaIssuesResolved = processFilterReports("", "", "", "", "");
         return ok(
-                reports.render(
-                    "Reports", User.find.byId(request().username()), resList, 
-                    resListGranted, resListRefused, "", "", "", "", ""
+                reportsqa.render(
+                    "Reports", User.find.byId(request().username()), resListQaed, resListAwaitingQa,
+                    resListWithQaIssues, resListWithNoQaIssues, resListFailedInstances, resListPassedInstances,
+                    resListWithQaIssuesResolved, "", "", "", "", ""
                 )
             );
     }
@@ -76,48 +79,59 @@ public class ReportsQa extends AbstractController {
     			Logger.info("Can't find organisation for title: " + organisation_name + ". " + e);
     		}
     	} 
-    	String request_name = form.get(Const.REQUEST);
-    	String request = "";
-    	if (request_name != null && !request_name.toLowerCase().equals(Const.NONE) 
-    			&& !request_name.toLowerCase().equals(Const.ALL)) {
-   			request = request_name;
+    	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
+    	String collection = "";
+    	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
+    		try {
+    			collection = DCollection.findByTitle(collection_name).url;
+    		} catch (Exception e) {
+    			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
+    		}
     	} 
         String start_date = form.get(Const.FIELD_CRAWL_START_DATE);
         Logger.info("start_date: " + start_date);
         String end_date = form.get(Const.FIELD_CRAWL_END_DATE);
         
-        List<CrawlPermission> resList = 
-        		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.PENDING.name(), 
-        				request, start_date, end_date);
-        List<CrawlPermission> resListGranted = 
-        		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.GRANTED.name(), 
-        				request, start_date, end_date);
-        List<CrawlPermission> resListRefused = 
-        		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.REFUSED.name(), 
-        				request, start_date, end_date);
-
+        List<Target> resListQaed = processFilterReports(curator, organisation, collection, start_date, end_date);
+        List<Target> resListAwaitingQa = processFilterReports(curator, organisation, collection, start_date, end_date);
+        List<Target> resListWithQaIssues = processFilterReports(curator, organisation, collection, start_date, end_date);
+        List<Target> resListWithNoQaIssues = processFilterReports(curator, organisation, collection, start_date, end_date);
+        List<Target> resListFailedInstances = processFilterReports(curator, organisation, collection, start_date, end_date);
+        List<Target> resListPassedInstances = processFilterReports(curator, organisation, collection, start_date, end_date);
+        List<Target> resListWithQaIssuesResolved = processFilterReports(curator, organisation, collection, start_date, end_date);
+        
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.EXPORT.equals(action)) {
-				Logger.info("export requested size: " + resList.size());
-    			export(resList, Const.EXPORT_REQUESTED_LICENCE_FILE);
-				Logger.info("export granted size: " + resListGranted.size());
-    			export(resListGranted, Const.EXPORT_GRANTED_LICENCE_FILE);
-				Logger.info("export refused size: " + resListRefused.size());
-    			export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
+				Logger.info("export resListQaed size: " + resListQaed.size());
+    			export(resListQaed, Const.EXPORT_TARGETS_WITH_QAED_INSTANCES);
+				Logger.info("export resListAwaitingQa size: " + resListAwaitingQa.size());
+    			export(resListAwaitingQa, Const.EXPORT_TARGETS_WITH_AWAITING_QA);
+				Logger.info("export resListWithQaIssues size: " + resListWithQaIssues.size());
+    			export(resListWithQaIssues, Const.EXPORT_TARGETS_WITH_QA_ISSUES);
+				Logger.info("export resListWithNoQaIssues size: " + resListWithNoQaIssues.size());
+    			export(resListWithNoQaIssues, Const.EXPORT_TARGETS_WITH_NO_QA_ISSUES);
+				Logger.info("export resListFailedInstances size: " + resListFailedInstances.size());
+    			export(resListFailedInstances, Const.EXPORT_TARGETS_WITH_FAILED_INSTANCES);
+				Logger.info("export resListPassedInstances size: " + resListPassedInstances.size());
+    			export(resListPassedInstances, Const.EXPORT_TARGETS_WITH_PASSED_INSTANCES);
+				Logger.info("export resListWithQaIssuesResolved size: " + resListWithQaIssuesResolved.size());
+    			export(resListWithQaIssuesResolved, Const.EXPORT_TARGETS_WITH_QA_ISSUES_RESOLVED);
     			return ok(
                 		reportsqa.render(
-                            "ReportsQa", User.find.byId(request().username()), resList, resListGranted,
-                            resListRefused, curator, organisation, start_date, end_date, request
+                            "ReportsQa", User.find.byId(request().username()), resListQaed, resListAwaitingQa,
+                            resListWithQaIssues, resListWithNoQaIssues, resListFailedInstances, resListPassedInstances,
+                            resListWithQaIssuesResolved, curator, organisation, start_date, end_date, collection
                         )
                     );
     		}
     		else if (Const.SEARCH.equals(action)) {
     			return ok(
                 		reportsqa.render(
-                            "ReportsQa", User.find.byId(request().username()), resList, resListGranted,
-                            resListRefused, curator, organisation, start_date, end_date, request
+                            "ReportsQa", User.find.byId(request().username()), resListQaed, resListAwaitingQa,
+                            resListWithQaIssues, resListWithNoQaIssues, resListFailedInstances, resListPassedInstances,
+                            resListWithQaIssuesResolved, curator, organisation, start_date, end_date, collection
                         )
                     );
 		    } else {
@@ -128,13 +142,13 @@ public class ReportsQa extends AbstractController {
     
         
     /**
-     * This method exports selected crawl permissions to CSV file.
+     * This method exports selected targets to CSV file.
      * @param list of Target objects
      * @param file name
      * @return
      */
-    public static void export(List<CrawlPermission> permissionList, String fileName) {
-    	Logger.info("export() permissionList size: " + permissionList.size());
+    public static void export(List<Target> targetList, String fileName) {
+    	Logger.info("export() targetList size: " + targetList.size());
 
         StringWriter sw = new StringWriter();
 	    sw.append("Target title");
@@ -145,15 +159,15 @@ public class ReportsQa extends AbstractController {
 		sw.append(Const.CSV_SEPARATOR);
         sw.append(Const.CSV_LINE_END);
  	    
- 	    if (permissionList != null && permissionList.size() > 0) {
- 	    	Iterator<CrawlPermission> itr = permissionList.iterator();
+ 	    if (targetList != null && targetList.size() > 0) {
+ 	    	Iterator<Target> itr = targetList.iterator();
  	    	while (itr.hasNext()) {
- 	    		CrawlPermission permission = itr.next();
-	    		sw.append(Target.findByUrl(permission.target).title);
+ 	    		Target target = itr.next();
+	    		sw.append(target.title);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(permission.target);
+	    		sw.append(target.field_url);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(permission.licenseDate);
+	    		sw.append(target.field_license);
 		 	    sw.append(Const.CSV_SEPARATOR);
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
@@ -166,102 +180,78 @@ public class ReportsQa extends AbstractController {
      * @param curator The curator URL
      * @param organisation The organisation URL
      * @param status The status of the report workflow
-     * @param request The request type (first request/folloup/all)
+     * @param collection The collection URL
      * @return
      */
-    public static List<CrawlPermission> processFilterReports(String curator, String organisation, 
-    		String status, String request, String start_date, String end_date) {
+    public static List<Target> processFilterReports(String curator, String organisation, 
+//    		String status, 
+    		String collection, String start_date, String end_date) {
     	boolean isProcessed = false;
-    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
-    	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
-    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
-    		Logger.info("status: " + status);
-    		exp = exp.eq(Const.STATUS, status);
-    		isProcessed = true;
-    	} 
+    	ExpressionList<Target> exp = Target.find.where();
+    	List<Target> res = new ArrayList<Target>();
+//    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
+//    		Logger.info("status: " + status);
+//    		exp = exp.eq(Const.STATUS, status);
+//    		isProcessed = true;
+//    	} 
     	if (curator != null && !curator.toLowerCase().equals(Const.NONE) && curator.length() > 0) {
     		Logger.info("curator: " + curator);
     		exp = exp.eq(Const.CREATOR_USER, curator);
     		isProcessed = true;
     	} 
-    	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
-    		Logger.info("request: " + request);
-    		if (request.equals(Const.RequestTypes.FOLLOW_UP.name())) {
-    			exp = exp.eq(Const.REQUEST_FOLLOW_UP, true);
-    		} else {
-    			exp = exp.eq(Const.REQUEST_FOLLOW_UP, null);
-    		}
-    		isProcessed = true;
+    	if (collection != null && !collection.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection);
     	} 
     	if (start_date != null && start_date.length() > 0) {
     		Logger.info("start_date: " + start_date);
-    		exp = exp.ge(Const.LICENSE_DATE, start_date);
+    		exp = exp.ge(Const.LAST_UPDATE, start_date);
     		isProcessed = true;
     	} 
     	if (end_date != null && end_date.length() > 0) {
-    		Logger.info("start_date: " + end_date);
-    		exp = exp.le(Const.LICENSE_DATE, end_date);
+    		Logger.info("end_date: " + end_date);
+    		exp = exp.le(Const.LAST_UPDATE, end_date);
     		isProcessed = true;
     	} 
     	res = exp.query().findList();
     	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
-        if (!isProcessed) {
-    		res = models.CrawlPermission.filterByStatus(status);
-    	}
+//        if (!isProcessed) {
+//    		res = models.Target.findAll();
+//    	}
         return res;
     }
               
     /**
      * Display the report.
      */
-    public static Result summary() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), 
-        		"", "", "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), 
-        		"", "", "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), 
-        		"", "", "");
-        return ok(
-                reports.render(
-                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, 
-                    "", "", "", "", ""
-                )
-            );
-    }
+//    public static Result summary() {
+//        return ok(
+//                reports.render(
+//                    "Reports", User.find.byId(request().username()), null, null, null, 
+//                    "", "", "", "", ""
+//                )
+//            );
+//    }
 
-    public static Result openLicences() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
-        return ok(
-                reports.render(
-                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-                )
-            );
-    }
+//    public static Result openLicences() {
+//    	return redirect(
+//                routes.Reports.index()
+//    	        );
+//    }
 
-    public static Result recordCreation() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
-        return ok(
-                reports.render(
-                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-                )
-            );
-    }
+//    public static Result recordCreation() {
+//        return ok(
+//                reports.render(
+//                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
+//                )
+//            );
+//    }
 
-    public static Result qa() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
-        return ok(
-                reportsqa.render(
-                    "Reports QA", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-                )
-            );
-    }
+//    public static Result qa() {
+//    	return redirect(
+//                routes.ReportsQa.index()
+//    	        );
+//    }
 
 }
 

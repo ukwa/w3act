@@ -230,6 +230,9 @@ public class TargetController extends AbstractController {
             newTarget.keywords = getFormParam(Const.KEYWORDS);
             newTarget.synonyms = getFormParam(Const.SYNONYMS);
             newTarget.active = true;
+            long unixTime = System.currentTimeMillis() / 1000L;
+            String changedTime = String.valueOf(unixTime);
+            Logger.info("changed time: " + changedTime);
         	if (!isExisting) {
         		newTarget.url = Const.ACT_URL + newTarget.nid;
         		newTarget.edit_url = Const.WCT_URL + newTarget.nid;
@@ -239,6 +242,7 @@ public class TargetController extends AbstractController {
                 	Logger.info("current target field_url: " + target.field_url);
             		target.domain = Scope.getDomainFromUrl(target.field_url);
             	}
+            	target.changed = changedTime;
         		Logger.info("update target: " + target.nid + ", obj: " + target.toString());
             	Ebean.update(target);
         	}
@@ -246,6 +250,7 @@ public class TargetController extends AbstractController {
             	Logger.info("current target field_url: " + newTarget.field_url);
         		newTarget.domain = Scope.getDomainFromUrl(newTarget.field_url);
         	}
+        	newTarget.changed = changedTime;
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
 	        res = redirect(routes.Targets.edit(newTarget.url));

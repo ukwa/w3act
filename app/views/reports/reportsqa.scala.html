@@ -1,4 +1,4 @@
-@(title: String, user: User, permissions: List[CrawlPermission], permissionsGranted: List[CrawlPermission], permissionsRefused: List[CrawlPermission], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, requestType: String)
+@(title: String, user: User, targetsQaed: List[Target], targetsAwaitingQa: List[Target], targetsWithQaIssues: List[Target], targetsWithNoQaIssues: List[Target], targetsFailedInstances: List[Target], targetsPassedInstances: List[Target], targetsWithQaIssuesResolved: List[Target], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, collectionUrl: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -31,12 +31,12 @@
 	<div class="tab-content padding-20">          
 		<ul class="nav nav-pills">
 	        <li class="active"><a href="#qaed" data-toggle="tab">Instances QA'ed</a></li>
-	        <li><a href="#granted" data-toggle="tab">Awaiting QA</a></li>
-		    <li><a href="#refused" data-toggle="tab">With QA issues</a></li>
-		    <li><a href="#refused" data-toggle="tab">With no QA issues</a></li>
-		    <li><a href="#refused" data-toggle="tab">Failed Instances</a></li>
-		    <li><a href="#refused" data-toggle="tab">Passed to Crawl Engineer</a></li>
-		    <li><a href="#refused" data-toggle="tab">With QA issues resolved</a></li>
+	        <li><a href="#awaitingQa" data-toggle="tab">Awaiting QA</a></li>
+		    <li><a href="#withQaIssues" data-toggle="tab">With QA issues</a></li>
+		    <li><a href="#withNoQaIssues" data-toggle="tab">With no QA issues</a></li>
+		    <li><a href="#failedInstances" data-toggle="tab">Failed Instances</a></li>
+		    <li><a href="#passed" data-toggle="tab">Passed to Crawl Engineer</a></li>
+		    <li><a href="#withQaIssuesResolved" data-toggle="tab">With QA issues resolved</a></li>
 	  	</ul>
 	</div>
 	
@@ -92,6 +92,24 @@
 								</div>
 							</div>
 							<div class="row">
+									<div class="form-group">
+						            	<label for="suggested_collections" class="col-sm-6 control-label">Filter by collection</label>
+						            	<div class="col-sm-6">
+											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
+								                <option>None</option>
+								                @for(cur_collection <- DCollection.findAll()) {
+									                @if(collectionUrl != null && collectionUrl.equals(cur_collection.url)) {
+									                	<option selected>@cur_collection.title</option>
+									                } else {
+									                	<option>@cur_collection.title</option>
+									                }
+								                }
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
 								<div class="col-md-6">
 										<div class="form-group">
 											<label class="col-sm-6 control-label">Filter by time period from </label>
@@ -114,27 +132,6 @@
 										</div>
 						     	</div>	
 							</div>
-							<div class="row">
-								<div class="row padding-10">
-						     		<div class="col-md-12 col-xs-12 col-sm-12">
-										<div class="form-group">
-							              	<label for="request" class="col-sm-6 control-label">Request type </label>
-										    <div class="col-sm-6">
-												<select name="request" id="request" class="form-control">
-									                @for(request <- CrawlPermission.getAllRequestTypes()) {
-										                @if(request.equals(requestType)) {
-										                	<option selected>@request</option>
-										                } else {
-										                	<option>@request</option>
-										                }
-									                }
-												</select>
-											</div>
-										</div>
-									</div>
-						     	</div>	     
-									
-							</div>
 						</div>
 					</div>
 				</div>				
@@ -145,7 +142,7 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Apply filters">Apply</button>
-					@if(permissions.size() > 0 || permissionsGranted.size() > 0 || permissionsRefused.size() > 0) {
+					@if(targetsQaed.size() > 0 || targetsAwaitingQa.size() > 0 || targetsWithQaIssues.size() > 0 || targetsWithNoQaIssues.size() > 0 || targetsFailedInstances.size() > 0 || targetsPassedInstances.size() > 0 || targetsWithQaIssuesResolved.size() > 0) {
 						<button type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
 					} else {
 						<button disabled type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
@@ -158,6 +155,7 @@
 		<div id="myTabContent" class="tab-content">
 		
 			<div class="tab-pane padding-20 fade active in" id="qaed">
+				<input type="hidden" name="status" value="qaed">
 			   	<div class="row padding-20">
 					<table class="table table-hover">
 						<thead>
@@ -167,13 +165,13 @@
 							</tr>
 						</thead>
 						<tbody>
-						@permissions.map { permission =>		              
+						@targetsQaed.map { target =>		              
 							<tr>
 								<td>
-					                @Target.findByUrl(permission.target).title
+					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
 								</td>
 								<td>
-					                @permission.target
+					                @Instance.findAllByTarget(target.url)
 								</td>
 							</tr>
 						}
@@ -182,57 +180,24 @@
 				</div>	
 			</div>
 			
-			<div class="tab-pane padding-20 fade" id="granted">
-				<input type="hidden" name="status" value="granted">
+			<div class="tab-pane padding-20 fade active in" id="#awaitingQa">
+				<input type="hidden" name="status" value="#awaitingQa">
 			   	<div class="row padding-20">
 					<table class="table table-hover">
 						<thead>
 							<tr>
 								<th>Target Title</th>
-								<th>Target URL</th>
-								<th>Date requested</th>
+								<th>#Instances</th>
 							</tr>
 						</thead>
 						<tbody>
-						@permissionsGranted.map { permission =>		              
+						@targetsAwaitingQa.map { target =>		              
 							<tr>
 								<td>
-					                @Target.findByUrl(permission.target).title
+					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
 								</td>
 								<td>
-					                @permission.target
-								</td>
-								<td>
-					                @permission.licenseDate
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>  
-
-			<div class="tab-pane padding-20 fade" id="refused">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>Target URL</th>
-								<th>Date requested</th>
-							</tr>
-						</thead>
-						<tbody>
-						@permissionsRefused.map { permission =>		              
-							<tr>
-								<td>
-					                @Target.findByUrl(permission.target).title
-								</td>
-								<td>
-					                @permission.target
-								</td>
-								<td>
-					                @permission.licenseDate
+					                @Instance.findAllByTarget(target.url)
 								</td>
 							</tr>
 						}
@@ -240,7 +205,137 @@
 					</table>
 				</div>	
 			</div>
-			
+						
+			<div class="tab-pane padding-20 fade active in" id="#withQaIssues">
+				<input type="hidden" name="status" value="#withQaIssues">
+			   	<div class="row padding-20">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Target Title</th>
+								<th>#Instances</th>
+							</tr>
+						</thead>
+						<tbody>
+						@targetsWithQaIssues.map { target =>		              
+							<tr>
+								<td>
+					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+								</td>
+								<td>
+					                @Instance.findAllByTarget(target.url)
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>	
+			</div>
+						
+			<div class="tab-pane padding-20 fade active in" id="#withNoQaIssues">
+				<input type="hidden" name="status" value="#withNoQaIssues">
+			   	<div class="row padding-20">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Target Title</th>
+								<th>#Instances</th>
+							</tr>
+						</thead>
+						<tbody>
+						@targetsWithNoQaIssues.map { target =>		              
+							<tr>
+								<td>
+					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+								</td>
+								<td>
+					                @Instance.findAllByTarget(target.url)
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>	
+			</div>
+						
+			<div class="tab-pane padding-20 fade active in" id="#failedInstances">
+				<input type="hidden" name="status" value="#failedInstances">
+			   	<div class="row padding-20">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Target Title</th>
+								<th>#Instances</th>
+							</tr>
+						</thead>
+						<tbody>
+						@targetsFailedInstances.map { target =>		              
+							<tr>
+								<td>
+					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+								</td>
+								<td>
+					                @Instance.findAllByTarget(target.url)
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>	
+			</div>
+						
+			<div class="tab-pane padding-20 fade active in" id="#passed">
+				<input type="hidden" name="status" value="#passed">
+			   	<div class="row padding-20">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Target Title</th>
+								<th>#Instances</th>
+							</tr>
+						</thead>
+						<tbody>
+						@targetsPassedInstances.map { target =>		              
+							<tr>
+								<td>
+					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+								</td>
+								<td>
+					                @Instance.findAllByTarget(target.url)
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>	
+			</div>
+						
+			<div class="tab-pane padding-20 fade active in" id="#withQaIssuesResolved">
+				<input type="hidden" name="status" value="#withQaIssuesResolved">
+			   	<div class="row padding-20">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Target Title</th>
+								<th>#Instances</th>
+							</tr>
+						</thead>
+						<tbody>
+						@targetsWithQaIssuesResolved.map { target =>		              
+							<tr>
+								<td>
+					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+								</td>
+								<td>
+					                @Instance.findAllByTarget(target.url)
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>	
+			</div>
+						
 		</div>	  
 
 	}

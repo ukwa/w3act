@@ -216,51 +216,63 @@ public class Reports extends AbstractController {
      * Display the report.
      */
     public static Result summary() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), 
-        		"", "", "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), 
-        		"", "", "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), 
-        		"", "", "");
-        return ok(
-                reports.render(
-                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, 
-                    "", "", "", "", ""
-                )
-            );
+    	return redirect(
+                routes.ReportsQa.index()
+    	        );
+//        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), 
+//        		"", "", "");
+//        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), 
+//        		"", "", "");
+//        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), 
+//        		"", "", "");
+//        return ok(
+//                reports.render(
+//                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, 
+//                    "", "", "", "", ""
+//                )
+//            );
     }
 
     public static Result openLicences() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
-        return ok(
-                reports.render(
-                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-                )
-            );
+    	return redirect(
+                routes.Reports.index()
+    	        );
+//        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
+//        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
+//        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
+//        return ok(
+//                reports.render(
+//                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
+//                )
+//            );
     }
 
     public static Result recordCreation() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
-        return ok(
-                reports.render(
-                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-                )
-            );
+//        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
+//        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
+//        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
+//        return ok(
+//                reports.render(
+//                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
+//                )
+//            );
+    	return redirect(
+                routes.ReportsQa.index()
+    	        );
     }
 
     public static Result qa() {
-        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
-        return ok(
-                reportsqa.render(
-                    "Reports QA", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-                )
-            );
+    	return redirect(
+                routes.ReportsQa.index()
+    	        );
+//        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
+//        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
+//        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
+//        return ok(
+//                reportsqa.render(
+//                    "Reports QA", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
+//                )
+//            );
     }
 
 }
