@@ -211,6 +211,13 @@ public final class Const {
 													"templates" + System.getProperty("file.separator");
 	public static final String DEFAULT_TEMPLATE  = "General";
 	
+	// Nomination
+	public static final String WEBSITE_URL              = "website_url";
+	public static final String TEL                      = "tel";
+	public static final String ADDRESS                  = "address";
+	public static final String NOMINATED_WEBSITE_OWNER  = "nominated_website_owner";
+	public static final String NOMINATION_DATE          = "nomination_date";
+	
 	// Buttons
 	public static final String SAVE               = "save";
 	public static final String DELETE             = "delete";

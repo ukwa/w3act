@@ -14,6 +14,7 @@ import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class allows archivist to manage nominations.
@@ -100,9 +101,11 @@ public class Nomination extends Model
     /**
      * Indicates that the new nomination has been inspected by Archivist.
      */
+    @JsonIgnore
     public Boolean nomination_checked;
     
     @Version
+    @JsonIgnore
     public Timestamp lastUpdate;
 
     public static final Model.Finder<Long, Nomination> find = new Model.Finder<Long, Nomination>(Long.class, Nomination.class);

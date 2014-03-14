@@ -2,21 +2,13 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.util.Iterator;
 import java.util.List;
+
+import models.Nomination;
+import models.User;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import models.CommunicationLog;
-import models.ContactPerson;
-import models.CrawlPermission;
-import models.Nomination;
-import models.Target;
-import models.Taxonomy;
-import models.User;
 import play.Logger;
 import play.data.DynamicForm;
 import play.libs.Json;
@@ -25,10 +17,15 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.licence.ukwalicence;
 import views.html.licence.ukwalicenceresult;
-import views.html.licence.ukwalicenceview;
-import views.html.nominations.*;
+import views.html.nominations.edit;
+import views.html.nominations.list;
+import views.html.nominations.nominationform;
+import views.html.nominations.view;
+
+import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Manage nominations.
@@ -127,7 +124,67 @@ public class Nominations extends AbstractController {
                 )
             );
     }
-      
+    
+    /**
+     * This method loads new Nomination object using POST RESTful interface.
+     * @return
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result load() {
+    	Logger.info("nomination load()");
+        JsonNode json = request().body().asJson();
+    	Logger.info("nomination load() json: " + json);
+        ObjectNode result = Json.newObject();
+    	Logger.info("nomination load() result: " + result);
+        String name = json.findPath(Const.NAME).textValue();
+    	Logger.info("load nomination name: " + name);
+        if(name == null) {
+            result.put("status", "Not OK");
+            result.put("message", "Missing parameter [name]");
+            return badRequest(result);
+        } else {
+            result.put("status", "OK");
+            result.put("message", "Nomination " + name);
+            Long id = json.findPath(Const.ID).longValue();
+            Logger.info("load nomination id: " + id);
+            String url = json.findPath(Const.URL).textValue();
+            Logger.info("load nomination url: " + url);
+            String title = json.findPath(Const.TITLE).textValue();
+            Logger.info("load nomination title: " + title);
+            String website_url = json.findPath(Const.WEBSITE_URL).textValue();
+            Logger.info("load nomination website_url: " + website_url);
+            String email = json.findPath(Const.EMAIL).textValue();
+            Logger.info("load nomination email: " + email);
+            String tel = json.findPath(Const.TEL).textValue();
+            Logger.info("load nomination tel: " + tel);
+            String address = json.findPath(Const.ADDRESS).textValue();
+            Logger.info("load nomination address: " + address);
+            boolean nominated_website_owner = json.findPath(Const.NOMINATED_WEBSITE_OWNER).booleanValue();
+            Logger.info("load nomination nominated_website_owner: " + nominated_website_owner);
+            String justification = json.findPath(Const.JUSTIFICATION).textValue();
+            Logger.info("load nomination justification: " + justification);
+            String notes = json.findPath(Const.NOTES).textValue();
+            Logger.info("load nomination notes: " + notes);
+            String nomination_date = json.findPath(Const.NOMINATION_DATE).textValue();
+            Logger.info("load nomination nomination_date: " + nomination_date);
+            Nomination nomination = new Nomination();
+            nomination.id = id;
+            nomination.url = url;
+            nomination.title = title;
+            nomination.website_url = website_url;
+            nomination.email = email;
+            nomination.tel = tel;
+            nomination.address = address;
+            nomination.nominated_website_owner = nominated_website_owner;
+            nomination.justification = justification;
+            nomination.notes = notes;
+            nomination.nomination_date = nomination_date;
+	       	Ebean.save(nomination);
+	        Logger.info("save nomination: " + nomination.toString());
+            return ok(result);
+        }
+    }	   
+
     /**
      * This method saves new object or changes on given Nomination in the same object
      * completed by revision comment. The "version" field in the Nomination object

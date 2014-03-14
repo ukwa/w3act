@@ -215,6 +215,7 @@ GET    	/nominations/filterbyjson/:name		controllers.Nominations.filterByJson(na
 GET     /nominations/:nomination            controllers.Nominations.view(nomination)
 GET     /nominations/:nomination/edit       controllers.Nominations.edit(nomination)
 GET     /nominations/create/:nomination     controllers.Nominations.create(nomination)
+POST    /nominations/load/json         		controllers.Nominations.load()
 POST    /nominations                   		controllers.Nominations.save()
 
 
