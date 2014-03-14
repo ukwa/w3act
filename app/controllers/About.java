@@ -1,26 +1,13 @@
 package controllers;
 
-import play.*;
-import play.mvc.*;
-import play.data.*;
-import static play.data.Form.*;
-
-import java.util.*;
-
-import models.*;
-
-import views.html.*;
-import uk.bl.api.*;
-import java.net.URL;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.lang.StringBuilder;
-import java.io.FileNotFoundException;
-import play.libs.Json;
-
+import models.User;
+import play.Logger;
+import play.mvc.Controller;
+import play.mvc.Result;
+import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.Utils;
+import views.html.about;
 
 /**
  * Describe W3ACT project.
@@ -37,5 +24,17 @@ public class About extends Controller {
         );
     }
 	
+    /**
+     * This method retrieves the last commit hash from Github.
+     * @return last commit hash value
+     */
+    public static String getLastCommitHash() {
+    	String row = Utils.buildWebRequestByUrl(Const.GITHUB, Const.LAST_COMMIT);
+    	int start = row.indexOf(Const.LAST_COMMIT) + Const.LAST_COMMIT.length();
+    	row = row.substring(start, start + 40);
+    	Logger.info("row: " + row);
+    	return row;
+    }
+    
 }
 

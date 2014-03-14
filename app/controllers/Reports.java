@@ -219,43 +219,15 @@ public class Reports extends AbstractController {
     	return redirect(
                 routes.ReportsQa.index()
     	        );
-//        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), 
-//        		"", "", "");
-//        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), 
-//        		"", "", "");
-//        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), 
-//        		"", "", "");
-//        return ok(
-//                reports.render(
-//                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, 
-//                    "", "", "", "", ""
-//                )
-//            );
     }
 
     public static Result openLicences() {
     	return redirect(
                 routes.Reports.index()
     	        );
-//        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-//        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-//        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
-//        return ok(
-//                reports.render(
-//                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-//                )
-//            );
     }
 
     public static Result recordCreation() {
-//        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-//        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-//        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
-//        return ok(
-//                reports.render(
-//                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-//                )
-//            );
     	return redirect(
                 routes.ReportsQa.index()
     	        );
@@ -265,14 +237,6 @@ public class Reports extends AbstractController {
     	return redirect(
                 routes.ReportsQa.index()
     	        );
-//        List<CrawlPermission> resList = processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-//        List<CrawlPermission> resListGranted = processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-//        List<CrawlPermission> resListRefused = processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
-//        return ok(
-//                reportsqa.render(
-//                    "Reports QA", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-//                )
-//            );
     }
 
 }

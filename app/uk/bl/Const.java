@@ -3,8 +3,6 @@ package uk.bl;
 import java.util.HashMap;
 import java.util.Map;
 
-import play.Logger;
-
 public final class Const {
   
     private Const() {}
@@ -274,7 +272,13 @@ public final class Const {
 	public static final String YES                  = "yes"; 
 	public static final String NO                   = "no"; 
 	public static final String MAX_COUNT            = "max_count"; 
-
+	
+	/**
+	 * HTTP request
+	 */
+    public static final String GITHUB = "https://github.com/ukwa/w3act/commits/master/"; 
+    public static final String LAST_COMMIT = "/ukwa/w3act/commit/"; 
+	
 	// Types of the JSON nodes
 	public enum NodeType {
         URL, 

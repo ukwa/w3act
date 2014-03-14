@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -231,5 +235,36 @@ public class Utils {
     	}
         return res;
     }
+    
+	/**
+	 * This method creates a web request for passed parameter, processes a call and returns
+	 * a server response.
+	 * @param resourceUrl The web site URL
+	 * @param target The target string in site content
+	 * @return target row
+	 */
+	public static String buildWebRequestByUrl(String resourceUrl, String target) {
+        String res = "";
+		try {
+	        URL github = new URL(resourceUrl);
+	        URLConnection yc = github.openConnection();
+	        BufferedReader in = new BufferedReader(
+	                                new InputStreamReader(
+	                                yc.getInputStream()));
+	        while ((res = in.readLine()) != null) {
+	        	if (res.contains(target)) {
+	        		break;
+	        	}
+	        }
+	        in.close();
+		} catch (MalformedURLException e) {
+			Logger.info("Reading last github hash: " + e);
+		} catch (Exception e) {
+			Logger.info("Reading last github hash: " + e);
+		}
+		return res;
+	}
+
+    
 }
 

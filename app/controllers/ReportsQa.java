@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.CrawlPermission;
 import models.DCollection;
 import models.Organisation;
 import models.Target;
@@ -21,7 +20,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.reports.*;
+import views.html.reports.reportsqa;
 
 import com.avaje.ebean.ExpressionList;
 
@@ -221,37 +220,5 @@ public class ReportsQa extends AbstractController {
         return res;
     }
               
-    /**
-     * Display the report.
-     */
-//    public static Result summary() {
-//        return ok(
-//                reports.render(
-//                    "Reports", User.find.byId(request().username()), null, null, null, 
-//                    "", "", "", "", ""
-//                )
-//            );
-//    }
-
-//    public static Result openLicences() {
-//    	return redirect(
-//                routes.Reports.index()
-//    	        );
-//    }
-
-//    public static Result recordCreation() {
-//        return ok(
-//                reports.render(
-//                    "Reports", User.find.byId(request().username()), resList, resListGranted, resListRefused, "", "", "", "", ""
-//                )
-//            );
-//    }
-
-//    public static Result qa() {
-//    	return redirect(
-//                routes.ReportsQa.index()
-//    	        );
-//    }
-
 }
 
