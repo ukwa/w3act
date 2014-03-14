@@ -145,10 +145,8 @@ public class Nominations extends AbstractController {
         } else {
             result.put("status", "OK");
             result.put("message", "Nomination " + name);
-            Long id = json.findPath(Const.ID).longValue();
-            Logger.info("load nomination id: " + id);
-            String url = json.findPath(Const.URL).textValue();
-            Logger.info("load nomination url: " + url);
+            Long id = Utils.createId();
+            String url = Const.ACT_URL + id;
             String title = json.findPath(Const.TITLE).textValue();
             Logger.info("load nomination title: " + title);
             String website_url = json.findPath(Const.WEBSITE_URL).textValue();
