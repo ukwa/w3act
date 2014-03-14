@@ -132,14 +132,10 @@ public class Utils {
     	String res = "";
     	if (timestamp.length() > 0) {
 			try {
-				Date resDate = new Date(Long.parseLong(timestamp));
-				if (resDate != null) {
-					Calendar mydate = new GregorianCalendar();
-					mydate.setTime(resDate);
-					res = Integer.toString(mydate.get(Calendar.DAY_OF_MONTH)) + "/" +
-							Integer.toString(mydate.get(Calendar.MONTH)) + "/" +
-							Integer.toString(mydate.get(Calendar.YEAR));
-				}
+				Date resDate = new Date(Long.parseLong(timestamp)*1000L);
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // the format of date
+				res = sdf.format(resDate);
+//				Logger.info("res date: " + res);
 			} catch (Exception e) {
 				Logger.info("Long timestamp conversion error: " + e);
 			}
