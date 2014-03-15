@@ -924,8 +924,9 @@ public class Target extends Model {
     		String suggested_collections, String license) {
     	ExpressionList<Target> exp = Target.find.where();
     	Page<Target> res = null;
+   		exp = exp.eq(Const.ACTIVE, true);
     	if (filterUrl != null && filterUrl.length() > 0) {
-    		exp = exp.eq(Const.ACTIVE, true).contains(Const.FIELD_URL_NODE, filterUrl);
+    		exp = exp.contains(Const.FIELD_URL_NODE, filterUrl);
     	}
     	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
     		exp = exp.icontains(Const.AUTHOR, curatorUrl);
