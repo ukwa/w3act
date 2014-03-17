@@ -3,6 +3,8 @@ package controllers;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.*;
 import play.mvc.*;
 import play.data.*;
@@ -27,6 +29,12 @@ public class Application extends Controller {
         public String validate() {
         	boolean res = false;
         	try {
+        		if (StringUtils.isBlank(email)) {
+        			return "Please enter an email";
+        		}
+        		if (StringUtils.isBlank(password)) {
+        			return "Please enter a password";
+        		}
 				Logger.info("validate() inserted password: " + password);
 				String inputPassword = password;
 				Logger.info("validate() db hash for email: " + email.toLowerCase() + ", password: " + User.findByEmail(email.toLowerCase()).password);
