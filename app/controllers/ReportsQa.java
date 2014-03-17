@@ -22,7 +22,7 @@ import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.reports.reportsqa;
 
-import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 
 /**
  * Manage reports.
@@ -34,20 +34,27 @@ public class ReportsQa extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-        List<Target> resListQaed = processFilterReports("", "", "", "", "");
-        List<Target> resListAwaitingQa = processFilterReports("", "", "", "", "");
-        List<Target> resListWithQaIssues = processFilterReports("", "", "", "", "");
-        List<Target> resListWithNoQaIssues = processFilterReports("", "", "", "", "");
-        List<Target> resListFailedInstances = processFilterReports("", "", "", "", "");
-        List<Target> resListPassedInstances = processFilterReports("", "", "", "", "");
-        List<Target> resListWithQaIssuesResolved = processFilterReports("", "", "", "", "");
-        return ok(
-                reportsqa.render(
-                    "Reports", User.find.byId(request().username()), resListQaed, resListAwaitingQa,
-                    resListWithQaIssues, resListWithNoQaIssues, resListFailedInstances, resListPassedInstances,
-                    resListWithQaIssuesResolved, "", "", "", "", ""
-                )
-            );
+    	return redirect(routes.ReportsQa.targets(0, "title", "asc", "qaed", "", "", "", "", ""));
+//        routes.Targets.targets(0, "title", "asc", "", "", "", "", "", "", "", "", Const.PAGINATION_OFFSET)
+//        List<Target> resListQaed = processFilterReports("", "", "", "", "");
+//        List<Target> resListAwaitingQa = processFilterReports("", "", "", "", "");
+//        List<Target> resListWithQaIssues = processFilterReports("", "", "", "", "");
+//        List<Target> resListWithNoQaIssues = processFilterReports("", "", "", "", "");
+//        List<Target> resListFailedInstances = processFilterReports("", "", "", "", "");
+//        List<Target> resListPassedInstances = processFilterReports("", "", "", "", "");
+//        List<Target> resListWithQaIssuesResolved = processFilterReports("", "", "", "", "");
+//        return ok(
+//                reportsqa.render(
+//                    "Reports", User.find.byId(request().username()), resListQaed, resListAwaitingQa,
+//                    resListWithQaIssues, resListWithNoQaIssues, resListFailedInstances, resListPassedInstances,
+//                    resListWithQaIssuesResolved, "", "", "", "", ""
+//                )
+//            );
+    }
+
+    public static Result switchReportQaTab(String status) {
+    	Logger.info("switchReportQaTab() status: " + status);
+    	return redirect(routes.ReportsQa.targets(0, "title", "asc", status, "", "", "", "", ""));
     }
 
     /**
@@ -59,6 +66,13 @@ public class ReportsQa extends AbstractController {
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get(Const.ACTION);
     	Logger.info("action: " + action);
+    	
+    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
+    	String sort = form.get(Const.SORT_BY);
+    	String order = form.get(Const.ORDER);
+    	String status = form.get(Const.STATUS);
+    	Logger.info("load status: " + status);
+
     	String curator_name = form.get(Const.AUTHOR);
     	String curator = "";
     	if (curator_name != null && !curator_name.toLowerCase().equals(Const.NONE)) {
@@ -87,52 +101,32 @@ public class ReportsQa extends AbstractController {
     			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
     		}
     	} 
-        String start_date = form.get(Const.FIELD_CRAWL_START_DATE);
-        Logger.info("start_date: " + start_date);
-        String end_date = form.get(Const.FIELD_CRAWL_END_DATE);
-        
-        List<Target> resListQaed = processFilterReports(curator, organisation, collection, start_date, end_date);
-        List<Target> resListAwaitingQa = processFilterReports(curator, organisation, collection, start_date, end_date);
-        List<Target> resListWithQaIssues = processFilterReports(curator, organisation, collection, start_date, end_date);
-        List<Target> resListWithNoQaIssues = processFilterReports(curator, organisation, collection, start_date, end_date);
-        List<Target> resListFailedInstances = processFilterReports(curator, organisation, collection, start_date, end_date);
-        List<Target> resListPassedInstances = processFilterReports(curator, organisation, collection, start_date, end_date);
-        List<Target> resListWithQaIssuesResolved = processFilterReports(curator, organisation, collection, start_date, end_date);
+        String startDate = form.get(Const.FIELD_CRAWL_START_DATE);
+        Logger.info("startDate: " + startDate);
+        String endDate = form.get(Const.FIELD_CRAWL_END_DATE);
         
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.EXPORT.equals(action)) {
-				Logger.info("export resListQaed size: " + resListQaed.size());
-    			export(resListQaed, Const.EXPORT_TARGETS_WITH_QAED_INSTANCES);
-				Logger.info("export resListAwaitingQa size: " + resListAwaitingQa.size());
-    			export(resListAwaitingQa, Const.EXPORT_TARGETS_WITH_AWAITING_QA);
-				Logger.info("export resListWithQaIssues size: " + resListWithQaIssues.size());
-    			export(resListWithQaIssues, Const.EXPORT_TARGETS_WITH_QA_ISSUES);
-				Logger.info("export resListWithNoQaIssues size: " + resListWithNoQaIssues.size());
-    			export(resListWithNoQaIssues, Const.EXPORT_TARGETS_WITH_NO_QA_ISSUES);
-				Logger.info("export resListFailedInstances size: " + resListFailedInstances.size());
-    			export(resListFailedInstances, Const.EXPORT_TARGETS_WITH_FAILED_INSTANCES);
-				Logger.info("export resListPassedInstances size: " + resListPassedInstances.size());
-    			export(resListPassedInstances, Const.EXPORT_TARGETS_WITH_PASSED_INSTANCES);
-				Logger.info("export resListWithQaIssuesResolved size: " + resListWithQaIssuesResolved.size());
-    			export(resListWithQaIssuesResolved, Const.EXPORT_TARGETS_WITH_QA_ISSUES_RESOLVED);
-    			return ok(
-                		reportsqa.render(
-                            "ReportsQa", User.find.byId(request().username()), resListQaed, resListAwaitingQa,
-                            resListWithQaIssues, resListWithNoQaIssues, resListFailedInstances, resListPassedInstances,
-                            resListWithQaIssuesResolved, curator, organisation, start_date, end_date, collection
-                        )
-                    );
+    			List<Target> exportTargets = new ArrayList<Target>();
+    	    	Page<Target> page = Target.pageReportsQa(pageNo, 10, sort, order, status, curator, organisation, 
+    					startDate, endDate, collection);    	    	
+    			int rowCount = page.getTotalRowCount();
+    	    	Page<Target> pageAll = Target.pageReportsQa(pageNo, rowCount, sort, order, status, curator, organisation, 
+    					startDate, endDate, collection); 
+    			exportTargets.addAll(pageAll.getList());
+				Logger.info("export report QA size: " + exportTargets.size() + ", status: " + status);
+    			export(exportTargets, Const.EXPORT_TARGETS_REPORTS_QA);
+    	    	return redirect(routes.ReportsQa.targets(pageNo, sort, order, status, curator, organisation, 
+    	    			startDate, endDate, collection));
     		}
     		else if (Const.SEARCH.equals(action)) {
-    			return ok(
-                		reportsqa.render(
-                            "ReportsQa", User.find.byId(request().username()), resListQaed, resListAwaitingQa,
-                            resListWithQaIssues, resListWithNoQaIssues, resListFailedInstances, resListPassedInstances,
-                            resListWithQaIssuesResolved, curator, organisation, start_date, end_date, collection
-                        )
-                    );
+    			Logger.info("searching " + pageNo + " " + sort + " " + order + ", status: " + status +
+    					", curator: " + curator + ", organisation: " + organisation + ", startDate: " + startDate +
+    					", endDate: " + endDate + ", collection: " + collection);
+    	    	return redirect(routes.ReportsQa.targets(pageNo, sort, order, status, curator, organisation, 
+    	    			startDate, endDate, collection));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
@@ -173,52 +167,40 @@ public class ReportsQa extends AbstractController {
  	    }
     	Utils.generateCsvFile(fileName, sw.toString());
     }
-            	
+           
     /**
-     * This method applies filters to the list of crawl reports.
-     * @param curator The curator URL
-     * @param organisation The organisation URL
-     * @param status The status of the report workflow
-     * @param collection The collection URL
-     * @return
+     * Display the paginated list of targets.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param status The type of report QA e.g. awaiting QA, with no QA issues...
+     * @param curator Author of the target
+     * @param organisation The author's organisation
+     * @param startDate The start date for filtering
+     * @param endDate The end date for filtering
+     * @param collection The associated collection
      */
-    public static List<Target> processFilterReports(String curator, String organisation, 
-//    		String status, 
-    		String collection, String start_date, String end_date) {
-    	boolean isProcessed = false;
-    	ExpressionList<Target> exp = Target.find.where();
-    	List<Target> res = new ArrayList<Target>();
-//    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
-//    		Logger.info("status: " + status);
-//    		exp = exp.eq(Const.STATUS, status);
-//    		isProcessed = true;
-//    	} 
-    	if (curator != null && !curator.toLowerCase().equals(Const.NONE) && curator.length() > 0) {
-    		Logger.info("curator: " + curator);
-    		exp = exp.eq(Const.CREATOR_USER, curator);
-    		isProcessed = true;
-    	} 
-    	if (collection != null && !collection.equals(Const.NONE)) {
-    		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection);
-    	} 
-    	if (start_date != null && start_date.length() > 0) {
-    		Logger.info("start_date: " + start_date);
-    		exp = exp.ge(Const.LAST_UPDATE, start_date);
-    		isProcessed = true;
-    	} 
-    	if (end_date != null && end_date.length() > 0) {
-    		Logger.info("end_date: " + end_date);
-    		exp = exp.le(Const.LAST_UPDATE, end_date);
-    		isProcessed = true;
-    	} 
-    	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
-
-//        if (!isProcessed) {
-//    		res = models.Target.findAll();
-//    	}
-        return res;
+    public static Result targets(int pageNo, String sortBy, String order, String status, String curator,
+    		String organisation, String startDate, String endDate, String collection) {
+    	Logger.info("ReportsQa.targets()");
+    	
+        return ok(
+        	reportsqa.render(
+        			"ReportsQa", 
+        			User.find.byId(request().username()), 
+        			Target.pageReportsQa(pageNo, 10, sortBy, order, status, curator, organisation, 
+        					startDate, endDate, collection), 
+        			sortBy, 
+        			order,
+        			status,
+                	curator, 
+                	organisation, 
+                	startDate, 
+                	endDate, 
+                	collection)
+        	);
     }
-              
+	    
 }
 

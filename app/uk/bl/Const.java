@@ -144,6 +144,7 @@ public final class Const {
 	public static final String CREATED            = "created";
 	public static final String FLAG_NOTES         = "flag_notes";
 	public static final String LAST_UPDATE        = "lastUpdate";
+	public static final String CHANGED            = "changed";
 	
     // Creator
 	public static final String UID                = "uid";
@@ -222,6 +223,7 @@ public final class Const {
 	/**
 	 * Reports
 	 */
+	public static final String EXPORT_TARGETS_REPORTS_QA              = "export_targets_reports_qa.csv";
 	public static final String EXPORT_TARGETS_WITH_QAED_INSTANCES     = "export_targets_with_qaed_instances.csv";
 	public static final String EXPORT_TARGETS_WITH_AWAITING_QA        = "export_targets_with_awaiting_qa.csv";
 	public static final String EXPORT_TARGETS_WITH_QA_ISSUES          = "export_targets_with_qa_issues.csv";

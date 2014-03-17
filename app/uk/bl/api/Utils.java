@@ -104,6 +104,25 @@ public class Utils {
     }
     
     /**
+     * This method performs a conversion of date in string format 'dd-MM-yyyy' to unix date.
+     * @param curDate
+     * @return long value of the unix date in string format
+     */
+    public static String getUnixDateStringFromDate(String curDate) {
+    	String res = "";
+		try {
+			Date resDate = new SimpleDateFormat("dd-MM-yyyy").parse(curDate);
+			Long longTime = new Long(resDate.getTime()/1000);
+			Logger.info("long time: " + longTime);
+			res = String.valueOf(longTime);
+			Logger.info("res date: " + res);
+		} catch (ParseException e) {
+			Logger.debug("Conversion of date in string format dd-MM-yyyy to unix date: " + e);
+		}
+        return res;
+    }
+    
+    /**
      * Retrieve formatted timestamp
      * @param timestamp
      * @return formatted timestamp

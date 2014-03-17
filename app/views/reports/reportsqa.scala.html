@@ -1,8 +1,4 @@
-@(title: String, user: User, targetsQaed: List[Target], targetsAwaitingQa: List[Target], targetsWithQaIssues: List[Target], targetsWithNoQaIssues: List[Target], targetsFailedInstances: List[Target], targetsPassedInstances: List[Target], targetsWithQaIssuesResolved: List[Target], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, collectionUrl: String)
-
-@styles = {
-	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
-}
+@(title: String, user: User, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, status: String, curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, collectionUrl: String)
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
@@ -13,6 +9,73 @@
 			applySearch(context); 
 		});
 	</script>
+}
+
+@styles = {
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+}
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    
+    // Generate the link
+    routes.ReportsQa.targets(newPage, sortBy, order, status, curatorUrl, organisationUrl, startDate, endDate, collectionUrl)
+    
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+    <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
+        <a href="@link(0, key)">@title</a>
+    </th>
+}
+
+@pagination = {
+		<div class="text-center">
+			<ul class="pagination">
+	        	@if(currentPage.hasPrev) {
+	            	<li class="prev">
+	                    <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
+	                </li>
+	            } else {
+	                <li class="prev disabled">
+	                    <a>&larr; Previous</a>
+	                </li>
+	            }
+	            <li class="current">
+	                <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+	            </li>
+	            @if(currentPage.hasNext) {
+	                <li class="next">
+	                    <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
+	                </li>
+	            } else {
+	                <li class="next disabled">
+	                    <a>Next &rarr;</a>
+	                </li>
+				}
+			</ul>
+		</div>
 }
 
 @main(title, user, scripts, styles) {
@@ -30,13 +93,41 @@
 		
 	<div class="tab-content padding-20">          
 		<ul class="nav nav-pills">
-	        <li class="active"><a href="#qaed" data-toggle="tab">Instances QA'ed</a></li>
-	        <li><a href="#awaitingQa" data-toggle="tab">Awaiting QA</a></li>
-		    <li><a href="#withQaIssues" data-toggle="tab">With QA issues</a></li>
-		    <li><a href="#withNoQaIssues" data-toggle="tab">With no QA issues</a></li>
-		    <li><a href="#failedInstances" data-toggle="tab">Failed Instances</a></li>
-		    <li><a href="#passed" data-toggle="tab">Passed to Crawl Engineer</a></li>
-		    <li><a href="#withQaIssuesResolved" data-toggle="tab">With QA issues resolved</a></li>
+		    @if(status.equals("qaed")) {
+	        <li class="active"><a href="@routes.ReportsQa.switchReportQaTab("qaed")">Instances QA'ed</a></li>
+	        } else {
+	        <li><a href="@routes.ReportsQa.switchReportQaTab("qaed")">Instances QA'ed</a></li>
+	        }
+		    @if(status.equals("awaitingQa")) {
+	        <li class="active"><a href="@routes.ReportsQa.switchReportQaTab("awaitingQa")">Awaiting QA</a></li>
+	        } else {
+	        <li><a href="@routes.ReportsQa.switchReportQaTab("awaitingQa")">Awaiting QA</a></li>
+	        }
+		    @if(status.equals("withQaIssues")) {
+		    <li class="active"><a href="@routes.ReportsQa.switchReportQaTab("withQaIssues")">With QA issues</a></li>
+	        } else {
+		    <li><a href="@routes.ReportsQa.switchReportQaTab("withQaIssues")">With QA issues</a></li>
+		    }
+		    @if(status.equals("withNoQaIssues")) {
+		    <li class="active"><a href="@routes.ReportsQa.switchReportQaTab("withNoQaIssues")">With no QA issues</a></li>
+	        } else {
+		    <li><a href="@routes.ReportsQa.switchReportQaTab("withNoQaIssues")">With no QA issues</a></li>
+	        }
+		    @if(status.equals("failedInstances")) {
+		    <li class="active"><a href="@routes.ReportsQa.switchReportQaTab("failedInstances")">Failed Instances</a></li>
+	        } else {
+		    <li><a href="@routes.ReportsQa.switchReportQaTab("failedInstances")">Failed Instances</a></li>
+	        }
+		    @if(status.equals("passed")) {
+		    <li class="active"><a href="@routes.ReportsQa.switchReportQaTab("passed")">Passed to Crawl Engineer</a></li>
+	        } else {
+		    <li><a href="@routes.ReportsQa.switchReportQaTab("passed")">Passed to Crawl Engineer</a></li>
+	        }
+		    @if(status.equals("withQaIssuesResolved")) {
+		    <li class="active"><a href="@routes.ReportsQa.switchReportQaTab("withQaIssuesResolved")">With QA issues resolved</a></li>
+	        } else {
+		    <li><a href="@routes.ReportsQa.switchReportQaTab("withQaIssuesResolved")">With QA issues resolved</a></li>
+	        }
 	  	</ul>
 	</div>
 	
@@ -45,8 +136,12 @@
 		@helper.form(action=routes.ReportsQa.search) {
 		<div id="forms">
 			<div class="input-group">
+   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
+ 				<input type="hidden" name="s" value="@currentSortBy">
+ 				<input type="hidden" name="o" value="@currentOrder">
 				<input type="hidden" name="query_curator" value="@curatorUrl">
 				<input type="hidden" name="query_organisation" value="organisationUrl">
+				<input type="hidden" name="status" value=status>
    			</div>				
 				<div class="padding-20">
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
@@ -63,7 +158,7 @@
 											<select name="author" class="form-control target-form-control" id="curator">
 												<option>None</option>
 												@for(curator <- User.findAll()) {
-													@if(curatorUrl != null && curatorUrl.equals(curator.url)) {
+													@if(curatorUrl != null && !curatorUrl.equals("") && curatorUrl.equals(curator.url)) {
 														<option selected>@curator.name</option>
 													} else {
 														<option>@curator.name</option>
@@ -107,7 +202,6 @@
 											</select>
 										</div>
 									</div>
-								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-6">
@@ -142,7 +236,7 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Apply filters">Apply</button>
-					@if(targetsQaed.size() > 0 || targetsAwaitingQa.size() > 0 || targetsWithQaIssues.size() > 0 || targetsWithNoQaIssues.size() > 0 || targetsFailedInstances.size() > 0 || targetsPassedInstances.size() > 0 || targetsWithQaIssuesResolved.size() > 0) {
+					@if(currentPage.getTotalRowCount() > 0) {
 						<button type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
 					} else {
 						<button disabled type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
@@ -150,195 +244,32 @@
 		       </div>
 			</div>
 		</div>
-		}				
+		}		
+		}<!-- end of search form -->		
 
-		<div id="myTabContent" class="tab-content">
-		
-			<div class="tab-pane padding-20 fade active in" id="qaed">
-				<input type="hidden" name="status" value="qaed">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>#Instances</th>
-							</tr>
-						</thead>
-						<tbody>
-						@targetsQaed.map { target =>		              
-							<tr>
-								<td>
-					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
-								</td>
-								<td>
-					                @Instance.findAllByTarget(target.url)
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>
-			
-			<div class="tab-pane padding-20 fade active in" id="#awaitingQa">
-				<input type="hidden" name="status" value="#awaitingQa">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>#Instances</th>
-							</tr>
-						</thead>
-						<tbody>
-						@targetsAwaitingQa.map { target =>		              
-							<tr>
-								<td>
-					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
-								</td>
-								<td>
-					                @Instance.findAllByTarget(target.url)
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>
-						
-			<div class="tab-pane padding-20 fade active in" id="#withQaIssues">
-				<input type="hidden" name="status" value="#withQaIssues">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>#Instances</th>
-							</tr>
-						</thead>
-						<tbody>
-						@targetsWithQaIssues.map { target =>		              
-							<tr>
-								<td>
-					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
-								</td>
-								<td>
-					                @Instance.findAllByTarget(target.url)
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>
-						
-			<div class="tab-pane padding-20 fade active in" id="#withNoQaIssues">
-				<input type="hidden" name="status" value="#withNoQaIssues">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>#Instances</th>
-							</tr>
-						</thead>
-						<tbody>
-						@targetsWithNoQaIssues.map { target =>		              
-							<tr>
-								<td>
-					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
-								</td>
-								<td>
-					                @Instance.findAllByTarget(target.url)
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>
-						
-			<div class="tab-pane padding-20 fade active in" id="#failedInstances">
-				<input type="hidden" name="status" value="#failedInstances">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>#Instances</th>
-							</tr>
-						</thead>
-						<tbody>
-						@targetsFailedInstances.map { target =>		              
-							<tr>
-								<td>
-					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
-								</td>
-								<td>
-					                @Instance.findAllByTarget(target.url)
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>
-						
-			<div class="tab-pane padding-20 fade active in" id="#passed">
-				<input type="hidden" name="status" value="#passed">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>#Instances</th>
-							</tr>
-						</thead>
-						<tbody>
-						@targetsPassedInstances.map { target =>		              
-							<tr>
-								<td>
-					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
-								</td>
-								<td>
-					                @Instance.findAllByTarget(target.url)
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>
-						
-			<div class="tab-pane padding-20 fade active in" id="#withQaIssuesResolved">
-				<input type="hidden" name="status" value="#withQaIssuesResolved">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>#Instances</th>
-							</tr>
-						</thead>
-						<tbody>
-						@targetsWithQaIssuesResolved.map { target =>		              
-							<tr>
-								<td>
-					                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
-								</td>
-								<td>
-					                @Instance.findAllByTarget(target.url)
-								</td>
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>
-						
-		</div>	  
+	    	@pagination
+			<table class="table table-hover">
+				<thead>
+	                <tr>
+						@header("title", "Target Title")
+						@header("", "#Instances")	                
+	                </tr>
+				</thead>
+				<tbody>
+					@for(target <- currentPage.getList) {
+	                <tr>
+						<td>
+			                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+						</td>
+						<td>
+			                @Instance.findAllByTarget(target.url)
+						</td>
+	                </tr>
+	                }
+				</tbody>
+			</table>
+	    	@pagination
 
-	}
 	</article>
 }
 

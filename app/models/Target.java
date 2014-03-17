@@ -961,6 +961,55 @@ public class Target extends Model {
     }
         
     /**
+     * Return a page of Target objects.
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param status The type of report QA e.g. awaiting QA, with no QA issues...
+     * @param curatorUrl
+     * @param organisationUrl
+     * @param startDate The start date for filtering
+     * @param endDate The end date for filtering
+     * @param collectionCategoryUrl
+     * @return
+     */
+    public static Page<Target> pageReportsQa(int page, int pageSize, String sortBy, String order, String status, 
+    		String curatorUrl, String organisationUrl, String startDate, String endDate, String suggested_collections) {
+    	ExpressionList<Target> exp = Target.find.where();
+    	Page<Target> res = null;
+   		exp = exp.eq(Const.ACTIVE, true);
+    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.AUTHOR, curatorUrl);
+    	}
+    	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
+    	} 
+    	if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, suggested_collections);
+    	} 
+    	if (startDate != null && startDate.length() > 0) {
+    		Logger.info("start_date: " + startDate);
+    		String startDateStr = Utils.getUnixDateStringFromDate(startDate);
+    		Logger.info("start_date string: " + startDateStr);
+    		exp = exp.ge(Const.CHANGED, startDateStr);
+    	} 
+    	if (endDate != null && endDate.length() > 0) {
+    		Logger.info("end_date: " + endDate);
+    		String endDateStr = Utils.getUnixDateStringFromDate(endDate);
+    		exp = exp.le(Const.CHANGED, endDateStr);
+    	} 
+    	res = exp.query()
+        		.orderBy(sortBy + " " + order)
+        		.orderBy(Const.DOMAIN)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    	Logger.info("Expression list size: " + res.getTotalRowCount());
+        return res;
+    }
+        
+    /**
      * Return a page of Target
      *
      * @param page Page to display
