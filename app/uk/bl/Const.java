@@ -78,6 +78,7 @@ public final class Const {
 	public static final String BL_MAIL_ADDRESS    = "wa-sysadm@bl.uk";
 	public static final String TAGS               = "tags";
 	public static final String TAXONOMIES         = "taxonomies";
+	public static final String LAST_VERSION_FILE  = "last-version.txt";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";

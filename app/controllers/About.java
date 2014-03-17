@@ -1,12 +1,14 @@
 package controllers;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 import models.User;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.about;
 
 /**
@@ -29,19 +31,34 @@ public class About extends Controller {
      * @return last commit hash value
      */
     public static String getLastCommitHash() {
-    	String row = "";
-//    	try {
+    	String res = "";
+    	try {
+    		BufferedReader br = new BufferedReader(new FileReader(Const.LAST_VERSION_FILE));
+    		try {
+    			StringBuilder sb = new StringBuilder();
+    			String line = br.readLine();
+
+    			while (line != null) {
+    				sb.append(line);
+    				sb.append('\n');
+    				line = br.readLine();
+    			}
+    			res = sb.toString();
+    		} finally {
+    			br.close();
+    		}
 //    		row = Utils.buildWebRequestByUrl(Const.GITHUB, Const.LAST_COMMIT);
 //        	Logger.info("row: " + row);
 //	    	if (row != null && row.length() > 0) {
 //		    	int start = row.indexOf(Const.LAST_COMMIT) + Const.LAST_COMMIT.length();
 //		    	row = row.substring(start, start + 40);
 //	    	}
-//    	} catch (Exception e) {
-//    		Logger.debug("Error occured by last commit hash calculation: " + e);
-//    	}
-//    	Logger.info("last commit hash: " + row);
-    	return row;
+    	} catch (Exception e) {
+    		Logger.debug("Error occured by last commit hash calculation: " + e);
+    	}
+    	Logger.info("last commit hash: " + res);
+
+    	return res;
     }
     
 }
