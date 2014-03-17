@@ -37,8 +37,12 @@ public class Application extends Controller {
         		}
 				Logger.info("validate() inserted password: " + password);
 				String inputPassword = password;
-				Logger.info("validate() db hash for email: " + email.toLowerCase() + ", password: " + User.findByEmail(email.toLowerCase()).password);
-        		res = PasswordHash.validatePassword(inputPassword, User.findByEmail(email.toLowerCase()).password);
+				Logger.info("validate() db hash for email: " + email.toLowerCase());
+				if (User.findByEmail(email.toLowerCase()) == null) {
+					return "Invalid email";
+				}
+				String userPassword = User.findByEmail(email.toLowerCase()).password;
+        		res = PasswordHash.validatePassword(inputPassword, userPassword);
 			} catch (NoSuchAlgorithmException e) {
 				Logger.info("validate() no algorithm error: " + e);
 			} catch (InvalidKeySpecException e) {
@@ -46,7 +50,7 @@ public class Application extends Controller {
 			}
         	Logger.info("res: " + res);
             if(!res || User.authenticate(email.toLowerCase(), User.findByEmail(email.toLowerCase()).password) == null) {
-                return "Invalid user or password";
+                return "Password";
             }
             return null;
         }
