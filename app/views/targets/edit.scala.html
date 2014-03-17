@@ -52,7 +52,9 @@
 	    <h1><a href="@routes.Targets.index()">Targets > </a>Target @target.title</h1>
 	</div>  
 	<ul class="nav nav-tabs">
+	   @if(Target.findById(target.nid) != null) {
 	   <li><a href="@routes.Targets.view(target.url)">View</a></li>
+	   }
 	   @if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) {
 	   <li class="active"><a href="@routes.Targets.edit(target.url)">Edit</a></li> 
 	   }
