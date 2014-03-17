@@ -251,3 +251,30 @@ function licencePromptHigherLevel(context) {
             }
     });
 }
+
+function applySearchTargets(context, searchContext, urlTo) {
+	if (searchContext !== undefined) {
+	    var resultMap = {};
+		$('#search-query').typeahead({
+			remote: {
+				url: context + searchContext + '/filterbyjson/%QUERY',
+				filter: function(items) {
+					var searchResults = [];
+					for (var i = 0; i < items.length; i++) {
+						var item = items[i];
+						label = item.field_url;
+						searchResults[i] = {
+							value: label,
+							title: item.title
+						};
+					}				
+		          	return searchResults;
+				}
+			},
+			 template: '<p><strong>{{title}}</strong></p><p>{{value}}</p>',
+			 engine: Hogan
+		}).on('typeahead:selected', function(event, datum) {
+			window.location = datum.value;
+		});
+	}
+}
