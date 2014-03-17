@@ -150,7 +150,8 @@ GET    	/targets/collectiontargets/        	controllers.Targets.collectionTarget
 GET    	/targets/usertargets/           	controllers.Targets.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", user_url ?= "", query_subject ?= "", query_collection ?= "")
 GET     /targets/lookup						controllers.Targets.lookup()
 GET     /targets/new/:title      			controllers.Targets.create(title)
-GET    	/targets/export/:frequency			controllers.Targets.exportByFrequencyJson(frequency)
+GET    	/targets/export/ld/:frequency		controllers.Targets.exportLdFrequencyJson(frequency)
+GET    	/targets/export/by/:frequency		controllers.Targets.exportByFrequencyJson(frequency)
 
 GET     /targets/:target                    controllers.Targets.view(target)
 GET     /targets/:revision/revision         controllers.Targets.viewrevision(revision:Long)

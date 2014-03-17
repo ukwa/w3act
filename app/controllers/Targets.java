@@ -716,8 +716,43 @@ public class Targets extends AbstractController {
     public static Result exportByFrequencyJson(String frequency) {
         JsonNode jsonData = null;
         if (frequency != null) {
-	        List<Target> targets = Target.filterUrl(frequency);
+	        List<Target> targets = new ArrayList<Target>();
+	        if (frequency.equals(Const.ALL)) {
+	        	targets = Target.findAllActive();
+	        } else {
+	        	targets = Target.filterActiveUrl(frequency);
+	        }
 	        jsonData = Json.toJson(targets);
+        }
+        return ok(jsonData);
+    }
+    
+    /**
+     * This method provides data exports for each possible crawl-frequency that are in legal deposit. 
+     * For each frequency this contains a list of Targets and associated 
+     * crawl metadata.
+     * @param frequency The crawl frequency e.g. 'daily'
+     * @return list of Target objects
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result exportLdFrequencyJson(String frequency) {
+        JsonNode jsonData = null;
+        if (frequency != null) {
+	        List<Target> res = new ArrayList<Target>();
+	        List<Target> targets = new ArrayList<Target>();
+	        if (frequency.equals(Const.ALL)) {
+	        	targets = Target.findAllActive();
+	        } else {
+	        	targets = Target.filterActiveUrl(frequency);
+	        }
+	        Iterator<Target> itr = targets.iterator();
+	        while (itr.hasNext()) {
+	        	Target target = itr.next();
+	        	if (Target.isInScope(target.field_url, null)) {
+	        		res.add(target);
+	        	}
+	        }
+	        jsonData = Json.toJson(res);
         }
         return ok(jsonData);
     }
