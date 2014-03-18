@@ -35,9 +35,9 @@ public class Application extends Controller {
         		if (StringUtils.isBlank(password)) {
         			return "Please enter a password";
         		}
-				Logger.info("validate() inserted password: " + password);
+//				Logger.info("validate() inserted password: " + password);
 				String inputPassword = password;
-				Logger.info("validate() db hash for email: " + email.toLowerCase());
+//				Logger.info("validate() db hash for email: " + email.toLowerCase());
 				if (User.findByEmail(email.toLowerCase()) == null) {
 					return "Invalid email";
 				}

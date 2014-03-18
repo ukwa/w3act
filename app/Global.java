@@ -69,7 +69,7 @@ public class Global extends GlobalSettings {
 	            	user.url = Const.ACT_URL + user.uid;
 	        		try {
 						user.password = PasswordHash.createHash(user.password);
-						Logger.info("hash password: " + user.password);
+//						Logger.info("hash password: " + user.password);
 					} catch (NoSuchAlgorithmException e) {
 						Logger.info("initial password creation - no algorithm error: " + e);
 					} catch (InvalidKeySpecException e) {

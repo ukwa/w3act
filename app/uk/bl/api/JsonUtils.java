@@ -220,11 +220,11 @@ public class JsonUtils {
 			    if (newUser.password == null || newUser.password.length() == 0) {
 			    	newUser.password = Const.DEFAULT_PASSWORD;
 			    }	
-				Logger.info("initial password: " + newUser.password);
+//				Logger.info("initial password: " + newUser.password);
 			    if (newUser.password.length() > 0) {
 			    	try {
 						newUser.password = PasswordHash.createHash(newUser.password);
-						Logger.info("hash password: " + newUser.password);
+//						Logger.info("hash password: " + newUser.password);
 					} catch (NoSuchAlgorithmException e) {
 						Logger.info("initial password creation - no algorithm error: " + e);
 					} catch (InvalidKeySpecException e) {
