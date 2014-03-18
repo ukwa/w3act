@@ -50,7 +50,7 @@ public class Application extends Controller {
 			}
         	Logger.info("res: " + res);
             if(!res || User.authenticate(email.toLowerCase(), User.findByEmail(email.toLowerCase()).password) == null) {
-                return "Password";
+                return "Password not recognised";
             }
             return null;
         }

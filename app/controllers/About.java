@@ -21,9 +21,12 @@ public class About extends Controller {
      * Display the About tab.
      */
     public static Result index() {
-		return ok(
-            about.render("About", User.find.byId(request().username()))
-        );
+    	User user = User.find.byId(request().username());
+    	if (user != null) {
+    		return ok(about.render("About", user));
+    		
+    	}
+        return redirect("login");
     }
 	
     /**
