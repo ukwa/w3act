@@ -82,14 +82,32 @@ public class LookupEntry extends Model
     }
 
     /**
+     * Retrieve a lookup entry by name.
+     * @param name The name of given site (URL)
+     * @return lookup entry name
+     */
+    public static LookupEntry findBySiteName(String name) {
+    	LookupEntry res = new LookupEntry();
+    	if (name != null && name.length() > 0 && !name.equals(Const.NONE)) {
+    		res = find.where().eq(Const.NAME, name).findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+    	return res;
+    }
+
+    /**
      * Retrieve a lookup entry value by URL.
      * @param url
      * @return lookup entry value (true or false)
      */
     public static boolean getValueByUrl(String url) {
     	boolean res = false;
-    	LookupEntry resLookupEntry = findByUrl(url);    	
+//    	Logger.debug("getValueByUrl() url: " + url);
+    	LookupEntry resLookupEntry = findBySiteName(url);    	
+//    	Logger.debug("getValueByUrl() resLookupEntry: " + resLookupEntry);
     	if (resLookupEntry != null && resLookupEntry.scopevalue != null) {
+//        	Logger.debug("getValueByUrl() resLookupEntry.scopevalue: " + resLookupEntry.scopevalue);
     		res = resLookupEntry.scopevalue;
     	}
     	return res;

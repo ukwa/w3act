@@ -749,6 +749,7 @@ public class Targets extends AbstractController {
 	        while (itr.hasNext()) {
 	        	Target target = itr.next();
 	        	if (Target.isInScope(target.field_url, null)) {
+	        		Logger.debug("add to export ld: " + target);
 	        		res.add(target);
 	        	}
 	        }

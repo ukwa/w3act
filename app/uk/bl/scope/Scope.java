@@ -131,7 +131,7 @@ public class Scope {
         	if (lookupEntryCount.size() > 0) {
         		inProjectDb = true;
         		res = LookupEntry.getValueByUrl(url);
-//        		Logger.info("lookup entry for '" + url + "' is in database with value: " + res);
+        		Logger.info("check lookup entry for '" + url + "' is in database with value: " + res);
         	}
         }
         
