@@ -298,6 +298,11 @@ public class InstanceController extends AbstractController {
             newInstance.qa_notes = getFormParam(Const.QA_NOTES);
             newInstance.quality_notes = getFormParam(Const.QUALITY_NOTES);
 
+            long unixTime = System.currentTimeMillis() / 1000L;
+            String changedTime = String.valueOf(unixTime);
+            Logger.info("changed time: " + changedTime);
+            newInstance.changed = changedTime;
+
         	if (!isExisting) {
             	Ebean.save(newInstance);
     	        Logger.info("save instance: " + newInstance.toString());

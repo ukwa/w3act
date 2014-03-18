@@ -757,6 +757,85 @@ public class Instance extends Model {
     	return res;
     }
     
+    /**
+     * Return a page of Target objects.
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param status The type of report QA e.g. awaiting QA, with no QA issues...
+     * @param curatorUrl
+     * @param organisationUrl
+     * @param startDate The start date for filtering
+     * @param endDate The end date for filtering
+     * @param collectionCategoryUrl
+     * @return
+     */
+    public static Page<Instance> pageReportsQa(int page, int pageSize, String sortBy, String order, String status, 
+    		String curatorUrl, String organisationUrl, String startDate, String endDate, String suggested_collections) {
+    	ExpressionList<Instance> exp = Instance.find.where();
+    	Page<Instance> res = null;
+//    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
+//    		exp = exp.icontains(Const.AUTHOR, curatorUrl);
+//    	}
+    	if (startDate != null && startDate.length() > 0) {
+    		Logger.info("start_date: " + startDate);
+    		String startDateStr = Utils.getUnixDateStringFromDate(startDate);
+    		Logger.info("start_date string: " + startDateStr);
+    		exp = exp.ge(Const.CHANGED, startDateStr);
+    	} 
+    	if (endDate != null && endDate.length() > 0) {
+    		Logger.info("end_date: " + endDate);
+    		String endDateStr = Utils.getUnixDateStringFromDate(endDate);
+    		exp = exp.le(Const.CHANGED, endDateStr);
+    	} 
+    	res = exp.query()
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    	Logger.info("Expression list size: " + res.getTotalRowCount());
+        return res;
+    }
+        	
+    /**
+     * This method applies filters to the list of reports QA.
+     * @param status The status depicts the type of report
+     * @param startDate The start date for filtering for field 'changed'
+     * @param endDate The end date for filtering for field 'changed'
+     * @return
+     */
+    public static List<Instance> processReportsQa(String status, String startDate, String endDate) {
+    	boolean isProcessed = false;
+    	ExpressionList<Instance> exp = Instance.find.where();
+    	List<Instance> res = new ArrayList<Instance>();
+//    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
+//    		Logger.info("status: " + status);
+//    		exp = exp.eq(Const.STATUS, status);
+//    		isProcessed = true;
+//    	} 
+    	if (startDate != null && startDate.length() > 0) {
+    		Logger.info("start_date: " + startDate);
+    		String startDateStr = Utils.getUnixDateStringFromDate(startDate);
+    		Logger.info("start_date string: " + startDateStr);
+    		exp = exp.ge(Const.CHANGED, startDateStr);
+    		isProcessed = true;
+    	} 
+    	if (endDate != null && endDate.length() > 0) {
+    		Logger.info("end_date: " + endDate);
+    		String endDateStr = Utils.getUnixDateStringFromDate(endDate);
+    		exp = exp.le(Const.CHANGED, endDateStr);
+    		isProcessed = true;
+    	} 
+//    	if (collection != null && !collection.equals(Const.NONE)) {
+//    		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection);
+//    	} 
+    	res = exp.query().findList();
+
+    	Logger.info("Expression list for instances size: " + res.size() + ", isProcessed: " + isProcessed);
+        return res;
+    }
+    
     public String toString() {
         return "Instance(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 

@@ -13,9 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
-import com.avaje.ebean.ExpressionList;
-import com.avaje.ebean.Page;
-
 import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -23,6 +20,9 @@ import uk.bl.api.IdGenerator;
 import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
+
+import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 
 
 /**
@@ -976,36 +976,41 @@ public class Target extends Model {
      */
     public static Page<Target> pageReportsQa(int page, int pageSize, String sortBy, String order, String status, 
     		String curatorUrl, String organisationUrl, String startDate, String endDate, String suggested_collections) {
+    	List<Instance> instanceList = Instance.processReportsQa(status, startDate, endDate);
     	ExpressionList<Target> exp = Target.find.where();
     	Page<Target> res = null;
    		exp = exp.eq(Const.ACTIVE, true);
     	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
+//    		Logger.info("curatorUrl: " + curatorUrl);
     		exp = exp.icontains(Const.AUTHOR, curatorUrl);
     	}
     	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
+//    		Logger.info("organisationUrl: " + organisationUrl);
     		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
     	} 
     	if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
+//    		Logger.info("suggested_collections: " + suggested_collections);
     		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, suggested_collections);
     	} 
-    	if (startDate != null && startDate.length() > 0) {
-    		Logger.info("start_date: " + startDate);
-    		String startDateStr = Utils.getUnixDateStringFromDate(startDate);
-    		Logger.info("start_date string: " + startDateStr);
-    		exp = exp.ge(Const.CHANGED, startDateStr);
-    	} 
-    	if (endDate != null && endDate.length() > 0) {
-    		Logger.info("end_date: " + endDate);
-    		String endDateStr = Utils.getUnixDateStringFromDate(endDate);
-    		exp = exp.le(Const.CHANGED, endDateStr);
-    	} 
+    	List<String> targetUrlCollection = new ArrayList<String>();
+    	Iterator<Instance> itr = instanceList.iterator();
+    	while (itr.hasNext()) {
+    		Instance instance = itr.next();
+    		if (instance.field_target != null && instance.field_target.length() > 0) {
+//    			Logger.info("Target.pageReportsQa() instance.field_target: " + instance.field_target);
+    			targetUrlCollection.add(instance.field_target);
+    		}
+    	}
+    	if (targetUrlCollection.size() > 0) {
+    		exp = exp.in(Const.URL, targetUrlCollection);
+    	}
     	res = exp.query()
         		.orderBy(sortBy + " " + order)
         		.orderBy(Const.DOMAIN)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
-    	Logger.info("Expression list size: " + res.getTotalRowCount());
+    	Logger.info("Expression list for targets size: " + res.getTotalRowCount());
         return res;
     }
         

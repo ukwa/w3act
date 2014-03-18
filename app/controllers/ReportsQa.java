@@ -34,27 +34,12 @@ public class ReportsQa extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-    	return redirect(routes.ReportsQa.targets(0, "title", "asc", "qaed", "", "", "", "", ""));
-//        routes.Targets.targets(0, "title", "asc", "", "", "", "", "", "", "", "", Const.PAGINATION_OFFSET)
-//        List<Target> resListQaed = processFilterReports("", "", "", "", "");
-//        List<Target> resListAwaitingQa = processFilterReports("", "", "", "", "");
-//        List<Target> resListWithQaIssues = processFilterReports("", "", "", "", "");
-//        List<Target> resListWithNoQaIssues = processFilterReports("", "", "", "", "");
-//        List<Target> resListFailedInstances = processFilterReports("", "", "", "", "");
-//        List<Target> resListPassedInstances = processFilterReports("", "", "", "", "");
-//        List<Target> resListWithQaIssuesResolved = processFilterReports("", "", "", "", "");
-//        return ok(
-//                reportsqa.render(
-//                    "Reports", User.find.byId(request().username()), resListQaed, resListAwaitingQa,
-//                    resListWithQaIssues, resListWithNoQaIssues, resListFailedInstances, resListPassedInstances,
-//                    resListWithQaIssuesResolved, "", "", "", "", ""
-//                )
-//            );
+    	return redirect(routes.ReportsQa.targets(0, "title", "asc", "qaed", "", "", Utils.getCurrentDate(), "", ""));
     }
 
     public static Result switchReportQaTab(String status) {
     	Logger.info("switchReportQaTab() status: " + status);
-    	return redirect(routes.ReportsQa.targets(0, "title", "asc", status, "", "", "", "", ""));
+    	return redirect(routes.ReportsQa.targets(0, "title", "asc", status, "", "", Utils.getCurrentDate(), "", ""));
     }
 
     /**
