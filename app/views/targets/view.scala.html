@@ -330,23 +330,14 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="mySel" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
+			              	<label for="inputAuthors" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="originating_organisation" id="mySel" class="form-control">
-					            	<option>None</option>
-					                @for(organisation <- Organisation.findAll()) {
-						                @if(organisation.title.equals(Organisation.findByUrl(target.originating_organisation).title)) {
-							                <option selected disabled>@organisation.title</option>
-							            } else {
-						                    <option disabled>@organisation.title</option>
-										}					            
-					                }
-								</select>
+				            	<textarea readonly class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@target.originating_organisation">@target.originating_organisation</textarea>
 							</div>
 						</div>
 					</div>
-		     	</div>		   
-
+		     	</div>		    		    
+     			     		
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">

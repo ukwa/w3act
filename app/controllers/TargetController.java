@@ -158,12 +158,7 @@ public class TargetController extends AbstractController {
             	}
             }
             if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
-            	if (!getFormParam(Const.ORIGINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-//            		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
-            		newTarget.originating_organisation = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
-            	} else {
-            		newTarget.originating_organisation = Const.NONE;
-            	}
+           		newTarget.originating_organisation = getFormParam(Const.ORIGINATING_ORGANISATION);
             }
 //    		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);
             if (getFormParam(Const.AUTHOR) != null) {
