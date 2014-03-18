@@ -502,7 +502,8 @@ public class Targets extends AbstractController {
     public static Result create(String title) {
         Logger.info("addEntry()");
     	Target target = new Target();
-    	target.title = title;
+//    	target.title = title;
+    	target.field_url = title;
         target.nid = Target.createId();
         target.url = Const.ACT_URL + target.nid;
         target.revision = Const.INITIAL_REVISION;
