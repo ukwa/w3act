@@ -408,6 +408,67 @@ public class Taxonomy extends Model {
         		.setFetchAhead(false)
         		.getPage(page);
     }    
+    
+    /**
+     * This method calculates selected taxonomies for presentation in view page.
+     * @param type The type of taxonomy
+     * @param target The target object
+     * @return taxonomy list as a string
+     */
+    public static String getSelectedSubjects(String type, Target target) {
+    	String res = "";
+		List<Taxonomy> taxonomyList = Taxonomy.findListByType(type);
+		Iterator<Taxonomy> itr = taxonomyList.iterator();
+		boolean firstTime = true;
+		while (itr.hasNext()) {
+			Taxonomy taxonomy = itr.next();
+			if(target.hasSubject(taxonomy.url)) {
+				if (firstTime) {
+					res = taxonomy.name;
+					firstTime = false;
+				} else {
+					res = res + Const.COMMA + " " + taxonomy.name;
+				}
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+    }
+
+    /**
+     * This method calculates selected taxonomies in second level for presentation in view page.
+     * @param type The type of taxonomy
+     * @param target The target object
+     * @return taxonomy list as a string
+     */
+    public static String getSelectedSubjectsSecondLevel(String type, Target target) {
+    	String res = "";
+		boolean firstTime = true;
+		List<Taxonomy> taxonomyList = Taxonomy.findListByType(type);
+		Iterator<Taxonomy> itr = taxonomyList.iterator();
+		while (itr.hasNext()) {
+			Taxonomy taxonomy = itr.next();
+			List<Taxonomy> subTaxonomyList = Taxonomy.findSubSubjectsList(taxonomy.name);
+			Iterator<Taxonomy> itrSub = subTaxonomyList.iterator();
+			while (itrSub.hasNext()) {
+				Taxonomy subTaxonomy = itrSub.next();
+				if(target.hasSubSubject(subTaxonomy.url)) {
+					if (firstTime) {
+						res = subTaxonomy.name;
+						firstTime = false;
+					} else {
+						res = res + Const.COMMA + " " + subTaxonomy.name;
+					}
+				}
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+    }
 
     public String toString() {
         return "Taxonomy(" + tid + ") with name: " + name;
