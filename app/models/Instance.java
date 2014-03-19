@@ -523,7 +523,17 @@ public class Instance extends Model {
     	Instance res = new Instance();
         Logger.info("instance timestamp: " + timestamp);
         
-        Instance instance = find.where().eq(Const.FIELD_TIMESTAMP, timestamp).findUnique();
+		List<Instance> list = new ArrayList<Instance>();
+		if (timestamp != null && timestamp.length() > 0) {
+	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TIMESTAMP, timestamp);
+	    	list = ll.findList(); 
+		}
+
+		Instance instance = null;
+		if (list.size() > 0) {
+	        instance = list.get(0);
+		}
+	//        Instance instance = find.where().eq(Const.FIELD_TIMESTAMP, timestamp).findUnique();
         if (instance == null) {
         	res.url = Const.NONE;
         } else {
