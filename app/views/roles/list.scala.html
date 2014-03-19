@@ -78,6 +78,8 @@
 		</div>
 }
 
+@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
@@ -123,6 +125,9 @@
 		@pagination
 
 	</article>    
+} 
+} else {
+	<h1>Access Denied for URL @routes.Roles.index()/list</h1>
 }
 
 
