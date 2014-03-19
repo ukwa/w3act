@@ -242,3 +242,6 @@ GET     /api/licence/:url                    controllers.CrawlPermissions.crawlP
 GET     /api/licencelevel/:url               controllers.CrawlPermissions.crawlPermissionExistAtHigherLevel(url)
 GET     /api/licenceprompthigherlevel/:url   controllers.CrawlPermissions.checkForHigherLevelPrompt(url)
 
+# Sample forms with validation
+#GET     /targets/blank/						controllers.Targets.blank()
+#POST    /targets							controllers.Targets.saveBlank()

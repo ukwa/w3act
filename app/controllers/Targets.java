@@ -1,7 +1,5 @@
 package controllers;
 
-import static play.data.Form.form;
-
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -29,6 +27,7 @@ import views.html.targets.list;
 import views.html.targets.edit;
 import views.html.targets.targets;
 import views.html.targets.view;
+import views.html.targets.blank;
 import views.html.collections.sites;
 
 import com.avaje.ebean.ExpressionList;
@@ -40,9 +39,19 @@ import views.html.users.*;
 /**
  * Manage targets.
  */
+/**
+ * @author kli
+ *
+ */
+/**
+ * @author kli
+ *
+ */
 @Security.Authenticated(Secured.class)
 public class Targets extends AbstractController {
   
+    final static play.data.Form<Target> targetForm = play.data.Form.form(Target.class);
+
     /**
      * Display the targets.
      */
@@ -287,7 +296,7 @@ public class Targets extends AbstractController {
      */
     public static Result searchTargets() {
     	
-    	DynamicForm form = form().bindFromRequest();
+    	DynamicForm form = DynamicForm.form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get("url");
 
@@ -463,7 +472,7 @@ public class Targets extends AbstractController {
      */
     public static Result search() {
     	
-    	DynamicForm form = form().bindFromRequest();
+    	DynamicForm form = DynamicForm.form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get("url");
 
@@ -500,9 +509,8 @@ public class Targets extends AbstractController {
      * @return
      */
     public static Result create(String title) {
-        Logger.info("addEntry()");
+        Logger.info("create()");
     	Target target = new Target();
-//    	target.title = title;
     	target.field_url = title;
         target.nid = Target.createId();
         target.url = Const.ACT_URL + target.nid;
@@ -510,11 +518,7 @@ public class Targets extends AbstractController {
         target.active = true;
 		Logger.info("add entry with target url: " + target.url);
 		Logger.info("target name: " + target.title);
-        return ok(
-                edit.render(
-                      target, User.find.byId(request().username())
-                )
-            );
+        return ok(edit.render(target, User.find.byId(request().username())));
     }
     
     /**
@@ -547,7 +551,7 @@ public class Targets extends AbstractController {
      */
     public static Result searchTargetsByCollection() {
     	
-    	DynamicForm form = form().bindFromRequest();
+    	DynamicForm form = DynamicForm.form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get("url");
 
@@ -608,7 +612,7 @@ public class Targets extends AbstractController {
      */
     public static Result searchTargetsByUser() {
     	
-    	DynamicForm form = form().bindFromRequest();
+    	DynamicForm form = DynamicForm.form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get("url");
 
@@ -758,6 +762,24 @@ public class Targets extends AbstractController {
         }
         return ok(jsonData);
     }
+
+    /**
+     * Example form with validation
+     * @return blank form for data entry
+     */
+    public static Result blank() {
+        Logger.info("blank()");
+        return ok(blank.render(targetForm, User.find.byId(request().username())));
+    }
     
+    public static Result saveBlank() {
+    	play.data.Form<Target> filledForm = targetForm.bindFromRequest();
+	    if(filledForm.hasErrors()) {
+	        return badRequest(blank.render(filledForm, User.find.byId(request().username())));
+	    } else {
+	        flash("success", "You've saved");
+	        return ok(blank.render(filledForm, User.find.byId(request().username())));
+	    }
+    }
 }
 

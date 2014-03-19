@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Version;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.IdGenerator;
@@ -55,7 +56,10 @@ public class Target extends Model {
     public Long vid;
     public Boolean is_new;
     public String type;
+    
+    @Required
     public String title;
+    
     public String language;
     public String url;
     public String edit_url;

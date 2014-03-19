@@ -1,0 +1,31 @@
+@(targetForm: Form[Target], user: User)
+@import helper._
+@import helper.twitterBootstrap._
+
+@main("", user) {
+
+	@helper.form(action=routes.Targets.saveBlank) {
+        
+       	@if(flash.contains("success")) {
+			<div class="alert alert-success">@flash.get("success")</div>
+		}
+        
+        <fieldset>
+            <legend>Target information</legend>
+            
+            @inputText(
+                targetForm("title"), 
+                '_label -> "Title", 
+                '_help -> "Please enter a title.",
+                '_error -> targetForm.globalError
+            )
+            
+        </fieldset>
+       
+        <div class="actions">
+            <input type="submit" class="btn primary" value="Save">
+        </div>
+        
+    }
+    
+}
