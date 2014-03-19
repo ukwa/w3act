@@ -76,7 +76,7 @@
 		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
 	  	</ul>
 	</div>
-	
+	@warningmessage(flash)
 	@helper.form(action=routes.TargetController.saveTarget) {
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="basicinformation">
@@ -96,7 +96,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">ID</label>
+							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
 						    <div class="col-sm-6">
 								<input class="form-control" name="nid" value="@target.nid" size="30" readonly>
 							</div>
@@ -303,7 +303,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
 								<select multiple name="subject" value="@target.field_subject" class="form-control">
 									<option>None</option>
@@ -323,7 +323,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="inputSubSubject" class="col-sm-6 control-label">Subject 2 level <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+			              	<label for="inputSubSubject" class="col-sm-6 control-label">Subject 2 level <font color="red">*</font> <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
 								<select multiple name="subsubject" value="@target.field_subject" class="form-control">
 									<option>None</option>
@@ -401,7 +401,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="userSel" class="col-sm-6 control-label">Selector <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
+			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
 						    <div class="col-sm-6">
 								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 							  		<select name="author" id="userSel" class="form-control">
@@ -511,7 +511,7 @@
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
+			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
 								<select name="selection_type" id="selection_type" class="form-control">
 					                @for(selection_type <- Target.getAllSelectionTypes()) {

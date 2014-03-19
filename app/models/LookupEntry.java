@@ -88,10 +88,21 @@ public class LookupEntry extends Model
      */
     public static LookupEntry findBySiteName(String name) {
     	LookupEntry res = new LookupEntry();
+    	
+		List<LookupEntry> list = new ArrayList<LookupEntry>();
     	if (name != null && name.length() > 0 && !name.equals(Const.NONE)) {
-    		res = find.where().eq(Const.NAME, name).findUnique();
+	        ExpressionList<LookupEntry> ll = find.where().eq(Const.NAME, name);
+//    		res = find.where().eq(Const.NAME, name).findUnique();
+	    	list = ll.findList(); 
+    	}
+    	LookupEntry lookupEntry = null;
+		if (list.size() > 0) {
+	        lookupEntry = list.get(0);
+		}
+		if (lookupEntry == null) {
+			res.name = Const.NONE;
     	} else {
-    		res.name = Const.NONE;
+    		res = lookupEntry;
     	}
     	return res;
     }

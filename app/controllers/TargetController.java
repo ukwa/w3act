@@ -1,5 +1,7 @@
 package controllers;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.*;
 import play.mvc.*;
 import models.*;
@@ -40,6 +42,7 @@ public class TargetController extends AbstractController {
         			", subject: " + getFormParams(Const.SUBJECT) +
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
+
             Target target = new Target();
         	Target newTarget = new Target();
             boolean isExisting = true;
@@ -49,6 +52,21 @@ public class TargetController extends AbstractController {
             	Logger.info("is not existing exception");
             	isExisting = false;
             }
+        	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
+        			|| StringUtils.isBlank(getFormParam(Const.FIELD_URL))
+        			|| StringUtils.isBlank(getFormParam(Const.SUBJECT))
+        			|| StringUtils.isBlank(getFormParam(Const.SUBSUBJECT))
+        			|| StringUtils.isBlank(getFormParam(Const.AUTHOR))
+        			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
+    			Logger.info("One of the required fields is empty. Please fill out all required fields marked by red star in edit page.");
+    			flash("message", "Please fill out all required fields marked by red star in edit page");
+    			if (isExisting) {
+    				return redirect(routes.Targets.edit(target.url));
+    			} else {
+    				return redirect(routes.Targets.create(getFormParam(Const.FIELD_URL)));
+    			}
+        	}    	
+
             if (target == null) {
             	target = new Target();
             	Logger.info("is not existing");
