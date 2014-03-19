@@ -721,7 +721,7 @@ public class Targets extends AbstractController {
 	        if (frequency.equals(Const.ALL)) {
 	        	targets = Target.findAllActive();
 	        } else {
-	        	targets = Target.filterActiveUrl(frequency);
+	        	targets = Target.exportByFrequency(frequency);
 	        }
 	        jsonData = Json.toJson(targets);
         }
@@ -744,7 +744,7 @@ public class Targets extends AbstractController {
 	        if (frequency.equals(Const.ALL)) {
 	        	targets = Target.findAllActive();
 	        } else {
-	        	targets = Target.filterActiveUrl(frequency);
+	        	targets = Target.exportByFrequency(frequency);
 	        }
 	        Iterator<Target> itr = targets.iterator();
 	        while (itr.hasNext()) {
