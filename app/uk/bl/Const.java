@@ -146,6 +146,7 @@ public final class Const {
 	public static final String FLAG_NOTES         = "flag_notes";
 	public static final String LAST_UPDATE        = "lastUpdate";
 	public static final String CHANGED            = "changed";
+	public static final String TREE_KEYS          = "treeKeys";
 	
     // Creator
 	public static final String UID                = "uid";

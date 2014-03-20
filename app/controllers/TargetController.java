@@ -1,18 +1,30 @@
 package controllers;
 
+import java.util.Iterator;
+import java.util.List;
+
+import models.DCollection;
+import models.Flag;
+import models.Organisation;
+import models.Tag;
+import models.Target;
+import models.Taxonomy;
+import models.User;
+
 import org.apache.commons.lang3.StringUtils;
 
-import play.*;
-import play.mvc.*;
-import models.*;
-import uk.bl.api.*;
+import play.Logger;
+import play.libs.Json;
+import play.mvc.BodyParser;
+import play.mvc.Result;
+import play.mvc.Security;
+import uk.bl.Const;
+import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
-
-import play.libs.Json;
-import uk.bl.Const;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Describe W3ACT project.
@@ -42,6 +54,7 @@ public class TargetController extends AbstractController {
         			", subject: " + getFormParams(Const.SUBJECT) +
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
+        	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
 
             Target target = new Target();
         	Target newTarget = new Target();
@@ -151,21 +164,24 @@ public class TargetController extends AbstractController {
             		newTarget.field_subsubject = Const.NONE;
             	}
             }
-            if (getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) != null) {
-            	if (!getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS).toLowerCase().contains(Const.NONE)) {
-	            	String[] elems = getFormParams(Const.FIELD_SUGGESTED_COLLECTIONS);
-	            	String resElem = "";
-	            	for (String elem: elems)
-	                {
-	            		if (elem != null && elem.length() > 0) {
-	            			resElem = resElem + DCollection.findByTitle(elem).url + Const.LIST_DELIMITER;
-	            		}
-	                }
-	            	newTarget.field_suggested_collections = resElem;
-//            		newTarget.field_suggested_collections = DCollection.findByTitle(getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS)).url;
-            	} else {
-            		newTarget.field_suggested_collections = Const.NONE;
-            	}
+//            if (getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) != null) {
+//            	if (!getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS).toLowerCase().contains(Const.NONE)) {
+//	            	String[] elems = getFormParams(Const.FIELD_SUGGESTED_COLLECTIONS);
+//	            	String resElem = "";
+//	            	for (String elem: elems)
+//	                {
+//	            		if (elem != null && elem.length() > 0) {
+//	            			resElem = resElem + DCollection.findByTitle(elem).url + Const.LIST_DELIMITER;
+//	            		}
+//	                }
+//	            	newTarget.field_suggested_collections = resElem;
+////            		newTarget.field_suggested_collections = DCollection.findByTitle(getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS)).url;
+//            	} else {
+//            		newTarget.field_suggested_collections = Const.NONE;
+//            	}
+//            }
+            if (getFormParam(Const.TREE_KEYS) != null) {
+            	newTarget.field_suggested_collections = getFormParam(Const.TREE_KEYS);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
@@ -299,5 +315,89 @@ public class TargetController extends AbstractController {
 //    	Logger.info("isInScope res: " + res);
     	return ok(Json.toJson(res));
     }
+    
+    /**
+     * This method calculates collection children - objects that have parents.
+     * @param url The identifier for parent 
+     * @return child collection in JSON form
+     */
+    public static String getChildren(String url, String targetUrl) {
+    	String res = "";
+        final StringBuffer sb = new StringBuffer();
+    	sb.append(", \"children\":");
+    	List<DCollection> childSuggestedCollections = DCollection.getChildLevelCollections(url);
+    	if (childSuggestedCollections.size() > 0) {
+	    	sb.append(getTreeElements(childSuggestedCollections, targetUrl));
+	    	res = sb.toString();
+//	    	Logger.info("getChildren() res: " + res);
+    	}
+    	return res;
+    }
+    
+    /**
+     * Mark collections that are stored in target object as selected
+     * @param collectionUrl
+     * @param targetUrl
+     * @return
+     */
+    public static String checkSelection(String collectionUrl, String targetUrl) {
+    	String res = "";
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Target target = Target.findByUrl(targetUrl);
+    		if (target.field_suggested_collections != null && 
+    				target.field_suggested_collections.contains(collectionUrl)) {
+    			res = "\"select\": true ,";
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+   	 * This method calculates first order collections.
+     * @param collectionList
+     * @return collection object in JSON form
+     */
+    public static String getTreeElements(List<DCollection> collectionList, String targetUrl) {
+    	String res = "";
+    	if (collectionList.size() > 0) {
+	        final StringBuffer sb = new StringBuffer();
+	        sb.append("[");
+	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	boolean firstTime = true;
+	    	while (itr.hasNext()) {
+	    		DCollection collection = itr.next();
+	    		if (firstTime) {
+	    			firstTime = false;
+	    		} else {
+	    			sb.append(", ");
+	    		}
+				sb.append("{\"title\": \"" + collection.title + "\"," + checkSelection(collection.url, targetUrl) + 
+						" \"key\": \"" + collection.url + "\"" + getChildren(collection.url, targetUrl) + "}");
+	    	}
+//	    	Logger.info("collectionList level size: " + collectionList.size());
+	    	sb.append("]");
+	    	res = sb.toString();
+//	    	Logger.info("getTreeElements() res: " + res);
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method computes a tree of suggested collections in JSON format. 
+     * @return tree structure
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result getSuggestedCollections(String targetUrl) {
+//    	Logger.info("getSuggestedCollections()");
+        JsonNode jsonData = null;
+        final StringBuffer sb = new StringBuffer();
+    	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
+    	sb.append(getTreeElements(suggestedCollections, targetUrl));
+//    	Logger.info("suggestedCollections main level size: " + suggestedCollections.size());
+        jsonData = Json.toJson(Json.parse(sb.toString()));
+//    	Logger.info("getSuggestedCollections() json: " + jsonData.toString());
+        return ok(jsonData);
+    }
+        
 }
 

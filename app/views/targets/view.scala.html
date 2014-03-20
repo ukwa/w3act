@@ -270,16 +270,11 @@
 						<div class="form-group">
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Suggested Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="field_suggested_collections" id="suggestions-collections" class="form-control">
-					                <option>None</option>
-					                @for(collection <- DCollection.findAll()) {
-						                @if(target.hasCollection(collection.url)) {
-						                	<option selected disabled>@collection.title</option>
-						                } else {
-						                	<option disabled>@collection.title</option>
-						                }
-					                }
-								</select>
+						        @if(target.url != null) {
+  									@DCollection.getCollectionsAsString(DCollection.getSelectedCollections(target.url))
+  								} else {
+  								    none
+  								}
 							</div>
 						</div>
 					</div>

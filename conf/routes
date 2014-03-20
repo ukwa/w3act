@@ -241,6 +241,7 @@ GET     /api/scopeintance/:url               controllers.InstanceController.isIn
 GET     /api/licence/:url                    controllers.CrawlPermissions.crawlPermissionExist(url)
 GET     /api/licencelevel/:url               controllers.CrawlPermissions.crawlPermissionExistAtHigherLevel(url)
 GET     /api/licenceprompthigherlevel/:url   controllers.CrawlPermissions.checkForHigherLevelPrompt(url)
+GET     /api/suggested_collections/:url      controllers.TargetController.getSuggestedCollections(url)
 
 # Sample forms with validation
 GET     /targets/blank/						controllers.Targets.blank()

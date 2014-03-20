@@ -253,6 +253,81 @@ public class DCollection extends Model {
     	return res;
     }          
 	
+	/**
+	 * This method retrieves collections without parents - first level collections.
+	 * @return
+	 */
+	public static List<DCollection> getFirstLevelCollections() {
+		List<DCollection> res = new ArrayList<DCollection>();
+        ExpressionList<DCollection> ll = find.where().icontains(Const.PARENT, "");
+    	res = ll.findList();
+		return res;
+	}       
+    
+	/**
+	 * This method retrieves collections with parents - child level collections.
+	 * @return
+	 */
+	public static List<DCollection> getChildLevelCollections(String url) {
+		List<DCollection> res = new ArrayList<DCollection>();
+        ExpressionList<DCollection> ll = find.where().eq(Const.PARENT, url);
+    	res = ll.findList();
+		return res;
+	}       
+    
+	/**
+	 * This method presents collection list for view page.
+	 * @param list
+	 * @return presentation string
+	 */
+	public static String getCollectionsAsString(List<DCollection> list) {
+    	String res = "";
+//		Logger.info("getCollectionsAsString() list size: " + list.size());
+		Iterator<DCollection> itr = list.iterator();
+		boolean firstTime = true;
+		while (itr.hasNext()) {
+			DCollection collection = itr.next();
+			if (firstTime) {
+//				Logger.info("add first collection.title: " + collection.title);
+				res = collection.title;
+				firstTime = false;
+			} else {
+//				Logger.info("add collection.title: " + collection.title);
+				res = res + Const.COMMA + " " + collection.title;
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+	}
+	
+	/**
+	 * This method retrieves selected suggested collections from target object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<DCollection> getSelectedCollections(String targetUrl) {
+//		Logger.info("getSelectedCollections() targetUrl: " + targetUrl);
+		List<DCollection> res = new ArrayList<DCollection>();
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Target target = Target.findByUrl(targetUrl);
+    		if (target.field_suggested_collections != null) {
+//    			Logger.info("getSelectedCollections() field_suggested_collections: " + target.field_suggested_collections);
+		    	String[] parts = target.field_suggested_collections.split(Const.COMMA + " ");
+		    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+		    		DCollection collection = findByUrl(part);
+		    		if (collection != null && collection.title != null && collection.title.length() > 0) {
+//			    		Logger.info("collection title: " + collection.title);
+		    			res.add(collection);
+		    		}
+		    	}
+    		}
+    	}
+		return res;
+	}       
+    
     public String toString() {
         return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
         		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;
