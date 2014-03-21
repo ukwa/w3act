@@ -7,8 +7,7 @@
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
 			searchContext = 'targets';
-			urlTo = 'target';
-			applySearch(context, searchContext, urlTo);
+			applySearch(context, searchContext);
 			scopeCheck(context);
 		});
 	</script>
