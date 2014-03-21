@@ -543,6 +543,33 @@ public class Instance extends Model {
     }          
 
     /**
+     * Retrieve an Instance by timestamp and target URL.
+     * @param url
+     * @return instance object 
+     */
+    public static Instance findByTimestampAndUrl(String timestamp, String url) {
+    	Instance res = new Instance();
+        Logger.info("instance timestamp: " + timestamp);
+        
+		List<Instance> list = new ArrayList<Instance>();
+		if (timestamp != null && timestamp.length() > 0 && url != null && url.length() > 0) {
+	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TIMESTAMP, timestamp).eq(Const.FIELD_TARGET, url);
+	    	list = ll.findList(); 
+		}
+
+		Instance instance = null;
+		if (list.size() > 0) {
+	        instance = list.get(0);
+		}
+        if (instance == null) {
+        	res.url = Const.NONE;
+        } else {
+        	res = instance;
+        }
+    	return res;
+    }          
+
+    /**
      * Retrieve a Instance by Id (nid).
      * @param nid
      * @return target 
@@ -624,7 +651,7 @@ public class Instance extends Model {
 	        	}
 	        }
 		}
-		Instance instance = Instance.findByTimestamp(lastDate);
+		Instance instance = Instance.findByTimestampAndUrl(lastDate, url);
 		res = instance.url;	
 		return res;
 	}
