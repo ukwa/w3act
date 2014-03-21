@@ -27,7 +27,7 @@ flags:
         description:  This flag marks QA issue content
 
     - !!models.Flag
-        name:         FOLLOW_UP_PEMISSION
+        name:         FOLLOW_UP_PERMISSION
         description:  This flag marks follow up permission
 
     - !!models.Flag
