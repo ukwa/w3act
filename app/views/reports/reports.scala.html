@@ -15,6 +15,8 @@
 	</script>
 }
 
+@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
@@ -246,5 +248,7 @@
 	}
 	</article>
 }
-
+} else {
+	<h1>Access Denied for URL @routes.Reports.index()/list</h1>
+}
 

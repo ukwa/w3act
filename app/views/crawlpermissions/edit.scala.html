@@ -12,6 +12,8 @@
 	</script>
 }
 
+@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+
 @main("", user, script) {
 
    	<div class="page-header">
@@ -199,4 +201,6 @@
 		</div>
 	}
 }
-
+} else {
+	<h1>Access Denied for URL @routes.CrawlPermissions.index()/edit</h1>
+}

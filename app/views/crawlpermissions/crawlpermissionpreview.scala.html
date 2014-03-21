@@ -1,5 +1,7 @@
 @(permission: CrawlPermission, user: User, emails: String, template: String)
 
+@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+
 @main("", user) {
 
    	<div class="page-header">
@@ -40,4 +42,6 @@
    	</div>
    	
 }
-
+} else {
+	<h1>Access Denied for URL @routes.CrawlPermissions.index()/preview</h1>
+}

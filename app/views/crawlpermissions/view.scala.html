@@ -1,5 +1,6 @@
 @(permission: CrawlPermission, user: User)
 
+@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 
 @main("", user) {
     
@@ -163,7 +164,9 @@
 	</div>	
 	
 }
-                   
+} else {
+	<h1>Access Denied for URL @routes.CrawlPermissions.index()/view</h1>
+}                   
 	            
 
 
