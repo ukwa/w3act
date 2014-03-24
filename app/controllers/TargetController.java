@@ -74,7 +74,12 @@ public class TargetController extends AbstractController {
     			Logger.info("One of the required fields is empty. Please fill out all required fields marked by red star in edit page.");
     			flash("message", "Please fill out all required fields marked by red star in edit page");
     			if (isExisting) {
-    				return redirect(routes.Targets.edit(target.url));
+    				if (target != null && target.url != null) {
+    	    			Logger.info("target.url: " + target.url);
+    					return redirect(routes.Targets.edit(target.url));
+    				} else {
+        				return redirect(routes.Targets.create(getFormParam(Const.FIELD_URL)));
+        			}
     			} else {
     				return redirect(routes.Targets.create(getFormParam(Const.FIELD_URL)));
     			}
