@@ -168,14 +168,9 @@ public class Roles extends AbstractController {
                 }
                 
                 role.name = getFormParam(Const.NAME);
-//        	    if (getFormParam(Const.PERMISSIONS) != null) {
-//        	    	Logger.debug("permissions: " + getFormParam(Const.PERMISSIONS));
-//        	    	role.permissions = getFormParam(Const.PERMISSIONS);
-//        	    }
         	    if (getFormParam(Const.DESCRIPTION) != null) {
         	    	role.description = getFormParam(Const.DESCRIPTION);
         	    }
-        	    
         	    
                 String permissionStr = "";
 		        List<Permission> permissionList = Permission.findAll();

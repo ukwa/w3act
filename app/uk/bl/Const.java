@@ -87,6 +87,7 @@ public final class Const {
 	public static final String NONE               = "none";
 	public static final String USER               = "user";
 	public static final String ALL                = "all";
+	public static final String DATE_FORMAT        = "dd-MM-yyyy";
 
 	// Target
 	public static final String NID                = "nid";

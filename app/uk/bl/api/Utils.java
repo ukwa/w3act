@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import play.Logger;
@@ -111,7 +112,7 @@ public class Utils {
     public static String getUnixDateStringFromDate(String curDate) {
     	String res = "";
 		try {
-			Date resDate = new SimpleDateFormat("dd-MM-yyyy").parse(curDate);
+			Date resDate = new SimpleDateFormat(Const.DATE_FORMAT).parse(curDate);
 			Long longTime = new Long(resDate.getTime()/1000);
 			Logger.info("long time: " + longTime);
 			res = String.valueOf(longTime);
@@ -120,6 +121,23 @@ public class Utils {
 			Logger.debug("Conversion of date in string format dd-MM-yyyy to unix date: " + e);
 		}
         return res;
+    }
+    
+    /**
+     * This method converts unix date to date.
+     * @param unixDate
+     * @return date as a string
+     */
+    public static String getDateFromUnixDate(String unixDate) {
+    	String res = "";
+    	if (unixDate != null && unixDate.length() > 0) {
+	    	long unixSeconds = Long.valueOf(unixDate);
+	    	Date date = new Date(unixSeconds*1000L); // *1000 is to convert seconds to milliseconds
+	    	SimpleDateFormat sdf = new SimpleDateFormat(Const.DATE_FORMAT); // the format of your date
+	    	sdf.setTimeZone(TimeZone.getTimeZone("GMT-4"));
+	    	res = sdf.format(date);
+    	}
+    	return res;
     }
     
     /**

@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.DCollection;
-import models.Organisation;
 import models.Instance;
 import models.Taxonomy;
 import models.User;
@@ -24,8 +22,9 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.instances.list;
 import views.html.instances.edit;
+import views.html.instances.list;
+import views.html.instances.listByTarget;
 
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -72,6 +71,29 @@ public class Instances extends AbstractController {
         			Instance.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 
         			order)
+        	);
+    }
+	
+    /**
+     * Display the paginated list of instances.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on instance urls
+     * @param targetUrl Filter by target url
+     */
+    public static Result listByTarget(int pageNo, String sortBy, String order, String filter, String targetUrl) {
+    	Logger.info("Instances.listByTarget()");
+        return ok(
+        	listByTarget.render(
+        			"Lookup", 
+        			User.find.byId(request().username()), 
+        			filter, 
+        			Instance.pageByTarget(pageNo, 10, sortBy, order, filter, targetUrl), 
+        			sortBy, 
+        			order,
+        			targetUrl)
         	);
     }
 	
@@ -169,6 +191,23 @@ public class Instances extends AbstractController {
             );
     }
 
+    /**
+     * This method shows the list of instances associated to a target in QA table.
+     * @param url The target URL
+     * @return instances view
+     */
+    public static Result showByTarget(String url) {    	
+    	if (url != null && url.length() > 0) {
+			Logger.info("Show instances filtered by target.");
+	        return redirect(
+	        		routes.Instances.listByTarget(0, "title", "asc", "", url)
+	        );
+    	}    	
+        return redirect(
+        		routes.Instances.list(0, "title", "asc", "")
+        );
+    }
+        
 	/**
 	 * This method filters instances by given license.
 	 * @return license list

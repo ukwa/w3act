@@ -584,6 +584,17 @@ public class Instance extends Model {
 	 * This method computes a number of instances for given target url.
 	 * @return
 	 */
+	public static List<Instance> findAllInstancesByTarget(String url) {
+		List<Instance> list = new ArrayList<Instance>();
+        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
+    	list = ll.findList(); 
+		return list;
+	}
+	
+	/**
+	 * This method returns a list of instances for given target url.
+	 * @return
+	 */
 	public static int findAllByTarget(String url) {
 		int res = 0;
         ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
@@ -607,7 +618,8 @@ public class Instance extends Model {
 	        String lastDate = "";
 	        while (itr.hasNext()) {
 	        	Instance instance = itr.next();
-	        	String curDate = instance.field_timestamp;
+	        	String curDate = instance.changed;
+//	        	String curDate = instance.field_timestamp;
 //	        	Date curDate = new Date(instance.field_timestamp);
 	        	if (lastDate == null || lastDate.equals("")) {
 	        		lastDate = curDate;
@@ -620,7 +632,22 @@ public class Instance extends Model {
 	        		lastDate = curDate;
 	        	}
 	        }
-	        res = Utils.showTimestamp(lastDate);
+	        res = Utils.getDateFromUnixDate(lastDate);
+//	        res = Utils.showTimestamp(lastDate);
+		}
+		return res;		
+	}
+	
+	/**
+	 * This method shows the date in a page.
+	 * @param curDate
+	 * @return timestamp value
+	 */
+	public static String showTimestamp(String curDate) {
+		String res = "";
+		if (curDate != null && curDate.length() > 0) {
+			Logger.info("showTimestamp() curDate: " + curDate + ", Utils.getDateFromUnixDate(curDate): " + Utils.getDateFromUnixDate(curDate));
+	        res = Utils.getDateFromUnixDate(curDate);
 		}
 		return res;		
 	}
@@ -684,6 +711,28 @@ public class Instance extends Model {
 
 //    	Logger.info("Instnce.page() filter: " + filter);
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * Return a page of Instance
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Instance property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     * @param targetUrl Filter by target url
+     */
+    public static Page<Instance> pageByTarget(int page, int pageSize, String sortBy, String order, 
+    		String filter, String targetUrl) {
+
+//    	Logger.info("Instnce.pageByTarget() filter: " + filter);
+        return find.where().icontains(Const.FIELD_URL_NODE, filter)
+        		.eq(Const.FIELD_TARGET, targetUrl)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

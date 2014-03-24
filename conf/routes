@@ -233,6 +233,8 @@ POST    /instances/search          			controllers.Instances.search()
 GET    	/instances/filterbyjson/:url		controllers.Instances.filterByJson(url)
 GET    	/instances/list/                  	controllers.Instances.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET     /instances/new/:title      			controllers.Instances.create(title)
+GET    	/instances/listbytarget/           	controllers.Instances.listByTarget(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", t ?= "")
+GET     /instances/showbytarget/:url		controllers.Instances.showByTarget(url)
 
 
 # Scope
