@@ -39,7 +39,7 @@
     }
     
     // Generate the link
-    routes.QAController.list(newPage, sortBy, order, searchurl, currentCollection, "")
+    routes.QAController.list(newPage, sortBy, order, searchurl, currentCollection, currentQaStatus)
     
 }
 
@@ -144,7 +144,7 @@
 											<select name="qa_status" class="form-control target-form-control" id="qa_status">
 									        	<option>None</option>
 									            @for(qaStatus <- QAController.getAllQAStatusTypes()) {
-							                 			@if(currentQaStatus != null && currentQaStatus.equals(qaStatus)) {
+							                 			@if(currentQaStatus != null && Taxonomy.findQaStatus(currentQaStatus).equals(qaStatus)) {
 								                		<option selected>@qaStatus</option>
 								                	} else {
 								                		<option>@qaStatus</option>

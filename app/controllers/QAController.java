@@ -67,7 +67,8 @@ public class QAController extends AbstractController {
         			sortBy, 
         			order,
         			collection,
-        			Taxonomy.findQaStatus(qaStatus))
+        			qaStatus)
+//        			Taxonomy.findQaStatus(qaStatus))
         	);
     }
 	
