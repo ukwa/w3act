@@ -2,7 +2,7 @@
 
 @main("", user) {
    	<div class="page-header">
-	    <h1><a href="@routes.Targets.index()">Targets > List Instances > </a>Instance @instance.title</h1>
+	    <h1><a href="@routes.Instances.index()">Targets > Instances > </a>Instance @instance.title</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
@@ -30,6 +30,13 @@
 	
 	<div id="myTabContent" class="tab-content">
 		<div class="tab-pane padding-20 fade active in" id="basicinformation">
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
+						</div>
+					</div>
+		     	</div>
 		
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -83,37 +90,6 @@
 						</div>
 					</div>
 		     	</div>	     	
-	
-	    		<!-- div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">QA Status</label>
-						    <div class="col-sm-6">
-								<label class="radio-inline">
-							  		@if(instance.status == 1) {
-							          <input name="status" id="radio1" value="1" type="radio" checked="checked" disabled> N/A
-							        } else {
-							          <input name="status" id="radio1" value="1" type="radio" disabled> N/A
-							        }
-								</label>
-								<label class="radio-inline">
-							  		@if(instance.status == 2) {
-							          <input name="status" id="radio2" value="2" type="radio" checked="checked" disabled> No QA issues found
-							        } else {
-							          <input name="status" id="radio2" value="2" type="radio" disabled> No QA issues found
-							        }
-								</label>
-								<label class="radio-inline">
-							  		@if(instance.status == 3) {
-							        	<input name="status" id="radio3" value="3" type="radio" checked="checked" disabled> QA issue
-							        } else {
-							        	<input name="status" id="radio3" value="3" type="radio" disabled> QA issue
-									}
-								</label>
-							</div>
-						</div>
-					</div>
-		     	</div-->	     
 	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -233,6 +209,14 @@
 		</div>
 		
 		<div class="tab-pane fade padding-20" id="metadata">
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
+						</div>
+					</div>
+		     	</div>
+
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -489,6 +473,14 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
+							<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
 							<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
 						</div>
 					</div>
@@ -611,6 +603,14 @@
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
+						<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
+					</div>
+				</div>
+	     	</div>
+
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
 						<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
 					</div>
 				</div>
@@ -726,6 +726,13 @@
         </div>
         
         <div class="tab-pane fade" id="crawlpolicy">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
+					</div>
+				</div>
+	     	</div>
 
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -821,6 +828,14 @@
         </div>
 	        
 		<div class="tab-pane fade padding-20" id="licensing">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
+					</div>
+				</div>
+	     	</div>
+
 			<dl class="dl-horizontal">
 				<dt>License:</dt>
 				<dd>The license terms under which this site should be archived and made available.</dd>
@@ -828,6 +843,14 @@
 		</div>
 		
 		<div class="tab-pane padding-20 fade active in" id="qa">    	
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
+					</div>
+				</div>
+	     	</div>
+
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
