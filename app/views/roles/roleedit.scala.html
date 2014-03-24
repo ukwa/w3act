@@ -39,9 +39,9 @@
 				        @for(permission <- Permission.findAll()) {
 							<label class="checkbox-inline">
 					            @if(Permission.isIncluded(permission.name, role.permissions)) {
-				                	<input type="checkbox" name="@permission.name" value="true" checked disabled="disabled" />
+				                	<input type="checkbox" name="@permission.name" value="true" checked />
 				                } else {
-				                	<input type="checkbox" name="@permission.name" value="true" disabled="disabled"  />
+				                	<input type="checkbox" name="@permission.name" value="true" />
 				                }
 				                 @permission.name
 			                </label>

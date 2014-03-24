@@ -1,5 +1,6 @@
 @(user: User, admin: User)
 
+@if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || user.url.equals(admin.url)) {
 
 @main("", admin){
     
@@ -132,4 +133,7 @@
 		</div>
 		}
 	}
+}
+} else {
+	<h1>Access Denied for URL @routes.Curators.index()/edit</h1>
 }

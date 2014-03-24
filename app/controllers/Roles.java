@@ -143,9 +143,9 @@ public class Roles extends AbstractController {
     	Result res = null;
         String save = getFormParam(Const.SAVE);
         String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
+//        Logger.debug("save role: " + save);
         if (save != null) {
-        	Logger.info("save role nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.debug("save role nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
         	Role role = null;
             boolean isExisting = true;
@@ -153,14 +153,14 @@ public class Roles extends AbstractController {
                 try {
                 	role = Role.findByUrl(getFormParam(Const.URL));
                 } catch (Exception e) {
-                	Logger.info("is not existing exception");
+                	Logger.debug("is not existing exception");
                 	isExisting = false;
                 	role = new Role();
                 	role.id = Long.valueOf(getFormParam(Const.NID));
                 	role.url = getFormParam(Const.URL);
                 }
                 if (role == null) {
-                	Logger.info("is not existing");
+                	Logger.debug("is not existing");
                 	isExisting = false;
                 	role = new Role();
                 	role.id = Long.valueOf(getFormParam(Const.NID));
@@ -168,12 +168,38 @@ public class Roles extends AbstractController {
                 }
                 
                 role.name = getFormParam(Const.NAME);
-        	    if (getFormParam(Const.PERMISSIONS) != null) {
-        	    	role.permissions = getFormParam(Const.PERMISSIONS);
-        	    }
+//        	    if (getFormParam(Const.PERMISSIONS) != null) {
+//        	    	Logger.debug("permissions: " + getFormParam(Const.PERMISSIONS));
+//        	    	role.permissions = getFormParam(Const.PERMISSIONS);
+//        	    }
         	    if (getFormParam(Const.DESCRIPTION) != null) {
         	    	role.description = getFormParam(Const.DESCRIPTION);
         	    }
+        	    
+        	    
+                String permissionStr = "";
+		        List<Permission> permissionList = Permission.findAll();
+		        Iterator<Permission> permissionItr = permissionList.iterator();
+		        while (permissionItr.hasNext()) {
+		        	Permission permission = permissionItr.next();
+	                if (getFormParam(permission.name) != null) {
+		                boolean permissionFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+		                if (permissionFlag) {
+		                	if (permissionStr.length() == 0) {
+		                		permissionStr = permission.name;
+		                	} else {
+		                		permissionStr = permissionStr + ", " + permission.name;
+		                	}
+		                }
+	                }
+		        }
+		        if (permissionStr.length() == 0) {
+		        	role.permissions = Const.DEFAULT_ROLE;
+		        } else {
+		        	role.permissions = permissionStr;
+		        }
+		        Logger.info("permissionStr: "+ permissionStr + ", user.permissions: " + role.permissions);
+        	    
         	    if (role.revision == null) {
         	    	role.revision = "";
         	    }
