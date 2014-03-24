@@ -21,6 +21,7 @@ import play.mvc.Security;
 import uk.bl.Const;
 import views.html.qa.list;
 
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -51,12 +52,18 @@ public class QAController extends AbstractController {
      */
     public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus) {
     	Logger.info("QAController.list() collection: " + collection);
+    	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
+    	if (page.getTotalRowCount() == 0) {
+    		pageNo = 0;
+        	page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
+    	}
         return ok(
         	list.render(
         			"QA", 
         			User.find.byId(request().username()), 
         			filter, 
-        			Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus), 
+        			page,
+//        			Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus), 
         			sortBy, 
         			order,
         			collection,
