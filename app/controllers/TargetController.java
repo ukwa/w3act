@@ -169,24 +169,10 @@ public class TargetController extends AbstractController {
             		newTarget.field_subsubject = Const.NONE;
             	}
             }
-//            if (getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) != null) {
-//            	if (!getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS).toLowerCase().contains(Const.NONE)) {
-//	            	String[] elems = getFormParams(Const.FIELD_SUGGESTED_COLLECTIONS);
-//	            	String resElem = "";
-//	            	for (String elem: elems)
-//	                {
-//	            		if (elem != null && elem.length() > 0) {
-//	            			resElem = resElem + DCollection.findByTitle(elem).url + Const.LIST_DELIMITER;
-//	            		}
-//	                }
-//	            	newTarget.field_suggested_collections = resElem;
-////            		newTarget.field_suggested_collections = DCollection.findByTitle(getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS)).url;
-//            	} else {
-//            		newTarget.field_suggested_collections = Const.NONE;
-//            	}
-//            }
             if (getFormParam(Const.TREE_KEYS) != null) {
-            	newTarget.field_suggested_collections = getFormParam(Const.TREE_KEYS);
+//            	newTarget.field_suggested_collections = getFormParam(Const.TREE_KEYS);
+	    		newTarget.field_suggested_collections = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+	    		Logger.debug("newTarget.field_suggested_collections: " + newTarget.field_suggested_collections);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {

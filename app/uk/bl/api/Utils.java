@@ -212,6 +212,44 @@ public class Utils {
     }
     
     /**
+     * This method removes duplicated entries from the string list with values separated by ', '.
+     * @param list The list that contains elements
+     * @return result list
+     */
+    public static String removeDuplicatesFromList(String list) {
+    	String res = "";
+    	boolean firstIteration = true;
+    	if (list != null) {
+    		if (list.contains(Const.LIST_DELIMITER)) {   	
+		    	String[] parts = list.split(Const.LIST_DELIMITER);
+		    	for (String part: parts)
+		        {
+		    		boolean isAlreadyInList = false;
+			    	String[] resListParts = res.split(Const.LIST_DELIMITER);
+			    	for (String resListPart: resListParts)
+			        {
+			    		if (resListPart.equals(part)) {
+			    			isAlreadyInList = true;
+			    			break;
+			    		}
+			        }
+			    	if (!isAlreadyInList) {
+			    		if (firstIteration) {
+			    			res = res + part;
+			    			firstIteration = false;
+			    		} else {
+			    			res = res + Const.LIST_DELIMITER + part;
+			    		}
+			    	}
+		        }
+    		} else {
+   				res = list;
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
      * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
      * @param elem The given element for searching
      * @param list The list that contains elements
