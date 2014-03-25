@@ -800,16 +800,11 @@
 					<div class="form-group">
 		            	<label for="qa_status" class="col-sm-6 control-label">QA Status</label>
 		            	<div class="col-sm-6">
-							<select name="qa_status" class="form-control target-form-control" id="qa_status">
-					        	<option>None</option>
-					            @for(qaStatus <- QAController.getAllQAStatusTypes()) {
-			                 		@if(qaStatus != null && qaStatus.equals(instance.qa_status)) {
-				                		<option selected disabled>@qaStatus</option>
-				                	} else {
-				                		<option disabled>@qaStatus</option>
-				                	}
-								}
-							</select>
+					        @if(instance.qa_status != null) {
+								@instance.qa_status
+							} else {
+							    none
+							}
 						</div>
 		         	</div>
 				</div>
