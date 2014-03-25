@@ -617,12 +617,6 @@ public class Targets extends AbstractController {
     	String query = form.get("url");
 
     	String user_url = form.get(Const.USER_URL);
-    	if (StringUtils.isBlank(query)) {
-			Logger.info("Target name is empty. Please write name in search window.");
-			flash("message", "Please enter a name in the search window");
-	        return redirect(routes.Targets.userTargets(0, "title", "asc", "", user_url, "", ""));
-    	}    	
-
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
     	String order = form.get(Const.ORDER);
@@ -646,6 +640,12 @@ public class Targets extends AbstractController {
     			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
     		}
     	} 
+    	
+    	if (StringUtils.isBlank(query)) {
+			Logger.info("Target name is empty. Please write name in search window.");
+			flash("message", "Please enter a name in the search window");
+	        return redirect(routes.Targets.userTargets(pageNo, sort, order, query, user_url, subject, collection));
+    	}    	
     	
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
