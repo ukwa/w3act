@@ -22,6 +22,7 @@ import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
@@ -895,9 +896,18 @@ public class Target extends Model {
 
 //    	Logger.info("pageQa() collection: " + collection);
 
-        return find.where().icontains(Const.FIELD_URL_NODE, filter)
-        		.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)
-        		.icontains(Const.FIELD_QA_STATUS, qaStatus)
+        return find.where(
+        		  Expr.and(
+        			 Expr.or(
+	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.TITLE, filter)
+	                 ),
+	                 Expr.and(
+		                Expr.icontains(Const.FIELD_QA_STATUS, qaStatus),
+		                Expr.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)
+		             )
+	               )
+        		)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
