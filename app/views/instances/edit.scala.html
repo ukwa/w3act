@@ -2,7 +2,7 @@
 
 @script = {
 	<script>
-		$(document).ready(function() {
+	(function() {
 	          var idle_timeout,
 	          SCOPE_URI = '/api/scope',
 	          MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
@@ -42,7 +42,30 @@
 				        	doScope(text);
 				    }
 			  });
-		});
+		
+		    SUGGESTED_COLLECTION_URI = '@routes.InstanceController.getSuggestedCollections(instance.url)';
+	        $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
+	        	$("#tree3").dynatree({
+	          	checkbox: true,
+	          	selectMode: 3,
+	          	children: data,
+	          	onSelect: function(select, node) {
+	            		// Get a list of all selected nodes, and convert to a key array:
+	            		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+	              		return node.data.key;
+	            		});
+	            		$("#echoSelection3").text(selKeys.join(", "));
+	            		document.getElementById('treeKeys').value = selKeys.join(", ");
+	            		// Get a list of all selected TOP nodes
+	            		var selRootNodes = node.tree.getSelectedNodes(true);
+	            		// ... and convert to a key array:
+	            		var selRootKeys = $.map(selRootNodes, function(node){
+	              		return node.data.key;
+	            		});
+	          		}
+	        	});
+	       })
+		})();		
 	</script>
 }
 
@@ -272,7 +295,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
 								<select multiple name="subject" value="@instance.field_subject" class="form-control">
 									<option>None</option>
@@ -287,6 +310,29 @@
 							</div>
 						</div>
 					</div>
+		     	</div>
+		     		
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputSubSubject" class="col-sm-6 control-label">Subject 2 level <font color="red">*</font> <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="subsubject" value="@instance.field_subject" class="form-control">
+									<option>None</option>
+									@for(subject <- Taxonomy.findListByType("subject")) {
+										<option value="@subject.name" disabled>@subject.name</option>
+  										@for(subsubject <- Taxonomy.findSubSubjectsList(subject.name)) {
+											@if(instance.hasSubSubject(subsubject.url)) {
+	    										<option value="@subsubject.name" selected>-> @subsubject.name</option>
+											} else {						                
+	  											<option value="@subsubject.name">-> @subsubject.name</option>
+	  										}
+	  									}
+									}
+							  	</select>
+							</div>
+						</div>
+					</div>
 		     	</div>	
 		     	}	    
 
@@ -296,20 +342,12 @@
 						<div class="form-group">
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Suggested Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="field_suggested_collections" id="suggestions-collections" class="form-control">
-					                <option>None</option>
-					                @for(collection <- DCollection.findAll()) {
-						                @if(instance.hasCollection(collection.url)) {
-						                	<option selected>@collection.title</option>
-						                } else {
-						                	<option>@collection.title</option>
-						                }
-					                }
-								</select>
+							  <div id="tree3"></div>
+							  <input type="hidden" id="treeKeys" name="treeKeys" value="@instance.field_suggested_collections">
 							</div>
 						</div>
 					</div>
-		     	</div>	
+		     	</div>	   
 		     	}	   
 		     	
 	    		<div class="row padding-10">

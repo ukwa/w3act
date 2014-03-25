@@ -328,6 +328,32 @@ public class DCollection extends Model {
 		return res;
 	}       
     
+	/**
+	 * This method retrieves selected suggested collections from instance object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<DCollection> getSelectedCollectionsByInstanceUrl(String instanceUrl) {
+//		Logger.info("getSelectedCollections() instanceUrl: " + instanceUrl);
+		List<DCollection> res = new ArrayList<DCollection>();
+    	if (instanceUrl != null && instanceUrl.length() > 0) {
+    		Instance instance = Instance.findByUrl(instanceUrl);
+    		if (instance.field_suggested_collections != null) {
+//    			Logger.info("getSelectedCollections() field_suggested_collections: " + target.field_suggested_collections);
+		    	String[] parts = instance.field_suggested_collections.split(Const.COMMA + " ");
+		    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+		    		DCollection collection = findByUrl(part);
+		    		if (collection != null && collection.title != null && collection.title.length() > 0) {
+//			    		Logger.info("collection title: " + collection.title);
+		    			res.add(collection);
+		    		}
+		    	}
+    		}
+    	}
+		return res;
+	}       
+    
     public String toString() {
         return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
         		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;

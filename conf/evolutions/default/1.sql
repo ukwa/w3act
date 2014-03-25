@@ -171,6 +171,7 @@ create table instance (
   field_notes               TEXT,
   field_instances           TEXT,
   field_subject             TEXT,
+  field_subsubject          TEXT,
   field_qa_status           TEXT,
   qa_status                 TEXT,
   qa_issue_category         TEXT,

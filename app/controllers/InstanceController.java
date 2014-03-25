@@ -1,5 +1,8 @@
 package controllers;
 
+import java.util.Iterator;
+import java.util.List;
+
 import play.*;
 import play.mvc.*;
 import models.*;
@@ -8,6 +11,7 @@ import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import play.libs.Json;
 import uk.bl.Const;
@@ -83,7 +87,7 @@ public class InstanceController extends AbstractController {
         			", subject: " + getFormParams(Const.SUBJECT) +
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
-//            Instance instance = new Instance();
+        	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
         	Instance newInstance = new Instance();
             boolean isExisting = true;
             try {
@@ -163,12 +167,14 @@ public class InstanceController extends AbstractController {
             if (getFormParam(Const.SUBJECT) != null) {
             	if (!getFormParam(Const.SUBJECT).toLowerCase().contains(Const.NONE)) {
 	            	String[] subjects = getFormParams(Const.SUBJECT);
+	//            	Logger.info("subjects: " + subjects[0] + subjects[1]);
 	            	String resSubject = "";
 	            	for (String subject: subjects)
 	                {
 	            		if (subject != null && subject.length() > 0) {
 	                		Logger.info("add subject: " + subject);
-	            			resSubject = resSubject + Taxonomy.findByFullName(subject).url + Const.LIST_DELIMITER;
+//	                		Logger.info("add subject: " + subject + ", " + Taxonomy.findByName(subject).url);
+	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBJECT).url + Const.LIST_DELIMITER;
 	            		}
 	                }
 	            	newInstance.field_subject = resSubject;
@@ -176,20 +182,25 @@ public class InstanceController extends AbstractController {
             		newInstance.field_subject = Const.NONE;
             	}
             }
-            if (getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS) != null) {
-            	if (!getFormParam(Const.FIELD_SUGGESTED_COLLECTIONS).toLowerCase().contains(Const.NONE)) {
-	            	String[] elems = getFormParams(Const.FIELD_SUGGESTED_COLLECTIONS);
-	            	String resElem = "";
-	            	for (String elem: elems)
+            if (getFormParam(Const.SUBSUBJECT) != null) {
+            	if (!getFormParam(Const.SUBSUBJECT).toLowerCase().contains(Const.NONE)) {
+	            	String[] subjects = getFormParams(Const.SUBSUBJECT);
+	            	String resSubject = "";
+	            	for (String subject: subjects)
 	                {
-	            		if (elem != null && elem.length() > 0) {
-	            			resElem = resElem + DCollection.findByTitle(elem).url + Const.LIST_DELIMITER;
+	            		if (subject != null && subject.length() > 0) {
+	                		Logger.info("add subsubject: " + subject);
+	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBSUBJECT).url + Const.LIST_DELIMITER;
 	            		}
 	                }
-	            	newInstance.field_suggested_collections = resElem;
+	            	newInstance.field_subsubject = resSubject;
             	} else {
-            		newInstance.field_suggested_collections = Const.NONE;
+            		newInstance.field_subsubject = Const.NONE;
             	}
+            }
+            if (getFormParam(Const.TREE_KEYS) != null) {
+            	newInstance.field_suggested_collections = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+	    		Logger.debug("newInstance.field_suggested_collections: " + newInstance.field_suggested_collections);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
@@ -305,9 +316,9 @@ public class InstanceController extends AbstractController {
 
         	if (!isExisting) {
             	Ebean.save(newInstance);
-    	        Logger.info("save instance: " + newInstance.toString());
+    	        Logger.info("save instance: " + newInstance.nid);
         	} else {
-        		Logger.info("update instance: " + newInstance.nid + ", obj: " + newInstance.toString());
+        		Logger.info("update instance: " + newInstance.nid);
             	Ebean.update(newInstance);
         	}
 	        res = redirect(routes.InstanceController.view(newInstance.url));
@@ -334,5 +345,89 @@ public class InstanceController extends AbstractController {
 //    	Logger.info("isInScope res: " + res);
     	return ok(Json.toJson(res));
     }
+    
+    /**
+     * This method calculates collection children - objects that have parents.
+     * @param url The identifier for parent 
+     * @return child collection in JSON form
+     */
+    public static String getChildren(String url, String targetUrl) {
+    	String res = "";
+        final StringBuffer sb = new StringBuffer();
+    	sb.append(", \"children\":");
+    	List<DCollection> childSuggestedCollections = DCollection.getChildLevelCollections(url);
+    	if (childSuggestedCollections.size() > 0) {
+	    	sb.append(getTreeElements(childSuggestedCollections, targetUrl));
+	    	res = sb.toString();
+//	    	Logger.info("getChildren() res: " + res);
+    	}
+    	return res;
+    }
+    
+    /**
+     * Mark collections that are stored in target object as selected
+     * @param collectionUrl
+     * @param targetUrl
+     * @return
+     */
+    public static String checkSelection(String collectionUrl, String targetUrl) {
+    	String res = "";
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Instance instance = Instance.findByUrl(targetUrl);
+    		if (instance.field_suggested_collections != null && 
+    				instance.field_suggested_collections.contains(collectionUrl)) {
+    			res = "\"select\": true ,";
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+   	 * This method calculates first order collections.
+     * @param collectionList
+     * @return collection object in JSON form
+     */
+    public static String getTreeElements(List<DCollection> collectionList, String targetUrl) {
+    	String res = "";
+    	if (collectionList.size() > 0) {
+	        final StringBuffer sb = new StringBuffer();
+	        sb.append("[");
+	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	boolean firstTime = true;
+	    	while (itr.hasNext()) {
+	    		DCollection collection = itr.next();
+	    		if (firstTime) {
+	    			firstTime = false;
+	    		} else {
+	    			sb.append(", ");
+	    		}
+				sb.append("{\"title\": \"" + collection.title + "\"," + checkSelection(collection.url, targetUrl) + 
+						" \"key\": \"" + collection.url + "\"" + getChildren(collection.url, targetUrl) + "}");
+	    	}
+//	    	Logger.info("collectionList level size: " + collectionList.size());
+	    	sb.append("]");
+	    	res = sb.toString();
+//	    	Logger.info("getTreeElements() res: " + res);
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method computes a tree of suggested collections in JSON format. 
+     * @return tree structure
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result getSuggestedCollections(String targetUrl) {
+//    	Logger.info("getSuggestedCollections()");
+        JsonNode jsonData = null;
+        final StringBuffer sb = new StringBuffer();
+    	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
+    	sb.append(getTreeElements(suggestedCollections, targetUrl));
+//    	Logger.info("suggestedCollections main level size: " + suggestedCollections.size());
+        jsonData = Json.toJson(Json.parse(sb.toString()));
+//    	Logger.info("getSuggestedCollections() json: " + jsonData.toString());
+        return ok(jsonData);
+    }
+            
 }
 

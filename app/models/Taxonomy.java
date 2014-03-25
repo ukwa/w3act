@@ -438,6 +438,34 @@ public class Taxonomy extends Model {
     }
 
     /**
+     * This method calculates selected taxonomies for presentation in view page.
+     * @param type The type of taxonomy
+     * @param target The instance object
+     * @return taxonomy list as a string
+     */
+    public static String getSelectedSubjectsByInstance(String type, Instance instance) {
+    	String res = "";
+		List<Taxonomy> taxonomyList = Taxonomy.findListByType(type);
+		Iterator<Taxonomy> itr = taxonomyList.iterator();
+		boolean firstTime = true;
+		while (itr.hasNext()) {
+			Taxonomy taxonomy = itr.next();
+			if(instance.hasSubject(taxonomy.url)) {
+				if (firstTime) {
+					res = taxonomy.name;
+					firstTime = false;
+				} else {
+					res = res + Const.COMMA + " " + taxonomy.name;
+				}
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+    }
+
+    /**
      * This method calculates selected taxonomies in second level for presentation in view page.
      * @param type The type of taxonomy
      * @param target The target object
@@ -455,6 +483,39 @@ public class Taxonomy extends Model {
 			while (itrSub.hasNext()) {
 				Taxonomy subTaxonomy = itrSub.next();
 				if(target.hasSubSubject(subTaxonomy.url)) {
+					if (firstTime) {
+						res = subTaxonomy.name;
+						firstTime = false;
+					} else {
+						res = res + Const.COMMA + " " + subTaxonomy.name;
+					}
+				}
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+    }
+
+    /**
+     * This method calculates selected taxonomies in second level for presentation in view page.
+     * @param type The type of taxonomy
+     * @param target The instance object
+     * @return taxonomy list as a string
+     */
+    public static String getSelectedSubjectsByInstanceSecondLevel(String type, Instance instance) {
+    	String res = "";
+		boolean firstTime = true;
+		List<Taxonomy> taxonomyList = Taxonomy.findListByType(type);
+		Iterator<Taxonomy> itr = taxonomyList.iterator();
+		while (itr.hasNext()) {
+			Taxonomy taxonomy = itr.next();
+			List<Taxonomy> subTaxonomyList = Taxonomy.findSubSubjectsList(taxonomy.name);
+			Iterator<Taxonomy> itrSub = subTaxonomyList.iterator();
+			while (itrSub.hasNext()) {
+				Taxonomy subTaxonomy = itrSub.next();
+				if(instance.hasSubSubject(subTaxonomy.url)) {
 					if (firstTime) {
 						res = subTaxonomy.name;
 						firstTime = false;

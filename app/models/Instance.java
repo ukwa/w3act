@@ -130,6 +130,8 @@ public class Instance extends Model {
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
     @Column(columnDefinition = "TEXT")
+    public String field_subsubject; 
+    @Column(columnDefinition = "TEXT")
     public String field_qa_status; 
     @Column(columnDefinition = "TEXT")
     public String qa_status; 
@@ -922,6 +924,17 @@ public class Instance extends Model {
         return res;
     }
     
+    /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+    public boolean hasSubSubject(String subject) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(subject, field_subsubject);
+    	return res;
+    }
+            
     public String toString() {
         return "Instance(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 

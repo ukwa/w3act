@@ -216,42 +216,39 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
-						    <div class="col-sm-6">
-								<select multiple name="subject" value="@instance.field_subject" class="form-control">
-									<option>None</option>
-  									@for(subject <- Taxonomy.findListByType("subject")) {
-										@if(instance.hasSubject(subject.url)) {
-    										<option value="@subject.name" selected disabled>@subject.name</option>
-										} else {						                
-  											<option value="@subject.name" disabled>@subject.name</option>
-  										}
-									}
-							  	</select>
-							</div>
+			              	 <div class="col-sm-6">
+  									@Taxonomy.getSelectedSubjectsByInstance("subject", instance)
+			              	</div>
 						</div>
 					</div>
-		     	</div>		    
-
+		     	</div>	
+		     		    
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputDescription" class="col-sm-6 control-label">Subject 2 level <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+			              	 <div class="col-sm-6">
+  									@Taxonomy.getSelectedSubjectsByInstanceSecondLevel("subject", instance)
+			              	</div>
+						</div>
+					</div>
+		     	</div>	
+		     		    
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Suggested Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="field_suggested_collections" id="suggestions-collections" class="form-control">
-					                <option>None</option>
-					                @for(collection <- DCollection.findAll()) {
-						                @if(instance.hasCollection(collection.url)) {
-						                	<option selected disabled>@collection.title</option>
-						                } else {
-						                	<option disabled>@collection.title</option>
-						                }
-					                }
-								</select>
+						        @if(instance.url != null) {
+  									@DCollection.getCollectionsAsString(DCollection.getSelectedCollectionsByInstanceUrl(instance.url))
+  								} else {
+  								    none
+  								}
 							</div>
 						</div>
 					</div>
 		     	</div>		   
-		     	
+
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
