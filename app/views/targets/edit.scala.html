@@ -946,14 +946,21 @@
 			</div>
 		</div>
 
+		@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {     			     		
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
+				    @if(target.author != null && user.hasRole("user") && !user.url.equals(target.author)) { 
+					<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
+					<button type="submit" class="btn btn-primary" name="delete" id="delete" disabled>Delete</button>
+					} else {
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
 					<button type="submit" class="btn btn-primary" name="delete" id="delete">Delete</button>
+					}
 		       </div>
 			</div>
 		</div>
+		}
 	}
 }
 
