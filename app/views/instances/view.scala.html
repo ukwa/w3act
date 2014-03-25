@@ -33,14 +33,6 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
-						</div>
-					</div>
-		     	</div>
-		
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
 							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
 						    <div class="col-sm-6">
 				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@instance.title" readonly>
@@ -209,14 +201,6 @@
 		</div>
 		
 		<div class="tab-pane fade padding-20" id="metadata">
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
-						</div>
-					</div>
-		     	</div>
-
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -473,14 +457,6 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
 							<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
 						</div>
 					</div>
@@ -603,14 +579,6 @@
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
-					</div>
-				</div>
-	     	</div>
-
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
 						<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
 					</div>
 				</div>
@@ -726,14 +694,6 @@
         </div>
         
         <div class="tab-pane fade" id="crawlpolicy">
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
-					</div>
-				</div>
-	     	</div>
-
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -828,14 +788,6 @@
         </div>
 	        
 		<div class="tab-pane fade padding-20" id="licensing">
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
-					</div>
-				</div>
-	     	</div>
-
 			<dl class="dl-horizontal">
 				<dt>License:</dt>
 				<dd>The license terms under which this site should be archived and made available.</dd>
@@ -843,14 +795,6 @@
 		</div>
 		
 		<div class="tab-pane padding-20 fade active in" id="qa">    	
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="wayback" class="col-sm-6 control-label"><a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.get_field_list_as_str("field_url")">In QA Wayback</a></label>
-					</div>
-				</div>
-	     	</div>
-
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -928,12 +872,12 @@
 			<div class="panel panel-primary" id="panels">
 				<div class="panel-heading">
 			    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
-			        	Instance instances
+			        	Instances
 					</a>
 				</div>
 				<div id="collapseInstances" class="panel-collapse collapse">
 					<div class="panel-footer">
-						<a class="brand" href="opera.bl.uk:/8080/wayback/*@instance.field_url">In Legal Deposit Web Archive</a>
+						<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@instance.field_url">In QA Wayback</a>
 					</div>
 				    <div class="panel-footer">
 			        	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url= http://@instance.field_url">In Open UK Web Archive</a>
