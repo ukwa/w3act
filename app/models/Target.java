@@ -262,7 +262,7 @@ public class Target extends Model {
      */
     public static List<Target> findAllforOrganisation(String url) {
     	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq("field_nominating_organisation", url);
+        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true).eq("field_nominating_organisation", url);
         res = ll.findList();
         return res;
 	}
