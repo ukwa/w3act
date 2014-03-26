@@ -145,7 +145,7 @@ public class ReportsQa extends AbstractController {
 		 	    sw.append(Const.CSV_SEPARATOR);
 	    		sw.append(target.field_url);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.field_license);
+	    		sw.append(target.changed);
 		 	    sw.append(Const.CSV_SEPARATOR);
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
