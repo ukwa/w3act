@@ -124,7 +124,7 @@
 						            	<div class="col-sm-6">
 											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
 								                <option>None</option>
-								                @for(collection <- DCollection.findAll()) {
+								                @for(collection <- DCollection.findAllSorted()) {
 									                @if(currentCollection != null && currentCollection.equals(collection.url)) {
 									                	<option selected>@collection.title</option>
 									                } else {

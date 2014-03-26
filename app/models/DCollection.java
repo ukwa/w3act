@@ -120,6 +120,18 @@ public class DCollection extends Model {
     }
     
     /**
+     * This method returns all users related to given organisation.
+     * @param organisation The organisation URL
+     * @return user list
+     */
+    public static List<DCollection> findAllSorted() {
+    	List<DCollection> res = new ArrayList<DCollection>();
+    	Page<DCollection> page = page(0, find.all().size(), Const.TITLE, Const.ASC, "");
+    	res = page.getList();
+        return res;
+    }
+    
+    /**
      * Create a new dcollection.
      */
     public static DCollection create(String title) {

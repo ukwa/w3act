@@ -146,16 +146,10 @@ public class User extends Model {
     public static List<User> findAllSorted() {
     	List<User> res = new ArrayList<User>();
     	Page<User> page = page(0, find.all().size(), Const.NAME, Const.ASC, "");
-//    	find.where()
-//    			.orderBy("title asc")
-//    			.findPagingList(find.all().size())
-//    			.setFetchAhead(false)
-//    			.getPage(0);
     	res = page.getList();
         return res;
     }
-    
-    
+        
     /**
      * Retrieve a User from email.
      */
