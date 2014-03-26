@@ -159,7 +159,7 @@
 									    <div class="col-sm-6">
 											<select name="author" class="form-control target-form-control" id="curator">
 												<option>None</option>
-												@for(curator <- User.findAll()) {
+												@for(curator <- User.findAllSorted()) {
 													@if(curatorUrl != null && !curatorUrl.equals("") && curatorUrl.equals(curator.url)) {
 														<option selected>@curator.name</option>
 													} else {

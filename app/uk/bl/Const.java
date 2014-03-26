@@ -156,6 +156,7 @@ public final class Const {
 	public static final String DEFAULT_ROLE       = "user";
 	public static final String PASSWORD           = "password";
 	public static final String USER_URL           = "user_url";
+	public static final String ASC                = "asc";
 
 	// Taxonomy
 	public static final String TYPE               = "type";
@@ -429,6 +430,19 @@ public final class Const {
 		CONTENT_PAGES_SUB_SECTIONS,
 		CONTENT_MENUS,
 		OTHER;
+    }
+    
+	/**
+	 * The report QA status types.
+	 */
+	public enum ReportQaStatusType { 
+		QAED,
+		AWAITINGQA,
+		WITHQAISSUES,
+		WITHNOQAISSUES,
+		FAILEDINSTANCES,
+		PASSED,
+		WITHQAISSUESRESOLVED;
     }
     
     /**

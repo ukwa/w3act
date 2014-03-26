@@ -139,6 +139,24 @@ public class User extends Model {
     }
 
     /**
+     * This method returns all users related to given organisation.
+     * @param organisation The organisation URL
+     * @return user list
+     */
+    public static List<User> findAllSorted() {
+    	List<User> res = new ArrayList<User>();
+    	Page<User> page = page(0, find.all().size(), Const.NAME, Const.ASC, "");
+//    	find.where()
+//    			.orderBy("title asc")
+//    			.findPagingList(find.all().size())
+//    			.setFetchAhead(false)
+//    			.getPage(0);
+    	res = page.getList();
+        return res;
+    }
+    
+    
+    /**
      * Retrieve a User from email.
      */
     public static User findByEmail(String email) {

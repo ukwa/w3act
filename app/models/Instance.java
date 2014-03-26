@@ -902,17 +902,68 @@ public class Instance extends Model {
 //    		exp = exp.eq(Const.STATUS, status);
 //    		isProcessed = true;
 //    	} 
+		if (status != null && status.equals(Const.ReportQaStatusType.WITHQAISSUES.name().toLowerCase())) { 
+			exp = exp.eq(Const.QA_STATUS, Const.QAStatusType.ISSUE_NOTED.name());
+			isProcessed = true;
+    	} 
+    	
+		if (status != null && status.equals(Const.ReportQaStatusType.WITHNOQAISSUES.name().toLowerCase())) { 
+			exp = exp.ne(Const.QA_STATUS, Const.QAStatusType.ISSUE_NOTED.name());
+			isProcessed = true;
+    	} 
+    	
+		if (status != null && status.equals(Const.ReportQaStatusType.FAILEDINSTANCES.name().toLowerCase())) { 
+			exp = exp.ne(Const.QA_STATUS, Const.QAStatusType.FAILED_DO_NOT_PUBLISH.name());
+			isProcessed = true;
+    	} 
+    	
+		if (status != null && status.equals(Const.ReportQaStatusType.PASSED.name().toLowerCase())) { 
+			exp = exp.ne(Const.QA_STATUS, Const.QAStatusType.FAILED_PASS_TO_ENGINEER.name());
+			isProcessed = true;
+    	} 
+    	
+		if (status != null && status.equals(Const.ReportQaStatusType.WITHQAISSUESRESOLVED.name().toLowerCase())) { 
+			exp = exp.ne(Const.QA_STATUS, Const.QAStatusType.ISSUE_NOTED.name());
+			isProcessed = true;
+    	} 
+    	
     	if (startDate != null && startDate.length() > 0) {
     		Logger.info("start_date: " + startDate);
     		String startDateStr = Utils.getUnixDateStringFromDate(startDate);
     		Logger.info("start_date string: " + startDateStr);
-    		exp = exp.ge(Const.CHANGED, startDateStr);
+    		if (status != null && (status.length() > 0 || status.length() ==  0) 
+    				&& (status.equals(Const.ReportQaStatusType.QAED.name().toLowerCase())
+        				|| status.equals(Const.ReportQaStatusType.WITHQAISSUES.name().toLowerCase())	
+        				|| status.equals(Const.ReportQaStatusType.WITHNOQAISSUES.name().toLowerCase())	
+        				|| status.equals(Const.ReportQaStatusType.FAILEDINSTANCES.name().toLowerCase())	
+        				|| status.equals(Const.ReportQaStatusType.PASSED.name().toLowerCase())	
+        				|| status.equals(Const.ReportQaStatusType.WITHQAISSUESRESOLVED.name().toLowerCase())	
+    					)) { 
+    			exp = exp.ge(Const.CHANGED, startDateStr);
+    		}
+    		if (status != null && status.length() > 0 
+    				&& status.equals(Const.ReportQaStatusType.AWAITINGQA.name().toLowerCase())) { 
+    			exp = exp.le(Const.CHANGED, startDateStr);
+    		}
     		isProcessed = true;
     	} 
     	if (endDate != null && endDate.length() > 0) {
     		Logger.info("end_date: " + endDate);
     		String endDateStr = Utils.getUnixDateStringFromDate(endDate);
-    		exp = exp.le(Const.CHANGED, endDateStr);
+    		if (status != null && (status.length() > 0 || status.length() ==  0) 
+    				&& (status.equals(Const.ReportQaStatusType.QAED.name().toLowerCase())
+    					|| status.equals(Const.ReportQaStatusType.WITHQAISSUES.name().toLowerCase())	
+    					|| status.equals(Const.ReportQaStatusType.WITHNOQAISSUES.name().toLowerCase())	
+        				|| status.equals(Const.ReportQaStatusType.FAILEDINSTANCES.name().toLowerCase())	
+        				|| status.equals(Const.ReportQaStatusType.PASSED.name().toLowerCase())	
+        				|| status.equals(Const.ReportQaStatusType.WITHQAISSUESRESOLVED.name().toLowerCase())	
+    					)) { 
+    			exp = exp.le(Const.CHANGED, endDateStr);
+    		}
+    		if (status != null && status.length() > 0 
+    				&& status.equals(Const.ReportQaStatusType.AWAITINGQA.name().toLowerCase())) { 
+    			exp = exp.ge(Const.CHANGED, endDateStr);
+    		}
     		isProcessed = true;
     	} 
 //    	if (collection != null && !collection.equals(Const.NONE)) {
