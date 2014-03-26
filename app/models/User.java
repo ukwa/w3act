@@ -139,8 +139,7 @@ public class User extends Model {
     }
 
     /**
-     * This method returns all users related to given organisation.
-     * @param organisation The organisation URL
+     * This method returns all users alphabetically sorted.
      * @return user list
      */
     public static List<User> findAllSorted() {

@@ -147,7 +147,7 @@
 						            	<div class="col-sm-6">
 											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
 									        	<option>None</option>
-									            	@for(organisation <- Organisation.findAll()) {
+									            	@for(organisation <- Organisation.findAllSorted()) {
 							                 		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
 								                			<option selected>@organisation.title</option>
 								                		} else {
@@ -167,7 +167,7 @@
 						            	<div class="col-sm-6">
 											<select name="field_subject" class="form-control target-form-control" id="subject">
 									        	<option>None</option>
-									            @for(subject <- Taxonomy.findListByType("subject")) {
+									            @for(subject <- Taxonomy.findListByTypeSorted("subject")) {
 							                 			@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
 							                			<option selected>@subject.name</option>
 							                		} else {

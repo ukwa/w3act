@@ -96,6 +96,17 @@ public class Organisation extends Model {
     }
     
     /**
+     * This method returns all organisations related alphabetically sorted.
+     * @return user list
+     */
+    public static List<Organisation> findAllSorted() {
+    	List<Organisation> res = new ArrayList<Organisation>();
+    	Page<Organisation> page = page(0, find.all().size(), Const.TITLE, Const.ASC, "");
+    	res = page.getList();
+        return res;
+    }
+        
+    /**
      * Create a new Organisation.
      */
     public static Organisation create(String title) {

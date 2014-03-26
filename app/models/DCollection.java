@@ -120,8 +120,7 @@ public class DCollection extends Model {
     }
     
     /**
-     * This method returns all users related to given organisation.
-     * @param organisation The organisation URL
+     * This method returns all collections related alphabetically sorted.
      * @return user list
      */
     public static List<DCollection> findAllSorted() {
