@@ -875,7 +875,11 @@ public class Target extends Model {
      */
     public static Page<Target> page(int page, int pageSize, String sortBy, String order, String filter) {
 
-        return find.where().icontains("field_url", filter)
+        return find.where()
+        		.add(Expr.or(
+	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.TITLE, filter)
+	                 ))
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
@@ -939,9 +943,10 @@ public class Target extends Model {
     	ExpressionList<Target> exp = Target.find.where();
     	Page<Target> res = null;
    		exp = exp.eq(Const.ACTIVE, true);
-    	if (filterUrl != null && filterUrl.length() > 0) {
-    		exp = exp.contains(Const.FIELD_URL_NODE, filterUrl);
-    	}
+   		exp = exp.add(Expr.or(
+		                    Expr.icontains(Const.FIELD_URL_NODE, filterUrl),
+		                    Expr.icontains(Const.TITLE, filterUrl)
+		                ));
     	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
     		exp = exp.icontains(Const.AUTHOR, curatorUrl);
     	}
@@ -1042,7 +1047,11 @@ public class Target extends Model {
     public static Page<Target> pageCollectionTargets(int page, int pageSize, String sortBy, String order, 
     		String filter, String collection_url) {
 
-        return find.where().icontains(Const.FIELD_URL_NODE, filter)
+        return find.where()
+        		.add(Expr.or(
+	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.TITLE, filter)
+	                 ))
         		.eq(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
@@ -1066,7 +1075,11 @@ public class Target extends Model {
     public static Page<Target> pageUserTargets(int page, int pageSize, String sortBy, String order, 
     		String filter, String user_url, String subject, String collection) {
 
-        return find.where().icontains(Const.FIELD_URL_NODE, filter)
+        return find.where()
+        		.add(Expr.or(
+	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.TITLE, filter)
+	                 ))
         		.eq(Const.AUTHOR, user_url)
         		.icontains(Const.FIELD_SUBJECT, subject)
         		.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)        		
