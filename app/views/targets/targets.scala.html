@@ -130,7 +130,7 @@
 									    <div class="col-sm-6">
 											<select name="author" class="form-control target-form-control" id="curator">
 												<option>None</option>
-												@for(curator <- User.findAll()) {
+												@for(curator <- User.findAllSorted()) {
 													@if(curatorUrl != null && curatorUrl.equals(curator.url)) {
 														<option selected>@curator.name</option>
 													} else {
@@ -240,7 +240,7 @@
 						            	<div class="col-sm-6">
 											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
 								                <option>None</option>
-								                @for(cur_collection <- DCollection.findAll()) {
+								                @for(cur_collection <- DCollection.findAllSorted()) {
 									                @if(collection != null && collection.equals(cur_collection.url)) {
 									                	<option selected>@cur_collection.title</option>
 									                } else {
