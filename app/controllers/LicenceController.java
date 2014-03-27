@@ -108,7 +108,46 @@ public class LicenceController extends AbstractController {
                         permission.description = getFormParam(Const.DESCRIPTION);
                     }
                     if (getFormParam(Const.CONTACT_PERSON) != null) {
-                        permission.contactPerson = getFormParam(Const.CONTACT_PERSON);
+                        String ownerName = getFormParam(Const.CONTACT_PERSON);
+                        ContactPerson contactPerson = null;
+                        try {
+                        	contactPerson = ContactPerson.findByName(ownerName);
+                        	Logger.info("found contact person: " + contactPerson);
+                            if (getFormParam(Const.POSITION) != null) {
+                                contactPerson.position = getFormParam(Const.POSITION);
+                            }
+                            if (getFormParam(Const.EMAIL) != null) {
+                                contactPerson.email = getFormParam(Const.EMAIL);
+                            }
+                            if (getFormParam(Const.PHONE) != null) {
+                                contactPerson.phone = getFormParam(Const.PHONE);
+                            }
+                        	// update existing contact person
+                        	Ebean.update(contactPerson);
+                	        Logger.info("update contact person: " + contactPerson.toString());
+                            permission.contactPerson = contactPerson.url;
+                        } catch (Exception e) {
+                        	System.out.println("Owner not found: " + ownerName);
+                        }
+                        if (contactPerson == null) {
+                        	// create new contact person
+                        	ContactPerson person = new ContactPerson();
+                        	person.name = ownerName;
+                            person.id = Target.createId();
+                            person.url = Const.ACT_URL + person.id;
+                            if (getFormParam(Const.POSITION) != null) {
+                                person.position = getFormParam(Const.POSITION);
+                            }
+                            if (getFormParam(Const.EMAIL) != null) {
+                                person.email = getFormParam(Const.EMAIL);
+                            }
+                            if (getFormParam(Const.PHONE) != null) {
+                                person.phone = getFormParam(Const.PHONE);
+                            }
+                        	Ebean.save(person);
+                	        Logger.info("save contact person: " + person.toString());
+                            permission.contactPerson = person.url;
+                        }
                     }
                     if (getFormParam(Const.LOG_DATE) != null) {
                         permission.licenseDate = getFormParam(Const.LOG_DATE);
@@ -158,47 +197,6 @@ public class LicenceController extends AbstractController {
         	        Logger.info("update crawl permission: " + permission.toString());                    
         	    }
             } 
-            // contact person
-            if (getFormParam(Const.CONTACT_PERSON) != null) {
-                String ownerName = getFormParam(Const.CONTACT_PERSON);
-                ContactPerson contactPerson = null;
-                try {
-                	contactPerson = ContactPerson.findByName(ownerName);
-                	Logger.info("found contact person: " + contactPerson);
-                    if (getFormParam(Const.POSITION) != null) {
-                        contactPerson.position = getFormParam(Const.POSITION);
-                    }
-                    if (getFormParam(Const.EMAIL) != null) {
-                        contactPerson.email = getFormParam(Const.EMAIL);
-                    }
-                    if (getFormParam(Const.PHONE) != null) {
-                        contactPerson.phone = getFormParam(Const.PHONE);
-                    }
-                	// update existing contact person
-                	Ebean.update(contactPerson);
-        	        Logger.info("update contact person: " + contactPerson.toString());
-                } catch (Exception e) {
-                	System.out.println("Owner not found: " + ownerName);
-                }
-                if (contactPerson == null) {
-                	// create new contact person
-                	ContactPerson person = new ContactPerson();
-                	person.name = ownerName;
-                    person.id = Target.createId();
-                    person.url = Const.ACT_URL + person.id;
-                    if (getFormParam(Const.POSITION) != null) {
-                        person.position = getFormParam(Const.POSITION);
-                    }
-                    if (getFormParam(Const.EMAIL) != null) {
-                        person.email = getFormParam(Const.EMAIL);
-                    }
-                    if (getFormParam(Const.PHONE) != null) {
-                        person.phone = getFormParam(Const.PHONE);
-                    }
-                	Ebean.save(person);
-        	        Logger.info("save contact person: " + person.toString());
-                }
-            }
 	        res = redirect(routes.LicenceController.result());
         } 
         return res;

@@ -42,8 +42,6 @@
 	@helper.form(action=routes.LicenceController.submit) {
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="basicinformation">
-			    <input type="hidden" name="license" value="UKWA Selective Archive License">
-			
 				<div class="padding-20">
 					<h2><font id="BLlicence" style="color: green">The British Library Web Archiving Licence</font></h2>
 					I / We the undersigned grant the British Library a licence to make any reproductions or communications of this web site as are reasonably necessary to preserve it over time and to make it available to the public:
@@ -55,7 +53,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">License:</label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="licenseType" value="Open UKWA Licence (2014-)" type="text" readonly>
+								<input class="form-control" name="license" value="Open UKWA Licence (2014-)" type="text" readonly>
 							</div>
 						</div>
 					</div>
@@ -140,7 +138,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Any other information:</label>
 						    <div class="col-sm-6">
-		 						<textarea name="description" value="@CrawlPermission.showByUrl(permissionUrl).description" cols="100" rows="1" class="form-control"></textarea>
+		 						<textarea name="description" value="@CrawlPermission.showByUrl(permissionUrl).description" cols="100" rows="1" class="form-control">@CrawlPermission.showByUrl(permissionUrl).description</textarea>
 							</div>
 						</div>
 					</div>

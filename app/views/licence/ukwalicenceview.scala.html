@@ -46,8 +46,19 @@
 				I / We the undersigned grant the British Library a licence to make any reproductions or communications of this web site as are reasonably necessary to preserve it over time and to make it available to the public:
 				(All fields marked <font color="red">*</font> are compulsory) 
 			</div>		     	
-   
+   	   
     		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">License:</label>
+					    <div class="col-sm-6">
+							<input class="form-control" name="license" value="Open UKWA Licence (2014-)" type="text" readonly>
+						</div>
+					</div>
+				</div>
+	     	</div>
+		     	
+		    <div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 						<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
@@ -126,7 +137,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Any other information:</label>
 					    <div class="col-sm-6">
-	 						<textarea name="description" value="@CrawlPermission.showByUrl(permissionUrl).description" cols="100" rows="1" class="form-control" readonly></textarea>
+	 						<textarea name="description" value="@CrawlPermission.showByUrl(permissionUrl).description" cols="100" rows="1" class="form-control" readonly>@CrawlPermission.showByUrl(permissionUrl).description</textarea>
 						</div>
 					</div>
 				</div>

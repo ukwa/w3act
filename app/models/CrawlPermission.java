@@ -162,7 +162,7 @@ public class CrawlPermission extends Model
      * @return
      */
     public static CrawlPermission showByUrl(String url) {
-//    	Logger.info("permission findByUrl: " + url);
+    	Logger.info("permission findByUrl: " + url);
     	CrawlPermission res = new CrawlPermission();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		try {
@@ -176,6 +176,7 @@ public class CrawlPermission extends Model
     	} else {
         	res.name = Const.NONE;
     	}
+    	Logger.info("permission res: " + res);
     	return res;
     }
     

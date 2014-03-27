@@ -297,6 +297,9 @@ public class CrawlPermissions extends AbstractController {
                     	    if (getFormParam(Const.CONTACT_PERSON) != null) {
                     	    	person.name = getFormParam(Const.CONTACT_PERSON);
                     	    }
+                    	    if (getFormParam(Const.POSITION) != null) {
+                    	    	person.position = getFormParam(Const.POSITION);
+                    	    }
                     	    if (getFormParam(Const.EMAIL) != null) {
                     	    	person.email = getFormParam(Const.EMAIL);
                     	    }

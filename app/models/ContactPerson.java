@@ -160,6 +160,7 @@ public class ContactPerson extends Model
     	} else {
         	res.name = Const.NONE;
     	}
+    	Logger.info("contact person res: " + res);
     	return res;
     }
     	
@@ -177,6 +178,7 @@ public class ContactPerson extends Model
      */
     public static String findNamesByUrls(String urls) {
     	String res = "";
+		Logger.info("findNamesByUrls urls: " + urls);
     	if (urls != null) {
     		if (urls.contains(Const.LIST_DELIMITER)) {
 		    	String[] parts = urls.split(Const.LIST_DELIMITER);
@@ -186,13 +188,16 @@ public class ContactPerson extends Model
 			    		String name = findByUrl(part).name;
 			    		res = res + name + Const.LIST_DELIMITER;
 		    		} catch (Exception e) {
-		    			System.out.println("findNamesByUrls error: " + e);
+		    			Logger.info("findNamesByUrls error: " + e);
 		    		}
 		        }
 	    	} else {
-	    		res = urls;    	
+	    		if (urls.length() > 0 && !urls.equals(Const.NONE)) {
+	    			res = findByUrl(urls).name;   
+	    		}
 	    	}
     	}
+		Logger.info("findNamesByUrls res: " + res);
     	return res;
     }          
 	    
@@ -220,7 +225,9 @@ public class ContactPerson extends Model
 		    		}
 		        }
 	    	} else {
-	    		res = urls;
+	    		if (urls.length() > 0 && !urls.equals(Const.NONE)) {
+	    			res = findByUrl(urls).email;   
+	    		}
 	    	}
     	}
     	return res;
