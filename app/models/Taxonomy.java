@@ -354,6 +354,18 @@ public class Taxonomy extends Model {
     	return res;
     }
     
+	/**
+	 * This method returns taxonomy collection filtered by type e.g. license
+	 * @param type The taxonomy type
+	 * @return taxonomy list
+	 */
+	public static List<Taxonomy> findByType(String type) {
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+        ExpressionList<Taxonomy> ll = find.where().eq(Const.TTYPE, type);
+    	res = ll.findList();
+		return res;
+	}       
+        
     /**
      * Retrieve a Taxonomy list by type.
      * @param taxonomy type

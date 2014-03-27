@@ -3,9 +3,8 @@
 taxonomies:
 
     - !!models.Taxonomy
-        ttype:        subsubject
-        parent:       Arts & Humanities        
-        name:         Architecture
+        ttype:        license
+        name:         Open UKWA Licence (2014-)
 
     - !!models.Taxonomy
         ttype:        subsubject

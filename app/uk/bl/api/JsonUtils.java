@@ -667,6 +667,11 @@ public class JsonUtils {
 				if (((Taxonomy) obj).name == null || ((Taxonomy) obj).name.length() == 0) {
 					hasEmptyName = true;
 				}
+				if (((Taxonomy) obj).ttype != null && ((Taxonomy) obj).ttype.equals(Const.LICENCE)) {
+					if (((Taxonomy) obj).name != null && ((Taxonomy) obj).name.equals(Const.OLD_UKWA_LICENSE)) {
+						((Taxonomy) obj).name = Const.NEW_UKWA_LICENSE;
+					}
+				}				
 //				Logger.info("taxonomy type: " + taxonomy_type.toString().toLowerCase());
 			}
 			boolean isNew = true;

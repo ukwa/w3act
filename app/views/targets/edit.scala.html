@@ -897,7 +897,7 @@
 						    <div class="col-sm-6">
 								<select name="license" id="edit-field-license" class="form-control" size="2">
 								 	<option>None</option>
-								    @for(taxonomy <- Targets.getLicense()) {
+								    @for(taxonomy <- Targets.getLicenses()) {
 						                @if(target.field_license != null && target.field_license.equals(taxonomy.url)) {             
 										 	<option selected>@taxonomy.name</option>
 									 	} else {

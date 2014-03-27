@@ -192,12 +192,16 @@ public final class Const {
 	public static final String DEFAULT_CONTACT   = "defaultContact";
 	public static final String PERMISSION_CHECKED = "permissionChecked";
 	
-	// Licence
+	/**
+	 * Licence
+	 */
 	public static final String AGREE             = "agree";
 	public static final String CONTENT           = "content";
 	public static final String PUBLISH           = "publish";
 	public static final String DATE              = "date";
 	public static final String ON                = "on";
+	public static final String OLD_UKWA_LICENSE  = "UKWA Selective Archive Licence";
+	public static final String NEW_UKWA_LICENSE  = "UKWA Selective Archive Licence (pre-2014)";
 	
 	// Permission Refusals
 	public static final String REFUSAL_DATE      = "refusal-date";

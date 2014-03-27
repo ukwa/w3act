@@ -148,6 +148,16 @@ public class Targets extends AbstractController {
 	}
 	
 	/**
+	 * This method returns all possible licenses.
+	 * @return license list
+	 */
+	public static List<Taxonomy> getLicenses() {
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+		res = Taxonomy.findByType(Const.LICENCE);
+    	return res;
+	}
+	
+	/**
 	 * This method filters targets by crawl frequency.
 	 * @return crawl frequency list
 	 */
