@@ -893,16 +893,16 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site should be archived and made available)</small></label>
+							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site is archived and made available)</small></label>
 						    <div class="col-sm-6">
 					    	    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-								<select name="license" id="edit-field-license" class="form-control" size="2">
+								<select multiple name="license" id="edit-field-license" class="form-control" size="2">
 								} else {
 								<select name="license" id="edit-field-license" class="form-control" size="2" disabled>
 								}
 								 	<option>None</option>
 								    @for(taxonomy <- Targets.getLicenses()) {
-						                @if(target.field_license != null && target.field_license.equals(taxonomy.url)) {             
+						                @if(target.field_license != null && target.field_license.contains(taxonomy.url)) {             
 										 	<option selected>@taxonomy.name</option>
 									 	} else {
 										 	<option>@taxonomy.name</option>

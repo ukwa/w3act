@@ -229,10 +229,26 @@ public class TargetController extends AbstractController {
             newTarget.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
             newTarget.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
             if (getFormParam(Const.FIELD_LICENSE) != null) {
-            	Logger.info("license: " + getFormParam(Const.FIELD_LICENSE));
-            	String licenseUrl = Taxonomy.findByFullNameExt(getFormParam(Const.FIELD_LICENSE), Const.LICENCE).url;
-            	newTarget.field_license = licenseUrl;
+            	if (!getFormParam(Const.FIELD_LICENSE).toLowerCase().contains(Const.NONE)) {
+	            	String[] licenses = getFormParams(Const.FIELD_LICENSE);
+	            	String resLicenses = "";
+	            	for (String curLicense: licenses)
+	                {
+	            		if (curLicense != null && curLicense.length() > 0) {
+	                		Logger.info("add curLicense: " + curLicense);
+	            			resLicenses = resLicenses + Taxonomy.findByFullNameExt(curLicense, Const.LICENCE).url + Const.LIST_DELIMITER;
+	            		}
+	                }
+	            	newTarget.field_license = resLicenses;
+            	} else {
+            		newTarget.field_license = Const.NONE;
+            	}
             }
+//            if (getFormParam(Const.FIELD_LICENSE) != null) {
+//            	Logger.info("license: " + getFormParam(Const.FIELD_LICENSE));
+//            	String licenseUrl = Taxonomy.findByFullNameExt(getFormParam(Const.FIELD_LICENSE), Const.LICENCE).url;
+//            	newTarget.field_license = licenseUrl;
+//            }
             newTarget.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
             newTarget.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newTarget.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
