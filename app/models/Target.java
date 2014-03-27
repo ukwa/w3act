@@ -804,6 +804,17 @@ public class Target extends Model {
     }
         
     /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param license
+     * @return true if in list
+     */
+    public boolean hasLicense(String license) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(license, field_license);
+    	return res;
+    }
+        
+    /**
      * This method evaluates if a collection is in a list separated by list delimiter e.g. ', '.
      * @param subject
      * @return true if in list

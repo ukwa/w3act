@@ -512,6 +512,34 @@ public class Taxonomy extends Model {
     /**
      * This method calculates selected taxonomies for presentation in view page.
      * @param type The type of taxonomy
+     * @param target The target object
+     * @return taxonomy list as a string
+     */
+    public static String getSelectedLicenses(String type, Target target) {
+    	String res = "";
+		List<Taxonomy> taxonomyList = Taxonomy.findListByType(type);
+		Iterator<Taxonomy> itr = taxonomyList.iterator();
+		boolean firstTime = true;
+		while (itr.hasNext()) {
+			Taxonomy taxonomy = itr.next();
+			if(target.hasLicense(taxonomy.url)) {
+				if (firstTime) {
+					res = taxonomy.name;
+					firstTime = false;
+				} else {
+					res = res + Const.COMMA + " " + taxonomy.name;
+				}
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+    }
+
+    /**
+     * This method calculates selected taxonomies for presentation in view page.
+     * @param type The type of taxonomy
      * @param target The instance object
      * @return taxonomy list as a string
      */

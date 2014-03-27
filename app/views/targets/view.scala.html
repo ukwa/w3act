@@ -811,10 +811,27 @@
         </div>
 	        
 		<div class="tab-pane fade padding-20" id="licensing">
-			<dl class="dl-horizontal">
-				<dt>License:</dt>
-				<dd>The license terms under which this site should be archived and made available.</dd>
-			</dl>
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site is archived and made available)</small></label>
+			              	<div class="col-sm-6">
+  									@Taxonomy.getSelectedLicenses("license", target)
+			              	</div>
+						</div>
+					</div>
+		     	</div>	
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
+						    <div class="col-sm-6">
+		 						<input readonly type="text" name="licensingStatus" value="@target.qa_status" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
 		</div>
 	</div>
 	<hr>
