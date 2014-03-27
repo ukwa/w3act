@@ -82,15 +82,16 @@ public class CrawlPermissions extends AbstractController {
     public static Result showCrawlPermissions(String targetUrl) {
     	Result res = null;
     	String target = "";
+    	String status = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
     		target = Target.findByUrl(targetUrl).field_url;
     	}
     	Logger.info("showCrawlPermissions: " + targetUrl + ", target: " + target);
-        List<CrawlPermission> resList = processFilterCrawlPermissions("", "", target);
+        List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);
     	Logger.info("showCrawlPermissions count: " + resList.size());
         res = ok(
         		views.html.crawlpermissions.list.render(
-                    "CrawlPermissions", User.find.byId(request().username()), resList, "", ""
+                    "CrawlPermissions", User.find.byId(request().username()), resList, "", status
                 )
             );
         return res;    	

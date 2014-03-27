@@ -117,7 +117,8 @@ public class CommunicationLogs extends AbstractController {
     	}
     	if (permission != null && !permission.toLowerCase().equals(Const.NONE)) {
     		Logger.info("process permission: " + permission);
-    		exp = exp.eq(Const.PERMISSION, CrawlPermission.findByName(permission).url);
+    		exp = exp.eq(Const.PERMISSION, permission);
+//    		exp = exp.eq(Const.PERMISSION, CrawlPermission.findByName(permission).url);
     		isProcessed = true;
     	} 
     	res = exp.query().findList();
