@@ -230,6 +230,25 @@ public class DCollection extends Model {
     	return res;
     }
     
+    /**
+     * Retrieve a collection by title.
+     * @param title
+     * @return collection object
+     */
+    public static DCollection findByTitleExt(String title) {
+    	DCollection res = new DCollection();
+    	if (title != null && title.length() > 0) {
+//    		Logger.info("p1: " + name);
+    		if (title.contains(Const.COMMA)) {
+    			title = title.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+    		}
+    		res = find.where().eq(Const.TITLE, title).findUnique();
+    	} else {
+    		res.title = Const.NONE;
+    	}
+    	return res;
+    }
+    
 	/**
 	 * This method filters collections by title and returns a list of filtered Collection objects.
 	 * @param title

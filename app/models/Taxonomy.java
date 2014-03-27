@@ -261,6 +261,34 @@ public class Taxonomy extends Model {
     }
 
     /**
+     * Retrieve a taxonomy by title for the case that multiple definitions for the same
+     * title were created in database e.g. one retrieved from Drupal and second from
+     * configuration files.
+     * @param title
+     * @return taxonomy object
+     */
+    public static Taxonomy findByNameExt(String name) {
+    	Taxonomy res = new Taxonomy();
+    	if (name != null && name.length() > 0) {
+//    		Logger.info("p1: " + name);
+    		if (name.contains(Const.COMMA)) {
+    			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+    		}
+	        ExpressionList<Taxonomy> ll = find.where().eq(Const.NAME, name);
+	    	List<Taxonomy> taxonomyList = ll.findList(); 
+	    	if (taxonomyList.size() > 0) {
+	    		res = taxonomyList.get(0);
+	    	} else {
+	    		res.name = Const.NONE;
+	    	}
+    	} else {
+    		res.name = Const.NONE;
+    	}
+		Logger.info("res: " + res);
+    	return res;
+    }
+
+    /**
      * This method normalize database entries with comma e.g. subjects. 
      * @param name
      * @return normalized name
