@@ -228,7 +228,11 @@ public class TargetController extends AbstractController {
             newTarget.revision = getFormParam(Const.REVISION);
             newTarget.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
             newTarget.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
-            newTarget.field_license = getFormParam(Const.FIELD_LICENSE);
+            if (getFormParam(Const.FIELD_LICENSE) != null) {
+            	Logger.info("license: " + getFormParam(Const.FIELD_LICENSE));
+            	String licenseUrl = Taxonomy.findByFullNameExt(getFormParam(Const.FIELD_LICENSE), Const.LICENCE).url;
+            	newTarget.field_license = licenseUrl;
+            }
             newTarget.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
             newTarget.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newTarget.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
