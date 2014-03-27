@@ -143,7 +143,7 @@
 					<td>0</td>
 					<td>@instance.field_crawl_frequency</td>
 					<td><a class="brand" href="@routes.Curators.edit(instance.author)">@instance.get_user_by_id()</a></td>
-					<td>@Taxonomy.findQaStatus(instance.field_qa_status)</td>
+					<td>@instance.qa_status</td>
 					<td>@instance.checkScope(instance.get_field_list_as_str("field_url"))</td>
 					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.get_field_list_as_str("field_url")">(mementos)</a></td>
 				</tr>
