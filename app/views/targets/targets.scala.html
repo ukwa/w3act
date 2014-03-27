@@ -131,7 +131,7 @@
 											<select name="author" class="form-control target-form-control" id="curator">
 												<option>None</option>
 												@for(curator <- User.findAllSorted()) {
-													@if(curatorUrl != null && curatorUrl.equals(curator.url)) {
+													@if(curatorUrl != null && curatorUrl.equals(curator.url) && curatorUrl.length() > 0) {
 														<option selected>@curator.name</option>
 													} else {
 														<option>@curator.name</option>
