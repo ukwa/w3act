@@ -205,15 +205,7 @@
 						<div class="form-group">
 			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="tags" id="tags" class="form-control">
-					                @for(tag <- Tag.findAll()) {
-						                @if(target.tags != null && target.tags.contains(tag.url)) {
-						                	<option selected disabled>@tag.name</option>
-						                } else {
-						                	<option disabled>@tag.name</option>
-						                }
-					                }
-								</select>
+						      	@target.getSelectedTags()
 							</div>
 						</div>
 					</div>
@@ -371,15 +363,7 @@
 						<div class="form-group">
 			              	<label for="status" class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="flags" id="flags" class="form-control">
-					                @for(flag <- Flag.findAll()) {
-						                @if(target.flags != null && target.flags.contains(flag.url)) {
-						                	<option selected disabled>@Flags.getGuiName(flag.name)</option>
-						                } else {
-						                	<option disabled>@Flags.getGuiName(flag.name)</option>
-						                }
-					                }
-								</select>
+						      	@target.getSelectedFlags()
 							</div>
 						</div>
 					</div>
