@@ -94,7 +94,7 @@
 					<td><a href="@routes.CommunicationLogs.view(log.url)">@log.name</a></td>
 					<td>@log.date</td>
 					<td>@log.ttype</td>
-					<td>@log.curator</td>
+					<td>@User.findByUrl(log.curator).name</td>
 					@if(log.permission != null && log.permission.length() > 0) {
 					<td>@CrawlPermission.showByUrl(log.permission).name</td>
 					} else {
