@@ -107,7 +107,6 @@
 			}
 		</div>
 		
-		@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
 		@pagination
     
 		<table class="table table-hover">
@@ -151,7 +150,6 @@
 		</table>
 		 
 		@pagination
-		}
 
    </article>
     
