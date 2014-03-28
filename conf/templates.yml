@@ -5,7 +5,7 @@ mailtemplates:
     - !!models.MailTemplate
         name:         General
         ttype:        Permission Request
-        subject:      Our Archive
+        subject:      UK Web Archive
         placeHolders: url, name
         fromEmail:    my@email.com
         text:         default.txt

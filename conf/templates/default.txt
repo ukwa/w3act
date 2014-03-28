@@ -1,13 +1,27 @@
-We would like to archive the website:
 
-||URL||
+The British Library would like to archive the following website:
+
+||URL|| 
 
 Dear Sir/Madam
 
-We would like to archive your website in the our Archive. We look forward to your participation.
+The British Library would like to archive your website in the UK Web Archive. The UK Web Archive was established in 2004 to capture and archive websites from the UK domain, responding to the challenge of a ‘digital black hole’ in the nation’s memory. It contains specially selected websites that represent different aspects of online life in the UK. We work closely with leading UK institutions to collect and permanently preserve the UK web, and our archive can be seen at http://www.webarchive.org.uk/.
+
+If you are happy for your site to be archived, please complete the online licence form ||LINK|| that will permit us to proceed. Archiving is free and does not normally require any effort on your part. If there are any other of your sites which you would like to be considered for archiving, you are most welcome to nominate them at http://www.webarchive.org.uk/ukwa/info/nominate.
+
+Information about copyright and how your archived website will be made available can be found in our FAQs at http://www.webarchive.org.uk/ukwa/info/faq. Should you require any additional information, please do not hesitate to contact us.
+
+We look forward to your participation.
 
 Kind regards
 
-Our Team
+British Library Web Archiving Team
 
-Our Web Address: https://github.com/ukwa/w3act
+Web Archiving
+The British Library
+96 Euston Road
+London
+NW1 2DB
+Tel: 020 7412 7000 (ext. 7215)
+E-mail: web-archivist@bl.uk
+UK Web Archive: http://www.webarchive.org.uk/

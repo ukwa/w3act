@@ -79,6 +79,8 @@ public final class Const {
 	public static final String TAGS               = "tags";
 	public static final String TAXONOMIES         = "taxonomies";
 	public static final String LAST_VERSION_FILE  = "last-version.txt";
+	public static final String URL_PLACE_HOLDER   = "||URL||";
+	public static final String LINK_PLACE_HOLDER  = "||LINK||";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";

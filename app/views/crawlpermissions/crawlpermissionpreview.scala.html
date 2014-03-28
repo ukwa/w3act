@@ -35,7 +35,14 @@
 			<div class="form-group">
 				<label for="inputText" class="col-sm-6 control-label">Text</label>
 			    <div class="col-sm-6">
-					<textarea class="form-control" name="text" id="text" cols="100" rows="10" readonly>@CrawlPermission.replaceStringInText(MailTemplate.findByName(template).readTemplate(), "||URL||", routes.LicenceController.form(permission.url).absoluteURL(request()).toString())</textarea>
+					<textarea class="form-control" name="text" id="text" cols="100" rows="10" readonly>
+					@CrawlPermission.replaceTwoStringsInText(
+						MailTemplate.findByName(template).readTemplate()
+						, "||URL||"
+						, "||LINK||"
+						, permission.target
+						, routes.LicenceController.form(permission.url).absoluteURL(request()).toString())
+					</textarea>
 				</div>
 			</div>
 		</div>

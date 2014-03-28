@@ -544,8 +544,14 @@ public class CrawlPermissions extends AbstractController {
                 	Logger.info("mail to contact person:" + permission.contactPerson.replace(Const.LIST_DELIMITER,"") + ".");
             		String email = ContactPerson.findByUrl(permission.contactPerson.replace(Const.LIST_DELIMITER,"")).email;
 //                	String[] toMailAddresses = Utils.getMailArray(email);
-                	messageBody = CrawlPermission.replaceStringInText(messageBody, "||URL||", 
-                			routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
+            		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.target);
+                	messageBody = CrawlPermission.
+	                	replaceTwoStringsInText(
+	                			messageBody
+	    						, Const.URL_PLACE_HOLDER
+	    						, Const.LINK_PLACE_HOLDER
+	    						, permission.target
+	    						, routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
                     EmailHelper.sendMessage(email, messageSubject, messageBody);                	
 //                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
                 	permission.status = Const.CrawlPermissionStatus.PENDING.name();

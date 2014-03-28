@@ -9,15 +9,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
-
-import uk.bl.api.Utils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This calls supports crawl permissions workflow and
@@ -259,6 +257,51 @@ public class CrawlPermission extends Model
     public static String replaceStringInText(String text, String placeHolder, String value) {
     	String res = text;
     	res = text.replace(placeHolder, value);
+    	return res;
+    }
+    
+    /**
+     * This method enables replacing of two place holders in mail text by given values.
+     * @param text The text of an email.
+     * @param placeHolderUrl The placeholder string for crawl URL ||URL||
+     * @param placeHolderLink The placeholder string for unique license URL ||LINK||
+     * @param valueUrl The value that overwrites associated placeholder
+     * @param valueLink The value that overwrites associated placeholder
+     * @return updated text
+     */
+    public static String replaceTwoStringsInText(String text, String placeHolderUrl, String placeHolderLink, 
+    		String valueUrl, String valueLink) {
+    	String res = text;
+//    	Logger.debug("replaceTwoStringsInText valueUrl: " + valueUrl);
+    	List<String> placeHolders = new ArrayList<String>();
+    	placeHolders.add(placeHolderUrl);
+    	placeHolders.add(placeHolderLink);
+    	List<String> values = new ArrayList<String>();
+    	values.add(valueUrl);
+    	values.add(valueLink);
+    	res = replacePlaceholdersInText(text, placeHolders, values);
+    	return res;
+    }
+    
+    /**
+     * This method enables replacing of place holders in mail text by given values.
+     * @param text The text of an email.
+     * @param placeHolders The placeholder list in string format e.g. ||URL||, ||LINK||
+     * @param values The value that overwrites place holders
+     * @return updated text
+     */
+    public static String replacePlaceholdersInText(String text, List<String> placeHolders, List<String> values) {
+    	String res = text;
+    	if (placeHolders != null && placeHolders.size() > 0 
+    			&& values != null && values.size() > 0
+    			&& placeHolders.size() == values.size()) {
+    		int counter = placeHolders.size();
+    		for (int i = 0; i < counter; i++) {
+    			Logger.info("replacePlaceholdersInText placeholder: " + placeHolders.get(i) +
+    					", value: " + values.get(i));
+    	    	res = res.replace(placeHolders.get(i), values.get(i));
+    		}
+    	}
     	return res;
     }
     
