@@ -51,6 +51,7 @@ public class TargetController extends AbstractController {
         			", title: " + getFormParam(Const.TITLE) + ", keysite: " + getFormParam(Const.KEYSITE) +
         			", description: " + getFormParam(Const.DESCRIPTION) + 
         			", status: " + getFormParam(Const.STATUS) +
+        			", qa status: " + getFormParam(Const.QA_STATUS) +
         			", subject: " + getFormParams(Const.SUBJECT) +
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
@@ -109,6 +110,9 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.STATUS) != null) {
 //        		Logger.info("status: " + getFormParam(Const.STATUS) + ".");
             	newTarget.status = Long.valueOf(getFormParam(Const.STATUS));
+            } 
+            if (getFormParam(Const.QA_STATUS) != null) {
+            	newTarget.qa_status = getFormParam(Const.QA_STATUS);
             } 
             if (getFormParam(Const.LANGUAGE) != null) {
 //        		Logger.info("language: " + getFormParam(Const.LANGUAGE) + ".");
