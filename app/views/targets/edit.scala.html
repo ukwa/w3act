@@ -54,7 +54,6 @@
                   		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
                     		return node.data.key;
                   		});
-                  		$("#echoSelection3").text(selKeys.join(", "));
                   		document.getElementById('treeKeys').value = selKeys.join(", ");
                   		// Get a list of all selected TOP nodes
                   		var selRootNodes = node.tree.getSelectedNodes(true);

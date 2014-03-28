@@ -85,6 +85,7 @@ public class CrawlPermissions extends AbstractController {
     	String status = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
     		target = Target.findByUrl(targetUrl).field_url;
+    		status = Target.findByUrl(targetUrl).qa_status;
     	}
     	Logger.info("showCrawlPermissions: " + targetUrl + ", target: " + target);
         List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);
@@ -355,11 +356,13 @@ public class CrawlPermissions extends AbstractController {
     	        Logger.info("save crawl permission: " + permission.toString());
     	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.SAVE);
     	        Ebean.save(log);
+    	        Targets.updateQaStatus(permission.target, permission.status);
         	} else {
            		Logger.info("update crawl permission: " + permission.toString());
                	Ebean.update(permission);
                	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
     	        Ebean.save(log);
+    	        Targets.updateQaStatus(permission.target, permission.status);
         	}
 	        res = redirect(routes.CrawlPermissions.view(permission.url));
         } 

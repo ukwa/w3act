@@ -30,6 +30,7 @@ import views.html.targets.view;
 import views.html.targets.blank;
 import views.html.collections.sites;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -789,6 +790,23 @@ public class Targets extends AbstractController {
 	        flash("success", "You've saved");
 	        return ok(blank.render(filledForm, User.find.byId(request().username())));
 	    }
+    }
+    
+    /**
+     * This method updates QA status for target if it is changed for e.g. 
+     * associated crawl permission.
+     * @param fieldUrl The target crawl URL
+     * @param qaStatus The current QA status
+     */
+    public static void updateQaStatus(String fieldUrl, String qaStatus) {
+        if (fieldUrl != null) {
+        	Target targetObj = Target.findByFieldUrl(fieldUrl);
+        	if (targetObj != null && targetObj.url != null) {
+	        	targetObj.qa_status = qaStatus;
+	        	Logger.debug("update Qa Status for target object: " + qaStatus);
+    	        Ebean.update(targetObj);
+        	}
+        }
     }
 }
 

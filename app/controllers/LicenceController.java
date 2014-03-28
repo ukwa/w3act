@@ -164,6 +164,7 @@ public class LicenceController extends AbstractController {
                 	Ebean.update(permission);
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);
+        	        Targets.updateQaStatus(permission.target, permission.status);
         	        try {
 	                    if (getFormParam(Const.LICENCE) != null) {
 	                    	String licenceName = getFormParam(Const.LICENCE);

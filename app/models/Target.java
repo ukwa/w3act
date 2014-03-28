@@ -1114,5 +1114,19 @@ public class Target extends Model {
 		return res;
 	}
 	
+    /**
+     * Retrieve a Target by crawl URL.
+     * @param url The crawl URL
+     * @return target The target object
+     */
+    public static Target findByFieldUrl(String url) {
+    	Target res = new Target();
+        Logger.info("findByFieldUrl() target url: " + url);        
+        if (url != null) {
+	        res = find.where().eq(Const.FIELD_URL_NODE, url).eq(Const.ACTIVE, true).findUnique();
+        }
+    	return res;
+    }          
+	
 }
 

@@ -148,10 +148,10 @@ public class Taxonomy extends Model {
      * @return QA status string
      */
     public static String findQaStatus(String url) {
-    	Logger.info("findQaStatus url: " + url);
+//    	Logger.info("findQaStatus url: " + url);
     	Taxonomy taxonomy = findByUrl(url);
     	String res = taxonomy.name;
-    	Logger.info("findQaStatus taxonomy: " + taxonomy);
+//    	Logger.info("findQaStatus taxonomy: " + taxonomy);
     	if (taxonomy.name.equals("No QA issues found (OK to publish)")) {
     		res = Const.QAStatusType.PASSED_PUBLISH_NO_ACTION_REQUIRED.name();
     	}
@@ -277,7 +277,7 @@ public class Taxonomy extends Model {
     	} else {
     		res.name = Const.NONE;
     	}
-		Logger.info("res: " + res);
+//		Logger.info("res: " + res);
     	return res;
     }
 
@@ -305,7 +305,7 @@ public class Taxonomy extends Model {
     	} else {
     		res.name = Const.NONE;
     	}
-		Logger.info("res: " + res);
+//		Logger.info("res: " + res);
     	return res;
     }
 
@@ -354,7 +354,7 @@ public class Taxonomy extends Model {
     	} else {
     		res.name = Const.NONE;
     	}
-		Logger.info("res: " + res);
+//		Logger.info("res: " + res);
     	return res;
     }
     
@@ -365,13 +365,13 @@ public class Taxonomy extends Model {
      */
     public static Taxonomy findByFullNameExt(String name, String ttype) {
     	Taxonomy res = new Taxonomy();
-    	Logger.info("findByFullNameExt: " + name);
+//    	Logger.info("findByFullNameExt: " + name);
     	if (name != null && name.length() > 0) {
     		res = find.where().eq(Const.NAME, name).eq(Const.TTYPE, ttype).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
-		Logger.info("res: " + res);
+//		Logger.info("res: " + res);
     	return res;
     }
     
