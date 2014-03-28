@@ -6,12 +6,14 @@ import java.util.List;
 import models.CommunicationLog;
 import models.ContactPerson;
 import models.CrawlPermission;
+import models.MailTemplate;
 import models.Target;
 import models.Taxonomy;
 import play.Logger;
 import play.mvc.Result;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import uk.bl.scope.EmailHelper;
 import views.html.licence.ukwalicence;
 import views.html.licence.ukwalicenceresult;
 import views.html.licence.ukwalicenceview;
@@ -59,6 +61,41 @@ public class LicenceController extends AbstractController {
     
     public static String getCurrentDate() {
     	return Utils.getCurrentDate();
+    }
+    
+    /**
+     * Send acknowledgment to the site owner
+     * @param ownerEmail
+     * @param permission The crawl permission that comprises outputs the data entered into the licence form
+     */
+    public static void sendAcknowledgementToSiteOwner(String ownerEmail, CrawlPermission permission) {
+    	MailTemplate mailTemplate = MailTemplate.findByName(Const.ACKNOWLEDGEMENT);
+    	Logger.debug("sendAcknowledgementToSiteOwner mailTemplate: " + mailTemplate);
+    	String messageSubject = mailTemplate.subject;
+//    	Logger.debug("sendAcknowledgementToSiteOwner text: " + mailTemplate.text);
+    	String messageBody = mailTemplate.readTemplate();
+		StringBuilder sb = new StringBuilder();
+		sb.append(Const.CSV_LINE_END);
+		sb.append(Const.LICENCE_ACK + Const.TWO_POINTS + permission.license + Const.CSV_LINE_END);
+		sb.append(Const.WEBSITE_TITLE_ACK + Const.TWO_POINTS + permission.name + Const.CSV_LINE_END);
+		sb.append(Const.WEB_ADDRESS_ACK + Const.TWO_POINTS + permission.target + Const.CSV_LINE_END);
+		sb.append(Const.NAME_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).name + Const.CSV_LINE_END);
+		sb.append(Const.POSITION_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).position + Const.CSV_LINE_END);
+		sb.append(Const.EMAIL_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).email + Const.CSV_LINE_END);
+		sb.append(Const.TEL_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).phone + Const.CSV_LINE_END);
+		sb.append(Const.DESCRIPTION_ACK + Const.TWO_POINTS + permission.description + Const.CSV_LINE_END);
+		sb.append(Const.THIRD_PARTY_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.thirdPartyContent) + Const.CSV_LINE_END);
+		sb.append(Const.AGREE_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.agree) + Const.CSV_LINE_END);
+		sb.append(Const.DATE_ACK + Const.TWO_POINTS + permission.licenseDate + Const.CSV_LINE_END);
+		sb.append(Const.PUBLICITY_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.publish) + Const.CSV_LINE_END);
+		sb.append(Const.CSV_LINE_END);
+    	messageBody = CrawlPermission.
+            	replaceStringInText(
+            			messageBody
+						, Const.PLACE_HOLDER_DELIMITER + mailTemplate.placeHolders + Const.PLACE_HOLDER_DELIMITER
+						, sb.toString());
+    	Logger.debug("sendAcknowledgementToSiteOwner messageBody: " + messageBody);
+        EmailHelper.sendMessage(ownerEmail, messageSubject, messageBody);                	
     }
     
     /**
@@ -127,7 +164,7 @@ public class LicenceController extends AbstractController {
                 	        Logger.info("update contact person: " + contactPerson.toString());
                             permission.contactPerson = contactPerson.url;
                         } catch (Exception e) {
-                        	System.out.println("Owner not found: " + ownerName);
+                        	Logger.error("Owner not found: " + ownerName);
                         }
                         if (contactPerson == null) {
                         	// create new contact person
@@ -152,6 +189,9 @@ public class LicenceController extends AbstractController {
                     if (getFormParam(Const.LOG_DATE) != null) {
                         permission.licenseDate = getFormParam(Const.LOG_DATE);
                     }
+                    if (getFormParam(Const.LICENCE) != null) {
+                    	permission.license = getFormParam(Const.LICENCE);
+                    }                    
                     if (isAgreed) {
 //                        if (isAgreed && noThirdPartyContent && mayPublish) {
                     	permission.status = Const.CrawlPermissionStatus.GRANTED.name();
@@ -165,6 +205,9 @@ public class LicenceController extends AbstractController {
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);
         	        Targets.updateQaStatus(permission.target, permission.status);
+        	        if (getFormParam(Const.EMAIL) != null) {
+        	        	sendAcknowledgementToSiteOwner(getFormParam(Const.EMAIL), permission);
+        	        }
         	        try {
 	                    if (getFormParam(Const.LICENCE) != null) {
 	                    	String licenceName = getFormParam(Const.LICENCE);

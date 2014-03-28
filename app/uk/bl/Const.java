@@ -79,8 +79,11 @@ public final class Const {
 	public static final String TAGS               = "tags";
 	public static final String TAXONOMIES         = "taxonomies";
 	public static final String LAST_VERSION_FILE  = "last-version.txt";
+	public static final String PLACE_HOLDER_DELIMITER = "||";
 	public static final String URL_PLACE_HOLDER   = "||URL||";
 	public static final String LINK_PLACE_HOLDER  = "||LINK||";
+	public static final String LICENCE_PLACE_HOLDER = "||licence||";
+	public static final String ACKNOWLEDGEMENT    = "Acknowledgement";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";
@@ -214,7 +217,9 @@ public final class Const {
 	public static final String NOTES             = "notes";
 	public static final String CURATOR           = "curator";
 
-	// Mail Template
+	/**
+	 * Mail Template
+	 */
 	public static final String TEXT              = "text";
 	public static final String FROM_EMAIL        = "fromEmail";
 	public static final String PLACE_HOLDERS     = "placeHolders";
@@ -222,6 +227,18 @@ public final class Const {
 	public static final String TEMPLATES_PATH    = "conf" + System.getProperty("file.separator") +
 													"templates" + System.getProperty("file.separator");
 	public static final String DEFAULT_TEMPLATE  = "General";
+	public static final String LICENCE_ACK       = "License";
+	public static final String WEBSITE_TITLE_ACK = "Title of Website";
+	public static final String WEB_ADDRESS_ACK   = "Web Address (URL)";
+	public static final String NAME_ACK          = "Name";
+	public static final String POSITION_ACK      = "Position";
+	public static final String EMAIL_ACK         = "E-mail";
+	public static final String TEL_ACK           = "Tel";
+	public static final String DESCRIPTION_ACK   = "Any other information";
+	public static final String THIRD_PARTY_ACK   = "Third-Party Conten";
+	public static final String AGREE_ACK         = "I/We agree";
+	public static final String DATE_ACK          = "Date";
+	public static final String PUBLICITY_ACK     = "Future publicity for the Web Archive";
 	
 	// Nomination
 	public static final String WEBSITE_URL              = "website_url";
@@ -255,6 +272,7 @@ public final class Const {
 	public static final String EXPORT_REFUSED_LICENCE_FILE = "export_refused_licences.csv";
 	public static final String CSV_SEPARATOR      = ";";
 	public static final String CSV_LINE_END       = "\n";
+	public static final String TWO_POINTS         = ": ";
 	public static final String SEARCH             = "search";
 	public static final String ADDENTRY           = "addentry";
 	public static final String SEND               = "send";

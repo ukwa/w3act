@@ -530,9 +530,10 @@ public class CrawlPermissions extends AbstractController {
      * This method sets status "PENDING" for selected crawl permissions.
      * If parameter all is true - do it for all queued permissions,
      * otherwise only selected by checkbox.
-     * @return
+     * @param all Type of email sending (all, selected)
+     * @param template The email template
      */
-    public static void setPendingSelectedCrawlPermissions(boolean all, String messageBody, String messageSubject) {
+    public static void setPendingSelectedCrawlPermissions(boolean all, String template) {//String messageBody, String messageSubject) {
         List<CrawlPermission> permissionList = CrawlPermission.findAll();
         Iterator<CrawlPermission> permissionItr = permissionList.iterator();
         while (permissionItr.hasNext()) {
@@ -544,12 +545,16 @@ public class CrawlPermissions extends AbstractController {
                 	Logger.info("mail to contact person:" + permission.contactPerson.replace(Const.LIST_DELIMITER,"") + ".");
             		String email = ContactPerson.findByUrl(permission.contactPerson.replace(Const.LIST_DELIMITER,"")).email;
 //                	String[] toMailAddresses = Utils.getMailArray(email);
+                	MailTemplate mailTemplate = MailTemplate.findByName(template);
+                	String messageSubject = mailTemplate.subject;
+                	String messageBody = mailTemplate.readTemplate();
+                	String[] placeHolderArray = Utils.getMailArray(mailTemplate.placeHolders);
             		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.target);
                 	messageBody = CrawlPermission.
 	                	replaceTwoStringsInText(
 	                			messageBody
-	    						, Const.URL_PLACE_HOLDER
-	    						, Const.LINK_PLACE_HOLDER
+	    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
+	    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
 	    						, permission.target
 	    						, routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
                     EmailHelper.sendMessage(email, messageSubject, messageBody);                	
@@ -583,39 +588,24 @@ public class CrawlPermissions extends AbstractController {
 	    }
     	String toMails = evaluateToEmails();
     	Logger.info("toMails: " + toMails);
-//    	String[] toMailAddresses = Utils.getMailArray(toMails);
-//    	Logger.info("toMailAddresses: " + toMailAddresses[0]);
-    	String messageSubject = MailTemplate.findByName(template).subject;
-    	String messageBody = MailTemplate.findByName(template).readTemplate();
+//    	String messageSubject = MailTemplate.findByName(template).subject;
+//    	String messageBody = MailTemplate.findByName(template).readTemplate();
 
     	if (sendall != null) {
         	Logger.info("send all crawl permission requests");
-//            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
-            setPendingSelectedCrawlPermissions(true, messageBody, messageSubject); 
+            setPendingSelectedCrawlPermissions(true, template);//messageBody, messageSubject); 
 	        res = redirect(routes.CrawlPermissions.index()); 
-//        	res = ok(
-//		        crawlpermissionsend.render(
-//		            CrawlPermission.filterByStatus(Const.DEFAULT_CRAWL_PERMISSION_STATUS), User.find.byId(request().username())
-//		            )
-//		        );
         }
         if (sendsome != null) {
         	Logger.info("send some crawl permission requests");
-//            EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);
-            setPendingSelectedCrawlPermissions(false, messageBody, messageSubject); 
+            setPendingSelectedCrawlPermissions(false, template);//messageBody, messageSubject); 
 	        res = redirect(routes.CrawlPermissions.index()); 
-//	        res = ok(
-//		        crawlpermissionsend.render(
-//		            getAssignedPermissionsList(), User.find.byId(request().username())
-//		            )
-//		        );
         }
         if (preview != null) {
         	Logger.info("preview crawl permission requests");        	
 	        res = ok(
 	            crawlpermissionpreview.render(
 		            	getAssignedPermissionsList().get(0), User.find.byId(request().username()), toMails, template
-//		            	getAssignedPermissionsList(), User.find.byId(request().username()), toMails, template
 	            )
 	        );
         }

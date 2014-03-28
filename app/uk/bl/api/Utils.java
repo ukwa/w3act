@@ -288,9 +288,7 @@ public class Utils {
     public static String readTextFile(String fileName) {
     	String res = "";
     	try {
-    		fileName = "conf" + System.getProperty("file.separator") + "templates" + 
-    					System.getProperty("file.separator") + "default.txt";
-    		System.out.println("template path: " + fileName);
+    		Logger.debug("template path: " + fileName);
 	    	BufferedReader br = new BufferedReader(new FileReader(fileName));
 	        try {
 	            StringBuilder sb = new StringBuilder();
@@ -306,7 +304,7 @@ public class Utils {
 	            br.close();
 	        }
     	} catch (Exception e) {
-    		System.out.println("read text file error: " + e);
+    		Logger.error("read text file error: " + e);
     	}
         return res;
     }
@@ -340,6 +338,17 @@ public class Utils {
 		return res;
 	}
 
-    
+    /**
+     * This method presents boolean value as sting in a view.
+     * @param value The boolean value
+     * @return value as a string
+     */
+    public static String showBooleanAsString(boolean value) {
+    	String res = Const.NO;
+    	if (value) {
+    		res = Const.YES;
+    	}
+    	return res;
+    }
 }
 

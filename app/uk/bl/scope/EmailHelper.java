@@ -34,8 +34,7 @@ public class EmailHelper {
     		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
     	    for(String key : customProps.stringPropertyNames()) {
     	    	  String value = customProps.getProperty(key);
-    	    	  System.out.println(key + " => " + value);
-    	      	  Logger.debug("sendMessage() key: " + key + " => " + value);
+//    	      	  Logger.debug("sendMessage() key: " + key + " => " + value);
     	    	  if (key.equals(Const.HOST)) {
   	    	          props.put("mail.smtp.host", value);
   	    	          props.put("mail.smtp.ssl.trust", value);
@@ -49,7 +48,7 @@ public class EmailHelper {
     	    	  if (key.equals(Const.PASSWORD)) {
   	    	          props.put("mail.smtp.password", value);
   	    	          password = value;
-  	    	      	  Logger.debug("sendMessage() password: " + password);
+//  	    	      	  Logger.debug("sendMessage() password: " + password);
     	    	  }
     	    	  if (key.equals(Const.PORT)) {
     	    	      props.put("mail.smtp.port", value);

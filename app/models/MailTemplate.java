@@ -11,11 +11,9 @@ import javax.persistence.Version;
 
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
-import com.avaje.ebean.Page;
-
-import uk.bl.api.Utils;
 
 /**
  * This class supports the management of e-mail templates.
