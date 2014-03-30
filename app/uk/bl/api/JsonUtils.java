@@ -833,14 +833,17 @@ public class JsonUtils {
 			try {
 			    if (Const.targetMap.containsKey(f.getName()) || Const.collectionMap.containsKey(f.getName())) {
 //					if (f.getName().contains("hosting") || f.getName().contains("domain")) {
-//						int ll = 0;
-//					}
+//					int ll = 0;
+//				}
 					JsonNode resNode = getElement(node, f.getName());
 					String jsonField = getStringList(resNode, f.getName(), false);
 					if (!f.getName().equals(Const.targetMap.get(Const.FIELD_URL_NODE))) {
 						jsonField = normalizeArchiveUrl(jsonField);
 					}
 //						Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
+					if (f.getName().contains(Const.FIELD_UK_POSTAL_ADDRESS_URL)) {
+						jsonField = getStringItem(resNode, Const.URL);
+					}
 					if (f.getType().equals(String.class)) {
 						if (jsonField == null || jsonField.length() == 0) {
 							jsonField = "";
