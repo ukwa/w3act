@@ -842,7 +842,9 @@ public class JsonUtils {
 					}
 //						Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
 					if (f.getName().contains(Const.FIELD_UK_POSTAL_ADDRESS_URL)) {
-						jsonField = getStringItem(resNode, Const.URL);
+						if (resNode != null) {
+							jsonField = getStringItem(resNode, Const.URL);
+						}
 					}
 					if (f.getType().equals(String.class)) {
 						if (jsonField == null || jsonField.length() == 0) {
