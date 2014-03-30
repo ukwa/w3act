@@ -263,9 +263,20 @@ public class TargetController extends AbstractController {
             newTarget.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
 //            Logger.info("ignore robots: " + getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
             newTarget.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
-            newTarget.field_crawl_start_date = getFormParam(Const.FIELD_CRAWL_START_DATE);
+            if (getFormParam(Const.FIELD_CRAWL_START_DATE) != null) {
+            	String startDateHumanView = getFormParam(Const.FIELD_CRAWL_START_DATE);
+            	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
+            	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
+            	newTarget.field_crawl_start_date = startDateUnix;
+            }
             newTarget.date_of_publication = getFormParam(Const.DATE_OF_PUBLICATION);
             newTarget.field_crawl_end_date = getFormParam(Const.FIELD_CRAWL_END_DATE);
+            if (getFormParam(Const.FIELD_CRAWL_END_DATE) != null) {
+            	String endDateHumanView = getFormParam(Const.FIELD_CRAWL_END_DATE);
+            	String endDateUnix = Utils.getUnixDateStringFromDate(endDateHumanView);
+            	Logger.info("endDateHumanView: " + endDateHumanView + ", endDateUnix: " + endDateUnix);
+            	newTarget.field_crawl_end_date = endDateUnix;
+            }
             newTarget.white_list = getFormParam(Const.WHITE_LIST);
             newTarget.black_list = getFormParam(Const.BLACK_LIST);
             newTarget.field_depth = getFormParam(Const.FIELD_DEPTH);

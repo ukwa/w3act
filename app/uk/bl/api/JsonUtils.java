@@ -837,7 +837,7 @@ public class JsonUtils {
 //					}
 					JsonNode resNode = getElement(node, f.getName());
 					String jsonField = getStringList(resNode, f.getName(), false);
-					if (!f.getName().equals(Const.targetMap.get("field_url"))) {
+					if (!f.getName().equals(Const.targetMap.get(Const.FIELD_URL_NODE))) {
 						jsonField = normalizeArchiveUrl(jsonField);
 					}
 //						Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);

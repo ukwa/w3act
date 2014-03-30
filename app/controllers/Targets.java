@@ -808,5 +808,18 @@ public class Targets extends AbstractController {
         	}
         }
     }
+    
+    /**
+     * Show date in HTML page.
+     * @param value The unix timestamp string
+     * @return date in human understandable form
+     */
+    public static String showDate(String value) {
+    	String res = value;
+     	if (value != null) {
+     		res = Utils.getDateFromUnixDate(value);
+     	}
+        return res;
+    }
 }
 

@@ -112,11 +112,17 @@ public class Utils {
     public static String getUnixDateStringFromDate(String curDate) {
     	String res = "";
 		try {
+	    	Logger.debug("getUnixDateStringFromDate curDate: " + curDate);
 			Date resDate = new SimpleDateFormat(Const.DATE_FORMAT).parse(curDate);
-			Long longTime = new Long(resDate.getTime()/1000);
+			/**
+			 * 86400 seconds stand for one day. We add it because simple date format conversion
+			 * creates timestamp for one day older than the current day.
+			 */
+			Long longTime = new Long(resDate.getTime()/1000 + 86400);
 			Logger.info("long time: " + longTime);
 			res = String.valueOf(longTime);
 			Logger.info("res date: " + res);
+			Logger.debug("check stored date - convert back to human date: " + getDateFromUnixDate(res));
 		} catch (ParseException e) {
 			Logger.debug("Conversion of date in string format dd-MM-yyyy to unix date: " + e);
 		}
@@ -130,6 +136,7 @@ public class Utils {
      */
     public static String getDateFromUnixDate(String unixDate) {
     	String res = "";
+    	Logger.debug("getDateFromUnixDate unixDate: " + unixDate);
     	if (unixDate != null && unixDate.length() > 0) {
 	    	long unixSeconds = Long.valueOf(unixDate);
 	    	Date date = new Date(unixSeconds*1000L); // *1000 is to convert seconds to milliseconds
@@ -155,6 +162,31 @@ public class Utils {
 					mydate.setTime(resDate);
 					res = Integer.toString(mydate.get(Calendar.DAY_OF_MONTH)) + "/" +
 							Integer.toString(mydate.get(Calendar.MONTH)) + "/" +
+							Integer.toString(mydate.get(Calendar.YEAR));
+				}
+			} catch (ParseException e) {
+				Logger.info("QA timestamp conversion error: " + e);
+			}
+    	}
+    	return res;
+    }              
+    
+    /**
+     * Show timestamp in HTML page
+     * @param timestamp
+     * @return formatted timestamp
+     */
+    public static String showTimestampInHtml(String timestamp) {
+    	String res = "";
+		Logger.info("showTimestampInHtml timestamp: " + timestamp);
+    	if (timestamp.length() > 0) {
+			try {
+				Date resDate = new SimpleDateFormat("yyyyMMddHHMMss").parse(timestamp);
+				if (resDate != null) {
+					Calendar mydate = new GregorianCalendar();
+					mydate.setTime(resDate);
+					res = Integer.toString(mydate.get(Calendar.DAY_OF_MONTH)) + "-" +
+							Integer.toString(mydate.get(Calendar.MONTH)) + "-" +
 							Integer.toString(mydate.get(Calendar.YEAR));
 				}
 			} catch (ParseException e) {
