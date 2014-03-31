@@ -250,6 +250,16 @@ public class Organisation extends Model {
         return find.all();
     }
 
+    /**
+     * This method shows nominating organisation in HTML page.
+     * @param organisationUrl The link to organisation in Target object field 
+     * 'field_nominating_organisation'
+     * @return
+     */
+    public static String getNominatingOrganisation(String organisationUrl) {
+        return Organisation.findByUrl(organisationUrl).title; 
+    }
+            
     public String toString() {
         return "Organisation(" + nid + ") with title: " + title + 
         	", format: " + format + ", summary: " + summary + ", value: " + value;

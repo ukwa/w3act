@@ -277,17 +277,11 @@
 						<div class="form-group">
 			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
 						    <div class="col-sm-6">
-								<select name="organisation" id="mySel" class="form-control">
-					            	<option>None</option>
-					                @for(organisation <- Organisation.findAll()) {
-						                @if(organisation.title.equals(Organisation.findByUrl(target.field_nominating_organisation).title) 
-						                	|| organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
-							                <option selected disabled>@organisation.title</option>
-							            } else {
-						                    <option disabled>@organisation.title</option>
-										}					            
-					                }
-								</select>
+						        @if(target.url != null && target.field_nominating_organisation != null) {
+  									@Organisation.getNominatingOrganisation(target.field_nominating_organisation)
+  								} else {
+  								    none
+  								}
 							</div>
 						</div>
 					</div>
