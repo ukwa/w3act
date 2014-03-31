@@ -88,27 +88,18 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
-								<label class="radio-inline">
-							  		@if(target.status == 1) {
-							          <input name="status" id="radio1" value="1" type="radio" checked="checked" disabled> N/A
-							        } else {
-							          <input name="status" id="radio1" value="1" type="radio" disabled> N/A
-							        }
-								</label>
-								<label class="radio-inline">
-							  		@if(target.status == 2) {
-							          <input name="status" id="radio2" value="2" type="radio" checked="checked" disabled> No QA issues found
-							        } else {
-							          <input name="status" id="radio2" value="2" type="radio" disabled> No QA issues found
-							        }
-								</label>
-								<label class="radio-inline">
-							  		@if(target.status == 3) {
-							        	<input name="status" id="radio3" value="3" type="radio" checked="checked" disabled> QA issue
-							        } else {
-							        	<input name="status" id="radio3" value="3" type="radio" disabled> QA issue
-									}
-								</label>
+						  		@if(target.status == 1) {
+						          N/A
+						        }
+						  		@if(target.status == 2) {
+						          No QA issues found
+						        }
+						  		@if(target.status == 3) {
+						          QA issue
+								}
+						  		@if(target.status != 1 && target.status != 2 && target.status != 3) {
+						        	none
+								}
 							</div>
 						</div>
 					</div>
@@ -119,34 +110,24 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If know, please add the current status of the site)</small></label>
 						    <div class="col-sm-6">
-								<label class="radio-inline">
 							  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("N/A")) {
-							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio" checked="checked" disabled> N/A
-							        } else {
-							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio" disabled> N/A
+							        	N/A
 							        }
-								</label>
-								<label class="radio-inline">
 							  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("Still live")) {
-							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio" checked="checked" disabled> Still live 
-							        } else {
-							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio" disabled> Still live 
+							        	Still live 
 							        }
-								</label>
-								<label class="radio-inline">
 							  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("No longer updated")) {
-							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio" checked="checked" disabled> No longer updated 
-							        } else {
-							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio" disabled> No longer updated 
+							        	No longer updated 
 							        }
-								</label>
-								<label class="radio-inline">
 							  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("Vanished")) {
-							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio" checked="checked" disabled> Vanished
-							        } else {
-							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio" disabled> Vanished
+							        	Vanished
 							        }
-								</label>
+							  		@if(target.field_live_site_status != null && !target.field_live_site_status.equals("Vanished")
+							  			&& !target.field_live_site_status.equals("No longer updated")
+							  			&& !target.field_live_site_status.equals("Still live")
+							  			&& !target.field_live_site_status.equals("N/A")) {
+							        	none
+							        }
 							</div>
 						</div>
 					</div>
@@ -157,10 +138,10 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
 						    <div class="col-sm-6">
-				                @if(target.field_key_site != null && target.field_key_site) {             
-					                <input type="checkbox" name="keysite" value="true" checked disabled/>
+				                @if(target.field_key_site != null && target.field_key_site) {  
+				                   yes           
 				                } else {
-					                <input type="checkbox" name="keysite" value="true" disabled/>
+				                   no
 				                }
 							</div>
 						</div>
@@ -355,7 +336,7 @@
 						<div class="form-group">
 			              	<label for="inputFlagNotes" class="col-sm-6 control-label">Flag notes <small class="text-center">(More details about the flagged issue)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="flag_notes" id="flag_notes" cols="100" rows="1" value="@target.flag_notes">@target.flag_notes</textarea>
+				            	<textarea readonly class="form-control" name="flag_notes" id="flag_notes" cols="100" rows="1" value="@target.flag_notes">@target.flag_notes</textarea>
 							</div>
 						</div>
 					</div>
@@ -455,9 +436,9 @@
 							<label class="col-sm-6 control-label">UK Hosting <small class="text-center">(The domain is hosted in the UK)</small></label>
 						    <div class="col-sm-6">
 				                @if(target.field_uk_hosting != null && target.field_uk_hosting) {             
-					                <input type="checkbox" name="field_uk_hosting" value="true" checked />
+					                yes
 				                } else {
-					                <input type="checkbox" name="field_uk_hosting" value="true" />
+					                no
 				                }
 							</div>
 						</div>
@@ -470,9 +451,9 @@
 							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 						    <div class="col-sm-6">
 				                @if(target.field_uk_postal_address != null && target.field_uk_postal_address) {             
-					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
+					                yes
 				                } else {
-					                <input type="checkbox" name="field_uk_postal_address" value="true"/>
+					                no
 				                }
 							</div>
 						</div>
@@ -484,7 +465,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_uk_postal_address_url" value="@target.field_uk_postal_address_url" size="60" maxlength="2048" class="form-control" />
+		 						<input readonly type="text" name="field_uk_postal_address_url" value="@target.field_uk_postal_address_url" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>
@@ -496,9 +477,9 @@
 							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 						    <div class="col-sm-6">
 				                @if(target.field_via_correspondence != null && target.field_via_correspondence) {             
-					                <input type="checkbox" name="field_via_correspondence" value="true" checked />
+					                yes
 				                } else {
-					                <input type="checkbox" name="field_via_correspondence" value="true" />
+					                no
 				                }
 							</div>
 						</div>
@@ -510,7 +491,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Notes <small class="text-center">(Any relevant notes, e.g. a more detailed description of this URL or set of URLs)</small></label>
 						    <div class="col-sm-6">
-		 						<textarea name="field_notes" cols="100" rows="1" class="form-control">@target.value</textarea>
+		 						<textarea readonly name="field_notes" cols="100" rows="1" class="form-control">@target.value</textarea>
 							</div>
 						</div>
 					</div>
@@ -522,9 +503,9 @@
 							<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
 						    <div class="col-sm-6">
 				                @if(target.field_professional_judgement != null && target.field_professional_judgement) {             
-					                <input type="checkbox" name="field_professional_judgement" value="true" checked />
+					                yes
 				                } else {
-					                <input type="checkbox" name="field_professional_judgement" value="true" />
+					                no
 				                }
 							</div>
 						</div>
@@ -536,7 +517,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
 						    <div class="col-sm-6">
-			 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@target.field_professional_judgement_exp</textarea>
+			 					<textarea readonly name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@target.field_professional_judgement_exp</textarea>
 							</div>
 						</div>
 					</div>
@@ -548,9 +529,9 @@
 							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
 				                @if(target.field_no_ld_criteria_met != null && target.field_no_ld_criteria_met) {             
-					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked />
+					                yes
 				                } else {
-				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true"/>
+				                	no
 				                }
 	                		</div>
 						</div>
@@ -706,9 +687,9 @@
 						<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
 					    <div class="col-sm-6">
 			                @if(target.field_ignore_robots_txt != null && target.field_ignore_robots_txt) {             
-				                <input type="checkbox" name="field_ignore_robots_txt" value="true" checked disabled/>
+				                yes
 			                } else {
-				                <input type="checkbox" name="field_ignore_robots_txt" value="true" disabled/>
+				                no
 			                }
                 		</div>
 					</div>
