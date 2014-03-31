@@ -318,15 +318,11 @@
 						<div class="form-group">
 			              	<label for="status" class="col-sm-6 control-label">Language <small class="text-center">(the predominant language in which the page is written)</small></label>
 						    <div class="col-sm-6">
-								<select name="language" id="language" class="form-control">
-					                @for(language <- Target.getAllLanguage()) {
-						                @if(language.equals(target.language)) {
-						                	<option selected disabled>@target.language</option>
-						                } else {
-						                	<option disabled>@language</option>
-						                }
-					                }
-								</select>
+						        @if(target.url != null && target.language != null) {
+  									@target.language
+  								} else {
+  								    none
+  								}
 							</div>
 						</div>
 					</div>
@@ -394,15 +390,11 @@
 						<div class="form-group">
 			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
-								<select name="selection_type" id="selection_type" class="form-control">
-					                @for(selection_type <- Target.getAllSelectionTypes()) {
-						                @if(selection_type.equals(target.selection_type)) {
-						                	<option selected disabled>@target.selection_type</option>
-						                } else {
-						                	<option disabled>@selection_type</option>
-						                }
-					                }
-								</select>
+						        @if(target.url != null && target.selection_type != null) {
+  									@target.selection_type
+  								} else {
+  								    none
+  								}
 							</div>
 						</div>
 					</div>
