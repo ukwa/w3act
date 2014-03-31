@@ -295,6 +295,15 @@ public class User extends Model {
     }
 
     /**
+     * This method shows user in HTML page.
+     * @param userUrl The link to user in Target object field 'author'
+     * @return
+     */
+    public static String showUser(String userUrl) {
+        return User.findByUrl(userUrl).name; 
+    }
+            
+    /**
      * Return a page of User
      *
      * @param page Page to display
