@@ -426,6 +426,24 @@ public final class Const {
 		SELECTION;
     }
 	
+    /**
+     * Help mapping to present predefined Scope values in GUI.
+     */
+    public static final Map<String, String> guiScopeMap = new HashMap<String, String>();
+    	static {
+		guiScopeMap.put("resource",   "Just this URL.");
+		guiScopeMap.put("plus1",      "This URL plus any directly linked resources.");
+		guiScopeMap.put("root",       "All URLs that start like this.");
+		guiScopeMap.put("subdomains", "All URLs that match match this host or any subdomains.");
+    }
+		
+	public enum ScopeType {
+		resource, 
+		plus1,
+		root,
+		subdomains;
+    }
+    	
 	/**
 	 * The QA status types.
 	 */

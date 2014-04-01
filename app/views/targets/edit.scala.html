@@ -710,27 +710,14 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
-								<select name="field_scope" class="form-control">
-					        		@if(target.field_scope.equals("Just this URL.")) {
-							            <option selected>Just this URL.</option>
-									} else {						                
-								    	<option>Just this URL.</option>
-								    }
-								    @if(target.field_scope.equals("This URL plus any directly linked resources.")) {
-								    	<option selected>This URL plus any directly linked resources.</option>
-									} else {						                
-								    	<option>This URL plus any directly linked resources.</option>
-									}
-								    @if(target.field_scope.equals("All URLs that start like this.")) {
-								    	<option selected>All URLs that start like this.</option>
-									} else {						                
-								    	<option>All URLs that start like this.</option>
-									}
-								    @if(target.field_scope.equals("All URLs that match match this host or any subdomains.")) {
-								    	<option selected>All URLs that match match this host or any subdomains.</option>
-									} else {						                
-								    	<option>All URLs that match match this host or any subdomains.</option>
-									}
+								<select name="field_scope" id="field_scope" class="form-control">
+					                @for(field_scope <- Target.getAllScopeTypes()) {
+						                @if(field_scope.equals(target.field_scope)) {
+						                	<option selected>@Targets.getScopeGuiName(target.field_scope)</option>
+						                } else {
+						                	<option>@Targets.getScopeGuiName(field_scope)</option>
+						                }
+					                }
 								</select>
 							</div>
 						</div>

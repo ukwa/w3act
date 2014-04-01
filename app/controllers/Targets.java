@@ -821,5 +821,40 @@ public class Targets extends AbstractController {
      	}
         return res;
     }
+    
+    /**
+     * This method maps scope value to present predefined Scope values in GUI.
+     * @param name The predefined scope value.
+     * @return scope name that should be presented in GUI
+     */
+    public static String getScopeGuiName(String name) {
+    	String res = name;
+    	if (name != null && name.length() > 0) {
+    		String guiName = Const.guiScopeMap.get(name);
+    		if (guiName != null && guiName.length() > 0) {
+    			res = guiName;
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method calculates scope value from the GUI scope name.
+     * @param name The GUI scope value.
+     * @return original scope name 
+     */
+    public static String getScopeNameFromGuiName(String name) {
+    	String res = name;
+    	if (name != null && name.length() > 0) {
+			for (Map.Entry<String, String> entry : Const.guiScopeMap.entrySet()) {
+				if (entry.getValue().equals(name)) {
+					res = entry.getKey();
+					break;
+				}
+			}
+    	}
+    	return res;
+    }
+            
 }
 

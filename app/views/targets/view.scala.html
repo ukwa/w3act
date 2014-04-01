@@ -664,7 +664,11 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Scope<font color="red">*</font> <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 					    <div class="col-sm-6">
-	 						<input type="text" name="field_scope" value="@target.field_scope" size="60" maxlength="2048" class="form-control" readonly/>
+			                @if(target.field_scope != null) {             
+				                @Targets.getScopeGuiName(target.field_scope)
+			                } else {
+				                none
+			                }
 						</div>
 					</div>
 				</div>
