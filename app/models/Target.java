@@ -878,6 +878,19 @@ public class Target extends Model {
     }         
 
     /**
+     * This method returns a list of all depth type values for target record.
+     * @return
+     */
+    public static List<String> getAllDepthTypes() {
+    	List<String> res = new ArrayList<String>();
+	    Const.DepthType[] resArray = Const.DepthType.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+
+    /**
      * This method returns a list of all flag values for target record.
      * @return
      */
