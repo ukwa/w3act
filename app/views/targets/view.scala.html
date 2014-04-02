@@ -347,7 +347,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Date of publication</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="date_of_publication" value="@target.date_of_publication" size="30" maxlength="2048" class="form-control" id="date_of_publication" readonly/>
+		 						<input type="text" value="@target.date_of_publication" size="30" maxlength="2048" class="form-control" id="date_of_publication" readonly/>
 	                		</div>
 						</div>
 					</div>
@@ -537,125 +537,7 @@
 						</div>
 					</div>
 		     	</div>				
-		</div>
-	
-		<div class="tab-pane fade" id="crawlpermission">
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
-					</div>
-				</div>
-	     	</div>
-    	
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">UK Hosting <small class="text-center">(The domain is hosted in the UK)</small></label>
-					    <div class="col-sm-6">
-			                @if(target.field_uk_hosting != null && target.field_uk_hosting) {             
-				                <input type="checkbox" name="field_uk_hosting" value="true" checked disabled/>
-			                } else {
-				                <input type="checkbox" name="field_uk_hosting" value="true" disabled/>
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>
-
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
-					    <div class="col-sm-6">
-			                @if(target.field_uk_postal_address != null && target.field_uk_postal_address) {             
-				                <input type="checkbox" name="field_uk_postal_address" value="true" checked disabled/>
-			                } else {
-				                <input type="checkbox" name="field_uk_postal_address" value="true" disabled/>
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>		     				     	
-
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
-					    <div class="col-sm-6">
-	 						<input type="text" name="field_uk_postal_address_url" value="@target.field_uk_postal_address_url" size="60" maxlength="2048" class="form-control"  readonly/>
-						</div>
-					</div>
-				</div>
-	     	</div>
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
-					    <div class="col-sm-6">
-			                @if(target.field_via_correspondence != null && target.field_via_correspondence) {             
-				                <input type="checkbox" name="field_via_correspondence" value="true" checked disabled/>
-			                } else {
-				                <input type="checkbox" name="field_via_correspondence" value="true" disabled/>
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>		
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Notes <small class="text-center">(Any relevant notes, e.g. a more detailed description of this URL or set of URLs)</small></label>
-					    <div class="col-sm-6">
-	 						<textarea name="field_notes" cols="100" rows="1" class="form-control" readonly>@target.field_notes</textarea>
-						</div>
-					</div>
-				</div>
-	     	</div>	
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
-					    <div class="col-sm-6">
-			                @if(target.field_professional_judgement != null && target.field_professional_judgement) {             
-				                <input type="checkbox" name="field_professional_judgement" value="true" checked disabled/>
-			                } else {
-				                <input type="checkbox" name="field_professional_judgement" value="true" disabled/>
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>	
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
-					    <div class="col-sm-6">
-		 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control" readonly>@target.field_professional_judgement_exp</textarea>
-						</div>
-					</div>
-				</div>
-	     	</div>	
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
-					    <div class="col-sm-6">
-			                @if(target.field_no_ld_criteria_met != null && target.field_no_ld_criteria_met) {             
-				                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked disabled/>
-			                } else {
-			                	<input type="checkbox" name="field_no_ld_criteria_met" value="true" disabled/>
-			                }
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-        </div>
+		</div>	
         
         <div class="tab-pane fade" id="crawlpolicy">
 

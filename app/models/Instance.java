@@ -24,6 +24,8 @@ import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.avaje.ebean.QueryIterator;
 
+import controllers.Flags;
+
 
 /**
  * Instance instance entity managed by Ebean
@@ -985,7 +987,69 @@ public class Instance extends Model {
     	res = Utils.hasElementInList(subject, field_subsubject);
     	return res;
     }
-            
+          
+    /**
+     * This method calculates selected tags for presentation in view page.
+     * @return tag list as a string
+     */
+    public String getSelectedTags() {
+    	String res = "";
+    	boolean firstTime = true;
+    	if (this.tags != null) {
+    		if (this.tags.contains(Const.LIST_DELIMITER)) {
+		    	String[] parts = this.tags.split(Const.LIST_DELIMITER);
+		    	for (String part: parts)
+		        {
+		    		try {
+		    			if (firstTime) {
+		    				res = Tag.findByUrl(part).name;
+		    				firstTime = false;
+		    			} else {
+		    				res = res + Const.LIST_DELIMITER + Tag.findByUrl(part).name;
+		    			}
+		    		} catch (Exception e) {
+		    			Logger.error("getSelectedTags error: " + e);
+		    		}
+		        }
+	    	}
+    	}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+    }
+    
+    /**
+     * This method calculates selected flags for presentation in view page.
+     * @return flag list as a string
+     */
+    public String getSelectedFlags() {
+    	String res = "";
+    	boolean firstTime = true;
+    	if (this.flags != null) {
+    		if (this.flags.contains(Const.LIST_DELIMITER)) {
+		    	String[] parts = this.flags.split(Const.LIST_DELIMITER);
+		    	for (String part: parts)
+		        {
+		    		try {
+		    			if (firstTime) {
+		    				res = Flags.getGuiName(Flag.findByUrl(part).name);
+		    				firstTime = false;
+		    			} else {
+		    				res = res + Const.LIST_DELIMITER + Flags.getGuiName(Flag.findByUrl(part).name);
+		    			}
+		    		} catch (Exception e) {
+		    			Logger.error("getSelectedFlags error: " + e);
+		    		}
+		        }
+	    	}
+    	}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+    }
+        
     public String toString() {
         return "Instance(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
