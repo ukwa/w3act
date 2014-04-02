@@ -285,9 +285,13 @@ public class InstanceController extends AbstractController {
             newInstance.date_of_publication = getFormParam(Const.DATE_OF_PUBLICATION);
             newInstance.white_list = getFormParam(Const.WHITE_LIST);
             newInstance.black_list = getFormParam(Const.BLACK_LIST);
-            newInstance.field_depth = getFormParam(Const.FIELD_DEPTH);
+            if (getFormParam(Const.FIELD_DEPTH) != null) {
+            	newInstance.field_depth = Targets.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+            }
+            if (getFormParam(Const.FIELD_SCOPE) != null) {
+            	newInstance.field_scope = Targets.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+            }
             newInstance.field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
-            newInstance.field_scope = getFormParam(Const.FIELD_SCOPE);
             newInstance.keywords = getFormParam(Const.KEYWORDS);
 //            Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
             newInstance.synonyms = getFormParam(Const.SYNONYMS);

@@ -729,7 +729,11 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 					    <div class="col-sm-6">
-	 						<input type="text" name="field_scope" value="@instance.field_scope" size="60" maxlength="2048" class="form-control" readonly/>
+			                @if(instance.field_scope != null) {             
+				                @Targets.getScopeGuiName(instance.field_scope)
+			                } else {
+				                none
+			                }
 						</div>
 					</div>
 				</div>
@@ -740,7 +744,11 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 					    <div class="col-sm-6">
-	 						<input type="text" name="field_depth" value="@instance.field_depth" size="60" maxlength="2048" class="form-control" readonly/>
+			                @if(instance.field_depth != null) {             
+				                @Targets.getDepthGuiName(instance.field_depth)
+			                } else {
+				                none
+			                }
 						</div>
 					</div>
 				</div>

@@ -682,27 +682,14 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
-								<select name="field_scope" class="form-control">
-					        		@if(instance.field_scope.equals("Just this URL.")) {
-							            <option selected>Just this URL.</option>
-									} else {						                
-								    	<option>Just this URL.</option>
-								    }
-								    @if(instance.field_scope.equals("This URL plus any directly linked resources.")) {
-								    	<option selected>This URL plus any directly linked resources.</option>
-									} else {						                
-								    	<option>This URL plus any directly linked resources.</option>
-									}
-								    @if(instance.field_scope.equals("All URLs that start like this.")) {
-								    	<option selected>All URLs that start like this.</option>
-									} else {						                
-								    	<option>All URLs that start like this.</option>
-									}
-								    @if(instance.field_scope.equals("All URLs that match match this host or any subdomains.")) {
-								    	<option selected>All URLs that match match this host or any subdomains.</option>
-									} else {						                
-								    	<option>All URLs that match match this host or any subdomains.</option>
-									}
+								<select name="field_scope" id="field_scope" class="form-control">
+					                @for(field_scope <- Target.getAllScopeTypes()) {
+						                @if(field_scope.equals(instance.field_scope)) {
+						                	<option selected>@Targets.getScopeGuiName(instance.field_scope)</option>
+						                } else {
+						                	<option>@Targets.getScopeGuiName(field_scope)</option>
+						                }
+					                }
 								</select>
 							</div>
 						</div>
@@ -714,27 +701,15 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
-						  		<label class="radio-inline">
-						  			@if(instance.field_depth != null && instance.field_depth.equals("Capped (small - 500MB)")) {
-										<input name="field_depth" id="radio1" value="Capped (small - 500MB)" type="radio" checked> Capped (small - 500MB)
-						          	} else { 
-						          		<input name="field_depth" id="radio1" value="Capped (small - 500MB)" type="radio"> Capped (small - 500MB) 
-						          	}
-						        </label>
-						        <label class="radio-inline">
-						  			@if(instance.field_depth != null && instance.field_depth.equals("Capped (large - 2GB)")) {
-										<input name="field_depth" id="radio2" value="Capped (large - 2GB)" type="radio" checked> Capped (large - 2GB)
-						          	} else {
-						          		<input name="field_depth" id="radio2" value="Capped (large - 2GB)" type="radio"> Capped (large - 2GB)
-						          	}
-						        </label>
-						        <label class="radio-inline">
-						  			@if(instance.field_depth != null && instance.field_depth.equals("Uncapped")) {
-										<input name="field_depth" id="radio3" value="Uncapped" type="radio" checked> Uncapped
-						          	} else {
-						          		<input name="field_depth" id="radio3" value="Uncapped" type="radio"> Uncapped
-						          	}
-						        </label>			      
+								<select name="field_depth" id="field_depth" class="form-control">
+					                @for(field_depth <- Target.getAllDepthTypes()) {
+						                @if(field_depth.equals(instance.field_depth)) {
+						                	<option selected>@Targets.getDepthGuiName(instance.field_depth)</option>
+						                } else {
+						                	<option>@Targets.getDepthGuiName(field_depth)</option>
+						                }
+					                }
+								</select>
 	                		</div>
 						</div>
 					</div>
