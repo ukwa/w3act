@@ -279,7 +279,9 @@ public class TargetController extends AbstractController {
             }
             newTarget.white_list = getFormParam(Const.WHITE_LIST);
             newTarget.black_list = getFormParam(Const.BLACK_LIST);
-            newTarget.field_depth = getFormParam(Const.FIELD_DEPTH);
+            if (getFormParam(Const.FIELD_DEPTH) != null) {
+            	newTarget.field_depth = Targets.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+            }
             newTarget.field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
             if (getFormParam(Const.FIELD_SCOPE) != null) {
             	newTarget.field_scope = Targets.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));

@@ -729,27 +729,15 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
-						  		<label class="radio-inline">
-						  			@if(target.field_depth != null && target.field_depth.equals("Capped (small - 500MB)")) {
-										<input name="field_depth" id="radio1" value="Capped (small - 500MB)" type="radio" checked> Capped (small - 500MB)
-						          	} else { 
-						          		<input name="field_depth" id="radio1" value="Capped (small - 500MB)" type="radio"> Capped (small - 500MB) 
-						          	}
-						        </label>
-						        <label class="radio-inline">
-						  			@if(target.field_depth != null && target.field_depth.equals("Capped (large - 2GB)")) {
-										<input name="field_depth" id="radio2" value="Capped (large - 2GB)" type="radio" checked> Capped (large - 2GB)
-						          	} else {
-						          		<input name="field_depth" id="radio2" value="Capped (large - 2GB)" type="radio"> Capped (large - 2GB)
-						          	}
-						        </label>
-						        <label class="radio-inline">
-						  			@if(target.field_depth != null && target.field_depth.equals("Uncapped")) {
-										<input name="field_depth" id="radio3" value="Uncapped" type="radio" checked> Uncapped
-						          	} else {
-						          		<input name="field_depth" id="radio3" value="Uncapped" type="radio"> Uncapped
-						          	}
-						        </label>			      
+								<select name="field_depth" id="field_depth" class="form-control">
+					                @for(field_depth <- Target.getAllDepthTypes()) {
+						                @if(field_depth.equals(target.field_depth)) {
+						                	<option selected>@Targets.getDepthGuiName(target.field_depth)</option>
+						                } else {
+						                	<option>@Targets.getDepthGuiName(field_depth)</option>
+						                }
+					                }
+								</select>
 	                		</div>
 						</div>
 					</div>

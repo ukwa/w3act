@@ -679,7 +679,11 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Depth<font color="red">*</font> <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 					    <div class="col-sm-6">
-	 						<input type="text" name="field_depth" value="@target.field_depth" size="60" maxlength="2048" class="form-control" readonly/>
+			                @if(target.field_depth != null) {             
+				                @Targets.getDepthGuiName(target.field_depth)
+			                } else {
+				                none
+			                }
 						</div>
 					</div>
 				</div>

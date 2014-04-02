@@ -856,5 +856,39 @@ public class Targets extends AbstractController {
     	return res;
     }
             
+    /**
+     * This method maps depth value to present predefined Scope values in GUI.
+     * @param name The predefined depth value.
+     * @return depth name that should be presented in GUI
+     */
+    public static String getDepthGuiName(String name) {
+    	String res = name;
+    	if (name != null && name.length() > 0) {
+    		String guiName = Const.guiDepthMap.get(name);
+    		if (guiName != null && guiName.length() > 0) {
+    			res = guiName;
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method calculates depth value from the GUI depth name.
+     * @param name The GUI depth value.
+     * @return original depth name 
+     */
+    public static String getDepthNameFromGuiName(String name) {
+    	String res = name;
+    	if (name != null && name.length() > 0) {
+			for (Map.Entry<String, String> entry : Const.guiDepthMap.entrySet()) {
+				if (entry.getValue().equals(name)) {
+					res = entry.getKey();
+					break;
+				}
+			}
+    	}
+    	return res;
+    }
+            
 }
 

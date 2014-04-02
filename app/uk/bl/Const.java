@@ -444,6 +444,22 @@ public final class Const {
 		subdomains;
     }
     	
+    /**
+     * Help mapping to present predefined Depth values in GUI.
+     */
+    public static final Map<String, String> guiDepthMap = new HashMap<String, String>();
+    	static {
+		guiDepthMap.put("capped",       "Capped (small - 500MB)");
+		guiDepthMap.put("capped_large", "Capped (large - 2GB)");
+		guiDepthMap.put("deep",         "Uncapped");
+    }
+		
+	public enum DepthType {
+		capped, 
+		capped_large,
+		deep;
+    }
+    	
 	/**
 	 * The QA status types.
 	 */
