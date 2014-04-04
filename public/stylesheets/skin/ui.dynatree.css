@@ -11,7 +11,7 @@ ul.dynatree-container
 	background-color: white;
 	border: 1px dotted gray;
 	overflow: auto;
-	height: 20%; /*100%;*/ /* issue 263 */
+	height: 120px; /* 20% would be ignored by IE9 */
 }
 
 ul.dynatree-container ul
