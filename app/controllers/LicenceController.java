@@ -3,6 +3,8 @@ package controllers;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import models.CommunicationLog;
 import models.ContactPerson;
 import models.CrawlPermission;
@@ -82,6 +84,8 @@ public class LicenceController extends AbstractController {
 		sb.append(Const.NAME_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).name + Const.CSV_LINE_END);
 		sb.append(Const.POSITION_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).position + Const.CSV_LINE_END);
 		sb.append(Const.EMAIL_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).email + Const.CSV_LINE_END);
+		sb.append(Const.POSTAL_ADDRESS_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).postalAddress + Const.CSV_LINE_END);
+		sb.append(Const.CONTACT_ORGANISATION_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).contactOrganisation + Const.CSV_LINE_END);
 		sb.append(Const.TEL_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).phone + Const.CSV_LINE_END);
 		sb.append(Const.DESCRIPTION_ACK + Const.TWO_POINTS + permission.description + Const.CSV_LINE_END);
 		sb.append(Const.THIRD_PARTY_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.thirdPartyContent) + Const.CSV_LINE_END);
@@ -108,6 +112,15 @@ public class LicenceController extends AbstractController {
         String submit = getFormParam(Const.SUBMIT);
         Logger.info("submit: " + submit);
         if (submit != null) {
+        	if (StringUtils.isBlank(getFormParam(Const.TARGET)) 
+        			|| StringUtils.isBlank(getFormParam(Const.NAME))
+        			|| StringUtils.isBlank(getFormParam(Const.POSITION))
+        			|| StringUtils.isBlank(getFormParam(Const.CONTACT_PERSON))
+        			|| StringUtils.isBlank(getFormParam(Const.EMAIL))) {
+    			Logger.info("One of the required fields is empty. Please fill out all required fields marked by red star in the form.");
+    			flash("message", "Please fill out all required fields marked by red star in the form");
+   				return redirect(routes.LicenceController.form(getFormParam(Const.URL)));
+        	}  
         	Logger.info("save UKWA licence - name: " + getFormParam(Const.NAME));
     		Logger.info("agree: " + getFormParam(Const.AGREE));
             boolean isAgreed = Utils.getNormalizeBooleanString(getFormParam(Const.AGREE));
@@ -129,7 +142,7 @@ public class LicenceController extends AbstractController {
             } 
         	Logger.info("flags isAgreed: " + isAgreed + ", noThirdPartyContent: " + noThirdPartyContent + ", mayPublish: " + mayPublish);
             if (getFormParam(Const.TARGET) != null) {
-        	    String target = getFormParam(Const.TARGET);
+        	    String target = getFormParam(Const.TARGET);        	    
         	    List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target);
         	    if (permissionList != null && permissionList.size() > 0) {
         	    	CrawlPermission permission = permissionList.get(0);
@@ -156,6 +169,12 @@ public class LicenceController extends AbstractController {
                             if (getFormParam(Const.EMAIL) != null) {
                                 contactPerson.email = getFormParam(Const.EMAIL);
                             }
+                            if (getFormParam(Const.POSTAL_ADDRESS) != null) {
+                                contactPerson.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
+                            }
+                            if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
+                                contactPerson.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
+                            }
                             if (getFormParam(Const.PHONE) != null) {
                                 contactPerson.phone = getFormParam(Const.PHONE);
                             }
@@ -177,6 +196,12 @@ public class LicenceController extends AbstractController {
                             }
                             if (getFormParam(Const.EMAIL) != null) {
                                 person.email = getFormParam(Const.EMAIL);
+                            }
+                            if (getFormParam(Const.POSTAL_ADDRESS) != null) {
+                                person.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
+                            }
+                            if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
+                                person.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
                             }
                             if (getFormParam(Const.PHONE) != null) {
                                 person.phone = getFormParam(Const.PHONE);

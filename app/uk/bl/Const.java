@@ -233,6 +233,8 @@ public final class Const {
 	public static final String NAME_ACK          = "Name";
 	public static final String POSITION_ACK      = "Position";
 	public static final String EMAIL_ACK         = "E-mail";
+	public static final String POSTAL_ADDRESS_ACK = "Postal Address";
+	public static final String CONTACT_ORGANISATION_ACK = "Contact Organisation";
 	public static final String TEL_ACK           = "Tel";
 	public static final String DESCRIPTION_ACK   = "Any other information";
 	public static final String THIRD_PARTY_ACK   = "Third-Party Conten";

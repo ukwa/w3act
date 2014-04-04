@@ -40,6 +40,9 @@
 	</div>	
 
 	@helper.form(action=routes.LicenceController.submit) {
+		@warningmessage(flash)            	
+   		<input type="hidden" name="url" value="@permissionUrl">    
+   		        	
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="basicinformation">
 				<div class="padding-20">
@@ -94,7 +97,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Name: <font color="red">*</font><small class="text-center">(organisation or individual)</small></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="contactPerson" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).name" placeholder="Max Mustermann" type="text">
+								<input class="form-control" name="contactPerson" type="text">
 							</div>
 						</div>
 					</div>
@@ -105,7 +108,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Position: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="position" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).position" type="text">
+								<input class="form-control" name="position" type="text">
 							</div>
 						</div>
 					</div>
@@ -116,7 +119,29 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="email" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).email" placeholder="max.mustermann@@domain.com" type="text">
+								<input class="form-control" name="email" type="text">
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Postal Address: </label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="postalAddress" type="text">
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Contact Organisation: </label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="contactOrganisation" type="text">
 							</div>
 						</div>
 					</div>
@@ -127,7 +152,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Tel:</label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="phone" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).phone" placeholder="0041889923456" type="text">
+								<input class="form-control" name="phone" type="text">
 							</div>
 						</div>
 					</div>
@@ -138,7 +163,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Any other information:</label>
 						    <div class="col-sm-6">
-		 						<textarea name="description" value="@CrawlPermission.showByUrl(permissionUrl).description" cols="100" rows="1" class="form-control">@CrawlPermission.showByUrl(permissionUrl).description</textarea>
+		 						<textarea name="description" cols="100" rows="1" class="form-control">@CrawlPermission.showByUrl(permissionUrl).description</textarea>
 							</div>
 						</div>
 					</div>
