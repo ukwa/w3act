@@ -124,6 +124,11 @@ public class LicenceController extends AbstractController {
         	Logger.info("save UKWA licence - name: " + getFormParam(Const.NAME));
     		Logger.info("agree: " + getFormParam(Const.AGREE));
             boolean isAgreed = Utils.getNormalizeBooleanString(getFormParam(Const.AGREE));
+    		if (!isAgreed) {
+    			Logger.info("The form cannot be submitted without selecting 'Yes' for field 'I/We agree'. Please agree for licence granting.");
+    			flash("message", "The form cannot be submitted without selecting 'Yes' for field 'I/We agree'. Please agree for licence granting.");
+   				return redirect(routes.LicenceController.form(getFormParam(Const.URL)));
+    		}
             boolean noThirdPartyContent = false;
             if (getFormParam(Const.CONTENT) != null) {
         		Logger.info("content: " + getFormParam(Const.CONTENT));
