@@ -728,12 +728,62 @@ public class Target extends Model {
 
 	/**
 	 * This method checks whether the passed URL is in scope.
-	 * @param url
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
 	 * @return result as a flag
 	 */
     public static boolean isInScope(String url, String nidUrl) {
     	try {
     		return Scope.check(url, nidUrl);
+    	} catch (WhoisException ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
+	 * This method checks whether the passed URL is in scope for
+	 * rules associated with scope IP.
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @return result as a flag
+	 */
+    public static boolean isInScopeIp(String url, String nidUrl) {
+    	try {
+    		return Scope.checkScopeIp(url, nidUrl);
+    	} catch (WhoisException ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
+	 * This method checks whether the passed URL is in scope for
+	 * rules associated with scope domain.
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @return result as a flag
+	 */
+    public static boolean isInScopeDomain(String url, String nidUrl) {
+    	try {
+    		return Scope.checkScopeDomain(url, nidUrl);
+    	} catch (WhoisException ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
+	 * This method checks whether the passed URL is in scope for particular mode
+	 * e.g. IP or DOMAIN.
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @param mode The mode of checking
+	 * @return result as a flag
+	 */
+    public static boolean isInScopeExt(String url, String nidUrl, String mode) {
+    	try {
+    		return Scope.checkExt(url, nidUrl, mode);
     	} catch (WhoisException ex) {
     		Logger.info("Exception: " + ex);
     		return false;

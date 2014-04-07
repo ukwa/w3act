@@ -17,11 +17,18 @@
 		<ul class="nav nav-pills">
         	<li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
         	<li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
-        		@if(Target.isInScope(target.field_url, target.url)) {
-	        		<li class=""><a href="#crawlpermission" data-toggle="tab">NPLD scope <font color="green">(+)</font></a></li>
-	    		} else {
-	        		<li class=""><a href="#crawlpermission" data-toggle="tab">NPLD scope <font color="red">(-)</font></a></li>
-	    		}		        
+			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
+			@if(Target.isInScopeIp(target.field_url, target.url)) {
+				<font color="green">(+)</font>
+			} else {
+				<font color="red">(-)</font>
+			}		        
+			@if(Target.isInScopeDomain(target.field_url, target.url)) {
+				<font color="green">(+)</font>
+			} else {
+				<font color="red">(-)</font>
+			}		        
+			</a></li>
         	<li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
 		    <li class=""><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
       	</ul>
@@ -65,7 +72,7 @@
 						</div>
 					</div>
 		     	</div>	 
-		     	    	
+
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -73,7 +80,24 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScope(target.field_url, target.url) || (target.field_url == null && Target.isInScope(target.title, target.url))) {
+								@if(Target.isInScopeIp(target.field_url, target.url)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK top-level domain
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeDomain(target.field_url, target.url)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>

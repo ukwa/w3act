@@ -261,7 +261,6 @@ public final class Const {
 	public static final String EXPORT_TARGETS_WITH_PASSED_INSTANCES   = "export_targets_with_passed_instances.csv";
 	public static final String EXPORT_TARGETS_WITH_QA_ISSUES_RESOLVED = "export_targets_with_qa_issues_resolved.csv";
 
-	
 	// Buttons
 	public static final String SAVE               = "save";
 	public static final String DELETE             = "delete";
@@ -568,7 +567,13 @@ public final class Const {
     	subNodeMap.put(FIELD_TARGET, URI);
     	subNodeMap.put(FIELD_QA_ISSUE, URI);
     }
-		
+
+	public enum ScopeCheckType {
+		ALL,
+		IP,
+		DOMAIN;
+    }    	
+    	
     /**
      * DEFINITIONS FOR TESTING  	
      */
