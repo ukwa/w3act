@@ -276,7 +276,11 @@
 						<div class="form-group">
 							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
 						    <div class="col-sm-6">
+	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" value="@target.field_wct_id">
+			              	} else {
 			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@target.field_wct_id">
+			              	}
 							</div>
 						</div>
 					</div>
@@ -287,7 +291,11 @@
 						<div class="form-group">
 			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
 						    <div class="col-sm-6">
+	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" value="@target.field_spt_id">
+			              	} else {
 			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@target.field_spt_id">
+			                }
 							</div>
 						</div>
 					</div>
