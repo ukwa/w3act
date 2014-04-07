@@ -613,6 +613,22 @@ public class Target extends Model {
     }          
 
     /**
+     * Check by URL if target object exists in database.
+     * @param url
+     * @return true if exists 
+     */
+    public static boolean existInDb(String url) {
+    	boolean res = false;       
+        if (url != null) {
+	        Target resObj = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
+	        if (resObj != null) {
+	        	res = true;
+	        }
+        }
+    	return res;
+    }          
+
+    /**
      * Retrieve a Target by target URL.
      * @param target URL
      * @return target object

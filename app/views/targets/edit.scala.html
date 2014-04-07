@@ -893,9 +893,18 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
+								@if(target.url != null && Target.existInDb(target.url)) {
 								<button type="submit" name="request" class="btn btn-success">Open License Request</button>
-								@if(target.url != null) {
-								<a href="@routes.CrawlPermissions.showCrawlPermissions(target.url)">Crawl Permissions</a>
+								   @if(target.url != null) {
+								   <a href="@routes.CrawlPermissions.showCrawlPermissions(target.url)">Crawl Permissions</a>
+								   }
+								} else {
+								<button disabled type="submit" name="request" class="btn btn-success">Open License Request</button>
+								<div class="padding-20">
+									<div class="alert alert-info">
+										Before you can request an Open UKWA license, you need to save the target record.
+									</div>
+								</div>
 								}
 							</div>
 						</div>
