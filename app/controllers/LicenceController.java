@@ -32,7 +32,7 @@ public class LicenceController extends AbstractController {
      */
     public static Result index() {
 		return ok(
-            ukwalicence.render("")
+            ukwalicence.render("", "", "", "", "", "", "", "", "", "")
         );
     }
     
@@ -44,7 +44,8 @@ public class LicenceController extends AbstractController {
      */
     public static Result form(String permissionUrl) {
 		return ok(
-            ukwalicence.render(permissionUrl)
+            ukwalicence.render(permissionUrl, CrawlPermission.showByUrl(permissionUrl).name, 
+            		CrawlPermission.showByUrl(permissionUrl).target, "", "", "", "", "", "", "")
         );
     }
     
@@ -119,7 +120,13 @@ public class LicenceController extends AbstractController {
         			|| StringUtils.isBlank(getFormParam(Const.EMAIL))) {
     			Logger.info("One of the required fields is empty. Please fill out all required fields marked by red star in the form.");
     			flash("message", "Please fill out all required fields marked by red star in the form");
-   				return redirect(routes.LicenceController.form(getFormParam(Const.URL)));
+    			return ok(
+    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
+    	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 
+    	   						getFormParam(Const.EMAIL), getFormParam(Const.POSTAL_ADDRESS), 
+    	   						getFormParam(Const.CONTACT_ORGANISATION), getFormParam(Const.PHONE), 
+    	   						getFormParam(Const.DESCRIPTION))
+    		        );
         	}  
         	Logger.info("save UKWA licence - name: " + getFormParam(Const.NAME));
     		Logger.info("agree: " + getFormParam(Const.AGREE));
@@ -127,7 +134,13 @@ public class LicenceController extends AbstractController {
     		if (!isAgreed) {
     			Logger.info("The form cannot be submitted without selecting 'Yes' for field 'I/We agree'. Please agree for licence granting.");
     			flash("message", "The form cannot be submitted without selecting 'Yes' for field 'I/We agree'. Please agree for licence granting.");
-   				return redirect(routes.LicenceController.form(getFormParam(Const.URL)));
+    			return ok(
+    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
+    	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 
+    	   						getFormParam(Const.EMAIL), getFormParam(Const.POSTAL_ADDRESS), 
+    	   						getFormParam(Const.CONTACT_ORGANISATION), getFormParam(Const.PHONE), 
+    	   						getFormParam(Const.DESCRIPTION))
+    		        );
     		}
             boolean noThirdPartyContent = false;
             if (getFormParam(Const.CONTENT) != null) {
@@ -235,6 +248,7 @@ public class LicenceController extends AbstractController {
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);
         	        Targets.updateQaStatus(permission.target, permission.status);
+        	    	Logger.debug("before sendAcknowledgementToSiteOwner mailTemplate: " + getFormParam(Const.EMAIL));
         	        if (getFormParam(Const.EMAIL) != null) {
         	        	sendAcknowledgementToSiteOwner(getFormParam(Const.EMAIL), permission);
         	        }

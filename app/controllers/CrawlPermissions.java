@@ -532,8 +532,10 @@ public class CrawlPermissions extends AbstractController {
      * otherwise only selected by checkbox.
      * @param all Type of email sending (all, selected)
      * @param template The email template
+     * @return true if sending successful, false otherwise
      */
-    public static void setPendingSelectedCrawlPermissions(boolean all, String template) {//String messageBody, String messageSubject) {
+    public static boolean setPendingSelectedCrawlPermissions(boolean all, String template) {
+    	boolean res = true;
         List<CrawlPermission> permissionList = CrawlPermission.findAll();
         Iterator<CrawlPermission> permissionItr = permissionList.iterator();
         while (permissionItr.hasNext()) {
@@ -557,17 +559,24 @@ public class CrawlPermissions extends AbstractController {
 	    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
 	    						, permission.target
 	    						, routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
-                    EmailHelper.sendMessage(email, messageSubject, messageBody);                	
-//                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
-                	permission.status = Const.CrawlPermissionStatus.PENDING.name();
-                	Logger.info("new permission staus: " + permission.status);
-                   	Ebean.update(permission);   
-        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
-        	        Ebean.save(log);
-                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+                	if (email != null) {
+	                    EmailHelper.sendMessage(email, messageSubject, messageBody);                	
+	//                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
+	                	permission.status = Const.CrawlPermissionStatus.PENDING.name();
+	                	Logger.info("new permission staus: " + permission.status);
+	                   	Ebean.update(permission);   
+	        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
+	        	        Ebean.save(log);
+	                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+                	} else {
+	                	Logger.info("Missing contact email. Please check contact person");
+	        	        res = false;
+	        	        break;
+                	}
                 }
             }
         }
+        return res;
     }
     
     /**
@@ -588,13 +597,14 @@ public class CrawlPermissions extends AbstractController {
 	    }
     	String toMails = evaluateToEmails();
     	Logger.info("toMails: " + toMails);
-//    	String messageSubject = MailTemplate.findByName(template).subject;
-//    	String messageBody = MailTemplate.findByName(template).readTemplate();
 
     	if (sendall != null) {
         	Logger.info("send all crawl permission requests");
-            setPendingSelectedCrawlPermissions(true, template);//messageBody, messageSubject); 
-	        res = redirect(routes.CrawlPermissions.index()); 
+            boolean sendingRes = setPendingSelectedCrawlPermissions(true, template);
+            if (!sendingRes) {
+    			flash("message", "Missing contact email. Please check contact person");
+            }
+        	res = redirect(routes.CrawlPermissions.index()); 
         }
         if (sendsome != null) {
         	Logger.info("send some crawl permission requests");

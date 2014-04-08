@@ -1,4 +1,4 @@
-@(permissionUrl: String)
+@(permissionUrl: String, curName: String, curTarget: String, curContactPerson: String, curPosition: String, curEmail: String, curPostalAddress: String, curContactOrganisation: String, curTel: String, curDescription: String)
 
 <html>
     <head>
@@ -67,7 +67,7 @@
 						<div class="form-group">
 							<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" value="@CrawlPermission.showByUrl(permissionUrl).name" type="text">
+				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" value="@curName" type="text">
 							</div>
 						</div>
 					</div>
@@ -78,7 +78,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="target" value="@CrawlPermission.showByUrl(permissionUrl).target" placeholder="http://www.londonbusinessforum.com/" type="text">
+								<input class="form-control" name="target" value="@curTarget" placeholder="http://www.londonbusinessforum.com/" type="text">
 							</div>
 						</div>
 					</div>
@@ -97,7 +97,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Name: <font color="red">*</font><small class="text-center">(organisation or individual)</small></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="contactPerson" type="text">
+								<input class="form-control" name="contactPerson" type="text" value="@curContactPerson">
 							</div>
 						</div>
 					</div>
@@ -108,7 +108,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Position: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="position" type="text">
+								<input class="form-control" name="position" type="text" value="@curPosition">
 							</div>
 						</div>
 					</div>
@@ -119,7 +119,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="email" type="text">
+								<input class="form-control" name="email" type="text" value="@curEmail">
 							</div>
 						</div>
 					</div>
@@ -130,7 +130,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Postal Address: </label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="postalAddress" type="text">
+								<input class="form-control" name="postalAddress" type="text" value="@curPostalAddress">
 							</div>
 						</div>
 					</div>
@@ -141,7 +141,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Contact Organisation: </label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="contactOrganisation" type="text">
+								<input class="form-control" name="contactOrganisation" type="text" value="@curContactOrganisation">
 							</div>
 						</div>
 					</div>
@@ -152,7 +152,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Tel:</label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="phone" type="text">
+								<input class="form-control" name="phone" type="text" value="@curTel">
 							</div>
 						</div>
 					</div>
@@ -163,7 +163,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Any other information:</label>
 						    <div class="col-sm-6">
-		 						<textarea name="description" cols="100" rows="1" class="form-control">@CrawlPermission.showByUrl(permissionUrl).description</textarea>
+		 						<textarea name="description" cols="100" rows="1" class="form-control">@curDescription</textarea>
 							</div>
 						</div>
 					</div>

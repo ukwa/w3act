@@ -35,6 +35,7 @@
     <article class="permissions">
 
 		<div id="forms">
+			@warningmessage(flash)
    			@helper.form(action=routes.CrawlPermissions.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter crawl permission name" value="@searchstr" id="search-query">
