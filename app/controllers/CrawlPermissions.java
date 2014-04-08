@@ -608,7 +608,10 @@ public class CrawlPermissions extends AbstractController {
         }
         if (sendsome != null) {
         	Logger.info("send some crawl permission requests");
-            setPendingSelectedCrawlPermissions(false, template);//messageBody, messageSubject); 
+        	boolean sendingRes = setPendingSelectedCrawlPermissions(false, template);//messageBody, messageSubject); 
+            if (!sendingRes) {
+    			flash("message", "Missing contact email. Please check contact person");
+            }
 	        res = redirect(routes.CrawlPermissions.index()); 
         }
         if (preview != null) {
