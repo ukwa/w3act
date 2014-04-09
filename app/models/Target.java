@@ -1162,6 +1162,7 @@ public class Target extends Model {
 	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
 	                    Expr.icontains(Const.TITLE, filter)
 	                 ))
+	            .eq(Const.ACTIVE, true)
         		.eq(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
@@ -1190,6 +1191,7 @@ public class Target extends Model {
 	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
 	                    Expr.icontains(Const.TITLE, filter)
 	                 ))
+	            .eq(Const.ACTIVE, true)
         		.eq(Const.AUTHOR, user_url)
         		.icontains(Const.FIELD_SUBJECT, subject)
         		.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)        		
