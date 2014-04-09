@@ -98,6 +98,16 @@ public class MailTemplate extends Model
     }
     
     /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static MailTemplate findById(Long id) {
+    	MailTemplate res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+    
+    /**
      * Retrieve a mail template by URL.
      * @param url
      * @return mail template name

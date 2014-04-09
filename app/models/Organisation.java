@@ -97,6 +97,16 @@ public class Organisation extends Model {
     }
     
     /**
+     * Retrieve an object by Id (nid).
+     * @param nid
+     * @return object 
+     */
+    public static Organisation findById(Long nid) {
+    	Organisation res = find.where().eq(Const.NID, nid).findUnique();
+    	return res;
+    }          
+    
+    /**
      * This method returns all organisations related alphabetically sorted.
      * @return user list
      */

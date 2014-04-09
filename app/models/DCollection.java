@@ -120,6 +120,16 @@ public class DCollection extends Model {
     }
     
     /**
+     * Retrieve an object by Id (nid).
+     * @param nid
+     * @return object 
+     */
+    public static DCollection findById(Long nid) {
+    	DCollection res = find.where().eq(Const.NID, nid).findUnique();
+    	return res;
+    }          
+    
+    /**
      * This method returns all collections related alphabetically sorted.
      * @return user list
      */

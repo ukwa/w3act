@@ -66,7 +66,16 @@ public class Tag extends Model
                    .findUnique();
     }
 
-    
+    /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static Tag findById(Long id) {
+    	Tag res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+        
     /**
      * Retrieve a permission refusal by URL.
      * @param url

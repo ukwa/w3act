@@ -96,6 +96,7 @@ public final class Const {
 
 	// Target
 	public static final String NID                = "nid";
+	public static final String TID                = "tid";
 	public static final String TITLE              = "title";
 	public static final String FIELD_URL          = "fieldurl";
 	public static final String KEYSITE            = "keysite";

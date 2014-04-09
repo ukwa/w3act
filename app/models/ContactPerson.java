@@ -111,6 +111,16 @@ public class ContactPerson extends Model
     }
 
     /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static ContactPerson findById(Long id) {
+    	ContactPerson res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+    
+    /**
      * Retrieve a contact person by URL.
      * @param url
      * @return contact person name

@@ -68,6 +68,16 @@ public class Flag extends Model
 
     
     /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static Flag findById(Long id) {
+    	Flag res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+    
+    /**
      * Retrieve a permission refusal by URL.
      * @param url
      * @return permission refusal name

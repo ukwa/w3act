@@ -7,7 +7,9 @@
 	</div>
 
 	<ul class="nav nav-tabs">
+	   @if(PermissionRefusal.findById(refusal.id) != null) {
 	   <li><a href="@routes.PermissionRefusals.view(refusal.url)">View</a></li>
+	   }
 	   @if(user.hasRole("sys_admin")) {
 		   <li class="active"><a href="@routes.PermissionRefusals.edit(refusal.url)">Edit</a></li>
 	   }

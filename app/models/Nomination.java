@@ -123,7 +123,16 @@ public class Nomination extends Model
                    .findUnique();
     }
 
-    
+    /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static Nomination findById(Long id) {
+    	Nomination res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+        
     /**
      * Retrieve a permission refusal by URL.
      * @param url

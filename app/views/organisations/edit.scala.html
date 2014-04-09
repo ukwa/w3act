@@ -7,8 +7,10 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
+	   @if(Organisation.findById(organisation.nid) != null) {
 	   <li><a href="@routes.Organisations.view(organisation.url)">View</a></li>
 	   <li><a href="@routes.Organisations.sites(organisation.url)">Sites</a></li> 
+	   }
 	   @if(user.hasRole("sys_admin")) {
 		   <li class="active"><a href="@routes.Organisations.edit(organisation.url)">Edit</a></li>
 		   <li><a href="@routes.Organisations.admin(organisation.url)">User administration</a></li>

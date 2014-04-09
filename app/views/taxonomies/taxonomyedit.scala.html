@@ -7,7 +7,9 @@
     </div>
     
 	<ul class="nav nav-tabs">
+		@if(Taxonomy.findById(taxonomy.tid) != null) {
 		<li><a href="@routes.TaxonomiesController.view(taxonomy.url)">View</a></li>
+		}
 		@if(user.hasRole("sys_admin")) {
 		   <li class="active"><a href="@routes.TaxonomiesController.edit(taxonomy.url)">Edit</a></li>
 		}

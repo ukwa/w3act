@@ -138,6 +138,16 @@ public class CrawlPermission extends Model
     }
     
     /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static CrawlPermission findById(Long id) {
+    	CrawlPermission res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+    
+    /**
      * Retrieve a crawl permission by URL.
      * @param url
      * @return crawl permission name

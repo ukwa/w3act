@@ -21,7 +21,9 @@
 	</div>
 
 	<ul class="nav nav-tabs">
+	   @if(CrawlPermission.findById(permission.id) != null) {
 	   <li><a href="@routes.CrawlPermissions.view(permission.url)">View</a></li>
+	   }
 	   @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 		   <li class="active"><a href="@routes.CrawlPermissions.edit(permission.url)">Edit</a></li>
 	   }

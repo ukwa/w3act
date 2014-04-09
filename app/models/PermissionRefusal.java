@@ -79,7 +79,16 @@ public class PermissionRefusal extends Model
                    .findUnique();
     }
 
-    
+    /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static PermissionRefusal findById(Long id) {
+    	PermissionRefusal res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+        
     /**
      * Retrieve a permission refusal by URL.
      * @param url

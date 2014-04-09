@@ -73,6 +73,16 @@ public class Role extends Model
         return name;
     }
 
+    /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static Role findById(Long id) {
+    	Role res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+    
     public static Role findByName(String name)
     {
         return find.where()

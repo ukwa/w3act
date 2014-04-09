@@ -9,7 +9,9 @@
 	</div>
 
 	<ul class="nav nav-tabs">
+	   @if(Role.findById(role.id) != null) {
 	   <li><a href="@routes.Roles.view(role.url)">View</a></li>
+	   }
 	   @if(user.hasRole("sys_admin")) {
 	   <li class="active"><a href="@routes.Roles.edit(role.url)">Edit</a></li>
 	   <li><a href="@routes.Roles.admin(role.url)">Role administration</a></li>

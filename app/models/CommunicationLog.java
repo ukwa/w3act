@@ -94,6 +94,16 @@ public class CommunicationLog extends Model
     }    
     
     /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static CommunicationLog findById(Long id) {
+    	CommunicationLog res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+    
+    /**
      * Retrieve a communication log by URL.
      * @param url
      * @return communication log name

@@ -139,6 +139,16 @@ public class User extends Model {
     }
 
     /**
+     * Retrieve an object by Id (uid).
+     * @param nid
+     * @return object 
+     */
+    public static User findById(Long uid) {
+    	User res = find.where().eq(Const.UID, uid).findUnique();
+    	return res;
+    }
+    
+    /**
      * This method returns all users alphabetically sorted.
      * @return user list
      */

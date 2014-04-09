@@ -7,7 +7,9 @@
 	</div>
 
 	<ul class="nav nav-tabs">
+	   @if(CommunicationLog.findById(log.id) != null) {
 	   <li><a href="@routes.CommunicationLogs.view(log.url)">View</a></li>
+	   }
 	   @if(user.hasRole("sys_admin")) {
 		   <li class="active"><a href="@routes.CommunicationLogs.edit(log.url)">Edit</a></li>
 	   }

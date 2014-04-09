@@ -54,6 +54,16 @@ public class Permission extends Model
         return name;
     }
 
+    /**
+     * Retrieve an object by Id (id).
+     * @param nid
+     * @return object 
+     */
+    public static Permission findById(Long id) {
+    	Permission res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+    
     public static Permission findByName(String name)
     {
         return find.where()

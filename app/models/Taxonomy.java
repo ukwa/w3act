@@ -77,6 +77,16 @@ public class Taxonomy extends Model {
     }
     
     /**
+     * Retrieve an object by Id (tid).
+     * @param nid
+     * @return object 
+     */
+    public static Taxonomy findById(Long nid) {
+    	Taxonomy res = find.where().eq(Const.TID, nid).findUnique();
+    	return res;
+    }          
+    
+    /**
      * Create a new Taxonomy.
      */
     public static Taxonomy create(String name) {
