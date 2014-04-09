@@ -3,6 +3,8 @@ package controllers;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import models.DCollection;
 import models.Flag;
 import models.Organisation;
@@ -10,10 +12,9 @@ import models.Tag;
 import models.Target;
 import models.Taxonomy;
 import models.User;
-
-import org.apache.commons.lang3.StringUtils;
-
 import play.Logger;
+import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -22,6 +23,7 @@ import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
+import views.html.targets.edit;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -57,6 +59,28 @@ public class TargetController extends AbstractController {
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
         	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
 
+        	DynamicForm requestData = Form.form().bindFromRequest();
+        	String title = requestData.get(Const.TITLE);
+        	Logger.info("form title: " + title);
+        	
+            Form<Target> targetForm = Form.form(Target.class).bindFromRequest();
+//            targetForm.get().field_url
+            /*if(targetForm.hasErrors()) {
+            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + targetForm.errors().toString());
+//            	return badRequest(
+//                        edit.render(targetForm, User.find.byId(request().username()))
+//                      );
+//        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " +
+        				"\n\nMissing fields are:\n" + targetForm.errors().toString());
+//    			flash("message", "Please fill out ll the required fields, marked with a red star. There are required fields in more than one tab. " + 
+//    							 targetForm.errors().toString());
+//            	return ok(
+//		              edit.render(targetForm, User.find.byId(request().username()))
+//		            );
+    	    } else {*/
+//            	Target targetFormObject = targetForm.get();
+//            	Logger.info("targetFormObject: " + targetFormObject);
             Target target = new Target();
         	Target newTarget = new Target();
             boolean isExisting = true;
@@ -72,18 +96,20 @@ public class TargetController extends AbstractController {
         			|| StringUtils.isBlank(getFormParam(Const.SUBSUBJECT))
         			|| StringUtils.isBlank(getFormParam(Const.AUTHOR))
         			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
-    			Logger.info("One of the required fields is empty. Please fill out all required fields marked by red star in edit page.");
-    			flash("message", "Please fill out all required fields marked by red star in edit page");
-    			if (isExisting) {
-    				if (target != null && target.url != null) {
-    	    			Logger.info("target.url: " + target.url);
-    					return redirect(routes.Targets.edit(target.url));
-    				} else {
-        				return redirect(routes.Targets.create(getFormParam(Const.FIELD_URL)));
-        			}
-    			} else {
-    				return redirect(routes.Targets.create(getFormParam(Const.FIELD_URL)));
-    			}
+            	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+//    			Logger.info("One of the required fields is empty. Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+//    			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+//    			if (isExisting) {
+//    				if (target != null && target.url != null) {
+//    	    			Logger.info("target.url: " + target.url);
+//    					return redirect(routes.Targets.edit(target.url));
+//    				} else {
+//        				return redirect(routes.Targets.create(getFormParam(Const.FIELD_URL)));
+//        			}
+//    			} else {
+//    				return redirect(routes.Targets.create(getFormParam(Const.FIELD_URL)));
+//    			}
         	}    	
 
             if (target == null) {
@@ -110,6 +136,7 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.STATUS) != null) {
 //        		Logger.info("status: " + getFormParam(Const.STATUS) + ".");
             	newTarget.status = Long.valueOf(getFormParam(Const.STATUS));
+//        		Logger.info("status: " + newTarget.status + ".");
             } 
             if (getFormParam(Const.QA_STATUS) != null) {
             	newTarget.qa_status = getFormParam(Const.QA_STATUS);
@@ -180,7 +207,7 @@ public class TargetController extends AbstractController {
             }
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
-//            		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
+            		Logger.info("nominating organisation: " + getFormParam(Const.ORGANISATION));
             		newTarget.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
             	} else {
             		newTarget.field_nominating_organisation = Const.NONE;
@@ -314,6 +341,7 @@ public class TargetController extends AbstractController {
 	        Logger.info("save target: " + newTarget.toString());
 	        res = redirect(routes.Targets.edit(newTarget.url));
         } 
+        //} // end of save
         if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.NID));
         	Logger.info("deleting: " + id);

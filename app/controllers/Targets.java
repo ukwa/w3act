@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -528,7 +529,10 @@ public class Targets extends AbstractController {
         target.active = true;
 		Logger.info("add entry with target url: " + target.url);
 		Logger.info("target name: " + target.title);
-        return ok(edit.render(target, User.find.byId(request().username())));
+		Form<Target> targetForm = Form.form(Target.class);
+		targetForm = targetForm.fill(target);
+        return ok(edit.render(targetForm, User.find.byId(request().username())));
+//        return ok(edit.render(target, User.find.byId(request().username())));
     }
     
     /**
@@ -692,11 +696,14 @@ public class Targets extends AbstractController {
 		Logger.info("Targets.edit() url: " + url);
 		Target target = Target.findByUrl(url);
 		Logger.info("Targets.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
-        return ok(
-                edit.render(
-                        Target.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<Target> targetForm = Form.form(Target.class);
+		targetForm = targetForm.fill(Target.findByUrl(url));
+        return ok(edit.render(targetForm, User.find.byId(request().username())));
+//        return ok(
+//                edit.render(
+//                        Target.findByUrl(url), User.find.byId(request().username())
+//                )
+//            );
     }
     
     public static Result view(String url) {

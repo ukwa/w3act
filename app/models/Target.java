@@ -36,6 +36,7 @@ import controllers.Flags;
 @Entity 
 public class Target extends Model {
 
+    @Required
     @Id
     public Long nid; // Legacy Site ID
     @Column(columnDefinition = "TEXT")
@@ -99,12 +100,14 @@ public class Target extends Model {
     public String selector_notes; 
     @Column(columnDefinition = "TEXT")
     public String archivist_notes; 
+    @Required
     public String selection_type; 
     public String selector;     
     @Column(columnDefinition = "TEXT")
     public String flag_notes; 
     
     // lists
+    @Required
     @Column(columnDefinition = "TEXT")
     public String field_url; 
     @Column(columnDefinition = "TEXT")
@@ -125,8 +128,10 @@ public class Target extends Model {
     public String field_notes; 
     @Column(columnDefinition = "TEXT")
     public String field_instances; 
+    @Required
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
+    @Required
     @Column(columnDefinition = "TEXT")
     public String field_subsubject; 
     @Column(columnDefinition = "TEXT")

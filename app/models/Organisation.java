@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -178,6 +179,7 @@ public class Organisation extends Model {
     		res.url = Const.NONE;
 //    		Logger.info("not found: " + res);
     	}
+//		Logger.info("return: " + res);
     	return res;
     }
 
@@ -191,6 +193,7 @@ public class Organisation extends Model {
     	Organisation res = new Organisation();
     	if (title != null && title.length() > 0) {
     		res = find.where().eq(Const.TITLE, title).findUnique();
+//        	Logger.info("res: " + res);
     		if (res == null) {
     			res = new Organisation();
         		res.title = Const.NONE;
@@ -200,6 +203,7 @@ public class Organisation extends Model {
     		res.title = Const.NONE;
     		res.url = Const.NONE;
     	}
+//    	Logger.info("final organisation res: " + res);
     	return res;
     }
 
