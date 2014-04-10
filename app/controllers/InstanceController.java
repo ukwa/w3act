@@ -164,24 +164,24 @@ public class InstanceController extends AbstractController {
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newInstance.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
-            if (getFormParam(Const.SUBJECT) != null) {
-            	if (!getFormParam(Const.SUBJECT).toLowerCase().contains(Const.NONE)) {
-	            	String[] subjects = getFormParams(Const.SUBJECT);
-	//            	Logger.info("subjects: " + subjects[0] + subjects[1]);
-	            	String resSubject = "";
-	            	for (String subject: subjects)
-	                {
-	            		if (subject != null && subject.length() > 0) {
-	                		Logger.info("add subject: " + subject);
-//	                		Logger.info("add subject: " + subject + ", " + Taxonomy.findByName(subject).url);
-	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBJECT).url + Const.LIST_DELIMITER;
-	            		}
-	                }
-	            	newInstance.field_subject = resSubject;
-            	} else {
-            		newInstance.field_subject = Const.NONE;
-            	}
-            }
+//            if (getFormParam(Const.SUBJECT) != null) {
+//            	if (!getFormParam(Const.SUBJECT).toLowerCase().contains(Const.NONE)) {
+//	            	String[] subjects = getFormParams(Const.SUBJECT);
+//	//            	Logger.info("subjects: " + subjects[0] + subjects[1]);
+//	            	String resSubject = "";
+//	            	for (String subject: subjects)
+//	                {
+//	            		if (subject != null && subject.length() > 0) {
+//	                		Logger.info("add subject: " + subject);
+////	                		Logger.info("add subject: " + subject + ", " + Taxonomy.findByName(subject).url);
+//	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBJECT).url + Const.LIST_DELIMITER;
+//	            		}
+//	                }
+//	            	newInstance.field_subject = resSubject;
+//            	} else {
+//            		newInstance.field_subject = Const.NONE;
+//            	}
+//            }
             if (getFormParam(Const.SUBSUBJECT) != null) {
             	if (!getFormParam(Const.SUBSUBJECT).toLowerCase().contains(Const.NONE)) {
 	            	String[] subjects = getFormParams(Const.SUBSUBJECT);

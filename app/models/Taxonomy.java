@@ -441,6 +441,19 @@ public class Taxonomy extends Model {
     	return res;
     }
         
+    /**
+     * Retrieve a Taxonomy by parent.
+     * @param taxonomy parent
+     * @return taxonomy object
+     */
+	public static Taxonomy findByParent(String parent) {
+    	Taxonomy res = null;
+    	if (parent != null && parent.length() > 0) {
+	        res = find.where().eq(Const.PARENT, parent).findUnique();
+        }
+    	return res;
+    }
+        
 	/**
 	 * This method retrieves subject index by name.
 	 * @param subject
