@@ -63,11 +63,15 @@ public class DCollection extends Model {
     public Long comment_count;
     @JsonIgnore
     public Long comment_count_new;
-    // TODO difference between XML and JSON
     @JsonIgnore
     public String revision;
     @JsonIgnore
     public Long feed_nid;    
+    /**
+     * 'true' if collection should be made visible in the UI, default 'false'
+     */
+    @JsonIgnore
+    public Boolean publish;
     // lists
     @Column(columnDefinition = "TEXT") @JsonIgnore
     public String field_targets; 
@@ -95,9 +99,11 @@ public class DCollection extends Model {
      */
     public DCollection(String title) {
         this.title = title;
+        this.publish = false;
     }
 
     public DCollection() {
+        this.publish = false;
     }
     
     // -- Queries

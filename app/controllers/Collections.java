@@ -17,6 +17,7 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.Utils;
 import views.html.collections.edit;
 import views.html.collections.view;
 import views.html.collections.list;
@@ -186,6 +187,7 @@ public class Collections extends AbstractController {
                 }
                 
                 collection.title = getFormParam(Const.TITLE);
+                collection.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
         	    if (getFormParam(Const.SUMMARY) != null) {
         	    	collection.summary = getFormParam(Const.SUMMARY);
         	    }

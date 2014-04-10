@@ -33,6 +33,23 @@
 			</div>
      	</div>
      	
+		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Publish</label>
+				    <div class="col-sm-6">
+		                @if(collection.publish != null && collection.publish) {             
+			                <input type="checkbox" name="publish" value="true" checked/>
+		                } else {
+			                <input type="checkbox" name="publish" value="true"/>
+		                }
+					</div>
+				</div>
+			</div>
+     	</div>		     				     	
+		}     	
+		
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">

@@ -18,6 +18,14 @@
 			<dl class="dl-horizontal text-overflow">
 				<dt>Description lists:</dt>
 				<dd>@collection.title</dd>
+				<dt>Publish:</dt>
+				<dd>
+	                @if(collection.publish != null && collection.publish) {             
+		                yes
+	                } else {
+		                no
+	                }
+				</dd>
 				<dt>Description:</dt>
 				<dd>@collection.summary</dd>
 				<dt>Revision log message:</dt>
