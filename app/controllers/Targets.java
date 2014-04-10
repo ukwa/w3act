@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DCollection;
+import models.Flag;
 import models.Organisation;
 import models.Target;
 import models.Taxonomy;
@@ -275,10 +276,11 @@ public class Targets extends AbstractController {
      * @param collection The associated collection
      * @param license The license name
      * @param pageSize The number of Target entries on the page
+     * @param flag The flag assigned by user
      */
     public static Result targets(int pageNo, String sortBy, String order, String filter, String curator,
     		String organisation, String subject, String crawlFrequency, String depth, String collection, 
-    		String license, int pageSize) {
+    		String license, int pageSize, String flag) {
     	Logger.info("Targets.targets()");   	
         return ok(
         	targets.render(
@@ -286,7 +288,7 @@ public class Targets extends AbstractController {
         			User.find.byId(request().username()), 
         			filter, 
         			Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
-        					subject, crawlFrequency, depth, collection, license), 
+        					subject, crawlFrequency, depth, collection, license, flag), 
         			sortBy, 
         			order, 
                 	curator, 
@@ -296,7 +298,8 @@ public class Targets extends AbstractController {
                 	depth, 
                 	collection, 
                 	license, 
-                	pageSize)
+                	pageSize,
+                	flag)
         	);
     }
 	
@@ -369,7 +372,12 @@ public class Targets extends AbstractController {
     	} 
     	String depth = form.get(Const.FIELD_DEPTH);
     	String crawlFrequency = form.get(Const.FIELD_CRAWL_FREQUENCY);
-
+    	String inputFlag = form.get(Const.FLAGS);
+    	String flag = "";
+    	if (inputFlag != null && !inputFlag.toLowerCase().equals(Const.NONE)) {
+	    	String origFlag = Flags.getNameFromGuiName(inputFlag);
+	    	flag = Flag.findByName(origFlag).url;
+    	}
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
@@ -384,20 +392,20 @@ public class Targets extends AbstractController {
     		else if (Const.EXPORT.equals(action)) {
     			List<Target> exportTargets = new ArrayList<Target>();
     	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, 
-    					subject, crawlFrequency, depth, collection, license); 
+    					subject, crawlFrequency, depth, collection, license, flag); 
     			int rowCount = page.getTotalRowCount();
     	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, 
-    					subject, crawlFrequency, depth, collection, license); 
+    					subject, crawlFrequency, depth, collection, license, flag); 
     			exportTargets.addAll(pageAll.getList());
 				Logger.info("export size: " + exportTargets.size());
     			export(exportTargets);
     	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation, 
-    	    			subject, crawlFrequency, depth, collection, license, pageSize));
+    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
     		} 
     		else if (Const.SEARCH.equals(action) || Const.APPLY.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.Targets.targets(pageNo, sort, order, query, curator, organisation, 
-    	    			subject, crawlFrequency, depth, collection, license, pageSize));
+    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
@@ -686,7 +694,7 @@ public class Targets extends AbstractController {
         );
     
     public static Result GO_TARGETS_HOME = redirect(
-            routes.Targets.targets(0, "title", "asc", "", "", "", "", "", "", "", "", Const.PAGINATION_OFFSET)
+            routes.Targets.targets(0, "title", "asc", "", "", "", "", "", "", "", "", Const.PAGINATION_OFFSET, "")
         );
     
     /**

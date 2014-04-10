@@ -112,6 +112,7 @@ public final class Const {
 	public static final String FIELD_COLLECTION_CATEGORIES = "field_collection_categories";
 	public static final String FIELD_SCOPE        = "field_scope";
 	public static final String FIELD_DEPTH        = "field_depth";
+	public static final String FLAG               = "flag";
 	public static final String REVISION           = "revision";
 	public static final String ACTIVE             = "active";
 	public static final String FIELD_WCT_ID       = "wct";

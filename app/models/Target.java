@@ -1030,26 +1030,24 @@ public class Target extends Model {
     
     /**
      * Return a page of Target objects.
-     * @param page Page to display
-     * @param pageSize Number of targets per page
-     * @param sortBy Target property used for sorting
-     * @param order Sort order (either or asc or desc)
-     * @param curatorUrl
-     * @param organisationUrl
-     * @param collectionCategoryUrl
-     * @param subjectUrl
-     * @param crawlFrequency
-     * @param depth
-     * @param suggested_collections
-     * @param offset The current page number
-     * @param limit The maximal row count
-     * @param filterUrl
-     * @param license
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filterUrl Filter applied on target urls
+     * @param curatorUrl Author of the target
+     * @param organisationUrl The author's organisation
+     * @param subjectUrl Target subject
+     * @param crawlFrequency The crawl frequency
+     * @param depth The crawl depth
+     * @param suggested_collections The associated collection
+     * @param license The license name
+     * @param pageSize The number of Target entries on the page
+     * @param flag The flag assigned by user
      * @return
      */
     public static Page<Target> pageTargets(int page, int pageSize, String sortBy, String order, String filterUrl, 
     		String curatorUrl, String organisationUrl, String subjectUrl, String crawlFrequency, String depth, 
-    		String suggested_collections, String license) {
+    		String suggested_collections, String license, String flag) {
     	ExpressionList<Target> exp = Target.find.where();
     	Page<Target> res = null;
    		exp = exp.eq(Const.ACTIVE, true);
@@ -1078,6 +1076,9 @@ public class Target extends Model {
     	} 
     	if (license != null && !license.equals("") && !license.toLowerCase().equals(Const.NONE)) {
     		exp = exp.icontains(Const.FIELD_LICENSE_NODE, suggested_collections);
+    	} 
+    	if (flag != null && !flag.equals("") && !flag.toLowerCase().equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FLAGS, flag);
     	} 
     	res = exp.query()
         		.orderBy(sortBy + " " + order)

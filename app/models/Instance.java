@@ -504,7 +504,7 @@ public class Instance extends Model {
      */
     public static Instance findByUrl(String url) {
     	Instance res = new Instance();
-        Logger.info("instance url: " + url);
+//        Logger.info("instance url: " + url);
         
         if (!url.contains(Const.COMMA)) {
 	        Instance res2 = find.where().eq(Const.URL, url).findUnique();
@@ -513,7 +513,7 @@ public class Instance extends Model {
 	        } else {
 	        	res = res2;
 	        }
-	        Logger.info("instance title: " + res.title);
+//	        Logger.info("instance title: " + res.title);
         }
     	return res;
     }          
