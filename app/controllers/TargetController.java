@@ -281,7 +281,9 @@ public class TargetController extends AbstractController {
 //            	String licenseUrl = Taxonomy.findByFullNameExt(getFormParam(Const.FIELD_LICENSE), Const.LICENCE).url;
 //            	newTarget.field_license = licenseUrl;
 //            }
-            newTarget.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
+            newTarget.field_uk_hosting = Target.isInScopeIp(newTarget.field_url, newTarget.url);
+        	Logger.debug("field_uk_hosting: " + newTarget.field_uk_hosting);
+//            Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
             newTarget.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newTarget.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
             newTarget.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
@@ -436,7 +438,7 @@ public class TargetController extends AbstractController {
 		    		} else {
 		    			sb.append(", ");
 		    		}
-	    			Logger.debug("added");
+//	    			Logger.debug("added");
 					sb.append("{\"title\": \"" + collection.title + "\"," + checkSelection(collection.url, targetUrl) + 
 							" \"key\": \"" + collection.url + "\"" + 
 							getChildren(collection.url, targetUrl) + "}");

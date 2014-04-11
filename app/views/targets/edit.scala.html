@@ -603,21 +603,41 @@
 						In order to be considered as in scope for Non-Print Legal Deposit, a resource must pass one of a series of tests.
 					</div>
 				</div>		     	
+
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">UK Hosting <small class="text-center">(The domain is hosted in the UK)</small></label>
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Hosting
+							</label>
 						    <div class="col-sm-6">
-				                @if(form("field_uk_hosting").value != null && form("field_uk_hosting").value) {             
-					                <input type="checkbox" name="field_uk_hosting" value="true" checked />
-				                } else {
-					                <input type="checkbox" name="field_uk_hosting" value="true" />
-				                }
+								@if(Target.isInScopeIp(form("field_url").value, form("url").value)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
 							</div>
 						</div>
 					</div>
-		     	</div>
-
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK top-level domain
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeDomain(form("field_url").value, form("url").value)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
