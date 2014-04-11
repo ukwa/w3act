@@ -986,6 +986,7 @@ public class Target extends Model {
     public static Page<Target> page(int page, int pageSize, String sortBy, String order, String filter) {
 
         return find.where()
+           		.eq(Const.ACTIVE, true)
         		.add(Expr.or(
 	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
 	                    Expr.icontains(Const.TITLE, filter)
