@@ -98,6 +98,9 @@
 							<label for="inputUrls" class="col-sm-6 control-label">
 								Seed URL(s) 
 								<small class="text-center">(One or more URLs, separated by comma)</small>
+								@if(instance.field_url != null && instance.field_url.length > 0) {
+								<br><a href="@routes.Instances.index()/list/?s=title&f=@instance.field_url">all instances for the target</a>
+								}
 							</label>
 						    <div class="col-sm-6">
 								<input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@instance.field_url" readonly>
