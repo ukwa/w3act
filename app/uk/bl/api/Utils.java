@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -238,6 +240,27 @@ public class Utils {
     			if (list.equals(elem)) {
     				res = true;
     			}
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method evaluates if object is in a list.
+     * @param object The given object for searching
+     * @param list The list that contains objects of the same type
+     * @return true if in list
+     */
+    public static boolean hasObjectInList(String object, List<String> list) {
+    	boolean res = false;
+    	if (list != null && object != null) {
+	    	Iterator<String> itr = list.iterator();
+	    	while (itr.hasNext()) {
+	    		String entry = itr.next();
+	    		if (entry.equals(object)) {
+	    			res = true;
+	    			break;
+	    		}
     		}
     	}
     	return res;
