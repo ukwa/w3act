@@ -951,6 +951,32 @@
 		</div>
 
 		<div class="padding-20">
+			<div class="panel-group" id="accordion">
+				<div class="panel panel-primary" id="panels">
+					<div class="panel-heading">
+				    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
+				        	Instances
+						</a>
+					</div>
+					<div id="collapseInstances" class="panel-collapse collapse">
+						<div class="panel-footer">
+							<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@form("field_url").value">In QA Wayback</a>
+						</div>
+					    <div class="panel-footer">
+				        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@form("field_url").value">In Open UK Web Archive</a>
+						</div>
+						<div class="panel-footer">
+							<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@form("field_url").value">In other web archives</a>
+						</div>
+					    <div class="panel-footer">
+				        	<a class="brand" target="_blank" href="@form("field_url").value">Live site</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="padding-20">
 			<div class="alert alert-info">
 				Provide an explanation of the changes you are making. This will help other authors understand your motivations.
 			</div>
