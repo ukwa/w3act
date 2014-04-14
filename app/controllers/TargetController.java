@@ -142,6 +142,7 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.QA_STATUS) != null) {
             	newTarget.qa_status = getFormParam(Const.QA_STATUS);
             } 
+    		Logger.info("QA status: " + newTarget.qa_status + ", getFormParam(Const.QA_STATUS): " + getFormParam(Const.QA_STATUS));
             if (getFormParam(Const.LANGUAGE) != null) {
 //        		Logger.info("language: " + getFormParam(Const.LANGUAGE) + ".");
             	newTarget.language = getFormParam(Const.LANGUAGE);
