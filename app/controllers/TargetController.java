@@ -286,10 +286,27 @@ public class TargetController extends AbstractController {
 //            Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
             newTarget.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newTarget.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
+            Logger.debug("newTarget.field_uk_postal_address: " + newTarget.field_uk_postal_address);
+            if (newTarget.field_uk_postal_address 
+            		&& (newTarget.field_uk_postal_address_url == null || newTarget.field_uk_postal_address_url.length() == 0)) {
+            	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
+        		return badRequest("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
+            }
             newTarget.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
             newTarget.value = getFormParam(Const.FIELD_NOTES);
+            if (newTarget.field_via_correspondence 
+            		&& (newTarget.value == null || newTarget.value.length() == 0)) {
+            	Logger.info("If Via Correspondence field has value 'Yes', the Notes field is required.");
+        		return badRequest("If Via Correspondence field has value 'Yes', the Notes field is required.");
+            }
             newTarget.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
             newTarget.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
+            Logger.debug("newTarget.field_professional_judgement: " + newTarget.field_professional_judgement);
+            if (newTarget.field_professional_judgement 
+            		&& (newTarget.field_professional_judgement_exp == null || newTarget.field_professional_judgement_exp.length() == 0)) {
+            	Logger.info("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
+        		return badRequest("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
+            }
             newTarget.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
 //            Logger.info("ignore robots: " + getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
             newTarget.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));

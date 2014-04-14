@@ -572,27 +572,46 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">UK Hosting <small class="text-center">(The domain is hosted in the UK)</small></label>
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Hosting
+							</label>
 						    <div class="col-sm-6">
-				                @if(instance.field_uk_hosting != null && instance.field_uk_hosting) {             
-					                <input type="checkbox" name="field_uk_hosting" value="true" checked />
-				                } else {
-					                <input type="checkbox" name="field_uk_hosting" value="true" />
-				                }
+								@if(Target.isInScopeIp(instance.field_url, instance.url)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
 							</div>
 						</div>
 					</div>
-		     	</div>
-
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK top-level domain
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeDomain(instance.field_url, instance.url)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+		
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 						    <div class="col-sm-6">
 				                @if(instance.field_uk_postal_address != null && instance.field_uk_postal_address) {             
-					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
+					                <input type="checkbox" name="field_uk_postal_address" value="true" />
 				                } else {
-					                <input type="checkbox" name="field_uk_postal_address" value="true"/>
+					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
 				                }
 							</div>
 						</div>
@@ -616,9 +635,9 @@
 							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 						    <div class="col-sm-6">
 				                @if(instance.field_via_correspondence != null && instance.field_via_correspondence) {             
-					                <input type="checkbox" name="field_via_correspondence" value="true" checked />
-				                } else {
 					                <input type="checkbox" name="field_via_correspondence" value="true" />
+				                } else {
+					                <input type="checkbox" name="field_via_correspondence" value="true" checked/>
 				                }
 							</div>
 						</div>
@@ -643,9 +662,9 @@
 							<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
 						    <div class="col-sm-6">
 				                @if(instance.field_professional_judgement != null && instance.field_professional_judgement) {             
-					                <input type="checkbox" name="field_professional_judgement" value="true" checked />
-				                } else {
 					                <input type="checkbox" name="field_professional_judgement" value="true" />
+				                } else {
+					                <input type="checkbox" name="field_professional_judgement" value="true" checked/>
 				                }
 							</div>
 						</div>
@@ -670,9 +689,9 @@
 							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
 				                @if(instance.field_no_ld_criteria_met != null && instance.field_no_ld_criteria_met) {             
-					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked />
+					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" />
 				                } else {
-				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true"/>
+				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true" checked/>
 				                }
 	                		</div>
 						</div>

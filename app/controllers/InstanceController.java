@@ -3,6 +3,8 @@ package controllers;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.*;
 import play.mvc.*;
 import models.*;
@@ -110,14 +112,17 @@ public class InstanceController extends AbstractController {
             	Logger.info("is not existing");
             	isExisting = false;
             }
-//            newInstance.nid = Utils.createId();
-//            newInstance.url = instance.url;
-//            newInstance.author = instance.author;
+        	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
+        			|| StringUtils.isBlank(getFormParam(Const.FIELD_URL))
+        			|| StringUtils.isBlank(getFormParam(Const.SUBSUBJECT))
+        			|| StringUtils.isBlank(getFormParam(Const.AUTHOR))
+        			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
+            	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+        	}    	
             if (newInstance.author == null) {
             	newInstance.author = getFormParam(Const.USER);
             }
-//            newInstance.field_collection_categories = instance.field_collection_categories;
-//            newInstance.field_nominating_organisation = instance.field_nominating_organisation;
 //            Logger.info("new nid: " + newInstance.nid);
             newInstance.title = getFormParam(Const.TITLE);
             newInstance.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
@@ -261,13 +266,30 @@ public class InstanceController extends AbstractController {
             	newInstance.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
             }
             newInstance.field_license = getFormParam(Const.FIELD_LICENSE);
-            newInstance.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
+//            newInstance.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
+            newInstance.field_uk_hosting = Target.isInScopeIp(newInstance.field_url, newInstance.url);
+        	Logger.debug("field_uk_hosting: " + newInstance.field_uk_hosting);
             newInstance.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newInstance.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
+            if (newInstance.field_uk_postal_address.equals(Const.YES) 
+            		&& (newInstance.field_uk_postal_address_url == null || newInstance.field_uk_postal_address_url.length() == 0)) {
+            	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
+        		return badRequest("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
+            }
             newInstance.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
             newInstance.field_notes = getFormParam(Const.FIELD_NOTES);
+            if (newInstance.field_via_correspondence.equals(Const.YES) 
+            		&& (newInstance.value == null || newInstance.value.length() == 0)) {
+            	Logger.info("If Via Correspondence field has value 'Yes', the Notes field is required.");
+        		return badRequest("If Via Correspondence field has value 'Yes', the Notes field is required.");
+            }
             newInstance.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
             newInstance.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
+            if (newInstance.field_professional_judgement.equals(Const.YES) 
+            		&& (newInstance.field_professional_judgement_exp == null || newInstance.field_professional_judgement_exp.length() == 0)) {
+            	Logger.info("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
+        		return badRequest("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
+            }
             newInstance.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
             newInstance.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));           
             if (getFormParam(Const.FIELD_CRAWL_START_DATE) != null) {

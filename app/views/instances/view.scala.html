@@ -456,18 +456,37 @@
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						<label class="col-sm-6 control-label">UK Hosting <small class="text-center">(The domain is hosted in the UK)</small></label>
+						<label for="inputUrls" class="col-sm-6 control-label">
+							UK Hosting
+						</label>
 					    <div class="col-sm-6">
-			                @if(instance.field_uk_hosting != null && instance.field_uk_hosting) {             
-				                yes
-			                } else {
-				                no
-			                }
+							@if(Target.isInScopeIp(instance.field_url, instance.url)) {
+				            	<font id="isInScope" style="color: green">yes</font>
+							} else {
+								<font id="isInScope" style="color: red">no</font>
+							}
 						</div>
 					</div>
 				</div>
-	     	</div>
+	     	</div>	     	
 
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputUrls" class="col-sm-6 control-label">
+							UK top-level domain
+						</label>
+					    <div class="col-sm-6">
+							@if(Target.isInScopeDomain(instance.field_url, instance.url)) {
+				            	<font id="isInScope" style="color: green">yes</font>
+							} else {
+								<font id="isInScope" style="color: red">no</font>
+							}
+						</div>
+					</div>
+				</div>
+	     	</div>	     	
+	
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">

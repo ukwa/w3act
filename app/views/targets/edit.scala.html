@@ -262,7 +262,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_key_site").value != null && form("field_key_site").value) {             
+				                @if(form("field_key_site").value != null && form("field_key_site").value == "true") {             
 					                <input type="checkbox" name="keysite" value="true" checked />
 				                } else {
 					                <input type="checkbox" name="keysite" value="true"/>
@@ -643,10 +643,10 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_uk_postal_address").value != null && form("field_uk_postal_address").value) {             
+				                @if(form("field_uk_postal_address").value != null && form("field_uk_postal_address").value == "true") {             
 					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
 				                } else {
-					                <input type="checkbox" name="field_uk_postal_address" value="true"/>
+					                <input type="checkbox" name="field_uk_postal_address" value="true" />
 				                }
 							</div>
 						</div>
@@ -669,8 +669,8 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_via_correspondence").value != null && form("field_via_correspondence").value) {             
-					                <input type="checkbox" name="field_via_correspondence" value="true" checked />
+				                @if(form("field_via_correspondence").value != null && form("field_via_correspondence").value == "true") {             
+					                <input type="checkbox" name="field_via_correspondence" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_via_correspondence" value="true" />
 				                }
@@ -696,8 +696,8 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_professional_judgement").value != null && form("field_professional_judgement").value) {             
-					                <input type="checkbox" name="field_professional_judgement" value="true" checked />
+				                @if(form("field_professional_judgement").value != null && form("field_professional_judgement").value == "true") {             
+					                <input type="checkbox" name="field_professional_judgement" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_professional_judgement" value="true" />
 				                }
@@ -723,10 +723,10 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_no_ld_criteria_met").value != null && form("field_no_ld_criteria_met").value) {             
-					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked />
+				                @if(form("field_no_ld_criteria_met").value != null && form("field_no_ld_criteria_met").value == "true") {             
+					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked/>
 				                } else {
-				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true"/>
+				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true" />
 				                }
 	                		</div>
 						</div>
@@ -779,7 +779,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_ignore_robots_txt").value != null && form("field_ignore_robots_txt").value) {             
+				                @if(form("field_ignore_robots_txt").value != null && form("field_ignore_robots_txt").value == "true") {             
 					                <input type="checkbox" name="field_ignore_robots_txt" value="true" checked />
 				                } else {
 					                <input type="checkbox" name="field_ignore_robots_txt" value="true"/>
