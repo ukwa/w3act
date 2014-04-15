@@ -358,9 +358,9 @@ public class DCollection extends Model {
 		List<DCollection> res = new ArrayList<DCollection>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Target target = Target.findByUrl(targetUrl);
-    		if (target.field_suggested_collections != null) {
-//    			Logger.info("getSelectedCollections() field_suggested_collections: " + target.field_suggested_collections);
-		    	String[] parts = target.field_suggested_collections.split(Const.COMMA + " ");
+    		if (target.field_collection_categories != null) {
+//    			Logger.info("getSelectedCollections() field_collection_categories: " + target.field_collection_categories);
+		    	String[] parts = target.field_collection_categories.split(Const.COMMA + " ");
 		    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 		    		DCollection collection = findByUrl(part);
@@ -384,9 +384,9 @@ public class DCollection extends Model {
 		List<DCollection> res = new ArrayList<DCollection>();
     	if (instanceUrl != null && instanceUrl.length() > 0) {
     		Instance instance = Instance.findByUrl(instanceUrl);
-    		if (instance.field_suggested_collections != null) {
-//    			Logger.info("getSelectedCollections() field_suggested_collections: " + target.field_suggested_collections);
-		    	String[] parts = instance.field_suggested_collections.split(Const.COMMA + " ");
+    		if (instance.field_collection_categories != null) {
+//    			Logger.info("getSelectedCollections() field_collection_categories: " + target.field_collection_categories);
+		    	String[] parts = instance.field_collection_categories.split(Const.COMMA + " ");
 		    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 		    		DCollection collection = findByUrl(part);

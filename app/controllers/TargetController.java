@@ -124,7 +124,7 @@ public class TargetController extends AbstractController {
             if (target.author == null) {
             	newTarget.author = getFormParam(Const.USER);
             }
-            newTarget.field_collection_categories = target.field_collection_categories;
+//            newTarget.field_collection_categories = target.field_collection_categories;
             newTarget.field_nominating_organisation = target.field_nominating_organisation;
 //            Logger.info("new nid: " + newTarget.nid);
             newTarget.title = getFormParam(Const.TITLE);
@@ -203,9 +203,8 @@ public class TargetController extends AbstractController {
             	}
             }
             if (getFormParam(Const.TREE_KEYS) != null) {
-//            	newTarget.field_suggested_collections = getFormParam(Const.TREE_KEYS);
-	    		newTarget.field_suggested_collections = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-	    		Logger.debug("newTarget.field_suggested_collections: " + newTarget.field_suggested_collections);
+	    		newTarget.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+	    		Logger.debug("newTarget.field_collection_categories: " + newTarget.field_collection_categories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
@@ -424,8 +423,8 @@ public class TargetController extends AbstractController {
     	String res = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Target target = Target.findByUrl(targetUrl);
-    		if (target.field_suggested_collections != null && 
-    				target.field_suggested_collections.contains(collectionUrl)) {
+    		if (target.field_collection_categories != null && 
+    				target.field_collection_categories.contains(collectionUrl)) {
     			res = "\"select\": true ,";
     		}
     	}
