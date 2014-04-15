@@ -546,7 +546,11 @@
 						                @if(selection_type.equals(form("selection_type").value)) {
 						                	<option selected>@form("selection_type").value</option>
 						                } else {
+						                	@if(form("selection_type").value == null && selection_type.equals("SELECTION")) {
+						                	<option selected>@selection_type</option>
+						                	} else {
 						                	<option>@selection_type</option>
+						                	}
 						                }
 					                }
 								</select>
