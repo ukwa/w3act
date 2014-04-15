@@ -738,6 +738,19 @@
 		         	</div>
 				</div>
 			</div>	
+
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputUrls" class="col-sm-6 control-label">
+							@if(instance.field_url != null && instance.field_url.length > 0) {
+							<br><a href="@routes.Instances.index()/list/?s=title&f=@instance.field_url">all instances for the target</a>
+							}
+						</label>
+					</div>
+				</div>
+	     	</div>	 
+		     	    				
 		</div>
 		
 	</div>
