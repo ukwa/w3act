@@ -204,8 +204,8 @@ public class InstanceController extends AbstractController {
             	}
             }
             if (getFormParam(Const.TREE_KEYS) != null) {
-            	newInstance.field_suggested_collections = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-	    		Logger.debug("newInstance.field_suggested_collections: " + newInstance.field_suggested_collections);
+            	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+	    		Logger.debug("newInstance.field_collection_categories: " + newInstance.field_collection_categories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
@@ -393,7 +393,7 @@ public class InstanceController extends AbstractController {
     	sb.append(", \"children\":");
     	List<DCollection> childSuggestedCollections = DCollection.getChildLevelCollections(url);
     	if (childSuggestedCollections.size() > 0) {
-	    	sb.append(getTreeElements(childSuggestedCollections, targetUrl));
+	    	sb.append(getTreeElements(childSuggestedCollections, targetUrl, false));
 	    	res = sb.toString();
 //	    	Logger.info("getChildren() res: " + res);
     	}
@@ -402,16 +402,16 @@ public class InstanceController extends AbstractController {
     
     /**
      * Mark collections that are stored in target object as selected
-     * @param collectionUrl
-     * @param targetUrl
+     * @param collectionUrl The collection identifier
+     * @param targetUrl This is an identifier for current instance object
      * @return
      */
     public static String checkSelection(String collectionUrl, String targetUrl) {
     	String res = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance instance = Instance.findByUrl(targetUrl);
-    		if (instance.field_suggested_collections != null && 
-    				instance.field_suggested_collections.contains(collectionUrl)) {
+    		if (instance.field_collection_categories != null && 
+    				instance.field_collection_categories.contains(collectionUrl)) {
     			res = "\"select\": true ,";
     		}
     	}
@@ -420,10 +420,12 @@ public class InstanceController extends AbstractController {
     
     /**
    	 * This method calculates first order collections.
-     * @param collectionList
+     * @param collectionList The list of all collections
+     * @param targetUrl This is an identifier for current instance object
+     * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static String getTreeElements(List<DCollection> collectionList, String targetUrl) {
+    public static String getTreeElements(List<DCollection> collectionList, String targetUrl, boolean parent) { 
     	String res = "";
     	if (collectionList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
@@ -432,13 +434,19 @@ public class InstanceController extends AbstractController {
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
 	    		DCollection collection = itr.next();
-	    		if (firstTime) {
-	    			firstTime = false;
-	    		} else {
-	    			sb.append(", ");
+//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
+//    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
+	    		if ((parent && collection.parent.length() == 0) || !parent) {
+		    		if (firstTime) {
+		    			firstTime = false;
+		    		} else {
+		    			sb.append(", ");
+		    		}
+//	    			Logger.debug("added");
+					sb.append("{\"title\": \"" + collection.title + "\"," + checkSelection(collection.url, targetUrl) + 
+							" \"key\": \"" + collection.url + "\"" + 
+							getChildren(collection.url, targetUrl) + "}");
 	    		}
-				sb.append("{\"title\": \"" + collection.title + "\"," + checkSelection(collection.url, targetUrl) + 
-						" \"key\": \"" + collection.url + "\"" + getChildren(collection.url, targetUrl) + "}");
 	    	}
 //	    	Logger.info("collectionList level size: " + collectionList.size());
 	    	sb.append("]");
@@ -458,7 +466,7 @@ public class InstanceController extends AbstractController {
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
-    	sb.append(getTreeElements(suggestedCollections, targetUrl));
+    	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
 //    	Logger.info("suggestedCollections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
 //    	Logger.info("getSuggestedCollections() json: " + jsonData.toString());

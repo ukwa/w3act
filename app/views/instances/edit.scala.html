@@ -340,19 +340,25 @@
 		     	</div>	
 		     	}	    
 
-				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="suggestions-collections" class="col-sm-6 control-label">Suggested Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
+			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 							  <div id="tree3"></div>
-							  <input type="hidden" id="treeKeys" name="treeKeys" value="@instance.field_suggested_collections">
+							  <input type="hidden" id="treeKeys" name="treeKeys" value="@instance.field_collection_categories">
+							  } else {
+							        @if(instance.url != null) {
+	  									@DCollection.getCollectionsAsString(DCollection.getSelectedCollections(instance.url))
+	  								} else {
+	  								    none
+	  								}
+		     	              }	   
 							</div>
 						</div>
 					</div>
 		     	</div>	   
-		     	}	   
 		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
