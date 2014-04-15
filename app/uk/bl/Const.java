@@ -155,6 +155,7 @@ public final class Const {
 	public static final String LAST_UPDATE        = "lastUpdate";
 	public static final String CHANGED            = "changed";
 	public static final String TREE_KEYS          = "treeKeys";
+	public static final String NA                 = "N/A";
 	
     // Creator
 	public static final String UID                = "uid";
@@ -550,6 +551,13 @@ public final class Const {
     	statusMap.put("N/A", 1L);
     	statusMap.put("No QA issues found", 2L);
     	statusMap.put("QA issue", 3L);
+    }
+		
+    public static final Map<Long, String> statusStrMap = new HashMap<Long, String>();
+    	static {
+    	statusStrMap.put(1L, NA);
+    	statusStrMap.put(2L, "No QA issues found");
+    	statusStrMap.put(3L, "QA issue");
     }
 		
     /**

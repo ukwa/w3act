@@ -1293,5 +1293,16 @@ public class Target extends Model {
         return res;
     }
     
+    /**
+     * This method returns status value as a String
+     * @return
+     */
+    public String getStatusStr() {
+    	String res = Const.NA;
+		if (status != null) {
+			res = Const.statusStrMap.get(Long.valueOf(status));
+		}
+    	return res;
+    }
 }
 
