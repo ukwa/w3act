@@ -132,6 +132,28 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
+	public static boolean isLookupExistsInDb(String url) {
+        boolean res = false;
+        url = normalizeUrl(url);        
+        if (url != null && url.length() > 0) {
+        	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
+        	if (lookupEntryCount.size() > 0) {
+        		res = true;
+        	}
+        }
+        Logger.info("isLookupExistsInDb() url: " + url + ", res: " + res);
+        return res;
+	}
+	
+	/**
+	 * This method comprises rule engine for checking if a given URL is in scope for particular mode
+	 * e.g. ALL, IP or DOMAIN.
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @param mode The mode of checking
+	 * @return true if in scope
+	 * @throws WhoisException
+	 */
 	public static boolean checkExt(String url, String nidUrl, String mode) throws WhoisException {
         boolean res = false;
         Logger.info("check url: " + url + ", nid: " + nidUrl);
@@ -241,24 +263,47 @@ public class Scope {
         if (nidUrl != null && nidUrl.length() > 0) {
         	if (!res) {
         		res = Target.checkManualScope(nidUrl);
+        		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
         	}
         }
 
     	// Rule 2: by permission
         if (!res && nidUrl != null && nidUrl.length() > 0) {
         	res = Target.checkLicense(nidUrl);
+    		Logger.debug("checkScopeIp() after license check (field: field_license): " + res);
         }
 
         // Rule 3.2: check geo IP
         if (!res && url != null && url.length() > 0) {
         	res = checkGeoIp(url);
+    		Logger.debug("checkScopeIp() after geoIp check: " + res);
         }
         
         // Rule 3.3: check whois lookup service
         if (!res && url != null && url.length() > 0) {
         	res = checkWhois(url);
+    		Logger.debug("checkScopeIp() after whois check: " + res);
         }
-		Logger.info("lookup entry for '" + url + "' is in database with value: " + res);        
+        
+        /**
+         * if database entry exists and is different to the current value - replace it
+         */
+        if (url != null && url.length() > 0) {
+        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(url);
+        	if (lookupEntries.size() > 0) {
+        		boolean dbValue = LookupEntry.getValueByUrl(url);
+        		if (dbValue != res) {
+       		        LookupEntry lookupEntry = lookupEntries.get(0);
+       		        lookupEntry.scopevalue = res;
+       		        Ebean.update(lookupEntry);
+            		Logger.info("updated lookup entry in database for '" + url + "' with value: " + res);
+        		}
+        	} else {
+        		storeInProjectDb(url, res);
+        	}
+        }
+        
+		Logger.info("resulting lookup entry for '" + url + "' is: " + res);        
         return res;
 	}
 	
@@ -331,13 +376,15 @@ public class Scope {
 	 * @param res The evaluated result after checking by expert rules
 	 */
 	public static void storeInProjectDb(String url, boolean res) {
-		LookupEntry lookupEntry = new LookupEntry();
-		lookupEntry.id = Utils.createId();
-		lookupEntry.url = Const.ACT_URL + lookupEntry.id;
-		lookupEntry.name = url;
-		lookupEntry.scopevalue = res;
-        Logger.info("Save lookup entry " + lookupEntry.toString());
-    	Ebean.save(lookupEntry);	
+		if (!isLookupExistsInDb(url)) {
+			LookupEntry lookupEntry = new LookupEntry();
+			lookupEntry.id = Utils.createId();
+			lookupEntry.url = Const.ACT_URL + lookupEntry.id;
+			lookupEntry.name = url;
+			lookupEntry.scopevalue = res;
+	        Logger.info("Save lookup entry " + lookupEntry.toString());
+	    	Ebean.save(lookupEntry);	
+		}
     }
 	
 	/**
