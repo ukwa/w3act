@@ -363,7 +363,11 @@
 			              	<label for="inputSubSubject" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject. To select more than one, hold down the CTRL key.)</small></label>
 						    <div class="col-sm-6">
 								<select multiple name="subsubject" value="@form("field_subject").value" class="form-control">
+									@if(form("field_subsubject").value != null && form("field_subsubject").value.equals("none")) {
+									<option selected>None</option>
+									} else {
 									<option>None</option>
+									}
 									@for(subject <- Taxonomy.findListByType("subject")) {
 										<option value="@subject.name" disabled>@subject.name</option>
   										@for(subsubject <- Taxonomy.findSubSubjectsList(subject.name)) {
