@@ -9,6 +9,29 @@
 			searchContext = 'targets';
 			applySearch(context, searchContext);
 			scopeCheck(context);
+			
+		      SUGGESTED_COLLECTION_URI = '@routes.QAController.getCollections(currentCollection)';
+              $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
+              	$("#tree3").dynatree({
+                	checkbox: true,
+                	selectMode: 1,
+                	children: data,
+                	onSelect: function(select, node) {
+                  		// Get a list of all selected nodes, and convert to a key array:
+                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+                    		return node.data.key;
+                  		});
+                  		document.getElementById('treeKeys').value = selKeys.join(", ");
+                  		// Get a list of all selected TOP nodes
+                  		var selRootNodes = node.tree.getSelectedNodes(true);
+                  		// ... and convert to a key array:
+                  		var selRootKeys = $.map(selRootNodes, function(node){
+                    		return node.data.key;
+                  		});
+                	}
+              	});
+             })
+			
 		});
 	</script>
 }
@@ -117,25 +140,25 @@
 				<div id="accordion">
 					<div id="filter-panel" class="panel-collapse collapse in">
 						<div class="panel-body">
+						
 							<div class="row">
+							
 								<div class="col-md-6">
 									<div class="form-group">
-						            	<label for="suggested_collections" class="col-sm-6 control-label">By Collection</label>
-						            	<div class="col-sm-6">
-											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
-								                <option>None</option>
-								                @for(collection <- DCollection.findAllSorted()) {
-									                @if(currentCollection != null && currentCollection.equals(collection.url)) {
-									                	<option selected>@collection.title</option>
-									                } else {
-									                	<option>@collection.title</option>
-									                }
+									
+						              	<label for="collections" class="col-sm-6 control-label">By Collection</label>
+									    <div class="col-sm-6">
+											  <div id="tree3"></div>
+								                @if(currentCollection != null) {
+											  	<input type="hidden" id="treeKeys" name="treeKeys" value="@currentCollection">
+								                } else {
+											  	<input type="hidden" id="treeKeys" name="treeKeys">
 								                }
-											</select>
 										</div>
 									</div>
 								</div>
 							</div>
+							
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">

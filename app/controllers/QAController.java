@@ -3,6 +3,7 @@ package controllers;
 import static play.data.Form.form;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import models.DCollection;
@@ -19,6 +20,7 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.Utils;
 import views.html.qa.list;
 
 import com.avaje.ebean.Page;
@@ -39,7 +41,7 @@ public class QAController extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.QAController.list(0, "title", "asc", "", "", "")
+            routes.QAController.list(0, "title", "asc", "", "act-", "")
         );
     
     /**
@@ -51,7 +53,7 @@ public class QAController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus) {
-    	Logger.info("QAController.list() collection: " + collection);
+//    	Logger.info("QAController.list() collection: " + collection);
     	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
     	if (page.getTotalRowCount() == 0) {
     		pageNo = 0;
@@ -78,17 +80,18 @@ public class QAController extends AbstractController {
      * @return
      */
     public static Result search() {
-    	Logger.info("QAController.search");
+//    	Logger.info("QAController.search");
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get("url");
     	Logger.info("QAController.search() query: " + query);
-
+//    	Logger.info("treeKeys: " + form.get(Const.TREE_KEYS));
+    	
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Target name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.QAController.list(0, "title", "asc", "", "", "")
+	        		routes.QAController.list(0, "title", "asc", "", "act-", "")
 	        );
     	}    	
 
@@ -96,17 +99,21 @@ public class QAController extends AbstractController {
     	String sort = form.get(Const.SORT_BY);
     	String order = form.get(Const.ORDER);
     	String query_qa_status_name = form.get(Const.QA_STATUS);
-    	String query_collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
+//    	String query_collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
 //    	Logger.info("QAController.search() query_collection_name: " + query_collection_name);
-    	Logger.info("QAController.search() query_qa_status_name: " + query_qa_status_name);
+    	Logger.info("query_qa_status_name: " + query_qa_status_name);
     	String query_collection = "";
-    	if (query_collection_name != null && !query_collection_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			query_collection = DCollection.findByTitle(query_collection_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find collection for URL: " + query_collection_name + ". " + e);
-    		}
-    	} 
+//    	if (query_collection_name != null && !query_collection_name.toLowerCase().equals(Const.NONE)) {
+//    		try {
+//    			query_collection = DCollection.findByTitle(query_collection_name).url;
+//    		} catch (Exception e) {
+//    			Logger.info("Can't find collection for URL: " + query_collection_name + ". " + e);
+//    		}
+//    	} 
+        if (form.get(Const.TREE_KEYS) != null) {
+        	query_collection = Utils.removeDuplicatesFromList(form.get(Const.TREE_KEYS));
+    		Logger.debug("query_collection: " + query_collection);
+        }
     	String query_qa_status = "";
     	if (query_qa_status_name != null && !query_qa_status_name.toLowerCase().equals(Const.NONE)) {
     		try {
@@ -115,7 +122,7 @@ public class QAController extends AbstractController {
     			Logger.info("Can't find QA status for URL: " + query_qa_status_name + ". " + e);
     		}
     	} 
-    	Logger.info("QAController.search() query_qa_status: " + query_qa_status);
+    	Logger.info("query_qa_status: " + query_qa_status);
     	
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
@@ -165,6 +172,98 @@ public class QAController extends AbstractController {
 	    }
 	    return res;
     }    
+    
+    /**
+     * This method computes a tree of collections in JSON format. 
+     * @param collectionUrl This is an identifier for current selected object
+     * @return tree structure
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result getCollections(String collectionUrl) {
+    	Logger.info("QA dashboard getCollections()");
+    	if (collectionUrl == null || collectionUrl.length() == 0) {
+    		collectionUrl = Const.ACT_URL;
+    	}
+        JsonNode jsonData = null;
+        final StringBuffer sb = new StringBuffer();
+    	List<DCollection> collections = DCollection.getFirstLevelCollections();
+    	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
+//    	Logger.info("collections main level size: " + collections.size());
+        jsonData = Json.toJson(Json.parse(sb.toString()));
+//    	Logger.info("getCollections() json: " + jsonData.toString());
+        return ok(jsonData);
+    }
+        
+    /**
+   	 * This method calculates first order collections.
+     * @param collectionList The list of all collections
+     * @param collectionUrl This is an identifier for current selected object
+     * @param parent This parameter is used to differentiate between root and children nodes
+     * @return collection object in JSON form
+     */
+    public static String getCollectionTreeElements(List<DCollection> collectionList, String collectionUrl, boolean parent) { 
+    	String res = "";
+    	if (collectionList.size() > 0) {
+	        final StringBuffer sb = new StringBuffer();
+	        sb.append("[");
+	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	boolean firstTime = true;
+	    	while (itr.hasNext()) {
+	    		DCollection collection = itr.next();
+//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
+//    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
+	    		if ((parent && collection.parent.length() == 0) || !parent) {
+		    		if (firstTime) {
+		    			firstTime = false;
+		    		} else {
+		    			sb.append(", ");
+		    		}
+//	    			Logger.debug("added");
+					sb.append("{\"title\": \"" + collection.title + "\"," + checkCollectionSelection(collection.url, collectionUrl) + 
+							" \"key\": \"" + collection.url + "\"" + 
+							getChildren(collection.url, collectionUrl) + "}");
+	    		}
+	    	}
+//	    	Logger.info("collectionList level size: " + collectionList.size());
+	    	sb.append("]");
+	    	res = sb.toString();
+//	    	Logger.info("getTreeElements() res: " + res);
+    	}
+    	return res;
+    }
+    
+    /**
+     * Mark collections that are stored in target object as selected
+     * @param collectionUrl The collection identifier
+     * @param checkedUrl This is an identifier for current target object
+     * @return
+     */
+    public static String checkCollectionSelection(String collectionUrl, String checkedUrl) {
+    	String res = "";
+    	if (checkedUrl != null && checkedUrl.length() > 0 && checkedUrl.equals(collectionUrl)) {
+    		res = "\"select\": true ,";
+    	}
+    	return res;
+    }
+        
+    /**
+     * This method calculates collection children - objects that have parents.
+     * @param url The identifier for parent 
+     * @param collectionUrl This is an identifier for current collection object
+     * @return child collection in JSON form
+     */
+    public static String getChildren(String url, String collectionUrl) {
+    	String res = "";
+        final StringBuffer sb = new StringBuffer();
+    	sb.append(", \"children\":");
+    	List<DCollection> childCollections = DCollection.getChildLevelCollections(url);
+    	if (childCollections.size() > 0) {
+	    	sb.append(getCollectionTreeElements(childCollections, collectionUrl, false));
+	    	res = sb.toString();
+//	    	Logger.info("getChildren() res: " + res);
+    	}
+    	return res;
+    }
     
 }
 

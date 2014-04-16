@@ -1009,17 +1009,17 @@ public class Target extends Model {
     public static Page<Target> pageQa(int page, int pageSize, String sortBy, String order, String filter, 
     		String collection, String qaStatus) {
 
-//    	Logger.info("pageQa() collection: " + collection);
+    	Logger.info("pageQa() collection: " + collection + ", qaStatus: " + qaStatus);
 
         return find.where(
         		  Expr.and(
         			 Expr.or(
-	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
-	                    Expr.icontains(Const.TITLE, filter)
+        				Expr.and(Expr.icontains(Const.FIELD_URL_NODE, filter), Expr.eq(Const.ACTIVE, true)),
+	                    Expr.and(Expr.icontains(Const.TITLE, filter), Expr.eq(Const.ACTIVE, true))
 	                 ),
 	                 Expr.and(
 		                Expr.icontains(Const.FIELD_QA_STATUS, qaStatus),
-		                Expr.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)
+		                Expr.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection)
 		             )
 	               )
         		)

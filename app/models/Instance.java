@@ -525,7 +525,7 @@ public class Instance extends Model {
      */
     public static Instance findByTimestamp(String timestamp) {
     	Instance res = new Instance();
-        Logger.info("instance timestamp: " + timestamp);
+//        Logger.info("instance timestamp: " + timestamp);
         
 		List<Instance> list = new ArrayList<Instance>();
 		if (timestamp != null && timestamp.length() > 0) {
@@ -553,7 +553,7 @@ public class Instance extends Model {
      */
     public static Instance findByTimestampAndUrl(String timestamp, String url) {
     	Instance res = new Instance();
-        Logger.info("instance timestamp: " + timestamp);
+//        Logger.info("instance timestamp: " + timestamp);
         
 		List<Instance> list = new ArrayList<Instance>();
 		if (timestamp != null && timestamp.length() > 0 && url != null && url.length() > 0) {

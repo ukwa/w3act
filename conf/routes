@@ -245,6 +245,7 @@ GET     /api/licencelevel/:url               controllers.CrawlPermissions.crawlP
 GET     /api/licenceprompthigherlevel/:url   controllers.CrawlPermissions.checkForHigherLevelPrompt(url)
 GET     /api/suggested_collections/:url      controllers.TargetController.getSuggestedCollections(url)
 GET     /api/suggested_collections_instance/:url      controllers.InstanceController.getSuggestedCollections(url)
+GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
 
 # Sample forms with validation
 GET     /targets/blank/						controllers.Targets.blank()

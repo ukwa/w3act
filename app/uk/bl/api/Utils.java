@@ -138,7 +138,7 @@ public class Utils {
      */
     public static String getDateFromUnixDate(String unixDate) {
     	String res = "";
-    	Logger.debug("getDateFromUnixDate unixDate: " + unixDate);
+//    	Logger.debug("getDateFromUnixDate unixDate: " + unixDate);
     	if (unixDate != null && unixDate.length() > 0) {
 	    	long unixSeconds = Long.valueOf(unixDate);
 	    	Date date = new Date(unixSeconds*1000L); // *1000 is to convert seconds to milliseconds

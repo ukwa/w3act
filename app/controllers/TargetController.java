@@ -470,22 +470,22 @@ public class TargetController extends AbstractController {
     }
     
     /**
-     * This method computes a tree of suggested collections in JSON format. 
+     * This method computes a tree of collections in JSON format. 
      * @param targetUrl This is an identifier for current target object
      * @return tree structure
      */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getSuggestedCollections(String targetUrl) {
-//    	Logger.info("getSuggestedCollections()");
+//    	Logger.info("getCollections()");
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
     	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
-//    	Logger.info("suggestedCollections main level size: " + suggestedCollections.size());
+//    	Logger.info("collections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-//    	Logger.info("getSuggestedCollections() json: " + jsonData.toString());
+//    	Logger.info("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
-    }
-        
+    }        
+    
 }
 
