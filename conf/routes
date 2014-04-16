@@ -141,7 +141,7 @@ GET     /mailtemplates/:template/edit        	controllers.MailTemplates.edit(tem
 POST    /mailtemplates                  		controllers.MailTemplates.save()
 
 GET     /targets                            controllers.Targets.index()
-GET    	/targets/search          			controllers.Targets.search()
+POST   	/targets/search          			controllers.Targets.search()
 GET    	/targets/search-targets    			controllers.Targets.searchTargets()
 GET    	/targets/search-targets-by-collection	controllers.Targets.searchTargetsByCollection()
 GET     /targets/search-targets-by-user  	controllers.Targets.searchTargetsByUser()
