@@ -1158,6 +1158,7 @@ public class Target extends Model {
      */
     public static Page<Target> pageCollectionTargets(int page, int pageSize, String sortBy, String order, 
     		String filter, String collection_url) {
+//    	Logger.debug("pageCollectionTargets() collection_url: " + collection_url);
 
         return find.where()
         		.add(Expr.or(
@@ -1165,7 +1166,7 @@ public class Target extends Model {
 	                    Expr.icontains(Const.TITLE, filter)
 	                 ))
 	            .eq(Const.ACTIVE, true)
-        		.eq(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
+        		.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
