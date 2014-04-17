@@ -521,6 +521,7 @@ public class CrawlPermissions extends AbstractController {
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);
                 	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+        	        Targets.updateQaStatus(permission.target, permission.status);
                 }
             }
         }
@@ -568,6 +569,7 @@ public class CrawlPermissions extends AbstractController {
 	        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
 	        	        Ebean.save(log);
 	                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+	        	        Targets.updateQaStatus(permission.target, permission.status);
                 	} else {
 	                	Logger.info("Missing contact email. Please check contact person");
 	        	        res = false;

@@ -961,7 +961,16 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
 						    <div class="col-sm-6">
-		 						<input readonly type="text" name="qa_status" id="qa_status" value="@form("qa_status").value" size="60" maxlength="2048" class="form-control" />
+								<select name="qa_status" id="qa_status" class="form-control">
+									<option>None</option>
+					                @for(status <- CrawlPermission.getAllStatus()) {
+						                @if(status.equals(form("qa_status").value)) {
+						                	<option selected>@status</option>
+						                } else {
+						                	<option>@status</option>
+						                }
+					                }
+								</select>
 							</div>
 						</div>
 					</div>
