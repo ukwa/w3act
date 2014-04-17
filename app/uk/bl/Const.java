@@ -172,6 +172,7 @@ public final class Const {
 	public static final String FIELD_OWNER        = "field_owner";
 	public static final String PARENT             = "parent";
 	public static final String PARENTS_ALL        = "parents_all";
+	public static final String OPEN_UKWA_LICENSE  = "Open UKWA Licence (2014-)";
 	
 	// Organisation
 	public static final String FIELD_ABBREVIATION = "field_abbreviation";

@@ -268,6 +268,12 @@ public class TargetController extends AbstractController {
 	                {
 	            		if (curLicense != null && curLicense.length() > 0) {
 	                		Logger.info("add curLicense: " + curLicense);
+	                		if (curLicense.equals(Const.OPEN_UKWA_LICENSE) 
+	                				&& getFormParam(Const.QA_STATUS) != null 
+	                				&& !getFormParam(Const.QA_STATUS).equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+	                        	Logger.info("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");
+	                    		return badRequest("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");	                			
+	                		}
 	            			resLicenses = resLicenses + Taxonomy.findByFullNameExt(curLicense, Const.LICENCE).url + Const.LIST_DELIMITER;
 	            		}
 	                }
