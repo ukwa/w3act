@@ -314,11 +314,11 @@ public class Targets extends AbstractController {
     	String action = form.get("action");
     	String query = form.get("url");
 
-    	if (StringUtils.isBlank(query)) {
-			Logger.info("Target name is empty. Please write name in search window.");
-			flash("message", "Please enter a name in the search window");
-	        return GO_TARGETS_HOME;
-    	}    	
+//    	if (StringUtils.isBlank(query)) {
+//			Logger.info("Target name is empty. Please write name in search window.");
+//			flash("message", "Please enter a name in the search window");
+//	        return GO_TARGETS_HOME;
+//    	}    	
 
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
@@ -495,13 +495,13 @@ public class Targets extends AbstractController {
     	String action = form.get("action");
     	String query = form.get("url");
 
-    	if (StringUtils.isBlank(query)) {
-			Logger.info("Target name is empty. Please write name in search window.");
-			flash("message", "Please enter a name in the search window");
-	        return redirect(
-	        		routes.Targets.list(0, "title", "asc", "")
-	        );
-    	}    	
+//    	if (StringUtils.isBlank(query)) {
+//			Logger.info("Target name is empty. Please write name in search window.");
+//			flash("message", "Please enter a name in the search window");
+//	        return redirect(
+//	        		routes.Targets.list(0, "title", "asc", "")
+//	        );
+//    	}    	
 
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
@@ -577,11 +577,11 @@ public class Targets extends AbstractController {
     	String action = form.get("action");
     	String query = form.get("url");
 
-    	if (StringUtils.isBlank(query)) {
-			Logger.info("Target name is empty. Please write name in search window.");
-			flash("message", "Please enter a name in the search window");
-	        return redirect(routes.Collections.list(0, "title", "asc", ""));
-    	}    	
+//    	if (StringUtils.isBlank(query)) {
+//			Logger.info("Target name is empty. Please write name in search window.");
+//			flash("message", "Please enter a name in the search window");
+//	        return redirect(routes.Collections.list(0, "title", "asc", ""));
+//    	}    	
 
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
@@ -663,11 +663,11 @@ public class Targets extends AbstractController {
     		}
     	} 
     	
-    	if (StringUtils.isBlank(query)) {
-			Logger.info("Target name is empty. Please write name in search window.");
-			flash("message", "Please enter a name in the search window");
-	        return redirect(routes.Targets.userTargets(pageNo, sort, order, query, user_url, subject, collection));
-    	}    	
+//    	if (StringUtils.isBlank(query)) {
+//			Logger.info("Target name is empty. Please write name in search window.");
+//			flash("message", "Please enter a name in the search window");
+//	        return redirect(routes.Targets.userTargets(pageNo, sort, order, query, user_url, subject, collection));
+//    	}    	
     	
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
