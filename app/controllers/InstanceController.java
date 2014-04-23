@@ -357,7 +357,7 @@ public class InstanceController extends AbstractController {
         		Logger.info("update instance: " + newInstance.nid);
             	Ebean.update(newInstance);
         	}
-	        res = redirect(routes.InstanceController.view(newInstance.url));
+	        res = redirect(routes.InstanceController.edit(newInstance.url));
         } 
         if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.NID));
