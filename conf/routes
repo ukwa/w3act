@@ -157,7 +157,7 @@ GET    	/targets/export/by/:frequency		controllers.Targets.exportByFrequencyJson
 
 GET     /targets/:target                    controllers.Targets.view(target)
 GET     /targets/:revision/revision         controllers.Targets.viewrevision(revision:Long)
-POST    /targets/:target/edit               controllers.Targets.edit(target)
+GET     /targets/:target/edit               controllers.Targets.edit(target)
 
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissions.showCrawlPermissions(target)
 GET     /target/licencerequest          	controllers.CrawlPermissions.licenceRequestForTarget(name, target)
