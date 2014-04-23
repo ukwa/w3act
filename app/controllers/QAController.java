@@ -129,6 +129,9 @@ public class QAController extends AbstractController {
     	} else {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    			if (query_collection == null || query_collection.length() == 0) {
+				    query_collection = Const.ACT_URL;
+				}
     	    	return redirect(routes.QAController.list(pageNo, sort, order, query, query_collection, query_qa_status));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -188,7 +191,7 @@ public class QAController extends AbstractController {
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> collections = DCollection.getFirstLevelCollections();
     	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
-//    	Logger.info("collections main level size: " + collections.size());
+    	Logger.info("collections main level size: " + collections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
 //    	Logger.info("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
