@@ -151,7 +151,7 @@ GET    	/targets/targets/                  	controllers.Targets.targets(p:Int ?=
 GET    	/targets/collectiontargets/        	controllers.Targets.collectionTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", collection_url ?= "")
 GET    	/targets/usertargets/           	controllers.Targets.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", user_url ?= "", query_subject ?= "", query_collection ?= "")
 GET     /targets/lookup						controllers.Targets.lookup()
-GET     /targets/new/:title      			controllers.Targets.create(title)
+#POST    /targets/new/create                 controllers.Targets.create(title)
 GET    	/targets/export/ld/:frequency		controllers.Targets.exportLdFrequencyJson(frequency)
 GET    	/targets/export/by/:frequency		controllers.Targets.exportByFrequencyJson(frequency)
 

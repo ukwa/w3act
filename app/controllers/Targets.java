@@ -511,7 +511,19 @@ public class Targets extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.Targets.create(query));
+//        		return redirect(routes.Targets.create(query));
+    	        Logger.info("create()");
+    	    	Target target = new Target();
+    	    	target.field_url = query;
+    	        target.nid = Target.createId();
+    	        target.url = Const.ACT_URL + target.nid;
+    	        target.revision = Const.INITIAL_REVISION;
+    	        target.active = true;
+    			Logger.info("add entry with target url: " + target.url);
+    			Logger.info("target name: " + target.title);
+    			Form<Target> targetForm = Form.form(Target.class);
+    			targetForm = targetForm.fill(target);
+    	        return ok(edit.render(targetForm, User.find.byId(request().username())));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
