@@ -158,7 +158,21 @@ public class Instances extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.Instances.create(query));
+        		//return redirect(routes.Instances.create(query));
+				Logger.info("addEntry()");
+				Instance instance = new Instance();
+				instance.title = query;
+				instance.nid = Utils.createId();
+				instance.url = Const.ACT_URL + instance.nid;
+				instance.field_scope = "";
+				instance.revision = Const.INITIAL_REVISION;
+				Logger.info("add entry with instance url: " + instance.url);
+				Logger.info("instance name: " + instance.title);
+				return ok(
+						edit.render(
+							  instance, User.find.byId(request().username())
+						)
+					);
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
