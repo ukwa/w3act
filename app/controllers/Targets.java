@@ -234,7 +234,7 @@ public class Targets extends AbstractController {
     public static Result filterByJson(String url) {
         JsonNode jsonData = null;
         if (url != null) {
-	        List<Target> targets = Target.filterUrl(url);
+	        List<Target> targets = Target.filterActiveUrl(url);
 	        jsonData = Json.toJson(targets);
         }
         return ok(jsonData);
