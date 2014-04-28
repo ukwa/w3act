@@ -25,6 +25,8 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import uk.bl.exception.WhoisException;
+import uk.bl.scope.Scope;
 import views.html.targets.list;
 import views.html.targets.edit;
 import views.html.targets.targets;
@@ -916,6 +918,52 @@ public class Targets extends AbstractController {
     	}
     	return res;
     }
-                
+         
+	/**
+	 * This method indicates to the user in a target record if data has been entered 
+	 * by other users relating to NPLD status in another target record at a higher 
+	 * level in the domain. 
+	 * This is to avoid duplication of effort: users should not need to spend time 
+	 * (outside ACT) doing the necessary research to populate the 'UK Postal Address', 
+	 * 'Via Correspondence', and 'Professional Judgment' fields for abc.co.uk/directory 
+	 * if those fields are already populated in a target record for abc.co.uk 
+	 * @param fieldUrl The target URL
+	 * @return result as a flag. Result is true if:
+	 * 		   (i) one or more of the three fields named above is not null in any other 
+	 *             target record at a higher level within the same domain AND 
+	 *         (ii) where both 'UK hosting' and 'UK top-level domain' = No.
+	 */
+    public static boolean indicateNpldStatus(String fieldUrl) {
+    	boolean res = false;
+    	if (Target.getNpldStatusList(fieldUrl).size() > 0) {
+    		res = true;
+    	}
+    	return res;
+    }
+    
+	/**
+	 * This method should give a list of the Target Titles and URLs for the 
+	 * first three examples, in descending order of date of creation of the record. 
+	 * @param fieldUrl The target URL
+	 * @return result as a string
+	 */
+    public static String showNpldStatusList(String fieldUrl) {
+    	String res = "";
+        try {
+            StringBuilder sb = new StringBuilder();
+        	List<Target> targets = Target.getNpldStatusList(fieldUrl);
+        	Iterator<Target> itr = targets.iterator();
+        	while (itr.hasNext()) {
+        		Target target = itr.next();
+        		sb.append(target.title + " " + target.field_url);
+                sb.append(System.getProperty("line.separator"));
+        	}
+            res = sb.toString();
+    	} catch (Exception e) {
+            Logger.error("showNpldStatusList() " + e.getMessage());
+        }
+    	return res;
+    }    
+    
 }
 

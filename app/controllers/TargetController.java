@@ -363,6 +363,9 @@ public class TargetController extends AbstractController {
         		newTarget.domain = Scope.getDomainFromUrl(newTarget.field_url);
         	}
         	newTarget.changed = changedTime;
+        	if (newTarget.created == null || newTarget.created.length() == 0) {
+        		newTarget.created = changedTime;
+        	}
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
 	        res = redirect(routes.Targets.edit(newTarget.url));

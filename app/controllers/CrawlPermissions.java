@@ -2,20 +2,19 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.ExpressionList;
-import com.fasterxml.jackson.databind.JsonNode;
-
+import models.CommunicationLog;
+import models.ContactPerson;
 import models.CrawlPermission;
+import models.MailTemplate;
 import models.Target;
 import models.User;
-import models.ContactPerson;
-import models.MailTemplate;
-import models.CommunicationLog;
+
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.data.DynamicForm;
 import play.libs.Json;
@@ -25,15 +24,15 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.scope.EmailHelper;
-import views.html.mailtemplates.*;
-import views.html.crawlpermissions.*;
-import views.html.licence.*;
-import views.html.refusals.*;
-import views.html.communicationlogs.*;
+import views.html.communicationlogs.logs;
+import views.html.crawlpermissions.crawlpermissionpreview;
+import views.html.licence.licences;
+import views.html.mailtemplates.mailtemplates;
+import views.html.refusals.refusals;
 
-import java.util.*;
-
-import org.apache.commons.lang3.StringUtils;
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Manage permissions.

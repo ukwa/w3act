@@ -1307,5 +1307,104 @@ public class Target extends Model {
 		}
     	return res;
     }
+    
+	/**
+	 * This method evaluates the Target list where NPLD status of 
+	 * 		(i) one or more of the 'UK Postal Address', 'Via Correspondence', 
+	 * 			and/or 'Professional Judgment' fields is not null in any other 
+	 *          target record at a higher level within the same domain AND 
+	 *      (ii) where both 'UK hosting' and 'UK top-level domain' = No.
+	 * @return target list
+	 */
+	public static List<Target> getNpldStatusList(String fieldUrl) {
+		List<Target> res = new ArrayList<Target>();
+		List<Target> unsorted = new ArrayList<Target>();
+		List<Target> targets = new ArrayList<Target>();
+		Logger.debug("getNpldStatusList() field URL: " + fieldUrl);
+		if (fieldUrl != null && fieldUrl.length() > 0) {
+			Logger.debug("getNpldStatusList() fieldUrl: " + fieldUrl);
+	        fieldUrl = Scope.normalizeUrl(fieldUrl);
+	        String domain = Scope.getDomainFromUrl(fieldUrl);
+			Logger.debug("getNpldStatusList() domain: " + domain);
+	        ExpressionList<Target> ll = find.where()
+	        		.icontains(Const.FIELD_URL_NODE, domain)
+	        		.eq(Const.FIELD_UK_HOSTING, false)
+		    		.eq(Const.ACTIVE, true);
+			targets = ll.findList();
+		}
+		Logger.debug("getNpldStatusList() targets list size: " + targets.size());
+
+		/**
+		 * Check that UK top level domain is false, one of mentioned flags is true
+		 * and the domain is of higher level.
+		 */
+		Iterator<Target> itr = targets.iterator();
+		while (itr.hasNext()) {
+			Target target = itr.next();
+			if ((target.field_uk_postal_address 
+					|| target.field_via_correspondence
+					|| target.field_professional_judgement) 
+					&& isHigherLevel(target.field_url, fieldUrl)
+					&& (!isInScopeIp(target.field_url, target.url)
+							&& !isInScopeDomain(target.field_url, target.url))) {
+				unsorted.add(target);
+//				if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
+//					break;
+//				}
+			}
+		}
+		Logger.debug("getNpldStatusList() targets unsorted result list size: " + unsorted.size());
+		
+		/**
+		 * Check that UK top level domain is false, one of mentioned flags is true
+		 * and the domain is of higher level.
+		 */
+		for (int i = 0; i < Const.MAX_NPLD_LIST_SIZE; i++) {
+			Target target = getLatestCreatedTarget(unsorted);
+			if (target != null) {
+				res.add(i, target);
+				unsorted.remove(target);
+			}
+		}
+		return res;
+	}
+	
+	/**
+	 * This method evaluates the latest created target from the passed
+	 * unsorted list.
+	 * @param unsorted The unsorted list.
+	 * @return
+	 */
+	public static Target getLatestCreatedTarget(List<Target> unsorted) {
+		Target res = null;
+		long latest = 0L;
+		Iterator<Target> itr = unsorted.iterator();
+		while (itr.hasNext()) {
+			Target target = itr.next();
+			if (target.created != null && target.created.length() > 0 && Long.valueOf(target.created) > latest) {
+				latest = Long.valueOf(target.created);
+				res = target;
+			}
+		}
+		return res;
+	}
+	
+	/**
+	 * This method evaluates if given current URL has lower level then
+	 * URL from the list.
+	 * @param iterUrl The URL from the list
+	 * @param currentUrl The current URL
+	 * @return
+	 */
+	public static boolean isHigherLevel(String iterUrl, String currentUrl) {
+		boolean res = false;
+		if (currentUrl.contains(iterUrl) 
+				&& currentUrl.indexOf(iterUrl) == 0
+				&& currentUrl.length() > iterUrl.length()) {
+			res = true;
+		}
+		return res;
+	}
+	    
 }
 
