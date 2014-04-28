@@ -2,6 +2,8 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
@@ -528,6 +530,25 @@ public class CrawlPermissions extends AbstractController {
     }
     
     /**
+     * This method injects necessary server name from configuration file.
+     * It is defined in 'server_name' field.
+     * @param licenseUrl
+     * @return edited link
+     */
+    public static String injectServerName(String licenseUrl) {
+    	String res = "";
+		if (licenseUrl != null && licenseUrl.length() > 0 && licenseUrl.contains(Const.HTTP_PREFIX)) {
+			String serverName = EmailHelper.getServerNameFromPropertyFile();
+			int startPos = licenseUrl.indexOf(Const.HTTP_PREFIX) + Const.HTTP_PREFIX.length();
+			int endPos = licenseUrl.substring(startPos).indexOf(Const.SLASH_DELIMITER) + startPos;
+			if (serverName != null && serverName.length() > 0) {
+				res = Const.HTTP_PREFIX + serverName + licenseUrl.substring(endPos);
+			}
+		}
+        return res;
+    }
+    
+    /**
      * This method sets status "PENDING" for selected crawl permissions.
      * If parameter all is true - do it for all queued permissions,
      * otherwise only selected by checkbox.
@@ -553,13 +574,17 @@ public class CrawlPermissions extends AbstractController {
                 	String messageBody = mailTemplate.readTemplate();
                 	String[] placeHolderArray = Utils.getMailArray(mailTemplate.placeHolders);
             		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.target);
+            		Logger.info("setPendingSelectedCrawlPermissions current: " + routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
+            		String licenseUrl = routes.LicenceController.form(permission.url).absoluteURL(request()).toString();
+            		licenseUrl = injectServerName(licenseUrl);
+            		Logger.info("setPendingSelectedCrawlPermissions new: " + licenseUrl);
                 	messageBody = CrawlPermission.
 	                	replaceTwoStringsInText(
 	                			messageBody
 	    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
 	    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
 	    						, permission.target
-	    						, routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
+	    						, licenseUrl);
                 	if (email != null) {
 	                    EmailHelper.sendMessage(email, messageSubject, messageBody);                	
 	//                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	

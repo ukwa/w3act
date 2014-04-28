@@ -41,7 +41,7 @@
 						, "||URL||"
 						, "||LINK||"
 						, permission.target
-						, routes.LicenceController.form(permission.url).absoluteURL(request()).toString())
+						, CrawlPermissions.injectServerName(routes.LicenceController.form(permission.url).absoluteURL(request()).toString()))
 					</textarea>
 				</div>
 			</div>

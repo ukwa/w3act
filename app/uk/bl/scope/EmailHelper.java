@@ -110,5 +110,25 @@ public class EmailHelper {
 		        throw new RuntimeException(e);
 		    }
 	    }
-    }          
+    }     
+    
+    public static String getServerNameFromPropertyFile() {
+    	Logger.debug("getServerNameFromPropertyFile()");
+    	Properties customProps = new Properties();
+	    String res = "";
+    	try {
+    		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
+    	    for(String key : customProps.stringPropertyNames()) {
+    	    	  String value = customProps.getProperty(key);
+    	    	  if (key.equals(Const.SERVER_NAME)) {
+    	    		  res = value;
+  	    	      	  Logger.debug("getServerNameFromPropertyFile() server name: " + res);
+    	    	  }
+    	    }
+    	} catch (IOException e) {
+    		throw new RuntimeException(e);
+    	}
+    	return res;
+   }          
+    
 }

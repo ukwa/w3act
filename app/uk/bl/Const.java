@@ -84,6 +84,8 @@ public final class Const {
 	public static final String LINK_PLACE_HOLDER  = "||LINK||";
 	public static final String LICENCE_PLACE_HOLDER = "||licence||";
 	public static final String ACKNOWLEDGEMENT    = "Acknowledgement";
+    public static final String HTTP_PREFIX        = "http://";
+	public static final String SERVER_NAME        = "server_name";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";
