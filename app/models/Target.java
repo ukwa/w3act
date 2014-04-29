@@ -1406,5 +1406,45 @@ public class Target extends Model {
 		return res;
 	}
 	    
+	/**
+	 * This method should give a list of the Target records, which have an Open UKWA 
+	 * Licence request in progress for a target at a higher level in the domain. 
+	 * [ie. when Open UKWA License Request field = Queued, Pending, Refused, Granted - 
+	 * any value except None.
+	 * @return target list
+	 */
+	public static List<Target> getUkwaLicenceStatusList(String fieldUrl) {
+		List<Target> res = new ArrayList<Target>();
+		List<Target> targets = new ArrayList<Target>();
+		Logger.debug("getUkwaLicenceStatusList() field URL: " + fieldUrl);
+		if (fieldUrl != null && fieldUrl.length() > 0) {
+			Logger.debug("getUkwaLicenceStatusList() fieldUrl: " + fieldUrl);
+	        fieldUrl = Scope.normalizeUrl(fieldUrl);
+	        String domain = Scope.getDomainFromUrl(fieldUrl);
+			Logger.debug("getUkwaLicenceStatusList() domain: " + domain);
+	        ExpressionList<Target> ll = find.where()
+	        		.icontains(Const.FIELD_URL_NODE, domain)
+		    		.eq(Const.ACTIVE, true);
+			targets = ll.findList();
+		}
+		Logger.debug("getUkwaLicenceStatusList() targets list size: " + targets.size());
+
+		/**
+		 * Check that no request is in progress and the domain is of higher level.
+		 */
+		Iterator<Target> itr = targets.iterator();
+		while (itr.hasNext()) {
+			Target target = itr.next();
+			if (target.qa_status != null 
+					&& target.qa_status.length() > 0 
+					&& !target.qa_status.toLowerCase().equals(Const.NONE)
+					&& isHigherLevel(target.field_url, fieldUrl)) {
+				res.add(target);
+			}
+		}
+		Logger.debug("getUkwaLicenceStatusList() targets result list size: " + res.size());
+		return res;
+	}
+	
 }
 

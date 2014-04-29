@@ -950,7 +950,11 @@
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
 								@if(form("url").value != null && Target.existInDb(form("url").value)) {
+									@if(!Targets.indicateUkwaLicenceStatus(form("field_url").value) 
+									    || (Targets.indicateUkwaLicenceStatus(form("field_url").value) 
+									        && ((user.hasRole("sys_admin") || user.hasRole("archivist"))))) {
 								<button type="submit" name="request" class="btn btn-success">Open License Request</button>
+									}
 								   @if(form("url").value != null) {
 								   <a href="@routes.CrawlPermissions.showCrawlPermissions(form("url").value)">Crawl Permissions</a>
 								   }
@@ -986,6 +990,14 @@
 						</div>
 					</div>
 		     	</div>
+		     	
+				@if(Targets.indicateUkwaLicenceStatus(form("field_url").value)) {    	
+				<div class="padding-20">
+					<div class="alert alert-info">
+						NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
+					</div>
+				</div>	
+				}	     			     	
 		     	
 			</div>		     		        		     
 	        

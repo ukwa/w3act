@@ -965,5 +965,22 @@ public class Targets extends AbstractController {
     	return res;
     }    
     
+	/**
+	 * This method alert users who may intend to initiate the Open UKWA Licence request 
+	 * process for targets in cases where that process has already been initiated for a 
+	 * target at a higher level within the same domain. 
+	 * The UKWA Licensing tab in the target record should show if there is an Open UKWA 
+	 * Licence request in progress for a target at a higher level in the domain. 
+	 * [ie. when Open UKWA License Request field = Queued, Pending, Refused, Granted - 
+	 * any value except None.
+	 */
+    public static boolean indicateUkwaLicenceStatus(String fieldUrl) {
+    	boolean res = false;
+    	if (Target.getUkwaLicenceStatusList(fieldUrl).size() > 0) {
+    		res = true;
+    	}
+    	return res;
+    }
+    
 }
 
