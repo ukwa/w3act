@@ -165,8 +165,10 @@ public class Scope {
          */
         boolean inProjectDb = false;
         if (url != null && url.length() > 0) {
-        	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
-        	if (lookupEntryCount.size() > 0) {
+//        	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
+        	LookupEntry resLookupEntry = LookupEntry.findBySiteName(url);   
+        	if (resLookupEntry != null && !resLookupEntry.name.toLowerCase().equals(Const.NONE)) {
+//        	if (lookupEntryCount.size() > 0) {
         		inProjectDb = true;
         		res = LookupEntry.getValueByUrl(url);
         		Logger.info("check lookup entry for '" + url + "' is in database with value: " + res);

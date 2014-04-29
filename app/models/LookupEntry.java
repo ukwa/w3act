@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -60,6 +61,7 @@ public class LookupEntry extends Model
 
     public static LookupEntry findByName(String name)
     {
+    	Logger.debug("findByName() name: " + name);
         return find.where()
                    .eq("name",
                        name)
@@ -72,6 +74,7 @@ public class LookupEntry extends Model
      * @return lookup entry name
      */
     public static LookupEntry findByUrl(String url) {
+    	Logger.debug("findByUrl() url: " + url);
     	LookupEntry res = new LookupEntry();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
@@ -87,6 +90,7 @@ public class LookupEntry extends Model
      * @return lookup entry name
      */
     public static LookupEntry findBySiteName(String name) {
+    	Logger.info("findBySiteName() name: " + name);
     	LookupEntry res = new LookupEntry();
     	
 		List<LookupEntry> list = new ArrayList<LookupEntry>();
@@ -114,11 +118,11 @@ public class LookupEntry extends Model
      */
     public static boolean getValueByUrl(String url) {
     	boolean res = false;
-//    	Logger.debug("getValueByUrl() url: " + url);
+    	Logger.info("getValueByUrl() url: " + url);
     	LookupEntry resLookupEntry = findBySiteName(url);    	
 //    	Logger.debug("getValueByUrl() resLookupEntry: " + resLookupEntry);
     	if (resLookupEntry != null && resLookupEntry.scopevalue != null) {
-//        	Logger.debug("getValueByUrl() resLookupEntry.scopevalue: " + resLookupEntry.scopevalue);
+        	Logger.info("getValueByUrl() resLookupEntry.scopevalue: " + resLookupEntry.scopevalue);
     		res = resLookupEntry.scopevalue;
     	}
     	return res;
@@ -134,6 +138,7 @@ public class LookupEntry extends Model
 		List<LookupEntry> res = new ArrayList<LookupEntry>();
         ExpressionList<LookupEntry> ll = find.where().icontains(Const.NAME, name);
     	res = ll.findList();
+    	Logger.info("LookupEntry filterByName res size: " + res.size());
 		return res;
 	}
         
