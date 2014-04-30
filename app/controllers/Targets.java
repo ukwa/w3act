@@ -521,6 +521,10 @@ public class Targets extends AbstractController {
     	        target.url = Const.ACT_URL + target.nid;
     	        target.revision = Const.INITIAL_REVISION;
     	        target.active = true;
+    	        if (User.find.byId(request().username()).hasRole(Const.USER)) {
+    	        	target.author = User.find.byId(request().username()).url;
+    	        	target.field_subsubject = Const.NONE;
+    	        }
     			Logger.info("add entry with target url: " + target.url);
     			Logger.info("target name: " + target.title);
     			Form<Target> targetForm = Form.form(Target.class);

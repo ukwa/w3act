@@ -94,9 +94,12 @@ public class TargetController extends AbstractController {
         	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
         			|| StringUtils.isBlank(getFormParam(Const.FIELD_URL))
 //        			|| StringUtils.isBlank(getFormParam(Const.SUBJECT))
-        			|| StringUtils.isBlank(getFormParam(Const.SUBSUBJECT))
-        			|| StringUtils.isBlank(getFormParam(Const.AUTHOR))
+        			|| (StringUtils.isBlank(getFormParam(Const.SUBSUBJECT)) && !User.find.byId(request().username()).hasRole(Const.USER))
+        			|| (StringUtils.isBlank(getFormParam(Const.AUTHOR)) && !User.find.byId(request().username()).hasRole(Const.USER))
         			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
+            	Logger.info("title: " + getFormParam(Const.TITLE) + ", field URL: " + getFormParam(Const.FIELD_URL) +
+            			", subject: " + getFormParam(Const.SUBSUBJECT) + ", selector: " + getFormParam(Const.AUTHOR) +
+            			", selection type: " + getFormParam(Const.SELECTION_TYPE));
             	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
         		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
 //    			Logger.info("One of the required fields is empty. Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
