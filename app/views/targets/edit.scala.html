@@ -972,6 +972,34 @@
 					</div>
 		     	</div>	
 
+				@if(Targets.indicateUkwaLicenceStatus(form("field_url").value)) {    	
+				<div class="padding-20">
+					<div class="alert alert-info">
+						NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
+					</div>
+				</div>	
+				}	     			     	
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
+						    <div class="col-sm-6">
+								<select name="qa_status" id="qa_status" class="form-control">
+									<option>None</option>
+					                @for(status <- CrawlPermission.getAllStatus()) {
+						                @if(status.equals(form("qa_status").value)) {
+						                	<option selected>@status</option>
+						                } else {
+						                	<option>@status</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -998,34 +1026,6 @@
 						</div>
 					</div>
 		     	</div>
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
-						    <div class="col-sm-6">
-								<select name="qa_status" id="qa_status" class="form-control">
-									<option>None</option>
-					                @for(status <- CrawlPermission.getAllStatus()) {
-						                @if(status.equals(form("qa_status").value)) {
-						                	<option selected>@status</option>
-						                } else {
-						                	<option>@status</option>
-						                }
-					                }
-								</select>
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	
-				@if(Targets.indicateUkwaLicenceStatus(form("field_url").value)) {    	
-				<div class="padding-20">
-					<div class="alert alert-info">
-						NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
-					</div>
-				</div>	
-				}	     			     	
 		     	
 			</div>		     		        		     
 	        
