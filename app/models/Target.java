@@ -293,7 +293,7 @@ public class Target extends Model {
      */
     public static List<Target> findAllforCollection(String url) {
     	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq(Const.FIELD_COLLECTION_CATEGORIES, url);
+        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_COLLECTION_CATEGORIES, url);
         res = ll.findList();
         return res;
 	}
