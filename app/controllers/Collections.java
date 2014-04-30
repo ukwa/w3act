@@ -2,6 +2,7 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.util.Iterator;
 import java.util.List;
 
 import models.DCollection;
@@ -228,4 +229,100 @@ public class Collections extends AbstractController {
         return redirect(routes.Targets.collectionTargets(0, "title", "asc", "", url));
     }    
 
+    /**
+     * This method computes a tree of collections in JSON format. 
+     * @param collectionUrl This is an identifier for current selected object
+     * @return tree structure
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result getCollections(String collectionUrl) {
+    	Logger.info("QA dashboard getCollections() " + collectionUrl);
+    	if (collectionUrl == null || collectionUrl.length() == 0) {
+    		collectionUrl = Const.ACT_URL;
+    	}
+        JsonNode jsonData = null;
+        final StringBuffer sb = new StringBuffer();
+    	List<DCollection> collections = DCollection.getFirstLevelCollections();
+    	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
+    	Logger.info("collections main level size: " + collections.size());
+        jsonData = Json.toJson(Json.parse(sb.toString()));
+//    	Logger.info("getCollections() json: " + jsonData.toString());
+        return ok(jsonData);
+    }
+        
+    /**
+   	 * This method calculates first order collections.
+     * @param collectionList The list of all collections
+     * @param collectionUrl This is an identifier for current selected object
+     * @param parent This parameter is used to differentiate between root and children nodes
+     * @return collection object in JSON form
+     */
+    public static String getCollectionTreeElements(List<DCollection> collectionList, String collectionUrl, boolean parent) { 
+    	String res = "";
+    	if (collectionList.size() > 0) {
+	        final StringBuffer sb = new StringBuffer();
+	        sb.append("[");
+	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	boolean firstTime = true;
+	    	while (itr.hasNext()) {
+	    		DCollection collection = itr.next();
+//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
+//    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
+	    		if ((parent && collection.parent.length() == 0) || !parent) {
+		    		if (firstTime) {
+		    			firstTime = false;
+		    		} else {
+		    			sb.append(", ");
+		    		}
+//	    			Logger.debug("added");
+					sb.append("{\"title\": \"" + collection.title + 
+							" (" + Target.findAllforCollection(collection.url).size() + ")" + "\"," + 
+							//" \"url\": \"http://www.google.com\"," +
+							" \"url\": \"" + routes.Collections.view(collection.url) + "\"," +
+                            checkCollectionSelection(collection.url, collectionUrl) + 
+							" \"key\": \"" + collection.url + "\"" + 
+							getChildren(collection.url, collectionUrl) + "}");
+	    		}
+	    	}
+//	    	Logger.info("collectionList level size: " + collectionList.size());
+	    	sb.append("]");
+	    	res = sb.toString();
+//	    	Logger.info("getTreeElements() res: " + res);
+    	}
+    	return res;
+    }
+    
+    /**
+     * Mark collections that are stored in target object as selected
+     * @param collectionUrl The collection identifier
+     * @param checkedUrl This is an identifier for current target object
+     * @return
+     */
+    public static String checkCollectionSelection(String collectionUrl, String checkedUrl) {
+    	String res = "";
+    	if (checkedUrl != null && checkedUrl.length() > 0 && checkedUrl.equals(collectionUrl)) {
+    		res = "\"select\": true ,";
+    	}
+    	return res;
+    }
+        
+    /**
+     * This method calculates collection children - objects that have parents.
+     * @param url The identifier for parent 
+     * @param collectionUrl This is an identifier for current collection object
+     * @return child collection in JSON form
+     */
+    public static String getChildren(String url, String collectionUrl) {
+    	String res = "";
+        final StringBuffer sb = new StringBuffer();
+    	sb.append(", \"children\":");
+    	List<DCollection> childCollections = DCollection.getChildLevelCollections(url);
+    	if (childCollections.size() > 0) {
+	    	sb.append(getCollectionTreeElements(childCollections, collectionUrl, false));
+	    	res = sb.toString();
+//	    	Logger.info("getChildren() res: " + res);
+    	}
+    	return res;
+    }
+        
 }

@@ -106,6 +106,19 @@ div#panels.panel.panel-primary.filter {
 	height: 130px;
 }
 
+html body div.container article.collections div.row div.form-group div.col-sm-12 div#tree3 ul.dynatree-container
+{
+	font-family: tahoma, arial, helvetica;
+	font-size: 10pt; /* font size should not be too big */
+	white-space: nowrap;
+	padding: 3px;
+	margin: 0; /* issue 201 */
+	background-color: white;
+	border: 1px dotted gray;
+	overflow: auto;
+	height: 320px; /* 20% would be ignored by IE9 */
+}
+
 a.page {
 	padding: 1px;
 	font-size: 10px;

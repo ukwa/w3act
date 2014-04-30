@@ -7,6 +7,41 @@
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
 			applySearch(context, 'collections'); 
+			
+			//var filter = $searchstr;
+		    //if(searchstr == "") {
+		    //	filter = "act-";
+		    //}
+		    //SUGGESTED_COLLECTION_URI = '@routes.Collections.getCollections(searchstr)';
+		    //if(searchstr == "") 
+			SUGGESTED_COLLECTION_URI = '@routes.Collections.getCollections("act-")';
+            $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
+             	$("#tree3").dynatree({
+                	checkbox: false,
+                	selectMode: 1,
+                	children: data,
+				    onActivate: function(node) { 
+				        if( node.data.url ){
+				            // use href to change the current frame:
+				            window.location.href = node.data.url; 
+				        }
+				    },				    
+                	onSelect: function(select, node) {
+                  		// Get a list of all selected nodes, and convert to a key array:
+                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+                    		return node.data.key;
+                  		});
+                  		document.getElementById('treeKeys').value = selKeys.join(", ");
+                  		// Get a list of all selected TOP nodes
+                  		var selRootNodes = node.tree.getSelectedNodes(true);
+                  		// ... and convert to a key array:
+                  		var selRootKeys = $.map(selRootNodes, function(node){
+                    		return node.data.key;
+                  		});
+                	}
+             	});
+            })
+			
 		});
 	</script>
 }
@@ -15,68 +50,6 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
 }
 
-@****************************************
-* Helper generating navigation links    *
-****************************************@
-@link(newPage:Int, newSortBy:String) = @{
-    
-    var sortBy = currentSortBy
-    var order = currentOrder
-    
-    if(newSortBy != null) {
-        sortBy = newSortBy
-        if(currentSortBy == newSortBy) {
-            if(currentOrder == "asc") {
-                order = "desc"
-            } else {
-                order = "asc"
-            }
-        } else {
-            order = "asc"
-        }
-    }
-    
-    // Generate the link
-    routes.Collections.list(newPage, sortBy, order, searchstr)
-    
-}
-
-@**********************************
-* Helper generating table headers *
-***********************************@
-@header(key:String, title:String) = {
-    <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
-        <a href="@link(0, key)">@title</a>
-    </th>
-}
-
-@pagination = {
-	<div class="text-center">
-		<ul class="pagination">
-        	@if(currentPage.hasPrev) {
-            	<li class="prev">
-                    <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
-                </li>
-            } else {
-                <li class="prev disabled">
-                    <a>&larr; Previous</a>
-                </li>
-            }
-            <li class="current">
-                <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
-            </li>
-            @if(currentPage.hasNext) {
-                <li class="next">
-                    <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
-                </li>
-            } else {
-                <li class="next disabled">
-                    <a>Next &rarr;</a>
-                </li>
-			}
-		</ul>
-	</div>
-}
 
 @main(title, user, scripts, styles) {
 	<div class="page-header">
@@ -101,27 +74,14 @@
 			}
 		</div>
 
-		@pagination
-
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					@header("title", "Title")
-					<th>Targets Count</th>					
-				</tr>
-			</thead>
-			<tbody>
-				@for(dcollection <- currentPage.getList) {
-		           <tr>
-		           	<td><a href="@routes.Collections.view(dcollection.url)">@dcollection.title</a></td>
-		           	<td>@Target.findAllforCollection(dcollection.url).size() </td>
-				</tr>
-		           }
-			</tbody>
-		</table>
-		
-		@pagination
-
+		<div class="row">		
+			<div class="form-group">									
+			    <div class="col-sm-12">
+					  <div id="tree3"></div>
+					  <input type="hidden" id="treeKeys" name="treeKeys">
+				</div>
+			</div>
+		</div>
 
 	</article>
 }
