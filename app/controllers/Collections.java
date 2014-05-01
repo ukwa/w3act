@@ -2,6 +2,7 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +26,8 @@ import views.html.collections.list;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Security.Authenticated(Secured.class)
 public class Collections extends AbstractController {
@@ -243,9 +246,12 @@ public class Collections extends AbstractController {
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> collections = DCollection.getFirstLevelCollections();
-    	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
+    	List<ObjectNode> result = getCollectionTreeElements(collections, collectionUrl, true);
+//    	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
     	Logger.info("collections main level size: " + collections.size());
-        jsonData = Json.toJson(Json.parse(sb.toString()));
+//        jsonData = Json.toJson(Json.parse(sb.toString()));
+		jsonData = Json.toJson(result);
+
 //    	Logger.info("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
     }
@@ -257,11 +263,14 @@ public class Collections extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static String getCollectionTreeElements(List<DCollection> collectionList, String collectionUrl, boolean parent) { 
-    	String res = "";
-    	if (collectionList.size() > 0) {
-	        final StringBuffer sb = new StringBuffer();
-	        sb.append("[");
+    public static List<ObjectNode> getCollectionTreeElements(List<DCollection> collectionList, String collectionUrl, boolean parent) { 
+//    	String res = "";
+		List<ObjectNode> result = new ArrayList<ObjectNode>();
+		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
+
+		if (collectionList.size() > 0) {
+//	        final StringBuffer sb = new StringBuffer();
+//	        sb.append("[");
 	    	Iterator<DCollection> itr = collectionList.iterator();
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
@@ -269,27 +278,43 @@ public class Collections extends AbstractController {
 //    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
 	    		if ((parent && collection.parent.length() == 0) || !parent) {
-		    		if (firstTime) {
-		    			firstTime = false;
-		    		} else {
-		    			sb.append(", ");
-		    		}
+//		    		if (firstTime) {
+//		    			firstTime = false;
+//		    		} else {
+//		    			sb.append(", ");
+//		    		}
+//		    		
+					ObjectNode child = nodeFactory.objectNode();
+					child.put("title", collection.title + " (" + Target.findAllforCollection(collection.url).size() + ")");
+					child.put("url", String.valueOf(routes.Collections.view(collection.url)));
+			    	if (StringUtils.isNotEmpty(collection.url) && collection.url.equals(collectionUrl)) {
+			    		child.put("select", true);
+			    	}
+					child.put("key", "\"" + collection.url + "\"");
+			    	List<DCollection> childCollections = DCollection.getChildLevelCollections(collection.url);
+			    	if (childCollections.size() > 0) {
+			    		child.put("children", Json.toJson(getCollectionTreeElements(childCollections, collectionUrl, false)));
+			    	}
+//					getChildren(nodeFactory, collection.url, collectionUrl);
+					result.add(child);
+					
 //	    			Logger.debug("added");
-					sb.append("{\"title\": \"" + collection.title + 
-							" (" + Target.findAllforCollection(collection.url).size() + ")" + "\"," + 
-							//" \"url\": \"http://www.google.com\"," +
-							" \"url\": \"" + routes.Collections.view(collection.url) + "\"," +
-                            checkCollectionSelection(collection.url, collectionUrl) + 
-							" \"key\": \"" + collection.url + "\"" + 
-							getChildren(collection.url, collectionUrl) + "}");
+//					sb.append("{\"title\": \"" + collection.title + 
+//							" (" + Target.findAllforCollection(collection.url).size() + ")" + "\"," + 
+//							//" \"url\": \"http://www.google.com\"," +
+//							" \"url\": \"" + routes.Collections.view(collection.url) + "\"," +
+//                            checkCollectionSelection(collection.url, collectionUrl) + 
+//							" \"key\": \"" + collection.url + "\"" + 
+//							getChildren(nodeFactory, collection.url, collectionUrl) + "}");
 	    		}
 	    	}
 //	    	Logger.info("collectionList level size: " + collectionList.size());
-	    	sb.append("]");
-	    	res = sb.toString();
-//	    	Logger.info("getTreeElements() res: " + res);
+//	    	sb.append("]");
+//	    	res = sb.toString();
+//	    	Logger.info("getTreeElements() res: " + sb.toString());
     	}
-    	return res;
+//    	Logger.info("getTreeElements() res: " + result);
+    	return result;
     }
     
     /**
@@ -298,12 +323,12 @@ public class Collections extends AbstractController {
      * @param checkedUrl This is an identifier for current target object
      * @return
      */
-    public static String checkCollectionSelection(String collectionUrl, String checkedUrl) {
-    	String res = "";
+    public static ObjectNode checkCollectionSelection(JsonNodeFactory nodeFactory, String collectionUrl, String checkedUrl) {
+		ObjectNode child = nodeFactory.objectNode();
     	if (checkedUrl != null && checkedUrl.length() > 0 && checkedUrl.equals(collectionUrl)) {
-    		res = "\"select\": true ,";
+    		child.put("select", true);
     	}
-    	return res;
+    	return child;
     }
         
     /**
@@ -312,17 +337,14 @@ public class Collections extends AbstractController {
      * @param collectionUrl This is an identifier for current collection object
      * @return child collection in JSON form
      */
-    public static String getChildren(String url, String collectionUrl) {
-    	String res = "";
-        final StringBuffer sb = new StringBuffer();
-    	sb.append(", \"children\":");
+    public static ObjectNode getChildren(JsonNodeFactory nodeFactory, String url, String collectionUrl) {
+		ObjectNode children = nodeFactory.objectNode();
     	List<DCollection> childCollections = DCollection.getChildLevelCollections(url);
     	if (childCollections.size() > 0) {
-	    	sb.append(getCollectionTreeElements(childCollections, collectionUrl, false));
-	    	res = sb.toString();
-//	    	Logger.info("getChildren() res: " + res);
+    		Logger.info("children: " + Json.toJson(getCollectionTreeElements(childCollections, collectionUrl, false)));
+    		children.put("children", Json.toJson(getCollectionTreeElements(childCollections, collectionUrl, false)));
     	}
-    	return res;
+    	return children;
     }
         
 }
