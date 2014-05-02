@@ -293,7 +293,16 @@ public class Target extends Model {
      */
     public static List<Target> findAllforCollection(String url) {
     	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_COLLECTION_CATEGORIES, url);
+        ExpressionList<Target> ll = find.where()//.icontains(Const.FIELD_COLLECTION_CATEGORIES, url);
+	        .eq(Const.ACTIVE, true)
+			.add(Expr.or(
+	                Expr.eq(Const.FIELD_COLLECTION_CATEGORIES, url),
+	                Expr.or(
+		                    Expr.icontains(Const.FIELD_COLLECTION_CATEGORIES, url + Const.COMMA),
+		                    Expr.icontains(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + " " + url)
+		                 )
+	             ));
+        
         res = ll.findList();
         return res;
 	}
@@ -1160,7 +1169,7 @@ public class Target extends Model {
      */
     public static Page<Target> pageCollectionTargets(int page, int pageSize, String sortBy, String order, 
     		String filter, String collection_url) {
-//    	Logger.debug("pageCollectionTargets() collection_url: " + collection_url);
+    	Logger.debug("pageCollectionTargets() collection_url: " + collection_url);
 
         return find.where()
         		.add(Expr.or(
@@ -1168,7 +1177,14 @@ public class Target extends Model {
 	                    Expr.icontains(Const.TITLE, filter)
 	                 ))
 	            .eq(Const.ACTIVE, true)
-        		.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
+        		.add(Expr.or(
+	                    Expr.eq(Const.FIELD_COLLECTION_CATEGORIES, collection_url),
+	                    Expr.or(
+	    	                    Expr.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url + Const.COMMA),
+	    	                    Expr.icontains(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + " " + collection_url)
+	    	                 )
+	                 ))
+        		//.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

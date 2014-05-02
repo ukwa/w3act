@@ -129,11 +129,11 @@
             	<td>
             		<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a>
 				</td>
-               	@if(target.field_collection_categories != null && Taxonomy.findListByUrl(target.field_collection_categories) != null) { 
+               	@if(target.field_collection_categories != null && DCollection.getSelectedCollections(target.url) != null) { 
                	<td>
-					@for(taxonomy <- Taxonomy.findListByUrl(target.field_collection_categories)) {
-	               		@if(taxonomy.url != null) {
-	            			<a href="@routes.TaxonomiesController.edit(taxonomy.url)">@taxonomy.name</a>,&nbsp;
+					@for(col <- DCollection.getSelectedCollections(target.url)) {
+	               		@if(col.url != null) {
+	            			<a href="@routes.Collections.view(col.url)">@col.title</a>,&nbsp;
 	            		}
 		            }
    	            </td>
