@@ -246,7 +246,11 @@ public class CrawlPermissions extends AbstractController {
         	CrawlPermission permission = null;
             boolean isExisting = true;
             try {
-            	if (StringUtils.isBlank(getFormParam(Const.EMAIL))) {
+            	if (StringUtils.isBlank(getFormParam(Const.NAME)) 
+            			|| StringUtils.isBlank(getFormParam(Const.FILTER))
+            			|| StringUtils.isBlank(getFormParam(Const.EMAIL))) {
+                	Logger.info("name: " + getFormParam(Const.NAME) + ", field URL: " + getFormParam(Const.FILTER) +
+                			", email: " + getFormParam(Const.EMAIL));
                 	Logger.info("Please fill out all the required fields, marked with a red star.");
             		return badRequest("Please fill out all the required fields, marked with a red star.");
             	}    	
