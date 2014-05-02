@@ -38,8 +38,7 @@ GET     /collections/:collection            controllers.Collections.view(collect
 GET     /collections/:collection/edit       controllers.Collections.edit(collection)
 GET     /collections/:sites/sites			controllers.Collections.sites(sites)
 POST    /collections             			controllers.Collections.save()
-#POST    /api/tree/collections               controllers.Collections.getCollections(filter ?= "act-")
-GET     /api/tree/collections/:filter       controllers.Collections.getCollections(filter)
+GET     /api/tree/collections               controllers.Collections.getCollections(filter)
 
 GET     /taxonomy                           controllers.TaxonomiesController.index()
 GET    	/taxonomy/list                  	controllers.TaxonomiesController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")

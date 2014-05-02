@@ -8,13 +8,7 @@
 			context = @play.api.Play.current.configuration.getString("application.context");
 			applySearch(context, 'collections'); 
 			
-			//var filter = $searchstr;
-		    //if(searchstr == "") {
-		    //	filter = "act-";
-		    //}
-		    //SUGGESTED_COLLECTION_URI = '@routes.Collections.getCollections(searchstr)';
-		    //if(searchstr == "") 
-			SUGGESTED_COLLECTION_URI = '@routes.Collections.getCollections("act-")';
+		    SUGGESTED_COLLECTION_URI = '@routes.Collections.getCollections(searchstr)';
             $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
              	$("#tree3").dynatree({
                 	checkbox: false,
@@ -57,7 +51,6 @@
 	</div>
  	<article class="collections">
 		<div id="forms">
-   			@warningmessage(flash)
    			@helper.form(action=routes.Collections.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />

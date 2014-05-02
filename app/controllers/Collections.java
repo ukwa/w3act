@@ -240,9 +240,9 @@ public class Collections extends AbstractController {
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getCollections(String collectionUrl) {
     	Logger.info("QA dashboard getCollections() " + collectionUrl);
-    	if (collectionUrl == null || collectionUrl.length() == 0) {
-    		collectionUrl = Const.ACT_URL;
-    	}
+//    	if (collectionUrl == null || collectionUrl.length() == 0) {
+//    		collectionUrl = Const.ACT_URL;
+//    	}
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> collections = DCollection.getFirstLevelCollections();
@@ -272,18 +272,21 @@ public class Collections extends AbstractController {
 //	        final StringBuffer sb = new StringBuffer();
 //	        sb.append("[");
 	    	Iterator<DCollection> itr = collectionList.iterator();
-	    	boolean firstTime = true;
+//	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
 	    		DCollection collection = itr.next();
 //    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
+	    		if (collectionUrl == null || collectionUrl.equals("") || (collectionUrl != null 
+	    				&& (collectionUrl.length() > 0 && collection.title.contains(collectionUrl)
+	    						|| collectionUrl.equals("")))) {	    		
 	    		if ((parent && collection.parent.length() == 0) || !parent) {
 //		    		if (firstTime) {
 //		    			firstTime = false;
 //		    		} else {
 //		    			sb.append(", ");
 //		    		}
-//		    		
+		    		
 					ObjectNode child = nodeFactory.objectNode();
 					child.put("title", collection.title + " (" + Target.findAllforCollection(collection.url).size() + ")");
 					child.put("url", String.valueOf(routes.Collections.view(collection.url)));
@@ -306,6 +309,7 @@ public class Collections extends AbstractController {
 //                            checkCollectionSelection(collection.url, collectionUrl) + 
 //							" \"key\": \"" + collection.url + "\"" + 
 //							getChildren(nodeFactory, collection.url, collectionUrl) + "}");
+	    		}
 	    		}
 	    	}
 //	    	Logger.info("collectionList level size: " + collectionList.size());
