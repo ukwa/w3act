@@ -151,7 +151,7 @@ public class JsonUtils {
 					Target obj = (Target) itr.next();
 			        obj.revision = Const.INITIAL_REVISION;
 			        obj.active = true;
-			        obj.selection_type = Const.SelectionType.NOMINATION.name();
+			        obj.selection_type = Const.SelectionType.SELECTION.name();
 					if (obj.vid > 0) {
 						obj.edit_url = Const.WCT_URL + obj.vid;
 					}
