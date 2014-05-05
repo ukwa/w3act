@@ -366,12 +366,14 @@ public class CrawlPermissions extends AbstractController {
     	        Logger.info("save crawl permission: " + permission.toString());
     	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.SAVE);
     	        Ebean.save(log);
+    	        updateAllByTarget(permission.url, permission.target, permission.status);
     	        Targets.updateQaStatus(permission.target, permission.status);
         	} else {
            		Logger.info("update crawl permission: " + permission.toString());
                	Ebean.update(permission);
                	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
     	        Ebean.save(log);
+    	        updateAllByTarget(permission.url, permission.target, permission.status);
     	        Targets.updateQaStatus(permission.target, permission.status);
         	}
 	        res = redirect(routes.CrawlPermissions.view(permission.url));
@@ -531,12 +533,45 @@ public class CrawlPermissions extends AbstractController {
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);
                 	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+        	        updateAllByTarget(permission.url, permission.target, permission.status);
         	        Targets.updateQaStatus(permission.target, permission.status);
                 }
             }
         }
     }
     
+    /**
+     * This method updates all crawl permissions associated for given target
+     * when a permission for a target is 'Granted', all others are set to 'Superseded'.
+     * @param url The identificaiton URL of a current crawl permission object
+     * @param target The domain name (URL)
+     * @param status The status of the permission workflow
+     */
+    public static void updateAllByTarget(String url, String target, String status) {
+    	if (status.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+	    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
+	    	List<CrawlPermission> permissionList = new ArrayList<CrawlPermission>();
+	    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
+	    		Logger.info("status: " + status);
+	    		exp = exp.eq(Const.STATUS, status);
+	    	} 
+	    	if (target != null && !target.toLowerCase().equals(Const.NONE) && target.length() > 0) {
+	    		Logger.info("target: " + target);
+	    		exp = exp.eq(Const.TARGET, target);
+	    	} 
+	    	permissionList = exp.query().findList();
+	    	Logger.info("Expression list size: " + permissionList.size());
+		    Iterator<CrawlPermission> permissionItr = permissionList.iterator();
+		    while (permissionItr.hasNext()) {
+		    	CrawlPermission permission = permissionItr.next();
+		    	if (!url.equals(permission.url)) {
+			    	permission.status = Const.CrawlPermissionStatus.SUPERSEDED.name();
+	               	Ebean.update(permission);  
+		    	}
+		    }
+    	}
+    }
+            
     /**
      * This method injects necessary server name from configuration file.
      * It is defined in 'server_name' field.
@@ -602,6 +637,7 @@ public class CrawlPermissions extends AbstractController {
 	        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
 	        	        Ebean.save(log);
 	                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+	        	        updateAllByTarget(permission.url, permission.target, permission.status);
 	        	        Targets.updateQaStatus(permission.target, permission.status);
                 	} else {
 	                	Logger.info("Missing contact email. Please check contact person");

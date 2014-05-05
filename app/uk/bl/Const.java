@@ -345,7 +345,8 @@ public final class Const {
 		PENDING,
 		REFUSED,
 		EMAIL_REJECTED,
-		GRANTED;
+		GRANTED,
+		SUPERSEDED;
     }
     
     /**

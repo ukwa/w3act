@@ -247,6 +247,7 @@ public class LicenceController extends AbstractController {
                 	Ebean.update(permission);
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);
+        	        CrawlPermissions.updateAllByTarget(permission.url, permission.target, permission.status);
         	        Targets.updateQaStatus(permission.target, permission.status);
         	    	Logger.debug("before sendAcknowledgementToSiteOwner mailTemplate: " + getFormParam(Const.EMAIL));
         	        if (getFormParam(Const.EMAIL) != null) {
