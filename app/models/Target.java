@@ -711,10 +711,9 @@ public class Target extends Model {
         Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
         boolean res = false;  
         if (target != null
-        		&& (//target.field_uk_domain.booleanValue() == true ||
-        		target.field_uk_postal_address.equals(Const.TRUE) 
-        		|| target.field_via_correspondence.equals(Const.TRUE)
-        		|| target.field_professional_judgement.equals(Const.TRUE))) {
+        		&& (target.field_uk_postal_address 
+        		|| target.field_via_correspondence
+        		|| target.field_professional_judgement)) {
         	Logger.debug("checkManualScope(): " + target.field_uk_postal_address + ", " + 
         		target.field_via_correspondence + ", " + target.field_professional_judgement);
         	res = true;

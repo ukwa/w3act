@@ -146,6 +146,69 @@ public class Scope {
 	}
 	
 	/**
+	 * This method updates the lookup entry for given URL with
+	 * the new QA status value.
+	 * @param target The target object
+	 * @param newStatus The QA status value
+	 */
+	public static void updateLookupEntry(Target target, boolean newStatus) {
+        boolean res = false;
+        Logger.info("updateLookupEntry() field URL: " + target.field_url + ", new QA status: " + newStatus);
+        String url = normalizeUrl(target.field_url);
+        
+        /**
+         * Check for fields of target that not yet stored in database.
+         */
+        if (target != null
+        		&& (target.field_uk_postal_address 
+        		|| target.field_via_correspondence
+        		|| target.field_professional_judgement)) {
+        	Logger.debug("updateLookupEntry(): " + target.field_uk_postal_address + ", " + 
+        		target.field_via_correspondence + ", " + target.field_professional_judgement);
+        	res = true;
+        }
+        if (target != null && target.field_no_ld_criteria_met) {
+        	res = false;
+        }
+        
+        if (target != null 
+        		&& target.field_license != null 
+        		&& target.field_license.length() > 0 
+        		&& !target.field_license.toLowerCase().contains(Const.NONE)) {
+        	res = true;
+        }
+
+        Logger.debug("updateLookupEntry() new scope: " + newStatus + ", fields check: " + res);
+        if (!newStatus && res) {
+        	newStatus = true;
+            Logger.debug("updateLookupEntry() update new scope: " + newStatus);
+        }
+        
+        /**
+         * Check if given URL is already in project database in a table LookupEntry. 
+         * If this is in and its value differs from new value - update value.
+         */
+        boolean inProjectDb = false;
+        if (url != null && url.length() > 0) {
+        	LookupEntry resLookupEntry = LookupEntry.findBySiteName(url);   
+        	if (resLookupEntry != null && !resLookupEntry.name.toLowerCase().equals(Const.NONE)) {
+        		inProjectDb = true;
+        		res = LookupEntry.getValueByUrl(url);
+        		Logger.info("updateLookupEntry lookup entry for '" + url + "' is in database with value: " + res);
+        		if (newStatus != res) {
+        			resLookupEntry.scopevalue = newStatus;
+            		Logger.info("updateLookupEntry lookup entry for '" + url + "' changed to value: " + newStatus);
+        			Ebean.update(resLookupEntry);
+        		}
+        	}
+        }
+
+        if (!inProjectDb) {
+	        storeInProjectDb(url, newStatus);
+	    }
+	}
+	
+	/**
 	 * This method comprises rule engine for checking if a given URL is in scope for particular mode
 	 * e.g. ALL, IP or DOMAIN.
 	 * @param url The search URL

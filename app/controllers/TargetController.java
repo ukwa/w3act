@@ -359,6 +359,8 @@ public class TargetController extends AbstractController {
             	}
             	target.changed = changedTime;
         		Logger.info("update target: " + target.nid + ", obj: " + target.toString());
+                boolean newScope = Target.isInScopeIp(target.field_url, target.url);
+            	Scope.updateLookupEntry(target, newScope);
             	Ebean.update(target);
         	}
         	if (newTarget.field_url != null) {
@@ -369,6 +371,9 @@ public class TargetController extends AbstractController {
         	if (newTarget.created == null || newTarget.created.length() == 0) {
         		newTarget.created = changedTime;
         	}
+            boolean newScope = Target.isInScopeIp(newTarget.field_url, newTarget.url);
+        	Scope.updateLookupEntry(newTarget, newScope);
+        	
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
 	        res = redirect(routes.Targets.edit(newTarget.url));
