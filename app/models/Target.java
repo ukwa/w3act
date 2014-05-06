@@ -757,6 +757,20 @@ public class Target extends Model {
     }
     
 	/**
+	 * This method checks the passed URL for GeoIp lookup.
+	 * @param url The search URL
+	 * @return result as a flag
+	 */
+    public static boolean checkUkHosting(String url) {
+    	try {
+    		return Scope.checkGeoIp(url);
+    	} catch (Exception ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
 	 * This method checks whether the passed URL is in scope for
 	 * rules associated with scope IP.
 	 * @param url The search URL
