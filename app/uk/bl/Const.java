@@ -415,6 +415,14 @@ public final class Const {
 	    GENERAL_CHANGE_REQUEST;
     }
     
+	public enum Roles {
+        sys_admin, 
+		archivist,
+		expert_user,
+		user,
+		viewer;
+    }
+		
     /**
      * Help mapping to present predefined Flag values in GUI.
      */

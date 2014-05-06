@@ -26,6 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -210,6 +211,55 @@ public class Role extends Model
     			}
     		}
     	}
+    	return res;
+    }
+    
+    /**
+     * This method evaluates index of the role in the role enumeration.
+     * @param roles
+     * @return
+     */
+    public static int getRoleSeverity(String roles) {
+    	int res = Const.Roles.values().length;
+    	if (roles != null && roles.length() > 0 ) {
+    		if (roles.contains(Const.COMMA)) {
+    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
+    			Iterator<String> itr = resList.iterator();
+    			while (itr.hasNext()) {
+        			String currentRoleName = itr.next();
+        			currentRoleName = currentRoleName.replaceAll(" ", "");
+    				int currentLevel = Const.Roles.valueOf(currentRoleName).ordinal();
+    				if (currentLevel < res) {
+    					res = currentLevel;
+    				}
+    			}
+    		} else {
+    			if (roles.equals(roles)) {
+    				res = Const.Roles.valueOf(roles).ordinal();
+    			}
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method validates whether user is allowed to
+     * change given role.
+     * @param role
+     * @param user
+     * @return true if user is allowed
+     */
+    public static boolean isAllowed(Role role, User user) {
+    	boolean res = false;
+    	if (role != null && role.name != null && role.name.length() > 0) {
+    		int roleIndex = Const.Roles.valueOf(role.name).ordinal();
+    		int userIndex = getRoleSeverity(user.roles);
+    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
+    		if (roleIndex >= userIndex) {
+    			res = true;
+    		}    		
+    	}
+    	Logger.debug("role allowance check: " + role + ", user: " + user + ", res: " + res);
     	return res;
     }
     
