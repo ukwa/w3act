@@ -1,6 +1,6 @@
 @(user: User, admin: User)
 
-@if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || user.url.equals(admin.url)) {
+@if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
 
 @main("", admin){
     
@@ -12,7 +12,7 @@
 	   <li><a href="@routes.Curators.view(user.url)">View</a></li>
 	   <li><a href="@routes.Curators.sites(user.url)">Targets</a></li> 
 	   }
-	   @if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || user.url.equals(admin.url)) {
+	   @if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
 		   <li class="active"><a href="@routes.Curators.edit(user.url)">Edit</a></li>
 	   }
 	</ul>
