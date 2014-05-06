@@ -41,7 +41,7 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Contact Person Name<font color="red">*</font></label>
+					<label for="inputName" class="col-sm-6 control-label">Contact Person Name</label>
 				    <div class="col-sm-6">
 	              		<input readonly class="form-control" name="contactPerson" id="contactPerson" value="@ContactPerson.findByUrl(permission.contactPerson).name" type="text">
 					</div>
@@ -52,7 +52,7 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Position: <font color="red">*</font></label>
+					<label class="col-sm-6 control-label">Position</label>
 				    <div class="col-sm-6">
 						<input readonly class="form-control" name="position" value="@ContactPerson.findByUrl(permission.contactPerson).position" type="text">
 					</div>
