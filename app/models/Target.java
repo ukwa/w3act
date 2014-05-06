@@ -1372,9 +1372,10 @@ public class Target extends Model {
 			Target target = itr.next();
 			if ((target.field_uk_postal_address 
 					|| target.field_via_correspondence
-					|| target.field_professional_judgement) 
+					|| target.field_professional_judgement
+					|| target.field_no_ld_criteria_met) 
 					&& isHigherLevel(target.field_url, fieldUrl)
-					&& (!isInScopeIp(target.field_url, target.url)
+					&& (!checkUkHosting(target.field_url)
 							&& !isInScopeDomain(target.field_url, target.url))) {
 				unsorted.add(target);
 //				if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
@@ -1389,12 +1390,15 @@ public class Target extends Model {
 		 * and the domain is of higher level.
 		 */
 		for (int i = 0; i < Const.MAX_NPLD_LIST_SIZE; i++) {
-			Target target = getLatestCreatedTarget(unsorted);
-			if (target != null) {
-				res.add(i, target);
-				unsorted.remove(target);
+			if (i < unsorted.size()) {
+				Target target = getLatestCreatedTarget(unsorted);
+				if (target != null) {
+					res.add(i, target);
+					unsorted.remove(target);
+				}
 			}
 		}
+		Logger.debug("getNpldStatusList() targets result list size: " + res.size());
 		return res;
 	}
 	
@@ -1415,6 +1419,7 @@ public class Target extends Model {
 				res = target;
 			}
 		}
+		Logger.info("getLatestCreatedTarget() res: " + res);
 		return res;
 	}
 	

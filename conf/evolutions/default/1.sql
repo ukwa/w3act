@@ -39,6 +39,7 @@ create table crawl_permission (
   name                      TEXT,
   target                    TEXT,
   description               TEXT,
+  any_other_information     TEXT,
   status                    TEXT,
   contact_person            TEXT,
   creator_user              TEXT,

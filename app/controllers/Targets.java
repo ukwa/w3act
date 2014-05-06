@@ -942,6 +942,7 @@ public class Targets extends AbstractController {
     	if (Target.getNpldStatusList(fieldUrl).size() > 0) {
     		res = true;
     	}
+    	Logger.info("indicateNpldStatus() res: " + res);
     	return res;
     }
     
