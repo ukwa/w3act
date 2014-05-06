@@ -173,7 +173,7 @@ public class LicenceController extends AbstractController {
                         permission.contactPerson = getFormParam(Const.CONTACT_PERSON);
                     }
                     if (getFormParam(Const.DESCRIPTION) != null) {
-                        permission.description = getFormParam(Const.DESCRIPTION);
+                        permission.anyOtherInformation = getFormParam(Const.DESCRIPTION);
                     }
                     if (getFormParam(Const.CONTACT_PERSON) != null) {
                         String ownerName = getFormParam(Const.CONTACT_PERSON);

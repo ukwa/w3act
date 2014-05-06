@@ -53,6 +53,10 @@ public class CrawlPermission extends Model
     @Column(columnDefinition = "TEXT")
     public String description;
     
+    @JsonIgnore
+    @Column(columnDefinition = "TEXT")
+    public String anyOtherInformation;
+    
     /**
      * Records status of permission process e.g. 
      * Not Initiated, Queued, Pending, Refused, Granted
