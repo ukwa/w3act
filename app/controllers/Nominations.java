@@ -145,6 +145,8 @@ public class Nominations extends AbstractController {
         } else {
             result.put("status", "OK");
             result.put("message", "Nomination " + name);
+            Logger.debug("load nomination: " + name);
+            Logger.debug("current nominations count for given name: " + Nomination.filterByName(name).size());
             Long id = Utils.createId();
             String url = Const.ACT_URL + id;
             String title = json.findPath(Const.TITLE).textValue();
@@ -167,6 +169,7 @@ public class Nominations extends AbstractController {
             Logger.info("load nomination nomination_date: " + nomination_date);
             Nomination nomination = new Nomination();
             nomination.id = id;
+            nomination.name = name;
             nomination.url = url;
             nomination.title = title;
             nomination.website_url = website_url;
@@ -178,7 +181,8 @@ public class Nominations extends AbstractController {
             nomination.notes = notes;
             nomination.nomination_date = nomination_date;
 	       	Ebean.save(nomination);
-	        Logger.info("save nomination: " + nomination.toString());
+	        Logger.info("saved nomination: " + nomination.toString());
+            Logger.debug("new nominations count for given name: " + Nomination.filterByName(name).size());
             return ok(result);
         }
     }	   
