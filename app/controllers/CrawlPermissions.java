@@ -573,6 +573,31 @@ public class CrawlPermissions extends AbstractController {
     }
             
     /**
+     * This method updates all crawl permissions associated for given target
+     * with passed status.
+     * @param target The domain name (URL)
+     * @param status The status of the permission workflow
+     */
+    public static void updateAllByTargetStatusChange(String target, String status) {
+    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
+    	List<CrawlPermission> permissionList = new ArrayList<CrawlPermission>();
+    	if (target != null && !target.toLowerCase().equals(Const.NONE) && target.length() > 0) {
+    		Logger.debug("updateAllByTargetStatusChange() target: " + target);
+    		exp = exp.eq(Const.TARGET, target);
+    	} 
+    	permissionList = exp.query().findList();
+    	Logger.info("Expression list size: " + permissionList.size());
+	    Iterator<CrawlPermission> permissionItr = permissionList.iterator();
+	    while (permissionItr.hasNext()) {
+	    	CrawlPermission permission = permissionItr.next();
+	    	permission.status = status;
+    		Logger.debug("updateAllByTargetStatusChange() update status to '" + status + 
+    				"' for permission: " + permission.name);
+            Ebean.update(permission);  
+	    }
+    }
+            
+    /**
      * This method injects necessary server name from configuration file.
      * It is defined in 'server_name' field.
      * @param licenseUrl
