@@ -263,7 +263,8 @@ public class Collections extends AbstractController {
 	    	Iterator<DCollection> itr = collectionList.iterator();
 	    	while (itr.hasNext()) {
 	    		DCollection collection = itr.next();
-	    		if (StringUtils.isNotEmpty(collectionUrl) && StringUtils.containsIgnoreCase(collection.title, collectionUrl)) {	    		
+	    		
+	    		if (collectionUrl.isEmpty() || (StringUtils.isNotEmpty(collectionUrl) && StringUtils.containsIgnoreCase(collection.title, collectionUrl))) {	    		
 		    		if ((parent && collection.parent.length() == 0) || !parent) {
 						ObjectNode child = nodeFactory.objectNode();
 						child.put("title", collection.title + " (" + Target.findAllforCollection(collection.url).size() + ")");

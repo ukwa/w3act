@@ -7,19 +7,31 @@
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
 			applySearch(context, 'collections'); 
-			
+
 		    SUGGESTED_COLLECTION_URI = '@routes.Collections.getCollections(searchstr)';
-            $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
+            $.ajax({
+            	url: SUGGESTED_COLLECTION_URI,
+            	dataType: 'json',
+            	success: function(data) {
+            		showTree(data);
+            	},
+    	    	error: function(jqXHR, textStatus, errorThrown) {
+    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+    	    	}
+    	    });
+            
+            function showTree(data) {
+            	console.log("data: " + data);
              	$("#tree3").dynatree({
                 	checkbox: false,
                 	selectMode: 1,
                 	children: data,
-				    onActivate: function(node) { 
-				        if( node.data.url ){
-				            // use href to change the current frame:
-				            window.location.href = node.data.url; 
-				        }
-				    },				    
+    			    onActivate: function(node) { 
+    			        if( node.data.url ){
+    			            // use href to change the current frame:
+    			            window.location.href = node.data.url; 
+    			        }
+    			    },				    
                 	onSelect: function(select, node) {
                   		// Get a list of all selected nodes, and convert to a key array:
                   		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
@@ -34,8 +46,7 @@
                   		});
                 	}
              	});
-            })
-			
+            }
 		});
 	</script>
 }
