@@ -551,21 +551,22 @@ public class CrawlPermissions extends AbstractController {
     	if (status.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
 	    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
 	    	List<CrawlPermission> permissionList = new ArrayList<CrawlPermission>();
-	    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
-	    		Logger.info("status: " + status);
-	    		exp = exp.eq(Const.STATUS, status);
-	    	} 
+//	    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
+//	    		Logger.info("updateAllByTarget() status: " + status);
+//	    		exp = exp.eq(Const.STATUS, status);
+//	    	} 
 	    	if (target != null && !target.toLowerCase().equals(Const.NONE) && target.length() > 0) {
-	    		Logger.info("target: " + target);
+	    		Logger.info("updateAllByTarget() target: " + target);
 	    		exp = exp.eq(Const.TARGET, target);
 	    	} 
 	    	permissionList = exp.query().findList();
-	    	Logger.info("Expression list size: " + permissionList.size());
+	    	Logger.info("updateAllByTarget() Expression list size: " + permissionList.size());
 		    Iterator<CrawlPermission> permissionItr = permissionList.iterator();
 		    while (permissionItr.hasNext()) {
 		    	CrawlPermission permission = permissionItr.next();
 		    	if (!url.equals(permission.url)) {
 			    	permission.status = Const.CrawlPermissionStatus.SUPERSEDED.name();
+			    	Logger.info("updateAllByTarget() permission: " + permission.name + " to SUPERSEDED");
 	               	Ebean.update(permission);  
 		    	}
 		    }
