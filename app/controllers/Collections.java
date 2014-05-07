@@ -240,19 +240,11 @@ public class Collections extends AbstractController {
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getCollections(String collectionUrl) {
     	Logger.info("QA dashboard getCollections() " + collectionUrl);
-//    	if (collectionUrl == null || collectionUrl.length() == 0) {
-//    		collectionUrl = Const.ACT_URL;
-//    	}
         JsonNode jsonData = null;
-        final StringBuffer sb = new StringBuffer();
     	List<DCollection> collections = DCollection.getFirstLevelCollections();
     	List<ObjectNode> result = getCollectionTreeElements(collections, collectionUrl, true);
-//    	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
     	Logger.info("collections main level size: " + collections.size());
-//        jsonData = Json.toJson(Json.parse(sb.toString()));
 		jsonData = Json.toJson(result);
-
-//    	Logger.info("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
     }
         
@@ -264,91 +256,32 @@ public class Collections extends AbstractController {
      * @return collection object in JSON form
      */
     public static List<ObjectNode> getCollectionTreeElements(List<DCollection> collectionList, String collectionUrl, boolean parent) { 
-//    	String res = "";
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 
 		if (collectionList.size() > 0) {
-//	        final StringBuffer sb = new StringBuffer();
-//	        sb.append("[");
 	    	Iterator<DCollection> itr = collectionList.iterator();
-//	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
 	    		DCollection collection = itr.next();
-//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
-//    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
-	    		if (collectionUrl == null || collectionUrl.equals("") || (collectionUrl != null 
-	    				&& (collectionUrl.length() > 0 && collection.title.contains(collectionUrl)
-	    						|| collectionUrl.equals("")))) {	    		
-	    		if ((parent && collection.parent.length() == 0) || !parent) {
-//		    		if (firstTime) {
-//		    			firstTime = false;
-//		    		} else {
-//		    			sb.append(", ");
-//		    		}
-		    		
-					ObjectNode child = nodeFactory.objectNode();
-					child.put("title", collection.title + " (" + Target.findAllforCollection(collection.url).size() + ")");
-					child.put("url", String.valueOf(routes.Collections.view(collection.url)));
-			    	if (StringUtils.isNotEmpty(collection.url) && collection.url.equals(collectionUrl)) {
-			    		child.put("select", true);
-			    	}
-					child.put("key", "\"" + collection.url + "\"");
-			    	List<DCollection> childCollections = DCollection.getChildLevelCollections(collection.url);
-			    	if (childCollections.size() > 0) {
-			    		child.put("children", Json.toJson(getCollectionTreeElements(childCollections, collectionUrl, false)));
-			    	}
-//					getChildren(nodeFactory, collection.url, collectionUrl);
-					result.add(child);
-					
-//	    			Logger.debug("added");
-//					sb.append("{\"title\": \"" + collection.title + 
-//							" (" + Target.findAllforCollection(collection.url).size() + ")" + "\"," + 
-//							//" \"url\": \"http://www.google.com\"," +
-//							" \"url\": \"" + routes.Collections.view(collection.url) + "\"," +
-//                            checkCollectionSelection(collection.url, collectionUrl) + 
-//							" \"key\": \"" + collection.url + "\"" + 
-//							getChildren(nodeFactory, collection.url, collectionUrl) + "}");
-	    		}
+	    		if (StringUtils.isNotEmpty(collectionUrl) && StringUtils.containsIgnoreCase(collection.title, collectionUrl)) {	    		
+		    		if ((parent && collection.parent.length() == 0) || !parent) {
+						ObjectNode child = nodeFactory.objectNode();
+						child.put("title", collection.title + " (" + Target.findAllforCollection(collection.url).size() + ")");
+						child.put("url", String.valueOf(routes.Collections.view(collection.url)));
+				    	if (StringUtils.isNotEmpty(collection.url) && collection.url.equalsIgnoreCase(collectionUrl)) {
+				    		child.put("select", true);
+				    	}
+						child.put("key", "\"" + collection.url + "\"");
+				    	List<DCollection> childCollections = DCollection.getChildLevelCollections(collection.url);
+				    	if (childCollections.size() > 0) {
+				    		child.put("children", Json.toJson(getCollectionTreeElements(childCollections, collectionUrl, false)));
+				    	}
+						result.add(child);
+		    		}
 	    		}
 	    	}
-//	    	Logger.info("collectionList level size: " + collectionList.size());
-//	    	sb.append("]");
-//	    	res = sb.toString();
-//	    	Logger.info("getTreeElements() res: " + sb.toString());
     	}
 //    	Logger.info("getTreeElements() res: " + result);
     	return result;
     }
-    
-    /**
-     * Mark collections that are stored in target object as selected
-     * @param collectionUrl The collection identifier
-     * @param checkedUrl This is an identifier for current target object
-     * @return
-     */
-    public static ObjectNode checkCollectionSelection(JsonNodeFactory nodeFactory, String collectionUrl, String checkedUrl) {
-		ObjectNode child = nodeFactory.objectNode();
-    	if (checkedUrl != null && checkedUrl.length() > 0 && checkedUrl.equals(collectionUrl)) {
-    		child.put("select", true);
-    	}
-    	return child;
-    }
-        
-    /**
-     * This method calculates collection children - objects that have parents.
-     * @param url The identifier for parent 
-     * @param collectionUrl This is an identifier for current collection object
-     * @return child collection in JSON form
-     */
-    public static ObjectNode getChildren(JsonNodeFactory nodeFactory, String url, String collectionUrl) {
-		ObjectNode children = nodeFactory.objectNode();
-    	List<DCollection> childCollections = DCollection.getChildLevelCollections(url);
-    	if (childCollections.size() > 0) {
-    		Logger.info("children: " + Json.toJson(getCollectionTreeElements(childCollections, collectionUrl, false)));
-    		children.put("children", Json.toJson(getCollectionTreeElements(childCollections, collectionUrl, false)));
-    	}
-    	return children;
-    }
-        
 }
