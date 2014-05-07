@@ -84,6 +84,7 @@ public class Scope {
 		} catch (Exception e) {
 			Logger.warn("GeoIP error. " + e);
 		}
+		Logger.debug("Geo IP query result: " + res);
 		return res;
 	}
 	

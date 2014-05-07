@@ -464,7 +464,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeIp(target.field_url, target.url)) {
+								@if(Target.checkUkHosting(target.field_url)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
