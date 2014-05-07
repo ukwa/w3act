@@ -22,13 +22,11 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
 				    <div class="col-sm-6">
-		                <label class="col-sm-6 control-label" style="color:green">ASSIGNED USERS</label>
+		                <label class="col-sm-6 control-label" style="color:green">ASSIGNED USERS</label><br><br>
 						<div>
-							<label class="checkbox-inline">
-					        	@for(user <- User.findByOrganisation(organisation.url)) {
-					                <input type="checkbox" name="@user.name" value="true" checked/> @user.name<br>
-					            }
-							</label>
+				        	@for(user <- User.findByOrganisation(organisation.url)) {
+				                <input type="checkbox" name="@user.name" value="true" checked/> @user.name<br>
+				            }
 						</div>
 					</div>
 				</div>
@@ -45,13 +43,11 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
 				    <div class="col-sm-6">
-		                <label class="col-sm-6 control-label" style="color:red">NOT ASSIGNED USERS</label>
+		                <label class="col-sm-6 control-label" style="color:red">AVAILABLE USERS</label><br><br>
 						<div>
-							<label class="checkbox-inline">
-            			        @for(user <- User.findByNotEqualOrganisation(organisation.url)) {
-					                <input type="checkbox" name="@user.name" value="true" checked /> @user.name<br>
-					            }
-							</label>
+           			        @for(user <- User.findByNotEqualOrganisation(organisation.url)) {
+				                <input type="checkbox" name="@user.name" value="true"/> @user.name<br>
+				            }
 						</div>
 					</div>
 				</div>
