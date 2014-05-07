@@ -86,6 +86,7 @@ public final class Const {
 	public static final String ACKNOWLEDGEMENT    = "Acknowledgement";
     public static final String HTTP_PREFIX        = "http://";
 	public static final String SERVER_NAME        = "server_name";
+	public static final String UND                = "und";
 	
 	// Elements in HTML forms
 	public static final String FALSE              = "false";

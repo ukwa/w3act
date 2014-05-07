@@ -155,6 +155,9 @@ public class JsonUtils {
 					if (obj.vid > 0) {
 						obj.edit_url = Const.WCT_URL + obj.vid;
 					}
+					if (obj.language != null && obj.language.equals(Const.UND)) {
+						obj.language = "";
+					}
 				}
 				if (type.equals(NodeType.ORGANISATION)) {
 					Organisation obj = (Organisation) itr.next();
