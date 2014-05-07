@@ -143,7 +143,9 @@ public class TargetController extends AbstractController {
 //        		Logger.info("status: " + newTarget.status + ".");
             } 
             if (getFormParam(Const.QA_STATUS) != null) {
+            	Logger.debug("###   QA_STATUS");
             	newTarget.qa_status = getFormParam(Const.QA_STATUS);
+            	CrawlPermissions.updateAllByTargetStatusChange(newTarget.field_url, newTarget.qa_status);
             } 
     		Logger.info("QA status: " + newTarget.qa_status + ", getFormParam(Const.QA_STATUS): " + getFormParam(Const.QA_STATUS));
             if (getFormParam(Const.LANGUAGE) != null) {
