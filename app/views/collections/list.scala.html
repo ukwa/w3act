@@ -1,4 +1,8 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[DCollection], currentSortBy: String, currentOrder: String)
+@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[DCollection], currentSortBy: String, currentOrder: String, data :com.fasterxml.jackson.databind.JsonNode)
+
+@getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
+	Html(data.toString)
+}
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
@@ -8,20 +12,9 @@
 			context = @play.api.Play.current.configuration.getString("application.context");
 			applySearch(context, 'collections'); 
 
-		    SUGGESTED_COLLECTION_URI = '@routes.Collections.getCollections(searchstr)';
-            $.ajax({
-            	url: SUGGESTED_COLLECTION_URI,
-            	dataType: 'json',
-            	success: function(data) {
-            		showTree(data);
-            	},
-    	    	error: function(jqXHR, textStatus, errorThrown) {
-    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
-    	    	}
-    	    });
+            showTree(@getJson(data));
             
             function showTree(data) {
-            	console.log("data: " + data);
              	$("#tree3").dynatree({
                 	checkbox: false,
                 	selectMode: 1,

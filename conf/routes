@@ -38,7 +38,6 @@ GET     /collections/:collection            controllers.Collections.view(collect
 GET     /collections/:collection/edit       controllers.Collections.edit(collection)
 GET     /collections/:sites/sites			controllers.Collections.sites(sites)
 POST    /collections             			controllers.Collections.save()
-GET     /api/tree/collections               controllers.Collections.getCollections(filter)
 
 GET     /taxonomy                           controllers.TaxonomiesController.index()
 GET    	/taxonomy/list                  	controllers.TaxonomiesController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")

@@ -28,6 +28,9 @@ import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 
 @Security.Authenticated(Secured.class)
 public class Collections extends AbstractController {
@@ -57,11 +60,13 @@ public class Collections extends AbstractController {
 	 */
 	public static Result list(int pageNo, String sortBy, String order,
 			String filter) {
-		Logger.info("LookUp.list()");
+		JsonNode node = getCollectionsData(filter);
+		Logger.info("LookUp.list() " + node);
+		
 		return ok(list.render("Collections",
 				User.find.byId(request().username()), filter,
 				DCollection.page(pageNo, 10, sortBy, order, filter), sortBy,
-				order));
+				order, node));
 	}
 	
 	/**
@@ -237,17 +242,15 @@ public class Collections extends AbstractController {
      * @param collectionUrl This is an identifier for current selected object
      * @return tree structure
      */
-    @BodyParser.Of(BodyParser.Json.class)
-    public static Result getCollections(String collectionUrl) {
-    	Logger.info("QA dashboard getCollections() " + collectionUrl);
-        JsonNode jsonData = null;
+
+    private static JsonNode getCollectionsData(String url) {
     	List<DCollection> collections = DCollection.getFirstLevelCollections();
-    	List<ObjectNode> result = getCollectionTreeElements(collections, collectionUrl, true);
+    	List<ObjectNode> result = getCollectionTreeElements(collections, url, true);
     	Logger.info("collections main level size: " + collections.size());
-		jsonData = Json.toJson(result);
-        return ok(jsonData);
+    	JsonNode jsonData = Json.toJson(result);
+        return jsonData;
     }
-        
+    
     /**
    	 * This method calculates first order collections.
      * @param collectionList The list of all collections
