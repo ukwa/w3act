@@ -1,11 +1,12 @@
 package controllers;
 
-import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
-import org.apache.commons.lang3.StringUtils;
-
+import models.CrawlPermission;
 import models.DCollection;
 import models.Flag;
 import models.Organisation;
@@ -13,6 +14,9 @@ import models.Tag;
 import models.Target;
 import models.Taxonomy;
 import models.User;
+
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -24,10 +28,13 @@ import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
-import views.html.targets.edit;
+import views.html.licence.ukwalicenceresult;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
 
 /**
  * Describe W3ACT project.
@@ -47,6 +54,7 @@ public class TargetController extends AbstractController {
         String save = getFormParam("save");
         String delete = getFormParam("delete");
         String request = getFormParam(Const.REQUEST);
+        String archive = getFormParam(Const.ARCHIVE);
         Logger.info("save: " + save);
         Logger.info("delete: " + delete);
         if (save != null) {
@@ -63,25 +71,6 @@ public class TargetController extends AbstractController {
         	DynamicForm requestData = Form.form().bindFromRequest();
         	String title = requestData.get(Const.TITLE);
         	Logger.info("form title: " + title);
-        	
-            Form<Target> targetForm = Form.form(Target.class).bindFromRequest();
-//            targetForm.get().field_url
-            /*if(targetForm.hasErrors()) {
-            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + targetForm.errors().toString());
-//            	return badRequest(
-//                        edit.render(targetForm, User.find.byId(request().username()))
-//                      );
-//        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " +
-        				"\n\nMissing fields are:\n" + targetForm.errors().toString());
-//    			flash("message", "Please fill out ll the required fields, marked with a red star. There are required fields in more than one tab. " + 
-//    							 targetForm.errors().toString());
-//            	return ok(
-//		              edit.render(targetForm, User.find.byId(request().username()))
-//		            );
-    	    } else {*/
-//            	Target targetFormObject = targetForm.get();
-//            	Logger.info("targetFormObject: " + targetFormObject);
             Target target = new Target();
         	Target newTarget = new Target();
             boolean isExisting = true;
@@ -93,7 +82,6 @@ public class TargetController extends AbstractController {
             }
         	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
         			|| StringUtils.isBlank(getFormParam(Const.FIELD_URL))
-//        			|| StringUtils.isBlank(getFormParam(Const.SUBJECT))
         			|| (StringUtils.isBlank(getFormParam(Const.SUBSUBJECT)) && !User.find.byId(request().username()).hasRole(Const.USER))
         			|| (StringUtils.isBlank(getFormParam(Const.AUTHOR)) && !User.find.byId(request().username()).hasRole(Const.USER))
         			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
@@ -102,18 +90,6 @@ public class TargetController extends AbstractController {
             			", selection type: " + getFormParam(Const.SELECTION_TYPE));
             	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
         		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-//    			Logger.info("One of the required fields is empty. Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-//    			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-//    			if (isExisting) {
-//    				if (target != null && target.url != null) {
-//    	    			Logger.info("target.url: " + target.url);
-//    					return redirect(routes.Targets.edit(target.url));
-//    				} else {
-//        				return redirect(routes.Targets.create(getFormParam(Const.FIELD_URL)));
-//        			}
-//    			} else {
-//    				return redirect(routes.Targets.create(getFormParam(Const.FIELD_URL)));
-//    			}
         	}    	
 
             if (target == null) {
@@ -127,9 +103,7 @@ public class TargetController extends AbstractController {
             if (target.author == null) {
             	newTarget.author = getFormParam(Const.USER);
             }
-//            newTarget.field_collection_categories = target.field_collection_categories;
             newTarget.field_nominating_organisation = target.field_nominating_organisation;
-//            Logger.info("new nid: " + newTarget.nid);
             newTarget.title = getFormParam(Const.TITLE);
             newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
@@ -173,24 +147,6 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
-//            if (getFormParam(Const.SUBJECT) != null) {
-//            	if (!getFormParam(Const.SUBJECT).toLowerCase().contains(Const.NONE)) {
-//	            	String[] subjects = getFormParams(Const.SUBJECT);
-//	//            	Logger.info("subjects: " + subjects[0] + subjects[1]);
-//	            	String resSubject = "";
-//	            	for (String subject: subjects)
-//	                {
-//	            		if (subject != null && subject.length() > 0) {
-//	                		Logger.info("add subject: " + subject);
-////	                		Logger.info("add subject: " + subject + ", " + Taxonomy.findByName(subject).url);
-//	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBJECT).url + Const.LIST_DELIMITER;
-//	            		}
-//	                }
-//	            	newTarget.field_subject = resSubject;
-//            	} else {
-//            		newTarget.field_subject = Const.NONE;
-//            	}
-//            }
             if (getFormParam(Const.SUBSUBJECT) != null) {
             	if (!getFormParam(Const.SUBSUBJECT).toLowerCase().contains(Const.NONE)) {
 	            	String[] subjects = getFormParams(Const.SUBSUBJECT);
@@ -287,14 +243,8 @@ public class TargetController extends AbstractController {
             		newTarget.field_license = Const.NONE;
             	}
             }
-//            if (getFormParam(Const.FIELD_LICENSE) != null) {
-//            	Logger.info("license: " + getFormParam(Const.FIELD_LICENSE));
-//            	String licenseUrl = Taxonomy.findByFullNameExt(getFormParam(Const.FIELD_LICENSE), Const.LICENCE).url;
-//            	newTarget.field_license = licenseUrl;
-//            }
             newTarget.field_uk_hosting = Target.checkUkHosting(newTarget.field_url);
         	Logger.debug("field_uk_hosting: " + newTarget.field_uk_hosting);
-//            Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
             newTarget.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newTarget.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
             Logger.debug("newTarget.field_uk_postal_address: " + newTarget.field_uk_postal_address);
@@ -397,9 +347,91 @@ public class TargetController extends AbstractController {
     	        res = redirect(routes.CrawlPermissions.licenceRequestForTarget(name, target)); 
         	}
         }
+        if (archive != null) {
+            Logger.debug("archive target title: " + getFormParam(Const.TITLE) + 
+            		" with URL: " + getFormParam(Const.FIELD_URL));
+        	if (getFormParam(Const.FIELD_URL) != null) {
+                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
+    	        res = redirect(routes.TargetController.archiveTarget(target)); 
+        	}
+        }
         return res;
     }
 	
+    /**
+     * This method pushes a message onto a RabbitMQ queue for given target
+     * using global settings from project configuration file.
+     * @param target The field URL of the target
+     * @return
+     */
+    public static Result archiveTarget(String target) {    	
+    	Logger.debug("archiveTarget() " + target);
+    	if (target != null && target.length() > 0) {
+	        Properties props = System.getProperties();
+	    	Properties customProps = new Properties();
+	    	String queueHost = "";
+	    	String queuePort = "";
+	    	String queueName = "";
+	    	String routingKey= "";
+	    	String exchangeName = "";
+	    	try {
+	    		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
+	    	    for(String key : customProps.stringPropertyNames()) {
+	    	    	  String value = customProps.getProperty(key);
+	//    	      	  Logger.debug("archiveTarget() key: " + key + " => " + value);
+	    	    	  if (key.equals(Const.QUEUE_HOST)) {
+	  	    	          queueHost = value;
+	  	    	      	  Logger.debug("archiveTarget() queue host: " + value);
+	    	    	  }
+	    	    	  if (key.equals(Const.QUEUE_PORT)) {
+	  	    	          queuePort = value;
+	  	    	      	  Logger.debug("archiveTarget() queue port: " + value);
+	    	    	  }
+	    	    	  if (key.equals(Const.QUEUE_NAME)) {
+	  	    	          queueName = value;
+	  	    	      	  Logger.debug("archiveTarget() queue name: " + value);
+	    	    	  }
+	    	    	  if (key.equals(Const.ROUTING_KEY)) {
+	  	    	          routingKey = value;
+	  	    	      	  Logger.debug("archiveTarget() routing key: " + value);
+	    	    	  }
+	    	    	  if (key.equals(Const.EXCHANGE_NAME)) {
+	  	    	          exchangeName = value;
+	  	    	      	  Logger.debug("archiveTarget() exchange name: " + value);
+	    	    	  }
+	    	    }
+	    	    ConnectionFactory factory = new ConnectionFactory();
+	    	    if (queueHost != null) {
+	    	    	factory.setHost(queueHost);
+	    	    }
+	    	    if (queuePort != null) {
+	    	    	factory.setPort(Integer.parseInt(queuePort));
+	    	    }
+	    	    Connection connection = factory.newConnection();
+	    	    Channel channel = connection.createChannel();
+
+	    	    channel.exchangeDeclare(exchangeName, "direct", true);
+	    	    channel.queueDeclare(queueName, true, false, false, null);
+	    	    channel.queueBind(queueName, exchangeName, routingKey);
+	    	    
+//	    	    channel.queueDeclare(queue_name, false, false, false, null);
+	    	    String message = target;
+//	    	    channel.basicPublish("", queue_name, null, message.getBytes());
+	    	    channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
+	    	    Logger.debug(" ### sent target '" + message + "' to queue");    	    
+	    	    channel.close();
+	    	    connection.close();	    	    
+	    	} catch (IOException e) {
+	    		Logger.error("Target archiving error: " + e.getMessage());
+	    	}    	      
+    	} else {
+    		Logger.debug("Target field for archiving is empty");
+    	}
+		return ok(
+	            ukwalicenceresult.render()
+	        );
+    }
+          
     /**
      * This method is checking scope for given URL and returns result in JSON format.
      * @param url

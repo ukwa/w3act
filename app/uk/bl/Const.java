@@ -87,7 +87,16 @@ public final class Const {
     public static final String HTTP_PREFIX        = "http://";
 	public static final String SERVER_NAME        = "server_name";
 	public static final String UND                = "und";
-	
+
+	/**
+	 * RabbitMQ settings
+	 */
+	public static final String QUEUE_HOST         = "queue_host";
+	public static final String QUEUE_PORT         = "queue_port";
+	public static final String QUEUE_NAME         = "queue_name";
+	public static final String ROUTING_KEY        = "routing_key";
+	public static final String EXCHANGE_NAME      = "exchange_name";
+		
 	// Elements in HTML forms
 	public static final String FALSE              = "false";
 	public static final String TRUE               = "true";
@@ -292,6 +301,7 @@ public final class Const {
 	public static final String SUBMIT             = "submit";
 	public static final String UPDATE             = "update";
 	public static final String REQUEST            = "request";	
+	public static final String ARCHIVE            = "archive";	
 	public static final String APPLY              = "apply";
 
 	// Sorting/Pagination

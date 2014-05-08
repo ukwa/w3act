@@ -15,7 +15,8 @@ object ApplicationBuild extends Build {
       "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
       "com.maxmind.geoip2" % "geoip2" % "0.7.0",
       "org.apache.commons" % "commons-email" % "1.3.2",
-      "commons-io" % "commons-io" % "2.3"
+      "commons-io" % "commons-io" % "2.3",
+	  "com.rabbitmq" % "amqp-client" % "3.3.1"
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
