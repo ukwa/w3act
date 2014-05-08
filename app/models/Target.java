@@ -690,7 +690,24 @@ public class Target extends Model {
     }          
 
 	/**
-	 * This method checks whether the passed URL is in scope. TODO boolean
+	 * This method checks whether the passed URL is in scope
+	 * and presents result as a string in GUI. 
+	 * @param fieldUrl The field URL
+	 * @param url The identification URL
+	 * @return result as a String
+	 */
+	public String checkScopeStr(String fieldUrl, String url) {
+		String res = "false";
+		if (fieldUrl != null && fieldUrl.length() > 0 
+				&& url != null && url.length() > 0
+				&& Target.isInScopeIp(fieldUrl, url)) {
+			res = "true";
+		}
+    	return res;
+    }
+
+	/**
+	 * This method checks whether the passed URL is in scope. 
 	 * @param url
 	 * @return result as a String
 	 */

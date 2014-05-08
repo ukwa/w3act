@@ -142,7 +142,11 @@
 					<td>@target.field_crawl_frequency</td>
 					<td><a class="brand" href="@routes.Curators.edit(target.author)">@target.get_user_by_id()</a></td>
 					<td>@target.getStatusStr()</td>
-					<td>@target.checkScope(target.get_field_list_as_str("field_url"))</td>
+					@if(target.field_url != null && target.url != null) {
+					<td>@target.checkScopeStr(target.field_url, target.url)</td>
+					} else {
+						<td></td>
+					}
 					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@target.get_field_list_as_str("field_url")">(mementos)</a></td>
 				</tr>
 				}
