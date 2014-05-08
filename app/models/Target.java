@@ -1299,13 +1299,17 @@ public class Target extends Model {
         }
     	
         /**
-         * The resulting list should only include those records where there is 
-         * specific 'UKWA Licensing' (i.e. where field_license is not empty).
+         * The resulting list should only include those records that
+         * are in scope according to InScopeIp and InScopeDomain rules.
          */
 		Iterator<Target> itr = targets.findList().iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-        	if (Target.isInScopeIp(target.field_url, target.url)) {
+			boolean isInScope = isInScopeIp(target.field_url, target.url);
+			if (!isInScope) {
+				isInScope = isInScopeDomain(target.field_url, target.url);
+			}
+        	if (isInScope) {
         		Logger.debug("add to export ld: " + target);
 	        	res.add(target);
 	        }
