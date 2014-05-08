@@ -392,7 +392,7 @@ public class Scope {
 	        	res = true;
 	        }
         }
-		Logger.info("lookup entry for '" + url + "' is in database with value: " + res);        
+		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
         return res;
 	}
 	

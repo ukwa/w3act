@@ -779,22 +779,9 @@ public class Targets extends AbstractController {
     public static Result exportLdFrequencyJson(String frequency) {
         JsonNode jsonData = null;
         if (frequency != null) {
-	        List<Target> res = new ArrayList<Target>();
 	        List<Target> targets = new ArrayList<Target>();
-	        if (frequency.equals(Const.ALL)) {
-	        	targets = Target.findAllActive();
-	        } else {
-	        	targets = Target.exportByFrequency(frequency);
-	        }
-	        Iterator<Target> itr = targets.iterator();
-	        while (itr.hasNext()) {
-	        	Target target = itr.next();
-	        	if (Target.isInScope(target.field_url, null)) {
-	        		Logger.debug("add to export ld: " + target);
-	        		res.add(target);
-	        	}
-	        }
-	        jsonData = Json.toJson(res);
+        	targets = Target.exportLdFrequency(frequency);
+	        jsonData = Json.toJson(targets);
         }
         return ok(jsonData);
     }

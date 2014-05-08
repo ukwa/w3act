@@ -1267,6 +1267,36 @@ public class Target extends Model {
 		return res;
 	}
 	
+	/**
+     * This method provides data exports for given crawl-frequency. 
+     * Method returns a list of Targets and associated crawl metadata.
+     * @param frequency The crawl frequency e.g. 'daily'
+     * @return list of Target objects
+	 */
+	public static List<Target> exportLdFrequency(String frequency) {
+		List<Target> res = new ArrayList<Target>();
+        ExpressionList<Target> targets = find.where().eq(Const.ACTIVE, true)
+        		.icontains(Const.FIELD_CRAWL_FREQUENCY, frequency);
+        if (frequency.equals(Const.ALL)) {
+        	targets = find.where().eq(Const.ACTIVE, true);
+        }
+    	
+        /**
+         * The resulting list should only include those records where there is 
+         * specific 'UKWA Licensing' (i.e. where field_license is not empty).
+         */
+		Iterator<Target> itr = targets.findList().iterator();
+		while (itr.hasNext()) {
+			Target target = itr.next();
+        	if (Target.isInScopeIp(target.field_url, target.url)) {
+        		Logger.debug("add to export ld: " + target);
+	        	res.add(target);
+	        }
+		}
+    	Logger.info("exportLdFrequency() resulting list size: " + res.size());   	
+		return res;
+	}
+	
     /**
      * Retrieve a Target by crawl URL.
      * @param url The crawl URL
