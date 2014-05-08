@@ -1243,9 +1243,27 @@ public class Target extends Model {
 	 */
 	public static List<Target> exportByFrequency(String frequency) {
 		List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true)
+        ExpressionList<Target> targets = find.where().eq(Const.ACTIVE, true)
         		.icontains(Const.FIELD_CRAWL_FREQUENCY, frequency);
-    	res = ll.findList();
+        if (frequency.equals(Const.ALL)) {
+        	targets = find.where().eq(Const.ACTIVE, true);
+        }
+    	
+        /**
+         * The resulting list should only include those records where there is 
+         * specific 'UKWA Licensing' (i.e. where field_license is not empty).
+         */
+		Iterator<Target> itr = targets.findList().iterator();
+		while (itr.hasNext()) {
+			Target target = itr.next();
+	        if (target != null 
+	        		&& target.field_license != null 
+	        		&& target.field_license.length() > 0 
+	        		&& !target.field_license.toLowerCase().contains(Const.NONE)) {
+	        	res.add(target);
+	        }
+		}
+    	Logger.info("exportByFrequency() resulting list size: " + res.size());   	
 		return res;
 	}
 	

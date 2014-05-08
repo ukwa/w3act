@@ -25,21 +25,18 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import uk.bl.exception.WhoisException;
-import uk.bl.scope.Scope;
-import views.html.targets.list;
+import views.html.collections.sites;
+import views.html.targets.blank;
 import views.html.targets.edit;
+import views.html.targets.list;
 import views.html.targets.targets;
 import views.html.targets.view;
-import views.html.targets.blank;
-import views.html.collections.sites;
+import views.html.users.usersites;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import views.html.users.*;
 
 /**
  * Manage targets.
@@ -765,11 +762,7 @@ public class Targets extends AbstractController {
         JsonNode jsonData = null;
         if (frequency != null) {
 	        List<Target> targets = new ArrayList<Target>();
-	        if (frequency.equals(Const.ALL)) {
-	        	targets = Target.findAllActive();
-	        } else {
-	        	targets = Target.exportByFrequency(frequency);
-	        }
+        	targets = Target.exportByFrequency(frequency);
 	        jsonData = Json.toJson(targets);
         }
         return ok(jsonData);
