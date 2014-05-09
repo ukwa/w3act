@@ -222,9 +222,35 @@ public class Nominations extends AbstractController {
                 }
                 
                 nomination.name = getFormParam(Const.NAME);
+        	    if (getFormParam(Const.TITLE) != null) {
+        	    	nomination.title = getFormParam(Const.TITLE);
+        	    }
+        	    if (getFormParam(Const.WEBSITE_URL) != null) {
+        	    	nomination.website_url = getFormParam(Const.WEBSITE_URL);
+        	    }
+        	    if (getFormParam(Const.EMAIL) != null) {
+        	    	nomination.email = getFormParam(Const.EMAIL);
+        	    }
+        	    if (getFormParam(Const.PHONE) != null) {
+        	    	nomination.tel = getFormParam(Const.PHONE);
+        	    }
+        	    if (getFormParam(Const.ADDRESS) != null) {
+        	    	nomination.address = getFormParam(Const.ADDRESS);
+        	    }
         	    if (getFormParam(Const.DESCRIPTION) != null) {
         	    	nomination.notes = getFormParam(Const.DESCRIPTION);
         	    }
+        	    if (getFormParam(Const.JUSTIFICATION) != null) {
+        	    	nomination.justification = getFormParam(Const.JUSTIFICATION);
+        	    }
+                if (getFormParam(Const.NOMINATION_DATE) != null) {
+                	String startDateHumanView = getFormParam(Const.NOMINATION_DATE);
+                	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
+                	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
+                	nomination.nomination_date = startDateUnix;
+                }        	    
+                nomination.nominated_website_owner = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATED_WEBSITE_OWNER));
+                nomination.nomination_checked = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATION_CHECKED));
             } catch (Exception e) {
             	Logger.info("Nomination not existing exception");
             }

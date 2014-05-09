@@ -15,17 +15,135 @@
 	   }
 	</ul>
 
-	<div class="padding-20">
-		<div class="tab-pane active">
-			<dl class="dl-horizontal text-overflow">    
-				<dt>Name:</dt>
-				<dd>@nomination.name</dd>
-				<dt>Description:</dt>
-				<dd>@nomination.notes</dd>
-			</dl>
-		</div>
-	</div>
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
+				    <div class="col-sm-6">
+	              		@nomination.name
+					</div>
+				</div>
+			</div>
+     	</div>
+         
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
+				    <div class="col-sm-6">
+		                @nomination.title
+					</div>
+				</div>
+			</div>
+     	</div>
 
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
+				    <div class="col-sm-6">
+						@nomination.website_url
+					</div>
+				</div>
+			</div>
+     	</div>
+
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
+				    <div class="col-sm-6">
+						@nomination.email
+					</div>
+				</div>
+			</div>
+     	</div>
+
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Phone:</label>
+				    <div class="col-sm-6">
+						@nomination.tel
+					</div>
+				</div>
+			</div>
+     	</div>
+
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Address:</label>
+				    <div class="col-sm-6">
+						@nomination.address
+					</div>
+				</div>
+			</div>
+     	</div>
+
+     	<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Nominated Website Owner:</label>
+				    <div class="col-sm-6">
+				    @if(nomination.nominated_website_owner != null && nomination.nominated_website_owner) {
+		                yes
+		            } else {
+		                no
+		            }
+					</div>
+				</div>
+			</div>
+     	</div>	     
+
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Justification:</label>
+				    <div class="col-sm-6">
+						@nomination.justification
+					</div>
+				</div>
+			</div>
+     	</div>
+
+     	<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Nomination Checked:</label>
+				    <div class="col-sm-6">
+				    @if(nomination.nomination_checked != null && nomination.nomination_checked) {
+		                yes
+		            } else {
+		                no
+		            }
+					</div>
+				</div>
+			</div>
+     	</div>	     
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
+				    <div class="col-sm-6">
+						@nomination.notes
+					</div>
+				</div>
+			</div>
+     	</div>
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Date</label>
+				    <div class="col-sm-6">
+ 						@nomination.nomination_date
+               		</div>
+				</div>
+			</div>
+     	</div>	
+		     	
 }
 } else {
 	<h1>Access Denied for URL @routes.Nominations.index()/view</h1>

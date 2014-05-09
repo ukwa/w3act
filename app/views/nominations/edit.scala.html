@@ -31,7 +31,103 @@
 				</div>
 			</div>
      	</div>
-	          
+         
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
+				    <div class="col-sm-6">
+		              <input class="form-control" name="title" id="title"  value="@nomination.title" placeholder="London Business Forum" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
+				    <div class="col-sm-6">
+						<input class="form-control" name="target" value="@nomination.website_url" placeholder="http://www.londonbusinessforum.com/" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
+				    <div class="col-sm-6">
+						<input class="form-control" name="email" value="@nomination.email" placeholder="max.mustermann@@domain.com" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Phone:</label>
+				    <div class="col-sm-6">
+						<input class="form-control" value="@nomination.tel" name="phone" placeholder="0041889923456" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Address:</label>
+				    <div class="col-sm-6">
+						<input class="form-control" value="@nomination.address" name="address" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+
+     	<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Nominated Website Owner:</label>
+				    <div class="col-sm-6">
+				    @if(nomination.nominated_website_owner != null && nomination.nominated_website_owner) {
+		                <input type="checkbox" name="nominated_website_owner" checked/>
+		            } else {
+		                <input type="checkbox" name="nominated_website_owner"/>
+		            }
+					</div>
+				</div>
+			</div>
+     	</div>	     
+
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Justification:</label>
+				    <div class="col-sm-6">
+						<input class="form-control" value="@nomination.justification" name="justification" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
+
+     	<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Nomination Checked:</label>
+				    <div class="col-sm-6">
+				    @if(nomination.nomination_checked != null && nomination.nomination_checked) {
+		                <input type="checkbox" name="nomination_checked" checked/>
+		            } else {
+		                <input type="checkbox" name="nomination_checked"/>
+		            }
+					</div>
+				</div>
+			</div>
+     	</div>	     
+
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
@@ -42,11 +138,18 @@
 				</div>
 			</div>
      	</div>
-		
-		<div class="alert alert-info">
-			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
-		</div>
 
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Date</label>
+				    <div class="col-sm-6">
+ 						<input type="text" name="log-date" class="form-control" id="log-date" value="@nomination.nomination_date"/>
+               		</div>
+				</div>
+			</div>
+     	</div>	
+		     	
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">

@@ -259,11 +259,14 @@ public final class Const {
 	public static final String DATE_ACK          = "Date";
 	public static final String PUBLICITY_ACK     = "Future publicity for the Web Archive";
 	
-	// Nomination
+	/**
+	 * Nomination
+	 */
 	public static final String WEBSITE_URL              = "website_url";
 	public static final String TEL                      = "tel";
 	public static final String ADDRESS                  = "address";
 	public static final String NOMINATED_WEBSITE_OWNER  = "nominated_website_owner";
+	public static final String NOMINATION_CHECKED       = "nomination_checked";
 	public static final String NOMINATION_DATE          = "nomination_date";
 	
 	/**
