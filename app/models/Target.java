@@ -1210,8 +1210,8 @@ public class Target extends Model {
         		.add(Expr.or(
 	                    Expr.eq(Const.FIELD_COLLECTION_CATEGORIES, collection_url),
 	                    Expr.or(
-	    	                    Expr.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url + Const.COMMA),
-	    	                    Expr.icontains(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + " " + collection_url)
+	    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, collection_url + Const.COMMA),
+	    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + "  " + collection_url)
 	    	                 )
 	                 ))
         		//.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
