@@ -55,6 +55,8 @@ public class Target extends Model {
     public Boolean field_uk_domain;
     public String field_crawl_permission;
     public Boolean field_special_dispensation;
+    @Column(columnDefinition = "TEXT")
+    public String field_special_dispensation_reaso;
     public Boolean field_uk_geoip;
     public Boolean field_professional_judgement;
     public Long vid;

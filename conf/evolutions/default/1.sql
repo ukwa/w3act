@@ -316,6 +316,7 @@ create table target (
   field_uk_domain           boolean,
   field_crawl_permission    varchar(255),
   field_special_dispensation boolean,
+  field_special_dispensation_reaso TEXT,
   field_uk_geoip            boolean,
   field_professional_judgement boolean,
   vid                       bigint,
