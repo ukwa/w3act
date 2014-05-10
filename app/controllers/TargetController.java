@@ -29,6 +29,8 @@ import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import views.html.licence.ukwalicenceresult;
+import views.html.targets.blank;
+import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -89,7 +91,8 @@ public class TargetController extends AbstractController {
             			", subject: " + getFormParam(Const.SUBSUBJECT) + ", selector: " + getFormParam(Const.AUTHOR) +
             			", selection type: " + getFormParam(Const.SELECTION_TYPE));
             	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+//        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+                return ok(infomessage.render("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab."));
         	}    	
 
             if (target == null) {
@@ -233,7 +236,8 @@ public class TargetController extends AbstractController {
 	                				&& getFormParam(Const.QA_STATUS) != null 
 	                				&& !getFormParam(Const.QA_STATUS).equals(Const.CrawlPermissionStatus.GRANTED.name())) {
 	                        	Logger.info("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");
-	                    		return badRequest("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");	                			
+//	                    		return badRequest("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");	                			
+	                            return ok(infomessage.render("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'."));
 	                		}
 	            			resLicenses = resLicenses + Taxonomy.findByFullNameExt(curLicense, Const.LICENCE).url + Const.LIST_DELIMITER;
 	            		}
@@ -251,14 +255,16 @@ public class TargetController extends AbstractController {
             if (newTarget.field_uk_postal_address 
             		&& (newTarget.field_uk_postal_address_url == null || newTarget.field_uk_postal_address_url.length() == 0)) {
             	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
-        		return badRequest("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
+//        		return badRequest("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
+                return ok(infomessage.render("If UK Postal Address field has value 'Yes', the Postal Address URL is required."));
             }
             newTarget.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
             newTarget.value = getFormParam(Const.FIELD_NOTES);
             if (newTarget.field_via_correspondence 
             		&& (newTarget.value == null || newTarget.value.length() == 0)) {
             	Logger.info("If Via Correspondence field has value 'Yes', the Notes field is required.");
-        		return badRequest("If Via Correspondence field has value 'Yes', the Notes field is required.");
+//        		return badRequest("If Via Correspondence field has value 'Yes', the Notes field is required.");
+                return ok(infomessage.render("If Via Correspondence field has value 'Yes', the Notes field is required."));
             }
             newTarget.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
             newTarget.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
@@ -266,7 +272,8 @@ public class TargetController extends AbstractController {
             if (newTarget.field_professional_judgement 
             		&& (newTarget.field_professional_judgement_exp == null || newTarget.field_professional_judgement_exp.length() == 0)) {
             	Logger.info("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
-        		return badRequest("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
+//        		return badRequest("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
+                return ok(infomessage.render("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required."));
             }
             newTarget.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
 //            Logger.info("ignore robots: " + getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));

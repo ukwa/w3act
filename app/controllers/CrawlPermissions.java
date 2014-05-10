@@ -29,6 +29,7 @@ import views.html.crawlpermissions.crawlpermissionpreview;
 import views.html.licence.licences;
 import views.html.mailtemplates.mailtemplates;
 import views.html.refusals.refusals;
+import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
@@ -252,7 +253,8 @@ public class CrawlPermissions extends AbstractController {
                 	Logger.info("name: " + getFormParam(Const.NAME) + ", field URL: " + getFormParam(Const.FILTER) +
                 			", email: " + getFormParam(Const.EMAIL));
                 	Logger.info("Please fill out all the required fields, marked with a red star.");
-            		return badRequest("Please fill out all the required fields, marked with a red star.");
+//            		return badRequest("Please fill out all the required fields, marked with a red star.");
+                    return ok(infomessage.render("Please fill out all the required fields, marked with a red star."));
             	}    	
             	
                 try {
