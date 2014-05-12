@@ -430,9 +430,11 @@ public class TargetController extends AbstractController {
 	    	    connection.close();	    	    
 	    	} catch (IOException e) {
 	    		Logger.error("Target archiving error: " + e.getMessage());
+	            return ok(infomessage.render("Target archiving error: " + e.getMessage()));
 	    	}    	      
     	} else {
     		Logger.debug("Target field for archiving is empty");
+            return ok(infomessage.render("Target archiving error. Target field for archiving is empty"));
     	}
 		return ok(
 	            ukwalicenceresult.render()
