@@ -452,6 +452,16 @@
 						In order to be considered as in scope for Non-Print Legal Deposit, a resource must pass one of a series of tests.
 					</div>
 				</div>		     	
+				@if(Targets.indicateNpldStatus(target.field_url)) {    	
+				<div class="padding-20">
+					<div class="alert alert-info">
+						NB. There are other records within this domain for which data has already been provided.
+						@for(targetObj <- Target.getNpldStatusList(target.field_url)) {
+							<p><a href="@routes.Targets.view(targetObj.url)">@targetObj.title @targetObj.field_url</a></p>
+						}
+					</div>
+				</div>	
+				}	     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
