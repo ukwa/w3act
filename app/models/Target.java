@@ -1495,6 +1495,19 @@ public class Target extends Model {
 	}
 	
 	/**
+	 * This method returns GUI representation of the date.
+	 * @param date
+	 * @return GUI string
+	 */
+	public static String getDateAsString(String date) {
+		String res = "";
+		if (date != null && date.length() > 0) {
+			res = Utils.showTimestampInTable((String) date);
+		}
+		return res;
+	}
+	
+	/**
 	 * This method evaluates if given current URL has lower level then
 	 * URL from the list.
 	 * @param iterUrl The URL from the list

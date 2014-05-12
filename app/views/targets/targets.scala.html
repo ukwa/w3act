@@ -312,6 +312,8 @@
 	                <tr>
 						@header("title", "Target Name")
 						@header("url", "Target URL(s)")	                
+						@header("created", "Created")	                
+						@header("qa_status", "Open UKWA Licence status")	                
 	                </tr>
 				</thead>
 				<tbody>
@@ -323,6 +325,16 @@
 							<td></td>
 						}		                  
 						<td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+						@if(target.url != null && target.created != null) {
+							<td>@Target.getDateAsString(target.created)</td>
+						} else {
+							<td></td>
+						}		                  
+						@if(target.url != null && target.qa_status != null) {
+							<td>@target.qa_status</td>
+						} else {
+							<td></td>
+						}		                  
 	                </tr>
 	                }
 				</tbody>
