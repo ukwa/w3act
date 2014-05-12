@@ -20,6 +20,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import views.html.infomessage;
 import views.html.organisations.list;
 import views.html.organisations.admin;
 import views.html.organisations.edit;
@@ -237,6 +238,12 @@ public class Organisations extends AbstractController {
                 	organisation.url = getFormParam(Const.URL);
                 }
                 
+            	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
+            			|| StringUtils.isBlank(getFormParam(Const.FIELD_ABBREVIATION))) {
+                	Logger.info("title: " + getFormParam(Const.TITLE) + ", abbreviation: " + getFormParam(Const.FIELD_ABBREVIATION));
+                	Logger.info("Please fill out all the required fields, marked with a red star.");
+                    return ok(infomessage.render("Please fill out all the required fields, marked with a red star."));
+            	}    	
         	    if (getFormParam(Const.TITLE) != null) {
         	    	organisation.title = getFormParam(Const.TITLE);
         	    }
