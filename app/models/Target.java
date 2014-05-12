@@ -796,6 +796,26 @@ public class Target extends Model {
 	 * @param nidUrl The identifier URL in the project domain model
 	 * @return result as a flag
 	 */
+    public static boolean isInScopeAll(String url, String nidUrl) {
+    	try {
+			boolean isInScope = isInScopeIp(url, nidUrl);
+			if (!isInScope) {
+				isInScope = isInScopeDomain(url, nidUrl);
+			}
+			return isInScope;
+    	} catch (Exception ex) {
+    		Logger.info("isInScopeAll() Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
+	 * This method checks whether the passed URL is in scope for
+	 * rules associated with scope IP.
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @return result as a flag
+	 */
     public static boolean isInScopeIp(String url, String nidUrl) {
     	try {
     		return Scope.checkScopeIp(url, nidUrl);
