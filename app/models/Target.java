@@ -822,6 +822,21 @@ public class Target extends Model {
     }
     
 	/**
+	 * This method checks whether the passed URL is in scope for
+	 * rules associated with WhoIs scoping rule.
+	 * @param url The search URL
+	 * @return result as a flag
+	 */
+    public static boolean isInScopeUkRegistration(String url) {
+    	try {
+    		return Scope.checkWhois(url);
+    	} catch (WhoisException ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
 	 * This method checks whether the passed URL is in scope for particular mode
 	 * e.g. IP or DOMAIN.
 	 * @param url The search URL

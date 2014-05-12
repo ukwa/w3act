@@ -108,6 +108,23 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Registration
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeUkRegistration(target.field_url)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
 						  		@if(target.status == 1) {
@@ -487,6 +504,23 @@
 							</label>
 						    <div class="col-sm-6">
 								@if(Target.isInScopeDomain(target.field_url, target.url)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Registration
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeUkRegistration(target.field_url)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
