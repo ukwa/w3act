@@ -304,6 +304,11 @@ public class JsonUtils {
 				    collection.weight      = taxonomy.weight;
 				    collection.node_count  = taxonomy.node_count;
 				    collection.vocabulary  = taxonomy.vocabulary;
+				    collection.field_owner = taxonomy.field_owner;
+				    collection.field_dates = taxonomy.field_dates;
+				    if (taxonomy.field_publish != null) {
+				    	collection.publish = Utils.getNormalizeBooleanString(taxonomy.field_publish);
+				    }
 				    collection.parent      = taxonomy.parent;
 				    collection.parents_all = taxonomy.parents_all;
 					res.add(collection);

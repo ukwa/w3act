@@ -67,6 +67,10 @@ public class DCollection extends Model {
     public String revision;
     @JsonIgnore
     public Long feed_nid;    
+    @Column(columnDefinition = "TEXT") 
+    public String field_owner;
+    @Column(columnDefinition = "TEXT") 
+    public String field_dates;
     /**
      * 'true' if collection should be made visible in the UI, default 'false'
      */

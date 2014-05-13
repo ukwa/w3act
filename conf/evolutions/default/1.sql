@@ -80,6 +80,8 @@ create table dcollection (
   comment_count_new         bigint,
   revision                  varchar(255),
   feed_nid                  bigint,
+  field_owner               TEXT,
+  field_dates               TEXT,
   publish                   boolean,
   field_targets             TEXT,
   field_sub_collections     TEXT,
