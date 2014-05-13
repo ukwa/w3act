@@ -427,5 +427,21 @@ public class Utils {
     	}
     	return res;
     }
+    
+    /**
+     * This method checks whether given string is
+     * a numeric value.
+     * @param str
+     * @return true if numeric
+     */
+    public static boolean isNumeric(String str)  
+    {  
+        try {  
+            Double.parseDouble(str);  
+        } catch (NumberFormatException nfe) {  
+            return false;  
+        }  
+        return true;  
+    }    
 }
 

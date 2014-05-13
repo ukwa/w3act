@@ -38,6 +38,9 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 
+import views.html.targets.edit;
+
+
 /**
  * Describe W3ACT project.
  */
@@ -70,6 +73,28 @@ public class TargetController extends AbstractController {
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
         	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
 
+        	
+//        	Form<Target> targetForm = Form.form(Target.class).bindFromRequest();
+////          targetForm.get().field_url
+//            if(targetForm.hasErrors()) {
+//            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + targetForm.errors().toString());
+////          	return badRequest(
+////                      edit.render(targetForm, User.find.byId(request().username()))
+////                    );
+////      		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+////      		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " +
+////      				"\n\nMissing fields are:\n" + targetForm.errors().toString());
+//	  			flash("message", "Please fill out ll the required fields, marked with a red star. There are required fields in more than one tab. " + 
+//	  							 targetForm.errors().toString());
+//	          	return ok(
+//			              edit.render(targetForm, User.find.byId(request().username()))
+//			            );
+//            } else {
+//	          	Target targetFormObject = targetForm.get();
+//	          	Logger.info("targetFormObject: " + targetFormObject);
+//            }
+        	
+        	
         	DynamicForm requestData = Form.form().bindFromRequest();
         	String title = requestData.get(Const.TITLE);
         	Logger.info("form title: " + title);
@@ -93,6 +118,21 @@ public class TargetController extends AbstractController {
             	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
 //        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
                 return ok(infomessage.render("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab."));
+        	}    	
+        	
+        	if (getFormParam(Const.FIELD_WCT_ID) != null && !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
+                Logger.info("You may only enter a numeric ID in 'WCT ID'.");
+                return ok(infomessage.render("You may only enter a numeric ID in 'WCT ID'."));
+        	}    	
+
+        	if (getFormParam(Const.FIELD_SPT_ID) != null && !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
+                Logger.info("You may only enter a numeric ID in 'SPT ID'.");
+                return ok(infomessage.render("You may only enter a numeric ID in 'SPT ID'."));
+        	}    	
+
+        	if (getFormParam(Const.LEGACY_SITE_ID) != null && !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
+                Logger.info("You may only enter a numeric ID in 'LEGACY SITE ID'.");
+                return ok(infomessage.render("You may only enter a numeric ID in 'LEGACY SITE ID'."));
         	}    	
 
             if (target == null) {
