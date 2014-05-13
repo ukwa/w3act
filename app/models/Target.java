@@ -1224,6 +1224,53 @@ public class Target extends Model {
     }
         
     /**
+     * Return a page of Target objects.
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param curatorUrl
+     * @param organisationUrl
+     * @param startDate The start date for filtering
+     * @param endDate The end date for filtering
+     * @return
+     */
+    public static Page<Target> pageReportsCreation(int page, int pageSize, String sortBy, String order,  
+    		String curatorUrl, String organisationUrl, String startDate, String endDate) {
+    	ExpressionList<Target> exp = Target.find.where();
+    	Page<Target> res = null;
+   		exp = exp.eq(Const.ACTIVE, true);
+    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
+//    		Logger.info("curatorUrl: " + curatorUrl);
+    		exp = exp.icontains(Const.AUTHOR, curatorUrl);
+    	}
+    	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
+//    		Logger.info("organisationUrl: " + organisationUrl);
+    		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
+    	} 
+    	if (startDate != null && startDate.length() > 0) {
+    		Logger.info("startDate: " + startDate);
+        	String startDateUnix = Utils.getUnixDateStringFromDateExt(startDate);
+        	Logger.info("startDateUnix: " + startDateUnix);
+    		exp = exp.ge(Const.CREATED, startDateUnix);
+    	} 
+    	if (endDate != null && endDate.length() > 0) {
+    		Logger.info("endDate: " + endDate);
+        	String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
+        	Logger.info("endDateUnix: " + endDateUnix);
+    		exp = exp.le(Const.CREATED, endDateUnix);
+    	} 
+
+    	res = exp.query()
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    	Logger.info("Expression list for targets created size: " + res.getTotalRowCount());
+        return res;
+    }
+        
+    /**
      * Return a page of Target
      *
      * @param page Page to display

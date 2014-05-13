@@ -229,7 +229,7 @@ public class Reports extends AbstractController {
 
     public static Result recordCreation() {
     	return redirect(
-                routes.ReportsQa.index()
+                routes.ReportsCreation.index()
     	        );
     }
 

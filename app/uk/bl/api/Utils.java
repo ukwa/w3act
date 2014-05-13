@@ -132,6 +132,28 @@ public class Utils {
     }
     
     /**
+     * This method performs a conversion of date in string format 'dd-MM-yyyy' to unix date without 
+     * modifying the date.
+     * @param curDate
+     * @return long value of the unix date in string format
+     */
+    public static String getUnixDateStringFromDateExt(String curDate) {
+    	String res = "";
+		try {
+	    	Logger.debug("getUnixDateStringFromDate curDate: " + curDate);
+			Date resDate = new SimpleDateFormat(Const.DATE_FORMAT).parse(curDate);
+			Long longTime = new Long(resDate.getTime()/1000);
+			Logger.info("long time: " + longTime);
+			res = String.valueOf(longTime);
+			Logger.info("res date: " + res);
+			Logger.debug("check stored date - convert back to human date: " + getDateFromUnixDate(res));
+		} catch (ParseException e) {
+			Logger.debug("Conversion of date in string format dd-MM-yyyy to unix date: " + e);
+		}
+        return res;
+    }
+    
+    /**
      * This method converts unix date to date.
      * @param unixDate
      * @return date as a string

@@ -87,6 +87,12 @@ public final class Const {
     public static final String HTTP_PREFIX        = "http://";
 	public static final String SERVER_NAME        = "server_name";
 	public static final String UND                = "und";
+	
+	/**
+	 * SQL constants
+	 */
+	public static final String ASC                = "asc";
+	public static final String DESC               = "desc";
 
 	/**
 	 * RabbitMQ settings
@@ -106,7 +112,9 @@ public final class Const {
 	public static final String ALL                = "all";
 	public static final String DATE_FORMAT        = "dd-MM-yyyy";
 
-	// Target
+	/**
+	 * Target
+	 */
 	public static final String NID                = "nid";
 	public static final String TID                = "tid";
 	public static final String TITLE              = "title";
@@ -177,7 +185,6 @@ public final class Const {
 	public static final String DEFAULT_ROLE       = "user";
 	public static final String PASSWORD           = "password";
 	public static final String USER_URL           = "user_url";
-	public static final String ASC                = "asc";
 
 	// Taxonomy
 	public static final String TYPE               = "type";
@@ -280,6 +287,7 @@ public final class Const {
 	public static final String EXPORT_TARGETS_WITH_FAILED_INSTANCES   = "export_targets_with_failed_instances.csv";
 	public static final String EXPORT_TARGETS_WITH_PASSED_INSTANCES   = "export_targets_with_passed_instances.csv";
 	public static final String EXPORT_TARGETS_WITH_QA_ISSUES_RESOLVED = "export_targets_with_qa_issues_resolved.csv";
+	public static final String EXPORT_TARGETS_REPORT_CREATION         = "export_targets_report_creation.csv";
 
 	// Buttons
 	public static final String SAVE               = "save";
