@@ -133,7 +133,7 @@ public class Target extends Model {
     @Required
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
-    @Required
+    //@Required
     @Column(columnDefinition = "TEXT")
     public String field_subsubject; 
     @Column(columnDefinition = "TEXT")
@@ -951,6 +951,17 @@ public class Target extends Model {
     public boolean hasSubSubject(String subject) {
     	boolean res = false;
     	res = Utils.hasElementInList(subject, field_subsubject);
+    	return res;
+    }
+        
+    /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+    public static boolean hasSubSubject(String subsubject, String subject) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(subject, subsubject);
     	return res;
     }
         

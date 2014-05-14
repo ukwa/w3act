@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import models.CrawlPermission;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -47,7 +49,183 @@ import views.html.targets.edit;
 @Security.Authenticated(Secured.class)
 public class TargetController extends AbstractController {
   
-    /**
+	/**
+	 * This method prepares Target form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+	    Target targetObj = new Target();
+	    targetObj.field_url = getFormParam(Const.FIELD_URL_NODE);
+	    targetObj.nid = Long.valueOf(getFormParam(Const.NID));
+	    targetObj.url = Const.ACT_URL + targetObj.nid;
+        targetObj.author = getFormParam(Const.USER);
+        targetObj.title = getFormParam(Const.TITLE);
+        targetObj.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
+        targetObj.field_description = getFormParam(Const.DESCRIPTION);
+        if (getFormParam(Const.FLAG_NOTES) != null) {
+        	targetObj.flag_notes = getFormParam(Const.FLAG_NOTES);
+        } 
+        if (getFormParam(Const.STATUS) != null) {
+        	targetObj.status = Long.valueOf(getFormParam(Const.STATUS));
+        } 
+        if (getFormParam(Const.QA_STATUS) != null) {
+        	targetObj.qa_status = getFormParam(Const.QA_STATUS);
+        } 
+        if (getFormParam(Const.LANGUAGE) != null) {
+        	targetObj.language = getFormParam(Const.LANGUAGE);
+        } 
+        if (getFormParam(Const.SELECTION_TYPE) != null) {
+        	targetObj.selection_type = getFormParam(Const.SELECTION_TYPE);
+        } 
+        if (getFormParam(Const.SELECTOR_NOTES) != null) {
+        	targetObj.selector_notes = getFormParam(Const.SELECTOR_NOTES);
+        } 
+        if (getFormParam(Const.ARCHIVIST_NOTES) != null) {
+        	targetObj.archivist_notes = getFormParam(Const.ARCHIVIST_NOTES);
+        } 
+        if (getFormParam(Const.LEGACY_SITE_ID) != null 
+        		&& getFormParam(Const.LEGACY_SITE_ID).length() > 0
+        		&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
+        	targetObj.legacy_site_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
+        }
+        if (getFormParam(Const.AUTHORS) != null) {
+        	targetObj.authors = getFormParam(Const.AUTHORS);
+        } 
+        if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
+        	targetObj.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
+        } 
+        if (getFormParam(Const.FIELD_SUBJECT) != null) {
+        	if (!getFormParam(Const.FIELD_SUBJECT).toLowerCase().contains(Const.NONE)) {
+            	String[] subjects = getFormParams(Const.FIELD_SUBJECT);
+            	String resSubject = "";
+            	for (String subject: subjects)
+                {
+            		if (subject != null && subject.length() > 0) {
+            			resSubject = resSubject + Taxonomy.findByFullName(subject).url + Const.LIST_DELIMITER;
+            		}
+                }
+            	targetObj.field_subsubject = resSubject;
+        	} else {
+        		targetObj.field_subsubject = Const.NONE;
+        	}
+        }
+        if (getFormParam(Const.TREE_KEYS) != null) {
+    		targetObj.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+        }
+        if (getFormParam(Const.ORGANISATION) != null) {
+        	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
+        		targetObj.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+        	} else {
+        		targetObj.field_nominating_organisation = Const.NONE;
+        	}
+        }
+        if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
+       		targetObj.originating_organisation = getFormParam(Const.ORIGINATING_ORGANISATION);
+        }
+        if (getFormParam(Const.AUTHOR) != null) {
+       		targetObj.author = User.findByName(getFormParam(Const.AUTHOR)).url;
+        }
+        if (getFormParam(Const.TAGS) != null) {
+        	if (!getFormParam(Const.TAGS).toLowerCase().contains(Const.NONE)) {
+            	String[] tags = getFormParams(Const.TAGS);
+            	String resTags = "";
+            	for (String tag: tags)
+                {
+            		if (tag != null && tag.length() > 0) {
+            			resTags = resTags + Tag.findByName(tag).url + Const.LIST_DELIMITER;
+            		}
+                }
+            	targetObj.tags = resTags;
+        	} else {
+        		targetObj.tags = Const.NONE;
+        	}
+        }
+        if (getFormParam(Const.FLAGS) != null) {
+        	if (!getFormParam(Const.FLAGS).toLowerCase().contains(Const.NONE)) {
+            	String[] flags = getFormParams(Const.FLAGS);
+            	String resFlags = "";
+            	for (String flag: flags)
+                {
+            		if (flag != null && flag.length() > 0) {
+                		String origFlag = Flags.getNameFromGuiName(flag);
+            			resFlags = resFlags + Flag.findByName(origFlag).url + Const.LIST_DELIMITER;
+            		}
+                }
+            	targetObj.flags = resFlags;
+        	} else {
+        		targetObj.flags = Const.NONE;
+        	}
+        }
+        targetObj.justification = getFormParam(Const.JUSTIFICATION);
+        targetObj.summary = getFormParam(Const.SUMMARY);
+        targetObj.revision = getFormParam(Const.REVISION);
+        if (getFormParam(Const.FIELD_WCT_ID) != null 
+        		&& getFormParam(Const.FIELD_WCT_ID).length() > 0
+        		&& Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
+        	targetObj.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
+        }
+        if (getFormParam(Const.FIELD_SPT_ID) != null 
+        		&& getFormParam(Const.FIELD_SPT_ID).length() > 0
+        		&& Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
+        	targetObj.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+        }
+        if (getFormParam(Const.FIELD_LICENSE) != null) {
+        	if (!getFormParam(Const.FIELD_LICENSE).toLowerCase().contains(Const.NONE)) {
+            	String[] licenses = getFormParams(Const.FIELD_LICENSE);
+            	String resLicenses = "";
+            	for (String curLicense: licenses)
+                {
+            		if (curLicense != null && curLicense.length() > 0) {
+            			resLicenses = resLicenses + Taxonomy.findByFullNameExt(curLicense, Const.LICENCE).url + Const.LIST_DELIMITER;
+            		}
+                }
+            	targetObj.field_license = resLicenses;
+        	} else {
+        		targetObj.field_license = Const.NONE;
+        	}
+        }
+        targetObj.field_uk_hosting = Target.checkUkHosting(targetObj.field_url);
+        targetObj.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
+        targetObj.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
+        targetObj.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
+        targetObj.value = getFormParam(Const.FIELD_NOTES);
+        targetObj.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
+        targetObj.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
+        targetObj.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
+        targetObj.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
+        if (getFormParam(Const.FIELD_CRAWL_START_DATE) != null) {
+        	String startDateHumanView = getFormParam(Const.FIELD_CRAWL_START_DATE);
+        	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
+        	targetObj.field_crawl_start_date = startDateUnix;
+        }
+        targetObj.date_of_publication = getFormParam(Const.DATE_OF_PUBLICATION);
+        targetObj.field_crawl_end_date = getFormParam(Const.FIELD_CRAWL_END_DATE);
+        if (getFormParam(Const.FIELD_CRAWL_END_DATE) != null) {
+        	String endDateHumanView = getFormParam(Const.FIELD_CRAWL_END_DATE);
+        	String endDateUnix = Utils.getUnixDateStringFromDate(endDateHumanView);
+        	targetObj.field_crawl_end_date = endDateUnix;
+        }
+        targetObj.white_list = getFormParam(Const.WHITE_LIST);
+        targetObj.black_list = getFormParam(Const.BLACK_LIST);
+        if (getFormParam(Const.FIELD_DEPTH) != null) {
+        	targetObj.field_depth = Targets.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+        }
+        targetObj.field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
+        if (getFormParam(Const.FIELD_SCOPE) != null) {
+        	targetObj.field_scope = Targets.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+        }
+        targetObj.keywords = getFormParam(Const.KEYWORDS);
+        targetObj.synonyms = getFormParam(Const.SYNONYMS);
+	    targetObj.active = true;
+		Form<Target> targetFormNew = Form.form(Target.class);
+		targetFormNew = targetFormNew.fill(targetObj);
+      	return ok(
+	              edit.render(targetFormNew, User.find.byId(request().username()))
+	            );
+    }
+
+	/**
      * This method saves changes on given target in a new target object
      * completed by revision comment. The "version" field in the Target object
      * contains the timestamp of the change and the last version is marked by
@@ -63,7 +241,10 @@ public class TargetController extends AbstractController {
         Logger.info("save: " + save);
         Logger.info("delete: " + delete);
         if (save != null) {
-        	Logger.info("save updated target nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.info("input data for the target saving nid: " + getFormParam(Const.NID) + 
+        			", url: " + getFormParam(Const.URL) +
+        			", field_subject: " + getFormParam(Const.FIELD_SUBJECT) + 
+        			", field_url: " + getFormParam(Const.FIELD_URL_NODE) + 
         			", title: " + getFormParam(Const.TITLE) + ", keysite: " + getFormParam(Const.KEYSITE) +
         			", description: " + getFormParam(Const.DESCRIPTION) + 
         			", status: " + getFormParam(Const.STATUS) +
@@ -72,29 +253,24 @@ public class TargetController extends AbstractController {
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
         	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
-
         	
-//        	Form<Target> targetForm = Form.form(Target.class).bindFromRequest();
-////          targetForm.get().field_url
-//            if(targetForm.hasErrors()) {
-//            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + targetForm.errors().toString());
-////          	return badRequest(
-////                      edit.render(targetForm, User.find.byId(request().username()))
-////                    );
-////      		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-////      		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " +
-////      				"\n\nMissing fields are:\n" + targetForm.errors().toString());
-//	  			flash("message", "Please fill out ll the required fields, marked with a red star. There are required fields in more than one tab. " + 
-//	  							 targetForm.errors().toString());
-//	          	return ok(
-//			              edit.render(targetForm, User.find.byId(request().username()))
-//			            );
-//            } else {
-//	          	Target targetFormObject = targetForm.get();
-//	          	Logger.info("targetFormObject: " + targetFormObject);
-//            }
-        	
-        	
+        	Form<Target> targetForm = Form.form(Target.class).bindFromRequest();
+            if(targetForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : targetForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out ll the required fields, marked with a red star. There are required fields in more than one tab. " + 
+	  					"Missing fields are " + missingFields);
+	  			info();
+            }
+        	        	
         	DynamicForm requestData = Form.form().bindFromRequest();
         	String title = requestData.get(Const.TITLE);
         	Logger.info("form title: " + title);
@@ -107,32 +283,39 @@ public class TargetController extends AbstractController {
             	Logger.info("is not existing exception");
             	isExisting = false;
             }
-        	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
-        			|| StringUtils.isBlank(getFormParam(Const.FIELD_URL))
-        			|| (StringUtils.isBlank(getFormParam(Const.SUBSUBJECT)) && !User.find.byId(request().username()).hasRole(Const.USER))
-        			|| (StringUtils.isBlank(getFormParam(Const.AUTHOR)) && !User.find.byId(request().username()).hasRole(Const.USER))
-        			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
-            	Logger.info("title: " + getFormParam(Const.TITLE) + ", field URL: " + getFormParam(Const.FIELD_URL) +
-            			", subject: " + getFormParam(Const.SUBSUBJECT) + ", selector: " + getFormParam(Const.AUTHOR) +
-            			", selection type: " + getFormParam(Const.SELECTION_TYPE));
-            	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-//        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-                return ok(infomessage.render("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab."));
-        	}    	
+//        	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
+//        			|| StringUtils.isBlank(getFormParam(Const.FIELD_URL))
+//        			|| (StringUtils.isBlank(getFormParam(Const.SUBSUBJECT)) && !User.find.byId(request().username()).hasRole(Const.USER))
+//        			|| (StringUtils.isBlank(getFormParam(Const.AUTHOR)) && !User.find.byId(request().username()).hasRole(Const.USER))
+//        			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
+//            	Logger.info("title: " + getFormParam(Const.TITLE) + ", field URL: " + getFormParam(Const.FIELD_URL) +
+//            			", subject: " + getFormParam(Const.SUBSUBJECT) + ", selector: " + getFormParam(Const.AUTHOR) +
+//            			", selection type: " + getFormParam(Const.SELECTION_TYPE));
+//            	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+////        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+//                return ok(infomessage.render("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab."));
+//        	}    	
         	
-        	if (getFormParam(Const.FIELD_WCT_ID) != null && !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
+            if (getFormParam(Const.FIELD_WCT_ID) != null 
+            		&& (getFormParam(Const.FIELD_WCT_ID).equals("")
+            		|| !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID)))) {
                 Logger.info("You may only enter a numeric ID in 'WCT ID'.");
-                return ok(infomessage.render("You may only enter a numeric ID in 'WCT ID'."));
+	  			flash("message", "You may only enter a numeric ID in 'WCT ID'.");
+	  			info();
         	}    	
 
-        	if (getFormParam(Const.FIELD_SPT_ID) != null && !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
+        	if (getFormParam(Const.FIELD_SPT_ID) != null && !getFormParam(Const.FIELD_SPT_ID).equals("")
+        			&& !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
                 Logger.info("You may only enter a numeric ID in 'SPT ID'.");
-                return ok(infomessage.render("You may only enter a numeric ID in 'SPT ID'."));
+	  			flash("message", "You may only enter a numeric ID in 'SPT ID'.");
+	  			info();
         	}    	
 
-        	if (getFormParam(Const.LEGACY_SITE_ID) != null && !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
+        	if (getFormParam(Const.LEGACY_SITE_ID) != null && !getFormParam(Const.LEGACY_SITE_ID).equals("")
+        			&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
                 Logger.info("You may only enter a numeric ID in 'LEGACY SITE ID'.");
-                return ok(infomessage.render("You may only enter a numeric ID in 'LEGACY SITE ID'."));
+	  			flash("message", "You may only enter a numeric ID in 'LEGACY SITE ID'.");
+	  			info();
         	}    	
 
             if (target == null) {
@@ -148,7 +331,7 @@ public class TargetController extends AbstractController {
             }
             newTarget.field_nominating_organisation = target.field_nominating_organisation;
             newTarget.title = getFormParam(Const.TITLE);
-            newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
+            newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
             newTarget.field_description = getFormParam(Const.DESCRIPTION);
             if (getFormParam(Const.FLAG_NOTES) != null) {
@@ -178,7 +361,9 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.ARCHIVIST_NOTES) != null) {
             	newTarget.archivist_notes = getFormParam(Const.ARCHIVIST_NOTES);
             } 
-            if (getFormParam(Const.LEGACY_SITE_ID) != null && getFormParam(Const.LEGACY_SITE_ID).length() > 0) {
+            if (getFormParam(Const.LEGACY_SITE_ID) != null 
+            		&& getFormParam(Const.LEGACY_SITE_ID).length() > 0
+            		&& Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
         		Logger.info("legacy site id: " + getFormParam(Const.LEGACY_SITE_ID) + ".");
             	newTarget.legacy_site_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
             }
@@ -190,15 +375,17 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
-            if (getFormParam(Const.SUBSUBJECT) != null) {
-            	if (!getFormParam(Const.SUBSUBJECT).toLowerCase().contains(Const.NONE)) {
-	            	String[] subjects = getFormParams(Const.SUBSUBJECT);
+            if (getFormParam(Const.FIELD_SUBJECT) != null) {
+            	if (!getFormParam(Const.FIELD_SUBJECT).toLowerCase().contains(Const.NONE)) {
+	            	String[] subjects = getFormParams(Const.FIELD_SUBJECT);
 	            	String resSubject = "";
 	            	for (String subject: subjects)
 	                {
 	            		if (subject != null && subject.length() > 0) {
 	                		Logger.info("add subsubject: " + subject);
-	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBSUBJECT).url + Const.LIST_DELIMITER;
+	            			resSubject = resSubject + Taxonomy.findByFullName(subject).url + Const.LIST_DELIMITER;
+	                		Logger.info("added subject URL: " + resSubject);
+//	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBSUBJECT).url + Const.LIST_DELIMITER;
 	            		}
 	                }
 	            	newTarget.field_subsubject = resSubject;
@@ -262,8 +449,16 @@ public class TargetController extends AbstractController {
             newTarget.justification = getFormParam(Const.JUSTIFICATION);
             newTarget.summary = getFormParam(Const.SUMMARY);
             newTarget.revision = getFormParam(Const.REVISION);
-            newTarget.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
-            newTarget.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+            if (getFormParam(Const.FIELD_WCT_ID) != null 
+            		&& getFormParam(Const.FIELD_WCT_ID).length() > 0
+            		&& Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
+            	newTarget.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
+            }
+            if (getFormParam(Const.FIELD_SPT_ID) != null 
+            		&& getFormParam(Const.FIELD_SPT_ID).length() > 0
+            		&& Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
+            	newTarget.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+            }
             if (getFormParam(Const.FIELD_LICENSE) != null) {
             	if (!getFormParam(Const.FIELD_LICENSE).toLowerCase().contains(Const.NONE)) {
 	            	String[] licenses = getFormParams(Const.FIELD_LICENSE);
@@ -276,8 +471,8 @@ public class TargetController extends AbstractController {
 	                				&& getFormParam(Const.QA_STATUS) != null 
 	                				&& !getFormParam(Const.QA_STATUS).equals(Const.CrawlPermissionStatus.GRANTED.name())) {
 	                        	Logger.info("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");
-//	                    		return badRequest("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");	                			
-	                            return ok(infomessage.render("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'."));
+	            	  			flash("message", "Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");
+	            	  			info();
 	                		}
 	            			resLicenses = resLicenses + Taxonomy.findByFullNameExt(curLicense, Const.LICENCE).url + Const.LIST_DELIMITER;
 	            		}
@@ -295,16 +490,16 @@ public class TargetController extends AbstractController {
             if (newTarget.field_uk_postal_address 
             		&& (newTarget.field_uk_postal_address_url == null || newTarget.field_uk_postal_address_url.length() == 0)) {
             	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
-//        		return badRequest("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
-                return ok(infomessage.render("If UK Postal Address field has value 'Yes', the Postal Address URL is required."));
+	  			flash("message", "If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
+	  			info();
             }
             newTarget.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
             newTarget.value = getFormParam(Const.FIELD_NOTES);
             if (newTarget.field_via_correspondence 
             		&& (newTarget.value == null || newTarget.value.length() == 0)) {
             	Logger.info("If Via Correspondence field has value 'Yes', the Notes field is required.");
-//        		return badRequest("If Via Correspondence field has value 'Yes', the Notes field is required.");
-                return ok(infomessage.render("If Via Correspondence field has value 'Yes', the Notes field is required."));
+	  			flash("message", "If Via Correspondence field has value 'Yes', the Notes field is required.");
+	  			info();
             }
             newTarget.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
             newTarget.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
@@ -312,8 +507,8 @@ public class TargetController extends AbstractController {
             if (newTarget.field_professional_judgement 
             		&& (newTarget.field_professional_judgement_exp == null || newTarget.field_professional_judgement_exp.length() == 0)) {
             	Logger.info("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
-//        		return badRequest("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
-                return ok(infomessage.render("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required."));
+	  			flash("message", "If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
+	  			info();
             }
             newTarget.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
 //            Logger.info("ignore robots: " + getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
@@ -387,18 +582,18 @@ public class TargetController extends AbstractController {
         }
         if (request != null) {
             Logger.debug("request permission for title: " + getFormParam(Const.TITLE) + 
-            		" and target: " + getFormParam(Const.FIELD_URL));
-        	if (getFormParam(Const.TITLE) != null && getFormParam(Const.FIELD_URL) != null) {
+            		" and target: " + getFormParam(Const.FIELD_URL_NODE));
+        	if (getFormParam(Const.TITLE) != null && getFormParam(Const.FIELD_URL_NODE) != null) {
                 String name = getFormParam(Const.TITLE);
-                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
+                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
     	        res = redirect(routes.CrawlPermissions.licenceRequestForTarget(name, target)); 
         	}
         }
         if (archive != null) {
             Logger.debug("archive target title: " + getFormParam(Const.TITLE) + 
-            		" with URL: " + getFormParam(Const.FIELD_URL));
-        	if (getFormParam(Const.FIELD_URL) != null) {
-                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL));
+            		" with URL: " + getFormParam(Const.FIELD_URL_NODE));
+        	if (getFormParam(Const.FIELD_URL_NODE) != null) {
+                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
     	        res = redirect(routes.TargetController.archiveTarget(target)); 
         	}
         }
@@ -501,6 +696,7 @@ public class TargetController extends AbstractController {
      * @return child collection in JSON form
      */
     public static String getChildren(String url, String targetUrl) {
+//    	Logger.info("getChildren() target URL: " + targetUrl);
     	String res = "";
         final StringBuffer sb = new StringBuffer();
     	sb.append(", \"children\":");
@@ -539,6 +735,7 @@ public class TargetController extends AbstractController {
      * @return collection object in JSON form
      */
     public static String getTreeElements(List<DCollection> collectionList, String targetUrl, boolean parent) { 
+//    	Logger.info("getTreeElements() target URL: " + targetUrl);
     	String res = "";
     	if (collectionList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
@@ -576,7 +773,7 @@ public class TargetController extends AbstractController {
      */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getSuggestedCollections(String targetUrl) {
-//    	Logger.info("getCollections()");
+    	Logger.info("getSuggestedCollections() target URL: " + targetUrl);
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();

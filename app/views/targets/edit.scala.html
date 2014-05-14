@@ -32,8 +32,8 @@
 	            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
 	          };		
 	          
-			  $("#fieldurl").keyup(function() {
-					var text = $('input[name=fieldurl]').val();
+			  $("#field_url").keyup(function() {
+					var text = $('input[name=field_url]').val();
 					
 				    if (text.length > MIN_TEXT_LENGTH) {
 				        restartIdleTimeout(text);
@@ -86,8 +86,6 @@
 	</ul>
 
 	<div class="tab-content padding-20">
-		<input type="hidden" name="nid" value="@form("nid").value">
-        <input type="hidden" name="user" value="@user.url">
            
 		<ul class="nav nav-pills">
 	        <li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
@@ -106,6 +104,10 @@
 	@warningmessage(flash)
 	@helper.form(action=routes.TargetController.saveTarget) {
 	
+		<input type="hidden" name="nid" value="@form("nid").value">
+		<input type="hidden" name="url" value="@form("url").value">
+        <input type="hidden" name="user" value="@user.url">
+
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="basicinformation">
 				<input type="hidden" name="user" value="@user.url">
@@ -141,9 +143,9 @@
 							</label>
 						    <div class="col-sm-6">
 								@if(form("field_url").value != null) {
-									<input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@form("field_url").value">
+									<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form("field_url").value">
 								} else {
-									<input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@form("title").value">
+									<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form("title").value">
 								}
 							</div>
 						</div>
@@ -375,7 +377,7 @@
 						<div class="form-group">
 			              	<label for="inputSubSubject" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject. To select more than one, hold down the CTRL key.)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="subsubject" value="@form("field_subject").value" class="form-control">
+								<select multiple name="field_subject" value="@form("field_subject").value" class="form-control">
 									@if(form("field_subsubject").value != null && form("field_subsubject").value.equals("none")) {
 									<option selected>None</option>
 									} else {
@@ -384,14 +386,13 @@
 									@for(subject <- Taxonomy.findListByType("subject")) {
 										<option value="@subject.name" disabled>@subject.name</option>
   										@for(subsubject <- Taxonomy.findSubSubjectsList(subject.name)) {
-											@if(form.get().hasSubSubject(subsubject.url)) {
+											@if(Target.hasSubSubject(form("field_subsubject").value, subsubject.url)) {
 	    										<option value="@subsubject.name" selected>-> @subsubject.name</option>
 											} else {						                
 	  											<option value="@subsubject.name">-> @subsubject.name</option>
-	  										}
-	  									}
+	  										}	  									}
 									}
-							  	</select>
+									</select>
 							</div>
 						</div>
 					</div>

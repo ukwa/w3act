@@ -136,6 +136,7 @@ public final class Const {
 	public static final String REVISION           = "revision";
 	public static final String ACTIVE             = "active";
 	public static final String FIELD_WCT_ID       = "wct";
+	public static final String FIELD_WCT          = "field_wct_id";
 	public static final String FIELD_SPT_ID       = "spt";
 	public static final String FIELD_LICENSE      = "license";
 	public static final String FIELD_LICENSE_NODE = "field_license";
