@@ -909,7 +909,7 @@ public class TargetController extends AbstractController {
     	Logger.info("getSubjectTree() target URL: " + targetUrl);
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
-    	List<Taxonomy> parentSubjects = Taxonomy.findListByType(Const.SUBJECT);
+    	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
 //    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
     	sb.append(getSubjectTreeElements(parentSubjects, targetUrl, true));
 //    	Logger.info("subjects main level size: " + parentSubjects.size());
