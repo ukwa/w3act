@@ -283,7 +283,7 @@ public class CrawlPermissions extends AbstractController {
         	    }
         		permission.contactPerson = Const.NONE;
                 if (getFormParam(Const.CONTACT_PERSON) != null) {
-                	if (!getFormParam(Const.CONTACT_PERSON).toLowerCase().contains(Const.NONE)) {
+//                	if (!getFormParam(Const.CONTACT_PERSON).toLowerCase().contains(Const.NONE)) {
                 		/**
                 		 * Save or update contact person
                 		 */
@@ -337,7 +337,7 @@ public class CrawlPermissions extends AbstractController {
                        		Logger.info("update contact person: " + person.toString());
                            	Ebean.update(person);
                     	}
-                	}
+//                	}
                 }
         	    
         	    Logger.info("creator user: " + getFormParam(Const.CREATOR_USER));
