@@ -176,6 +176,7 @@ public final class Const {
 	public static final String LAST_UPDATE        = "lastUpdate";
 	public static final String CHANGED            = "changed";
 	public static final String TREE_KEYS          = "treeKeys";
+	public static final String SUBJECT_TREE_KEYS  = "subjectTreeKeys";
 	public static final String NA                 = "N/A";
 	public static final int    MAX_NPLD_LIST_SIZE = 3;
 	

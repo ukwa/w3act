@@ -645,6 +645,42 @@ public class Taxonomy extends Model {
     /**
      * This method calculates selected taxonomies in second level for presentation in view page.
      * @param type The type of taxonomy
+     * @param target The target object
+     * @return taxonomy list as a string
+     */
+    public static String getSelectedSubjectsList(String type, String targetUrl) {
+    	String res = "";
+		boolean firstTime = true;
+		Target target = Target.findByUrl(targetUrl);
+		if (target != null) {
+			List<Taxonomy> taxonomyList = Taxonomy.findListByType(type);
+			Iterator<Taxonomy> itr = taxonomyList.iterator();
+			while (itr.hasNext()) {
+				Taxonomy taxonomy = itr.next();
+				List<Taxonomy> subTaxonomyList = Taxonomy.findSubSubjectsList(taxonomy.name);
+				Iterator<Taxonomy> itrSub = subTaxonomyList.iterator();
+				while (itrSub.hasNext()) {
+					Taxonomy subTaxonomy = itrSub.next();
+					if(target.hasSubSubject(subTaxonomy.url)) {
+						if (firstTime) {
+							res = subTaxonomy.name;
+							firstTime = false;
+						} else {
+							res = res + Const.COMMA + " " + subTaxonomy.name;
+						}
+					}
+				}
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+    }
+
+    /**
+     * This method calculates selected taxonomies in second level for presentation in view page.
+     * @param type The type of taxonomy
      * @param target The instance object
      * @return taxonomy list as a string
      */
@@ -674,7 +710,60 @@ public class Taxonomy extends Model {
 		}
         return res;
     }
-
+    
+	/**
+	 * This method retrieves selected subjects from target object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<Taxonomy> getSelectedSubjects(String targetUrl) {
+//		Logger.info("getSelectedSubjects() targetUrl: " + targetUrl);
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Target target = Target.findByUrl(targetUrl);
+    		if (target.field_subject != null) {
+//    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
+		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
+		    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+		    		Taxonomy subject = findByUrl(part);
+		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+//			    		Logger.info("subject name: " + subject.name);
+		    			res.add(subject);
+		    		}
+		    	}
+    		}
+    	}
+		return res;
+	}       
+    
+	/**
+	 * This method presents subjects list for view page.
+	 * @param list
+	 * @return presentation string
+	 */
+	public static String getSubjectsAsString(List<Taxonomy> list) {
+    	String res = "";
+//		Logger.info("getSubjectsAsString() list size: " + list.size());
+		Iterator<Taxonomy> itr = list.iterator();
+		boolean firstTime = true;
+		while (itr.hasNext()) {
+			Taxonomy subject = itr.next();
+			if (firstTime) {
+//				Logger.info("add first subject.name: " + subject.name);
+				res = subject.name;
+				firstTime = false;
+			} else {
+//				Logger.info("add subject.name: " + subject.name);
+				res = res + Const.COMMA + " " + subject.name;
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+	}
+	
     public String toString() {
         return "Taxonomy(" + tid + ") with name: " + name;
     }

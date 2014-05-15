@@ -254,24 +254,17 @@
 						</div>
 					</div>
 		     	</div>		    
-		    
-	    		<!-- div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
-			              	 <div class="col-sm-6">
-  									@Taxonomy.getSelectedSubjects("subject", target)
-			              	</div>
-						</div>
-					</div>
-		     	</div-->	
-		     		    
+		    	     		    
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 			              	<label for="inputDescription" class="col-sm-6 control-label">Subject</label>
 			              	 <div class="col-sm-6">
-  									@Taxonomy.getSelectedSubjectsSecondLevel("subject", target)
+						        @if(target.url != null) {
+  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjects(target.url))
+  								} else {
+  								    none
+  								}
 			              	</div>
 						</div>
 					</div>

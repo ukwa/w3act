@@ -521,6 +521,7 @@ public class Targets extends AbstractController {
     	        if (User.find.byId(request().username()).hasRole(Const.USER)) {
     	        	target.author = User.find.byId(request().username()).url;
     	        	target.field_subsubject = Const.NONE;
+    	        	target.field_subject = Const.NONE;
     	        }
     			Logger.info("add entry with target url: " + target.url);
     			Logger.info("target name: " + target.title);
