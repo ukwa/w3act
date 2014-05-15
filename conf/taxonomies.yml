@@ -14,6 +14,11 @@ taxonomies:
     - !!models.Taxonomy
         ttype:        subsubject
         parent:       Arts & Humanities        
+        name:         Architecture
+
+    - !!models.Taxonomy
+        ttype:        subsubject
+        parent:       Arts & Humanities        
         name:         Comedy and Humour
 
     - !!models.Taxonomy
@@ -273,42 +278,42 @@ taxonomies:
         
     - !!models.Taxonomy
         ttype:        subsubject
-        parent:       Science & Techonology
+        parent:       Science & Technology
         name:         Computer Science, Information Technology and Web Technology
         
     - !!models.Taxonomy
         ttype:        subsubject
-        parent:       Science & Techonology
+        parent:       Science & Technology
         name:         Engineering
         
     - !!models.Taxonomy
         ttype:        subsubject
-        parent:       Science & Techonology
+        parent:       Science & Technology
         name:         Environment
         
     - !!models.Taxonomy
         ttype:        subsubject
-        parent:       Science & Techonology
+        parent:       Science & Technology
         name:         Life Sciences
         
     - !!models.Taxonomy
         ttype:        subsubject
-        parent:       Science & Techonology
+        parent:       Science & Technology
         name:         Mathematics
         
     - !!models.Taxonomy
         ttype:        subsubject
-        parent:       Science & Techonology
+        parent:       Science & Technology
         name:         Physical Sciences
         
     - !!models.Taxonomy
         ttype:        subsubject
-        parent:       Science & Techonology
+        parent:       Science & Technology
         name:         Popular Science
         
     - !!models.Taxonomy
         ttype:        subsubject
-        parent:       Science & Techonology
+        parent:       Science & Technology
         name:         Zoology, Veterinary Science and Animal Health
         
     - !!models.Taxonomy
