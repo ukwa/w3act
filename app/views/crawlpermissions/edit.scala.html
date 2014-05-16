@@ -137,14 +137,14 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-	              	<label for="inputTemplate" class="col-sm-6 control-label">Template <small class="text-center">(Select template type for permission request)</small></label>
+	              	<label for="inputTemplate" class="col-sm-6 control-label">Template <small class="text-center">(Select template for permission request)</small></label>
 				    <div class="col-sm-6">
 						<select name="template" id="template" class="form-control">
-			                @for(template <- MailTemplate.getAllTypes()) {
-				                @if(template.equals(permission.template)) {
+			                @for(template <- MailTemplates.getMailTemplatesByType("PERMISSION_REQUEST")) {
+				                @if(template.name.equals(permission.template)) {
 				                	<option selected>@permission.template</option>
 				                } else {
-				                	<option>@template</option>
+				                	<option>@template.name</option>
 				                }
 			                }
 						</select>

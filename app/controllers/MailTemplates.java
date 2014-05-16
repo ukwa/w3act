@@ -123,9 +123,8 @@ public class MailTemplates extends AbstractController {
     }	   
     
     /**
-     * This method applyies filters to the list of crawl templates.
+     * This method applies filters to the list of mail templates.
      * @param filterUrl
-     * @param status
      * @return
      */
     public static List<MailTemplate> processFilterMailTemplates(String filterUrl) {
@@ -140,6 +139,29 @@ public class MailTemplates extends AbstractController {
     	}
     	res = exp.query().findList();
     	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+
+        if (!isProcessed) {
+    		res = models.MailTemplate.findAll();
+    	}
+        return res;
+    }
+        
+    /**
+     * This method applies filter by type to the list of mail templates.
+     * @param templateType
+     * @return
+     */
+    public static List<MailTemplate> getMailTemplatesByType(String templateType) {
+    	boolean isProcessed = false;
+    	ExpressionList<MailTemplate> exp = MailTemplate.find.where();
+    	List<MailTemplate> res = new ArrayList<MailTemplate>();
+    	if (templateType != null && templateType.length() > 0) {
+    		Logger.info("getMailTemplatesByType() type: " + templateType);
+    		exp = exp.contains(Const.TTYPE, templateType);
+    		isProcessed = true;
+    	}
+    	res = exp.query().findList();
+    	Logger.info("getMailTemplatesByType() resulting list size: " + res.size());
 
         if (!isProcessed) {
     		res = models.MailTemplate.findAll();
