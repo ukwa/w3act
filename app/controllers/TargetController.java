@@ -95,21 +95,6 @@ public class TargetController extends AbstractController {
         if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
         	targetObj.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
         } 
-//        if (getFormParam(Const.FIELD_SUBJECT) != null) {
-//        	if (!getFormParam(Const.FIELD_SUBJECT).toLowerCase().contains(Const.NONE)) {
-//            	String[] subjects = getFormParams(Const.FIELD_SUBJECT);
-//            	String resSubject = "";
-//            	for (String subject: subjects)
-//                {
-//            		if (subject != null && subject.length() > 0) {
-//            			resSubject = resSubject + Taxonomy.findByFullName(subject).url + Const.LIST_DELIMITER;
-//            		}
-//                }
-//            	targetObj.field_subsubject = resSubject;
-//        	} else {
-//        		targetObj.field_subsubject = Const.NONE;
-//        	}
-//        }
         if (getFormParam(Const.FIELD_SUBJECT) != null) {
     		targetObj.field_subject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
     		Logger.debug("targetObj.field_subject: " + targetObj.field_subject);
@@ -272,7 +257,7 @@ public class TargetController extends AbstractController {
             	    }
             	}
             	Logger.info("form errors size: " + targetForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out ll the required fields, marked with a red star. There are required fields in more than one tab. " + 
+	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
 	  					"Missing fields are " + missingFields);
 	  			return info();
             }

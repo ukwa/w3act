@@ -108,7 +108,6 @@ public class Collections extends AbstractController {
     			Form<DCollection> collectionForm = Form.form(DCollection.class);
     			collectionForm = collectionForm.fill(collection);
     	        return ok(edit.render(collectionForm, User.find.byId(request().username())));    			
-
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Collections.list(pageNo, sort, order, query));
@@ -167,7 +166,7 @@ public class Collections extends AbstractController {
     }
 
 	/**
-	 * This method prepares Target form for sending info message
+	 * This method prepares Collection form for sending info message
 	 * about errors 
 	 * @return edit page with form and info message
 	 */
@@ -188,7 +187,6 @@ public class Collections extends AbstractController {
 	    }
 		Form<DCollection> collectionFormNew = Form.form(DCollection.class);
 		collectionFormNew = collectionFormNew.fill(collection);
-		Logger.info("info() goto edit");
       	return ok(
 	              edit.render(collectionFormNew, User.find.byId(request().username()))
 	            );
@@ -221,7 +219,7 @@ public class Collections extends AbstractController {
             	    }
             	}
             	Logger.info("form errors size: " + collectionForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out ll the required fields, marked with a red star." + 
+	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
 	  					"Missing fields are " + missingFields);
 	  			return info();
             }
