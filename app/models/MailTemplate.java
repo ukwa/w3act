@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.Utils;
@@ -40,6 +41,7 @@ public class MailTemplate extends Model
      * The name of the e-mail.
      */
     @Column(columnDefinition = "TEXT")
+    @Required
     public String name;
        
     /**
@@ -59,6 +61,7 @@ public class MailTemplate extends Model
      * E-mail from field.
      */
     @Column(columnDefinition = "TEXT")
+    @Required
     public String fromEmail;
 
     /**

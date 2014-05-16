@@ -116,6 +116,7 @@
 			</thead>
 			<tbody>
 			@for(curator <- currentPage.getList) {
+			    @if(curator.url != null && curator.url.length() > 0) {
 				<tr>		                  
 					<td><a href="@routes.Curators.view(curator.url)">@curator.name</a></td>
 					<td>@curator.email</td>
@@ -129,6 +130,7 @@
 					  <td></td>
 					}
                 </tr>
+                }
 			}
 			</tbody>
 		</table>
