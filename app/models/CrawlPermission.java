@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Version;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.Utils;
@@ -40,6 +41,7 @@ public class CrawlPermission extends Model
     public String url;
 
     @Column(columnDefinition = "TEXT")
+    @Required
     public String name;
     
     /**
@@ -47,6 +49,7 @@ public class CrawlPermission extends Model
      */
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
+    @Required
     public String target;
     
     @JsonIgnore
