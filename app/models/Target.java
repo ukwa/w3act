@@ -702,7 +702,7 @@ public class Target extends Model {
 		String res = "false";
 		if (fieldUrl != null && fieldUrl.length() > 0 
 				&& url != null && url.length() > 0
-				&& Target.isInScopeIp(fieldUrl, url)) {
+				&& Target.isInScopeAll(fieldUrl, url)) {
 			res = "true";
 		}
     	return res;
