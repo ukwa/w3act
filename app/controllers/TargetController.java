@@ -259,7 +259,6 @@ public class TargetController extends AbstractController {
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
         	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
-//        	Logger.info("subjectTreeKeys: " + getFormParam(Const.SUBJECT_TREE_KEYS));
         	
         	Form<Target> targetForm = Form.form(Target.class).bindFromRequest();
             if(targetForm.hasErrors()) {
@@ -289,19 +288,7 @@ public class TargetController extends AbstractController {
             } catch (Exception e) {
             	Logger.info("is not existing exception");
             	isExisting = false;
-            }
-//        	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
-//        			|| StringUtils.isBlank(getFormParam(Const.FIELD_URL))
-//        			|| (StringUtils.isBlank(getFormParam(Const.SUBSUBJECT)) && !User.find.byId(request().username()).hasRole(Const.USER))
-//        			|| (StringUtils.isBlank(getFormParam(Const.AUTHOR)) && !User.find.byId(request().username()).hasRole(Const.USER))
-//        			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
-//            	Logger.info("title: " + getFormParam(Const.TITLE) + ", field URL: " + getFormParam(Const.FIELD_URL) +
-//            			", subject: " + getFormParam(Const.SUBSUBJECT) + ", selector: " + getFormParam(Const.AUTHOR) +
-//            			", selection type: " + getFormParam(Const.SELECTION_TYPE));
-//            	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-////        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-//                return ok(infomessage.render("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab."));
-//        	}    	
+            } 	
         	
             if (getFormParam(Const.FIELD_WCT_ID) != null 
             		&& (getFormParam(Const.FIELD_WCT_ID).equals("")
@@ -566,8 +553,7 @@ public class TargetController extends AbstractController {
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
 	        res = redirect(routes.Targets.edit(newTarget.url));
-        } 
-        //} // end of save
+        } // end of save
         if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.NID));
         	Logger.info("deleting: " + id);
@@ -650,10 +636,7 @@ public class TargetController extends AbstractController {
 	    	    channel.exchangeDeclare(exchangeName, "direct", true);
 	    	    channel.queueDeclare(queueName, true, false, false, null);
 	    	    channel.queueBind(queueName, exchangeName, routingKey);
-	    	    
-//	    	    channel.queueDeclare(queue_name, false, false, false, null);
 	    	    String message = target;
-//	    	    channel.basicPublish("", queue_name, null, message.getBytes());
 	    	    channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
 	    	    Logger.debug(" ### sent target '" + message + "' to queue");    	    
 	    	    channel.close();

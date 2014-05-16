@@ -184,11 +184,7 @@ public class Collections extends AbstractController {
 	    	collection.revision = "";
 	    }
 	    if (getFormParam(Const.REVISION) != null) {
-	    	String comma = "";
-	    	if (StringUtils.isNotBlank(collection.revision)) {
-	    		comma = Const.COMMA + " ";
-	    	}
-	    	collection.revision = collection.revision.concat(comma + getFormParam(Const.REVISION));
+	    	collection.revision = getFormParam(Const.REVISION);
 	    }
 		Form<DCollection> collectionFormNew = Form.form(DCollection.class);
 		collectionFormNew = collectionFormNew.fill(collection);
@@ -259,11 +255,7 @@ public class Collections extends AbstractController {
         	    	collection.revision = "";
         	    }
                 if (getFormParam(Const.REVISION) != null) {
-                	String comma = "";
-                	if (StringUtils.isNotBlank(collection.revision)) {
-                		comma = Const.COMMA + " ";
-                	}
-                	collection.revision = collection.revision.concat(comma + getFormParam(Const.REVISION));
+        	    	collection.revision = getFormParam(Const.REVISION);
                 }
             } catch (Exception e) {
             	Logger.info("Collection not exists exception");
