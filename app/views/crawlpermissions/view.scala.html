@@ -18,7 +18,7 @@
 	<div class="row padding-10">
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
-				<label for="inputCreatorUser" class="col-sm-6 control-label">Name</label>
+				<label for="inputCreatorUser" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 			    <div class="col-sm-6">
 					<label for="inputPermissionName" class="col-sm-6 control-label">@permission.name</label>
 				</div>
@@ -29,7 +29,7 @@
 	<div class="row padding-10">
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
-				<label for="inputTarget" class="col-sm-6 control-label">Target</label>
+				<label for="inputTarget" class="col-sm-6 control-label">Target <font color="red">*</font></label>
 			    <div class="col-sm-6">
 					<label for="valueTarget" class="col-sm-6 control-label">@permission.target</label>
 				</div>
@@ -63,7 +63,7 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputEmail" class="col-sm-6 control-label">E-mail<font color="red">*</font></label>
+					<label for="inputEmail" class="col-sm-6 control-label">E-mail <font color="red">*</font></label>
 				    <div class="col-sm-6">
 	              		<input readonly class="form-control" name="email" id="email" value="@ContactPerson.findByUrl(permission.contactPerson).email" type="text">
 					</div>
