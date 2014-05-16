@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -21,16 +22,13 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.collections.edit;
-import views.html.collections.view;
 import views.html.collections.list;
+import views.html.collections.view;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
 
 @Security.Authenticated(Secured.class)
 public class Collections extends AbstractController {
@@ -61,7 +59,7 @@ public class Collections extends AbstractController {
 	public static Result list(int pageNo, String sortBy, String order,
 			String filter) {
 		JsonNode node = getCollectionsData(filter);
-		Logger.info("LookUp.list() " + node);
+//		Logger.info("LookUp.list() " + node);
 		
 		return ok(list.render("Collections",
 				User.find.byId(request().username()), filter,
@@ -100,7 +98,17 @@ public class Collections extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.Collections.create(query));
+//        		return redirect(routes.Collections.create(query));
+    	        Logger.info("create collection()");
+    	    	DCollection collection = new DCollection();
+    	    	collection.title = query;
+    	        collection.nid = Target.createId();
+    	        collection.url = Const.ACT_URL + collection.nid;
+    			Logger.info("add collection with url: " + collection.url + ", and title: " + collection.title);
+    			Form<DCollection> collectionForm = Form.form(DCollection.class);
+    			collectionForm = collectionForm.fill(collection);
+    	        return ok(edit.render(collectionForm, User.find.byId(request().username())));    			
+
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Collections.list(pageNo, sort, order, query));
@@ -135,16 +143,15 @@ public class Collections extends AbstractController {
      * @return
      */
     public static Result create(String title) {
+        Logger.info("create collection()");
     	DCollection collection = new DCollection();
     	collection.title = title;
         collection.nid = Target.createId();
         collection.url = Const.ACT_URL + collection.nid;
-		Logger.info("add entry with url: " + collection.url + ", and title: " + collection.title);
-        return ok(
-                edit.render(
-                      collection, User.find.byId(request().username())
-                )
-            );
+		Logger.info("add collection with url: " + collection.url + ", and title: " + collection.title);
+		Form<DCollection> collectionForm = Form.form(DCollection.class);
+		collectionForm = collectionForm.fill(collection);
+        return ok(edit.render(collectionForm, User.find.byId(request().username())));
     }
     
     /**
@@ -154,13 +161,43 @@ public class Collections extends AbstractController {
 		Logger.info("collection url: " + url);
 		DCollection collection = DCollection.findByUrl(url);
 		Logger.info("collection title: " + collection.title + ", url: " + url);
-        return ok(
-                edit.render(
-                        DCollection.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<DCollection> collectionForm = Form.form(DCollection.class);
+		collectionForm = collectionForm.fill(collection);
+        return ok(edit.render(collectionForm, User.find.byId(request().username())));
     }
 
+	/**
+	 * This method prepares Target form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+    	DCollection collection = new DCollection();
+    	collection.nid = Long.valueOf(getFormParam(Const.NID));
+    	collection.url = getFormParam(Const.URL);
+    	collection.title = getFormParam(Const.TITLE);
+    	collection.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
+	    if (getFormParam(Const.SUMMARY) != null) {
+	    	collection.summary = getFormParam(Const.SUMMARY);
+	    }
+	    if (collection.revision == null) {
+	    	collection.revision = "";
+	    }
+	    if (getFormParam(Const.REVISION) != null) {
+	    	String comma = "";
+	    	if (StringUtils.isNotBlank(collection.revision)) {
+	    		comma = Const.COMMA + " ";
+	    	}
+	    	collection.revision = collection.revision.concat(comma + getFormParam(Const.REVISION));
+	    }
+		Form<DCollection> collectionFormNew = Form.form(DCollection.class);
+		collectionFormNew = collectionFormNew.fill(collection);
+		Logger.info("info() goto edit");
+      	return ok(
+	              edit.render(collectionFormNew, User.find.byId(request().username()))
+	            );
+    }
+    
     /**
      * This method saves new object or changes on given Collection in the same object
      * completed by revision comment. The "version" field in the Collection object
@@ -173,8 +210,26 @@ public class Collections extends AbstractController {
         String delete = getFormParam(Const.DELETE);
 //        Logger.info("save: " + save);
         if (save != null) {
-        	Logger.info("save collection nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.info("input data for saving collection nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
         			", title: " + getFormParam(Const.TITLE) + ", revision: " + getFormParam(Const.REVISION));
+        	
+        	Form<DCollection> collectionForm = Form.form(DCollection.class).bindFromRequest();
+            if(collectionForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : collectionForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + collectionForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out ll the required fields, marked with a red star." + 
+	  					"Missing fields are " + missingFields);
+	  			return info();
+            }
+        	
         	DCollection collection = null;
             boolean isExisting = true;
             try {
@@ -211,7 +266,7 @@ public class Collections extends AbstractController {
                 	collection.revision = collection.revision.concat(comma + getFormParam(Const.REVISION));
                 }
             } catch (Exception e) {
-            	Logger.info("User not existing exception");
+            	Logger.info("Collection not exists exception");
             }
             
         	if (!isExisting) {
@@ -221,7 +276,7 @@ public class Collections extends AbstractController {
            		Logger.info("update collection: " + collection.toString());
                	Ebean.update(collection);
         	}
-	        res = redirect(routes.Collections.view(collection.url));
+	        res = redirect(routes.Collections.edit(collection.url));
         } 
         if (delete != null) {
         	String url = getFormParam(Const.URL);

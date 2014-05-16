@@ -236,6 +236,20 @@ public class DCollection extends Model {
     }
     
     /**
+     * This method returns parent collections for given collection.
+     * @param collectionUrl The identifier URL of collection
+     * @return parent collection list
+     */
+    public static List<DCollection> getParentsByUrl(String collectionUrl) {
+    	DCollection collection = DCollection.findByUrl(collectionUrl);
+    	List<DCollection> res = new ArrayList<DCollection>();
+    	if (collection != null) {
+    		res = getParents(collection);
+    	}
+		return res;
+    }
+    
+    /**
      * Retrieve a collection by title.
      * @param title
      * @return collection object

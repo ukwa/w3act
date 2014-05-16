@@ -275,7 +275,7 @@ public class TargetController extends AbstractController {
             	Logger.info("form errors size: " + targetForm.errors().size() + ", " + missingFields);
 	  			flash("message", "Please fill out ll the required fields, marked with a red star. There are required fields in more than one tab. " + 
 	  					"Missing fields are " + missingFields);
-	  			info();
+	  			return info();
             }
         	        	
         	DynamicForm requestData = Form.form().bindFromRequest();
@@ -308,21 +308,21 @@ public class TargetController extends AbstractController {
             		|| !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID)))) {
                 Logger.info("You may only enter a numeric ID in 'WCT ID'.");
 	  			flash("message", "You may only enter a numeric ID in 'WCT ID'.");
-	  			info();
+	  			return info();
         	}    	
 
         	if (getFormParam(Const.FIELD_SPT_ID) != null && !getFormParam(Const.FIELD_SPT_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
                 Logger.info("You may only enter a numeric ID in 'SPT ID'.");
 	  			flash("message", "You may only enter a numeric ID in 'SPT ID'.");
-	  			info();
+	  			return info();
         	}    	
 
         	if (getFormParam(Const.LEGACY_SITE_ID) != null && !getFormParam(Const.LEGACY_SITE_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
                 Logger.info("You may only enter a numeric ID in 'LEGACY SITE ID'.");
 	  			flash("message", "You may only enter a numeric ID in 'LEGACY SITE ID'.");
-	  			info();
+	  			return info();
         	}    	
 
             if (target == null) {
@@ -382,24 +382,6 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
-//            if (getFormParam(Const.FIELD_SUBJECT) != null) {
-//            	if (!getFormParam(Const.FIELD_SUBJECT).toLowerCase().contains(Const.NONE)) {
-//	            	String[] subjects = getFormParams(Const.FIELD_SUBJECT);
-//	            	String resSubject = "";
-//	            	for (String subject: subjects)
-//	                {
-//	            		if (subject != null && subject.length() > 0) {
-//	                		Logger.info("add subsubject: " + subject);
-//	            			resSubject = resSubject + Taxonomy.findByFullName(subject).url + Const.LIST_DELIMITER;
-//	                		Logger.info("added subject URL: " + resSubject);
-////	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBSUBJECT).url + Const.LIST_DELIMITER;
-//	            		}
-//	                }
-//	            	newTarget.field_subsubject = resSubject;
-//            	} else {
-//            		newTarget.field_subsubject = Const.NONE;
-//            	}
-//            }
             if (getFormParam(Const.FIELD_SUBJECT) != null) {
             	newTarget.field_subject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
         		Logger.debug("newTarget.field_subject: " + newTarget.field_subject);
@@ -485,7 +467,7 @@ public class TargetController extends AbstractController {
 	                				&& !getFormParam(Const.QA_STATUS).equals(Const.CrawlPermissionStatus.GRANTED.name())) {
 	                        	Logger.info("Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");
 	            	  			flash("message", "Saving is not allowed if License='Open UKWA License (2014-)' and Open UKWA License Requests status is anything other than 'Granted'.");
-	            	  			info();
+	            	  			return info();
 	                		}
 	            			resLicenses = resLicenses + Taxonomy.findByFullNameExt(curLicense, Const.LICENCE).url + Const.LIST_DELIMITER;
 	            		}
@@ -504,7 +486,7 @@ public class TargetController extends AbstractController {
             		&& (newTarget.field_uk_postal_address_url == null || newTarget.field_uk_postal_address_url.length() == 0)) {
             	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
 	  			flash("message", "If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
-	  			info();
+	  			return info();
             }
             newTarget.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
             newTarget.value = getFormParam(Const.FIELD_NOTES);
@@ -512,7 +494,7 @@ public class TargetController extends AbstractController {
             		&& (newTarget.value == null || newTarget.value.length() == 0)) {
             	Logger.info("If Via Correspondence field has value 'Yes', the Notes field is required.");
 	  			flash("message", "If Via Correspondence field has value 'Yes', the Notes field is required.");
-	  			info();
+	  			return info();
             }
             newTarget.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
             newTarget.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
@@ -521,7 +503,7 @@ public class TargetController extends AbstractController {
             		&& (newTarget.field_professional_judgement_exp == null || newTarget.field_professional_judgement_exp.length() == 0)) {
             	Logger.info("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
 	  			flash("message", "If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
-	  			info();
+	  			return info();
             }
             newTarget.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
 //            Logger.info("ignore robots: " + getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
