@@ -49,7 +49,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">ID</label>
+							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
 						    <div class="col-sm-6">
 								<input class="form-control" name="nid" value="@target.nid" size="30" readonly>
 							</div>
@@ -314,7 +314,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="userSel" class="col-sm-6 control-label">User <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
+			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
 						    <div class="col-sm-6">
 						        @if(target.url != null && target.author != null) {
   									@User.showUser(target.author)
@@ -401,7 +401,7 @@
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
+			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
 						        @if(target.url != null && target.selection_type != null) {
   									@target.selection_type
