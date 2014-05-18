@@ -92,12 +92,7 @@
 	        <li><a href="#basicinformation" data-toggle="tab">Overview</a></li>
 	        <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
 	        <li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-			@if(Target.isInScopeIp(instance.field_url, instance.url)) {
-				<font color="green">(+)</font>
-			} else {
-				<font color="red">(-)</font>
-			}		        
-			@if(Target.isInScopeDomain(instance.field_url, instance.url)) {
+			@if(Target.isInScopeAll(instance.field_url, instance.url)) {
 				<font color="green">(+)</font>
 			} else {
 				<font color="red">(-)</font>
@@ -224,7 +219,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeIp(instance.field_url, instance.url)) {
+								@if(Target.checkUkHosting(instance.field_url)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -242,6 +237,23 @@
 							</label>
 						    <div class="col-sm-6">
 								@if(Target.isInScopeDomain(instance.field_url, instance.url)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Registration
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeUkRegistration(instance.field_url)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -647,7 +659,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeIp(instance.field_url, instance.url)) {
+								@if(Target.checkUkHosting(instance.field_url)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -674,6 +686,23 @@
 					</div>
 		     	</div>	     	
 		
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Registration
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeUkRegistration(instance.field_url)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
