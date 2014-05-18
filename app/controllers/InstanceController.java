@@ -86,7 +86,7 @@ public class InstanceController extends AbstractController {
         			", title: " + getFormParam(Const.TITLE) + ", keysite: " + getFormParam(Const.KEYSITE) +
         			", description: " + getFormParam(Const.DESCRIPTION) + 
         			", status: " + getFormParam(Const.STATUS) +
-        			", subject: " + getFormParams(Const.SUBJECT) +
+        			", subject: " + getFormParams(Const.FIELD_SUBJECT) +
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
         	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
@@ -114,7 +114,7 @@ public class InstanceController extends AbstractController {
             }
         	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
         			|| StringUtils.isBlank(getFormParam(Const.FIELD_URL))
-        			|| StringUtils.isBlank(getFormParam(Const.SUBSUBJECT))
+        			|| StringUtils.isBlank(getFormParam(Const.FIELD_SUBJECT))
         			|| StringUtils.isBlank(getFormParam(Const.AUTHOR))
         			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
             	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
@@ -169,40 +169,28 @@ public class InstanceController extends AbstractController {
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newInstance.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
-//            if (getFormParam(Const.SUBJECT) != null) {
-//            	if (!getFormParam(Const.SUBJECT).toLowerCase().contains(Const.NONE)) {
-//	            	String[] subjects = getFormParams(Const.SUBJECT);
-//	//            	Logger.info("subjects: " + subjects[0] + subjects[1]);
+            if (getFormParam(Const.FIELD_SUBJECT) != null) {
+            	newInstance.field_subject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
+        		Logger.debug("newInstance.field_subject: " + newInstance.field_subject);
+            } else {
+            	newInstance.field_subject = Const.NONE;
+            }            
+//            if (getFormParam(Const.SUBSUBJECT) != null) {
+//            	if (!getFormParam(Const.SUBSUBJECT).toLowerCase().contains(Const.NONE)) {
+//	            	String[] subjects = getFormParams(Const.SUBSUBJECT);
 //	            	String resSubject = "";
 //	            	for (String subject: subjects)
 //	                {
 //	            		if (subject != null && subject.length() > 0) {
-//	                		Logger.info("add subject: " + subject);
-////	                		Logger.info("add subject: " + subject + ", " + Taxonomy.findByName(subject).url);
-//	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBJECT).url + Const.LIST_DELIMITER;
+//	                		Logger.info("add subsubject: " + subject);
+//	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBSUBJECT).url + Const.LIST_DELIMITER;
 //	            		}
 //	                }
-//	            	newInstance.field_subject = resSubject;
+//	            	newInstance.field_subsubject = resSubject;
 //            	} else {
-//            		newInstance.field_subject = Const.NONE;
+//            		newInstance.field_subsubject = Const.NONE;
 //            	}
 //            }
-            if (getFormParam(Const.SUBSUBJECT) != null) {
-            	if (!getFormParam(Const.SUBSUBJECT).toLowerCase().contains(Const.NONE)) {
-	            	String[] subjects = getFormParams(Const.SUBSUBJECT);
-	            	String resSubject = "";
-	            	for (String subject: subjects)
-	                {
-	            		if (subject != null && subject.length() > 0) {
-	                		Logger.info("add subsubject: " + subject);
-	            			resSubject = resSubject + Taxonomy.findByFullNameExt(subject, Const.SUBSUBJECT).url + Const.LIST_DELIMITER;
-	            		}
-	                }
-	            	newInstance.field_subsubject = resSubject;
-            	} else {
-            		newInstance.field_subsubject = Const.NONE;
-            	}
-            }
             if (getFormParam(Const.TREE_KEYS) != null) {
             	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
 	    		Logger.debug("newInstance.field_collection_categories: " + newInstance.field_collection_categories);
@@ -473,5 +461,126 @@ public class InstanceController extends AbstractController {
         return ok(jsonData);
     }
             
+    /**
+     * This method calculates subject children - objects that have parents.
+     * @param url The identifier for parent 
+     * @param targetUrl This is an identifier for current target object
+     * @return child subject in JSON form
+     */
+    public static String getSubjectChildren(String url, String targetUrl) {
+//    	Logger.info("getSubjectChildren() target URL: " + targetUrl);
+    	String res = "";
+        final StringBuffer sb = new StringBuffer();
+    	sb.append(", \"children\":");
+//    	List<Taxonomy> childSubject = Taxonomy.findListByType(Const.SUBSUBJECT);
+    	Taxonomy subject = Taxonomy.findByUrl(url);
+    	List<Taxonomy> childSubject = Taxonomy.findSubSubjectsList(subject.name);
+    	if (childSubject.size() > 0) {
+	    	sb.append(getSubjectTreeElements(childSubject, targetUrl, false));
+	    	res = sb.toString();
+//	    	Logger.info("getSubjectChildren() res: " + res);
+    	}
+    	return res;
+    }
+    
+    /**
+     * Mark subjects that are stored in target object as selected
+     * @param subjectUrl The subject identifier
+     * @param targetUrl This is an identifier for current target object
+     * @return
+     */
+    public static String checkSubjectSelection(String subjectUrl, String targetUrl) {
+    	String res = "";
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Instance target = Instance.findByUrl(targetUrl);
+    		if (target.field_subject != null && 
+    				target.field_subject.contains(subjectUrl)) {
+    			res = "\"select\": true ,";
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+     * Check if none value is selected
+     * @param subjectUrl The subject identifier
+     * @param targetUrl This is an identifier for current target object
+     * @return
+     */
+    public static String checkNone(String targetUrl) {
+    	String res = "";
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Instance target = Instance.findByUrl(targetUrl);
+    		if (target.field_subject != null 
+    				&& (target.field_subject.length() == 0 
+    				|| target.field_subject.toLowerCase().contains(Const.NONE.toLowerCase()))) {
+    			res = "\"select\": true ,";
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+   	 * This method calculates first order subjects.
+     * @param subjectList The list of all subjects
+     * @param targetUrl This is an identifier for current target object
+     * @param parent This parameter is used to differentiate between root and children nodes
+     * @return collection object in JSON form
+     */
+    public static String getSubjectTreeElements(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
+//    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
+    	String res = "";
+    	if (subjectList.size() > 0) {
+	        final StringBuffer sb = new StringBuffer();
+	        sb.append("[");
+	        if (parent) {
+	        	sb.append("{\"title\": \"" + "None" + "\"," + checkNone(targetUrl) + 
+	        			" \"key\": \"" + "None" + "\"" + "}, ");
+	        }
+	    	Iterator<Taxonomy> itr = subjectList.iterator();
+	    	boolean firstTime = true;
+	    	while (itr.hasNext()) {
+	    		Taxonomy subject = itr.next();
+//    			Logger.debug("add subject: " + subject.name + ", with url: " + subject.url +
+//    					", parent:" + subject.parent + ", parent size: " + subject.parent.length());
+	    		if ((parent && subject.parent.length() == 0) || !parent) {
+		    		if (firstTime) {
+		    			firstTime = false;
+		    		} else {
+		    			sb.append(", ");
+		    		}
+//	    			Logger.debug("added");
+					sb.append("{\"title\": \"" + subject.name + "\"," + checkSubjectSelection(subject.url, targetUrl) + 
+							" \"key\": \"" + subject.url + "\"" + 
+							getSubjectChildren(subject.url, targetUrl) + "}");
+	    		}
+	    	}
+//	    	Logger.info("subjectList level size: " + subjectList.size());
+	    	sb.append("]");
+	    	res = sb.toString();
+//	    	Logger.info("getSubjectTreeElements() res: " + res);
+    	}
+    	return res;
+    }
+        
+    /**
+     * This method computes a tree of subjects in JSON format. 
+     * @param targetUrl This is an identifier for current target object
+     * @return tree structure
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result getSubjectTree(String targetUrl) {
+    	Logger.info("getSubjectTree() target URL: " + targetUrl);
+        JsonNode jsonData = null;
+        final StringBuffer sb = new StringBuffer();
+    	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
+//    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
+    	sb.append(getSubjectTreeElements(parentSubjects, targetUrl, true));
+//    	Logger.info("subjects main level size: " + parentSubjects.size());
+        jsonData = Json.toJson(Json.parse(sb.toString()));
+//    	Logger.info("getSubjectTree() json: " + jsonData.toString());
+        return ok(jsonData);
+    }        
+    
 }
 

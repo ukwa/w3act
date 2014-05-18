@@ -738,6 +738,32 @@ public class Taxonomy extends Model {
 	}       
     
 	/**
+	 * This method retrieves selected subjects from instance object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<Taxonomy> getSelectedSubjectsByInstance(String targetUrl) {
+//		Logger.info("getSelectedSubjectsByInstance() targetUrl: " + targetUrl);
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Instance target = Instance.findByUrl(targetUrl);
+    		if (target.field_subject != null) {
+//    			Logger.info("getSelectedSubjectsByInstance() field_subject: " + target.field_subject);
+		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
+		    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+		    		Taxonomy subject = findByUrl(part);
+		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+//			    		Logger.info("subject name: " + subject.name);
+		    			res.add(subject);
+		    		}
+		    	}
+    		}
+    	}
+		return res;
+	}       
+    
+	/**
 	 * This method presents subjects list for view page.
 	 * @param list
 	 * @return presentation string

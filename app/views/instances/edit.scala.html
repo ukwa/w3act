@@ -65,6 +65,28 @@
 	          		}
 	        	});
 	       })
+	       
+	      SUBJECTS_URI = '@routes.InstanceController.getSubjectTree(instance.url)';
+          $.getJSON(SUBJECTS_URI, function(data) {    	
+            	$("#subjectTree").dynatree({
+              	checkbox: true,
+              	selectMode: 3,
+              	children: data,
+              	onSelect: function(select, node) {
+                		// Get a list of all selected nodes, and convert to a key array:
+                		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+                  		return node.data.key;
+                		});
+                		document.getElementById('field_subject').value = selKeys.join(", ");
+                		// Get a list of all selected TOP nodes
+                		var selRootNodes = node.tree.getSelectedNodes(true);
+                		// ... and convert to a key array:
+                		var selRootKeys = $.map(selRootNodes, function(node){
+                  		return node.data.key;
+                		});
+              	}
+            	});
+          })
 		})();		
 	</script>
 }
@@ -84,8 +106,6 @@
 	</ul>
 
 	<div class="tab-content padding-20">
-		<input type="hidden" name="nid" value="@instance.nid">
-        <input type="hidden" name="user" value="@user.url">
            
 		<ul class="nav nav-pills">
 		    <li class="active"><a href="#qa" data-toggle="tab">QA</a></li>
@@ -104,6 +124,11 @@
 	</div>
 	
 	@helper.form(action=routes.InstanceController.saveInstance) {
+	
+		<input type="hidden" name="nid" value="@instance.nid">
+		<input type="hidden" name="url" value="@instance.url">
+        <input type="hidden" name="user" value="@user.url">
+	
 		<div id="myTabContent" class="tab-content">
 		
 			<div class="tab-pane padding-20 fade active in" id="qa">    
@@ -392,31 +417,28 @@
 					</div>
 		     	</div>		    
 		    
-				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {		    
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="inputSubSubject" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject. To select more than one, hold down the CTRL key.)</small></label>
+			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject. To select more than one, hold down the CTRL key.)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="subsubject" value="@instance.field_subject" class="form-control">
-									<option>None</option>
-									@for(subject <- Taxonomy.findListByType("subject")) {
-										<option value="@subject.name" disabled>@subject.name</option>
-  										@for(subsubject <- Taxonomy.findSubSubjectsList(subject.name)) {
-											@if(instance.hasSubSubject(subsubject.url)) {
-	    										<option value="@subsubject.name" selected>-> @subsubject.name</option>
-											} else {						                
-	  											<option value="@subsubject.name">-> @subsubject.name</option>
-	  										}
-	  									}
-									}
-							  	</select>
+			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+							  <div id="subjectTree"></div>
+							  <input type="hidden" id="field_subject" name="field_subject" value="@instance.field_subject">
+							  } else {
+							        @if(instance.url != null) {
+	  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjectsByInstance(instance.url))
+								        <input type="hidden" id="field_subject" name="field_subject" value="@instance.field_subject">
+	  								} else {
+	  								    none
+								        <input type="hidden" id="field_subject" name="field_subject" value="none">
+	  								}
+		     	              }	   
 							</div>
 						</div>
 					</div>
-		     	</div>	
-		     	}	    
-
+		     	</div>	   
+		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
