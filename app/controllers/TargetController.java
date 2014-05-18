@@ -86,7 +86,7 @@ public class TargetController extends AbstractController {
         } 
         if (getFormParam(Const.LEGACY_SITE_ID) != null 
         		&& getFormParam(Const.LEGACY_SITE_ID).length() > 0
-        		&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
+        		&& Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
         	targetObj.legacy_site_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
         }
         if (getFormParam(Const.AUTHORS) != null) {

@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Version;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.IdGenerator;
@@ -34,6 +35,7 @@ import controllers.Flags;
 @Entity 
 public class Instance extends Model {
 
+    @Required
     @Id
     public Long nid;
     @Column(columnDefinition = "TEXT")
@@ -59,6 +61,7 @@ public class Instance extends Model {
     public Long vid;
     public Boolean is_new;
     public String type;
+    @Required
     public String title;
     public String language;
     public String url;
@@ -101,6 +104,7 @@ public class Instance extends Model {
     public String selector_notes; 
     @Column(columnDefinition = "TEXT")
     public String archivist_notes; 
+    @Required
     public String selection_type; 
     public String selector;     
     public Long legacy_site_id;
@@ -111,6 +115,7 @@ public class Instance extends Model {
     public Timestamp lastUpdate;
     
     // lists
+    @Required
     @Column(columnDefinition = "TEXT")
     public String field_url; 
     @Column(columnDefinition = "TEXT")
@@ -129,6 +134,7 @@ public class Instance extends Model {
     public String field_notes; 
     @Column(columnDefinition = "TEXT")
     public String field_instances; 
+    @Required
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
     @Column(columnDefinition = "TEXT")

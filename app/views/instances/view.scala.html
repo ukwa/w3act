@@ -131,7 +131,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="inputTitle" class="col-sm-6 control-label">Title </label>
+							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
 						    <div class="col-sm-6">
 				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@instance.title" readonly>
 							</div>
@@ -142,7 +142,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">ID</label>
+							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
 						    <div class="col-sm-6">
 								<input class="form-control" name="nid" value="@instance.nid" size="30" readonly>
 							</div>
@@ -154,7 +154,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								Seed URL(s) 
+								Seed URL(s) <font color="red">*</font> 
 								<small class="text-center">(One or more URLs, separated by comma)</small>
 								@if(instance.field_url != null && instance.field_url.length > 0) {
 								<br><a href="@routes.Instances.index()/list/?s=title&f=@instance.field_url">all instances for the target</a>
@@ -332,7 +332,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Subject</label>
+			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <font color="red">*</font></label>
 			              	 <div class="col-sm-6">
 						        @if(instance.url != null) {
   									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjectsByInstance(instance.url))
@@ -388,7 +388,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="userSel" class="col-sm-6 control-label">User <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
+			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
 						    <div class="col-sm-6">
 						        @if(instance.url != null && instance.author != null) {
   									@User.showUser(instance.author)
@@ -464,7 +464,7 @@
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
+			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
 						        @if(instance.url != null && instance.selection_type != null) {
   									@instance.selection_type
