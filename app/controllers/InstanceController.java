@@ -471,7 +471,9 @@ public class InstanceController extends AbstractController {
         	Logger.debug("field_uk_hosting: " + newInstance.field_uk_hosting);
             newInstance.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newInstance.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
-            if (newInstance.field_uk_postal_address.equals(Const.YES) 
+            Logger.debug("field_uk_postal_address: " + newInstance.field_uk_postal_address + 
+            		", field_uk_postal_address_url: " + newInstance.field_uk_postal_address_url);
+            if (newInstance.field_uk_postal_address 
             		&& (newInstance.field_uk_postal_address_url == null || newInstance.field_uk_postal_address_url.length() == 0)) {
             	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
 	  			flash("message", "If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
@@ -479,7 +481,7 @@ public class InstanceController extends AbstractController {
             }
             newInstance.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
             newInstance.field_notes = getFormParam(Const.FIELD_NOTES);
-            if (newInstance.field_via_correspondence.equals(Const.YES) 
+            if (newInstance.field_via_correspondence 
             		&& (newInstance.value == null || newInstance.value.length() == 0)) {
             	Logger.info("If Via Correspondence field has value 'Yes', the Notes field is required.");
 	  			flash("message", "If Via Correspondence field has value 'Yes', the Notes field is required.");
@@ -487,7 +489,7 @@ public class InstanceController extends AbstractController {
             }
             newInstance.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
             newInstance.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
-            if (newInstance.field_professional_judgement.equals(Const.YES) 
+            if (newInstance.field_professional_judgement 
             		&& (newInstance.field_professional_judgement_exp == null || newInstance.field_professional_judgement_exp.length() == 0)) {
             	Logger.info("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
 	  			flash("message", "If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
