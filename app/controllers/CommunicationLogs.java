@@ -7,15 +7,19 @@ import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.CommunicationLog;
+import models.DCollection;
 import models.Target;
 import models.User;
 import models.CrawlPermission;
 import play.Logger;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.Utils;
+import views.html.communicationlogs.edit;
 import views.html.communicationlogs.*;
 
 import java.util.*;
@@ -45,11 +49,11 @@ public class CommunicationLogs extends AbstractController {
 		Logger.info("log url: " + url);
 		CommunicationLog log = CommunicationLog.findByUrl(url);
 		Logger.info("log name: " + log.name + ", url: " + url);
-        return ok(
-                edit.render(
-                		models.CommunicationLog.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
+		logFormNew = logFormNew.fill(log);
+      	return ok(
+	              edit.render(logFormNew, User.find.byId(request().username()))
+	            );
     }
     
     public static Result view(String url) {
@@ -80,7 +84,18 @@ public class CommunicationLogs extends AbstractController {
         Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name + ", permissions: " + permissions);
         if (addentry != null) {
         	if (name != null && name.length() > 0) {
-        		res = redirect(routes.CommunicationLogs.create(name));
+            	CommunicationLog log = new CommunicationLog();
+            	log.name = name;
+                log.id = Target.createId();
+                log.url = Const.ACT_URL + log.id;
+                log.curator = User.find.byId(request().username()).url;        
+        		Logger.info("add communication log entry with url: " + log.url + ", and name: " + 
+        				log.name + ", curator: " + log.curator);
+        		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
+        		logFormNew = logFormNew.fill(log);
+              	return ok(
+        	              edit.render(logFormNew, User.find.byId(request().username()))
+        	            );
         	} else {
         		Logger.info("CommunicationLog name is empty. Please write name in search window.");
                 res = ok(
@@ -141,14 +156,51 @@ public class CommunicationLogs extends AbstractController {
         log.id = Target.createId();
         log.url = Const.ACT_URL + log.id;
         log.curator = User.find.byId(request().username()).url;        
-		Logger.info("add entry with url: " + log.url + ", and name: " + log.name + ", curator: " + log.curator);
-        return ok(
-                edit.render(
-                      log, User.find.byId(request().username())
-                )
-            );
+		Logger.info("add communication log entry with url: " + log.url + ", and name: " + 
+				log.name + ", curator: " + log.curator);
+		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
+		logFormNew = logFormNew.fill(log);
+      	return ok(
+	              edit.render(logFormNew, User.find.byId(request().username()))
+	            );
     }
       
+	/**
+	 * This method prepares CommunicationLog form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+		CommunicationLog log = new CommunicationLog();
+    	log.id = Long.valueOf(getFormParam(Const.ID));
+    	log.url = getFormParam(Const.URL);
+	    if (getFormParam(Const.NAME) != null) {
+	    	log.name = getFormParam(Const.NAME);
+	    }
+	    if (getFormParam(Const.LOG_DATE) != null) {
+	    	log.date = getFormParam(Const.LOG_DATE);
+	    }
+	    if (getFormParam(Const.TYPE) != null) {
+	    	log.ttype = getFormParam(Const.TYPE);
+	    }
+	    Logger.info("permission: " + getFormParam(Const.PERMISSIONS));
+	    if (getFormParam(Const.PERMISSIONS) != null) {
+	    	log.permission = CrawlPermission.findByName(getFormParam(Const.PERMISSIONS)).url;
+    	    Logger.info("log.permission: " + log.permission);
+	    }
+	    if (getFormParam(Const.NOTES) != null) {
+	    	log.notes = getFormParam(Const.NOTES);
+	    }
+	    if (getFormParam(Const.CURATOR) != null) {
+	    	log.curator = User.findByName(getFormParam(Const.CURATOR)).url;
+	    }    	
+		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
+		logFormNew = logFormNew.fill(log);
+      	return ok(
+	              edit.render(logFormNew, User.find.byId(request().username()))
+	            );
+    }
+    
     /**
      * This method saves new object or changes on given log in the same object
      * completed by revision comment. The "version" field in the log object
@@ -163,6 +215,24 @@ public class CommunicationLogs extends AbstractController {
         if (save != null) {
         	Logger.info("save log id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME));
+        	Form<CommunicationLog> logForm = Form.form(CommunicationLog.class).bindFromRequest();
+            if(logForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : logForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    key = Utils.showMissingField(key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + logForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+	  					"Missing fields are " + missingFields);
+	  			return info();
+            }
+        	
         	CommunicationLog log = null;
             boolean isExisting = true;
             try {
@@ -214,8 +284,7 @@ public class CommunicationLogs extends AbstractController {
            		Logger.info("update log: " + log.toString());
                	Ebean.update(log);
         	}
-	        res = redirect(routes.CommunicationLogs.view(log.url));
-	        return res;
+	        return redirect(routes.CommunicationLogs.edit(log.url));
         } 
         if (delete != null) {
         	CommunicationLog log = CommunicationLog.findByUrl(getFormParam(Const.URL));
