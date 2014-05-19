@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -474,5 +475,22 @@ public class Utils {
         }  
         return true;  
     }    
+    
+    /**
+     * Replace domain field names by GUI field names
+     * @param fields
+     * @return
+     */
+    public static String showMissingFields(String fields) {
+    	if (fields != null && fields.length() > 0) {
+    		for (Map.Entry<String, String> entry : Const.guiMap.entrySet()) {
+				if (fields.contains(entry.getKey())) {
+					fields = fields.replace(entry.getKey(), entry.getValue());
+				}
+			}
+    	}
+    	return fields;
+    	
+    }
 }
 

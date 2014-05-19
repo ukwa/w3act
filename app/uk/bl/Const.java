@@ -462,6 +462,16 @@ public final class Const {
     	guiFlagMap.put("GENERAL_CHANGE_REQUEST", "General Change Request");
     }
 		
+    /**
+     * GUI fields in relation to domain field names.
+     */
+    public static final Map<String, String> guiMap = new HashMap<String, String>();
+    	static {
+    	guiMap.put(NAME,                     "Name");
+    	guiMap.put(TITLE,                    "Title");
+    	guiMap.put(FIELD_SUBJECT,            "Subject");
+    }
+    		
 	public enum SelectionType {
 		NOMINATION, // when created from UKWA
 		SELECTION;

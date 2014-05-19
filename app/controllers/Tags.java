@@ -8,16 +8,20 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import models.DCollection;
 import models.Tag;
 import models.Target;
 import models.User;
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.Utils;
+import views.html.collections.edit;
 import views.html.tags.*;
 
 import java.util.*;
@@ -49,11 +53,11 @@ public class Tags extends AbstractController {
 		Logger.info("tag url: " + url);
 		Tag tag = Tag.findByUrl(url);
 		Logger.info("tag name: " + tag.name + ", url: " + url);
-        return ok(
-                tagedit.render(
-                		models.Tag.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<Tag> tagFormNew = Form.form(Tag.class);
+		tagFormNew = tagFormNew.fill(tag);
+      	return ok(
+	              tagedit.render(tagFormNew, User.find.byId(request().username()))
+	            );
     }
     
     public static Result view(String url) {
@@ -92,7 +96,16 @@ public class Tags extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.Tags.create(query));
+    	    	Tag tag = new Tag();
+    	    	tag.name = query;
+    	        tag.id = Target.createId();
+    	        tag.url = Const.ACT_URL + tag.id;
+    			Logger.info("add tag with url: " + tag.url + ", and name: " + tag.name);
+    			Form<Tag> tagFormNew = Form.form(Tag.class);
+    			tagFormNew = tagFormNew.fill(tag);
+    	      	return ok(
+    		              tagedit.render(tagFormNew, User.find.byId(request().username()))
+    		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Tags.list(pageNo, sort, order, query));
@@ -137,14 +150,36 @@ public class Tags extends AbstractController {
     	tag.name = name;
         tag.id = Target.createId();
         tag.url = Const.ACT_URL + tag.id;
-		Logger.info("add entry with url: " + tag.url + ", and name: " + tag.name);
-        return ok(
-                tagedit.render(
-                      tag, User.find.byId(request().username())
-                )
-            );
+		Logger.info("add tag with url: " + tag.url + ", and name: " + tag.name);
+		Form<Tag> tagFormNew = Form.form(Tag.class);
+		tagFormNew = tagFormNew.fill(tag);
+      	return ok(
+	              tagedit.render(tagFormNew, User.find.byId(request().username()))
+	            );
     }
       
+	/**
+	 * This method prepares Collection form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+    	Tag tag = new Tag();
+    	tag.id = Long.valueOf(getFormParam(Const.ID));
+    	tag.url = getFormParam(Const.URL);
+	    if (getFormParam(Const.NAME) != null) {
+	    	tag.name = getFormParam(Const.NAME);
+	    }
+	    if (getFormParam(Const.DESCRIPTION) != null) {
+	    	tag.description = getFormParam(Const.DESCRIPTION);
+	    }
+		Form<Tag> tagFormNew = Form.form(Tag.class);
+		tagFormNew = tagFormNew.fill(tag);
+      	return ok(
+	              tagedit.render(tagFormNew, User.find.byId(request().username()))
+	            );
+    }
+    
     /**
      * This method saves new object or changes on given tag in the same object
      * completed by revision comment. The "version" field in the tag object
@@ -159,6 +194,22 @@ public class Tags extends AbstractController {
         if (save != null) {
         	Logger.info("save tag id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME));
+        	Form<Tag> tagForm = Form.form(Tag.class).bindFromRequest();
+            if(tagForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : tagForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + tagForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+	  					"Missing fields are " + Utils.showMissingFields(missingFields));
+	  			return info();
+            }
         	Tag tag = null;
             boolean isExisting = true;
             try {
@@ -196,7 +247,7 @@ public class Tags extends AbstractController {
            		Logger.info("update tag: " + tag.toString());
                	Ebean.update(tag);
         	}
-	        res = redirect(routes.Tags.view(tag.url));
+	        return redirect(routes.Tags.edit(tag.url));
         } 
         if (delete != null) {
         	Tag tag = Tag.findByUrl(getFormParam(Const.URL));
