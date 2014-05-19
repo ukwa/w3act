@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
-import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -34,6 +34,7 @@ public class Organisation extends Model {
     @JsonIgnore
     public String format;
     @JsonIgnore
+    @Required
     public String field_abbreviation;
     @JsonIgnore
     public Long vid;
@@ -41,6 +42,7 @@ public class Organisation extends Model {
     public Boolean is_new;
     @JsonIgnore
     public String type;
+    @Required
     @Id 
     public String title;
     @JsonIgnore
