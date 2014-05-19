@@ -9,16 +9,20 @@ import org.apache.commons.lang3.StringUtils;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import models.DCollection;
 import models.Permission;
 import models.Target;
 import models.User;
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.Utils;
+import views.html.permissions.edit;
 import views.html.permissions.*;
 
 /**
@@ -46,11 +50,11 @@ public class Permissions extends AbstractController {
 		Logger.info("permission url: " + url);
 		Permission permission = Permission.findByUrl(url);
 		Logger.info("permission name: " + permission.name + ", url: " + url);
-        return ok(
-                edit.render(
-                        Permission.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<Permission> permissionFormNew = Form.form(Permission.class);
+		permissionFormNew = permissionFormNew.fill(permission);
+      	return ok(
+	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	            );
     }
     
     public static Result view(String url) {
@@ -90,7 +94,16 @@ public class Permissions extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.Permissions.create(query));
+    	    	Permission permission = new Permission();
+    	    	permission.name = query;
+    	        permission.id = Target.createId();
+    	        permission.url = Const.ACT_URL + permission.id;
+    			Logger.info("add permission entry with url: " + permission.url + ", and name: " + permission.name);
+    			Form<Permission> permissionFormNew = Form.form(Permission.class);
+    			permissionFormNew = permissionFormNew.fill(permission);
+    	      	return ok(
+    		              edit.render(permissionFormNew, User.find.byId(request().username()))
+    		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Permissions.list(pageNo, sort, order, query));
@@ -111,14 +124,40 @@ public class Permissions extends AbstractController {
     	permission.name = name;
         permission.id = Target.createId();
         permission.url = Const.ACT_URL + permission.id;
-		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
-        return ok(
-                edit.render(
-                      permission, User.find.byId(request().username())
-                )
-            );
+		Logger.info("add permission entry with url: " + permission.url + ", and name: " + permission.name);
+		Form<Permission> permissionFormNew = Form.form(Permission.class);
+		permissionFormNew = permissionFormNew.fill(permission);
+      	return ok(
+	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	            );
     }
       
+	/**
+	 * This method prepares Permission form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+    	Permission permission = new Permission();
+    	permission.id = Long.valueOf(getFormParam(Const.ID));
+    	permission.url = getFormParam(Const.URL);
+        permission.name = getFormParam(Const.NAME);
+	    if (getFormParam(Const.DESCRIPTION) != null) {
+	    	permission.description = getFormParam(Const.DESCRIPTION);
+	    }
+	    if (permission.revision == null) {
+	    	permission.revision = "";
+	    }
+        if (getFormParam(Const.REVISION) != null) {
+        	permission.revision = getFormParam(Const.REVISION);
+        }
+		Form<Permission> permissionFormNew = Form.form(Permission.class);
+		permissionFormNew = permissionFormNew.fill(permission);
+      	return ok(
+	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	            );
+    }
+    
     /**
      * This method saves new object or changes on given Permission in the same object
      * completed by revision comment. The "version" field in the Permission object
@@ -133,6 +172,22 @@ public class Permissions extends AbstractController {
         if (save != null) {
         	Logger.info("save permission id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
+        	Form<Permission> permissionForm = Form.form(Permission.class).bindFromRequest();
+            if(permissionForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : permissionForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + permissionForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+	  					"Missing fields are " + missingFields);
+	  			return info();
+            }
         	Permission permission = null;
             boolean isExisting = true;
             try {
@@ -161,7 +216,7 @@ public class Permissions extends AbstractController {
         	    	permission.revision = "";
         	    }
                 if (getFormParam(Const.REVISION) != null) {
-                	permission.revision = permission.revision.concat(", " + getFormParam(Const.REVISION));
+                	permission.revision = getFormParam(Const.REVISION);
                 }
             } catch (Exception e) {
             	Logger.info("Permission not existing exception");
@@ -174,7 +229,7 @@ public class Permissions extends AbstractController {
            		Logger.info("update permission: " + permission.toString());
                	Ebean.update(permission);
         	}
-	        res = redirect(routes.Permissions.view(permission.url));
+	        res = redirect(routes.Permissions.edit(permission.url));
         } 
         if (delete != null) {
         	Permission permission = Permission.findByUrl(getFormParam(Const.URL));

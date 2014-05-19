@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -28,7 +29,8 @@ public class Permission extends Model
 
 	@Id @JsonIgnore
     public Long id;
-
+    
+	@Required
     @Column(columnDefinition = "TEXT")
     public String name;
 
