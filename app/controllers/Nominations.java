@@ -4,6 +4,7 @@ import static play.data.Form.form;
 
 import java.util.List;
 
+import models.DCollection;
 import models.Nomination;
 import models.User;
 
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -52,11 +54,11 @@ public class Nominations extends AbstractController {
 		Logger.info("nomination url: " + url);
 		Nomination nomination = Nomination.findByUrl(url);
 		Logger.info("nomination name: " + nomination.name + ", url: " + url);
-        return ok(
-                edit.render(
-                        Nomination.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
+		nominationFormNew = nominationFormNew.fill(nomination);
+      	return ok(
+	              edit.render(nominationFormNew, User.find.byId(request().username()))
+	            );
     }
     
     public static Result view(String url) {
@@ -96,7 +98,16 @@ public class Nominations extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.Nominations.create(query));
+    	    	Nomination nomination = new Nomination();
+    	    	nomination.name = query;
+    	        nomination.id = Utils.createId();
+    	        nomination.url = Const.ACT_URL + nomination.id;
+    			Logger.info("add nomination with url: " + nomination.url + ", and name: " + nomination.name);
+    			Form<Nomination> nominationFormNew = Form.form(Nomination.class);
+    			nominationFormNew = nominationFormNew.fill(nomination);
+    	      	return ok(
+    		              edit.render(nominationFormNew, User.find.byId(request().username()))
+    		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Nominations.list(pageNo, sort, order, query));
@@ -118,11 +129,11 @@ public class Nominations extends AbstractController {
         nomination.id = Utils.createId();
         nomination.url = Const.ACT_URL + nomination.id;
 		Logger.info("add nomination with url: " + nomination.url + ", and name: " + nomination.name);
-        return ok(
-                edit.render(
-                      nomination, User.find.byId(request().username())
-                )
-            );
+		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
+		nominationFormNew = nominationFormNew.fill(nomination);
+      	return ok(
+	              edit.render(nominationFormNew, User.find.byId(request().username()))
+	            );
     }
     
     /**
@@ -187,6 +198,52 @@ public class Nominations extends AbstractController {
         }
     }	   
 
+	/**
+	 * This method prepares Nomination form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+    	Nomination nomination = new Nomination();
+    	nomination.id = Long.valueOf(getFormParam(Const.ID));
+    	nomination.url = getFormParam(Const.URL);
+        nomination.name = getFormParam(Const.NAME);
+	    if (getFormParam(Const.TITLE) != null) {
+	    	nomination.title = getFormParam(Const.TITLE);
+	    }
+	    if (getFormParam(Const.WEBSITE_URL) != null) {
+	    	nomination.website_url = getFormParam(Const.WEBSITE_URL);
+	    }
+	    if (getFormParam(Const.EMAIL) != null) {
+	    	nomination.email = getFormParam(Const.EMAIL);
+	    }
+	    if (getFormParam(Const.PHONE) != null) {
+	    	nomination.tel = getFormParam(Const.PHONE);
+	    }
+	    if (getFormParam(Const.ADDRESS) != null) {
+	    	nomination.address = getFormParam(Const.ADDRESS);
+	    }
+	    if (getFormParam(Const.DESCRIPTION) != null) {
+	    	nomination.notes = getFormParam(Const.DESCRIPTION);
+	    }
+	    if (getFormParam(Const.JUSTIFICATION) != null) {
+	    	nomination.justification = getFormParam(Const.JUSTIFICATION);
+	    }
+        if (getFormParam(Const.NOMINATION_DATE) != null) {
+        	String startDateHumanView = getFormParam(Const.NOMINATION_DATE);
+        	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
+        	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
+        	nomination.nomination_date = startDateUnix;
+        }        	    
+        nomination.nominated_website_owner = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATED_WEBSITE_OWNER));
+        nomination.nomination_checked = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATION_CHECKED));
+		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
+		nominationFormNew = nominationFormNew.fill(nomination);
+      	return ok(
+	              edit.render(nominationFormNew, User.find.byId(request().username()))
+	            );
+    }
+    
     /**
      * This method saves new object or changes on given Nomination in the same object
      * completed by revision comment. The "version" field in the Nomination object
@@ -201,6 +258,22 @@ public class Nominations extends AbstractController {
         if (save != null) {
         	Logger.info("save nomination id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
+        	Form<Nomination> nominationForm = Form.form(Nomination.class).bindFromRequest();
+            if(nominationForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : nominationForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + nominationForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+	  					"Missing fields are " + missingFields);
+	  			return info();
+            }
         	Nomination nomination = null;
             boolean isExisting = true;
             try {
@@ -262,7 +335,7 @@ public class Nominations extends AbstractController {
            		Logger.info("update nomination: " + nomination.toString());
                	Ebean.update(nomination);
         	}
-	        res = redirect(routes.Nominations.view(nomination.url));
+	        res = redirect(routes.Nominations.edit(nomination.url));
         } 
         if (delete != null) {
         	Nomination nomination = Nomination.findByUrl(getFormParam(Const.URL));
@@ -333,8 +406,8 @@ public class Nominations extends AbstractController {
     		Logger.info("agree: " + getFormParam(Const.AGREE));
             boolean isAgreed = Utils.getNormalizeBooleanString(getFormParam(Const.AGREE));
         	Logger.info("flags isAgreed: " + isAgreed );
-            if (getFormParam(Const.TARGET) != null) {
-        	    String target = getFormParam(Const.TARGET);
+            if (getFormParam(Const.WEBSITE_URL) != null) {
+        	    String target = getFormParam(Const.WEBSITE_URL);
         	    Nomination nomination = new Nomination();
                 nomination.id = Utils.createId();
                 nomination.url = Const.ACT_URL + nomination.id;
