@@ -469,7 +469,12 @@ public final class Const {
     	static {
     	guiMap.put(NAME,                     "Name");
     	guiMap.put(TITLE,                    "Title");
+    	guiMap.put(NID,                      "ID");
+    	guiMap.put(ID,                       "ID");
     	guiMap.put(FIELD_SUBJECT,            "Subject");
+    	guiMap.put(FIELD_URL_NODE,           "Seed URL(s)");
+    	guiMap.put(AUTHOR,                   "Selector");
+    	guiMap.put(SELECTION_TYPE,           "Selection Type");
     }
     		
 	public enum SelectionType {

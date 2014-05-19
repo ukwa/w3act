@@ -492,5 +492,19 @@ public class Utils {
     	return fields;
     	
     }
+    
+    /**
+     * Replace domain field name by GUI field name
+     * @param fields
+     * @return
+     */
+    public static String showMissingField(String field) {
+    	String res = field;
+    	if (field != null && field.length() > 0) {
+    		res = Const.guiMap.get(field);
+    	}
+    	return res;
+    	
+    }
 }
 

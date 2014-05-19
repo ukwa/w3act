@@ -299,6 +299,7 @@ public class InstanceController extends AbstractController {
             	String missingFields = "";
             	for (String key : instanceForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
+            	    key = Utils.showMissingField(key);
             	    if (missingFields.length() == 0) {
             	    	missingFields = key;
             	    } else {
@@ -729,8 +730,7 @@ public class InstanceController extends AbstractController {
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
     		if (target.field_subject != null 
-    				&& (target.field_subject.length() == 0 
-    				|| target.field_subject.toLowerCase().contains(Const.NONE.toLowerCase()))) {
+    				&& (target.field_subject.toLowerCase().contains(Const.NONE.toLowerCase()))) {
     			res = "\"select\": true ,";
     		}
     	}

@@ -199,6 +199,7 @@ public class Tags extends AbstractController {
             	String missingFields = "";
             	for (String key : tagForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
+            	    key = Utils.showMissingField(key);
             	    if (missingFields.length() == 0) {
             	    	missingFields = key;
             	    } else {
@@ -207,7 +208,7 @@ public class Tags extends AbstractController {
             	}
             	Logger.info("form errors size: " + tagForm.errors().size() + ", " + missingFields);
 	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					"Missing fields are " + Utils.showMissingFields(missingFields));
+	  					"Missing fields are " + missingFields);
 	  			return info();
             }
         	Tag tag = null;
