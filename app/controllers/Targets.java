@@ -310,6 +310,15 @@ public class Targets extends AbstractController {
     public static Result searchTargets() {
     	
     	DynamicForm form = DynamicForm.form().bindFromRequest();
+    	Logger.debug("page size: " + getFormParam(Const.PAGE_SIZE));
+        if (form.get(Const.PAGE_SIZE) == null 
+        		|| (form.get(Const.PAGE_SIZE) != null 
+        		   && !Utils.isNumeric(form.get(Const.PAGE_SIZE)))) {
+            Logger.info("You may only enter a numeric page size.");
+  			flash("message", "You may only enter a numeric page size.");
+	        return GO_TARGETS_HOME;
+    	}    	
+    	
     	String action = form.get("action");
     	String query = form.get("url");
 
