@@ -1,39 +1,20 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.ExpressionList;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import models.Taxonomy;
-import models.DCollection;
-import models.Organisation;
-import models.Role;
-import models.Target;
 import models.Taxonomy;
 import models.User;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.BodyParser;
-
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
-import uk.bl.scope.EmailHelper;
-import views.html.licence.*;
-import views.html.targets.targets;
+import views.html.licence.licences;
 
-import javax.mail.*;
-
-import java.io.*;
-import java.util.*;
-import java.util.*;
-
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.InternetAddress;
-import javax.activation.*;
+import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Manage persons.
@@ -90,7 +71,7 @@ public class LicenceEdit extends AbstractController {
     	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
     		Logger.info("name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);    		
-    		exp = exp.contains(Const.TYPE, Const.LICENCE);
+    		exp = exp.contains(Const.TTYPE, Const.LICENCE);
     		isProcessed = true;
     	}
     	res = exp.query().findList();

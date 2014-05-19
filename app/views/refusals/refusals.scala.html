@@ -35,11 +35,11 @@
 		<div id="forms">
    			@helper.form(action=routes.PermissionRefusals.search, 'class -> "form-inline") {
 	   			<div class="input-group">
-					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Permission Refusal Name" value="@searchstr" id="search-query">
+					<input type="text" class="form-control lookup-form-control" name="url" placeholder="Enter Permission Refusal Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="search" title="Search for permission refusal by name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="addentry" title="Add new permission refusal">Add</button>
+							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new permission refusal">Add</button>
 						}
 					</span>
 				</div>
