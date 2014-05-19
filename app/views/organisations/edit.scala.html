@@ -13,7 +13,9 @@
 	   }
 	   @if(user.hasRole("sys_admin")) {
 		   <li class="active"><a href="@routes.Organisations.edit(form("url").value)">Edit</a></li>
+		   @if(Organisation.findById(Long.valueOf(form("nid").value)) != null) {
 		   <li><a href="@routes.Organisations.admin(form("url").value)">User administration</a></li>
+		   }
 	   }
 	</ul>
     

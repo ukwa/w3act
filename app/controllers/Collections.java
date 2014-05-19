@@ -212,6 +212,7 @@ public class Collections extends AbstractController {
             	String missingFields = "";
             	for (String key : collectionForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
+            	    key = Utils.showMissingField(key);
             	    if (missingFields.length() == 0) {
             	    	missingFields = key;
             	    } else {

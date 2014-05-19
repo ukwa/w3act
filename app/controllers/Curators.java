@@ -264,6 +264,7 @@ public class Curators extends AbstractController {
             	String missingFields = "";
             	for (String key : userForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
+            	    key = Utils.showMissingField(key);
             	    if (missingFields.length() == 0) {
             	    	missingFields = key;
             	    } else {

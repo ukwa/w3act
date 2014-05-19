@@ -475,6 +475,10 @@ public final class Const {
     	guiMap.put(FIELD_URL_NODE,           "Seed URL(s)");
     	guiMap.put(AUTHOR,                   "Selector");
     	guiMap.put(SELECTION_TYPE,           "Selection Type");
+    	guiMap.put(TARGET,                   "Target");
+    	guiMap.put(EMAIL,                    "E-mail");
+    	guiMap.put(FIELD_ABBREVIATION,       "Abbreviation");
+    	guiMap.put(FROM_EMAIL,               "From E-mail");
     }
     		
 	public enum SelectionType {

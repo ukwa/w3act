@@ -365,6 +365,7 @@ public class CrawlPermissions extends AbstractController {
                 	String missingFields = "";
                 	for (String key : permissionForm.errors().keySet()) {
                 	    Logger.debug("key: " +  key);
+                	    key = Utils.showMissingField(key);
                 	    if (missingFields.length() == 0) {
                 	    	missingFields = key;
                 	    } else {
@@ -383,16 +384,7 @@ public class CrawlPermissions extends AbstractController {
     	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
     	  					"Missing field is email");
     	  			return info();
-            	}    	
-//            	if (StringUtils.isBlank(getFormParam(Const.NAME)) 
-//            			|| StringUtils.isBlank(getFormParam(Const.FILTER))
-//            			|| StringUtils.isBlank(getFormParam(Const.EMAIL))) {
-//                	Logger.info("name: " + getFormParam(Const.NAME) + ", field URL: " + getFormParam(Const.FILTER) +
-//                			", email: " + getFormParam(Const.EMAIL));
-//                	Logger.info("Please fill out all the required fields, marked with a red star.");
-////            		return badRequest("Please fill out all the required fields, marked with a red star.");
-//                    return ok(infomessage.render("Please fill out all the required fields, marked with a red star."));
-//            	}    	
+            	}    	 	
             	
                 try {
                 	permission = CrawlPermission.findByUrl(getFormParam(Const.URL));

@@ -256,6 +256,7 @@ public class Organisations extends AbstractController {
             	String missingFields = "";
             	for (String key : organisationForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
+            	    key = Utils.showMissingField(key);
             	    if (missingFields.length() == 0) {
             	    	missingFields = key;
             	    } else {
