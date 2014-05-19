@@ -573,8 +573,8 @@ public final class Const {
 		
     public static final Map<String, Integer> permissionExportMap = new HashMap<String, Integer>();
 		static {
-		targetExportMap.put("target", 0);
-		targetExportMap.put("licenseDate", 1);
+		permissionExportMap.put("target", 0);
+		permissionExportMap.put("licenseDate", 1);
 	}
 		
     public static final Map<String, Integer> collectionMap = new HashMap<String, Integer>();

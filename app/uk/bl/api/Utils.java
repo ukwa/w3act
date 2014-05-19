@@ -86,7 +86,7 @@ public class Utils {
 	 	{
 	 	    FileWriter writer = new FileWriter(sFileName);
 
-	  	    String decodedData = URLDecoder.decode(data, Const.STR_FORMAT);
+	  	    String decodedData = replacer(data); //URLDecoder.decode(data, Const.STR_FORMAT);
 //	  	    Logger.info("generateCsvFile: " + decodedData);
 	 	    writer.append(decodedData);
 	 	    writer.flush();
@@ -97,6 +97,37 @@ public class Utils {
 	 	     e.printStackTrace();
 	 	} 
     }    
+    
+    /**
+     * This method secures handling of percent in string.
+     * @param data
+     * @return
+     */
+    public static String replacer(String data) {
+        try {
+           StringBuffer tempBuffer = new StringBuffer();
+           int incrementor = 0;
+           int dataLength = data.length();
+           while (incrementor < dataLength) {
+              char charecterAt = data.charAt(incrementor);
+              if (charecterAt == '%') {
+                 tempBuffer.append("<percentage>");
+              } else if (charecterAt == '+') {
+                 tempBuffer.append("<plus>");
+              } else {
+                 tempBuffer.append(charecterAt);
+              }
+              incrementor++;
+           }
+           data = tempBuffer.toString();
+           data = URLDecoder.decode(data, Const.STR_FORMAT);
+           data = data.replaceAll("<percentage>", "%");
+           data = data.replaceAll("<plus>", "+");
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+        return data;
+    }
     
     /**
      * This method generates current date for e.g. licence form.
