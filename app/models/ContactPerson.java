@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -40,6 +41,7 @@ public class ContactPerson extends Model
     /**
      * The name of the contact person.
      */
+    @Required
     @Column(columnDefinition = "TEXT")
     public String name;
     
@@ -58,6 +60,7 @@ public class ContactPerson extends Model
     /**
      * E-mail address of the contact person.
      */
+    @Required
     @Column(columnDefinition = "TEXT")
     public String email;
     

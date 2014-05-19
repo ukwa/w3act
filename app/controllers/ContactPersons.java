@@ -9,16 +9,19 @@ import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.ContactPerson;
+import models.DCollection;
 import models.Target;
 import models.User;
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import views.html.contactpersons.edit;
 import views.html.contactpersons.*;
 
 import java.util.*;
@@ -50,11 +53,11 @@ public class ContactPersons extends AbstractController {
 		Logger.info("person url: " + url);
 		ContactPerson person = ContactPerson.findByUrl(url);
 		Logger.info("person name: " + person.name + ", url: " + url);
-        return ok(
-                edit.render(
-                		models.ContactPerson.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
+		personFormNew = personFormNew.fill(person);
+      	return ok(
+	              edit.render(personFormNew, User.find.byId(request().username()))
+	            );
     }
     
     public static Result view(String url) {
@@ -92,7 +95,16 @@ public class ContactPersons extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.ContactPersons.create(name));
+    	    	ContactPerson person = new ContactPerson();
+    	    	person.name = name;
+    	        person.id = Target.createId();
+    	        person.url = Const.ACT_URL + person.id;
+    			Logger.info("add contact person with url: " + person.url + ", and name: " + person.name);
+    			Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
+    			personFormNew = personFormNew.fill(person);
+    	      	return ok(
+    		              edit.render(personFormNew, User.find.byId(request().username()))
+    		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			return ok(
@@ -142,14 +154,56 @@ public class ContactPersons extends AbstractController {
     	person.name = name;
         person.id = Target.createId();
         person.url = Const.ACT_URL + person.id;
-		Logger.info("add entry with url: " + person.url + ", and name: " + person.name);
-        return ok(
-                edit.render(
-                      person, User.find.byId(request().username())
-                )
-            );
+		Logger.info("add contact person with url: " + person.url + ", and name: " + person.name);
+		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
+		personFormNew = personFormNew.fill(person);
+      	return ok(
+	              edit.render(personFormNew, User.find.byId(request().username()))
+	            );
     }
       
+	/**
+	 * This method prepares ContactPerson form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+    	ContactPerson person = new ContactPerson();
+    	person.id = Long.valueOf(getFormParam(Const.ID));
+    	person.url = getFormParam(Const.URL);
+	    if (getFormParam(Const.NAME) != null) {
+	    	person.name = getFormParam(Const.NAME);
+	    }
+	    if (getFormParam(Const.DESCRIPTION) != null) {
+	    	person.description = getFormParam(Const.DESCRIPTION);
+	    }
+	    if (getFormParam(Const.POSITION) != null) {
+	    	person.position = getFormParam(Const.POSITION);
+	    }
+	    if (getFormParam(Const.EMAIL) != null) {
+	    	person.email = getFormParam(Const.EMAIL);
+	    }
+	    if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
+	    	person.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
+	    }
+	    if (getFormParam(Const.PHONE) != null) {
+	    	person.phone = getFormParam(Const.PHONE);
+	    }
+	    if (getFormParam(Const.POSTAL_ADDRESS) != null) {
+	    	person.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
+	    }
+	    if (getFormParam(Const.WEB_FORM) != null) {
+	    	person.webForm = getFormParam(Const.WEB_FORM);
+	    }
+    	person.defaultContact = Utils.getNormalizeBooleanString(getFormParam(Const.DEFAULT_CONTACT));
+    	person.permissionChecked = Utils.getNormalizeBooleanString(getFormParam(Const.PERMISSION_CHECKED));
+		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
+		personFormNew = personFormNew.fill(person);
+      	return ok(
+	              edit.render(personFormNew, User.find.byId(request().username()))
+	            );
+    }
+    
     /**
      * This method saves new object or changes on given person in the same object
      * completed by revision comment. The "version" field in the person object
@@ -164,6 +218,23 @@ public class ContactPersons extends AbstractController {
         if (save != null) {
         	Logger.info("save person id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME));
+        	Form<ContactPerson> personForm = Form.form(ContactPerson.class).bindFromRequest();
+            if(personForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : personForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    key = Utils.showMissingField(key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + personForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+	  					"Missing fields are " + missingFields);
+	  			return info();
+            }
         	ContactPerson person = null;
             boolean isExisting = true;
             try {
@@ -221,7 +292,7 @@ public class ContactPersons extends AbstractController {
            		Logger.info("update crawl person: " + person.toString());
                	Ebean.update(person);
         	}
-	        res = redirect(routes.ContactPersons.view(person.url));
+	        return redirect(routes.ContactPersons.edit(person.url));
         } 
         if (delete != null) {
         	ContactPerson person = ContactPerson.findByUrl(getFormParam(Const.URL));
