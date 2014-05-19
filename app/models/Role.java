@@ -27,6 +27,7 @@ import javax.persistence.Id;
 import javax.persistence.Version;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -44,7 +45,8 @@ public class Role extends Model
 
 	@Id @JsonIgnore
     public Long id;
-
+    
+	@Required
 	@Column(columnDefinition = "TEXT")
     public String name;
 

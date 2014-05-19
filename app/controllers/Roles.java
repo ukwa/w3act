@@ -10,12 +10,14 @@ import org.apache.commons.lang3.StringUtils;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import models.DCollection;
 import models.Permission;
 import models.Role;
 import models.Target;
 import models.User;
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -49,11 +51,11 @@ public class Roles extends AbstractController {
 		Logger.info("role url: " + url);
 		Role role = Role.findByUrl(url);
 		Logger.info("role name: " + role.name + ", url: " + url);
-        return ok(
-                roleedit.render(
-                        Role.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<Role> roleFormNew = Form.form(Role.class);
+		roleFormNew = roleFormNew.fill(role);
+      	return ok(
+	              roleedit.render(roleFormNew, User.find.byId(request().username()))
+	            );
     }
     
     public static Result view(String url) {
@@ -105,7 +107,16 @@ public class Roles extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.Roles.create(query));
+    	    	Role role = new Role();
+    	    	role.name = query;
+    	        role.id = Target.createId();
+    	        role.url = Const.ACT_URL + role.id;
+    			Logger.info("add entry with url: " + role.url + ", and name: " + role.name);
+    			Form<Role> roleFormNew = Form.form(Role.class);
+    			roleFormNew = roleFormNew.fill(role);
+    	      	return ok(
+    		              roleedit.render(roleFormNew, User.find.byId(request().username()))
+    		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Roles.list(pageNo, sort, order, query));
@@ -126,13 +137,63 @@ public class Roles extends AbstractController {
         role.id = Target.createId();
         role.url = Const.ACT_URL + role.id;
 		Logger.info("add entry with url: " + role.url + ", and name: " + role.name);
-        return ok(
-                roleedit.render(
-                      role, User.find.byId(request().username())
-                )
-            );
+		Form<Role> roleFormNew = Form.form(Role.class);
+		roleFormNew = roleFormNew.fill(role);
+      	return ok(
+	              roleedit.render(roleFormNew, User.find.byId(request().username()))
+	            );
     }
       
+	/**
+	 * This method prepares Role form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+    	Role role = new Role();
+    	role.id = Long.valueOf(getFormParam(Const.NID));
+    	role.url = getFormParam(Const.URL);
+        role.name = getFormParam(Const.NAME);
+	    if (getFormParam(Const.DESCRIPTION) != null) {
+	    	role.description = getFormParam(Const.DESCRIPTION);
+	    }
+	    
+        String permissionStr = "";
+        List<Permission> permissionList = Permission.findAll();
+        Iterator<Permission> permissionItr = permissionList.iterator();
+        while (permissionItr.hasNext()) {
+        	Permission permission = permissionItr.next();
+            if (getFormParam(permission.name) != null) {
+                boolean permissionFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+                if (permissionFlag) {
+                	if (permissionStr.length() == 0) {
+                		permissionStr = permission.name;
+                	} else {
+                		permissionStr = permissionStr + ", " + permission.name;
+                	}
+                }
+            }
+        }
+        if (permissionStr.length() == 0) {
+        	role.permissions = Const.DEFAULT_ROLE;
+        } else {
+        	role.permissions = permissionStr;
+        }
+        Logger.info("permissionStr: "+ permissionStr + ", user.permissions: " + role.permissions);
+	    
+	    if (role.revision == null) {
+	    	role.revision = "";
+	    }
+        if (getFormParam(Const.REVISION) != null) {
+        	role.revision = getFormParam(Const.REVISION);
+        }
+		Form<Role> roleFormNew = Form.form(Role.class);
+		roleFormNew = roleFormNew.fill(role);
+      	return ok(
+	              roleedit.render(roleFormNew, User.find.byId(request().username()))
+	            );
+    }
+    
     /**
      * This method saves new object or changes on given Role in the same object
      * completed by revision comment. The "version" field in the Role object
@@ -147,6 +208,22 @@ public class Roles extends AbstractController {
         if (save != null) {
         	Logger.debug("save role nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
+        	Form<Role> roleForm = Form.form(Role.class).bindFromRequest();
+            if(roleForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : roleForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + roleForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+	  					"Missing fields are " + missingFields);
+	  			return info();
+            }
         	Role role = null;
             boolean isExisting = true;
             try {
@@ -199,7 +276,7 @@ public class Roles extends AbstractController {
         	    	role.revision = "";
         	    }
                 if (getFormParam(Const.REVISION) != null) {
-                	role.revision = role.revision.concat(", " + getFormParam(Const.REVISION));
+                	role.revision = getFormParam(Const.REVISION);
                 }
             } catch (Exception e) {
             	Logger.info("Role not existing exception");
@@ -212,7 +289,7 @@ public class Roles extends AbstractController {
            		Logger.info("update role: " + role.toString());
                	Ebean.update(role);
         	}
-	        res = redirect(routes.Roles.view(role.url));
+	        res = redirect(routes.Roles.edit(role.url));
         } 
         if (delete != null) {
         	Role role = Role.findByUrl(getFormParam(Const.URL));
