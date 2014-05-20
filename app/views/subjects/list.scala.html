@@ -10,7 +10,7 @@
 	<script>
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
-			applySearch(context, 'collections'); 
+			applySearch(context, 'subjects'); 
 
             showTree(@getJson(data));
             
@@ -53,7 +53,7 @@
 	<div class="page-header">
 	  <h1>Subjects</h1>
 	</div>
- 	<article class="subjects">
+ 	<article class="collections">
 		<div id="forms">
    			@helper.form(action=routes.Subjects.search, 'class -> "form-inline") {
 	   			<div class="input-group">

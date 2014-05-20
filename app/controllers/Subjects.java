@@ -272,12 +272,12 @@ public class Subjects extends AbstractController {
      * @param subjectUrl This is an identifier for current selected object
      * @return tree structure
      */
-
     private static JsonNode getSubjectsData(String url) {    	
     	List<Taxonomy> subjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
     	List<ObjectNode> result = getSubjectTreeElements(subjects, url, true);
     	Logger.info("subjects main level size: " + subjects.size());
     	JsonNode jsonData = Json.toJson(result);
+    	Logger.info("getSubjectsData() jsonData: " + jsonData);
         return jsonData;
     }
     
@@ -296,11 +296,13 @@ public class Subjects extends AbstractController {
 	    	Iterator<Taxonomy> itr = subjectList.iterator();
 	    	while (itr.hasNext()) {
 	    		Taxonomy subject = itr.next();
-	    		
-	    		if (subjectUrl.isEmpty() || (StringUtils.isNotEmpty(subjectUrl) && StringUtils.containsIgnoreCase(subject.name, subjectUrl))) {	    		
+//	    		Logger.info("getSubjectTreeElements() subject name: " + subject.name + 
+//	    				", subjectUrl: " + subjectUrl + ", parent: " + parent + ", subject.parent: " + subject.parent);
+	    		if (subjectUrl.isEmpty() 
+	    				|| (StringUtils.isNotEmpty(subjectUrl) && StringUtils.containsIgnoreCase(subject.name, subjectUrl))) {	    		
 		    		if ((parent && subject.parent.length() == 0) || !parent) {
 						ObjectNode child = nodeFactory.objectNode();
-						child.put("name", subject.name);
+						child.put("title", subject.name);
 						child.put("url", String.valueOf(routes.Subjects.view(subject.url)));
 				    	if (StringUtils.isNotEmpty(subject.url) && subject.url.equalsIgnoreCase(subjectUrl)) {
 				    		child.put("select", true);
@@ -315,7 +317,7 @@ public class Subjects extends AbstractController {
 	    		}
 	    	}
     	}
-//    	Logger.info("getTreeElements() res: " + result);
+//    	Logger.info("getSubjectTreeElements() res: " + result);
     	return result;
     }
 }
