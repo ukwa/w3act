@@ -39,6 +39,15 @@ GET     /collections/:collection/edit       controllers.Collections.edit(collect
 GET     /collections/:sites/sites			controllers.Collections.sites(sites)
 POST    /collections             			controllers.Collections.save()
 
+GET     /subjects                           controllers.Subjects.index()
+GET    	/subjects/list                  	controllers.Subjects.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET    	/subjects/search                    controllers.Subjects.search()
+GET    	/subjects/filterbyjson/:name		controllers.Subjects.filterByJson(name)
+GET     /subjects/new/:title        		controllers.Subjects.create(title)
+GET     /subjects/:subject                  controllers.Subjects.view(subject)
+GET     /subjects/:subject/edit             controllers.Subjects.edit(subject)
+POST    /subjects             			    controllers.Subjects.save()
+
 GET     /taxonomy                           controllers.TaxonomiesController.index()
 GET    	/taxonomy/list                  	controllers.TaxonomiesController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET    	/taxonomy/search                    controllers.TaxonomiesController.search()

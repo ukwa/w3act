@@ -189,13 +189,16 @@ public final class Const {
 	public static final String PASSWORD           = "password";
 	public static final String USER_URL           = "user_url";
 
-	// Taxonomy
+	/**
+	 * Taxonomy
+	 */
 	public static final String TYPE               = "type";
 	public static final String TTYPE              = "ttype";
 	public static final String FIELD_OWNER        = "field_owner";
 	public static final String PARENT             = "parent";
 	public static final String PARENTS_ALL        = "parents_all";
 	public static final String OPEN_UKWA_LICENSE  = "Open UKWA Licence (2014-)";
+	public static final String FIELD_PUBLISH      = "field_publish";
 	
 	// Organisation
 	public static final String FIELD_ABBREVIATION = "field_abbreviation";

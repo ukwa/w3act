@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -26,6 +27,7 @@ public class Taxonomy extends Model {
      
     @Id
     public Long tid;
+    @Required
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 
     public String ttype;  
@@ -45,6 +47,7 @@ public class Taxonomy extends Model {
     public String field_dates;
     @Column(columnDefinition = "TEXT") 
     public String field_publish;
+    @Required
     @Column(columnDefinition = "TEXT") 
     public String parent;
     @Column(columnDefinition = "TEXT") 

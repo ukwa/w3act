@@ -503,6 +503,9 @@ public class Targets extends AbstractController {
     	String action = form.get("action");
     	String query = form.get("url");
     	String tabStatus = form.get(Const.TAB_STATUS);
+		if (tabStatus == null || tabStatus.length() == 0) {
+			tabStatus = Const.TabStatus.overview.name();
+		}
 
 //    	if (StringUtils.isBlank(query)) {
 //			Logger.info("Target name is empty. Please write name in search window.");
@@ -533,8 +536,8 @@ public class Targets extends AbstractController {
     	        	target.field_subsubject = Const.NONE;
     	        	target.field_subject = Const.NONE;
     	        }
-    			Logger.info("add entry with target url: " + target.url);
-    			Logger.info("target name: " + target.title);
+    			Logger.info("add target with url: " + target.url);
+    			Logger.info("target title: " + target.title);
     			Form<Target> targetForm = Form.form(Target.class);
     			targetForm = targetForm.fill(target);
     	        return ok(edit.render(targetForm, User.find.byId(request().username()), tabStatus));    			

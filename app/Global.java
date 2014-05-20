@@ -42,6 +42,7 @@ public class Global extends GlobalSettings {
     
     public Promise<SimpleResult> onError(RequestHeader request, Throwable t) {
         return Promise.<SimpleResult>pure(internalServerError(
+//                views.html.errorPage.render(t, User.find.byId(request().username()))
             views.html.errorPage.render(t)
         ));
     }
