@@ -158,9 +158,11 @@ GET     /targets/lookup						controllers.Targets.lookup()
 GET    	/targets/export/ld/:frequency		controllers.Targets.exportLdFrequencyJson(frequency)
 GET    	/targets/export/by/:frequency		controllers.Targets.exportByFrequencyJson(frequency)
 
-GET     /targets/:target                    controllers.Targets.view(target)
+GET     /targets/view                       controllers.Targets.view(target, tabStatus)
 GET     /targets/:revision/revision         controllers.Targets.viewrevision(revision:Long)
-GET     /targets/:target/edit               controllers.Targets.edit(target)
+GET     /targets/edit                       controllers.Targets.edit(target, tabStatus)
+GET    	/targets/switchEditTab              controllers.Targets.switchEditTab(url, tabstatus) 
+GET    	/targets/switchViewTab              controllers.Targets.switchViewTab(url, tabstatus) 
 
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissions.showCrawlPermissions(target)
 GET     /target/licencerequest          	controllers.CrawlPermissions.licenceRequestForTarget(name, target)

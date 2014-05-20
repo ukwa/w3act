@@ -1,4 +1,4 @@
-@(target: Target, user: User)
+@(target: Target, user: User, tabstatus: String)
 
 @main("", user) {
    	<div class="page-header">
@@ -6,10 +6,10 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.Targets.view(target.url)">View</a></li>
+	   <li class="active"><a href="@routes.Targets.view(target.url, tabstatus)">View</a></li>
 	   @if(((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) 
 	   		|| (user.hasRole("user") && user.url.equals(target.author))) {
-	   <li><a href="@routes.Targets.edit(target.url)">Edit</a></li> 
+	   <li><a href="@routes.Targets.edit(target.url, tabstatus)">Edit</a></li> 
 	   }
 	</ul>
 	
@@ -18,19 +18,47 @@
         <input type="hidden" name="user" value="@user.url">
            
 		<ul class="nav nav-pills">
+		    @if(tabstatus.equals("overview")) {
         	<li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
+        	} else {
+        	<li><a href="#basicinformation" data-toggle="tab">Overview</a></li>
+        	}
+		    @if(tabstatus.equals("metadata")) {
+        	<li class="active"><a href="#metadata" data-toggle="tab">Metadata</a></li>
+        	} else {
         	<li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
-			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-			@if(Target.isInScopeAll(target.field_url, target.url)) {
-				<font color="green">(+)</font>
-			} else {
-				<font color="red">(-)</font>
-			}		        
+        	}
+		    @if(tabstatus.equals("crawlpermission")) {
+			<li class="active"><a href="#crawlpermission" data-toggle="tab">NPLD scope 
+				@if(Target.isInScopeAll(target.field_url, target.url)) {
+					<font color="green">(+)</font>
+				} else {
+					<font color="red">(-)</font>
+				}		        
 			</a></li>
+			} else {
+			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
+				@if(Target.isInScopeAll(target.field_url, target.url)) {
+					<font color="green">(+)</font>
+				} else {
+					<font color="red">(-)</font>
+				}		        
+			</a></li>
+			}
+		    @if(tabstatus.equals("crawlpolicy")) {
+        	<li class="active"><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
+        	} else {
         	<li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
+        	}
+		    @if(tabstatus.equals("licensing")) {
+		    <li class="active"><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
+		    } else {
 		    <li class=""><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
+		    }
       	</ul>
 	</div>
+	
+	<input type="hidden" name="tabstatus" value="@tabstatus">
 	
 	<div id="myTabContent" class="tab-content">
 		<div class="tab-pane padding-20 fade active in" id="basicinformation">
@@ -467,7 +495,7 @@
 					<div class="alert alert-info">
 						NB. There are other records within this domain for which data has already been provided.
 						@for(targetObj <- Target.getNpldStatusList(target.field_url)) {
-							<p><a href="@routes.Targets.view(targetObj.url)">@targetObj.title @targetObj.field_url</a></p>
+							<p><a href="@routes.Targets.view(targetObj.url, "overview")">@targetObj.title @targetObj.field_url</a></p>
 						}
 					</div>
 				</div>	

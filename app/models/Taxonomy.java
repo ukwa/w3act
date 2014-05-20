@@ -430,13 +430,13 @@ public class Taxonomy extends Model {
 	public static List<Taxonomy> findSubSubjectsList(String parent) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (parent != null && parent.length() > 0) {
-    		Logger.info("findSubSubjectsList() parent: " + parent);
+//    		Logger.info("findSubSubjectsList() parent: " + parent);
     		parent = formatDbComma(parent);
 	        ExpressionList<Taxonomy> ll = find.where()
 	        		.eq(Const.TTYPE, Const.TaxonomyType.SUBSUBJECT.name().toLowerCase())
 	        		.eq(Const.PARENT, parent);
 	    	res = ll.findList(); 
-	    	Logger.info("size: " + res.size());
+//	    	Logger.info("size: " + res.size());
         }
     	return res;
     }

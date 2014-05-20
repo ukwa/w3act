@@ -179,6 +179,7 @@ public final class Const {
 	public static final String SUBJECT_TREE_KEYS  = "subjectTreeKeys";
 	public static final String NA                 = "N/A";
 	public static final int    MAX_NPLD_LIST_SIZE = 3;
+	public static final String TAB_STATUS         = "tabstatus";
 	
     // Creator
 	public static final String UID                = "uid";
@@ -445,6 +446,14 @@ public final class Const {
 		expert_user,
 		user,
 		viewer;
+    }
+	
+	public enum TabStatus {
+		overview,
+		metadata,
+		crawlpermission,
+		crawlpolicy,
+		licensing;
     }
 		
     /**
