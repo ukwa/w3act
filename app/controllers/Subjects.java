@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import models.Organisation;
 import models.Taxonomy;
 import models.Target;
 import models.User;
@@ -178,7 +179,15 @@ public class Subjects extends AbstractController {
     	subject.field_publish = Const.PUBLISH;
 	    if (getFormParam(Const.PARENT) != null) {
 	    	subject.parent = getFormParam(Const.PARENT);
+//	    	subject.parent = Taxonomy.findByName(getFormParam(Const.PARENT)).url;
 	    }
+	    subject.ttype = Const.SUBSUBJECT;
+//        if (getFormParam(Const.TTYPE) != null) {
+//        	subject.ttype = getFormParam(Const.TTYPE);
+//        }
+        if (getFormParam(Const.DESCRIPTION) != null) {
+        	subject.description = getFormParam(Const.DESCRIPTION);
+        }
 		Form<Taxonomy> subjectFormNew = Form.form(Taxonomy.class);
 		subjectFormNew = subjectFormNew.fill(subject);
       	return ok(
@@ -199,7 +208,7 @@ public class Subjects extends AbstractController {
 //        Logger.info("save: " + save);
         if (save != null) {
         	Logger.info("input data for saving subject tid: " + getFormParam(Const.TID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
+        			", name: " + getFormParam(Const.NAME) + ", parent: " + getFormParam(Const.PARENT));
         	
         	Form<Taxonomy> subjectForm = Form.form(Taxonomy.class).bindFromRequest();
             if(subjectForm.hasErrors()) {
@@ -223,7 +232,7 @@ public class Subjects extends AbstractController {
             boolean isExisting = true;
             try {
                 try {
-                	subject = Taxonomy.findByUrl(getFormParam(Const.URL));
+                	subject = Taxonomy.findByUrlExt(getFormParam(Const.URL));
                 } catch (Exception e) {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
@@ -241,9 +250,19 @@ public class Subjects extends AbstractController {
                 
                 subject.name = getFormParam(Const.NAME);
                 subject.field_publish = Const.FIELD_PUBLISH;
+//                subject.field_publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
         	    if (getFormParam(Const.PARENT) != null) {
         	    	subject.parent = getFormParam(Const.PARENT);
+//        	    	subject.parent = Taxonomy.findByName(getFormParam(Const.PARENT)).name;
+//        	    	subject.parent = Taxonomy.findByName(getFormParam(Const.PARENT)).url;
         	    }
+        	    subject.ttype = Const.SUBSUBJECT;
+//                if (getFormParam(Const.TTYPE) != null) {
+//                	subject.ttype = getFormParam(Const.TTYPE);
+//                }
+                if (getFormParam(Const.DESCRIPTION) != null) {
+                	subject.description = getFormParam(Const.DESCRIPTION);
+                }
             } catch (Exception e) {
             	Logger.info("Subject not exists exception");
             }

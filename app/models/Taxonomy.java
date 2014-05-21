@@ -109,6 +109,22 @@ public class Taxonomy extends Model {
     }
     
     /**
+     * Retrieve a taxonomy object by URL.
+     * @param url
+     * @return taxonomy object
+     */
+    public static Taxonomy findByUrlExt(String url) {
+//    	Logger.info("taxonomy findByUrl: " + url);
+    	Taxonomy res = new Taxonomy();
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
+    		res = find.where().eq(Const.URL, url).findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+    	return res;
+    }
+
+    /**
      * Retrieve a Taxonomy by URL.
      * @param url
      * @return taxonomy object

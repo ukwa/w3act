@@ -49,9 +49,9 @@
 				<div class="form-group">
 	              	<label for="tags" class="col-sm-6 control-label">Parent <font color="red">*</font></label>
 				    <div class="col-sm-6">
-						<select multiple name="parent" id="parent" class="form-control">
+						<select name="parent" id="parent" class="form-control">
 			                @for(subject <- Taxonomy.findListByTypeSorted("subject")) {
-				                @if(form("parent").value != null && form("parent").value.contains(subject.url)) {
+				                @if(form("parent").value != null && form("parent").value.equals(subject.name)) {
 				                	<option selected>@subject.name</option>
 				                } else {
 				                	<option>@subject.name</option>
