@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import models.CommunicationLog;
 import models.DCollection;
+import models.Permission;
 import models.Target;
 import models.User;
 import models.CrawlPermission;
@@ -19,10 +20,11 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.communicationlogs.edit;
 import views.html.communicationlogs.*;
 
 import java.util.*;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Manage logs.
@@ -76,6 +78,10 @@ public class CommunicationLogs extends AbstractController {
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
         String permissions = getFormParam(Const.PERMISSIONS);
+        if (StringUtils.isNotEmpty(permissions) && !permissions.toLowerCase().equals(Const.NONE)) {
+        	permissions = CrawlPermission.findByName(permissions).url;
+        }
+        Logger.info("filter permission: " + permissions);
         if (permissions == null) {
         	permissions = Const.NONE;
         }
@@ -116,8 +122,8 @@ public class CommunicationLogs extends AbstractController {
     
     /**
      * This method applyies filters to the list of crawl logs.
-     * @param filterUrl
-     * @param status
+     * @param filterUrl The filter string
+     * @param permission The permission identifier URL
      * @return
      */
     public static List<CommunicationLog> processFilterCommunicationLogs(String filterUrl, String permission) {
