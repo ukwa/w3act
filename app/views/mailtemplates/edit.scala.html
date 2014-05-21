@@ -88,7 +88,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Default Email</label>
 				    <div class="col-sm-6">
-		                @if(form("defaultEmail").value != null && form("defaultEmail").value) {             
+		                @if(form("defaultEmail").value != null && form("defaultEmail").value == "true") {             
 			                <input type="checkbox" name="defaultEmail" value="true" checked />
 		                } else {
 			                <input type="checkbox" name="defaultEmail" value="true"/>
