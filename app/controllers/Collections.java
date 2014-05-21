@@ -247,6 +247,11 @@ public class Collections extends AbstractController {
                 
                 collection.title = getFormParam(Const.TITLE);
                 collection.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
+        	    if (getFormParam(Const.PARENT) != null) {
+                	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
+                		collection.parent = DCollection.findByTitleExt(getFormParam(Const.PARENT)).url;
+                	}
+        	    }
         	    if (getFormParam(Const.SUMMARY) != null) {
         	    	collection.summary = getFormParam(Const.SUMMARY);
         	    }

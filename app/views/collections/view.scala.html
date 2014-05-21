@@ -13,26 +13,67 @@
 		}
 	</ul>
 
-	<div class="padding-20">
-		<div class="tab-pane active" id="home">
-			<dl class="dl-horizontal text-overflow">
-				<dt>Description lists:</dt>
-				<dd>@collection.title</dd>
-				<dt>Publish:</dt>
-				<dd>
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Title <font color="red">*</font></label>
+				    <div class="col-sm-6">
+						@collection.title
+
+					</div>
+				</div>
+			</div>
+     	</div>
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
+				    <div class="col-sm-6">
+				    @DCollection.findByUrl(collection.parent).title
+					</div>
+				</div>
+			</div>
+     	</div>		   
+
+		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Publish</label>
+				    <div class="col-sm-6">
 	                @if(collection.publish != null && collection.publish) {             
 		                yes
 	                } else {
 		                no
 	                }
-				</dd>
-				<dt>Description:</dt>
-				<dd>@collection.summary</dd>
-				<dt>Revision log message:</dt>
-				<dd>@collection.revision</dd>
-			</dl>
+					</div>
+				</div>
+			</div>
+     	</div>		     				     	
+		}     	
+		
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
+				    <div class="col-sm-6">
+		          		@collection.summary
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
-
+		
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+     			<div class="form-group">
+					<label for="inputRevision" class="col-sm-6 control-label">Revision log message</label>
+				    <div class="col-sm-6">
+						@collection.revision
+					</div>
+				</div>
+			</div>
+		</div>
+    	
 }
 
