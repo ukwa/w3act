@@ -727,7 +727,7 @@ public class Targets extends AbstractController {
         );
     
     public static Result switchEditTab(String url, String tabstatus) {
-    	Logger.info("switchEditTab() tabstatus: " + tabstatus);
+    	Logger.info("############## switchEditTab() tabstatus: " + tabstatus);
     	return edit(url, tabstatus);
     }
     

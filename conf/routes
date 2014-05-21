@@ -170,8 +170,8 @@ GET    	/targets/export/by/:frequency		controllers.Targets.exportByFrequencyJson
 GET     /targets/view                       controllers.Targets.view(target, tabStatus)
 GET     /targets/:revision/revision         controllers.Targets.viewrevision(revision:Long)
 GET     /targets/edit                       controllers.Targets.edit(target, tabStatus)
-GET    	/targets/switchEditTab              controllers.Targets.switchEditTab(url, tabstatus) 
-GET    	/targets/switchViewTab              controllers.Targets.switchViewTab(url, tabstatus) 
+GET    	/targets/switchEditTab              controllers.Targets.switchEditTab(target, tabstatus) 
+GET    	/targets/switchViewTab              controllers.Targets.switchViewTab(target, tabstatus) 
 
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissions.showCrawlPermissions(target)
 GET     /target/licencerequest          	controllers.CrawlPermissions.licenceRequestForTarget(name, target)
