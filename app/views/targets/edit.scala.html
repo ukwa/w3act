@@ -1149,7 +1149,11 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-				    @if(form("author").value != null && user.hasRole("user") && !user.hasRole("expert_user") && !user.url.equals(form("author").value)) { 
+				    @if(form("author").value != null && user.hasRole("user") 
+				    	&& !user.hasRole("expert_user") 
+				    	&& !user.hasRole("archivist") 
+				    	&& !user.hasRole("sys_admin") 
+				    	&& !user.url.equals(form("author").value)) { 
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
 				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
 					<button type="submit" class="btn btn-primary" name="delete" id="delete" disabled>Delete</button>
