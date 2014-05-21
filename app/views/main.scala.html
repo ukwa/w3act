@@ -59,23 +59,23 @@
 						<ul class="dropdown-menu">
 							<li><a href="@routes.Organisations.index()">Organisations</a></li>
 							<li><a href="@routes.Curators.index()">Curators</a></li>
+							<li><a href="@routes.Roles.index()">Roles</a></li>
 						</ul>
 					</li>
-                    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Access Control<b class="caret"></b></a>
-							<ul class="dropdown-menu">
-								<li><a href="@routes.Roles.index()">Roles</a></li>
-								<!-- li><a href="@routes.Permissions.index()">Permissions</a></li-->
-								<li><a href="@routes.CrawlPermissions.index()">Crawl Permissions</a></li>
-								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-								<li><a href="@routes.QAController.index()">QA</a></li>
-								}
-								<li><a href="@routes.Reports.index()">Reports</a></li>
-								<li><a href="@routes.Nominations.index()">Nominations</a></li>
-							</ul>
-						</li>					
-					}
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Quality Control<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<!-- li><a href="@routes.Permissions.index()">Permissions</a></li-->
+		                    @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
+							<li><a href="@routes.CrawlPermissions.index()">Crawl Permissions</a></li>
+							}
+							@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+							<li><a href="@routes.QAController.index()">QA</a></li>
+							<li><a href="@routes.Reports.index()">Reports</a></li>
+							<li><a href="@routes.Nominations.index()">Nominations</a></li>
+							}
+						</ul>
+					</li>					
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></a>
 						<ul class="dropdown-menu">
