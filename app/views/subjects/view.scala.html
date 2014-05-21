@@ -28,9 +28,13 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-	              	<label for="tags" class="col-sm-6 control-label">Parent <font color="red">*</font></label>
+	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
 				    <div class="col-sm-6">
+				    @if(subject.parent != null && subject.parent.length() > 0) { 
 		                @subject.parent
+		            } else {
+		                None
+		            }
 					</div>
 				</div>
 			</div>

@@ -36,10 +36,13 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-	              	<label for="tags" class="col-sm-6 control-label">Parent <font color="red">*</font></label>
+	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
 				    <div class="col-sm-6">
+		                @if(form("parent").value == null || form("parent").value.length() == 0) {
+		                	None
+		                } else {
 						<select name="parent" id="parent" class="form-control">
-			                @for(subject <- Taxonomy.findListByTypeSorted("subject")) {
+			                @for(subject <- Taxonomy.findListByTypeAndParentSorted("subject","")) {
 				                @if(form("parent").value != null && form("parent").value.equals(subject.name)) {
 				                	<option selected>@subject.name</option>
 				                } else {
@@ -47,6 +50,7 @@
 				                }
 			                }
 						</select>
+		                }				    
 					</div>
 				</div>
 			</div>

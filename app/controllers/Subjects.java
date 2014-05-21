@@ -177,11 +177,13 @@ public class Subjects extends AbstractController {
     	subject.url = getFormParam(Const.URL);
     	subject.name = getFormParam(Const.NAME);
     	subject.field_publish = Const.PUBLISH;
+	    subject.ttype = Const.SUBJECT;
 	    if (getFormParam(Const.PARENT) != null) {
-	    	subject.parent = getFormParam(Const.PARENT);
-//	    	subject.parent = Taxonomy.findByName(getFormParam(Const.PARENT)).url;
+        	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
+        		subject.parent = getFormParam(Const.PARENT);
+        	    subject.ttype = Const.SUBSUBJECT;
+        	}
 	    }
-	    subject.ttype = Const.SUBSUBJECT;
 //        if (getFormParam(Const.TTYPE) != null) {
 //        	subject.ttype = getFormParam(Const.TTYPE);
 //        }
@@ -251,15 +253,13 @@ public class Subjects extends AbstractController {
                 subject.name = getFormParam(Const.NAME);
                 subject.field_publish = Const.FIELD_PUBLISH;
 //                subject.field_publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
+        	    subject.ttype = Const.SUBJECT;
         	    if (getFormParam(Const.PARENT) != null) {
-        	    	subject.parent = getFormParam(Const.PARENT);
-//        	    	subject.parent = Taxonomy.findByName(getFormParam(Const.PARENT)).name;
-//        	    	subject.parent = Taxonomy.findByName(getFormParam(Const.PARENT)).url;
+                	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
+                		subject.parent = getFormParam(Const.PARENT);
+                	    subject.ttype = Const.SUBSUBJECT;
+                	}
         	    }
-        	    subject.ttype = Const.SUBSUBJECT;
-//                if (getFormParam(Const.TTYPE) != null) {
-//                	subject.ttype = getFormParam(Const.TTYPE);
-//                }
                 if (getFormParam(Const.DESCRIPTION) != null) {
                 	subject.description = getFormParam(Const.DESCRIPTION);
                 }
@@ -296,7 +296,7 @@ public class Subjects extends AbstractController {
     	List<ObjectNode> result = getSubjectTreeElements(subjects, url, true);
     	Logger.info("subjects main level size: " + subjects.size());
     	JsonNode jsonData = Json.toJson(result);
-    	Logger.info("getSubjectsData() jsonData: " + jsonData);
+//    	Logger.info("getSubjectsData() jsonData: " + jsonData);
         return jsonData;
     }
     
