@@ -399,6 +399,7 @@ create table taxonomy (
   field_owner               TEXT,
   field_dates               TEXT,
   field_publish             TEXT,
+  publish                   boolean,
   parent                    TEXT,
   parents_all               TEXT,
   constraint pk_taxonomy primary key (tid))

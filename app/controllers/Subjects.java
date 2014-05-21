@@ -176,17 +176,17 @@ public class Subjects extends AbstractController {
     	subject.tid = Long.valueOf(getFormParam(Const.TID));
     	subject.url = getFormParam(Const.URL);
     	subject.name = getFormParam(Const.NAME);
-    	subject.field_publish = Const.PUBLISH;
-	    subject.ttype = Const.SUBJECT;
+        subject.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
+	    if (getFormParam(Const.TTYPE) != null) {
+	    	subject.ttype = getFormParam(Const.TTYPE);
+	    }
+//	    subject.ttype = Const.SUBJECT;
 	    if (getFormParam(Const.PARENT) != null) {
         	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
         		subject.parent = getFormParam(Const.PARENT);
         	    subject.ttype = Const.SUBSUBJECT;
         	}
 	    }
-//        if (getFormParam(Const.TTYPE) != null) {
-//        	subject.ttype = getFormParam(Const.TTYPE);
-//        }
         if (getFormParam(Const.DESCRIPTION) != null) {
         	subject.description = getFormParam(Const.DESCRIPTION);
         }
@@ -251,9 +251,11 @@ public class Subjects extends AbstractController {
                 }
                 
                 subject.name = getFormParam(Const.NAME);
-                subject.field_publish = Const.FIELD_PUBLISH;
-//                subject.field_publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
-        	    subject.ttype = Const.SUBJECT;
+                subject.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
+        	    if (getFormParam(Const.TTYPE) != null) {
+        	    	subject.ttype = getFormParam(Const.TTYPE);
+        	    }
+//        	    subject.ttype = Const.SUBJECT;
         	    if (getFormParam(Const.PARENT) != null) {
                 	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
                 		subject.parent = getFormParam(Const.PARENT);

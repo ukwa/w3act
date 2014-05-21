@@ -21,6 +21,7 @@
 		@helper.form(action=routes.Subjects.save) {
    		<input type="hidden" name="url" value="@form("url").value">
    	    <input type="hidden" name="tid" value="@form("tid").value">
+        <input type="hidden" name="ttype" value="@form("ttype").value">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -38,7 +39,8 @@
 				<div class="form-group">
 	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
 				    <div class="col-sm-6">
-		                @if(form("parent").value == null || form("parent").value.length() == 0) {
+		                @if((form("parent").value == null || form("parent").value.length() == 0) 
+		                	&& Taxonomy.findById(Long.valueOf(form("tid").value)) != null) {
 		                	None
 		                } else {
 						<select name="parent" id="parent" class="form-control">
@@ -62,10 +64,10 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Publish</label>
 				    <div class="col-sm-6">
-		                @if(form("field_publish").value != null && form("field_publish").value) {             
-			                <input type="checkbox" name="field_publish" value="true" checked/>
+		                @if(form("publish").value != null && form("publish").value == "true") {             
+			                <input type="checkbox" name="publish" value="true" checked/>
 		                } else {
-			                <input type="checkbox" name="field_publish" value="true"/>
+			                <input type="checkbox" name="publish" value="true"/>
 		                }
 					</div>
 				</div>

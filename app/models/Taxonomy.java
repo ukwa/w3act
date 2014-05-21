@@ -16,6 +16,7 @@ import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 /**
@@ -47,6 +48,11 @@ public class Taxonomy extends Model {
     public String field_dates;
     @Column(columnDefinition = "TEXT") 
     public String field_publish;
+    /**
+     * 'true' if collection should be made visible in the UI, default 'false'
+     */
+    @JsonIgnore
+    public Boolean publish;
 //    @Required
     @Column(columnDefinition = "TEXT") 
     public String parent;
