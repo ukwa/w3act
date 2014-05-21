@@ -45,7 +45,9 @@
 		                } else {
 						<select name="parent" id="parent" class="form-control">
 			                @for(subject <- Taxonomy.findListByTypeAndParentSorted("subject","")) {
-				                @if(form("parent").value != null && form("parent").value.equals(subject.name)) {
+				                @if(form("parent").value != null 
+				                	&& Taxonomy.findByName(form("parent").value) != null 
+				                	&& Taxonomy.findByName(form("parent").value).url.equals(subject.url)) {
 				                	<option selected>@subject.name</option>
 				                } else {
 				                	<option>@subject.name</option>
