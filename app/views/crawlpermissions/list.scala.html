@@ -163,7 +163,7 @@
 	</article>
 }
 } else {
-    @if(user.hasRole("expert_user")) {
+    @if(user.hasRole("expert_user") || user.hasRole("user")) {
     <h1>Your Open UKWA License email has now been queued.</h1>
     } else {
 	<h1>Access Denied for URL @routes.CrawlPermissions.index()/list</h1>
