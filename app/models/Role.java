@@ -217,6 +217,38 @@ public class Role extends Model
     }
     
     /**
+     * This method checks if a given role is included in the list of passed user roles.
+     * Simple "contains" method of string does not help for roles since part of the role name
+     * like "exper_user" could be a name of the other role like "user".
+     * @param roleName The given role name
+     * @param roles The user roles as a string separated by comma
+     * @return true if role name is included
+     */
+    public static boolean isIncludedByUrl(String roleName, String url) {
+    	boolean res = false;
+    	String roles = User.findByUrl(url).roles;
+    	if (roleName != null && roleName.length() > 0 && roles != null && roles.length() > 0 ) {
+    		if (roles.contains(Const.COMMA)) {
+    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
+    			Iterator<String> itr = resList.iterator();
+    			while (itr.hasNext()) {
+        			String currentRoleName = itr.next();
+        			currentRoleName = currentRoleName.replaceAll(" ", "");
+        			if (currentRoleName.equals(roleName)) {
+        				res = true;
+        				break;
+        			}
+    			}
+    		} else {
+    			if (roles.equals(roleName)) {
+    				res = true;
+    			}
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
      * This method evaluates index of the role in the role enumeration.
      * @param roles
      * @return

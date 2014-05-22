@@ -76,7 +76,7 @@
 				        @for(role <- Role.findAll()) {
 				            @if(Role.isAllowed(role, admin)) {
 							<label class="checkbox-inline">
-					            @if(Role.isIncluded(role.name, form("roles").value)) {
+					            @if(Role.isIncludedByUrl(role.name, form("url").value)) {
 				                	<input type="checkbox" name="@role.name" value="true" checked />
 				                } else {
 				                	<input type="checkbox" name="@role.name" value="true" />
