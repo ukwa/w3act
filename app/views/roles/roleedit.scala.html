@@ -43,7 +43,7 @@
 					<div class="col-sm-6">
 				        @for(permission <- Permission.findAll()) {
 							<label class="checkbox-inline">
-					            @if(Permission.isIncluded(permission.name, form("permissions").value)) {
+					            @if(Permission.isIncludedByUrl(permission.name, form("url").value)) {
 				                	<input type="checkbox" name="@permission.name" value="true" checked />
 				                } else {
 				                	<input type="checkbox" name="@permission.name" value="true" />

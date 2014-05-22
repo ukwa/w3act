@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -14,6 +15,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -133,6 +136,37 @@ public class Permission extends Model
     			}
     		}
     	}
+    	return res;
+    }
+
+    public static boolean isIncludedByUrl(String permissionName, String url) {
+    	boolean res = false;
+    	Logger.info("isIncludedByUrl() url: " + url);
+    	try {
+	    	if (StringUtils.isNotEmpty(url)) {
+		    	String permissions = Role.findByUrl(url).permissions;
+		    	if (permissionName != null && permissionName.length() > 0 && permissions != null && permissions.length() > 0 ) {
+		    		if (permissions.contains(Const.COMMA)) {
+		    			List<String> resList = Arrays.asList(permissions.split(Const.COMMA));
+		    			Iterator<String> itr = resList.iterator();
+		    			while (itr.hasNext()) {
+		        			String currentRoleName = itr.next();
+		        			currentRoleName = currentRoleName.replaceAll(" ", "");
+		        			if (currentRoleName.equals(permissionName)) {
+		        				res = true;
+		        				break;
+		        			}
+		    			}
+		    		} else {
+		    			if (permissions.equals(permissionName)) {
+		    				res = true;
+		    			}
+		    		}
+		    	}
+	    	}
+		} catch (Exception e) {
+			Logger.debug("User is not yet stored in database.");
+		}
     	return res;
     }
 
