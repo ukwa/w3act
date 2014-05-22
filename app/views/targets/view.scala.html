@@ -1,6 +1,31 @@
 @(target: Target, user: User, tabstatus: String)
 
-@main("", user) {
+@script = {
+	<script>
+	window.setTimeout(function() {
+	  $('#change-view').click(function() {
+        var active = $("#tabs").find("li.active").text();
+        console.log(active);
+        if (active.indexOf('Overview') > -1) {
+            window.location.href="@routes.Targets.edit(target.url, "overview")";
+        }
+        if (active.indexOf('Metadata') > -1) {
+            window.location.href="@routes.Targets.edit(target.url, "metadata")";
+        }
+        if (active.indexOf('NPLD') > -1) {
+            window.location.href="@routes.Targets.edit(target.url, "crawlpermission")";
+        }
+        if (active.indexOf('Crawl') > -1) {
+            window.location.href="@routes.Targets.edit(target.url, "crawlpolicy")";
+        }
+        if (active.indexOf('UKWA') > -1) {
+            window.location.href="@routes.Targets.edit(target.url, "licensing")";
+        }
+        });
+	}, 1);
+	</script>
+}
+@main("", user, script) {
    	<div class="page-header">
 	    <h1><a href="@routes.Targets.index()">Targets > </a>Target @target.title</h1>
 	</div>
@@ -9,7 +34,7 @@
 	   <li class="active"><a href="@routes.Targets.view(target.url, tabstatus)">View</a></li>
 	   @if(((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) 
 	   		|| (user.hasRole("user") && user.url.equals(target.author))) {
-	   <li><a href="@routes.Targets.edit(target.url, tabstatus)">Edit</a></li> 
+	   <li><a id="change-view" onclick="return false;" href="@routes.Targets.edit(target.url, tabstatus)">Edit</a></li>
 	   }
 	</ul>
 	
@@ -17,7 +42,7 @@
 		<input type="hidden" name="nid" value="@target.nid">
         <input type="hidden" name="user" value="@user.url">
            
-		<ul class="nav nav-pills">
+		<ul class="nav nav-pills" id="tabs">
 		    @if(tabstatus.equals("overview")) {
         	<li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
         	} else {
