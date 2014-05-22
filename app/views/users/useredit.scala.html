@@ -55,18 +55,29 @@
 			</div>
      	</div>
 
-		@if(form("url").value.equals(admin.url)) {
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="password" class="col-sm-6 control-label">E-Password <font color="red">*</font></label>
-					    <div class="col-sm-6">
-							<input class="form-control" name="password" id="password" type="text" value="@form("password").value">
-						</div>
+	    @if(User.findById(Long.valueOf(form("uid").value)) != null) {
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="password" class="col-sm-6 control-label">Old Password</label>
+				    <div class="col-sm-6">
+						<input class="form-control" name="oldpassword" id="oldpassword" type="text">
 					</div>
 				</div>
-	     	</div>
+			</div>
+     	</div>
 		}
+		
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="password" class="col-sm-6 control-label">New Password</label>
+				    <div class="col-sm-6">
+						<input class="form-control" name="password" id="password" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
 		
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">

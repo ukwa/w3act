@@ -99,12 +99,13 @@ public class Curators extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-//        		return redirect(routes.Curators.create(query));
     	    	User user = new User();
     	    	user.name = query;
-    	        user.uid = Target.createId();
+    	        user.uid = Utils.createId();
     	        user.url = Const.ACT_URL + user.uid;
-    			Logger.info("add curator with url: " + user.url + ", and name: " + user.name);
+    	        user.roles = Const.DEFAULT_ROLE;
+    	        user.email = user.name + "@bl.uk";
+    	        Logger.info("add curator entry with url: " + user.url + ", and name: " + user.name);
     			Form<User> userForm = Form.form(User.class);
     			userForm = userForm.fill(user);
     	        return ok(useredit.render(userForm, User.find.byId(request().username())));    			
@@ -126,7 +127,9 @@ public class Curators extends AbstractController {
     	user.name = title;
         user.uid = Target.createId();
         user.url = Const.ACT_URL + user.uid;
-		Logger.info("add curator with url: " + user.url + ", and name: " + user.name);
+        user.roles = Const.DEFAULT_ROLE;
+        user.email = user.name + "@bl.uk";
+        Logger.info("add curator with url: " + user.url + ", and name: " + user.name);
 		Form<User> userForm = Form.form(User.class);
 		userForm = userForm.fill(user);
         return ok(useredit.render(userForm, User.find.byId(request().username())));    			
@@ -192,16 +195,6 @@ public class Curators extends AbstractController {
     	user.email = user.name + "@";
 	    if (getFormParam(Const.EMAIL) != null) {
 	    	user.email = getFormParam(Const.EMAIL);
-	    }
-	    if (getFormParam(Const.PASSWORD) != null) {
-	    	user.password = getFormParam(Const.PASSWORD);
-	    	try {
-				user.password = PasswordHash.createHash(user.password);
-			} catch (NoSuchAlgorithmException e) {
-				Logger.info("change password - no algorithm error: " + e);
-			} catch (InvalidKeySpecException e) {
-				Logger.info("change password - key specification error: " + e);
-			}
 	    }
         if (getFormParam(Const.ORGANISATION) != null) {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
@@ -301,16 +294,6 @@ public class Curators extends AbstractController {
         	    if (getFormParam(Const.EMAIL) != null) {
         	    	user.email = getFormParam(Const.EMAIL);
         	    }
-        	    if (getFormParam(Const.PASSWORD) != null) {
-        	    	user.password = getFormParam(Const.PASSWORD);
-			    	try {
-						user.password = PasswordHash.createHash(user.password);
-					} catch (NoSuchAlgorithmException e) {
-						Logger.info("change password - no algorithm error: " + e);
-					} catch (InvalidKeySpecException e) {
-						Logger.info("change password - key specification error: " + e);
-					}
-        	    }
                 if (getFormParam(Const.ORGANISATION) != null) {
                 	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
 //                		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
@@ -352,9 +335,47 @@ public class Curators extends AbstractController {
             }
             
         	if (!isExisting) {
+                if (getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0) {
+                	Logger.info("The password field is empty.");
+    	  			flash("message", "The password field is empty.");
+    	  			return info();
+                } else {
+        	    	user.password = getFormParam(Const.PASSWORD);
+			    	try {
+						user.password = PasswordHash.createHash(user.password);
+					} catch (NoSuchAlgorithmException e) {
+						Logger.info("change password - no algorithm error: " + e);
+					} catch (InvalidKeySpecException e) {
+						Logger.info("change password - key specification error: " + e);
+					}
+        	    }
                	Ebean.save(user);
     	        Logger.info("save user: " + user.toString());
         	} else {
+                if (getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0
+                		|| getFormParam(Const.OLD_PASSWORD) == null || getFormParam(Const.OLD_PASSWORD).length() == 0) {
+                	Logger.info("The password field is empty.");
+    	  			flash("message", "The password field is empty.");
+    	  			return info();
+                } else {
+            		String oldInputPassword = getFormParam(Const.OLD_PASSWORD);
+            		user.password = getFormParam(Const.PASSWORD);
+			    	try {
+	                	String userDbPassword = User.findByUid(user.uid).password;
+	            		boolean isValidOldPassword = PasswordHash.validatePassword(oldInputPassword, userDbPassword);
+	            		if (!isValidOldPassword) {
+	                    	Logger.info("The old password is not correct.");
+	        	  			flash("message", "The old password is not correct.");
+	        	  			return info();	            		
+	        	  		} else {
+	        	  			user.password = PasswordHash.createHash(user.password);
+	        	  		}
+					} catch (NoSuchAlgorithmException e) {
+						Logger.info("change password - no algorithm error: " + e);
+					} catch (InvalidKeySpecException e) {
+						Logger.info("change password - key specification error: " + e);
+					}
+        	    }
            		Logger.info("update user: " + user.toString());
            		User oldUser = User.findById(user.uid);
            		if (!oldUser.email.equals(user.email)) {

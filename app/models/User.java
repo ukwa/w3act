@@ -184,6 +184,15 @@ public class User extends Model {
     }
 
     /**
+     * Retrieve a User by UID
+     * @param id
+     * @return
+     */
+    public static User findByUid(Long id) {
+        return find.where().eq(Const.UID, id).findUnique();
+    }
+
+    /**
      * This method returns all users related to given organisation.
      * @param organisation The organisation URL
      * @return user list

@@ -26,6 +26,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -226,24 +228,31 @@ public class Role extends Model
      */
     public static boolean isIncludedByUrl(String roleName, String url) {
     	boolean res = false;
-    	String roles = User.findByUrl(url).roles;
-    	if (roleName != null && roleName.length() > 0 && roles != null && roles.length() > 0 ) {
-    		if (roles.contains(Const.COMMA)) {
-    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
-    			Iterator<String> itr = resList.iterator();
-    			while (itr.hasNext()) {
-        			String currentRoleName = itr.next();
-        			currentRoleName = currentRoleName.replaceAll(" ", "");
-        			if (currentRoleName.equals(roleName)) {
-        				res = true;
-        				break;
-        			}
-    			}
-    		} else {
-    			if (roles.equals(roleName)) {
-    				res = true;
-    			}
-    		}
+    	Logger.info("isIncludedByUrl() url: " + url);
+    	try {
+	    	if (StringUtils.isNotEmpty(url)) {
+		    	String roles = User.findByUrl(url).roles;
+		    	if (roleName != null && roleName.length() > 0 && roles != null && roles.length() > 0 ) {
+		    		if (roles.contains(Const.COMMA)) {
+		    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
+		    			Iterator<String> itr = resList.iterator();
+		    			while (itr.hasNext()) {
+		        			String currentRoleName = itr.next();
+		        			currentRoleName = currentRoleName.replaceAll(" ", "");
+		        			if (currentRoleName.equals(roleName)) {
+		        				res = true;
+		        				break;
+		        			}
+		    			}
+		    		} else {
+		    			if (roles.equals(roleName)) {
+		    				res = true;
+		    			}
+		    		}
+		    	}
+	    	}
+    	} catch (Exception e) {
+    		Logger.debug("User is not yet stored in database.");
     	}
     	return res;
     }
