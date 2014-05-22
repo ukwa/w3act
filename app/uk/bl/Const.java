@@ -181,11 +181,14 @@ public final class Const {
 	public static final int    MAX_NPLD_LIST_SIZE = 3;
 	public static final String TAB_STATUS         = "tabstatus";
 	
-    // Creator
+    /**
+     * Creator
+     */
 	public static final String UID                = "uid";
 	public static final String NAME               = "name";
 	public static final String EMAIL              = "email";
 	public static final String DEFAULT_ROLE       = "user";
+	public static final String DEFAULT_BL_ROLE    = "archivist";
 	public static final String PASSWORD           = "password";
 	public static final String USER_URL           = "user_url";
 
@@ -200,15 +203,21 @@ public final class Const {
 	public static final String OPEN_UKWA_LICENSE  = "Open UKWA Licence (2014-)";
 	public static final String FIELD_PUBLISH      = "field_publish";
 	
-	// Organisation
+	/**
+	 * Organisation
+	 */
 	public static final String FIELD_ABBREVIATION = "field_abbreviation";
 	public static final String ALL_AGENCIES       = "All Agencies";
 	
-	// Permission
+	/**
+	 * Permission
+	 */
 	public static final String ID                 = "id";
 	public static final String PERMISSION         = "permission";
 	
-	// Crawl Permission
+	/**
+	 * Crawl Permission
+	 */
 	public static final String TARGET             = "target";
 	public static final String CONTACT_PERSON     = "contactPerson";
 	public static final String CREATOR_USER       = "creatorUser";
@@ -218,7 +227,9 @@ public final class Const {
 	
 	public static final String DEFAULT_CRAWL_PERMISSION_STATUS = "QUEUED";
 	
-	// Contact Person
+	/**
+	 * Contact Person
+	 */
 	public static final String POSITION          = "position";
 	public static final String CONTACT_ORGANISATION = "contactOrganisation";
 	public static final String PHONE             = "phone";
@@ -238,11 +249,15 @@ public final class Const {
 	public static final String OLD_UKWA_LICENSE  = "UKWA Selective Archive Licence";
 	public static final String NEW_UKWA_LICENSE  = "UKWA Selective Archive Licence (pre-2014)";
 	
-	// Permission Refusals
+	/**
+	 * Permission Refusals
+	 */
 	public static final String REFUSAL_DATE      = "refusal-date";
 	public static final String REASON            = "reason";
 
-	// Communications Logging
+	/**
+	 * Communications Logging
+	 */
 	public static final String LOG_DATE          = "log-date";
 	public static final String NOTES             = "notes";
 	public static final String CURATOR           = "curator";
@@ -295,7 +310,9 @@ public final class Const {
 	public static final String EXPORT_TARGETS_WITH_QA_ISSUES_RESOLVED = "export_targets_with_qa_issues_resolved.csv";
 	public static final String EXPORT_TARGETS_REPORT_CREATION         = "export_targets_report_creation.csv";
 
-	// Buttons
+	/**
+	 * Buttons
+	 */
 	public static final String SAVE               = "save";
 	public static final String DELETE             = "delete";
 	public static final String CLEAR              = "clear";
@@ -321,7 +338,9 @@ public final class Const {
 	public static final String ARCHIVE            = "archive";	
 	public static final String APPLY              = "apply";
 
-	// Sorting/Pagination
+	/**
+	 * Sorting/Pagination
+	 */
 	public static final String PAGE_NO             	= "p";
 	public static final String PAGE_SIZE          	= "page_size";
 	public static final String SORT_BY				= "s";
@@ -330,7 +349,9 @@ public final class Const {
 	public static final String QUERY_COLLECTION    	= "query_collection";
 	public static final String QUERY_QA_STATUS     	= "query_qa_status";
 	
-	// Export settings
+	/**
+	 * Export settings
+	 */
 	public static final String ACTION               = "action";   
 	public static final String EXPORT_LOOKUPS       = "export_lookups";  
 	public static final String EXPORT_LOOKUP_FILE   = "exportlookups.csv"; 

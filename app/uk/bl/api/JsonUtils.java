@@ -234,6 +234,9 @@ public class JsonUtils {
 						Logger.info("initial password creation - key specification error: " + e);
 					}
 			    }
+			    if (newUser.roles == null || newUser.roles.length() == 0) {
+			    	newUser.roles = Const.DEFAULT_BL_ROLE;
+			    }	
 //				Logger.info("id: " + newUser.uid  + ", url: " + newUser.url + ", email: " + newUser.email + 
 //						", name: " + newUser.name + ", password: " + newUser.password);
 			}
