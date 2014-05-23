@@ -30,7 +30,15 @@
 				<div class="form-group">
 	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
 				    <div class="col-sm-6">
-				    @DCollection.findByUrl(collection.parent).title
+				    @if(collection.parent != null && collection.parent.length() > 0) {
+					    @if(!collection.parent.equals("None")) {
+				    		@DCollection.findByUrl(collection.parent).title
+				    	} else {
+				    	    none
+				    	}
+				    } else {
+				        none
+				    }
 					</div>
 				</div>
 			</div>

@@ -105,9 +105,10 @@ public class Collections extends AbstractController {
     	        collection.nid = Target.createId();
     	        collection.url = Const.ACT_URL + collection.nid;
     			Logger.info("add collection with url: " + collection.url + ", and title: " + collection.title);
+    			JsonNode node = getCollectionsTree(collection.url);
     			Form<DCollection> collectionForm = Form.form(DCollection.class);
     			collectionForm = collectionForm.fill(collection);
-    	        return ok(edit.render(collectionForm, User.find.byId(request().username())));    			
+    	        return ok(edit.render(collectionForm, User.find.byId(request().username()), node));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Collections.list(pageNo, sort, order, query));
@@ -148,9 +149,10 @@ public class Collections extends AbstractController {
         collection.nid = Target.createId();
         collection.url = Const.ACT_URL + collection.nid;
 		Logger.info("add collection with url: " + collection.url + ", and title: " + collection.title);
+		JsonNode node = getCollectionsTree(collection.url);
 		Form<DCollection> collectionForm = Form.form(DCollection.class);
 		collectionForm = collectionForm.fill(collection);
-        return ok(edit.render(collectionForm, User.find.byId(request().username())));
+        return ok(edit.render(collectionForm, User.find.byId(request().username()), node));
     }
     
     /**
@@ -160,9 +162,10 @@ public class Collections extends AbstractController {
 		Logger.info("collection url: " + url);
 		DCollection collection = DCollection.findByUrl(url);
 		Logger.info("collection title: " + collection.title + ", url: " + url);
+		JsonNode node = getCollectionsTree(collection.url);
 		Form<DCollection> collectionForm = Form.form(DCollection.class);
 		collectionForm = collectionForm.fill(collection);
-        return ok(edit.render(collectionForm, User.find.byId(request().username())));
+        return ok(edit.render(collectionForm, User.find.byId(request().username()), node));
     }
 
 	/**
@@ -176,6 +179,10 @@ public class Collections extends AbstractController {
     	collection.url = getFormParam(Const.URL);
     	collection.title = getFormParam(Const.TITLE);
     	collection.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
+        if (getFormParam(Const.TREE_KEYS) != null) {
+    		collection.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+    		Logger.debug("collection parent: " + collection.parent);
+        }
 	    if (getFormParam(Const.SUMMARY) != null) {
 	    	collection.summary = getFormParam(Const.SUMMARY);
 	    }
@@ -185,10 +192,11 @@ public class Collections extends AbstractController {
 	    if (getFormParam(Const.REVISION) != null) {
 	    	collection.revision = getFormParam(Const.REVISION);
 	    }
+		JsonNode node = getCollectionsTree(collection.url);
 		Form<DCollection> collectionFormNew = Form.form(DCollection.class);
 		collectionFormNew = collectionFormNew.fill(collection);
       	return ok(
-	              edit.render(collectionFormNew, User.find.byId(request().username()))
+	              edit.render(collectionFormNew, User.find.byId(request().username()), node)
 	            );
     }
     
@@ -247,11 +255,20 @@ public class Collections extends AbstractController {
                 
                 collection.title = getFormParam(Const.TITLE);
                 collection.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
-        	    if (getFormParam(Const.PARENT) != null) {
-                	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
-                		collection.parent = DCollection.findByTitleExt(getFormParam(Const.PARENT)).url;
-                	}
-        	    }
+//        	    if (getFormParam(Const.PARENT) != null) {
+//                	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
+//                		collection.parent = DCollection.findByTitleExt(getFormParam(Const.PARENT)).url;
+//                	}
+//        	    }
+                if (getFormParam(Const.TREE_KEYS) != null) {
+            		collection.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+            		Logger.debug("collection parent: " + collection.parent);
+            		if (StringUtils.isNotEmpty(collection.parent) && collection.parent.contains(Const.COMMA)) {
+                    	Logger.info("Please select only one parent.");
+        	  			flash("message", "Please select only one parent.");
+        	  			return info();
+                    }
+                }
         	    if (getFormParam(Const.SUMMARY) != null) {
         	    	collection.summary = getFormParam(Const.SUMMARY);
         	    }
@@ -339,4 +356,126 @@ public class Collections extends AbstractController {
 //    	Logger.info("getTreeElements() res: " + result);
     	return result;
     }
+    
+    /**
+     * This method presents collections in a tree form.
+     * @param url
+     * @return
+     */
+    private static JsonNode getCollectionsTree(String url) {
+        JsonNode jsonData = null;
+        final StringBuffer sb = new StringBuffer();
+    	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
+    	if (url != null && url.length() > 0) {
+    		DCollection collection = DCollection.findByUrl(url);
+    		if (StringUtils.isNotEmpty(collection.parent)) {
+    			url = collection.parent;
+    		}
+    	}    	
+    	sb.append(getTreeElements(suggestedCollections, url, true));
+//    	Logger.info("collections main level size: " + suggestedCollections.size());
+        jsonData = Json.toJson(Json.parse(sb.toString()));
+//    	Logger.info("getCollections() json: " + jsonData.toString());
+        return jsonData;
+    }
+    
+    /**
+   	 * This method calculates first order collections.
+     * @param collectionList The list of all collections
+     * @param url This is an identifier for current collection object
+     * @param parent This parameter is used to differentiate between root and children nodes
+     * @return collection object in JSON form
+     */
+    public static String getTreeElements(List<DCollection> collectionList, String url, boolean parent) { 
+//    	Logger.info("getTreeElements() target URL: " + targetUrl);
+    	String res = "";
+    	if (collectionList.size() > 0) {
+	        final StringBuffer sb = new StringBuffer();
+	        sb.append("[");
+	        if (parent) {
+	        	sb.append("{\"title\": \"" + "None" + "\"," + checkNone(url) + 
+	        			" \"key\": \"" + "None" + "\"" + "}, ");
+	        }
+	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	boolean firstTime = true;
+	    	while (itr.hasNext()) {
+	    		DCollection collection = itr.next();
+//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
+//    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
+	    		if ((parent && collection.parent.length() == 0) || !parent) {
+		    		if (firstTime) {
+		    			firstTime = false;
+		    		} else {
+		    			sb.append(", ");
+		    		}
+//	    			Logger.debug("added");
+					sb.append("{\"title\": \"" + collection.title + "\"," + checkSelection(collection.parent, url) + 
+							" \"key\": \"" + collection.url + "\"" + 
+							getChildren(collection.url, url) + "}");
+	    		}
+	    	}
+//	    	Logger.info("collectionList level size: " + collectionList.size());
+	    	sb.append("]");
+	    	res = sb.toString();
+//	    	Logger.info("getTreeElements() res: " + res);
+    	}
+    	return res;
+    }
+        
+    /**
+     * Check if none value is selected
+     * @param url This is an identifier for current collection object
+     * @return
+     */
+    public static String checkNone(String url) {
+    	String res = "";
+//    	if (url != null && url.length() > 0) {
+//    		Logger.info("checkNone: " + url);
+//    		DCollection collection = DCollection.findByUrl(url);
+//    		Logger.info("checkNone parent: " + collection.parent);
+//    		if (collection.parent != null 
+//    				&& (collection.parent.toLowerCase().contains(Const.NONE.toLowerCase()))) {
+    		if (StringUtils.isNotEmpty(url) && url.toLowerCase().equals(Const.NONE.toLowerCase())) {
+    			res = "\"select\": true ,";
+    		}
+//    	}
+    	return res;
+    }
+    
+    /**
+     * Mark collections that are stored in target object as selected
+     * @param collectionUrl The collection identifier
+     * @param currentUrl This is an identifier for current collection object
+     * @return
+     */
+    public static String checkSelection(String collectionUrl, String currentUrl) {
+    	String res = "";
+    	if (currentUrl != null && currentUrl.length() > 0) {
+    		if (currentUrl.equals(collectionUrl)) {
+    			res = "\"select\": true ,";
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method calculates collection children - objects that have parents.
+     * @param url The identifier for parent 
+     * @param currentUrl This is an identifier for current collection object
+     * @return child collection in JSON form
+     */
+    public static String getChildren(String url, String currentUrl) {
+//    	Logger.info("getChildren() target URL: " + targetUrl);
+    	String res = "";
+        final StringBuffer sb = new StringBuffer();
+    	sb.append(", \"children\":");
+    	List<DCollection> childSuggestedCollections = DCollection.getChildLevelCollections(url);
+    	if (childSuggestedCollections.size() > 0) {
+	    	sb.append(getTreeElements(childSuggestedCollections, currentUrl, false));
+	    	res = sb.toString();
+//	    	Logger.info("getChildren() res: " + res);
+    	}
+    	return res;
+    }
+    
 }
