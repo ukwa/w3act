@@ -352,12 +352,8 @@ public class Curators extends AbstractController {
                	Ebean.save(user);
     	        Logger.info("save user: " + user.toString());
         	} else {
-                if (getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0
-                		|| getFormParam(Const.OLD_PASSWORD) == null || getFormParam(Const.OLD_PASSWORD).length() == 0) {
-                	Logger.info("The password field is empty.");
-    	  			flash("message", "The password field is empty.");
-    	  			return info();
-                } else {
+                if (!(getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0
+                		|| getFormParam(Const.OLD_PASSWORD) == null || getFormParam(Const.OLD_PASSWORD).length() == 0)) {
             		String oldInputPassword = getFormParam(Const.OLD_PASSWORD);
             		user.password = getFormParam(Const.PASSWORD);
 			    	try {

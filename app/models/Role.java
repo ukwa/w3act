@@ -295,12 +295,17 @@ public class Role extends Model
     public static boolean isAllowed(Role role, User user) {
     	boolean res = false;
     	if (role != null && role.name != null && role.name.length() > 0) {
-    		int roleIndex = Const.Roles.valueOf(role.name).ordinal();
-    		int userIndex = getRoleSeverity(user.roles);
-    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
-    		if (roleIndex >= userIndex) {
+    		try {
+	    		int roleIndex = Const.Roles.valueOf(role.name).ordinal();
+	    		int userIndex = getRoleSeverity(user.roles);
+	    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
+	    		if (roleIndex >= userIndex) {
+	    			res = true;
+	    		}  
+    		} catch (Exception e) {
+    			Logger.info("New created role is allowed.");
     			res = true;
-    		}    		
+    		}
     	}
     	Logger.debug("role allowance check: " + role + ", user: " + user + ", res: " + res);
     	return res;
