@@ -9,9 +9,9 @@
 			setTimeout(function(){
 				//alert('instance view tab: ' + tab);
 				if (tab == 'qa') {
-	  			  $('#li-basicinformation').removeClass('active'); // Remove 'active' from #basicinformation tab
+	  			  $('#li-overview').removeClass('active'); // Remove 'active' from #overview tab
 				  $('#li-qa').addClass('active'); // Set 'active' #qa tab		  
-				  $('#basicinformation').removeClass('active in');
+				  $('#overview').removeClass('active in');
 				  $('#qa').addClass('active in');
 				}
 			}, 1);
@@ -29,6 +29,39 @@
 		    }
 		    console.log('Query variable %s not found', variable);
 		}
+		
+	    function switchPage() {
+	        var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
+	        var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
+	        
+	        // And finally we just attach the href to view.html and forward the browser. 
+	        // An example URL would be: 'view.html#npld-scope'
+	        window.location.href="@routes.InstanceController.edit(instance.url)" + href;
+	      }
+	    
+	      $(document).ready(function() {
+	        // This happens right after the document is loaded.
+	        // Our nav pills won't do anything by themselves, so we need to make sure we
+	        // check if the current URL has a #-component and if so, we activate the
+	        // appropriate pill.
+	        var hash = window.location.hash;
+	        if (hash.indexOf('#') == 0) {
+	          // We have a hash - let's see if it matches with nav pill href
+	          var el = $('#myNavbar a[href=' + hash + ']');
+	        
+	          // We have an <a> with this ID, and it has a parent node that's an <li>
+	          if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
+	            // So we activate this nav pill
+	            $(el).tab('show');
+	          }
+	        }
+	        
+	        // This is completely optional!! But it keeps the hash in our current URL bar
+	        // in sync with the tab we have selected, so the pages stay nice and bookmarkable
+	        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+	          window.location.hash = ($(e.target).attr('href'));
+	        })
+	      });	
 	</script>
 }
 
@@ -39,17 +72,17 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.InstanceController.view(instance.url)">View</a></li>
-	   <li><a href="@routes.InstanceController.edit(instance.url)">Edit</a></li> 
+	   <li class="active"><a href="#">View</a></li>
+	   <li><a onclick="switchPage(); return false;" href="@routes.InstanceController.edit(instance.url)">Edit</a></li>
 	</ul>
 	
 	<div class="tab-content padding-20">
 		<input type="hidden" name="nid" value="@instance.nid">
         <input type="hidden" name="user" value="@user.url">
            
-		<ul class="nav nav-pills">
+		<ul class="nav nav-pills" id="myNavbar">
 		    <li class="active" id="li-qa"><a href="#qa" data-toggle="tab">QA</a></li>
-        	<li id="li-basicinformation"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
+        	<li id="li-overview"><a href="#overview" data-toggle="tab">Overview</a></li>
         	<li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
 	        <li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
 			@if(Target.isInScopeAll(instance.field_url, instance.url)) {
@@ -127,7 +160,7 @@
 	     	</div>	 		     	    				
 		</div>
 
-		<div class="tab-pane padding-20 fade" id="basicinformation">
+		<div class="tab-pane padding-20 fade" id="overview">
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
