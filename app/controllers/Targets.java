@@ -501,19 +501,7 @@ public class Targets extends AbstractController {
     	
     	DynamicForm form = DynamicForm.form().bindFromRequest();
     	String action = form.get("action");
-    	String query = form.get("url");
-    	String tabStatus = form.get(Const.TAB_STATUS);
-		if (tabStatus == null || tabStatus.length() == 0) {
-			tabStatus = Const.TabStatus.overview.name();
-		}
-
-//    	if (StringUtils.isBlank(query)) {
-//			Logger.info("Target name is empty. Please write name in search window.");
-//			flash("message", "Please enter a name in the search window");
-//	        return redirect(
-//	        		routes.Targets.list(0, "title", "asc", "")
-//	        );
-//    	}    	
+    	String query = form.get("url"); 	
 
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
@@ -523,7 +511,6 @@ public class Targets extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-//        		return redirect(routes.Targets.create(query));
     	        Logger.info("create()");
     	    	Target target = new Target();
     	    	target.field_url = query;
@@ -540,7 +527,7 @@ public class Targets extends AbstractController {
     			Logger.info("target title: " + target.title);
     			Form<Target> targetForm = Form.form(Target.class);
     			targetForm = targetForm.fill(target);
-    	        return ok(edit.render(targetForm, User.find.byId(request().username()), tabStatus));    			
+    	        return ok(edit.render(targetForm, User.find.byId(request().username())));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -568,8 +555,7 @@ public class Targets extends AbstractController {
 		Logger.info("target name: " + target.title);
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(target);
-        return ok(edit.render(targetForm, User.find.byId(request().username()), Const.TabStatus.overview.name()));
-//        return ok(edit.render(target, User.find.byId(request().username())));
+        return ok(edit.render(targetForm, User.find.byId(request().username())));
     }
     
     /**
@@ -725,51 +711,28 @@ public class Targets extends AbstractController {
     public static Result GO_TARGETS_HOME = redirect(
             routes.Targets.targets(0, "title", "asc", "", "", "", "", "", "", "", "", Const.PAGINATION_OFFSET, "")
         );
-    
-    public static Result switchEditTab(String url, String tabstatus) {
-    	Logger.info("############## switchEditTab() tabstatus: " + tabstatus);
-    	return edit(url, tabstatus);
-    }
-    
-    public static Result switchViewTab(String url, String tabstatus) {
-    	Logger.info("switchViewTab() tabstatus: " + tabstatus);
-    	return view(url, tabstatus);
-    }
-    
+       
     /**
      * Display the target edit panel for this URL.
      * @param url The target identifier URL
-     * @param tabStatus The tab name which should be currently selected
      */
-    public static Result edit(String url, String tabStatus) {
+    public static Result edit(String url) {
 		Logger.info("Targets.edit() url: " + url);
 		Target target = Target.findByUrl(url);
 		Logger.info("Targets.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(Target.findByUrl(url));
-		if (tabStatus == null || tabStatus.length() == 0) {
-			tabStatus = Const.TabStatus.overview.name();
-		}
-        return ok(edit.render(targetForm, User.find.byId(request().username()), tabStatus));
-//        return ok(
-//                edit.render(
-//                        Target.findByUrl(url), User.find.byId(request().username())
-//                )
-//            );
+        return ok(edit.render(targetForm, User.find.byId(request().username())));
     }
     
     /**
      * @param url The target identifier URL
-     * @param tabStatus The tab name which should be currently selected
      * @return
      */
-    public static Result view(String url, String tabStatus) {
-		if (tabStatus == null || tabStatus.length() == 0) {
-			tabStatus = Const.TabStatus.overview.name();
-		}
+    public static Result view(String url) {
         return ok(
                 view.render(
-                        Target.findByUrl(url), User.find.byId(request().username()), tabStatus
+                        Target.findByUrl(url), User.find.byId(request().username())
                 )
             );
     }
@@ -782,7 +745,7 @@ public class Targets extends AbstractController {
     public static Result viewrevision(Long nid) {
         return ok(
                 view.render(
-                        Target.findById(nid), User.find.byId(request().username()), Const.TabStatus.overview.name()
+                        Target.findById(nid), User.find.byId(request().username())
                 )
             );
     }

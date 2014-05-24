@@ -261,7 +261,7 @@
 					@for(target <- currentPage.getList) {
 	                <tr>
 						<td>
-			                <a class="brand" href="@routes.Targets.view(target.url, "overview")">@target.title</a>
+			                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
 						</td>
 						<td>
 			                @Instance.findAllByTarget(target.url)

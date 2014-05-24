@@ -126,7 +126,7 @@
 			<tbody>
 				@for(target <- currentPage.getList) {
 				<tr>
-					<td><a class="brand" href="@routes.Targets.view(target.url, "overview")">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+					<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 					<td><a class="brand" href="opera.bl.uk:/8080/wayback/*@target.get_field_list_as_str("field_url")">(mid-crawl),</a>
 	                 	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url=http://@target.get_field_list_as_str("field_url")">(archival),</a>
 	                 	<a class="brand" href="@target.get_field_list_as_str("field_url")">(live)</a></td>

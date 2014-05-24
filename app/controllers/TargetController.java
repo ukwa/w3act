@@ -56,7 +56,6 @@ public class TargetController extends AbstractController {
 	 */
 	public static Result info() {
 	    Target targetObj = new Target();
-        String tabStatus = getFormParam(Const.TAB_STATUS);
 	    targetObj.field_url = getFormParam(Const.FIELD_URL_NODE);
 	    targetObj.nid = Long.valueOf(getFormParam(Const.NID));
 	    targetObj.url = Const.ACT_URL + targetObj.nid;
@@ -213,7 +212,7 @@ public class TargetController extends AbstractController {
 		Form<Target> targetFormNew = Form.form(Target.class);
 		targetFormNew = targetFormNew.fill(targetObj);
       	return ok(
-	              edit.render(targetFormNew, User.find.byId(request().username()), tabStatus)
+	              edit.render(targetFormNew, User.find.byId(request().username()))
 	            );
     }
 
@@ -230,7 +229,6 @@ public class TargetController extends AbstractController {
         String delete = getFormParam("delete");
         String request = getFormParam(Const.REQUEST);
         String archive = getFormParam(Const.ARCHIVE);
-        String tabStatus = getFormParam(Const.TAB_STATUS);
         Logger.info("save: " + save);
         Logger.info("delete: " + delete);
         if (save != null) {
@@ -540,7 +538,7 @@ public class TargetController extends AbstractController {
         	
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
-	        res = redirect(routes.Targets.edit(newTarget.url, tabStatus));
+	        res = redirect(routes.Targets.edit(newTarget.url));
         } // end of save
         if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.NID));
