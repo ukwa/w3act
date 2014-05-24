@@ -32,7 +32,7 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 			if (urlTo !== undefined) {
 				window.location.replace(context + urlTo + "/" + "view?target=" + datum.url + "&tabStatus=overview");
 			} else {
-				window.location.replace(context + searchContext + "/" + "view?target=" + datum.url + "&tabStatus=overview"); 
+				window.location.replace(context + searchContext + "/" + "view?target=" + datum.url); 
 			}
 		});
 	}

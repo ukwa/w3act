@@ -535,7 +535,7 @@ public class Target extends Model {
 		List<Target> res = new ArrayList<Target>();
 		if (curatorUrl != null && organisationUrl != null) {
 	        ExpressionList<Target> ll = find.where().contains("field_nominating_organisation", organisationUrl);
-	    	res = ll.findList(); // TODO
+	    	res = ll.findList(); 
 		}
 		return res;
 	}
@@ -1313,6 +1313,35 @@ public class Target extends Model {
 	    	                 )
 	                 ))
         		//.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * Return a page of Target
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     * @param organisation_url Organisation where targets search occurs
+     * @return
+     */
+    public static Page<Target> pageOrganisationTargets(int page, int pageSize, String sortBy, String order, 
+    		String filter, String organisation_url) {
+    	Logger.debug("pageOrganisationTargets() organisation_url: " + organisation_url);
+
+        return find.where()
+        		.add(Expr.or(
+	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.TITLE, filter)
+	                 ))
+	            .eq(Const.ACTIVE, true)
+        		.add(Expr.eq(Const.FIELD_NOMINATING_ORGANISATION, organisation_url))
+        		//.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation_url)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

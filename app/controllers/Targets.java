@@ -583,6 +583,30 @@ public class Targets extends AbstractController {
     }
 	    
     /**
+     * Display the paginated list of targets for given organisation.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     * @param collection_url Collection where targets search occurs
+     */
+    public static Result organisationTargets(int pageNo, String sortBy, String order, String filter, 
+    		String organisation_url) {
+    	Logger.info("Targets.organisationTargets()");
+    	
+        return ok(
+        		views.html.organisations.sites.render(
+        			Organisation.findByUrl(organisation_url),  
+        			User.find.byId(request().username()), 
+        			filter, 
+        			Target.pageOrganisationTargets(pageNo, 10, sortBy, order, filter, organisation_url), 
+        			sortBy, 
+        			order) 
+        	);
+    }
+	    
+    /**
      * This method enables searching for given URL and particular collection.
      * @return
      */
@@ -609,6 +633,33 @@ public class Targets extends AbstractController {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.Targets.collectionTargets(pageNo, sort, order, query, collection_url));
+		    } else {
+		    	return badRequest("This action is not allowed");
+		    }
+    	}
+    }
+    
+    /**
+     * This method enables searching for given URL and particular organisation.
+     * @return
+     */
+    public static Result searchTargetsByOrganisation() {
+    	
+    	DynamicForm form = DynamicForm.form().bindFromRequest();
+    	String action = form.get(Const.ACTION);
+    	String query = form.get(Const.URL);
+
+    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
+    	String sort = form.get(Const.SORT_BY);
+    	String order = form.get(Const.ORDER);
+    	String organisation_url = form.get(Const.ORGANISATION_URL);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.SEARCH.equals(action)) {
+    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    	    	return redirect(routes.Targets.organisationTargets(pageNo, sort, order, query, organisation_url));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }

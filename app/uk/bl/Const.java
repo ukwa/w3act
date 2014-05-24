@@ -7,7 +7,9 @@ public final class Const {
   
     private Const() {}
 	
-	// Taxonomy
+	/**
+	 * Taxonomy
+	 */
 	public static final String USERS           = "users";
 	public static final String ROLES           = "roles";
 	public static final String PERMISSIONS     = "permissions";
@@ -17,6 +19,7 @@ public final class Const {
 	public static final String LICENSES        = "licenses";
 	public static final String LICENCE         = "license";
 	public static final String COLLECTION_URL  = "collection_url";
+	public static final String ORGANISATION_URL = "organisation_url";
 
     // Drupal connection definitions
     public static final String URI             = "uri";

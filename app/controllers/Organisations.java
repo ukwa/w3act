@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.DCollection;
 import models.Organisation;
 import models.Target;
 import models.User;
@@ -22,11 +21,9 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.infomessage;
-import views.html.organisations.list;
 import views.html.organisations.admin;
 import views.html.organisations.edit;
-import views.html.organisations.sites;
+import views.html.organisations.list;
 import views.html.organisations.view;
 
 import com.avaje.ebean.Ebean;
@@ -167,11 +164,7 @@ public class Organisations extends AbstractController {
     }    
     
     public static Result sites(String url) {
-        return ok(
-                sites.render(
-                        Organisation.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+        return redirect(routes.Targets.organisationTargets(0, Const.TITLE, Const.ASC, "", url));
     }
     
     /**
