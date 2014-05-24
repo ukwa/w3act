@@ -322,7 +322,7 @@ public class Organisations extends AbstractController {
            		Logger.info("update organisation: " + organisation.toString());
                	Ebean.update(organisation);
         	}
-	        res = redirect(routes.Organisations.view(organisation.url));
+	        res = redirect(routes.Organisations.edit(organisation.url));
         } 
         if (delete != null) {
         	Organisation organisation = Organisation.findByUrl(getFormParam(Const.URL));

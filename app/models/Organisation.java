@@ -43,7 +43,6 @@ public class Organisation extends Model {
     @JsonIgnore
     public String type;
     @Required
-    @Id 
     public String title;
     @JsonIgnore
     public String language;

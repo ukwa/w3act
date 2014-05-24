@@ -235,7 +235,6 @@ create table nomination (
 
 create table organisation (
   nid                       bigint not null,
-  title                     varchar(255) not null,
   value                     TEXT,
   summary                   varchar(255),
   format                    varchar(255),
@@ -243,6 +242,7 @@ create table organisation (
   vid                       bigint,
   is_new                    boolean,
   type                      varchar(255),
+  title                     varchar(255),
   language                  varchar(255),
   url                       varchar(255),
   edit_url                  varchar(255),
@@ -258,7 +258,8 @@ create table organisation (
   comment_count_new         bigint,
   revision                  TEXT,
   feed_nid                  bigint,
-  last_update               timestamp not null)
+  last_update               timestamp not null,
+  constraint pk_organisation primary key (nid))
 ;
 
 create table permission (
