@@ -11,22 +11,7 @@
       
       // And finally we just attach the href to view.html and forward the browser. 
       // An example URL would be: 'view.html#npld-scope'
-      console.log(href);
-      if (href.indexOf('overview') > -1) {
-          window.location.href="@routes.Targets.edit(target.url)" + href;
-      }        
-      if (href.indexOf('metadata') > -1) {
-          window.location.href="@routes.Targets.edit(target.url)" + href;
-      }   
-      if (href.indexOf('crawlpermission') > -1) {
-          window.location.href="@routes.Targets.edit(target.url)" + href;
-      }   
-      if (href.indexOf('crawlpolicy') > -1) {
-          window.location.href="@routes.Targets.edit(target.url)" + href;
-      }   
-      if (href.indexOf('licensing') > -1) {
-          window.location.href="@routes.Targets.edit(target.url)" + href;
-      }   
+      window.location.href="@routes.Targets.edit(target.url)" + href;
     }
   
     $(document).ready(function() {
