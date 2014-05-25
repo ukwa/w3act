@@ -41,7 +41,6 @@ public class ContactPerson extends Model
     /**
      * The name of the contact person.
      */
-    @Required
     @Column(columnDefinition = "TEXT")
     public String name;
     
