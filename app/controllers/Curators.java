@@ -7,7 +7,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Iterator;
 import java.util.List;
 
-import models.DCollection;
 import models.Organisation;
 import models.Role;
 import models.Target;
@@ -25,10 +24,8 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
-import views.html.collections.edit;
 import views.html.users.list;
-import views.html.users.useredit;
-import views.html.users.userview;
+import views.html.users.view;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -108,7 +105,7 @@ public class Curators extends AbstractController {
     	        Logger.info("add curator entry with url: " + user.url + ", and name: " + user.name);
     			Form<User> userForm = Form.form(User.class);
     			userForm = userForm.fill(user);
-    	        return ok(useredit.render(userForm, User.find.byId(request().username())));    			
+    	        return ok(views.html.users.edit.render(userForm, User.find.byId(request().username())));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Curators.list(pageNo, sort, order, query));
@@ -132,7 +129,7 @@ public class Curators extends AbstractController {
         Logger.info("add curator with url: " + user.url + ", and name: " + user.name);
 		Form<User> userForm = Form.form(User.class);
 		userForm = userForm.fill(user);
-        return ok(useredit.render(userForm, User.find.byId(request().username())));    			
+        return ok(views.html.users.edit.render(userForm, User.find.byId(request().username())));    			
     }
     
     /**
@@ -160,7 +157,7 @@ public class Curators extends AbstractController {
 		User user = User.findByUrl(url);
 		Logger.info("user name: " + user.name + ", url: " + url);
         return ok(
-                userview.render(
+                view.render(
                         User.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -175,7 +172,7 @@ public class Curators extends AbstractController {
 		Logger.info("user name: " + user.name + ", url: " + url);
 		Form<User> userForm = Form.form(User.class);
 		userForm = userForm.fill(user);
-        return ok(useredit.render(userForm, User.find.byId(request().username()))); 
+        return ok(views.html.users.edit.render(userForm, User.find.byId(request().username()))); 
     }
     
     public static Result sites(String url) {
@@ -232,7 +229,7 @@ public class Curators extends AbstractController {
 		Form<User> userFormNew = Form.form(User.class);
 		userFormNew = userFormNew.fill(user);
       	return ok(
-	              useredit.render(userFormNew, User.find.byId(request().username()))
+      			views.html.users.edit.render(userFormNew, User.find.byId(request().username()))
 	            );
     }
         
@@ -266,7 +263,7 @@ public class Curators extends AbstractController {
             	}
             	Logger.info("form errors size: " + userForm.errors().size() + ", " + missingFields);
 	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					"Missing fields are " + missingFields);
+	  					" Missing fields are: " + missingFields);
 	  			return info();
             }
         	User user = null;

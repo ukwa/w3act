@@ -21,7 +21,6 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.collections.edit;
 import views.html.tags.*;
 
 import java.util.*;
@@ -56,13 +55,13 @@ public class Tags extends AbstractController {
 		Form<Tag> tagFormNew = Form.form(Tag.class);
 		tagFormNew = tagFormNew.fill(tag);
       	return ok(
-	              tagedit.render(tagFormNew, User.find.byId(request().username()))
+	              edit.render(tagFormNew, User.find.byId(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
-                tagview.render(
+                view.render(
                 		models.Tag.findByUrl(url), User.find.byId(request().username())
                 )
             );
@@ -104,7 +103,7 @@ public class Tags extends AbstractController {
     			Form<Tag> tagFormNew = Form.form(Tag.class);
     			tagFormNew = tagFormNew.fill(tag);
     	      	return ok(
-    		              tagedit.render(tagFormNew, User.find.byId(request().username()))
+    		              edit.render(tagFormNew, User.find.byId(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
@@ -154,7 +153,7 @@ public class Tags extends AbstractController {
 		Form<Tag> tagFormNew = Form.form(Tag.class);
 		tagFormNew = tagFormNew.fill(tag);
       	return ok(
-	              tagedit.render(tagFormNew, User.find.byId(request().username()))
+	              edit.render(tagFormNew, User.find.byId(request().username()))
 	            );
     }
       
@@ -176,7 +175,7 @@ public class Tags extends AbstractController {
 		Form<Tag> tagFormNew = Form.form(Tag.class);
 		tagFormNew = tagFormNew.fill(tag);
       	return ok(
-	              tagedit.render(tagFormNew, User.find.byId(request().username()))
+	              edit.render(tagFormNew, User.find.byId(request().username()))
 	            );
     }
     
@@ -208,7 +207,7 @@ public class Tags extends AbstractController {
             	}
             	Logger.info("form errors size: " + tagForm.errors().size() + ", " + missingFields);
 	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					"Missing fields are " + missingFields);
+	  					" Missing fields are: " + missingFields);
 	  			return info();
             }
         	Tag tag = null;

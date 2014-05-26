@@ -308,7 +308,7 @@ public class InstanceController extends AbstractController {
             	}
             	Logger.info("form errors size: " + instanceForm.errors().size() + ", " + missingFields);
 	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
-	  					"Missing fields are " + missingFields);
+	  					" Missing fields are: " + missingFields);
 	  			return info();
             }
         	

@@ -230,7 +230,7 @@ public class Collections extends AbstractController {
             	}
             	Logger.info("form errors size: " + collectionForm.errors().size() + ", " + missingFields);
 	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					"Missing fields are " + missingFields);
+	  					" Missing fields are: " + missingFields);
 	  			return info();
             }
         	
