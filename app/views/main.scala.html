@@ -83,7 +83,9 @@
 						<ul class="dropdown-menu">
 							<li><a href="@routes.Organisations.index()">Organisations</a></li>
 							<li><a href="@routes.Curators.index()">Curators</a></li>
+							@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 							<li><a href="@routes.Roles.index()">Roles</a></li>
+							}
 						</ul>
 					</li>
 					<li><a href="@routes.Contact.index">Contact</a></li>
