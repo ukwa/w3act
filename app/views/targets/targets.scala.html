@@ -250,6 +250,7 @@
 										</div>
 									</div>
 								</div>
+								@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) {
 								<div class="col-md-6">
 									<div class="form-group">
 						            	<label for="flags" class="col-sm-6 control-label">Filter by flag</label>
@@ -267,6 +268,7 @@
 										</div>
 									</div>
 								</div>
+								}
 							</div>
 							
 							<div class="row">
