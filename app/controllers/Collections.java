@@ -269,6 +269,11 @@ public class Collections extends AbstractController {
         	  			flash("message", "Please select only one parent.");
         	  			return info();
                     }
+            		if (StringUtils.isNotEmpty(collection.parent) && collection.parent.equals(collection.url)) {
+                    	Logger.info("It is not possible to assign a node to itself as a parent. Please select one parent.");
+        	  			flash("message", "It is not possible to assign a node to itself as a parent. Please select one parent.");
+        	  			return info();
+                    }
                 }
         	    if (getFormParam(Const.SUMMARY) != null) {
         	    	collection.summary = getFormParam(Const.SUMMARY);
