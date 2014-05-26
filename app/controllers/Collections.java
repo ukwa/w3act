@@ -106,6 +106,7 @@ public class Collections extends AbstractController {
     	        collection.url = Const.ACT_URL + collection.nid;
     			Logger.info("add collection with url: " + collection.url + ", and title: " + collection.title);
     			JsonNode node = getCollectionsTree(collection.url);
+//    			Logger.info("node tree: " + node.toString());
     			Form<DCollection> collectionForm = Form.form(DCollection.class);
     			collectionForm = collectionForm.fill(collection);
     	        return ok(edit.render(collectionForm, User.find.byId(request().username()), node));    			
@@ -367,9 +368,13 @@ public class Collections extends AbstractController {
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
     	if (url != null && url.length() > 0) {
-    		DCollection collection = DCollection.findByUrl(url);
-    		if (StringUtils.isNotEmpty(collection.parent)) {
-    			url = collection.parent;
+    		try {
+	    		DCollection collection = DCollection.findByUrl(url);
+	    		if (StringUtils.isNotEmpty(collection.parent)) {
+	    			url = collection.parent;
+	    		}
+    		} catch (Exception e) {
+    			Logger.info("New collection has no parent yet.");
     		}
     	}    	
     	sb.append(getTreeElements(suggestedCollections, url, true));
