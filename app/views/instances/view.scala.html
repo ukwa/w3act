@@ -53,6 +53,7 @@
 	          if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
 	            // So we activate this nav pill
 	            $(el).tab('show');
+	            window.scrollTo(0, 0);
 	          }
 	        }
 	        
@@ -60,6 +61,7 @@
 	        // in sync with the tab we have selected, so the pages stay nice and bookmarkable
 	        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 	          window.location.hash = ($(e.target).attr('href'));
+	          window.scrollTo(0, 0);
 	        })
 	      });	
 	</script>
