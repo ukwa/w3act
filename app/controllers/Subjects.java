@@ -22,9 +22,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.subjects.edit;
-import views.html.subjects.list;
-import views.html.subjects.view;
+import views.html.subjects.*;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -122,7 +120,7 @@ public class Subjects extends AbstractController {
     public static Result filterByJson(String name) {
     	JsonNode jsonData = null;
         if (name != null) {
-	        List<Taxonomy> subjects = Taxonomy.filterByName(name);
+	        List<Taxonomy> subjects = Taxonomy.filterSubjectsByName(name);
 	        jsonData = Json.toJson(subjects);
         }
         return ok(jsonData);

@@ -14,6 +14,7 @@ import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -518,6 +519,24 @@ public class Taxonomy extends Model {
 	public static List<Taxonomy> filterByName(String name) {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
         ExpressionList<Taxonomy> ll = find.where().icontains(Const.NAME, name);
+    	res = ll.findList();
+		return res;
+	}
+
+	/**
+	 * This method filters subjects by name and returns a list 
+	 * of filtered subject objects.
+	 * @param name
+	 * @return
+	 */
+	public static List<Taxonomy> filterSubjectsByName(String name) {
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+        ExpressionList<Taxonomy> ll = find.where().icontains(Const.NAME, name)
+    			.add(Expr.or(
+    	                Expr.eq(Const.TTYPE, Const.SUBJECT),
+    	                Expr.eq(Const.TTYPE, Const.SUBSUBJECT)
+    	             )
+    	        );
     	res = ll.findList();
 		return res;
 	}
