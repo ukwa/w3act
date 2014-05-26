@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
@@ -323,8 +324,14 @@ public class DCollection extends Model {
 	 */
 	public static List<DCollection> getFirstLevelCollections() {
 		List<DCollection> res = new ArrayList<DCollection>();
-        ExpressionList<DCollection> ll = find.where().icontains(Const.PARENT, "");
+        ExpressionList<DCollection> ll = find.where()
+        		.add(Expr.or(
+        				Expr.eq(Const.PARENT, ""),
+        				Expr.eq(Const.PARENT, Const.NONE_VALUE)
+    	                )
+    	        );
     	res = ll.findList();
+//    	Logger.info("getFirstLevelCollections list size: " + res.size());
 		return res;
 	}       
     

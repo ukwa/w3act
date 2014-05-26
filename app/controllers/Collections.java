@@ -337,7 +337,7 @@ public class Collections extends AbstractController {
 	    		DCollection collection = itr.next();
 	    		
 	    		if (collectionUrl.isEmpty() || (StringUtils.isNotEmpty(collectionUrl) && StringUtils.containsIgnoreCase(collection.title, collectionUrl))) {	    		
-		    		if ((parent && collection.parent.length() == 0) || !parent) {
+		    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
 						ObjectNode child = nodeFactory.objectNode();
 						child.put("title", collection.title + " (" + Target.findAllforCollection(collection.url).size() + ")");
 						child.put("url", String.valueOf(routes.Collections.view(collection.url)));

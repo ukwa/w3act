@@ -114,6 +114,7 @@ public final class Const {
 	public static final String USER               = "user";
 	public static final String ALL                = "all";
 	public static final String DATE_FORMAT        = "dd-MM-yyyy";
+	public static final String NONE_VALUE         = "None";
 
 	/**
 	 * Target
