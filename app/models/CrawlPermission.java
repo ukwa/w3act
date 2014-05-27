@@ -201,9 +201,22 @@ public class CrawlPermission extends Model
 	 * @param name
 	 * @return
 	 */
-	public static List<CrawlPermission> filterByName(String name) {
+	public static List<CrawlPermission> filterByName(String name) { 
 		List<CrawlPermission> res = new ArrayList<CrawlPermission>();
         ExpressionList<CrawlPermission> ll = find.where().icontains(Const.NAME, name);
+    	res = ll.findList();
+		return res;
+	}
+        
+	/**
+	 * This method filters crawl permissions by contact person and returns a list 
+	 * of filtered CrawlPermission objects.
+	 * @param url The identifier for contact person
+	 * @return
+	 */
+	public static List<CrawlPermission> filterByContactPerson(String url) { 
+		List<CrawlPermission> res = new ArrayList<CrawlPermission>();
+        ExpressionList<CrawlPermission> ll = find.where().icontains(Const.CONTACT_PERSON, url);
     	res = ll.findList();
 		return res;
 	}

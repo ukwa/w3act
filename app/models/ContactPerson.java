@@ -130,7 +130,17 @@ public class ContactPerson extends Model
     public static ContactPerson findByUrl(String url) {
     	ContactPerson res = new ContactPerson();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
-    		res = find.where().eq(Const.URL, url).findUnique();
+    		try {
+    			res = find.where().eq(Const.URL, url).findUnique();
+    			if (res == null) {
+    				res = new ContactPerson();
+    				res.name = Const.NONE;
+    			}
+    		} catch (Exception e) {
+    			Logger.info("Contact person: findByUrl error: " + e);
+    			res.name = Const.NONE;
+    			return res;
+    		}    			
     	} else {
     		res.name = Const.NONE;
     	}

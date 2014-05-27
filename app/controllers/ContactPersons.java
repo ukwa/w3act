@@ -9,6 +9,7 @@ import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.ContactPerson;
+import models.CrawlPermission;
 import models.DCollection;
 import models.Target;
 import models.User;
@@ -21,7 +22,6 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.contactpersons.edit;
 import views.html.contactpersons.*;
 
 import java.util.*;
@@ -296,6 +296,13 @@ public class ContactPersons extends AbstractController {
         } 
         if (delete != null) {
         	ContactPerson person = ContactPerson.findByUrl(getFormParam(Const.URL));
+        	List<CrawlPermission> assignedCrawlPermissionList = CrawlPermission.filterByContactPerson(person.url);
+        	Iterator<CrawlPermission> itr = assignedCrawlPermissionList.iterator();
+        	while (itr.hasNext()) {
+        		CrawlPermission permission = itr.next();
+        		permission.contactPerson = Const.NONE;
+        		Ebean.update(permission);
+        	}
         	Ebean.delete(person);
 	        res = redirect(routes.ContactPersons.index()); 
         }
