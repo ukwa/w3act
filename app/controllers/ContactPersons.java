@@ -240,6 +240,15 @@ public class ContactPersons extends AbstractController {
             try {
                 try {
                 	person = ContactPerson.findByUrl(getFormParam(Const.URL));
+                	if (StringUtils.isNotEmpty(person.name) 
+                			&& person.name.equals(Const.NONE)
+                			&& person.email == null) {
+                    	Logger.info("is not existing person");
+                    	isExisting = false;
+                    	person = new ContactPerson();
+                    	person.id = Long.valueOf(getFormParam(Const.ID));
+                    	person.url = getFormParam(Const.URL);
+                	}
                 } catch (Exception e) {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
@@ -254,7 +263,6 @@ public class ContactPersons extends AbstractController {
                 	person.id = Long.valueOf(getFormParam(Const.ID));
                 	person.url = getFormParam(Const.URL);
                 }
-                
         	    if (getFormParam(Const.NAME) != null) {
         	    	person.name = getFormParam(Const.NAME);
         	    }
