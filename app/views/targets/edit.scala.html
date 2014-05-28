@@ -1096,7 +1096,9 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
-								@if(form("url").value != null && Target.existInDb(form("url").value)) {
+								@if(form("url").value != null && Target.existInDb(form("url").value)
+								    && form("qa_status").value != null 
+								    && (form("qa_status").value.equals("None") || form("qa_status").value.length() == 0)) {
 									@if(!Targets.indicateUkwaLicenceStatus(form("field_url").value) 
 									    || (Targets.indicateUkwaLicenceStatus(form("field_url").value) 
 									        && ((user.hasRole("sys_admin") 
