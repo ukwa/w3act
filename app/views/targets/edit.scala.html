@@ -47,7 +47,7 @@
               $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
               	$("#tree3").dynatree({
                 	checkbox: true,
-                	selectMode: 3,
+                	selectMode: 2,
                 	children: data,
                 	onSelect: function(select, node) {
                   		// Get a list of all selected nodes, and convert to a key array:
