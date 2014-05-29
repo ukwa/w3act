@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import models.DCollection;
 import models.Organisation;
 import models.Taxonomy;
 import models.Target;
@@ -104,9 +105,10 @@ public class Subjects extends AbstractController {
     	        subject.tid = Target.createId();
     	        subject.url = Const.ACT_URL + subject.tid;
     			Logger.info("add subject with url: " + subject.url + ", and name: " + subject.name);
+    			JsonNode node = getSubjectsTree(subject.url);
     			Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
     			subjectForm = subjectForm.fill(subject);
-    	        return ok(edit.render(subjectForm, User.find.byId(request().username())));    			
+    	        return ok(edit.render(subjectForm, User.find.byId(request().username()), node));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Subjects.list(pageNo, sort, order, query));
@@ -147,9 +149,10 @@ public class Subjects extends AbstractController {
         subject.tid = Target.createId();
         subject.url = Const.ACT_URL + subject.tid;
 		Logger.info("add subject with url: " + subject.url + ", and name: " + subject.name);
+		JsonNode node = getSubjectsTree(subject.url);
 		Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
 		subjectForm = subjectForm.fill(subject);
-        return ok(edit.render(subjectForm, User.find.byId(request().username())));
+        return ok(edit.render(subjectForm, User.find.byId(request().username()), node));
     }
     
     /**
@@ -159,9 +162,10 @@ public class Subjects extends AbstractController {
 		Logger.info("subject url: " + url);
 		Taxonomy subject = Taxonomy.findByUrl(url);
 		Logger.info("subject name: " + subject.name + ", url: " + url);
+		JsonNode node = getSubjectsTree(subject.url);
 		Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
 		subjectForm = subjectForm.fill(subject);
-        return ok(edit.render(subjectForm, User.find.byId(request().username())));
+        return ok(edit.render(subjectForm, User.find.byId(request().username()), node));
     }
 
 	/**
@@ -179,19 +183,27 @@ public class Subjects extends AbstractController {
 	    	subject.ttype = getFormParam(Const.TTYPE);
 	    }
 //	    subject.ttype = Const.SUBJECT;
-	    if (getFormParam(Const.PARENT) != null) {
-        	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
-        		subject.parent = getFormParam(Const.PARENT);
+//	    if (getFormParam(Const.PARENT) != null) {
+//        	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
+//        		subject.parent = getFormParam(Const.PARENT);
+//        	    subject.ttype = Const.SUBSUBJECT;
+//        	}
+//	    }
+        if (getFormParam(Const.TREE_KEYS) != null) {
+    		subject.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+    		Logger.debug("subject parent: " + subject.parent);
+        	if (!getFormParam(Const.TREE_KEYS).toLowerCase().contains(Const.NONE)) {
         	    subject.ttype = Const.SUBSUBJECT;
         	}
-	    }
+        }
         if (getFormParam(Const.DESCRIPTION) != null) {
         	subject.description = getFormParam(Const.DESCRIPTION);
         }
+		JsonNode node = getSubjectsTree(subject.url);
 		Form<Taxonomy> subjectFormNew = Form.form(Taxonomy.class);
 		subjectFormNew = subjectFormNew.fill(subject);
       	return ok(
-	              edit.render(subjectFormNew, User.find.byId(request().username()))
+	              edit.render(subjectFormNew, User.find.byId(request().username()), node)
 	            );
     }
     
@@ -208,7 +220,7 @@ public class Subjects extends AbstractController {
 //        Logger.info("save: " + save);
         if (save != null) {
         	Logger.info("input data for saving subject tid: " + getFormParam(Const.TID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME) + ", parent: " + getFormParam(Const.PARENT));
+        			", name: " + getFormParam(Const.NAME) + ", parent: " + getFormParam(Const.TREE_KEYS));
         	
         	Form<Taxonomy> subjectForm = Form.form(Taxonomy.class).bindFromRequest();
             if(subjectForm.hasErrors()) {
@@ -254,17 +266,43 @@ public class Subjects extends AbstractController {
         	    	subject.ttype = getFormParam(Const.TTYPE);
         	    }
 //        	    subject.ttype = Const.SUBJECT;
-        	    if (getFormParam(Const.PARENT) != null) {
-                	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
-                		subject.parent = getFormParam(Const.PARENT);
-                	    subject.ttype = Const.SUBSUBJECT;
-                	}
-        	    }
+//        	    if (getFormParam(Const.PARENT) != null) {
+//                	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
+//                		subject.parent = getFormParam(Const.PARENT);
+//                	    subject.ttype = Const.SUBSUBJECT;
+//                	}
+//        	    }
+                if (getFormParam(Const.TREE_KEYS) != null) {
+            		if (StringUtils.isNotEmpty(getFormParam(Const.TREE_KEYS)) && getFormParam(Const.TREE_KEYS).contains(Const.COMMA)) {
+                    	Logger.info("Please select only one parent.");
+        	  			flash("message", "Please select only one parent.");
+        	  			return info();
+                    }
+            		if (StringUtils.isNotEmpty(subject.parent) && subject.parent.equals(subject.url)) {
+                    	Logger.info("It is not possible to assign a node to itself as a parent. Please select one parent.");
+        	  			flash("message", "It is not possible to assign a node to itself as a parent. Please select one parent.");
+        	  			return info();
+                    }
+            		String parentUrl = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+            		if (parentUrl != null) {
+            			if (!parentUrl.toLowerCase().equals(Const.NONE)) {
+            				subject.parent = Taxonomy.findByUrlExt(parentUrl).name;
+                        	if (!getFormParam(Const.TREE_KEYS).toLowerCase().contains(Const.NONE)) {
+        	            	    subject.ttype = Const.SUBSUBJECT;
+        	            	}
+            			} else {
+            				subject.parent = Const.NONE;
+    	            	    subject.ttype = Const.SUBJECT;
+            			}
+            		}
+//            		subject.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+            		Logger.debug("subject parent: " + subject.parent);
+                }
                 if (getFormParam(Const.DESCRIPTION) != null) {
                 	subject.description = getFormParam(Const.DESCRIPTION);
                 }
             } catch (Exception e) {
-            	Logger.info("Subject not exists exception");
+            	Logger.info("Subject not exists exception: " + e.getMessage());
             }
             
         	if (!isExisting) {
@@ -319,7 +357,8 @@ public class Subjects extends AbstractController {
 //	    				", subjectUrl: " + subjectUrl + ", parent: " + parent + ", subject.parent: " + subject.parent);
 	    		if (subjectUrl.isEmpty() 
 	    				|| (StringUtils.isNotEmpty(subjectUrl) && StringUtils.containsIgnoreCase(subject.name, subjectUrl))) {	    		
-		    		if ((parent && subject.parent.length() == 0) || !parent) {
+//		    		if ((parent && subject.parent.length() == 0) || !parent) {
+			    	if ((parent && subject.parent.length() == 0) || !parent || (parent && subject.parent.equals(Const.NONE))) {
 						ObjectNode child = nodeFactory.objectNode();
 						child.put("title", subject.name);
 						child.put("url", String.valueOf(routes.Subjects.view(subject.url)));
@@ -339,4 +378,131 @@ public class Subjects extends AbstractController {
 //    	Logger.info("getSubjectTreeElements() res: " + result);
     	return result;
     }
+
+    /**
+     * This method presents subjects in a tree form.
+     * @param url
+     * @return
+     */
+    private static JsonNode getSubjectsTree(String url) {
+        JsonNode jsonData = null;
+        final StringBuffer sb = new StringBuffer();
+    	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
+    	if (url != null && url.length() > 0) {
+    		try {
+	    		Taxonomy subject = Taxonomy.findByUrl(url);
+	    		if (StringUtils.isNotEmpty(subject.parent)) {
+	    			url = subject.parent;
+	    		}
+    		} catch (Exception e) {
+    			Logger.info("New subject has no parent yet.");
+    		}
+    	}    	
+    	sb.append(getSubjectTreeElementsExt(parentSubjects, url, true));
+//    	Logger.info("collections main level size: " + suggestedCollections.size());
+        jsonData = Json.toJson(Json.parse(sb.toString()));
+//    	Logger.info("getCollections() json: " + jsonData.toString());
+        return jsonData;
+    }
+    
+    /**
+   	 * This method calculates first order subjects.
+     * @param subjectList The list of all subjects
+     * @param url This is an identifier for current subject object
+     * @param parent This parameter is used to differentiate between root and children nodes
+     * @return collection object in JSON form
+     */
+    public static String getSubjectTreeElementsExt(List<Taxonomy> subjectList, String url, boolean parent) { 
+//    	Logger.info("getSubjectTreeElements() URL: " + url);
+    	String res = "";
+    	if (subjectList.size() > 0) {
+	        final StringBuffer sb = new StringBuffer();
+	        sb.append("[");
+	        if (parent) {
+	        	sb.append("{\"title\": \"" + "None" + "\"," + checkNone(url) + 
+	        			" \"key\": \"" + "None" + "\"" + "}, ");
+	        }
+	    	Iterator<Taxonomy> itr = subjectList.iterator();
+	    	boolean firstTime = true;
+	    	while (itr.hasNext()) {
+	    		Taxonomy subject = itr.next();
+//    			Logger.debug("add subject: " + subject.name + ", with url: " + subject.url +
+//    					", parent:" + subject.parent + ", parent size: " + subject.parent.length());
+	    		if ((parent && subject.parent.length() == 0) || !parent || subject.parent.equals(Const.NONE_VALUE)) {
+		    		if (firstTime) {
+		    			firstTime = false;
+		    		} else {
+		    			sb.append(", ");
+		    		}
+//	    			Logger.debug("added");
+					sb.append("{\"title\": \"" + subject.name + "\"," + checkSelection(subject.name, url) + 
+							" \"key\": \"" + subject.url + "\"" + 
+							getSubjectChildren(subject.url, url) + "}");
+	    		}
+	    	}
+//	    	Logger.info("subjectList level size: " + subjectList.size());
+	    	sb.append("]");
+	    	res = sb.toString();
+//	    	Logger.info("getSubjectTreeElements() res: " + res);
+    	}
+    	return res;
+    }
+        
+    /**
+     * Check if none value is selected
+     * @param url This is an identifier for current subject object
+     * @return
+     */
+    public static String checkNone(String url) {
+    	String res = "";
+		if (StringUtils.isNotEmpty(url) && url.toLowerCase().equals(Const.NONE.toLowerCase())) {
+			res = "\"select\": true ,";
+		}
+    	return res;
+    }
+    
+    /**
+     * Mark subjects that are stored in target object as selected
+     * @param subjectUrl The subject identifier
+     * @param currentUrl This is an identifier for current subject object
+     * @return
+     */
+    public static String checkSelection(String subjectUrl, String currentUrl) {
+    	String res = "";
+		if (currentUrl.contains(Const.COMMA)) {
+			currentUrl = currentUrl.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+		}
+//    	Logger.info("checkSelection() 1: " + subjectUrl + ", 2: " + currentUrl);
+    	if (currentUrl != null && currentUrl.length() > 0) {
+    		if (currentUrl.equals(subjectUrl) || currentUrl.equals(subjectUrl)) {
+    			res = "\"select\": true ,";
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method calculates subject children - objects that have parents.
+     * @param url The identifier for parent 
+     * @param currentUrl This is an identifier for current subject object
+     * @return child subject in JSON form
+     */
+    public static String getSubjectChildren(String url, String currentUrl) {
+//    	Logger.info("getChildren() target URL: " + targetUrl);
+    	String res = "";
+        final StringBuffer sb = new StringBuffer();
+    	sb.append(", \"children\":");
+//    	List<Taxonomy> childSubjectList = Taxonomy.findListByType(Const.SUBSUBJECT);
+//    	List<Taxonomy> childSubjectList = Taxonomy.getChildLevelSubjects(url);
+    	Taxonomy subject = Taxonomy.findByUrl(url);
+    	List<Taxonomy> childSubjectList = Taxonomy.findSubSubjectsList(subject.name);
+//    	List<Taxonomy> childSubjectList = Taxonomy.getChildLevelSubjects(subject.name);
+    	if (childSubjectList.size() > 0) {
+	    	sb.append(getSubjectTreeElementsExt(childSubjectList, currentUrl, false));
+	    	res = sb.toString();
+//	    	Logger.info("getChildren() res: " + res);
+    	}
+    	return res;
+    }
+    
 }

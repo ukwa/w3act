@@ -305,14 +305,26 @@ public class ContactPersons extends AbstractController {
         if (delete != null) {
         	ContactPerson person = ContactPerson.findByUrl(getFormParam(Const.URL));
         	List<CrawlPermission> assignedCrawlPermissionList = CrawlPermission.filterByContactPerson(person.url);
-        	Iterator<CrawlPermission> itr = assignedCrawlPermissionList.iterator();
-        	while (itr.hasNext()) {
-        		CrawlPermission permission = itr.next();
-        		permission.contactPerson = Const.NONE;
-        		Ebean.update(permission);
+        	if (assignedCrawlPermissionList.size() > 0) {
+	        	Iterator<CrawlPermission> itr = assignedCrawlPermissionList.iterator();
+            	String missingFields = "";
+	        	while (itr.hasNext()) {
+	        		CrawlPermission permission = itr.next();
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = permission.name;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + permission.name;
+            	    }
+            	}
+            	Logger.info("A contact person can't be deleted since it is used in following crawl permissions: " 
+            			+ missingFields + ". Please remove it from crawl permission objects first and then delete.");
+	  			flash("message", "A contact person can't be deleted since it is used in following crawl permissions: " 
+            			+ missingFields + ". Please remove it from crawl permission objects first and then delete.");
+	  			return info();
+        	} else {
+        		Ebean.delete(person);
+        		res = redirect(routes.ContactPersons.index());
         	}
-        	Ebean.delete(person);
-	        res = redirect(routes.ContactPersons.index()); 
         }
     	res = redirect(routes.ContactPersons.index()); 
         return res;

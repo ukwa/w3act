@@ -168,6 +168,9 @@ public class Flags extends AbstractController {
     	Flag flag = new Flag();
     	flag.id = Long.valueOf(getFormParam(Const.ID));
     	flag.url = getFormParam(Const.URL);
+	    if (getFormParam(Const.DESCRIPTION) != null) {
+	    	flag.description = getFormParam(Const.DESCRIPTION);
+	    }
 		Form<Flag> flagFormNew = Form.form(Flag.class);
 		flagFormNew = flagFormNew.fill(flag);
       	return ok(
