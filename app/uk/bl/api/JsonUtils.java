@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
+
 import models.DCollection;
 import models.Instance;
 import models.Organisation;
@@ -312,7 +314,11 @@ public class JsonUtils {
 				    if (taxonomy.field_publish != null) {
 				    	collection.publish = Utils.getNormalizeBooleanString(taxonomy.field_publish);
 				    }
-				    collection.parent      = taxonomy.parent;
+				    if (taxonomy.parent == null || taxonomy.parent.length() == 0) {
+				    	collection.parent = Const.NONE_VALUE;
+				    } else {
+				    	collection.parent      = taxonomy.parent;
+				    }
 				    collection.parents_all = taxonomy.parents_all;
 					res.add(collection);
 				}
