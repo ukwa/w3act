@@ -250,7 +250,6 @@
 										</div>
 									</div>
 								</div>
-								@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) {
 								<div class="col-md-6">
 									<div class="form-group">
 						            	<label for="flags" class="col-sm-6 control-label">Filter by flag</label>
@@ -268,7 +267,6 @@
 										</div>
 									</div>
 								</div>
-								}
 							</div>
 							
 							<div class="row">
@@ -324,7 +322,7 @@
 						} else {
 							<td></td>
 						}		                  
-						<td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+						<td><a class="brand" href="@target.get_field_list_as_str("field_url")" target="_blank">@target.get_field_list_as_str("field_url")</a></td>
 						@if(target.url != null && target.created != null) {
 							<td>@Target.getDateAsString(target.created)</td>
 						} else {
