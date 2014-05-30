@@ -710,7 +710,7 @@ public class TargetController extends AbstractController {
 	    		DCollection collection = itr.next();
 //    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
-	    		if ((parent && collection.parent.length() == 0) || !parent) {
+	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
 		    		if (firstTime) {
 		    			firstTime = false;
 		    		} else {
@@ -742,9 +742,9 @@ public class TargetController extends AbstractController {
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
     	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
-//    	Logger.info("collections main level size: " + suggestedCollections.size());
+    	Logger.info("collections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-//    	Logger.info("getCollections() json: " + jsonData.toString());
+    	Logger.info("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
     }        
     
