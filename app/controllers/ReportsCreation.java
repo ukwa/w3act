@@ -152,7 +152,7 @@ public class ReportsCreation extends AbstractController {
         return ok(
         	reportscreation.render(
         			"ReportsCreation", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			Target.pageReportsCreation(pageNo, 10, sortBy, order, curator, organisation, 
         					startDate, endDate), 
         			sortBy, 

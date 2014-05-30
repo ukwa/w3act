@@ -173,7 +173,7 @@ public class ReportsQa extends AbstractController {
         return ok(
         	reportsqa.render(
         			"ReportsQa", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			Target.pageReportsQa(pageNo, 10, sortBy, order, status, curator, organisation, 
         					startDate, endDate, collection), 
         			sortBy, 

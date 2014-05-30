@@ -41,7 +41,7 @@ public class ContactPersons extends AbstractController {
         List<ContactPerson> resList = processFilterContactPersons("");
         return ok(
                 list.render(
-                    "ContactPersons", User.find.byId(request().username()), resList, ""
+                    "ContactPersons", User.findByEmail(request().username()), resList, ""
                 )
             );
     }
@@ -56,7 +56,7 @@ public class ContactPersons extends AbstractController {
 		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
 		personFormNew = personFormNew.fill(person);
       	return ok(
-	              edit.render(personFormNew, User.find.byId(request().username()))
+	              edit.render(personFormNew, User.findByEmail(request().username()))
 	            );
     }
     
@@ -64,7 +64,7 @@ public class ContactPersons extends AbstractController {
     	Logger.info("view contact person");
         return ok(
                 view.render(
-                		models.ContactPerson.findByUrl(url), User.find.byId(request().username())
+                		models.ContactPerson.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -103,13 +103,13 @@ public class ContactPersons extends AbstractController {
     			Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
     			personFormNew = personFormNew.fill(person);
     	      	return ok(
-    		              edit.render(personFormNew, User.find.byId(request().username()))
+    		              edit.render(personFormNew, User.findByEmail(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			return ok(
                 		list.render(
-                                "ContactPersons", User.find.byId(request().username()), resList, name
+                                "ContactPersons", User.findByEmail(request().username()), resList, name
                             )
                         );
 		    } else {
@@ -158,7 +158,7 @@ public class ContactPersons extends AbstractController {
 		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
 		personFormNew = personFormNew.fill(person);
       	return ok(
-	              edit.render(personFormNew, User.find.byId(request().username()))
+	              edit.render(personFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -200,7 +200,7 @@ public class ContactPersons extends AbstractController {
 		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
 		personFormNew = personFormNew.fill(person);
       	return ok(
-	              edit.render(personFormNew, User.find.byId(request().username()))
+	              edit.render(personFormNew, User.findByEmail(request().username()))
 	            );
     }
     

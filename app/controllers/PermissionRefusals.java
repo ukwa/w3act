@@ -43,7 +43,7 @@ public class PermissionRefusals extends AbstractController {
         List<PermissionRefusal> resList = processFilterPermissionRefusals("");
         return ok(
                 refusals.render(
-                    "PermissionRefusals", User.find.byId(request().username()), resList, ""
+                    "PermissionRefusals", User.findByEmail(request().username()), resList, ""
                 )
             );
     }
@@ -58,14 +58,14 @@ public class PermissionRefusals extends AbstractController {
 		Form<PermissionRefusal> refusalFormNew = Form.form(PermissionRefusal.class);
 		refusalFormNew = refusalFormNew.fill(refusal);
       	return ok(
-	              edit.render(refusalFormNew, User.find.byId(request().username()))
+	              edit.render(refusalFormNew, User.findByEmail(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
                 view.render(
-                		models.PermissionRefusal.findByUrl(url), User.find.byId(request().username())
+                		models.PermissionRefusal.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -89,7 +89,7 @@ public class PermissionRefusals extends AbstractController {
 			flash("message", "Please enter a name in the search window");
             res = ok(
             		refusals.render(
-                        "PermissionRefusals", User.find.byId(request().username()), resList, ""
+                        "PermissionRefusals", User.findByEmail(request().username()), resList, ""
                     )
                 );
     	}
@@ -106,13 +106,13 @@ public class PermissionRefusals extends AbstractController {
     			Form<PermissionRefusal> refusalFormNew = Form.form(PermissionRefusal.class);
     			refusalFormNew = refusalFormNew.fill(refusal);
     	      	return ok(
-    		              edit.render(refusalFormNew, User.find.byId(request().username()))
+    		              edit.render(refusalFormNew, User.findByEmail(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
                 res = ok(
                 		refusals.render(
-                            "PermissionRefusals", User.find.byId(request().username()), resList, query
+                            "PermissionRefusals", User.findByEmail(request().username()), resList, query
                         )
                     );
 		    } else {
@@ -161,7 +161,7 @@ public class PermissionRefusals extends AbstractController {
 		Form<PermissionRefusal> refusalFormNew = Form.form(PermissionRefusal.class);
 		refusalFormNew = refusalFormNew.fill(refusal);
       	return ok(
-	              edit.render(refusalFormNew, User.find.byId(request().username()))
+	              edit.render(refusalFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -189,7 +189,7 @@ public class PermissionRefusals extends AbstractController {
 		Form<PermissionRefusal> refusalFormNew = Form.form(PermissionRefusal.class);
 		refusalFormNew = refusalFormNew.fill(refusal);
       	return ok(
-	              edit.render(refusalFormNew, User.find.byId(request().username()))
+	              edit.render(refusalFormNew, User.findByEmail(request().username()))
 	            );
     }
     

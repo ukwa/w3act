@@ -239,6 +239,7 @@ public class JsonUtils {
 			    if (newUser.roles == null || newUser.roles.length() == 0) {
 			    	newUser.roles = Const.DEFAULT_BL_ROLE;
 			    }	
+			    newUser.uid = null;
 //				Logger.info("id: " + newUser.uid  + ", url: " + newUser.url + ", email: " + newUser.email + 
 //						", name: " + newUser.name + ", password: " + newUser.password);
 			}

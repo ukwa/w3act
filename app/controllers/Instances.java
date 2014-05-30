@@ -68,7 +68,7 @@ public class Instances extends AbstractController {
         return ok(
         	list.render(
         			"Lookup", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Instance.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 
@@ -90,7 +90,7 @@ public class Instances extends AbstractController {
         return ok(
         	listByTarget.render(
         			"Lookup", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Instance.pageByTarget(pageNo, 10, sortBy, order, filter, targetUrl), 
         			sortBy, 
@@ -171,7 +171,7 @@ public class Instances extends AbstractController {
 				Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
     			Form<Instance> instanceForm = Form.form(Instance.class);
     			instanceForm = instanceForm.fill(instance);
-    	        return ok(edit.render(instanceForm, User.find.byId(request().username())));    			
+    	        return ok(edit.render(instanceForm, User.findByEmail(request().username())));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -198,7 +198,7 @@ public class Instances extends AbstractController {
 		Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
 		Form<Instance> instanceForm = Form.form(Instance.class);
 		instanceForm = instanceForm.fill(instance);
-        return ok(edit.render(instanceForm, User.find.byId(request().username())));    			
+        return ok(edit.render(instanceForm, User.findByEmail(request().username())));    			
     }
 
     /**

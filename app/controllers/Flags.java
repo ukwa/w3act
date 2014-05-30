@@ -57,14 +57,14 @@ public class Flags extends AbstractController {
 		Form<Flag> flagFormNew = Form.form(Flag.class);
 		flagFormNew = flagFormNew.fill(flag);
       	return ok(
-	              edit.render(flagFormNew, User.find.byId(request().username()))
+	              edit.render(flagFormNew, User.findByEmail(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
                 view.render(
-                		models.Flag.findByUrl(url), User.find.byId(request().username())
+                		models.Flag.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -105,7 +105,7 @@ public class Flags extends AbstractController {
     			Form<Flag> flagFormNew = Form.form(Flag.class);
     			flagFormNew = flagFormNew.fill(flag);
     	      	return ok(
-    		              edit.render(flagFormNew, User.find.byId(request().username()))
+    		              edit.render(flagFormNew, User.findByEmail(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
@@ -155,7 +155,7 @@ public class Flags extends AbstractController {
 		Form<Flag> flagFormNew = Form.form(Flag.class);
 		flagFormNew = flagFormNew.fill(flag);
       	return ok(
-	              edit.render(flagFormNew, User.find.byId(request().username()))
+	              edit.render(flagFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -174,7 +174,7 @@ public class Flags extends AbstractController {
 		Form<Flag> flagFormNew = Form.form(Flag.class);
 		flagFormNew = flagFormNew.fill(flag);
       	return ok(
-	              edit.render(flagFormNew, User.find.byId(request().username()))
+	              edit.render(flagFormNew, User.findByEmail(request().username()))
 	            );
     }
     
@@ -314,7 +314,7 @@ public class Flags extends AbstractController {
         return ok(
         	list.render(
         			"Flags", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Flag.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 

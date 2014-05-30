@@ -39,7 +39,7 @@ public class CommunicationLogs extends AbstractController {
         List<CommunicationLog> resList = processFilterCommunicationLogs("", "");
         return ok(
         		logs.render(
-                    "CommunicationLogs", User.find.byId(request().username()), resList, "", ""
+                    "CommunicationLogs", User.findByEmail(request().username()), resList, "", ""
                 )
             );
     }
@@ -54,14 +54,14 @@ public class CommunicationLogs extends AbstractController {
 		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
 		logFormNew = logFormNew.fill(log);
       	return ok(
-	              edit.render(logFormNew, User.find.byId(request().username()))
+	              edit.render(logFormNew, User.findByEmail(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
                 view.render(
-                		models.CommunicationLog.findByUrl(url), User.find.byId(request().username())
+                		models.CommunicationLog.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -94,26 +94,26 @@ public class CommunicationLogs extends AbstractController {
             	log.name = name;
                 log.id = Target.createId();
                 log.url = Const.ACT_URL + log.id;
-                log.curator = User.find.byId(request().username()).url;        
+                log.curator = User.findByEmail(request().username()).url;        
         		Logger.info("add communication log entry with url: " + log.url + ", and name: " + 
         				log.name + ", curator: " + log.curator);
         		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
         		logFormNew = logFormNew.fill(log);
               	return ok(
-        	              edit.render(logFormNew, User.find.byId(request().username()))
+        	              edit.render(logFormNew, User.findByEmail(request().username()))
         	            );
         	} else {
         		Logger.info("CommunicationLog name is empty. Please write name in search window.");
                 res = ok(
                         logs.render(
-                            "CommunicationLogs", User.find.byId(request().username()), resList, "", permissions
+                            "CommunicationLogs", User.findByEmail(request().username()), resList, "", permissions
                         )
                     );
         	}
         } else {
             res = ok(
             		logs.render(
-                        "CommunicationLogs", User.find.byId(request().username()), resList, name, permissions
+                        "CommunicationLogs", User.findByEmail(request().username()), resList, name, permissions
                     )
                 );
         }
@@ -161,13 +161,13 @@ public class CommunicationLogs extends AbstractController {
     	log.name = name;
         log.id = Target.createId();
         log.url = Const.ACT_URL + log.id;
-        log.curator = User.find.byId(request().username()).url;        
+        log.curator = User.findByEmail(request().username()).url;        
 		Logger.info("add communication log entry with url: " + log.url + ", and name: " + 
 				log.name + ", curator: " + log.curator);
 		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
 		logFormNew = logFormNew.fill(log);
       	return ok(
-	              edit.render(logFormNew, User.find.byId(request().username()))
+	              edit.render(logFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -203,7 +203,7 @@ public class CommunicationLogs extends AbstractController {
 		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
 		logFormNew = logFormNew.fill(log);
       	return ok(
-	              edit.render(logFormNew, User.find.byId(request().username()))
+	              edit.render(logFormNew, User.findByEmail(request().username()))
 	            );
     }
     
@@ -311,7 +311,7 @@ public class CommunicationLogs extends AbstractController {
         List<CommunicationLog> resList = processFilterCommunicationLogs("", permission);
         res = ok(
         		logs.render(
-                    "CommunicationLogs", User.find.byId(request().username()), resList, "", permission
+                    "CommunicationLogs", User.findByEmail(request().username()), resList, "", permission
                 )
             );
         return res;

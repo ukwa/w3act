@@ -53,14 +53,14 @@ public class Permissions extends AbstractController {
 		Form<Permission> permissionFormNew = Form.form(Permission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
       	return ok(
-	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	              edit.render(permissionFormNew, User.findByEmail(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
                 view.render(
-                        Permission.findByUrl(url), User.find.byId(request().username())
+                        Permission.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -102,7 +102,7 @@ public class Permissions extends AbstractController {
     			Form<Permission> permissionFormNew = Form.form(Permission.class);
     			permissionFormNew = permissionFormNew.fill(permission);
     	      	return ok(
-    		              edit.render(permissionFormNew, User.find.byId(request().username()))
+    		              edit.render(permissionFormNew, User.findByEmail(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
@@ -128,7 +128,7 @@ public class Permissions extends AbstractController {
 		Form<Permission> permissionFormNew = Form.form(Permission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
       	return ok(
-	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	              edit.render(permissionFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -154,7 +154,7 @@ public class Permissions extends AbstractController {
 		Form<Permission> permissionFormNew = Form.form(Permission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
       	return ok(
-	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	              edit.render(permissionFormNew, User.findByEmail(request().username()))
 	            );
     }
     
@@ -262,7 +262,7 @@ public class Permissions extends AbstractController {
         return ok(
         	list.render(
         			"Permissions", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Permission.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 

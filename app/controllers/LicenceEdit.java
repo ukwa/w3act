@@ -29,7 +29,7 @@ public class LicenceEdit extends AbstractController {
         List<Taxonomy> resList = processFilterLicences("");
         return ok(
                 licences.render(
-                    "Licences", User.find.byId(request().username()), resList, ""
+                    "Licences", User.findByEmail(request().username()), resList, ""
                 )
             );
     }
@@ -50,7 +50,7 @@ public class LicenceEdit extends AbstractController {
         if (search != null) {
             res = ok(
             		licences.render(
-                        "Licences", User.find.byId(request().username()), resList, name
+                        "Licences", User.findByEmail(request().username()), resList, name
                     )
                 );
         }

@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="creator")
 public class User extends Model {
 
-    @Id @JsonIgnore
+    @JsonIgnore
     @Constraints.Required
     @Formats.NonEmpty
     public String email;
@@ -50,7 +50,7 @@ public class User extends Model {
     
     @JsonIgnore
     public String field_affiliation;
-    @JsonIgnore
+    @Id @JsonIgnore
     public Long uid;
     public String url;
     @JsonIgnore

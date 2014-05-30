@@ -53,7 +53,7 @@ public class TaxonomiesController extends AbstractController {
 			String filter) {
 		Logger.info("LookUp.list()");
 		return ok(list.render("TaxonomiesList",
-				User.find.byId(request().username()), filter,
+				User.findByEmail(request().username()), filter,
 				Taxonomy.page(pageNo, 10, sortBy, order, filter), sortBy,
 				order));
 	}
@@ -112,7 +112,7 @@ public class TaxonomiesController extends AbstractController {
     public static Result view(String url) {
         return ok(
                 taxonomyview.render(
-                        Taxonomy.findByUrl(url), User.find.byId(request().username())
+                        Taxonomy.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -130,7 +130,7 @@ public class TaxonomiesController extends AbstractController {
 		Logger.info("add entry with url: " + taxonomy.url + ", and name: " + taxonomy.name);
         return ok(
                 taxonomyedit.render(
-                      taxonomy, User.find.byId(request().username())
+                      taxonomy, User.findByEmail(request().username())
                 )
             );
     }
@@ -144,7 +144,7 @@ public class TaxonomiesController extends AbstractController {
 		Logger.info("taxonomy name: " + taxonomy.name + ", url: " + url);
         return ok(
                 taxonomyedit.render(
-                        Taxonomy.findByUrl(url), User.find.byId(request().username())
+                        Taxonomy.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }

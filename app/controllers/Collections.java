@@ -62,7 +62,7 @@ public class Collections extends AbstractController {
 //		Logger.info("LookUp.list() " + node);
 		
 		return ok(list.render("Collections",
-				User.find.byId(request().username()), filter,
+				User.findByEmail(request().username()), filter,
 				DCollection.page(pageNo, 10, sortBy, order, filter), sortBy,
 				order, node));
 	}
@@ -109,7 +109,7 @@ public class Collections extends AbstractController {
 //    			Logger.info("node tree: " + node.toString());
     			Form<DCollection> collectionForm = Form.form(DCollection.class);
     			collectionForm = collectionForm.fill(collection);
-    	        return ok(edit.render(collectionForm, User.find.byId(request().username()), node));    			
+    	        return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Collections.list(pageNo, sort, order, query));
@@ -133,7 +133,7 @@ public class Collections extends AbstractController {
     public static Result view(String url) {
         return ok(
                 view.render(
-                        DCollection.findByUrl(url), User.find.byId(request().username())
+                        DCollection.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -153,7 +153,7 @@ public class Collections extends AbstractController {
 		JsonNode node = getCollectionsTree(collection.url);
 		Form<DCollection> collectionForm = Form.form(DCollection.class);
 		collectionForm = collectionForm.fill(collection);
-        return ok(edit.render(collectionForm, User.find.byId(request().username()), node));
+        return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));
     }
     
     /**
@@ -166,7 +166,7 @@ public class Collections extends AbstractController {
 		JsonNode node = getCollectionsTree(collection.url);
 		Form<DCollection> collectionForm = Form.form(DCollection.class);
 		collectionForm = collectionForm.fill(collection);
-        return ok(edit.render(collectionForm, User.find.byId(request().username()), node));
+        return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));
     }
 
 	/**
@@ -197,7 +197,7 @@ public class Collections extends AbstractController {
 		Form<DCollection> collectionFormNew = Form.form(DCollection.class);
 		collectionFormNew = collectionFormNew.fill(collection);
       	return ok(
-	              edit.render(collectionFormNew, User.find.byId(request().username()), node)
+	              edit.render(collectionFormNew, User.findByEmail(request().username()), node)
 	            );
     }
     

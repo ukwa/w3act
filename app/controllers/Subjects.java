@@ -62,7 +62,7 @@ public class Subjects extends AbstractController {
 //		Logger.info("LookUp.list() " + node);
 		
 		return ok(list.render("Subjects",
-				User.find.byId(request().username()), filter,
+				User.findByEmail(request().username()), filter,
 				Taxonomy.page(pageNo, 10, sortBy, order, filter), sortBy,
 				order, node));
 	}
@@ -108,7 +108,7 @@ public class Subjects extends AbstractController {
     			JsonNode node = getSubjectsTree(subject.url);
     			Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
     			subjectForm = subjectForm.fill(subject);
-    	        return ok(edit.render(subjectForm, User.find.byId(request().username()), node));    			
+    	        return ok(edit.render(subjectForm, User.findByEmail(request().username()), node));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Subjects.list(pageNo, sort, order, query));
@@ -132,7 +132,7 @@ public class Subjects extends AbstractController {
     public static Result view(String url) {
         return ok(
                 view.render(
-                        Taxonomy.findByUrl(url), User.find.byId(request().username())
+                        Taxonomy.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -152,7 +152,7 @@ public class Subjects extends AbstractController {
 		JsonNode node = getSubjectsTree(subject.url);
 		Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
 		subjectForm = subjectForm.fill(subject);
-        return ok(edit.render(subjectForm, User.find.byId(request().username()), node));
+        return ok(edit.render(subjectForm, User.findByEmail(request().username()), node));
     }
     
     /**
@@ -165,7 +165,7 @@ public class Subjects extends AbstractController {
 		JsonNode node = getSubjectsTree(subject.url);
 		Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
 		subjectForm = subjectForm.fill(subject);
-        return ok(edit.render(subjectForm, User.find.byId(request().username()), node));
+        return ok(edit.render(subjectForm, User.findByEmail(request().username()), node));
     }
 
 	/**
@@ -203,7 +203,7 @@ public class Subjects extends AbstractController {
 		Form<Taxonomy> subjectFormNew = Form.form(Taxonomy.class);
 		subjectFormNew = subjectFormNew.fill(subject);
       	return ok(
-	              edit.render(subjectFormNew, User.find.byId(request().username()), node)
+	              edit.render(subjectFormNew, User.findByEmail(request().username()), node)
 	            );
     }
     

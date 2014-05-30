@@ -33,7 +33,7 @@ public class FindContent extends Controller {
      */
     public static Result index() {
 		return ok(
-            findcontent.render("FindContent", User.find.byId(request().username()))
+            findcontent.render("FindContent", User.findByEmail(request().username()))
         );
     }
 	

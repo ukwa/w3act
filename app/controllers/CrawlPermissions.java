@@ -51,7 +51,7 @@ public class CrawlPermissions extends AbstractController {
         List<CrawlPermission> resList = processFilterCrawlPermissions("", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "");
         return ok(
         		views.html.crawlpermissions.list.render(
-                    "CrawlPermissions", User.find.byId(request().username()), resList, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS
+                    "CrawlPermissions", User.findByEmail(request().username()), resList, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS
                 )
             );
     }
@@ -66,14 +66,14 @@ public class CrawlPermissions extends AbstractController {
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
       	return ok(
-	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	              edit.render(permissionFormNew, User.findByEmail(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
         		views.html.crawlpermissions.view.render(
-                		models.CrawlPermission.findByUrl(url), User.find.byId(request().username())
+                		models.CrawlPermission.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -97,7 +97,7 @@ public class CrawlPermissions extends AbstractController {
     	Logger.info("showCrawlPermissions count: " + resList.size());
         res = ok(
         		views.html.crawlpermissions.list.render(
-                    "CrawlPermissions", User.find.byId(request().username()), resList, "", status
+                    "CrawlPermissions", User.findByEmail(request().username()), resList, "", status
                 )
             );
         return res;    	
@@ -125,7 +125,7 @@ public class CrawlPermissions extends AbstractController {
 			flash("message", "Please enter a name in the search window");
 			return ok(
 					views.html.crawlpermissions.list.render(
-                        "CrawlPermissions", User.find.byId(request().username()), resList, "", status
+                        "CrawlPermissions", User.findByEmail(request().username()), resList, "", status
                     )
                 );
 		}
@@ -139,7 +139,7 @@ public class CrawlPermissions extends AbstractController {
             	permission.name = name;
                 permission.id = Target.createId();
                 permission.url = Const.ACT_URL + permission.id;
-                permission.creatorUser = User.find.byId(request().username()).url;
+                permission.creatorUser = User.findByEmail(request().username()).url;
                 permission.status = Const.CrawlPermissionStatus.QUEUED.name();
                 permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
                 permission.thirdPartyContent = false;
@@ -149,13 +149,13 @@ public class CrawlPermissions extends AbstractController {
         		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
         		permissionFormNew = permissionFormNew.fill(permission);
               	return ok(
-        	              edit.render(permissionFormNew, User.find.byId(request().username()))
+        	              edit.render(permissionFormNew, User.findByEmail(request().username()))
         	            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			return ok(
     					views.html.crawlpermissions.list.render(
-                            "CrawlPermissions", User.find.byId(request().username()), resList, name, status
+                            "CrawlPermissions", User.findByEmail(request().username()), resList, name, status
                         )
                     );
 		    } else {
@@ -210,7 +210,7 @@ public class CrawlPermissions extends AbstractController {
     	permission.name = name;
         permission.id = Target.createId();
         permission.url = Const.ACT_URL + permission.id;
-        permission.creatorUser = User.find.byId(request().username()).url;
+        permission.creatorUser = User.findByEmail(request().username()).url;
         permission.status = Const.CrawlPermissionStatus.QUEUED.name();
         permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
         permission.thirdPartyContent = false;
@@ -220,7 +220,7 @@ public class CrawlPermissions extends AbstractController {
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
       	return ok(
-	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	              edit.render(permissionFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -236,7 +236,7 @@ public class CrawlPermissions extends AbstractController {
         permission.id = Utils.createId();
         permission.url = Const.ACT_URL + permission.id;
         Logger.debug("licenceRequestForTarget url: " + permission.url);
-        permission.creatorUser = User.find.byId(request().username()).url;
+        permission.creatorUser = User.findByEmail(request().username()).url;
         Logger.debug("licenceRequestForTarget user: " + permission.creatorUser);
         permission.status = Const.CrawlPermissionStatus.QUEUED.name();
         permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
@@ -245,7 +245,7 @@ public class CrawlPermissions extends AbstractController {
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
       	return ok(
-	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	              edit.render(permissionFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -338,7 +338,7 @@ public class CrawlPermissions extends AbstractController {
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
       	return ok(
-	              edit.render(permissionFormNew, User.find.byId(request().username()))
+	              edit.render(permissionFormNew, User.findByEmail(request().username()))
 	            );
     }
     
@@ -523,7 +523,7 @@ public class CrawlPermissions extends AbstractController {
     public static Result templates() {
         return ok(
                 mailtemplates.render(
-                    "MailTemplates", User.find.byId(request().username()), models.MailTemplate.findAll(), "", ""
+                    "MailTemplates", User.findByEmail(request().username()), models.MailTemplate.findAll(), "", ""
                 )
             );
     }
@@ -531,7 +531,7 @@ public class CrawlPermissions extends AbstractController {
     public static Result contactpersons() {
         return ok(
                 views.html.contactpersons.list.render(
-                    "ContactPersons", User.find.byId(request().username()), models.ContactPerson.findAll(), ""
+                    "ContactPersons", User.findByEmail(request().username()), models.ContactPerson.findAll(), ""
                 )
             );
     }
@@ -539,7 +539,7 @@ public class CrawlPermissions extends AbstractController {
     public static Result licences() {
         return ok(
                 licences.render(
-                	"Licences", User.find.byId(request().username()), models.Taxonomy.findListByType("license"), ""
+                	"Licences", User.findByEmail(request().username()), models.Taxonomy.findListByType("license"), ""
                 )
             );
     }
@@ -547,7 +547,7 @@ public class CrawlPermissions extends AbstractController {
     public static Result refusals() {
         return ok(
                 refusals.render(
-                	"Refusals", User.find.byId(request().username()), models.PermissionRefusal.findAll(), ""
+                	"Refusals", User.findByEmail(request().username()), models.PermissionRefusal.findAll(), ""
                 )
             );
     }
@@ -555,7 +555,7 @@ public class CrawlPermissions extends AbstractController {
     public static Result communicationLogs() {
         return ok(
                 logs.render(
-                	"CommunicationLogs", User.find.byId(request().username()), models.CommunicationLog.findAll(), "", ""
+                	"CommunicationLogs", User.findByEmail(request().username()), models.CommunicationLog.findAll(), "", ""
                 )
             );
     }
@@ -848,7 +848,7 @@ public class CrawlPermissions extends AbstractController {
         	Logger.info("preview crawl permission requests");        	
 	        res = ok(
 	            crawlpermissionpreview.render(
-		            	getAssignedPermissionsList().get(0), User.find.byId(request().username()), toMails, template
+		            	getAssignedPermissionsList().get(0), User.findByEmail(request().username()), toMails, template
 	            )
 	        );
         }

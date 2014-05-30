@@ -42,7 +42,7 @@ public class Reports extends AbstractController {
         		processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
         return ok(
                 reports.render(
-                    "Reports", User.find.byId(request().username()), resList, 
+                    "Reports", User.findByEmail(request().username()), resList, 
                     resListGranted, resListRefused, "", "", "", "", ""
                 )
             );
@@ -108,7 +108,7 @@ public class Reports extends AbstractController {
     			export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
     			return ok(
                 		reports.render(
-                            "Reports", User.find.byId(request().username()), resList, resListGranted,
+                            "Reports", User.findByEmail(request().username()), resList, resListGranted,
                             resListRefused, curator, organisation, start_date, end_date, request
                         )
                     );
@@ -116,7 +116,7 @@ public class Reports extends AbstractController {
     		else if (Const.SEARCH.equals(action)) {
     			return ok(
                 		reports.render(
-                            "Reports", User.find.byId(request().username()), resList, resListGranted,
+                            "Reports", User.findByEmail(request().username()), resList, resListGranted,
                             resListRefused, curator, organisation, start_date, end_date, request
                         )
                     );

@@ -54,14 +54,14 @@ public class Roles extends AbstractController {
 		Form<Role> roleFormNew = Form.form(Role.class);
 		roleFormNew = roleFormNew.fill(role);
       	return ok(
-	              roleedit.render(roleFormNew, User.find.byId(request().username()))
+	              roleedit.render(roleFormNew, User.findByEmail(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
                 roleview.render(
-                        Role.findByUrl(url), User.find.byId(request().username())
+                        Role.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -74,7 +74,7 @@ public class Roles extends AbstractController {
     public static Result admin(String url) {
         return ok(
                 roleadmin.render(
-                        Role.findByUrl(url), User.find.byId(request().username())
+                        Role.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -115,7 +115,7 @@ public class Roles extends AbstractController {
     			Form<Role> roleFormNew = Form.form(Role.class);
     			roleFormNew = roleFormNew.fill(role);
     	      	return ok(
-    		              roleedit.render(roleFormNew, User.find.byId(request().username()))
+    		              roleedit.render(roleFormNew, User.findByEmail(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
@@ -140,7 +140,7 @@ public class Roles extends AbstractController {
 		Form<Role> roleFormNew = Form.form(Role.class);
 		roleFormNew = roleFormNew.fill(role);
       	return ok(
-	              roleedit.render(roleFormNew, User.find.byId(request().username()))
+	              roleedit.render(roleFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -190,7 +190,7 @@ public class Roles extends AbstractController {
 		Form<Role> roleFormNew = Form.form(Role.class);
 		roleFormNew = roleFormNew.fill(role);
       	return ok(
-	              roleedit.render(roleFormNew, User.find.byId(request().username()))
+	              roleedit.render(roleFormNew, User.findByEmail(request().username()))
 	            );
     }
     
@@ -363,7 +363,7 @@ public class Roles extends AbstractController {
         return ok(
         	list.render(
         			"Roles", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Role.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 

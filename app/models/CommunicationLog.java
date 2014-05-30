@@ -166,7 +166,7 @@ public class CommunicationLog extends Model
         CommunicationLog log = new CommunicationLog();
         log.id = Utils.createId();
         log.url = Const.ACT_URL + log.id;
-//        log.curator = User.find.byId(request().username()).url; 
+//        log.curator = User.findByEmail(request().username()).url; 
         log.curator = user;
         log.ttype = Const.CommunicationLogTypes.OTHER.name();
         log.date = Utils.getCurrentDate();

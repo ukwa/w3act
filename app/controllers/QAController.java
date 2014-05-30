@@ -62,7 +62,7 @@ public class QAController extends AbstractController {
         return ok(
         	list.render(
         			"QA", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			page,
 //        			Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus), 

@@ -212,7 +212,7 @@ public class TargetController extends AbstractController {
 		Form<Target> targetFormNew = Form.form(Target.class);
 		targetFormNew = targetFormNew.fill(targetObj);
       	return ok(
-	              edit.render(targetFormNew, User.find.byId(request().username()))
+	              edit.render(targetFormNew, User.findByEmail(request().username()))
 	            );
     }
 

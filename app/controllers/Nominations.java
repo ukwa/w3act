@@ -57,14 +57,14 @@ public class Nominations extends AbstractController {
 		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
 		nominationFormNew = nominationFormNew.fill(nomination);
       	return ok(
-	              edit.render(nominationFormNew, User.find.byId(request().username()))
+	              edit.render(nominationFormNew, User.findByEmail(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
                 view.render(
-                        Nomination.findByUrl(url), User.find.byId(request().username())
+                        Nomination.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -106,7 +106,7 @@ public class Nominations extends AbstractController {
     			Form<Nomination> nominationFormNew = Form.form(Nomination.class);
     			nominationFormNew = nominationFormNew.fill(nomination);
     	      	return ok(
-    		              edit.render(nominationFormNew, User.find.byId(request().username()))
+    		              edit.render(nominationFormNew, User.findByEmail(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
@@ -132,7 +132,7 @@ public class Nominations extends AbstractController {
 		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
 		nominationFormNew = nominationFormNew.fill(nomination);
       	return ok(
-	              edit.render(nominationFormNew, User.find.byId(request().username()))
+	              edit.render(nominationFormNew, User.findByEmail(request().username()))
 	            );
     }
     
@@ -240,7 +240,7 @@ public class Nominations extends AbstractController {
 		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
 		nominationFormNew = nominationFormNew.fill(nomination);
       	return ok(
-	              edit.render(nominationFormNew, User.find.byId(request().username()))
+	              edit.render(nominationFormNew, User.findByEmail(request().username()))
 	            );
     }
     
@@ -368,7 +368,7 @@ public class Nominations extends AbstractController {
         return ok(
         	list.render(
         			"Nominations", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Nomination.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 

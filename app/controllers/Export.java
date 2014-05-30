@@ -30,7 +30,7 @@ public class Export extends AbstractController {
      */
     public static Result index() {
 		return ok(
-	            export.render("Export", User.find.byId(request().username()))
+	            export.render("Export", User.findByEmail(request().username()))
 	        );
     }
     

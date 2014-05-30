@@ -55,14 +55,14 @@ public class Tags extends AbstractController {
 		Form<Tag> tagFormNew = Form.form(Tag.class);
 		tagFormNew = tagFormNew.fill(tag);
       	return ok(
-	              edit.render(tagFormNew, User.find.byId(request().username()))
+	              edit.render(tagFormNew, User.findByEmail(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
                 view.render(
-                		models.Tag.findByUrl(url), User.find.byId(request().username())
+                		models.Tag.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -103,7 +103,7 @@ public class Tags extends AbstractController {
     			Form<Tag> tagFormNew = Form.form(Tag.class);
     			tagFormNew = tagFormNew.fill(tag);
     	      	return ok(
-    		              edit.render(tagFormNew, User.find.byId(request().username()))
+    		              edit.render(tagFormNew, User.findByEmail(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
@@ -153,7 +153,7 @@ public class Tags extends AbstractController {
 		Form<Tag> tagFormNew = Form.form(Tag.class);
 		tagFormNew = tagFormNew.fill(tag);
       	return ok(
-	              edit.render(tagFormNew, User.find.byId(request().username()))
+	              edit.render(tagFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -175,7 +175,7 @@ public class Tags extends AbstractController {
 		Form<Tag> tagFormNew = Form.form(Tag.class);
 		tagFormNew = tagFormNew.fill(tag);
       	return ok(
-	              edit.render(tagFormNew, User.find.byId(request().username()))
+	              edit.render(tagFormNew, User.findByEmail(request().username()))
 	            );
     }
     
@@ -281,7 +281,7 @@ public class Tags extends AbstractController {
         return ok(
         	list.render(
         			"Tags", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Tag.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 

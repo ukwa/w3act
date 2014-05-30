@@ -42,7 +42,7 @@ public class MailTemplates extends AbstractController {
         List<MailTemplate> resList = processFilterMailTemplates("");
         return ok(
                 mailtemplates.render(
-                    "MailTemplates", User.find.byId(request().username()), resList, "", ""
+                    "MailTemplates", User.findByEmail(request().username()), resList, "", ""
                 )
             );
     }
@@ -57,14 +57,14 @@ public class MailTemplates extends AbstractController {
 		Form<MailTemplate> templateForm = Form.form(MailTemplate.class);
 		templateForm = templateForm.fill(template);
       	return ok(
-	              edit.render(templateForm, User.find.byId(request().username()))
+	              edit.render(templateForm, User.findByEmail(request().username()))
 	            );
     }
     
     public static Result view(String url) {
         return ok(
                 view.render(
-                		models.MailTemplate.findByUrl(url), User.find.byId(request().username())
+                		models.MailTemplate.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -89,7 +89,7 @@ public class MailTemplates extends AbstractController {
 			flash("message", "Please enter a name in the search window");
 	        return ok(
 	                mailtemplates.render(
-	                    "MailTemplates", User.find.byId(request().username()), resList, "", ""
+	                    "MailTemplates", User.findByEmail(request().username()), resList, "", ""
 	                )
 	            );
     	}
@@ -107,13 +107,13 @@ public class MailTemplates extends AbstractController {
         		Form<MailTemplate> templateForm = Form.form(MailTemplate.class);
         		templateForm = templateForm.fill(template);
               	return ok(
-        	              edit.render(templateForm, User.find.byId(request().username()))
+        	              edit.render(templateForm, User.findByEmail(request().username()))
         	            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	        return ok(
     	                mailtemplates.render(
-    	                    "MailTemplates", User.find.byId(request().username()), resList, "", ""
+    	                    "MailTemplates", User.findByEmail(request().username()), resList, "", ""
     	                )
     	            );
     	    } else {
@@ -183,7 +183,7 @@ public class MailTemplates extends AbstractController {
 		Form<MailTemplate> templateForm = Form.form(MailTemplate.class);
 		templateForm = templateForm.fill(template);
       	return ok(
-	              edit.render(templateForm, User.find.byId(request().username()))
+	              edit.render(templateForm, User.findByEmail(request().username()))
 	            );
     }
       
@@ -218,7 +218,7 @@ public class MailTemplates extends AbstractController {
 		Form<MailTemplate> templateFormNew = Form.form(MailTemplate.class);
 		templateFormNew = templateFormNew.fill(template);
       	return ok(
-	              edit.render(templateFormNew, User.find.byId(request().username()))
+	              edit.render(templateFormNew, User.findByEmail(request().username()))
 	            );
     }
     

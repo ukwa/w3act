@@ -44,13 +44,13 @@ public class InstanceController extends AbstractController {
 		Logger.info("InstanceController.edit() instance name: " + instance.title + ", url: " + url + ", username: " + request().username());
 		Form<Instance> instanceForm = Form.form(Instance.class);
 		instanceForm = instanceForm.fill(instance);
-        return ok(edit.render(instanceForm, User.find.byId(request().username())));
+        return ok(edit.render(instanceForm, User.findByEmail(request().username())));
     }
     
     public static Result view(String url) {
         return ok(
                 view.render(
-                        Instance.findByUrl(url), User.find.byId(request().username())
+                        Instance.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -63,7 +63,7 @@ public class InstanceController extends AbstractController {
     public static Result viewrevision(Long nid) {
         return ok(
                 view.render(
-                        Instance.findById(nid), User.find.byId(request().username())
+                        Instance.findById(nid), User.findByEmail(request().username())
                 )
             );
     }
@@ -266,7 +266,7 @@ public class InstanceController extends AbstractController {
 		instanceFormNew = instanceFormNew.fill(newInstance);
 		Logger.debug("info() goto edit form");
       	return ok(
-	              edit.render(instanceFormNew, User.find.byId(request().username()))
+	              edit.render(instanceFormNew, User.findByEmail(request().username()))
 	            );
     }
     

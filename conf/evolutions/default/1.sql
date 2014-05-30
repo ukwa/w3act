@@ -416,11 +416,11 @@ create table taxonomy_vocabulary (
 ;
 
 create table creator (
-  email                     varchar(255) not null,
+  uid                       bigint not null,
+  email                     varchar(255),
   name                      varchar(255),
   password                  varchar(255),
   field_affiliation         varchar(255),
-  uid                       bigint,
   url                       varchar(255),
   edit_url                  varchar(255),
   last_access               varchar(255),
@@ -432,7 +432,7 @@ create table creator (
   roles                     TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_creator primary key (email))
+  constraint pk_creator primary key (uid))
 ;
 
 create sequence communication_log_seq;

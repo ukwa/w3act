@@ -81,7 +81,7 @@ public class Organisations extends AbstractController {
     			Logger.info("add with url: " + organisation.url + ", and title: " + organisation.title);
     			Form<Organisation> organisationForm = Form.form(Organisation.class);
     			organisationForm = organisationForm.fill(organisation);
-    	        return ok(edit.render(organisationForm, User.find.byId(request().username())));
+    	        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Organisations.list(pageNo, sort, order, query));
@@ -102,7 +102,7 @@ public class Organisations extends AbstractController {
 		Logger.info("add organisation with url: " + organisation.url + ", and title: " + organisation.title);
 		Form<Organisation> organisationForm = Form.form(Organisation.class);
 		organisationForm = organisationForm.fill(organisation);
-        return ok(edit.render(organisationForm, User.find.byId(request().username())));
+        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
     }
     
     /**
@@ -114,7 +114,7 @@ public class Organisations extends AbstractController {
 		Logger.info("organisation title: " + organisation.title + ", url: " + url);
 		Form<Organisation> organisationForm = Form.form(Organisation.class);
 		organisationForm = organisationForm.fill(organisation);
-        return ok(edit.render(organisationForm, User.find.byId(request().username())));
+        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
 
     }
     
@@ -144,7 +144,7 @@ public class Organisations extends AbstractController {
         return ok(
         	list.render(
         			"Organisations", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			query, 
         			Organisation.page(pageNo, 10, sortBy, order, query), 
         			sortBy, 
@@ -158,7 +158,7 @@ public class Organisations extends AbstractController {
     public static Result view(String url) {
         return ok(
                 view.render(
-                        Organisation.findByUrl(url), User.find.byId(request().username())
+                        Organisation.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }    
@@ -175,7 +175,7 @@ public class Organisations extends AbstractController {
     public static Result admin(String url) {
         return ok(
                 admin.render(
-                        Organisation.findByUrl(url), User.find.byId(request().username())
+                        Organisation.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -225,7 +225,7 @@ public class Organisations extends AbstractController {
 		Form<Organisation> organisationFormNew = Form.form(Organisation.class);
 		organisationFormNew = organisationFormNew.fill(organisation);
       	return ok(
-	              edit.render(organisationFormNew, User.find.byId(request().username()))
+	              edit.render(organisationFormNew, User.findByEmail(request().username()))
 	            );
     }
     

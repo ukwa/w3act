@@ -252,7 +252,7 @@ public class Targets extends AbstractController {
         return ok(
         	list.render(
         			"Lookup", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Target.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 
@@ -284,7 +284,7 @@ public class Targets extends AbstractController {
         return ok(
         	targets.render(
         			"Targets", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
         					subject, crawlFrequency, depth, collection, license, flag), 
@@ -518,8 +518,8 @@ public class Targets extends AbstractController {
     	        target.url = Const.ACT_URL + target.nid;
     	        target.revision = Const.INITIAL_REVISION;
     	        target.active = true;
-    	        if (User.find.byId(request().username()).hasRole(Const.USER)) {
-    	        	target.author = User.find.byId(request().username()).url;
+    	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
+    	        	target.author = User.findByEmail(request().username()).url;
     	        	target.field_subsubject = Const.NONE;
     	        	target.field_subject = Const.NONE;
     	        }
@@ -527,7 +527,7 @@ public class Targets extends AbstractController {
     			Logger.info("target title: " + target.title);
     			Form<Target> targetForm = Form.form(Target.class);
     			targetForm = targetForm.fill(target);
-    	        return ok(edit.render(targetForm, User.find.byId(request().username())));    			
+    	        return ok(edit.render(targetForm, User.findByEmail(request().username())));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -555,7 +555,7 @@ public class Targets extends AbstractController {
 		Logger.info("target name: " + target.title);
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(target);
-        return ok(edit.render(targetForm, User.find.byId(request().username())));
+        return ok(edit.render(targetForm, User.findByEmail(request().username())));
     }
     
     /**
@@ -574,7 +574,7 @@ public class Targets extends AbstractController {
         return ok(
         		sites.render(
         			DCollection.findByUrl(collection_url),  
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection_url), 
         			sortBy, 
@@ -598,7 +598,7 @@ public class Targets extends AbstractController {
         return ok(
         		views.html.organisations.sites.render(
         			Organisation.findByUrl(organisation_url),  
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Target.pageOrganisationTargets(pageNo, 10, sortBy, order, filter, organisation_url), 
         			sortBy, 
@@ -684,7 +684,7 @@ public class Targets extends AbstractController {
         return ok(
         		usersites.render(
         			User.findByUrl(user_url),  
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Target.pageUserTargets(pageNo, 10, sortBy, order, filter, user_url, subject, collection), 
         			sortBy, 
@@ -773,7 +773,7 @@ public class Targets extends AbstractController {
 		Logger.info("Targets.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(Target.findByUrl(url));
-        return ok(edit.render(targetForm, User.find.byId(request().username())));
+        return ok(edit.render(targetForm, User.findByEmail(request().username())));
     }
     
     /**
@@ -783,7 +783,7 @@ public class Targets extends AbstractController {
     public static Result view(String url) {
         return ok(
                 view.render(
-                        Target.findByUrl(url), User.find.byId(request().username())
+                        Target.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -796,7 +796,7 @@ public class Targets extends AbstractController {
     public static Result viewrevision(Long nid) {
         return ok(
                 view.render(
-                        Target.findById(nid), User.find.byId(request().username())
+                        Target.findById(nid), User.findByEmail(request().username())
                 )
             );
     }
@@ -843,16 +843,16 @@ public class Targets extends AbstractController {
      */
     public static Result blank() {
         Logger.info("blank()");
-        return ok(blank.render(targetForm, User.find.byId(request().username())));
+        return ok(blank.render(targetForm, User.findByEmail(request().username())));
     }
     
     public static Result saveBlank() {
     	play.data.Form<Target> filledForm = targetForm.bindFromRequest();
 	    if(filledForm.hasErrors()) {
-	        return badRequest(blank.render(filledForm, User.find.byId(request().username())));
+	        return badRequest(blank.render(filledForm, User.findByEmail(request().username())));
 	    } else {
 	        flash("success", "You've saved");
-	        return ok(blank.render(filledForm, User.find.byId(request().username())));
+	        return ok(blank.render(filledForm, User.findByEmail(request().username())));
 	    }
     }
     
