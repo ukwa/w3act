@@ -161,6 +161,19 @@ public class ContactPerson extends Model
 		return res;
 	}
         
+	/**
+	 * This method filters contact persons by email and returns a list 
+	 * of filtered contact person objects.
+	 * @param email
+	 * @return
+	 */
+	public static List<ContactPerson> filterByEmail(String email) {
+		List<ContactPerson> res = new ArrayList<ContactPerson>();
+        ExpressionList<ContactPerson> ll = find.where().icontains(Const.EMAIL, email);
+    	res = ll.findList();
+		return res;
+	}
+        
     /**
      * This method is used to show contact person in a table.
      * It shows none value if no entry was found in database.
