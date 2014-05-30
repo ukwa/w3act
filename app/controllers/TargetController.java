@@ -742,9 +742,9 @@ public class TargetController extends AbstractController {
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
     	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
-    	Logger.info("collections main level size: " + suggestedCollections.size());
+//    	Logger.info("collections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-    	Logger.info("getCollections() json: " + jsonData.toString());
+//    	Logger.info("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
     }        
     
