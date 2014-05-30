@@ -507,6 +507,8 @@ public class CrawlPermissions extends AbstractController {
     	        updateAllByTarget(permission.url, permission.target, permission.status);
     	        Targets.updateQaStatus(permission.target, permission.status);
         	}
+        	Logger.info("Crawl permission was saved with status " + permission.status);
+  			flash("message", "Crawl permission was saved with status " + permission.status);
 	        return redirect(routes.CrawlPermissions.edit(permission.url));
         } 
         if (delete != null) {
