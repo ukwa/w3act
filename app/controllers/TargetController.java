@@ -299,22 +299,22 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.FIELD_WCT_ID) != null 
             		&& (getFormParam(Const.FIELD_WCT_ID).equals("")
             		|| !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID)))) {
-                Logger.info("You may only enter a numeric ID in 'WCT ID'.");
-	  			flash("message", "You may only enter a numeric ID in 'WCT ID'.");
+                Logger.info("Only numeric values are valid identifiers. Please check field 'WCT ID'.");
+	  			flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
 	  			return info();
         	}    	
 
         	if (getFormParam(Const.FIELD_SPT_ID) != null && !getFormParam(Const.FIELD_SPT_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
-                Logger.info("You may only enter a numeric ID in 'SPT ID'.");
-	  			flash("message", "You may only enter a numeric ID in 'SPT ID'.");
+                Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+	  			flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 	  			return info();
         	}    	
 
         	if (getFormParam(Const.LEGACY_SITE_ID) != null && !getFormParam(Const.LEGACY_SITE_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
-                Logger.info("You may only enter a numeric ID in 'LEGACY SITE ID'.");
-	  			flash("message", "You may only enter a numeric ID in 'LEGACY SITE ID'.");
+                Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+	  			flash("message", "Only numeric values are valid identifiers. Please check field  'LEGACY SITE ID'.");
 	  			return info();
         	}    	
 
