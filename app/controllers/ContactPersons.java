@@ -237,30 +237,30 @@ public class ContactPersons extends AbstractController {
             }
         	ContactPerson person = null;
             boolean isExisting = true;
-            try {
-            	List<ContactPerson> personByEmailList = ContactPerson.filterByEmail(getFormParam(Const.EMAIL));
-            	if (personByEmailList.size() > 0) {
-            		ContactPerson personByEmail = personByEmailList.get(0); 
-	            	if (StringUtils.isNotEmpty(personByEmail.name) 
-	            			&& StringUtils.isNotEmpty(personByEmail.email)
-	            			&& getFormParam(Const.NAME) != null 
-	            			&& getFormParam(Const.EMAIL) != null 
-	            			&& personByEmail.email.equals(getFormParam(Const.EMAIL))
-	            			&& !personByEmail.name.equals(getFormParam(Const.NAME))) {
-	            		String msg = "A contact person with email '" + getFormParam(Const.EMAIL) + 
-	    	  					"' is already in the Contact Persons list, but whith the Name '" + personByEmail.name + 
-	    	  					"' which is different from the given name '" + getFormParam(Const.NAME) + 
-	    	  					"'. Please re-populate the name field with the existing name, " +
-	    	  					"and either save the record with the correct name " +
-	    	  					"or enter an new contact email address.";
-	                	Logger.info(msg);
-	    	  			flash("message", msg);
-	    	  			return info();
-	            	}
-            	}
-            } catch (Exception e) {
-            	Logger.info("ContactPerson with given email is not existing in database. ");
-            }
+//            try {
+//            	List<ContactPerson> personByEmailList = ContactPerson.filterByEmail(getFormParam(Const.EMAIL));
+//            	if (personByEmailList.size() > 0) {
+//            		ContactPerson personByEmail = personByEmailList.get(0); 
+//	            	if (StringUtils.isNotEmpty(personByEmail.name) 
+//	            			&& StringUtils.isNotEmpty(personByEmail.email)
+//	            			&& getFormParam(Const.NAME) != null 
+//	            			&& getFormParam(Const.EMAIL) != null 
+//	            			&& personByEmail.email.equals(getFormParam(Const.EMAIL))
+//	            			&& !personByEmail.name.equals(getFormParam(Const.NAME))) {
+//	            		String msg = "A contact person with email '" + getFormParam(Const.EMAIL) + 
+//	    	  					"' is already in the Contact Persons list, but whith the Name '" + personByEmail.name + 
+//	    	  					"' which is different from the given name '" + getFormParam(Const.NAME) + 
+//	    	  					"'. Please re-populate the name field with the existing name, " +
+//	    	  					"and either save the record with the correct name " +
+//	    	  					"or enter an new contact email address.";
+//	                	Logger.info(msg);
+//	    	  			flash("message", msg);
+//	    	  			return info();
+//	            	}
+//            	}
+//            } catch (Exception e) {
+//            	Logger.info("ContactPerson with given email is not existing in database. ");
+//            }
             try {
                 try {
                 	person = ContactPerson.findByUrl(getFormParam(Const.URL));
