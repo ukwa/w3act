@@ -209,7 +209,7 @@
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" id="save" name="save" title="If crawl permission is required button is green, if crawl permission for given target already exists it is red, if it exists in higher domain level it is yellow">Save</button>
 				    @if(CrawlPermission.findById(Long.valueOf(form("id").value)) != null) {
-				    <button type="submit" class="btn btn-primary" name="delete">Delete</button>
+				    <button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
 				    }
 		       </div>
 			</div>

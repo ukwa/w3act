@@ -1098,7 +1098,7 @@
 				<div class="btn-group">
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
 				    @if(Instance.findById(Long.valueOf(form("nid").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" id="delete">Delete</button>
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
 					}
 		       </div>
 			</div>

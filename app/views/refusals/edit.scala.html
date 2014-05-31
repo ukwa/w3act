@@ -81,7 +81,7 @@
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" name="save">Save</button>
 					@if(PermissionRefusal.findById(Long.valueOf(form("id").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
 					}
 		       </div>
 			</div>

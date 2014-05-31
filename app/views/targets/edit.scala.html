@@ -1187,12 +1187,12 @@
 				    	&& !user.url.equals(form("author").value)) { 
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
 				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" id="delete" disabled>Delete</button>
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
 					   }
 					} else {
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
 				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" id="delete">Delete</button>
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
 					   }
 					}
 		       </div>
