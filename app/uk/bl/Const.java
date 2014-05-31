@@ -333,6 +333,8 @@ public final class Const {
 	public static final String SEARCH             = "search";
 	public static final String ADDENTRY           = "addentry";
 	public static final String SEND               = "send";
+	public static final String SELECT_ALL         = "selectall";
+	public static final String DESELECT_ALL       = "deselectall";
 	public static final String SEND_ALL           = "sendall";
 	public static final String SEND_SOME          = "sendsome";
 	public static final String PREVIEW            = "preview";

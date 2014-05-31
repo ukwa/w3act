@@ -16,6 +16,7 @@ import uk.bl.Const;
 import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -347,6 +348,34 @@ public class CrawlPermission extends Model
 	    }
 	    return res;
     }         
+    
+    /**
+     * Return a page of crawl permission 
+     *
+     * @param page Page to display
+     * @param pageSize Number of Users per page
+     * @param sortBy Crawl permission property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     * @param status The status of crawl permission request (e.g. QUEUED, PENDING...)
+     * @param target The field URL
+     */
+    public static Page<CrawlPermission> page(int page, int pageSize, String sortBy, String order, String filter, 
+    		String status, String target) {
+
+        return find.where()
+        		.icontains(Const.NAME, filter)
+        		.eq(Const.STATUS, status)
+//        		.ne(Const.STATUS, Const.NONE)
+//        		.ne(Const.STATUS, Const.NONE_VALUE)
+        		.icontains(Const.TARGET, target)
+//        		.ne(Const.TARGET, Const.NONE)
+//        		.ne(Const.TARGET, Const.NONE_VALUE)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }
     
     public String toString() {
         return "CrawlPermission(" + name + ")" + ", id:" + id;

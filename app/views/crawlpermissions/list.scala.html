@@ -1,4 +1,4 @@
-@(title: String, user: User, permissions: List[CrawlPermission], searchstr: String, cur_status: String)
+@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[CrawlPermission], currentSortBy: String, currentOrder: String, cur_status: String, target: String, sel: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -13,6 +13,69 @@
 			applySearch(context); 
 		});
 	</script>
+}
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    
+    // Generate the link
+    routes.CrawlPermissions.list(newPage, sortBy, order, searchstr, cur_status, target)
+    
+}
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(key:String, title:String) = {
+    <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
+        <a href="@link(0, key)">@title</a>
+    </th>
+}
+
+@pagination = {
+		<div class="text-center">
+			<ul class="pagination">
+	        	@if(currentPage.hasPrev) {
+	            	<li class="prev">
+	                    <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
+	                </li>
+	            } else {
+	                <li class="prev disabled">
+	                    <a>&larr; Previous</a>
+	                </li>
+	            }
+	            <li class="current">
+	                <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+	            </li>
+	            @if(currentPage.hasNext) {
+	                <li class="next">
+	                    <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
+	                </li>
+	            } else {
+	                <li class="next disabled">
+	                    <a>Next &rarr;</a>
+	                </li>
+				}
+			</ul>
+		</div>
 }
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
@@ -77,6 +140,8 @@
 				</div>				
 		    }
 		</div>	        
+		
+	@pagination
 
 	@helper.form(action=routes.CrawlPermissions.send, 'class -> "form-inline") {
 	   	<div class="row padding-20">
@@ -91,15 +156,19 @@
 					</tr>
 				</thead>
 				<tbody>
-				@permissions.map { permission =>		              
+				@for(permission <- currentPage.getList) {
 					<tr>
 						<td>
 							<label class="checkbox-inline">
-				                <input type="checkbox" name="@permission.name" value="true" checked /> <a href="@routes.CrawlPermissions.view(permission.url)">@permission.name</a> 
+							@if(sel.equals("selectall")) {
+				                <input type="checkbox" name="@permission.name" value="true" checked /> <a href="@routes.CrawlPermissions.view(permission.url)">@permission.name</a>
+				            } else { 
+				                <input type="checkbox" name="@permission.name" value="true" /> <a href="@routes.CrawlPermissions.view(permission.url)">@permission.name</a>
+				            } 
 							</label>
 						</td>
 						<td>
-			                @permission.target
+							<a href="@permission.target">@permission.target</a>			                
 						</td>
 						<td>
 			                @ContactPerson.findNamesByUrls(permission.contactPerson)
@@ -115,6 +184,8 @@
 				</tbody>
 			</table>
 		</div>
+			
+		@pagination
 		
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -144,12 +215,16 @@
 		<div class="row padding-20 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
-				@if(permissions.size() > 0 && CrawlPermissions.haveContactPerson(permissions)) {
+				@if(currentPage.getTotalRowCount() > 0 && CrawlPermissions.haveContactPerson(currentPage.getList())) {
+					<button type="submit" class="btn btn-primary" name="selectall">Select all</button>
+					<button type="submit" class="btn btn-primary" name="deselectall">Deselect all</button>
 					<button type="submit" class="btn btn-primary" name="sendall">Send all</button>
 					<button type="submit" class="btn btn-primary" name="sendsome">Send some</button>
 					<button type="submit" class="btn btn-primary" name="preview">Preview</button>
 					<button type="submit" class="btn btn-primary" name="reject">Reject</button>
 				} else {
+					<button type="submit" class="btn btn-primary" name="selectall" disabled>Select all</button>
+					<button type="submit" class="btn btn-primary" name="deselectall" disabled>Deselect all</button>
 					<button type="submit" class="btn btn-primary" name="sendall" disabled>Send all</button>
 					<button type="submit" class="btn btn-primary" name="sendsome" disabled>Send some</button>
 					<button type="submit" class="btn btn-primary" name="preview" disabled>Preview</button>
@@ -160,6 +235,7 @@
 		</div>
 		}		
 	}
+	
 	</article>
 }
 } else {

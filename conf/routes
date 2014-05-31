@@ -117,6 +117,7 @@ GET     /flags/new/:flag                    controllers.Flags.create(flag)
 POST    /flags                         		controllers.Flags.save()
 
 GET     /crawlpermissions                   	controllers.CrawlPermissions.index()
+GET     /crawlpermissions/list                  controllers.CrawlPermissions.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", status ?= "QUEUED", target ?= "", sel ?= "selectall")
 GET    	/crawlpermissions/search            	controllers.CrawlPermissions.search()
 GET    	/crawlpermissions/filterbyjson/:name	controllers.CrawlPermissions.filterByJson(name)
 GET     /crawlpermissions/new/:permission     	controllers.CrawlPermissions.create(permission)
