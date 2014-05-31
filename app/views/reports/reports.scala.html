@@ -169,10 +169,14 @@
 						@permissions.map { permission =>		              
 							<tr>
 								<td>
-					                @Target.findByUrl(permission.target).title
+								    @if(!Target.findByTarget(permission.target).title.equals("none")) {					                	
+					                	<a class="brand" href="@routes.Targets.view(Target.findByTarget(permission.target).url)">@Target.findByTarget(permission.target).title</a>
+					                } else {
+					                    none
+					                }
 								</td>
 								<td>
-					                @permission.target
+				                	<a class="brand" href="@permission.target">@permission.target</a>					                
 								</td>
 								<td>
 					                @permission.licenseDate
