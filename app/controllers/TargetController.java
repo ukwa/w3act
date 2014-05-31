@@ -314,7 +314,7 @@ public class TargetController extends AbstractController {
         	if (getFormParam(Const.LEGACY_SITE_ID) != null && !getFormParam(Const.LEGACY_SITE_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
                 Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-	  			flash("message", "Only numeric values are valid identifiers. Please check field  'LEGACY SITE ID'.");
+	  			flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 	  			return info();
         	}    	
 
