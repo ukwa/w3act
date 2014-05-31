@@ -56,6 +56,24 @@ public class TargetController extends AbstractController {
 	 */
 	public static Result info() {
 	    Target targetObj = new Target();
+        try {
+    	    Target target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
+        	if (getFormParam(Const.FIELD_WCT_ID) != null && !getFormParam(Const.FIELD_WCT_ID).equals("")
+        			&& !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
+            	targetObj.field_wct_id = target.field_wct_id;
+            }
+        	if (getFormParam(Const.FIELD_SPT_ID) != null && !getFormParam(Const.FIELD_SPT_ID).equals("")
+        			&& !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
+            	targetObj.field_spt_id = target.field_spt_id;
+        	}
+        	if (getFormParam(Const.LEGACY_SITE_ID) != null && !getFormParam(Const.LEGACY_SITE_ID).equals("")
+        			&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
+            	targetObj.legacy_site_id = target.legacy_site_id;
+            }
+        } catch (Exception e) {
+        	Logger.info("The target for given NID is not yet existing in database");
+        } 	
+
 	    targetObj.field_url = getFormParam(Const.FIELD_URL_NODE);
 	    targetObj.nid = Long.valueOf(getFormParam(Const.NID));
 	    targetObj.url = Const.ACT_URL + targetObj.nid;
@@ -276,6 +294,8 @@ public class TargetController extends AbstractController {
             	isExisting = false;
             } 	
         	
+//            Logger.info("wct id: " + getFormParam(Const.FIELD_WCT_ID) +
+//            		", isNumeric: " + Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID)));
             if (getFormParam(Const.FIELD_WCT_ID) != null 
             		&& (getFormParam(Const.FIELD_WCT_ID).equals("")
             		|| !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID)))) {
