@@ -301,6 +301,14 @@ public class Collections extends AbstractController {
         	String url = getFormParam(Const.URL);
         	Logger.info("deleting: " + url);
         	DCollection collection = DCollection.findByUrl(url);
+        	/**
+        	 * Check whether children exist
+        	 */
+            if (DCollection.hasChildren(collection.url)) {
+            	Logger.info("This collection has children nodes. Please re-assign children to other nodes first.");
+	  			flash("message", "This collection has children nodes. Please re-assign children to other nodes first.");
+	  			return info();
+            } 
         	Ebean.delete(collection);
 	        res = redirect(routes.Collections.index()); 
         }

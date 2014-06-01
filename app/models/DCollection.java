@@ -237,6 +237,20 @@ public class DCollection extends Model {
     }
     
     /**
+     * This method returns true if given collection has children nodes.
+     * @param collectionUrl The parent collection URL
+     * @return true if parent collection has children
+     */
+    public static boolean hasChildren(String collectionUrl) {
+    	boolean res = false;
+    	List<DCollection> collectionList = getChildLevelCollections(collectionUrl);
+    	if (collectionList.size() > 0) {
+    		res = true;
+    	}
+    	return res;
+    }
+    
+    /**
      * This method returns parent collections for given collection.
      * @param collectionUrl The identifier URL of collection
      * @return parent collection list
