@@ -194,6 +194,7 @@ public final class Const {
 	public static final String DEFAULT_ROLE       = "user";
 	public static final String DEFAULT_BL_ROLE    = "archivist";
 	public static final String PASSWORD           = "password";
+	public static final String PASSWORD_VALIDATION = "password_validation";
 	public static final String OLD_PASSWORD       = "oldpassword";
 	public static final String USER_URL           = "user_url";
 

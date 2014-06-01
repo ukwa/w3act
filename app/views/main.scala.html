@@ -86,6 +86,7 @@
 							@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 							<li><a href="@routes.Roles.index()">Roles</a></li>
 							}
+							<li><a href="@routes.Passwords.edit()">Change Password</a></li>
 						</ul>
 					</li>
 					<li><a href="@routes.Contact.index">Contact</a></li>

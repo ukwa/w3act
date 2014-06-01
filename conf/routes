@@ -265,6 +265,11 @@ GET     /api/subjects_instance/:url          controllers.InstanceController.getS
 GET     /api/suggested_collections_instance/:url      controllers.InstanceController.getSuggestedCollections(url)
 GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
 
+# Password management
+GET     /passwords                           controllers.Passwords.edit()
+POST    /passwords/save            			 controllers.Passwords.save()
+
+
 # Sample forms with validation
 GET     /targets/blank/						controllers.Targets.blank()
 POST    /targets							controllers.Targets.saveBlank()
