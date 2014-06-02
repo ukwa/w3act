@@ -16,7 +16,11 @@
 @main("", user, script) {
 
    	<div class="page-header">
+   		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
     	<h1><a href="@routes.CrawlPermissions.index()">Quality Control > Crawl Permissions > </a>Crawl Permission @form("name").value</h1>
+    	} else {
+    	<h1>Quality Control > Crawl Permissions > Crawl Permission @form("name").value</h1>
+    	}
 	</div>
 
 	<ul class="nav nav-tabs">

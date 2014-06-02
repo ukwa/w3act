@@ -89,7 +89,9 @@ public class TargetController extends AbstractController {
         } 
         if (getFormParam(Const.QA_STATUS) != null) {
         	targetObj.qa_status = getFormParam(Const.QA_STATUS);
-        } 
+        } else {
+        	targetObj.qa_status = Const.NONE_VALUE;
+        }
         if (getFormParam(Const.LANGUAGE) != null) {
         	targetObj.language = getFormParam(Const.LANGUAGE);
         } 
@@ -370,6 +372,8 @@ public class TargetController extends AbstractController {
             	Logger.debug("###   QA_STATUS");
             	newTarget.qa_status = getFormParam(Const.QA_STATUS);
             	CrawlPermissions.updateAllByTargetStatusChange(newTarget.field_url, newTarget.qa_status);
+            } else {
+            	newTarget.qa_status = Const.NONE_VALUE;
             } 
     		Logger.info("QA status: " + newTarget.qa_status + ", getFormParam(Const.QA_STATUS): " + getFormParam(Const.QA_STATUS));
             if (getFormParam(Const.LANGUAGE) != null) {

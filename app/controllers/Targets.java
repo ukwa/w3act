@@ -523,6 +523,7 @@ public class Targets extends AbstractController {
     	        	target.field_subsubject = Const.NONE;
     	        	target.field_subject = Const.NONE;
     	        }
+//	        	target.qa_status = Const.NONE_VALUE;
     			Logger.info("add target with url: " + target.url);
     			Logger.info("target title: " + target.title);
     			Form<Target> targetForm = Form.form(Target.class);
@@ -1015,6 +1016,7 @@ public class Targets extends AbstractController {
     	if (Target.getUkwaLicenceStatusList(fieldUrl).size() > 0) {
     		res = true;
     	}
+    	Logger.info("indicateUkwaLicenceStatus() res: " + res);
     	return res;
     }
     

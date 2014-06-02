@@ -1076,7 +1076,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
 						    <div class="col-sm-6">
-						        @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+						        @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 								<select name="qa_status" id="qa_status" class="form-control">
 								} else {
 								<select disabled name="qa_status" id="qa_status" class="form-control">
@@ -1102,7 +1102,8 @@
 						    <div class="col-sm-6">
 								@if(form("url").value != null && Target.existInDb(form("url").value)
 								    && form("qa_status").value != null 
-								    && (form("qa_status").value.equals("None") || form("qa_status").value.length() == 0)) {
+								    && (form("qa_status").value.equals("None")
+								    || form("qa_status").value.length() == 0)) {
 									@if(!Targets.indicateUkwaLicenceStatus(form("field_url").value) 
 									    || (Targets.indicateUkwaLicenceStatus(form("field_url").value) 
 									        && ((user.hasRole("sys_admin") 
@@ -1111,7 +1112,7 @@
 									        	|| user.hasRole("user"))))) {
 								<button type="submit" name="request" class="btn btn-success">Open License Request</button>
 									}
-								   @if(form("url").value != null) {
+								   @if(form("url").value != null && (user.hasRole("sys_admin") || user.hasRole("archivist"))) {
 								   <a href="@routes.CrawlPermissions.showCrawlPermissions(form("url").value)">Crawl Permissions</a>
 								   }
 								} else {

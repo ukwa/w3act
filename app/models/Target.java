@@ -1678,6 +1678,10 @@ public class Target extends Model {
 		Iterator<Target> itr = targets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
+//			Logger.info(
+//					"getUkwaLicenceStatusList() check that no request is in progress and the domain is of higher level. qa_status: " + 
+//							target.qa_status + ", target.field_url: " + target.field_url + 
+//							", isHigherLevel: " + isHigherLevel(target.field_url, fieldUrl));
 			if (target.qa_status != null 
 					&& target.qa_status.length() > 0 
 					&& !target.qa_status.toLowerCase().equals(Const.NONE)
