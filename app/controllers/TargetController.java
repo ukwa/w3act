@@ -116,7 +116,14 @@ public class TargetController extends AbstractController {
         	targetObj.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
         } 
         if (getFormParam(Const.FIELD_SUBJECT) != null) {
-    		targetObj.field_subject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
+        	String subjectListStr = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
+        	if (subjectListStr != null && subjectListStr.length() > 0
+        			&& subjectListStr.toLowerCase().contains(Const.NONE)
+        			&& subjectListStr.contains(Const.COMMA)) {
+        	    targetObj.field_subject = Const.NONE;
+        	} else {
+        		targetObj.field_subject = subjectListStr;
+        	}
     		Logger.debug("targetObj.field_subject: " + targetObj.field_subject);
         } else {
         	targetObj.field_subject = Const.NONE;
@@ -152,22 +159,6 @@ public class TargetController extends AbstractController {
         		targetObj.tags = Const.NONE;
         	}
         }
-//        if (getFormParam(Const.FLAGS) != null) {
-//        	if (!getFormParam(Const.FLAGS).toLowerCase().contains(Const.NONE)) {
-//            	String[] flags = getFormParams(Const.FLAGS);
-//            	String resFlags = "";
-//            	for (String flag: flags)
-//                {
-//            		if (flag != null && flag.length() > 0) {
-//                		String origFlag = Flags.getNameFromGuiName(flag);
-//            			resFlags = resFlags + Flag.findByName(origFlag).url + Const.LIST_DELIMITER;
-//            		}
-//                }
-//            	targetObj.flags = resFlags;
-//        	} else {
-//        		targetObj.flags = Const.NONE;
-//        	}
-//        }
         String flagStr = "";
         List<Flag> flagList = Flag.findAll();
         Iterator<Flag> flagItr = flagList.iterator();
@@ -404,7 +395,16 @@ public class TargetController extends AbstractController {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
             } 
             if (getFormParam(Const.FIELD_SUBJECT) != null) {
-            	newTarget.field_subject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
+            	String subjectListStr = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
+            	if (subjectListStr != null && subjectListStr.length() > 0
+            			&& subjectListStr.toLowerCase().contains(Const.NONE)
+            			&& subjectListStr.contains(Const.COMMA)) {
+            		String msg = "Selected subjects cannot comprise simultaneously value 'None' and other values. Please select either value 'None' or other selections.";
+                	Logger.info(msg);
+    	  			flash("message", msg);
+    	  			return info();            		
+            	}
+            	newTarget.field_subject = subjectListStr;
         		Logger.debug("newTarget.field_subject: " + newTarget.field_subject);
             } else {
             	newTarget.field_subject = Const.NONE;
@@ -444,24 +444,6 @@ public class TargetController extends AbstractController {
             		newTarget.tags = Const.NONE;
             	}
             }
-//            if (getFormParam(Const.FLAGS) != null) {
-//            	if (!getFormParam(Const.FLAGS).toLowerCase().contains(Const.NONE)) {
-//	            	String[] flags = getFormParams(Const.FLAGS);
-//	            	String resFlags = "";
-//	            	for (String flag: flags)
-//	                {
-//	            		if (flag != null && flag.length() > 0) {
-//	                		Logger.info("add flag: " + flag);
-//	                		String origFlag = Flags.getNameFromGuiName(flag);
-//	                		Logger.info("original flag name: " + origFlag);
-//	            			resFlags = resFlags + Flag.findByName(origFlag).url + Const.LIST_DELIMITER;
-//	            		}
-//	                }
-//	            	newTarget.flags = resFlags;
-//            	} else {
-//            		newTarget.flags = Const.NONE;
-//            	}
-//            }
             String flagStr = "";
             List<Flag> flagList = Flag.findAll();
             Iterator<Flag> flagItr = flagList.iterator();
