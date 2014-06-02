@@ -882,22 +882,22 @@ public class TargetController extends AbstractController {
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
 	    		Taxonomy subject = itr.next();
-    			Logger.debug("add subject: " + subject.name + ", with url: " + subject.url +
-    					", parent:" + subject.parent + ", parent size: " + subject.parent.length());
+//    			Logger.debug("add subject: " + subject.name + ", with url: " + subject.url +
+//    					", parent:" + subject.parent + ", parent size: " + subject.parent.length());
 	    		if ((parent && subject.parent.length() == 0) || !parent) {
 		    		if (firstTime) {
 		    			firstTime = false;
 		    		} else {
 		    			sb.append(", ");
 		    		}
-	    			Logger.debug("added");
+//	    			Logger.debug("added");
 					sb.append("{\"title\": \"" + subject.name + "\"," + checkSubjectSelection(subject.url, targetUrl) + 
 							" \"key\": \"" + subject.url + "\"" + 
 							getSubjectChildren(subject.url, targetUrl) + 
 							"}");
 	    		}
 	    	}
-	    	Logger.info("subjectList level size: " + subjectList.size());
+//	    	Logger.info("subjectList level size: " + subjectList.size());
 	    	sb.append("]");
 	    	res = sb.toString();
 //	    	Logger.info("getSubjectTreeElements() res: " + res);
@@ -916,12 +916,12 @@ public class TargetController extends AbstractController {
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
-    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
+//    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
     	sb.append(getSubjectTreeElements(parentSubjects, targetUrl, true));
     	Logger.info("subjects main level size: " + parentSubjects.size());
-    	Logger.info("sb.toString(): " + sb.toString());
+//    	Logger.info("sb.toString(): " + sb.toString());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-    	Logger.info("getSubjectTree() json: " + jsonData.toString());
+//    	Logger.info("getSubjectTree() json: " + jsonData.toString());
         return ok(jsonData);
     }        
     

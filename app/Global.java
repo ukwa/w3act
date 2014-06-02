@@ -207,12 +207,17 @@ public class Global extends GlobalSettings {
 					// store urls in DB
 	                Ebean.save(allUrls);
 	                Logger.info("targets successfully loaded");
-	//                List<Target> targetList = (List<Target>) Target.find.all();
-	//                Iterator<Target> targetItr = targetList.iterator();
-	//                while (targetItr.hasNext()) {
-	//                	Target target = targetItr.next();
-	//                    Logger.info("Target test object: " + target.toString());
-	//                }
+//	                List<Target> targetList = (List<Target>) Target.find.all();
+//	                Iterator<Target> targetItr = targetList.iterator();
+//	                while (targetItr.hasNext()) {
+//	                	Target target = targetItr.next();
+////	                    Logger.info("Target test object: " + target.toString());
+//						if (target.field_subject == null
+//								|| target.field_subject.length() == 0) {
+//							target.field_subject = Const.NONE;
+//							Ebean.update(target);
+//						}
+//	                }
 	                Logger.info("load organisations ...");
 					// aggregate organisations data from drupal and store JSON content in a file
 			        List<Object> allOrganisations = JsonUtils.getDrupalData(Const.NodeType.ORGANISATION);
