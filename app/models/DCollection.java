@@ -345,7 +345,7 @@ public class DCollection extends Model {
     	                )
     	        );
     	res = ll.findList();
-//    	Logger.info("getFirstLevelCollections list size: " + res.size());
+    	Logger.info("getFirstLevelCollections list size: " + res.size());
 		return res;
 	}       
     

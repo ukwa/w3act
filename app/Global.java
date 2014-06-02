@@ -1,5 +1,6 @@
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +27,10 @@ import uk.bl.api.Utils;
 import com.avaje.ebean.Ebean;
 
 import controllers.Organisations;
-
 import play.*;
 import play.mvc.*;
 import play.mvc.Http.*;
 import play.libs.F.*;
-
 import static play.mvc.Results.*;
 
 public class Global extends GlobalSettings {
@@ -152,6 +151,24 @@ public class Global extends GlobalSettings {
             Ebean.save(sectionList);
 	    }
 	    
+	    /**
+	     * This method removes from taxonomy list old subject taxonomies.
+	     * @param taxonomyList
+	     * @return
+	     */
+	    public static List<Taxonomy> cleanUpTaxonomies(List<Object> taxonomyList) {
+	    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+            Iterator<Object> taxonomyItr = taxonomyList.iterator();
+            while (taxonomyItr.hasNext()) {
+            	Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
+            	if (!(taxonomy.ttype.equals(Const.SUBJECT) && (taxonomy.parent == null || taxonomy.parent.length() == 0)) 
+            			&& !(taxonomy.ttype.equals(Const.SUBSUBJECT) && taxonomy.parent.contains(Const.ACT_URL))) {
+            		res.add(taxonomy);
+            	}
+            }
+            return res;
+	    }
+	    
         @SuppressWarnings("unchecked")
 		public static void insert(Application app) {
             if(Ebean.find(User.class).findRowCount() == 0) {
@@ -207,8 +224,10 @@ public class Global extends GlobalSettings {
 	                Logger.info("load taxonomies ...");
 	                // aggregate original taxonomies from drupal extracting information from aggregated data
 			        List<Object> allTaxonomies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY);
-					// store urls in DB
+//			        List<Taxonomy> cleanedTaxonomies = cleanUpTaxonomies(allTaxonomies);
+					// store taxonomies in DB
 	                Ebean.save(allTaxonomies);
+//	                Ebean.save(cleanedTaxonomies);
 	                Logger.info("taxonomies successfully loaded");
 	                // due to merging of different original object models the resulting 
 	                // collection set is evaluated from particular taxonomy type
