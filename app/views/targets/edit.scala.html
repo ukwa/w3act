@@ -570,24 +570,25 @@
 					</div>
 		     	</div>		    		    
      			     		
-		     	<div class="row padding-10">
+		   		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="status" class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
+							<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
 						    <div class="col-sm-6">
-								<select multiple name="flags" id="flags" class="form-control">
-					                @for(flag <- Flag.findAll()) {
-						                @if(form("flags").value != null && form("flags").value.contains(flag.url)) {
-						                	<option selected>@Flags.getGuiName(flag.name)</option>
+						        @for(flag <- Flag.findAll()) {
+									<label class="checkbox-inline">
+						                @if(form("flags").value != null && form("flags").value.contains(flag.name)) {
+						                	<input type="checkbox" name="@flag.name" value="true" checked />
 						                } else {
-						                	<option>@Flags.getGuiName(flag.name)</option>
+						                	<input type="checkbox" name="@flag.name" value="true" />
 						                }
-					                }
-								</select>
+						                @Flags.getGuiName(flag.name)
+					                </label>
+					            }
 							</div>
 						</div>
 					</div>
-		     	</div>	
+		     	</div>	     		
 
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">

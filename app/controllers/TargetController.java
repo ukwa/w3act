@@ -150,22 +150,46 @@ public class TargetController extends AbstractController {
         		targetObj.tags = Const.NONE;
         	}
         }
-        if (getFormParam(Const.FLAGS) != null) {
-        	if (!getFormParam(Const.FLAGS).toLowerCase().contains(Const.NONE)) {
-            	String[] flags = getFormParams(Const.FLAGS);
-            	String resFlags = "";
-            	for (String flag: flags)
-                {
-            		if (flag != null && flag.length() > 0) {
-                		String origFlag = Flags.getNameFromGuiName(flag);
-            			resFlags = resFlags + Flag.findByName(origFlag).url + Const.LIST_DELIMITER;
-            		}
+//        if (getFormParam(Const.FLAGS) != null) {
+//        	if (!getFormParam(Const.FLAGS).toLowerCase().contains(Const.NONE)) {
+//            	String[] flags = getFormParams(Const.FLAGS);
+//            	String resFlags = "";
+//            	for (String flag: flags)
+//                {
+//            		if (flag != null && flag.length() > 0) {
+//                		String origFlag = Flags.getNameFromGuiName(flag);
+//            			resFlags = resFlags + Flag.findByName(origFlag).url + Const.LIST_DELIMITER;
+//            		}
+//                }
+//            	targetObj.flags = resFlags;
+//        	} else {
+//        		targetObj.flags = Const.NONE;
+//        	}
+//        }
+        String flagStr = "";
+        List<Flag> flagList = Flag.findAll();
+        Iterator<Flag> flagItr = flagList.iterator();
+        while (flagItr.hasNext()) {
+        	Flag flag = flagItr.next();
+//        	Logger.info("flag: " + flag + ", param: " + getFormParam(flag.name));
+            if (getFormParam(flag.name) != null) {
+                boolean flagFlag = Utils.getNormalizeBooleanString(getFormParam(flag.name));
+//            	Logger.info("flagFlag: " + flagFlag);
+                if (flagFlag) {
+                	if (flagStr.length() == 0) {
+                		flagStr = flag.name;
+                	} else {
+                		flagStr = flagStr + ", " + flag.name;
+                	}
                 }
-            	targetObj.flags = resFlags;
-        	} else {
-        		targetObj.flags = Const.NONE;
-        	}
+            }
         }
+        if (flagStr.length() == 0) {
+        	targetObj.flags = Const.NONE;
+        } else {
+        	targetObj.flags = flagStr;
+        }
+        Logger.info("flagStr: "+ flagStr + ", targetObj.flags: " + targetObj.flags);
         targetObj.justification = getFormParam(Const.JUSTIFICATION);
         targetObj.summary = getFormParam(Const.SUMMARY);
         targetObj.revision = getFormParam(Const.REVISION);
@@ -416,24 +440,48 @@ public class TargetController extends AbstractController {
             		newTarget.tags = Const.NONE;
             	}
             }
-            if (getFormParam(Const.FLAGS) != null) {
-            	if (!getFormParam(Const.FLAGS).toLowerCase().contains(Const.NONE)) {
-	            	String[] flags = getFormParams(Const.FLAGS);
-	            	String resFlags = "";
-	            	for (String flag: flags)
-	                {
-	            		if (flag != null && flag.length() > 0) {
-	                		Logger.info("add flag: " + flag);
-	                		String origFlag = Flags.getNameFromGuiName(flag);
-	                		Logger.info("original flag name: " + origFlag);
-	            			resFlags = resFlags + Flag.findByName(origFlag).url + Const.LIST_DELIMITER;
-	            		}
-	                }
-	            	newTarget.flags = resFlags;
-            	} else {
-            		newTarget.flags = Const.NONE;
-            	}
+//            if (getFormParam(Const.FLAGS) != null) {
+//            	if (!getFormParam(Const.FLAGS).toLowerCase().contains(Const.NONE)) {
+//	            	String[] flags = getFormParams(Const.FLAGS);
+//	            	String resFlags = "";
+//	            	for (String flag: flags)
+//	                {
+//	            		if (flag != null && flag.length() > 0) {
+//	                		Logger.info("add flag: " + flag);
+//	                		String origFlag = Flags.getNameFromGuiName(flag);
+//	                		Logger.info("original flag name: " + origFlag);
+//	            			resFlags = resFlags + Flag.findByName(origFlag).url + Const.LIST_DELIMITER;
+//	            		}
+//	                }
+//	            	newTarget.flags = resFlags;
+//            	} else {
+//            		newTarget.flags = Const.NONE;
+//            	}
+//            }
+            String flagStr = "";
+            List<Flag> flagList = Flag.findAll();
+            Iterator<Flag> flagItr = flagList.iterator();
+            while (flagItr.hasNext()) {
+            	Flag flag = flagItr.next();
+//            	Logger.info("flag: " + flag + ", param: " + getFormParam(flag.name));
+                if (getFormParam(flag.name) != null) {
+                    boolean flagFlag = Utils.getNormalizeBooleanString(getFormParam(flag.name));
+//                	Logger.info("flagFlag: " + flagFlag);
+                    if (flagFlag) {
+                    	if (flagStr.length() == 0) {
+                    		flagStr = flag.name;
+                    	} else {
+                    		flagStr = flagStr + ", " + flag.name;
+                    	}
+                    }
+                }
             }
+            if (flagStr.length() == 0) {
+            	newTarget.flags = Const.NONE;
+            } else {
+            	newTarget.flags = flagStr;
+            }
+            Logger.info("flagStr: "+ flagStr + ", newTarget.flags: " + newTarget.flags);
             newTarget.justification = getFormParam(Const.JUSTIFICATION);
             newTarget.summary = getFormParam(Const.SUMMARY);
             newTarget.revision = getFormParam(Const.REVISION);
