@@ -771,6 +771,11 @@ public class Targets extends AbstractController {
     public static Result edit(String url) {
 		Logger.info("Targets.edit() url: " + url);
 		Target target = Target.findByUrl(url);
+		if (target.field_subject == null || target.field_subject.length() == 0) {
+			Logger.info("Targets.edit() set subject value to 'None' for imported targets.");
+			target.field_subject = Const.NONE;
+			Ebean.update(target);
+		}		
 		Logger.info("Targets.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(Target.findByUrl(url));
