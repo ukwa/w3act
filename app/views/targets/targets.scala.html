@@ -166,7 +166,7 @@
 						            	<div class="col-sm-6">
 											<select name="field_subject" class="form-control target-form-control" id="subject">
 									        	<option>None</option>
-									            @for(subject <- Taxonomy.findListByTypeSorted("subject")) {
+									            @for(subject <- Taxonomy.findListByTypeSortedAll()) {
 							                 			@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
 							                			<option selected>@subject.name</option>
 							                		} else {

@@ -318,6 +318,33 @@ public class Taxonomy extends Model {
     }
 
     /**
+     * Retrieve a taxonomy by name. The origin of these subjects is from the configuration file.
+     * @param title
+     * @return taxonomy object
+     */
+    public static Taxonomy findByNameConf(String name) {
+    	Taxonomy res = new Taxonomy();
+    	if (name != null && name.length() > 0) {
+//    		Logger.info("p1: " + name);
+    		if (name.contains(Const.COMMA)) {
+    			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+    		}
+    		res = find.where()
+    				.eq(Const.NAME, name)
+    				.not(Expr.icontains(Const.PARENT, Const.ACT_URL))
+//                Expr.icontains(Const.FIELD_URL_NODE, filter),
+//                Expr.icontains(Const.TITLE, filter)
+//             ))
+//    				.(Const.PARENT, Const.ACT_URL)
+    				.findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+//		Logger.info("res: " + res);
+    	return res;
+    }
+
+    /**
      * Retrieve a taxonomy by title for the case that multiple definitions for the same
      * title were created in database e.g. one retrieved from Drupal and second from
      * configuration files.
@@ -463,6 +490,18 @@ public class Taxonomy extends Model {
      * This method returns all taxonomies by type alphabetically sorted.
      * @return user list
      */
+    public static List<Taxonomy> findListByTypeSortedAll() {
+    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	Page<Taxonomy> page = pageByTypeAll(0, find.all().size(), Const.NAME, Const.ASC, "");
+    	res = page.getList();
+    	Logger.info("findListByTypeSortedAll() subjects list size: " + res.size());
+        return res;
+    }
+        	
+    /**
+     * This method returns all taxonomies by type alphabetically sorted.
+     * @return user list
+     */
     public static List<Taxonomy> findListByTypeSortedExt(String type, String value) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	Page<Taxonomy> page = pageByTypeAndValue(0, find.all().size(), Const.NAME, Const.ASC, "", type, value);
@@ -596,6 +635,35 @@ public class Taxonomy extends Model {
 
         return find.where().icontains(Const.NAME, filter)
         		.eq(Const.TTYPE, type)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * Return a page of Taxonomy by Type
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param type Taxonomy type
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Taxonomy> pageByTypeAll(int page, int pageSize, String sortBy, String order, 
+    		String filter) {
+
+        return find.where()
+        		.icontains(Const.NAME, filter)
+	        	.add(Expr.or(
+		                Expr.icontains(Const.TTYPE, Const.SUBJECT),
+		                Expr.icontains(Const.TTYPE, Const.SUBSUBJECT)
+	        		))
+	        	.add(Expr.or(
+		                Expr.isNull(Const.PARENT),
+		                Expr.not(Expr.icontains(Const.PARENT, Const.ACT_URL))
+	        		))
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

@@ -280,7 +280,7 @@ public class Targets extends AbstractController {
     public static Result targets(int pageNo, String sortBy, String order, String filter, String curator,
     		String organisation, String subject, String crawlFrequency, String depth, String collection, 
     		String license, int pageSize, String flag) {
-    	Logger.info("Targets.targets()");   	
+    	Logger.info("Targets.targets() subject: " + subject);   	
         return ok(
         	targets.render(
         			"Targets", 
@@ -355,7 +355,7 @@ public class Targets extends AbstractController {
     	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
     		try {
     			Logger.info("find subject for title: " + subject_name + ". " + subject_name.length());
-           		subject = Taxonomy.findByNameExt(subject_name).url;
+           		subject = Taxonomy.findByNameConf(subject_name).url;
     		} catch (Exception e) {
     			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
     		}
