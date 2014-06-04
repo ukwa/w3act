@@ -399,10 +399,17 @@ public class TargetController extends AbstractController {
             	if (subjectListStr != null && subjectListStr.length() > 0
             			&& subjectListStr.toLowerCase().contains(Const.NONE)
             			&& subjectListStr.contains(Const.COMMA)) {
-            		String msg = "Selected subjects cannot comprise simultaneously value 'None' and other values. Please select either value 'None' or other selections.";
-                	Logger.info(msg);
-    	  			flash("message", msg);
-    	  			return info();            		
+            		if (subjectListStr.contains(Const.NONE_VALUE + Const.COMMA + " ")) {
+            			subjectListStr = subjectListStr.replace(Const.NONE_VALUE + Const.COMMA + " ", "");
+            		}
+            		if (subjectListStr.contains(Const.COMMA + " " + Const.NONE_VALUE)) {
+            			subjectListStr = subjectListStr.replace(Const.COMMA + " " + Const.NONE_VALUE, "");
+            		}
+            		Logger.info("after removing 'None' value is it was combined with another subject");
+//            		String msg = "Selected subjects cannot comprise simultaneously value 'None' and other values. Please select either value 'None' or other selections.";
+//                	Logger.info(msg);
+//    	  			flash("message", msg);
+//    	  			return info();            		
             	}
             	newTarget.field_subject = subjectListStr;
         		Logger.debug("newTarget.field_subject: " + newTarget.field_subject);
