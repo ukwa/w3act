@@ -470,6 +470,26 @@ public class Utils {
     {  
         try {  
             Double.parseDouble(str);  
+            String regex = "[0-9]+";
+            if (str.matches(regex) == false) {
+            	return false;
+            }
+        } catch (NumberFormatException nfe) {  
+            return false;  
+        }  
+        return true;  
+    }    
+    
+    /**
+     * This method checks whether given string is
+     * a numeric value of type Long.
+     * @param str
+     * @return true if numeric
+     */
+    public static boolean isNumericLong(String str)  
+    {  
+        try {  
+            Long.parseLong(str);  
         } catch (NumberFormatException nfe) {  
             return false;  
         }  

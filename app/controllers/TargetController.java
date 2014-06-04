@@ -387,6 +387,7 @@ public class TargetController extends AbstractController {
             		&& Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
         		Logger.info("legacy site id: " + getFormParam(Const.LEGACY_SITE_ID) + ".");
             	newTarget.legacy_site_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
+//            	newTarget.legacy_site_id = Long.parseLong(getFormParam(Const.LEGACY_SITE_ID));
             }
 
     		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
