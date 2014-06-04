@@ -292,10 +292,12 @@ public class TargetController extends AbstractController {
             	    	missingFields = missingFields + Const.COMMA + " " + key;
             	    }
             	}
-            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
-	  					"Missing fields are: " + missingFields);
-	  			return info();
+            	if (missingFields != null) {
+	            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + missingFields);
+		  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
+		  					"Missing fields are: " + missingFields);
+		  			return info();
+            	}
             }
         	        	
         	DynamicForm requestData = Form.form().bindFromRequest();
@@ -760,7 +762,7 @@ public class TargetController extends AbstractController {
      * @return collection object in JSON form
      */
     public static String getTreeElements(List<DCollection> collectionList, String targetUrl, boolean parent) { 
-    	Logger.info("getTreeElements() target URL: " + targetUrl);
+//    	Logger.info("getTreeElements() target URL: " + targetUrl);
     	String res = "";
     	if (collectionList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
@@ -799,7 +801,7 @@ public class TargetController extends AbstractController {
      */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getSuggestedCollections(String targetUrl) {
-    	Logger.info("getSuggestedCollections() target URL: " + targetUrl);
+//    	Logger.info("getSuggestedCollections() target URL: " + targetUrl);
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
