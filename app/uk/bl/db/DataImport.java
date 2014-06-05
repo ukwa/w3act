@@ -2,6 +2,7 @@ package uk.bl.db;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,24 +36,31 @@ public enum DataImport {
         if(Ebean.find(User.class).findRowCount() == 0) {
             try {
                 Logger.info("loading taxonomies from configuration ...");
-                Map<String,List<Object>> alltaxonomies = (Map<String,List<Object>>)Yaml.load("taxonomies.yml");
+                @SuppressWarnings("unchecked")
+				Map<String,List<Object>> alltaxonomies = (Map<String,List<Object>>)Yaml.load("taxonomies.yml");
                 insertInitialData(Const.TAXONOMIES, Taxonomy.class, alltaxonomies);	
                 Logger.info("loading open tags from configuration ...");
-                Map<String,List<Object>> alltags = (Map<String,List<Object>>)Yaml.load("tags.yml");
+                @SuppressWarnings("unchecked")
+				Map<String,List<Object>> alltags = (Map<String,List<Object>>)Yaml.load("tags.yml");
                 insertInitialData(Const.TAGS, Tag.class, alltags);	
                 Logger.info("loading flags from configuration ...");
-                Map<String,List<Object>> allflags = (Map<String,List<Object>>)Yaml.load("flags.yml");
+                @SuppressWarnings("unchecked")
+				Map<String,List<Object>> allflags = (Map<String,List<Object>>)Yaml.load("flags.yml");
                 insertInitialData(Const.FLAGS, Flag.class, allflags);	
                 Logger.info("loading e-mail templates from configuration ...");
-                Map<String,List<Object>> alltemplates = (Map<String,List<Object>>)Yaml.load("templates.yml");
+                @SuppressWarnings("unchecked")
+				Map<String,List<Object>> alltemplates = (Map<String,List<Object>>)Yaml.load("templates.yml");
                 insertInitialData(Const.MAILTEMPLATES, MailTemplate.class, alltemplates);	
                 Logger.info("loading contact persons from configuration ...");
-                Map<String,List<Object>> allContactPersons = (Map<String,List<Object>>)Yaml.load("contact-persons.yml");
+                @SuppressWarnings("unchecked")
+				Map<String,List<Object>> allContactPersons = (Map<String,List<Object>>)Yaml.load("contact-persons.yml");
                 insertInitialData(Const.CONTACTPERSONS, ContactPerson.class, allContactPersons);	
                 Logger.info("loading users from configuration ...");
-                Map<String,List<Object>> allusers = (Map<String,List<Object>>)Yaml.load("users.yml");
+                @SuppressWarnings("unchecked")
+				Map<String,List<Object>> allusers = (Map<String,List<Object>>)Yaml.load("users.yml");
                 insertInitialData(Const.USERS, User.class, allusers);	
-                Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
+                @SuppressWarnings("unchecked")
+				Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
                 insertInitialData(Const.ROLES, Role.class, all);	
                 insertInitialData(Const.PERMISSIONS, Permission.class, all);	
                 insertInitialData(Const.ORGANISATIONS, Organisation.class, all);
@@ -212,7 +220,25 @@ public enum DataImport {
             Ebean.update(target);
 		}
 	}
-	
+
+    /**
+     * This method removes from taxonomy list old subject taxonomies.
+     * @param taxonomyList
+     * @return
+     */
+    public List<Taxonomy> cleanUpTaxonomies(List<Object> taxonomyList) {
+    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+        Iterator<Object> taxonomyItr = taxonomyList.iterator();
+        while (taxonomyItr.hasNext()) {
+        	Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
+        	if (!(taxonomy.ttype.equals(Const.SUBJECT) && (taxonomy.parent == null || taxonomy.parent.length() == 0)) 
+        			&& !(taxonomy.ttype.equals(Const.SUBSUBJECT) && taxonomy.parent.contains(Const.ACT_URL))) {
+        		res.add(taxonomy);
+        	}
+        }
+        return res;
+    }
+    
 	public static void main(String[] args) {
 		DataImport.INSTANCE.insert();
 	}
