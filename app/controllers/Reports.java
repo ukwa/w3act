@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import models.ContactPerson;
 import models.CrawlPermission;
 import models.Organisation;
 import models.Target;
@@ -204,10 +205,31 @@ public class Reports extends AbstractController {
     		isProcessed = true;
     	} 
     	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+    	Logger.info("processFilterReports() Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
     		res = models.CrawlPermission.filterByStatus(status);
+    	}
+        
+    	Logger.info("organisation: " + organisation + ", res size: " + res.size());
+    	if (organisation != null && !organisation.equals(Const.NONE) && organisation.length() > 0) {
+	        List<CrawlPermission> resByOrganisation = new ArrayList<CrawlPermission>();
+	        Iterator<CrawlPermission> resIter = res.iterator();
+	        while (resIter.hasNext()) {
+	        	CrawlPermission permission = resIter.next();
+	        	Logger.info("permission.contactPerson: " + permission.contactPerson);
+	        	if (permission.contactPerson != null && permission.contactPerson.length() > 0) {
+	        		ContactPerson person = ContactPerson.findByUrl(permission.contactPerson);
+		        	Logger.info("person.contactOrganisation: " + person.contactOrganisation);
+	            	if (person.contactOrganisation != null && person.contactOrganisation.length() > 0) {
+			        	Logger.info("Organisation.findByUrl(organisation).title: " + Organisation.findByUrl(organisation).title);
+	            		if (Organisation.findByUrl(organisation).title.contains(person.contactOrganisation)) {
+	            			resByOrganisation.add(permission);
+	            		}
+	            	}
+	        	}
+	        }
+	        return resByOrganisation;
     	}
         return res;
     }

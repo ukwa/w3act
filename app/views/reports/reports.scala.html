@@ -77,7 +77,7 @@
 						            	<div class="col-sm-6">
 											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
 									        	<option>All Agencies</option>
-									            	@for(organisation <- Organisation.findAll()) {
+									            	@for(organisation <- Organisation.findAllSorted()) {
 							                 		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
 								                			<option selected>@organisation.title</option>
 								                		} else {
