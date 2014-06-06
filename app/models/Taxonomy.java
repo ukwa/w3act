@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @SuppressWarnings("serial")
 @Entity 
+@Table(name = "taxonomy")
 public class Taxonomy extends Model {
      
     @Id

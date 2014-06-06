@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
@@ -20,6 +21,7 @@ import com.avaje.ebean.ExpressionList;
  * This class supports the management of e-mail templates.
  */
 @Entity
+@Table(name = "mail_template")
 public class MailTemplate extends Model
 {
 
@@ -87,7 +89,12 @@ public class MailTemplate extends Model
 
     public static final Model.Finder<Long, MailTemplate> find = new Model.Finder<Long, MailTemplate>(Long.class, MailTemplate.class);
 
-    public String getName()
+    
+    public MailTemplate() {
+    	super();
+    }
+
+	public String getName()
     {
         return name;
     }

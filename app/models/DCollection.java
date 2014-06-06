@@ -20,7 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * DCollection entity managed by Ebean
  */
 @SuppressWarnings("serial")
-@Entity 
+@Entity
+@Table(name = "dcollection")
 public class DCollection extends Model {
 
     @Id @JsonIgnore
@@ -108,6 +109,7 @@ public class DCollection extends Model {
     }
 
     public DCollection() {
+    	super();
         this.publish = false;
     }
     

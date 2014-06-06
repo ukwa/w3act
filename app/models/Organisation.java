@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @SuppressWarnings("serial")
 @Entity 
+@Table(name = "organisation")
 public class Organisation extends Model {
 
     @Id @JsonIgnore

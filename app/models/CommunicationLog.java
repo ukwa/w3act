@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
@@ -22,6 +23,7 @@ import uk.bl.api.Utils;
  * outside ACT. Archivist is treating each individual communication as a unique record.
  */
 @Entity
+@Table(name = "communication_log")
 public class CommunicationLog extends Model
 {
 

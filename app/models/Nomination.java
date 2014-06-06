@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * This class allows archivist to manage nominations.
  */
 @Entity
+@Table(name = "nomination")
 public class Nomination extends Model
 {
 
@@ -115,6 +117,10 @@ public class Nomination extends Model
 
     public static final Model.Finder<Long, Nomination> find = new Model.Finder<Long, Nomination>(Long.class, Nomination.class);
 
+    public Nomination() {
+    	super();
+    }
+    
     public String getName()
     {
         return name;

@@ -14,6 +14,7 @@ import uk.bl.Const;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,7 @@ import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table(name = "permission")
 public class Permission extends Model
 {
     /**

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
@@ -20,6 +21,7 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open flags.
  */
 @Entity
+@Table(name = "flag")
 public class Flag extends Model
 {
 

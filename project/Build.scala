@@ -16,7 +16,8 @@ object ApplicationBuild extends Build {
       "com.maxmind.geoip2" % "geoip2" % "0.7.0",
       "org.apache.commons" % "commons-email" % "1.3.2",
       "commons-io" % "commons-io" % "2.3",
-	  "com.rabbitmq" % "amqp-client" % "3.3.1"
+	  "com.rabbitmq" % "amqp-client" % "3.3.1",
+	  "org.avaje" % "ebean" % "2.7.1"  
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
@@ -27,7 +28,8 @@ object ApplicationBuild extends Build {
 	        val ta: Tests.Argument = arg.asInstanceOf[Tests.Argument]
 	        val newArg = if(ta.framework == Some(TestFrameworks.JUnit)) ta.copy(args = List.empty[String]) else ta
 	      } yield newArg
-	    }    
+	    },
+    	ebeanEnabled := true
     )    
 
 }

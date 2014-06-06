@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
@@ -20,6 +21,7 @@ import com.avaje.ebean.ExpressionList;
  * (usually outside ACT), and why.
  */
 @Entity
+@Table(name = "permission_refusal")
 public class PermissionRefusal extends Model
 {
 

@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.Logger;
@@ -33,6 +34,7 @@ import controllers.Flags;
  */
 @SuppressWarnings("serial")
 @Entity 
+@Table(name = "instance")
 public class Instance extends Model {
 
     @Required
@@ -162,6 +164,10 @@ public class Instance extends Model {
     @Column(columnDefinition = "TEXT")
     public String authors; 
 
+    public Instance() {
+    	super();
+    }
+
     /**
      * Constructor
      * @param title
@@ -170,9 +176,6 @@ public class Instance extends Model {
     public Instance(String title, String url) {
     	this.title = title;
     	this.url = url;
-    }
-
-    public Instance() {
     }
 
     // -- Queries

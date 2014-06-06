@@ -240,6 +240,8 @@ public enum DataImport {
     }
     
 	public static void main(String[] args) {
+		Logger.info("start");
 		DataImport.INSTANCE.insert();
+		System.out.println("finished");
 	}
 }

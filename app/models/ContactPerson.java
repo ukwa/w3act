@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
@@ -21,6 +22,7 @@ import play.Logger;
  * This class describes the contact person details.
  */
 @Entity
+@Table(name = "contact_person")
 public class ContactPerson extends Model
 {
 

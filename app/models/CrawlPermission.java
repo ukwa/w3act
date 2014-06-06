@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.Logger;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * handles crawl permission requests sent by e-mail to the owner.
  */
 @Entity
+@Table(name = "crawl_permission")
 public class CrawlPermission extends Model
 {
 
