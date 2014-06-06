@@ -602,8 +602,9 @@ public class TargetController extends AbstractController {
         	Scope.updateLookupEntry(newTarget, newScope);
         	
         	Ebean.save(newTarget);
-	        Logger.info("save target: " + newTarget.toString());
-	        res = redirect(routes.Targets.edit(newTarget.url) + getFormParam(Const.TAB_STATUS));
+	        Logger.info("Your changes have been saved: " + newTarget.toString());
+  			flash("message", "Your changes have been saved.");
+	        res = redirect(routes.Targets.view(newTarget.url) + getFormParam(Const.TAB_STATUS));
         } // end of save
         if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.NID));

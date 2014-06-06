@@ -187,13 +187,7 @@
 	
 		<input type="hidden" name="nid" value="@form("nid").value">
 		<input type="hidden" name="url" value="@form("url").value">
-        <input type="hidden" name="user" value="@user.url">
-        <script>
-            if($('#myNavbar li.active').find('a').attr('href') == "licensing") {
-            	<input type="hidden" id="ttabstatus" name="tabstatus" value="licensing">
-            }
-        </script>
-		
+        <input type="hidden" name="user" value="@user.url">	
 		<input type="hidden" id="tabstatus" name="tabstatus" value="">
 
 		<div id="myTabContent" class="tab-content">
