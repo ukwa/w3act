@@ -96,6 +96,10 @@
         var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
         var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
         
+  		// pass the current tab to the save method in order to load page in the same tab
+  		document.getElementById('tabstatus').value = activeTab.find('a').attr('href');
+        //alert(document.getElementById('tabstatus').value);
+        
         // And finally we just attach the href to view.html and forward the browser. 
         // An example URL would be: 'view.html#npld-scope'
         window.location.href="@routes.Targets.view(form("url").value)" + href;
@@ -111,7 +115,11 @@
           // We have a hash - let's see if it matches with nav pill href
           var el = $('#myNavbar a[href=' + hash + ']');
         
-          // We have an <a> with this ID, and it has a parent node that's an <li>
+    	  // pass the current tab to the save method in order to load page in the same tab
+          document.getElementById('tabstatus').value = hash;
+          //alert(document.getElementById('tabstatus').value);
+
+    	  // We have an <a> with this ID, and it has a parent node that's an <li>
           if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
             // So we activate this nav pill
             $(el).tab('show');
@@ -123,6 +131,8 @@
         // in sync with the tab we have selected, so the pages stay nice and bookmarkable
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
           window.location.hash = ($(e.target).attr('href'));
+          document.getElementById('tabstatus').value = ($(e.target).attr('href'));
+          //alert(document.getElementById('tabstatus').value);
           window.scrollTo(0, 0);
         })
       });		
@@ -178,6 +188,13 @@
 		<input type="hidden" name="nid" value="@form("nid").value">
 		<input type="hidden" name="url" value="@form("url").value">
         <input type="hidden" name="user" value="@user.url">
+        <script>
+            if($('#myNavbar li.active').find('a').attr('href') == "licensing") {
+            	<input type="hidden" id="ttabstatus" name="tabstatus" value="licensing">
+            }
+        </script>
+		
+		<input type="hidden" id="tabstatus" name="tabstatus" value="">
 
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="overview">

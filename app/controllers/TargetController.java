@@ -279,6 +279,7 @@ public class TargetController extends AbstractController {
         			", organisation: " + getFormParam(Const.ORGANISATION) +
         			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
         	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
+        	Logger.info("current tab: " + getFormParam(Const.TAB_STATUS));
         	
         	Form<Target> targetForm = Form.form(Target.class).bindFromRequest();
             if(targetForm.hasErrors()) {
@@ -602,7 +603,7 @@ public class TargetController extends AbstractController {
         	
         	Ebean.save(newTarget);
 	        Logger.info("save target: " + newTarget.toString());
-	        res = redirect(routes.Targets.edit(newTarget.url));
+	        res = redirect(routes.Targets.edit(newTarget.url) + getFormParam(Const.TAB_STATUS));
         } // end of save
         if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.NID));
