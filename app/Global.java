@@ -1,5 +1,6 @@
 import play.Application;
 import play.GlobalSettings;
+import play.Logger;
 import uk.bl.db.DataImport;
 import play.mvc.*;
 import play.mvc.Http.*;
@@ -10,7 +11,11 @@ public class Global extends GlobalSettings {
     
     public void onStart(Application app) {
     	// should run in background and return view
-    	DataImport.INSTANCE.insert();
+    	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
+    	Logger.info("dataImport: " + dataImport);
+    	if (dataImport) {
+    		DataImport.INSTANCE.insert();
+    	}
     }
     
     public Promise<SimpleResult> onError(RequestHeader request, Throwable t) {

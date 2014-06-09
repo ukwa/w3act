@@ -35,6 +35,11 @@ public enum DataImport {
 	public void insert() {
         if(Ebean.find(User.class).findRowCount() == 0) {
             try {
+                Logger.info("loading users from configuration ...");
+                @SuppressWarnings("unchecked")
+				Map<String,List<Object>> allusers = (Map<String,List<Object>>)Yaml.load("users.yml");
+                Logger.info("allusers..." + allusers);
+                insertInitialData(Const.USERS, User.class, allusers);
                 Logger.info("loading taxonomies from configuration ...");
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> alltaxonomies = (Map<String,List<Object>>)Yaml.load("taxonomies.yml");
@@ -55,10 +60,6 @@ public enum DataImport {
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> allContactPersons = (Map<String,List<Object>>)Yaml.load("contact-persons.yml");
                 insertInitialData(Const.CONTACTPERSONS, ContactPerson.class, allContactPersons);	
-                Logger.info("loading users from configuration ...");
-                @SuppressWarnings("unchecked")
-				Map<String,List<Object>> allusers = (Map<String,List<Object>>)Yaml.load("users.yml");
-                insertInitialData(Const.USERS, User.class, allusers);	
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
                 insertInitialData(Const.ROLES, Role.class, all);	
@@ -241,7 +242,8 @@ public enum DataImport {
     
 	public static void main(String[] args) {
 		Logger.info("start");
+		new play.core.StaticApplication(new java.io.File("."));
 		DataImport.INSTANCE.insert();
-		System.out.println("finished");
+		Logger.info("finished");
 	}
 }
