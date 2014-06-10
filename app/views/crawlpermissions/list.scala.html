@@ -218,15 +218,15 @@
 				@if(currentPage.getTotalRowCount() > 0 && CrawlPermissions.haveContactPerson(currentPage.getList())) {
 					<button type="submit" class="btn btn-primary" name="selectall">Select all</button>
 					<button type="submit" class="btn btn-primary" name="deselectall">Deselect all</button>
-					<button type="submit" class="btn btn-primary" name="sendall">Send all</button>
-					<button type="submit" class="btn btn-primary" name="sendsome">Send some</button>
+					<!-- button type="submit" class="btn btn-primary" name="sendall">Send all</button-->
+					<button type="submit" class="btn btn-primary" name="sendsome">Send</button>
 					<button type="submit" class="btn btn-primary" name="preview">Preview</button>
 					<button type="submit" class="btn btn-primary" name="reject">Reject</button>
 				} else {
 					<button type="submit" class="btn btn-primary" name="selectall" disabled>Select all</button>
 					<button type="submit" class="btn btn-primary" name="deselectall" disabled>Deselect all</button>
-					<button type="submit" class="btn btn-primary" name="sendall" disabled>Send all</button>
-					<button type="submit" class="btn btn-primary" name="sendsome" disabled>Send some</button>
+					<!-- button type="submit" class="btn btn-primary" name="sendall" disabled>Send all</button-->
+					<button type="submit" class="btn btn-primary" name="sendsome" disabled>Send</button>
 					<button type="submit" class="btn btn-primary" name="preview" disabled>Preview</button>
 					<button type="submit" class="btn btn-primary" name="reject" disabled>Reject</button>
 				}
