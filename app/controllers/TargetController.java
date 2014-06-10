@@ -2,6 +2,8 @@ package controllers;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -694,8 +696,29 @@ public class TargetController extends AbstractController {
 	    	    channel.close();
 	    	    connection.close();	    	    
 	    	} catch (IOException e) {
-	    		Logger.error("There was a problem sending the message: " + e.getMessage());
-	            return ok(infomessage.render("There was a problem sending the message: " + e.getMessage()));
+	    		String msg = e.getMessage();
+	    		User currentUser = User.findByEmail(request().username());
+	    	    if (currentUser.hasRole("sys_admin") 
+	    	    		|| currentUser.hasRole("archivist") 
+	    	    		|| currentUser.hasRole("expert_user")) {
+	    	    	StringWriter sw = new StringWriter();
+	    	    	e.printStackTrace(new PrintWriter(sw));
+	    	    	msg = sw.toString();
+	    	    }
+	    		Logger.error("There was a problem sending the message: " + msg);
+	            return ok(infomessage.render("There was a problem sending the message: " + msg));
+	    	} catch (Exception e) {
+	    		String msg = e.getMessage();
+	    		User currentUser = User.findByEmail(request().username());
+	    	    if (currentUser.hasRole("sys_admin") 
+	    	    		|| currentUser.hasRole("archivist") 
+	    	    		|| currentUser.hasRole("expert_user")) {
+	    	    	StringWriter sw = new StringWriter();
+	    	    	e.printStackTrace(new PrintWriter(sw));
+	    	    	msg = sw.toString();
+	    	    }
+	    		Logger.error("There was a problem sending the message: " + msg);
+	            return ok(infomessage.render("There was a problem sending the message: " + msg));
 	    	}    	      
     	} else {
     		Logger.debug("Target field for archiving is empty");
