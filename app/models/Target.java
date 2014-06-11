@@ -108,7 +108,11 @@ public class Target extends Model {
     public String selection_type; 
     public String selector;     
     @Column(columnDefinition = "TEXT")
-    public String flag_notes; 
+    public String flag_notes;
+    /**
+     * This field comprises the current tab name for view and edit pages.
+     */
+    public String tabstatus;
     
     // lists
     @Required

@@ -245,6 +245,9 @@ public class TargetController extends AbstractController {
         }
         targetObj.keywords = getFormParam(Const.KEYWORDS);
         targetObj.synonyms = getFormParam(Const.SYNONYMS);
+        if (getFormParam(Const.TAB_STATUS) != null) {
+        	targetObj.tabstatus = getFormParam(Const.TAB_STATUS);
+        }
 	    targetObj.active = true;
 		Form<Target> targetFormNew = Form.form(Target.class);
 		targetFormNew = targetFormNew.fill(targetObj);

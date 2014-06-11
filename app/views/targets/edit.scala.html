@@ -125,6 +125,20 @@
             $(el).tab('show');
             window.scrollTo(0, 0);
           }
+        } else {
+        	//console.log('tabstatus after validation: ' + document.getElementById('tabstatus').value);
+        	var valtab = document.getElementById('tabstatus').value;
+            if (valtab.indexOf('#') == 0) {
+                // We have a hash - let's see if it matches with nav pill href
+                var valel = $('#myNavbar a[href=' + valtab + ']');
+              
+          	    // We have an <a> with this ID, and it has a parent node that's an <li>
+                if (valel && valel.parent() && valel.parent().prop('tagName') == 'LI') {
+                  // So we activate this nav pill
+                  $(valel).tab('show');
+                  window.scrollTo(0, 0);
+                }
+            } 
         }
         
         // This is completely optional!! But it keeps the hash in our current URL bar
@@ -188,7 +202,7 @@
 		<input type="hidden" name="nid" value="@form("nid").value">
 		<input type="hidden" name="url" value="@form("url").value">
         <input type="hidden" name="user" value="@user.url">	
-		<input type="hidden" id="tabstatus" name="tabstatus" value="">
+		<input type="hidden" id="tabstatus" name="tabstatus" value="@form("tabstatus").value">
 
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="overview">
