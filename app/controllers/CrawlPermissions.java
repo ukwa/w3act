@@ -383,7 +383,7 @@ public class CrawlPermissions extends AbstractController {
 	    	            			&& personByEmail.email.equals(getFormParam(Const.EMAIL))
 	    	            			&& !personByEmail.name.equals(getFormParam(Const.CONTACT_PERSON))) {
 	    	            		String msg = "A contact person with email '" + getFormParam(Const.EMAIL) + 
-	    	    	  					"' is already in the Contact Persons list, but whith the Name '" + personByEmail.name + 
+	    	    	  					"' is already in the Contact Persons list, but with the Name '" + personByEmail.name + 
 	    	    	  					"' which is different from the given name '" + getFormParam(Const.CONTACT_PERSON) + 
 	    	    	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
 	    	                	Logger.info(msg);
