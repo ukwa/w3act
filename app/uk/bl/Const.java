@@ -412,8 +412,7 @@ public final class Const {
 	public enum MailTemplateType {
 		PERMISSION_REQUEST,
 		THANK_YOU_ONLINE_PERMISSION_FORM,
-		THANK_YOU_ONLINE_NOMINATION_BY_OWNER,
-		OPT_OUT;
+		THANK_YOU_ONLINE_NOMINATION_BY_OWNER;
     }
 	    
 	/**
