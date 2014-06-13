@@ -9,7 +9,6 @@ import java.util.List;
 import models.CommunicationLog;
 import models.ContactPerson;
 import models.CrawlPermission;
-import models.DCollection;
 import models.MailTemplate;
 import models.Target;
 import models.User;
@@ -33,7 +32,6 @@ import views.html.licence.licences;
 import views.html.mailtemplates.mailtemplates;
 import views.html.refusals.refusals;
 import views.html.crawlpermissions.list;
-import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
@@ -45,18 +43,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 @Security.Authenticated(Secured.class)
 public class CrawlPermissions extends AbstractController {
   
-    /**
-     * Display the permission.
-     */
-//    public static Result index() {
-//        List<CrawlPermission> resList = processFilterCrawlPermissions("", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "");
-//        return ok(
-//        		views.html.crawlpermissions.list.render(
-//                    "CrawlPermissions", User.findByEmail(request().username()), resList, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS
-//                )
-//            );
-//    }
-
     /**
      * Display the crawl permissions.
      */
@@ -194,11 +180,6 @@ public class CrawlPermissions extends AbstractController {
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.CrawlPermissions.list(0, Const.NAME, Const.ASC, name, status, "", Const.SELECT_ALL));
-//    			return ok(
-//    					views.html.crawlpermissions.list.render(
-//                            "CrawlPermissions", User.findByEmail(request().username()), resList, name, status
-//                        )
-//                    );
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -404,9 +385,7 @@ public class CrawlPermissions extends AbstractController {
 	    	            		String msg = "A contact person with email '" + getFormParam(Const.EMAIL) + 
 	    	    	  					"' is already in the Contact Persons list, but whith the Name '" + personByEmail.name + 
 	    	    	  					"' which is different from the given name '" + getFormParam(Const.CONTACT_PERSON) + 
-	    	    	  					"'. Please re-populate the name field with the existing name, " +
-	    	    	  					"and either save the record with the correct name " +
-	    	    	  					"or enter an new contact email address.";
+	    	    	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
 	    	                	Logger.info(msg);
 	    	    	  			flash("message", msg);
 	    	    	  			return info();
