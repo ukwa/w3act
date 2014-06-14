@@ -701,27 +701,25 @@ public class TargetController extends AbstractController {
 	    	} catch (IOException e) {
 	    		String msg = e.getMessage();
 	    		User currentUser = User.findByEmail(request().username());
-	    	    if (currentUser.hasRole("sys_admin") 
-	    	    		|| currentUser.hasRole("archivist") 
-	    	    		|| currentUser.hasRole("expert_user")) {
+	    	    if (currentUser.hasRole("sys_admin")) {
 	    	    	StringWriter sw = new StringWriter();
 	    	    	e.printStackTrace(new PrintWriter(sw));
 	    	    	msg = sw.toString();
 	    	    }
-	    		Logger.error("There was a problem sending the message: " + msg);
-	            return ok(infomessage.render("There was a problem sending the message: " + msg));
+	    	    msg = "There was a problem queuing this crawl instruction. Please refer to the system administrator.";
+	    		Logger.error(msg);
+	            return ok(infomessage.render(msg));
 	    	} catch (Exception e) {
 	    		String msg = e.getMessage();
 	    		User currentUser = User.findByEmail(request().username());
-	    	    if (currentUser.hasRole("sys_admin") 
-	    	    		|| currentUser.hasRole("archivist") 
-	    	    		|| currentUser.hasRole("expert_user")) {
+	    	    if (currentUser.hasRole("sys_admin")) {
 	    	    	StringWriter sw = new StringWriter();
 	    	    	e.printStackTrace(new PrintWriter(sw));
 	    	    	msg = sw.toString();
 	    	    }
-	    		Logger.error("There was a problem sending the message: " + msg);
-	            return ok(infomessage.render("There was a problem sending the message: " + msg));
+	    	    msg = "There was a problem queuing this crawl instruction. Please refer to the system administrator.";
+	    		Logger.error(msg);
+	            return ok(infomessage.render(msg));
 	    	}    	      
     	} else {
     		Logger.debug("Target field for archiving is empty");
