@@ -1,4 +1,4 @@
-@(title: String, user: User, permissions: List[CrawlPermission], permissionsGranted: List[CrawlPermission], permissionsRefused: List[CrawlPermission], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, requestType: String)
+@(title: String, user: User, permissions: List[Target], permissionsGranted: List[Target], permissionsRefused: List[Target], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, requestType: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -166,21 +166,23 @@
 							</tr>
 						</thead>
 						<tbody>
-						@permissions.map { permission =>		              
+						@permissions.map { target =>		              
 							<tr>
 								<td>
-								    @if(!Target.findByTarget(permission.target).title.equals("none")) {					                	
-					                	<a class="brand" href="@routes.Targets.view(Target.findByTarget(permission.target).url)">@Target.findByTarget(permission.target).title</a>
+								    @if(!target.title.equals("none")) {					                	
+					                	<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
 					                } else {
 					                    none
 					                }
 								</td>
 								<td>
-				                	<a class="brand" href="@permission.target">@permission.target</a>					                
+				                	<a class="brand" href="@target.field_url">@target.field_url</a>					                
 								</td>
-								<td>
-					                @permission.licenseDate
-								</td>
+								@if(target.url != null && target.created != null) {
+									<td>@Target.getDateAsString(target.created)</td>
+								} else {
+									<td></td>
+								}		                  
 							</tr>
 						}
 						</tbody>
@@ -200,17 +202,23 @@
 							</tr>
 						</thead>
 						<tbody>
-						@permissionsGranted.map { permission =>		              
+						@permissionsGranted.map { target =>		              
 							<tr>
 								<td>
-					                @Target.findByUrl(permission.target).title
+								    @if(!target.title.equals("none")) {					                	
+					                	<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+					                } else {
+					                    none
+					                }
 								</td>
 								<td>
-					                @permission.target
+				                	<a class="brand" href="@target.field_url">@target.field_url</a>					                
 								</td>
-								<td>
-					                @permission.licenseDate
-								</td>
+								@if(target.url != null && target.created != null) {
+									<td>@Target.getDateAsString(target.created)</td>
+								} else {
+									<td></td>
+								}		                  
 							</tr>
 						}
 						</tbody>
@@ -229,17 +237,23 @@
 							</tr>
 						</thead>
 						<tbody>
-						@permissionsRefused.map { permission =>		              
+						@permissionsRefused.map { target =>		              
 							<tr>
 								<td>
-					                @Target.findByUrl(permission.target).title
+								    @if(!target.title.equals("none")) {					                	
+					                	<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+					                } else {
+					                    none
+					                }
 								</td>
 								<td>
-					                @permission.target
+				                	<a class="brand" href="@target.field_url">@target.field_url</a>					                
 								</td>
-								<td>
-					                @permission.licenseDate
-								</td>
+								@if(target.url != null && target.created != null) {
+									<td>@Target.getDateAsString(target.created)</td>
+								} else {
+									<td></td>
+								}		                  
 							</tr>
 						}
 						</tbody>

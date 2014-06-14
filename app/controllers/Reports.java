@@ -35,11 +35,14 @@ public class Reports extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-        List<CrawlPermission> resList = 
+        List<Target> resList = 
+//                List<CrawlPermission> resList = 
         		processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<CrawlPermission> resListGranted = 
+        List<Target> resListGranted = 
+//                List<CrawlPermission> resListGranted = 
         		processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<CrawlPermission> resListRefused = 
+        List<Target> resListRefused = 
+//                List<CrawlPermission> resListRefused = 
         		processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
         return ok(
                 reports.render(
@@ -87,13 +90,16 @@ public class Reports extends AbstractController {
         Logger.info("start_date: " + start_date);
         String end_date = form.get(Const.FIELD_CRAWL_END_DATE);
         
-        List<CrawlPermission> resList = 
+        List<Target> resList = 
+//                List<CrawlPermission> resList = 
         		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.PENDING.name(), 
         				request, start_date, end_date);
-        List<CrawlPermission> resListGranted = 
+        List<Target> resListGranted = 
+//                List<CrawlPermission> resListGranted = 
         		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.GRANTED.name(), 
         				request, start_date, end_date);
-        List<CrawlPermission> resListRefused = 
+        List<Target> resListRefused = 
+//                List<CrawlPermission> resListRefused = 
         		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.REFUSED.name(), 
         				request, start_date, end_date);
 
@@ -134,7 +140,8 @@ public class Reports extends AbstractController {
      * @param file name
      * @return
      */
-    public static void export(List<CrawlPermission> permissionList, String fileName) {
+    public static void export(List<Target> permissionList, String fileName) {
+//        public static void export(List<CrawlPermission> permissionList, String fileName) {
     	Logger.info("export() permissionList size: " + permissionList.size());
 
         StringWriter sw = new StringWriter();
@@ -147,14 +154,16 @@ public class Reports extends AbstractController {
         sw.append(Const.CSV_LINE_END);
  	    
  	    if (permissionList != null && permissionList.size() > 0) {
- 	    	Iterator<CrawlPermission> itr = permissionList.iterator();
+// 	    	Iterator<CrawlPermission> itr = permissionList.iterator();
+ 	    	Iterator<Target> itr = permissionList.iterator();
  	    	while (itr.hasNext()) {
- 	    		CrawlPermission permission = itr.next();
-	    		sw.append(Target.findByUrl(permission.target).title);
+ 	    		Target target = itr.next();
+// 	    		CrawlPermission permission = itr.next();
+	    		sw.append(target.title);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(permission.target);
+	    		sw.append(target.field_url);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(permission.licenseDate);
+	    		sw.append(target.created);
 		 	    sw.append(Const.CSV_SEPARATOR);
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
@@ -170,21 +179,50 @@ public class Reports extends AbstractController {
      * @param request The request type (first request/folloup/all)
      * @return
      */
-    public static List<CrawlPermission> processFilterReports(String curator, String organisation, 
-    		String status, String request, String start_date, String end_date) {
+    public static List<Target> processFilterReports(String curator, String organisation, 
+//    	    public static List<CrawlPermission> processFilterReports(String curator, String organisation, 
+    		String status, String request, String startDate, String endDate) {
     	boolean isProcessed = false;
-    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
-    	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
+    	ExpressionList<Target> exp = Target.find.where();
+//    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
+    	List<Target> res = new ArrayList<Target>();
+//    	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
+    	
+    	
+   		exp = exp.eq(Const.ACTIVE, true);
+    	if (curator != null && !curator.equals(Const.NONE)) {
+//    		Logger.info("curatorUrl: " + curatorUrl);
+    		exp = exp.icontains(Const.AUTHOR, curator);
+    	}
+    	if (organisation != null && !organisation.equals(Const.NONE)) {
+//    		Logger.info("organisationUrl: " + organisationUrl);
+    		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation);
+    	} 
+    	if (startDate != null && startDate.length() > 0) {
+    		Logger.info("startDate: " + startDate);
+        	String startDateUnix = Utils.getUnixDateStringFromDateExt(startDate);
+        	Logger.info("startDateUnix: " + startDateUnix);
+    		exp = exp.ge(Const.CREATED, startDateUnix);
+    	} 
+    	if (endDate != null && endDate.length() > 0) {
+    		Logger.info("endDate: " + endDate);
+        	String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
+        	Logger.info("endDateUnix: " + endDateUnix);
+    		exp = exp.le(Const.CREATED, endDateUnix);
+    	} 
+    	
+    	
+    	
     	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
-    		Logger.info("status: " + status);
-    		exp = exp.eq(Const.STATUS, status);
+//    		Logger.info("qa status: " + status);
+    		exp = exp.eq(Const.QA_STATUS, status);
     		isProcessed = true;
     	} 
-    	if (curator != null && !curator.toLowerCase().equals(Const.NONE) && curator.length() > 0) {
-    		Logger.info("curator: " + curator);
-    		exp = exp.eq(Const.CREATOR_USER, curator);
-    		isProcessed = true;
-    	} 
+//    	if (curator != null && !curator.toLowerCase().equals(Const.NONE) && curator.length() > 0) {
+//    		Logger.info("curator: " + curator);
+//    		exp = exp.eq(Const.CREATOR_USER, curator);
+//    		isProcessed = true;
+//    	} 
     	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
     		Logger.info("request: " + request);
     		if (request.equals(Const.RequestTypes.FOLLOW_UP.name())) {
@@ -194,43 +232,43 @@ public class Reports extends AbstractController {
     		}
     		isProcessed = true;
     	} 
-    	if (start_date != null && start_date.length() > 0) {
-    		Logger.info("start_date: " + start_date);
-    		exp = exp.ge(Const.LICENSE_DATE, start_date);
-    		isProcessed = true;
-    	} 
-    	if (end_date != null && end_date.length() > 0) {
-    		Logger.info("start_date: " + end_date);
-    		exp = exp.le(Const.LICENSE_DATE, end_date);
-    		isProcessed = true;
-    	} 
+//    	if (start_date != null && start_date.length() > 0) {
+//    		Logger.info("start_date: " + start_date);
+//    		exp = exp.ge(Const.LICENSE_DATE, start_date);
+//    		isProcessed = true;
+//    	} 
+//    	if (end_date != null && end_date.length() > 0) {
+//    		Logger.info("start_date: " + end_date);
+//    		exp = exp.le(Const.LICENSE_DATE, end_date);
+//    		isProcessed = true;
+//    	} 
     	res = exp.query().findList();
     	Logger.info("processFilterReports() Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
-        if (!isProcessed) {
-    		res = models.CrawlPermission.filterByStatus(status);
-    	}
+//        if (!isProcessed) {
+//    		res = models.CrawlPermission.filterByStatus(status);
+//    	}
         
-    	Logger.info("organisation: " + organisation + ", res size: " + res.size());
-    	if (organisation != null && !organisation.equals(Const.NONE) && organisation.length() > 0) {
-	        List<CrawlPermission> resByOrganisation = new ArrayList<CrawlPermission>();
-	        Iterator<CrawlPermission> resIter = res.iterator();
-	        while (resIter.hasNext()) {
-	        	CrawlPermission permission = resIter.next();
-	        	Logger.info("permission.contactPerson: " + permission.contactPerson);
-	        	if (permission.contactPerson != null && permission.contactPerson.length() > 0) {
-	        		ContactPerson person = ContactPerson.findByUrl(permission.contactPerson);
-		        	Logger.info("person.contactOrganisation: " + person.contactOrganisation);
-	            	if (person.contactOrganisation != null && person.contactOrganisation.length() > 0) {
-			        	Logger.info("Organisation.findByUrl(organisation).title: " + Organisation.findByUrl(organisation).title);
-	            		if (Organisation.findByUrl(organisation).title.contains(person.contactOrganisation)) {
-	            			resByOrganisation.add(permission);
-	            		}
-	            	}
-	        	}
-	        }
-	        return resByOrganisation;
-    	}
+//    	Logger.info("organisation: " + organisation + ", res size: " + res.size());
+//    	if (organisation != null && !organisation.equals(Const.NONE) && organisation.length() > 0) {
+//	        List<CrawlPermission> resByOrganisation = new ArrayList<CrawlPermission>();
+//	        Iterator<CrawlPermission> resIter = res.iterator();
+//	        while (resIter.hasNext()) {
+//	        	CrawlPermission permission = resIter.next();
+//	        	Logger.info("permission.contactPerson: " + permission.contactPerson);
+//	        	if (permission.contactPerson != null && permission.contactPerson.length() > 0) {
+//	        		ContactPerson person = ContactPerson.findByUrl(permission.contactPerson);
+//		        	Logger.info("person.contactOrganisation: " + person.contactOrganisation);
+//	            	if (person.contactOrganisation != null && person.contactOrganisation.length() > 0) {
+//			        	Logger.info("Organisation.findByUrl(organisation).title: " + Organisation.findByUrl(organisation).title);
+//	            		if (Organisation.findByUrl(organisation).title.contains(person.contactOrganisation)) {
+//	            			resByOrganisation.add(permission);
+//	            		}
+//	            	}
+//	        	}
+//	        }
+//	        return resByOrganisation;
+//    	}
         return res;
     }
               
