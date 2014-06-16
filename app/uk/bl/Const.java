@@ -117,7 +117,7 @@ public final class Const {
 	public static final String ALL                = "all";
 	public static final String DATE_FORMAT        = "dd-MM-yyyy";
 	public static final String NONE_VALUE         = "None";
-	public static final String EITHER             = "Either";
+	public static final String EITHER             = "either";
 
 	/**
 	 * Target
