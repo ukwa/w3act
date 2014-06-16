@@ -37,7 +37,7 @@
 			    <div class="col-sm-6">
 					<textarea class="form-control" name="text" id="text" cols="100" rows="10" readonly>
 					@CrawlPermission.replaceTwoStringsInText(
-						MailTemplate.findByName(template).readTemplate()
+						MailTemplate.findByName(template).text
 						, "||URL||"
 						, "||LINK||"
 						, permission.target

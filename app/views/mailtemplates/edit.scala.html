@@ -101,12 +101,16 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputText" class="col-sm-6 control-label">Text</label>
-				    <div class="col-sm-6">
+					<label for="inputText" class="col-sm-6 control-label">Template Body</label>
+				</div>
+			</div>
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+				    <div class="col-sm-12">
 				    	@if(user.hasRole("sys_admin")) {
-						<textarea class="form-control" name="text" id="text" cols="100" rows="1">@form("text").value</textarea>
+						<textarea class="form-control" name="text" id="text" cols="100" rows="3">@form("text").value</textarea>
 						} else {
-						<textarea class="form-control" name="text" id="text" cols="100" rows="1" readonly>@form("text").value</textarea>
+						<textarea class="form-control" name="text" id="text" cols="100" rows="3" readonly>@form("text").value</textarea>
 						}
 					</div>
 				</div>

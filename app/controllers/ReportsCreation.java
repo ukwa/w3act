@@ -72,14 +72,21 @@ public class ReportsCreation extends AbstractController {
         String startDate = form.get(Const.FIELD_CRAWL_START_DATE);
         Logger.info("startDate: " + startDate);
         String endDate = form.get(Const.FIELD_CRAWL_END_DATE);
-        String crawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
-    	String npld = "";
-        if (getFormParam(Const.NPLD) != null) {
-        	npld = getFormParam(Const.NPLD);
+        String crawlFrequency = "";
+        String crawlFrequency_name = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
+        if (crawlFrequency_name != null && !crawlFrequency_name.toLowerCase().equals(Const.NONE)) {
+        	crawlFrequency = crawlFrequency_name;
         }
-    	String tld = "";
-        if (getFormParam(Const.TLD) != null) {
-        	tld = getFormParam(Const.TLD);
+    	String npld = "";
+    	String npld_name = getFormParam(Const.NPLD);
+        if (npld_name != null && !npld_name.toLowerCase().equals(Const.NONE)) {
+        	npld = npld_name;
+        }
+    	String tld = Const.EITHER;
+    	String tld_name = getFormParam(Const.TLD);
+    	Logger.info("tld: " + getFormParam(Const.TLD));
+        if (tld_name != null && !tld_name.toLowerCase().equals(Const.NONE)) {
+        	tld = tld_name;
         }
         
     	if (StringUtils.isEmpty(action)) {
@@ -100,7 +107,8 @@ public class ReportsCreation extends AbstractController {
     		}
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order + ", curator: " + curator + 
-    					", organisation: " + organisation + ", startDate: " + startDate + ", endDate: " + endDate);
+    					", organisation: " + organisation + ", startDate: " + startDate + ", endDate: " + endDate + 
+    					", npld: " + npld + ", crawlFrequency: " + crawlFrequency + ", tld: " + tld);
     	    	return redirect(routes.ReportsCreation.targets(pageNo, sort, order, curator, organisation, 
     	    			startDate, endDate, npld, crawlFrequency, tld));
 		    } else {

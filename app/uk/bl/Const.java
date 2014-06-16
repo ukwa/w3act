@@ -685,6 +685,16 @@ public final class Const {
 		DOMAIN;
     }    	
     	
+	public enum NpldType {
+		UK_HOSTING,
+		UK_TOP_LEVEL_DOMAIN,
+		UK_REGISTRATION,
+		UK_POSTAL_ADDRESS,
+		VIA_CORRESPONDENCE,
+		PROFESSIONAL_JUDGEMENT,
+		NO_LD_CRITERIA_MET;
+    }    
+
     /**
      * DEFINITIONS FOR TESTING  	
      */

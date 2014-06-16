@@ -174,6 +174,7 @@ public enum DataImport {
 	        	MailTemplate mailTemplate = (MailTemplate) sectionItr.next();
 	        	mailTemplate.id = Utils.createId();
 	        	mailTemplate.url = Const.ACT_URL + mailTemplate.id;
+	        	mailTemplate.readInitialTemplate();
                 Logger.info("Predefined " + MailTemplate.class.getSimpleName() + ": " + mailTemplate.toString());
 	        }
 	        if (cls == ContactPerson.class) {

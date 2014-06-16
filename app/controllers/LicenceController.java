@@ -76,7 +76,8 @@ public class LicenceController extends AbstractController {
     	Logger.debug("sendAcknowledgementToSiteOwner mailTemplate: " + mailTemplate);
     	String messageSubject = mailTemplate.subject;
 //    	Logger.debug("sendAcknowledgementToSiteOwner text: " + mailTemplate.text);
-    	String messageBody = mailTemplate.readTemplate();
+//    	String messageBody = mailTemplate.readTemplate();
+    	String messageBody = mailTemplate.text;
 		StringBuilder sb = new StringBuilder();
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.LICENCE_ACK + Const.TWO_POINTS + permission.license + Const.CSV_LINE_END);

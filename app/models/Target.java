@@ -1018,6 +1018,19 @@ public class Target extends Model {
     }         
 
     /**
+     * This method returns a list of all NPLD types for target object.
+     * @return
+     */
+    public static List<String> getAllNpldTypes() {
+    	List<String> res = new ArrayList<String>();
+	    Const.NpldType[] resArray = Const.NpldType.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+
+    /**
      * This method returns a list of all selection type values for target record.
      * @return
      */
@@ -1258,6 +1271,7 @@ public class Target extends Model {
     public static Page<Target> pageReportsCreation(int page, int pageSize, String sortBy, String order,  
     		String curatorUrl, String organisationUrl, String startDate, String endDate, 
     		String npld, String crawlFrequency, String tld) {
+    	Logger.info("pageReportsCreation() npld: " + npld + ", crawlFrequency: " + crawlFrequency + ", tld: " + tld);
     	ExpressionList<Target> exp = Target.find.where();
     	Page<Target> res = null;
    		exp = exp.eq(Const.ACTIVE, true);
@@ -1280,6 +1294,9 @@ public class Target extends Model {
         	String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
         	Logger.info("endDateUnix: " + endDateUnix);
     		exp = exp.le(Const.CREATED, endDateUnix);
+    	} 
+    	if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
     	} 
 
     	res = exp.query()

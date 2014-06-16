@@ -783,7 +783,8 @@ public class CrawlPermissions extends AbstractController {
 //                	String[] toMailAddresses = Utils.getMailArray(email);
                 	MailTemplate mailTemplate = MailTemplate.findByName(template);
                 	String messageSubject = mailTemplate.subject;
-                	String messageBody = mailTemplate.readTemplate();
+                	String messageBody = mailTemplate.text;
+//                	String messageBody = mailTemplate.readTemplate();
                 	String[] placeHolderArray = Utils.getMailArray(mailTemplate.placeHolders);
             		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.target);
             		Logger.info("setPendingSelectedCrawlPermissions current: " + routes.LicenceController.form(permission.url).absoluteURL(request()).toString());

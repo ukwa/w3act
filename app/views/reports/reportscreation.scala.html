@@ -155,15 +155,15 @@
 									<div class="form-group">
 										<label for="curator" class="col-sm-6 control-label">Filter by NPLD</label>
 									    <div class="col-sm-6">
-											<select name="author" class="form-control target-form-control" id="curator">
+											<select name="npld" id="npld" class="form-control">
 												<option>None</option>
-												@for(curator <- User.findAll()) {
-													@if(curatorUrl != null && !curatorUrl.equals("") && curatorUrl.equals(curator.url)) {
-														<option selected>@curator.name</option>
-													} else {
-														<option>@curator.name</option>
-													}
-												}
+								                @for(npldType <- Target.getAllNpldTypes()) {
+									                @if(npldType.equals(npld)) {
+									                	<option selected>@npldType</option>
+									                } else {
+									                	<option>@npldType</option>
+									                }
+								                }
 											</select>
 										</div>
 									</div>

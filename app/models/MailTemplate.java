@@ -173,6 +173,15 @@ public class MailTemplate extends Model
     	return Utils.readTextFile(Const.TEMPLATES_PATH + text);
     }
     
+    /**
+     * This method reads initial data from configuration files of the mail templates
+     * @return
+     */
+    public String readInitialTemplate() {
+    	text = Utils.readTextFile(Const.TEMPLATES_PATH + text);
+    	return text;
+    }
+    
     public String toString() {
         return "MailTemplate(" + name + ")" + ", id:" + id;
     }
