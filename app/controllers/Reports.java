@@ -180,14 +180,10 @@ public class Reports extends AbstractController {
      * @return
      */
     public static List<Target> processFilterReports(String curator, String organisation, 
-//    	    public static List<CrawlPermission> processFilterReports(String curator, String organisation, 
     		String status, String request, String startDate, String endDate) {
     	boolean isProcessed = false;
     	ExpressionList<Target> exp = Target.find.where();
-//    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
     	List<Target> res = new ArrayList<Target>();
-//    	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
-    	
     	
    		exp = exp.eq(Const.ACTIVE, true);
     	if (curator != null && !curator.equals(Const.NONE)) {
@@ -210,65 +206,40 @@ public class Reports extends AbstractController {
         	Logger.info("endDateUnix: " + endDateUnix);
     		exp = exp.le(Const.CREATED, endDateUnix);
     	} 
-    	
-    	
-    	
     	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
 //    		Logger.info("qa status: " + status);
     		exp = exp.eq(Const.QA_STATUS, status);
     		isProcessed = true;
     	} 
-//    	if (curator != null && !curator.toLowerCase().equals(Const.NONE) && curator.length() > 0) {
-//    		Logger.info("curator: " + curator);
-//    		exp = exp.eq(Const.CREATOR_USER, curator);
-//    		isProcessed = true;
-//    	} 
-    	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
-    		Logger.info("request: " + request);
-    		if (request.equals(Const.RequestTypes.FOLLOW_UP.name())) {
-    			exp = exp.eq(Const.REQUEST_FOLLOW_UP, true);
-    		} else {
-    			exp = exp.eq(Const.REQUEST_FOLLOW_UP, null);
-    		}
-    		isProcessed = true;
-    	} 
-//    	if (start_date != null && start_date.length() > 0) {
-//    		Logger.info("start_date: " + start_date);
-//    		exp = exp.ge(Const.LICENSE_DATE, start_date);
-//    		isProcessed = true;
-//    	} 
-//    	if (end_date != null && end_date.length() > 0) {
-//    		Logger.info("start_date: " + end_date);
-//    		exp = exp.le(Const.LICENSE_DATE, end_date);
-//    		isProcessed = true;
-//    	} 
     	res = exp.query().findList();
     	Logger.info("processFilterReports() Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
-
-//        if (!isProcessed) {
-//    		res = models.CrawlPermission.filterByStatus(status);
-//    	}
-        
-//    	Logger.info("organisation: " + organisation + ", res size: " + res.size());
-//    	if (organisation != null && !organisation.equals(Const.NONE) && organisation.length() > 0) {
-//	        List<CrawlPermission> resByOrganisation = new ArrayList<CrawlPermission>();
-//	        Iterator<CrawlPermission> resIter = res.iterator();
-//	        while (resIter.hasNext()) {
-//	        	CrawlPermission permission = resIter.next();
-//	        	Logger.info("permission.contactPerson: " + permission.contactPerson);
-//	        	if (permission.contactPerson != null && permission.contactPerson.length() > 0) {
-//	        		ContactPerson person = ContactPerson.findByUrl(permission.contactPerson);
-//		        	Logger.info("person.contactOrganisation: " + person.contactOrganisation);
-//	            	if (person.contactOrganisation != null && person.contactOrganisation.length() > 0) {
-//			        	Logger.info("Organisation.findByUrl(organisation).title: " + Organisation.findByUrl(organisation).title);
-//	            		if (Organisation.findByUrl(organisation).title.contains(person.contactOrganisation)) {
-//	            			resByOrganisation.add(permission);
-//	            		}
-//	            	}
-//	        	}
-//	        }
-//	        return resByOrganisation;
-//    	}
+    	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
+    		Logger.info("request: " + request);
+	        List<Target> resByRequest = new ArrayList<Target>();
+	        Iterator<Target> resIter = res.iterator();
+	        while (resIter.hasNext()) {
+	        	Target target = resIter.next();
+	        	if (target.field_url != null && target.field_url.length() > 0) {
+	        		List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target.field_url);
+	            	if (permissionList != null && permissionList.size() > 0) {
+	            		CrawlPermission permission = permissionList.get(0);
+	            		Logger.info("permission: " + permission);
+	            		Logger.info("permission requestFollowup: " + permission.requestFollowup + ", request: " + request);
+	            		try {
+		            		if (permission.requestFollowup && request.equals(Const.RequestTypes.FOLLOW_UP.name())
+		            				|| !permission.requestFollowup && request.equals(Const.RequestTypes.FIRST_REQUEST.name())) {
+		            			resByRequest.add(target);
+		            		}
+	            		} catch (Exception e) {
+		            		if (request.equals(Const.RequestTypes.FIRST_REQUEST.name())) {
+		            			resByRequest.add(target);
+		            		}
+	            		}
+	            	}
+	        	}
+	        }
+	        return resByRequest;
+    	} 
         return res;
     }
               
