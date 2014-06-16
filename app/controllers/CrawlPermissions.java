@@ -519,7 +519,7 @@ public class CrawlPermissions extends AbstractController {
         	}
         	Logger.info("Crawl permission was saved with status " + permission.status);
   			flash("message", "Crawl permission was saved with status " + permission.status);
-	        return redirect(routes.CrawlPermissions.edit(permission.url));
+	        return redirect(routes.CrawlPermissions.view(permission.url));
         } 
         if (delete != null) {
         	CrawlPermission permission = CrawlPermission.findByUrl(getFormParam(Const.URL));

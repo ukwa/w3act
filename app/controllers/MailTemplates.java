@@ -5,7 +5,6 @@ import static play.data.Form.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.DCollection;
 import models.MailTemplate;
 import models.Target;
 import models.User;
@@ -304,7 +303,9 @@ public class MailTemplates extends AbstractController {
            		Logger.info("update mail template: " + template.toString());
                	Ebean.update(template);
         	}
-	        return redirect(routes.MailTemplates.edit(template.url));
+        	Logger.info("Mail Template was saved.");
+  			flash("message", "Mail Template was saved.");
+  			return redirect(routes.MailTemplates.view(template.url));
         } 
         if (delete != null) {
         	MailTemplate template = MailTemplate.findByUrl(getFormParam(Const.URL));
