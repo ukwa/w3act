@@ -33,7 +33,7 @@ public class ReportsCreation extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-    	return redirect(routes.ReportsCreation.targets(0, Const.CREATED, Const.DESC, "", "", Utils.getCurrentDate(), ""));
+    	return redirect(routes.ReportsCreation.targets(0, Const.CREATED, Const.DESC, "", "", Utils.getCurrentDate(), "", "", "", Const.EITHER));
     }
 
     /**
@@ -71,6 +71,15 @@ public class ReportsCreation extends AbstractController {
         String startDate = form.get(Const.FIELD_CRAWL_START_DATE);
         Logger.info("startDate: " + startDate);
         String endDate = form.get(Const.FIELD_CRAWL_END_DATE);
+        String crawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
+    	String npld = "";
+        if (getFormParam(Const.NPLD) != null) {
+        	npld = getFormParam(Const.NPLD);
+        }
+    	String tld = "";
+        if (getFormParam(Const.TLD) != null) {
+        	tld = getFormParam(Const.TLD);
+        }
         
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
@@ -78,21 +87,21 @@ public class ReportsCreation extends AbstractController {
     		if (Const.EXPORT.equals(action)) {
     			List<Target> exportTargets = new ArrayList<Target>();
     	    	Page<Target> page = Target.pageReportsCreation(pageNo, 10, sort, order, curator, organisation, 
-    					startDate, endDate);    	    	
+    					startDate, endDate, npld, crawlFrequency, tld);    	    	
     			int rowCount = page.getTotalRowCount();
     	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curator, organisation, 
-    					startDate, endDate); 
+    					startDate, endDate, npld, crawlFrequency, tld); 
     			exportTargets.addAll(pageAll.getList());
 				Logger.info("export report creation size: " + exportTargets.size());
     			export(exportTargets, Const.EXPORT_TARGETS_REPORT_CREATION);
     	    	return redirect(routes.ReportsCreation.targets(pageNo, sort, order, curator, organisation, 
-    	    			startDate, endDate));
+    	    			startDate, endDate, npld, crawlFrequency, tld));
     		}
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order + ", curator: " + curator + 
     					", organisation: " + organisation + ", startDate: " + startDate + ", endDate: " + endDate);
     	    	return redirect(routes.ReportsCreation.targets(pageNo, sort, order, curator, organisation, 
-    	    			startDate, endDate));
+    	    			startDate, endDate, npld, crawlFrequency, tld));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
@@ -144,9 +153,12 @@ public class ReportsCreation extends AbstractController {
      * @param organisation The author's organisation
      * @param startDate The start date for filtering
      * @param endDate The end date for filtering
+     * @param npld The selection of NPLD scope rule for filtering
+     * @param crawlFrequency The crawl frequency value for filtering
+     * @param tld The top level domain setting for filtering
      */
     public static Result targets(int pageNo, String sortBy, String order, String curator,
-    		String organisation, String startDate, String endDate) {
+    		String organisation, String startDate, String endDate, String npld, String crawlFrequency, String tld) {
     	Logger.info("ReportsCreation.targets()");
     	
         return ok(
@@ -154,13 +166,16 @@ public class ReportsCreation extends AbstractController {
         			"ReportsCreation", 
         			User.findByEmail(request().username()), 
         			Target.pageReportsCreation(pageNo, 10, sortBy, order, curator, organisation, 
-        					startDate, endDate), 
+        					startDate, endDate, npld, crawlFrequency, tld), 
         			sortBy, 
         			order,
                 	curator, 
                 	organisation, 
                 	startDate, 
-                	endDate)
+                	endDate,
+                	npld, 
+                	crawlFrequency, 
+                	tld)
         	);
     }
 	    

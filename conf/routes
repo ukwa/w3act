@@ -143,7 +143,7 @@ GET    	/reportsqa/switchReportQaTab/:name      controllers.ReportsQa.switchRepo
 GET    	/reportsqa/targets/                  	controllers.ReportsQa.targets(p:Int ?= 0, s ?= "name", o ?= "asc", status ?= "", query_curator ?= "", query_organisation ?= "", query_start_date ?= "", query_end_date ?= "", query_collection ?= "")
 GET    	/reportscreation               	        controllers.ReportsCreation.index() 
 GET    	/reportscreation/search                 controllers.ReportsCreation.search()
-GET    	/reportscreation/targets/               controllers.ReportsCreation.targets(p:Int ?= 0, s ?= "name", o ?= "asc", query_curator ?= "", query_organisation ?= "", query_start_date ?= "", query_end_date ?= "")
+GET    	/reportscreation/targets/               controllers.ReportsCreation.targets(p:Int ?= 0, s ?= "name", o ?= "asc", query_curator ?= "", query_organisation ?= "", query_start_date ?= "", query_end_date ?= "", npld ?= "", crawl_frequency ?= "", tld ?= "")
 
 GET     /mailtemplates                       	controllers.MailTemplates.index()
 GET     /mailtemplates/search               	controllers.MailTemplates.search()

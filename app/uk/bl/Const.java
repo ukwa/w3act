@@ -106,7 +106,9 @@ public final class Const {
 	public static final String ROUTING_KEY        = "routing_key";
 	public static final String EXCHANGE_NAME      = "exchange_name";
 		
-	// Elements in HTML forms
+	/**
+	 * Elements in HTML forms
+	 */
 	public static final String FALSE              = "false";
 	public static final String TRUE               = "true";
 	public static final String FILTER             = "filter";
@@ -115,6 +117,7 @@ public final class Const {
 	public static final String ALL                = "all";
 	public static final String DATE_FORMAT        = "dd-MM-yyyy";
 	public static final String NONE_VALUE         = "None";
+	public static final String EITHER             = "Either";
 
 	/**
 	 * Target
@@ -184,6 +187,8 @@ public final class Const {
 	public static final String NA                 = "N/A";
 	public static final int    MAX_NPLD_LIST_SIZE = 3;
 	public static final String TAB_STATUS         = "tabstatus";
+	public static final String NPLD               = "npld";
+	public static final String TLD                = "tld";
 	
     /**
      * Creator

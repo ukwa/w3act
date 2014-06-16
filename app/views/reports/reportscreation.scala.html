@@ -1,4 +1,4 @@
-@(title: String, user: User, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, curatorUrl: String, organisationUrl: String, startDate: String, endDate: String)
+@(title: String, user: User, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, npld: String, crawlFrequency: String, tld: String)
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
@@ -89,7 +89,7 @@
     <ul class="nav nav-tabs">
 	   <!-- li><a href="@routes.Reports.summary()">Summary</a></li-->
 	   <li><a href="@routes.Reports.openLicences()">Open UKWA licences</a></li> 
-	   <li class="active"><a href="@routes.Reports.recordCreation()">Record creation</a></li> 
+	   <li class="active"><a href="@routes.Reports.recordCreation()">Target creation</a></li> 
 	   <li><a href="@routes.Reports.qa()">QA</a></li> 
 	</ul>
 		
@@ -102,7 +102,10 @@
  				<input type="hidden" name="s" value="@currentSortBy">
  				<input type="hidden" name="o" value="@currentOrder">
 				<input type="hidden" name="query_curator" value="@curatorUrl">
-				<input type="hidden" name="query_organisation" value="organisationUrl">		
+				<input type="hidden" name="query_organisation" value="@organisationUrl">		
+				<input type="hidden" name="npld" value="@npld">		
+				<input type="hidden" name="crawl_frequency" value="@crawlFrequency">		
+				<input type="hidden" name="tld" value="@tld">		
    			</div>				
 				<div class="padding-20">
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
@@ -145,6 +148,109 @@
 											</select>
 										</div>
 						         	</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="curator" class="col-sm-6 control-label">Filter by NPLD</label>
+									    <div class="col-sm-6">
+											<select name="author" class="form-control target-form-control" id="curator">
+												<option>None</option>
+												@for(curator <- User.findAll()) {
+													@if(curatorUrl != null && !curatorUrl.equals("") && curatorUrl.equals(curator.url)) {
+														<option selected>@curator.name</option>
+													} else {
+														<option>@curator.name</option>
+													}
+												}
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">					
+						            	<label for="organisation" class="col-sm-6 control-label">Filter by crawl frequency</label>
+						    <div class="col-sm-6">
+				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
+				             		@if(crawlFrequency != null && crawlFrequency.equals("Domain Crawl Only")) {
+					 					<option selected>Domain Crawl Only</option>
+						            } else {						                
+					 					<option>Domain Crawl Only</option>
+					                }
+				             		@if(crawlFrequency != null && crawlFrequency.equals("Annually")) {
+					 					<option selected>Annually</option>
+						            } else {						                
+					 					<option>Annually</option>
+					                }
+				             		@if(crawlFrequency != null && crawlFrequency.equals("Six-monthly")) {
+					 					<option selected>Six-monthly</option>
+						            } else {						                
+					 					<option>Six-monthly</option>
+					                }
+				             		@if(crawlFrequency != null && crawlFrequency.equals("Quarterly")) {
+					 					<option selected>Quarterly</option>
+						            } else {						                
+					 					<option>Quarterly</option>
+					                }
+				             		@if(crawlFrequency != null && crawlFrequency.equals("Monthly")) {
+					 					<option selected>Monthly</option>
+						            } else {						                
+					 					<option>Monthly</option>
+					                }
+				             		@if(crawlFrequency != null && crawlFrequency.equals("Old-Monthly-DO-NOT-USE")) {
+					 					<option selected>Old-Monthly-DO-NOT-USE</option>
+						            } else {						                
+					 					<option>Old-Monthly-DO-NOT-USE</option>
+					                }
+				             		@if(crawlFrequency != null && crawlFrequency.equals("Weekly")) {
+					 					<option selected>Weekly</option>
+						            } else {						                
+					 					<option>Weekly</option>
+					                }
+				             		@if(crawlFrequency != null && crawlFrequency.equals("Daily")) {
+					 					<option selected>Daily</option>
+						            } else {						                
+					 					<option>Daily</option>
+					                }
+				             		@if(crawlFrequency != null && crawlFrequency.equals("Never Crawl")) {
+					 					<option selected>Never Crawl</option>
+						            } else {						                
+					 					<option>Never Crawl</option>
+					                }
+				 				</select>
+				 			</div>
+						         	</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="curator" class="col-sm-6 control-label">Filter by UK top level domain</label>
+									    <div class="col-sm-6">
+											<label class="radio-inline">
+										  		@if(tld.equals("Yes")) {
+										          <input name="tld" id="radio1" value="1" type="radio" checked="checked"> Yes
+										        } else {
+										          <input name="tld" id="radio1" value="1" type="radio"> Yes
+										        }
+											</label>
+											<label class="radio-inline">
+										  		@if(tld.equals("No")) {
+										          <input name="tld" id="radio2" value="2" type="radio" checked="checked"> No 
+										        } else {
+										          <input name="tld" id="radio2" value="2" type="radio"> No 
+										        }
+											</label>
+											<label class="radio-inline">
+										  		@if(tld.equals("Either")) {
+										        	<input name="tld" id="radio3" value="3" type="radio" checked="checked"> Either/Any
+										        } else {
+										        	<input name="tld" id="radio3" value="3" type="radio"> Either/Any
+												}
+											</label>
+										</div>
+									</div>
 								</div>
 							</div>
 							<div class="row">

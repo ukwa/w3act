@@ -1250,10 +1250,14 @@ public class Target extends Model {
      * @param organisationUrl
      * @param startDate The start date for filtering
      * @param endDate The end date for filtering
+     * @param npld The selection of NPLD scope rule for filtering
+     * @param crawlFrequency The crawl frequency value for filtering
+     * @param tld The top level domain setting for filtering
      * @return
      */
     public static Page<Target> pageReportsCreation(int page, int pageSize, String sortBy, String order,  
-    		String curatorUrl, String organisationUrl, String startDate, String endDate) {
+    		String curatorUrl, String organisationUrl, String startDate, String endDate, 
+    		String npld, String crawlFrequency, String tld) {
     	ExpressionList<Target> exp = Target.find.where();
     	Page<Target> res = null;
    		exp = exp.eq(Const.ACTIVE, true);
