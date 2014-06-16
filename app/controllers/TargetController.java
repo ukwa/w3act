@@ -601,7 +601,12 @@ public class TargetController extends AbstractController {
         	}
         	newTarget.changed = changedTime;
         	if (newTarget.created == null || newTarget.created.length() == 0) {
-        		newTarget.created = changedTime;
+        		if (target != null && target.created != null && target.created.length() > 0) {
+        			Logger.info("The creation time remains the same like in original revision of the target: " + target.created);
+        			newTarget.created = target.created;
+        		} else {
+        			newTarget.created = changedTime;
+        		}
         	}
             boolean newScope = Target.isInScopeIp(newTarget.field_url, newTarget.url);
         	Scope.updateLookupEntry(newTarget, newScope);
