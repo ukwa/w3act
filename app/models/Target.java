@@ -1313,7 +1313,6 @@ public class Target extends Model {
             		.findPagingList(pageSize)
             		.setFetchAhead(false)
             		.getPage(page);
-//	    	List<Target> resNpld = new ArrayList<Target>();
     		Logger.info("pageReportsCreation() tmp.getList() size: " + tmp.getList().size());
 			Iterator<Target> itr = tmp.getList().iterator();
 			while (itr.hasNext()) {
@@ -1322,20 +1321,59 @@ public class Target extends Model {
 		        		&& target.field_url != null 
 		        		&& target.field_url.length() > 0 
 		        		&& !target.field_url.toLowerCase().contains(Const.NONE)) {
-		        	if (tld.equals(Const.YES) || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
+		        	if (tld.equals(Const.NO)) {
+		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
+		        		Logger.info("pageReportsCreation() Not UK top level domain isInScope: " + isInScope);
+		        		if (!isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
 		        		boolean isInScope = Target.checkUkHosting(target.field_url);
-		        		Logger.info("pageReportsCreation() isInScope: " + isInScope);
+		        		Logger.info("pageReportsCreation() UK Hosting isInScope: " + isInScope);
 		        		if (isInScope) {
-//		    	        	resNpld.add(target);
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (tld.equals(Const.YES) || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
+		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
+		        		Logger.info("pageReportsCreation() UK top level domain isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
+		        		boolean isInScope = Target.isInScopeUkRegistration(target.field_url);
+		        		Logger.info("pageReportsCreation() UK Registration isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.UK_POSTAL_ADDRESS.name())) {
+		        		boolean isInScope = target.field_uk_postal_address;
+		        		Logger.info("pageReportsCreation() UK Postal Address isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.VIA_CORRESPONDENCE.name())) {
+		        		boolean isInScope = target.field_via_correspondence;
+		        		Logger.info("pageReportsCreation() via correspondence isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.NO_LD_CRITERIA_MET.name())) {
+		        		boolean isInScope = target.field_no_ld_criteria_met;
+		        		Logger.info("pageReportsCreation() no ld criteria met isInScope: " + isInScope);
+		        		if (isInScope) {
 		    	        	targetUrlCollection.add(target.url);
 		        		}
 		        	}
 		        }
 			}
     		Logger.info("pageReportsCreation() targetUrlCollection size: " + targetUrlCollection.size());
-//	    	if (targetUrlCollection.size() > 0) {
-	    		exp = exp.in(Const.URL, targetUrlCollection);
-//	    	}
+    		exp = exp.in(Const.URL, targetUrlCollection);
     	}
     	
     	res = exp.query()
