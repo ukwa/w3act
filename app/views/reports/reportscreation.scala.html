@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.ReportsCreation.targets(newPage, sortBy, order, curatorUrl, organisationUrl, startDate, endDate)
+    routes.ReportsCreation.targets(newPage, sortBy, order, curatorUrl, organisationUrl, startDate, endDate, npld, crawlFrequency, tld)
     
 }
 
@@ -171,56 +171,56 @@
 								<div class="col-md-6">
 									<div class="form-group">					
 						            	<label for="organisation" class="col-sm-6 control-label">Filter by crawl frequency</label>
-						    <div class="col-sm-6">
-				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
-									<option>None</option>
-				             		@if(crawlFrequency != null && crawlFrequency.equals("Domain Crawl Only")) {
-					 					<option selected>Domain Crawl Only</option>
-						            } else {						                
-					 					<option>Domain Crawl Only</option>
-					                }
-				             		@if(crawlFrequency != null && crawlFrequency.equals("Annually")) {
-					 					<option selected>Annually</option>
-						            } else {						                
-					 					<option>Annually</option>
-					                }
-				             		@if(crawlFrequency != null && crawlFrequency.equals("Six-monthly")) {
-					 					<option selected>Six-monthly</option>
-						            } else {						                
-					 					<option>Six-monthly</option>
-					                }
-				             		@if(crawlFrequency != null && crawlFrequency.equals("Quarterly")) {
-					 					<option selected>Quarterly</option>
-						            } else {						                
-					 					<option>Quarterly</option>
-					                }
-				             		@if(crawlFrequency != null && crawlFrequency.equals("Monthly")) {
-					 					<option selected>Monthly</option>
-						            } else {						                
-					 					<option>Monthly</option>
-					                }
-				             		@if(crawlFrequency != null && crawlFrequency.equals("Old-Monthly-DO-NOT-USE")) {
-					 					<option selected>Old-Monthly-DO-NOT-USE</option>
-						            } else {						                
-					 					<option>Old-Monthly-DO-NOT-USE</option>
-					                }
-				             		@if(crawlFrequency != null && crawlFrequency.equals("Weekly")) {
-					 					<option selected>Weekly</option>
-						            } else {						                
-					 					<option>Weekly</option>
-					                }
-				             		@if(crawlFrequency != null && crawlFrequency.equals("Daily")) {
-					 					<option selected>Daily</option>
-						            } else {						                
-					 					<option>Daily</option>
-					                }
-				             		@if(crawlFrequency != null && crawlFrequency.equals("Never Crawl")) {
-					 					<option selected>Never Crawl</option>
-						            } else {						                
-					 					<option>Never Crawl</option>
-					                }
-				 				</select>
-				 			</div>
+									    <div class="col-sm-6">
+							 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
+												<option>None</option>
+							             		@if(crawlFrequency != null && crawlFrequency.equals("Domain Crawl Only")) {
+								 					<option selected>Domain Crawl Only</option>
+									            } else {						                
+								 					<option>Domain Crawl Only</option>
+								                }
+							             		@if(crawlFrequency != null && crawlFrequency.equals("Annually")) {
+								 					<option selected>Annually</option>
+									            } else {						                
+								 					<option>Annually</option>
+								                }
+							             		@if(crawlFrequency != null && crawlFrequency.equals("Six-monthly")) {
+								 					<option selected>Six-monthly</option>
+									            } else {						                
+								 					<option>Six-monthly</option>
+								                }
+							             		@if(crawlFrequency != null && crawlFrequency.equals("Quarterly")) {
+								 					<option selected>Quarterly</option>
+									            } else {						                
+								 					<option>Quarterly</option>
+								                }
+							             		@if(crawlFrequency != null && crawlFrequency.equals("Monthly")) {
+								 					<option selected>Monthly</option>
+									            } else {						                
+								 					<option>Monthly</option>
+								                }
+							             		@if(crawlFrequency != null && crawlFrequency.equals("Old-Monthly-DO-NOT-USE")) {
+								 					<option selected>Old-Monthly-DO-NOT-USE</option>
+									            } else {						                
+								 					<option>Old-Monthly-DO-NOT-USE</option>
+								                }
+							             		@if(crawlFrequency != null && crawlFrequency.equals("Weekly")) {
+								 					<option selected>Weekly</option>
+									            } else {						                
+								 					<option>Weekly</option>
+								                }
+							             		@if(crawlFrequency != null && crawlFrequency.equals("Daily")) {
+								 					<option selected>Daily</option>
+									            } else {						                
+								 					<option>Daily</option>
+								                }
+							             		@if(crawlFrequency != null && crawlFrequency.equals("Never Crawl")) {
+								 					<option selected>Never Crawl</option>
+									            } else {						                
+								 					<option>Never Crawl</option>
+								                }
+							 				</select>
+							 			</div>
 						         	</div>
 								</div>
 							</div>

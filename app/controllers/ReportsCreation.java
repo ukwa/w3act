@@ -73,18 +73,19 @@ public class ReportsCreation extends AbstractController {
         Logger.info("startDate: " + startDate);
         String endDate = form.get(Const.FIELD_CRAWL_END_DATE);
         String crawlFrequency = "";
-        String crawlFrequency_name = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
+        Logger.info("field crawl frequency: " + form.get(Const.FIELD_CRAWL_FREQUENCY));
+        String crawlFrequency_name = form.get(Const.FIELD_CRAWL_FREQUENCY);
         if (crawlFrequency_name != null && !crawlFrequency_name.toLowerCase().equals(Const.NONE)) {
         	crawlFrequency = crawlFrequency_name;
         }
     	String npld = "";
-    	String npld_name = getFormParam(Const.NPLD);
+    	String npld_name = form.get(Const.NPLD);
         if (npld_name != null && !npld_name.toLowerCase().equals(Const.NONE)) {
         	npld = npld_name;
         }
     	String tld = Const.EITHER;
-    	String tld_name = getFormParam(Const.TLD);
-    	Logger.info("tld: " + getFormParam(Const.TLD));
+    	String tld_name = form.get(Const.TLD);
+    	Logger.info("tld: " + form.get(Const.TLD));
         if (tld_name != null && !tld_name.toLowerCase().equals(Const.NONE)) {
         	tld = tld_name;
         }
