@@ -173,7 +173,10 @@
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="btn-group">		
 				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-					<a href="@routes.Targets.lookup()" class="btn btn-primary" title="Look up and add new target">Send </a>
+					<a href="@routes.Targets.lookup()" class="btn btn-primary" title="Look up and add new target">Send </a>					
+				}
+				@if(permission.target != null && permission.target.length() > 0) {
+				<a href="@routes.Targets.view(Target.findByTarget(permission.target).url)" class="btn btn-primary" title="Return to the target record">Back to Target Record</a>
 				}
 	       </div>
 		</div>
