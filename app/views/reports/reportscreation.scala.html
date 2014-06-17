@@ -153,9 +153,9 @@
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
-										<label for="curator" class="col-sm-6 control-label">Filter by NPLD</label>
+										<label for="npld" class="col-sm-6 control-label">Filter by NPLD</label>
 									    <div class="col-sm-6">
-											<select name="npld" id="npld" class="form-control">
+											<select name="filter_npld" id="npld" class="form-control">
 												<option>None</option>
 								                @for(npldType <- Target.getAllNpldTypes()) {
 									                @if(npldType.equals(npld)) {
@@ -231,23 +231,23 @@
 									    <div class="col-sm-6">
 											<label class="radio-inline">
 										  		@if(tld.equals("yes")) {
-										          <input name="tld" id="radio1" value="1" type="radio" checked="checked"> yes
+										          <input name="filter_tld" id="radio1" value="1" type="radio" checked="checked"> yes
 										        } else {
-										          <input name="tld" id="radio1" value="1" type="radio"> yes
+										          <input name="filter_tld" id="radio1" value="1" type="radio"> yes
 										        }
 											</label>
 											<label class="radio-inline">
 										  		@if(tld.equals("no")) {
-										          <input name="tld" id="radio2" value="2" type="radio" checked="checked"> no 
+										          <input name="filter_tld" id="radio2" value="2" type="radio" checked="checked"> no 
 										        } else {
-										          <input name="tld" id="radio2" value="2" type="radio"> no 
+										          <input name="filter_tld" id="radio2" value="2" type="radio"> no 
 										        }
 											</label>
 											<label class="radio-inline">
 										  		@if(tld.equals("either")) {
-										        	<input name="tld" id="radio3" value="3" type="radio" checked="checked"> either/any
+										        	<input name="filter_tld" id="radio3" value="3" type="radio" checked="checked"> either/any
 										        } else {
-										        	<input name="tld" id="radio3" value="3" type="radio"> either/any
+										        	<input name="filter_tld" id="radio3" value="3" type="radio"> either/any
 												}
 											</label>
 										</div>

@@ -189,6 +189,8 @@ public final class Const {
 	public static final String TAB_STATUS         = "tabstatus";
 	public static final String NPLD               = "npld";
 	public static final String TLD                = "tld";
+	public static final String FILTER_NPLD        = "filter_npld";
+	public static final String FILTER_TLD         = "filter_tld";
 	
     /**
      * Creator

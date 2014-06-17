@@ -23,9 +23,12 @@ import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.avaje.ebean.PagingList;
+import com.avaje.ebean.Query;
 
 import controllers.Flags;
 
@@ -1298,7 +1301,43 @@ public class Target extends Model {
     	if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
     		exp = exp.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
     	} 
-
+    	
+    	/**
+    	 * Apply NPLD filters
+    	 */
+    	if (!tld.equals(Const.EITHER) || !npld.equals(Const.NONE)) {
+    		Logger.info("pageReportsCreation() Apply NPLD filters");
+        	List<String> targetUrlCollection = new ArrayList<String>();
+        	Page<Target> tmp = exp.query()
+            		.orderBy(sortBy + " " + order)
+            		.findPagingList(pageSize)
+            		.setFetchAhead(false)
+            		.getPage(page);
+//	    	List<Target> resNpld = new ArrayList<Target>();
+    		Logger.info("pageReportsCreation() tmp.getList() size: " + tmp.getList().size());
+			Iterator<Target> itr = tmp.getList().iterator();
+			while (itr.hasNext()) {
+				Target target = itr.next();
+		        if (target != null 
+		        		&& target.field_url != null 
+		        		&& target.field_url.length() > 0 
+		        		&& !target.field_url.toLowerCase().contains(Const.NONE)) {
+		        	if (tld.equals(Const.YES) || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
+		        		boolean isInScope = Target.checkUkHosting(target.field_url);
+		        		Logger.info("pageReportsCreation() isInScope: " + isInScope);
+		        		if (isInScope) {
+//		    	        	resNpld.add(target);
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        }
+			}
+    		Logger.info("pageReportsCreation() targetUrlCollection size: " + targetUrlCollection.size());
+//	    	if (targetUrlCollection.size() > 0) {
+	    		exp = exp.in(Const.URL, targetUrlCollection);
+//	    	}
+    	}
+    	
     	res = exp.query()
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)

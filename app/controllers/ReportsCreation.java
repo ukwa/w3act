@@ -78,16 +78,23 @@ public class ReportsCreation extends AbstractController {
         if (crawlFrequency_name != null && !crawlFrequency_name.toLowerCase().equals(Const.NONE)) {
         	crawlFrequency = crawlFrequency_name;
         }
-    	String npld = "";
-    	String npld_name = form.get(Const.NPLD);
+    	String npld = Const.NONE;
+    	Logger.info("npld: " + form.get(Const.FILTER_NPLD));
+    	String npld_name = form.get(Const.FILTER_NPLD);
         if (npld_name != null && !npld_name.toLowerCase().equals(Const.NONE)) {
         	npld = npld_name;
         }
     	String tld = Const.EITHER;
-    	String tld_name = form.get(Const.TLD);
-    	Logger.info("tld: " + form.get(Const.TLD));
+    	String tld_name = form.get(Const.FILTER_TLD);
+    	Logger.info("tld: " + form.get(Const.FILTER_TLD));
         if (tld_name != null && !tld_name.toLowerCase().equals(Const.NONE)) {
-        	tld = tld_name;
+        	long idx = Long.valueOf(tld_name);
+        	if (idx == 1) {
+        		tld = Const.YES;
+        	}
+        	if (idx == 2) {
+        		tld = Const.NO;
+        	}
         }
         
     	if (StringUtils.isEmpty(action)) {
