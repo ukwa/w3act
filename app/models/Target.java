@@ -1308,13 +1308,18 @@ public class Target extends Model {
     	if (!tld.equals(Const.EITHER) || !npld.equals(Const.NONE)) {
     		Logger.info("pageReportsCreation() Apply NPLD filters");
         	List<String> targetUrlCollection = new ArrayList<String>();
-        	Page<Target> tmp = exp.query()
+//        	Page<Target> tmp = exp.query()
+//            		.orderBy(sortBy + " " + order)
+//            		.findPagingList(pageSize)
+//            		.setFetchAhead(false)
+//            		.getPage(page);
+        	List<Target> tmp = exp.query()
             		.orderBy(sortBy + " " + order)
-            		.findPagingList(pageSize)
-            		.setFetchAhead(false)
-            		.getPage(page);
-    		Logger.info("pageReportsCreation() tmp.getList() size: " + tmp.getList().size());
-			Iterator<Target> itr = tmp.getList().iterator();
+            		.findList();
+//    		Logger.info("pageReportsCreation() tmp.getList() size: " + tmp.getList().size());
+    		Logger.info("pageReportsCreation() tmp list size: " + tmp.size());
+			Iterator<Target> itr = tmp.iterator();
+//			Iterator<Target> itr = tmp.getList().iterator();
 			while (itr.hasNext()) {
 				Target target = itr.next();
 		        if (target != null 
