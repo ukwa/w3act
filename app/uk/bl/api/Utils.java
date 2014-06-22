@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -86,7 +87,7 @@ public class Utils {
 	 	{
 	 	    FileWriter writer = new FileWriter(sFileName);
 
-	  	    String decodedData = URLDecoder.decode(data, Const.STR_FORMAT);
+	  	    String decodedData = replacer(data); //URLDecoder.decode(data, Const.STR_FORMAT);
 //	  	    Logger.info("generateCsvFile: " + decodedData);
 	 	    writer.append(decodedData);
 	 	    writer.flush();
@@ -97,6 +98,37 @@ public class Utils {
 	 	     e.printStackTrace();
 	 	} 
     }    
+    
+    /**
+     * This method secures handling of percent in string.
+     * @param data
+     * @return
+     */
+    public static String replacer(String data) {
+        try {
+           StringBuffer tempBuffer = new StringBuffer();
+           int incrementor = 0;
+           int dataLength = data.length();
+           while (incrementor < dataLength) {
+              char charecterAt = data.charAt(incrementor);
+              if (charecterAt == '%') {
+                 tempBuffer.append("<percentage>");
+              } else if (charecterAt == '+') {
+                 tempBuffer.append("<plus>");
+              } else {
+                 tempBuffer.append(charecterAt);
+              }
+              incrementor++;
+           }
+           data = tempBuffer.toString();
+           data = URLDecoder.decode(data, Const.STR_FORMAT);
+           data = data.replaceAll("<percentage>", "%");
+           data = data.replaceAll("<plus>", "+");
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+        return data;
+    }
     
     /**
      * This method generates current date for e.g. licence form.
@@ -121,6 +153,28 @@ public class Utils {
 			 * creates timestamp for one day older than the current day.
 			 */
 			Long longTime = new Long(resDate.getTime()/1000 + 86400);
+			Logger.info("long time: " + longTime);
+			res = String.valueOf(longTime);
+			Logger.info("res date: " + res);
+			Logger.debug("check stored date - convert back to human date: " + getDateFromUnixDate(res));
+		} catch (ParseException e) {
+			Logger.debug("Conversion of date in string format dd-MM-yyyy to unix date: " + e);
+		}
+        return res;
+    }
+    
+    /**
+     * This method performs a conversion of date in string format 'dd-MM-yyyy' to unix date without 
+     * modifying the date.
+     * @param curDate
+     * @return long value of the unix date in string format
+     */
+    public static String getUnixDateStringFromDateExt(String curDate) {
+    	String res = "";
+		try {
+	    	Logger.debug("getUnixDateStringFromDate curDate: " + curDate);
+			Date resDate = new SimpleDateFormat(Const.DATE_FORMAT).parse(curDate);
+			Long longTime = new Long(resDate.getTime()/1000);
 			Logger.info("long time: " + longTime);
 			res = String.valueOf(longTime);
 			Logger.info("res date: " + res);
@@ -404,6 +458,73 @@ public class Utils {
     		res = Const.YES;
     	}
     	return res;
+    }
+    
+    /**
+     * This method checks whether given string is
+     * a numeric value.
+     * @param str
+     * @return true if numeric
+     */
+    public static boolean isNumeric(String str)  
+    {  
+        try {  
+            Double.parseDouble(str);  
+            String regex = "[0-9]+";
+            if (str.matches(regex) == false) {
+            	return false;
+            }
+        } catch (NumberFormatException nfe) {  
+            return false;  
+        }  
+        return true;  
+    }    
+    
+    /**
+     * This method checks whether given string is
+     * a numeric value of type Long.
+     * @param str
+     * @return true if numeric
+     */
+    public static boolean isNumericLong(String str)  
+    {  
+        try {  
+            Long.parseLong(str);  
+        } catch (NumberFormatException nfe) {  
+            return false;  
+        }  
+        return true;  
+    }    
+    
+    /**
+     * Replace domain field names by GUI field names
+     * @param fields
+     * @return
+     */
+    public static String showMissingFields(String fields) {
+    	if (fields != null && fields.length() > 0) {
+    		for (Map.Entry<String, String> entry : Const.guiMap.entrySet()) {
+				if (fields.contains(entry.getKey())) {
+					fields = fields.replace(entry.getKey(), entry.getValue());
+				}
+			}
+    	}
+    	return fields;
+    	
+    }
+    
+    /**
+     * Replace domain field name by GUI field name
+     * @param fields
+     * @return
+     */
+    public static String showMissingField(String field) {
+    	String res = field;
+    	if (field != null && field.length() > 0) {
+    		res = Const.guiMap.get(field);
+    	}
+    	return res;
+    	
     }
 }
 

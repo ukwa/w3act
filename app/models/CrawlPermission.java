@@ -7,14 +7,17 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -22,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * handles crawl permission requests sent by e-mail to the owner.
  */
 @Entity
+@Table(name = "crawl_permission")
 public class CrawlPermission extends Model
 {
 
@@ -40,6 +44,7 @@ public class CrawlPermission extends Model
     public String url;
 
     @Column(columnDefinition = "TEXT")
+    @Required
     public String name;
     
     /**
@@ -47,6 +52,7 @@ public class CrawlPermission extends Model
      */
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
+    @Required
     public String target;
     
     @JsonIgnore
@@ -198,9 +204,22 @@ public class CrawlPermission extends Model
 	 * @param name
 	 * @return
 	 */
-	public static List<CrawlPermission> filterByName(String name) {
+	public static List<CrawlPermission> filterByName(String name) { 
 		List<CrawlPermission> res = new ArrayList<CrawlPermission>();
         ExpressionList<CrawlPermission> ll = find.where().icontains(Const.NAME, name);
+    	res = ll.findList();
+		return res;
+	}
+        
+	/**
+	 * This method filters crawl permissions by contact person and returns a list 
+	 * of filtered CrawlPermission objects.
+	 * @param url The identifier for contact person
+	 * @return
+	 */
+	public static List<CrawlPermission> filterByContactPerson(String url) { 
+		List<CrawlPermission> res = new ArrayList<CrawlPermission>();
+        ExpressionList<CrawlPermission> ll = find.where().icontains(Const.CONTACT_PERSON, url);
     	res = ll.findList();
 		return res;
 	}
@@ -331,6 +350,34 @@ public class CrawlPermission extends Model
 	    }
 	    return res;
     }         
+    
+    /**
+     * Return a page of crawl permission 
+     *
+     * @param page Page to display
+     * @param pageSize Number of Users per page
+     * @param sortBy Crawl permission property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     * @param status The status of crawl permission request (e.g. QUEUED, PENDING...)
+     * @param target The field URL
+     */
+    public static Page<CrawlPermission> page(int page, int pageSize, String sortBy, String order, String filter, 
+    		String status, String target) {
+
+        return find.where()
+        		.icontains(Const.NAME, filter)
+        		.eq(Const.STATUS, status)
+//        		.ne(Const.STATUS, Const.NONE)
+//        		.ne(Const.STATUS, Const.NONE_VALUE)
+        		.icontains(Const.TARGET, target)
+//        		.ne(Const.TARGET, Const.NONE)
+//        		.ne(Const.TARGET, Const.NONE_VALUE)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }
     
     public String toString() {
         return "CrawlPermission(" + name + ")" + ", id:" + id;

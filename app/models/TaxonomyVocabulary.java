@@ -12,6 +12,7 @@ import play.db.ebean.*;
  */
 @SuppressWarnings("serial")
 @Entity 
+@Table(name = "taxonomy_vocabulary")
 public class TaxonomyVocabulary extends Model {
 
     @Id
@@ -21,13 +22,15 @@ public class TaxonomyVocabulary extends Model {
     @Column(columnDefinition = "TEXT")
     public String description;
     public Long term_count;
+    
+    public TaxonomyVocabulary() {
+    	super();
+    }
       
     public TaxonomyVocabulary(String name) {
         this.name = name;
     }
     
-    public TaxonomyVocabulary() {
-    }
     
     // -- Queries
     

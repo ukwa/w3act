@@ -7,7 +7,7 @@
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
 			searchContext = 'targets';
-			applySearch(context, searchContext);
+			applySearchTargetsTab(context, searchContext);
 			scopeCheck(context);
 		});
 	</script>
@@ -103,10 +103,8 @@
    					<input type="hidden" name="query_flag" value="@flag">
 					<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
 		   			<span class="input-group-btn">
-						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
 				        <button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear up search settings">Clear</button>
-				        }
 						@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) && searchurl != null && searchurl.length() > 0) {
 							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Look up and add new target">Add Target</button>
 						}
@@ -168,7 +166,7 @@
 						            	<div class="col-sm-6">
 											<select name="field_subject" class="form-control target-form-control" id="subject">
 									        	<option>None</option>
-									            @for(subject <- Taxonomy.findListByTypeSorted("subject")) {
+									            @for(subject <- Taxonomy.findListByTypeSortedAll()) {
 							                 			@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
 							                			<option selected>@subject.name</option>
 							                		} else {
@@ -287,7 +285,7 @@
 						  				<label for="export" class="col-sm-6 control-label">Targets count</label>
 						            	<div class="col-sm-6">
 								   			<div class="input-group">
-								 				<input type="text" name="max_count" value="@currentPage.getTotalRowCount" maxlength="200" class="form-control target-form-control" id="max_count" title="Number of selected targets" />
+								 				<input readonly type="text" name="max_count" value="@currentPage.getTotalRowCount" maxlength="200" class="form-control target-form-control" id="max_count" title="Number of selected targets" />
 								 				<span class="input-group-btn">
 													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
@@ -312,6 +310,8 @@
 	                <tr>
 						@header("title", "Target Name")
 						@header("url", "Target URL(s)")	                
+						@header("created", "Created")	                
+						@header("qa_status", "Open UKWA Licence status")	                
 	                </tr>
 				</thead>
 				<tbody>
@@ -322,7 +322,17 @@
 						} else {
 							<td></td>
 						}		                  
-						<td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
+						<td><a class="brand" href="@target.get_field_list_as_str("field_url")" target="_blank">@target.get_field_list_as_str("field_url")</a></td>
+						@if(target.url != null && target.created != null) {
+							<td>@Target.getDateAsString(target.created)</td>
+						} else {
+							<td></td>
+						}		                  
+						@if(target.url != null && target.qa_status != null) {
+							<td>@target.qa_status</td>
+						} else {
+							<td></td>
+						}		                  
 	                </tr>
 	                }
 				</tbody>

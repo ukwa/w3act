@@ -1,33 +1,35 @@
-@(organisation: Organisation, user: User)
+@(form: Form[Organisation], user: User)
 
 @main("", user) {
     
    	<div class="page-header">
-	    <h1><a href="@routes.Organisations.index()">Organisations > </a>Organisation @organisation.title</h1>
+	    <h1><a href="@routes.Organisations.index()">Users & Agencies > Organisations > </a>Organisation @form("title").value</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   @if(Organisation.findById(organisation.nid) != null) {
-	   <li><a href="@routes.Organisations.view(organisation.url)">View</a></li>
-	   <li><a href="@routes.Organisations.sites(organisation.url)">Sites</a></li> 
+	   @if(Organisation.findById(Long.valueOf(form("nid").value)) != null) {
+	   <li><a href="@routes.Organisations.view(form("url").value)">View</a></li>
+	   <li><a href="@routes.Organisations.sites(form("url").value)">Sites</a></li> 
 	   }
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.Organisations.edit(organisation.url)">Edit</a></li>
-		   <li><a href="@routes.Organisations.admin(organisation.url)">User administration</a></li>
+		   <li class="active"><a href="@routes.Organisations.edit(form("url").value)">Edit</a></li>
+		   @if(Organisation.findById(Long.valueOf(form("nid").value)) != null) {
+		   <li><a href="@routes.Organisations.admin(form("url").value)">User administration</a></li>
+		   }
 	   }
 	</ul>
     
-
+	@warningmessage(flash)
 	@helper.form(action=routes.Organisations.save) {
-		<input type="hidden" name="url" value="@organisation.url">
-		<input type="hidden" name="nid" value="@organisation.nid">
+		<input type="hidden" name="url" value="@form("url").value">
+		<input type="hidden" name="nid" value="@form("nid").value">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
 					<label for="inputName" class="col-sm-6 control-label">Title <font color="red">*</font></label>
 				    <div class="col-sm-6">
-	              		<input class="form-control" name="title" id="inputTitle" value="@organisation.title" type="text">
+	              		<input class="form-control" name="title" id="inputTitle" value="@form("title").value" type="text">
 					</div>
 				</div>
 			</div>
@@ -36,9 +38,9 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputAbbreviation" class="col-sm-6 control-label">Abbreviation (<small>An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc)</small><font color="red">*</font></label>
+					<label for="inputAbbreviation" class="col-sm-6 control-label">Abbreviation (<small>An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc)</small> <font color="red">*</font></label>
 				    <div class="col-sm-6">
-	              		<input class="form-control" name="field_abbreviation" id="inputAbbreviation" placeholder="BL" type="text" value="@organisation.field_abbreviation">
+	              		<input class="form-control" name="field_abbreviation" id="inputAbbreviation" placeholder="BL" type="text" value="@form("field_abbreviation").value">
 					</div>
 				</div>
 			</div>
@@ -49,7 +51,7 @@
 				<div class="form-group">
 					<label for="inputAbbreviation" class="col-sm-6 control-label">Description</label>
 				    <div class="col-sm-6">
-	               		<textarea class="form-control" name="summary" id="inputDescription" value="@organisation.summary" cols="100" rows="1">@organisation.summary</textarea>
+	               		<textarea class="form-control" name="summary" id="inputDescription" value="@form("summary").value" cols="100" rows="1">@form("summary").value</textarea>
 					</div>
 				</div>
 			</div>
@@ -60,7 +62,7 @@
      			<div class="form-group">
 					<label for="inputRevision" class="col-sm-6 control-label">Revision log message</label>
 				    <div class="col-sm-6">
-						<textarea class="form-control text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1">@organisation.revision</textarea>
+						<textarea class="form-control text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1">@form("revision").value</textarea>
 					</div>
 				</div>
 			</div>
@@ -76,7 +78,9 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
 					<button type="submit" class="btn btn-primary" name="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
+				    @if(Organisation.findById(Long.valueOf(form("nid").value)) != null) {
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
+					}
 		       </div>
 			</div>
 		</div>

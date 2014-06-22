@@ -78,18 +78,18 @@
 		</div>
 }
 
-@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.Reports.index()">Access Control > </a>Reports</h1>
+	    <h1><a href="@routes.Reports.index()">Targets > </a>Reports</h1>
 	</div>
 	
     <ul class="nav nav-tabs">
-	   <li><a href="@routes.Reports.summary()">Summary</a></li>
+	   <!-- li><a href="@routes.Reports.summary()">Summary</a></li-->
 	   <li><a href="@routes.Reports.openLicences()">Open UKWA licences</a></li> 
-	   <li><a href="@routes.Reports.recordCreation()">Record creation</a></li> 
+	   <li><a href="@routes.Reports.recordCreation()">Target creation</a></li> 
 	   <li class="active"><a href="@routes.Reports.qa()">QA</a></li> 
 	</ul>
 		
@@ -275,6 +275,6 @@
 	</article>
 }
 } else {
-	<h1>Access Denied for URL @routes.Reports.index()/qa</h1>
+	@infomessage.render("Access Denied for URL @routes.Reports.index()/qa")
 }
 

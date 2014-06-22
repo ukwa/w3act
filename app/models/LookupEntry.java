@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.Logger;
@@ -16,6 +17,7 @@ import uk.bl.Const;
 import com.avaje.ebean.ExpressionList;
 
 @Entity
+@Table(name = "lookup_entry")
 public class LookupEntry extends Model
 {
     /**

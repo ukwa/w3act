@@ -24,9 +24,13 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -35,6 +39,7 @@ import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table(name = "role")
 public class Role extends Model
 {
     /**
@@ -44,7 +49,8 @@ public class Role extends Model
 
 	@Id @JsonIgnore
     public Long id;
-
+    
+	@Required
 	@Column(columnDefinition = "TEXT")
     public String name;
 
@@ -215,6 +221,45 @@ public class Role extends Model
     }
     
     /**
+     * This method checks if a given role is included in the list of passed user roles.
+     * Simple "contains" method of string does not help for roles since part of the role name
+     * like "exper_user" could be a name of the other role like "user".
+     * @param roleName The given role name
+     * @param roles The user roles as a string separated by comma
+     * @return true if role name is included
+     */
+    public static boolean isIncludedByUrl(String roleName, String url) {
+    	boolean res = false;
+    	Logger.info("isIncludedByUrl() url: " + url);
+    	try {
+	    	if (StringUtils.isNotEmpty(url)) {
+		    	String roles = User.findByUrl(url).roles;
+		    	if (roleName != null && roleName.length() > 0 && roles != null && roles.length() > 0 ) {
+		    		if (roles.contains(Const.COMMA)) {
+		    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
+		    			Iterator<String> itr = resList.iterator();
+		    			while (itr.hasNext()) {
+		        			String currentRoleName = itr.next();
+		        			currentRoleName = currentRoleName.replaceAll(" ", "");
+		        			if (currentRoleName.equals(roleName)) {
+		        				res = true;
+		        				break;
+		        			}
+		    			}
+		    		} else {
+		    			if (roles.equals(roleName)) {
+		    				res = true;
+		    			}
+		    		}
+		    	}
+	    	}
+    	} catch (Exception e) {
+    		Logger.debug("User is not yet stored in database.");
+    	}
+    	return res;
+    }
+    
+    /**
      * This method evaluates index of the role in the role enumeration.
      * @param roles
      * @return
@@ -252,12 +297,17 @@ public class Role extends Model
     public static boolean isAllowed(Role role, User user) {
     	boolean res = false;
     	if (role != null && role.name != null && role.name.length() > 0) {
-    		int roleIndex = Const.Roles.valueOf(role.name).ordinal();
-    		int userIndex = getRoleSeverity(user.roles);
-    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
-    		if (roleIndex >= userIndex) {
+    		try {
+	    		int roleIndex = Const.Roles.valueOf(role.name).ordinal();
+	    		int userIndex = getRoleSeverity(user.roles);
+	    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
+	    		if (roleIndex >= userIndex) {
+	    			res = true;
+	    		}  
+    		} catch (Exception e) {
+    			Logger.info("New created role is allowed.");
     			res = true;
-    		}    		
+    		}
     	}
     	Logger.debug("role allowance check: " + role + ", user: " + user + ", res: " + res);
     	return res;

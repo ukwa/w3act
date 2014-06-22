@@ -14,16 +14,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.organisations.list;
 import views.html.organisations.admin;
 import views.html.organisations.edit;
-import views.html.organisations.sites;
+import views.html.organisations.list;
 import views.html.organisations.view;
 
 import com.avaje.ebean.Ebean;
@@ -74,7 +74,14 @@ public class Organisations extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.Organisations.create(query));
+    	    	Organisation organisation = new Organisation();
+    	    	organisation.title = query;
+    	        organisation.nid = Target.createId();
+    	        organisation.url = Const.ACT_URL + organisation.nid;
+    			Logger.info("add with url: " + organisation.url + ", and title: " + organisation.title);
+    			Form<Organisation> organisationForm = Form.form(Organisation.class);
+    			organisationForm = organisationForm.fill(organisation);
+    	        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.Organisations.list(pageNo, sort, order, query));
@@ -92,12 +99,10 @@ public class Organisations extends AbstractController {
     	organisation.title = title;
         organisation.nid = Target.createId();
         organisation.url = Const.ACT_URL + organisation.nid;
-		Logger.info("add entry with url: " + organisation.url + ", and title: " + organisation.title);
-        return ok(
-                edit.render(
-                      organisation, User.find.byId(request().username())
-                )
-            );
+		Logger.info("add organisation with url: " + organisation.url + ", and title: " + organisation.title);
+		Form<Organisation> organisationForm = Form.form(Organisation.class);
+		organisationForm = organisationForm.fill(organisation);
+        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
     }
     
     /**
@@ -107,11 +112,10 @@ public class Organisations extends AbstractController {
 		Logger.info("organisation url: " + url);
 		Organisation organisation = Organisation.findByUrl(url);
 		Logger.info("organisation title: " + organisation.title + ", url: " + url);
-        return ok(
-                edit.render(
-                        Organisation.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<Organisation> organisationForm = Form.form(Organisation.class);
+		organisationForm = organisationForm.fill(organisation);
+        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
+
     }
     
     /**
@@ -140,7 +144,7 @@ public class Organisations extends AbstractController {
         return ok(
         	list.render(
         			"Organisations", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			query, 
         			Organisation.page(pageNo, 10, sortBy, order, query), 
         			sortBy, 
@@ -154,17 +158,13 @@ public class Organisations extends AbstractController {
     public static Result view(String url) {
         return ok(
                 view.render(
-                        Organisation.findByUrl(url), User.find.byId(request().username())
+                        Organisation.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }    
     
     public static Result sites(String url) {
-        return ok(
-                sites.render(
-                        Organisation.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+        return redirect(routes.Targets.organisationTargets(0, Const.TITLE, Const.ASC, "", url));
     }
     
     /**
@@ -175,7 +175,7 @@ public class Organisations extends AbstractController {
     public static Result admin(String url) {
         return ok(
                 admin.render(
-                        Organisation.findByUrl(url), User.find.byId(request().username())
+                        Organisation.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -200,6 +200,35 @@ public class Organisations extends AbstractController {
         return ok();
     }
 
+	/**
+	 * This method prepares Organisation form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+    	Organisation organisation = new Organisation();
+    	organisation.nid = Long.valueOf(getFormParam(Const.NID));
+    	organisation.url = getFormParam(Const.URL);
+    	organisation.title = getFormParam(Const.TITLE);
+	    if (getFormParam(Const.FIELD_ABBREVIATION) != null) {
+	    	organisation.field_abbreviation = getFormParam(Const.FIELD_ABBREVIATION);
+	    }
+	    if (getFormParam(Const.SUMMARY) != null) {
+	    	organisation.summary = getFormParam(Const.SUMMARY);
+	    }
+	    if (organisation.revision == null) {
+	    	organisation.revision = "";
+	    }
+	    if (getFormParam(Const.REVISION) != null) {
+	    	organisation.revision = getFormParam(Const.REVISION);
+	    }
+		Form<Organisation> organisationFormNew = Form.form(Organisation.class);
+		organisationFormNew = organisationFormNew.fill(organisation);
+      	return ok(
+	              edit.render(organisationFormNew, User.findByEmail(request().username()))
+	            );
+    }
+    
     /**
      * This method saves new object or changes on given Organisation in the same object
      * completed by revision comment. The "version" field in the Organisation object
@@ -215,6 +244,24 @@ public class Organisations extends AbstractController {
         	Logger.info("save organisation nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
         			", title: " + getFormParam(Const.TITLE) + ", revision: " + getFormParam(Const.REVISION) + 
         			", abbreviation: " + getFormParam(Const.FIELD_ABBREVIATION));
+        	Form<Organisation> organisationForm = Form.form(Organisation.class).bindFromRequest();
+            if(organisationForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : organisationForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    key = Utils.showMissingField(key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + organisationForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+	  					" Missing fields are: " + missingFields);
+	  			return info();
+            }
+        	
         	Organisation organisation = null;
             boolean isExisting = true;
             try {
@@ -237,6 +284,12 @@ public class Organisations extends AbstractController {
                 	organisation.url = getFormParam(Const.URL);
                 }
                 
+//            	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
+//            			|| StringUtils.isBlank(getFormParam(Const.FIELD_ABBREVIATION))) {
+//                	Logger.info("title: " + getFormParam(Const.TITLE) + ", abbreviation: " + getFormParam(Const.FIELD_ABBREVIATION));
+//                	Logger.info("Please fill out all the required fields, marked with a red star.");
+//                    return ok(infomessage.render("Please fill out all the required fields, marked with a red star."));
+//            	}    	
         	    if (getFormParam(Const.TITLE) != null) {
         	    	organisation.title = getFormParam(Const.TITLE);
         	    }
@@ -250,7 +303,7 @@ public class Organisations extends AbstractController {
         	    	organisation.revision = "";
         	    }
                 if (getFormParam(Const.REVISION) != null) {
-                	organisation.revision = organisation.revision.concat(", " + getFormParam(Const.REVISION));
+                	organisation.revision = getFormParam(Const.REVISION);
                 }
             } catch (Exception e) {
             	Logger.info("User not existing exception");
@@ -269,8 +322,7 @@ public class Organisations extends AbstractController {
            		Logger.info("update organisation: " + organisation.toString());
                	Ebean.update(organisation);
         	}
-	        res = redirect(routes.Organisations.index());
-//	        res = redirect(routes.Organisations.view(organisation.url));
+	        res = redirect(routes.Organisations.edit(organisation.url));
         } 
         if (delete != null) {
         	Organisation organisation = Organisation.findByUrl(getFormParam(Const.URL));
@@ -374,7 +426,6 @@ public class Organisations extends AbstractController {
         String save = getFormParam(Const.SAVE);
         if (save != null) {
         	Organisation organisation = null;
-            boolean isExisting = true;
             try {
                	organisation = Organisation.findByUrl(getFormParam(Const.URL));
                	

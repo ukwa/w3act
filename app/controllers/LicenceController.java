@@ -76,7 +76,8 @@ public class LicenceController extends AbstractController {
     	Logger.debug("sendAcknowledgementToSiteOwner mailTemplate: " + mailTemplate);
     	String messageSubject = mailTemplate.subject;
 //    	Logger.debug("sendAcknowledgementToSiteOwner text: " + mailTemplate.text);
-    	String messageBody = mailTemplate.readTemplate();
+//    	String messageBody = mailTemplate.readTemplate();
+    	String messageBody = mailTemplate.text;
 		StringBuilder sb = new StringBuilder();
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.LICENCE_ACK + Const.TWO_POINTS + permission.license + Const.CSV_LINE_END);
@@ -131,9 +132,10 @@ public class LicenceController extends AbstractController {
         	Logger.info("save UKWA licence - name: " + getFormParam(Const.NAME));
     		Logger.info("agree: " + getFormParam(Const.AGREE));
             boolean isAgreed = Utils.getNormalizeBooleanString(getFormParam(Const.AGREE));
-    		if (!isAgreed) {
-    			Logger.info("The form cannot be submitted without selecting 'Yes' for field 'I/We agree'. Please agree for licence granting.");
-    			flash("message", "The form cannot be submitted without selecting 'Yes' for field 'I/We agree'. Please agree for licence granting.");
+    		if (!isAgreed || StringUtils.isBlank(getFormParam(Const.CONTENT)) 
+        			|| StringUtils.isBlank(getFormParam(Const.PUBLISH))) {
+    			Logger.info("The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
+    			flash("message", "The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
     			return ok(
     		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
     	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 

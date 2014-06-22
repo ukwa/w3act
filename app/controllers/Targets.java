@@ -252,7 +252,7 @@ public class Targets extends AbstractController {
         return ok(
         	list.render(
         			"Lookup", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Target.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 
@@ -280,11 +280,11 @@ public class Targets extends AbstractController {
     public static Result targets(int pageNo, String sortBy, String order, String filter, String curator,
     		String organisation, String subject, String crawlFrequency, String depth, String collection, 
     		String license, int pageSize, String flag) {
-    	Logger.info("Targets.targets()");   	
+    	Logger.info("Targets.targets() subject: " + subject);   	
         return ok(
         	targets.render(
         			"Targets", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
         					subject, crawlFrequency, depth, collection, license, flag), 
@@ -310,6 +310,15 @@ public class Targets extends AbstractController {
     public static Result searchTargets() {
     	
     	DynamicForm form = DynamicForm.form().bindFromRequest();
+    	Logger.debug("page size: " + getFormParam(Const.PAGE_SIZE));
+        if (form.get(Const.PAGE_SIZE) == null 
+        		|| (form.get(Const.PAGE_SIZE) != null 
+        		   && !Utils.isNumeric(form.get(Const.PAGE_SIZE)))) {
+            Logger.info("You may only enter a numeric page size.");
+  			flash("message", "You may only enter a numeric page size.");
+	        return GO_TARGETS_HOME;
+    	}    	
+    	
     	String action = form.get("action");
     	String query = form.get("url");
 
@@ -346,7 +355,7 @@ public class Targets extends AbstractController {
     	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
     		try {
     			Logger.info("find subject for title: " + subject_name + ". " + subject_name.length());
-           		subject = Taxonomy.findByNameExt(subject_name).url;
+           		subject = Taxonomy.findByNameConf(subject_name).url;
     		} catch (Exception e) {
     			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
     		}
@@ -492,15 +501,7 @@ public class Targets extends AbstractController {
     	
     	DynamicForm form = DynamicForm.form().bindFromRequest();
     	String action = form.get("action");
-    	String query = form.get("url");
-
-//    	if (StringUtils.isBlank(query)) {
-//			Logger.info("Target name is empty. Please write name in search window.");
-//			flash("message", "Please enter a name in the search window");
-//	        return redirect(
-//	        		routes.Targets.list(0, "title", "asc", "")
-//	        );
-//    	}    	
+    	String query = form.get("url"); 	
 
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
@@ -510,7 +511,6 @@ public class Targets extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-//        		return redirect(routes.Targets.create(query));
     	        Logger.info("create()");
     	    	Target target = new Target();
     	    	target.field_url = query;
@@ -518,15 +518,17 @@ public class Targets extends AbstractController {
     	        target.url = Const.ACT_URL + target.nid;
     	        target.revision = Const.INITIAL_REVISION;
     	        target.active = true;
-    	        if (User.find.byId(request().username()).hasRole(Const.USER)) {
-    	        	target.author = User.find.byId(request().username()).url;
+    	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
+    	        	target.author = User.findByEmail(request().username()).url;
     	        	target.field_subsubject = Const.NONE;
+    	        	target.field_subject = Const.NONE;
     	        }
-    			Logger.info("add entry with target url: " + target.url);
-    			Logger.info("target name: " + target.title);
+//	        	target.qa_status = Const.NONE_VALUE;
+    			Logger.info("add target with url: " + target.url);
+    			Logger.info("target title: " + target.title);
     			Form<Target> targetForm = Form.form(Target.class);
     			targetForm = targetForm.fill(target);
-    	        return ok(edit.render(targetForm, User.find.byId(request().username())));    			
+    	        return ok(edit.render(targetForm, User.findByEmail(request().username())));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -554,8 +556,7 @@ public class Targets extends AbstractController {
 		Logger.info("target name: " + target.title);
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(target);
-        return ok(edit.render(targetForm, User.find.byId(request().username())));
-//        return ok(edit.render(target, User.find.byId(request().username())));
+        return ok(edit.render(targetForm, User.findByEmail(request().username())));
     }
     
     /**
@@ -574,9 +575,33 @@ public class Targets extends AbstractController {
         return ok(
         		sites.render(
         			DCollection.findByUrl(collection_url),  
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection_url), 
+        			sortBy, 
+        			order) 
+        	);
+    }
+	    
+    /**
+     * Display the paginated list of targets for given organisation.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     * @param collection_url Collection where targets search occurs
+     */
+    public static Result organisationTargets(int pageNo, String sortBy, String order, String filter, 
+    		String organisation_url) {
+    	Logger.info("Targets.organisationTargets()");
+    	
+        return ok(
+        		views.html.organisations.sites.render(
+        			Organisation.findByUrl(organisation_url),  
+        			User.findByEmail(request().username()), 
+        			filter, 
+        			Target.pageOrganisationTargets(pageNo, 10, sortBy, order, filter, organisation_url), 
         			sortBy, 
         			order) 
         	);
@@ -616,6 +641,33 @@ public class Targets extends AbstractController {
     }
     
     /**
+     * This method enables searching for given URL and particular organisation.
+     * @return
+     */
+    public static Result searchTargetsByOrganisation() {
+    	
+    	DynamicForm form = DynamicForm.form().bindFromRequest();
+    	String action = form.get(Const.ACTION);
+    	String query = form.get(Const.URL);
+
+    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
+    	String sort = form.get(Const.SORT_BY);
+    	String order = form.get(Const.ORDER);
+    	String organisation_url = form.get(Const.ORGANISATION_URL);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.SEARCH.equals(action)) {
+    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    	    	return redirect(routes.Targets.organisationTargets(pageNo, sort, order, query, organisation_url));
+		    } else {
+		    	return badRequest("This action is not allowed");
+		    }
+    	}
+    }
+    
+    /**
      * Display the paginated list of targets.
      *
      * @param page Current page number (starts from 0)
@@ -633,7 +685,7 @@ public class Targets extends AbstractController {
         return ok(
         		usersites.render(
         			User.findByUrl(user_url),  
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Target.pageUserTargets(pageNo, 10, sortBy, order, filter, user_url, subject, collection), 
         			sortBy, 
@@ -711,28 +763,33 @@ public class Targets extends AbstractController {
     public static Result GO_TARGETS_HOME = redirect(
             routes.Targets.targets(0, "title", "asc", "", "", "", "", "", "", "", "", Const.PAGINATION_OFFSET, "")
         );
-    
+       
     /**
      * Display the target edit panel for this URL.
+     * @param url The target identifier URL
      */
     public static Result edit(String url) {
 		Logger.info("Targets.edit() url: " + url);
 		Target target = Target.findByUrl(url);
+		if (target.field_subject == null || target.field_subject.length() == 0) {
+			Logger.info("Targets.edit() set subject value to 'None' for imported targets.");
+			target.field_subject = Const.NONE;
+			Ebean.update(target);
+		}		
 		Logger.info("Targets.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(Target.findByUrl(url));
-        return ok(edit.render(targetForm, User.find.byId(request().username())));
-//        return ok(
-//                edit.render(
-//                        Target.findByUrl(url), User.find.byId(request().username())
-//                )
-//            );
+        return ok(edit.render(targetForm, User.findByEmail(request().username())));
     }
     
+    /**
+     * @param url The target identifier URL
+     * @return
+     */
     public static Result view(String url) {
         return ok(
                 view.render(
-                        Target.findByUrl(url), User.find.byId(request().username())
+                        Target.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -745,7 +802,7 @@ public class Targets extends AbstractController {
     public static Result viewrevision(Long nid) {
         return ok(
                 view.render(
-                        Target.findById(nid), User.find.byId(request().username())
+                        Target.findById(nid), User.findByEmail(request().username())
                 )
             );
     }
@@ -792,16 +849,16 @@ public class Targets extends AbstractController {
      */
     public static Result blank() {
         Logger.info("blank()");
-        return ok(blank.render(targetForm, User.find.byId(request().username())));
+        return ok(blank.render(targetForm, User.findByEmail(request().username())));
     }
     
     public static Result saveBlank() {
     	play.data.Form<Target> filledForm = targetForm.bindFromRequest();
 	    if(filledForm.hasErrors()) {
-	        return badRequest(blank.render(filledForm, User.find.byId(request().username())));
+	        return badRequest(blank.render(filledForm, User.findByEmail(request().username())));
 	    } else {
 	        flash("success", "You've saved");
-	        return ok(blank.render(filledForm, User.find.byId(request().username())));
+	        return ok(blank.render(filledForm, User.findByEmail(request().username())));
 	    }
     }
     
@@ -964,6 +1021,7 @@ public class Targets extends AbstractController {
     	if (Target.getUkwaLicenceStatusList(fieldUrl).size() > 0) {
     		res = true;
     	}
+    	Logger.info("indicateUkwaLicenceStatus() res: " + res);
     	return res;
     }
     

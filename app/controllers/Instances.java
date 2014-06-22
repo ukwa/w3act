@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import models.DCollection;
 import models.Instance;
 import models.Taxonomy;
 import models.User;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -66,7 +68,7 @@ public class Instances extends AbstractController {
         return ok(
         	list.render(
         			"Lookup", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Instance.page(pageNo, 10, sortBy, order, filter), 
         			sortBy, 
@@ -88,7 +90,7 @@ public class Instances extends AbstractController {
         return ok(
         	listByTarget.render(
         			"Lookup", 
-        			User.find.byId(request().username()), 
+        			User.findByEmail(request().username()), 
         			filter, 
         			Instance.pageByTarget(pageNo, 10, sortBy, order, filter, targetUrl), 
         			sortBy, 
@@ -166,13 +168,10 @@ public class Instances extends AbstractController {
 				instance.url = Const.ACT_URL + instance.nid;
 				instance.field_scope = "";
 				instance.revision = Const.INITIAL_REVISION;
-				Logger.info("add entry with instance url: " + instance.url);
-				Logger.info("instance name: " + instance.title);
-				return ok(
-						edit.render(
-							  instance, User.find.byId(request().username())
-						)
-					);
+				Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
+    			Form<Instance> instanceForm = Form.form(Instance.class);
+    			instanceForm = instanceForm.fill(instance);
+    	        return ok(edit.render(instanceForm, User.findByEmail(request().username())));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -196,13 +195,10 @@ public class Instances extends AbstractController {
         instance.url = Const.ACT_URL + instance.nid;
         instance.field_scope = "";
         instance.revision = Const.INITIAL_REVISION;
-		Logger.info("add entry with instance url: " + instance.url);
-		Logger.info("instance name: " + instance.title);
-        return ok(
-                edit.render(
-                      instance, User.find.byId(request().username())
-                )
-            );
+		Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
+		Form<Instance> instanceForm = Form.form(Instance.class);
+		instanceForm = instanceForm.fill(instance);
+        return ok(edit.render(instanceForm, User.findByEmail(request().username())));    			
     }
 
     /**

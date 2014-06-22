@@ -1,0 +1,72 @@
+@(subject: Taxonomy, user: User) 
+
+@main("", user) {
+
+	<div class="page-header">
+		<h1><a href="@routes.Subjects.index()">Taxonomies > Subjects > </a>Subject @subject.name </h1>
+	</div>
+
+	<ul class="nav nav-tabs">
+		<li class="active"><a
+			href="@routes.Subjects.view(subject.url)">View</a></li>
+		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+		<li><a href="@routes.Subjects.edit(subject.url)">Edit</a></li>
+		}
+	</ul>
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
+				    <div class="col-sm-6">
+						@subject.name
+					</div>
+				</div>
+			</div>
+     	</div>
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
+				    <div class="col-sm-6">
+				    @if(subject.parent != null && subject.parent.length() > 0) { 
+		                @subject.parent
+		            } else {
+		                None
+		            }
+					</div>
+				</div>
+			</div>
+     	</div>		   
+
+		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Publish</label>
+				    <div class="col-sm-6">
+	                @if(subject.publish != null && subject.publish) {             
+		                yes
+	                } else {
+		                no
+	                }
+					</div>
+				</div>
+			</div>
+     	</div>		     				     	
+		}     	
+		
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
+				    <div class="col-sm-6">
+		          		@subject.description
+					</div>
+				</div>
+			</div>
+		</div>
+
+}
+

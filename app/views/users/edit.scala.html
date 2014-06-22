@@ -1,71 +1,83 @@
-@(user: User, admin: User)
+@(form: Form[User], admin: User)
 
 @if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
 
 @main("", admin){
     
    	<div class="page-header">
-	    <h1><a href="@routes.Curators.index()">Curators > </a>User @user.name</h1>
+	    <h1><a href="@routes.Curators.index()">Users & Agencies > Curators > </a>User @form("name").value</h1>
 	</div>
 	<ul class="nav nav-tabs">
-	   @if(User.findById(user.uid) != null) {
-	   <li><a href="@routes.Curators.view(user.url)">View</a></li>
-	   <li><a href="@routes.Curators.sites(user.url)">Targets</a></li> 
+	   @if(User.findById(Long.valueOf(form("uid").value)) != null) {
+	   <li><a href="@routes.Curators.view(form("url").value)">View</a></li>
+	   <li><a href="@routes.Curators.sites(form("url").value)">Targets</a></li> 
 	   }
 	   @if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.Curators.edit(user.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.Curators.edit(form("url").value)">Edit</a></li>
 	   }
 	</ul>
     
-	@helper.form(action=routes.Curators.save) {
-		<input type="hidden" name="url" value="@user.url">
-		<input type="hidden" name="uid" value="@user.uid">
+	    @warningmessage(flash)
+	    @helper.form(action=routes.Curators.save) {
+		<input type="hidden" name="url" value="@form("url").value">
+		<input type="hidden" name="uid" value="@form("uid").value">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
 					<label for="inputName" class="col-sm-6 control-label">Name<font color="red">*</font></label>
 				    <div class="col-sm-6">
-			              <input class="form-control" name="name" id="name" size="60" placeholder="My name" type="text" value="@user.name">
+			              <input class="form-control" name="name" id="name" size="60" placeholder="My name" type="text" value="@form("name").value">
 					</div>
 				</div>
 			</div>
      	</div>
      	
-		<div class="row padding-10">
+		<!-- div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
 					<label for="inputName" class="col-sm-6 control-label">ID</label>
 				    <div class="col-sm-6">
-				          <input class="form-control" name="uid" value="@user.uid" size="30" readonly>
+				          <input class="form-control" name="uid" value="@form("uid").value" size="30" readonly>
 					</div>
 				</div>
 			</div>
-     	</div>
+     	</div-->
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
 					<label for="email" class="col-sm-6 control-label">E-mail <font color="red">*</font></label>
 				    <div class="col-sm-6">
-						<input class="form-control" name="email" id="email" placeholder="sample@@domain.uk" type="text" value="@user.email">
+						<input class="form-control" name="email" id="email" placeholder="sample@@domain.uk" type="text" value="@form("email").value">
 					</div>
 				</div>
 			</div>
      	</div>
 
-		@if(user.url.equals(admin.url)) {
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="password" class="col-sm-6 control-label">E-Password <font color="red">*</font></label>
-					    <div class="col-sm-6">
-							<input class="form-control" name="password" id="password" type="text" value="@user.password">
-						</div>
+	    @if(User.findById(Long.valueOf(form("uid").value)) != null) {
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="password" class="col-sm-6 control-label">Old Password</label>
+				    <div class="col-sm-6">
+						<input class="form-control" name="oldpassword" id="oldpassword" type="text">
 					</div>
 				</div>
-	     	</div>
+			</div>
+     	</div>
 		}
+		
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="password" class="col-sm-6 control-label">New Password</label>
+				    <div class="col-sm-6">
+						<input class="form-control" name="password" id="password" type="text">
+					</div>
+				</div>
+			</div>
+     	</div>
 		
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -75,7 +87,7 @@
 				        @for(role <- Role.findAll()) {
 				            @if(Role.isAllowed(role, admin)) {
 							<label class="checkbox-inline">
-					            @if(Role.isIncluded(role.name, user.roles)) {
+					            @if(Role.isIncludedByUrl(role.name, form("url").value)) {
 				                	<input type="checkbox" name="@role.name" value="true" checked />
 				                } else {
 				                	<input type="checkbox" name="@role.name" value="true" />
@@ -92,12 +104,12 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="nom-org" class="col-sm-6 control-label">Nominating Organisation</label>
+					<label for="nom-org" class="col-sm-6 control-label">Organisation</label>
 				    <div class="col-sm-6">
 						<select name="organisation" id="nom-org" class="form-control">
 			            <option>None</option>
 							@for(organisation <- Organisation.findAll()) {
-								@if(organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
+								@if(organisation.title.equals(Organisation.findByUrl(form("field_affiliation").value).title)) {
              						<option selected>@organisation.title</option>
          						} else {
                 					<option>@organisation.title</option>
@@ -115,7 +127,7 @@
 					<div class="form-group">
 		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message <small class="text-center">(Provide an explanation of the changes you are making. This will help other authors understand your motivations)</small></label>
 					    <div class="col-sm-6">
-               				<textarea class="form-control" name="revision" id="inputRevision">@user.revision</textarea>
+               				<textarea class="form-control" name="revision" id="inputRevision">@form("revision").value</textarea>
 						</div>
 					</div>
 				</div>
@@ -126,12 +138,14 @@
 			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
 		</div>
 
-	    @if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || user.url.equals(admin.url)) {
+	    @if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || form("url").value.equals(admin.url)) {
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
 					<button type="submit" class="btn btn-primary" name="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
+				    @if(User.findById(Long.valueOf(form("uid").value)) != null) {
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
+					}
 		       </div>
 			</div>
 		</div>
@@ -139,5 +153,5 @@
 	}
 }
 } else {
-	<h1>Access Denied for URL @routes.Curators.index()/edit</h1>
+	@infomessage.render("Access Denied for URL @routes.Curators.index()/edit")
 }

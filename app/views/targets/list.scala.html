@@ -7,7 +7,7 @@
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
 			searchContext = 'targets';
-			applySearch(context, searchContext);
+			applySearchTargetsTab(context, searchContext);
 			scopeCheck(context);
 		});
 	</script>
@@ -126,10 +126,10 @@
 			<tbody>
 				@for(target <- currentPage.getList) {
 				<tr>
-					<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
-					<td><a class="brand" href="opera.bl.uk:/8080/wayback/*@target.get_field_list_as_str("field_url")">(mid-crawl),</a>
-	                 	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url=http://@target.get_field_list_as_str("field_url")">(archival),</a>
-	                 	<a class="brand" href="@target.get_field_list_as_str("field_url")">(live)</a></td>
+					<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")" target="_blank">@target.get_field_list_as_str("field_url")</a></td>
+					<td><a class="brand" href="opera.bl.uk:/8080/wayback/*@target.get_field_list_as_str("field_url")" target="_blank">(mid-crawl),</a>
+	                 	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url=http://@target.get_field_list_as_str("field_url")" target="_blank">(archival),</a>
+	                 	<a class="brand" href="@target.get_field_list_as_str("field_url")" target="_blank">(live)</a></td>
 					@if(target.getOrganisation != null 
 						&& target.getOrganisation.url != null
 						&& target.getOrganisation.title != null) {
@@ -147,7 +147,7 @@
 					} else {
 						<td></td>
 					}
-					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@target.get_field_list_as_str("field_url")">(mementos)</a></td>
+					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@target.get_field_list_as_str("field_url")" target="_blank">(mementos)</a></td>
 				</tr>
 				}
 			</tbody>

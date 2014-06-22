@@ -80,6 +80,8 @@ create table dcollection (
   comment_count_new         bigint,
   revision                  varchar(255),
   feed_nid                  bigint,
+  field_owner               TEXT,
+  field_dates               TEXT,
   publish                   boolean,
   field_targets             TEXT,
   field_sub_collections     TEXT,
@@ -233,7 +235,6 @@ create table nomination (
 
 create table organisation (
   nid                       bigint not null,
-  title                     varchar(255) not null,
   value                     TEXT,
   summary                   varchar(255),
   format                    varchar(255),
@@ -241,6 +242,7 @@ create table organisation (
   vid                       bigint,
   is_new                    boolean,
   type                      varchar(255),
+  title                     varchar(255),
   language                  varchar(255),
   url                       varchar(255),
   edit_url                  varchar(255),
@@ -256,7 +258,8 @@ create table organisation (
   comment_count_new         bigint,
   revision                  TEXT,
   feed_nid                  bigint,
-  last_update               timestamp not null)
+  last_update               timestamp not null,
+  constraint pk_organisation primary key (nid))
 ;
 
 create table permission (
@@ -357,6 +360,7 @@ create table target (
   selection_type            varchar(255),
   selector                  varchar(255),
   flag_notes                TEXT,
+  tabstatus                 varchar(255),
   field_url                 TEXT,
   domain                    TEXT,
   field_description         TEXT,
@@ -397,6 +401,7 @@ create table taxonomy (
   field_owner               TEXT,
   field_dates               TEXT,
   field_publish             TEXT,
+  publish                   boolean,
   parent                    TEXT,
   parents_all               TEXT,
   constraint pk_taxonomy primary key (tid))
@@ -412,11 +417,11 @@ create table taxonomy_vocabulary (
 ;
 
 create table creator (
-  email                     varchar(255) not null,
+  uid                       bigint not null,
+  email                     varchar(255),
   name                      varchar(255),
   password                  varchar(255),
   field_affiliation         varchar(255),
-  uid                       bigint,
   url                       varchar(255),
   edit_url                  varchar(255),
   last_access               varchar(255),
@@ -428,7 +433,7 @@ create table creator (
   roles                     TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_creator primary key (email))
+  constraint pk_creator primary key (uid))
 ;
 
 create sequence communication_log_seq;

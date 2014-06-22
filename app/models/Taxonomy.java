@@ -8,13 +8,17 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 /**
@@ -22,10 +26,12 @@ import com.avaje.ebean.Page;
  */
 @SuppressWarnings("serial")
 @Entity 
+@Table(name = "taxonomy")
 public class Taxonomy extends Model {
      
     @Id
     public Long tid;
+    @Required
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 
     public String ttype;  
@@ -45,6 +51,12 @@ public class Taxonomy extends Model {
     public String field_dates;
     @Column(columnDefinition = "TEXT") 
     public String field_publish;
+    /**
+     * 'true' if collection should be made visible in the UI, default 'false'
+     */
+    @JsonIgnore
+    public Boolean publish;
+//    @Required
     @Column(columnDefinition = "TEXT") 
     public String parent;
     @Column(columnDefinition = "TEXT") 
@@ -105,6 +117,22 @@ public class Taxonomy extends Model {
         return newName;
     }
     
+    /**
+     * Retrieve a taxonomy object by URL.
+     * @param url
+     * @return taxonomy object
+     */
+    public static Taxonomy findByUrlExt(String url) {
+//    	Logger.info("taxonomy findByUrl: " + url);
+    	Taxonomy res = new Taxonomy();
+    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
+    		res = find.where().eq(Const.URL, url).findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+    	return res;
+    }
+
     /**
      * Retrieve a Taxonomy by URL.
      * @param url
@@ -292,6 +320,33 @@ public class Taxonomy extends Model {
     }
 
     /**
+     * Retrieve a taxonomy by name. The origin of these subjects is from the configuration file.
+     * @param title
+     * @return taxonomy object
+     */
+    public static Taxonomy findByNameConf(String name) {
+    	Taxonomy res = new Taxonomy();
+    	if (name != null && name.length() > 0) {
+//    		Logger.info("p1: " + name);
+    		if (name.contains(Const.COMMA)) {
+    			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+    		}
+    		res = find.where()
+    				.eq(Const.NAME, name)
+    				.not(Expr.icontains(Const.PARENT, Const.ACT_URL))
+//                Expr.icontains(Const.FIELD_URL_NODE, filter),
+//                Expr.icontains(Const.TITLE, filter)
+//             ))
+//    				.(Const.PARENT, Const.ACT_URL)
+    				.findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+//		Logger.info("res: " + res);
+    	return res;
+    }
+
+    /**
      * Retrieve a taxonomy by title for the case that multiple definitions for the same
      * title were created in database e.g. one retrieved from Drupal and second from
      * configuration files.
@@ -411,6 +466,17 @@ public class Taxonomy extends Model {
     	return res;
     }
         
+	/**
+	 * This method retrieves subjects with parents - child level subjects.
+	 * @return
+	 */
+	public static List<Taxonomy> getChildLevelSubjects(String url) {
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+        ExpressionList<Taxonomy> ll = find.where().eq(Const.PARENT, url);
+    	res = ll.findList();
+		return res;
+	}       
+    	
     /**
      * This method returns all taxonomies by type alphabetically sorted.
      * @return user list
@@ -423,6 +489,40 @@ public class Taxonomy extends Model {
     }
         	
     /**
+     * This method returns all taxonomies by type alphabetically sorted.
+     * @return user list
+     */
+    public static List<Taxonomy> findListByTypeSortedAll() {
+    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	Page<Taxonomy> page = pageByTypeAll(0, find.all().size(), Const.NAME, Const.ASC, "");
+    	res = page.getList();
+    	Logger.info("findListByTypeSortedAll() subjects list size: " + res.size());
+        return res;
+    }
+        	
+    /**
+     * This method returns all taxonomies by type alphabetically sorted.
+     * @return user list
+     */
+    public static List<Taxonomy> findListByTypeSortedExt(String type, String value) {
+    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	Page<Taxonomy> page = pageByTypeAndValue(0, find.all().size(), Const.NAME, Const.ASC, "", type, value);
+    	res = page.getList();
+        return res;
+    }
+        	
+    /**
+     * This method returns all taxonomies by type alphabetically sorted.
+     * @return user list
+     */
+    public static List<Taxonomy> findListByTypeAndParentSorted(String type, String parent) {
+    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	Page<Taxonomy> page = pageByTypeAndParent(0, find.all().size(), Const.NAME, Const.ASC, "", type, parent);
+    	res = page.getList();
+        return res;
+    }
+        	
+    /**
      * Retrieve a list of the 2nd level subjects by parent name.
      * @param parent name as a string
      * @return 2nd level subjects list
@@ -430,7 +530,7 @@ public class Taxonomy extends Model {
 	public static List<Taxonomy> findSubSubjectsList(String parent) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (parent != null && parent.length() > 0) {
-//    		Logger.info("parent: " + parent);
+//    		Logger.info("findSubSubjectsList() parent: " + parent);
     		parent = formatDbComma(parent);
 	        ExpressionList<Taxonomy> ll = find.where()
 	        		.eq(Const.TTYPE, Const.TaxonomyType.SUBSUBJECT.name().toLowerCase())
@@ -486,6 +586,24 @@ public class Taxonomy extends Model {
 		return res;
 	}
 
+	/**
+	 * This method filters subjects by name and returns a list 
+	 * of filtered subject objects.
+	 * @param name
+	 * @return
+	 */
+	public static List<Taxonomy> filterSubjectsByName(String name) {
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+        ExpressionList<Taxonomy> ll = find.where().icontains(Const.NAME, name)
+    			.add(Expr.or(
+    	                Expr.eq(Const.TTYPE, Const.SUBJECT),
+    	                Expr.eq(Const.TTYPE, Const.SUBSUBJECT)
+    	             )
+    	        );
+    	res = ll.findList();
+		return res;
+	}
+
     /**
      * Return a page of Taxonomy
      *
@@ -519,6 +637,83 @@ public class Taxonomy extends Model {
 
         return find.where().icontains(Const.NAME, filter)
         		.eq(Const.TTYPE, type)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * Return a page of Taxonomy by Type
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param type Taxonomy type
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Taxonomy> pageByTypeAll(int page, int pageSize, String sortBy, String order, 
+    		String filter) {
+
+        return find.where()
+        		.icontains(Const.NAME, filter)
+	        	.add(Expr.or(
+		                Expr.icontains(Const.TTYPE, Const.SUBJECT),
+		                Expr.icontains(Const.TTYPE, Const.SUBSUBJECT)
+	        		))
+	        	.add(Expr.or(
+		                Expr.isNull(Const.PARENT),
+		                Expr.not(Expr.icontains(Const.PARENT, Const.ACT_URL))
+	        		))
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * Return a page of Taxonomy by Type
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param type Taxonomy type
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Taxonomy> pageByTypeAndValue(int page, int pageSize, String sortBy, String order, 
+    		String filter, String type, String value) {
+//		.add(Expr.or(
+//                Expr.icontains(Const.FIELD_URL_NODE, filter),
+//                Expr.icontains(Const.TITLE, filter)
+//             ))
+
+        return find.where()
+        		.icontains(Const.NAME, filter)
+        		.eq(Const.TTYPE, type)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * Return a page of Taxonomy by Type
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param type Taxonomy type
+     * @param filter Filter applied on the name column
+     */
+    public static Page<Taxonomy> pageByTypeAndParent(int page, int pageSize, String sortBy, String order, 
+    		String filter, String type, String parent) {
+
+        return find.where().icontains(Const.NAME, filter)
+        		.eq(Const.TTYPE, type)
+        		.eq(Const.PARENT, parent)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
@@ -645,6 +840,42 @@ public class Taxonomy extends Model {
     /**
      * This method calculates selected taxonomies in second level for presentation in view page.
      * @param type The type of taxonomy
+     * @param target The target object
+     * @return taxonomy list as a string
+     */
+    public static String getSelectedSubjectsList(String type, String targetUrl) {
+    	String res = "";
+		boolean firstTime = true;
+		Target target = Target.findByUrl(targetUrl);
+		if (target != null) {
+			List<Taxonomy> taxonomyList = Taxonomy.findListByType(type);
+			Iterator<Taxonomy> itr = taxonomyList.iterator();
+			while (itr.hasNext()) {
+				Taxonomy taxonomy = itr.next();
+				List<Taxonomy> subTaxonomyList = Taxonomy.findSubSubjectsList(taxonomy.name);
+				Iterator<Taxonomy> itrSub = subTaxonomyList.iterator();
+				while (itrSub.hasNext()) {
+					Taxonomy subTaxonomy = itrSub.next();
+					if(target.hasSubSubject(subTaxonomy.url)) {
+						if (firstTime) {
+							res = subTaxonomy.name;
+							firstTime = false;
+						} else {
+							res = res + Const.COMMA + " " + subTaxonomy.name;
+						}
+					}
+				}
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+    }
+
+    /**
+     * This method calculates selected taxonomies in second level for presentation in view page.
+     * @param type The type of taxonomy
      * @param target The instance object
      * @return taxonomy list as a string
      */
@@ -674,7 +905,86 @@ public class Taxonomy extends Model {
 		}
         return res;
     }
-
+    
+	/**
+	 * This method retrieves selected subjects from target object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<Taxonomy> getSelectedSubjects(String targetUrl) {
+//		Logger.info("getSelectedSubjects() targetUrl: " + targetUrl);
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Target target = Target.findByUrl(targetUrl);
+    		if (target.field_subject != null) {
+//    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
+		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
+		    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+		    		Taxonomy subject = findByUrl(part);
+		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+//			    		Logger.info("subject name: " + subject.name);
+		    			res.add(subject);
+		    		}
+		    	}
+    		}
+    	}
+		return res;
+	}       
+    
+	/**
+	 * This method retrieves selected subjects from instance object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<Taxonomy> getSelectedSubjectsByInstance(String targetUrl) {
+//		Logger.info("getSelectedSubjectsByInstance() targetUrl: " + targetUrl);
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Instance target = Instance.findByUrl(targetUrl);
+    		if (target.field_subject != null) {
+//    			Logger.info("getSelectedSubjectsByInstance() field_subject: " + target.field_subject);
+		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
+		    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+		    		Taxonomy subject = findByUrl(part);
+		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+//			    		Logger.info("subject name: " + subject.name);
+		    			res.add(subject);
+		    		}
+		    	}
+    		}
+    	}
+		return res;
+	}       
+    
+	/**
+	 * This method presents subjects list for view page.
+	 * @param list
+	 * @return presentation string
+	 */
+	public static String getSubjectsAsString(List<Taxonomy> list) {
+    	String res = "";
+//		Logger.info("getSubjectsAsString() list size: " + list.size());
+		Iterator<Taxonomy> itr = list.iterator();
+		boolean firstTime = true;
+		while (itr.hasNext()) {
+			Taxonomy subject = itr.next();
+			if (firstTime) {
+//				Logger.info("add first subject.name: " + subject.name);
+				res = subject.name;
+				firstTime = false;
+			} else {
+//				Logger.info("add subject.name: " + subject.name);
+				res = res + Const.COMMA + " " + subject.name;
+			}
+		}
+		if (res.length() == 0) {
+			res = Const.NONE;
+		}
+        return res;
+	}
+	
     public String toString() {
         return "Taxonomy(" + tid + ") with name: " + name;
     }

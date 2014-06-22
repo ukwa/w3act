@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -40,7 +41,7 @@ public class MailTemplates extends AbstractController {
         List<MailTemplate> resList = processFilterMailTemplates("");
         return ok(
                 mailtemplates.render(
-                    "MailTemplates", User.find.byId(request().username()), resList, "", ""
+                    "MailTemplates", User.findByEmail(request().username()), resList, "", ""
                 )
             );
     }
@@ -52,17 +53,17 @@ public class MailTemplates extends AbstractController {
 		Logger.info("template url: " + url);
 		MailTemplate template = MailTemplate.findByUrl(url);
 		Logger.info("template name: " + template.name + ", url: " + url);
-        return ok(
-                edit.render(
-                		models.MailTemplate.findByUrl(url), User.find.byId(request().username())
-                )
-            );
+		Form<MailTemplate> templateForm = Form.form(MailTemplate.class);
+		templateForm = templateForm.fill(template);
+      	return ok(
+	              edit.render(templateForm, User.findByEmail(request().username()))
+	            );
     }
     
     public static Result view(String url) {
         return ok(
                 view.render(
-                		models.MailTemplate.findByUrl(url), User.find.byId(request().username())
+                		models.MailTemplate.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -87,7 +88,7 @@ public class MailTemplates extends AbstractController {
 			flash("message", "Please enter a name in the search window");
 	        return ok(
 	                mailtemplates.render(
-	                    "MailTemplates", User.find.byId(request().username()), resList, "", ""
+	                    "MailTemplates", User.findByEmail(request().username()), resList, "", ""
 	                )
 	            );
     	}
@@ -96,12 +97,22 @@ public class MailTemplates extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.MailTemplates.create(query));
+//        		return redirect(routes.MailTemplates.create(query));
+            	MailTemplate template = new MailTemplate();
+            	template.name = query;
+                template.id = Target.createId();
+                template.url = Const.ACT_URL + template.id;
+        		Logger.info("add email template with url: " + template.url + ", and name: " + template.name);
+        		Form<MailTemplate> templateForm = Form.form(MailTemplate.class);
+        		templateForm = templateForm.fill(template);
+              	return ok(
+        	              edit.render(templateForm, User.findByEmail(request().username()))
+        	            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
     	        return ok(
     	                mailtemplates.render(
-    	                    "MailTemplates", User.find.byId(request().username()), resList, "", ""
+    	                    "MailTemplates", User.findByEmail(request().username()), resList, "", ""
     	                )
     	            );
     	    } else {
@@ -111,9 +122,8 @@ public class MailTemplates extends AbstractController {
     }	   
     
     /**
-     * This method applyies filters to the list of crawl templates.
+     * This method applies filters to the list of mail templates.
      * @param filterUrl
-     * @param status
      * @return
      */
     public static List<MailTemplate> processFilterMailTemplates(String filterUrl) {
@@ -136,6 +146,29 @@ public class MailTemplates extends AbstractController {
     }
         
     /**
+     * This method applies filter by type to the list of mail templates.
+     * @param templateType
+     * @return
+     */
+    public static List<MailTemplate> getMailTemplatesByType(String templateType) {
+    	boolean isProcessed = false;
+    	ExpressionList<MailTemplate> exp = MailTemplate.find.where();
+    	List<MailTemplate> res = new ArrayList<MailTemplate>();
+    	if (templateType != null && templateType.length() > 0) {
+    		Logger.info("getMailTemplatesByType() type: " + templateType);
+    		exp = exp.contains(Const.TTYPE, templateType);
+    		isProcessed = true;
+    	}
+    	res = exp.query().findList();
+    	Logger.info("getMailTemplatesByType() resulting list size: " + res.size());
+
+        if (!isProcessed) {
+    		res = models.MailTemplate.findAll();
+    	}
+        return res;
+    }
+        
+    /**
      * Add new template entry.
      * @param template title
      * @return
@@ -145,14 +178,49 @@ public class MailTemplates extends AbstractController {
     	template.name = name;
         template.id = Target.createId();
         template.url = Const.ACT_URL + template.id;
-		Logger.info("add entry with url: " + template.url + ", and name: " + template.name);
-        return ok(
-                edit.render(
-                      template, User.find.byId(request().username())
-                )
-            );
+		Logger.info("add email template with url: " + template.url + ", and name: " + template.name);
+		Form<MailTemplate> templateForm = Form.form(MailTemplate.class);
+		templateForm = templateForm.fill(template);
+      	return ok(
+	              edit.render(templateForm, User.findByEmail(request().username()))
+	            );
     }
       
+	/**
+	 * This method prepares MailTemplate form for sending info message
+	 * about errors 
+	 * @return edit page with form and info message
+	 */
+	public static Result info() {
+    	MailTemplate template = new MailTemplate();
+       	template.id = Long.valueOf(getFormParam(Const.ID));
+       	template.url = getFormParam(Const.URL);
+	    if (getFormParam(Const.NAME) != null) {
+	    	template.name = getFormParam(Const.NAME);
+	    }
+	    if (getFormParam(Const.TEXT) != null) {
+	    	template.text = getFormParam(Const.TEXT);
+	    }
+	    if (getFormParam(Const.SUBJECT) != null) {
+	    	template.subject = getFormParam(Const.SUBJECT);
+	    }
+	    if (getFormParam(Const.FROM_EMAIL) != null) {
+	    	template.fromEmail = getFormParam(Const.FROM_EMAIL);
+	    }
+	    if (getFormParam(Const.PLACE_HOLDERS) != null) {
+	    	template.placeHolders = getFormParam(Const.PLACE_HOLDERS);
+	    }
+	    if (getFormParam(Const.TTYPE) != null) {
+	    	template.ttype = getFormParam(Const.TTYPE);
+	    }
+    	template.defaultEmail = Utils.getNormalizeBooleanString(getFormParam(Const.DEFAULT_EMAIL_FLAG));
+		Form<MailTemplate> templateFormNew = Form.form(MailTemplate.class);
+		templateFormNew = templateFormNew.fill(template);
+      	return ok(
+	              edit.render(templateFormNew, User.findByEmail(request().username()))
+	            );
+    }
+    
     /**
      * This method saves new object or changes on given template in the same object
      * completed by revision comment. The "version" field in the template object
@@ -167,6 +235,23 @@ public class MailTemplates extends AbstractController {
         if (save != null) {
         	Logger.info("save template id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME));
+        	Form<MailTemplate> templateForm = Form.form(MailTemplate.class).bindFromRequest();
+            if(templateForm.hasErrors()) {
+            	String missingFields = "";
+            	for (String key : templateForm.errors().keySet()) {
+            	    Logger.debug("key: " +  key);
+            	    key = Utils.showMissingField(key);
+            	    if (missingFields.length() == 0) {
+            	    	missingFields = key;
+            	    } else {
+            	    	missingFields = missingFields + Const.COMMA + " " + key;
+            	    }
+            	}
+            	Logger.info("form errors size: " + templateForm.errors().size() + ", " + missingFields);
+	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+	  					" Missing fields are: " + missingFields);
+	  			return info();
+            }
         	MailTemplate template = null;
             boolean isExisting = true;
             try {
@@ -202,6 +287,10 @@ public class MailTemplates extends AbstractController {
         	    if (getFormParam(Const.PLACE_HOLDERS) != null) {
         	    	template.placeHolders = getFormParam(Const.PLACE_HOLDERS);
         	    }
+        	    if (getFormParam(Const.TTYPE) != null) {
+        	    	template.ttype = getFormParam(Const.TTYPE);
+        	    }
+            	Logger.info("template type: " + template.ttype);
        	    	template.defaultEmail = Utils.getNormalizeBooleanString(getFormParam(Const.DEFAULT_EMAIL_FLAG));
             } catch (Exception e) {
             	Logger.info("MailTemplate not existing exception");
@@ -209,17 +298,19 @@ public class MailTemplates extends AbstractController {
             
         	if (!isExisting) {
                	Ebean.save(template);
-    	        Logger.info("save crawl template: " + template.toString());
+    	        Logger.info("save mail template: " + template.toString());
         	} else {
-           		Logger.info("update crawl template: " + template.toString());
+           		Logger.info("update mail template: " + template.toString());
                	Ebean.update(template);
         	}
-	        res = redirect(routes.MailTemplates.view(template.url));
+        	Logger.info("Mail Template was saved.");
+  			flash("message", "Mail Template was saved.");
+  			return redirect(routes.MailTemplates.view(template.url));
         } 
         if (delete != null) {
         	MailTemplate template = MailTemplate.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(template);
-	        res = redirect(routes.MailTemplates.index()); 
+	        return redirect(routes.MailTemplates.index()); 
         }
     	res = redirect(routes.MailTemplates.index()); 
         return res;

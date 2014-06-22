@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
@@ -19,7 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * DCollection entity managed by Ebean
  */
 @SuppressWarnings("serial")
-@Entity 
+@Entity
+@Table(name = "dcollection")
 public class DCollection extends Model {
 
     @Id @JsonIgnore
@@ -67,6 +69,10 @@ public class DCollection extends Model {
     public String revision;
     @JsonIgnore
     public Long feed_nid;    
+    @Column(columnDefinition = "TEXT") 
+    public String field_owner;
+    @Column(columnDefinition = "TEXT") 
+    public String field_dates;
     /**
      * 'true' if collection should be made visible in the UI, default 'false'
      */
@@ -103,6 +109,7 @@ public class DCollection extends Model {
     }
 
     public DCollection() {
+    	super();
         this.publish = false;
     }
     
@@ -232,6 +239,34 @@ public class DCollection extends Model {
     }
     
     /**
+     * This method returns true if given collection has children nodes.
+     * @param collectionUrl The parent collection URL
+     * @return true if parent collection has children
+     */
+    public static boolean hasChildren(String collectionUrl) {
+    	boolean res = false;
+    	List<DCollection> collectionList = getChildLevelCollections(collectionUrl);
+    	if (collectionList.size() > 0) {
+    		res = true;
+    	}
+    	return res;
+    }
+    
+    /**
+     * This method returns parent collections for given collection.
+     * @param collectionUrl The identifier URL of collection
+     * @return parent collection list
+     */
+    public static List<DCollection> getParentsByUrl(String collectionUrl) {
+    	DCollection collection = DCollection.findByUrl(collectionUrl);
+    	List<DCollection> res = new ArrayList<DCollection>();
+    	if (collection != null) {
+    		res = getParents(collection);
+    	}
+		return res;
+    }
+    
+    /**
      * Retrieve a collection by title.
      * @param title
      * @return collection object
@@ -305,8 +340,14 @@ public class DCollection extends Model {
 	 */
 	public static List<DCollection> getFirstLevelCollections() {
 		List<DCollection> res = new ArrayList<DCollection>();
-        ExpressionList<DCollection> ll = find.where().icontains(Const.PARENT, "");
+        ExpressionList<DCollection> ll = find.where()
+        		.add(Expr.or(
+        				Expr.eq(Const.PARENT, ""),
+        				Expr.eq(Const.PARENT, Const.NONE_VALUE)
+    	                )
+    	        );
     	res = ll.findList();
+    	Logger.info("getFirstLevelCollections list size: " + res.size());
 		return res;
 	}       
     

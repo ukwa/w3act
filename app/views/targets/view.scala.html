@@ -1,39 +1,94 @@
 @(target: Target, user: User)
 
-@main("", user) {
+@script = {
+	<script>
+    // This is the code that switches to the other page.
+    // We do this via JavaScript, and not a normal hyperlink,
+    // because that way we can communicate the current nav pill status as part of the link URL.
+    function switchPage() {
+      var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
+      var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
+      
+      // And finally we just attach the href to view.html and forward the browser. 
+      // An example URL would be: 'view.html#npld-scope'
+      window.location.href="@routes.Targets.edit(target.url)" + href;
+    }
+  
+    $(document).ready(function() {
+      // This happens right after the document is loaded.
+      // Our nav pills won't do anything by themselves, so we need to make sure we
+      // check if the current URL has a #-component and if so, we activate the
+      // appropriate pill.
+      var hash = window.location.hash;
+      if (hash.indexOf('#') == 0) {
+        // We have a hash - let's see if it matches with nav pill href
+        var el = $('#myNavbar a[href=' + hash + ']');
+      
+        // We have an <a> with this ID, and it has a parent node that's an <li>
+        if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
+          // So we activate this nav pill
+          $(el).tab('show');
+          window.scrollTo(0, 0);
+        }
+      }
+      
+      // This is completely optional!! But it keeps the hash in our current URL bar
+      // in sync with the tab we have selected, so the pages stay nice and bookmarkable
+      $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        window.location.hash = ($(e.target).attr('href'));
+        window.scrollTo(0, 0);
+      })
+    });	
+	</script>
+}
+
+@style = {
+    <style>
+    #tab-content {
+      padding:20px;
+    }
+    
+    .tab-pane {
+      padding:20px 0;
+    }
+    </style>
+}
+    
+@main("", user, script, style) {
    	<div class="page-header">
 	    <h1><a href="@routes.Targets.index()">Targets > </a>Target @target.title</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.Targets.view(target.url)">View</a></li>
+	   <li class="active"><a href="#">View</a></li>
 	   @if(((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) 
 	   		|| (user.hasRole("user") && user.url.equals(target.author))) {
-	   <li><a href="@routes.Targets.edit(target.url)">Edit</a></li> 
+	   <li><a onclick="switchPage(); return false;" href="@routes.Targets.edit(target.url)">Edit</a></li>
 	   }
 	</ul>
-	
+	      
+	@warningmessage(flash)
 	<div class="tab-content padding-20">
 		<input type="hidden" name="nid" value="@target.nid">
         <input type="hidden" name="user" value="@user.url">
            
-		<ul class="nav nav-pills">
-        	<li class="active"><a href="#basicinformation" data-toggle="tab">Overview</a></li>
-        	<li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
+		<ul class="nav nav-pills" id="myNavbar">
+        	<li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
+		   	<li><a href="#metadata" data-toggle="tab">Metadata</a></li>
 			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-			@if(Target.isInScopeIp(target.field_url, target.url)) {
-				<font color="green">(+)</font>
-			} else {
-				<font color="red">(-)</font>
-			}		        
+				@if(Target.isInScopeAll(target.field_url, target.url)) {
+					<font color="green">(+)</font>
+				} else {
+					<font color="red">(-)</font>
+				}		        
 			</a></li>
-        	<li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
-		    <li class=""><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
+        	<li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
+		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
       	</ul>
 	</div>
 	
 	<div id="myTabContent" class="tab-content">
-		<div class="tab-pane padding-20 fade active in" id="basicinformation">
+		<div class="tab-pane padding-20 fade active in" id="overview">
 		
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -49,7 +104,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">ID</label>
+							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
 						    <div class="col-sm-6">
 								<input class="form-control" name="nid" value="@target.nid" size="30" readonly>
 							</div>
@@ -108,6 +163,23 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Registration
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeUkRegistration(target.field_url)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
 						  		@if(target.status == 1) {
@@ -130,7 +202,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If know, please add the current status of the site)</small></label>
+							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If known, please add the current status of the site)</small></label>
 						    <div class="col-sm-6">
 							  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("N/A")) {
 							        	N/A
@@ -237,24 +309,17 @@
 						</div>
 					</div>
 		     	</div>		    
-		    
-	    		<!-- div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
-			              	 <div class="col-sm-6">
-  									@Taxonomy.getSelectedSubjects("subject", target)
-			              	</div>
-						</div>
-					</div>
-		     	</div-->	
-		     		    
+		    	     		    
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 			              	<label for="inputDescription" class="col-sm-6 control-label">Subject</label>
 			              	 <div class="col-sm-6">
-  									@Taxonomy.getSelectedSubjectsSecondLevel("subject", target)
+						        @if(target.url != null) {
+  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjects(target.url))
+  								} else {
+  								    none
+  								}
 			              	</div>
 						</div>
 					</div>
@@ -304,7 +369,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="userSel" class="col-sm-6 control-label">User <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
+			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
 						    <div class="col-sm-6">
 						        @if(target.url != null && target.author != null) {
   									@User.showUser(target.author)
@@ -342,16 +407,25 @@
 					</div>
 		     	</div>		    		    
      			     	
-		     	<div class="row padding-10">
+		   		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="status" class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
+							<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
 						    <div class="col-sm-6">
-						      	@target.getSelectedFlags()
+						        @for(flag <- Flag.findAll()) {
+									<label class="checkbox-inline">
+						                @if(target.flags != null && target.flags.contains(flag.name)) {
+						                	<input type="checkbox" name="@Flags.getGuiName(flag.name)" value="true" checked disabled />
+						                } else {
+						                	<input type="checkbox" name="@Flags.getGuiName(flag.name)" value="true" disabled />
+						                }
+						                @Flags.getGuiName(flag.name)
+					                </label>
+					            }
 							</div>
 						</div>
 					</div>
-		     	</div>		   
+		     	</div>	     		
 
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -391,7 +465,7 @@
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
+			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
 						        @if(target.url != null && target.selection_type != null) {
   									@target.selection_type
@@ -452,6 +526,16 @@
 						In order to be considered as in scope for Non-Print Legal Deposit, a resource must pass one of a series of tests.
 					</div>
 				</div>		     	
+				@if(Targets.indicateNpldStatus(target.field_url)) {    	
+				<div class="padding-20">
+					<div class="alert alert-info">
+						NB. There are other records within this domain for which data has already been provided.
+						@for(targetObj <- Target.getNpldStatusList(target.field_url)) {
+							<p><a href="@routes.Targets.view(targetObj.url)">@targetObj.title @targetObj.field_url</a></p>
+						}
+					</div>
+				</div>	
+				}	     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -477,6 +561,23 @@
 							</label>
 						    <div class="col-sm-6">
 								@if(Target.isInScopeDomain(target.field_url, target.url)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Registration
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeUkRegistration(target.field_url)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -538,6 +639,7 @@
 					</div>
 		     	</div>	
 
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -562,7 +664,8 @@
 							</div>
 						</div>
 					</div>
-		     	</div>	
+		     	</div>
+		     	}	
 
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -582,6 +685,7 @@
         
         <div class="tab-pane fade" id="crawlpolicy">
 
+			@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -681,6 +785,24 @@
 					</div>
 				</div>
 	     	</div>	
+	     	
+			@if(target.url != null && Target.existInDb(target.url)) {
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label"></label>
+						    <div class="col-sm-6">
+						     	<a href="@routes.TargetController.archiveTarget(target.field_url)">
+					    			<button type="submit" name="archive" class="btn btn-success">Archive this now</button>
+								</a>
+						</div>
+					</div>
+				</div>
+	     	</div>
+			    }
+			}
+	     }		     	
         </div>
 	        
 		<div class="tab-pane fade padding-20" id="licensing">

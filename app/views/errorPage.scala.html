@@ -1,0 +1,53 @@
+@(t: Throwable)
+
+<!DOCTYPE html>
+<html lang="en"><head>
+<title>W3ACT</title>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<!--link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")"-->
+<!-- link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")"-->
+<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")">
+<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/style.css")">
+<link rel="stylesheet" type="text/css" media="screen"
+	href="@routes.Assets.at("stylesheets/blue/style.css")">
+<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.js")"></script>
+<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-play-1.7.1.js")"></script>
+<script src="@routes.Assets.at("bootstrap/dist/js/bootstrap.min.js")"></script>
+<script type="text/javascript" src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
+<script type="text/javascript" src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
+<script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.tablesorter.min.js")"></script>
+<script type="text/javascript"
+	src="@routes.Application.javascriptRoutes"></script>
+</head>
+<body>
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="@routes.About.index">
+				<image src="@routes.Assets.at("images/ukwa-icon-nobg-16.png")" />
+					W3ACT
+			</a>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="alert alert-info">
+			An unexpected error has occurred. 
+		</div>
+		
+		<blockquote>
+			<p>@t.getMessage</p>
+		</blockquote>
+
+	</div>
+</body>
+</html>
+
+
+
+

@@ -7,8 +7,10 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -19,6 +21,7 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open tags.
  */
 @Entity
+@Table(name = "tag")
 public class Tag extends Model
 {
 
@@ -39,6 +42,7 @@ public class Tag extends Model
     /**
      * The name of the tag.
      */
+    @Required
     @Column(columnDefinition = "TEXT")
     public String name;
     
@@ -53,7 +57,11 @@ public class Tag extends Model
 
     public static final Model.Finder<Long, Tag> find = new Model.Finder<Long, Tag>(Long.class, Tag.class);
 
-    public String getName()
+    public Tag() {
+		super();
+	}
+
+	public String getName()
     {
         return name;
     }

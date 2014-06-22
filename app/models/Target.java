@@ -11,6 +11,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.Logger;
@@ -22,9 +23,12 @@ import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.avaje.ebean.PagingList;
+import com.avaje.ebean.Query;
 
 import controllers.Flags;
 
@@ -34,6 +38,7 @@ import controllers.Flags;
  */
 @SuppressWarnings("serial")
 @Entity 
+@Table(name = "target")
 public class Target extends Model {
 
     @Required
@@ -106,7 +111,11 @@ public class Target extends Model {
     public String selection_type; 
     public String selector;     
     @Column(columnDefinition = "TEXT")
-    public String flag_notes; 
+    public String flag_notes;
+    /**
+     * This field comprises the current tab name for view and edit pages.
+     */
+    public String tabstatus;
     
     // lists
     @Required
@@ -133,7 +142,7 @@ public class Target extends Model {
     @Required
     @Column(columnDefinition = "TEXT")
     public String field_subject; 
-    @Required
+    //@Required
     @Column(columnDefinition = "TEXT")
     public String field_subsubject; 
     @Column(columnDefinition = "TEXT")
@@ -535,7 +544,7 @@ public class Target extends Model {
 		List<Target> res = new ArrayList<Target>();
 		if (curatorUrl != null && organisationUrl != null) {
 	        ExpressionList<Target> ll = find.where().contains("field_nominating_organisation", organisationUrl);
-	    	res = ll.findList(); // TODO
+	    	res = ll.findList(); 
 		}
 		return res;
 	}
@@ -652,15 +661,21 @@ public class Target extends Model {
     public static Target findByTarget(String target) {
     	Target res = new Target();
         Logger.info("findByTarget() target url: " + target);
-        
-        if (!target.contains(Const.COMMA)) {
-	        Target res2 = find.where().eq(Const.FIELD_URL_NODE, target).eq(Const.ACTIVE, true).findUnique();
-	        if (res2 == null) {
-	        	res.title = Const.NONE;
-	        } else {
-	        	res = res2;
+        try {
+	        if (!target.contains(Const.COMMA)) {
+		        Target res2 = find.where().eq(Const.FIELD_URL_NODE, target).eq(Const.ACTIVE, true).findUnique();
+		        if (res2 == null) {
+		        	res.title = Const.NONE;
+		        	res.url = Const.NONE;
+		        } else {
+		        	res = res2;
+		        }
+	//	        Logger.info("target title: " + res.title);
 	        }
-//	        Logger.info("target title: " + res.title);
+        } catch (Exception e) {
+        	Logger.info("Target was not found in database.");
+        	res.title = Const.NONE;
+        	res.url = Const.NONE;
         }
     	return res;
     }          
@@ -702,7 +717,7 @@ public class Target extends Model {
 		String res = "false";
 		if (fieldUrl != null && fieldUrl.length() > 0 
 				&& url != null && url.length() > 0
-				&& Target.isInScopeIp(fieldUrl, url)) {
+				&& Target.isInScopeAll(fieldUrl, url)) {
 			res = "true";
 		}
     	return res;
@@ -796,6 +811,26 @@ public class Target extends Model {
 	 * @param nidUrl The identifier URL in the project domain model
 	 * @return result as a flag
 	 */
+    public static boolean isInScopeAll(String url, String nidUrl) {
+    	try {
+			boolean isInScope = isInScopeIp(url, nidUrl);
+			if (!isInScope) {
+				isInScope = isInScopeDomain(url, nidUrl);
+			}
+			return isInScope;
+    	} catch (Exception ex) {
+    		Logger.info("isInScopeAll() Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
+	 * This method checks whether the passed URL is in scope for
+	 * rules associated with scope IP.
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @return result as a flag
+	 */
     public static boolean isInScopeIp(String url, String nidUrl) {
     	try {
     		return Scope.checkScopeIp(url, nidUrl);
@@ -815,6 +850,21 @@ public class Target extends Model {
     public static boolean isInScopeDomain(String url, String nidUrl) {
     	try {
     		return Scope.checkScopeDomain(url, nidUrl);
+    	} catch (WhoisException ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
+	 * This method checks whether the passed URL is in scope for
+	 * rules associated with WhoIs scoping rule.
+	 * @param url The search URL
+	 * @return result as a flag
+	 */
+    public static boolean isInScopeUkRegistration(String url) {
+    	try {
+    		return Scope.checkWhois(url);
     	} catch (WhoisException ex) {
     		Logger.info("Exception: " + ex);
     		return false;
@@ -921,6 +971,17 @@ public class Target extends Model {
         
     /**
      * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
+     * @param subject
+     * @return true if in list
+     */
+    public static boolean hasSubSubject(String subsubject, String subject) {
+    	boolean res = false;
+    	res = Utils.hasElementInList(subject, subsubject);
+    	return res;
+    }
+        
+    /**
+     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
      * @param license
      * @return true if in list
      */
@@ -959,6 +1020,19 @@ public class Target extends Model {
     public static List<String> getAllLanguage() {
     	List<String> res = new ArrayList<String>();
 	    Const.TargetLanguage[] resArray = Const.TargetLanguage.values();
+	    for (int i=0; i < resArray.length; i++) {
+		    res.add(resArray[i].name());
+	    }
+	    return res;
+    }         
+
+    /**
+     * This method returns a list of all NPLD types for target object.
+     * @return
+     */
+    public static List<String> getAllNpldTypes() {
+    	List<String> res = new ArrayList<String>();
+	    Const.NpldType[] resArray = Const.NpldType.values();
 	    for (int i=0; i < resArray.length; i++) {
 		    res.add(resArray[i].name());
 	    }
@@ -1189,6 +1263,140 @@ public class Target extends Model {
     }
         
     /**
+     * Return a page of Target objects.
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param curatorUrl
+     * @param organisationUrl
+     * @param startDate The start date for filtering
+     * @param endDate The end date for filtering
+     * @param npld The selection of NPLD scope rule for filtering
+     * @param crawlFrequency The crawl frequency value for filtering
+     * @param tld The top level domain setting for filtering
+     * @return
+     */
+    public static Page<Target> pageReportsCreation(int page, int pageSize, String sortBy, String order,  
+    		String curatorUrl, String organisationUrl, String startDate, String endDate, 
+    		String npld, String crawlFrequency, String tld) {
+    	Logger.info("pageReportsCreation() npld: " + npld + ", crawlFrequency: " + crawlFrequency + ", tld: " + tld);
+    	ExpressionList<Target> exp = Target.find.where();
+    	Page<Target> res = null;
+   		exp = exp.eq(Const.ACTIVE, true);
+    	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
+//    		Logger.info("curatorUrl: " + curatorUrl);
+    		exp = exp.icontains(Const.AUTHOR, curatorUrl);
+    	}
+    	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
+//    		Logger.info("organisationUrl: " + organisationUrl);
+    		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
+    	} 
+    	if (startDate != null && startDate.length() > 0) {
+    		Logger.info("startDate: " + startDate);
+        	String startDateUnix = Utils.getUnixDateStringFromDateExt(startDate);
+        	Logger.info("startDateUnix: " + startDateUnix);
+    		exp = exp.ge(Const.CREATED, startDateUnix);
+    	} 
+    	if (endDate != null && endDate.length() > 0) {
+    		Logger.info("endDate: " + endDate);
+        	String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
+        	Logger.info("endDateUnix: " + endDateUnix);
+    		exp = exp.le(Const.CREATED, endDateUnix);
+    	} 
+    	if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
+    		exp = exp.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
+    	} 
+    	
+    	/**
+    	 * Apply NPLD filters
+    	 */
+    	if (!tld.equals(Const.EITHER) || !npld.equals(Const.NONE)) {
+    		Logger.info("pageReportsCreation() Apply NPLD filters");
+        	List<String> targetUrlCollection = new ArrayList<String>();
+//        	Page<Target> tmp = exp.query()
+//            		.orderBy(sortBy + " " + order)
+//            		.findPagingList(pageSize)
+//            		.setFetchAhead(false)
+//            		.getPage(page);
+        	List<Target> tmp = exp.query()
+            		.orderBy(sortBy + " " + order)
+            		.findList();
+//    		Logger.info("pageReportsCreation() tmp.getList() size: " + tmp.getList().size());
+    		Logger.info("pageReportsCreation() tmp list size: " + tmp.size());
+			Iterator<Target> itr = tmp.iterator();
+//			Iterator<Target> itr = tmp.getList().iterator();
+			while (itr.hasNext()) {
+				Target target = itr.next();
+		        if (target != null 
+		        		&& target.field_url != null 
+		        		&& target.field_url.length() > 0 
+		        		&& !target.field_url.toLowerCase().contains(Const.NONE)) {
+		        	if (tld.equals(Const.NO)) {
+		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
+		        		Logger.info("pageReportsCreation() Not UK top level domain isInScope: " + isInScope);
+		        		if (!isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
+		        		boolean isInScope = Target.checkUkHosting(target.field_url);
+		        		Logger.info("pageReportsCreation() UK Hosting isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (tld.equals(Const.YES) || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
+		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
+		        		Logger.info("pageReportsCreation() UK top level domain isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
+		        		boolean isInScope = Target.isInScopeUkRegistration(target.field_url);
+		        		Logger.info("pageReportsCreation() UK Registration isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.UK_POSTAL_ADDRESS.name())) {
+		        		boolean isInScope = target.field_uk_postal_address;
+		        		Logger.info("pageReportsCreation() UK Postal Address isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.VIA_CORRESPONDENCE.name())) {
+		        		boolean isInScope = target.field_via_correspondence;
+		        		Logger.info("pageReportsCreation() via correspondence isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        	if (npld.equals(Const.NpldType.NO_LD_CRITERIA_MET.name())) {
+		        		boolean isInScope = target.field_no_ld_criteria_met;
+		        		Logger.info("pageReportsCreation() no ld criteria met isInScope: " + isInScope);
+		        		if (isInScope) {
+		    	        	targetUrlCollection.add(target.url);
+		        		}
+		        	}
+		        }
+			}
+    		Logger.info("pageReportsCreation() targetUrlCollection size: " + targetUrlCollection.size());
+    		exp = exp.in(Const.URL, targetUrlCollection);
+    	}
+    	
+    	res = exp.query()
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    	Logger.info("Expression list for targets created size: " + res.getTotalRowCount());
+        return res;
+    }
+        
+    /**
      * Return a page of Target
      *
      * @param page Page to display
@@ -1213,10 +1421,42 @@ public class Target extends Model {
 	                    Expr.eq(Const.FIELD_COLLECTION_CATEGORIES, collection_url),
 	                    Expr.or(
 	    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, collection_url + Const.COMMA),
-	    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + "  " + collection_url)
+	    	                    Expr.or(
+	    	    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + " " + collection_url),
+	    	    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + "  " + collection_url)
+	    	    	                 )
 	    	                 )
 	                 ))
         		//.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * Return a page of Target
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
+     * @param organisation_url Organisation where targets search occurs
+     * @return
+     */
+    public static Page<Target> pageOrganisationTargets(int page, int pageSize, String sortBy, String order, 
+    		String filter, String organisation_url) {
+    	Logger.debug("pageOrganisationTargets() organisation_url: " + organisation_url);
+
+        return find.where()
+        		.add(Expr.or(
+	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.TITLE, filter)
+	                 ))
+	            .eq(Const.ACTIVE, true)
+        		.add(Expr.eq(Const.FIELD_NOMINATING_ORGANISATION, organisation_url))
+        		//.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation_url)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
@@ -1495,6 +1735,19 @@ public class Target extends Model {
 	}
 	
 	/**
+	 * This method returns GUI representation of the date.
+	 * @param date
+	 * @return GUI string
+	 */
+	public static String getDateAsString(String date) {
+		String res = "";
+		if (date != null && date.length() > 0) {
+			res = Utils.showTimestampInTable((String) date);
+		}
+		return res;
+	}
+	
+	/**
 	 * This method evaluates if given current URL has lower level then
 	 * URL from the list.
 	 * @param iterUrl The URL from the list
@@ -1540,6 +1793,10 @@ public class Target extends Model {
 		Iterator<Target> itr = targets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
+//			Logger.info(
+//					"getUkwaLicenceStatusList() check that no request is in progress and the domain is of higher level. qa_status: " + 
+//							target.qa_status + ", target.field_url: " + target.field_url + 
+//							", isHigherLevel: " + isHigherLevel(target.field_url, fieldUrl));
 			if (target.qa_status != null 
 					&& target.qa_status.length() > 0 
 					&& !target.qa_status.toLowerCase().equals(Const.NONE)

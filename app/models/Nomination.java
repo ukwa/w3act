@@ -7,8 +7,10 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -20,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * This class allows archivist to manage nominations.
  */
 @Entity
+@Table(name = "nomination")
 public class Nomination extends Model
 {
 
@@ -40,24 +43,28 @@ public class Nomination extends Model
     /**
      * The name of the nomination. Derived from UKWA Nomination Form > Full name
      */
+    @Required
     @Column(columnDefinition = "TEXT")
     public String name;
     
     /**
      * The title of the nomination. Derived from UKWA Nomination Form > Title of website
      */
+    @Required
     @Column(columnDefinition = "TEXT")
     public String title;
     
     /**
      * The URL of the nomination. Derived from UKWA Nomination Form > URL of website
      */
+    @Required
     @Column(columnDefinition = "TEXT")
     public String website_url;
     
     /**
      * The email of the nomination. Derived from UKWA Nomination Form > Email address
      */
+    @Required
     @Column(columnDefinition = "TEXT")
     public String email;
     
@@ -110,6 +117,10 @@ public class Nomination extends Model
 
     public static final Model.Finder<Long, Nomination> find = new Model.Finder<Long, Nomination>(Long.class, Nomination.class);
 
+    public Nomination() {
+    	super();
+    }
+    
     public String getName()
     {
         return name;

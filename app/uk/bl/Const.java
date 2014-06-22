@@ -7,7 +7,9 @@ public final class Const {
   
     private Const() {}
 	
-	// Taxonomy
+	/**
+	 * Taxonomy
+	 */
 	public static final String USERS           = "users";
 	public static final String ROLES           = "roles";
 	public static final String PERMISSIONS     = "permissions";
@@ -17,6 +19,7 @@ public final class Const {
 	public static final String LICENSES        = "licenses";
 	public static final String LICENCE         = "license";
 	public static final String COLLECTION_URL  = "collection_url";
+	public static final String ORGANISATION_URL = "organisation_url";
 
     // Drupal connection definitions
     public static final String URI             = "uri";
@@ -87,6 +90,12 @@ public final class Const {
     public static final String HTTP_PREFIX        = "http://";
 	public static final String SERVER_NAME        = "server_name";
 	public static final String UND                = "und";
+	
+	/**
+	 * SQL constants
+	 */
+	public static final String ASC                = "asc";
+	public static final String DESC               = "desc";
 
 	/**
 	 * RabbitMQ settings
@@ -97,7 +106,9 @@ public final class Const {
 	public static final String ROUTING_KEY        = "routing_key";
 	public static final String EXCHANGE_NAME      = "exchange_name";
 		
-	// Elements in HTML forms
+	/**
+	 * Elements in HTML forms
+	 */
 	public static final String FALSE              = "false";
 	public static final String TRUE               = "true";
 	public static final String FILTER             = "filter";
@@ -105,8 +116,12 @@ public final class Const {
 	public static final String USER               = "user";
 	public static final String ALL                = "all";
 	public static final String DATE_FORMAT        = "dd-MM-yyyy";
+	public static final String NONE_VALUE         = "None";
+	public static final String EITHER             = "either";
 
-	// Target
+	/**
+	 * Target
+	 */
 	public static final String NID                = "nid";
 	public static final String TID                = "tid";
 	public static final String TITLE              = "title";
@@ -128,6 +143,7 @@ public final class Const {
 	public static final String REVISION           = "revision";
 	public static final String ACTIVE             = "active";
 	public static final String FIELD_WCT_ID       = "wct";
+	public static final String FIELD_WCT          = "field_wct_id";
 	public static final String FIELD_SPT_ID       = "spt";
 	public static final String FIELD_LICENSE      = "license";
 	public static final String FIELD_LICENSE_NODE = "field_license";
@@ -167,35 +183,54 @@ public final class Const {
 	public static final String LAST_UPDATE        = "lastUpdate";
 	public static final String CHANGED            = "changed";
 	public static final String TREE_KEYS          = "treeKeys";
+	public static final String SUBJECT_TREE_KEYS  = "subjectTreeKeys";
 	public static final String NA                 = "N/A";
 	public static final int    MAX_NPLD_LIST_SIZE = 3;
+	public static final String TAB_STATUS         = "tabstatus";
+	public static final String NPLD               = "npld";
+	public static final String TLD                = "tld";
+	public static final String FILTER_NPLD        = "filter_npld";
+	public static final String FILTER_TLD         = "filter_tld";
 	
-    // Creator
+    /**
+     * Creator
+     */
 	public static final String UID                = "uid";
 	public static final String NAME               = "name";
 	public static final String EMAIL              = "email";
 	public static final String DEFAULT_ROLE       = "user";
+	public static final String DEFAULT_BL_ROLE    = "archivist";
 	public static final String PASSWORD           = "password";
+	public static final String PASSWORD_VALIDATION = "password_validation";
+	public static final String OLD_PASSWORD       = "oldpassword";
 	public static final String USER_URL           = "user_url";
-	public static final String ASC                = "asc";
 
-	// Taxonomy
+	/**
+	 * Taxonomy
+	 */
 	public static final String TYPE               = "type";
 	public static final String TTYPE              = "ttype";
 	public static final String FIELD_OWNER        = "field_owner";
 	public static final String PARENT             = "parent";
 	public static final String PARENTS_ALL        = "parents_all";
 	public static final String OPEN_UKWA_LICENSE  = "Open UKWA Licence (2014-)";
+	public static final String FIELD_PUBLISH      = "field_publish";
 	
-	// Organisation
+	/**
+	 * Organisation
+	 */
 	public static final String FIELD_ABBREVIATION = "field_abbreviation";
 	public static final String ALL_AGENCIES       = "All Agencies";
 	
-	// Permission
+	/**
+	 * Permission
+	 */
 	public static final String ID                 = "id";
 	public static final String PERMISSION         = "permission";
 	
-	// Crawl Permission
+	/**
+	 * Crawl Permission
+	 */
 	public static final String TARGET             = "target";
 	public static final String CONTACT_PERSON     = "contactPerson";
 	public static final String CREATOR_USER       = "creatorUser";
@@ -205,7 +240,9 @@ public final class Const {
 	
 	public static final String DEFAULT_CRAWL_PERMISSION_STATUS = "QUEUED";
 	
-	// Contact Person
+	/**
+	 * Contact Person
+	 */
 	public static final String POSITION          = "position";
 	public static final String CONTACT_ORGANISATION = "contactOrganisation";
 	public static final String PHONE             = "phone";
@@ -225,11 +262,15 @@ public final class Const {
 	public static final String OLD_UKWA_LICENSE  = "UKWA Selective Archive Licence";
 	public static final String NEW_UKWA_LICENSE  = "UKWA Selective Archive Licence (pre-2014)";
 	
-	// Permission Refusals
+	/**
+	 * Permission Refusals
+	 */
 	public static final String REFUSAL_DATE      = "refusal-date";
 	public static final String REASON            = "reason";
 
-	// Communications Logging
+	/**
+	 * Communications Logging
+	 */
 	public static final String LOG_DATE          = "log-date";
 	public static final String NOTES             = "notes";
 	public static final String CURATOR           = "curator";
@@ -280,8 +321,11 @@ public final class Const {
 	public static final String EXPORT_TARGETS_WITH_FAILED_INSTANCES   = "export_targets_with_failed_instances.csv";
 	public static final String EXPORT_TARGETS_WITH_PASSED_INSTANCES   = "export_targets_with_passed_instances.csv";
 	public static final String EXPORT_TARGETS_WITH_QA_ISSUES_RESOLVED = "export_targets_with_qa_issues_resolved.csv";
+	public static final String EXPORT_TARGETS_REPORT_CREATION         = "export_targets_report_creation.csv";
 
-	// Buttons
+	/**
+	 * Buttons
+	 */
 	public static final String SAVE               = "save";
 	public static final String DELETE             = "delete";
 	public static final String CLEAR              = "clear";
@@ -297,6 +341,8 @@ public final class Const {
 	public static final String SEARCH             = "search";
 	public static final String ADDENTRY           = "addentry";
 	public static final String SEND               = "send";
+	public static final String SELECT_ALL         = "selectall";
+	public static final String DESELECT_ALL       = "deselectall";
 	public static final String SEND_ALL           = "sendall";
 	public static final String SEND_SOME          = "sendsome";
 	public static final String PREVIEW            = "preview";
@@ -307,7 +353,9 @@ public final class Const {
 	public static final String ARCHIVE            = "archive";	
 	public static final String APPLY              = "apply";
 
-	// Sorting/Pagination
+	/**
+	 * Sorting/Pagination
+	 */
 	public static final String PAGE_NO             	= "p";
 	public static final String PAGE_SIZE          	= "page_size";
 	public static final String SORT_BY				= "s";
@@ -316,7 +364,9 @@ public final class Const {
 	public static final String QUERY_COLLECTION    	= "query_collection";
 	public static final String QUERY_QA_STATUS     	= "query_qa_status";
 	
-	// Export settings
+	/**
+	 * Export settings
+	 */
 	public static final String ACTION               = "action";   
 	public static final String EXPORT_LOOKUPS       = "export_lookups";  
 	public static final String EXPORT_LOOKUP_FILE   = "exportlookups.csv"; 
@@ -370,7 +420,7 @@ public final class Const {
 		PERMISSION_REQUEST,
 		THANK_YOU_ONLINE_PERMISSION_FORM,
 		THANK_YOU_ONLINE_NOMINATION_BY_OWNER,
-		OPT_OUT;
+		THANK_YOU_ONLINE_NOMINATION_BY_NOMINATOR;
     }
 	    
 	/**
@@ -436,6 +486,14 @@ public final class Const {
 		user,
 		viewer;
     }
+	
+	public enum TabStatus {
+		overview,
+		metadata,
+		crawlpermission,
+		crawlpolicy,
+		licensing;
+    }
 		
     /**
      * Help mapping to present predefined Flag values in GUI.
@@ -452,6 +510,25 @@ public final class Const {
     	guiFlagMap.put("GENERAL_CHANGE_REQUEST", "General Change Request");
     }
 		
+    /**
+     * GUI fields in relation to domain field names.
+     */
+    public static final Map<String, String> guiMap = new HashMap<String, String>();
+    	static {
+    	guiMap.put(NAME,                     "Name");
+    	guiMap.put(TITLE,                    "Title");
+    	guiMap.put(NID,                      "ID");
+    	guiMap.put(ID,                       "ID");
+    	guiMap.put(FIELD_SUBJECT,            "Subject");
+    	guiMap.put(FIELD_URL_NODE,           "Seed URL(s)");
+    	guiMap.put(AUTHOR,                   "Selector");
+    	guiMap.put(SELECTION_TYPE,           "Selection Type");
+    	guiMap.put(TARGET,                   "Target");
+    	guiMap.put(EMAIL,                    "E-mail");
+    	guiMap.put(FIELD_ABBREVIATION,       "Abbreviation");
+    	guiMap.put(FROM_EMAIL,               "From E-mail");
+    }
+    		
 	public enum SelectionType {
 		NOMINATION, // when created from UKWA
 		SELECTION;
@@ -563,8 +640,8 @@ public final class Const {
 		
     public static final Map<String, Integer> permissionExportMap = new HashMap<String, Integer>();
 		static {
-		targetExportMap.put("target", 0);
-		targetExportMap.put("licenseDate", 1);
+		permissionExportMap.put("target", 0);
+		permissionExportMap.put("licenseDate", 1);
 	}
 		
     public static final Map<String, Integer> collectionMap = new HashMap<String, Integer>();
@@ -611,6 +688,16 @@ public final class Const {
 		DOMAIN;
     }    	
     	
+	public enum NpldType {
+		UK_HOSTING,
+		UK_TOP_LEVEL_DOMAIN,
+		UK_REGISTRATION,
+		UK_POSTAL_ADDRESS,
+		VIA_CORRESPONDENCE,
+		PROFESSIONAL_JUDGEMENT,
+		NO_LD_CRITERIA_MET;
+    }    
+
     /**
      * DEFINITIONS FOR TESTING  	
      */

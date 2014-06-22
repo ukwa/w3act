@@ -9,14 +9,12 @@
 		<meta name="description" content="">
 		<meta name="author" content="">
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/style.css")">
-		<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")">
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/blue/style.css")">
         <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-play-1.7.1.js")"></script>
-        <script src="@routes.Assets.at("bootstrap/dist/js/bootstrap.min.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/main.min.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.tablesorter.min.js")"></script>
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
         <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
@@ -27,6 +25,9 @@
         
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/skin/ui.dynatree.css")">
         <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.dynatree.js")"></script>
+
+		<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")">
+        <script src="@routes.Assets.at("bootstrap/dist/js/bootstrap.min.js")"></script>
         
         @scripts
         @styles
@@ -47,45 +48,47 @@
 			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Collections<b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="@routes.Collections.index()">Collections</a></li>
-							<li><a href="@routes.TaxonomiesController.index()">Taxonomies</a></li>
-						</ul>
-					</li>
-					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Targets<b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li><a href="@routes.Targets.lookup()">Look Up URL</a></li>
 							<li><a href="@routes.Targets.index()">List Targets</a></li>
 							<li><a href="@routes.Instances.index()">List Instances</a></li>
+							<li><a href="@routes.Reports.index()">Reports</a></li>
 						</ul>
 					</li>
-					<li><a href="@routes.Organisations.index()">Organisations</a></li>
-					<li><a href="@routes.Curators.index()">Curators</a></li>
-                    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Access Control<b class="caret"></b></a>
-							<ul class="dropdown-menu">
-								<li><a href="@routes.Roles.index()">Roles</a></li>
-								<li><a href="@routes.Permissions.index()">Permissions</a></li>
-								<li><a href="@routes.CrawlPermissions.index()">Crawl Permissions</a></li>
-								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-								<li><a href="@routes.QAController.index()">QA</a></li>
-								}
-								<li><a href="@routes.Reports.index()">Reports</a></li>
-								<li><a href="@routes.Nominations.index()">Nominations</a></li>
-							</ul>
-						</li>					
-					}
+					@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></a>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Archivist Tasks<b class="caret"></b></a>
 						<ul class="dropdown-menu">
+							<li><a href="@routes.CrawlPermissions.index()">Crawl Permissions</a></li>
+							<li><a href="@routes.QAController.index()">QA</a></li>
+							<li><a href="@routes.Nominations.index()">Nominations</a></li>
+						</ul>
+					</li>
+					}					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Taxonomies<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="@routes.Collections.index()">Collections</a></li>
+							<li><a href="@routes.Subjects.index()">Subjects</a></li>
 							<li><a href="@routes.Tags.index()">Tags</a></li>
 							<li><a href="@routes.Flags.index()">Flags</a></li>
+							@if(user.hasRole("sys_admin")) {
 							<li><a href="@routes.Export.index()">Export</a></li>
+							}
 						</ul>
 					</li>					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Users & Agencies<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="@routes.Organisations.index()">Organisations</a></li>
+							<li><a href="@routes.Curators.index()">Curators</a></li>
+							@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+							<li><a href="@routes.Roles.index()">Roles</a></li>
+							}
+							<li><a href="@routes.Passwords.edit()">Change Password</a></li>
+						</ul>
+					</li>
 					<li><a href="@routes.Contact.index">Contact</a></li>
 				</ul>
 				<div class="navbar-right">

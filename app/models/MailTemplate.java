@@ -7,8 +7,10 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.Utils;
@@ -19,6 +21,7 @@ import com.avaje.ebean.ExpressionList;
  * This class supports the management of e-mail templates.
  */
 @Entity
+@Table(name = "mail_template")
 public class MailTemplate extends Model
 {
 
@@ -40,6 +43,7 @@ public class MailTemplate extends Model
      * The name of the e-mail.
      */
     @Column(columnDefinition = "TEXT")
+    @Required
     public String name;
        
     /**
@@ -59,6 +63,7 @@ public class MailTemplate extends Model
      * E-mail from field.
      */
     @Column(columnDefinition = "TEXT")
+    @Required
     public String fromEmail;
 
     /**
@@ -84,7 +89,12 @@ public class MailTemplate extends Model
 
     public static final Model.Finder<Long, MailTemplate> find = new Model.Finder<Long, MailTemplate>(Long.class, MailTemplate.class);
 
-    public String getName()
+    
+    public MailTemplate() {
+    	super();
+    }
+
+	public String getName()
     {
         return name;
     }
@@ -161,6 +171,15 @@ public class MailTemplate extends Model
      */
     public String readTemplate() {
     	return Utils.readTextFile(Const.TEMPLATES_PATH + text);
+    }
+    
+    /**
+     * This method reads initial data from configuration files of the mail templates
+     * @return
+     */
+    public String readInitialTemplate() {
+    	text = Utils.readTextFile(Const.TEMPLATES_PATH + text);
+    	return text;
     }
     
     public String toString() {

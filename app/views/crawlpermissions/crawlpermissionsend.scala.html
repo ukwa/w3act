@@ -5,7 +5,7 @@
 @main("", user) {
 
    	<div class="page-header">
-    	<h1><a href="@routes.CrawlPermissions.index()">Access Control > Crawl Permissions > </a>Crawl Permission Send</h1>
+    	<h1><a href="@routes.CrawlPermissions.index()">Archivist Tasks > Crawl Permissions > </a>Crawl Permission Send</h1>
 	</div>
 
 	@helper.form(action=routes.CrawlPermissions.save) {
@@ -28,7 +28,7 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" name="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>
@@ -36,5 +36,5 @@
 	}
 }
 } else {
-	<h1>Access Denied for URL @routes.CrawlPermissions.index()/send</h1>
+	@infomessage.render("Access Denied for URL @routes.CrawlPermissions.index()/send")
 }

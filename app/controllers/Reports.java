@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import models.ContactPerson;
 import models.CrawlPermission;
 import models.Organisation;
 import models.Target;
@@ -34,15 +35,18 @@ public class Reports extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-        List<CrawlPermission> resList = 
+        List<Target> resList = 
+//                List<CrawlPermission> resList = 
         		processFilterReports("", "", Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<CrawlPermission> resListGranted = 
+        List<Target> resListGranted = 
+//                List<CrawlPermission> resListGranted = 
         		processFilterReports("", "", Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<CrawlPermission> resListRefused = 
+        List<Target> resListRefused = 
+//                List<CrawlPermission> resListRefused = 
         		processFilterReports("", "", Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
         return ok(
                 reports.render(
-                    "Reports", User.find.byId(request().username()), resList, 
+                    "Reports", User.findByEmail(request().username()), resList, 
                     resListGranted, resListRefused, "", "", "", "", ""
                 )
             );
@@ -86,13 +90,16 @@ public class Reports extends AbstractController {
         Logger.info("start_date: " + start_date);
         String end_date = form.get(Const.FIELD_CRAWL_END_DATE);
         
-        List<CrawlPermission> resList = 
+        List<Target> resList = 
+//                List<CrawlPermission> resList = 
         		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.PENDING.name(), 
         				request, start_date, end_date);
-        List<CrawlPermission> resListGranted = 
+        List<Target> resListGranted = 
+//                List<CrawlPermission> resListGranted = 
         		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.GRANTED.name(), 
         				request, start_date, end_date);
-        List<CrawlPermission> resListRefused = 
+        List<Target> resListRefused = 
+//                List<CrawlPermission> resListRefused = 
         		processFilterReports(curator, organisation, Const.CrawlPermissionStatus.REFUSED.name(), 
         				request, start_date, end_date);
 
@@ -108,7 +115,7 @@ public class Reports extends AbstractController {
     			export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
     			return ok(
                 		reports.render(
-                            "Reports", User.find.byId(request().username()), resList, resListGranted,
+                            "Reports", User.findByEmail(request().username()), resList, resListGranted,
                             resListRefused, curator, organisation, start_date, end_date, request
                         )
                     );
@@ -116,7 +123,7 @@ public class Reports extends AbstractController {
     		else if (Const.SEARCH.equals(action)) {
     			return ok(
                 		reports.render(
-                            "Reports", User.find.byId(request().username()), resList, resListGranted,
+                            "Reports", User.findByEmail(request().username()), resList, resListGranted,
                             resListRefused, curator, organisation, start_date, end_date, request
                         )
                     );
@@ -133,7 +140,8 @@ public class Reports extends AbstractController {
      * @param file name
      * @return
      */
-    public static void export(List<CrawlPermission> permissionList, String fileName) {
+    public static void export(List<Target> permissionList, String fileName) {
+//        public static void export(List<CrawlPermission> permissionList, String fileName) {
     	Logger.info("export() permissionList size: " + permissionList.size());
 
         StringWriter sw = new StringWriter();
@@ -146,14 +154,16 @@ public class Reports extends AbstractController {
         sw.append(Const.CSV_LINE_END);
  	    
  	    if (permissionList != null && permissionList.size() > 0) {
- 	    	Iterator<CrawlPermission> itr = permissionList.iterator();
+// 	    	Iterator<CrawlPermission> itr = permissionList.iterator();
+ 	    	Iterator<Target> itr = permissionList.iterator();
  	    	while (itr.hasNext()) {
- 	    		CrawlPermission permission = itr.next();
-	    		sw.append(Target.findByUrl(permission.target).title);
+ 	    		Target target = itr.next();
+// 	    		CrawlPermission permission = itr.next();
+	    		sw.append(target.title);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(permission.target);
+	    		sw.append(target.field_url);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(permission.licenseDate);
+	    		sw.append(target.created);
 		 	    sw.append(Const.CSV_SEPARATOR);
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
@@ -169,46 +179,67 @@ public class Reports extends AbstractController {
      * @param request The request type (first request/folloup/all)
      * @return
      */
-    public static List<CrawlPermission> processFilterReports(String curator, String organisation, 
-    		String status, String request, String start_date, String end_date) {
+    public static List<Target> processFilterReports(String curator, String organisation, 
+    		String status, String request, String startDate, String endDate) {
     	boolean isProcessed = false;
-    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
-    	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
+    	ExpressionList<Target> exp = Target.find.where();
+    	List<Target> res = new ArrayList<Target>();
+    	
+   		exp = exp.eq(Const.ACTIVE, true);
+    	if (curator != null && !curator.equals(Const.NONE)) {
+//    		Logger.info("curatorUrl: " + curatorUrl);
+    		exp = exp.icontains(Const.AUTHOR, curator);
+    	}
+    	if (organisation != null && !organisation.equals(Const.NONE)) {
+//    		Logger.info("organisationUrl: " + organisationUrl);
+    		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisation);
+    	} 
+    	if (startDate != null && startDate.length() > 0) {
+    		Logger.info("startDate: " + startDate);
+        	String startDateUnix = Utils.getUnixDateStringFromDateExt(startDate);
+        	Logger.info("startDateUnix: " + startDateUnix);
+    		exp = exp.ge(Const.CREATED, startDateUnix);
+    	} 
+    	if (endDate != null && endDate.length() > 0) {
+    		Logger.info("endDate: " + endDate);
+        	String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
+        	Logger.info("endDateUnix: " + endDateUnix);
+    		exp = exp.le(Const.CREATED, endDateUnix);
+    	} 
     	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
-    		Logger.info("status: " + status);
-    		exp = exp.eq(Const.STATUS, status);
-    		isProcessed = true;
-    	} 
-    	if (curator != null && !curator.toLowerCase().equals(Const.NONE) && curator.length() > 0) {
-    		Logger.info("curator: " + curator);
-    		exp = exp.eq(Const.CREATOR_USER, curator);
-    		isProcessed = true;
-    	} 
-    	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
-    		Logger.info("request: " + request);
-    		if (request.equals(Const.RequestTypes.FOLLOW_UP.name())) {
-    			exp = exp.eq(Const.REQUEST_FOLLOW_UP, true);
-    		} else {
-    			exp = exp.eq(Const.REQUEST_FOLLOW_UP, null);
-    		}
-    		isProcessed = true;
-    	} 
-    	if (start_date != null && start_date.length() > 0) {
-    		Logger.info("start_date: " + start_date);
-    		exp = exp.ge(Const.LICENSE_DATE, start_date);
-    		isProcessed = true;
-    	} 
-    	if (end_date != null && end_date.length() > 0) {
-    		Logger.info("start_date: " + end_date);
-    		exp = exp.le(Const.LICENSE_DATE, end_date);
+//    		Logger.info("qa status: " + status);
+    		exp = exp.eq(Const.QA_STATUS, status);
     		isProcessed = true;
     	} 
     	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
-
-        if (!isProcessed) {
-    		res = models.CrawlPermission.filterByStatus(status);
-    	}
+    	Logger.info("processFilterReports() Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+    	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
+    		Logger.info("request: " + request);
+	        List<Target> resByRequest = new ArrayList<Target>();
+	        Iterator<Target> resIter = res.iterator();
+	        while (resIter.hasNext()) {
+	        	Target target = resIter.next();
+	        	if (target.field_url != null && target.field_url.length() > 0) {
+	        		List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target.field_url);
+	            	if (permissionList != null && permissionList.size() > 0) {
+	            		CrawlPermission permission = permissionList.get(0);
+	            		Logger.info("permission: " + permission);
+	            		Logger.info("permission requestFollowup: " + permission.requestFollowup + ", request: " + request);
+	            		try {
+		            		if (permission.requestFollowup && request.equals(Const.RequestTypes.FOLLOW_UP.name())
+		            				|| !permission.requestFollowup && request.equals(Const.RequestTypes.FIRST_REQUEST.name())) {
+		            			resByRequest.add(target);
+		            		}
+	            		} catch (Exception e) {
+		            		if (request.equals(Const.RequestTypes.FIRST_REQUEST.name())) {
+		            			resByRequest.add(target);
+		            		}
+	            		}
+	            	}
+	        	}
+	        }
+	        return resByRequest;
+    	} 
         return res;
     }
               
@@ -229,7 +260,7 @@ public class Reports extends AbstractController {
 
     public static Result recordCreation() {
     	return redirect(
-                routes.ReportsQa.index()
+                routes.ReportsCreation.index()
     	        );
     }
 

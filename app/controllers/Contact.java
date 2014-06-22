@@ -19,7 +19,7 @@ public class Contact extends AbstractController {
      */
     public static Result index() {
 		return ok(
-            contact.render("Contact", User.find.byId(request().username()))
+            contact.render("Contact", User.findByEmail(request().username()))
         );
     }
     

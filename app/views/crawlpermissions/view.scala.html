@@ -1,11 +1,15 @@
 @(permission: CrawlPermission, user: User)
 
-@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+@if(user.hasRole("sys_admin") || user.hasRole("archivist") || (permission.creatorUser.equals(user.url))) {
 
 @main("", user) {
     
 	<div class="page-header">
-	    <h1><a href="@routes.CrawlPermissions.index()">Access Control > Crawl Permissions > </a>Crawl Permission @permission.name</h1>
+   		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+    	<h1><a href="@routes.CrawlPermissions.index()">Quality Control > Crawl Permissions > </a>Crawl Permission @permission.name</h1>
+    	} else {
+    	<h1>Archivist Tasks > Crawl Permissions > Crawl Permission @permission.name</h1>
+    	}
 	</div>
 	
 	<ul class="nav nav-tabs">
@@ -15,10 +19,11 @@
 	   }
 	</ul>
 
+    @warningmessage(flash)
 	<div class="row padding-10">
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
-				<label for="inputCreatorUser" class="col-sm-6 control-label">Name</label>
+				<label for="inputCreatorUser" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 			    <div class="col-sm-6">
 					<label for="inputPermissionName" class="col-sm-6 control-label">@permission.name</label>
 				</div>
@@ -29,7 +34,7 @@
 	<div class="row padding-10">
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
-				<label for="inputTarget" class="col-sm-6 control-label">Target</label>
+				<label for="inputTarget" class="col-sm-6 control-label">Target <font color="red">*</font></label>
 			    <div class="col-sm-6">
 					<label for="valueTarget" class="col-sm-6 control-label">@permission.target</label>
 				</div>
@@ -63,7 +68,7 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputEmail" class="col-sm-6 control-label">E-mail<font color="red">*</font></label>
+					<label for="inputEmail" class="col-sm-6 control-label">E-mail <font color="red">*</font></label>
 				    <div class="col-sm-6">
 	              		<input readonly class="form-control" name="email" id="email" value="@ContactPerson.findByUrl(permission.contactPerson).email" type="text">
 					</div>
@@ -168,7 +173,10 @@
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="btn-group">		
 				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-					<a href="@routes.Targets.lookup()" class="btn btn-primary" title="Look up and add new target">Send </a>
+					<a href="@routes.Targets.lookup()" class="btn btn-primary" title="Look up and add new target">Send </a>					
+				}
+				@if(permission.target != null && permission.target.length() > 0) {
+				<a href="@routes.Targets.view(Target.findByTarget(permission.target).url)" class="btn btn-primary" title="Return to the target record">Back to Target Record</a>
 				}
 	       </div>
 		</div>
@@ -176,7 +184,7 @@
 	
 }
 } else {
-	<h1>Access Denied for URL @routes.CrawlPermissions.index()/view</h1>
+	@infomessage.render("Access Denied for URL @routes.CrawlPermissions.index()/view")
 }                   
 	            
 

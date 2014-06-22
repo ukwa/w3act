@@ -7,8 +7,10 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -21,6 +23,7 @@ import uk.bl.api.Utils;
  * outside ACT. Archivist is treating each individual communication as a unique record.
  */
 @Entity
+@Table(name = "communication_log")
 public class CommunicationLog extends Model
 {
 
@@ -41,6 +44,7 @@ public class CommunicationLog extends Model
     /**
      * The name of the communication.
      */
+    @Required
     @Column(columnDefinition = "TEXT")
     public String name;
     
@@ -164,7 +168,7 @@ public class CommunicationLog extends Model
         CommunicationLog log = new CommunicationLog();
         log.id = Utils.createId();
         log.url = Const.ACT_URL + log.id;
-//        log.curator = User.find.byId(request().username()).url; 
+//        log.curator = User.findByEmail(request().username()).url; 
         log.curator = user;
         log.ttype = Const.CommunicationLogTypes.OTHER.name();
         log.date = Utils.getCurrentDate();

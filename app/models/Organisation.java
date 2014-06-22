@@ -7,9 +7,10 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
-import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @SuppressWarnings("serial")
 @Entity 
+@Table(name = "organisation")
 public class Organisation extends Model {
 
     @Id @JsonIgnore
@@ -34,6 +36,7 @@ public class Organisation extends Model {
     @JsonIgnore
     public String format;
     @JsonIgnore
+    @Required
     public String field_abbreviation;
     @JsonIgnore
     public Long vid;
@@ -41,7 +44,7 @@ public class Organisation extends Model {
     public Boolean is_new;
     @JsonIgnore
     public String type;
-    @Id 
+    @Required
     public String title;
     @JsonIgnore
     public String language;

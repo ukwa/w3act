@@ -21,7 +21,7 @@ public class About extends Controller {
      * Display the About tab.
      */
     public static Result index() {
-    	User user = User.find.byId(request().username());
+    	User user = User.findByEmail(request().username());
     	if (user != null) {
     		return ok(about.render("About", user));
     		

@@ -1,30 +1,31 @@
-@(log: CommunicationLog, user: User)
+@(form: Form[CommunicationLog], user: User)
 
 @main("", user) {
 
    	<div class="page-header">
-    	<h1>Edit communication log @log.name</h1>
+	    <h1><a href="@routes.CommunicationLogs.index()">Quality Control > Communication Logs ></a>Edit communication log @form("name").value</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
-	   @if(CommunicationLog.findById(log.id) != null) {
-	   <li><a href="@routes.CommunicationLogs.view(log.url)">View</a></li>
+	   @if(CommunicationLog.findById(Long.valueOf(form("id").value)) != null) {
+	   <li><a href="@routes.CommunicationLogs.view(form("url").value)">View</a></li>
 	   }
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.CommunicationLogs.edit(log.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.CommunicationLogs.edit(form("url").value)">Edit</a></li>
 	   }
 	</ul>
     
+    @warningmessage(flash)
 	@helper.form(action=routes.CommunicationLogs.save) {
-		<input type="hidden" name="url" value="@log.url">
-		<input type="hidden" name="id" value="@log.id">
+		<input type="hidden" name="url" value="@form("url").value">
+		<input type="hidden" name="id" value="@form("id").value">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Name<font color="red">*</font></label>
+					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 				    <div class="col-sm-6">
-	              		<input class="form-control" name="name" id="inputName" value="@log.name" type="text">
+	              		<input class="form-control" name="name" id="inputName" value="@form("name").value" type="text">
 					</div>
 				</div>
 			</div>
@@ -35,7 +36,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Curator</label>
 				    <div class="col-sm-6">
- 						<input type="text" name="curator" value="@User.findByUrl(log.curator).name" size="30" maxlength="2048" class="form-control" id="curator"/>
+ 						<input type="text" name="curator" value="@User.findByUrl(form("curator").value).name" size="30" maxlength="2048" class="form-control" id="curator"/>
                		</div>
 				</div>
 			</div>
@@ -46,7 +47,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Date</label>
 				    <div class="col-sm-6">
- 						<input type="text" name="log-date" value="@log.date" size="30" maxlength="2048" class="form-control" id="log-date"/>
+ 						<input type="text" name="log-date" value="@form("date").value" size="30" maxlength="2048" class="form-control" id="log-date"/>
                		</div>
 				</div>
 			</div>
@@ -59,8 +60,8 @@
 				    <div class="col-sm-6">
 						<select name="type" id="type" class="form-control">
 			                @for(ttype <- CommunicationLog.getAllTypes()) {
-				                @if(ttype.equals(log.ttype)) {
-				                	<option selected>@log.ttype</option>
+				                @if(ttype.equals(form("ttype").value)) {
+				                	<option selected>@form("ttype").value</option>
 				                } else {
 				                	<option>@ttype</option>
 				                }
@@ -79,7 +80,7 @@
 						<select name="permissions" id="permissions" class="form-control">
 							<!-- option>None</option-->
 			                @for(permission <- CrawlPermission.findAll()) {
-				                @if(permission.url.equals(log.permission)) {
+				                @if(permission.url.equals(form("permission").value)) {
 				                	<option selected>@permission.name</option>
 				                } else {
 				                	<option>@permission.name</option>
@@ -96,7 +97,7 @@
 				<div class="form-group">
 					<label for="inputNotes" class="col-sm-6 control-label">Notes</label>
 				    <div class="col-sm-6">
-						<textarea class="form-control" name="notes" id="notes" cols="100" rows="1">@log.notes</textarea>
+						<textarea class="form-control" name="notes" id="notes" cols="100" rows="1">@form("notes").value</textarea>
 					</div>
 				</div>
 			</div>
@@ -110,7 +111,9 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" name="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="delete">Delete</button>
+					@if(CommunicationLog.findById(Long.valueOf(form("id").value)) != null) {
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
+					}
 		       </div>
 			</div>
 		</div>
