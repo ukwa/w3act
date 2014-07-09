@@ -704,30 +704,30 @@ public class TargetController extends AbstractController {
 	    	    channel.close();
 	    	    connection.close();	    	    
 	    	} catch (IOException e) {
-	    		String msg = e.getMessage();
+	    		String msg = "There was a problem queuing this crawl instruction. Please refer to the system administrator.";
 	    		User currentUser = User.findByEmail(request().username());
+    	    	StringWriter sw = new StringWriter();
+    	    	e.printStackTrace(new PrintWriter(sw));
+    	    	String msgFullTrace = sw.toString();
+	    		Logger.error(msgFullTrace);
 	    	    if (currentUser.hasRole("sys_admin")) {
-	    	    	StringWriter sw = new StringWriter();
-	    	    	e.printStackTrace(new PrintWriter(sw));
-	    	    	msg = sw.toString();
+	    	    	msg = msgFullTrace;
 	    	    }
-	    	    msg = "There was a problem queuing this crawl instruction. Please refer to the system administrator.";
-	    		Logger.error(msg);
 	            return ok(infomessage.render(msg));
 	    	} catch (Exception e) {
-	    		String msg = e.getMessage();
+	    		String msg = "There was a problem queuing this crawl instruction. Please refer to the system administrator.";
 	    		User currentUser = User.findByEmail(request().username());
+    	    	StringWriter sw = new StringWriter();
+    	    	e.printStackTrace(new PrintWriter(sw));
+    	    	String msgFullTrace = sw.toString();
+	    		Logger.error(msgFullTrace);
 	    	    if (currentUser.hasRole("sys_admin")) {
-	    	    	StringWriter sw = new StringWriter();
-	    	    	e.printStackTrace(new PrintWriter(sw));
-	    	    	msg = sw.toString();
+	    	    	msg = msgFullTrace;
 	    	    }
-	    	    msg = "There was a problem queuing this crawl instruction. Please refer to the system administrator.";
-	    		Logger.error(msg);
 	            return ok(infomessage.render(msg));
 	    	}    	      
     	} else {
-    		Logger.debug("Target field for archiving is empty");
+    		Logger.debug("There was a problem sending the message. Target field for archiving is empty");
             return ok(infomessage.render("There was a problem sending the message. Target field for archiving is empty"));
     	}
 		return ok(
