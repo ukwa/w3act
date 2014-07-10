@@ -8,6 +8,17 @@
     	<h1><a href="@routes.CrawlPermissions.index()">Archivist Tasks > Crawl Permissions > </a>Crawl Permission Preview</h1>
 	</div>
 
+	@helper.form(action=routes.CrawlPermissions.sendPreview) {
+	
+    <input type="hidden" name="email" value="@emails">		        
+    <input type="hidden" name="subject" value="@MailTemplate.findByName(template).subject">		        
+	<input type="hidden" name="body" value="@CrawlPermission.replaceTwoStringsInText(
+						MailTemplate.findByName(template).text
+						, "||URL||"
+						, "||LINK||"
+						, permission.target
+						, CrawlPermissions.injectServerName(routes.LicenceController.form(permission.url).absoluteURL(request()).toString()))">	
+	
 	<div class="row padding-10">
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
@@ -31,7 +42,7 @@
    	</div>
    	
 	<div class="row padding-10">
-    		<div class="col-md-12 col-xs-12 col-sm-12">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
 				<label for="inputText" class="col-sm-6 control-label">Text</label>
 			    <div class="col-sm-6">
@@ -48,6 +59,16 @@
 		</div>
    	</div>
    	
+	<div class="row padding-10 pull-right">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<div class="btn-group">		
+					<button type="submit" class="btn btn-primary" name="preview">Send preview to me</button>
+	 	        </div>
+	 	    </div>
+		</div>
+	</div>   	
+	}   	
 }
 } else {
 	@infomessage.render("Access Denied for URL @routes.CrawlPermissions.index()/preview")

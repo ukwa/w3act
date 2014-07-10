@@ -125,6 +125,7 @@ GET    	/crawlpermissions/templates     		controllers.CrawlPermissions.templates
 GET    	/crawlpermissions/contacttemplates    	controllers.CrawlPermissions.contactpersons()
 POST    /crawlpermissions/save               	controllers.CrawlPermissions.save()
 POST    /crawlpermissions/send              	controllers.CrawlPermissions.send()
+POST    /crawlpermissions/sendPreview          	controllers.CrawlPermissions.sendPreview()
 GET    	/crawlpermissions/licences        		controllers.CrawlPermissions.licences()
 GET    	/crawlpermissions/refusals        		controllers.CrawlPermissions.refusals()
 GET    	/crawlpermissions/communicationlogs    	controllers.CrawlPermissions.communicationLogs()

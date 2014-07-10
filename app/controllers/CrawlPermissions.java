@@ -885,6 +885,33 @@ public class CrawlPermissions extends AbstractController {
     }
     
     /**
+     * This method sends email preview to the user.
+     */
+    public static Result sendPreview() {
+		Logger.info("send preview");
+    	Result res = ok();
+        String preview = getFormParam(Const.PREVIEW);
+        if (preview != null) {
+        	boolean sendingRes = true;
+        	Logger.info("mail to contact person:" + getFormParam(Const.EMAIL) + ".");
+    		String email = getFormParam(Const.EMAIL);
+        	String messageSubject = getFormParam(Const.SUBJECT);
+        	String messageBody = getFormParam(Const.BODY);
+        	if (email != null) {
+                EmailHelper.sendMessage(email, messageSubject, messageBody);                	
+        	} else {
+            	Logger.info("Missing contact email. Please check contact person");
+            	sendingRes = false;
+        	}
+            if (!sendingRes) {
+    			flash("message", "Missing contact email. Please check contact person");
+            }
+	        res = redirect(routes.CrawlPermissions.index()); 
+        }
+        return res;
+    }
+    
+    /**
      * This method checks if crawl permission for given target already exists.
      * @param target
      * @return true if exists false otherwise
