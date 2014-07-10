@@ -644,7 +644,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Justification <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="justification" value="@form("justification").value" size="60" maxlength="2048" class="form-control" />
+				            	<textarea class="form-control" name="justification" id="inputJustification" cols="100" rows="1" value="@form("justification").value">@form("justification").value</textarea>
 							</div>
 						</div>
 					</div>
@@ -679,7 +679,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(This field allows further notes to selection for WA team, not captured in Justification field.)</small></label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="selector_notes" value="@form("selector_notes").value" size="60" maxlength="2048" class="form-control" />
+				            	<textarea class="form-control" name="selector_notes" id="input_selector_notes" cols="100" rows="1" value="@form("selector_notes").value">@form("selector_notes").value</textarea>
 							</div>
 						</div>
 					</div>
@@ -690,7 +690,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="archivist_notes" value="@form("archivist_notes").value" size="60" maxlength="2048" class="form-control" />
+				            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" cols="100" rows="1" value="@form("archivist_notes").value">@form("archivist_notes").value</textarea>
 							</div>
 						</div>
 					</div>
