@@ -87,10 +87,13 @@ public class LicenceController extends AbstractController {
 		sb.append(Const.POSITION_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).position + Const.CSV_LINE_END);
 		sb.append(Const.EMAIL_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).email + Const.CSV_LINE_END);
 		sb.append(Const.POSTAL_ADDRESS_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).postalAddress + Const.CSV_LINE_END);
+		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.CONTACT_ORGANISATION_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).contactOrganisation + Const.CSV_LINE_END);
 		sb.append(Const.TEL_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).phone + Const.CSV_LINE_END);
 		sb.append(Const.DESCRIPTION_ACK + Const.TWO_POINTS + permission.description + Const.CSV_LINE_END);
+		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.THIRD_PARTY_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.thirdPartyContent) + Const.CSV_LINE_END);
+		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.AGREE_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.agree) + Const.CSV_LINE_END);
 		sb.append(Const.DATE_ACK + Const.TWO_POINTS + permission.licenseDate + Const.CSV_LINE_END);
 		sb.append(Const.PUBLICITY_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.publish) + Const.CSV_LINE_END);
