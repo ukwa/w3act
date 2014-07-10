@@ -75,15 +75,21 @@
 		<ul class="nav nav-pills" id="myNavbar">
         	<li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
 		   	<li><a href="#metadata" data-toggle="tab">Metadata</a></li>
+        	<li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
 			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-				@if(Target.isInScopeAll(target.field_url, target.url)) {
+				@if(Target.isInScopeAllWithoutLicense(target.field_url, target.url)) {
 					<font color="green">(+)</font>
 				} else {
 					<font color="red">(-)</font>
 				}		        
 			</a></li>
-        	<li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
-		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
+		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing
+		    	@if(Target.hasGrantedLicense(target.url)) {
+					<font color="green">(+)</font>
+				} else {
+					<font color="red">(-)</font>
+				}		        
+		    </a></li>
       	</ul>
 	</div>
 	

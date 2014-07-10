@@ -185,15 +185,21 @@
 		<ul class="nav nav-pills" id="myNavbar">
 	        <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
 	        <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
+		    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
 			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-				@if(Target.isInScopeAll(form("field_url").value, form("url").value)) {
+				@if(Target.isInScopeAllWithoutLicense(form("field_url").value, form("url").value)) {
 					<font color="green">(+)</font>
 				} else {
 					<font color="red">(-)</font>
 				}		        
 			</a></li>
-		    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
-		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
+		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing
+		    	@if(Target.hasGrantedLicense(form("url").value)) {
+					<font color="green">(+)</font>
+				} else {
+					<font color="red">(-)</font>
+				}		        
+		    </a></li>
 	  	</ul>
 	</div>
 	@warningmessage(flash)

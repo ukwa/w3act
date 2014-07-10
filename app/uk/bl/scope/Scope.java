@@ -301,7 +301,7 @@ public class Scope {
 	
 	/**
 	 * This method comprises rule engine for checking if a given URL is in scope for rules 
-	 * associated with IP analysis.
+	 * associated with IP analysis. 
 	 * @param url The search URL
 	 * @param nidUrl The identifier URL in the project domain model
 	 * @return true if in scope
@@ -337,6 +337,74 @@ public class Scope {
         if (!res && nidUrl != null && nidUrl.length() > 0) {
         	res = Target.checkLicense(nidUrl);
     		Logger.debug("checkScopeIp() after license check (field: field_license): " + res);
+        }
+
+        // Rule 3.2: check geo IP
+        if (!res && url != null && url.length() > 0) {
+        	res = checkGeoIp(url);
+    		Logger.debug("checkScopeIp() after geoIp check: " + res);
+        }
+        
+        // Rule 3.3: check whois lookup service
+        if (!res && url != null && url.length() > 0) {
+        	res = checkWhois(url);
+    		Logger.debug("checkScopeIp() after whois check: " + res);
+        }
+        
+        /**
+         * if database entry exists and is different to the current value - replace it
+         */
+        if (url != null && url.length() > 0) {
+        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(url);
+        	if (lookupEntries.size() > 0) {
+        		boolean dbValue = LookupEntry.getValueByUrl(url);
+        		if (dbValue != res) {
+       		        LookupEntry lookupEntry = lookupEntries.get(0);
+       		        lookupEntry.scopevalue = res;
+       		        Ebean.update(lookupEntry);
+            		Logger.info("updated lookup entry in database for '" + url + "' with value: " + res);
+        		}
+        	} else {
+        		storeInProjectDb(url, res);
+        	}
+        }
+        
+		Logger.info("resulting lookup entry for '" + url + "' is: " + res);        
+        return res;
+	}
+	
+	/**
+	 * This method comprises rule engine for checking if a given URL is in scope for rules 
+	 * associated with IP analysis. This check is without license field.
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @return true if in scope
+	 * @throws WhoisException
+	 */
+	public static boolean checkScopeIpWithoutLicense(String url, String nidUrl) throws WhoisException {
+        boolean res = false;
+        Logger.info("check for scope IP url: " + url + ", nid: " + nidUrl);
+        url = normalizeUrl(url);
+        
+        /**
+         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
+         *
+         *  Rule 1.1: "field_uk_domain"
+         *  Rule 1.2: "field_uk_postal_address"
+         *  Rule 1.3: "field_via_correspondence"
+         *  Rule 1.4: "field_professional_judgement"
+         *  
+         *  is true - checking result is positive.
+         *  
+         *  Rule 1.5: if the field "field_no_ld_criteria_met" is true - checking result is negative
+         * 
+         */
+        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
+        if (nidUrl != null && nidUrl.length() > 0) {
+        	if (!res) {
+        		res = Target.checkManualScope(nidUrl);
+        		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
+        	}
         }
 
         // Rule 3.2: check geo IP

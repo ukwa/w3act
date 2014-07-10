@@ -773,7 +773,27 @@ public class Target extends Model {
         	res = true;
         }
         return res;
+    }
+
+    /**
+     * This method checks whether license for Target with given URL is granted
+     * @param url
+     * @return true if license exists
+     */
+    public static boolean hasGrantedLicense(String url) {
+        Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
+        boolean res = false;  
+        Logger.info("hasGrantedLicense: " + target.field_license);
+        if (target != null 
+        		&& target.field_license != null 
+        		&& target.field_license.length() > 0 
+        		&& !target.field_license.toLowerCase().contains(Const.NONE)
+        		&& target.qa_status != null 
+        		&& target.qa_status.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+        	res = true;
         }
+        return res;
+    }
 
 	/**
 	 * This method checks whether the passed URL is in scope.
@@ -826,6 +846,26 @@ public class Target extends Model {
     
 	/**
 	 * This method checks whether the passed URL is in scope for
+	 * rules associated with scope IP. This check is without license field.
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @return result as a flag
+	 */
+    public static boolean isInScopeAllWithoutLicense(String url, String nidUrl) {
+    	try {
+			boolean isInScope = isInScopeIpWithoutLicense(url, nidUrl);
+			if (!isInScope) {
+				isInScope = isInScopeDomain(url, nidUrl);
+			}
+			return isInScope;
+    	} catch (Exception ex) {
+    		Logger.info("isInScopeAll() Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
+	 * This method checks whether the passed URL is in scope for
 	 * rules associated with scope IP.
 	 * @param url The search URL
 	 * @param nidUrl The identifier URL in the project domain model
@@ -834,6 +874,22 @@ public class Target extends Model {
     public static boolean isInScopeIp(String url, String nidUrl) {
     	try {
     		return Scope.checkScopeIp(url, nidUrl);
+    	} catch (WhoisException ex) {
+    		Logger.info("Exception: " + ex);
+    		return false;
+    	}
+    }
+    
+	/**
+	 * This method checks whether the passed URL is in scope for
+	 * rules associated with scope IP. This check is without license field.
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @return result as a flag
+	 */
+    public static boolean isInScopeIpWithoutLicense(String url, String nidUrl) {
+    	try {
+    		return Scope.checkScopeIpWithoutLicense(url, nidUrl);
     	} catch (WhoisException ex) {
     		Logger.info("Exception: " + ex);
     		return false;
