@@ -177,7 +177,11 @@
 			                <a href="@routes.CommunicationLogs.showLogs(permission.url)">Log</a>
 						</td>
 						<td>
-			                <a href="@routes.LicenceController.formview(permission.url)" target="_blank">Licence</a>
+						    @if(permission.status.equals("GRANTED")) {
+			                <a href="@routes.LicenceController.formview(permission.url)" target="_blank">Granted License</a>
+			                } else {
+			                <a href="@routes.LicenceController.formview(permission.url)" target="_blank">Preview License</a>
+			                }
 						</td>
 					</tr>
 				}
