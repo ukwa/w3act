@@ -170,6 +170,7 @@
    	<div class="page-header">
 	    <h1><a href="@routes.Targets.index()">Targets > </a>Target @form("title").value</h1>
 	</div>  
+	
 	<ul class="nav nav-tabs">
 	   @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
 	   <li><a onclick="switchPage(); return false;" href="@routes.Targets.view(form("url").value)">View</a></li>
