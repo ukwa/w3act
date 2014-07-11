@@ -114,7 +114,8 @@
 			<div class="alert alert-info">
 				Search here for all or part of the name of the target, or its URL.
 			</div>
-
+			
+			<div id="filter-column">
 				<div class="padding-20">
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
@@ -122,10 +123,26 @@
 				<div id="accordion">
 					<div id="filter-panel" class="panel-collapse collapse in">
 						<div class="panel-body">
-							<div class="row">
-								<div class="col-md-6">
+						
+								<div class="col-md-12">
 									<div class="form-group">
-										<label for="curator" class="col-sm-6 control-label">Filter by curator</label>
+						            	<div class="col-sm-6" style="margin-bottom: 10px;">
+								   			<div class="input-group">
+								 				<span class="input-group-btn">
+													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
+													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
+								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file">Export</button>	
+								 					}								 			
+							            		</span>
+							            	</div>
+							            </div>
+									</div>
+						    	</div>
+						    							
+							<!-- div class="row"-->
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="curator" class="col-sm-6 control-label">Curator</label>
 									    <div class="col-sm-6">
 											<select name="author" class="form-control target-form-control" id="curator">
 												<option>None</option>
@@ -140,9 +157,9 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-md-6">
+								<div class="col-md-12">
 									<div class="form-group">					
-						            	<label for="organisation" class="col-sm-6 control-label">Filter by nominating organisation</label>
+						            	<label for="organisation" class="col-sm-6 control-label">Organisation</label>
 						            	<div class="col-sm-6">
 											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
 									        	<option>None</option>
@@ -157,12 +174,12 @@
 										</div>
 						         	</div>
 								</div>
-							</div>
+							<!-- /div-->
 		
-							<div class="row">
-								<div class="col-md-6">
+							<!-- div class="row"-->
+								<div class="col-md-12">
 									<div class="form-group">
-						            	<label for="subject" class="col-sm-6 control-label">Filter by subject</label>
+						            	<label for="subject" class="col-sm-6 control-label">Subject</label>
 						            	<div class="col-sm-6">
 											<select name="field_subject" class="form-control target-form-control" id="subject">
 									        	<option>None</option>
@@ -177,9 +194,9 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-md-6">
+								<div class="col-md-12">
 									<div class="form-group">					
-						            	<label for="frequency" class="col-sm-6 control-label">Filter by crawl frequency</label>
+						            	<label for="frequency" class="col-sm-6 control-label">Crawl frequency</label>
 						            	<div class="col-sm-6">
 											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
 								                <option>None</option>
@@ -194,12 +211,12 @@
 										</div>
 						         	</div>
 								</div>
-							</div>
+							<!-- /div-->
 		
-							<div class="row">
-								<div class="col-md-6">
+							<!-- div class="row"-->
+								<div class="col-md-12">
 									<div class="form-group">
-						            	<label for="field-depth" class="col-sm-6 control-label">Filter by depth</label>
+						            	<label for="field-depth" class="col-sm-6 control-label">Depth</label>
 						            	<div class="col-sm-6">
 											<select name="field_depth" class="form-control target-form-control" id="field-depth">
 									        	<option>None</option>
@@ -214,9 +231,9 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-md-6">
+								<div class="col-md-12">
 									<div class="form-group">
-						            	<label for="license" class="col-sm-6 control-label">Filter by license</label>
+						            	<label for="license" class="col-sm-6 control-label">License</label>
 						            	<div class="col-sm-6">
 											<select name="field_license" class="form-control target-form-control" id="license">
 									        	<option>None</option>
@@ -231,11 +248,11 @@
 										</div>
 						         	</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-6">
+							<!-- /div-->
+							<!--div class="row"-->
+								<div class="col-md-12">
 									<div class="form-group">
-						            	<label for="suggested_collections" class="col-sm-6 control-label">Filter by collection</label>
+						            	<label for="suggested_collections" class="col-sm-6 control-label">Collection</label>
 						            	<div class="col-sm-6">
 											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
 								                <option>None</option>
@@ -250,9 +267,9 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-md-6">
+								<div class="col-md-12">
 									<div class="form-group">
-						            	<label for="flags" class="col-sm-6 control-label">Filter by flag</label>
+						            	<label for="flags" class="col-sm-6 control-label">Flag</label>
 						            	<div class="col-sm-6">
 											<select name="flags" class="form-control target-form-control" id="flags">
 									        	<option>None</option>
@@ -267,25 +284,39 @@
 										</div>
 									</div>
 								</div>
-							</div>
+							<!--/div!-->
 							
-							<div class="row">
-								<div class="col-md-6">
+							<!--div class="row"-->
+								<div class="col-md-12">
 									<div class="form-group">
-										<div class="row padding-10">
 											<label class="col-sm-6 control-label">Page size</label>
 										    <div class="col-sm-6">
 								 				<input type="text" name="page_size" value="@pageSize" maxlength="200" class="form-control target-form-control" id="page_size" title="Number of targets on page" />
 											</div>
-								     	</div>	 
 								     </div>
-								 </div>
-								<div class="col-md-6">
+								</div>
+								<div class="col-md-12">
 									<div class="form-group">
 						  				<label for="export" class="col-sm-6 control-label">Targets count</label>
 						            	<div class="col-sm-6">
 								   			<div class="input-group">
 								 				<input readonly type="text" name="max_count" value="@currentPage.getTotalRowCount" maxlength="200" class="form-control target-form-control" id="max_count" title="Number of selected targets" />
+								 				<!-- span class="input-group-btn">
+													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
+													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
+								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file">Export</button>	
+								 					}								 			
+							            		</span-->
+							            	</div>
+							            </div>
+									</div>
+								<!--/div-->
+						    	</div>
+		     	
+								<div class="col-md-12">
+									<div class="form-group">
+						            	<div class="col-sm-6" style="margin-top: 10px;">
+								   			<div class="input-group">
 								 				<span class="input-group-btn">
 													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
@@ -295,14 +326,16 @@
 							            	</div>
 							            </div>
 									</div>
-								</div>
-						    </div>
-		     	
+						    	</div>
+
 						</div>
 					</div>
 				</div>
 		</div>
 		} <!-- end of search form -->
+	</div>
+	
+	<div id="data-column">
 		
 	    	@pagination
 			<table class="table table-hover">
@@ -310,8 +343,9 @@
 	                <tr>
 						@header("title", "Target Name")
 						@header("url", "Target URL(s)")	                
-						@header("created", "Created")	                
-						@header("qa_status", "Open UKWA Licence status")	                
+						<!-- @header("created", "Created")	                
+						@header("qa_status", "Open UKWA Licence status")	
+						 -->                
 	                </tr>
 				</thead>
 				<tbody>
@@ -323,7 +357,7 @@
 							<td></td>
 						}		                  
 						<td><a class="brand" href="@target.get_field_list_as_str("field_url")" target="_blank">@target.get_field_list_as_str("field_url")</a></td>
-						@if(target.url != null && target.created != null) {
+						<!-- @if(target.url != null && target.created != null) {
 							<td>@Target.getDateAsString(target.created)</td>
 						} else {
 							<td></td>
@@ -332,13 +366,14 @@
 							<td>@target.qa_status</td>
 						} else {
 							<td></td>
-						}		                  
+						} -->		                  
 	                </tr>
 	                }
 				</tbody>
 			</table>
 	    	@pagination
-
+	</div>
+	
    	</article>
 }
 

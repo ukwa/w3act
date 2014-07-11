@@ -376,4 +376,14 @@ table.table.table-striped.table-bordered.table-hover.table-condensed {
 	margin-top: 5px;
 }
 
+#filter-column {
+    width: 35%;
+    float: left;
+    /*margin-right: 10px;*/
+}
+
+#data-column {
+    width: 60%;
+    float: right;
+}
 
