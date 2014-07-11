@@ -783,7 +783,7 @@ public class Target extends Model {
     public static boolean hasGrantedLicense(String url) {
         Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
         boolean res = false;  
-        Logger.info("hasGrantedLicense: " + target.field_license);
+        Logger.info("hasGrantedLicense url: " + url);
         if (target != null 
         		&& target.field_license != null 
         		&& target.field_license.length() > 0 
