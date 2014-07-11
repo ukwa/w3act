@@ -108,9 +108,9 @@
 				<div class="form-group">
 				    <div class="col-sm-12">
 				    	@if(user.hasRole("sys_admin")) {
-						<textarea class="form-control" name="text" id="text" cols="100" rows="3">@form("text").value</textarea>
+						<textarea class="form-control" name="text" id="text" cols="100" rows="20">@form("text").value</textarea>
 						} else {
-						<textarea class="form-control" name="text" id="text" cols="100" rows="3" readonly>@form("text").value</textarea>
+						<textarea class="form-control" name="text" id="text" cols="100" rows="20" readonly>@form("text").value</textarea>
 						}
 					</div>
 				</div>
