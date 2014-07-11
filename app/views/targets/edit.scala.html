@@ -694,17 +694,6 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
-						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" cols="100" rows="1" value="@form("archivist_notes").value">@form("archivist_notes").value</textarea>
-							</div>
-						</div>
-					</div>
-		     	</div>	
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
 							<label for="legacy_cite_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
 						    <div class="col-sm-6">
 			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form("legacy_site_id").value">
@@ -1166,6 +1155,19 @@
 	        
 		</div>
                         
+        <div id="archivistArea" class="revision">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
+					    <div class="col-sm-6">
+			            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" value="@form("archivist_notes").value">@form("archivist_notes").value</textarea>
+						</div>
+					</div>
+				</div>
+	     	</div>	
+		</div>
+
         <div id="revisionArea" class="revision">
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">

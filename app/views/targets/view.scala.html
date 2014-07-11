@@ -498,17 +498,6 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
-						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" cols="100" rows="1" value="@target.archivist_notes" readonly>@target.archivist_notes</textarea>
-							</div>
-						</div>
-					</div>
-		     	</div>	
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
 							<label for="legacy_site_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
 						    <div class="col-sm-6">
 			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@target.legacy_site_id" readonly>
@@ -846,7 +835,16 @@
 		     	</div>
 		</div>
 	</div>
+
 	<hr>
+	
+	<div id="arhivistArea" class="revision">
+		<dl class="dl-horizontal">
+			<dt>Archivist Notes:</dt>
+			<dd>@target.archivist_notes</dd>
+		</dl>
+	</div>
+
 	<div id="revisionArea" class="revision">
 		<dl class="dl-horizontal">
 			<dt>Revision log message:</dt>
