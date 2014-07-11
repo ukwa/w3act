@@ -32,6 +32,7 @@ import views.html.targets.list;
 import views.html.targets.targets;
 import views.html.targets.view;
 import views.html.users.usersites;
+import views.html.*;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
@@ -584,6 +585,30 @@ public class Targets extends AbstractController {
     }
 	    
     /**
+     * Display the paginated list of targets.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     * @param subject_url Subject where targets search occurs
+     */
+    public static Result subjectTargets(int pageNo, String sortBy, String order, String filter, 
+    		String subject_url) {
+    	Logger.info("Targets.subjectTargets()");
+    	
+        return ok(
+        		views.html.subjects.sites.render(
+        			Taxonomy.findByUrl(subject_url),  
+        			User.findByEmail(request().username()), 
+        			filter, 
+        			Target.pageSubjectTargets(pageNo, 10, sortBy, order, filter, subject_url), 
+        			sortBy, 
+        			order) 
+        	);
+    }
+	    
+    /**
      * Display the paginated list of targets for given organisation.
      *
      * @param page Current page number (starts from 0)
@@ -634,6 +659,33 @@ public class Targets extends AbstractController {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.Targets.collectionTargets(pageNo, sort, order, query, collection_url));
+		    } else {
+		    	return badRequest("This action is not allowed");
+		    }
+    	}
+    }
+    
+    /**
+     * This method enables searching for given URL and particular subject.
+     * @return
+     */
+    public static Result searchTargetsBySubject() {
+    	
+    	DynamicForm form = DynamicForm.form().bindFromRequest();
+    	String action = form.get("action");
+    	String query = form.get("url");
+
+    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
+    	String sort = form.get(Const.SORT_BY);
+    	String order = form.get(Const.ORDER);
+    	String subject_url = form.get(Const.SUBJECT_URL);
+
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.SEARCH.equals(action)) {
+    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    	    	return redirect(routes.Targets.subjectTargets(pageNo, sort, order, query, subject_url));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }

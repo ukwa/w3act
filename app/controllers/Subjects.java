@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.DCollection;
-import models.Organisation;
 import models.Taxonomy;
 import models.Target;
 import models.User;
@@ -323,7 +321,16 @@ public class Subjects extends AbstractController {
         }
         return res;
     }
-	    
+	        
+    /**
+     * This method demonstrates targets associated with given subject.
+     * @param url The URL identifier for subject
+     * @return
+     */
+    public static Result sites(String url) {
+        return redirect(routes.Targets.subjectTargets(0, Const.TITLE, Const.ASC, "", url));
+    }  
+
     /**
      * This method computes a tree of subjects in JSON format. 
      * @param subjectUrl This is an identifier for current selected object

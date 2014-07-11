@@ -59,6 +59,7 @@
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		   <li class="active"><a href="@routes.Subjects.edit(form("url").value)">Edit</a></li>
 		}
+		<li><a href="@routes.Subjects.sites(form("url").value)">Targets</a></li>
 	</ul>
 	
 	    @warningmessage(flash)

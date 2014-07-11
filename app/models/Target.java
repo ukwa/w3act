@@ -1498,6 +1498,43 @@ public class Target extends Model {
      * @param sortBy Target property used for sorting
      * @param order Sort order (either or asc or desc)
      * @param filter Filter applied on the name column
+     * @param subject_url Subject where targets search occurs
+     * @return
+     */
+    public static Page<Target> pageSubjectTargets(int page, int pageSize, String sortBy, String order, 
+    		String filter, String subject_url) {
+    	Logger.debug("pageSubjectTargets() subject_url: " + subject_url);
+
+        return find.where()
+        		.add(Expr.or(
+	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.TITLE, filter)
+	                 ))
+	            .eq(Const.ACTIVE, true)
+        		.add(Expr.or(
+	                    Expr.eq(Const.FIELD_SUBJECT, subject_url),
+	                    Expr.or(
+	    	                    Expr.contains(Const.FIELD_SUBJECT, subject_url + Const.COMMA),
+	    	                    Expr.or(
+	    	    	                    Expr.contains(Const.FIELD_SUBJECT, Const.COMMA + " " + subject_url),
+	    	    	                    Expr.contains(Const.FIELD_SUBJECT, Const.COMMA + "  " + subject_url)
+	    	    	                 )
+	    	                 )
+	                 ))
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }    
+    
+    /**
+     * Return a page of Target
+     *
+     * @param page Page to display
+     * @param pageSize Number of targets per page
+     * @param sortBy Target property used for sorting
+     * @param order Sort order (either or asc or desc)
+     * @param filter Filter applied on the name column
      * @param organisation_url Organisation where targets search occurs
      * @return
      */
