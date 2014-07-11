@@ -5,12 +5,11 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li class="active"><a
-			href="@routes.Collections.view(collection.url)">View</a></li>
-		<li><a href="@routes.Collections.sites(collection.url)">Targets</a></li>
+		<li class="active"><a href="@routes.Collections.view(collection.url)">View</a></li>
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		<li><a href="@routes.Collections.edit(collection.url)">Edit</a></li>
 		}
+		<li><a href="@routes.Collections.sites(collection.url)">Targets</a></li>
 	</ul>
 
 		<div class="row padding-10">
