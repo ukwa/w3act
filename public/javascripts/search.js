@@ -319,3 +319,44 @@ function applySearch(context, searchContext, urlTo) {
 	}
 }
 
+
+function applySearchExt(context, searchContext, urlTo) {
+
+	if (searchContext !== undefined) {
+	    var resultMap = {};
+		$('#search-query').typeahead({
+			remote: {
+				url: context + searchContext + '/filterbyjson/%QUERY',
+				filter: function(items) {
+					var searchResults = [];
+					for (var i = 0; i < items.length; i++) {
+						var item = items[i];
+						var label = item.name;
+						if (label === undefined) {
+							label = item.title;
+						}
+						searchResults[i] = {
+							value: label,
+							url: item.url,
+							field_url: item.field_url
+						};
+					}				
+		          	return searchResults;
+				}
+			},
+			 template: '<p><strong>{{value}}</strong></p><p>{{field_url}}</p>',
+			 engine: Hogan
+		}).on('typeahead:selected', function(event, datum) {
+			console.log("contextTo: " + urlTo);
+			if (datum.field_url !== undefined) {
+				$(this).val(datum.field_url);
+			}
+			if (urlTo !== undefined) {
+				window.location.replace(context + urlTo + "/view?target=" + datum.url);
+			} else {
+				window.location.replace(context + searchContext + "/view?target=" + datum.url); 
+			}
+		});
+	}
+}
+
