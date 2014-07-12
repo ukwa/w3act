@@ -117,6 +117,12 @@ public class Target extends Model {
      */
     public String tabstatus;
     
+	public Boolean isInScopeUkRegistrationValue;
+	public Boolean isInScopeDomainValue;
+	public Boolean isUkHostingValue;
+	public Boolean isInScopeIpValue;
+	public Boolean isInScopeIpWithoutLicenseValue;
+
     // lists
     @Required
     @Column(columnDefinition = "TEXT")
@@ -1389,28 +1395,32 @@ public class Target extends Model {
 		        		&& target.field_url.length() > 0 
 		        		&& !target.field_url.toLowerCase().contains(Const.NONE)) {
 		        	if (tld.equals(Const.NO)) {
-		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
+//		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
+		        		boolean isInScope = target.isInScopeDomainValue;
 		        		Logger.info("pageReportsCreation() Not UK top level domain isInScope: " + isInScope);
 		        		if (!isInScope) {
 		    	        	targetUrlCollection.add(target.url);
 		        		}
 		        	}
 		        	if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
-		        		boolean isInScope = Target.checkUkHosting(target.field_url);
+//		        		boolean isInScope = Target.checkUkHosting(target.field_url);
+		        		boolean isInScope = target.isUkHostingValue;
 		        		Logger.info("pageReportsCreation() UK Hosting isInScope: " + isInScope);
 		        		if (isInScope) {
 		    	        	targetUrlCollection.add(target.url);
 		        		}
 		        	}
 		        	if (tld.equals(Const.YES) || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
-		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
+//		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
+		        		boolean isInScope = target.isInScopeDomainValue;
 		        		Logger.info("pageReportsCreation() UK top level domain isInScope: " + isInScope);
 		        		if (isInScope) {
 		    	        	targetUrlCollection.add(target.url);
 		        		}
 		        	}
 		        	if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
-		        		boolean isInScope = Target.isInScopeUkRegistration(target.field_url);
+//		        		boolean isInScope = Target.isInScopeUkRegistration(target.field_url);
+		        		boolean isInScope = target.isInScopeUkRegistrationValue;
 		        		Logger.info("pageReportsCreation() UK Registration isInScope: " + isInScope);
 		        		if (isInScope) {
 		    	        	targetUrlCollection.add(target.url);

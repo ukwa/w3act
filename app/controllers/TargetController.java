@@ -611,6 +611,15 @@ public class TargetController extends AbstractController {
             boolean newScope = Target.isInScopeIp(newTarget.field_url, newTarget.url);
         	Scope.updateLookupEntry(newTarget, newScope);
         	
+        	/**
+        	 * NPLD scope values
+        	 */
+        	newTarget.isInScopeUkRegistrationValue   = Target.isInScopeUkRegistration(newTarget.field_url);
+        	newTarget.isInScopeDomainValue           = Target.isInScopeDomain(newTarget.field_url, newTarget.url);
+        	newTarget.isUkHostingValue               = Target.checkUkHosting(newTarget.field_url);
+        	newTarget.isInScopeIpValue               = newScope;
+        	newTarget.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(newTarget.field_url, newTarget.url);
+        	
         	Ebean.save(newTarget);
 	        Logger.info("Your changes have been saved: " + newTarget.toString());
   			flash("message", "Your changes have been saved.");
