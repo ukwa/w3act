@@ -144,7 +144,7 @@
 									<div class="form-group">
 										<label for="curator" class="col-sm-6 control-label">Curator</label>
 									    <div class="col-sm-6">
-											<select name="author" class="form-control target-form-control" id="curator">
+											<select name="author" class="form-control target-form-control" id="curator" style="width: 200px;">
 												<option>None</option>
 												@for(curator <- User.findAllSorted()) {
 													@if(curatorUrl != null && curatorUrl.equals(curator.url) && curatorUrl.length() > 0) {
@@ -161,7 +161,7 @@
 									<div class="form-group">					
 						            	<label for="organisation" class="col-sm-6 control-label">Organisation</label>
 						            	<div class="col-sm-6">
-											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
+											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation" style="width: 200px;">
 									        	<option>None</option>
 									            	@for(organisation <- Organisation.findAllSorted()) {
 							                 		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
@@ -181,7 +181,7 @@
 									<div class="form-group">
 						            	<label for="subject" class="col-sm-6 control-label">Subject</label>
 						            	<div class="col-sm-6">
-											<select name="field_subject" class="form-control target-form-control" id="subject">
+											<select name="field_subject" class="form-control target-form-control" id="subject" style="width: 200px;">
 									        	<option>None</option>
 									            @for(subject <- Taxonomy.findListByTypeSortedAll()) {
 							                 			@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
@@ -198,7 +198,7 @@
 									<div class="form-group">					
 						            	<label for="frequency" class="col-sm-6 control-label">Crawl frequency</label>
 						            	<div class="col-sm-6">
-											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
+											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency" style="width: 200px;">
 								                <option>None</option>
 								                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
 						                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
@@ -218,7 +218,7 @@
 									<div class="form-group">
 						            	<label for="field-depth" class="col-sm-6 control-label">Depth</label>
 						            	<div class="col-sm-6">
-											<select name="field_depth" class="form-control target-form-control" id="field-depth">
+											<select name="field_depth" class="form-control target-form-control" id="field-depth" style="width: 200px;">
 									        	<option>None</option>
 									            @for(curDepth <- Targets.getDepth()) {
 							                  		@if(depth != null && depth.equals(curDepth.field_depth)) {
@@ -235,7 +235,7 @@
 									<div class="form-group">
 						            	<label for="license" class="col-sm-6 control-label">License</label>
 						            	<div class="col-sm-6">
-											<select name="field_license" class="form-control target-form-control" id="license">
+											<select name="field_license" class="form-control target-form-control" id="license" style="width: 200px;">
 									        	<option>None</option>
 									            @for(curLicense <- Targets.getLicense()) {
 							                 			@if(license != null && license.equals(curLicense.name)) {
@@ -254,7 +254,7 @@
 									<div class="form-group">
 						            	<label for="suggested_collections" class="col-sm-6 control-label">Collection</label>
 						            	<div class="col-sm-6">
-											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
+											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control" style="width: 200px;">
 								                <option>None</option>
 								                @for(cur_collection <- DCollection.findAllSorted()) {
 									                @if(collection != null && collection.equals(cur_collection.url)) {
@@ -271,7 +271,7 @@
 									<div class="form-group">
 						            	<label for="flags" class="col-sm-6 control-label">Flag</label>
 						            	<div class="col-sm-6">
-											<select name="flags" class="form-control target-form-control" id="flags">
+											<select name="flags" class="form-control target-form-control" id="flags" style="width: 200px;">
 									        	<option>None</option>
 									            @for(curFlag <- Flag.findAll()) {
 							                  		@if(flag != null && flag.equals(curFlag.url)) {
@@ -291,7 +291,7 @@
 									<div class="form-group">
 											<label class="col-sm-6 control-label">Page size</label>
 										    <div class="col-sm-6">
-								 				<input type="text" name="page_size" value="@pageSize" maxlength="200" class="form-control target-form-control" id="page_size" title="Number of targets on page" />
+								 				<input type="text" name="page_size" value="@pageSize" maxlength="200" class="form-control target-form-control" id="page_size" title="Number of targets on page"  style="width: 200px;"/>
 											</div>
 								     </div>
 								</div>
@@ -300,7 +300,7 @@
 						  				<label for="export" class="col-sm-6 control-label">Targets count</label>
 						            	<div class="col-sm-6">
 								   			<div class="input-group">
-								 				<input readonly type="text" name="max_count" value="@currentPage.getTotalRowCount" maxlength="200" class="form-control target-form-control" id="max_count" title="Number of selected targets" />
+								 				<input readonly type="text" name="max_count" value="@currentPage.getTotalRowCount" maxlength="200" class="form-control target-form-control" id="max_count" title="Number of selected targets"  style="width: 200px;"/>
 								 				<!-- span class="input-group-btn">
 													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
