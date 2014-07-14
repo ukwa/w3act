@@ -10,6 +10,28 @@
 			applySearchTargetsTab(context, searchContext);
 			scopeCheck(context);
 			
+		      SUGGESTED_COLLECTION_URI = '@routes.TargetController.getSuggestedCollections(collection)';
+              $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
+              	$("#tree3").dynatree({
+                	checkbox: true,
+                	selectMode: 2,
+                	children: data,
+                	onSelect: function(select, node) {
+                  		// Get a list of all selected nodes, and convert to a key array:
+                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+                    		return node.data.key;
+                  		});
+                  		document.getElementById('treeKeys').value = selKeys.join(", ");
+                  		// Get a list of all selected TOP nodes
+                  		var selRootNodes = node.tree.getSelectedNodes(true);
+                  		// ... and convert to a key array:
+                  		var selRootKeys = $.map(selRootNodes, function(node){
+                    		return node.data.key;
+                  		});
+                	}
+              	});
+             })
+
 		      SUBJECTS_URI = '@routes.TargetController.getSubjectTree(subjectUrl)';
 	          $.getJSON(SUBJECTS_URI, function(data) {    	
 	            	$("#subjectTree").dynatree({
@@ -269,16 +291,8 @@
 									<div class="form-group">
 						            	<label for="suggested_collections" class="col-sm-6 control-label">Collection</label>
 						            	<div class="col-sm-6">
-											<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control" style="width: 200px;">
-								                <option>None</option>
-								                @for(cur_collection <- DCollection.findAllSorted()) {
-									                @if(collection != null && collection.equals(cur_collection.url)) {
-									                	<option selected>@cur_collection.title</option>
-									                } else {
-									                	<option>@cur_collection.title</option>
-									                }
-								                }
-											</select>
+											  <div id="tree3"></div>
+											  <input type="hidden" id="treeKeys" name="treeKeys" value="@collection">
 										</div>
 									</div>
 								</div>

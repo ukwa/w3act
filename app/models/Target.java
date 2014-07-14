@@ -1251,8 +1251,10 @@ public class Target extends Model {
     	if (depth != null && !depth.equals("") && !depth.toLowerCase().equals(Const.NONE)) {
     		exp = exp.icontains(Const.FIELD_DEPTH, depth);
     	} 
+    	Logger.info("pageTargets() suggested_collections: " + suggested_collections);
     	if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
-    		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, suggested_collections);
+    		exp = exp.icontains(Const.FIELD_COLLECTION_CATEGORIES, suggested_collections);
+//    		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, suggested_collections);
     	} 
     	if (license != null && !license.equals("") && !license.toLowerCase().equals(Const.NONE)) {
     		exp = exp.icontains(Const.FIELD_LICENSE_NODE, suggested_collections);

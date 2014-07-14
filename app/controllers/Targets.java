@@ -389,15 +389,20 @@ public class Targets extends AbstractController {
 //    			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
 //    		}
 //    	} 
-    	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
     	String collection = "";
-    	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			collection = DCollection.findByTitleExt(collection_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
-    		}
-    	} 
+        if (form.get(Const.TREE_KEYS) != null) {
+    		collection = Utils.removeDuplicatesFromList(form.get(Const.TREE_KEYS));
+        }
+		Logger.debug("collection: " + collection);
+//    	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
+//    	String collection = "";
+//    	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
+//    		try {
+//    			collection = DCollection.findByTitleExt(collection_name).url;
+//    		} catch (Exception e) {
+//    			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
+//    		}
+//    	} 
     	String license_name = form.get(Const.FIELD_LICENSE_NODE);
     	String license = "";
     	if (license_name != null && !license_name.toLowerCase().equals(Const.NONE)) {
@@ -841,7 +846,7 @@ public class Targets extends AbstractController {
         );
     
     public static Result GO_TARGETS_HOME = redirect(
-            routes.Targets.targets(0, Const.TITLE, Const.ASC, "", "", "", Const.NONE, "", "", "", "", Const.PAGINATION_OFFSET, "")
+            routes.Targets.targets(0, Const.TITLE, Const.ASC, "", "", "", Const.NONE, "", "", Const.NONE, "", Const.PAGINATION_OFFSET, "")
         );
        
     /**
