@@ -884,6 +884,7 @@ public class TargetController extends AbstractController {
     public static String checkSubjectSelection(String subjectUrl, String targetUrl) {
     	String res = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
+//    		if (subjectUrl != null && targetUrl.equals(subjectUrl)) {
     		Target target = Target.findByUrl(targetUrl);
     		if (target.field_subject != null && 
     				target.field_subject.contains(subjectUrl)) {
@@ -919,7 +920,7 @@ public class TargetController extends AbstractController {
      * @return collection object in JSON form
      */
     public static String getSubjectTreeElements(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
-    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
+//    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
     	String res = "";
     	if (subjectList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();

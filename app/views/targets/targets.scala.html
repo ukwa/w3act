@@ -9,6 +9,29 @@
 			searchContext = 'targets';
 			applySearchTargetsTab(context, searchContext);
 			scopeCheck(context);
+			
+		      SUBJECTS_URI = '@routes.TargetController.getSubjectTree(subjectUrl)';
+	          $.getJSON(SUBJECTS_URI, function(data) {    	
+	            	$("#subjectTree").dynatree({
+	              	checkbox: true,
+	              	selectMode: 2,
+	              	children: data,
+	              	onSelect: function(select, node) {
+	                		// Get a list of all selected nodes, and convert to a key array:
+	                		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+	                  		return node.data.key;
+	                		});
+	                		document.getElementById('subject').value = selKeys.join(", ");
+	                		// Get a list of all selected TOP nodes
+	                		var selRootNodes = node.tree.getSelectedNodes(true);
+	                		// ... and convert to a key array:
+	                		var selRootKeys = $.map(selRootNodes, function(node){
+	                  		return node.data.key;
+	                		});
+	              	}
+	            	});
+	          })	          
+            
 		});
 	</script>
 }
@@ -180,17 +203,9 @@
 								<div class="col-md-12">
 									<div class="form-group">
 						            	<label for="subject" class="col-sm-6 control-label">Subject</label>
-						            	<div class="col-sm-6">
-											<select name="field_subject" class="form-control target-form-control" id="subject" style="width: 200px;">
-									        	<option>None</option>
-									            @for(subject <- Taxonomy.findListByTypeSortedAll()) {
-							                 			@if(subjectUrl != null && subjectUrl.equals(subject.url)) {
-							                			<option selected>@subject.name</option>
-							                		} else {
-														<option>@subject.name</option>
-								                		}
-									                }
-											</select>
+									    <div class="col-sm-6">
+										    <div id="subjectTree"></div>
+										    <input type="hidden" id="subject" name="subject" value="@subjectUrl">
 										</div>
 									</div>
 								</div>

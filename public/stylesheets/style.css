@@ -119,6 +119,20 @@ html body div.container article.collections div.row div.form-group div.col-sm-12
 	height: 320px; /* 20% would be ignored by IE9 */
 }
 
+html body div.container article.targets form div#forms div#filter-column div#accordion div#filter-panel.panel-collapse.collapse.in div.panel-body div.col-md-12 div.form-group div.col-sm-6 div#subjectTree ul.dynatree-container
+{
+	font-family: tahoma, arial, helvetica;
+	font-size: 10pt; /* font size should not be too big */
+	white-space: nowrap;
+	padding: 3px;
+	margin-bottom: 5; /* issue 201 */
+	background-color: white;
+	border: 1px dotted gray;
+	overflow: auto;
+	height: 120px; /* 20% would be ignored by IE9 */
+	width: 200px;
+}
+
 a.page {
 	padding: 1px;
 	font-size: 10px;

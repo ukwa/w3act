@@ -351,16 +351,44 @@ public class Targets extends AbstractController {
     			Logger.info("Can't find organisation for title: " + organisation_name + ". " + e);
     		}
     	} 
-    	String subject_name = form.get(Const.FIELD_SUBJECT);
-    	String subject = "";
-    	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			Logger.info("find subject for title: " + subject_name + ". " + subject_name.length());
-           		subject = Taxonomy.findByNameConf(subject_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
-    		}
-    	} 
+    	
+//		String subject_name = Utils.removeDuplicatesFromList(form.get(Const.TREE_KEYS));
+//    	String subject = "";
+//		if (subject_name != null) {
+//			if (!subject_name.toLowerCase().equals(Const.NONE)) {
+//				subject = Taxonomy.findByUrlExt(subject_name).url;
+//			} else {
+//				subject = "";
+//			}
+//		}
+		
+    	String subject = Const.NONE;
+        if (form.get(Const.SUBJECT) != null) {
+        	String subjectListStr = Utils.removeDuplicatesFromList(form.get(Const.SUBJECT));
+        	if (subjectListStr != null && subjectListStr.length() > 0
+        			&& subjectListStr.toLowerCase().contains(Const.NONE)
+        			&& subjectListStr.contains(Const.COMMA)) {
+        		if (subjectListStr.contains(Const.NONE_VALUE + Const.COMMA + " ")) {
+        			subjectListStr = subjectListStr.replace(Const.NONE_VALUE + Const.COMMA + " ", "");
+        		}
+        		if (subjectListStr.contains(Const.COMMA + " " + Const.NONE_VALUE)) {
+        			subjectListStr = subjectListStr.replace(Const.COMMA + " " + Const.NONE_VALUE, "");
+        		}     		
+        	}
+        	subject = subjectListStr;
+        }            		        
+		Logger.debug("subject: " + subject);
+		
+//    	String subject_name = form.get(Const.FIELD_SUBJECT);
+//    	String subject = "";
+//    	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
+//    		try {
+//    			Logger.info("find subject for title: " + subject_name + ". " + subject_name.length());
+//           		subject = Taxonomy.findByNameConf(subject_name).url;
+//    		} catch (Exception e) {
+//    			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
+//    		}
+//    	} 
     	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
     	String collection = "";
     	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
@@ -809,11 +837,11 @@ public class Targets extends AbstractController {
     }
 
     public static Result GO_HOME = redirect(
-            routes.Targets.list(0, "title", "asc", "")
+            routes.Targets.list(0, Const.TITLE, Const.ASC, "")
         );
     
     public static Result GO_TARGETS_HOME = redirect(
-            routes.Targets.targets(0, "title", "asc", "", "", "", "", "", "", "", "", Const.PAGINATION_OFFSET, "")
+            routes.Targets.targets(0, Const.TITLE, Const.ASC, "", "", "", Const.NONE, "", "", "", "", Const.PAGINATION_OFFSET, "")
         );
        
     /**
