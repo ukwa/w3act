@@ -10,7 +10,7 @@
 			applySearchTargetsTab(context, searchContext);
 			scopeCheck(context);
 			
-		      SUGGESTED_COLLECTION_URI = '@routes.TargetController.getSuggestedCollections(collection)';
+		      SUGGESTED_COLLECTION_URI = '@routes.TargetController.getSuggestedCollectionsFilter(collection)';
               $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
               	$("#tree3").dynatree({
                 	checkbox: true,

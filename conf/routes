@@ -264,6 +264,7 @@ GET     /api/licence/:url                    controllers.CrawlPermissions.crawlP
 GET     /api/licencelevel/:url               controllers.CrawlPermissions.crawlPermissionExistAtHigherLevel(url)
 GET     /api/licenceprompthigherlevel/:url   controllers.CrawlPermissions.checkForHigherLevelPrompt(url)
 GET     /api/suggested_collections/:url      controllers.TargetController.getSuggestedCollections(url)
+GET     /api/suggested_collections_filter/:url      controllers.TargetController.getSuggestedCollectionsFilter(url)
 GET     /api/subjects/:url                   controllers.TargetController.getSubjectTree(url)
 GET     /api/subjects_filter/:url            controllers.TargetController.getSubjectTreeFilter(url)
 GET     /api/subjects_instance/:url          controllers.InstanceController.getSubjectTree(url)

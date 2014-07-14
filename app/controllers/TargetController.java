@@ -796,6 +796,22 @@ public class TargetController extends AbstractController {
     }
     
     /**
+     * Mark preselected collections as selected in filter
+     * @param collectionUrl The collection identifier
+     * @param targetUrl This is an identifier for current target object
+     * @return
+     */
+    public static String checkSelectionFilter(String collectionUrl, String targetUrl) {
+    	String res = "";
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		if (collectionUrl != null && targetUrl.equals(collectionUrl)) {
+    			res = "\"select\": true ,";
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
    	 * This method calculates first order collections.
      * @param collectionList The list of all collections
      * @param targetUrl This is an identifier for current target object
@@ -836,6 +852,46 @@ public class TargetController extends AbstractController {
     }
     
     /**
+   	 * This method calculates first order collections for filtering.
+     * @param collectionList The list of all collections
+     * @param targetUrl This is an identifier for current target object
+     * @param parent This parameter is used to differentiate between root and children nodes
+     * @return collection object in JSON form
+     */
+    public static String getTreeElementsFilter(List<DCollection> collectionList, String targetUrl, boolean parent) { 
+//    	Logger.info("getTreeElements() target URL: " + targetUrl);
+    	String res = "";
+    	if (collectionList.size() > 0) {
+	        final StringBuffer sb = new StringBuffer();
+	        sb.append("[");
+	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	boolean firstTime = true;
+	    	while (itr.hasNext()) {
+	    		DCollection collection = itr.next();
+//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
+//    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
+	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
+		    		if (firstTime) {
+		    			firstTime = false;
+		    		} else {
+		    			sb.append(", ");
+		    		}
+//	    			Logger.debug("added");
+					sb.append("{\"title\": \"" + collection.title + "\"," + checkSelectionFilter(collection.url, targetUrl) + 
+							" \"key\": \"" + collection.url + "\"" + 
+							getChildren(collection.url, targetUrl) + 
+							"}");
+	    		}
+	    	}
+//	    	Logger.info("collectionList level size: " + collectionList.size());
+	    	sb.append("]");
+	    	res = sb.toString();
+//	    	Logger.info("getTreeElements() res: " + res);
+    	}
+    	return res;
+    }
+    
+    /**
      * This method computes a tree of collections in JSON format. 
      * @param targetUrl This is an identifier for current target object
      * @return tree structure
@@ -847,6 +903,24 @@ public class TargetController extends AbstractController {
         final StringBuffer sb = new StringBuffer();
     	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
     	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
+//    	Logger.info("collections main level size: " + suggestedCollections.size());
+        jsonData = Json.toJson(Json.parse(sb.toString()));
+//    	Logger.info("getCollections() json: " + jsonData.toString());
+        return ok(jsonData);
+    }        
+    
+    /**
+     * This method computes a tree of collections in JSON format for filtering. 
+     * @param targetUrl This is an identifier for current target object
+     * @return tree structure
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result getSuggestedCollectionsFilter(String targetUrl) {
+//    	Logger.info("getSuggestedCollectionsFilter() target URL: " + targetUrl);
+        JsonNode jsonData = null;
+        final StringBuffer sb = new StringBuffer();
+    	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
+    	sb.append(getTreeElementsFilter(suggestedCollections, targetUrl, true));
 //    	Logger.info("collections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
 //    	Logger.info("getCollections() json: " + jsonData.toString());
