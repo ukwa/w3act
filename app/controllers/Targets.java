@@ -376,6 +376,7 @@ public class Targets extends AbstractController {
         		}     		
         	}
         	subject = subjectListStr;
+        	subject = Utils.cutFirstSelection(subject);
         }            		        
 		Logger.debug("subject: " + subject);
 		
@@ -389,9 +390,10 @@ public class Targets extends AbstractController {
 //    			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
 //    		}
 //    	} 
-    	String collection = "";
+    	String collection = Const.NONE;
         if (form.get(Const.TREE_KEYS) != null) {
     		collection = Utils.removeDuplicatesFromList(form.get(Const.TREE_KEYS));
+    		collection = Utils.cutFirstSelection(collection);
         }
 		Logger.debug("collection: " + collection);
 //    	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);

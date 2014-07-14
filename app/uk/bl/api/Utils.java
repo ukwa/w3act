@@ -526,5 +526,19 @@ public class Utils {
     	return res;
     	
     }
+    
+    /**
+     * This method cuts only the first selected value in a string list separated by comma.
+     * @param str The string list
+     * @return first value
+     */
+    public static String cutFirstSelection(String str) {
+    	String res = str;
+    	if (str != null && str.contains(Const.COMMA)) {
+    		int commaPos = str.indexOf(Const.COMMA);
+    		res = str.substring(0, commaPos - 1);
+    	}
+    	return res;
+    }
 }
 
