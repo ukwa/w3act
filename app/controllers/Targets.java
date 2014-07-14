@@ -377,6 +377,9 @@ public class Targets extends AbstractController {
         	}
         	subject = subjectListStr;
         	subject = Utils.cutFirstSelection(subject);
+        	if (subject.length() == 0) {
+        		subject = Const.NONE;
+        	}
         }            		        
 		Logger.debug("subject: " + subject);
 		

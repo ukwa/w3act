@@ -32,7 +32,7 @@
               	});
              })
 
-		      SUBJECTS_URI = '@routes.TargetController.getSubjectTree(subjectUrl)';
+		      SUBJECTS_URI = '@routes.TargetController.getSubjectTreeFilter(subjectUrl)';
 	          $.getJSON(SUBJECTS_URI, function(data) {    	
 	            	$("#subjectTree").dynatree({
 	              	checkbox: true,

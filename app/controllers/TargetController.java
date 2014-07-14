@@ -895,6 +895,22 @@ public class TargetController extends AbstractController {
     }
     
     /**
+     * Mark preselected subjects as selected in filter
+     * @param subjectUrl The subject identifier
+     * @param targetUrl This is an identifier for current target object
+     * @return
+     */
+    public static String checkSubjectSelectionFilter(String subjectUrl, String targetUrl) {
+    	String res = "";
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		if (subjectUrl != null && targetUrl.equals(subjectUrl)) {
+    			res = "\"select\": true ,";
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
      * Check if none value is selected
      * @param subjectUrl The subject identifier
      * @param targetUrl This is an identifier for current target object
@@ -957,6 +973,50 @@ public class TargetController extends AbstractController {
     }
         
     /**
+   	 * This method calculates first order subjects for targets filtering.
+     * @param subjectList The list of all subjects
+     * @param targetUrl This is an identifier for current target object
+     * @param parent This parameter is used to differentiate between root and children nodes
+     * @return collection object in JSON form
+     */
+    public static String getSubjectTreeElementsFilter(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
+//    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
+    	String res = "";
+    	if (subjectList.size() > 0) {
+	        final StringBuffer sb = new StringBuffer();
+	        sb.append("[");
+	        if (parent) {
+	        	sb.append("{\"title\": \"" + "None" + "\"," + checkNone(targetUrl) + 
+	        			" \"key\": \"" + "None" + "\"" + "}, ");
+	        }
+	    	Iterator<Taxonomy> itr = subjectList.iterator();
+	    	boolean firstTime = true;
+	    	while (itr.hasNext()) {
+	    		Taxonomy subject = itr.next();
+//    			Logger.debug("add subject: " + subject.name + ", with url: " + subject.url +
+//    					", parent:" + subject.parent + ", parent size: " + subject.parent.length());
+	    		if ((parent && subject.parent.length() == 0) || !parent) {
+		    		if (firstTime) {
+		    			firstTime = false;
+		    		} else {
+		    			sb.append(", ");
+		    		}
+//	    			Logger.debug("added");
+					sb.append("{\"title\": \"" + subject.name + "\"," + checkSubjectSelectionFilter(subject.url, targetUrl) + 
+							" \"key\": \"" + subject.url + "\"" + 
+							getSubjectChildren(subject.url, targetUrl) + 
+							"}");
+	    		}
+	    	}
+//	    	Logger.info("subjectList level size: " + subjectList.size());
+	    	sb.append("]");
+	    	res = sb.toString();
+//	    	Logger.info("getSubjectTreeElements() res: " + res);
+    	}
+    	return res;
+    }
+        
+    /**
      * This method computes a tree of subjects in JSON format. 
      * @param targetUrl This is an identifier for current target object
      * @return tree structure
@@ -969,6 +1029,26 @@ public class TargetController extends AbstractController {
     	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
 //    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
     	sb.append(getSubjectTreeElements(parentSubjects, targetUrl, true));
+    	Logger.info("subjects main level size: " + parentSubjects.size());
+//    	Logger.info("sb.toString(): " + sb.toString());
+        jsonData = Json.toJson(Json.parse(sb.toString()));
+//    	Logger.info("getSubjectTree() json: " + jsonData.toString());
+        return ok(jsonData);
+    }        
+    
+    /**
+     * This method computes a tree of subjects in JSON format. 
+     * @param targetUrl This is an identifier for current target object
+     * @return tree structure
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result getSubjectTreeFilter(String targetUrl) {
+    	Logger.info("getSubjectTree() target URL: " + targetUrl);
+        JsonNode jsonData = null;
+        final StringBuffer sb = new StringBuffer();
+    	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
+//    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
+    	sb.append(getSubjectTreeElementsFilter(parentSubjects, targetUrl, true));
     	Logger.info("subjects main level size: " + parentSubjects.size());
 //    	Logger.info("sb.toString(): " + sb.toString());
         jsonData = Json.toJson(Json.parse(sb.toString()));
