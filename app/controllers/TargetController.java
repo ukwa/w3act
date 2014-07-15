@@ -985,6 +985,22 @@ public class TargetController extends AbstractController {
     }
     
     /**
+     * Check if none value is selected in filter
+     * @param subjectUrl The subject identifier
+     * @param targetUrl This is an identifier for current target object
+     * @return
+     */
+    public static String checkNoneFilter(String targetUrl) {
+    	String res = "";
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		if (targetUrl.toLowerCase().contains(Const.NONE.toLowerCase())) {
+    			res = "\"select\": true ,";
+    		}
+    	}
+    	return res;
+    }
+    
+    /**
      * Check if none value is selected
      * @param subjectUrl The subject identifier
      * @param targetUrl This is an identifier for current target object
@@ -1060,7 +1076,7 @@ public class TargetController extends AbstractController {
 	        final StringBuffer sb = new StringBuffer();
 	        sb.append("[");
 	        if (parent) {
-	        	sb.append("{\"title\": \"" + "None" + "\"," + checkNone(targetUrl) + 
+	        	sb.append("{\"title\": \"" + "None" + "\"," + checkNoneFilter(targetUrl) + 
 	        			" \"key\": \"" + "None" + "\"" + "}, ");
 	        }
 	    	Iterator<Taxonomy> itr = subjectList.iterator();
