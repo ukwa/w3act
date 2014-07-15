@@ -430,7 +430,7 @@ public class Targets extends AbstractController {
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
     			return redirect(
-    	        		routes.Targets.list(0, "title", "asc", query)
+    	        		routes.Targets.list(0, Const.TITLE, Const.ASC, query)
     			        );
     		} 
     		else if (Const.CLEAR.equals(action)) {

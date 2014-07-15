@@ -176,7 +176,8 @@
 								 				<span class="input-group-btn">
 													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
-								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file">Export</button>	
+													<button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear filters">Clear</button>
+								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file in the root folder">Export</button>	
 								 					}								 			
 							            		</span>
 							            	</div>
@@ -349,6 +350,7 @@
 								 				<span class="input-group-btn">
 													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
+													<button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear filters">Clear</button>
 								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file">Export</button>	
 								 					}								 			
 							            		</span>
