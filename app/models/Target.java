@@ -1241,17 +1241,18 @@ public class Target extends Model {
     	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
     		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
     	} 
-    	if (subjectUrl != null && !subjectUrl.equals(Const.NONE)) {
+    	Logger.debug("pageTargets() subject: " + subjectUrl);
+    	if (subjectUrl != null && !subjectUrl.toLowerCase().equals(Const.NONE)) {
     		exp = exp.icontains(Const.FIELD_SUBJECT, subjectUrl);
     	} 
-    	Logger.info("pageTargets() crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
+    	Logger.debug("pageTargets() crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
     	if (crawlFrequency != null && !crawlFrequency.equals("") && !crawlFrequency.toLowerCase().equals(Const.NONE)) {
     		exp = exp.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
     	} 
     	if (depth != null && !depth.equals("") && !depth.toLowerCase().equals(Const.NONE)) {
     		exp = exp.icontains(Const.FIELD_DEPTH, depth);
     	} 
-    	Logger.info("pageTargets() suggested_collections: " + suggested_collections);
+    	Logger.debug("pageTargets() suggested_collections: " + suggested_collections);
     	if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
     		exp = exp.icontains(Const.FIELD_COLLECTION_CATEGORIES, suggested_collections);
 //    		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, suggested_collections);
@@ -1268,7 +1269,7 @@ public class Target extends Model {
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
-    	Logger.info("Expression list size: " + res.getTotalRowCount());
+    	Logger.debug("Expression list size: " + res.getTotalRowCount());
         return res;
     }
         
