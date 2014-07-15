@@ -362,7 +362,7 @@ public class Targets extends AbstractController {
 //			}
 //		}
 		
-    	String subject = Const.NONE;
+    	String subject = Const.EMPTY;
         if (form.get(Const.SUBJECT) != null) {
         	String subjectListStr = Utils.removeDuplicatesFromList(form.get(Const.SUBJECT));
         	if (subjectListStr != null && subjectListStr.length() > 0
@@ -378,9 +378,12 @@ public class Targets extends AbstractController {
         	subject = subjectListStr;
         	subject = Utils.cutFirstSelection(subject);
         	if (subject.length() == 0) {
-        		subject = Const.NONE;
+        		subject = Const.EMPTY;
         	}
-        }            		        
+            if (subject.equals(Const.NONE_VALUE)) {
+            	subject = Const.NONE;
+            }
+        }            	
 		Logger.debug("subject: " + subject);
 		
 //    	String subject_name = form.get(Const.FIELD_SUBJECT);
@@ -851,7 +854,7 @@ public class Targets extends AbstractController {
         );
     
     public static Result GO_TARGETS_HOME = redirect(
-            routes.Targets.targets(0, Const.TITLE, Const.ASC, "", "", "", Const.NONE, "", "", Const.NONE, "", Const.PAGINATION_OFFSET, "")
+            routes.Targets.targets(0, Const.TITLE, Const.ASC, "", "", "", Const.EMPTY, "", "", Const.NONE, "", Const.PAGINATION_OFFSET, "")
         );
        
     /**

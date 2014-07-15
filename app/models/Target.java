@@ -1242,8 +1242,16 @@ public class Target extends Model {
     		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
     	} 
     	Logger.debug("pageTargets() subject: " + subjectUrl);
-    	if (subjectUrl != null && !subjectUrl.toLowerCase().equals(Const.NONE)) {
-    		exp = exp.icontains(Const.FIELD_SUBJECT, subjectUrl);
+    	if (subjectUrl != null && !subjectUrl.equals(Const.EMPTY)) {
+    		if (subjectUrl.toLowerCase().equals(Const.NONE)) {
+    			Logger.debug("t1");
+    	   		exp = exp.add(Expr.or(
+	                    Expr.eq(Const.FIELD_SUBJECT, ""),
+	                    Expr.icontains(Const.FIELD_SUBJECT, subjectUrl.toLowerCase())
+	                ));
+    		} else {
+    			exp = exp.icontains(Const.FIELD_SUBJECT, subjectUrl);
+    		}
     	} 
     	Logger.debug("pageTargets() crawlFrequency: " + crawlFrequency + ", depth: " + depth + ", license: " + license);
     	if (crawlFrequency != null && !crawlFrequency.equals("") && !crawlFrequency.toLowerCase().equals(Const.NONE)) {
