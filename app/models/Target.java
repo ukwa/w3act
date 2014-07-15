@@ -1359,6 +1359,9 @@ public class Target extends Model {
     	if (startDate != null && startDate.length() > 0) {
     		Logger.info("startDate: " + startDate);
         	String startDateUnix = Utils.getUnixDateStringFromDateExt(startDate);
+        	if (startDateUnix.length() == 9) { 
+        		startDateUnix = "0" + startDateUnix;
+        	}
         	Logger.info("startDateUnix: " + startDateUnix);
     		exp = exp.ge(Const.CREATED, startDateUnix);
     	} 
