@@ -178,10 +178,20 @@ public class JsonUtils {
 					if (obj.language != null && obj.language.equals(Const.UND)) {
 						obj.language = "";
 					}
-//					if (obj.field_subject == null
-//							|| obj.field_subject.length() == 0) {
-//						obj.field_subject = Const.NONE;
-//					}
+		        	/**
+		        	 * NPLD scope values
+		        	 */
+		        	Logger.debug("calculate NPLD scope for target: " + obj.field_url + ", ID: " + obj.url);
+		        	obj.isInScopeUkRegistrationValue   = Target.isInScopeUkRegistration(obj.field_url);
+		        	Logger.debug("   isInScopeUkRegistrationValue: " + obj.isInScopeUkRegistrationValue);
+		        	obj.isInScopeDomainValue           = Target.isInScopeDomain(obj.field_url, obj.url);
+		        	Logger.debug("   isInScopeDomainValue: " + obj.isInScopeDomainValue);
+		        	obj.isUkHostingValue               = Target.checkUkHosting(obj.field_url);
+		        	Logger.debug("   isUkHostingValue: " + obj.isUkHostingValue);
+		        	obj.isInScopeIpValue               = Target.isInScopeIp(obj.field_url, obj.url);;
+		        	Logger.debug("   isInScopeIpValue: " + obj.isInScopeIpValue);
+		        	obj.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(obj.field_url, obj.url);
+		        	Logger.debug("   isInScopeIpWithoutLicenseValue: " + obj.isInScopeIpWithoutLicenseValue);
 				}
 				if (type.equals(NodeType.ORGANISATION)) {
 					Organisation obj = (Organisation) itr.next();
