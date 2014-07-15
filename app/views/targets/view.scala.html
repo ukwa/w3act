@@ -847,20 +847,32 @@
 
 	<hr>
 	
-	<div id="arhivistArea" class="revision">
-		<dl class="dl-horizontal">
-			<dt>Archivist Notes:</dt>
-			<dd>@target.archivist_notes</dd>
-		</dl>
+    <div id="archivistArea" class="revision">
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label class="col-sm-6 control-label">Archivist Notes</label>
+				    <div class="col-sm-6">
+		            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" readonly>@target.archivist_notes</textarea>
+					</div>
+				</div>
+			</div>
+     	</div>	
 	</div>
 
-	<div id="revisionArea" class="revision">
-		<dl class="dl-horizontal">
-			<dt>Revision log message:</dt>
-			<dd>@target.revision</dd>
-		</dl>
+    <div id="revisionArea" class="revision">
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+	              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
+				    <div class="col-sm-6">
+              				<textarea class="form-control" name="revision" id="inputRevision" readonly>@target.revision</textarea>
+					</div>
+				</div>
+			</div>
+     	</div>
 	</div>
-		
+	
 	<div class="padding-20">
 		<div class="panel-group" id="accordion">
 			<div class="panel panel-primary" id="panels">
