@@ -186,8 +186,8 @@ public class JsonUtils {
 //		        	Logger.debug("   isInScopeUkRegistrationValue (WhoIs): " + obj.isInScopeUkRegistrationValue);
 		        	obj.isInScopeDomainValue           = Target.isInScopeDomain(obj.field_url, obj.url);
 		        	Logger.debug("   isInScopeDomainValue (UK_DOMAIN): " + obj.isInScopeDomainValue);
-		        	obj.isUkHostingValue               = Target.checkUkHosting(obj.field_url);
-		        	Logger.debug("   isUkHostingValue (GeoIp): " + obj.isUkHostingValue);
+//		        	obj.isUkHostingValue               = Target.checkUkHosting(obj.field_url);
+//		        	Logger.debug("   isUkHostingValue (GeoIp): " + obj.isUkHostingValue);
 //		        	obj.isInScopeIpValue               = Target.isInScopeIp(obj.field_url, obj.url);;
 //		        	Logger.debug("   isInScopeIpValue: (multiple rules WhoIs)" + obj.isInScopeIpValue);
 //		        	obj.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(obj.field_url, obj.url);
