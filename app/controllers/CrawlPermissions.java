@@ -894,7 +894,7 @@ public class CrawlPermissions extends AbstractController {
         if (preview != null) {
         	boolean sendingRes = true;
         	Logger.info("mail to contact person:" + getFormParam(Const.EMAIL) + ".");
-    		String email = getFormParam(Const.EMAIL);
+    		String email = request().username(); //getFormParam(Const.EMAIL);
         	String messageSubject = getFormParam(Const.SUBJECT);
         	String messageBody = getFormParam(Const.BODY);
         	if (email != null) {
