@@ -1244,7 +1244,6 @@ public class Target extends Model {
     	Logger.debug("pageTargets() subject: " + subjectUrl);
     	if (subjectUrl != null && !subjectUrl.equals(Const.EMPTY)) {
     		if (subjectUrl.toLowerCase().equals(Const.NONE)) {
-    			Logger.debug("t1");
     	   		exp = exp.add(Expr.or(
 	                    Expr.eq(Const.FIELD_SUBJECT, ""),
 	                    Expr.icontains(Const.FIELD_SUBJECT, subjectUrl.toLowerCase())
