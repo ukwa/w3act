@@ -1,0 +1,48 @@
+@(user: User)
+
+@main("", user) {
+    
+   	<div class="page-header">
+	    <h1><a href="@routes.Passwords.edit()">Users & Agencies > Check WhoIs </a></h1>
+	</div>
+    
+    @warningmessage(flash)
+    @helper.form(action=routes.CheckWhoIs.check) {
+		<input type="hidden" name="url" value="@user.url">
+		<input type="hidden" name="uid" value="@user.uid">
+	
+		<div class="row padding-10">
+	   		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="password" class="col-sm-6 control-label">Targets count with 'WhoIs' value 'Yes'</label>
+				    <div class="col-sm-6">
+						<input class="form-control" value="@Target.findWhoIsCount(true)">
+					</div>
+				</div>
+			</div>
+	   	</div>
+		
+		<div class="row padding-10">
+	   		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="password" class="col-sm-6 control-label">Targets count with 'WhoIs' value 'No'</label>
+				    <div class="col-sm-6">
+						<input class="form-control" value="@Target.findWhoIsCount(false)">
+					</div>
+				</div>
+			</div>
+	   	</div>
+		
+		<div class="alert alert-info">
+			In order to refresh the 'WhoIs' criteria for targets please use the 'Check' button. This will trigger a new check. 
+		</div>
+	
+		<div class="row padding-10 pull-right">
+	   		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+					<button type="submit" class="btn btn-primary" name="check">Check</button>
+		       </div>
+			</div>
+		</div>
+	}
+}

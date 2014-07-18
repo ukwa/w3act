@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 import java.util.List;
 
 import models.LookupEntry;
@@ -498,6 +499,42 @@ public class Scope {
 	        // store in project DB
 	        storeInProjectDb(url, false);
     		throw new WhoisException(e);
+    	}
+    	Logger.info("whois res: " + res);        	
+		return res;
+	}
+	
+	/**
+	 * This method extracts domain name from the given URL and checks country or country code
+	 * in response using whois lookup service.
+	 * @param url
+	 * @return true if in UK domain
+	 * @throws WhoisException 
+	 */
+	public static boolean checkWhoisThread() throws WhoisException {
+		boolean res = false;
+    	JRubyWhois whoIs = new JRubyWhois();
+    	int count = 0;
+    	List<Target> targetList = Target.findAllActive();
+    	Iterator<Target> itr = targetList.iterator();
+    	while (itr.hasNext()) {
+    		Target target = itr.next();
+        	try {
+	        	Logger.info("checkWhoisThread count: " + count + ", URL: " + target.field_url);
+	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.field_url));
+	        	Logger.info("whoIsRes: " + whoIsRes);
+	        	res = whoIsRes.isUKRegistrant();
+	        	Logger.info("isUKRegistrant?: " + res);
+	        	storeInProjectDb(target.field_url, res);
+	        	target.isInScopeUkRegistrationValue = res;
+	    	} catch (Exception e) {
+	    		Logger.info("whois lookup message: " + e.getMessage());
+		        // store in project DB
+		        storeInProjectDb(target.field_url, false);
+	        	target.isInScopeUkRegistrationValue = false;
+	    	}
+        	Ebean.update(target);
+        	count++;
     	}
     	Logger.info("whois res: " + res);        	
 		return res;

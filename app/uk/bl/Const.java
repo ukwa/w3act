@@ -136,6 +136,7 @@ public final class Const {
 	public static final String ORGANISATION       = "organisation";
 	public static final String ORIGINATING_ORGANISATION = "originating_organisation";
 	public static final String FIELD_SUGGESTED_COLLECTIONS = "field_suggested_collections";
+	public static final String IS_IN_SCOPE_UK_REGISTRATION_VALUE = "isInScopeUkRegistrationValue";
 	public static final String FIELD_CRAWL_FREQUENCY = "field_crawl_frequency";
 	public static final String FIELD_COLLECTION_CATEGORIES = "field_collection_categories";
 	public static final String FIELD_SCOPE        = "field_scope";

@@ -304,6 +304,31 @@ public class Target extends Model {
     }
 
     /**
+     * This method returns all Targets that comprise link to given collection
+     * @param collectionUrl - The collection identifier
+     * @return Targets list
+     */
+    public static int findWhoIsCount(boolean value) {
+    	List<Target> res = new ArrayList<Target>();
+    	if (value) {
+	        ExpressionList<Target> ll = find.where()
+	    	        .eq(Const.ACTIVE, true)
+	    	        .eq(Const.IS_IN_SCOPE_UK_REGISTRATION_VALUE, true);
+	        res = ll.findList();
+    	} else {
+	        ExpressionList<Target> ll = find.where()
+	    	        .eq(Const.ACTIVE, true)
+	    	        .add(Expr.or(
+	    	        		Expr.eq(Const.IS_IN_SCOPE_UK_REGISTRATION_VALUE, false),
+		                    Expr.isNull(Const.IS_IN_SCOPE_UK_REGISTRATION_VALUE)
+	    	        		)
+	    	        );
+	        res = ll.findList();
+    	}
+        return res.size();
+    }
+
+    /**
      * This method retrieves all targets for given collection.
      * @param url
      * @return

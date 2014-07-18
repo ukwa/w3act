@@ -275,6 +275,9 @@ GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollect
 GET     /passwords                           controllers.Passwords.edit()
 POST    /passwords/save            			 controllers.Passwords.save()
 
+# WhoIs check
+GET     /whois                               controllers.CheckWhoIs.index()
+POST    /whois/check            			 controllers.CheckWhoIs.check()
 
 # Sample forms with validation
 GET     /targets/blank/						controllers.Targets.blank()
