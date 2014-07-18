@@ -191,10 +191,15 @@
 			
 		@pagination
 		
-   		<div class="row padding-10">
+		<div class="alert alert-info">
+			In order to enable send buttons check that crawl permission list is not empty and that these crawl permissions contain a contact person. 
+		</div>
+
+		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+		<div class="row padding-20 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-	              	<label for="selectTemplate" class="col-sm-6 control-label">Template</label>
+	              	<label for="selectTemplate" class="col-sm-4 control-label">Template</label>
 				    <div class="col-sm-6">
 						<select name="template" value="General" class="form-control">
 							<option>None</option>
@@ -208,16 +213,6 @@
 					  	</select>
 					</div>
 				</div>
-			</div>
-     	</div>		    
-
-		<div class="alert alert-info">
-			In order to enable send buttons check that crawl permission list is not empty and that these crawl permissions contain a contact person. 
-		</div>
-
-		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		<div class="row padding-20 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
 				@if(currentPage.getTotalRowCount() > 0 && CrawlPermissions.haveContactPerson(currentPage.getList())) {
 					<button type="submit" class="btn btn-primary" name="selectall">Select all</button>
