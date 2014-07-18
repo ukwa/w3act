@@ -335,27 +335,15 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
-								<label class="radio-inline">
-							  		@if(Long.valueOf(form("status").value) == 1) {
-							          <input name="status" id="radio1" value="1" type="radio" checked="checked"> N/A
-							        } else {
-							          <input name="status" id="radio1" value="1" type="radio"> N/A
-							        }
-								</label>
-								<label class="radio-inline">
-							  		@if(Long.valueOf(form("status").value) == 2) {
-							          <input name="status" id="radio2" value="2" type="radio" checked="checked"> No QA issues found
-							        } else {
-							          <input name="status" id="radio2" value="2" type="radio"> No QA issues found
-							        }
-								</label>
-								<label class="radio-inline">
-							  		@if(Long.valueOf(form("status").value) == 3) {
-							        	<input name="status" id="radio3" value="3" type="radio" checked="checked"> QA issue
-							        } else {
-							        	<input name="status" id="radio3" value="3" type="radio"> QA issue
-									}
-								</label>
+								<select name="field_qa_status" id="field_qa_status" class="form-control">
+									@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
+						                @if(form("field_qa_status").value != null && form("field_qa_status").value.contains(taxonomy.url)) {             
+										 	<option selected>@taxonomy.name</option>
+									 	} else {
+										 	<option>@taxonomy.name</option>
+									 	}									 	
+								    }	
+                                </select>
 							</div>
 						</div>
 					</div>

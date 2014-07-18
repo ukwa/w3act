@@ -141,7 +141,7 @@
 					<td>0</td>
 					<td>@target.field_crawl_frequency</td>
 					<td><a class="brand" href="@routes.Curators.edit(target.author)">@target.get_user_by_id()</a></td>
-					<td>@target.getStatusStr()</td>
+					<td>@Taxonomy.findByUrl(target.field_qa_status).name</td>
 					@if(target.field_url != null && target.url != null) {
 					<td>@target.checkScopeStr(target.field_url, target.url)</td>
 					} else {

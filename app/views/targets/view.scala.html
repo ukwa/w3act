@@ -197,16 +197,9 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
-						  		@if(target.status == 1) {
-						          N/A
-						        }
-						  		@if(target.status == 2) {
-						          No QA issues found
-						        }
-						  		@if(target.status == 3) {
-						          QA issue
-								}
-						  		@if(target.status != 1 && target.status != 2 && target.status != 3) {
+						        @if(target.field_qa_status != null && Taxonomy.findByUrl(target.field_qa_status) != null) {
+						  			@Taxonomy.findByUrl(target.field_qa_status).name 						          
+						        } else {
 						        	none
 								}
 							</div>

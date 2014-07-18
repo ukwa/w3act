@@ -86,9 +86,12 @@ public class TargetController extends AbstractController {
         if (getFormParam(Const.FLAG_NOTES) != null) {
         	targetObj.flag_notes = getFormParam(Const.FLAG_NOTES);
         } 
-        if (getFormParam(Const.STATUS) != null) {
-        	targetObj.status = Long.valueOf(getFormParam(Const.STATUS));
+        if (getFormParam(Const.FIELD_QA_STATUS) != null) {
+        	targetObj.field_qa_status = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
         } 
+//        if (getFormParam(Const.STATUS) != null) {
+//        	targetObj.status = Long.valueOf(getFormParam(Const.STATUS));
+//        } 
         if (getFormParam(Const.QA_STATUS) != null) {
         	targetObj.qa_status = getFormParam(Const.QA_STATUS);
         } else {
@@ -362,10 +365,13 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.FLAG_NOTES) != null) {
             	newTarget.flag_notes = getFormParam(Const.FLAG_NOTES);
             } 
-            if (getFormParam(Const.STATUS) != null) {
-//        		Logger.info("status: " + getFormParam(Const.STATUS) + ".");
-            	newTarget.status = Long.valueOf(getFormParam(Const.STATUS));
-//        		Logger.info("status: " + newTarget.status + ".");
+//            if (getFormParam(Const.STATUS) != null) {
+////        		Logger.info("status: " + getFormParam(Const.STATUS) + ".");
+//            	newTarget.status = Long.valueOf(getFormParam(Const.STATUS));
+////        		Logger.info("status: " + newTarget.status + ".");
+//            } 
+            if (getFormParam(Const.FIELD_QA_STATUS) != null) {
+            	newTarget.field_qa_status = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
             } 
             if (getFormParam(Const.QA_STATUS) != null) {
             	Logger.debug("###   QA_STATUS");
