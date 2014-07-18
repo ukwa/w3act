@@ -160,6 +160,38 @@ public class Taxonomy extends Model {
     }          
     
     /**
+     * Retrieve a Taxonomy by URL.
+     * @param url
+     * @return taxonomy object
+     */
+    public static String findTaxonomyNamesByUrl(String url) {
+    	String res = Const.NONE;
+        
+        if (url != null && url.length() > 0) {
+    		if (url.contains(Const.LIST_DELIMITER)) {   	
+		    	String[] parts = url.split(Const.LIST_DELIMITER);
+		    	for (String part: parts)
+		        {
+			        Taxonomy taxonomy = find.where().eq(Const.URL, part).findUnique();
+			        if (taxonomy != null) {
+			        	if (res.equals(Const.NONE)) {
+			        		res = taxonomy.name;
+			        	} else {
+			        		res = res + Const.LIST_DELIMITER + taxonomy.name;
+			        	}
+			        }
+		        }
+    		} else {
+		        Taxonomy taxonomy = find.where().eq(Const.URL, url).findUnique();
+		        if (taxonomy != null) {
+		        	res = taxonomy.name;
+		        }
+    		}        	
+        }
+    	return res;
+    }          
+    
+    /**
      * Retrieve a Taxonomy by name.
      * @param QA status name
      * @return taxonomy object
