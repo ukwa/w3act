@@ -296,7 +296,7 @@ public final class Const {
 	public static final String CONTACT_ORGANISATION_ACK = "Contact Organisation";
 	public static final String TEL_ACK           = "Tel";
 	public static final String DESCRIPTION_ACK   = "Any other information";
-	public static final String THIRD_PARTY_ACK   = "Third-Party Conten";
+	public static final String THIRD_PARTY_ACK   = "Third-Party Content";
 	public static final String AGREE_ACK         = "I/We agree";
 	public static final String DATE_ACK          = "Date";
 	public static final String PUBLICITY_ACK     = "Future publicity for the Web Archive";
