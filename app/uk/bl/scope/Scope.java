@@ -507,20 +507,22 @@ public class Scope {
 	/**
 	 * This method extracts domain name from the given URL and checks country or country code
 	 * in response using whois lookup service.
-	 * @param url
+	 * @param number The number of targets for which the elapsed time since the last check is greatest
 	 * @return true if in UK domain
 	 * @throws WhoisException 
 	 */
-	public static boolean checkWhoisThread() throws WhoisException {
+	public static boolean checkWhoisThread(int number) throws WhoisException {
 		boolean res = false;
     	JRubyWhois whoIs = new JRubyWhois();
     	int count = 0;
-    	List<Target> targetList = Target.findAllActive();
+//    	List<Target> targetList = Target.findAllActive();
+    	List<Target> targetList = Target.findLastActive(number);
     	Iterator<Target> itr = targetList.iterator();
     	while (itr.hasNext()) {
     		Target target = itr.next();
         	try {
-	        	Logger.info("checkWhoisThread count: " + count + ", URL: " + target.field_url);
+	        	Logger.info("checkWhoisThread count: " + count + ", URL: " + target.field_url +
+	        			", last update: " + String.valueOf(target.lastUpdate));
 	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.field_url));
 	        	Logger.info("whoIsRes: " + whoIsRes);
 	        	res = whoIsRes.isUKRegistrant();

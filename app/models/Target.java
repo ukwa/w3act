@@ -987,6 +987,21 @@ public class Target extends Model {
     }          
 
     /**
+     * This method returns the latest version of Target objects.
+	 * @param number The number of targets for which the elapsed time since the last check is greatest
+     * @return
+     */
+    public static List<Target> findLastActive(int number) {
+		List<Target> res = new ArrayList<Target>();
+        res = find.where()
+        		.eq(Const.ACTIVE, true)
+        		.orderBy(Const.LAST_UPDATE + " " + Const.ASC)
+				.findList()
+				.subList(0, number);
+		return res;
+    }          
+
+    /**
      * This method finds all targets that have higher level domain containing in
      * their path on order to extend licence obtained for higher level to the lower levels.
      */

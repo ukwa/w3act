@@ -91,6 +91,7 @@ public final class Const {
     public static final String HTTP_PREFIX        = "http://";
 	public static final String SERVER_NAME        = "server_name";
 	public static final String UND                = "und";
+    public static final String NUMBER             = "number";
 	
 	/**
 	 * SQL constants

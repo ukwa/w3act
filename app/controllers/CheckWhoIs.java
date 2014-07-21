@@ -80,9 +80,16 @@ public class CheckWhoIs extends AbstractController {
         String check = getFormParam("check");
         if (check != null) {
         	Logger.info("CheckWhoIs controller check() ");
+        	Logger.info("target number to check: " + getFormParam(Const.NUMBER));
+        	int number = 50;
+            if (getFormParam(Const.NUMBER) != null 
+            		&& getFormParam(Const.NUMBER).length() > 0
+            		&& Utils.isNumeric(getFormParam(Const.NUMBER))) {
+            	number = Integer.valueOf(getFormParam(Const.NUMBER));
+            }
 //        	new WhoIsThread("WhoIs check").start();
         	Target target = new Target();
-        	WhoIsThread notifier = new WhoIsThread(target);
+        	WhoIsThread notifier = new WhoIsThread(target, number);
     		Thread notifierThread = new Thread(notifier, "notifierWhoIsThread");
     		notifierThread.start();
 //        	res = ok(infomessage.render("You have successfully checked the current status of WhoIs service."));
