@@ -778,26 +778,33 @@ public class CrawlPermissions extends AbstractController {
 //        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
                 boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag || all) {
-                	Logger.info("mail to contact person:" + permission.contactPerson.replace(Const.LIST_DELIMITER,"") + ".");
+                	Logger.debug("mail to contact person: " + permission.contactPerson.replace(Const.LIST_DELIMITER,"") + ".");
+                	Logger.debug("mail template: " + template);
             		String email = ContactPerson.findByUrl(permission.contactPerson.replace(Const.LIST_DELIMITER,"")).email;
 //                	String[] toMailAddresses = Utils.getMailArray(email);
-                	MailTemplate mailTemplate = MailTemplate.findByName(template);
-                	String messageSubject = mailTemplate.subject;
-                	String messageBody = mailTemplate.text;
-//                	String messageBody = mailTemplate.readTemplate();
-                	String[] placeHolderArray = Utils.getMailArray(mailTemplate.placeHolders);
-            		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.target);
-            		Logger.info("setPendingSelectedCrawlPermissions current: " + routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
-            		String licenseUrl = routes.LicenceController.form(permission.url).absoluteURL(request()).toString();
-            		licenseUrl = injectServerName(licenseUrl);
-            		Logger.info("setPendingSelectedCrawlPermissions new: " + licenseUrl);
-                	messageBody = CrawlPermission.
-	                	replaceTwoStringsInText(
-	                			messageBody
-	    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
-	    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
-	    						, permission.target
-	    						, licenseUrl);
+            		String messageBody = Const.NONE_VALUE;
+                	String messageSubject = Const.NONE_VALUE;
+            		if (!template.equals(Const.NONE_VALUE)) {
+	                	MailTemplate mailTemplate = MailTemplate.findByName(template);
+	                	messageSubject = mailTemplate.subject;
+	                	messageBody = mailTemplate.text;
+	//                	String messageBody = mailTemplate.readTemplate();
+	                	String[] placeHolderArray = Utils.getMailArray(mailTemplate.placeHolders);
+	            		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.target);
+	            		Logger.info("setPendingSelectedCrawlPermissions current: " + routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
+	            		String licenseUrl = routes.LicenceController.form(permission.url).absoluteURL(request()).toString();
+	            		licenseUrl = injectServerName(licenseUrl);
+	            		Logger.info("setPendingSelectedCrawlPermissions new: " + licenseUrl);
+	                	messageBody = CrawlPermission.
+		                	replaceTwoStringsInText(
+		                			messageBody
+		    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
+		    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
+		    						, permission.target
+		    						, licenseUrl);
+            		} else {
+            			Logger.debug("selected 'None' template type");
+            		}
                 	if (email != null) {
 	                    EmailHelper.sendMessage(email, messageSubject, messageBody);                	
 	//                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
