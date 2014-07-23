@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import play.Logger;
 import play.mvc.Content;
+import uk.bl.Const;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
@@ -21,6 +22,7 @@ public class ApplicationTest {
 	private static String URL1 = "bbc.co.uk";
 	private static String URL2 = "marksandspencer.com";
 	private static String URL3 = "google.com";
+	private static String URL4 = "buydomains.london";
 
 	@Test 
     public void simpleCheck() {
@@ -31,7 +33,7 @@ public class ApplicationTest {
     /**
      * This is a test for whois service (UK domain) that requires Internet connection.
      */
-//    @Test 
+    @Test 
     public void testWhoisUk() {
     	boolean res;
 		try {
@@ -47,7 +49,7 @@ public class ApplicationTest {
     /**
      * This is a test for whois service (UK COM domain) that requires Internet connection.
      */
-//    @Test 
+    @Test 
     public void testWhoisUkCom() {
     	boolean res;
 		try {
@@ -59,10 +61,29 @@ public class ApplicationTest {
 		}
     }
     
+    @Test 
+    public void testLondon() {
+		//res = Scope.checkExt(URL4, URL4, Const.ScopeCheckType.ALL.name());
+    	boolean result = URL4.contains(".london");
+        assertThat(result).isEqualTo(true);
+    }
+
+    @Test 
+    public void testScopeIPLondon() {
+//    	boolean result;
+//    	try {
+//			result = Scope.checkScopeIp(URL4, URL4);
+//	        assertThat(result).isEqualTo(true);
+//		} catch (WhoisException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+    }
+    
     /**
      * This is a test for whois service (not UK domain) that requires Internet connection.
      */
-//    @Test 
+    @Test 
     public void testWhoisNotUk() {
     	boolean res;
 		try {

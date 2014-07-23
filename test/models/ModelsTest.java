@@ -67,11 +67,12 @@ public class ModelsTest extends WithApplication {
     
     @Test
     public void tryAuthenticateUser() {
-        new User("Max Muster", TEST_EMAIL, TEST_PASSWORD).save();
+        User user = new User("Max Muster", TEST_EMAIL, TEST_PASSWORD);
+        user.save();
         assertNotNull(User.authenticate(TEST_EMAIL, TEST_PASSWORD));
         assertNull(User.authenticate(TEST_EMAIL, "badpassword"));
         assertNull(User.authenticate("peter.king@ait.ac.at", TEST_PASSWORD));
-        User.find.ref(TEST_EMAIL).delete();
+        user.delete();
     }
     
 }

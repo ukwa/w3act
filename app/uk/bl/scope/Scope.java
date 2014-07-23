@@ -52,6 +52,7 @@ import com.maxmind.geoip2.model.CityResponse;
 public class Scope {
 
 	public static final String UK_DOMAIN       = ".uk";
+	public static final String LONDON_DOMAIN       = ".london";
 	public static final String GEO_IP_SERVICE  = "GeoLite2-City.mmdb";
 	public static final String UK_COUNTRY_CODE = "GB";
 	public static final String HTTP            = "http://";
@@ -275,7 +276,7 @@ public class Scope {
 	        if (!res && url != null && url.length() > 0
 	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
 	    	        		|| mode.equals(Const.ScopeCheckType.DOMAIN.name()))) {
-		        if (url.contains(UK_DOMAIN)) {
+		        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN)) {
 		        	res = true;
 		        }
 	        }
@@ -457,7 +458,7 @@ public class Scope {
         
         // Rule 3.1: check domain name
         if (!res && url != null && url.length() > 0) {
-	        if (url.contains(UK_DOMAIN)) {
+	        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN)) {
 	        	res = true;
 	        }
         }
