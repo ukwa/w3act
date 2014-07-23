@@ -1,6 +1,9 @@
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.contentType;
+import static play.test.Helpers.fakeApplication;
+import static play.test.Helpers.running;
+
 import models.User;
 
 import org.junit.Test;
@@ -22,7 +25,6 @@ public class ApplicationTest {
 	private static String URL1 = "bbc.co.uk";
 	private static String URL2 = "marksandspencer.com";
 	private static String URL3 = "google.com";
-	private static String URL4 = "buydomains.london";
 
 	@Test 
     public void simpleCheck() {
@@ -35,15 +37,19 @@ public class ApplicationTest {
      */
     @Test 
     public void testWhoisUk() {
-    	boolean res;
-		try {
-			res = Scope.checkWhois(URL1);
-	    	Logger.info("test whois res: " + res);
-	        assertThat(res).isEqualTo(true);
-		} catch (WhoisException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        running(fakeApplication(), new Runnable() {
+        	boolean result;
+            public void run() {
+            	try {
+        			result = Scope.checkWhois(URL1);
+        	    	Logger.info("test whois res: " + result);
+        	        assertThat(result).isEqualTo(true);
+        		} catch (WhoisException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
+            }
+          });
     }
     
     /**
@@ -51,33 +57,53 @@ public class ApplicationTest {
      */
     @Test 
     public void testWhoisUkCom() {
-    	boolean res;
-		try {
-			res = Scope.checkWhois(URL2);
-	        assertThat(res).isEqualTo(true);
-		} catch (WhoisException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        running(fakeApplication(), new Runnable() {
+        	boolean result;
+            public void run() {
+            	try {
+            		result = Scope.checkWhois(URL2);
+        	        assertThat(result).isEqualTo(true);
+        		} catch (WhoisException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
+            }
+          });
     }
     
     @Test 
     public void testLondon() {
-		//res = Scope.checkExt(URL4, URL4, Const.ScopeCheckType.ALL.name());
-    	boolean result = URL4.contains(".london");
-        assertThat(result).isEqualTo(true);
+        running(fakeApplication(), new Runnable() {
+        	boolean result;
+            public void run() {
+            	try {
+        			result = Scope.checkExt("buydomains.london", "buydomains.london", Const.ScopeCheckType.ALL.name());
+        			assertThat(result).isEqualTo(true);
+        		} catch (WhoisException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
+            }
+          });
+
+//    	boolean result = "buydomains.london".contains(".london");
+//      assertThat(result).isEqualTo(true);
     }
 
     @Test 
     public void testScopeIPLondon() {
-//    	boolean result;
-//    	try {
-//			result = Scope.checkScopeIp(URL4, URL4);
-//	        assertThat(result).isEqualTo(true);
-//		} catch (WhoisException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+        running(fakeApplication(), new Runnable() {
+        	boolean result;
+            public void run() {
+            	try {
+        			result = Scope.checkScopeIp("buydomains.london", "buydomains.london");
+        	        assertThat(result).isEqualTo(true);
+        		} catch (WhoisException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
+            }
+          });
     }
     
     /**
@@ -85,14 +111,18 @@ public class ApplicationTest {
      */
     @Test 
     public void testWhoisNotUk() {
-    	boolean res;
-		try {
-			res = Scope.checkWhois(URL3);
-	        assertThat(res).isEqualTo(false);
-		} catch (WhoisException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        running(fakeApplication(), new Runnable() {
+        	boolean result;
+            public void run() {
+            	try {
+            		result = Scope.checkWhois(URL3);
+        	        assertThat(result).isEqualTo(false);
+            	} catch (WhoisException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
+            }
+          });    	
     }
     
     @Test
