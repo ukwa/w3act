@@ -134,16 +134,19 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_license != null && target.field_license.length() > 0 && !subjects.contains(target.field_license)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_license", target.field_license);
-		        if (ll.findRowCount() > 0) {
-		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.field_license);
-		        	Logger.info("target.field_license: " + target.field_license + ".");
-//		        	Logger.info("taxonomy url: " + taxonomy.url);
-//		        	Logger.info("license: " + taxonomy.name);
-		        	res.add(taxonomy);
-		        	subjects.add(target.field_license);
-		        }
+			if (target.field_license != null) {
+				String curLicense = target.field_license.replace(Const.LIST_DELIMITER, "");
+				if (curLicense.length() > 0 && !subjects.contains(curLicense)) {
+			        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_LICENSE_NODE, curLicense);
+			        if (ll.findRowCount() > 0) {
+			        	Taxonomy taxonomy = Taxonomy.findByUrl(curLicense);
+			        	Logger.info("curLicense: " + curLicense + ".");
+	//		        	Logger.info("taxonomy url: " + taxonomy.url);
+	//		        	Logger.info("license: " + taxonomy.name);
+			        	res.add(taxonomy);
+			        	subjects.add(curLicense);
+			        }
+				}
 			}
 		}
 //		Logger.info("getLicense res: " + res);
