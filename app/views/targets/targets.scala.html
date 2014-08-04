@@ -276,7 +276,7 @@
 											<select name="field_license" class="form-control target-form-control" id="license" style="width: 200px;">
 									        	<option>None</option>
 									            @for(curLicense <- Targets.getLicense()) {
-							                 		@if(license != null && license.equals(curLicense.name)) {
+							                 		@if(license != null && license.equals(curLicense.url)) {
 								                		<option selected>@curLicense.name</option>
 								                	} else {
 								                		<option>@curLicense.name</option>

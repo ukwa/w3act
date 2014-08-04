@@ -1305,7 +1305,7 @@ public class Target extends Model {
 //    		exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, suggested_collections);
     	} 
     	if (license != null && !license.equals("") && !license.toLowerCase().equals(Const.NONE)) {
-    		exp = exp.icontains(Const.FIELD_LICENSE_NODE, suggested_collections);
+    		exp = exp.icontains(Const.FIELD_LICENSE_NODE, license);
     	} 
     	if (flag != null && !flag.equals("") && !flag.toLowerCase().equals(Const.NONE)) {
     		exp = exp.icontains(Const.FLAGS, flag);

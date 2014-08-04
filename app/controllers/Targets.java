@@ -423,6 +423,7 @@ public class Targets extends AbstractController {
     			Logger.info("Can't find license for name: " + license_name + ". " + e);
     		}
     	} 
+    	Logger.debug("license: " + license);
     	String depth = form.get(Const.FIELD_DEPTH);
     	String crawlFrequency = form.get(Const.FIELD_CRAWL_FREQUENCY);
     	String inputFlag = form.get(Const.FLAGS);
