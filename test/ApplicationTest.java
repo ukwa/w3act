@@ -55,7 +55,7 @@ public class ApplicationTest {
     /**
      * This is a test for whois service (UK COM domain) that requires Internet connection.
      */
-    @Test 
+//    @Test 
     public void testWhoisUkCom() {
         running(fakeApplication(), new Runnable() {
         	boolean result;
@@ -71,7 +71,7 @@ public class ApplicationTest {
           });
     }
     
-    @Test 
+//    @Test 
     public void testLondon() {
         running(fakeApplication(), new Runnable() {
         	boolean result;
@@ -90,7 +90,7 @@ public class ApplicationTest {
 //      assertThat(result).isEqualTo(true);
     }
 
-    @Test 
+//    @Test 
     public void testScopeIPLondon() {
         running(fakeApplication(), new Runnable() {
         	boolean result;
@@ -106,7 +106,7 @@ public class ApplicationTest {
           });
     }
     
-  @Test 
+//  @Test 
   public void testScot() {
       running(fakeApplication(), new Runnable() {
       	boolean result;
@@ -125,7 +125,7 @@ public class ApplicationTest {
 //    assertThat(result).isEqualTo(true);
   }
 
-  @Test 
+//  @Test 
   public void testScopeDomainScot() {
       running(fakeApplication(), new Runnable() {
       	boolean result;
