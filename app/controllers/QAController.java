@@ -193,7 +193,7 @@ public class QAController extends AbstractController {
     	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
     	Logger.info("collections main level size: " + collections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-    	Logger.info("getCollections() json: " + jsonData.toString());
+//    	Logger.info("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
     }
         
@@ -213,8 +213,8 @@ public class QAController extends AbstractController {
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
 	    		DCollection collection = itr.next();
-    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
-    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
+//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
+//    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
 	    		if ((parent && (collection.parent.length() == 0 || collection.parent.toLowerCase().equals(Const.NONE))) 
 	    				|| !parent) {
 		    		if (firstTime) {
@@ -222,16 +222,16 @@ public class QAController extends AbstractController {
 		    		} else {
 		    			sb.append(", ");
 		    		}
-	    			Logger.debug("added");
+//	    			Logger.debug("added");
 					sb.append("{\"title\": \"" + collection.title + "\"," + checkCollectionSelection(collection.url, collectionUrl) + 
 							" \"key\": \"" + collection.url + "\"" + 
 							getChildren(collection.url, collectionUrl) + "}");
 	    		}
 	    	}
-	    	Logger.info("collectionList level size: " + collectionList.size());
+//	    	Logger.info("collectionList level size: " + collectionList.size());
 	    	sb.append("]");
 	    	res = sb.toString();
-	    	Logger.info("getTreeElements() res: " + res);
+//	    	Logger.info("getTreeElements() res: " + res);
     	}
     	return res;
     }
