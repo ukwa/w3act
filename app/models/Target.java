@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -1963,6 +1965,29 @@ public class Target extends Model {
 		Logger.debug("getUkwaLicenceStatusList() targets result list size: " + res.size());
 		return res;
 	}
-	
+
+	public boolean indicateUkwaLicenceStatus() {
+		boolean containsStatus = false;
+		if (StringUtils.isNotEmpty(this.field_url)) {
+			Logger.debug("getUkwaLicenceStatusList() fieldUrl: " + this.field_url);
+			this.field_url = Scope.normalizeUrl(this.field_url);
+	        String domain = Scope.getDomainFromUrl(this.field_url);
+			Logger.debug("getUkwaLicenceStatusList() domain: " + domain);
+			// get me Targets that contain the same domain so I can check the licenses
+	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, domain).eq(Const.ACTIVE, true);
+	        List<Target> targets = ll.findList();
+	        
+			Iterator<Target> itr = targets.iterator();
+			while (itr.hasNext()) {
+				Target target = itr.next();
+				// TODO: also check if this target has a valid license too
+				if (StringUtils.isNotBlank(target.field_license)) {
+					containsStatus = true;
+					break;
+				}
+			}
+		}
+		return containsStatus;
+	}	
 }
 
