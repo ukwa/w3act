@@ -45,6 +45,9 @@ public class CrawlPermission extends Model
     @OneToOne
     public User fk_user;
 
+    @ManyToOne
+    public ContactPerson fk_contact_person;  
+    
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.
      */
