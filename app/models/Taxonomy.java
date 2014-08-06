@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import play.Logger;
@@ -31,6 +32,10 @@ public class Taxonomy extends Model {
      
     @Id
     public Long tid;
+    @ManyToOne
+    public Target fk_target;	
+    @ManyToOne
+    public Target fk_instance;
     @Required
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 

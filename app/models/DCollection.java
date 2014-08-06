@@ -26,6 +26,10 @@ public class DCollection extends Model {
 
     @Id @JsonIgnore
     public Long nid;
+    @ManyToOne
+    public Target fk_target;	
+    @ManyToOne
+    public Target fk_instance;
     @Column(columnDefinition = "TEXT") @JsonIgnore
     public String value;
     @Column(columnDefinition = "TEXT") @JsonIgnore

@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -36,6 +38,12 @@ public class CrawlPermission extends Model
 
 	@Id @JsonIgnore
     public Long id;
+
+    @ManyToOne
+    public Target fk_target;	
+    
+    @OneToOne
+    public User fk_user;
 
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.

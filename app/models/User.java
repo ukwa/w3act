@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -37,6 +38,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="creator")
 public class User extends Model {
 
+    @OneToOne
+    public Target fk_target;	
+	
     @JsonIgnore
     @Constraints.Required
     @Formats.NonEmpty

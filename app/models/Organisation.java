@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -29,6 +30,8 @@ public class Organisation extends Model {
 
     @Id @JsonIgnore
     public Long nid;
+    @ManyToOne
+    public User fk_user;    
     @Column(columnDefinition = "TEXT") @JsonIgnore
     public String value;
     @JsonIgnore

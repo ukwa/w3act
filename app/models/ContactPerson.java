@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -34,6 +35,9 @@ public class ContactPerson extends Model
 	@Id 
     public Long id;
 
+    @ManyToOne
+    public CrawlPermission fk_crawl_permission;  
+    
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.
      */

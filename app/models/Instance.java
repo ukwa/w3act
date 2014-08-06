@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -40,6 +41,8 @@ public class Instance extends Model {
     @Required
     @Id
     public Long nid;
+    @ManyToOne
+    public Target fk_target;
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")

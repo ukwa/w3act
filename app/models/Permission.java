@@ -14,6 +14,7 @@ import uk.bl.Const;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -35,7 +36,10 @@ public class Permission extends Model
 	@Id @JsonIgnore
     public Long id;
     
-	@Required
+    @ManyToOne
+    public Permission fk_permission;  
+    
+    @Required
     @Column(columnDefinition = "TEXT")
     public String name;
 

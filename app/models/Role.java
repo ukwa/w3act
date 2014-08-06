@@ -24,6 +24,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -49,6 +50,9 @@ public class Role extends Model
 
 	@Id @JsonIgnore
     public Long id;
+    
+    @ManyToOne
+    public User fk_user;  
     
 	@Required
 	@Column(columnDefinition = "TEXT")
