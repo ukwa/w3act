@@ -1096,11 +1096,11 @@
 					</div>
 		     	</div>	
 
-				@if(Targets.indicateUkwaLicenceStatus(form("field_url").value)) {    	
+				@if(form.get.indicateUkwaLicenceStatus) {    	
 				<div class="padding-20">
 					<div class="alert alert-info">
 						NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
-						@for(targetObj <- Target.getUkwaLicenceStatusList(form("field_url").value)) {
+						@for(targetObj <- form.get.getUkwaLicenceStatusList) { 
 							<p><a href="@routes.Targets.view(targetObj.url)">@targetObj.title @targetObj.field_url</a></p>
 						}
 					</div>
@@ -1140,8 +1140,8 @@
 								    && form("qa_status").value != null 
 								    && (form("qa_status").value.equals("None")
 								    || form("qa_status").value.length() == 0)) {
-									@if(!Targets.indicateUkwaLicenceStatus(form("field_url").value) 
-									    || (Targets.indicateUkwaLicenceStatus(form("field_url").value) 
+									@if(!form.get.indicateUkwaLicenceStatus 
+									    || (form.get.indicateUkwaLicenceStatus 
 									        && ((user.hasRole("sys_admin") 
 									        	|| user.hasRole("archivist")
 									        	|| user.hasRole("expert_user")
