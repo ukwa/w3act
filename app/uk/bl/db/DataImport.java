@@ -123,7 +123,7 @@ public enum DataImport {
                 JsonUtils.getDomainForTargets();
                 Logger.info("Target domains extracted");
                 normalizeUrls();
-                // Create association between creator and organisation
+                // Create association between Creator and Organisation
 	            List<User> creatorList = (List<User>) User.find.all();
 	            Iterator<User> creatorItr = creatorList.iterator();
 	            while (creatorItr.hasNext()) {

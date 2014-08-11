@@ -354,6 +354,11 @@ public class TargetController extends AbstractController {
             }
             newTarget.nid = Target.createId();
             newTarget.url = target.url;
+            /**
+             * Copy association fields
+             */
+            newTarget.organisation_to_target = target.organisation_to_target;
+            
             newTarget.author = target.author;
             if (target.author == null) {
             	newTarget.author = getFormParam(Const.USER);
@@ -602,6 +607,10 @@ public class TargetController extends AbstractController {
         		Logger.info("update target: " + target.nid + ", obj: " + target.toString());
                 boolean newScope = Target.isInScopeIp(target.field_url, target.url);
             	Scope.updateLookupEntry(target, newScope);
+                /**
+                 * Reset association fields
+                 */
+                target.organisation_to_target = null;
             	Ebean.update(target);
         	}
         	if (newTarget.field_url != null) {
@@ -630,6 +639,12 @@ public class TargetController extends AbstractController {
         	newTarget.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(newTarget.field_url, newTarget.url);
         	
         	Ebean.save(newTarget);
+            /**
+             * Create or update association between CrawlPermission and Target
+             */
+            CrawlPermission crawlPermission = CrawlPermission.findByTarget(newTarget.field_url);
+            crawlPermission.updateTarget();
+            Ebean.update(crawlPermission);
 	        Logger.info("Your changes have been saved: " + newTarget.toString());
   			flash("message", "Your changes have been saved.");
 	        res = redirect(routes.Targets.view(newTarget.url) + getFormParam(Const.TAB_STATUS));

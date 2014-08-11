@@ -181,6 +181,20 @@ public class CrawlPermission extends Model
     }
 
     /**
+     * @param target The field URL
+     * @return
+     */
+    public static CrawlPermission findByTarget(String target) {
+    	CrawlPermission res = new CrawlPermission();
+    	if (target != null && target.length() > 0 && !target.equals(Const.NONE)) {
+    		res = find.where().eq(Const.TARGET, target).findUnique();
+    	} else {
+    		res.name = Const.NONE;
+    	}
+    	return res;
+    }
+
+    /**
      * This method is used to show crawl permission in a table.
      * It shows none value if no entry was found in database.
      * @param url
@@ -396,7 +410,7 @@ public class CrawlPermission extends Model
     public void updateTarget() {
 		if (target != null
 				&& target.length() > 0) {
-			Target targetObj = Target.findByUrl(target);
+			Target targetObj = Target.findByTarget(target);
 //            Logger.info("Add crawl permission to target: " + targetObj.toString());
             this.target_to_crawl_permission = targetObj;
 		}
