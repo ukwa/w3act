@@ -6,19 +6,20 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import play.Logger;
-import play.data.validation.Constraints.Required;
-import play.db.ebean.Model;
-import uk.bl.Const;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
+
+import play.Logger;
+import play.data.validation.Constraints.Required;
+import play.db.ebean.Model;
+import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -36,8 +37,10 @@ public class Permission extends Model
 	@Id @JsonIgnore
     public Long id;
     
-//    @ManyToOne
-//    public Permission fk_permission;  
+	//bi-directional many-to-one association to Role
+	@ManyToOne
+	@JoinColumn(name="id_permission")
+	public Role role;
     
     @Required
     @Column(columnDefinition = "TEXT")
@@ -194,4 +197,20 @@ public class Permission extends Model
         		.getPage(page);
     }
 
+    /**
+     * This method updates foreign key mapping between a Permission and a Role.
+     */
+    public void updateRole() {
+        List<Role> roleList = (List<Role>) Role.find.all();
+        Iterator<Role> roleItr = roleList.iterator();
+        while (roleItr.hasNext()) {
+        	Role role = roleItr.next();
+//            Logger.info("Test role test object: " + role.toString());
+    		if (role.permissions != null
+    				&& role.permissions.length() > 0
+    				&& role.permissions.contains(name)) {
+    			this.role = role;
+    		}    	
+        }    	
+    }
 }

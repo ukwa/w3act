@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -41,8 +42,12 @@ public class Instance extends Model {
     @Required
     @Id
     public Long nid;
-//    @ManyToOne
-//    public Target fk_target;
+    
+	//bi-directional many-to-one association to Organisation
+	@ManyToOne
+	@JoinColumn(name="id_organisation")
+	public Organisation organisation_to_instance;
+    
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")
@@ -1062,6 +1067,19 @@ public class Instance extends Model {
         return res;
     }
         
+    /**
+     * This method updates foreign key mapping between an Instance and an Organisation.
+     */
+    public void updateOrganisation() {
+		if (field_nominating_organisation != null
+				&& field_nominating_organisation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(field_nominating_organisation);
+//            Logger.info("Add instance to organisation: " + organisation.toString());
+            this.organisation_to_instance = organisation;
+		}
+    	
+    }
+	
     public String toString() {
         return "Instance(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 

@@ -35,6 +35,7 @@ create table contact_person (
 
 create table crawl_permission (
   id                        bigint not null,
+  id_target                 bigint,
   url                       TEXT,
   name                      TEXT,
   target                    TEXT,
@@ -105,6 +106,7 @@ create table flag (
 
 create table instance (
   nid                       bigint not null,
+  id_organisation           bigint,
   value                     TEXT,
   summary                   TEXT,
   act_url                   varchar(255),
@@ -264,6 +266,7 @@ create table organisation (
 
 create table permission (
   id                        bigint not null,
+  id_permission             bigint,
   name                      TEXT,
   url                       TEXT,
   description               TEXT,
@@ -479,10 +482,16 @@ create sequence taxonomy_vocabulary_seq;
 
 create sequence creator_seq;
 
-alter table target add constraint fk_target_organisation_to_targ_1 foreign key (id_organisation) references organisation (nid);
-create index ix_target_organisation_to_targ_1 on target (id_organisation);
-alter table creator add constraint fk_creator_organisation_2 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_2 on creator (id_organisation);
+alter table crawl_permission add constraint fk_crawl_permission_target_to__1 foreign key (id_target) references target (nid);
+create index ix_crawl_permission_target_to__1 on crawl_permission (id_target);
+alter table instance add constraint fk_instance_organisation_to_in_2 foreign key (id_organisation) references organisation (nid);
+create index ix_instance_organisation_to_in_2 on instance (id_organisation);
+alter table permission add constraint fk_permission_role_3 foreign key (id_permission) references role (id);
+create index ix_permission_role_3 on permission (id_permission);
+alter table target add constraint fk_target_organisation_to_targ_4 foreign key (id_organisation) references organisation (nid);
+create index ix_target_organisation_to_targ_4 on target (id_organisation);
+alter table creator add constraint fk_creator_organisation_5 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_5 on creator (id_organisation);
 
 
 

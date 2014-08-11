@@ -56,6 +56,18 @@ public class Organisation extends Model {
     	this.targets = targets;
     }    
     
+    //bi-directional many-to-one association to Instance
+    @OneToMany(mappedBy="organisation_to_instance", cascade=CascadeType.PERSIST)
+    private List<Instance> instances = new ArrayList<Instance>();
+     
+    public List<Instance> getInstances() {
+    	return this.instances;
+    }
+    
+    public void setInstances(List<Instance> instances) {
+    	this.instances = instances;
+    }    
+    
     @Column(columnDefinition = "TEXT") @JsonIgnore
     public String value;
     @JsonIgnore

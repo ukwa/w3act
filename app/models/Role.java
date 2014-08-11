@@ -21,10 +21,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -51,9 +52,18 @@ public class Role extends Model
 	@Id @JsonIgnore
     public Long id;
     
-//    @ManyToOne
-//    public User fk_user;  
+    //bi-directional many-to-one association to Role
+    @OneToMany(mappedBy="role", cascade=CascadeType.PERSIST)
+    private List<Permission> permissionsMap = new ArrayList<Permission>();
+     
+    public List<Permission> getPermissionsMap() {
+    	return this.permissionsMap;
+    }
     
+    public void setPermissions(List<Permission> permissionsMap) {
+    	this.permissionsMap = permissionsMap;
+    }    
+        
 	@Required
 	@Column(columnDefinition = "TEXT")
     public String name;
@@ -338,4 +348,5 @@ public class Role extends Model
         		.setFetchAhead(false)
         		.getPage(page);
     }
+
 }

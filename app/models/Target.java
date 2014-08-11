@@ -8,11 +8,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -49,6 +51,18 @@ public class Target extends Model {
 	@JoinColumn(name="id_organisation")
 	public Organisation organisation_to_target;
     
+    //bi-directional many-to-one association to CrawlPermission
+    @OneToMany(mappedBy="target_to_crawl_permission", cascade=CascadeType.PERSIST)
+    private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
+     
+    public List<CrawlPermission> getCrawlPermissions() {
+    	return this.crawlPermissions;
+    }
+    
+    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
+    	this.crawlPermissions = crawlPermissions;
+    }    
+    	
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")

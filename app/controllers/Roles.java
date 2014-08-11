@@ -289,6 +289,21 @@ public class Roles extends AbstractController {
            		Logger.info("update role: " + role.toString());
                	Ebean.update(role);
         	}
+        	// update association to permissions
+	        List<Permission> permissionList = Permission.findAll();
+	        Iterator<Permission> permissionItr = permissionList.iterator();
+	        while (permissionItr.hasNext()) {
+	        	Permission permission = permissionItr.next();
+	        	Logger.debug("Update role - permission: " + permission.toString() + ", role.permissions: " + role.permissions);
+                if (permission.name != null
+                		&& role.permissions.contains(permission.name)) {
+                	permission.role = role;
+                	Ebean.update(permission);
+                } else {
+                	permission.role = null;
+                	Ebean.update(permission);
+                }
+	        }
 	        res = redirect(routes.Roles.edit(role.url));
         } 
         if (delete != null) {

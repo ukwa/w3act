@@ -355,8 +355,7 @@ public class User extends Model {
 			Organisation organisation = Organisation.findByUrl(field_affiliation);
 //            Logger.info("Add creator to organisation: " + organisation.toString());
             this.organisation = organisation;
-		}
-    	
+		}    	
     }
 }
 

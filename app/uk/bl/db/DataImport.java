@@ -140,7 +140,25 @@ public enum DataImport {
                     target.updateOrganisation();
         			Ebean.update(target);
 	            }
-            } catch (Exception e) {
+                // Create association between Instance and Organisation
+	            List<Instance> instanceList = (List<Instance>) Instance.find.all();
+	            Iterator<Instance> instanceItr = instanceList.iterator();
+	            while (instanceItr.hasNext()) {
+	            	Instance instance = instanceItr.next();
+//                    Logger.info("Test instance test object: " + instance.toString());
+                    instance.updateOrganisation();
+        			Ebean.update(instance);
+	            }
+                // Create association between Permission and Role
+	            List<Permission> permissionList = (List<Permission>) Permission.find.all();
+	            Iterator<Permission> permissionItr = permissionList.iterator();
+	            while (permissionItr.hasNext()) {
+	            	Permission permission = permissionItr.next();
+//                    Logger.info("Test permission test object: " + permission.toString());
+                    permission.updateRole();
+        			Ebean.update(permission);
+	            }
+	        } catch (Exception e) {
             	Logger.info("Store error: " + e);
             }
         }

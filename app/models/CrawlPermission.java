@@ -7,8 +7,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -39,14 +39,10 @@ public class CrawlPermission extends Model
 	@Id @JsonIgnore
     public Long id;
 
-//    @ManyToOne
-//    public Target fk_target;	
-//    
-//    @OneToOne
-//    public User fk_user;
-//
-//    @ManyToOne
-//    public ContactPerson fk_contact_person;  
+	//bi-directional many-to-one association to Target
+	@ManyToOne
+	@JoinColumn(name="id_target")
+	public Target target_to_crawl_permission;
     
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.
@@ -394,4 +390,17 @@ public class CrawlPermission extends Model
         return "CrawlPermission(" + name + ")" + ", id:" + id;
     }    
 
+    /**
+     * This method updates foreign key mapping between a CrawlPermission and a Target.
+     */
+    public void updateTarget() {
+		if (target != null
+				&& target.length() > 0) {
+			Target targetObj = Target.findByUrl(target);
+//            Logger.info("Add crawl permission to target: " + targetObj.toString());
+            this.target_to_crawl_permission = targetObj;
+		}
+    	
+    }
+    
 }

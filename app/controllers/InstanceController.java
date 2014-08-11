@@ -159,6 +159,7 @@ public class InstanceController extends AbstractController {
         if (getFormParam(Const.ORGANISATION) != null) {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
         		newInstance.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+        		newInstance.updateOrganisation();
         	} else {
         		newInstance.field_nominating_organisation = Const.NONE;
         	}
@@ -440,6 +441,7 @@ public class InstanceController extends AbstractController {
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
             		newInstance.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+            		newInstance.updateOrganisation();
             	} else {
             		newInstance.field_nominating_organisation = Const.NONE;
             	}

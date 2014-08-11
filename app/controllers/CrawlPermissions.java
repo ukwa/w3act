@@ -286,6 +286,7 @@ public class CrawlPermissions extends AbstractController {
 	    }
 	    if (getFormParam(Const.TARGET) != null) {
 	    	permission.target = getFormParam(Const.TARGET);
+	    	permission.updateTarget();
 	    }
 		permission.contactPerson = Const.NONE;
         if (getFormParam(Const.CONTACT_PERSON) != null) {
@@ -419,6 +420,7 @@ public class CrawlPermissions extends AbstractController {
         	    }
         	    if (getFormParam(Const.TARGET) != null) {
         	    	permission.target = getFormParam(Const.TARGET);
+        	    	permission.updateTarget();
         	    }
         		permission.contactPerson = Const.NONE;
                 if (getFormParam(Const.CONTACT_PERSON) != null) {
