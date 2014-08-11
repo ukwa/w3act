@@ -8,7 +8,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -43,6 +42,18 @@ public class Organisation extends Model {
     
     public void setUsers(List<User> users) {
     	this.users = users;
+    }    
+    
+    //bi-directional many-to-one association to Target
+    @OneToMany(mappedBy="organisation_to_target", cascade=CascadeType.PERSIST)
+    private List<Target> targets = new ArrayList<Target>();
+     
+    public List<Target> getTargets() {
+    	return this.targets;
+    }
+    
+    public void setTargets(List<Target> targets) {
+    	this.targets = targets;
     }    
     
     @Column(columnDefinition = "TEXT") @JsonIgnore

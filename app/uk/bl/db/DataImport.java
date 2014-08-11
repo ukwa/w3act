@@ -131,6 +131,15 @@ public enum DataImport {
                     creator.updateOrganisation();
         			Ebean.update(creator);
 	            }                
+                // Create association between Target and Organisation
+	            List<Target> targetList = (List<Target>) Target.find.all();
+	            Iterator<Target> targetItr = targetList.iterator();
+	            while (targetItr.hasNext()) {
+	            	Target target = targetItr.next();
+//                    Logger.info("Test target test object: " + target.toString());
+                    target.updateOrganisation();
+        			Ebean.update(target);
+	            }
             } catch (Exception e) {
             	Logger.info("Store error: " + e);
             }

@@ -305,6 +305,7 @@ create table tag (
 
 create table target (
   nid                       bigint not null,
+  id_organisation           bigint,
   value                     TEXT,
   summary                   TEXT,
   format                    varchar(255),
@@ -478,8 +479,10 @@ create sequence taxonomy_vocabulary_seq;
 
 create sequence creator_seq;
 
-alter table creator add constraint fk_creator_organisation_1 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_1 on creator (id_organisation);
+alter table target add constraint fk_target_organisation_to_targ_1 foreign key (id_organisation) references organisation (nid);
+create index ix_target_organisation_to_targ_1 on target (id_organisation);
+alter table creator add constraint fk_creator_organisation_2 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_2 on creator (id_organisation);
 
 
 

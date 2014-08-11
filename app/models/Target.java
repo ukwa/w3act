@@ -8,13 +8,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -45,16 +43,12 @@ public class Target extends Model {
     @Required
     @Id
     public Long nid; // Legacy Site ID
-//    @OneToMany(targetEntity=Organisation.class)
-//    	    @OneToMany(cascade=CascadeType.ALL, mappedBy="fk_target") 
-//    @OneToMany(cascade=CascadeType.ALL, mappedBy="fk_target") 
-//    @OneToMany(cascade=CascadeType.ALL)
-//    @JoinColumn(name="organisation_id", referencedColumnName="nid")
-//    public List<Organisation> fk_organisations;	    
-//    @ManyToOne
-//    public User fk_user;	
-//    @ManyToOne
-//    public Organisation fk_target_to_organisation;
+    
+	//bi-directional many-to-one association to Organisation
+	@ManyToOne
+	@JoinColumn(name="id_organisation")
+	public Organisation organisation_to_target;
+    
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")
@@ -1974,6 +1968,19 @@ public class Target extends Model {
 		Logger.debug("getUkwaLicenceStatusList() targets result list size: " + res.size());
 		return res;
 	}
+	
+    /**
+     * This method updates foreign key mapping between a Target and an Organisation.
+     */
+    public void updateOrganisation() {
+		if (field_nominating_organisation != null
+				&& field_nominating_organisation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(field_nominating_organisation);
+//            Logger.info("Add target to organisation: " + organisation.toString());
+            this.organisation_to_target = organisation;
+		}
+    	
+    }
 	
 }
 

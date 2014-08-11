@@ -139,6 +139,7 @@ public class TargetController extends AbstractController {
         if (getFormParam(Const.ORGANISATION) != null) {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
         		targetObj.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+        		targetObj.updateOrganisation();
         	} else {
         		targetObj.field_nominating_organisation = Const.NONE;
         	}
@@ -358,6 +359,7 @@ public class TargetController extends AbstractController {
             	newTarget.author = getFormParam(Const.USER);
             }
             newTarget.field_nominating_organisation = target.field_nominating_organisation;
+    		newTarget.updateOrganisation();
             newTarget.title = getFormParam(Const.TITLE);
             newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
@@ -439,6 +441,7 @@ public class TargetController extends AbstractController {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
             		Logger.info("nominating organisation: " + getFormParam(Const.ORGANISATION));
             		newTarget.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+            		newTarget.updateOrganisation();
             	} else {
             		newTarget.field_nominating_organisation = Const.NONE;
             	}

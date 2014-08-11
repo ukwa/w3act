@@ -39,9 +39,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="creator")
 public class User extends Model {
 
-//    @OneToMany
-//    public Target fk_target;	
-
 	//bi-directional many-to-one association to Organisation
 	@ManyToOne
 	@JoinColumn(name="id_organisation")
