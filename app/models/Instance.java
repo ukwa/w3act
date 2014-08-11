@@ -41,8 +41,8 @@ public class Instance extends Model {
     @Required
     @Id
     public Long nid;
-    @ManyToOne
-    public Target fk_target;
+//    @ManyToOne
+//    public Target fk_target;
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")

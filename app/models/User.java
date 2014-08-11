@@ -10,7 +10,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -38,8 +39,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="creator")
 public class User extends Model {
 
-    @OneToOne
-    public Target fk_target;	
+//    @OneToMany
+//    public Target fk_target;	
+
+	//bi-directional many-to-one association to Organisation
+	@ManyToOne
+	@JoinColumn(name="id_organisation")
+	public Organisation organisation;
 	
     @JsonIgnore
     @Constraints.Required
@@ -341,6 +347,19 @@ public class User extends Model {
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
+    }
+    
+    /**
+     * This method updates foreign key mapping between a user and an organisation.
+     */
+    public void updateOrganisation() {
+		if (field_affiliation != null
+				&& field_affiliation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(field_affiliation);
+//            Logger.info("Add creator to organisation: " + organisation.toString());
+            this.organisation = organisation;
+		}
+    	
     }
 }
 

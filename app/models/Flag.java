@@ -34,11 +34,11 @@ public class Flag extends Model
 	@Id 
     public Long id;
 
-    @ManyToOne
-    public Target fk_target;
-	
-    @ManyToOne
-    public Target fk_instance;
+//    @ManyToOne
+//    public Target fk_target;
+//	
+//    @ManyToOne
+//    public Target fk_instance;
 	
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.

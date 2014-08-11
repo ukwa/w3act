@@ -312,6 +312,7 @@ public class JsonUtils {
 			while (userItr.hasNext()) {
 				User user = userItr.next();
 				user.field_affiliation = organisation.url;
+				user.updateOrganisation();
 				Ebean.update(user);
 			}
 		}
@@ -829,6 +830,7 @@ public class JsonUtils {
 				if (existingUser != null && existingUser.name.length() > 0) {
 					isNew = false;
 					existingUser.field_affiliation = newUser.field_affiliation;
+					existingUser.updateOrganisation();
 					existingUser.uid = newUser.uid;
 					existingUser.url = newUser.url;
 					existingUser.edit_url = newUser.edit_url;

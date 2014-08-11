@@ -36,8 +36,8 @@ public class Permission extends Model
 	@Id @JsonIgnore
     public Long id;
     
-    @ManyToOne
-    public Permission fk_permission;  
+//    @ManyToOne
+//    public Permission fk_permission;  
     
     @Required
     @Column(columnDefinition = "TEXT")

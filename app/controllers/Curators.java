@@ -197,6 +197,7 @@ public class Curators extends AbstractController {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
 //        		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
         		user.field_affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+        		user.updateOrganisation();
         	} else {
         		user.field_affiliation = Const.NONE;
         	}
@@ -308,6 +309,7 @@ public class Curators extends AbstractController {
                 	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
 //                		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
                 		user.field_affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+                		user.updateOrganisation();
                 	} else {
                 		user.field_affiliation = Const.NONE;
                 	}

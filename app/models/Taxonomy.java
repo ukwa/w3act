@@ -32,10 +32,10 @@ public class Taxonomy extends Model {
      
     @Id
     public Long tid;
-    @ManyToOne
-    public Target fk_target;	
-    @ManyToOne
-    public Target fk_instance;
+//    @ManyToOne
+//    public Target fk_target;	
+//    @ManyToOne
+//    public Target fk_instance;
     @Required
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 

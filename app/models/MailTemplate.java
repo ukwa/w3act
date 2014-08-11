@@ -34,8 +34,8 @@ public class MailTemplate extends Model
 	@Id 
     public Long id;
 
-    @ManyToOne
-    public CrawlPermission fk_crawl_permission;  
+//    @ManyToOne
+//    public CrawlPermission fk_crawl_permission;  
     
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.

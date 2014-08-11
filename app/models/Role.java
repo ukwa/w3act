@@ -51,8 +51,8 @@ public class Role extends Model
 	@Id @JsonIgnore
     public Long id;
     
-    @ManyToOne
-    public User fk_user;  
+//    @ManyToOne
+//    public User fk_user;  
     
 	@Required
 	@Column(columnDefinition = "TEXT")

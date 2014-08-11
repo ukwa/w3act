@@ -29,11 +29,11 @@ public class LookupEntry extends Model
 	@Id 
     public Long id;
 
-    @OneToOne
-    public Target fk_target;
-	
-    @OneToOne
-    public Target fk_instance;
+//    @OneToOne
+//    public Target fk_target;
+//	
+//    @OneToOne
+//    public Target fk_instance;
 	
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.

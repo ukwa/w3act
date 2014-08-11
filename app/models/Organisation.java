@@ -4,10 +4,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -30,8 +32,19 @@ public class Organisation extends Model {
 
     @Id @JsonIgnore
     public Long nid;
-    @ManyToOne
-    public User fk_user;    
+    
+    //bi-directional many-to-one association to User
+    @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
+    private List<User> users = new ArrayList<User>();
+     
+    public List<User> getUsers() {
+    	return this.users;
+    }
+    
+    public void setUsers(List<User> users) {
+    	this.users = users;
+    }    
+    
     @Column(columnDefinition = "TEXT") @JsonIgnore
     public String value;
     @JsonIgnore

@@ -39,14 +39,14 @@ public class CrawlPermission extends Model
 	@Id @JsonIgnore
     public Long id;
 
-    @ManyToOne
-    public Target fk_target;	
-    
-    @OneToOne
-    public User fk_user;
-
-    @ManyToOne
-    public ContactPerson fk_contact_person;  
+//    @ManyToOne
+//    public Target fk_target;	
+//    
+//    @OneToOne
+//    public User fk_user;
+//
+//    @ManyToOne
+//    public ContactPerson fk_contact_person;  
     
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.

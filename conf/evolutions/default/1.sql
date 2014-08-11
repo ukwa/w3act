@@ -5,7 +5,6 @@
 
 create table communication_log (
   id                        bigint not null,
-  fk_crawl_permission_id    bigint,
   url                       TEXT,
   name                      TEXT,
   curator                   TEXT,
@@ -19,7 +18,6 @@ create table communication_log (
 
 create table contact_person (
   id                        bigint not null,
-  fk_crawl_permission_id    bigint,
   url                       TEXT,
   name                      TEXT,
   position                  TEXT,
@@ -37,8 +35,6 @@ create table contact_person (
 
 create table crawl_permission (
   id                        bigint not null,
-  fk_target_nid             bigint,
-  fk_user_uid               bigint,
   url                       TEXT,
   name                      TEXT,
   target                    TEXT,
@@ -62,8 +58,6 @@ create table crawl_permission (
 
 create table dcollection (
   nid                       bigint not null,
-  fk_target_nid             bigint,
-  fk_instance_nid           bigint,
   value                     TEXT,
   summary                   TEXT,
   format                    varchar(255),
@@ -102,8 +96,6 @@ create table dcollection (
 
 create table flag (
   id                        bigint not null,
-  fk_target_nid             bigint,
-  fk_instance_nid           bigint,
   url                       TEXT,
   name                      TEXT,
   description               TEXT,
@@ -113,7 +105,6 @@ create table flag (
 
 create table instance (
   nid                       bigint not null,
-  fk_target_nid             bigint,
   value                     TEXT,
   summary                   TEXT,
   act_url                   varchar(255),
@@ -202,8 +193,6 @@ create table instance (
 
 create table lookup_entry (
   id                        bigint not null,
-  fk_target_nid             bigint,
-  fk_instance_nid           bigint,
   url                       TEXT,
   name                      TEXT,
   ttype                     TEXT,
@@ -214,7 +203,6 @@ create table lookup_entry (
 
 create table mail_template (
   id                        bigint not null,
-  fk_crawl_permission_id    bigint,
   url                       TEXT,
   name                      TEXT,
   ttype                     TEXT,
@@ -229,7 +217,6 @@ create table mail_template (
 
 create table nomination (
   id                        bigint not null,
-  fk_crawl_permission_id    bigint,
   url                       TEXT,
   name                      TEXT,
   title                     TEXT,
@@ -248,7 +235,6 @@ create table nomination (
 
 create table organisation (
   nid                       bigint not null,
-  fk_user_uid               bigint,
   value                     TEXT,
   summary                   varchar(255),
   format                    varchar(255),
@@ -278,7 +264,6 @@ create table organisation (
 
 create table permission (
   id                        bigint not null,
-  fk_permission_id          bigint,
   name                      TEXT,
   url                       TEXT,
   description               TEXT,
@@ -300,7 +285,6 @@ create table permission_refusal (
 
 create table role (
   id                        bigint not null,
-  fk_user_uid               bigint,
   name                      TEXT,
   url                       TEXT,
   permissions               TEXT,
@@ -312,8 +296,6 @@ create table role (
 
 create table tag (
   id                        bigint not null,
-  fk_target_nid             bigint,
-  fk_instance_nid           bigint,
   url                       TEXT,
   name                      TEXT,
   description               TEXT,
@@ -413,8 +395,6 @@ create table target (
 
 create table taxonomy (
   tid                       bigint not null,
-  fk_target_nid             bigint,
-  fk_instance_nid           bigint,
   name                      varchar(255),
   ttype                     varchar(255),
   description               TEXT,
@@ -443,7 +423,7 @@ create table taxonomy_vocabulary (
 
 create table creator (
   uid                       bigint not null,
-  fk_target_nid             bigint,
+  id_organisation           bigint,
   email                     varchar(255),
   name                      varchar(255),
   password                  varchar(255),
@@ -498,48 +478,8 @@ create sequence taxonomy_vocabulary_seq;
 
 create sequence creator_seq;
 
-alter table communication_log add constraint fk_communication_log_fk_crawl__1 foreign key (fk_crawl_permission_id) references crawl_permission (id);
-create index ix_communication_log_fk_crawl__1 on communication_log (fk_crawl_permission_id);
-alter table contact_person add constraint fk_contact_person_fk_crawl_per_2 foreign key (fk_crawl_permission_id) references crawl_permission (id);
-create index ix_contact_person_fk_crawl_per_2 on contact_person (fk_crawl_permission_id);
-alter table crawl_permission add constraint fk_crawl_permission_fk_target_3 foreign key (fk_target_nid) references target (nid);
-create index ix_crawl_permission_fk_target_3 on crawl_permission (fk_target_nid);
-alter table crawl_permission add constraint fk_crawl_permission_fk_user_4 foreign key (fk_user_uid) references creator (uid);
-create index ix_crawl_permission_fk_user_4 on crawl_permission (fk_user_uid);
-alter table dcollection add constraint fk_dcollection_fk_target_5 foreign key (fk_target_nid) references target (nid);
-create index ix_dcollection_fk_target_5 on dcollection (fk_target_nid);
-alter table dcollection add constraint fk_dcollection_fk_instance_6 foreign key (fk_instance_nid) references target (nid);
-create index ix_dcollection_fk_instance_6 on dcollection (fk_instance_nid);
-alter table flag add constraint fk_flag_fk_target_7 foreign key (fk_target_nid) references target (nid);
-create index ix_flag_fk_target_7 on flag (fk_target_nid);
-alter table flag add constraint fk_flag_fk_instance_8 foreign key (fk_instance_nid) references target (nid);
-create index ix_flag_fk_instance_8 on flag (fk_instance_nid);
-alter table instance add constraint fk_instance_fk_target_9 foreign key (fk_target_nid) references target (nid);
-create index ix_instance_fk_target_9 on instance (fk_target_nid);
-alter table lookup_entry add constraint fk_lookup_entry_fk_target_10 foreign key (fk_target_nid) references target (nid);
-create index ix_lookup_entry_fk_target_10 on lookup_entry (fk_target_nid);
-alter table lookup_entry add constraint fk_lookup_entry_fk_instance_11 foreign key (fk_instance_nid) references target (nid);
-create index ix_lookup_entry_fk_instance_11 on lookup_entry (fk_instance_nid);
-alter table mail_template add constraint fk_mail_template_fk_crawl_per_12 foreign key (fk_crawl_permission_id) references crawl_permission (id);
-create index ix_mail_template_fk_crawl_per_12 on mail_template (fk_crawl_permission_id);
-alter table nomination add constraint fk_nomination_fk_crawl_permis_13 foreign key (fk_crawl_permission_id) references crawl_permission (id);
-create index ix_nomination_fk_crawl_permis_13 on nomination (fk_crawl_permission_id);
-alter table organisation add constraint fk_organisation_fk_user_14 foreign key (fk_user_uid) references creator (uid);
-create index ix_organisation_fk_user_14 on organisation (fk_user_uid);
-alter table permission add constraint fk_permission_fk_permission_15 foreign key (fk_permission_id) references permission (id);
-create index ix_permission_fk_permission_15 on permission (fk_permission_id);
-alter table role add constraint fk_role_fk_user_16 foreign key (fk_user_uid) references creator (uid);
-create index ix_role_fk_user_16 on role (fk_user_uid);
-alter table tag add constraint fk_tag_fk_target_17 foreign key (fk_target_nid) references target (nid);
-create index ix_tag_fk_target_17 on tag (fk_target_nid);
-alter table tag add constraint fk_tag_fk_instance_18 foreign key (fk_instance_nid) references target (nid);
-create index ix_tag_fk_instance_18 on tag (fk_instance_nid);
-alter table taxonomy add constraint fk_taxonomy_fk_target_19 foreign key (fk_target_nid) references target (nid);
-create index ix_taxonomy_fk_target_19 on taxonomy (fk_target_nid);
-alter table taxonomy add constraint fk_taxonomy_fk_instance_20 foreign key (fk_instance_nid) references target (nid);
-create index ix_taxonomy_fk_instance_20 on taxonomy (fk_instance_nid);
-alter table creator add constraint fk_creator_fk_target_21 foreign key (fk_target_nid) references target (nid);
-create index ix_creator_fk_target_21 on creator (fk_target_nid);
+alter table creator add constraint fk_creator_organisation_1 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_1 on creator (id_organisation);
 
 
 
