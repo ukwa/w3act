@@ -122,6 +122,15 @@ public enum DataImport {
                 JsonUtils.getDomainForTargets();
                 Logger.info("Target domains extracted");
                 normalizeUrls();
+                // Create association between creator and organisation
+	            List<User> creatorList = (List<User>) User.find.all();
+	            Iterator<User> creatorItr = creatorList.iterator();
+	            while (creatorItr.hasNext()) {
+	              	User creator = creatorItr.next();
+//                    Logger.info("Test creator test object: " + creator.toString());
+                    creator.updateOrganisation();
+        			Ebean.update(creator);
+	            }                
             } catch (Exception e) {
             	Logger.info("Store error: " + e);
             }
