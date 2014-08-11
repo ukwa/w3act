@@ -9,6 +9,7 @@ import java.util.Map;
 
 import models.ContactPerson;
 import models.Flag;
+import models.Instance;
 import models.MailTemplate;
 import models.Organisation;
 import models.Permission;
