@@ -26,10 +26,19 @@ public class DCollection extends Model {
 
     @Id @JsonIgnore
     public Long nid;
-//    @ManyToOne
-//    public Target fk_target;	
-//    @ManyToOne
-//    public Target fk_instance;
+
+    //bi-directional many-to-one association to Target
+    @OneToMany(mappedBy="collection_to_target", cascade=CascadeType.PERSIST)
+    private List<Target> targets = new ArrayList<Target>();
+     
+    public List<Target> getTargets() {
+    	return this.targets;
+    }
+    
+    public void setTargets(List<Target> targets) {
+    	this.targets = targets;
+    }    
+    
     @Column(columnDefinition = "TEXT") @JsonIgnore
     public String value;
     @Column(columnDefinition = "TEXT") @JsonIgnore
@@ -467,5 +476,6 @@ public class DCollection extends Model {
         		.setFetchAhead(false)
         		.getPage(page);
     }
+       
 }
 

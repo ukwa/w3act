@@ -159,6 +159,15 @@ public enum DataImport {
                     permission.updateRole();
         			Ebean.update(permission);
 	            }
+                // Create association between Target and DCollection
+	            List<Target> targetColList = (List<Target>) Target.find.all();
+	            Iterator<Target> targetColItr = targetColList.iterator();
+	            while (targetColItr.hasNext()) {
+	            	Target target = targetItr.next();
+//                    Logger.info("Test target test object: " + target.toString());
+                    target.updateCollection();
+        			Ebean.update(target);
+	            }
 	        } catch (Exception e) {
             	Logger.info("Store error: " + e);
             }

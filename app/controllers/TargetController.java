@@ -135,6 +135,7 @@ public class TargetController extends AbstractController {
         }
         if (getFormParam(Const.TREE_KEYS) != null) {
     		targetObj.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+    		targetObj.updateCollection();
         }
         if (getFormParam(Const.ORGANISATION) != null) {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
@@ -365,6 +366,8 @@ public class TargetController extends AbstractController {
             }
             newTarget.field_nominating_organisation = target.field_nominating_organisation;
     		newTarget.updateOrganisation();
+            newTarget.field_collection_categories = target.field_collection_categories;
+    		newTarget.updateCollection();
             newTarget.title = getFormParam(Const.TITLE);
             newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
@@ -406,7 +409,6 @@ public class TargetController extends AbstractController {
             		&& Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
         		Logger.info("legacy site id: " + getFormParam(Const.LEGACY_SITE_ID) + ".");
             	newTarget.legacy_site_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
-//            	newTarget.legacy_site_id = Long.parseLong(getFormParam(Const.LEGACY_SITE_ID));
             }
 
     		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
@@ -440,6 +442,7 @@ public class TargetController extends AbstractController {
             }            
             if (getFormParam(Const.TREE_KEYS) != null) {
 	    		newTarget.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+	    		newTarget.updateCollection();
 	    		Logger.debug("newTarget.field_collection_categories: " + newTarget.field_collection_categories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
@@ -611,6 +614,7 @@ public class TargetController extends AbstractController {
                  * Reset association fields
                  */
                 target.organisation_to_target = null;
+                target.collection_to_target = null;
             	Ebean.update(target);
         	}
         	if (newTarget.field_url != null) {
@@ -639,12 +643,16 @@ public class TargetController extends AbstractController {
         	newTarget.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(newTarget.field_url, newTarget.url);
         	
         	Ebean.save(newTarget);
-            /**
-             * Create or update association between CrawlPermission and Target
-             */
-            CrawlPermission crawlPermission = CrawlPermission.findByTarget(newTarget.field_url);
-            crawlPermission.updateTarget();
-            Ebean.update(crawlPermission);
+        	try {
+	            /**
+	             * Create or update association between CrawlPermission and Target
+	             */
+	            CrawlPermission crawlPermission = CrawlPermission.findByTarget(newTarget.field_url);
+	            crawlPermission.updateTarget();
+	            Ebean.update(crawlPermission);
+        	} catch (Exception e) {
+        		Logger.info("No crawl permission to update for URL: " + newTarget.field_url);
+        	}
 	        Logger.info("Your changes have been saved: " + newTarget.toString());
   			flash("message", "Your changes have been saved.");
 	        res = redirect(routes.Targets.view(newTarget.url) + getFormParam(Const.TAB_STATUS));

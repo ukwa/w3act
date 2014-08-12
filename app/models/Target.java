@@ -63,6 +63,11 @@ public class Target extends Model {
     	this.crawlPermissions = crawlPermissions;
     }    
     	
+	//bi-directional many-to-one association to DCollection
+	@ManyToOne
+	@JoinColumn(name="id_collection")
+	public DCollection collection_to_target;
+	
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")
@@ -1993,6 +1998,22 @@ public class Target extends Model {
 //            Logger.info("Add target to organisation: " + organisation.toString());
             this.organisation_to_target = organisation;
 		}
+    	
+    }
+	
+    /**
+     * This method updates foreign key mapping between a Target and a DCollection.
+     */
+    public void updateCollection() {
+    	Logger.info("updateCollection() field_collection_categories: " + field_collection_categories);
+    	this.collection_to_target = null;
+		if (field_collection_categories != null
+				&& field_collection_categories.length() > 0
+				&& !field_collection_categories.contains(Const.COMMA)) {
+			DCollection collection = DCollection.findByUrl(field_collection_categories);
+            Logger.info("Add target to collection: " + collection.toString());
+            this.collection_to_target = collection;
+		} 
     	
     }
 	
