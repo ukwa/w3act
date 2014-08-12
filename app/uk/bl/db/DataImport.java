@@ -168,6 +168,15 @@ public enum DataImport {
                     target.updateCollection();
         			Ebean.update(target);
 	            }
+                // Create association between Target and Subject (Taxonomy)
+	            List<Target> targetSubjectList = (List<Target>) Target.find.all();
+	            Iterator<Target> targetSubjectItr = targetSubjectList.iterator();
+	            while (targetSubjectItr.hasNext()) {
+	            	Target target = targetItr.next();
+//                    Logger.info("Test target object: " + target.toString());
+                    target.updateSubject();
+        			Ebean.update(target);
+	            }
 	        } catch (Exception e) {
             	Logger.info("Store error: " + e);
             }

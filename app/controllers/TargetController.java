@@ -129,6 +129,7 @@ public class TargetController extends AbstractController {
         	} else {
         		targetObj.field_subject = subjectListStr;
         	}
+        	targetObj.updateSubject();
     		Logger.debug("targetObj.field_subject: " + targetObj.field_subject);
         } else {
         	targetObj.field_subject = Const.NONE;
@@ -368,6 +369,8 @@ public class TargetController extends AbstractController {
     		newTarget.updateOrganisation();
             newTarget.field_collection_categories = target.field_collection_categories;
     		newTarget.updateCollection();
+            newTarget.field_subject = target.field_subject;
+    		newTarget.updateSubject();
             newTarget.title = getFormParam(Const.TITLE);
             newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
@@ -436,6 +439,7 @@ public class TargetController extends AbstractController {
 //    	  			return info();            		
             	}
             	newTarget.field_subject = subjectListStr;
+            	newTarget.updateSubject();
         		Logger.debug("newTarget.field_subject: " + newTarget.field_subject);
             } else {
             	newTarget.field_subject = Const.NONE;
@@ -615,6 +619,8 @@ public class TargetController extends AbstractController {
                  */
                 target.organisation_to_target = null;
                 target.collection_to_target = null;
+                target.subject_to_target = null;
+//                target.subject_to_target.clear();
             	Ebean.update(target);
         	}
         	if (newTarget.field_url != null) {

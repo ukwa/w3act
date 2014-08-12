@@ -13,6 +13,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -67,6 +69,15 @@ public class Target extends Model {
 	@ManyToOne
 	@JoinColumn(name="id_collection")
 	public DCollection collection_to_target;
+	
+	//bi-directional many-to-many association to Subject
+	@ManyToOne
+//	@ManyToMany
+	@JoinColumn(name="id_taxonomy")
+//	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "id_taxonomy") },
+//	inverseJoinColumns = { @JoinColumn(name = "id_target") }) 
+	public Taxonomy subject_to_target;
+//	public List<Taxonomy> subject_to_target = new ArrayList<Taxonomy>();
 	
     @Column(columnDefinition = "TEXT")
     public String value;
@@ -2013,6 +2024,23 @@ public class Target extends Model {
 			DCollection collection = DCollection.findByUrl(field_collection_categories);
             Logger.info("Add target to collection: " + collection.toString());
             this.collection_to_target = collection;
+		} 
+    	
+    }
+	
+    /**
+     * This method updates foreign key mapping between a Target and a Subject (Taxonomy).
+     */
+    public void updateSubject() {
+    	Logger.info("updateSubject() field_subject: " + field_subject);
+    	this.subject_to_target = null;
+		if (field_subject != null && field_subject.length() > 0) {
+			List<Taxonomy> subjectList = Taxonomy.getSelectedSubjects(url);
+            Logger.info("Add target to subjects: " + subjectList.get(0).toString());
+//          this.subject_to_target.addAll(subjectList);
+			if (subjectList.size() > 0) {
+				this.subject_to_target = subjectList.get(0);
+			}
 		} 
     	
     }

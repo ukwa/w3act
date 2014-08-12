@@ -310,6 +310,7 @@ create table target (
   nid                       bigint not null,
   id_organisation           bigint,
   id_collection             bigint,
+  id_taxonomy               bigint,
   value                     TEXT,
   summary                   TEXT,
   format                    varchar(255),
@@ -493,8 +494,10 @@ alter table target add constraint fk_target_organisation_to_targ_4 foreign key (
 create index ix_target_organisation_to_targ_4 on target (id_organisation);
 alter table target add constraint fk_target_collection_to_target_5 foreign key (id_collection) references dcollection (nid);
 create index ix_target_collection_to_target_5 on target (id_collection);
-alter table creator add constraint fk_creator_organisation_6 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_6 on creator (id_organisation);
+alter table target add constraint fk_target_subject_to_target_6 foreign key (id_taxonomy) references taxonomy (tid);
+create index ix_target_subject_to_target_6 on target (id_taxonomy);
+alter table creator add constraint fk_creator_organisation_7 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_7 on creator (id_organisation);
 
 
 

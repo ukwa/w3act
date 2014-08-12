@@ -5,10 +5,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import play.Logger;
@@ -32,10 +37,23 @@ public class Taxonomy extends Model {
      
     @Id
     public Long tid;
-//    @ManyToOne
-//    public Target fk_target;	
-//    @ManyToOne
-//    public Target fk_instance;
+
+    //bi-directional many-to-many association to Target
+//    @ManyToMany(cascade=CascadeType.PERSIST)
+//  @ManyToMany(mappedBy="subject_to_target", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="subject_to_target", cascade=CascadeType.PERSIST)
+//	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "id_target") },
+//	inverseJoinColumns = { @JoinColumn(name = "id_taxonomy") }) 
+    private List<Target> targets = new ArrayList<Target>();
+     
+    public List<Target> getTargets() {
+    	return this.targets;
+    }
+    
+    public void setTargets(List<Target> targets) {
+    	this.targets = targets;
+    }    
+    
     @Required
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 
