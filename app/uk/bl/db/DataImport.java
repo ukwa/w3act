@@ -152,13 +152,16 @@ public enum DataImport {
                     target.updateTag();
         			Ebean.update(target);
 	            }
-                // Create association between Instance and Organisation
+                // Create associations for Instance
 	            List<Instance> instanceList = (List<Instance>) Instance.find.all();
 	            Iterator<Instance> instanceItr = instanceList.iterator();
 	            while (instanceItr.hasNext()) {
 	            	Instance instance = instanceItr.next();
 //                    Logger.info("Test instance test object: " + instance.toString());
+	                // Create association between Instance and Organisation
                     instance.updateOrganisation();
+                    // Create association between Target and Subject (Taxonomy)
+                    instance.updateSubject();
         			Ebean.update(instance);
 	            }
                 // Create association between Permission and Role

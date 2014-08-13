@@ -48,6 +48,11 @@ public class Instance extends Model {
 	@JoinColumn(name="id_organisation")
 	public Organisation organisation_to_instance;
     
+	//bi-directional many-to-many association to Subject
+	@ManyToOne
+	@JoinColumn(name="id_taxonomy")
+	public Taxonomy subject_to_instance;
+	
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")
@@ -1077,6 +1082,23 @@ public class Instance extends Model {
 //            Logger.info("Add instance to organisation: " + organisation.toString());
             this.organisation_to_instance = organisation;
 		}
+    	
+    }
+	
+    /**
+     * This method updates foreign key mapping between a Target and a Subject (Taxonomy).
+     */
+    public void updateSubject() {
+    	Logger.info("updateSubject() field_subject: " + field_subject);
+    	this.subject_to_instance = null;
+		if (field_subject != null && field_subject.length() > 0) {
+			List<Taxonomy> subjectList = Taxonomy.getSelectedSubjectsForInstance(url);
+            Logger.info("Add target to subjects: " + subjectList.get(0).toString());
+//          this.subject_to_target.addAll(subjectList);
+			if (subjectList.size() > 0) {
+				this.subject_to_instance = subjectList.get(0);
+			}
+		} 
     	
     }
 	

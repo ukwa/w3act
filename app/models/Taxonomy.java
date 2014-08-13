@@ -50,6 +50,18 @@ public class Taxonomy extends Model {
     	this.targets = targets;
     }    
     
+    //bi-directional many-to-many association to Instance
+    @OneToMany(mappedBy="subject_to_instance", cascade=CascadeType.PERSIST)
+    private List<Instance> instances = new ArrayList<Instance>();
+   
+    public List<Instance> getInstances() {
+    	return this.instances;
+    }
+  
+    public void setInstances(List<Instance> instances) {
+    	this.instances = instances;
+    }    
+  
     //bi-directional many-to-many association to Target
     @OneToMany(mappedBy="license_to_target", cascade=CascadeType.PERSIST)
 	private List<Target> targetLicenses = new ArrayList<Target>();
@@ -979,6 +991,32 @@ public class Taxonomy extends Model {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Target target = Target.findByUrl(targetUrl);
+    		if (target.field_subject != null) {
+//    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
+		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
+		    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+		    		Taxonomy subject = findByUrl(part);
+		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+//			    		Logger.info("subject name: " + subject.name);
+		    			res.add(subject);
+		    		}
+		    	}
+    		}
+    	}
+		return res;
+	}       
+    
+	/**
+	 * This method retrieves selected subjects from target object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<Taxonomy> getSelectedSubjectsForInstance(String targetUrl) {
+//		Logger.info("getSelectedSubjects() targetUrl: " + targetUrl);
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Instance target = Instance.findByUrl(targetUrl);
     		if (target.field_subject != null) {
 //    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
 		    	String[] parts = target.field_subject.split(Const.COMMA + " ");

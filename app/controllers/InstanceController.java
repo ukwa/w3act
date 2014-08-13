@@ -152,6 +152,7 @@ public class InstanceController extends AbstractController {
         } else {
         	newInstance.field_subject = Const.NONE;
         }            
+		newInstance.updateSubject();
         if (getFormParam(Const.TREE_KEYS) != null) {
         	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
     		Logger.debug("newInstance.field_collection_categories: " + newInstance.field_collection_categories);
@@ -434,6 +435,7 @@ public class InstanceController extends AbstractController {
             } else {
             	newInstance.field_subject = Const.NONE;
             }            
+    		newInstance.updateSubject();
             if (getFormParam(Const.TREE_KEYS) != null) {
             	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
 	    		Logger.debug("newInstance.field_collection_categories: " + newInstance.field_collection_categories);
