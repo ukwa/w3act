@@ -163,6 +163,7 @@ public class TargetController extends AbstractController {
             		}
                 }
             	targetObj.tags = resTags;
+            	targetObj.updateTag();
         	} else {
         		targetObj.tags = Const.NONE;
         	}
@@ -189,6 +190,7 @@ public class TargetController extends AbstractController {
         	targetObj.flags = Const.NONE;
         } else {
         	targetObj.flags = flagStr;
+        	targetObj.updateFlag();
         }
         Logger.info("flagStr: "+ flagStr + ", targetObj.flags: " + targetObj.flags);
         targetObj.justification = getFormParam(Const.JUSTIFICATION);
@@ -477,6 +479,7 @@ public class TargetController extends AbstractController {
 	            		}
 	                }
 	            	newTarget.tags = resTags;
+	        		newTarget.updateTag();
             	} else {
             		newTarget.tags = Const.NONE;
             	}
@@ -503,6 +506,7 @@ public class TargetController extends AbstractController {
             	newTarget.flags = Const.NONE;
             } else {
             	newTarget.flags = flagStr;
+        		newTarget.updateFlag();
             }
             Logger.info("flagStr: "+ flagStr + ", newTarget.flags: " + newTarget.flags);
             newTarget.justification = getFormParam(Const.JUSTIFICATION);
@@ -621,6 +625,8 @@ public class TargetController extends AbstractController {
                 target.collection_to_target = null;
                 target.subject_to_target = null;
 //                target.subject_to_target.clear();
+                target.flag_to_target = null;
+                target.tag_to_target = null;
             	Ebean.update(target);
         	}
         	if (newTarget.field_url != null) {

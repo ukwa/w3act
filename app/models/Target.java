@@ -13,8 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -53,7 +51,17 @@ public class Target extends Model {
 	@JoinColumn(name="id_organisation")
 	public Organisation organisation_to_target;
     
-    //bi-directional many-to-one association to CrawlPermission
+	//bi-directional many-to-one association to Flag
+	@ManyToOne
+	@JoinColumn(name="id_flag")
+	public Flag flag_to_target;
+    
+	//bi-directional many-to-one association to Tag
+	@ManyToOne
+	@JoinColumn(name="id_tag")
+	public Tag tag_to_target;
+    
+    //bi-directional one-to-many association to CrawlPermission
     @OneToMany(mappedBy="target_to_crawl_permission", cascade=CascadeType.PERSIST)
     private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
      
@@ -2042,6 +2050,32 @@ public class Target extends Model {
 				this.subject_to_target = subjectList.get(0);
 			}
 		} 
+    	
+    }
+	
+    /**
+     * This method updates foreign key mapping between a Target and an Flag.
+     */
+    public void updateFlag() {
+		if (flags != null
+				&& flags.length() > 0) {
+			Flag flag = Flag.findByUrl(flags);
+//            Logger.info("Add target to flag: " + flag.toString());
+            this.flag_to_target = flag;
+		}
+    	
+    }
+	
+    /**
+     * This method updates foreign key mapping between a Target and an Tag.
+     */
+    public void updateTag() {
+		if (tags != null
+				&& tags.length() > 0) {
+			Tag tag = Tag.findByUrl(tags);
+//            Logger.info("Add target to tag: " + tag.toString());
+            this.tag_to_target = tag;
+		}
     	
     }
 	

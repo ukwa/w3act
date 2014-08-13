@@ -44,7 +44,7 @@ public class Organisation extends Model {
     	this.users = users;
     }    
     
-    //bi-directional many-to-one association to Target
+    //bi-directional one-to-many association to Target
     @OneToMany(mappedBy="organisation_to_target", cascade=CascadeType.PERSIST)
     private List<Target> targets = new ArrayList<Target>();
      

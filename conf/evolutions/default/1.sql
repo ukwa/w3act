@@ -309,6 +309,8 @@ create table tag (
 create table target (
   nid                       bigint not null,
   id_organisation           bigint,
+  id_flag                   bigint,
+  id_tag                    bigint,
   id_collection             bigint,
   id_taxonomy               bigint,
   value                     TEXT,
@@ -492,12 +494,16 @@ alter table permission add constraint fk_permission_role_3 foreign key (id_permi
 create index ix_permission_role_3 on permission (id_permission);
 alter table target add constraint fk_target_organisation_to_targ_4 foreign key (id_organisation) references organisation (nid);
 create index ix_target_organisation_to_targ_4 on target (id_organisation);
-alter table target add constraint fk_target_collection_to_target_5 foreign key (id_collection) references dcollection (nid);
-create index ix_target_collection_to_target_5 on target (id_collection);
-alter table target add constraint fk_target_subject_to_target_6 foreign key (id_taxonomy) references taxonomy (tid);
-create index ix_target_subject_to_target_6 on target (id_taxonomy);
-alter table creator add constraint fk_creator_organisation_7 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_7 on creator (id_organisation);
+alter table target add constraint fk_target_flag_to_target_5 foreign key (id_flag) references flag (id);
+create index ix_target_flag_to_target_5 on target (id_flag);
+alter table target add constraint fk_target_tag_to_target_6 foreign key (id_tag) references tag (id);
+create index ix_target_tag_to_target_6 on target (id_tag);
+alter table target add constraint fk_target_collection_to_target_7 foreign key (id_collection) references dcollection (nid);
+create index ix_target_collection_to_target_7 on target (id_collection);
+alter table target add constraint fk_target_subject_to_target_8 foreign key (id_taxonomy) references taxonomy (tid);
+create index ix_target_subject_to_target_8 on target (id_taxonomy);
+alter table creator add constraint fk_creator_organisation_9 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_9 on creator (id_organisation);
 
 
 

@@ -4,10 +4,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -34,12 +35,18 @@ public class Tag extends Model
 	@Id 
     public Long id;
 
-//    @ManyToOne
-//    public Target fk_target;
-//	
-//    @ManyToOne
-//    public Target fk_instance;
-	
+    //bi-directional one-to-many association to Target
+    @OneToMany(mappedBy="tag_to_target", cascade=CascadeType.PERSIST)
+    private List<Target> targets = new ArrayList<Target>();
+     
+    public List<Target> getTargets() {
+    	return this.targets;
+    }
+    
+    public void setTargets(List<Target> targets) {
+    	this.targets = targets;
+    }    
+    
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.
      */
