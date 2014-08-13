@@ -217,6 +217,7 @@ public class TargetController extends AbstractController {
             		}
                 }
             	targetObj.field_license = resLicenses;
+        		targetObj.updateLicense();
         	} else {
         		targetObj.field_license = Const.NONE;
         	}
@@ -373,6 +374,8 @@ public class TargetController extends AbstractController {
     		newTarget.updateCollection();
             newTarget.field_subject = target.field_subject;
     		newTarget.updateSubject();
+            newTarget.field_license = target.field_license;
+    		newTarget.updateLicense();
             newTarget.title = getFormParam(Const.TITLE);
             newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
@@ -541,6 +544,7 @@ public class TargetController extends AbstractController {
 	            		}
 	                }
 	            	newTarget.field_license = resLicenses;
+	        		newTarget.updateLicense();
             	} else {
             		newTarget.field_license = Const.NONE;
             	}

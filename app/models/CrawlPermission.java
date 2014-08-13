@@ -44,6 +44,16 @@ public class CrawlPermission extends Model
 	@JoinColumn(name="id_target")
 	public Target target_to_crawl_permission;
     
+	//bi-directional many-to-one association to MailTemplate
+	@ManyToOne
+	@JoinColumn(name="id_mailtemplate")
+	public MailTemplate mailtemplate_to_crawlpermission;
+	
+	//bi-directional many-to-one association to ContactPerson
+	@ManyToOne
+	@JoinColumn(name="id_contactperson")
+	public ContactPerson contactperson_to_crawlpermission;
+	
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.
      */
@@ -417,4 +427,29 @@ public class CrawlPermission extends Model
     	
     }
     
+    /**
+     * This method updates foreign key mapping between a CrawlPermission and a MailTemplate.
+     */
+    public void updateMailTemplate() {
+        this.mailtemplate_to_crawlpermission = null;
+		if (template != null
+				&& template.length() > 0) {
+			MailTemplate mailTemplate = MailTemplate.findByUrl(template);
+//            Logger.info("Add crawl permission to mail template: " + mailTemplate.toString());
+            this.mailtemplate_to_crawlpermission = mailTemplate;
+		}    	
+    }
+    
+    /**
+     * This method updates foreign key mapping between a CrawlPermission and a ContactPerson.
+     */
+    public void updateContactPerson() {
+        this.contactperson_to_crawlpermission = null;
+		if (contactPerson != null
+				&& contactPerson.length() > 0) {
+			ContactPerson contactPersonObj = ContactPerson.findByUrl(contactPerson);
+//            Logger.info("Add crawl permission to contactPerson: " + contactPerson.toString());
+            this.contactperson_to_crawlpermission = contactPersonObj;
+		}    	
+    }
 }

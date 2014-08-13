@@ -132,13 +132,24 @@ public enum DataImport {
                     creator.updateOrganisation();
         			Ebean.update(creator);
 	            }                
-                // Create association between Target and Organisation
+                // Create associations for Target
 	            List<Target> targetList = (List<Target>) Target.find.all();
 	            Iterator<Target> targetItr = targetList.iterator();
 	            while (targetItr.hasNext()) {
 	            	Target target = targetItr.next();
-//                    Logger.info("Test target test object: " + target.toString());
-                    target.updateOrganisation();
+//                    Logger.info("Test target object: " + target.toString());
+	            	// Create association between Target and Organisation
+	            	target.updateOrganisation();
+                    // Create association between Target and DCollection
+                    target.updateCollection();
+                    // Create association between Target and Subject (Taxonomy)
+                    target.updateSubject();
+                    // Create association between Target and License (Taxonomy)
+                    target.updateLicense();
+                    // Create association between Target and Flag
+                    target.updateFlag();
+                    // Create association between Target and Tag
+                    target.updateTag();
         			Ebean.update(target);
 	            }
                 // Create association between Instance and Organisation
@@ -158,42 +169,6 @@ public enum DataImport {
 //                    Logger.info("Test permission test object: " + permission.toString());
                     permission.updateRole();
         			Ebean.update(permission);
-	            }
-                // Create association between Target and DCollection
-	            List<Target> targetColList = (List<Target>) Target.find.all();
-	            Iterator<Target> targetColItr = targetColList.iterator();
-	            while (targetColItr.hasNext()) {
-	            	Target target = targetColItr.next();
-//                    Logger.info("Test target test object: " + target.toString());
-                    target.updateCollection();
-        			Ebean.update(target);
-	            }
-                // Create association between Target and Subject (Taxonomy)
-	            List<Target> targetSubjectList = (List<Target>) Target.find.all();
-	            Iterator<Target> targetSubjectItr = targetSubjectList.iterator();
-	            while (targetSubjectItr.hasNext()) {
-	            	Target target = targetSubjectItr.next();
-//                    Logger.info("Test target object: " + target.toString());
-                    target.updateSubject();
-        			Ebean.update(target);
-	            }
-                // Create association between Target and Flag
-	            List<Target> targetFlagList = (List<Target>) Target.find.all();
-	            Iterator<Target> targetFlagItr = targetFlagList.iterator();
-	            while (targetFlagItr.hasNext()) {
-	            	Target target = targetFlagItr.next();
-//                    Logger.info("Test target object: " + target.toString());
-                    target.updateFlag();
-        			Ebean.update(target);
-	            }
-                // Create association between Target and Tag
-	            List<Target> targetTagList = (List<Target>) Target.find.all();
-	            Iterator<Target> targetTagItr = targetTagList.iterator();
-	            while (targetTagItr.hasNext()) {
-	            	Target target = targetTagItr.next();
-//                    Logger.info("Test target object: " + target.toString());
-                    target.updateTag();
-        			Ebean.update(target);
 	            }
 	        } catch (Exception e) {
             	Logger.info("Store error: " + e);

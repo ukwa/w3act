@@ -36,6 +36,8 @@ create table contact_person (
 create table crawl_permission (
   id                        bigint not null,
   id_target                 bigint,
+  id_mailtemplate           bigint,
+  id_contactperson          bigint,
   url                       TEXT,
   name                      TEXT,
   target                    TEXT,
@@ -313,6 +315,7 @@ create table target (
   id_tag                    bigint,
   id_collection             bigint,
   id_taxonomy               bigint,
+  id_taxonomy_license       bigint,
   value                     TEXT,
   summary                   TEXT,
   format                    varchar(255),
@@ -488,22 +491,28 @@ create sequence creator_seq;
 
 alter table crawl_permission add constraint fk_crawl_permission_target_to__1 foreign key (id_target) references target (nid);
 create index ix_crawl_permission_target_to__1 on crawl_permission (id_target);
-alter table instance add constraint fk_instance_organisation_to_in_2 foreign key (id_organisation) references organisation (nid);
-create index ix_instance_organisation_to_in_2 on instance (id_organisation);
-alter table permission add constraint fk_permission_role_3 foreign key (id_permission) references role (id);
-create index ix_permission_role_3 on permission (id_permission);
-alter table target add constraint fk_target_organisation_to_targ_4 foreign key (id_organisation) references organisation (nid);
-create index ix_target_organisation_to_targ_4 on target (id_organisation);
-alter table target add constraint fk_target_flag_to_target_5 foreign key (id_flag) references flag (id);
-create index ix_target_flag_to_target_5 on target (id_flag);
-alter table target add constraint fk_target_tag_to_target_6 foreign key (id_tag) references tag (id);
-create index ix_target_tag_to_target_6 on target (id_tag);
-alter table target add constraint fk_target_collection_to_target_7 foreign key (id_collection) references dcollection (nid);
-create index ix_target_collection_to_target_7 on target (id_collection);
-alter table target add constraint fk_target_subject_to_target_8 foreign key (id_taxonomy) references taxonomy (tid);
-create index ix_target_subject_to_target_8 on target (id_taxonomy);
-alter table creator add constraint fk_creator_organisation_9 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_9 on creator (id_organisation);
+alter table crawl_permission add constraint fk_crawl_permission_mailtempla_2 foreign key (id_mailtemplate) references mail_template (id);
+create index ix_crawl_permission_mailtempla_2 on crawl_permission (id_mailtemplate);
+alter table crawl_permission add constraint fk_crawl_permission_contactper_3 foreign key (id_contactperson) references contact_person (id);
+create index ix_crawl_permission_contactper_3 on crawl_permission (id_contactperson);
+alter table instance add constraint fk_instance_organisation_to_in_4 foreign key (id_organisation) references organisation (nid);
+create index ix_instance_organisation_to_in_4 on instance (id_organisation);
+alter table permission add constraint fk_permission_role_5 foreign key (id_permission) references role (id);
+create index ix_permission_role_5 on permission (id_permission);
+alter table target add constraint fk_target_organisation_to_targ_6 foreign key (id_organisation) references organisation (nid);
+create index ix_target_organisation_to_targ_6 on target (id_organisation);
+alter table target add constraint fk_target_flag_to_target_7 foreign key (id_flag) references flag (id);
+create index ix_target_flag_to_target_7 on target (id_flag);
+alter table target add constraint fk_target_tag_to_target_8 foreign key (id_tag) references tag (id);
+create index ix_target_tag_to_target_8 on target (id_tag);
+alter table target add constraint fk_target_collection_to_target_9 foreign key (id_collection) references dcollection (nid);
+create index ix_target_collection_to_target_9 on target (id_collection);
+alter table target add constraint fk_target_subject_to_target_10 foreign key (id_taxonomy) references taxonomy (tid);
+create index ix_target_subject_to_target_10 on target (id_taxonomy);
+alter table target add constraint fk_target_license_to_target_11 foreign key (id_taxonomy_license) references taxonomy (tid);
+create index ix_target_license_to_target_11 on target (id_taxonomy_license);
+alter table creator add constraint fk_creator_organisation_12 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_12 on creator (id_organisation);
 
 
 

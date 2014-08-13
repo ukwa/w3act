@@ -168,6 +168,7 @@ public class CrawlPermissions extends AbstractController {
                 permission.creatorUser = User.findByEmail(request().username()).url;
                 permission.status = Const.CrawlPermissionStatus.QUEUED.name();
                 permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
+    	    	permission.updateMailTemplate();
                 permission.thirdPartyContent = false;
                 permission.agree = false;
                 permission.publish = true;
@@ -235,6 +236,7 @@ public class CrawlPermissions extends AbstractController {
         permission.creatorUser = User.findByEmail(request().username()).url;
         permission.status = Const.CrawlPermissionStatus.QUEUED.name();
         permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
+    	permission.updateMailTemplate();
         permission.thirdPartyContent = false;
         permission.agree = false;
         permission.publish = true;
@@ -262,6 +264,7 @@ public class CrawlPermissions extends AbstractController {
         Logger.debug("licenceRequestForTarget user: " + permission.creatorUser);
         permission.status = Const.CrawlPermissionStatus.QUEUED.name();
         permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
+    	permission.updateMailTemplate();
         permission.target = target;
 		Logger.info("add entry with url: " + permission.url + ", name: " + permission.name + ", and target: " + permission.target);
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
@@ -301,6 +304,7 @@ public class CrawlPermissions extends AbstractController {
                     	List<ContactPerson> personList = ContactPerson.filterByEmail(getFormParam(Const.EMAIL));
                     	if (personList.size() > 0) {
                     		permission.contactPerson = personList.get(0).url;
+                	    	permission.updateContactPerson();
                     	}
                     } catch (Exception e2) {
                     	Logger.info("contact person is not found by email.");
@@ -314,6 +318,7 @@ public class CrawlPermissions extends AbstractController {
 	    }
 	    if (getFormParam(Const.TEMPLATE) != null) {
 	    	permission.template = getFormParam(Const.TEMPLATE);
+	    	permission.updateMailTemplate();
 	    }
 	    if (getFormParam(Const.STATUS) != null) {
 	    	permission.status = getFormParam(Const.STATUS);
@@ -471,6 +476,7 @@ public class CrawlPermissions extends AbstractController {
                         }
                         
                         permission.contactPerson = person.url;
+            	    	permission.updateContactPerson();
                     	if (!isContactPersonExisting) {
                            	Ebean.save(person);
                 	        Logger.info("save contact person: " + person.toString());
@@ -488,6 +494,7 @@ public class CrawlPermissions extends AbstractController {
         	    }
         	    if (getFormParam(Const.TEMPLATE) != null) {
         	    	permission.template = getFormParam(Const.TEMPLATE);
+        	    	permission.updateMailTemplate();
         	    }
         	    if (getFormParam(Const.STATUS) != null) {
         	    	permission.status = getFormParam(Const.STATUS);

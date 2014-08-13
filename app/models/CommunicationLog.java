@@ -7,17 +7,15 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
-
-import uk.bl.api.Utils;
 
 /**
  * This class supports the management of logging communications occurring
@@ -35,10 +33,7 @@ public class CommunicationLog extends Model
 
 	@Id 
     public Long id;
-
-//    @ManyToOne
-//    public CrawlPermission fk_crawl_permission;  
-    
+   
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.
      */

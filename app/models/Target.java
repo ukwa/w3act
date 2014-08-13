@@ -87,6 +87,11 @@ public class Target extends Model {
 	public Taxonomy subject_to_target;
 //	public List<Taxonomy> subject_to_target = new ArrayList<Taxonomy>();
 	
+	//bi-directional many-to-many association to License (Taxonomy)
+	@ManyToOne
+	@JoinColumn(name="id_taxonomy_license")
+	public Taxonomy license_to_target;
+	
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")
@@ -2048,6 +2053,23 @@ public class Target extends Model {
 //          this.subject_to_target.addAll(subjectList);
 			if (subjectList.size() > 0) {
 				this.subject_to_target = subjectList.get(0);
+			}
+		} 
+    	
+    }
+	
+    /**
+     * This method updates foreign key mapping between a Target and a License (Taxonomy).
+     */
+    public void updateLicense() {
+    	Logger.info("updateLicense() field_license: " + field_license);
+    	this.license_to_target = null;
+		if (field_license != null && field_license.length() > 0) {
+			List<Taxonomy> licenseList = Taxonomy.getSelectedLicenses(url);
+            Logger.info("Add target to licenses: " + licenseList.get(0).toString());
+//          this.license_to_target.addAll(licenseList);
+			if (licenseList.size() > 0) {
+				this.license_to_target = licenseList.get(0);
 			}
 		} 
     	

@@ -9,10 +9,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -54,6 +50,18 @@ public class Taxonomy extends Model {
     	this.targets = targets;
     }    
     
+    //bi-directional many-to-many association to Target
+    @OneToMany(mappedBy="license_to_target", cascade=CascadeType.PERSIST)
+	private List<Target> targetLicenses = new ArrayList<Target>();
+	   
+	public List<Target> getTargetLicenses() {
+		return this.targetLicenses;
+	}
+	  
+	public void setTargetLicenses(List<Target> targetLicenses) {
+	  	this.targetLicenses = targetLicenses;
+	}    
+  
     @Required
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 
@@ -980,6 +988,32 @@ public class Taxonomy extends Model {
 		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
 //			    		Logger.info("subject name: " + subject.name);
 		    			res.add(subject);
+		    		}
+		    	}
+    		}
+    	}
+		return res;
+	}       
+    
+	/**
+	 * This method retrieves selected licenses from target object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<Taxonomy> getSelectedLicenses(String targetUrl) {
+//		Logger.info("getSelectedLicenses() targetUrl: " + targetUrl);
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+    	if (targetUrl != null && targetUrl.length() > 0) {
+    		Target target = Target.findByUrl(targetUrl);
+    		if (target.field_license != null) {
+//    			Logger.info("getSelectedLicenses() field_license: " + target.field_license);
+		    	String[] parts = target.field_license.split(Const.COMMA + " ");
+		    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+		    		Taxonomy license = findByUrl(part);
+		    		if (license != null && license.name != null && license.name.length() > 0) {
+//			    		Logger.info("license name: " + license.name);
+		    			res.add(license);
 		    		}
 		    	}
     		}

@@ -4,10 +4,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -34,9 +35,18 @@ public class MailTemplate extends Model
 	@Id 
     public Long id;
 
-//    @ManyToOne
-//    public CrawlPermission fk_crawl_permission;  
+    //bi-directional one-to-many association to CrawlPermission
+    @OneToMany(mappedBy="mailtemplate_to_crawlpermission", cascade=CascadeType.PERSIST)
+    private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
+     
+    public List<CrawlPermission> getCrawlPermissions() {
+    	return this.crawlPermissions;
+    }
     
+    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
+    	this.crawlPermissions = crawlPermissions;
+    }    
+        
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.
      */
