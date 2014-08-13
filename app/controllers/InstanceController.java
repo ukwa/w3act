@@ -188,6 +188,7 @@ public class InstanceController extends AbstractController {
             		}
                 }
             	newInstance.tags = resTags;
+        		newInstance.updateTag();
         	} else {
         		newInstance.tags = Const.NONE;
         	}
@@ -204,6 +205,7 @@ public class InstanceController extends AbstractController {
             		}
                 }
             	newInstance.flags = resFlags;
+        		newInstance.updateFlag();
         	} else {
         		newInstance.flags = Const.NONE;
         	}
@@ -472,6 +474,7 @@ public class InstanceController extends AbstractController {
 	            		}
 	                }
 	            	newInstance.tags = resTags;
+	        		newInstance.updateTag();
             	} else {
             		newInstance.tags = Const.NONE;
             	}
@@ -488,6 +491,7 @@ public class InstanceController extends AbstractController {
 	            		}
 	                }
 	            	newInstance.flags = resFlags;
+	        		newInstance.updateFlag();
             	} else {
             		newInstance.flags = Const.NONE;
             	}

@@ -58,6 +58,16 @@ public class Instance extends Model {
 	@JoinColumn(name="id_collection")
 	public DCollection collection_to_instance;
 	
+	//bi-directional many-to-one association to Flag
+	@ManyToOne
+	@JoinColumn(name="id_flag")
+	public Flag flag_to_instance;
+    
+	//bi-directional many-to-one association to Tag
+	@ManyToOne
+	@JoinColumn(name="id_tag")
+	public Tag tag_to_instance;
+    
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")
@@ -1120,6 +1130,32 @@ public class Instance extends Model {
             Logger.info("Add instance to collection: " + collection.toString());
             this.collection_to_instance = collection;
 		} 
+    	
+    }
+	
+    /**
+     * This method updates foreign key mapping between an Instance and a Flag.
+     */
+    public void updateFlag() {
+		if (flags != null
+				&& flags.length() > 0) {
+			Flag flag = Flag.findByUrl(flags);
+//            Logger.info("Add instance to flag: " + flag.toString());
+            this.flag_to_instance = flag;
+		}
+    	
+    }
+	
+    /**
+     * This method updates foreign key mapping between an Instance and a Tag.
+     */
+    public void updateTag() {
+		if (tags != null
+				&& tags.length() > 0) {
+			Tag tag = Tag.findByUrl(tags);
+//            Logger.info("Add instance to tag: " + tag.toString());
+            this.tag_to_instance = tag;
+		}
     	
     }
 	

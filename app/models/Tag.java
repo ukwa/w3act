@@ -47,6 +47,18 @@ public class Tag extends Model
     	this.targets = targets;
     }    
     
+    //bi-directional one-to-many association to Instance
+    @OneToMany(mappedBy="tag_to_instance", cascade=CascadeType.PERSIST)
+    private List<Instance> instances = new ArrayList<Instance>();
+     
+    public List<Instance> getInstances() {
+    	return this.instances;
+    }
+    
+    public void setInstances(List<Instance> instances) {
+    	this.instances = instances;
+    }    
+    
     /**
      * This field with prefix "act-" builds an unique identifier in W3ACT database.
      */

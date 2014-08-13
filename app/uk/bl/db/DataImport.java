@@ -160,10 +160,14 @@ public enum DataImport {
 //                    Logger.info("Test instance test object: " + instance.toString());
 	                // Create association between Instance and Organisation
                     instance.updateOrganisation();
-                    // Create association between Target and DCollection
+                    // Create association between Instance and DCollection
                     instance.updateCollection();
-                    // Create association between Target and Subject (Taxonomy)
+                    // Create association between Instance and Subject (Taxonomy)
                     instance.updateSubject();
+                    // Create association between Instance and Flag
+                    instance.updateFlag();
+                    // Create association between Instance and Tag
+                    instance.updateTag();
         			Ebean.update(instance);
 	            }
                 // Create association between Permission and Role
