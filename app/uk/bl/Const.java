@@ -194,6 +194,7 @@ public final class Const {
 	public static final String TLD                = "tld";
 	public static final String FILTER_NPLD        = "filter_npld";
 	public static final String FILTER_TLD         = "filter_tld";
+	public static final String INSTANCE           = "instance";
 	
     /**
      * Creator
@@ -388,6 +389,7 @@ public final class Const {
 	 * Database associations
 	 */
     public static final String SUBJECT_TARGET = "subject_target"; 
+    public static final String SUBJECT_INSTANCE = "subject_instance"; 
 
     // Types of the JSON nodes
 	public enum NodeType {

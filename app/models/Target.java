@@ -2039,24 +2039,6 @@ public class Target extends Model {
     }
 	
     /**
-     * This method updates foreign key mapping between a Target and a Subject (Taxonomy).
-     */
-//    public void updateSubject() {
-//    	Logger.info("updateSubject() field_subject: " + field_subject + ", subject_to_taget size: " + subject_to_target.size());
-//    	this.subject_to_target = null;
-//		if (field_subject != null && field_subject.length() > 0) {
-//			List<Taxonomy> subjectList = Taxonomy.getSelectedSubjects(url);
-//            Logger.info("Add target to subjects: " + subjectList.get(0).toString());
-//            this.subject_to_target.addAll(subjectList);
-//        	Logger.info("updateSubject() updated subject_to_taget size: " + subject_to_target.size());
-////			if (subjectList.size() > 0) {
-////				this.subject_to_target = subjectList.get(0);
-////			}
-//		} 
-//    	
-//    }
-	
-    /**
      * This method updates foreign key mapping between a Target and a License (Taxonomy).
      */
     public void updateLicense() {

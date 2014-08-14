@@ -550,8 +550,8 @@ public class Utils {
      * @param tableName
      * @param id
      */
-    public static void removeAssociationFromDb(String tableName, Long id) {
-        SqlUpdate removeOldAssociation = Ebean.createSqlUpdate("DELETE FROM " + tableName + " WHERE id_target = " + id);
+    public static void removeAssociationFromDb(String tableName, String columnName, Long id) {
+        SqlUpdate removeOldAssociation = Ebean.createSqlUpdate("DELETE FROM " + tableName + " WHERE " + columnName + " = " + id);
         removeOldAssociation.execute();     	
     }
 }

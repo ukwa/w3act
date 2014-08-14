@@ -152,7 +152,7 @@ public class InstanceController extends AbstractController {
         } else {
         	newInstance.field_subject = Const.NONE;
         }            
-		newInstance.updateSubject();
+//		newInstance.updateSubject();
         if (getFormParam(Const.TREE_KEYS) != null) {
         	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
         	newInstance.updateCollection();
@@ -438,7 +438,9 @@ public class InstanceController extends AbstractController {
             } else {
             	newInstance.field_subject = Const.NONE;
             }            
-    		newInstance.updateSubject();
+            Utils.removeAssociationFromDb(Const.SUBJECT_INSTANCE, Const.ID + "_" + Const.INSTANCE, newInstance.nid);
+            newInstance.subject_to_instance = Taxonomy.convertUrlsToObjects(newInstance.field_subject);
+//            newInstance.updateSubject();
             if (getFormParam(Const.TREE_KEYS) != null) {
             	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
             	newInstance.updateCollection();

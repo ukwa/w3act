@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -41,18 +42,18 @@ public class Instance extends Model {
 
     @Required
     @Id
+    @Column(name="ID")
     public Long nid;
     
 	//bi-directional many-to-one association to Organisation
 	@ManyToOne
 	@JoinColumn(name="id_organisation")
 	public Organisation organisation_to_instance;
-    
+    	
 	//bi-directional many-to-many association to Subject
-	@ManyToOne
-	@JoinColumn(name="id_taxonomy")
-	public Taxonomy subject_to_instance;
-	
+	@ManyToMany(mappedBy="instances")
+	public List<Taxonomy> subject_to_instance = new ArrayList<Taxonomy>();
+
 	//bi-directional many-to-one association to DCollection
 	@ManyToOne
 	@JoinColumn(name="id_collection")
@@ -1099,24 +1100,7 @@ public class Instance extends Model {
 		}
     	
     }
-	
-    /**
-     * This method updates foreign key mapping between a Target and a Subject (Taxonomy).
-     */
-    public void updateSubject() {
-    	Logger.info("updateSubject() field_subject: " + field_subject);
-    	this.subject_to_instance = null;
-		if (field_subject != null && field_subject.length() > 0) {
-			List<Taxonomy> subjectList = Taxonomy.getSelectedSubjectsForInstance(url);
-            Logger.info("Add target to subjects: " + subjectList.get(0).toString());
-//          this.subject_to_target.addAll(subjectList);
-			if (subjectList.size() > 0) {
-				this.subject_to_instance = subjectList.get(0);
-			}
-		} 
-    	
-    }
-	
+		
     /**
      * This method updates foreign key mapping between a Instance and a DCollection.
      */

@@ -164,7 +164,8 @@ public enum DataImport {
                     // Create association between Instance and DCollection
                     instance.updateCollection();
                     // Create association between Instance and Subject (Taxonomy)
-                    instance.updateSubject();
+//                    instance.updateSubject();
+                	instance.subject_to_instance = Taxonomy.convertUrlsToObjects(instance.field_subject);                    
                     // Create association between Instance and Flag
                     instance.updateFlag();
                     // Create association between Instance and Tag

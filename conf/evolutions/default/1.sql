@@ -107,9 +107,8 @@ create table flag (
 ;
 
 create table instance (
-  nid                       bigint not null,
+  ID                        bigint not null,
   id_organisation           bigint,
-  id_taxonomy               bigint,
   id_collection             bigint,
   id_flag                   bigint,
   id_tag                    bigint,
@@ -196,7 +195,7 @@ create table instance (
   flags                     TEXT,
   authors                   TEXT,
   last_update               timestamp not null,
-  constraint pk_instance primary key (nid))
+  constraint pk_instance primary key (ID))
 ;
 
 create table lookup_entry (
@@ -462,6 +461,12 @@ create table subject_target (
   id_target                      bigint not null,
   constraint pk_subject_target primary key (id_taxonomy, id_target))
 ;
+
+create table subject_instance (
+  id_taxonomy                    bigint not null,
+  id_instance                    bigint not null,
+  constraint pk_subject_instance primary key (id_taxonomy, id_instance))
+;
 create sequence communication_log_seq;
 
 create sequence contact_person_seq;
@@ -506,34 +511,36 @@ alter table crawl_permission add constraint fk_crawl_permission_contactper_3 for
 create index ix_crawl_permission_contactper_3 on crawl_permission (id_contactperson);
 alter table instance add constraint fk_instance_organisation_to_in_4 foreign key (id_organisation) references organisation (nid);
 create index ix_instance_organisation_to_in_4 on instance (id_organisation);
-alter table instance add constraint fk_instance_subject_to_instanc_5 foreign key (id_taxonomy) references taxonomy (ID);
-create index ix_instance_subject_to_instanc_5 on instance (id_taxonomy);
-alter table instance add constraint fk_instance_collection_to_inst_6 foreign key (id_collection) references dcollection (nid);
-create index ix_instance_collection_to_inst_6 on instance (id_collection);
-alter table instance add constraint fk_instance_flag_to_instance_7 foreign key (id_flag) references flag (id);
-create index ix_instance_flag_to_instance_7 on instance (id_flag);
-alter table instance add constraint fk_instance_tag_to_instance_8 foreign key (id_tag) references tag (id);
-create index ix_instance_tag_to_instance_8 on instance (id_tag);
-alter table permission add constraint fk_permission_role_9 foreign key (id_permission) references role (id);
-create index ix_permission_role_9 on permission (id_permission);
-alter table target add constraint fk_target_organisation_to_tar_10 foreign key (id_organisation) references organisation (nid);
-create index ix_target_organisation_to_tar_10 on target (id_organisation);
-alter table target add constraint fk_target_flag_to_target_11 foreign key (id_flag) references flag (id);
-create index ix_target_flag_to_target_11 on target (id_flag);
-alter table target add constraint fk_target_tag_to_target_12 foreign key (id_tag) references tag (id);
-create index ix_target_tag_to_target_12 on target (id_tag);
-alter table target add constraint fk_target_collection_to_targe_13 foreign key (id_collection) references dcollection (nid);
-create index ix_target_collection_to_targe_13 on target (id_collection);
-alter table target add constraint fk_target_license_to_target_14 foreign key (id_taxonomy_license) references taxonomy (ID);
-create index ix_target_license_to_target_14 on target (id_taxonomy_license);
-alter table creator add constraint fk_creator_organisation_15 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_15 on creator (id_organisation);
+alter table instance add constraint fk_instance_collection_to_inst_5 foreign key (id_collection) references dcollection (nid);
+create index ix_instance_collection_to_inst_5 on instance (id_collection);
+alter table instance add constraint fk_instance_flag_to_instance_6 foreign key (id_flag) references flag (id);
+create index ix_instance_flag_to_instance_6 on instance (id_flag);
+alter table instance add constraint fk_instance_tag_to_instance_7 foreign key (id_tag) references tag (id);
+create index ix_instance_tag_to_instance_7 on instance (id_tag);
+alter table permission add constraint fk_permission_role_8 foreign key (id_permission) references role (id);
+create index ix_permission_role_8 on permission (id_permission);
+alter table target add constraint fk_target_organisation_to_targ_9 foreign key (id_organisation) references organisation (nid);
+create index ix_target_organisation_to_targ_9 on target (id_organisation);
+alter table target add constraint fk_target_flag_to_target_10 foreign key (id_flag) references flag (id);
+create index ix_target_flag_to_target_10 on target (id_flag);
+alter table target add constraint fk_target_tag_to_target_11 foreign key (id_tag) references tag (id);
+create index ix_target_tag_to_target_11 on target (id_tag);
+alter table target add constraint fk_target_collection_to_targe_12 foreign key (id_collection) references dcollection (nid);
+create index ix_target_collection_to_targe_12 on target (id_collection);
+alter table target add constraint fk_target_license_to_target_13 foreign key (id_taxonomy_license) references taxonomy (ID);
+create index ix_target_license_to_target_13 on target (id_taxonomy_license);
+alter table creator add constraint fk_creator_organisation_14 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_14 on creator (id_organisation);
 
 
 
 alter table subject_target add constraint fk_subject_target_taxonomy_01 foreign key (id_taxonomy) references taxonomy (ID);
 
 alter table subject_target add constraint fk_subject_target_target_02 foreign key (id_target) references target (ID);
+
+alter table subject_instance add constraint fk_subject_instance_taxonomy_01 foreign key (id_taxonomy) references taxonomy (ID);
+
+alter table subject_instance add constraint fk_subject_instance_instance_02 foreign key (id_instance) references instance (ID);
 
 # --- !Downs
 
@@ -548,6 +555,8 @@ drop table if exists dcollection cascade;
 drop table if exists flag cascade;
 
 drop table if exists instance cascade;
+
+drop table if exists subject_instance cascade;
 
 drop table if exists lookup_entry cascade;
 

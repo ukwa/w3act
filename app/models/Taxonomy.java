@@ -53,7 +53,9 @@ public class Taxonomy extends Model {
     }    
     
     //bi-directional many-to-many association to Instance
-    @OneToMany(mappedBy="subject_to_instance", cascade=CascadeType.PERSIST)
+    @ManyToMany
+	@JoinTable(name = Const.SUBJECT_INSTANCE, joinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="ID") },
+		inverseJoinColumns = { @JoinColumn(name = "id_instance", referencedColumnName="ID") }) 
     private List<Instance> instances = new ArrayList<Instance>();
    
     public List<Instance> getInstances() {
