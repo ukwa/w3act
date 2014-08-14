@@ -388,8 +388,11 @@ public final class Const {
 	/**
 	 * Database associations
 	 */
-    public static final String SUBJECT_TARGET = "subject_target"; 
-    public static final String SUBJECT_INSTANCE = "subject_instance"; 
+    public static final String SUBJECT_TARGET        = "subject_target"; 
+    public static final String SUBJECT_INSTANCE      = "subject_instance"; 
+    public static final String COLLECTION_TARGET     = "collection_target"; 
+    public static final String COLLECTION_INSTANCE   = "collection_instance"; 
+    public static final String LICENSE_TARGET        = "license_target"; 
 
     // Types of the JSON nodes
 	public enum NodeType {

@@ -60,7 +60,7 @@ create table crawl_permission (
 ;
 
 create table dcollection (
-  nid                       bigint not null,
+  ID                        bigint not null,
   value                     TEXT,
   summary                   TEXT,
   format                    varchar(255),
@@ -94,7 +94,7 @@ create table dcollection (
   vocabulary                TEXT,
   parent                    TEXT,
   parents_all               TEXT,
-  constraint pk_dcollection primary key (nid))
+  constraint pk_dcollection primary key (ID))
 ;
 
 create table flag (
@@ -109,7 +109,6 @@ create table flag (
 create table instance (
   ID                        bigint not null,
   id_organisation           bigint,
-  id_collection             bigint,
   id_flag                   bigint,
   id_tag                    bigint,
   value                     TEXT,
@@ -316,8 +315,6 @@ create table target (
   id_organisation           bigint,
   id_flag                   bigint,
   id_tag                    bigint,
-  id_collection             bigint,
-  id_taxonomy_license       bigint,
   value                     TEXT,
   summary                   TEXT,
   format                    varchar(255),
@@ -456,6 +453,18 @@ create table creator (
 ;
 
 
+create table collection_target (
+  id_collection                  bigint not null,
+  id_target                      bigint not null,
+  constraint pk_collection_target primary key (id_collection, id_target))
+;
+
+create table collection_instance (
+  id_collection                  bigint not null,
+  id_instance                    bigint not null,
+  constraint pk_collection_instance primary key (id_collection, id_instance))
+;
+
 create table subject_target (
   id_taxonomy                    bigint not null,
   id_target                      bigint not null,
@@ -466,6 +475,12 @@ create table subject_instance (
   id_taxonomy                    bigint not null,
   id_instance                    bigint not null,
   constraint pk_subject_instance primary key (id_taxonomy, id_instance))
+;
+
+create table license_target (
+  id_license                     bigint not null,
+  id_target                      bigint not null,
+  constraint pk_license_target primary key (id_license, id_target))
 ;
 create sequence communication_log_seq;
 
@@ -511,28 +526,30 @@ alter table crawl_permission add constraint fk_crawl_permission_contactper_3 for
 create index ix_crawl_permission_contactper_3 on crawl_permission (id_contactperson);
 alter table instance add constraint fk_instance_organisation_to_in_4 foreign key (id_organisation) references organisation (nid);
 create index ix_instance_organisation_to_in_4 on instance (id_organisation);
-alter table instance add constraint fk_instance_collection_to_inst_5 foreign key (id_collection) references dcollection (nid);
-create index ix_instance_collection_to_inst_5 on instance (id_collection);
-alter table instance add constraint fk_instance_flag_to_instance_6 foreign key (id_flag) references flag (id);
-create index ix_instance_flag_to_instance_6 on instance (id_flag);
-alter table instance add constraint fk_instance_tag_to_instance_7 foreign key (id_tag) references tag (id);
-create index ix_instance_tag_to_instance_7 on instance (id_tag);
-alter table permission add constraint fk_permission_role_8 foreign key (id_permission) references role (id);
-create index ix_permission_role_8 on permission (id_permission);
-alter table target add constraint fk_target_organisation_to_targ_9 foreign key (id_organisation) references organisation (nid);
-create index ix_target_organisation_to_targ_9 on target (id_organisation);
-alter table target add constraint fk_target_flag_to_target_10 foreign key (id_flag) references flag (id);
-create index ix_target_flag_to_target_10 on target (id_flag);
-alter table target add constraint fk_target_tag_to_target_11 foreign key (id_tag) references tag (id);
-create index ix_target_tag_to_target_11 on target (id_tag);
-alter table target add constraint fk_target_collection_to_targe_12 foreign key (id_collection) references dcollection (nid);
-create index ix_target_collection_to_targe_12 on target (id_collection);
-alter table target add constraint fk_target_license_to_target_13 foreign key (id_taxonomy_license) references taxonomy (ID);
-create index ix_target_license_to_target_13 on target (id_taxonomy_license);
-alter table creator add constraint fk_creator_organisation_14 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_14 on creator (id_organisation);
+alter table instance add constraint fk_instance_flag_to_instance_5 foreign key (id_flag) references flag (id);
+create index ix_instance_flag_to_instance_5 on instance (id_flag);
+alter table instance add constraint fk_instance_tag_to_instance_6 foreign key (id_tag) references tag (id);
+create index ix_instance_tag_to_instance_6 on instance (id_tag);
+alter table permission add constraint fk_permission_role_7 foreign key (id_permission) references role (id);
+create index ix_permission_role_7 on permission (id_permission);
+alter table target add constraint fk_target_organisation_to_targ_8 foreign key (id_organisation) references organisation (nid);
+create index ix_target_organisation_to_targ_8 on target (id_organisation);
+alter table target add constraint fk_target_flag_to_target_9 foreign key (id_flag) references flag (id);
+create index ix_target_flag_to_target_9 on target (id_flag);
+alter table target add constraint fk_target_tag_to_target_10 foreign key (id_tag) references tag (id);
+create index ix_target_tag_to_target_10 on target (id_tag);
+alter table creator add constraint fk_creator_organisation_11 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_11 on creator (id_organisation);
 
 
+
+alter table collection_target add constraint fk_collection_target_dcollect_01 foreign key (id_collection) references dcollection (ID);
+
+alter table collection_target add constraint fk_collection_target_target_02 foreign key (id_target) references target (ID);
+
+alter table collection_instance add constraint fk_collection_instance_dcolle_01 foreign key (id_collection) references dcollection (ID);
+
+alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (id_instance) references instance (ID);
 
 alter table subject_target add constraint fk_subject_target_taxonomy_01 foreign key (id_taxonomy) references taxonomy (ID);
 
@@ -541,6 +558,10 @@ alter table subject_target add constraint fk_subject_target_target_02 foreign ke
 alter table subject_instance add constraint fk_subject_instance_taxonomy_01 foreign key (id_taxonomy) references taxonomy (ID);
 
 alter table subject_instance add constraint fk_subject_instance_instance_02 foreign key (id_instance) references instance (ID);
+
+alter table license_target add constraint fk_license_target_taxonomy_01 foreign key (id_license) references taxonomy (ID);
+
+alter table license_target add constraint fk_license_target_target_02 foreign key (id_target) references target (ID);
 
 # --- !Downs
 
@@ -551,6 +572,10 @@ drop table if exists contact_person cascade;
 drop table if exists crawl_permission cascade;
 
 drop table if exists dcollection cascade;
+
+drop table if exists collection_target cascade;
+
+drop table if exists collection_instance cascade;
 
 drop table if exists flag cascade;
 
@@ -579,6 +604,8 @@ drop table if exists target cascade;
 drop table if exists subject_target cascade;
 
 drop table if exists taxonomy cascade;
+
+drop table if exists license_target cascade;
 
 drop table if exists taxonomy_vocabulary cascade;
 

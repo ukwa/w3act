@@ -54,10 +54,9 @@ public class Instance extends Model {
 	@ManyToMany(mappedBy="instances")
 	public List<Taxonomy> subject_to_instance = new ArrayList<Taxonomy>();
 
-	//bi-directional many-to-one association to DCollection
-	@ManyToOne
-	@JoinColumn(name="id_collection")
-	public DCollection collection_to_instance;
+	//bi-directional many-to-many association to DCollection
+	@ManyToMany(mappedBy="instances")
+	public List<DCollection> collection_to_instance = new ArrayList<DCollection>();
 	
 	//bi-directional many-to-one association to Flag
 	@ManyToOne
@@ -1104,18 +1103,18 @@ public class Instance extends Model {
     /**
      * This method updates foreign key mapping between a Instance and a DCollection.
      */
-    public void updateCollection() {
-    	Logger.info("updateCollection() field_collection_categories: " + field_collection_categories);
-    	this.collection_to_instance = null;
-		if (field_collection_categories != null
-				&& field_collection_categories.length() > 0
-				&& !field_collection_categories.contains(Const.COMMA)) {
-			DCollection collection = DCollection.findByUrl(field_collection_categories);
-            Logger.info("Add instance to collection: " + collection.toString());
-            this.collection_to_instance = collection;
-		} 
-    	
-    }
+//    public void updateCollection() {
+//    	Logger.info("updateCollection() field_collection_categories: " + field_collection_categories);
+//    	this.collection_to_instance = null;
+//		if (field_collection_categories != null
+//				&& field_collection_categories.length() > 0
+//				&& !field_collection_categories.contains(Const.COMMA)) {
+//			DCollection collection = DCollection.findByUrl(field_collection_categories);
+//            Logger.info("Add instance to collection: " + collection.toString());
+//            this.collection_to_instance = collection;
+//		} 
+//    	
+//    }
 	
     /**
      * This method updates foreign key mapping between an Instance and a Flag.

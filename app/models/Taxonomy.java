@@ -5,13 +5,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import play.Logger;
@@ -23,8 +22,6 @@ import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.JoinColumn;
 
 /**
  * Taxonomy entity managed by Ebean
@@ -67,7 +64,9 @@ public class Taxonomy extends Model {
     }    
   
     //bi-directional many-to-many association to Target
-    @OneToMany(mappedBy="license_to_target", cascade=CascadeType.PERSIST)
+    @ManyToMany
+	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "id_license", referencedColumnName="ID") },
+		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
 	private List<Target> targetLicenses = new ArrayList<Target>();
 	   
 	public List<Target> getTargetLicenses() {

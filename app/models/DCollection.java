@@ -25,12 +25,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class DCollection extends Model {
 
     @Id @JsonIgnore
+    @Column(name="ID")
     public Long nid;
 
-    //bi-directional many-to-one association to Target
-    @OneToMany(mappedBy="collection_to_target", cascade=CascadeType.PERSIST)
+    //bi-directional many-to-many association to Target
+    @ManyToMany
+	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "id_collection", referencedColumnName="ID") },
+		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
     private List<Target> targets = new ArrayList<Target>();
-     
+ 
     public List<Target> getTargets() {
     	return this.targets;
     }
@@ -39,10 +42,12 @@ public class DCollection extends Model {
     	this.targets = targets;
     }    
     
-    //bi-directional many-to-one association to Instance
-    @OneToMany(mappedBy="collection_to_instance", cascade=CascadeType.PERSIST)
+    //bi-directional many-to-many association to Instance
+    @ManyToMany
+	@JoinTable(name = Const.COLLECTION_INSTANCE, joinColumns = { @JoinColumn(name = "id_collection", referencedColumnName="ID") },
+		inverseJoinColumns = { @JoinColumn(name = "id_instance", referencedColumnName="ID") }) 
     private List<Instance> instances = new ArrayList<Instance>();
-     
+    
     public List<Instance> getInstances() {
     	return this.instances;
     }
@@ -466,6 +471,27 @@ public class DCollection extends Model {
 		return res;
 	}       
     
+	/**
+	 * This method retrieves selected collections from target object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<DCollection> convertUrlsToObjects(String urls) {
+		List<DCollection> res = new ArrayList<DCollection>();
+   		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
+	    	String[] parts = urls.split(Const.COMMA + " ");
+	    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+	    		DCollection collection = findByUrl(part);
+	    		if (collection != null && collection.title != null && collection.title.length() > 0) {
+//			    	Logger.info("collection title: " + collection.title);
+	    			res.add(collection);
+	    		}
+	    	}
+    	}
+		return res;
+	}       
+    	
     public String toString() {
         return "DCollection(" + nid + ") with title: " + title + ", field_targets: " + field_targets +
         		 ", field_instances: " + field_instances +", format: " + format + ", summary: " + summary + ", value: " + value;

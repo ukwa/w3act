@@ -137,7 +137,8 @@ public class TargetController extends AbstractController {
         }
         if (getFormParam(Const.TREE_KEYS) != null) {
     		targetObj.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-    		targetObj.updateCollection();
+        	targetObj.collection_to_target = DCollection.convertUrlsToObjects(targetObj.field_collection_categories);
+//    		targetObj.updateCollection();
         }
         if (getFormParam(Const.ORGANISATION) != null) {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
@@ -218,7 +219,8 @@ public class TargetController extends AbstractController {
             		}
                 }
             	targetObj.field_license = resLicenses;
-        		targetObj.updateLicense();
+            	targetObj.license_to_target = Taxonomy.convertUrlsToObjects(targetObj.field_license);
+//        		targetObj.updateLicense();
         	} else {
         		targetObj.field_license = Const.NONE;
         	}
@@ -372,11 +374,11 @@ public class TargetController extends AbstractController {
             newTarget.field_nominating_organisation = target.field_nominating_organisation;
     		newTarget.updateOrganisation();
             newTarget.field_collection_categories = target.field_collection_categories;
-    		newTarget.updateCollection();
+//    		newTarget.updateCollection();
 //            newTarget.field_subject = target.field_subject;
 //    		newTarget.updateSubject();
-            newTarget.field_license = target.field_license;
-    		newTarget.updateLicense();
+//            newTarget.field_license = target.field_license;
+//    		newTarget.updateLicense();
             newTarget.title = getFormParam(Const.TITLE);
             newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
@@ -453,7 +455,8 @@ public class TargetController extends AbstractController {
             }            
             if (getFormParam(Const.TREE_KEYS) != null) {
 	    		newTarget.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-	    		newTarget.updateCollection();
+	        	newTarget.collection_to_target = DCollection.convertUrlsToObjects(newTarget.field_collection_categories);
+//	    		newTarget.updateCollection();
 	    		Logger.debug("newTarget.field_collection_categories: " + newTarget.field_collection_categories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
@@ -546,7 +549,8 @@ public class TargetController extends AbstractController {
 	            		}
 	                }
 	            	newTarget.field_license = resLicenses;
-	        		newTarget.updateLicense();
+                	newTarget.license_to_target = Taxonomy.convertUrlsToObjects(newTarget.field_license);
+//	        		newTarget.updateLicense();
             	} else {
             		newTarget.field_license = Const.NONE;
             	}
@@ -630,25 +634,12 @@ public class TargetController extends AbstractController {
                 target.organisation_to_target = null;
                 target.collection_to_target = null;
                 target.subject_to_target = null;
-//              target.subject_to_target.clear();
-//            	List<Taxonomy> toDelete = Taxonomy.convertUrlsToObjects(target.field_subject);
-//                target.subject_to_target.remove(toDelete);
-//    	        Taxonomy toDelete = Taxonomy.find.where().eq(Const.URL, url).findUnique();
-//                Ebean.delete(target.subject_to_target);
-//                target.subject_to_target.remove(target.subject_to_target);
                 Utils.removeAssociationFromDb(Const.SUBJECT_TARGET, Const.ID + "_" + Const.TARGET, target.nid);
+                Utils.removeAssociationFromDb(Const.COLLECTION_TARGET, Const.ID + "_" + Const.TARGET, target.nid);
+                Utils.removeAssociationFromDb(Const.LICENSE_TARGET, Const.ID + "_" + Const.TARGET, target.nid);
                 target.flag_to_target = null;
                 target.tag_to_target = null;
                 Logger.info("+++ subject_to_target object before target nid: " + target.nid + ", update: " + target.subject_to_target);
-//            	List<Taxonomy> subjects = target.subject_to_target;
-//            	Iterator<Taxonomy> itrUpdateSubjects = subjects.iterator();
-//            	while (itrUpdateSubjects.hasNext()) {
-//            		Taxonomy subjectToUpdate = itrUpdateSubjects.next();
-//            		Logger.info("+++ subject_to_target before target update: " + subjectToUpdate.toString());
-//            		subjectToUpdate.getTargets().remove(target.nid);
-//            		break;
-//            	}
-//            	target.subject_to_target = null;
             	Ebean.update(target);
         	}
         	if (newTarget.field_url != null) {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.ContactPerson;
+import models.DCollection;
 import models.Flag;
 import models.Instance;
 import models.MailTemplate;
@@ -141,12 +142,14 @@ public enum DataImport {
 	            	// Create association between Target and Organisation
 	            	target.updateOrganisation();
                     // Create association between Target and DCollection
-                    target.updateCollection();
+//                    target.updateCollection();
+                	target.collection_to_target = DCollection.convertUrlsToObjects(target.field_collection_categories);
                     // Create association between Target and Subject (Taxonomy)
 //                    target.updateSubject();
                 	target.subject_to_target = Taxonomy.convertUrlsToObjects(target.field_subject);
                     // Create association between Target and License (Taxonomy)
-                    target.updateLicense();
+//                    target.updateLicense();
+                	target.license_to_target = Taxonomy.convertUrlsToObjects(target.field_license);
                     // Create association between Target and Flag
                     target.updateFlag();
                     // Create association between Target and Tag
@@ -162,7 +165,8 @@ public enum DataImport {
 	                // Create association between Instance and Organisation
                     instance.updateOrganisation();
                     // Create association between Instance and DCollection
-                    instance.updateCollection();
+//                    instance.updateCollection();
+                	instance.collection_to_instance = DCollection.convertUrlsToObjects(instance.field_collection_categories);
                     // Create association between Instance and Subject (Taxonomy)
 //                    instance.updateSubject();
                 	instance.subject_to_instance = Taxonomy.convertUrlsToObjects(instance.field_subject);                    

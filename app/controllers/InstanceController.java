@@ -155,7 +155,8 @@ public class InstanceController extends AbstractController {
 //		newInstance.updateSubject();
         if (getFormParam(Const.TREE_KEYS) != null) {
         	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-        	newInstance.updateCollection();
+        	newInstance.collection_to_instance = DCollection.convertUrlsToObjects(newInstance.field_collection_categories);
+//        	newInstance.updateCollection();
     		Logger.debug("newInstance.field_collection_categories: " + newInstance.field_collection_categories);
         }
         if (getFormParam(Const.ORGANISATION) != null) {
@@ -443,7 +444,8 @@ public class InstanceController extends AbstractController {
 //            newInstance.updateSubject();
             if (getFormParam(Const.TREE_KEYS) != null) {
             	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-            	newInstance.updateCollection();
+            	newInstance.collection_to_instance = DCollection.convertUrlsToObjects(newInstance.field_collection_categories);
+//            	newInstance.updateCollection();
 	    		Logger.debug("newInstance.field_collection_categories: " + newInstance.field_collection_categories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {

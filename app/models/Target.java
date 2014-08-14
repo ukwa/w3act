@@ -75,19 +75,17 @@ public class Target extends Model {
     	this.crawlPermissions = crawlPermissions;
     }    
     	
-	//bi-directional many-to-one association to DCollection
-	@ManyToOne
-	@JoinColumn(name="id_collection")
-	public DCollection collection_to_target;
+	//bi-directional many-to-many association to DCollection
+	@ManyToMany(mappedBy="targets")
+	public List<DCollection> collection_to_target = new ArrayList<DCollection>();
 	
 	//bi-directional many-to-many association to Subject
 	@ManyToMany(mappedBy="targets")
 	public List<Taxonomy> subject_to_target = new ArrayList<Taxonomy>();
 	
-	//bi-directional many-to-many association to License (Taxonomy)
-	@ManyToOne
-	@JoinColumn(name="id_taxonomy_license")
-	public Taxonomy license_to_target;
+	//bi-directional many-to-many association to Subject
+	@ManyToMany(mappedBy="targets")
+	public List<Taxonomy> license_to_target = new ArrayList<Taxonomy>();
 	
     @Column(columnDefinition = "TEXT")
     public String value;
@@ -2025,35 +2023,35 @@ public class Target extends Model {
     /**
      * This method updates foreign key mapping between a Target and a DCollection.
      */
-    public void updateCollection() {
-    	Logger.info("updateCollection() field_collection_categories: " + field_collection_categories);
-    	this.collection_to_target = null;
-		if (field_collection_categories != null
-				&& field_collection_categories.length() > 0
-				&& !field_collection_categories.contains(Const.COMMA)) {
-			DCollection collection = DCollection.findByUrl(field_collection_categories);
-            Logger.info("Add target to collection: " + collection.toString());
-            this.collection_to_target = collection;
-		} 
-    	
-    }
+//    public void updateCollection() {
+//    	Logger.info("updateCollection() field_collection_categories: " + field_collection_categories);
+//    	this.collection_to_target = null;
+//		if (field_collection_categories != null
+//				&& field_collection_categories.length() > 0
+//				&& !field_collection_categories.contains(Const.COMMA)) {
+//			DCollection collection = DCollection.findByUrl(field_collection_categories);
+//            Logger.info("Add target to collection: " + collection.toString());
+//            this.collection_to_target = collection;
+//		} 
+//    	
+//    }
 	
     /**
      * This method updates foreign key mapping between a Target and a License (Taxonomy).
      */
-    public void updateLicense() {
-    	Logger.info("updateLicense() field_license: " + field_license);
-    	this.license_to_target = null;
-		if (field_license != null && field_license.length() > 0) {
-			List<Taxonomy> licenseList = Taxonomy.getSelectedLicenses(url);
-            Logger.info("Add target to licenses: " + licenseList.get(0).toString());
-//          this.license_to_target.addAll(licenseList);
-			if (licenseList.size() > 0) {
-				this.license_to_target = licenseList.get(0);
-			}
-		} 
-    	
-    }
+//    public void updateLicense() {
+//    	Logger.info("updateLicense() field_license: " + field_license);
+//    	this.license_to_target = null;
+//		if (field_license != null && field_license.length() > 0) {
+//			List<Taxonomy> licenseList = Taxonomy.getSelectedLicenses(url);
+//            Logger.info("Add target to licenses: " + licenseList.get(0).toString());
+////          this.license_to_target.addAll(licenseList);
+//			if (licenseList.size() > 0) {
+//				this.license_to_target = licenseList.get(0);
+//			}
+//		} 
+//    	
+//    }
 	
     /**
      * This method updates foreign key mapping between a Target and an Flag.
