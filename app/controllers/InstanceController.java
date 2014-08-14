@@ -683,7 +683,7 @@ public class InstanceController extends AbstractController {
 	    		DCollection collection = itr.next();
 //    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
-	    		if ((parent && collection.parent.length() == 0) || !parent) {
+	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
 		    		if (firstTime) {
 		    			firstTime = false;
 		    		} else {

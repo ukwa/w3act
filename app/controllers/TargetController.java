@@ -636,7 +636,7 @@ public class TargetController extends AbstractController {
 //    	        Taxonomy toDelete = Taxonomy.find.where().eq(Const.URL, url).findUnique();
 //                Ebean.delete(target.subject_to_target);
 //                target.subject_to_target.remove(target.subject_to_target);
-                Utils.removeAssociationFromDb(Const.SUBJECT_TARGET, "id_" + Const.TARGET, target.nid);
+                Utils.removeAssociationFromDb(Const.SUBJECT_TARGET, Const.ID + "_" + Const.TARGET, target.nid);
                 target.flag_to_target = null;
                 target.tag_to_target = null;
                 Logger.info("+++ subject_to_target object before target nid: " + target.nid + ", update: " + target.subject_to_target);
