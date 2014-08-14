@@ -393,6 +393,10 @@ public final class Const {
     public static final String COLLECTION_TARGET     = "collection_target"; 
     public static final String COLLECTION_INSTANCE   = "collection_instance"; 
     public static final String LICENSE_TARGET        = "license_target"; 
+    public static final String TAG_TARGET            = "tag_target"; 
+    public static final String FLAG_TARGET           = "flag_target"; 
+    public static final String TAG_INSTANCE          = "tag_instance"; 
+    public static final String FLAG_INSTANCE         = "flag_instance"; 
 
     // Types of the JSON nodes
 	public enum NodeType {

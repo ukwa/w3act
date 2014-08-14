@@ -98,19 +98,17 @@ create table dcollection (
 ;
 
 create table flag (
-  id                        bigint not null,
+  ID                        bigint not null,
   url                       TEXT,
   name                      TEXT,
   description               TEXT,
   last_update               timestamp not null,
-  constraint pk_flag primary key (id))
+  constraint pk_flag primary key (ID))
 ;
 
 create table instance (
   ID                        bigint not null,
   id_organisation           bigint,
-  id_flag                   bigint,
-  id_tag                    bigint,
   value                     TEXT,
   summary                   TEXT,
   act_url                   varchar(255),
@@ -302,19 +300,17 @@ create table role (
 ;
 
 create table tag (
-  id                        bigint not null,
+  ID                        bigint not null,
   url                       TEXT,
   name                      TEXT,
   description               TEXT,
   last_update               timestamp not null,
-  constraint pk_tag primary key (id))
+  constraint pk_tag primary key (ID))
 ;
 
 create table target (
   ID                        bigint not null,
   id_organisation           bigint,
-  id_flag                   bigint,
-  id_tag                    bigint,
   value                     TEXT,
   summary                   TEXT,
   format                    varchar(255),
@@ -465,6 +461,30 @@ create table collection_instance (
   constraint pk_collection_instance primary key (id_collection, id_instance))
 ;
 
+create table flag_target (
+  id_flag                        bigint not null,
+  id_target                      bigint not null,
+  constraint pk_flag_target primary key (id_flag, id_target))
+;
+
+create table flag_instance (
+  id_flag                        bigint not null,
+  id_instance                    bigint not null,
+  constraint pk_flag_instance primary key (id_flag, id_instance))
+;
+
+create table tag_target (
+  id_tag                         bigint not null,
+  id_target                      bigint not null,
+  constraint pk_tag_target primary key (id_tag, id_target))
+;
+
+create table tag_instance (
+  id_tag                         bigint not null,
+  id_instance                    bigint not null,
+  constraint pk_tag_instance primary key (id_tag, id_instance))
+;
+
 create table subject_target (
   id_taxonomy                    bigint not null,
   id_target                      bigint not null,
@@ -526,20 +546,12 @@ alter table crawl_permission add constraint fk_crawl_permission_contactper_3 for
 create index ix_crawl_permission_contactper_3 on crawl_permission (id_contactperson);
 alter table instance add constraint fk_instance_organisation_to_in_4 foreign key (id_organisation) references organisation (nid);
 create index ix_instance_organisation_to_in_4 on instance (id_organisation);
-alter table instance add constraint fk_instance_flag_to_instance_5 foreign key (id_flag) references flag (id);
-create index ix_instance_flag_to_instance_5 on instance (id_flag);
-alter table instance add constraint fk_instance_tag_to_instance_6 foreign key (id_tag) references tag (id);
-create index ix_instance_tag_to_instance_6 on instance (id_tag);
-alter table permission add constraint fk_permission_role_7 foreign key (id_permission) references role (id);
-create index ix_permission_role_7 on permission (id_permission);
-alter table target add constraint fk_target_organisation_to_targ_8 foreign key (id_organisation) references organisation (nid);
-create index ix_target_organisation_to_targ_8 on target (id_organisation);
-alter table target add constraint fk_target_flag_to_target_9 foreign key (id_flag) references flag (id);
-create index ix_target_flag_to_target_9 on target (id_flag);
-alter table target add constraint fk_target_tag_to_target_10 foreign key (id_tag) references tag (id);
-create index ix_target_tag_to_target_10 on target (id_tag);
-alter table creator add constraint fk_creator_organisation_11 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_11 on creator (id_organisation);
+alter table permission add constraint fk_permission_role_5 foreign key (id_permission) references role (id);
+create index ix_permission_role_5 on permission (id_permission);
+alter table target add constraint fk_target_organisation_to_targ_6 foreign key (id_organisation) references organisation (nid);
+create index ix_target_organisation_to_targ_6 on target (id_organisation);
+alter table creator add constraint fk_creator_organisation_7 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_7 on creator (id_organisation);
 
 
 
@@ -550,6 +562,22 @@ alter table collection_target add constraint fk_collection_target_target_02 fore
 alter table collection_instance add constraint fk_collection_instance_dcolle_01 foreign key (id_collection) references dcollection (ID);
 
 alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (id_instance) references instance (ID);
+
+alter table flag_target add constraint fk_flag_target_flag_01 foreign key (id_flag) references flag (ID);
+
+alter table flag_target add constraint fk_flag_target_target_02 foreign key (id_target) references target (ID);
+
+alter table flag_instance add constraint fk_flag_instance_flag_01 foreign key (id_flag) references flag (ID);
+
+alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (id_instance) references instance (ID);
+
+alter table tag_target add constraint fk_tag_target_tag_01 foreign key (id_tag) references tag (ID);
+
+alter table tag_target add constraint fk_tag_target_target_02 foreign key (id_target) references target (ID);
+
+alter table tag_instance add constraint fk_tag_instance_tag_01 foreign key (id_tag) references tag (ID);
+
+alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (id_instance) references instance (ID);
 
 alter table subject_target add constraint fk_subject_target_taxonomy_01 foreign key (id_taxonomy) references taxonomy (ID);
 
@@ -579,9 +607,15 @@ drop table if exists collection_instance cascade;
 
 drop table if exists flag cascade;
 
+drop table if exists flag_target cascade;
+
+drop table if exists flag_instance cascade;
+
 drop table if exists instance cascade;
 
 drop table if exists subject_instance cascade;
+
+drop table if exists tag_instance cascade;
 
 drop table if exists lookup_entry cascade;
 
@@ -598,6 +632,8 @@ drop table if exists permission_refusal cascade;
 drop table if exists role cascade;
 
 drop table if exists tag cascade;
+
+drop table if exists tag_target cascade;
 
 drop table if exists target cascade;
 

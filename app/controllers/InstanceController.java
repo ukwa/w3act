@@ -189,7 +189,7 @@ public class InstanceController extends AbstractController {
             		}
                 }
             	newInstance.tags = resTags;
-        		newInstance.updateTag();
+            	newInstance.tag_to_instance = Tag.convertUrlsToObjects(newInstance.tags);
         	} else {
         		newInstance.tags = Const.NONE;
         	}
@@ -206,7 +206,7 @@ public class InstanceController extends AbstractController {
             		}
                 }
             	newInstance.flags = resFlags;
-        		newInstance.updateFlag();
+            	newInstance.flag_to_instance = Flag.convertUrlsToObjects(newInstance.flags);
         	} else {
         		newInstance.flags = Const.NONE;
         	}
@@ -441,11 +441,9 @@ public class InstanceController extends AbstractController {
             }            
             Utils.removeAssociationFromDb(Const.SUBJECT_INSTANCE, Const.ID + "_" + Const.INSTANCE, newInstance.nid);
             newInstance.subject_to_instance = Taxonomy.convertUrlsToObjects(newInstance.field_subject);
-//            newInstance.updateSubject();
             if (getFormParam(Const.TREE_KEYS) != null) {
             	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
             	newInstance.collection_to_instance = DCollection.convertUrlsToObjects(newInstance.field_collection_categories);
-//            	newInstance.updateCollection();
 	    		Logger.debug("newInstance.field_collection_categories: " + newInstance.field_collection_categories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
@@ -478,7 +476,7 @@ public class InstanceController extends AbstractController {
 	            		}
 	                }
 	            	newInstance.tags = resTags;
-	        		newInstance.updateTag();
+	            	newInstance.tag_to_instance = Tag.convertUrlsToObjects(newInstance.tags);
             	} else {
             		newInstance.tags = Const.NONE;
             	}
@@ -495,7 +493,7 @@ public class InstanceController extends AbstractController {
 	            		}
 	                }
 	            	newInstance.flags = resFlags;
-	        		newInstance.updateFlag();
+	            	newInstance.flag_to_instance = Flag.convertUrlsToObjects(newInstance.flags);
             	} else {
             		newInstance.flags = Const.NONE;
             	}

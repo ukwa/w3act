@@ -58,16 +58,14 @@ public class Instance extends Model {
 	@ManyToMany(mappedBy="instances")
 	public List<DCollection> collection_to_instance = new ArrayList<DCollection>();
 	
-	//bi-directional many-to-one association to Flag
-	@ManyToOne
-	@JoinColumn(name="id_flag")
-	public Flag flag_to_instance;
+	//bi-directional many-to-many association to Flag
+	@ManyToMany(mappedBy="instances")
+	public List<Flag> flag_to_instance = new ArrayList<Flag>();
     
-	//bi-directional many-to-one association to Tag
-	@ManyToOne
-	@JoinColumn(name="id_tag")
-	public Tag tag_to_instance;
-    
+	//bi-directional many-to-many association to Tag
+	@ManyToMany(mappedBy="instances")
+	public List<Tag> tag_to_instance = new ArrayList<Tag>();
+	
     @Column(columnDefinition = "TEXT")
     public String value;
     @Column(columnDefinition = "TEXT")
@@ -1100,48 +1098,6 @@ public class Instance extends Model {
     	
     }
 		
-    /**
-     * This method updates foreign key mapping between a Instance and a DCollection.
-     */
-//    public void updateCollection() {
-//    	Logger.info("updateCollection() field_collection_categories: " + field_collection_categories);
-//    	this.collection_to_instance = null;
-//		if (field_collection_categories != null
-//				&& field_collection_categories.length() > 0
-//				&& !field_collection_categories.contains(Const.COMMA)) {
-//			DCollection collection = DCollection.findByUrl(field_collection_categories);
-//            Logger.info("Add instance to collection: " + collection.toString());
-//            this.collection_to_instance = collection;
-//		} 
-//    	
-//    }
-	
-    /**
-     * This method updates foreign key mapping between an Instance and a Flag.
-     */
-    public void updateFlag() {
-		if (flags != null
-				&& flags.length() > 0) {
-			Flag flag = Flag.findByUrl(flags);
-//            Logger.info("Add instance to flag: " + flag.toString());
-            this.flag_to_instance = flag;
-		}
-    	
-    }
-	
-    /**
-     * This method updates foreign key mapping between an Instance and a Tag.
-     */
-    public void updateTag() {
-		if (tags != null
-				&& tags.length() > 0) {
-			Tag tag = Tag.findByUrl(tags);
-//            Logger.info("Add instance to tag: " + tag.toString());
-            this.tag_to_instance = tag;
-		}
-    	
-    }
-	
     public String toString() {
         return "Instance(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
         ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 

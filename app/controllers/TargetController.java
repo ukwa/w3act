@@ -165,7 +165,7 @@ public class TargetController extends AbstractController {
             		}
                 }
             	targetObj.tags = resTags;
-            	targetObj.updateTag();
+            	targetObj.tag_to_target = Tag.convertUrlsToObjects(targetObj.tags);
         	} else {
         		targetObj.tags = Const.NONE;
         	}
@@ -192,7 +192,7 @@ public class TargetController extends AbstractController {
         	targetObj.flags = Const.NONE;
         } else {
         	targetObj.flags = flagStr;
-        	targetObj.updateFlag();
+        	targetObj.flag_to_target = Flag.convertUrlsToObjects(targetObj.flags);
         }
         Logger.info("flagStr: "+ flagStr + ", targetObj.flags: " + targetObj.flags);
         targetObj.justification = getFormParam(Const.JUSTIFICATION);
@@ -374,11 +374,6 @@ public class TargetController extends AbstractController {
             newTarget.field_nominating_organisation = target.field_nominating_organisation;
     		newTarget.updateOrganisation();
             newTarget.field_collection_categories = target.field_collection_categories;
-//    		newTarget.updateCollection();
-//            newTarget.field_subject = target.field_subject;
-//    		newTarget.updateSubject();
-//            newTarget.field_license = target.field_license;
-//    		newTarget.updateLicense();
             newTarget.title = getFormParam(Const.TITLE);
             newTarget.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
@@ -386,11 +381,6 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.FLAG_NOTES) != null) {
             	newTarget.flag_notes = getFormParam(Const.FLAG_NOTES);
             } 
-//            if (getFormParam(Const.STATUS) != null) {
-////        		Logger.info("status: " + getFormParam(Const.STATUS) + ".");
-//            	newTarget.status = Long.valueOf(getFormParam(Const.STATUS));
-////        		Logger.info("status: " + newTarget.status + ".");
-//            } 
             if (getFormParam(Const.FIELD_QA_STATUS) != null) {
             	newTarget.field_qa_status = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
             } 
@@ -440,15 +430,10 @@ public class TargetController extends AbstractController {
             		if (subjectListStr.contains(Const.COMMA + " " + Const.NONE_VALUE)) {
             			subjectListStr = subjectListStr.replace(Const.COMMA + " " + Const.NONE_VALUE, "");
             		}
-            		Logger.info("after removing 'None' value is it was combined with another subject");
-//            		String msg = "Selected subjects cannot comprise simultaneously value 'None' and other values. Please select either value 'None' or other selections.";
-//                	Logger.info(msg);
-//    	  			flash("message", msg);
-//    	  			return info();            		
+            		Logger.info("after removing 'None' value is it was combined with another subject");      		
             	}
             	newTarget.field_subject = subjectListStr;
             	newTarget.subject_to_target = Taxonomy.convertUrlsToObjects(newTarget.field_subject);
-//            	newTarget.updateSubject();
         		Logger.debug("newTarget.field_subject: " + newTarget.field_subject);
             } else {
             	newTarget.field_subject = Const.NONE;
@@ -456,7 +441,6 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.TREE_KEYS) != null) {
 	    		newTarget.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
 	        	newTarget.collection_to_target = DCollection.convertUrlsToObjects(newTarget.field_collection_categories);
-//	    		newTarget.updateCollection();
 	    		Logger.debug("newTarget.field_collection_categories: " + newTarget.field_collection_categories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
@@ -487,7 +471,7 @@ public class TargetController extends AbstractController {
 	            		}
 	                }
 	            	newTarget.tags = resTags;
-	        		newTarget.updateTag();
+                	newTarget.tag_to_target = Tag.convertUrlsToObjects(newTarget.tags);
             	} else {
             		newTarget.tags = Const.NONE;
             	}
@@ -514,7 +498,7 @@ public class TargetController extends AbstractController {
             	newTarget.flags = Const.NONE;
             } else {
             	newTarget.flags = flagStr;
-        		newTarget.updateFlag();
+            	newTarget.flag_to_target = Flag.convertUrlsToObjects(newTarget.flags);
             }
             Logger.info("flagStr: "+ flagStr + ", newTarget.flags: " + newTarget.flags);
             newTarget.justification = getFormParam(Const.JUSTIFICATION);
@@ -550,7 +534,6 @@ public class TargetController extends AbstractController {
 	                }
 	            	newTarget.field_license = resLicenses;
                 	newTarget.license_to_target = Taxonomy.convertUrlsToObjects(newTarget.field_license);
-//	        		newTarget.updateLicense();
             	} else {
             		newTarget.field_license = Const.NONE;
             	}
@@ -637,6 +620,8 @@ public class TargetController extends AbstractController {
                 Utils.removeAssociationFromDb(Const.SUBJECT_TARGET, Const.ID + "_" + Const.TARGET, target.nid);
                 Utils.removeAssociationFromDb(Const.COLLECTION_TARGET, Const.ID + "_" + Const.TARGET, target.nid);
                 Utils.removeAssociationFromDb(Const.LICENSE_TARGET, Const.ID + "_" + Const.TARGET, target.nid);
+                Utils.removeAssociationFromDb(Const.FLAG_TARGET, Const.ID + "_" + Const.TARGET, target.nid);
+                Utils.removeAssociationFromDb(Const.TAG_TARGET, Const.ID + "_" + Const.TARGET, target.nid);
                 target.flag_to_target = null;
                 target.tag_to_target = null;
                 Logger.info("+++ subject_to_target object before target nid: " + target.nid + ", update: " + target.subject_to_target);

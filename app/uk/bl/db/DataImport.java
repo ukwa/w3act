@@ -142,18 +142,15 @@ public enum DataImport {
 	            	// Create association between Target and Organisation
 	            	target.updateOrganisation();
                     // Create association between Target and DCollection
-//                    target.updateCollection();
                 	target.collection_to_target = DCollection.convertUrlsToObjects(target.field_collection_categories);
                     // Create association between Target and Subject (Taxonomy)
-//                    target.updateSubject();
                 	target.subject_to_target = Taxonomy.convertUrlsToObjects(target.field_subject);
                     // Create association between Target and License (Taxonomy)
-//                    target.updateLicense();
                 	target.license_to_target = Taxonomy.convertUrlsToObjects(target.field_license);
                     // Create association between Target and Flag
-                    target.updateFlag();
+                	target.flag_to_target = Flag.convertUrlsToObjects(target.flags);
                     // Create association between Target and Tag
-                    target.updateTag();
+                	target.tag_to_target = Tag.convertUrlsToObjects(target.tags);
         			Ebean.update(target);
 	            }
                 // Create associations for Instance
@@ -161,19 +158,16 @@ public enum DataImport {
 	            Iterator<Instance> instanceItr = instanceList.iterator();
 	            while (instanceItr.hasNext()) {
 	            	Instance instance = instanceItr.next();
-//                    Logger.info("Test instance test object: " + instance.toString());
 	                // Create association between Instance and Organisation
                     instance.updateOrganisation();
                     // Create association between Instance and DCollection
-//                    instance.updateCollection();
                 	instance.collection_to_instance = DCollection.convertUrlsToObjects(instance.field_collection_categories);
                     // Create association between Instance and Subject (Taxonomy)
-//                    instance.updateSubject();
                 	instance.subject_to_instance = Taxonomy.convertUrlsToObjects(instance.field_subject);                    
                     // Create association between Instance and Flag
-                    instance.updateFlag();
+                	instance.flag_to_instance = Flag.convertUrlsToObjects(instance.flags);
                     // Create association between Instance and Tag
-                    instance.updateTag();
+                	instance.tag_to_instance = Tag.convertUrlsToObjects(instance.tags);
         			Ebean.update(instance);
 	            }
                 // Create association between Permission and Role

@@ -4,11 +4,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -33,12 +34,15 @@ public class Flag extends Model
 	private static final long serialVersionUID = -2257699575463702989L;
 
 	@Id 
+    @Column(name="ID")
     public Long id;
 
-    //bi-directional one-to-many association to Target
-    @OneToMany(mappedBy="flag_to_target", cascade=CascadeType.PERSIST)
+    //bi-directional many-to-many association to Target
+    @ManyToMany
+	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "id_flag", referencedColumnName="ID") },
+		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
     private List<Target> targets = new ArrayList<Target>();
-     
+ 
     public List<Target> getTargets() {
     	return this.targets;
     }
@@ -46,11 +50,13 @@ public class Flag extends Model
     public void setTargets(List<Target> targets) {
     	this.targets = targets;
     }    
-    	
-    //bi-directional one-to-many association to Instance
-    @OneToMany(mappedBy="flag_to_instance", cascade=CascadeType.PERSIST)
+    
+    //bi-directional many-to-many association to Instance
+    @ManyToMany
+	@JoinTable(name = Const.FLAG_INSTANCE, joinColumns = { @JoinColumn(name = "id_flag", referencedColumnName="ID") },
+		inverseJoinColumns = { @JoinColumn(name = "id_instance", referencedColumnName="ID") }) 
     private List<Instance> instances = new ArrayList<Instance>();
-     
+    
     public List<Instance> getInstances() {
     	return this.instances;
     }
@@ -142,7 +148,28 @@ public class Flag extends Model
         return find.all();
     }
     
-    public String toString() {
+	/**
+	 * This method retrieves selected flags from target object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<Flag> convertUrlsToObjects(String urls) {
+		List<Flag> res = new ArrayList<Flag>();
+   		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
+	    	String[] parts = urls.split(Const.COMMA + " ");
+	    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+	    		Flag flag = findByName(part);
+	    		if (flag != null && flag.name != null && flag.name.length() > 0) {
+//			    	Logger.info("flag name: " + flag.name);
+	    			res.add(flag);
+	    		}
+	    	}
+    	}
+		return res;
+	}       
+    	
+   public String toString() {
         return "Flag(" + name + ")" + ", id:" + id;
     }
     
