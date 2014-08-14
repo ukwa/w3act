@@ -384,7 +384,12 @@ public final class Const {
     public static final String GITHUB = "https://github.com/ukwa/w3act/commits/master/"; 
     public static final String LAST_COMMIT = "/ukwa/w3act/commit/"; 
 	
-	// Types of the JSON nodes
+	/**
+	 * Database associations
+	 */
+    public static final String SUBJECT_TARGET = "subject_target"; 
+
+    // Types of the JSON nodes
 	public enum NodeType {
         URL, 
 		COLLECTION,

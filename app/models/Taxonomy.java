@@ -9,6 +9,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -22,6 +24,7 @@ import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.JoinColumn;
 
 /**
  * Taxonomy entity managed by Ebean
@@ -32,16 +35,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Taxonomy extends Model {
      
     @Id
+    @Column(name="ID")
     public Long tid;
 
     //bi-directional many-to-many association to Target
-//    @ManyToMany(cascade=CascadeType.PERSIST)
-//  @ManyToMany(mappedBy="subject_to_target", cascade=CascadeType.PERSIST)
-    @OneToMany(mappedBy="subject_to_target", cascade=CascadeType.PERSIST)
-//	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "id_target") },
-//	inverseJoinColumns = { @JoinColumn(name = "id_taxonomy") }) 
+    @ManyToMany
+	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="ID") },
+		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
     private List<Target> targets = new ArrayList<Target>();
-     
+ 
     public List<Target> getTargets() {
     	return this.targets;
     }
@@ -1112,6 +1114,27 @@ public class Taxonomy extends Model {
         return res;
 	}
 	
+	/**
+	 * This method retrieves selected subjects from target object.
+	 * @param targetUrl
+	 * @return
+	 */
+	public static List<Taxonomy> convertUrlsToObjects(String urls) {
+		List<Taxonomy> res = new ArrayList<Taxonomy>();
+   		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
+	    	String[] parts = urls.split(Const.COMMA + " ");
+	    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+	    		Taxonomy subject = findByUrl(part);
+	    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+//			    	Logger.info("subject name: " + subject.name);
+	    			res.add(subject);
+	    		}
+	    	}
+    	}
+		return res;
+	}       
+    	
     public String toString() {
         return "Taxonomy(" + tid + ") with name: " + name;
     }

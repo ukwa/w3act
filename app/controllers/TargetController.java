@@ -37,6 +37,7 @@ import views.html.targets.blank;
 import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlUpdate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -129,7 +130,7 @@ public class TargetController extends AbstractController {
         	} else {
         		targetObj.field_subject = subjectListStr;
         	}
-        	targetObj.updateSubject();
+//        	targetObj.updateSubject();
     		Logger.debug("targetObj.field_subject: " + targetObj.field_subject);
         } else {
         	targetObj.field_subject = Const.NONE;
@@ -372,8 +373,8 @@ public class TargetController extends AbstractController {
     		newTarget.updateOrganisation();
             newTarget.field_collection_categories = target.field_collection_categories;
     		newTarget.updateCollection();
-            newTarget.field_subject = target.field_subject;
-    		newTarget.updateSubject();
+//            newTarget.field_subject = target.field_subject;
+//    		newTarget.updateSubject();
             newTarget.field_license = target.field_license;
     		newTarget.updateLicense();
             newTarget.title = getFormParam(Const.TITLE);
@@ -444,7 +445,8 @@ public class TargetController extends AbstractController {
 //    	  			return info();            		
             	}
             	newTarget.field_subject = subjectListStr;
-            	newTarget.updateSubject();
+            	newTarget.subject_to_target = Taxonomy.convertUrlsToObjects(newTarget.field_subject);
+//            	newTarget.updateSubject();
         		Logger.debug("newTarget.field_subject: " + newTarget.field_subject);
             } else {
             	newTarget.field_subject = Const.NONE;
@@ -628,9 +630,25 @@ public class TargetController extends AbstractController {
                 target.organisation_to_target = null;
                 target.collection_to_target = null;
                 target.subject_to_target = null;
-//                target.subject_to_target.clear();
+//              target.subject_to_target.clear();
+//            	List<Taxonomy> toDelete = Taxonomy.convertUrlsToObjects(target.field_subject);
+//                target.subject_to_target.remove(toDelete);
+//    	        Taxonomy toDelete = Taxonomy.find.where().eq(Const.URL, url).findUnique();
+//                Ebean.delete(target.subject_to_target);
+//                target.subject_to_target.remove(target.subject_to_target);
+                Utils.removeAssociationFromDb(Const.SUBJECT_TARGET, target.nid);
                 target.flag_to_target = null;
                 target.tag_to_target = null;
+                Logger.info("+++ subject_to_target object before target nid: " + target.nid + ", update: " + target.subject_to_target);
+//            	List<Taxonomy> subjects = target.subject_to_target;
+//            	Iterator<Taxonomy> itrUpdateSubjects = subjects.iterator();
+//            	while (itrUpdateSubjects.hasNext()) {
+//            		Taxonomy subjectToUpdate = itrUpdateSubjects.next();
+//            		Logger.info("+++ subject_to_target before target update: " + subjectToUpdate.toString());
+//            		subjectToUpdate.getTargets().remove(target.nid);
+//            		break;
+//            	}
+//            	target.subject_to_target = null;
             	Ebean.update(target);
         	}
         	if (newTarget.field_url != null) {
@@ -658,6 +676,11 @@ public class TargetController extends AbstractController {
         	newTarget.isInScopeIpValue               = newScope;
         	newTarget.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(newTarget.field_url, newTarget.url);
         	
+        	List<Taxonomy> subjects = newTarget.subject_to_target;
+        	Iterator<Taxonomy> itrSubjects = subjects.iterator();
+        	while (itrSubjects.hasNext()) {
+        		Logger.info("+++ subject_to_target before target save: " + itrSubjects.next().toString());
+        	}
         	Ebean.save(newTarget);
         	try {
 	            /**

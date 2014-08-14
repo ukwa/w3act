@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlUpdate;
+
 import play.Logger;
 import uk.bl.Const;
 
@@ -539,6 +542,17 @@ public class Utils {
     		res = str.substring(0, commaPos - 1);
     	}
     	return res;
+    }
+    
+    /**
+     * This method removes associations from join table in database
+     * for given table name and id in the case of ManyToMany association.
+     * @param tableName
+     * @param id
+     */
+    public static void removeAssociationFromDb(String tableName, Long id) {
+        SqlUpdate removeOldAssociation = Ebean.createSqlUpdate("DELETE FROM " + tableName + " WHERE id_target = " + id);
+        removeOldAssociation.execute();     	
     }
 }
 

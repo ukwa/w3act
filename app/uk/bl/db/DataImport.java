@@ -143,7 +143,8 @@ public enum DataImport {
                     // Create association between Target and DCollection
                     target.updateCollection();
                     // Create association between Target and Subject (Taxonomy)
-                    target.updateSubject();
+//                    target.updateSubject();
+                	target.subject_to_target = Taxonomy.convertUrlsToObjects(target.field_subject);
                     // Create association between Target and License (Taxonomy)
                     target.updateLicense();
                     // Create association between Target and Flag
