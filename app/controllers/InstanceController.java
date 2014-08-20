@@ -257,6 +257,9 @@ public class InstanceController extends AbstractController {
         newInstance.keywords = getFormParam(Const.KEYWORDS);
 //        Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
         newInstance.synonyms = getFormParam(Const.SYNONYMS);
+        if (getFormParam(Const.FIELD_QA_STATUS) != null) {
+        	newInstance.field_qa_status = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
+        }             
         if (getFormParam(Const.QA_STATUS) != null) {
         	if (!getFormParam(Const.QA_STATUS).toLowerCase().contains(Const.NONE)) {
         		Logger.info("Instance qa status: " + getFormParam(Const.QA_STATUS));
@@ -564,6 +567,9 @@ public class InstanceController extends AbstractController {
             newInstance.keywords = getFormParam(Const.KEYWORDS);
 //            Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
             newInstance.synonyms = getFormParam(Const.SYNONYMS);
+            if (getFormParam(Const.FIELD_QA_STATUS) != null) {
+            	newInstance.field_qa_status = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
+            }             
             if (getFormParam(Const.QA_STATUS) != null) {
             	if (!getFormParam(Const.QA_STATUS).toLowerCase().contains(Const.NONE)) {
             		Logger.info("Instance qa status: " + getFormParam(Const.QA_STATUS));
