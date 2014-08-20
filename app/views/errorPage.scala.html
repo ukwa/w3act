@@ -41,7 +41,11 @@
 		</div>
 		
 		<blockquote>
+		@if(t.getMessage.contains("PersistenceException") && t.getMessage.contains("foreign key constraint")) {
+			<p>It is not possible to delete that object because it is referenced by another object in the database</p>
+		} else {
 			<p>@t.getMessage</p>
+		}
 		</blockquote>
 
 	</div>
