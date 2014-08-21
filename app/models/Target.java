@@ -2016,8 +2016,8 @@ public class Target extends Model {
 			}
 		}
 
-		Logger.debug("getUkwaLicenceStatusList() targets result list size: " + res.size());
-		return res;
+		Logger.debug("getUkwaLicenceStatusList() targets result list size: " + results.size());
+		return results;
 	}
 	
   /**
