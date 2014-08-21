@@ -179,6 +179,7 @@ public enum DataImport {
                     permission.updateRole();
         			Ebean.update(permission);
 	            }
+                Logger.info("+++ Data import completed +++");
 	        } catch (Exception e) {
             	Logger.info("Store error: " + e);
             }
