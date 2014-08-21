@@ -19,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -1961,6 +1963,19 @@ public class Target extends Model {
 		return res;
 	}
 	    
+	public boolean isHigherLevel(String iterUrl) {
+		return (this.field_url.contains(iterUrl) && this.field_url.indexOf(iterUrl) == 0 && this.field_url.length() > iterUrl.length());
+	}
+
+	public boolean validQAStatus(Target target) {
+		Logger.info("validQAStatus field_url: " + target.field_url);
+		return (qa_status != null && target.qa_status.length() > 0 && !target.qa_status.toLowerCase().equals(Const.NONE));
+	}
+	
+	public boolean indicateUkwaLicenceStatus() {
+		return this.getUkwaLicenceStatusList().size() > 0;
+	}
+	
 	/**
 	 * This method should give a list of the Target records, which have an Open UKWA 
 	 * Licence request in progress for a target at a higher level in the domain. 
@@ -1968,47 +1983,47 @@ public class Target extends Model {
 	 * any value except None.
 	 * @return target list
 	 */
-	public static List<Target> getUkwaLicenceStatusList(String fieldUrl) {
-		List<Target> res = new ArrayList<Target>();
-		List<Target> targets = new ArrayList<Target>();
-		Logger.debug("getUkwaLicenceStatusList() field URL: " + fieldUrl);
-		if (fieldUrl != null && fieldUrl.length() > 0) {
-			Logger.debug("getUkwaLicenceStatusList() fieldUrl: " + fieldUrl);
-	        fieldUrl = Scope.normalizeUrl(fieldUrl);
-	        String domain = Scope.getDomainFromUrl(fieldUrl);
+	public List<Target> getUkwaLicenceStatusList() {
+		List<Target> results = new ArrayList<Target>();
+		if (StringUtils.isNotEmpty(this.field_url)) {
+			// first aggregate a list of active targets for associated URL
+			Logger.debug("getUkwaLicenceStatusList() fieldUrl: " + this.field_url);
+			this.field_url = Scope.normalizeUrl(this.field_url);
+	        String domain = Scope.getDomainFromUrl(this.field_url);
 			Logger.debug("getUkwaLicenceStatusList() domain: " + domain);
-	        ExpressionList<Target> ll = find.where()
-	        		.icontains(Const.FIELD_URL_NODE, domain)
+			// get me Targets that contain the same domain so I can check the licenses. i.e higher level
+	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, domain)
 		    		.eq(Const.ACTIVE, true);
-			targets = ll.findList();
-		}
-		Logger.debug("getUkwaLicenceStatusList() targets list size: " + targets.size());
+	        List<Target> targets = ll.findList();
+	        
+			Logger.info("Targets containing domain "  + domain + " - " + targets.size());
 
-		/**
-		 * Check that no request is in progress and the domain is of higher level.
-		 */
-		Iterator<Target> itr = targets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-//			Logger.info(
-//					"getUkwaLicenceStatusList() check that no request is in progress and the domain is of higher level. qa_status: " + 
-//							target.qa_status + ", target.field_url: " + target.field_url + 
-//							", isHigherLevel: " + isHigherLevel(target.field_url, fieldUrl));
-			if (target.qa_status != null 
-					&& target.qa_status.length() > 0 
-					&& !target.qa_status.toLowerCase().equals(Const.NONE)
-					&& isHigherLevel(target.field_url, fieldUrl)) {
-				res.add(target);
+			/**
+			 * Check that the domain is of higher level.
+			 */
+			Iterator<Target> itr = targets.iterator();
+			while (itr.hasNext()) {
+				Target target = itr.next();
+				// Then for each target from selected list look if ‘qa_status’ field is not empty. If it is not empty then we know a crawl permission request has already been sent.
+				// also check if this target has a valid license too
+				// Then look if it is a target of a higher level domain analyzing given URL.
+				// license field checked as required in issue 176.
+				Logger.info("validQAStatus: " + validQAStatus(target));
+				// higher level domain and has a license or higher level domain and has pending qa status
+				if ((isHigherLevel(target.field_url) && StringUtils.isNotBlank(target.field_license)) || (isHigherLevel(target.field_url) && validQAStatus(target))) {
+					results.add(target);
+				}
 			}
 		}
+
 		Logger.debug("getUkwaLicenceStatusList() targets result list size: " + res.size());
 		return res;
 	}
 	
-    /**
-     * This method updates foreign key mapping between a Target and an Organisation.
-     */
-    public void updateOrganisation() {
+  /**
+   * This method updates foreign key mapping between a Target and an Organisation.
+   */
+  public void updateOrganisation() {
 		if (field_nominating_organisation != null
 				&& field_nominating_organisation.length() > 0) {
 			Organisation organisation = Organisation.findByUrl(field_nominating_organisation);
@@ -2016,7 +2031,7 @@ public class Target extends Model {
             this.organisation_to_target = organisation;
 		}
     	
-    }
+  }
 	
 }
 

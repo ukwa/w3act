@@ -814,11 +814,11 @@
 					</div>
 		     	</div>	
 
-				@if(Targets.indicateUkwaLicenceStatus(target.field_url)) {    	
+				@if(target.indicateUkwaLicenceStatus) {    	
 				<div class="padding-20">
 					<div class="alert alert-info">
 						NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
-						@for(targetObj <- Target.getUkwaLicenceStatusList(target.field_url)) {
+						@for(targetObj <- target.getUkwaLicenceStatusList) { 
 							<p><a href="@routes.Targets.view(targetObj.url)">@targetObj.title @targetObj.field_url</a></p>
 						}
 					</div>

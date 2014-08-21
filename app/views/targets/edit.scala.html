@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @(form: Form[Target], user: User)
 
 @script = {
@@ -1263,3 +1264,1259 @@
 	}
 }
 
+=======
+@(form: Form[Target], user: User)
+
+@script = {
+	<script>	
+		(function() {
+	          var idle_timeout,
+	          SCOPE_URI = '/api/scope',
+	          MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
+	          TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+	          IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+        
+	          // Does the Scope lookup
+	          var doScope = function(text) {
+	              $.getJSON(SCOPE_URI + text, function(data) {
+	              //alert("Is in scope: " + data);
+	              var lab = document.querySelector('isInScope'); 
+	              if (data) {
+		              lab.innerHTML = "is in scope";
+		              lab.style = "color: green";
+	              } else {
+		              lab.innerHTML = "is not in scope";
+		              lab.style = "color: red";
+	              }
+	            });
+	          };
+	          
+	          // Restarts the keyboard-idleness timeout
+	          var restartIdleTimeout = function(text) {
+	            if (idle_timeout)
+	              window.clearTimeout(idle_timeout);
+	            
+	            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
+	          };		
+	          
+			  $("#field_url").keyup(function() {
+					var text = $('input[name=field_url]').val();
+					
+				    if (text.length > MIN_TEXT_LENGTH) {
+				        restartIdleTimeout(text);
+				
+				    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+				        	doScope(text);
+				    }
+			  });
+
+		      SUGGESTED_COLLECTION_URI = '@routes.TargetController.getSuggestedCollections(form("url").value)';
+              $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
+              	$("#tree3").dynatree({
+                	checkbox: true,
+                	selectMode: 2,
+                	children: data,
+                	onSelect: function(select, node) {
+                  		// Get a list of all selected nodes, and convert to a key array:
+                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+                    		return node.data.key;
+                  		});
+                  		document.getElementById('treeKeys').value = selKeys.join(", ");
+                  		// Get a list of all selected TOP nodes
+                  		var selRootNodes = node.tree.getSelectedNodes(true);
+                  		// ... and convert to a key array:
+                  		var selRootKeys = $.map(selRootNodes, function(node){
+                    		return node.data.key;
+                  		});
+                	}
+              	});
+             })
+             //.error(function(e) { alert('error'); alert(e); });
+
+		      SUBJECTS_URI = '@routes.TargetController.getSubjectTree(form("url").value)';
+	          $.getJSON(SUBJECTS_URI, function(data) {    	
+	            	$("#subjectTree").dynatree({
+	              	checkbox: true,
+	              	selectMode: 2,
+	              	children: data,
+	              	onSelect: function(select, node) {
+	                		// Get a list of all selected nodes, and convert to a key array:
+	                		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+	                  		return node.data.key;
+	                		});
+	                		document.getElementById('field_subject').value = selKeys.join(", ");
+	                		// Get a list of all selected TOP nodes
+	                		var selRootNodes = node.tree.getSelectedNodes(true);
+	                		// ... and convert to a key array:
+	                		var selRootKeys = $.map(selRootNodes, function(node){
+	                  		return node.data.key;
+	                		});
+	              	}
+	            	});
+	          })	          
+	})();
+		
+      // This is the code that switches to the other page.
+      // We do this via JavaScript, and not a normal hyperlink,
+      // because that way we can communicate the current nav pill status as part of the link URL.
+      function switchPage() {
+        var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
+        var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
+        
+  		// pass the current tab to the save method in order to load page in the same tab
+  		document.getElementById('tabstatus').value = activeTab.find('a').attr('href');
+        //alert(document.getElementById('tabstatus').value);
+        
+        // And finally we just attach the href to view.html and forward the browser. 
+        // An example URL would be: 'view.html#npld-scope'
+        window.location.href="@routes.Targets.view(form("url").value)" + href;
+      }
+    
+      $(document).ready(function() {
+        // This happens right after the document is loaded.
+        // Our nav pills won't do anything by themselves, so we need to make sure we
+        // check if the current URL has a #-component and if so, we activate the
+        // appropriate pill.
+        var hash = window.location.hash;
+        if (hash.indexOf('#') == 0) {
+          // We have a hash - let's see if it matches with nav pill href
+          var el = $('#myNavbar a[href=' + hash + ']');
+        
+    	  // pass the current tab to the save method in order to load page in the same tab
+          document.getElementById('tabstatus').value = hash;
+          //alert(document.getElementById('tabstatus').value);
+
+    	  // We have an <a> with this ID, and it has a parent node that's an <li>
+          if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
+            // So we activate this nav pill
+            $(el).tab('show');
+            window.scrollTo(0, 0);
+          }
+        } else {
+        	//console.log('tabstatus after validation: ' + document.getElementById('tabstatus').value);
+        	var valtab = document.getElementById('tabstatus').value;
+            if (valtab.indexOf('#') == 0) {
+                // We have a hash - let's see if it matches with nav pill href
+                var valel = $('#myNavbar a[href=' + valtab + ']');
+              
+          	    // We have an <a> with this ID, and it has a parent node that's an <li>
+                if (valel && valel.parent() && valel.parent().prop('tagName') == 'LI') {
+                  // So we activate this nav pill
+                  $(valel).tab('show');
+                  window.scrollTo(0, 0);
+                }
+            } 
+        }
+        
+        // This is completely optional!! But it keeps the hash in our current URL bar
+        // in sync with the tab we have selected, so the pages stay nice and bookmarkable
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+          window.location.hash = ($(e.target).attr('href'));
+          document.getElementById('tabstatus').value = ($(e.target).attr('href'));
+          //alert(document.getElementById('tabstatus').value);
+          window.scrollTo(0, 0);
+        })
+      });		
+	</script>
+}
+
+@style = {
+    <style>
+    #tab-content {
+      padding:20px;
+    }
+    
+    .tab-pane {
+      padding:20px 0;
+    }
+    </style>
+}
+
+@main("", user, script, style) {
+    
+   	<div class="page-header">
+	    <h1><a href="@routes.Targets.index()">Targets > </a>Target @form("title").value</h1>
+	</div>  
+	
+	<ul class="nav nav-tabs">
+	   @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
+	   <li><a onclick="switchPage(); return false;" href="@routes.Targets.view(form("url").value)">View</a></li>
+	   }
+	   @if(((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) 
+	   		|| (user.hasRole("user") && user.url.equals(form("author").value))) {
+	   <li class="active"><a href="#">Edit</a></li> 
+	   }
+	</ul>
+      
+	<div class="tab-content padding-20">
+	           
+		<ul class="nav nav-pills" id="myNavbar">
+	        <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
+	        <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
+		    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
+			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
+				@if(Target.isInScopeAllWithoutLicense(form("field_url").value, form("url").value)) {
+					<font color="green">(+)</font>
+				} else {
+					<font color="red">(-)</font>
+				}		        
+			</a></li>
+		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing
+		    	@if(Target.hasGrantedLicense(form("url").value)) {
+					<font color="green">(+)</font>
+				} else {
+					<font color="red">(-)</font>
+				}		        
+		    </a></li>
+	  	</ul>
+	</div>
+	@warningmessage(flash)
+	@helper.form(action=routes.TargetController.saveTarget) {
+	
+		<input type="hidden" name="nid" value="@form("nid").value">
+		<input type="hidden" name="url" value="@form("url").value">
+        <input type="hidden" name="user" value="@user.url">	
+		<input type="hidden" id="tabstatus" name="tabstatus" value="@form("tabstatus").value">
+
+		@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {     			     		
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+				    @if(form("author").value != null && user.hasRole("user") 
+				    	&& !user.hasRole("expert_user") 
+				    	&& !user.hasRole("archivist") 
+				    	&& !user.hasRole("sys_admin") 
+				    	&& !user.url.equals(form("author").value)) { 
+					<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
+				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
+					   }
+					} else {
+					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
+				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
+					   }
+					}
+		       </div>
+			</div>
+		</div>
+		}
+
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane padding-20 fade active in" id="overview">
+				<input type="hidden" name="user" value="@user.url">
+	   
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
+						    <div class="col-sm-6">
+				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="Title" type="text" value="@form("title").value">
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
+						    <div class="col-sm-6">
+								<input class="form-control" name="nid" value="@form("nid").value" size="30" readonly>
+							</div>
+						</div>
+					</div>
+		     	</div>
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								Seed URL(s) <font color="red">*</font>
+								<small class="text-center">(One or more URLs, separated by comma)</small>
+							</label>
+						    <div class="col-sm-6">
+								@if(form("field_url").value != null) {
+									<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form("field_url").value">
+								} else {
+									<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form("title").value">
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	 
+		     	    	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Hosting
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.checkUkHosting(form("field_url").value)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK top-level domain
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeDomain(form("field_url").value, form("url").value)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Registration
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeUkRegistration(form("field_url").value)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">QA Status</label>
+						    <div class="col-sm-6">
+								<select name="field_qa_status" id="field_qa_status" class="form-control">
+									@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
+						                @if(form("field_qa_status").value != null && form("field_qa_status").value.contains(taxonomy.url)) {             
+										 	<option selected>@taxonomy.name</option>
+									 	} else {
+										 	<option>@taxonomy.name</option>
+									 	}									 	
+								    }	
+                                </select>
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If known, please add the current status of the site)</small></label>
+						    <div class="col-sm-6">
+								<label class="radio-inline">
+							  		@if(form("field_live_site_status").value != null && form("field_live_site_status").value.equals("N/A")) {
+							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio" checked="checked"> N/A
+							        } else {
+							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio"> N/A
+							        }
+								</label>
+								<label class="radio-inline">
+							  		@if(form("field_live_site_status").value != null && form("field_live_site_status").value.equals("Still live")) {
+							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio" checked="checked"> Still live 
+							        } else {
+							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio"> Still live 
+							        }
+								</label>
+								<label class="radio-inline">
+							  		@if(form("field_live_site_status").value != null && form("field_live_site_status").value.equals("No longer updated")) {
+							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio" checked="checked"> No longer updated 
+							        } else {
+							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio"> No longer updated 
+							        }
+								</label>
+								<label class="radio-inline">
+							  		@if(form("field_live_site_status").value != null && form("field_live_site_status").value.equals("Vanished")) {
+							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio" checked="checked"> Vanished
+							        } else {
+							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio"> Vanished
+							        }
+								</label>
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
+						    <div class="col-sm-6">
+				                @if(form("field_key_site").value != null && form("field_key_site").value == "true") {             
+					                <input type="checkbox" name="keysite" value="true" checked />
+				                } else {
+					                <input type="checkbox" name="keysite" value="true"/>
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>	     
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
+						    <div class="col-sm-6">
+	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" value="@form("field_wct_id").value">
+			              	} else {
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@form("field_wct_id").value">
+			              	}
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
+						    <div class="col-sm-6">
+	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" value="@form("field_spt_id").value">
+			              	} else {
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@form("field_spt_id").value">
+			                }
+							</div>
+						</div>
+					</div>
+		     	</div>
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="keywords" class="col-sm-6 control-label">Keyword(s) <small class="text-center">(The multiple private uncontrolled keywords)</small></label>
+						    <div class="col-sm-6">
+		 				  		<input id="keywords" type="text" name="keywords" value="@form("keywords").value" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+	
+		   		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
+						    <div class="col-sm-6">
+								<select multiple name="tags" id="tags" class="form-control">
+					                @for(tag <- Tag.findAll()) {
+						                @if(form("tags").value != null && form("tags").value.contains(tag.url)) {
+						                	<option selected>@tag.name</option>
+						                } else {
+						                	<option>@tag.name</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="Synonyms" class="col-sm-6 control-label">Synonyms <small class="text-center">(The synonyms support manual logging of identical content hosted on multiple domains)</small></label>
+						    <div class="col-sm-6">
+		 				  		<input type="text" name="synonyms" value="@form("synonyms").value" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+			</div>
+			
+		    <div class="tab-pane fade" id="metadata">
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputDescription" class="col-sm-6 control-label">Description <small class="text-center">(A description of this web site)</small></label>
+						    <div class="col-sm-6">
+				            	<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" value="@form("field_description").value">@form("field_description").value</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>		    
+		    
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject. To select more than one, hold down the CTRL key.)</small></label>
+						    <div class="col-sm-6">
+			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || (form("author").value != null && user.url.equals(form("author").value))) {
+							  <div id="subjectTree"></div>
+							  <input type="hidden" id="field_subject" name="field_subject" value="@form("field_subject").value">
+							  } else {
+							        @if(form("url").value != null) {
+	  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjects(form("url").value))
+								        <input type="hidden" id="field_subject" name="field_subject" value="@form("field_subject").value">
+	  								} else {
+	  								    none
+								        <input type="hidden" id="field_subject" name="field_subject" value="none">
+	  								}
+		     	              }	   
+							</div>
+						</div>
+					</div>
+		     	</div>	   
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
+						    <div class="col-sm-6">
+			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+							  <div id="tree3"></div>
+							  <input type="hidden" id="treeKeys" name="treeKeys" value="@form("field_collection_categories").value">
+							  } else {
+							        @if(form("url").value != null) {
+	  									@DCollection.getCollectionsAsString(DCollection.getSelectedCollections(form("url").value))
+	  								} else {
+	  								    none
+	  								}
+		     	              }	   
+							</div>
+						</div>
+					</div>
+		     	</div>	   
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
+						    <div class="col-sm-6">
+								<select name="organisation" id="mySel" class="form-control">
+					            	<option>None</option>
+					                @for(organisation <- Organisation.findAll()) {
+						                @if(organisation.title.equals(Organisation.findByUrl(form("field_nominating_organisation").value).title)) {
+							                <option selected>@organisation.title</option>
+							            } else {
+						                    <option>@organisation.title</option>
+										}					            
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputAuthors" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
+						    <div class="col-sm-6">
+				            	<textarea class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@form("originating_organisation").value">@form("originating_organisation").value</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>		    		    
+     			     		
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
+						    <div class="col-sm-6">
+								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+							  		<select name="author" id="userSel" class="form-control">
+							  	} else {
+							  		<select name="author" id="userSel" disabled class="form-control">
+							  	}
+					            @for(selUser <- User.findAll()) {
+						        	@if((form("author").value != null && selUser.url.equals(form("author").value))
+						            	|| (form("author").value == null && selUser.url.equals(user.url))) {
+							            <option selected>@selUser.name</option>
+									} else {
+						            	<option>@selUser.name</option>
+									}
+								}
+									</select>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="status" class="col-sm-6 control-label">Language <small class="text-center">(The predominant language in which the page is written)</small></label>
+						    <div class="col-sm-6">
+								<select name="language" id="language" class="form-control">
+					                @for(language <- Target.getAllLanguage()) {
+						                @if(language.equals(form("language").value)) {
+						                	<option selected>@form("language").value</option>
+						                } else {
+						                	<option>@language</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+		     	
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {     			     		
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputAuthors" class="col-sm-6 control-label">Author(s) <small class="text-center">(A named individual responsible for creating the content)</small></label>
+						    <div class="col-sm-6">
+				            	<textarea class="form-control" name="authors" id="authors" cols="100" rows="1" value="@form("authors").value">@form("authors").value</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>		    		    
+     			     		
+		   		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
+						    <div class="col-sm-6">
+						        @for(flag <- Flag.findAll()) {
+									<label class="checkbox-inline">
+						                @if(form("flags").value != null && form("flags").value.contains(flag.name)) {
+						                	<input type="checkbox" name="@flag.name" value="true" checked />
+						                } else {
+						                	<input type="checkbox" name="@flag.name" value="true" />
+						                }
+						                @Flags.getGuiName(flag.name)
+					                </label>
+					            }
+							</div>
+						</div>
+					</div>
+		     	</div>	     		
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="inputFlagNotes" class="col-sm-6 control-label">Flag notes <small class="text-center">(More details about the flagged issue)</small></label>
+						    <div class="col-sm-6">
+				            	<textarea class="form-control" name="flag_notes" id="flag_notes" cols="100" rows="1" value="@form("flag_notes").value">@form("flag_notes").value</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>		    		    
+		     	}	   
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Date of publication</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="date_of_publication" value="@form("date_of_publication").value" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Justification <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
+						    <div class="col-sm-6">
+				            	<textarea class="form-control" name="justification" id="inputJustification" cols="100" rows="1" value="@form("justification").value">@form("justification").value</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	}	     			     
+
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
+						    <div class="col-sm-6">
+								<select name="selection_type" id="selection_type" class="form-control">
+					                @for(selection_type <- Target.getAllSelectionTypes()) {
+						                @if(selection_type.equals(form("selection_type").value)) {
+						                	<option selected>@form("selection_type").value</option>
+						                } else {
+						                	@if(form("selection_type").value == null && selection_type.equals("SELECTION")) {
+						                	<option selected>@selection_type</option>
+						                	} else {
+						                	<option>@selection_type</option>
+						                	}
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>		   
+		     			     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(This field allows further notes to selection for WA team, not captured in Justification field.)</small></label>
+						    <div class="col-sm-6">
+				            	<textarea class="form-control" name="selector_notes" id="input_selector_notes" cols="100" rows="1" value="@form("selector_notes").value">@form("selector_notes").value</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="legacy_cite_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
+						    <div class="col-sm-6">
+			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form("legacy_site_id").value">
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+			</div>
+			
+			<div class="tab-pane fade" id="crawlpermission">
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
+						</div>
+					</div>
+		     	</div>
+				<div class="padding-20">
+					<div class="alert alert-info">
+						In order to be considered as in scope for Non-Print Legal Deposit, a resource must pass one of a series of tests.
+					</div>
+				</div>		
+				
+				@if(Targets.indicateNpldStatus(form("field_url").value)) {    	
+				<div class="padding-20">
+					<div class="alert alert-info">
+						NB. There are other records within this domain for which data has already been provided.
+						@for(targetObj <- Target.getNpldStatusList(form("field_url").value)) {
+							<p><a href="@routes.Targets.view(targetObj.url)">@targetObj.title @targetObj.field_url</a></p>
+						}
+					</div>
+				</div>	
+				}	     	
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Hosting
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.checkUkHosting(form("field_url").value)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK top-level domain
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeDomain(form("field_url").value, form("url").value)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputUrls" class="col-sm-6 control-label">
+								UK Registration
+							</label>
+						    <div class="col-sm-6">
+								@if(Target.isInScopeUkRegistration(form("field_url").value)) {
+					            	<font id="isInScope" style="color: green">yes</font>
+								} else {
+									<font id="isInScope" style="color: red">no</font>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>	     	
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
+						    <div class="col-sm-6">
+				                @if(form("field_uk_postal_address").value != null && form("field_uk_postal_address").value == "true") {             
+					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
+				                } else {
+					                <input type="checkbox" name="field_uk_postal_address" value="true" />
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>		     				     	
+
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="field_uk_postal_address_url" value="@form("field_uk_postal_address_url").value" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
+						    <div class="col-sm-6">
+				                @if(form("field_via_correspondence").value != null && form("field_via_correspondence").value == "true") {             
+					                <input type="checkbox" name="field_via_correspondence" value="true" checked/>
+				                } else {
+					                <input type="checkbox" name="field_via_correspondence" value="true" />
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>		
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Via Correspondence: Notes <small class="text-center">(Please record details of correspondence with site owner)</small></label>
+						    <div class="col-sm-6">
+		 						<textarea name="field_notes" cols="100" rows="1" class="form-control">@form("value").value</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
+						    <div class="col-sm-6">
+				                @if(form("field_professional_judgement").value != null && form("field_professional_judgement").value == "true") {             
+					                <input type="checkbox" name="field_professional_judgement" value="true" checked/>
+				                } else {
+					                <input type="checkbox" name="field_professional_judgement" value="true" />
+				                }
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
+						    <div class="col-sm-6">
+			 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@form("field_professional_judgement_exp").value</textarea>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+		     	}
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
+						    <div class="col-sm-6">
+				                @if(form("field_no_ld_criteria_met").value != null && form("field_no_ld_criteria_met").value == "true") {             
+					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked/>
+				                } else {
+				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true" />
+				                }
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+	        </div>
+	        
+	        <div class="tab-pane fade" id="crawlpolicy">
+
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
+						    <div class="col-sm-6">
+								<select name="field_scope" id="field_scope" class="form-control">
+					                @for(field_scope <- Target.getAllScopeTypes()) {
+						                @if(field_scope.equals(form("field_scope").value)) {
+						                	<option selected>@Targets.getScopeGuiName(form("field_scope").value)</option>
+						                } else {
+						                	<option>@Targets.getScopeGuiName(field_scope)</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
+						    <div class="col-sm-6">
+								<select name="field_depth" id="field_depth" class="form-control">
+					                @for(field_depth <- Target.getAllDepthTypes()) {
+						                @if(field_depth.equals(form("field_depth").value)) {
+						                	<option selected>@Targets.getDepthGuiName(form("field_depth").value)</option>
+						                } else {
+						                	<option>@Targets.getDepthGuiName(field_depth)</option>
+						                }
+					                }
+								</select>
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
+						    <div class="col-sm-6">
+				                @if(form("field_ignore_robots_txt").value != null && form("field_ignore_robots_txt").value == "true") {             
+					                <input type="checkbox" name="field_ignore_robots_txt" value="true" checked />
+				                } else {
+					                <input type="checkbox" name="field_ignore_robots_txt" value="true"/>
+				                }
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+		     	
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
+						    <div class="col-sm-6">
+				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Domain Crawl Only")) {
+					 					<option selected>Domain Crawl Only</option>
+						            } else {						                
+					 					<option>Domain Crawl Only</option>
+					                }
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Annually")) {
+					 					<option selected>Annually</option>
+						            } else {						                
+					 					<option>Annually</option>
+					                }
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Six-monthly")) {
+					 					<option selected>Six-monthly</option>
+						            } else {						                
+					 					<option>Six-monthly</option>
+					                }
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Quarterly")) {
+					 					<option selected>Quarterly</option>
+						            } else {						                
+					 					<option>Quarterly</option>
+					                }
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Monthly")) {
+					 					<option selected>Monthly</option>
+						            } else {						                
+					 					<option>Monthly</option>
+					                }
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Old-Monthly-DO-NOT-USE")) {
+					 					<option selected>Old-Monthly-DO-NOT-USE</option>
+						            } else {						                
+					 					<option>Old-Monthly-DO-NOT-USE</option>
+					                }
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Weekly")) {
+					 					<option selected>Weekly</option>
+						            } else {						                
+					 					<option>Weekly</option>
+					                }
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Daily")) {
+					 					<option selected>Daily</option>
+						            } else {						                
+					 					<option>Daily</option>
+					                }
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Never Crawl")) {
+					 					<option selected>Never Crawl</option>
+						            } else {						                
+					 					<option>Never Crawl</option>
+					                }
+				 				</select>
+				 			</div>
+						</div>
+					</div>
+		     	</div>	
+		     	
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Start date</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="field_crawl_start_date" value="@Targets.showDate(form("field_crawl_start_date").value)" size="30" maxlength="2048" class="form-control" id="start-date"/>
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">End date</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="field_crawl_end_date" value="@Targets.showDate(form("field_crawl_end_date").value)" size="30" maxlength="2048" class="form-control" id="end-date"/>
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">White list</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="white_list" value="@form("white_list").value" size="30" maxlength="2048" class="form-control" />
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Black list</label>
+						    <div class="col-sm-6">
+		 						<input type="text" name="black_list" value="@form("black_list").value" size="30" maxlength="2048" class="form-control" />
+	                		</div>
+						</div>
+					</div>
+		     	</div>	
+		     			     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label"></label>
+						    <div class="col-sm-6">
+								@if(form("url").value != null && Target.existInDb(form("url").value)) {
+									@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+								<button type="submit" name="archive" class="btn btn-success">Archive this now</button>
+									}
+								} else {
+								<button disabled type="submit" name="archive" class="btn btn-success">Archive this now</button>
+								<div class="padding-20">
+									<div class="alert alert-info">
+										Before you can archive this target, you need to save the target record.
+									</div>
+								</div>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>
+				}		     	
+	        </div>
+	        
+	        <div class="tab-pane fade" id="licensing">
+			
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site is archived and made available)</small></label>
+						    <div class="col-sm-6">
+					    	    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+								<select multiple name="license" id="edit-field-license" class="form-control" size="2">
+								} else {
+								<select name="license" id="edit-field-license" class="form-control" size="2" disabled>
+								}
+								 	<option>None</option>
+								    @for(taxonomy <- Targets.getLicenses()) {
+						                @if(form("field_license").value != null && form("field_license").value.contains(taxonomy.url)) {             
+										 	<option selected>@taxonomy.name</option>
+									 	} else {
+										 	<option>@taxonomy.name</option>
+									 	}									 	
+								    }	
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>	
+
+				@if(form.get.indicateUkwaLicenceStatus) {    	
+				<div class="padding-20">
+					<div class="alert alert-info">
+						NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
+						@for(targetObj <- form.get.getUkwaLicenceStatusList) { 
+							<p><a href="@routes.Targets.view(targetObj.url)">@targetObj.title @targetObj.field_url</a></p>
+						}
+					</div>
+				</div>	
+				}	     			     	
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
+						    <div class="col-sm-6">
+						        @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+								<select name="qa_status" id="qa_status" class="form-control">
+								} else {
+								<select disabled name="qa_status" id="qa_status" class="form-control">
+								}
+									<option>None</option>
+					                @for(status <- CrawlPermission.getAllStatus()) {
+						                @if(status.equals(form("qa_status").value)) {
+						                	<option selected>@status</option>
+						                } else {
+						                	<option>@status</option>
+						                }
+					                }
+								</select>
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label"></label>
+						    <div class="col-sm-6">
+								@if(form("url").value != null && Target.existInDb(form("url").value)
+								    && form("qa_status").value != null 
+								    && (form("qa_status").value.equals("None")
+								    || form("qa_status").value.length() == 0)) {
+									@if(!form.get.indicateUkwaLicenceStatus 
+									    || (form.get.indicateUkwaLicenceStatus 
+									        && ((user.hasRole("sys_admin") 
+									        	|| user.hasRole("archivist")
+									        	|| user.hasRole("expert_user")
+									        	|| user.hasRole("user"))))) {
+								<button type="submit" name="request" class="btn btn-success">Open License Request</button>
+									}
+								   @if(form("url").value != null && (user.hasRole("sys_admin") || user.hasRole("archivist"))) {
+								   <a href="@routes.CrawlPermissions.showCrawlPermissions(form("url").value)">Crawl Permissions</a>
+								   }
+								} else {
+								<button disabled type="submit" name="request" class="btn btn-success">Open License Request</button>
+								<div class="padding-20">
+									<div class="alert alert-info">
+										Before you can request an Open UKWA license, you need to save the target record. You cannot open a new licence request if a request is already queued.
+									</div>
+								</div>
+								}
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	
+			</div>		     		        		     
+	        
+		</div>
+                        
+        <div id="archivistArea" class="revision">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
+					    <div class="col-sm-6">
+			            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" value="@form("archivist_notes").value">@form("archivist_notes").value</textarea>
+						</div>
+					</div>
+				</div>
+	     	</div>	
+		</div>
+
+        <div id="revisionArea" class="revision">
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
+					    <div class="col-sm-6">
+               				<textarea class="form-control" name="revision" id="inputRevision">@form("revision").value</textarea>
+						</div>
+					</div>
+				</div>
+	     	</div>
+		</div>
+
+		<div class="padding-20">
+			<div class="panel-group" id="accordion">
+				<div class="panel panel-primary" id="panels">
+					<div class="panel-heading">
+				    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
+				        	Instances
+						</a>
+					</div>
+					<div id="collapseInstances" class="panel-collapse collapse">
+						<div class="panel-footer">
+							<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@form("field_url").value">In QA Wayback</a>
+						</div>
+					    <div class="panel-footer">
+				        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@form("field_url").value">In Open UK Web Archive</a>
+						</div>
+						<div class="panel-footer">
+							<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@form("field_url").value">In other web archives</a>
+						</div>
+					    <div class="panel-footer">
+				        	<a class="brand" target="_blank" href="@form("field_url").value">Live site</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="padding-20">
+			<div class="alert alert-info">
+				Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+			</div>
+		</div>
+
+		@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {     			     		
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+				    @if(form("author").value != null && user.hasRole("user") 
+				    	&& !user.hasRole("expert_user") 
+				    	&& !user.hasRole("archivist") 
+				    	&& !user.hasRole("sys_admin") 
+				    	&& !user.url.equals(form("author").value)) { 
+					<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
+				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
+					   }
+					} else {
+					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
+				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
+					   }
+					}
+		       </div>
+			</div>
+		</div>
+		}
+	}
+}
+
+>>>>>>> master
