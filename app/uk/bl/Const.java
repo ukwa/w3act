@@ -403,6 +403,7 @@ public final class Const {
     public static final String FLAG_TARGET           = "flag_target"; 
     public static final String TAG_INSTANCE          = "tag_instance"; 
     public static final String FLAG_INSTANCE         = "flag_instance"; 
+    public static final String ROLE_USER             = "role_user"; 
 
     // Types of the JSON nodes
 	public enum NodeType {

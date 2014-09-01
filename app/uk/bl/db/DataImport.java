@@ -131,6 +131,8 @@ public enum DataImport {
 	              	User creator = creatorItr.next();
 //                    Logger.info("Test creator test object: " + creator.toString());
                     creator.updateOrganisation();
+                    // Create association between User and Role
+                	creator.role_to_user = Role.convertUrlsToObjects(creator.roles);
         			Ebean.update(creator);
 	            }                
                 // Create associations for Target

@@ -222,6 +222,7 @@ public class Curators extends AbstractController {
         	user.roles = Const.DEFAULT_ROLE;
         } else {
         	user.roles = roleStr;
+        	user.role_to_user = Role.convertUrlsToObjects(user.roles);
         }
         Logger.info("roleStr: "+ roleStr + ", user.roles: " + user.roles);
         if (getFormParam(Const.REVISION) != null) {
@@ -337,6 +338,7 @@ public class Curators extends AbstractController {
 		        	user.roles = Const.DEFAULT_ROLE;
 		        } else {
 		        	user.roles = roleStr;
+		        	user.role_to_user = Role.convertUrlsToObjects(user.roles);
 		        }
 		        Logger.info("roleStr: "+ roleStr + ", user.roles: " + user.roles);
                 if (getFormParam(Const.REVISION) != null) {
@@ -391,7 +393,9 @@ public class Curators extends AbstractController {
 //           					+ oldUser.email + ", new value: " + user.email);
 //           			return info();
 //           		}
-               	Ebean.update(user);
+                Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.uid);
+                user.role_to_user = null;
+                Ebean.update(user);
         	}
 	        res = redirect(routes.Curators.edit(user.url));
         } 

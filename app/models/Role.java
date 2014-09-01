@@ -25,6 +25,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -50,7 +53,8 @@ public class Role extends Model
 	private static final long serialVersionUID = 5670206529564297517L;
 
 	@Id @JsonIgnore
-    public Long id;
+    @Column(name="ID")
+	public Long id;
     
     //bi-directional many-to-one association to Role
     @OneToMany(mappedBy="role", cascade=CascadeType.PERSIST)
@@ -62,6 +66,20 @@ public class Role extends Model
     
     public void setPermissions(List<Permission> permissionsMap) {
     	this.permissionsMap = permissionsMap;
+    }    
+        
+    //bi-directional many-to-many association to User
+    @ManyToMany
+	@JoinTable(name = Const.ROLE_USER, joinColumns = { @JoinColumn(name = "id_role", referencedColumnName="ID") },
+		inverseJoinColumns = { @JoinColumn(name = "id_user", referencedColumnName="ID") }) 
+    private List<User> users = new ArrayList<User>();
+ 
+    public List<User> getUsers() {
+    	return this.users;
+    }
+    
+    public void setUsers(List<User> users) {
+    	this.users = users;
     }    
         
 	@Required
@@ -327,7 +345,28 @@ public class Role extends Model
     	return res;
     }
     
-    public String toString() {
+	/**
+	 * This method retrieves selected roles from user object.
+	 * @param userUrl
+	 * @return
+	 */
+	public static List<Role> convertUrlsToObjects(String urls) {
+		List<Role> res = new ArrayList<Role>();
+   		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
+	    	String[] parts = urls.split(Const.COMMA + " ");
+	    	for (String part: parts) {
+//		    		Logger.info("part: " + part);
+	    		Role role = findByName(part);
+	    		if (role != null && role.name != null && role.name.length() > 0) {
+//			    	Logger.info("role name: " + role.name);
+	    			res.add(role);
+	    		}
+	    	}
+    	}
+		return res;
+	}       
+    	
+   public String toString() {
         return "Role(" + name + ")" + ", id:" + id;
     }
     

@@ -268,7 +268,7 @@ create table organisation (
 
 create table permission (
   id                        bigint not null,
-  id_permission             bigint,
+  id_role                   bigint,
   name                      TEXT,
   url                       TEXT,
   description               TEXT,
@@ -289,14 +289,14 @@ create table permission_refusal (
 ;
 
 create table role (
-  id                        bigint not null,
+  ID                        bigint not null,
   name                      TEXT,
   url                       TEXT,
   permissions               TEXT,
   description               TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_role primary key (id))
+  constraint pk_role primary key (ID))
 ;
 
 create table tag (
@@ -428,13 +428,13 @@ create table taxonomy_vocabulary (
 ;
 
 create table creator (
-  uid                       bigint not null,
+  ID                        bigint not null,
+  url                       varchar(255),
   id_organisation           bigint,
   email                     varchar(255),
   name                      varchar(255),
   password                  varchar(255),
   field_affiliation         varchar(255),
-  url                       varchar(255),
   edit_url                  varchar(255),
   last_access               varchar(255),
   last_login                varchar(255),
@@ -445,7 +445,7 @@ create table creator (
   roles                     TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_creator primary key (uid))
+  constraint pk_creator primary key (ID))
 ;
 
 
@@ -471,6 +471,12 @@ create table flag_instance (
   id_flag                        bigint not null,
   id_instance                    bigint not null,
   constraint pk_flag_instance primary key (id_flag, id_instance))
+;
+
+create table role_user (
+  id_role                        bigint not null,
+  id_user                        bigint not null,
+  constraint pk_role_user primary key (id_role, id_user))
 ;
 
 create table tag_target (
@@ -546,8 +552,8 @@ alter table crawl_permission add constraint fk_crawl_permission_contactper_3 for
 create index ix_crawl_permission_contactper_3 on crawl_permission (id_contactperson);
 alter table instance add constraint fk_instance_organisation_to_in_4 foreign key (id_organisation) references organisation (nid);
 create index ix_instance_organisation_to_in_4 on instance (id_organisation);
-alter table permission add constraint fk_permission_role_5 foreign key (id_permission) references role (id);
-create index ix_permission_role_5 on permission (id_permission);
+alter table permission add constraint fk_permission_role_5 foreign key (id_role) references role (ID);
+create index ix_permission_role_5 on permission (id_role);
 alter table target add constraint fk_target_organisation_to_targ_6 foreign key (id_organisation) references organisation (nid);
 create index ix_target_organisation_to_targ_6 on target (id_organisation);
 alter table creator add constraint fk_creator_organisation_7 foreign key (id_organisation) references organisation (nid);
@@ -570,6 +576,10 @@ alter table flag_target add constraint fk_flag_target_target_02 foreign key (id_
 alter table flag_instance add constraint fk_flag_instance_flag_01 foreign key (id_flag) references flag (ID);
 
 alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (id_instance) references instance (ID);
+
+alter table role_user add constraint fk_role_user_role_01 foreign key (id_role) references role (ID);
+
+alter table role_user add constraint fk_role_user_creator_02 foreign key (id_user) references creator (ID);
 
 alter table tag_target add constraint fk_tag_target_tag_01 foreign key (id_tag) references tag (ID);
 
@@ -630,6 +640,8 @@ drop table if exists permission cascade;
 drop table if exists permission_refusal cascade;
 
 drop table if exists role cascade;
+
+drop table if exists role_user cascade;
 
 drop table if exists tag cascade;
 

@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -39,11 +40,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="creator")
 public class User extends Model {
 
-	//bi-directional many-to-one association to Organisation
+    @Id @JsonIgnore
+    @Column(name="ID")
+    public Long uid;
+    public String url;
+
+    //bi-directional many-to-one association to Organisation
 	@ManyToOne
 	@JoinColumn(name="id_organisation")
 	public Organisation organisation;
 	
+	//bi-directional many-to-many association to Role
+	@ManyToMany(mappedBy="users")
+	public List<Role> role_to_user = new ArrayList<Role>();
+    	
     @JsonIgnore
     @Constraints.Required
     @Formats.NonEmpty
@@ -57,9 +67,7 @@ public class User extends Model {
     
     @JsonIgnore
     public String field_affiliation;
-    @Id @JsonIgnore
-    public Long uid;
-    public String url;
+
     @JsonIgnore
     public String edit_url;
     @JsonIgnore
