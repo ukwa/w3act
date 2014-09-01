@@ -30,6 +30,7 @@ public final class Const {
 	public static final String DRUPAL_USER     = "drupal_user";
 	public static final String DRUPAL_PASSWORD = "drupal_password";
 	public static final String OUT_FILE_PATH   = "res.txt"; // res files are stored in root directory of the project
+	public static final String TXT_EXT         = ".txt"; 
 	
 	// Names of the JSON nodes
 	public static final String FIRST_PAGE      = "first";
@@ -62,6 +63,11 @@ public final class Const {
 	public static final int PAGINATION_OFFSET     = 10; // offset is a page step from current page for pagination
 	public static final int ROWS_PER_PAGE         = 50;
 	public static final int MAX_USER_COUNT        = 100;
+	public static final int BUFFER_SIZE           = 1024; // 1KB 
+	public static final int MAX_CHUNKS            = 1000;  
+	public static final int BODY_OFFSET           = 3;  
+	public static final int BRACES_OFFSET         = 2;  
+	public static final String ENCODING           = "UTF-8";
 	public static final String WEBARCHIVE_LINK    = "www.webarchive.org.uk"; 
 	public static final String ACT_URL            = "act-";
 	public static final String WCT_URL            = "wct-";

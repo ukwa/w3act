@@ -39,7 +39,7 @@ public class Permission extends Model
     
 	//bi-directional many-to-one association to Role
 	@ManyToOne
-	@JoinColumn(name="id_permission")
+	@JoinColumn(name="id_role")
 	public Role role;
     
     @Required
