@@ -100,7 +100,7 @@ public class Curators extends AbstractController {
     	    	user.name = query;
     	        user.uid = Utils.createId();
     	        user.url = Const.ACT_URL + user.uid;
-    	        user.roles = Const.DEFAULT_ROLE;
+    	    	user.role_to_user = Role.setDefaultRole();
     	        user.email = user.name + "@bl.uk";
     	        Logger.info("add curator entry with url: " + user.url + ", and name: " + user.name);
     			Form<User> userForm = Form.form(User.class);
@@ -124,7 +124,7 @@ public class Curators extends AbstractController {
     	user.name = title;
         user.uid = Target.createId();
         user.url = Const.ACT_URL + user.uid;
-        user.roles = Const.DEFAULT_ROLE;
+    	user.role_to_user = Role.setDefaultRole();
         user.email = user.name + "@bl.uk";
         Logger.info("add curator with url: " + user.url + ", and name: " + user.name);
 		Form<User> userForm = Form.form(User.class);
@@ -219,12 +219,11 @@ public class Curators extends AbstractController {
             }
         }
         if (roleStr.length() == 0) {
-        	user.roles = Const.DEFAULT_ROLE;
+        	user.role_to_user = null;
         } else {
-        	user.roles = roleStr;
-        	user.role_to_user = Role.convertUrlsToObjects(user.roles);
+        	user.role_to_user = Role.convertUrlsToObjects(roleStr);
         }
-        Logger.info("roleStr: "+ roleStr + ", user.roles: " + user.roles);
+        Logger.info("roleStr: "+ roleStr);
         if (getFormParam(Const.REVISION) != null) {
         	user.revision = getFormParam(Const.REVISION);
         }
@@ -289,7 +288,6 @@ public class Curators extends AbstractController {
                 }
                 
         	    user.name = getFormParam(Const.NAME);
-//    	    	user.email = user.name + "@";
         	    if (getFormParam(Const.EMAIL) != null) {
         	    	try {
 	        	    	if (getFormParam(Const.EMAIL).length() > 0 
@@ -315,9 +313,6 @@ public class Curators extends AbstractController {
                 		user.field_affiliation = Const.NONE;
                 	}
                 }
-//                if (getFormParam(Const.ROLES) != null) {
-//                	user.roles = getFormParam(Const.ROLES);
-//                }
                 String roleStr = "";
 		        List<Role> roleList = Role.findAll();
 		        Iterator<Role> roleItr = roleList.iterator();
@@ -334,13 +329,13 @@ public class Curators extends AbstractController {
 		                }
 	                }
 		        }
+                Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.uid);
 		        if (roleStr.length() == 0) {
-		        	user.roles = Const.DEFAULT_ROLE;
+		        	user.role_to_user = null;
 		        } else {
-		        	user.roles = roleStr;
-		        	user.role_to_user = Role.convertUrlsToObjects(user.roles);
+		        	user.role_to_user = Role.convertUrlsToObjects(roleStr);
 		        }
-		        Logger.info("roleStr: "+ roleStr + ", user.roles: " + user.roles);
+//		        Logger.info("roleStr: "+ roleStr + ", user.role_to_user size: " + user.role_to_user.size());
                 if (getFormParam(Const.REVISION) != null) {
                 	user.revision = getFormParam(Const.REVISION);
                 }
@@ -387,14 +382,6 @@ public class Curators extends AbstractController {
 					}
         	    }
            		Logger.info("update user: " + user.toString());
-//           		User oldUser = User.findById(user.uid);
-//           		if (!oldUser.email.equals(user.email)) {
-//           			flash("message", "Email field is a key and should not be changed. Original: " 
-//           					+ oldUser.email + ", new value: " + user.email);
-//           			return info();
-//           		}
-                Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.uid);
-                user.role_to_user = null;
                 Ebean.update(user);
         	}
 	        res = redirect(routes.Curators.edit(user.url));
@@ -406,5 +393,28 @@ public class Curators extends AbstractController {
         }
         return res;
     }
+    
+    /**
+     * This method checks if this User has a role passed by its id.
+     * @param userId
+     * @return true if exists
+     */
+    public static String showRoles(Long userId) {
+    	String res = "";
+    	User user = User.findById(userId);
+    	if (user.role_to_user != null && user.role_to_user.size() > 0) {
+    		Iterator<Role> itr = user.role_to_user.iterator();
+    		while (itr.hasNext()) {
+    			Role role = itr.next();
+    			if (res.length() == 0) {
+    				res = role.name;
+    			} else {
+    				res = res + Const.COMMA + " " + role.name;
+    			}
+    		}
+    	}
+    	return res;
+    }
+        
 }
 

@@ -18,6 +18,7 @@ import java.util.Properties;
 import models.DCollection;
 import models.Instance;
 import models.Organisation;
+import models.Role;
 import models.Target;
 import models.Taxonomy;
 import models.TaxonomyVocabulary;

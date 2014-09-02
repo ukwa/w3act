@@ -2,7 +2,6 @@ package models;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -84,9 +83,15 @@ public class User extends Model {
     public Long feed_nid;
     
     // lists
+    
+    /**
+     * This field is necessary only for initial import from configuration file 
+     * where roles of particular user are defined as a string.
+     */
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String roles;
+
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String revision; 
@@ -102,13 +107,11 @@ public class User extends Model {
     
     public User() {
     	this.revision = "";
-    	this.roles = Const.DEFAULT_ROLE;
     }
 
     public User(String name) {
     	this.name = name;
     	this.revision = "";
-    	this.roles = Const.DEFAULT_ROLE;
     }
 
     public User(String name, String email, String password) {
@@ -116,33 +119,50 @@ public class User extends Model {
     	this.email = email;
     	this.password = password;
     	this.revision = "";
-    	this.roles = Const.DEFAULT_ROLE;
     }
     
     /**
-     * This method checks if this User has a role passed as string parameter.
+     * This method checks whether user has a role by its id.
      * @param roleName
      * @return true if exists
+     */
+    public boolean hasRole(long roleId) {
+    	boolean res = false;
+//    	Logger.info("hasRole() role id: " + roleId + ", role_to_user.size(): " + role_to_user.size());
+    	if (role_to_user != null && role_to_user.size() > 0) {
+    		Iterator<Role> itr = role_to_user.iterator();
+    		while (itr.hasNext()) {
+    			Role role = itr.next();
+//    	    	Logger.info("hasRole() role id: " + roleId + ", role_to_user id: " + role.id);
+    			if (role.id == roleId) {
+    				res = true;
+    				break;
+    			}
+    		}
+    	}
+//    	Logger.info("hasRole res: " + res);
+    	return res;
+    }
+    
+    /**
+     * This method checks whether user has a role by its name.
+     * @param roleName
+     * @return
      */
     public boolean hasRole(String roleName) {
     	boolean res = false;
 //    	Logger.info("hasRole: " + roleName);
-    	if (roleName != null && roleName.length() > 0 
-    			&& roles.contains(roleName)) {
-    		res = true;
+    	if (roleName != null && roleName.length() > 0) {
+    		Role role = Role.findByName(roleName);
+//        	Logger.info("role id: " + role.id);
+    		res = hasRole(role.id);
     	}
     	return res;
     }
     
     public List<? extends Role> getRoles()
     {
-    	List<Role> res = new ArrayList<Role>();
-		List<String> resList = Arrays.asList(roles.split(Const.COMMA));
-		Iterator<String> itr = resList.iterator();
-		while (itr.hasNext()) {
-			res.add(Role.findByName(itr.next()));
-		}
-        return res;
+    	return role_to_user;
     }
 
     /**
@@ -276,13 +296,6 @@ public class User extends Model {
 			DateTime dt1 = new DateTime(dateCreated);
 			DateTime dt2 = new DateTime(dateLastAccess);
 	 
-//			Logger.info(Months.monthsBetween(dt1, dt2).getMonths() + " months, ");
-//			Logger.info(Weeks.weeksBetween(dt1, dt2).getWeeks() + " weeks, ");			
-//			Logger.info(Weeks.weeksBetween(dt1, dt2).toPeriod() + " period, ");
-//			Logger.info(Days.daysBetween(dt1, dt2).getDays() + " days, ");
-//			Logger.info(Hours.hoursBetween(dt1, dt2).getHours() % 24 + " hours, ");
-//			Logger.info(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60 + " minutes, ");
-//			Logger.info(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
 			Period period = new Period(dt1, dt2);
 			PeriodFormatterBuilder formaterBuilder = new PeriodFormatterBuilder()
 		        .appendMonths().appendSuffix(" months ")

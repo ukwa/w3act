@@ -229,23 +229,15 @@ public class Role extends Model
      * @param roles The user roles as a string separated by comma
      * @return true if role name is included
      */
-    public static boolean isIncluded(String roleName, String roles) {
+    public static boolean isIncluded(long roleId, List<Role> roles) {
     	boolean res = false;
-    	if (roleName != null && roleName.length() > 0 && roles != null && roles.length() > 0 ) {
-    		if (roles.contains(Const.COMMA)) {
-    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
-    			Iterator<String> itr = resList.iterator();
-    			while (itr.hasNext()) {
-        			String currentRoleName = itr.next();
-        			currentRoleName = currentRoleName.replaceAll(" ", "");
-        			if (currentRoleName.equals(roleName)) {
-        				res = true;
-        				break;
-        			}
-    			}
-    		} else {
-    			if (roles.equals(roleName)) {
-    				res = true;
+    	if (roles != null && roles.size() > 0 ) {
+   			Iterator<Role> itr = roles.iterator();
+    		while (itr.hasNext()) {
+        		Role currentRole = itr.next();
+       			if (currentRole.id == roleId) {
+       				res = true;
+       				break;
     			}
     		}
     	}
@@ -260,30 +252,14 @@ public class Role extends Model
      * @param roles The user roles as a string separated by comma
      * @return true if role name is included
      */
-    public static boolean isIncludedByUrl(String roleName, String url) {
+    public static boolean isIncludedByUrl(Long roleId, String url) {
     	boolean res = false;
-    	Logger.info("isIncludedByUrl() url: " + url);
+    	Logger.info("isIncludedByUrl() roleId: " + roleId + ",url: " + url);
     	try {
 	    	if (StringUtils.isNotEmpty(url)) {
-		    	String roles = User.findByUrl(url).roles;
-		    	if (roleName != null && roleName.length() > 0 && roles != null && roles.length() > 0 ) {
-		    		if (roles.contains(Const.COMMA)) {
-		    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
-		    			Iterator<String> itr = resList.iterator();
-		    			while (itr.hasNext()) {
-		        			String currentRoleName = itr.next();
-		        			currentRoleName = currentRoleName.replaceAll(" ", "");
-		        			if (currentRoleName.equals(roleName)) {
-		        				res = true;
-		        				break;
-		        			}
-		    			}
-		    		} else {
-		    			if (roles.equals(roleName)) {
-		    				res = true;
-		    			}
-		    		}
-		    	}
+		    	List<Role> roles = User.findByUrl(url).role_to_user;
+		    	Logger.info("roles.size: "+ roles.size());
+		    	res = isIncluded(roleId, roles);
 	    	}
     	} catch (Exception e) {
     		Logger.debug("User is not yet stored in database.");
@@ -296,23 +272,15 @@ public class Role extends Model
      * @param roles
      * @return
      */
-    public static int getRoleSeverity(String roles) {
+    public static int getRoleSeverity(List<Role> roles) {
     	int res = Const.Roles.values().length;
-    	if (roles != null && roles.length() > 0 ) {
-    		if (roles.contains(Const.COMMA)) {
-    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
-    			Iterator<String> itr = resList.iterator();
-    			while (itr.hasNext()) {
-        			String currentRoleName = itr.next();
-        			currentRoleName = currentRoleName.replaceAll(" ", "");
-    				int currentLevel = Const.Roles.valueOf(currentRoleName).ordinal();
-    				if (currentLevel < res) {
-    					res = currentLevel;
-    				}
-    			}
-    		} else {
-    			if (roles.equals(roles)) {
-    				res = Const.Roles.valueOf(roles).ordinal();
+    	if (roles != null && roles.size() > 0 ) {
+   			Iterator<Role> itr = roles.iterator();
+    		while (itr.hasNext()) {
+        		Role currentRole = itr.next();
+   				int currentLevel = Const.Roles.valueOf(currentRole.name).ordinal();
+   				if (currentLevel < res) {
+   					res = currentLevel;
     			}
     		}
     	}
@@ -331,8 +299,8 @@ public class Role extends Model
     	if (role != null && role.name != null && role.name.length() > 0) {
     		try {
 	    		int roleIndex = Const.Roles.valueOf(role.name).ordinal();
-	    		int userIndex = getRoleSeverity(user.roles);
-	    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
+	    		int userIndex = getRoleSeverity(user.role_to_user);
+//	    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
 	    		if (roleIndex >= userIndex) {
 	    			res = true;
 	    		}  
@@ -341,7 +309,7 @@ public class Role extends Model
     			res = true;
     		}
     	}
-    	Logger.debug("role allowance check: " + role + ", user: " + user + ", res: " + res);
+//    	Logger.debug("role allowance check: " + role + ", user: " + user + ", res: " + res);
     	return res;
     }
     
@@ -355,14 +323,42 @@ public class Role extends Model
    		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
 	    	String[] parts = urls.split(Const.COMMA + " ");
 	    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
+//		    	Logger.info("convertUrlsToObjects part: " + part);
 	    		Role role = findByName(part);
 	    		if (role != null && role.name != null && role.name.length() > 0) {
-//			    	Logger.info("role name: " + role.name);
+//			    	Logger.info("add role to the list: " + role.name);
 	    			res.add(role);
 	    		}
 	    	}
     	}
+		return res;
+	}       
+    	
+	/**
+	 * This method initializes User object by the default Role.
+	 * @param userUrl
+	 * @return
+	 */
+	public static List<Role> setDefaultRole() {
+		List<Role> res = new ArrayList<Role>();
+   		Role role = findByName(Const.DEFAULT_ROLE);
+		if (role != null && role.name != null && role.name.length() > 0) {
+			res.add(role);
+		}
+		return res;
+	}       
+    	
+	/**
+	 * This method initializes User object by the default Role by the role name.
+	 * @param userUrl
+	 * @return
+	 */
+	public static List<Role> setDefaultRoleByName(String roleName) {
+		List<Role> res = new ArrayList<Role>();
+   		Role role = findByName(roleName);
+		if (role != null && role.name != null && role.name.length() > 0) {
+			res.add(role);
+		}
 		return res;
 	}       
     	

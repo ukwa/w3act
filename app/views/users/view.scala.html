@@ -56,7 +56,7 @@
 					    <div class="col-sm-6">
 					        @for(role <- Role.findAll()) {
 								<label class="checkbox-inline">
-						            @if(Role.isIncluded(role.name, user.roles)) {
+						            @if(Role.isIncluded(role.id, user.role_to_user)) {
 					                	<input type="checkbox" name="@role.name" value="true" checked disabled/>
 					                } else {
 					                	<input type="checkbox" name="@role.name" value="true" disabled/>
