@@ -254,11 +254,11 @@ public class Role extends Model
      */
     public static boolean isIncludedByUrl(Long roleId, String url) {
     	boolean res = false;
-    	Logger.info("isIncludedByUrl() roleId: " + roleId + ",url: " + url);
+//    	Logger.info("isIncludedByUrl() roleId: " + roleId + ",url: " + url);
     	try {
 	    	if (StringUtils.isNotEmpty(url)) {
 		    	List<Role> roles = User.findByUrl(url).role_to_user;
-		    	Logger.info("roles.size: "+ roles.size());
+//		    	Logger.info("roles.size: "+ roles.size());
 		    	res = isIncluded(roleId, roles);
 	    	}
     	} catch (Exception e) {

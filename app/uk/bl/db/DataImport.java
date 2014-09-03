@@ -37,9 +37,11 @@ public enum DataImport {
 	public void insert() {
         if(Ebean.find(User.class).findRowCount() == 0) {
             try {
-                Logger.info("loading users from configuration ...");
+                Logger.info("loading roles, permissions and users from configuration ...");
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> allusers = (Map<String,List<Object>>)Yaml.load("users.yml");
+                insertInitialData(Const.ROLES, Role.class, allusers);	
+                insertInitialData(Const.PERMISSIONS, Permission.class, allusers);	
                 Logger.info("allusers..." + allusers);
                 insertInitialData(Const.USERS, User.class, allusers);
                 Logger.info("loading taxonomies from configuration ...");
@@ -62,17 +64,16 @@ public enum DataImport {
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> allContactPersons = (Map<String,List<Object>>)Yaml.load("contact-persons.yml");
                 insertInitialData(Const.CONTACTPERSONS, ContactPerson.class, allContactPersons);	
+                Logger.info("loading organisations from configuration ...");
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
-                insertInitialData(Const.ROLES, Role.class, all);	
-                insertInitialData(Const.PERMISSIONS, Permission.class, all);	
                 insertInitialData(Const.ORGANISATIONS, Organisation.class, all);
 
-                Logger.info("test load curators ...");
+                Logger.info("load curators ...");
 		        List<Object> allCurators = JsonUtils.getDrupalDataBase(Const.NodeType.USER);
 				// store curators in DB
                 Ebean.save(allCurators);
-                Logger.info("test curators successfully loaded");
+                Logger.info("curators successfully loaded");
                 Logger.info("load urls");
 				// aggregate url data from drupal and store JSON content in a file
 		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
@@ -132,7 +133,7 @@ public enum DataImport {
 //                    Logger.info("Test creator test object: " + creator.toString());
                     creator.updateOrganisation();
                     // Create association between User and Role
-                	creator.role_to_user = Role.convertUrlsToObjects(creator.roles);
+//                	creator.role_to_user = Role.convertUrlsToObjects(creator.roles);
         			Ebean.update(creator);
 	            }                
                 // Create associations for Target

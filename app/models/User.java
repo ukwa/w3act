@@ -84,14 +84,6 @@ public class User extends Model {
     
     // lists
     
-    /**
-     * This field is necessary only for initial import from configuration file 
-     * where roles of particular user are defined as a string.
-     */
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String roles;
-
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String revision; 

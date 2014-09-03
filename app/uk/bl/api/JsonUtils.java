@@ -278,8 +278,11 @@ public class JsonUtils {
 								+ e);
 					}
 				}
-				if (newUser.roles == null || newUser.roles.length() == 0) {
-					newUser.roles = Const.DEFAULT_BL_ROLE;
+//				if (newUser.roles == null || newUser.roles.length() == 0) {
+//					newUser.roles = Const.DEFAULT_BL_ROLE;
+//				}
+				if (newUser.role_to_user == null || newUser.role_to_user.size() == 0) {
+					newUser.role_to_user = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
 				}
 				newUser.uid = null;
 				// Logger.info("id: " + newUser.uid + ", url: " + newUser.url +
