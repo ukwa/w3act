@@ -158,3 +158,12 @@ or simply manually delete all "target" folders in your project
 [RHEL installation]: https://github.com/ukwa/w3act/wiki/Installation-instructions
 [ukwa-whois]: https://github.com/ukwa/jruby-whois/blob/master/src/main/java/uk/bl/wa/whois/JRubyWhois.java
 [download-maven]: http://maven.apache.org/download.cgi
+
+Help with submodules for W3ACT Source
+
+```
+$ git submodule init
+$ git config -l
+$ git submodule update
+
+```
