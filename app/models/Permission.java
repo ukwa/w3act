@@ -148,30 +148,35 @@ public class Permission extends Model
     	return res;
     }
 
-    public static boolean isIncludedByUrl(String permissionName, String url) {
+    /**
+     * This method checks whether given permission ID already is in a given permission list.
+     * @param permissionId
+     * @param permissions
+     * @return
+     */
+    public static boolean isIncluded(long permissionId, List<Permission> permissions) {
+    	boolean res = false;
+    	if (permissions != null && permissions.size() > 0 ) {
+   			Iterator<Permission> itr = permissions.iterator();
+    		while (itr.hasNext()) {
+        		Permission currentPermission = itr.next();
+       			if (currentPermission.id == permissionId) {
+       				res = true;
+       				break;
+    			}
+    		}
+    	}
+    	return res;
+    }
+    
+    public static boolean isIncludedByUrl(Long permissionId, String url) {
     	boolean res = false;
     	Logger.info("isIncludedByUrl() url: " + url);
     	try {
 	    	if (StringUtils.isNotEmpty(url)) {
-		    	String permissions = Role.findByUrl(url).permissions;
-		    	if (permissionName != null && permissionName.length() > 0 && permissions != null && permissions.length() > 0 ) {
-		    		if (permissions.contains(Const.COMMA)) {
-		    			List<String> resList = Arrays.asList(permissions.split(Const.COMMA));
-		    			Iterator<String> itr = resList.iterator();
-		    			while (itr.hasNext()) {
-		        			String currentRoleName = itr.next();
-		        			currentRoleName = currentRoleName.replaceAll(" ", "");
-		        			if (currentRoleName.equals(permissionName)) {
-		        				res = true;
-		        				break;
-		        			}
-		    			}
-		    		} else {
-		    			if (permissions.equals(permissionName)) {
-		    				res = true;
-		    			}
-		    		}
-		    	}
+		    	List<Permission> permissions = Role.findByUrl(url).getPermissionsMap();
+//		    	Logger.info("permissions.size: "+ permissions.size());
+		    	res = isIncluded(permissionId, permissions);
 	    	}
 		} catch (Exception e) {
 			Logger.debug("User is not yet stored in database.");
@@ -206,11 +211,31 @@ public class Permission extends Model
         while (roleItr.hasNext()) {
         	Role role = roleItr.next();
 //            Logger.info("Test role test object: " + role.toString());
-    		if (role.permissions != null
-    				&& role.permissions.length() > 0
-    				&& role.permissions.contains(name)) {
+    		if (role.hasPermission(name)) {
     			this.role = role;
     		}    	
         }    	
     }
+    
+	/**
+	 * This method retrieves selected permissions from user object.
+	 * @param permissionUrl
+	 * @return
+	 */
+	public static List<Permission> convertUrlsToObjects(String urls) {
+		List<Permission> res = new ArrayList<Permission>();
+   		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
+	    	String[] parts = urls.split(Const.COMMA + " ");
+	    	for (String part: parts) {
+//		    	Logger.info("convertUrlsToObjects part: " + part);
+	    		Permission permission = findByName(part);
+	    		if (permission != null && permission.name != null && permission.name.length() > 0) {
+//			    	Logger.info("add permission to the list: " + permission.name);
+	    			res.add(permission);
+	    		}
+	    	}
+    	}
+		return res;
+	}       
+    	 
 }

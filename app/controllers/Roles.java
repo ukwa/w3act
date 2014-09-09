@@ -2,19 +2,17 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import models.DCollection;
 import models.Permission;
 import models.Role;
 import models.Target;
 import models.User;
+
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -24,7 +22,13 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import views.html.roles.*;
+import views.html.roles.list;
+import views.html.roles.roleadmin;
+import views.html.roles.roleedit;
+import views.html.roles.roleview;
+
+import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Manage roles.
@@ -175,11 +179,11 @@ public class Roles extends AbstractController {
             }
         }
         if (permissionStr.length() == 0) {
-        	role.permissions = Const.DEFAULT_ROLE;
+        	role.setPermissions(new ArrayList<Permission>());
         } else {
-        	role.permissions = permissionStr;
+        	role.setPermissions(Permission.convertUrlsToObjects(permissionStr));
         }
-        Logger.info("permissionStr: "+ permissionStr + ", user.permissions: " + role.permissions);
+        Logger.info("permissionStr: "+ permissionStr + ", role.permissions: " + role.getPermissionsMap().size());
 	    
 	    if (role.revision == null) {
 	    	role.revision = "";
@@ -266,11 +270,11 @@ public class Roles extends AbstractController {
 	                }
 		        }
 		        if (permissionStr.length() == 0) {
-		        	role.permissions = Const.DEFAULT_ROLE;
+		        	role.setPermissions(new ArrayList<Permission>());
 		        } else {
-		        	role.permissions = permissionStr;
+		        	role.setPermissions(Permission.convertUrlsToObjects(permissionStr));
 		        }
-		        Logger.info("permissionStr: "+ permissionStr + ", user.permissions: " + role.permissions);
+		        Logger.info("permissionStr: "+ permissionStr + ", role.permissions: " + role.getPermissionsMap().size());
         	    
         	    if (role.revision == null) {
         	    	role.revision = "";
@@ -294,9 +298,9 @@ public class Roles extends AbstractController {
 	        Iterator<Permission> permissionItr = permissionList.iterator();
 	        while (permissionItr.hasNext()) {
 	        	Permission permission = permissionItr.next();
-	        	Logger.debug("Update role - permission: " + permission.toString() + ", role.permissions: " + role.permissions);
+	        	Logger.debug("Update role - permission: " + permission.toString() + ", role.permissions: " + role.getPermissionsMap().size());
                 if (permission.name != null
-                		&& role.permissions.contains(permission.name)) {
+                		&& Permission.isIncluded(permission.id, role.getPermissionsMap())) {
                 	permission.role = role;
                 	Ebean.update(permission);
                 } else {
@@ -343,7 +347,12 @@ public class Roles extends AbstractController {
 	                }
 		        }
         		Logger.info("assignedPermissions: " + assignedPermissions);
-		        role.permissions = assignedPermissions;
+//		        role.permissions = assignedPermissions;
+		        if (assignedPermissions.length() == 0) {
+		        	role.setPermissions(new ArrayList<Permission>());
+		        } else {
+		        	role.setPermissions(Permission.convertUrlsToObjects(assignedPermissions));
+		        }
                	Ebean.update(role);
             } catch (Exception e) {
             	Logger.info("User not existing exception");
@@ -385,5 +394,26 @@ public class Roles extends AbstractController {
         			order)
         	);
     }    
+    
+    /**
+     * This method presents permissions as a human readable string.
+     */
+	public static String showPermissions(Long roleId) {
+    	String res = "";
+    	Role role = Role.findById(roleId);
+    	if (role.getPermissionsMap() != null && role.getPermissionsMap().size() > 0) {
+    		Iterator<Permission> itr = role.getPermissionsMap().iterator();
+    		while (itr.hasNext()) {
+    			Permission permission = itr.next();
+    			if (res.length() == 0) {
+    				res = permission.name;
+    			} else {
+    				res = res + Const.COMMA + " " + permission.name;
+    			}
+    		}
+    	}
+    	return res;
+	}
+	    
 }
 

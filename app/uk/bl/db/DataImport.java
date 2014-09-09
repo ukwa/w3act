@@ -40,8 +40,8 @@ public enum DataImport {
                 Logger.info("loading roles, permissions and users from configuration ...");
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> allusers = (Map<String,List<Object>>)Yaml.load("users.yml");
-                insertInitialData(Const.ROLES, Role.class, allusers);	
                 insertInitialData(Const.PERMISSIONS, Permission.class, allusers);	
+                insertInitialData(Const.ROLES, Role.class, allusers);	
                 Logger.info("allusers..." + allusers);
                 insertInitialData(Const.USERS, User.class, allusers);
                 Logger.info("loading taxonomies from configuration ...");

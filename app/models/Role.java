@@ -58,7 +58,7 @@ public class Role extends Model
     
     //bi-directional many-to-one association to Role
     @OneToMany(mappedBy="role", cascade=CascadeType.PERSIST)
-    private List<Permission> permissionsMap = new ArrayList<Permission>();
+    public List<Permission> permissionsMap = new ArrayList<Permission>();
      
     public List<Permission> getPermissionsMap() {
     	return this.permissionsMap;
@@ -89,9 +89,9 @@ public class Role extends Model
     @Column(columnDefinition = "TEXT")
     public String url;
 
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String permissions;
+//    @JsonIgnore
+//    @Column(columnDefinition = "TEXT")
+//    public String permissions;
 
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
@@ -165,10 +165,42 @@ public class Role extends Model
      */
     public boolean hasPermission(String permissionName) {
     	boolean res = false;
-    	if (permissionName != null && permissionName.length() > 0 
-    			&& permissions.contains(permissionName)) {
-    		res = true;
+    	if (permissionName != null && permissionName.length() > 0) {
+    		Permission permission = Permission.findByName(permissionName);
+//        	Logger.info("permission id: " + permission.id);
+    		res = hasPermission(permission.id);
     	}
+    	return res;
+    }
+//    public boolean hasPermission(String permissionName) {
+//    	boolean res = false;
+//    	if (permissionName != null && permissionName.length() > 0 
+//    			&& permissions.contains(permissionName)) {
+//    		res = true;
+//    	}
+//    	return res;
+//    }
+    
+    /**
+     * This method checks whether user has a permission by its id.
+     * @param permissionName
+     * @return true if exists
+     */
+    public boolean hasPermission(long permissionId) {
+    	boolean res = false;
+//    	Logger.info("hasPermission() permission id: " + permissionId + ", permission_to_user.size(): " + permission_to_user.size());
+    	if (permissionsMap != null && permissionsMap.size() > 0) {
+    		Iterator<Permission> itr = permissionsMap.iterator();
+    		while (itr.hasNext()) {
+    			Permission permission = itr.next();
+//    	    	Logger.info("hasPermission() permission id: " + permissionId + ", permissionMap id: " + permission.id);
+    			if (permission.id == permissionId) {
+    				res = true;
+    				break;
+    			}
+    		}
+    	}
+//    	Logger.info("hasPermission res: " + res);
     	return res;
     }
     
@@ -176,37 +208,39 @@ public class Role extends Model
      * This method returns permissions assigned to this role.
      * @return list of Permission objects
      */
-    public List<Permission> getPermissions()
+    public List<? extends Permission> getPermissions()
     {
-    	List<Permission> res = new ArrayList<Permission>();
-    	if (permissions != null && permissions.length() > 0) {
-			List<String> resList = Arrays.asList(permissions.split(Const.COMMA + " "));
-			Iterator<String> itr = resList.iterator();
-			while (itr.hasNext()) {
-				res.add(Permission.findByName(itr.next()));
-			}
-    	}
-        return res;
+    	return permissionsMap;
     }
+
+//    public List<Permission> getPermissions()
+//    {
+//    	List<Permission> res = new ArrayList<Permission>();
+//    	if (permissions != null && permissions.length() > 0) {
+//			List<String> resList = Arrays.asList(permissions.split(Const.COMMA + " "));
+//			Iterator<String> itr = resList.iterator();
+//			while (itr.hasNext()) {
+//				res.add(Permission.findByName(itr.next()));
+//			}
+//    	}
+//        return res;
+//    }
     
     /**
      * This method returns permissions that are not assigned to this role.
      * @return list of Permission objects
      */
-    public static List<Permission> getNotAssignedPermissions(String permissionsStr)
+    public static List<Permission> getNotAssignedPermissions(List<Permission> assignedPermissions)
     {
     	List<Permission> allPermissionList = Permission.findAll();
 //    	Logger.info("Permissions count: " + allPermissionList.size());
         List<Permission> res = new ArrayList<Permission>();
-    	if (permissionsStr != null && permissionsStr.length() > 0) {
-			List<String> assignedList = Arrays.asList(permissionsStr.split(Const.COMMA + " "));
-//			Logger.info("original permissions: " + permissionsStr);
-//			Logger.info("assignedList: " + assignedList);
+    	if (assignedPermissions != null && assignedPermissions.size() > 0) {
 			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
 			while (itrAllPermissions.hasNext()) {
 				Permission curPermission = itrAllPermissions.next();
 //		    	Logger.info("curPermission: " + curPermission.name);
-				if (!assignedList.contains(curPermission.name)) {
+				if (!assignedPermissions.contains(curPermission.name)) {
 					res.add(curPermission);
 				}
 			}
@@ -214,6 +248,27 @@ public class Role extends Model
         return res;
     }
     
+//    public static List<Permission> getNotAssignedPermissions(String permissionsStr)
+//    {
+//    	List<Permission> allPermissionList = Permission.findAll();
+////    	Logger.info("Permissions count: " + allPermissionList.size());
+//        List<Permission> res = new ArrayList<Permission>();
+//    	if (permissionsStr != null && permissionsStr.length() > 0) {
+//			List<String> assignedList = Arrays.asList(permissionsStr.split(Const.COMMA + " "));
+////			Logger.info("original permissions: " + permissionsStr);
+////			Logger.info("assignedList: " + assignedList);
+//			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
+//			while (itrAllPermissions.hasNext()) {
+//				Permission curPermission = itrAllPermissions.next();
+////		    	Logger.info("curPermission: " + curPermission.name);
+//				if (!assignedList.contains(curPermission.name)) {
+//					res.add(curPermission);
+//				}
+//			}
+//    	}
+//        return res;
+//    }
+//    
     /**
      * Retrieve all roles.
      */
@@ -361,7 +416,7 @@ public class Role extends Model
 		}
 		return res;
 	}       
-    	
+ 
    public String toString() {
         return "Role(" + name + ")" + ", id:" + id;
     }

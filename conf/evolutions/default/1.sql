@@ -292,7 +292,6 @@ create table role (
   ID                        bigint not null,
   name                      TEXT,
   url                       TEXT,
-  permissions               TEXT,
   description               TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
