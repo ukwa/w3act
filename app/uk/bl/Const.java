@@ -237,7 +237,7 @@ public final class Const {
 	 */
 	public static final String ID                 = "id";
 	public static final String PERMISSION         = "permission";
-	
+	public static final String ROLE               = "role";	
 	/**
 	 * Crawl Permission
 	 */

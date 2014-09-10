@@ -290,24 +290,25 @@ public class Roles extends AbstractController {
                	Ebean.save(role);
     	        Logger.info("save role: " + role.toString());
         	} else {
-           		Logger.info("update role: " + role.toString());
+//                Utils.removeAssociationFromDb(Const.PERMISSION_ROLE, Const.ID + "_" + Const.ROLE, role.id);
+                Logger.info("update role: " + role.toString());
                	Ebean.update(role);
         	}
         	// update association to permissions
-	        List<Permission> permissionList = Permission.findAll();
-	        Iterator<Permission> permissionItr = permissionList.iterator();
-	        while (permissionItr.hasNext()) {
-	        	Permission permission = permissionItr.next();
-	        	Logger.debug("Update role - permission: " + permission.toString() + ", role.permissions: " + role.getPermissionsMap().size());
-                if (permission.name != null
-                		&& Permission.isIncluded(permission.id, role.getPermissionsMap())) {
-                	permission.getRoles().add(role);
-                	Ebean.update(permission);
-                } else {
-                	permission.setRoles(new ArrayList<Role>());
-                	Ebean.update(permission);
-                }
-	        }
+//	        List<Permission> permissionList = Permission.findAll();
+//	        Iterator<Permission> permissionItr = permissionList.iterator();
+//	        while (permissionItr.hasNext()) {
+//	        	Permission permission = permissionItr.next();
+//	        	Logger.debug("Update role - permission: " + permission.toString() + ", role.permissions: " + role.getPermissionsMap().size());
+//                if (permission.name != null
+//                		&& Permission.isIncluded(permission.id, role.getPermissionsMap())) {
+//                	permission.getRoles().add(role);
+//                	Ebean.update(permission);
+//                } else {
+//                	permission.setRoles(new ArrayList<Role>());
+//                	Ebean.update(permission);
+//                }
+//	        }
 	        res = redirect(routes.Roles.edit(role.url));
         } 
         if (delete != null) {
