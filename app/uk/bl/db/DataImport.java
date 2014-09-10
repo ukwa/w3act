@@ -212,12 +212,14 @@ public enum DataImport {
 					Logger.info("initial password creation - key specification error: " + e);
 				}
                 Logger.info("Predefined " + User.class.getSimpleName() + ": " + user.toString());
+                Logger.info("+++ user role_to_user size: " + user.role_to_user.size());
 	        }
 	        if (cls == Role.class) {
             	Role role = (Role) sectionItr.next();
             	role.id = Utils.createId();
 	        	role.url= Const.ACT_URL + role.id;
                 Logger.info("Predefined " + Role.class.getSimpleName() + ": " + role.toString());
+                Logger.info("+++ role permissionsMap size: " + role.permissionsMap.size());
 	        }
 	        if (cls == Permission.class) {
 	        	Permission permission = (Permission) sectionItr.next();

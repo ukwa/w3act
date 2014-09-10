@@ -48,7 +48,7 @@
 				    <div class="col-sm-6">
 		                <label class="col-sm-6 control-label" style="color:green">NOT ASSIGNED PERMISSIONS</label>
 						<div class="col-sm-6">
-					        @for(notpermission <- Role.getNotAssignedPermissions(role.getPermissionsMap)) {
+					        @for(notpermission <- Role.getNotAssignedPermissions(role.permissionsMap)) {
 								<label class="checkbox-inline">
 					                <input type="checkbox" name="@notpermission.name + np" value="true" checked /> @notpermission.name 
 								</label>

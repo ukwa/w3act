@@ -56,10 +56,15 @@ public class Role extends Model
     @Column(name="ID")
 	public Long id;
     
-    //bi-directional many-to-one association to Role
-    @OneToMany(mappedBy="role", cascade=CascadeType.PERSIST)
-    public List<Permission> permissionsMap = new ArrayList<Permission>();
-     
+	//bi-directional many-to-many association to Permission
+	@ManyToMany(mappedBy="roles")
+	public List<Permission> permissionsMap = new ArrayList<Permission>();
+	
+//    //bi-directional many-to-one association to Role
+//    @OneToMany(mappedBy="role", cascade=CascadeType.PERSIST)
+////    @Column(name="permissionsMap")
+//    public List<Permission> permissionsMap = new ArrayList<Permission>();
+//     
     public List<Permission> getPermissionsMap() {
     	return this.permissionsMap;
     }

@@ -301,10 +301,10 @@ public class Roles extends AbstractController {
 	        	Logger.debug("Update role - permission: " + permission.toString() + ", role.permissions: " + role.getPermissionsMap().size());
                 if (permission.name != null
                 		&& Permission.isIncluded(permission.id, role.getPermissionsMap())) {
-                	permission.role = role;
+                	permission.getRoles().add(role);
                 	Ebean.update(permission);
                 } else {
-                	permission.role = null;
+                	permission.setRoles(new ArrayList<Role>());
                 	Ebean.update(permission);
                 }
 	        }
@@ -401,6 +401,7 @@ public class Roles extends AbstractController {
 	public static String showPermissions(Long roleId) {
     	String res = "";
     	Role role = Role.findById(roleId);
+    	Logger.info("showPermissions size: " + role.permissionsMap.size());
     	if (role.getPermissionsMap() != null && role.getPermissionsMap().size() > 0) {
     		Iterator<Permission> itr = role.getPermissionsMap().iterator();
     		while (itr.hasNext()) {

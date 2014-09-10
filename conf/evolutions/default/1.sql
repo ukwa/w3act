@@ -267,14 +267,13 @@ create table organisation (
 ;
 
 create table permission (
-  id                        bigint not null,
-  id_role                   bigint,
+  ID                        bigint not null,
   name                      TEXT,
   url                       TEXT,
   description               TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_permission primary key (id))
+  constraint pk_permission primary key (ID))
 ;
 
 create table permission_refusal (
@@ -471,6 +470,12 @@ create table flag_instance (
   constraint pk_flag_instance primary key (id_flag, id_instance))
 ;
 
+create table permission_role (
+  id_permission                  bigint not null,
+  id_role                        bigint not null,
+  constraint pk_permission_role primary key (id_permission, id_role))
+;
+
 create table role_user (
   id_role                        bigint not null,
   id_user                        bigint not null,
@@ -550,12 +555,10 @@ alter table crawl_permission add constraint fk_crawl_permission_contactper_3 for
 create index ix_crawl_permission_contactper_3 on crawl_permission (id_contactperson);
 alter table instance add constraint fk_instance_organisation_to_in_4 foreign key (id_organisation) references organisation (nid);
 create index ix_instance_organisation_to_in_4 on instance (id_organisation);
-alter table permission add constraint fk_permission_role_5 foreign key (id_role) references role (ID);
-create index ix_permission_role_5 on permission (id_role);
-alter table target add constraint fk_target_organisation_to_targ_6 foreign key (id_organisation) references organisation (nid);
-create index ix_target_organisation_to_targ_6 on target (id_organisation);
-alter table creator add constraint fk_creator_organisation_7 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_7 on creator (id_organisation);
+alter table target add constraint fk_target_organisation_to_targ_5 foreign key (id_organisation) references organisation (nid);
+create index ix_target_organisation_to_targ_5 on target (id_organisation);
+alter table creator add constraint fk_creator_organisation_6 foreign key (id_organisation) references organisation (nid);
+create index ix_creator_organisation_6 on creator (id_organisation);
 
 
 
@@ -574,6 +577,10 @@ alter table flag_target add constraint fk_flag_target_target_02 foreign key (id_
 alter table flag_instance add constraint fk_flag_instance_flag_01 foreign key (id_flag) references flag (ID);
 
 alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (id_instance) references instance (ID);
+
+alter table permission_role add constraint fk_permission_role_permission_01 foreign key (id_permission) references permission (ID);
+
+alter table permission_role add constraint fk_permission_role_role_02 foreign key (id_role) references role (ID);
 
 alter table role_user add constraint fk_role_user_role_01 foreign key (id_role) references role (ID);
 
@@ -634,6 +641,8 @@ drop table if exists nomination cascade;
 drop table if exists organisation cascade;
 
 drop table if exists permission cascade;
+
+drop table if exists permission_role cascade;
 
 drop table if exists permission_refusal cascade;
 

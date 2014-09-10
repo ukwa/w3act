@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -35,13 +37,28 @@ public class Permission extends Model
 	private static final long serialVersionUID = -2250099575468302989L;
 
 	@Id @JsonIgnore
+	@Column(name="ID")
     public Long id;
     
 	//bi-directional many-to-one association to Role
-	@ManyToOne
-	@JoinColumn(name="id_role")
-	public Role role;
+//	@ManyToOne
+//	@JoinColumn(name="id_role")
+//	public Role role;
     
+    //bi-directional many-to-many association to Role
+    @ManyToMany
+	@JoinTable(name = Const.PERMISSION_ROLE, joinColumns = { @JoinColumn(name = "id_permission", referencedColumnName="ID") },
+		inverseJoinColumns = { @JoinColumn(name = "id_role", referencedColumnName="ID") }) 
+    private List<Role> roles = new ArrayList<Role>();
+ 
+    public List<Role> getRoles() {
+    	return this.roles;
+    }
+    
+    public void setRoles(List<Role> roles) {
+    	this.roles = roles;
+    }    
+        
     @Required
     @Column(columnDefinition = "TEXT")
     public String name;
@@ -171,7 +188,7 @@ public class Permission extends Model
     
     public static boolean isIncludedByUrl(Long permissionId, String url) {
     	boolean res = false;
-    	Logger.info("isIncludedByUrl() url: " + url);
+//    	Logger.info("isIncludedByUrl() url: " + url);
     	try {
 	    	if (StringUtils.isNotEmpty(url)) {
 		    	List<Permission> permissions = Role.findByUrl(url).getPermissionsMap();
@@ -212,7 +229,7 @@ public class Permission extends Model
         	Role role = roleItr.next();
 //            Logger.info("Test role test object: " + role.toString());
     		if (role.hasPermission(name)) {
-    			this.role = role;
+    			this.roles.add(role);
     		}    	
         }    	
     }
