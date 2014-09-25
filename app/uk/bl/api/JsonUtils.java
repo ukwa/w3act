@@ -24,6 +24,7 @@ import models.Taxonomy;
 import models.TaxonomyVocabulary;
 import models.User;
 import play.Logger;
+import play.Play;
 import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.Const.NodeType;
@@ -66,27 +67,13 @@ public class JsonUtils {
 	 */
 	private static String authenticateAndLoadDrupal(String urlStr, NodeType type) {
 		String res = urlStr;
-		try {
-			String user = "";
-			String password = "";
-			Properties customProps = new Properties();
-			customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
-			for (String key : customProps.stringPropertyNames()) {
-				String value = customProps.getProperty(key);
-				if (key.equals(Const.DRUPAL_USER)) {
-					user = value;
-				}
-				if (key.equals(Const.DRUPAL_PASSWORD)) {
-					password = value;
-				}
-			}
-			Logger.info("authenticateAndLoadDrupal() url: " + urlStr);
-			HttpBasicAuth.downloadFileWithAuth(urlStr, user, password, type
-					.toString().toLowerCase() + Const.OUT_FILE_PATH);
-			res = urlStr;
-		} catch (IOException e) {
-			throw new RuntimeException("Drupal authentification failed: " + e);
-		}
+		String user = Play.application().configuration().getString(Const.DRUPAL_USER);
+		String password = Play.application().configuration().getString(Const.DRUPAL_PASSWORD);
+
+		Logger.info("authenticateAndLoadDrupal() url: " + urlStr);
+		HttpBasicAuth.downloadFileWithAuth(urlStr, user, password, type
+				.toString().toLowerCase() + Const.OUT_FILE_PATH);
+		res = urlStr;
 		return res;
 	}
 

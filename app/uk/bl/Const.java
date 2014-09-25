@@ -80,10 +80,10 @@ public final class Const {
 	public static final String LIMIT              = "limit";
 	public static final String LIST_DELIMITER     = ", ";
 	public static final String SLASH_DELIMITER    = "/";
-	public static final String PROJECT_PROPERTY_FILE = "conf" + System.getProperty("file.separator") + 
-														"w3act.properties";
-	public static final String HOST               = "host";
+	public static final String HOST          	  = "host";
 	public static final String PORT               = "port";
+	public static final String MAIL_USER          = "mail.user";
+	public static final String MAIL_PASSWORD      = "mail.password";
 	public static final String FROM               = "from";
 	public static final String BL_MAIL_ADDRESS    = "wa-sysadm@bl.uk";
 	public static final String TAGS               = "tags";

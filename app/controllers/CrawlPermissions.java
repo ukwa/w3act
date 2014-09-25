@@ -280,10 +280,7 @@ public class CrawlPermissions extends AbstractController {
 	 * @return edit page with form and info message
 	 */
 	public static Result info() {
-       	CrawlPermission permission = new CrawlPermission();
-       	permission.id = Long.valueOf(getFormParam(Const.ID));
-       	permission.url = getFormParam(Const.URL);
-        permission.name = getFormParam(Const.NAME);
+       	CrawlPermission permission = CrawlPermission.create(Long.valueOf(getFormParam(Const.ID)), getFormParam(Const.URL), getFormParam(Const.NAME));
 	    if (getFormParam(Const.DESCRIPTION) != null) {
 	    	permission.description = getFormParam(Const.DESCRIPTION);
 	    }
@@ -296,14 +293,14 @@ public class CrawlPermissions extends AbstractController {
             permission.contactPerson = getFormParam(Const.CONTACT_PERSON);
             try {
             	ContactPerson person = ContactPerson.findByName(getFormParam(Const.CONTACT_PERSON));
-            	permission.contactPerson = person.url;
+            	setContactPerson(permission, person.url);
             } catch (Exception e) {
             	Logger.info("contact person is not existing.");
                 if (getFormParam(Const.EMAIL) != null) {
                     try {
                     	List<ContactPerson> personList = ContactPerson.filterByEmail(getFormParam(Const.EMAIL));
                     	if (personList.size() > 0) {
-                    		permission.contactPerson = personList.get(0).url;
+                        	setContactPerson(permission, personList.get(0).url);
                 	    	permission.updateContactPerson();
                     	}
                     } catch (Exception e2) {
@@ -407,16 +404,12 @@ public class CrawlPermissions extends AbstractController {
                 } catch (Exception e) {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
-                	permission = new CrawlPermission();
-                	permission.id = Long.valueOf(getFormParam(Const.ID));
-                	permission.url = getFormParam(Const.URL);
+                	permission = CrawlPermission.create(Long.valueOf(getFormParam(Const.ID)), getFormParam(Const.URL));
                 }
                 if (permission == null) {
                 	Logger.info("is not existing");
                 	isExisting = false;
-                	permission = new CrawlPermission();
-                	permission.id = Long.valueOf(getFormParam(Const.ID));
-                	permission.url = getFormParam(Const.URL);
+                	permission = CrawlPermission.create(Long.valueOf(getFormParam(Const.ID)), getFormParam(Const.URL));
                 }
                 
                 permission.name = getFormParam(Const.NAME);
@@ -441,16 +434,12 @@ public class CrawlPermissions extends AbstractController {
                             } catch (Exception e) {
                             	Logger.info("contact person is not existing exception");
                             	isContactPersonExisting = false;
-                            	person = new ContactPerson();
-                            	person.id = Utils.createId();
-                            	person.url = Const.ACT_URL + person.id;
+                            	person = ContactPerson.create(Utils.createId(), Const.ACT_URL + person.id);
                             }
                             if (person == null) {
                             	Logger.info("contact person is not existing");
                             	isContactPersonExisting = false;
-                            	person = new ContactPerson();
-                            	person.id = Utils.createId();
-                            	person.url = Const.ACT_URL + person.id;
+                            	person = ContactPerson.create(Utils.createId(), Const.ACT_URL + person.id);
                             }
                             
                     	    if (getFormParam(Const.CONTACT_PERSON) != null) {
@@ -1034,5 +1023,11 @@ public class CrawlPermissions extends AbstractController {
         }
         return ok(jsonData);
     }
+    
+    public static CrawlPermission setContactPerson(CrawlPermission crawlPermission, String url) { 
+    	crawlPermission.contactPerson = url;
+    	return crawlPermission;
+    }
+
 }
 

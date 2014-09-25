@@ -13,6 +13,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import play.Logger;
+import play.Play;
 import uk.bl.Const;
 
 
@@ -25,71 +26,34 @@ public class EmailHelper {
     public static void sendMessage(String to, String subject, String msg) {
 
     	Logger.debug("sendMessage() to: " + to + ", subject: " + subject + ", message body: " + msg);
+    	
     	if (to != null) {
 	        Properties props = System.getProperties();
-	    	Properties customProps = new Properties();
-	    	String user = "";
-	    	String from = "";
-	    	String password = "";
-	    	try {
-	    		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
-	    	    for(String key : customProps.stringPropertyNames()) {
-	    	    	  String value = customProps.getProperty(key);
-	//    	      	  Logger.debug("sendMessage() key: " + key + " => " + value);
-	    	    	  if (key.equals(Const.HOST)) {
-	  	    	          props.put("mail.smtp.host", value);
-	  	    	          props.put("mail.smtp.ssl.trust", value);
-	  	    	      	  Logger.debug("sendMessage() host: " + value);
-	    	    	  }
-	    	    	  if (key.equals(Const.USER)) {
-	  	    	          props.put("mail.smtp.user", value);
-	  	    	          user = value;
-	  	    	      	  Logger.debug("sendMessage() user: " + user);
-	    	    	  }
-	    	    	  if (key.equals(Const.PASSWORD)) {
-	  	    	          props.put("mail.smtp.password", value);
-	  	    	          password = value;
-	//  	    	      	  Logger.debug("sendMessage() password: " + password);
-	    	    	  }
-	    	    	  if (key.equals(Const.PORT)) {
-	    	    	      props.put("mail.smtp.port", value);
-	  	    	      	  Logger.debug("sendMessage() port: " + value);
-	      	    	  }
-	    	    	  if (key.equals(Const.FROM)) {
-	    	    	      from = value;
-	  	    	      	  Logger.debug("sendMessage() from: " + value);
-	      	    	  }
-	    	    }
-	    	} catch (IOException e) {
-	    		throw new RuntimeException(e);
-	    	}
-	    	
+    		String host = Play.application().configuration().getString(Const.HOST);
+    		final String user = Play.application().configuration().getString(Const.MAIL_USER);
+    		final String password = Play.application().configuration().getString(Const.MAIL_PASSWORD);
+    		String port = Play.application().configuration().getString(Const.PORT);
+    		String from = Play.application().configuration().getString(Const.FROM);
+    		
+    		props.put("mail.smtp.host", host);
+    		props.put("mail.smtp.ssl.trust", host);
+			props.put("mail.smtp.user", user);
+			props.put("mail.smtp.password", password);
+  	    	props.put("mail.smtp.port", port);
 	        props.put("mail.smtp.starttls.enable", Const.TRUE); 
 	        props.put("mail.smtp.auth", Const.FALSE);
+
+    		Logger.debug("sendMessage() host: " + host);
+			Logger.debug("sendMessage() user: " + user);
+  	    	Logger.debug("sendMessage() port: " + port);
+  	    	Logger.debug("sendMessage() from: " + from);
+
 	        Session session = Session.getInstance(props);
 	    	if (user != null && user.length() > 0 && password != null && password.length() > 0) {
 		        props.put("mail.smtp.auth", Const.TRUE);
 		        session = Session.getInstance(props,
 			      new javax.mail.Authenticator() {
 			        public PasswordAuthentication getPasswordAuthentication() {
-			        	String user = "";
-			        	String password = "";
-			        	try {
-			            	Properties customProps = new Properties();
-			        		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
-			        	    for(String key : customProps.stringPropertyNames()) {
-			        	    	  String value = customProps.getProperty(key);
-			        	    	  if (key.equals(Const.USER)) {
-			      	    	          user = value;
-			        	    	  }
-			        	    	  if (key.equals(Const.PASSWORD)) {
-			      	    	          password = value;
-			        	    	  }
-			        	    }
-			        	} catch (IOException e) {
-			    	      	Logger.debug("sendMessage() error: " + e);
-			        		throw new RuntimeException(e);
-			        	}
 			            return new PasswordAuthentication(user, password);
 			        }
 			      });
@@ -114,20 +78,7 @@ public class EmailHelper {
     
     public static String getServerNameFromPropertyFile() {
     	Logger.debug("getServerNameFromPropertyFile()");
-    	Properties customProps = new Properties();
-	    String res = "";
-    	try {
-    		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
-    	    for(String key : customProps.stringPropertyNames()) {
-    	    	  String value = customProps.getProperty(key);
-    	    	  if (key.equals(Const.SERVER_NAME)) {
-    	    		  res = value;
-  	    	      	  Logger.debug("getServerNameFromPropertyFile() server name: " + res);
-    	    	  }
-    	    }
-    	} catch (IOException e) {
-    		throw new RuntimeException(e);
-    	}
+		String res = Play.application().configuration().getString(Const.SERVER_NAME);
     	return res;
    }          
     

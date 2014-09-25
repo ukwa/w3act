@@ -151,7 +151,20 @@ public class CrawlPermission extends Model
 
     public static final Model.Finder<Long, CrawlPermission> find = new Model.Finder<Long, CrawlPermission>(Long.class, CrawlPermission.class);
 
-    public String getName()
+    public CrawlPermission() {}
+    
+    public CrawlPermission(Long id, String url) {
+		this.id = id;
+		this.url = url;
+	}
+
+	public CrawlPermission(Long id, String url, String name) {
+		this.id = id;
+		this.url = url;
+		this.name = name;
+	}
+
+	public String getName()
     {
         return name;
     }
@@ -452,4 +465,13 @@ public class CrawlPermission extends Model
             this.contactperson_to_crawlpermission = contactPersonObj;
 		}    	
     }
+    
+    public static CrawlPermission create(Long id, String url) {
+    	return new CrawlPermission(id, url);
+    }
+    
+    public static CrawlPermission create(Long id, String url, String name) {
+    	return new CrawlPermission(id, url, name);
+    }
+
 }
