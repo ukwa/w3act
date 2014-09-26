@@ -1976,6 +1976,22 @@ public class Target extends Model {
 		return this.getUkwaLicenceStatusList().size() > 0;
 	}
 	
+	public boolean indicateOtherLicenses() {
+		List<Taxonomy> licenses = Taxonomy.findByType(Const.LICENCE);
+		Logger.info("field_license: " + this.field_license);
+		for(Taxonomy taxonomy : licenses) {
+			Logger.info("taxonomy ............... " + taxonomy.url);
+			if (this.field_license != null && field_license.contains(taxonomy.url)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean indicateLicenses() {
+		return (indicateUkwaLicenceStatus() || indicateOtherLicenses());
+	}
+	
 	/**
 	 * This method should give a list of the Target records, which have an Open UKWA 
 	 * Licence request in progress for a target at a higher level in the domain. 
