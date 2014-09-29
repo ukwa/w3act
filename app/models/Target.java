@@ -33,6 +33,7 @@ import uk.bl.scope.Scope;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import controllers.Flags;
 
@@ -46,25 +47,25 @@ import controllers.Flags;
 public class Target extends Model {
 
     @Required
-    @Id
+    @Id @JsonIgnore
     @Column(name="ID")
     public Long nid; // Legacy Site ID
     
 	//bi-directional many-to-one association to Organisation
 	@ManyToOne
-	@JoinColumn(name="id_organisation")
+	@JoinColumn(name="id_organisation")	@JsonIgnore
 	public Organisation organisation_to_target;
     
 	//bi-directional many-to-many association to Flag
-	@ManyToMany(mappedBy="targets")
+	@ManyToMany(mappedBy="targets") @JsonIgnore
 	public List<Flag> flag_to_target = new ArrayList<Flag>();
     
 	//bi-directional many-to-many association to Tag
-	@ManyToMany(mappedBy="targets")
+	@ManyToMany(mappedBy="targets") @JsonIgnore
 	public List<Tag> tag_to_target = new ArrayList<Tag>();
 	
     //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="target_to_crawl_permission", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="target_to_crawl_permission", cascade=CascadeType.PERSIST) @JsonIgnore
     private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
      
     public List<CrawlPermission> getCrawlPermissions() {
@@ -76,15 +77,15 @@ public class Target extends Model {
     }    
     	
 	//bi-directional many-to-many association to DCollection
-	@ManyToMany(mappedBy="targets")
+	@ManyToMany(mappedBy="targets") @JsonIgnore
 	public List<DCollection> collection_to_target = new ArrayList<DCollection>();
 	
 	//bi-directional many-to-many association to Subject
-	@ManyToMany(mappedBy="targets")
+	@ManyToMany(mappedBy="targets") @JsonIgnore
 	public List<Taxonomy> subject_to_target = new ArrayList<Taxonomy>();
 	
 	//bi-directional many-to-many association to Subject
-	@ManyToMany(mappedBy="targets")
+	@ManyToMany(mappedBy="targets") @JsonIgnore
 	public List<Taxonomy> license_to_target = new ArrayList<Taxonomy>();
 	
     @Column(columnDefinition = "TEXT")
@@ -1968,12 +1969,28 @@ public class Target extends Model {
 	}
 
 	public boolean validQAStatus(Target target) {
-		Logger.info("validQAStatus field_url: " + target.field_url);
+//		Logger.info("validQAStatus field_url: " + target.field_url);
 		return (qa_status != null && target.qa_status.length() > 0 && !target.qa_status.toLowerCase().equals(Const.NONE));
 	}
 	
 	public boolean indicateUkwaLicenceStatus() {
 		return this.getUkwaLicenceStatusList().size() > 0;
+	}
+	
+	public boolean indicateOtherLicenses() {
+		List<Taxonomy> licenses = Taxonomy.findByType(Const.LICENCE);
+		Logger.info("field_license: " + this.field_license);
+		for(Taxonomy taxonomy : licenses) {
+			Logger.info("taxonomy ............... " + taxonomy.url);
+			if (this.field_license != null && field_license.contains(taxonomy.url)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean indicateLicenses() {
+		return (indicateUkwaLicenceStatus() || indicateOtherLicenses());
 	}
 	
 	/**
@@ -2008,7 +2025,7 @@ public class Target extends Model {
 				// also check if this target has a valid license too
 				// Then look if it is a target of a higher level domain analyzing given URL.
 				// license field checked as required in issue 176.
-				Logger.info("validQAStatus: " + validQAStatus(target));
+//				Logger.info("validQAStatus: " + validQAStatus(target));
 				// higher level domain and has a license or higher level domain and has pending qa status
 				if ((isHigherLevel(target.field_url) && StringUtils.isNotBlank(target.field_license)) || (isHigherLevel(target.field_url) && validQAStatus(target))) {
 					results.add(target);

@@ -114,7 +114,14 @@ public class ContactPerson extends Model
 
     public static final Model.Finder<Long, ContactPerson> find = new Model.Finder<Long, ContactPerson>(Long.class, ContactPerson.class);
 
-    public String getName()
+    public ContactPerson() {}
+
+	public ContactPerson(Long id, String url) {
+		this.id = id;
+		this.url = url;
+	}
+
+	public String getName()
     {
         return name;
     }
@@ -285,6 +292,10 @@ public class ContactPerson extends Model
 	    
     public String toString() {
         return "ContactPerson(" + name + ")" + ", id:" + id;
-    }    
+    }
+    
+    public static ContactPerson create(Long id, String url) {
+    	return new ContactPerson(id, url);
+    }
 
 }

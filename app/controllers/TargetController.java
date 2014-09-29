@@ -21,6 +21,7 @@ import models.User;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
+import play.Play;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.validation.ValidationError;
@@ -708,57 +709,38 @@ public class TargetController extends AbstractController {
     public static Result archiveTarget(String target) {    	
     	Logger.debug("archiveTarget() " + target);
     	if (target != null && target.length() > 0) {
-	        Properties props = System.getProperties();
-	    	Properties customProps = new Properties();
-	    	String queueHost = "";
-	    	String queuePort = "";
-	    	String queueName = "";
-	    	String routingKey= "";
-	    	String exchangeName = "";
-	    	try {
-	    		customProps.load(new FileInputStream(Const.PROJECT_PROPERTY_FILE));
-	    	    for(String key : customProps.stringPropertyNames()) {
-	    	    	  String value = customProps.getProperty(key);
-	//    	      	  Logger.debug("archiveTarget() key: " + key + " => " + value);
-	    	    	  if (key.equals(Const.QUEUE_HOST)) {
-	  	    	          queueHost = value;
-	  	    	      	  Logger.debug("archiveTarget() queue host: " + value);
-	    	    	  }
-	    	    	  if (key.equals(Const.QUEUE_PORT)) {
-	  	    	          queuePort = value;
-	  	    	      	  Logger.debug("archiveTarget() queue port: " + value);
-	    	    	  }
-	    	    	  if (key.equals(Const.QUEUE_NAME)) {
-	  	    	          queueName = value;
-	  	    	      	  Logger.debug("archiveTarget() queue name: " + value);
-	    	    	  }
-	    	    	  if (key.equals(Const.ROUTING_KEY)) {
-	  	    	          routingKey = value;
-	  	    	      	  Logger.debug("archiveTarget() routing key: " + value);
-	    	    	  }
-	    	    	  if (key.equals(Const.EXCHANGE_NAME)) {
-	  	    	          exchangeName = value;
-	  	    	      	  Logger.debug("archiveTarget() exchange name: " + value);
-	    	    	  }
-	    	    }
-	    	    ConnectionFactory factory = new ConnectionFactory();
-	    	    if (queueHost != null) {
-	    	    	factory.setHost(queueHost);
-	    	    }
-	    	    if (queuePort != null) {
-	    	    	factory.setPort(Integer.parseInt(queuePort));
-	    	    }
-	    	    Connection connection = factory.newConnection();
-	    	    Channel channel = connection.createChannel();
-
-	    	    channel.exchangeDeclare(exchangeName, "direct", true);
-	    	    channel.queueDeclare(queueName, true, false, false, null);
-	    	    channel.queueBind(queueName, exchangeName, routingKey);
-	    	    String message = target;
-	    	    channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
-	    	    Logger.debug(" ### sent target '" + message + "' to queue");    	    
-	    	    channel.close();
-	    	    connection.close();	    	    
+    		try {
+		    	String queueHost = Play.application().configuration().getString(Const.QUEUE_HOST);
+		    	String queuePort = Play.application().configuration().getString(Const.QUEUE_PORT);
+		    	String queueName = Play.application().configuration().getString(Const.QUEUE_NAME);
+		    	String routingKey = Play.application().configuration().getString(Const.ROUTING_KEY);
+		    	String exchangeName = Play.application().configuration().getString(Const.EXCHANGE_NAME);
+	
+		    	Logger.debug("archiveTarget() queue host: " + queueHost);
+		      	Logger.debug("archiveTarget() queue port: " + queuePort);
+		      	Logger.debug("archiveTarget() queue name: " + queueName);
+		      	Logger.debug("archiveTarget() routing key: " + routingKey);
+		      	Logger.debug("archiveTarget() exchange name: " + exchangeName);
+	
+		      	ConnectionFactory factory = new ConnectionFactory();
+		    	if (queueHost != null) {
+		    		factory.setHost(queueHost);
+		    	}
+		    	if (queuePort != null) {
+		    		factory.setPort(Integer.parseInt(queuePort));
+		    	}
+		    	Connection connection = factory.newConnection();
+		    	Channel channel = connection.createChannel();
+	
+		    	channel.exchangeDeclare(exchangeName, "direct", true);
+		    	channel.queueDeclare(queueName, true, false, false, null);
+		    	channel.queueBind(queueName, exchangeName, routingKey);
+		    	String message = target;
+		    	channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
+		    	Logger.debug(" ### sent target '" + message + "' to queue");    	    
+		    	channel.close();
+		    	connection.close();
+	    	
 	    	} catch (IOException e) {
 	    		String msg = "There was a problem queuing this crawl instruction. Please refer to the system administrator.";
 	    		User currentUser = User.findByEmail(request().username());

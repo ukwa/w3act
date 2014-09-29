@@ -46,11 +46,11 @@ public class User extends Model {
 
     //bi-directional many-to-one association to Organisation
 	@ManyToOne
-	@JoinColumn(name="id_organisation")
+	@JoinColumn(name="id_organisation") @JsonIgnore
 	public Organisation organisation;
 	
 	//bi-directional many-to-many association to Role
-	@ManyToMany(mappedBy="users")
+	@ManyToMany(mappedBy="users") @JsonIgnore
 	public List<Role> role_to_user = new ArrayList<Role>();
     	
     @JsonIgnore

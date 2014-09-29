@@ -34,6 +34,7 @@ public class Organisation extends Model {
     
     //bi-directional many-to-one association to User
     @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
+    @JsonIgnore
     private List<User> users = new ArrayList<User>();
      
     public List<User> getUsers() {
@@ -46,6 +47,7 @@ public class Organisation extends Model {
     
     //bi-directional one-to-many association to Target
     @OneToMany(mappedBy="organisation_to_target", cascade=CascadeType.PERSIST)
+    @JsonIgnore
     private List<Target> targets = new ArrayList<Target>();
      
     public List<Target> getTargets() {
@@ -58,6 +60,7 @@ public class Organisation extends Model {
     
     //bi-directional many-to-one association to Instance
     @OneToMany(mappedBy="organisation_to_instance", cascade=CascadeType.PERSIST)
+    @JsonIgnore
     private List<Instance> instances = new ArrayList<Instance>();
      
     public List<Instance> getInstances() {

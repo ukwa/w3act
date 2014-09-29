@@ -1139,6 +1139,11 @@ public class Taxonomy extends Model {
     public String toString() {
         return "Taxonomy(" + tid + ") with name: " + name;
     }
+    
+    public static Taxonomy findByTypeAndUrl(String type, String url) {
+        Taxonomy taxonomy = find.where().eq(Const.TTYPE, type).eq(Const.URL, url).findUnique();
+    	return taxonomy;
+    }
 
 }
 
