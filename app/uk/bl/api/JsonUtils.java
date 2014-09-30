@@ -139,7 +139,7 @@ public class JsonUtils {
 		} catch (Exception e) {
 			Logger.info("data aggregation error: " + e);
 		}
-		Logger.info("list size: " + res.size());
+//		Logger.info("list size: " + res.size());
 		// int idx = 0;
 		// Iterator<Object> itr = res.iterator();
 		// while (itr.hasNext()) {
@@ -149,7 +149,7 @@ public class JsonUtils {
 		// idx++;
 		// }
 		// int idx = 0;
-		Logger.info("res list size: " + res.size());
+//		Logger.info("res list size: " + res.size());
 		if (!type.equals(NodeType.INSTANCE)) {
 			Iterator<Object> itr = res.iterator();
 			while (itr.hasNext()) {
@@ -438,7 +438,7 @@ public class JsonUtils {
 	public static void readListFromString(String fieldName,
 			List<String> urlList, NodeType type, TaxonomyType taxonomy_type,
 			List<Object> res) {
-		// Logger.info("fieldName: " + fieldName);
+//		Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
 		if (fieldName != null && fieldName.length() > 0) {
 			if (fieldName.contains(Const.COMMA)) {
 				List<String> resList = Arrays.asList(fieldName
@@ -484,6 +484,7 @@ public class JsonUtils {
 							TaxonomyType.LICENSE, res);
 					readListFromString(target.field_subject, urlList, type,
 							TaxonomyType.SUBJECT, res);
+					Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
 					readListFromString(target.field_qa_status, urlList, type,
 							TaxonomyType.QUALITY_ISSUE, res);
 				}
@@ -733,7 +734,7 @@ public class JsonUtils {
 		if (json != null) {
 			JsonNode rootNode = json.path(Const.LIST_NODE);
 			Iterator<JsonNode> ite = rootNode.iterator();
-			Logger.info("rootNode elements count is: " + rootNode.size());
+//			Logger.info("rootNode elements count is: " + rootNode.size());
 
 			while (ite.hasNext()) {
 				JsonNode node = ite.next();
@@ -851,9 +852,19 @@ public class JsonUtils {
 	 * @param obj
 	 */
 	public static void parseJsonString(Field f, JsonNode node, Object obj) {
+
 		try {
 			String jsonField = getStringItem(node, f.getName());
 			jsonField = normalizeArchiveUrl(jsonField);
+			if (obj instanceof Instance) {
+				if (f.getName().equals("title")) {
+					Logger.info("Instance title: " + jsonField);
+				}
+				if (f.getName().equals("uri")) {
+					Logger.info("Instance uri: " + jsonField);
+				}
+
+			}
 			if (f.getType().equals(String.class)) {
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "";
@@ -979,7 +990,7 @@ public class JsonUtils {
 			List<Object> resList) {
 		Field[] fields = obj.getClass().getFields();
 		// if (obj.getClass().toString().contains("Taxonomy")) {
-		// Logger.info("Taxonomy node: " + node.toString());
+//		Logger.info("Taxonomy node: " + urlList + " " + type + " " + taxonomy_type);
 		// }
 		for (Field f : fields) {
 			try {
@@ -1018,8 +1029,25 @@ public class JsonUtils {
 					} else {
 						if (!checkSubNode(f, node, obj, urlList, type,
 								taxonomy_type, resList)) {
+							if (f.getName().equals("field_qa_issues")) {
+								Logger.info("!checkSubNode: " + f.getName());
+							}
 							parseJsonString(f, node, obj);
-						}
+						} 
+//							else {
+//							Logger.info(""+obj.getClass());
+//							if (obj instanceof Instance) {
+//								if (f.getName().equals("field_qa_issues")) {
+////									field_qa_issues":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/165","id":"165","resource":"taxonomy_term"}
+//									Logger.info("node: " + node);
+////									parseJsonNode(node, obj);
+//								}
+//							}
+//							else {
+//								parseJsonString(f, node, obj);
+//							}
+//
+//						}
 					}
 				}
 			} catch (IllegalArgumentException e) {
