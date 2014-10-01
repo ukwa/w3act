@@ -484,7 +484,7 @@ public class JsonUtils {
 							TaxonomyType.LICENSE, res);
 					readListFromString(target.field_subject, urlList, type,
 							TaxonomyType.SUBJECT, res);
-					Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
+//					Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
 					readListFromString(target.field_qa_status, urlList, type,
 							TaxonomyType.QUALITY_ISSUE, res);
 				}
@@ -860,11 +860,12 @@ public class JsonUtils {
 				if (f.getName().equals("title")) {
 					Logger.info("Instance title: " + jsonField);
 				}
-				if (f.getName().equals("uri")) {
-					Logger.info("Instance uri: " + jsonField);
+				if (f.getName().equals("field_qa_issues")) {
+					Logger.info("Instance field_qa_issues: " + jsonField);
 				}
 
 			}
+			
 			if (f.getType().equals(String.class)) {
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "";
@@ -1029,11 +1030,19 @@ public class JsonUtils {
 					} else {
 						if (!checkSubNode(f, node, obj, urlList, type,
 								taxonomy_type, resList)) {
+							// field_qa_issues seems to come from here
 							if (f.getName().equals("field_qa_issues")) {
-								Logger.info("!checkSubNode: " + f.getName());
+								JsonNode resNode = getElement(node, f.getName());
+//								String jsonField = getStringItem(resNode, f.getName());
+								String jsonField = getStringFromSubNode(resNode, "uri");
+								Taxonomy taxonomy = Ebean.find(models.Taxonomy.class).where().eq("url", jsonField).findUnique();
+								Logger.info("!checkSubNode: " + f.getName() + "-----" + resNode + " " + f.getType() + " " + jsonField + " ---- " + taxonomy.name);
+//								parseJsonString(f, resNode, obj);
+//								String jsonField = getStringFromSubNode(resNode, Const.subNodeMap.get(f.getName()));
+							} else {
+								parseJsonString(f, node, obj);
 							}
-							parseJsonString(f, node, obj);
-						} 
+						}
 //							else {
 //							Logger.info(""+obj.getClass());
 //							if (obj instanceof Instance) {
