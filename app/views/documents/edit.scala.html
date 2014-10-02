@@ -1,18 +1,58 @@
-@(title: String, form: Form[Document], user: User)
+@(title: String, form: Form[Journal], user: User)
 
-@main(title, user) {
+
+@scripts = {
+	<script type="text/javascript">
+		function getSelectionText() {
+			var text = "";
+			var win=document.getElementById("landing_page").contentWindow;
+			//var win=window;
+			alert("case1: " + win.document.html);
+			if (win.getSelection) {
+				text = win.getSelection().toString();
+				alert("case1: " + text);
+			} else if (win.document.selection && win.document.selection.type != "Control") {
+				text = win.document.selection.createRange().text;
+				alert("case2: " + text);
+			}
+			return text;
+		}
+		function openPopup() {
+			var breite = screen.width;
+			var hoehe = screen.height; 
+			var xps = ((breite/2)-379);
+			var yps = breite/2;
+			console.log("width: " + yps + ", height: " + hoehe);
+			window.open("http://www.ifs.org.uk/publications/7274", "name",
+					"width=" + yps + "," +
+					"height=" + hoehe + "," +
+					"left=" + yps + "," +
+					"scrollbars=yes"
+			);
+		}
+	</script>
+}
+
+@main(title, user, scripts) {
 	@title
 	
 	@helper.form(action = routes.Documents.save()) {
 		<div class="col-md-5">
+			@helper.inputText(form("document.title"))
+			@helper.inputText(form("document.doi"))
+			@helper.inputDate(form("document.publication_date"))
 			@helper.inputText(form("title"))
-			@helper.inputText(form("author"))
+			@helper.inputText(form("publication_year"))
+			@helper.inputText(form("volume"))
+			@helper.inputText(form("issue"))
 			
+			<a target="popup" onclick="openPopup()">Open Landing Page</a>
+			<br>
 			<input type="submit" class="btn primary" value="Save">
 		</div>
 		
 		<div class="col-md-7">
-			<iframe src="http://www.ifs.org.uk/publications/7274" width="100%" height="600" name="SELFHTML_in_a_box" />
+			<iframe id="landing_page" src="@routes.Helper.passthrough("http://www.thinknpc.org/publications/closing-in-on-change","")" width="100%" height="600" />
 		</div>
 	}
 }

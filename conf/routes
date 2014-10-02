@@ -109,7 +109,10 @@ GET     /tags/new/:tag                      controllers.Tags.create(tag)
 POST    /tags	                          	controllers.Tags.save()
 
 GET		/documents							controllers.Documents.index()
-GET		/documents/saved					controllers.Documents.save()
+POST	/documents							controllers.Documents.save()
+
+#GET		/site/:url/							controllers.Helper.passthrough(url)
+GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)
 
 GET     /flags                              controllers.Flags.index()
 GET     /flags/list							controllers.Flags.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")

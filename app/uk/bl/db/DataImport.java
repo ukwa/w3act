@@ -116,9 +116,9 @@ public enum DataImport {
                 Logger.info("collections successfully loaded");
                 Logger.info("load instances");
 				// aggregate instances data from drupal and store JSON content in a file
-		        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
+		        //List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 				// store instances in DB
-                Ebean.save(allInstances);
+                //Ebean.save(allInstances);
                 Logger.info("instances successfully loaded");
                 JsonUtils.mapInstancesToTargets();
                 Logger.info("map instances to targets");

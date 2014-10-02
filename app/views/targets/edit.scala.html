@@ -201,6 +201,7 @@
 					<font color="red">(-)</font>
 				}		        
 		    </a></li>
+		    <li><a href="#documents" data-toggle="tab">Documents</a></li>
 	  	</ul>
 	</div>
 	@warningmessage(flash)
@@ -1171,6 +1172,12 @@
 		     	</div>
 		     	
 			</div>		     		        		     
+	        
+	        <div class="tab-pane fade" id="documents">
+	        	@helper.checkbox(field = form("watched"))
+	        	Journal Titles
+	        	<input type="button" value="Add Journal Title">
+	        </div>
 	        
 		</div>
                         
