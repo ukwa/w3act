@@ -1,0 +1,33 @@
+# Documents
+
+documents:
+
+  - !!models.Document
+    landingPageUrl: http://www.ifs.org.uk/publications/7274
+    documentUrl: http://www.ifs.org.uk/uploads/publications/comms/r96.pdf
+    title: Document 1
+
+  - !!models.Document
+    landingPageUrl: http://www.thinknpc.org/publications/closing-in-on-change/
+    documentUrl: http://www.thinknpc.org/publications/closing-in-on-change/npc_closing-in-on-change-measuring-the-effectiveness-of-your-campaign/?post-parent=11603
+    title: Document 2
+
+  - !!models.Document
+    landingPageUrl: http://www.ofsted.gov.uk/resources/are-you-ready-good-practice-school-readiness
+    documentUrl: http://www.ofsted.gov.uk/sites/default/files/documents/surveys-and-good-practice/a/Are%20you%20ready%20Good%20practice%20in%20school%20readiness.pdf
+    title: Document 3
+
+  - !!models.Document
+    landingPageUrl: http://www.parliament.uk/business/committees/committees-a-z/commons-select/home-affairs-committee/publications/
+    documentUrl: http://www.publications.parliament.uk/pa/cm201415/cmselect/cmhaff/200/200.pdf
+    title: Document 4
+
+  - !!models.Document
+    landingPageUrl: https://www.gov.uk/government/consultations/eu-accounting-directive-smaller-companies-reporting
+    documentUrl: https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/350864/bis-14-1025-implemention-of-eu-accounting-directive-chapters-1-to-9-consultation.pdf
+    title: Document 5
+
+  - !!models.Document
+    landingPageUrl: https://www.gov.uk/government/publications/family-businesses-research
+    documentUrl: https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/313957/bis-14-699-research-into-family-businesses-bis-research-paper-172.pdf
+    title: Document 6

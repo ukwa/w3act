@@ -1,0 +1,20 @@
+@(title: String, form: Form[JournalTitle], user: User)
+
+@main(title, user) {
+	@title
+	
+	@helper.form(action = routes.JournalTitles.save()) {
+		<div class="col-md-5">
+			@helper.inputText(form("title"))
+			@helper.inputText(form("issn"))
+			@helper.inputText(form("frequency"))
+			@helper.inputText(form("publisherName"))
+			@helper.inputText(form("language"))
+			@helper.inputText(form("priorityCataloguing"))
+			@helper.inputText(form("blCollectionSubset"))
+			@helper.inputText(form("subject"))
+			
+			<input type="submit" class="btn primary" value="Save">
+		</div>
+	}
+}

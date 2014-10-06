@@ -108,10 +108,13 @@ GET     /tags/:tag/edit                     controllers.Tags.edit(tag)
 GET     /tags/new/:tag                      controllers.Tags.create(tag)
 POST    /tags	                          	controllers.Tags.save()
 
-GET		/documents							controllers.Documents.index()
+GET     /documents/list						controllers.Documents.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET		/documents/:document				controllers.Documents.edit(document: Long)
 POST	/documents							controllers.Documents.save()
 
-#GET		/site/:url/							controllers.Helper.passthrough(url)
+GET		/journaltitles						controllers.JournalTitles.index()
+POST	/journaltitles						controllers.JournalTitles.save()
+
 GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)
 
 GET     /flags                              controllers.Flags.index()

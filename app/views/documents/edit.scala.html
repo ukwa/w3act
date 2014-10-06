@@ -17,13 +17,13 @@
 			}
 			return text;
 		}
-		function openPopup() {
+		function openPopup(url) {
 			var breite = screen.width;
 			var hoehe = screen.height; 
 			var xps = ((breite/2)-379);
 			var yps = breite/2;
 			console.log("width: " + yps + ", height: " + hoehe);
-			window.open("http://www.ifs.org.uk/publications/7274", "name",
+			window.open(url, "name",
 					"width=" + yps + "," +
 					"height=" + hoehe + "," +
 					"left=" + yps + "," +
@@ -40,19 +40,19 @@
 		<div class="col-md-5">
 			@helper.inputText(form("document.title"))
 			@helper.inputText(form("document.doi"))
-			@helper.inputDate(form("document.publication_date"))
-			@helper.inputText(form("title"))
-			@helper.inputText(form("publication_year"))
+			@helper.inputDate(form("document.publicationDate"))
+			@*helper.inputText(form("title"))*@
+			@helper.inputText(form("publicationYear"))
 			@helper.inputText(form("volume"))
 			@helper.inputText(form("issue"))
 			
-			<a target="popup" onclick="openPopup()">Open Landing Page</a>
+			<a target="popup" onclick="openPopup('@form.get.document.landingPageUrl')">Open Landing Page</a>
 			<br>
 			<input type="submit" class="btn primary" value="Save">
 		</div>
 		
 		<div class="col-md-7">
-			<iframe id="landing_page" src="@routes.Helper.passthrough("http://www.thinknpc.org/publications/closing-in-on-change","")" width="100%" height="600" />
+			<iframe id="landing_page" src="@routes.Helper.passthrough(form.get.document.landingPageUrl,"")" width="100%" height="600" />
 		</div>
 	}
 }

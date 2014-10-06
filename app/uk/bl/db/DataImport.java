@@ -9,6 +9,7 @@ import java.util.Map;
 
 import models.ContactPerson;
 import models.DCollection;
+import models.Document;
 import models.Flag;
 import models.Instance;
 import models.MailTemplate;
@@ -68,6 +69,16 @@ public enum DataImport {
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
                 insertInitialData(Const.ORGANISATIONS, Organisation.class, all);
+                Logger.info("loading documents from configuration ...");
+                @SuppressWarnings("unchecked")
+				Map<String,List<Object>> allDocuments = (Map<String,List<Object>>)Yaml.load("documents.yml");
+                for (String key : allDocuments.keySet()) {
+                	Logger.info("Key: "+key);
+                	for (Object o : allDocuments.get(key)) {
+                		Logger.info("  "+o);
+                	}
+                }
+                insertInitialData(Const.DOCUMENTS, Document.class, allDocuments);
 
                 Logger.info("load curators ...");
 		        List<Object> allCurators = JsonUtils.getDrupalDataBase(Const.NodeType.USER);
@@ -116,9 +127,9 @@ public enum DataImport {
                 Logger.info("collections successfully loaded");
                 Logger.info("load instances");
 				// aggregate instances data from drupal and store JSON content in a file
-		        //List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
+		        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 				// store instances in DB
-                //Ebean.save(allInstances);
+                Ebean.save(allInstances);
                 Logger.info("instances successfully loaded");
                 JsonUtils.mapInstancesToTargets();
                 Logger.info("map instances to targets");
@@ -199,8 +210,9 @@ public enum DataImport {
         List<Object> sectionList = all.get(sectionName);
         Iterator<Object> sectionItr = sectionList.iterator();
         while (sectionItr.hasNext()) {
+        	Object value = sectionItr.next();
 	        if (cls == User.class) {
-            	User user = (User) sectionItr.next();
+            	User user = (User) value;
             	user.uid = Utils.createId();
             	user.url = Const.ACT_URL + user.uid;
         		try {
@@ -215,54 +227,59 @@ public enum DataImport {
                 Logger.info("+++ user role_to_user size: " + user.role_to_user.size());
 	        }
 	        if (cls == Role.class) {
-            	Role role = (Role) sectionItr.next();
+            	Role role = (Role) value;
             	role.id = Utils.createId();
 	        	role.url= Const.ACT_URL + role.id;
                 Logger.info("Predefined " + Role.class.getSimpleName() + ": " + role.toString());
                 Logger.info("+++ role permissionsMap size: " + role.permissionsMap.size());
 	        }
 	        if (cls == Permission.class) {
-	        	Permission permission = (Permission) sectionItr.next();
+	        	Permission permission = (Permission) value;
 	        	permission.id = Utils.createId();
 	        	permission.url= Const.ACT_URL + permission.id;
                 Logger.info("Predefined " + Permission.class.getSimpleName() + ": " + permission.toString());
 	        }
 	        if (cls == Organisation.class) {
-	        	Organisation organisation = (Organisation) sectionItr.next();
+	        	Organisation organisation = (Organisation) value;
 	        	organisation.nid = Utils.createId();
 	        	organisation.url= Const.ACT_URL + organisation.nid;
                 Logger.info("Predefined " + Organisation.class.getSimpleName() + ": " + organisation.toString());
 	        }
 	        if (cls == MailTemplate.class) {
-	        	MailTemplate mailTemplate = (MailTemplate) sectionItr.next();
+	        	MailTemplate mailTemplate = (MailTemplate) value;
 	        	mailTemplate.id = Utils.createId();
 	        	mailTemplate.url = Const.ACT_URL + mailTemplate.id;
 	        	mailTemplate.readInitialTemplate();
                 Logger.info("Predefined " + MailTemplate.class.getSimpleName() + ": " + mailTemplate.toString());
 	        }
 	        if (cls == ContactPerson.class) {
-	        	ContactPerson contactPerson = (ContactPerson) sectionItr.next();
+	        	ContactPerson contactPerson = (ContactPerson) value;
 	        	contactPerson.id = Utils.createId();
 	        	contactPerson.url = Const.ACT_URL + contactPerson.id;
                 Logger.info("Predefined " + ContactPerson.class.getSimpleName() + ": " + contactPerson.toString());
 	        }
 	        if (cls == Tag.class) {
-	        	Tag tag = (Tag) sectionItr.next();
+	        	Tag tag = (Tag) value;
 	        	tag.id = Utils.createId();
 	        	tag.url = Const.ACT_URL + tag.id;
                 Logger.info("Predefined " + Tag.class.getSimpleName() + ": " + tag.toString());
 	        }
 	        if (cls == Flag.class) {
-	        	Flag flag = (Flag) sectionItr.next();
+	        	Flag flag = (Flag) value;
 	        	flag.id = Utils.createId();
 	        	flag.url = Const.ACT_URL + flag.id;
                 Logger.info("Predefined " + Flag.class.getSimpleName() + ": " + flag.toString());
 	        }
 	        if (cls == Taxonomy.class) {
-	        	Taxonomy taxonomy = (Taxonomy) sectionItr.next();
+	        	Taxonomy taxonomy = (Taxonomy) value;
 	        	taxonomy.tid = Utils.createId();
 	        	taxonomy.url = Const.ACT_URL + taxonomy.tid;
                 Logger.info("Predefined " + Taxonomy.class.getSimpleName() + ": " + taxonomy.toString());
+	        }
+	        if (cls == Document.class) {
+	        	Document document = (Document) value;
+	        	document.filename = document.title + ".pdf";
+                Logger.info("Predefined " + Document.class.getSimpleName() + ": " + document.toString());
 	        }
         }
         Ebean.save(sectionList);

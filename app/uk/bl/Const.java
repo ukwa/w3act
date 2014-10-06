@@ -175,6 +175,7 @@ public final class Const {
     public static final String LANGUAGE = "language";
     public static final String AUTHORS = "authors";
     public static final String FLAGS = "flags";
+    public static final String DOCUMENTS = "documents";
 	public static final String DATE_OF_PUBLICATION = "date_of_publication";
 	public static final String JUSTIFICATION      = "justification";
 	public static final String SELECTION_TYPE     = "selection_type";
