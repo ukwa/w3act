@@ -1031,17 +1031,44 @@ public class JsonUtils {
 						if (!checkSubNode(f, node, obj, urlList, type,
 								taxonomy_type, resList)) {
 							// field_qa_issues seems to come from here
-							if (f.getName().equals("field_qa_issues")) {
-								JsonNode resNode = getElement(node, f.getName());
-//								String jsonField = getStringItem(resNode, f.getName());
-								String jsonField = getStringFromSubNode(resNode, "uri");
-								Taxonomy taxonomy = Ebean.find(models.Taxonomy.class).where().eq("url", jsonField).findUnique();
-								Logger.info("!checkSubNode: " + f.getName() + "-----" + resNode + " " + f.getType() + " " + jsonField + " ---- " + taxonomy.name);
+
+							if (obj instanceof Instance) {
+								if (f.getName().equals("field_qa_issues")) {
+									JsonNode resNode = getElement(node, f.getName());
+	//								String jsonField = getStringItem(resNode, f.getName());
+									String jsonField = getStringFromSubNode(resNode, "uri");
+									Taxonomy taxonomy = Ebean.find(models.Taxonomy.class).where().eq("url", jsonField).findUnique();
+									Logger.info("!checkSubNode: " + f.getName() + "-----" + resNode + " " + f.getType() + " " + jsonField + " ---- " + taxonomy.name);
+									
+	//								{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/164","id":"164","resource":"taxonomy_term"} 
+	//								class java.lang.String act-164 
+	//								No QA issues found (OK to publish)
+									Logger.info("setting " + obj.getClass() + " to " + taxonomy.name + " on field " + f.getName());
+									f.set(obj, taxonomy.name);
+	////								((Instance)obj).field_qa_issues = taxonomy.name;
+								}
+								if (f.getName().equals("qa_status")) {
+									// No QA issues found (OK to publish), QA issues found, Unknown
+									// PASSED_PUBLISH_NO_ACTION_REQUIRED, ISSUE_NOTED, None
+									String fieldQaIssues = ((Instance)obj).field_qa_issues;
+									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
+									Logger.info("Mapping " + obj.getClass() + " " + fieldQaIssues + " to qa_status " + convertedValue);
+									f.set(obj, convertedValue);
+//									((Instance)obj).field_qa_status = convertedValue;
+								}
+
 //								parseJsonString(f, resNode, obj);
 //								String jsonField = getStringFromSubNode(resNode, Const.subNodeMap.get(f.getName()));
 							} else {
 								parseJsonString(f, node, obj);
 							}
+
+						
+						
+						
+						
+						
+						
 						}
 //							else {
 //							Logger.info(""+obj.getClass());
