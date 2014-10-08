@@ -178,7 +178,7 @@
 						    <div class="col-sm-6">
 								<select name="field_qa_status" id="field_qa_status" class="form-control">
 									@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
-						                @if(form("field_qa_status").value != null && form("field_qa_status").value.contains(taxonomy.url)) {             
+						                @if(form("field_qa_issues").value != null && form("field_qa_issues").value.contains(taxonomy.name)) {             
 										 	<option selected>@taxonomy.name</option>
 									 	} else {
 										 	<option>@taxonomy.name</option>
@@ -224,7 +224,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			            	<label for="quality_notes" class="col-sm-6 control-label">Quality Notes</label>
+			            	<label for="quality_notes" class="col-sm-6 control-label">Technical Notes</label>
 			            	<div class="col-sm-6">
 				            	<textarea class="form-control" name="quality_notes" id="quality_notes" cols="100" rows="1" value="@form("quality_notes").value">@form("quality_notes").value</textarea>
 							</div>

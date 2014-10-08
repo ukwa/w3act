@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
+
 import models.DCollection;
 import models.Instance;
 import models.Organisation;
@@ -1054,6 +1056,25 @@ public class JsonUtils {
 									Logger.info("Mapping " + obj.getClass() + " " + fieldQaIssues + " to qa_status " + convertedValue);
 									f.set(obj, convertedValue);
 //									((Instance)obj).field_qa_status = convertedValue;
+								} else if (f.getName().equals("field_description_of_qa_issues")) {
+//									"qa_notes":"","quality_notes"
+//									Description of QA Issues > QA Notes
+									JsonNode resNode = getElement(node, f.getName());
+									String jsonField = getStringFromSubNode(resNode, "value");
+									if (StringUtils.isEmpty(jsonField)) {
+										jsonField = "N/A";
+									}
+									f.set(obj, jsonField);
+									((Instance)obj).qa_notes = jsonField;
+								} else if (f.getName().equals("quality_notes")) {
+//									Notes > Quality Notes
+									JsonNode resNode = getElement(node, f.getName());
+									String jsonField = getStringFromSubNode(resNode, "value");
+									if (StringUtils.isEmpty(jsonField)) {
+										jsonField = "N/A";
+									}
+									f.set(obj, jsonField);
+									((Instance)obj).quality_notes = jsonField;
 								} else {
 									parseJsonString(f, node, obj);
 								}
