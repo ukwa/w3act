@@ -1030,8 +1030,8 @@ public class JsonUtils {
 					} else {
 						if (!checkSubNode(f, node, obj, urlList, type,
 								taxonomy_type, resList)) {
-							// field_qa_issues seems to come from here
 
+							// field_qa_issues seems to come from here
 							if (obj instanceof Instance) {
 								if (f.getName().equals("field_qa_issues")) {
 									JsonNode resNode = getElement(node, f.getName());
@@ -1045,9 +1045,8 @@ public class JsonUtils {
 	//								No QA issues found (OK to publish)
 									Logger.info("setting " + obj.getClass() + " to " + taxonomy.name + " on field " + f.getName());
 									f.set(obj, taxonomy.name);
-	////								((Instance)obj).field_qa_issues = taxonomy.name;
-								}
-								if (f.getName().equals("qa_status")) {
+////								((Instance)obj).field_qa_issues = taxonomy.name;
+								} else if (f.getName().equals("qa_status")) {
 									// No QA issues found (OK to publish), QA issues found, Unknown
 									// PASSED_PUBLISH_NO_ACTION_REQUIRED, ISSUE_NOTED, None
 									String fieldQaIssues = ((Instance)obj).field_qa_issues;
@@ -1055,35 +1054,13 @@ public class JsonUtils {
 									Logger.info("Mapping " + obj.getClass() + " " + fieldQaIssues + " to qa_status " + convertedValue);
 									f.set(obj, convertedValue);
 //									((Instance)obj).field_qa_status = convertedValue;
+								} else {
+									parseJsonString(f, node, obj);
 								}
-
-//								parseJsonString(f, resNode, obj);
-//								String jsonField = getStringFromSubNode(resNode, Const.subNodeMap.get(f.getName()));
 							} else {
 								parseJsonString(f, node, obj);
 							}
-
-						
-						
-						
-						
-						
-						
 						}
-//							else {
-//							Logger.info(""+obj.getClass());
-//							if (obj instanceof Instance) {
-//								if (f.getName().equals("field_qa_issues")) {
-////									field_qa_issues":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/165","id":"165","resource":"taxonomy_term"}
-//									Logger.info("node: " + node);
-////									parseJsonNode(node, obj);
-//								}
-//							}
-//							else {
-//								parseJsonString(f, node, obj);
-//							}
-//
-//						}
 					}
 				}
 			} catch (IllegalArgumentException e) {
