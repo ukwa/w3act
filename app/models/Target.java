@@ -1965,24 +1965,43 @@ public class Target extends Model {
 	}
 	    
 	public boolean isHigherLevel(String iterUrl) {
-		return (this.field_url.contains(iterUrl) && this.field_url.indexOf(iterUrl) == 0 && this.field_url.length() > iterUrl.length());
+		boolean highLevel = (this.field_url.contains(iterUrl) && this.field_url.indexOf(iterUrl) == 0 && this.field_url.length() > iterUrl.length());
+		Logger.info("iterUrl: " + iterUrl  + " " + highLevel);
+		return highLevel;
 	}
 
 	public boolean validQAStatus(Target target) {
 //		Logger.info("validQAStatus field_url: " + target.field_url);
 		return (qa_status != null && target.qa_status.length() > 0 && !target.qa_status.toLowerCase().equals(Const.NONE));
 	}
+
+	public boolean hasLicenses() {
+//		Open UKWA licence for target being edited - disabled
+//		Other license for target being edited - disabled
+		return indicateLicenses(this.field_license);
+	}
 	
+	public boolean hasHigherLicense() {
+//		Open UKWA Licence at higher level - disabled
+//		Other license at higher level - disabled
+		Target higherTarget = this.getHigherLevelTarget();
+		if (higherTarget != null) {
+			return (indicateLicenses(higherTarget.field_license));
+		}
+		return false;
+	}
+
 	public boolean indicateUkwaLicenceStatus() {
+		// include what RGRAF implemented
 		return this.getUkwaLicenceStatusList().size() > 0;
 	}
 	
-	public boolean indicateOtherLicenses() {
+	private boolean indicateLicenses(String field_license) {
 		List<Taxonomy> licenses = Taxonomy.findByType(Const.LICENCE);
-		Logger.info("field_license: " + this.field_license);
+		Logger.info("field_license: " + field_license);
 		for(Taxonomy taxonomy : licenses) {
 			Logger.info("taxonomy ............... " + taxonomy.url);
-			if (this.field_license != null && field_license.contains(taxonomy.url)) {
+			if (field_license != null && field_license.contains(taxonomy.url)) {
 				return true;
 			}
 		}
@@ -1990,7 +2009,25 @@ public class Target extends Model {
 	}
 	
 	public boolean indicateLicenses() {
-		return (indicateUkwaLicenceStatus() || indicateOtherLicenses());
+		return (indicateUkwaLicenceStatus() || hasLicenses() || hasHigherLicense());
+	}
+	
+	public Target getHigherLevelTarget() {
+		// field_url - the domain name
+		// field_license - act-168
+		if (StringUtils.isNotEmpty(this.field_url)) {
+			String normalisedUrl = Scope.normalizeUrl(this.field_url);
+	        String domain = Scope.getDomainFromUrl(normalisedUrl);
+	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, domain).eq(Const.ACTIVE, true);
+	        List<Target> targets = ll.findList();
+			for (Target target : targets) {
+				if (isHigherLevel(target.field_url)) {
+					return target;
+				}
+			}
+
+		}
+		return null;
 	}
 	
 	/**
@@ -2001,6 +2038,8 @@ public class Target extends Model {
 	 * @return target list
 	 */
 	public List<Target> getUkwaLicenceStatusList() {
+//		Open UKWA Licence at higher level - disabled
+//		Open UKWA licence for target being edited - disabled
 		List<Target> results = new ArrayList<Target>();
 		if (StringUtils.isNotEmpty(this.field_url)) {
 			// first aggregate a list of active targets for associated URL
@@ -2009,8 +2048,7 @@ public class Target extends Model {
 	        String domain = Scope.getDomainFromUrl(this.field_url);
 			Logger.debug("getUkwaLicenceStatusList() domain: " + domain);
 			// get me Targets that contain the same domain so I can check the licenses. i.e higher level
-	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, domain)
-		    		.eq(Const.ACTIVE, true);
+	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, domain).eq(Const.ACTIVE, true);
 	        List<Target> targets = ll.findList();
 	        
 			Logger.info("Targets containing domain "  + domain + " - " + targets.size());
@@ -2031,6 +2069,7 @@ public class Target extends Model {
 					results.add(target);
 				}
 			}
+			// what about current target license?
 		}
 
 		Logger.debug("getUkwaLicenceStatusList() targets result list size: " + results.size());
