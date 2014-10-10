@@ -2,8 +2,6 @@ package controllers;
 
 import com.avaje.ebean.Ebean;
 
-import models.Document;
-import models.Journal;
 import models.JournalTitle;
 import models.User;
 import play.Logger;
@@ -17,7 +15,7 @@ public class JournalTitles extends AbstractController {
 
 	public static Form<JournalTitle> journalTitleForm;
 
-	public static Result index() {
+	public static Result addJournalTitle(String target) {
 		Logger.info("JournalTitles.index()");
 
 		journalTitleForm = Form.form(JournalTitle.class);

@@ -72,12 +72,6 @@ public enum DataImport {
                 Logger.info("loading documents from configuration ...");
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> allDocuments = (Map<String,List<Object>>)Yaml.load("documents.yml");
-                for (String key : allDocuments.keySet()) {
-                	Logger.info("Key: "+key);
-                	for (Object o : allDocuments.get(key)) {
-                		Logger.info("  "+o);
-                	}
-                }
                 insertInitialData(Const.DOCUMENTS, Document.class, allDocuments);
 
                 Logger.info("load curators ...");

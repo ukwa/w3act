@@ -84,25 +84,7 @@
 	    <h1>Documents</h1>
 	</div>
 		
-    <article class="flags">
-
-		<div id="forms">
-   			@warningmessage(flash)
-   			@helper.form(action=routes.Flags.search, 'class -> "form-inline") {
-	   			<div class="input-group">
-					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
-	   				<input type="hidden" name="s" value="@currentSortBy">
-	   				<input type="hidden" name="o" value="@currentOrder">
-	   				<input type="text" class="form-control lookup-form-control" name="q" placeholder="Enter flag name" value="@searchstr" id="search-query">
-		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for flag by name">Search</button>
-						@if(user.hasRole("sys_admin")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new flag">Add</button>
-						}						
-					</span>
-				</div>
-			}
-		</div>	        
+    <article class="flags">      
 
 		<table class="table table-hover">
 			<thead>

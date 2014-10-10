@@ -1,5 +1,12 @@
-@(title: String, form: Form[Journal], user: User)
+@(title: String, form: Form[Document], user: User)
 
+@import helper.checkbox
+@import helper.inputDate
+@import helper.inputText
+@import helper.options
+@import helper.select
+@import scala.collection.immutable.List
+@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
 
 @scripts = {
 	<script type="text/javascript">
@@ -7,10 +14,30 @@
 			var text = "";
 			var win=document.getElementById("landing_page").contentWindow;
 			//var win=window;
-			alert("case1: " + win.document.html);
 			if (win.getSelection) {
+				var node = win.getSelection().anchorNode;
+				var cssSelector = "";
+				var idFound = false;
+				while (node.parentNode && !idFound) {
+					var node = node.parentNode;
+					var localCssSelector = node.localName;
+					if (node.id) {
+						localCssSelector += "#" + node.id;
+						idFound = true;
+					}
+					else if (node.className) {
+						localCssSelector += "." + node.className.replace(/[ ]/g, '.');
+					}
+					if (cssSelector) {
+						cssSelector = localCssSelector + " " + cssSelector;
+					}
+					else {
+						cssSelector = localCssSelector;
+					}
+				}
+				console.log("cssSelector: " + cssSelector);
 				text = win.getSelection().toString();
-				alert("case1: " + text);
+				console.log("text: " + text);
 			} else if (win.document.selection && win.document.selection.type != "Control") {
 				text = win.document.selection.createRange().text;
 				alert("case2: " + text);
@@ -30,29 +57,105 @@
 					"scrollbars=yes"
 			);
 		}
+
+		function show(element) {
+			element.style.display = "block";
+		}
+
+		function hide(element) {
+			element.style.display = "none";
+		}
+		
+		function toggleVisibility() {
+			var select = document.getElementById("type");
+			var type = select.selectedIndex;
+			var book_general = document.getElementById("book_general");
+			var book = document.getElementById("book");
+			var journal_general = document.getElementById("journal_general");
+			var journal_article = document.getElementById("journal_article");
+			hide(book_general);
+			hide(book);
+			hide(journal_general);
+			hide(journal_article);
+			switch(type) {
+				case 1:
+					show(book_general);
+					show(book);
+					break;
+				case 2:
+					show(book_general);
+					break;
+				case 3:
+					show(journal_general);
+					show(journal_article);
+					break;
+				case 4:
+					show(journal_general);
+					break;
+			}
+		}
+
+		if (window.addEventListener)  // W3C DOM
+			window.addEventListener('load', function() { toggleVisibility(); }, false);
+		else if (window.attachEvent) { // IE DOM
+			window.attachEvent('onload', function() { toggleVisibility(); }, false);
+		}
 	</script>
 }
 
 @main(title, user, scripts) {
-	@title
+	<div class="page-header">
+    	<h1><a href="@routes.Documents.list()">Documents > </a>@form("filename").value</h1>
+	</div>
 	
 	@helper.form(action = routes.Documents.save()) {
 		<div class="col-md-5">
-			@helper.inputText(form("document.title"))
-			@helper.inputText(form("document.doi"))
-			@helper.inputDate(form("document.publicationDate"))
-			@*helper.inputText(form("title"))*@
-			@helper.inputText(form("publicationYear"))
-			@helper.inputText(form("volume"))
-			@helper.inputText(form("issue"))
+			<input type="hidden" name="id" value="@form("id").value">
+			<input type="hidden" name="landingPageUrl" value="@form("landingPageUrl").value">
+			<input type="hidden" name="documentUrl" value="@form("documentUrl").value">
+			<input type="hidden" name="filename" value="@form("filename").value">
+			<input type="hidden" name="book.id" value="@form("book.id").value">
+			<input type="hidden" name="book.id_document" value="@form("id").value">
+			<input type="hidden" name="journal.id" value="@form("journal.id").value">
+			<input type="hidden" name="journal.id_document" value="@form("id").value">
+
+			@defining('class -> "form-control") { textualElement =>
+				@inputText(form("title"), '_label -> "Title", textualElement)
+				@inputText(form("doi"), '_label -> "DOI (Digital Object Identifier)", textualElement)
+				@inputDate(form("filename"), '_label -> "Filename", textualElement)
+				@select(form("type"),
+					options(List("","Book", "Book Chapter", "Journal Article", "Journal Issue")),
+					'_label -> "Submission Type", 'onchange -> "toggleVisibility()", textualElement)
+				<div id="book_general" style="display: none">
+					@inputText(form("book.isbn"), '_label -> "ISBN", textualElement)
+					@inputText(form("book.author"), '_label -> "Author(s)", textualElement)
+					@inputText(form("book.corporate_author"), '_label -> "Corporate Author", textualElement)
+					@checkbox(form("book.priority_cataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
+				</div>
+				<div id="book" style="display: none">
+					@inputText(form("book.series"), '_label -> "Series", textualElement)
+					@inputText(form("book.publisher"), '_label -> "Publisher", textualElement)
+					@inputText(form("book.edition"), '_label -> "Edition", textualElement)
+					@inputText(form("book.publicationYear"), '_label -> "Year of Publication", textualElement)
+				</div>
+				<div id="journal_general" style="display: none">
+					@inputText(form("journal.publicationYear"), '_label -> "Year of Publication", textualElement)
+					@inputText(form("journal.volume"), '_label -> "Volume", textualElement)
+					@inputText(form("journal.issue"), '_label -> "Issue/Part", textualElement)
+				</div>
+				<div id="journal_article" style="display: none">
+					@inputText(form("journal.author"), '_label -> "Author(s)", textualElement)
+				</div>
+			}
 			
-			<a target="popup" onclick="openPopup('@form.get.document.landingPageUrl')">Open Landing Page</a>
-			<br>
+			@*<a target="landingPage" onclick="openPopup('@form("landingPageUrl").value')">Open Landing Page</a><br>
+			<a target="document" onclick="openPopup('@form("documentUrl").value')">Open Document</a><br>*@
+			<a onclick="getSelectionText()">get selection</a><br>
 			<input type="submit" class="btn primary" value="Save">
 		</div>
 		
 		<div class="col-md-7">
-			<iframe id="landing_page" src="@routes.Helper.passthrough(form.get.document.landingPageUrl,"")" width="100%" height="600" />
+			<iframe id="landing_page" src="@routes.Helper.passthrough(form("landingPageUrl").value,"")" width="100%" height="600" />
 		</div>
 	}
 }

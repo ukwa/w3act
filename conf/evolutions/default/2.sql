@@ -21,7 +21,8 @@ create table document (
   title			TEXT not null,
   doi			varchar(255),
   publication_date	date,
-  filename		varchar(255) not null
+  filename		varchar(255) not null,
+  type			varchar(255)
 );
 
 create table book (
@@ -30,11 +31,11 @@ create table book (
   isbn			varchar(255),
   author		varchar(255),
   corporate_author	varchar(255),
-  priority_cataloguing	varchar(255) not null,
+  priority_cataloguing	boolean not null,
   series		varchar(255),
-  publisher		varchar(255) not null,
+  publisher		varchar(255),
   edition		varchar(255),
-  publication_year	integer not null
+  publication_year	integer
 );
 
 create table journal (

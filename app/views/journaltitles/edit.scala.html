@@ -1,18 +1,23 @@
 @(title: String, form: Form[JournalTitle], user: User)
 
+@import helper.inputText
+@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+
 @main(title, user) {
 	@title
 	
 	@helper.form(action = routes.JournalTitles.save()) {
 		<div class="col-md-5">
-			@helper.inputText(form("title"))
-			@helper.inputText(form("issn"))
-			@helper.inputText(form("frequency"))
-			@helper.inputText(form("publisherName"))
-			@helper.inputText(form("language"))
-			@helper.inputText(form("priorityCataloguing"))
-			@helper.inputText(form("blCollectionSubset"))
-			@helper.inputText(form("subject"))
+			@defining('class -> "form-control") { inputArg =>
+				@inputText(form("title"), inputArg)
+				@inputText(form("issn"), inputArg)
+				@inputText(form("frequency"), inputArg)
+				@inputText(form("publisherName"), inputArg)
+				@inputText(form("language"), inputArg)
+				@inputText(form("priorityCataloguing"), inputArg)
+				@inputText(form("blCollectionSubset"), inputArg)
+				@inputText(form("subject"), inputArg)
+			}
 			
 			<input type="submit" class="btn primary" value="Save">
 		</div>

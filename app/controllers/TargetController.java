@@ -1,13 +1,10 @@
 package controllers;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import models.CrawlPermission;
 import models.DCollection;
@@ -18,13 +15,10 @@ import models.Target;
 import models.Taxonomy;
 import models.User;
 
-import org.apache.commons.lang3.StringUtils;
-
 import play.Logger;
 import play.Play;
 import play.data.DynamicForm;
 import play.data.Form;
-import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -34,11 +28,9 @@ import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import views.html.licence.ukwalicenceresult;
-import views.html.targets.blank;
 import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
-import com.avaje.ebean.SqlUpdate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -282,6 +274,7 @@ public class TargetController extends AbstractController {
         String delete = getFormParam("delete");
         String request = getFormParam(Const.REQUEST);
         String archive = getFormParam(Const.ARCHIVE);
+        String journalTitle = getFormParam("journalTitle");
         Logger.info("save: " + save);
         Logger.info("delete: " + delete);
         if (save != null) {
@@ -673,14 +666,14 @@ public class TargetController extends AbstractController {
   			flash("message", "Your changes have been saved.");
 	        res = redirect(routes.Targets.view(newTarget.url) + getFormParam(Const.TAB_STATUS));
         } // end of save
-        if (delete != null) {
+        else if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.NID));
         	Logger.info("deleting: " + id);
         	Target target = Target.findById(id);
         	Ebean.delete(target);
 	        res = redirect(routes.Targets.index()); 
         }
-        if (request != null) {
+        else if (request != null) {
             Logger.debug("request permission for title: " + getFormParam(Const.TITLE) + 
             		" and target: " + getFormParam(Const.FIELD_URL_NODE));
         	if (getFormParam(Const.TITLE) != null && getFormParam(Const.FIELD_URL_NODE) != null) {
@@ -689,12 +682,20 @@ public class TargetController extends AbstractController {
     	        res = redirect(routes.CrawlPermissions.licenceRequestForTarget(name, target)); 
         	}
         }
-        if (archive != null) {
+        else if (archive != null) {
             Logger.debug("archive target title: " + getFormParam(Const.TITLE) + 
             		" with URL: " + getFormParam(Const.FIELD_URL_NODE));
         	if (getFormParam(Const.FIELD_URL_NODE) != null) {
                 String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
     	        res = redirect(routes.TargetController.archiveTarget(target)); 
+        	}
+        }
+        else if (journalTitle != null) {
+            Logger.debug("add journal title for target title: " + getFormParam(Const.TITLE) + 
+            		" with URL: " + getFormParam(Const.FIELD_URL_NODE));
+        	if (getFormParam(Const.FIELD_URL_NODE) != null) {
+                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
+    	        res = redirect(routes.JournalTitles.addJournalTitle(target)); 
         	}
         }
         return res;

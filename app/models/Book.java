@@ -10,9 +10,9 @@ import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 
 @Entity
-public class Journal extends Model {
+public class Book extends Model {
 	
-	public Journal(Document document) {
+	public Book(Document document) {
 		this.document = document;
 	}
 	@Id
@@ -20,12 +20,15 @@ public class Journal extends Model {
 	@OneToOne
 	@JoinColumn(name="id_document")
 	public Document document;
-	@ManyToOne
-	@JoinColumn(name="id_journal_title")
-	public JournalTitle journalTitle;
+	public String isbn;
+	public String author;
+	public String corporate_author;
+	public boolean priority_cataloguing;
+	public String series;
+	@Required
+	public String publisher;
+	public String edition;
 	@Required
     public Integer publicationYear;
-	public String volume;
-	public String issue;
-	public String author;
+	
 }
