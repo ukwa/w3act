@@ -1,22 +1,25 @@
 @(title: String, form: Form[JournalTitle], user: User)
 
+@import helper.checkbox
 @import helper.inputText
 @implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
 
 @main(title, user) {
-	@title
+	<div class="page-header">
+    	<h1>Journal Titles</h1>
+	</div>
 	
 	@helper.form(action = routes.JournalTitles.save()) {
 		<div class="col-md-5">
-			@defining('class -> "form-control") { inputArg =>
-				@inputText(form("title"), inputArg)
-				@inputText(form("issn"), inputArg)
-				@inputText(form("frequency"), inputArg)
-				@inputText(form("publisherName"), inputArg)
-				@inputText(form("language"), inputArg)
-				@inputText(form("priorityCataloguing"), inputArg)
-				@inputText(form("blCollectionSubset"), inputArg)
-				@inputText(form("subject"), inputArg)
+			@defining('class -> "form-control") { textualElement =>
+				@inputText(form("title"), '_label -> "Journal Title", textualElement)
+				@inputText(form("issn"), '_label -> "ISSN", textualElement)
+				@inputText(form("frequency"), '_label -> "Frequency", textualElement)
+				@inputText(form("publisherName"), '_label -> "Publisher Name", textualElement)
+				@inputText(form("language"), '_label -> "Language", textualElement)
+				@checkbox(form("priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
+				@inputText(form("blCollectionSubset"), '_label -> "BL Collection Subset", textualElement)
+				@inputText(form("subject"), '_label -> "Subject(s)", textualElement)
 			}
 			
 			<input type="submit" class="btn primary" value="Save">

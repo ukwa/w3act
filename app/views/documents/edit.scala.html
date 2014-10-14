@@ -1,11 +1,11 @@
-@(title: String, form: Form[Document], user: User)
+@(title: String, form: Form[Document], user: User, journalTitles: java.util.Map[String, String])
 
 @import helper.checkbox
 @import helper.inputDate
 @import helper.inputText
 @import helper.options
 @import helper.select
-@import scala.collection.immutable.List
+@import scala.List
 @implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
 
 @scripts = {
@@ -49,7 +49,6 @@
 			var hoehe = screen.height; 
 			var xps = ((breite/2)-379);
 			var yps = breite/2;
-			console.log("width: " + yps + ", height: " + hoehe);
 			window.open(url, "name",
 					"width=" + yps + "," +
 					"height=" + hoehe + "," +
@@ -122,7 +121,8 @@
 			@defining('class -> "form-control") { textualElement =>
 				@inputText(form("title"), '_label -> "Title", textualElement)
 				@inputText(form("doi"), '_label -> "DOI (Digital Object Identifier)", textualElement)
-				@inputDate(form("filename"), '_label -> "Filename", textualElement)
+				@inputDate(form("publicationDate"), '_label -> "Publication Date", textualElement)
+				@inputText(form("filename"), '_label -> "Filename", textualElement)
 				@select(form("type"),
 					options(List("","Book", "Book Chapter", "Journal Article", "Journal Issue")),
 					'_label -> "Submission Type", 'onchange -> "toggleVisibility()", textualElement)
@@ -130,7 +130,7 @@
 					@inputText(form("book.isbn"), '_label -> "ISBN", textualElement)
 					@inputText(form("book.author"), '_label -> "Author(s)", textualElement)
 					@inputText(form("book.corporate_author"), '_label -> "Corporate Author", textualElement)
-					@checkbox(form("book.priority_cataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
+					@checkbox(form("book.priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
 				</div>
 				<div id="book" style="display: none">
 					@inputText(form("book.series"), '_label -> "Series", textualElement)
@@ -139,6 +139,10 @@
 					@inputText(form("book.publicationYear"), '_label -> "Year of Publication", textualElement)
 				</div>
 				<div id="journal_general" style="display: none">
+					@select(form("journal.journalTitleId"),
+						options(journalTitles),
+						'_label -> "Journal Title", textualElement)
+					<input type="submit" name="journalTitle" class="btn btn-success" value="Add Journal Title">
 					@inputText(form("journal.publicationYear"), '_label -> "Year of Publication", textualElement)
 					@inputText(form("journal.volume"), '_label -> "Volume", textualElement)
 					@inputText(form("journal.issue"), '_label -> "Issue/Part", textualElement)
@@ -148,8 +152,8 @@
 				</div>
 			}
 			
-			@*<a target="landingPage" onclick="openPopup('@form("landingPageUrl").value')">Open Landing Page</a><br>
-			<a target="document" onclick="openPopup('@form("documentUrl").value')">Open Document</a><br>*@
+			<a target="landingPage" onclick="openPopup('@form("landingPageUrl").value')">Open Landing Page</a><br>
+			<a target="document" onclick="openPopup('@form("documentUrl").value')">Open Document</a><br>
 			<a onclick="getSelectionText()">get selection</a><br>
 			<input type="submit" class="btn primary" value="Save">
 		</div>

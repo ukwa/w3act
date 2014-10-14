@@ -13,7 +13,7 @@ public class CrawlData {
 	
 	private static String logFileName = "crawl.log";
 	
-	public static List<Document> renameThisMethodLaterAccordingly() {
+	public static List<Document> retrieveDocuments() {
 		Logger.info("parse log file ...");
 		
 		List<Document> documentList = new ArrayList<>();

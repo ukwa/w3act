@@ -8,7 +8,7 @@ create table journal_title (
   frequency		varchar(255),
   publisher_name	varchar(255) not null,
   language		varchar(255),
-  priority_cataloguing	varchar(255),
+  priority_cataloguing	boolean,
   bl_collection_subset	varchar(255),
   subject		varchar(255)
 );

@@ -13,12 +13,10 @@ import views.html.journaltitles.edit;
 @Security.Authenticated(Secured.class)
 public class JournalTitles extends AbstractController {
 
-	public static Form<JournalTitle> journalTitleForm;
-
-	public static Result addJournalTitle(String target) {
+	public static Result addJournalTitle() {
 		Logger.info("JournalTitles.index()");
 
-		journalTitleForm = Form.form(JournalTitle.class);
+		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
 				User.findByEmail(request().username())));
@@ -27,11 +25,20 @@ public class JournalTitles extends AbstractController {
 	public static Result save() {
 		Logger.info("JournalTitles.save()");
 		
-		JournalTitle journalTitle = journalTitleForm.bindFromRequest().get();
+		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).bindFromRequest();
+		
+		if (journalTitleForm.hasErrors()) {
+			Logger.info("Show errors in html");
+			return badRequest(edit.render("Journal Title", journalTitleForm,
+					User.findByEmail(request().username())));
+		}
+		
+		JournalTitle journalTitle = journalTitleForm.get();
 		
 		Ebean.save(journalTitle);
-
-		return ok();
+		
+		flash("journalTitle", "" + journalTitle.id);
+		return redirect(routes.Documents.edit(new Long(session("id"))));
 	}
 
 }

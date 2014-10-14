@@ -37,7 +37,7 @@ public class Document extends Model {
     @Column(columnDefinition = "TEXT")
 	public String title;
 	public String doi;
-	@DateTime(pattern="MM/dd/yyyy")
+	@DateTime(pattern="yyyy-MM-dd")
 	public Date publicationDate;
     @Required
 	public String filename;
@@ -49,10 +49,12 @@ public class Document extends Model {
         List<ValidationError> errors = new ArrayList<ValidationError>();
         String required = "This field is required";
         if (type.toLowerCase().startsWith("journal")) {
+        	if (journal.journalTitleId == null)
+                errors.add(new ValidationError("journal.journalTitleId", required));
         	if (journal.publicationYear == null)
                 errors.add(new ValidationError("journal.publicationYear", required));
         	if (journal.volume.isEmpty() && journal.issue.isEmpty())
-                errors.add(new ValidationError("journal.issue", "Complete Version or Issue/Part or both"));
+                errors.add(new ValidationError("journal.issue", "Complete Volume or Issue/Part or both"));
         } else if (type.toLowerCase().startsWith("book")) {
         	if (type.toLowerCase().equals("book")) {
         		if (book.publisher.isEmpty())
@@ -71,11 +73,6 @@ public class Document extends Model {
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
-    }
-    
-    public static Document findById(Long id) {
-    	Document res = find.where().eq(Const.ID, id).findUnique();
-    	return res;
     }
     
 }

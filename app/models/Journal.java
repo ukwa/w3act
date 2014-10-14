@@ -5,6 +5,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -23,6 +24,9 @@ public class Journal extends Model {
 	@ManyToOne
 	@JoinColumn(name="id_journal_title")
 	public JournalTitle journalTitle;
+	@Required
+	@Transient
+	public Long journalTitleId;
 	@Required
     public Integer publicationYear;
 	public String volume;

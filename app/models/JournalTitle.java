@@ -23,7 +23,7 @@ public class JournalTitle extends Model {
 	@Required
 	public String publisherName;
 	public String language;
-	public String priorityCataloguing;
+	public boolean priorityCataloguing;
 	public String blCollectionSubset;
 	public String subject;
 

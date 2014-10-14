@@ -31,3 +31,13 @@ documents:
     landingPageUrl: https://www.gov.uk/government/publications/family-businesses-research
     documentUrl: https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/313957/bis-14-699-research-into-family-businesses-bis-research-paper-172.pdf
     title: Document 6
+
+journalTitles:
+
+  - !!models.JournalTitle
+    title: JournalTitle 1
+    publisherName: Publisher 1
+
+  - !!models.JournalTitle
+    title: JournalTitle 2
+    publisherName: Publisher 2

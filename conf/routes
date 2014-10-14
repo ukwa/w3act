@@ -112,6 +112,7 @@ GET     /documents/list						controllers.Documents.list(p:Int ?= 0, s ?= "title"
 GET		/documents/:document				controllers.Documents.edit(document: Long)
 POST	/documents							controllers.Documents.save()
 
+GET		/journaltitles						controllers.JournalTitles.addJournalTitle()
 POST	/journaltitles						controllers.JournalTitles.save()
 
 GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)
@@ -189,7 +190,6 @@ GET     /targets/edit                       controllers.Targets.edit(target)
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissions.showCrawlPermissions(target)
 GET     /target/licencerequest          	controllers.CrawlPermissions.licenceRequestForTarget(name, target)
 GET     /target/archive                 	controllers.TargetController.archiveTarget(target)
-GET		/target/journaltitles				controllers.JournalTitles.addJournalTitle(target)
 
 GET     /contact                                controllers.Contact.index()
 POST    /contact/send              	            controllers.Contact.send()
