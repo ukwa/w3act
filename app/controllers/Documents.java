@@ -32,20 +32,29 @@ public class Documents extends AbstractController {
 			"journal.volume", "journal.issue", "journal.author");*/
 	
 	public static Result edit(Long id) {
-		Logger.info("Documents.index()");
+		Logger.info("Documents.edit()");
 		
 		Form<Document> documentForm = Form.form(Document.class);
 		
-		if (flash("journalTitle") != null) {
-			session("journal.journalTitleId", flash("journalTitle"));
-			documentForm = documentForm.bind(session());
-			documentForm.discardErrors();
-		} else {
-			Document document = getDocumentFromDB(id);
-			documentForm = documentForm.fill(document);
-		}
+		Document document = getDocumentFromDB(id);
+		documentForm = documentForm.fill(document);
 		
 		return ok(edit.render("Document" + id, documentForm,
+				User.findByEmail(request().username()), getJournalTitles()));
+	}
+	
+	public static Result continueEdit() {
+		Logger.info("Documents.continueEdit()");
+		
+		Form<Document> documentForm = Form.form(Document.class);
+		
+		if (flash("journalTitle") != null)
+			session("journal.journalTitleId", flash("journalTitle"));
+		
+		documentForm = documentForm.bind(session());
+		documentForm.discardErrors();
+		
+		return ok(edit.render("Document", documentForm,
 				User.findByEmail(request().username()), getJournalTitles()));
 	}
 

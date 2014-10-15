@@ -695,7 +695,7 @@ public class TargetController extends AbstractController {
             		" with URL: " + getFormParam(Const.FIELD_URL_NODE));
         	if (getFormParam(Const.FIELD_URL_NODE) != null) {
                 String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
-    	        res = redirect(routes.JournalTitles.addJournalTitle()); 
+    	        res = ok("work in progress: It should only be possible for saved targets to add journal titles."); 
         	}
         }
         return res;

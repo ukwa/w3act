@@ -109,10 +109,11 @@ GET     /tags/new/:tag                      controllers.Tags.create(tag)
 POST    /tags	                          	controllers.Tags.save()
 
 GET     /documents/list						controllers.Documents.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET		/documents/journaltitles			controllers.JournalTitles.addJournalTitle()
+GET		/documents/unsaved					controllers.Documents.continueEdit()
 GET		/documents/:document				controllers.Documents.edit(document: Long)
 POST	/documents							controllers.Documents.save()
 
-GET		/journaltitles						controllers.JournalTitles.addJournalTitle()
 POST	/journaltitles						controllers.JournalTitles.save()
 
 GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)

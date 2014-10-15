@@ -94,11 +94,11 @@
 			}
 		}
 
-		if (window.addEventListener)  // W3C DOM
+		@*if (window.addEventListener)  // W3C DOM
 			window.addEventListener('load', function() { toggleVisibility(); }, false);
 		else if (window.attachEvent) { // IE DOM
 			window.attachEvent('onload', function() { toggleVisibility(); }, false);
-		}
+		}*@
 	</script>
 }
 
@@ -126,28 +126,28 @@
 				@select(form("type"),
 					options(List("","Book", "Book Chapter", "Journal Article", "Journal Issue")),
 					'_label -> "Submission Type", 'onchange -> "toggleVisibility()", textualElement)
-				<div id="book_general" style="display: none">
+				<div id="book_general" style="@if(!form("type").value.toLowerCase.startsWith("book")) {display: none}">
 					@inputText(form("book.isbn"), '_label -> "ISBN", textualElement)
 					@inputText(form("book.author"), '_label -> "Author(s)", textualElement)
 					@inputText(form("book.corporate_author"), '_label -> "Corporate Author", textualElement)
 					@checkbox(form("book.priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
 				</div>
-				<div id="book" style="display: none">
+				<div id="book" style="@if(form("type").value.toLowerCase != "book") {display: none}">
 					@inputText(form("book.series"), '_label -> "Series", textualElement)
 					@inputText(form("book.publisher"), '_label -> "Publisher", textualElement)
 					@inputText(form("book.edition"), '_label -> "Edition", textualElement)
 					@inputText(form("book.publicationYear"), '_label -> "Year of Publication", textualElement)
 				</div>
-				<div id="journal_general" style="display: none">
+				<div id="journal_general" style="@if(!form("type").value.toLowerCase.startsWith("journal")) {display: none}">
 					@select(form("journal.journalTitleId"),
 						options(journalTitles),
 						'_label -> "Journal Title", textualElement)
-					<input type="submit" name="journalTitle" class="btn btn-success" value="Add Journal Title">
+					<input type="submit" name="journalTitle" class="btn btn-success" value="New Journal Title">
 					@inputText(form("journal.publicationYear"), '_label -> "Year of Publication", textualElement)
 					@inputText(form("journal.volume"), '_label -> "Volume", textualElement)
 					@inputText(form("journal.issue"), '_label -> "Issue/Part", textualElement)
 				</div>
-				<div id="journal_article" style="display: none">
+				<div id="journal_article" style="@if(form("type").value.toLowerCase != "journal article") {display: none}">
 					@inputText(form("journal.author"), '_label -> "Author(s)", textualElement)
 				</div>
 			}

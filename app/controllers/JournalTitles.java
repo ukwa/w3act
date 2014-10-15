@@ -25,8 +25,9 @@ public class JournalTitles extends AbstractController {
 	public static Result save() {
 		Logger.info("JournalTitles.save()");
 		
-		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).bindFromRequest();
+		String target = getFormParam("target");
 		
+		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).bindFromRequest();
 		if (journalTitleForm.hasErrors()) {
 			Logger.info("Show errors in html");
 			return badRequest(edit.render("Journal Title", journalTitleForm,
@@ -38,7 +39,7 @@ public class JournalTitles extends AbstractController {
 		Ebean.save(journalTitle);
 		
 		flash("journalTitle", "" + journalTitle.id);
-		return redirect(routes.Documents.edit(new Long(session("id"))));
+		return redirect(routes.Documents.continueEdit());
 	}
 
 }

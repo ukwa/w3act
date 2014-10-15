@@ -67,7 +67,10 @@ public class Target extends Model {
     //bi-directional one-to-many association to CrawlPermission
     @OneToMany(mappedBy="target_to_crawl_permission", cascade=CascadeType.PERSIST) @JsonIgnore
     private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
-     
+    
+    @OneToMany(mappedBy="target") @JsonIgnore
+    public List<JournalTitle> journalTitles = new ArrayList<>();
+    
     public List<CrawlPermission> getCrawlPermissions() {
     	return this.crawlPermissions;
     }

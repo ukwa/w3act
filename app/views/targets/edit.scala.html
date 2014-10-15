@@ -1,5 +1,8 @@
 @(form: Form[Target], user: User)
 
+@import helper.checkbox
+@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+
 @script = {
 	<script>	
 		(function() {
@@ -1173,10 +1176,13 @@
 		     	
 			</div>		     		        		     
 	        
-	        <div class="tab-pane fade" id="documents">
-	        	@helper.checkbox(field = form("watched"))
-	        	Journal Titles
-	        	<button type="submit" name="journalTitle" class="btn btn-success">Add Journal Title</button>
+			<div class="tab-pane fade" id="documents">
+				@checkbox(form("watched"), '_label -> "watched", 'class -> "checkbox")
+				Journal Titles
+				@helper.repeat(form("journalTitles")) { journalTitle =>
+					@journalTitle("title").value
+				}
+	        	<input type="submit" name="journalTitle" class="btn btn-success" value="Add Journal Title">
 	        </div>
 	        
 		</div>
