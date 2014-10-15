@@ -1,4 +1,4 @@
-@(title: String, form: Form[JournalTitle], user: User)
+@(title: String, form: Form[JournalTitle], user: User, toDocument: Boolean)
 
 @import helper.checkbox
 @import helper.inputText
@@ -7,16 +7,33 @@
 @main(title, user) {
 	<div class="page-header">
     	<h1>
-			<a href="@routes.Documents.list()">Documents > </a>
-			<a href="@routes.Documents.continueEdit()">@play.mvc.Controller.session("filename") > </a>
+    		@if(toDocument) {
+				<a href="@routes.Documents.list()">Documents</a> >
+				<a href="@routes.Documents.continueEdit()">@play.mvc.Controller.session("filename")</a> >
+			} else {
+				<a href="@routes.Targets.index()">Targets</a> >
+				<a href="@routes.Targets.view(form("target.url").value)">@form("target.title").value</a> >
+			}
 			New Journal Title
 		</h1>
 	</div>
 	
-	@helper.form(action = routes.JournalTitles.save()) {
+	@helper.form(action = routes.JournalTitles.save(toDocument)) {
 		<div class="col-md-5">
+			<input type="hidden" name="target.nid" value="@form("target.nid").value">
+			<input type="hidden" name="target.url" value="@form("target.url").value">
+			<input type="hidden" name="target.title" value="@form("target.title").value">
+			
 			@defining('class -> "form-control") { textualElement =>
 				@inputText(form("title"), '_label -> "Journal Title", textualElement)
+				<div class="row padding-10">
+					<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Target</label>
+							<div class="col-sm-6">@form("target.title").value</div>
+						</div>
+					</div>
+				</div>
 				@inputText(form("issn"), '_label -> "ISSN", textualElement)
 				@inputText(form("frequency"), '_label -> "Frequency", textualElement)
 				@inputText(form("publisherName"), '_label -> "Publisher Name", textualElement)

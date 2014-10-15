@@ -34,10 +34,8 @@ public class Documents extends AbstractController {
 	public static Result edit(Long id) {
 		Logger.info("Documents.edit()");
 		
-		Form<Document> documentForm = Form.form(Document.class);
-		
 		Document document = getDocumentFromDB(id);
-		documentForm = documentForm.fill(document);
+		Form<Document> documentForm = Form.form(Document.class).fill(document);
 		
 		return ok(edit.render("Document" + id, documentForm,
 				User.findByEmail(request().username()), getJournalTitles()));
@@ -46,12 +44,10 @@ public class Documents extends AbstractController {
 	public static Result continueEdit() {
 		Logger.info("Documents.continueEdit()");
 		
-		Form<Document> documentForm = Form.form(Document.class);
-		
 		if (flash("journalTitle") != null)
 			session("journal.journalTitleId", flash("journalTitle"));
 		
-		documentForm = documentForm.bind(session());
+		Form<Document> documentForm = Form.form(Document.class).bind(session());
 		documentForm.discardErrors();
 		
 		return ok(edit.render("Document", documentForm,
@@ -67,7 +63,7 @@ public class Documents extends AbstractController {
 		
 		if (journalTitle != null) {
 			session().putAll(documentForm.data());
-			return redirect(routes.JournalTitles.addJournalTitle());
+			return redirect(routes.JournalTitles.addJournalTitle(0, true));
 		} else {
 			Logger.info("Errors: " + documentForm.hasErrors());
 			for (String key : documentForm.errors().keySet()) {
@@ -119,6 +115,7 @@ public class Documents extends AbstractController {
 	
 	public static Document getDocumentFromDB(long id) {
 		Document document = Ebean.find(Document.class, id);
+		if (document.type == null) document.type = "";
 		if (document.journal != null)
 			document.journal.journalTitleId = document.journal.journalTitle.id;
 			

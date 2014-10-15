@@ -99,6 +99,7 @@
 					<font color="red">(-)</font>
 				}		        
 		    </a></li>
+		    <li><a href="#journalTitles" data-toggle="tab">Journal Titles</a></li>
       	</ul>
 	</div>
 	
@@ -835,6 +836,17 @@
 						</div>
 					</div>
 		     	</div>
+		</div>
+		
+		<div class="tab-pane fade" id="journalTitles">
+			<table>
+				@for(journalTitle <- target.journalTitles) {
+					<tr>
+						<td>@journalTitle.title</td>
+					</tr>
+				}
+			</table>
+	       	<a href="@routes.JournalTitles.addJournalTitle(target.nid, false)">New Journal Title</a>
 		</div>
 	</div>
 
