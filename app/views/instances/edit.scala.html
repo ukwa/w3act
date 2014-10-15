@@ -177,14 +177,15 @@
 			            	<label for="qa_status" class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
 								<select name="field_qa_status" id="field_qa_status" class="form-control">
-									@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
-						                @if(form("field_qa_issues").value != null && form("field_qa_issues").value.contains(taxonomy.name)) {             
-										 	<option selected>@taxonomy.name</option>
-									 	} else {
-										 	<option>@taxonomy.name</option>
-									 	}									 	
-								    }	
-                                </select>
+									<option>None</option>
+					                @for(qaStatusType <- uk.bl.Const.QAStatusType.values()) {
+					                	@if(form("field_qa_status").value != null && form("field_qa_status").value.contains(qaStatusType.name)) {
+						                	<option value="@qaStatusType.name" selected>@qaStatusType.getValue</option>
+						                } else {
+						                	<option value="@qaStatusType.name">@qaStatusType.getValue</option>
+						                }
+					                }
+								</select>						    
 							</div>
 			         	</div>
 					</div>

@@ -165,13 +165,13 @@
 						            	<div class="col-sm-6">
 											<select name="qa_status" class="form-control target-form-control" id="qa_status">
 									        	<option>None</option>
-									            @for(qaStatus <- QAController.getAllQAStatusTypes()) {
-							                 			@if(currentQaStatus != null && Taxonomy.findQaStatus(currentQaStatus).equals(qaStatus)) {
-								                		<option selected>@qaStatus</option>
-								                	} else {
-								                		<option>@qaStatus</option>
-								                	}
-												}
+									    		@for(qaStatusType <- uk.bl.Const.QAStatusType.values()) {
+						                 			@if(currentQaStatus != null && currentQaStatus.equals(qaStatusType.name)) {
+						                				<option value="@qaStatusType.name" selected>@qaStatusType.getValue</option>
+						                			} else {
+						                				<option value="@qaStatusType.name">@qaStatusType.getValue</option>
+						                			}
+					                			}
 											</select>
 										</div>
 						         	</div>

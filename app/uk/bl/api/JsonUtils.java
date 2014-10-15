@@ -1,7 +1,6 @@
 package uk.bl.api;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,7 +12,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,6 +28,7 @@ import play.Play;
 import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.Const.NodeType;
+import uk.bl.Const.QAStatusType;
 import uk.bl.Const.TaxonomyType;
 import uk.bl.scope.Scope;
 
@@ -858,16 +857,6 @@ public class JsonUtils {
 		try {
 			String jsonField = getStringItem(node, f.getName());
 			jsonField = normalizeArchiveUrl(jsonField);
-			if (obj instanceof Instance) {
-				if (f.getName().equals("title")) {
-					Logger.info("Instance title: " + jsonField);
-				}
-				if (f.getName().equals("field_qa_issues")) {
-					Logger.info("Instance field_qa_issues: " + jsonField);
-				}
-
-			}
-			
 			if (f.getType().equals(String.class)) {
 				if (jsonField == null || jsonField.length() == 0) {
 					jsonField = "";
@@ -1053,7 +1042,7 @@ public class JsonUtils {
 									// PASSED_PUBLISH_NO_ACTION_REQUIRED, ISSUE_NOTED, None
 									String fieldQaIssues = ((Instance)obj).field_qa_issues;
 									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
-									Logger.info("Mapping " + obj.getClass() + " " + fieldQaIssues + " to qa_status " + convertedValue);
+									Logger.info("Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
 									f.set(obj, convertedValue);
 //									((Instance)obj).field_qa_status = convertedValue;
 								} else if (f.getName().equals("field_description_of_qa_issues")) {
@@ -1080,6 +1069,16 @@ public class JsonUtils {
 								}
 							} else {
 								parseJsonString(f, node, obj);
+							}
+						} else {
+							if (obj instanceof Instance) {
+								if (f.getName().equals(Const.FIELD_QA_STATUS)) {
+									Logger.info("checkSubNode - FIELD_QA_STATUS >>>>>>>>>>>> " + f.getName());
+									String fieldQaIssues = ((Instance)obj).field_qa_issues;
+									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
+									Logger.info("checkSubNode Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
+									f.set(obj, convertedValue);
+								}
 							}
 						}
 					}
@@ -1171,5 +1170,14 @@ public class JsonUtils {
 				Ebean.update(target);
 			}
 		}
+	}
+	
+	private static String getQaStatus(String value) {
+		for (QAStatusType qaStatusType :QAStatusType.values()) {
+			if (qaStatusType.name().equals(value)) {
+				return value;
+			}
+		}
+		return null;
 	}
 }
