@@ -28,14 +28,14 @@ public class QaStatusTest {
 		assertEquals(Const.QAStatusType.ISSUE_NOTED.name(), issuesNoted);
 		assertEquals(Const.NONE_VALUE, none);
 
-		assertEquals("Passed, Publish, No Action Required", getQaStatusValue(passedPublishNoActionRequired));
-		assertEquals("Issue Noted", getQaStatusValue(issuesNoted));
-//		assertEquals("None", getQaStatusValue(none));
+		assertEquals("Passed, Publish, No Action Required", Const.QAStatusType.getQaStatus(passedPublishNoActionRequired).getValue());
+		assertEquals("Issue Noted", Const.QAStatusType.getQaStatus(issuesNoted).getValue());
+//		assertEquals("None", Const.QAStatusType.getQaStatus(none));
 
 		
-		assertEquals("Failed, Do Not Publish", getQaStatusValue(Const.QAStatusType.FAILED_DO_NOT_PUBLISH.name()));
-		assertEquals("Failed, Pass to Engineer", getQaStatusValue(Const.QAStatusType.FAILED_PASS_TO_ENGINEER.name()));
-		assertEquals("Recrawl Requested", getQaStatusValue(Const.QAStatusType.RECRAWL_REQUESTED.name()));
+		assertEquals("Failed, Do Not Publish", Const.QAStatusType.getQaStatus(Const.QAStatusType.FAILED_DO_NOT_PUBLISH.name()).getValue());
+		assertEquals("Failed, Pass to Engineer", Const.QAStatusType.getQaStatus(Const.QAStatusType.FAILED_PASS_TO_ENGINEER.name()).getValue());
+		assertEquals("Recrawl Requested", Const.QAStatusType.getQaStatus(Const.QAStatusType.RECRAWL_REQUESTED.name()).getValue());
 
 //		PASSED_PUBLISH_NO_ACTION_REQUIRED("Passed, Publish, No Action Required"),
 //		FAILED_DO_NOT_PUBLISH("Failed, Do Not Publish"),
@@ -61,15 +61,4 @@ public class QaStatusTest {
     	}
     	return result;
     }
-    
-	private static String getQaStatusValue(String name) {
-		for (QAStatusType qaStatusType :QAStatusType.values()) {
-			System.out.println("" + qaStatusType.name() + " - " + qaStatusType.getValue());
-			if (qaStatusType.name().equals(name)) {
-				return qaStatusType.getValue();
-			}
-		}
-		return null;
-	}
-
 }

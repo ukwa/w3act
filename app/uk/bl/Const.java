@@ -613,6 +613,16 @@ public final class Const {
         public String getValue() {
         	return value;
         }
+
+    	public static QAStatusType getQaStatus(String name) {
+    		for (QAStatusType qaStatusType : QAStatusType.values()) {
+    			if (qaStatusType.name().equals(name)) {
+        			System.out.println("" + qaStatusType.name() + " - " + qaStatusType.getValue());
+    				return qaStatusType;
+    			}
+    		}
+    		return null;
+    	}
 	}
 	
 	/**
