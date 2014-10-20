@@ -448,15 +448,19 @@ public class CrawlPermissions extends AbstractController {
                             try {
                             	person = ContactPerson.findByName(getFormParam(Const.CONTACT_PERSON));
                             } catch (Exception e) {
-                            	Logger.info("contact person is not existing exception");
+                            	Logger.info("contact person is not existing exception 1 " + person);
                             	isContactPersonExisting = false;
-                            	person = ContactPerson.create(Utils.createId(), Const.ACT_URL + person.id);
+                            	Long id = Utils.createId();
+                            	person = ContactPerson.create(id, Const.ACT_URL + id);
                             }
                             if (person == null) {
                             	Logger.info("contact person is not existing");
                             	isContactPersonExisting = false;
-                            	person = ContactPerson.create(Utils.createId(), Const.ACT_URL + person.id);
+                            	Long id = Utils.createId();
+                            	person = ContactPerson.create(id, Const.ACT_URL + id);
                             }
+                            
+                        	Logger.info("contact person stuff");
                             
                     	    if (getFormParam(Const.CONTACT_PERSON) != null) {
                     	    	person.name = getFormParam(Const.CONTACT_PERSON);
@@ -477,7 +481,7 @@ public class CrawlPermissions extends AbstractController {
                     	    	person.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
                     	    }
                         } catch (Exception e) {
-                        	Logger.info("ContactPerson not existing exception");
+                        	Logger.info("ContactPerson not existing exception 2");
                         }
                         
                         permission.contactPerson = person.url;
@@ -501,6 +505,7 @@ public class CrawlPermissions extends AbstractController {
         	    	permission.template = getFormParam(Const.TEMPLATE);
         	    	permission.updateMailTemplate();
         	    }
+                Logger.info("Status: " + permission.status + ", " + getFormParam(Const.STATUS));
         	    if (getFormParam(Const.STATUS) != null) {
         	    	permission.status = getFormParam(Const.STATUS);
         	    }
@@ -511,6 +516,7 @@ public class CrawlPermissions extends AbstractController {
             } catch (Exception e) {
             	Logger.info("CrawlPermission not existing exception");
             }
+            
             
         	if (!isExisting) {
                 permission.thirdPartyContent = false;
@@ -528,6 +534,7 @@ public class CrawlPermissions extends AbstractController {
                	Ebean.update(permission);
                	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
     	        Ebean.save(log);
+           		Logger.info("update: " + permission.url + ", " + permission.target + ", " + permission.status);
     	        updateAllByTarget(permission.url, permission.target, permission.status);
     	        Targets.updateQaStatus(permission.target, permission.status);
         	}
@@ -705,6 +712,7 @@ public class CrawlPermissions extends AbstractController {
      * @param status The status of the permission workflow
      */
     public static void updateAllByTarget(String url, String target, String status) {
+    	Logger.info("updateAllByTarget: "+ url + ", " + target + ", " + status);
     	if (status.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
 	    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
 	    	List<CrawlPermission> permissionList = new ArrayList<CrawlPermission>();
