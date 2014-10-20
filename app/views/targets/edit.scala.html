@@ -336,13 +336,23 @@
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
 								<select name="field_qa_status" id="field_qa_status" class="form-control">
-									@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
-						                @if(form("field_qa_status").value != null && form("field_qa_status").value.contains(taxonomy.url)) {             
-										 	<option selected>@taxonomy.name</option>
-									 	} else {
-										 	<option>@taxonomy.name</option>
-									 	}									 	
-								    }	
+									@if(form("field_qa_status").value != null) {
+										@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
+							                @if(form("field_qa_status").value.contains(taxonomy.url)) {             
+											 	<option value="@taxonomy.name" selected>@taxonomy.name</option>
+										 	} else {
+											 	<option value="@taxonomy.name">@taxonomy.name</option>
+										 	}									 	
+									    }
+									} else {
+										@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
+							                @if(taxonomy.name.equals("Unknown")) {             
+											 	<option value="@taxonomy.name" selected>@taxonomy.name</option>
+										 	} else {
+											 	<option value="@taxonomy.name">@taxonomy.name</option>
+										 	}									 	
+									    }
+									}	
                                 </select>
 							</div>
 						</div>
