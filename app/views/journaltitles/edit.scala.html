@@ -14,12 +14,17 @@
 				<a href="@routes.Targets.index()">Targets</a> >
 				<a href="@routes.Targets.view(form("target.url").value)">@form("target.title").value</a> >
 			}
-			New Journal Title
+			@if(form("id").value != null) {
+				@form("title").value
+			} else {
+				New Journal Title
+			}
 		</h1>
 	</div>
 	
 	@helper.form(action = routes.JournalTitles.save(toDocument)) {
 		<div class="col-md-5">
+			<input type="hidden" name="id" value="@form("id").value">
 			<input type="hidden" name="target.nid" value="@form("target.nid").value">
 			<input type="hidden" name="target.url" value="@form("target.url").value">
 			<input type="hidden" name="target.title" value="@form("target.title").value">
@@ -44,6 +49,9 @@
 			}
 			
 			<input type="submit" class="btn primary" value="Save">
+			@if(form("id").value != null) {
+				<input type="submit" name="delete" class="btn primary" value="Delete">
+			}
 		</div>
 	}
 }

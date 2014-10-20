@@ -64,53 +64,53 @@ public class Documents extends AbstractController {
 		if (journalTitle != null) {
 			session().putAll(documentForm.data());
 			return redirect(routes.JournalTitles.addJournalTitle(0, true));
-		} else {
-			Logger.info("Errors: " + documentForm.hasErrors());
-			for (String key : documentForm.errors().keySet()) {
-				Logger.info("Key: " + key);
-				for (ValidationError error : documentForm.errors().get(key)) {
-					for (String message : error.messages()) {
-						Logger.info("Message: " + message);
-					}
-				}
-			}
-			if (documentForm.hasErrors()) {
-				Logger.info("Show errors in html");
-				return badRequest(edit.render("Document", documentForm,
-						User.findByEmail(request().username()), getJournalTitles()));
-			}
-			Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
-			Document document = documentForm.get();
-			Ebean.update(document);
-			
-			if (!document.type.toLowerCase().startsWith("book") && document.book.id != null) {
-				Book book = Ebean.find(Book.class, document.book.id);
-				Ebean.delete(book);
-			}
-			if (!document.type.toLowerCase().startsWith("journal") && document.journal.id != null) {
-				Journal journal = Ebean.find(Journal.class, document.journal.id);
-				Ebean.delete(journal);
-			}
-			
-			if (document.type.toLowerCase().startsWith("book")) {
-				document.book.document = document;
-				if (document.book.id == null) {
-					Ebean.save(document.book);
-				} else {
-					Ebean.update(document.book);
-				}
-			} else if (document.type.toLowerCase().startsWith("journal")) {
-				document.journal.document = document;
-				document.journal.journalTitle = Ebean.find(JournalTitle.class, document.journal.journalTitleId);
-				if (document.journal.id == null) {
-					Ebean.save(document.journal);
-				} else {
-					Ebean.update(document.journal);
-				}
-			}
-	
-			return redirect(routes.Documents.edit(document.id));
 		}
+		
+		Logger.info("Errors: " + documentForm.hasErrors());
+		for (String key : documentForm.errors().keySet()) {
+			Logger.info("Key: " + key);
+			for (ValidationError error : documentForm.errors().get(key)) {
+				for (String message : error.messages()) {
+					Logger.info("Message: " + message);
+				}
+			}
+		}
+		if (documentForm.hasErrors()) {
+			Logger.info("Show errors in html");
+			return badRequest(edit.render("Document", documentForm,
+					User.findByEmail(request().username()), getJournalTitles()));
+		}
+		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
+		Document document = documentForm.get();
+		Ebean.update(document);
+		
+		if (!document.type.toLowerCase().startsWith("book") && document.book.id != null) {
+			Book book = Ebean.find(Book.class, document.book.id);
+			Ebean.delete(book);
+		}
+		if (!document.type.toLowerCase().startsWith("journal") && document.journal.id != null) {
+			Journal journal = Ebean.find(Journal.class, document.journal.id);
+			Ebean.delete(journal);
+		}
+		
+		if (document.type.toLowerCase().startsWith("book")) {
+			document.book.document = document;
+			if (document.book.id == null) {
+				Ebean.save(document.book);
+			} else {
+				Ebean.update(document.book);
+			}
+		} else if (document.type.toLowerCase().startsWith("journal")) {
+			document.journal.document = document;
+			document.journal.journalTitle = Ebean.find(JournalTitle.class, document.journal.journalTitleId);
+			if (document.journal.id == null) {
+				Ebean.save(document.journal);
+			} else {
+				Ebean.update(document.journal);
+			}
+		}
+
+		return redirect(routes.Documents.edit(document.id));
 	}
 	
 	public static Document getDocumentFromDB(long id) {

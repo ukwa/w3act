@@ -842,11 +842,11 @@
 			<table>
 				@for(journalTitle <- target.journalTitles) {
 					<tr>
-						<td>@journalTitle.title</td>
+						<td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
 					</tr>
 				}
 			</table>
-	       	<a href="@routes.JournalTitles.addJournalTitle(target.nid, false)">New Journal Title</a>
+	       	<a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.nid, false)">New Journal Title</a>
 		</div>
 	</div>
 

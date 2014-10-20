@@ -15,7 +15,7 @@ import views.html.journaltitles.edit;
 public class JournalTitles extends AbstractController {
 
 	public static Result addJournalTitle(Long targetId, boolean toDocument) {
-		Logger.info("JournalTitles.index()");
+		Logger.info("JournalTitles.addJournalTitle()");
 		
 		Target target = Ebean.find(Target.class, targetId);
 		
@@ -26,13 +26,29 @@ public class JournalTitles extends AbstractController {
 		return ok(edit.render("Journal Title", journalTitleForm,
 				User.findByEmail(request().username()), toDocument));
 	}
+	
+	public static Result edit(Long id) {
+		Logger.info("JournalTitles.edit()");
+		
+		JournalTitle journalTitle = Ebean.find(JournalTitle.class, id);
+		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
+
+		return ok(edit.render("Journal Title", journalTitleForm,
+				User.findByEmail(request().username()), false));
+	}
 
 	public static Result save(boolean toDocument) {
 		Logger.info("JournalTitles.save()");
 		
-		String target = getFormParam("target");
+		String delete = getFormParam("delete");
 		
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).bindFromRequest();
+		if (delete != null) {
+			JournalTitle journalTitle = Ebean.find(JournalTitle.class, journalTitleForm.apply("id").value());
+			Ebean.delete(journalTitle);
+			return redirect(routes.Targets.view(journalTitle.target.url));
+		}
+		
 		if (journalTitleForm.hasErrors()) {
 			Logger.info("Show errors in html");
 			return badRequest(edit.render("Journal Title", journalTitleForm,
@@ -41,13 +57,16 @@ public class JournalTitles extends AbstractController {
 		
 		JournalTitle journalTitle = journalTitleForm.get();
 		
-		Ebean.save(journalTitle);
+		if (journalTitle.id == null)
+			Ebean.save(journalTitle);
+		else
+			Ebean.update(journalTitle);
 		
 		flash("journalTitle", "" + journalTitle.id);
 		if (toDocument)
 			return redirect(routes.Documents.continueEdit());
 		else
-			return redirect(routes.Targets.view(journalTitle.target.url));
+			return redirect(routes.JournalTitles.edit(journalTitle.id));
 	}
 
 }
