@@ -121,7 +121,7 @@
 			@defining('class -> "form-control") { textualElement =>
 				@inputText(form("title"), '_label -> "Title", textualElement)
 				@inputText(form("doi"), '_label -> "DOI (Digital Object Identifier)", textualElement)
-				@inputDate(form("publicationDate"), '_label -> "Publication Date", textualElement)
+				@inputText(form("publicationDate"), '_label -> "Publication Date", textualElement)
 				@inputText(form("filename"), '_label -> "Filename", textualElement)
 				@select(form("type"),
 					options(List("","Book", "Book Chapter", "Journal Article", "Journal Issue")),

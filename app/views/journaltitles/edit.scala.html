@@ -4,7 +4,52 @@
 @import helper.inputText
 @implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
 
-@main(title, user) {
+@scripts = {
+	<script type="text/javascript">
+		$(function() {
+			$("#collectionTree").dynatree({
+				checkbox: true,
+				classNames: {checkbox: "dynatree-radio"},
+				selectMode: 1,
+				initAjax: {url: "/actdev/api/suggested_collections_filter/none"},
+				onSelect: function(select, node) {
+					// Get a list of all selected nodes, and convert to a key array:
+					var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+						return node.data.key;
+					});
+					document.getElementById('blCollectionSubset').value = selKeys.join(", ");
+					// Get a list of all selected TOP nodes
+					var selRootNodes = node.tree.getSelectedNodes(true);
+					// ... and convert to a key array:
+					var selRootKeys = $.map(selRootNodes, function(node){
+						return node.data.key;
+					});
+				}
+			});
+			$("#subjectTree").dynatree({
+				checkbox: true,
+				classNames: {checkbox: "dynatree-radio"},
+				selectMode: 1,
+				initAjax: {url: "/actdev/api/subjects_filter/empty"},
+				onSelect: function(select, node) {
+					// Get a list of all selected nodes, and convert to a key array:
+					var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+						return node.data.key;
+					});
+					document.getElementById('subject').value = selKeys.join(", ");
+					// Get a list of all selected TOP nodes
+					var selRootNodes = node.tree.getSelectedNodes(true);
+					// ... and convert to a key array:
+					var selRootKeys = $.map(selRootNodes, function(node){
+						return node.data.key;
+					});
+				}
+			});
+		});
+	</script>
+}
+
+@main(title, user, scripts) {
 	<div class="page-header">
     	<h1>
     		@if(toDocument) {
@@ -23,7 +68,7 @@
 	</div>
 	
 	@helper.form(action = routes.JournalTitles.save(toDocument)) {
-		<div class="col-md-5">
+		<div>
 			<input type="hidden" name="id" value="@form("id").value">
 			<input type="hidden" name="target.nid" value="@form("target.nid").value">
 			<input type="hidden" name="target.url" value="@form("target.url").value">
@@ -43,9 +88,29 @@
 				@inputText(form("frequency"), '_label -> "Frequency", textualElement)
 				@inputText(form("publisherName"), '_label -> "Publisher Name", textualElement)
 				@inputText(form("language"), '_label -> "Language", textualElement)
-				@checkbox(form("priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
-				@inputText(form("blCollectionSubset"), '_label -> "BL Collection Subset", textualElement)
-				@inputText(form("subject"), '_label -> "Subject(s)", textualElement)
+				@checkbox(form("priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")			
+				<div class="row padding-10">
+					<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">BL Collection Subset</label>
+							<div class="col-sm-6">
+								<div id="collectionTree" />
+								@*<input type="hidden" name="blCollectionSubset" value="@form("blCollectionSubset").value">*@
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row padding-10">
+					<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Subject(s)</label>
+							<div class="col-sm-6">
+								<div id="subjectTree" />
+								@*<input type="hidden" name="subject" value="@form("subject").value">*@
+							</div>
+						</div>
+					</div>
+				</div>
 			}
 			
 			<input type="submit" class="btn primary" value="Save">

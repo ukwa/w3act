@@ -2003,6 +2003,7 @@ public class Target extends Model {
 	 * any value except None.
 	 * @return target list
 	 */
+	@JsonIgnore
 	public List<Target> getUkwaLicenceStatusList() {
 		List<Target> results = new ArrayList<Target>();
 		if (StringUtils.isNotEmpty(this.field_url)) {

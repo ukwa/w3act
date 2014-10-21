@@ -4,18 +4,16 @@
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
-		$(document).ready(function() {
+		$(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
 			searchContext = 'targets';
 			applySearchTargetsTab(context, searchContext);
 			scopeCheck(context);
 			
-		      SUGGESTED_COLLECTION_URI = '@routes.TargetController.getSuggestedCollectionsFilter(collection)';
-              $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
               	$("#tree3").dynatree({
                 	checkbox: true,
                 	selectMode: 2,
-                	children: data,
+                	initAjax: {url: "@routes.TargetController.getSuggestedCollectionsFilter(collection)"},
                 	onSelect: function(select, node) {
                   		// Get a list of all selected nodes, and convert to a key array:
                   		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
@@ -30,29 +28,25 @@
                   		});
                 	}
               	});
-             })
 
-		      SUBJECTS_URI = '@routes.TargetController.getSubjectTreeFilter(subjectUrl)';
-	          $.getJSON(SUBJECTS_URI, function(data) {    	
-	            	$("#subjectTree").dynatree({
-	              	checkbox: true,
-	              	selectMode: 2,
-	              	children: data,
-	              	onSelect: function(select, node) {
-	                		// Get a list of all selected nodes, and convert to a key array:
-	                		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-	                  		return node.data.key;
-	                		});
-	                		document.getElementById('subject').value = selKeys.join(", ");
-	                		// Get a list of all selected TOP nodes
-	                		var selRootNodes = node.tree.getSelectedNodes(true);
-	                		// ... and convert to a key array:
-	                		var selRootKeys = $.map(selRootNodes, function(node){
-	                  		return node.data.key;
-	                		});
-	              	}
-	            	});
-	          })	          
+            	$("#subjectTree").dynatree({
+              	checkbox: true,
+              	selectMode: 2,
+              	initAjax: {url: "@routes.TargetController.getSubjectTreeFilter(subjectUrl)"},
+              	onSelect: function(select, node) {
+                		// Get a list of all selected nodes, and convert to a key array:
+                		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+                  		return node.data.key;
+                		});
+                		document.getElementById('subject').value = selKeys.join(", ");
+                		// Get a list of all selected TOP nodes
+                		var selRootNodes = node.tree.getSelectedNodes(true);
+                		// ... and convert to a key array:
+                		var selRootKeys = $.map(selRootNodes, function(node){
+                  		return node.data.key;
+                		});
+              	}
+            	});	          
             
 		});
 	</script>

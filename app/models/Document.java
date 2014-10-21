@@ -37,7 +37,7 @@ public class Document extends Model {
     @Column(columnDefinition = "TEXT")
 	public String title;
 	public String doi;
-	@DateTime(pattern="yyyy-MM-dd")
+	@DateTime(pattern="dd-MM-yyyy")
 	public Date publicationDate;
     @Required
 	public String filename;
