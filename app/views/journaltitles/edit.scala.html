@@ -1,7 +1,10 @@
 @(title: String, form: Form[JournalTitle], user: User, toDocument: Boolean)
 
 @import helper.checkbox
+@import helper.input
 @import helper.inputText
+@import helper.options
+@import helper.select
 @implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
 
 @scripts = {
@@ -11,13 +14,13 @@
 				checkbox: true,
 				classNames: {checkbox: "dynatree-radio"},
 				selectMode: 1,
-				initAjax: {url: "/actdev/api/suggested_collections_filter/none"},
+				children: @Html(TargetController.getCollectionsJsonData("none")),
 				onSelect: function(select, node) {
 					// Get a list of all selected nodes, and convert to a key array:
 					var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
 						return node.data.key;
 					});
-					document.getElementById('blCollectionSubset').value = selKeys.join(", ");
+					$("#blCollectionSubset")[0].value = selKeys.join(", ");
 					// Get a list of all selected TOP nodes
 					var selRootNodes = node.tree.getSelectedNodes(true);
 					// ... and convert to a key array:
@@ -28,15 +31,14 @@
 			});
 			$("#subjectTree").dynatree({
 				checkbox: true,
-				classNames: {checkbox: "dynatree-radio"},
-				selectMode: 1,
-				initAjax: {url: "/actdev/api/subjects_filter/empty"},
+				selectMode: 2,
+				children: @Html(TargetController.getSubjectsJsonData("empty")),
 				onSelect: function(select, node) {
 					// Get a list of all selected nodes, and convert to a key array:
 					var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
 						return node.data.key;
 					});
-					document.getElementById('subject').value = selKeys.join(", ");
+					$("#subject")[0].value = selKeys.join(", ");
 					// Get a list of all selected TOP nodes
 					var selRootNodes = node.tree.getSelectedNodes(true);
 					// ... and convert to a key array:
@@ -45,6 +47,11 @@
 					});
 				}
 			});
+			$("#collectionTree").dynatree("getTree").selectKey($("#blCollectionSubset")[0].value);
+			var subjects = $("#subject")[0].value.split(", ");
+			for (subject of subjects) {
+				$("#subjectTree").dynatree("getTree").selectKey(subject);
+			}
 		});
 	</script>
 }
@@ -72,45 +79,26 @@
 			<input type="hidden" name="id" value="@form("id").value">
 			<input type="hidden" name="target.nid" value="@form("target.nid").value">
 			<input type="hidden" name="target.url" value="@form("target.url").value">
-			<input type="hidden" name="target.title" value="@form("target.title").value">
 			
 			@defining('class -> "form-control") { textualElement =>
 				@inputText(form("title"), '_label -> "Journal Title", textualElement)
-				<div class="row padding-10">
-					<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Target</label>
-							<div class="col-sm-6">@form("target.title").value</div>
-						</div>
-					</div>
-				</div>
+				@input(form("target.title"), '_label -> "Target") { (id, name, value, args) =>
+					@value
+					<input type="hidden" name="@name" id="@id" value="@value">
+				}
 				@inputText(form("issn"), '_label -> "ISSN", textualElement)
 				@inputText(form("frequency"), '_label -> "Frequency", textualElement)
 				@inputText(form("publisherName"), '_label -> "Publisher Name", textualElement)
-				@inputText(form("language"), '_label -> "Language", textualElement)
-				@checkbox(form("priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")			
-				<div class="row padding-10">
-					<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">BL Collection Subset</label>
-							<div class="col-sm-6">
-								<div id="collectionTree" />
-								@*<input type="hidden" name="blCollectionSubset" value="@form("blCollectionSubset").value">*@
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="row padding-10">
-					<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Subject(s)</label>
-							<div class="col-sm-6">
-								<div id="subjectTree" />
-								@*<input type="hidden" name="subject" value="@form("subject").value">*@
-							</div>
-						</div>
-					</div>
-				</div>
+				@select(form("language"), options(Target.getAllLanguage()), '_label -> "Language", textualElement)
+				@checkbox(form("priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
+				@input(form("blCollectionSubset"), '_label -> "BL Collection Subset") { (id, name, value, args) =>
+					<span id="collectionTree"></span>
+					<input type="hidden" name="@name" id="@id" value="@value">
+				}
+				@input(form("subject"), '_label -> "Subject(s)") { (id, name, value, args) =>
+					<span id="subjectTree"></span>
+					<input type="hidden" name="@name" id="@id" value="@value">
+				}
 			}
 			
 			<input type="submit" class="btn primary" value="Save">

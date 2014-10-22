@@ -44,7 +44,10 @@ import views.html.targets.edit;
  */
 @Security.Authenticated(Secured.class)
 public class TargetController extends AbstractController {
-  
+	
+	private static String collectionsJsonData;
+	private static String subjectsJsonData;
+	
 	/**
 	 * This method prepares Target form for sending info message
 	 * about errors 
@@ -937,7 +940,16 @@ public class TargetController extends AbstractController {
         jsonData = Json.toJson(Json.parse(sb.toString()));
 //    	Logger.info("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
-    }        
+    }
+    
+    public static String getCollectionsJsonData(String targetUrl) {
+    	if (collectionsJsonData != null) return collectionsJsonData;
+        final StringBuffer sb = new StringBuffer();
+    	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
+    	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
+    	collectionsJsonData = sb.toString();
+        return collectionsJsonData;
+    }
     
     /**
      * This method computes a tree of collections in JSON format for filtering. 
@@ -1154,7 +1166,16 @@ public class TargetController extends AbstractController {
         jsonData = Json.toJson(Json.parse(sb.toString()));
 //    	Logger.info("getSubjectTree() json: " + jsonData.toString());
         return ok(jsonData);
-    }        
+    }
+    
+    public static String getSubjectsJsonData(String targetUrl) {
+    	if (subjectsJsonData != null) return subjectsJsonData;
+        final StringBuffer sb = new StringBuffer();
+    	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
+    	sb.append(getSubjectTreeElements(parentSubjects, targetUrl, true));
+    	subjectsJsonData = sb.toString();
+    	return subjectsJsonData;
+    }  
     
     /**
      * This method computes a tree of subjects in JSON format. 

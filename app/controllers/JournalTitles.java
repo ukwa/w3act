@@ -1,9 +1,12 @@
 package controllers;
 
+import java.util.List;
+
 import com.avaje.ebean.Ebean;
 
 import models.JournalTitle;
 import models.Target;
+import models.Taxonomy;
 import models.User;
 import play.Logger;
 import play.data.Form;
@@ -21,6 +24,7 @@ public class JournalTitles extends AbstractController {
 		
 		JournalTitle journalTitle = new JournalTitle();
 		journalTitle.target = target;
+		journalTitle.subject = target.field_subject;
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
@@ -31,10 +35,20 @@ public class JournalTitles extends AbstractController {
 		Logger.info("JournalTitles.edit()");
 		
 		JournalTitle journalTitle = Ebean.find(JournalTitle.class, id);
+		journalTitle.subject = serializeTaxonomies(journalTitle.taxonomies);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
 				User.findByEmail(request().username()), false));
+	}
+	
+	public static String serializeTaxonomies(List<Taxonomy> taxonomies) {
+		String subject = "";
+		for (Taxonomy taxonomy : taxonomies) {
+			if (!subject.isEmpty()) subject += ", ";
+			subject += taxonomy.url;
+		}
+		return subject;
 	}
 
 	public static Result save(boolean toDocument) {
@@ -56,6 +70,7 @@ public class JournalTitles extends AbstractController {
 		}
 		
 		JournalTitle journalTitle = journalTitleForm.get();
+		journalTitle.taxonomies = Taxonomy.convertUrlsToObjects(journalTitle.subject);
 		
 		if (journalTitle.id == null)
 			Ebean.save(journalTitle);

@@ -396,17 +396,18 @@ public final class Const {
 	/**
 	 * Database associations
 	 */
-    public static final String SUBJECT_TARGET        = "subject_target"; 
-    public static final String SUBJECT_INSTANCE      = "subject_instance"; 
-    public static final String COLLECTION_TARGET     = "collection_target"; 
-    public static final String COLLECTION_INSTANCE   = "collection_instance"; 
-    public static final String LICENSE_TARGET        = "license_target"; 
-    public static final String TAG_TARGET            = "tag_target"; 
-    public static final String FLAG_TARGET           = "flag_target"; 
-    public static final String TAG_INSTANCE          = "tag_instance"; 
-    public static final String FLAG_INSTANCE         = "flag_instance"; 
-    public static final String ROLE_USER             = "role_user"; 
-    public static final String PERMISSION_ROLE       = "permission_role"; 
+    public static final String SUBJECT_TARGET        = "subject_target";
+    public static final String SUBJECT_INSTANCE      = "subject_instance";
+    public static final String COLLECTION_TARGET     = "collection_target";
+    public static final String COLLECTION_INSTANCE   = "collection_instance";
+    public static final String LICENSE_TARGET        = "license_target";
+    public static final String TAG_TARGET            = "tag_target";
+    public static final String FLAG_TARGET           = "flag_target";
+    public static final String TAG_INSTANCE          = "tag_instance";
+    public static final String FLAG_INSTANCE         = "flag_instance";
+    public static final String ROLE_USER             = "role_user";
+    public static final String PERMISSION_ROLE       = "permission_role";
+    public static final String SUBJECT_JOURNAL_TITLE = "subject_journal_title";
 
     // Types of the JSON nodes
 	public enum NodeType {
