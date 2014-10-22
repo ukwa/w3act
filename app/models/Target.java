@@ -1474,10 +1474,16 @@ public class Target extends Model {
     		expressionList.eq("field_via_correspondence", true);
     	} else if (npld.equals(Const.NpldType.NO_LD_CRITERIA_MET.name())) {
     		expressionList.eq("field_no_ld_criteria_met", true);
+    	} else if (npld.equals(Const.NpldType.PROFESSIONAL_JUDGEMENT.name())) {
+    		expressionList.eq("field_professional_judgement", true);
     	} else if (npld.equals(Const.NONE)) {
     		expressionList.eq("field_uk_postal_address", false);
     		expressionList.eq("field_via_correspondence", false);
     		expressionList.eq("field_no_ld_criteria_met", false);
+    		expressionList.eq("isUkHostingValue", false);
+    		expressionList.eq("isInScopeUkRegistrationValue", false);
+    		expressionList.eq("field_professional_judgement", false);
+    		expressionList.add(Expr.raw("field_url NOT like '%" + Scope.UK_DOMAIN + "%' or field_url NOT like '%" + Scope.LONDON_DOMAIN + "%' or field_url NOT like '%" + Scope.SCOT_DOMAIN + "%'"));
     	} else if (npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
 //    		Expression ex = Expr.or(Expr.icontains("field_url", Scope.UK_DOMAIN), Expr.icontains("field_url", Scope.LONDON_DOMAIN));
 //    		exp.add(Expr.or(ex, Expr.icontains("field_url", Scope.SCOT_DOMAIN)));
@@ -1489,7 +1495,6 @@ public class Target extends Model {
     		// uk registration address
     		expressionList.eq("isInScopeUkRegistrationValue", true);
     	}
-
     	
     	if (tld.equals(Const.NO)) {
         	// not a UK top level domain
