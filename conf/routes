@@ -277,7 +277,7 @@ POST    /passwords/save            			 controllers.Passwords.save()
 
 # WhoIs check
 GET     /whois                               controllers.CheckWhoIs.index()
-POST    /whois/check            			 controllers.CheckWhoIs.check()
+GET     /whois/check            			 controllers.CheckWhoIs.check(total:Int ?= 0)
 
 # Sample forms with validation
 GET     /targets/blank/						controllers.Targets.blank()
