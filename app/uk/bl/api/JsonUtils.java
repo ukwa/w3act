@@ -1042,28 +1042,30 @@ public class JsonUtils {
 									// PASSED_PUBLISH_NO_ACTION_REQUIRED, ISSUE_NOTED, None
 									String fieldQaIssues = ((Instance)obj).field_qa_issues;
 									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
-									Logger.info("Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
+//									Logger.info("Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
 									f.set(obj, convertedValue);
 //									((Instance)obj).field_qa_status = convertedValue;
-								} else if (f.getName().equals("field_description_of_qa_issues")) {
+								} else if (f.getName().equals("qa_notes")) {
 //									"qa_notes":"","quality_notes"
 //									Description of QA Issues > QA Notes
-									JsonNode resNode = getElement(node, f.getName());
+									JsonNode resNode = getElement(node, "field_description_of_qa_issues");
 									String jsonField = getStringFromSubNode(resNode, "value");
+//									Logger.info("Mapping " + obj.getClass() + " field_description_of_qa_issues: " + jsonField + " to " + f.getName());
 									if (StringUtils.isEmpty(jsonField)) {
 										jsonField = "N/A";
 									}
 									f.set(obj, jsonField);
-									((Instance)obj).qa_notes = jsonField;
+//									((Instance)obj).qa_notes = jsonField;
 								} else if (f.getName().equals("quality_notes")) {
 //									Notes > Quality Notes
-									JsonNode resNode = getElement(node, f.getName());
+									JsonNode resNode = getElement(node, "body");
 									String jsonField = getStringFromSubNode(resNode, "value");
+									Logger.info("Mapping " + obj.getClass() + " body: " + jsonField + " to " + f.getName());
 									if (StringUtils.isEmpty(jsonField)) {
 										jsonField = "N/A";
 									}
 									f.set(obj, jsonField);
-									((Instance)obj).quality_notes = jsonField;
+//									((Instance)obj).quality_notes = jsonField;
 								} else {
 									parseJsonString(f, node, obj);
 								}

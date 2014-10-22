@@ -405,13 +405,9 @@ table.table.table-striped.table-bordered.table-hover.table-condensed {
 }
 
 #filter-column {
-    width: 35%;
-    float: left;
     /*margin-right: 10px;*/
 }
 
 #data-column {
-    width: 60%;
-    float: right;
 }
 

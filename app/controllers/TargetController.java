@@ -1,13 +1,10 @@
 package controllers;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import models.CrawlPermission;
 import models.DCollection;
@@ -18,13 +15,10 @@ import models.Target;
 import models.Taxonomy;
 import models.User;
 
-import org.apache.commons.lang3.StringUtils;
-
 import play.Logger;
 import play.Play;
 import play.data.DynamicForm;
 import play.data.Form;
-import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -34,11 +28,9 @@ import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import views.html.licence.ukwalicenceresult;
-import views.html.targets.blank;
 import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
-import com.avaje.ebean.SqlUpdate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;

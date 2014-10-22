@@ -292,10 +292,13 @@ public class CrawlPermissions extends AbstractController {
         if (getFormParam(Const.CONTACT_PERSON) != null) {
             permission.contactPerson = getFormParam(Const.CONTACT_PERSON);
             
+            Logger.info("contactPerson: " + permission.contactPerson + ", " + permission.description + ", " + permission.target);
+            
             if (requireContactPerson) {
 	            try {
 	            	ContactPerson person = ContactPerson.findByName(getFormParam(Const.CONTACT_PERSON));
 	            	setContactPerson(permission, person.url);
+	            	Logger.info("contact person: " + getFormParam(Const.CONTACT_PERSON) + ", " + person.url);
 	            } catch (Exception e) {
 	            	Logger.info("contact person is not existing.");
 	                if (getFormParam(Const.EMAIL) != null) {
@@ -312,7 +315,7 @@ public class CrawlPermissions extends AbstractController {
 	            }
             }
         }	    
-	    Logger.info("creator user: " + getFormParam(Const.CREATOR_USER));
+//	    Logger.info("creator user: " + getFormParam(Const.CREATOR_USER) + " - " + ContactPerson.findByUrl(getFormParam(Const.CONTACT_PERSON)).email);
 	    if (getFormParam(Const.CREATOR_USER) != null) {
 	    	permission.creatorUser = User.findByName(getFormParam(Const.CREATOR_USER)).url;
 	    }
@@ -328,6 +331,7 @@ public class CrawlPermissions extends AbstractController {
 	    }
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
+		Logger.info("email: " + getFormParam(Const.EMAIL));
 		return permissionFormNew;
     }
     
@@ -403,7 +407,7 @@ public class CrawlPermissions extends AbstractController {
 	    	    	  					"' is already in the Contact Persons list, but with the Name '" + personByEmail.name + 
 	    	    	  					"' which is different from the given name '" + getFormParam(Const.CONTACT_PERSON) + 
 	    	    	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
-	    	                	Logger.info(msg);
+	    	                	Logger.info(msg + " - " + getFormParam(Const.EMAIL));
 	    	    	  			flash("message", msg);
 	    	    	  	      	return ok(
 	    	    	  	              edit.render(processForm(true), User.findByEmail(request().username()))

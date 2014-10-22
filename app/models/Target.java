@@ -33,6 +33,7 @@ import uk.bl.scope.Scope;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.avaje.ebean.Query;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import controllers.Flags;
@@ -1176,13 +1177,8 @@ public class Target extends Model {
      * This method returns a list of all NPLD types for target object.
      * @return
      */
-    public static List<String> getAllNpldTypes() {
-    	List<String> res = new ArrayList<String>();
-	    Const.NpldType[] resArray = Const.NpldType.values();
-	    for (int i=0; i < resArray.length; i++) {
-		    res.add(resArray[i].name());
-	    }
-	    return res;
+    public static Const.NpldType[] getAllNpldTypes() {
+    	return Const.NpldType.values();
     }         
 
     /**
@@ -1272,7 +1268,7 @@ public class Target extends Model {
     public static Page<Target> pageQa(int page, int pageSize, String sortBy, String order, String filter, 
     		String collection, String qaStatus) {
 
-    	Logger.info("pageQa() collection: " + collection + ", qaStatus: " + qaStatus);
+    	Logger.info("pageQa() collection: " + collection + ", qaStatus: " + qaStatus + ", filter: " + filter);
 
         return find.where(
         		  Expr.and(
@@ -1436,17 +1432,21 @@ public class Target extends Model {
     public static Page<Target> pageReportsCreation(int page, int pageSize, String sortBy, String order,  
     		String curatorUrl, String organisationUrl, String startDate, String endDate, 
     		String npld, String crawlFrequency, String tld) {
+    	
     	Logger.info("pageReportsCreation() npld: " + npld + ", crawlFrequency: " + crawlFrequency + ", tld: " + tld);
-    	ExpressionList<Target> exp = Target.find.where();
+    	ExpressionList<Target> expressionList = Target.find.where();
+    	
     	Page<Target> res = null;
-   		exp = exp.eq(Const.ACTIVE, true);
+    	
+   		expressionList = expressionList.eq(Const.ACTIVE, true);
+   		
     	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
 //    		Logger.info("curatorUrl: " + curatorUrl);
-    		exp = exp.icontains(Const.AUTHOR, curatorUrl);
+    		expressionList = expressionList.icontains(Const.AUTHOR, curatorUrl);
     	}
     	if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
 //    		Logger.info("organisationUrl: " + organisationUrl);
-    		exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
+    		expressionList = expressionList.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
     	} 
     	if (startDate != null && startDate.length() > 0) {
     		Logger.info("startDate: " + startDate);
@@ -1455,108 +1455,119 @@ public class Target extends Model {
         		startDateUnix = "0" + startDateUnix;
         	}
         	Logger.info("startDateUnix: " + startDateUnix);
-    		exp = exp.ge(Const.CREATED, startDateUnix);
+    		expressionList = expressionList.ge(Const.CREATED, startDateUnix);
     	} 
     	if (endDate != null && endDate.length() > 0) {
     		Logger.info("endDate: " + endDate);
         	String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
         	Logger.info("endDateUnix: " + endDateUnix);
-    		exp = exp.le(Const.CREATED, endDateUnix);
+    		expressionList = expressionList.le(Const.CREATED, endDateUnix);
     	} 
     	if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
-    		exp = exp.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
+    		expressionList = expressionList.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
     	} 
+
+    	// new stuff
+    	if (npld.equals(Const.NpldType.UK_POSTAL_ADDRESS.name())) {
+    		expressionList.eq("field_uk_postal_address", true);
+    	} else if (npld.equals(Const.NpldType.VIA_CORRESPONDENCE.name())) {
+    		expressionList.eq("field_via_correspondence", true);
+    	} else if (npld.equals(Const.NpldType.NO_LD_CRITERIA_MET.name())) {
+    		expressionList.eq("field_no_ld_criteria_met", true);
+    	} else if (npld.equals(Const.NONE)) {
+    		expressionList.eq("field_uk_postal_address", false);
+    		expressionList.eq("field_via_correspondence", false);
+    		expressionList.eq("field_no_ld_criteria_met", false);
+    	} else if (npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
+//    		Expression ex = Expr.or(Expr.icontains("field_url", Scope.UK_DOMAIN), Expr.icontains("field_url", Scope.LONDON_DOMAIN));
+//    		exp.add(Expr.or(ex, Expr.icontains("field_url", Scope.SCOT_DOMAIN)));
+    		expressionList.add(Expr.raw("field_url like '%" + Scope.UK_DOMAIN + "%' or field_url like '%" + Scope.LONDON_DOMAIN + "%' or field_url like '%" + Scope.SCOT_DOMAIN + "%'"));
+    	} else if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
+    		// uk hosting
+    		expressionList.eq("isUkHostingValue", true);
+    	} else if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
+    		// uk registration address
+    		expressionList.eq("isInScopeUkRegistrationValue", true);
+    	}
+
+    	
+    	if (tld.equals(Const.NO)) {
+        	// not a UK top level domain
+    		expressionList.eq("isInScopeDomainValue", false);
+    	}
+    	if (tld.equals(Const.YES) || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
+    		// UK top level domain
+    		expressionList.eq("isInScopeDomainValue", true);
+    	} 
+    	if (tld.equals(Const.EITHER)) {
+        	// not a UK top level domain
+//    		expressionList.eq("isInScopeDomainValue", false);
+//    		expressionList.eq("isInScopeDomainValue", true);
+    	}
+    	
+    	// TODO: NONE SELECTED???
+    	
+		Logger.info("pageReportsCreation() NPLD: " + npld);
     	
     	/**
     	 * Apply NPLD filters
     	 */
-    	if (!tld.equals(Const.EITHER) || !npld.equals(Const.NONE)) {
-    		Logger.info("pageReportsCreation() Apply NPLD filters");
-        	List<String> targetUrlCollection = new ArrayList<String>();
+//    	if (!tld.equals(Const.EITHER)) {
+//    		Logger.info("pageReportsCreation() Apply NPLD filters");
+//        	List<String> targetUrlCollection = new ArrayList<String>();
 //        	Page<Target> tmp = exp.query()
 //            		.orderBy(sortBy + " " + order)
 //            		.findPagingList(pageSize)
 //            		.setFetchAhead(false)
 //            		.getPage(page);
-        	List<Target> tmp = exp.query()
-            		.orderBy(sortBy + " " + order)
-            		.findList();
-//    		Logger.info("pageReportsCreation() tmp.getList() size: " + tmp.getList().size());
-    		Logger.info("pageReportsCreation() tmp list size: " + tmp.size());
-			Iterator<Target> itr = tmp.iterator();
-//			Iterator<Target> itr = tmp.getList().iterator();
-			while (itr.hasNext()) {
-				Target target = itr.next();
-		        if (target != null 
-		        		&& target.field_url != null 
-		        		&& target.field_url.length() > 0 
-		        		&& !target.field_url.toLowerCase().contains(Const.NONE)) {
-		        	if (tld.equals(Const.NO)) {
-//		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
-		        		boolean isInScope = target.isInScopeDomainValue;
-		        		Logger.info("pageReportsCreation() Not UK top level domain isInScope: " + isInScope);
-		        		if (!isInScope) {
-		    	        	targetUrlCollection.add(target.url);
-		        		}
-		        	}
-		        	if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
-//		        		boolean isInScope = Target.checkUkHosting(target.field_url);
-		        		boolean isInScope = target.isUkHostingValue;
-		        		Logger.info("pageReportsCreation() UK Hosting isInScope: " + isInScope);
-		        		if (isInScope) {
-		    	        	targetUrlCollection.add(target.url);
-		        		}
-		        	}
-		        	if (tld.equals(Const.YES) || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
-//		        		boolean isInScope = Target.isInScopeDomain(target.field_url, target.url);
-		        		boolean isInScope = target.isInScopeDomainValue;
-		        		Logger.info("pageReportsCreation() UK top level domain isInScope: " + isInScope);
-		        		if (isInScope) {
-		    	        	targetUrlCollection.add(target.url);
-		        		}
-		        	}
-		        	if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
-//		        		boolean isInScope = Target.isInScopeUkRegistration(target.field_url);
-		        		boolean isInScope = target.isInScopeUkRegistrationValue;
-		        		Logger.info("pageReportsCreation() UK Registration isInScope: " + isInScope);
-		        		if (isInScope) {
-		    	        	targetUrlCollection.add(target.url);
-		        		}
-		        	}
-		        	if (npld.equals(Const.NpldType.UK_POSTAL_ADDRESS.name())) {
-		        		boolean isInScope = target.field_uk_postal_address;
-		        		Logger.info("pageReportsCreation() UK Postal Address isInScope: " + isInScope);
-		        		if (isInScope) {
-		    	        	targetUrlCollection.add(target.url);
-		        		}
-		        	}
-		        	if (npld.equals(Const.NpldType.VIA_CORRESPONDENCE.name())) {
-		        		boolean isInScope = target.field_via_correspondence;
-		        		Logger.info("pageReportsCreation() via correspondence isInScope: " + isInScope);
-		        		if (isInScope) {
-		    	        	targetUrlCollection.add(target.url);
-		        		}
-		        	}
-		        	if (npld.equals(Const.NpldType.NO_LD_CRITERIA_MET.name())) {
-		        		boolean isInScope = target.field_no_ld_criteria_met;
-		        		Logger.info("pageReportsCreation() no ld criteria met isInScope: " + isInScope);
-		        		if (isInScope) {
-		    	        	targetUrlCollection.add(target.url);
-		        		}
-		        	}
-		        }
-			}
-    		Logger.info("pageReportsCreation() targetUrlCollection size: " + targetUrlCollection.size());
-    		exp = exp.in(Const.URL, targetUrlCollection);
-    	}
-    	
-    	res = exp.query()
+        	
+        	
+        	
+        	// TODO: do we really need to query first?
+//        	List<Target> tmp = expressionList.query()
+//            		.orderBy(sortBy + " " + order)
+//            		.findList();
+//        	
+//
+//    		Logger.info("pageReportsCreation() tmp list size: " + tmp.size());
+//			Iterator<Target> itr = tmp.iterator();
+//			while (itr.hasNext()) {
+//				Target target = itr.next();
+//		        if (target != null 
+//		        		&& target.field_url != null 
+//		        		&& target.field_url.length() > 0 
+//		        		&& !target.field_url.toLowerCase().contains(Const.NONE)) {
+//		        	
+////		        	target.isInScopeDomainValue           = Target.isInScopeDomain(target.field_url, target.url);
+////		        	// do a contains on target.field_url??? (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN) || url.contains(SCOT_DOMAIN))
+////		        	
+////		        	target.isUkHostingValue               = Target.checkUkHosting(target.field_url);
+////		        	target.isInScopeUkRegistrationValue   = Target.isInScopeUkRegistration(target.field_url);
+//		        }		        	
+//
+//    		Logger.info("pageReportsCreation() targetUrlCollection size: " + targetUrlCollection.size());
+//    		expressionList = expressionList.in(Const.URL, targetUrlCollection);
+//    	}
+    
+		Query<Target> query = expressionList.query();
+		
+    	res = query
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
+    	
     	Logger.info("Expression list for targets created size: " + res.getTotalRowCount());
+		Logger.info("RAW SQL: " + query.getGeneratedSql());
+		
+//        Target target = query.findUnique();
+//        Logger.debug(query.getGeneratedSql());
+
+		
+//		Logger.info("pageReportsCreation() tmp list size: " + res.);
+    	
         return res;
+        
     }
         
     /**
@@ -1966,7 +1977,7 @@ public class Target extends Model {
 	    
 	public boolean isHigherLevel(String iterUrl) {
 		boolean highLevel = (this.field_url.contains(iterUrl) && this.field_url.indexOf(iterUrl) == 0 && this.field_url.length() > iterUrl.length());
-		Logger.info("iterUrl: " + iterUrl  + " " + highLevel);
+//		Logger.info("iterUrl: " + iterUrl  + " " + highLevel);
 		return highLevel;
 	}
 
@@ -2009,6 +2020,7 @@ public class Target extends Model {
 	}
 	
 	public boolean indicateLicenses() {
+		Logger.info("indicateLicenses >>>>>>> " + indicateUkwaLicenceStatus() + " " + hasLicenses() + " " + hasHigherLicense());
 		return (indicateUkwaLicenceStatus() || hasLicenses() || hasHigherLicense());
 	}
 	

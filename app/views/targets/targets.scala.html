@@ -60,6 +60,11 @@
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+	<style>
+		ul.dynatree-container {
+			overflow-x: hidden;
+		}
+	</style>
 }
 
 @****************************************
@@ -130,23 +135,24 @@
 	    <h1><a href="@routes.Targets.index()">Targets > </a>Overview</h1>
 	</div>	    
     <article class="targets">
-		@warningmessage(flash)
-		@helper.form(action=routes.Targets.searchTargets) {
     
-    	<div id="forms">
+		@warningmessage(flash)
+		
+		@helper.form(action=routes.Targets.searchTargets) {
+        	<div id="forms">
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
-   					<input type="hidden" name="s" value="@currentSortBy">
-   					<input type="hidden" name="o" value="@currentOrder">
-   					<input type="hidden" name="query_curator" value="@curatorUrl">
-   					<input type="hidden" name="query_organisation" value="organisationUrl">
-   					<input type="hidden" name="query_subject" value="@subjectUrl">
-   					<input type="hidden" name="query_crawl_frequency" value="@crawlFrequency">
-   					<input type="hidden" name="query_depth" value="@depth">
-   					<input type="hidden" name="query_collection" value="@collection">
-   					<input type="hidden" name="query_license" value="@license">
-   					<input type="hidden" name="query_flag" value="@flag">
-					<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
+	  					<input type="hidden" name="s" value="@currentSortBy">
+	  					<input type="hidden" name="o" value="@currentOrder">
+	  					<input type="hidden" name="query_curator" value="@curatorUrl">
+	  					<input type="hidden" name="query_organisation" value="organisationUrl">
+	  					<input type="hidden" name="query_subject" value="@subjectUrl">
+	  					<input type="hidden" name="query_crawl_frequency" value="@crawlFrequency">
+	  					<input type="hidden" name="query_depth" value="@depth">
+	  					<input type="hidden" name="query_collection" value="@collection">
+	  					<input type="hidden" name="query_license" value="@license">
+	  					<input type="hidden" name="query_flag" value="@flag">
+						<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
 				        <button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear up search settings">Clear</button>
@@ -155,42 +161,40 @@
 						}
 					</span>
 				</div>
-    	
-			<div class="alert alert-info">
-				Search here for all or part of the name of the target, or its URL.
-			</div>
-			
-			<div id="filter-column">
-				<div class="padding-20">
-				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
+	    	
+				<div class="alert alert-info">
+					Search here for all or part of the name of the target, or its URL.
 				</div>
-						
-				<div id="accordion">
-					<div id="filter-panel" class="panel-collapse collapse in">
-						<div class="panel-body">
-						
-								<div class="col-md-12">
-									<div class="form-group">
-						            	<div class="col-sm-6" style="margin-bottom: 10px;">
-								   			<div class="input-group">
-								 				<span class="input-group-btn">
-													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
+				
+				<div class="row">
+					<div class="col-md-12 col-sm-12">
+						<div class="padding-20">
+						    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
+						</div>
+					</div>
+				</div>			
+				<div class="row">
+					<div class="col-md-12 col-sm-12">
+						<div id="accordion">
+							<div id="filter-panel" class="panel-collapse collapse in">
+								<div class="col-md-12 col-sm-12">
+									<div class="text-center">
+										<div class="form-group">
+							 				<span class="btn-group">
+												@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
 													<button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear filters">Clear</button>
 								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file in the root folder">Export</button>	
-								 					}								 			
-							            		</span>
-							            	</div>
+							 					}								 			
+						            		</span>
 							            </div>
-									</div>
-						    	</div>
-						    							
-							<!-- div class="row"-->
-								<div class="col-md-12">
+							    	</div>
+								</div>
+								<div class="col-md-6 col-sm-6">
 									<div class="form-group">
-										<label for="curator" class="col-sm-6 control-label">Curator</label>
-									    <div class="col-sm-6">
-											<select name="author" class="form-control target-form-control" id="curator" style="width: 200px;">
+										<label for="curator" class="col-md-4 col-sm-4 control-label">Curator</label>
+						            	<div class="col-md-8 col-sm-8">
+											<select name="author" class="form-control target-form-control" id="curator">
 												<option>None</option>
 												@for(curator <- User.findAllSorted()) {
 													@if(curatorUrl != null && curatorUrl.equals(curator.url) && curatorUrl.length() > 0) {
@@ -200,14 +204,12 @@
 													}
 												}
 											</select>
-										</div>
+										</div>	
 									</div>
-								</div>
-								<div class="col-md-12">
 									<div class="form-group">					
-						            	<label for="organisation" class="col-sm-6 control-label">Organisation</label>
-						            	<div class="col-sm-6">
-											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation" style="width: 200px;">
+						            	<label for="organisation" class="col-md-4 col-sm-4 control-label">Organisation</label>
+						            	<div class="col-md-8 col-sm-8">
+											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
 									        	<option>None</option>
 									            	@for(organisation <- Organisation.findAllSorted()) {
 							                 		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
@@ -219,44 +221,25 @@
 											</select>
 										</div>
 						         	</div>
-								</div>
-							<!-- /div-->
-		
-							<!-- div class="row"-->
-								<div class="col-md-12">
-									<div class="form-group">
-						            	<label for="subject" class="col-sm-6 control-label">Subject</label>
-									    <div class="col-sm-6">
-										    <div id="subjectTree"></div>
-										    <input type="hidden" id="subject" name="subject" value="@subjectUrl">
-										</div>
-									</div>
-								</div>
-								<div class="col-md-12">
 									<div class="form-group">					
-						            	<label for="frequency" class="col-sm-6 control-label">Crawl frequency</label>
-						            	<div class="col-sm-6">
-											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency" style="width: 200px;">
+						            	<label for="frequency" class="col-md-4 col-sm-4 control-label">Crawl frequency</label>
+						            	<div class="col-md-8 col-sm-8">
+											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
 								                <option>None</option>
 								                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
-						                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
-							                		<option selected>@curCrawlFrequency.field_crawl_frequency</option>
+					                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
+								                		<option selected>@curCrawlFrequency.field_crawl_frequency</option>
 							                		} else {
-							                		<option>@curCrawlFrequency.field_crawl_frequency</option>
+								                		<option>@curCrawlFrequency.field_crawl_frequency</option>
 							                		}
 								                }
 											</select>
 										</div>
 						         	</div>
-								</div>
-							<!-- /div-->
-		
-							<!-- div class="row"-->
-								<div class="col-md-12">
 									<div class="form-group">
-						            	<label for="field-depth" class="col-sm-6 control-label">Depth</label>
-						            	<div class="col-sm-6">
-											<select name="field_depth" class="form-control target-form-control" id="field-depth" style="width: 200px;">
+						            	<label for="field-depth" class="col-md-4 col-sm-4 control-label">Depth</label>
+						            	<div class="col-md-8 col-sm-8">
+											<select name="field_depth" class="form-control target-form-control" id="field-depth">
 									        	<option>None</option>
 									            @for(curDepth <- Targets.getDepth()) {
 							                  		@if(depth != null && depth.equals(curDepth.field_depth)) {
@@ -267,13 +250,11 @@
 												}
 											</select>
 										</div>
-									</div>
-								</div>
-								<div class="col-md-12">
+									</div>					         	
 									<div class="form-group">
-						            	<label for="license" class="col-sm-6 control-label">License</label>
-						            	<div class="col-sm-6">
-											<select name="field_license" class="form-control target-form-control" id="license" style="width: 200px;">
+						            	<label for="license" class="col-md-4 col-sm-4 control-label">License</label>
+						            	<div class="col-md-8 col-sm-8">
+											<select name="field_license" class="form-control target-form-control" id="license">
 									        	<option>None</option>
 									            @for(curLicense <- Targets.getLicense()) {
 							                 		@if(license != null && license.equals(curLicense.url)) {
@@ -285,23 +266,10 @@
 											</select>
 										</div>
 						         	</div>
-								</div>
-							<!-- /div-->
-							<!--div class="row"-->
-								<div class="col-md-12">
 									<div class="form-group">
-						            	<label for="suggested_collections" class="col-sm-6 control-label">Collection</label>
-						            	<div class="col-sm-6">
-											  <div id="tree3"></div>
-											  <input type="hidden" id="treeKeys" name="treeKeys" value="@collection">
-										</div>
-									</div>
-								</div>
-								<div class="col-md-12">
-									<div class="form-group">
-						            	<label for="flags" class="col-sm-6 control-label">Flag</label>
-						            	<div class="col-sm-6">
-											<select name="flags" class="form-control target-form-control" id="flags" style="width: 200px;">
+						            	<label for="flags" class="col-md-4 col-sm-4 control-label">Flag</label>
+						            	<div class="col-md-8 col-sm-8">
+											<select name="flags" class="form-control target-form-control" id="flags">
 									        	<option>None</option>
 									            @for(curFlag <- Flag.findAll()) {
 							                  		@if(flag != null && flag.equals(curFlag.url)) {
@@ -312,99 +280,95 @@
 												}
 											</select>
 										</div>
+									</div>					         	
+									<div class="form-group">
+										<label class="col-md-4 col-sm-4 control-label">Page size</label>
+						            	<div class="col-md-8 col-sm-8">
+							 				<input type="text" name="page_size" value="@pageSize" maxlength="200" class="form-control target-form-control" id="page_size" title="Number of targets on page" />
+							 			</div>
+								     </div>					         	
+							    </div>							
+								<div class="col-md-6 col-sm-6">
+									<div class="form-group">
+						            	<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
+									    <div id="subjectTree" class="col-md-8 col-sm-8" style="padding:5px;"></div>
+									    <input type="hidden" id="subject" name="subject" value="@subjectUrl">
+									</div>						         	
+									<div class="form-group">
+						            	<label for="suggested_collections" class="col-md-4 col-sm-4 control-label">Collection</label>
+						            	<div class="col-md-8 col-sm-8" style="padding:5px;">
+										  <div id="tree3"></div>
+										  <input type="hidden" id="treeKeys" name="treeKeys" value="@collection">
+										</div>
 									</div>
-								</div>
-							<!--/div!-->
-							
-							<!--div class="row"-->
-								<div class="col-md-12">
-									<div class="form-group">
-											<label class="col-sm-6 control-label">Page size</label>
-										    <div class="col-sm-6">
-								 				<input type="text" name="page_size" value="@pageSize" maxlength="200" class="form-control target-form-control" id="page_size" title="Number of targets on page"  style="width: 200px;"/>
-											</div>
-								     </div>
-								</div>
-								<!-- div class="col-md-12">
-									<div class="form-group">
-						  				<label for="export" class="col-sm-6 control-label">Targets count</label>
-						            	<div class="col-sm-6">
-								   			<div class="input-group">
-								 				<input readonly type="text" name="max_count" value="@currentPage.getTotalRowCount" maxlength="200" class="form-control target-form-control" id="max_count" title="Number of selected targets"  style="width: 200px;"/>
-								 				<!-- span class="input-group-btn">
-													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
-													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
-								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file">Export</button>	
-								 					}								 			
-							            		</span-->
-							            	<!-- /div>
-							            </div>
-									</div>
-						    	</div-->
-								<!--/div-->
-		     	
-								<div class="col-md-12">
-									<div class="form-group">
-						            	<div class="col-sm-6" style="margin-top: 10px;">
-								   			<div class="input-group">
-								 				<span class="input-group-btn">
-													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
+								</div>							
+								<div class="col-md-12 col-sm-12">
+									<div class="text-center">
+										<div class="form-group">
+							 				<span class="btn-group">
+												@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
 													<button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear filters">Clear</button>
-								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file">Export</button>	
-								 					}								 			
-							            		</span>
-							            	</div>
+								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file in the root folder">Export</button>	
+							 					}								 			
+						            		</span>
 							            </div>
-									</div>
-						    	</div>
-
+							    	</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-		</div>
-		} <!-- end of search form -->
-	</div>
-	
-	<div id="data-column">
-		
-	    	@pagination
-			<table class="table table-hover">
-				<thead>
-	                <tr>
-						@header("title", "Target Name")
-						@header("url", "Target URL(s)")	                
-						<!-- @header("created", "Created")	                
-						@header("qa_status", "Open UKWA Licence status")	
-						 -->                
-	                </tr>
-				</thead>
-				<tbody>
-					@for(target <- currentPage.getList) {
-	                <tr>
-						@if(target.url != null && target.title != null) {
-							<td><a href="@routes.Targets.view(target.url)">@target.title</a></td>
-						} else {
-							<td></td>
-						}		                  
-						<td><a class="brand" href="@target.get_field_list_as_str("field_url")" target="_blank">@target.get_field_list_as_str("field_url")</a></td>
-						<!-- @if(target.url != null && target.created != null) {
-							<td>@Target.getDateAsString(target.created)</td>
-						} else {
-							<td></td>
-						}		                  
-						@if(target.url != null && target.qa_status != null) {
-							<td>@target.qa_status</td>
-						} else {
-							<td></td>
-						} -->		                  
-	                </tr>
-	                }
-				</tbody>
-			</table>
-	    	@pagination
-	</div>
-	
+			</div>
+			} <!-- end of search form -->
+			
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<div id="data-column">
+					
+				    	@pagination
+						<table class="table table-hover">
+							<thead>
+				                <tr>
+									@header("title", "Target Name")
+									@header("url", "Target URL(s)")	                
+									<!-- @header("created", "Created")	                
+									@header("qa_status", "Open UKWA Licence status")	
+									 -->                
+				                </tr>
+							</thead>
+							<tbody>
+								@for(target <- currentPage.getList) {
+				                <tr>
+									@if(target.title != null && target.title.length > 0) {
+										<td><a href="@routes.Targets.view(target.url)">@target.title</a></td>
+									} else {
+										<td>N/A</td>
+									}
+									@if(target.url != null && target.get_field_list_as_str("field_url").length > 0) { 		                  
+										<td><a class="brand" href="@target.get_field_list_as_str("field_url")" target="_blank">@target.get_field_list_as_str("field_url")</a></td>
+									} else {
+										<td>N/A</td>
+									}
+									<!-- @if(target.url != null && target.created != null) {
+										<td>@Target.getDateAsString(target.created)</td>
+									} else {
+										<td></td>
+									}		                  
+									@if(target.url != null && target.qa_status != null) {
+										<td>@target.qa_status</td>
+									} else {
+										<td></td>
+									} -->		                  
+				                </tr>
+				                }
+							</tbody>
+						</table>
+				    	@pagination
+				    	
+					</div>
+				</div>
+			</div>
    	</article>
 }
 
