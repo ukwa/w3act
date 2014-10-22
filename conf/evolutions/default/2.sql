@@ -9,8 +9,13 @@ create table journal_title (
   publisher_name	varchar(255) not null,
   language		varchar(255),
   priority_cataloguing	boolean,
-  bl_collection_subset	varchar(255),
-  subject		varchar(255)
+  bl_collection_subset	varchar(255)
+);
+
+create table subject_journal_title (
+  id_taxonomy		bigint references taxonomy (id),
+  id_journal_title	bigint references journal_title (id),
+  primary key (id_taxonomy, id_journal_title)
 );
 
 create table document (
@@ -56,6 +61,7 @@ create sequence journal_seq;
 # --- !Downs
 
 drop table if exists journal_title cascade;
+drop table if exists subject_journal_title cascade;
 drop table if exists document cascade;
 drop table if exists book cascade;
 drop table if exists journal cascade;
