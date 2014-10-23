@@ -1,7 +1,7 @@
 language: scala
 env:
-  - PLAY_VERSION=2.2.0
+  - ACTIVATOR_VERSION=1.2.10
 before_script:
-  - wget http://downloads.typesafe.com/play/${PLAY_VERSION}/play-${PLAY_VERSION}.zip
-  - unzip -q play-${PLAY_VERSION}.zip
-script: play-${PLAY_VERSION}/play -Dconfig.file=conf/travis-ci.conf test
+  - wget http://downloads.typesafe.com/typesafe-activator/${ACTIVATOR_VERSION}/typesafe-activator-${ACTIVATOR_VERSION}-minimal.zip
+  - unzip -q typesafe-activator-${ACTIVATOR_VERSION}-minimal.zip
+script: typesafe-activator-${ACTIVATOR_VERSION}-minimal/activator -Dconfig.file=conf/travis-ci.conf test

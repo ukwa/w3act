@@ -3,13 +3,12 @@ import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.contentType;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;
-
 import models.User;
 
 import org.junit.Test;
 
 import play.Logger;
-import play.mvc.Content;
+import play.twirl.api.Html;
 import uk.bl.Const;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
@@ -163,7 +162,7 @@ public class ApplicationTest {
     
 //    @Test
     public void renderTemplate() {
-        Content html = views.html.about.render("W3ACT", new User("Ross King")); 
+        Html html = views.html.about.render("W3ACT", new User("Ross King")); 
         assertThat(contentType(html)).isEqualTo("text/html");
         assertThat(contentAsString(html)).contains("W3ACT");
     }
