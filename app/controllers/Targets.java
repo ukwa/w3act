@@ -32,7 +32,6 @@ import views.html.targets.list;
 import views.html.targets.targets;
 import views.html.targets.view;
 import views.html.users.usersites;
-import views.html.*;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;

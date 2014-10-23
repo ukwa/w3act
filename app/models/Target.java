@@ -1040,9 +1040,8 @@ public class Target extends Model {
 		List<Target> res = new ArrayList<Target>();
         res = find.where()
         		.eq(Const.ACTIVE, true)
-        		.orderBy(Const.LAST_UPDATE + " " + Const.ASC)
-				.findList()
-				.subList(0, number);
+        		.orderBy(Const.LAST_UPDATE + " " + Const.DESC).setMaxRows(number)
+				.findList();
 		return res;
     }          
 

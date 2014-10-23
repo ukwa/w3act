@@ -603,6 +603,7 @@ public class TargetController extends AbstractController {
             	target.changed = changedTime;
         		Logger.info("update target: " + target.nid + ", obj: " + target.toString());
                 boolean newScope = Target.isInScopeIp(target.field_url, target.url);
+                // TODO: save new entry or update current
             	Scope.updateLookupEntry(target, newScope);
                 /**
                  * Reset association fields
@@ -634,7 +635,8 @@ public class TargetController extends AbstractController {
         		}
         	}
             boolean newScope = Target.isInScopeIp(newTarget.field_url, newTarget.url);
-        	Scope.updateLookupEntry(newTarget, newScope);
+            // TODO: save new entry or update current
+            Scope.updateLookupEntry(newTarget, newScope);
         	
         	/**
         	 * NPLD scope values

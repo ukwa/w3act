@@ -17,6 +17,7 @@ import uk.bl.api.WhoIsThread;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import views.html.whois.index;
+import views.html.whois.results;
 import views.html.infomessage;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -91,13 +92,16 @@ public class CheckWhoIs extends AbstractController {
 //		    the domain least recently checked (and when)
     		
     		LookupEntry entry = LookupEntry.findLatest();
-    		String mostRecentChecked = entry.name + " - " + entry.lastUpdate;
+    		String domainMostRecentChecked = entry.name + " - " + entry.lastUpdate;
     		String domainLeastChecked = "";
-    		Logger.info("LookupEntry mostRecentChecked: " + mostRecentChecked);
+    		Logger.info("LookupEntry mostRecentChecked: " + domainMostRecentChecked);
     		Logger.info("LookupEntry domainLeastChecked: " + domainLeastChecked);
 
 //        	res = ok(infomessage.render("You have successfully checked the current status of WhoIs service."));
-        	return ok(infomessage.render("You have started a check for the current status of the WhoIs service. Please refresh the 'Archivist Tasks > Check WhoIs' page using F5 in order to see changes." + mostRecentChecked));
+        	return ok(
+        			results.render(User.findByEmail(request().username()), "You have started a check for the current status of the WhoIs service. Please refresh the 'Archivist Tasks > Check WhoIs' page using F5 in order to see changes.",
+        					 domainMostRecentChecked, domainLeastChecked)
+        	);
 //  			flash("message", "You have started a check for the current status of the WhoIs service. Please refresh this page using F5 in order to see changes.");
 //  			return index();
         } 
