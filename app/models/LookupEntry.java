@@ -143,7 +143,13 @@ public class LookupEntry extends Model
     	Logger.info("LookupEntry filterByName res size: " + res.size());
 		return res;
 	}
-        
+ 
+    public static LookupEntry findLatest()
+    {
+    	Logger.info("findLatest()");
+        return find.where().orderBy("lastUpdate desc").setMaxRows(1).findUnique();
+    }
+   
    /**
      * Retrieve all lookup entry objects.
      */

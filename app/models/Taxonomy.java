@@ -287,14 +287,22 @@ public class Taxonomy extends Model {
     	Taxonomy taxonomy = findQaIssueByName(name);
     	String res = taxonomy.name;
 //    	Logger.info("findQaStatus taxonomy: " + taxonomy);
+		// No QA issues found (OK to publish), QA issues found, Unknown
+		// PASSED_PUBLISH_NO_ACTION_REQUIRED, ISSUE_NOTED, None
     	if (taxonomy.name.equals("No QA issues found (OK to publish)")) {
     		res = Const.QAStatusType.PASSED_PUBLISH_NO_ACTION_REQUIRED.name();
     	}
-    	if (taxonomy.name.equals("QA issues found")) {
+    	else if (taxonomy.name.equals("QA issues found")) {
     		res = Const.QAStatusType.ISSUE_NOTED.name();
     	}
+    	else if (taxonomy.name.equals("Unknown")) {
+    		res = Const.NONE_VALUE;
+    	}
+    	else {
+    		res = Const.NONE_VALUE;
+    	}
     	return res;
-    }          
+    }
     
     /**
      * Retrieve a QA status by Name.

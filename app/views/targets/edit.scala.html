@@ -304,7 +304,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK top-level domain
+								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
 								@if(Target.isInScopeDomain(form("field_url").value, form("url").value)) {
@@ -340,13 +340,23 @@
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
 								<select name="field_qa_status" id="field_qa_status" class="form-control">
-									@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
-						                @if(form("field_qa_status").value != null && form("field_qa_status").value.contains(taxonomy.url)) {             
-										 	<option selected>@taxonomy.name</option>
-									 	} else {
-										 	<option>@taxonomy.name</option>
-									 	}									 	
-								    }	
+									@if(form("field_qa_status").value != null) {
+										@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
+							                @if(form("field_qa_status").value.contains(taxonomy.url)) {             
+											 	<option value="@taxonomy.name" selected>@taxonomy.name</option>
+										 	} else {
+											 	<option value="@taxonomy.name">@taxonomy.name</option>
+										 	}									 	
+									    }
+									} else {
+										@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
+							                @if(taxonomy.name.equals("Unknown")) {             
+											 	<option value="@taxonomy.name" selected>@taxonomy.name</option>
+										 	} else {
+											 	<option value="@taxonomy.name">@taxonomy.name</option>
+										 	}									 	
+									    }
+									}	
                                 </select>
 							</div>
 						</div>
@@ -767,7 +777,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK top-level domain
+								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
 								@if(Target.isInScopeDomain(form("field_url").value, form("url").value)) {

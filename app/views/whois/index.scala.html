@@ -1,13 +1,50 @@
 @(user: User)
 
-@main("", user) {
+@styles = {
+	<style>
+		.modal-vertical-centered {
+			transform: translate(0, 50%) !important;
+		  	-ms-transform: translate(0, 50%) !important; /* IE 9 */
+		  	-webkit-transform: translate(0, 50%) !important; /* Safari and Chrome */
+		}
+	
+	.modal-vertical-centered-progress {
+		transform: translate(0, 300%) !important;
+	  	-ms-transform: translate(0, 300%) !important; /* IE 9 */
+	  	-webkit-transform: translate(0, 300%) !important; /* Safari and Chrome */
+	}
+	</style>
+
+}
+
+@scripts = {
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+			$('#checkButton').on('click', function() {
+				modalLoader();
+				$('#check-form').submit();
+
+			});
+			
+			function modalLoader() {
+				$('#modalLoader').modal({
+				    backdrop: true,
+				    keyboard: true
+				});
+			}
+		});
+	</script>
+}
+
+@main("", user, scripts, styles) {
     
    	<div class="page-header">
 	    <h1><a href="@routes.Passwords.edit()">Users & Agencies > Check WhoIs </a></h1>
 	</div>
     
     @warningmessage(flash)
-    @helper.form(action=routes.CheckWhoIs.check) {
+	    @helper.form(action=routes.CheckWhoIs.check(), 'id -> "check-form") {
 		<input type="hidden" name="url" value="@user.url">
 		<input type="hidden" name="uid" value="@user.uid">
 	
@@ -40,9 +77,9 @@
 		<div class="row padding-10">
 	   		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="number" class="col-sm-6 control-label">Number of targets to check <small class="text-center">(The number of targets for which the elapsed time since the last check is greatest)</small></label>
+					<label for="total" class="col-sm-6 control-label">Number of targets to check <small class="text-center">(The number of targets for which the elapsed time since the last check is greatest)</small></label>
 				    <div class="col-sm-6">
-						<input class="form-control" name="number" id="number" value="50">
+						<input class="form-control" name="total" id="total" value="50">
 					</div>
 				</div>
 			</div>
@@ -51,9 +88,22 @@
 		<div class="row padding-10 pull-right">
 	   		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="check">Check</button>
+					<button type="submit" class="btn btn-primary" name="check" id="checkButton">Check</button>
 		       </div>
 			</div>
 		</div>
 	}
 }
+
+<div id="modalLoader" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-vertical-centered-progress">
+    	<div class="modal-content">
+			<div class="modal-body">
+			    <div class="progress progress-striped active">
+			        <div class="progress-bar" style="width: 100%;">
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,6 +1,10 @@
+import java.util.List;
+
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
+import uk.bl.Const;
+import uk.bl.api.JsonUtils;
 import uk.bl.db.DataImport;
 import play.mvc.*;
 import play.mvc.Http.*;
@@ -13,6 +17,8 @@ public class Global extends GlobalSettings {
     	// should run in background and return view
     	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
     	Logger.info("dataImport: " + dataImport);
+//        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
+
     	if (dataImport) {
     		DataImport.INSTANCE.insert();
     	}

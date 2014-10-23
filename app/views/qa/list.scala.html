@@ -32,6 +32,19 @@
               	});
              })
 			
+         	$('#qa_status').change(function(event) {
+        		console.log('qa_status');
+        		event.preventDefault();
+        		
+			    var action = $("<input>")
+       			.attr("type", "hidden")
+       			.attr("name", "action").val("search");
+		    
+		    	$('#forms').append($(action));
+       			$('#forms').submit();
+        	});
+             
+             
 		});
 	</script>
 }
@@ -113,23 +126,22 @@
     <article class="targets">
     
 		@warningmessage(flash)
-		@helper.form(action=routes.QAController.search) {
-		<div id="forms">
-	   			<div class="input-group">
-	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
-   					<input type="hidden" name="s" value="@currentSortBy">
-   					<input type="hidden" name="o" value="@currentOrder">
-   					<input type="hidden" name="query_collection" value="@currentCollection">
-   					<input type="hidden" name="query_qa_status" value="@currentQaStatus">
-					<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
-		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
-					</span>
-				</div>
+		@helper.form(action=routes.QAController.search, 'id -> "forms") {
+   			<div class="input-group">
+   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
+  					<input type="hidden" name="s" value="@currentSortBy">
+  					<input type="hidden" name="o" value="@currentOrder">
+  					<input type="hidden" name="query_collection" value="@currentCollection">
+  					<input type="hidden" name="query_qa_status" value="@currentQaStatus">
+				<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
+	   			<span class="input-group-btn">
+					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
+				</span>
+			</div>
+
 			<div class="alert alert-info">
 				Enter any whole or part URL, or part of a target name.
 			</div>				
-		</div>
 		
 		@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
 		
@@ -165,13 +177,13 @@
 						            	<div class="col-sm-6">
 											<select name="qa_status" class="form-control target-form-control" id="qa_status">
 									        	<option>None</option>
-									            @for(qaStatus <- QAController.getAllQAStatusTypes()) {
-							                 			@if(currentQaStatus != null && Taxonomy.findQaStatus(currentQaStatus).equals(qaStatus)) {
-								                		<option selected>@qaStatus</option>
-								                	} else {
-								                		<option>@qaStatus</option>
-								                	}
-												}
+									    		@for(qaStatusType <- uk.bl.Const.QAStatusType.values()) {
+						                 			@if(currentQaStatus != null && currentQaStatus.equals(qaStatusType.name)) {
+						                				<option value="@qaStatusType.name" selected>@qaStatusType.getValue</option>
+						                			} else {
+						                				<option value="@qaStatusType.name">@qaStatusType.getValue</option>
+						                			}
+					                			}
 											</select>
 										</div>
 						         	</div>
@@ -204,7 +216,7 @@
 					<td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
 					<td><a class="brand" href="@routes.Instances.showByTarget(target.url)">@Instance.findAllByTarget(target.url)</a></td>
 					<td><a class="brand" href="@routes.InstanceController.edit(Instance.getLatestInstance(target.url))?tab=qa">@Instance.showLatestTimestamp(target.url)</a></td>
-					<td>@Taxonomy.findQaStatus(target.field_qa_status)</td>
+					<td>@uk.bl.Const.QAStatusType.getQaStatus(Taxonomy.findQaStatus(target.field_qa_status)).getValue()</td>
 				</tr>
 				}
 			</tbody>

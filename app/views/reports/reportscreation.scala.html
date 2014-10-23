@@ -158,10 +158,10 @@
 											<select name="filter_npld" id="npld" class="form-control">
 												<option>None</option>
 								                @for(npldType <- Target.getAllNpldTypes()) {
-									                @if(npldType.equals(npld)) {
-									                	<option selected>@npldType</option>
+									                @if(npldType.name().equals(npld)) {
+									                	<option value="@npldType.name" selected>@npldType.getValue</option>
 									                } else {
-									                	<option>@npldType</option>
+									                	<option value="@npldType.name" >@npldType.getValue</option>
 									                }
 								                }
 											</select>

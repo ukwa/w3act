@@ -514,11 +514,13 @@ public class Scope {
 	 * @throws WhoisException 
 	 */
 	public static boolean checkWhoisThread(int number) throws WhoisException {
+    	Logger.info("checkWhoisThread: " + number);
 		boolean res = false;
     	JRubyWhois whoIs = new JRubyWhois();
     	int count = 0;
 //    	List<Target> targetList = Target.findAllActive();
     	List<Target> targetList = Target.findLastActive(number);
+    	Logger.info("targetList: " + targetList.size());
     	Iterator<Target> itr = targetList.iterator();
     	while (itr.hasNext()) {
     		Target target = itr.next();

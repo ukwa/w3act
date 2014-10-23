@@ -600,13 +600,34 @@ public final class Const {
 	 * The QA status types.
 	 */
 	public enum QAStatusType { 
-		PASSED_PUBLISH_NO_ACTION_REQUIRED,
-		FAILED_DO_NOT_PUBLISH,
-		FAILED_PASS_TO_ENGINEER,
-		RECRAWL_REQUESTED,
-		ISSUE_NOTED;
-    }
-    
+		
+		PASSED_PUBLISH_NO_ACTION_REQUIRED("Passed, Publish, No Action Required"),
+		FAILED_DO_NOT_PUBLISH("Failed, Do Not Publish"),
+		FAILED_PASS_TO_ENGINEER("Failed, Pass to Engineer"),
+		RECRAWL_REQUESTED("Recrawl Requested"),
+		ISSUE_NOTED("Issue Noted");
+		
+        private String value;
+
+        private QAStatusType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static QAStatusType getQaStatus(String name) {
+    		for (QAStatusType qaStatusType : QAStatusType.values()) {
+    			if (qaStatusType.name().equals(name)) {
+        			System.out.println("" + qaStatusType.name() + " - " + qaStatusType.getValue());
+    				return qaStatusType;
+    			}
+    		}
+    		return null;
+    	}
+	}
+	
 	/**
 	 * The QA issue category.
 	 */
@@ -717,13 +738,24 @@ public final class Const {
     }    	
     	
 	public enum NpldType {
-		UK_HOSTING,
-		UK_TOP_LEVEL_DOMAIN,
-		UK_REGISTRATION,
-		UK_POSTAL_ADDRESS,
-		VIA_CORRESPONDENCE,
-		PROFESSIONAL_JUDGEMENT,
-		NO_LD_CRITERIA_MET;
+		UK_HOSTING("UK Hosting"),
+		UK_TOP_LEVEL_DOMAIN("UK Top Level Domain"),
+		UK_REGISTRATION("UK Registration"),
+		UK_POSTAL_ADDRESS("UK Postal Address"),
+		VIA_CORRESPONDENCE("Via Correspondance"),
+		PROFESSIONAL_JUDGEMENT("Professional Judgement"),
+		NO_LD_CRITERIA_MET("No LD Criteria Met");
+		
+        private String value;
+
+        private NpldType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
     }    
 
     /**

@@ -53,12 +53,15 @@ public class QAController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus) {
-//    	Logger.info("QAController.list() collection: " + collection);
+    	
     	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
-    	if (page.getTotalRowCount() == 0) {
-    		pageNo = 0;
-        	page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
-    	}
+    	Logger.info("Calling QAController.list() collection: " + collection);
+//    	if (page.getTotalRowCount() == 0) {
+//    		pageNo = 0;
+//        	page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
+//    	}
+    	Logger.info("Called QAController.list() collection: " + collection);
+    	
         return ok(
         	list.render(
         			"QA", 
@@ -132,6 +135,7 @@ public class QAController extends AbstractController {
     			if (query_collection == null || query_collection.length() == 0) {
 				    query_collection = Const.ACT_URL;
 				}
+    			Logger.info("values: " + pageNo + " - " + sort + " - " + order + " - " + query + " - " + query_collection + " - " + query_qa_status);
     	    	return redirect(routes.QAController.list(pageNo, sort, order, query, query_collection, query_qa_status));
 		    } else {
 		      return badRequest("This action is not allowed");
