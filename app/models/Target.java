@@ -2054,6 +2054,7 @@ public class Target extends Model {
 	 * any value except None.
 	 * @return target list
 	 */
+	@JsonIgnore
 	public List<Target> getUkwaLicenceStatusList() {
 //		Open UKWA Licence at higher level - disabled
 //		Open UKWA licence for target being edited - disabled
