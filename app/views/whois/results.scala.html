@@ -1,22 +1,21 @@
-@(user: User, message: String, domainMostChecked: String, domainLeastChecked: String)
+@(user: User, domainMostChecked: String, domainLeastChecked: String)
 
 @main("", user) {
 
 
 	<div class="container">
 	
-		<div class="alert alert-info">
-			Whois Results
+		<h1>Whois Results</h1>
+		
+		<h3>Most Checked Domain</h3>
+		<div class="alert alert-success" role="alert">
+			@domainMostChecked
 		</div>
-		
-		<blockquote>
-			<p>@message</p>
-		</blockquote>
-		
-		<ul>
-			<li>@domainMostChecked</li>
-			<li>@domainLeastChecked</li>
-		</ul>
+			
+		<h3>Least Checked Domain</h3>
+		<div class="alert alert-info" role="alert">
+			@domainLeastChecked
+		</div>
 
 	</div>
 }

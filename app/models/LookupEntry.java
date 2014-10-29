@@ -8,13 +8,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
+
+import com.avaje.ebean.SqlRow;
 
 @Entity
 @Table(name = "lookup_entry")
@@ -54,6 +58,9 @@ public class LookupEntry extends Model
     @Version
     public Timestamp lastUpdate;
 
+    @Transient
+    public Integer totalRows;
+    
     public static final Model.Finder<Long, LookupEntry> find = new Model.Finder<Long, LookupEntry>(Long.class, LookupEntry.class);
 
     public String getName()
@@ -144,12 +151,6 @@ public class LookupEntry extends Model
 		return res;
 	}
  
-    public static LookupEntry findLatest()
-    {
-    	Logger.info("findLatest()");
-        return find.where().orderBy("lastUpdate desc").setMaxRows(1).findUnique();
-    }
-   
    /**
      * Retrieve all lookup entry objects.
      */

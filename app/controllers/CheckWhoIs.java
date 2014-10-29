@@ -1,6 +1,7 @@
 package controllers;
 
 
+import java.util.Date;
 import java.util.List;
 
 import models.LookupEntry;
@@ -20,6 +21,11 @@ import views.html.whois.index;
 import views.html.whois.results;
 import views.html.infomessage;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Query;
+import com.avaje.ebean.RawSql;
+import com.avaje.ebean.RawSqlBuilder;
+import com.avaje.ebean.SqlRow;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -91,16 +97,23 @@ public class CheckWhoIs extends AbstractController {
 //		    most recent domain checked (and when)
 //		    the domain least recently checked (and when)
     		
-    		LookupEntry entry = LookupEntry.findLatest();
-    		String domainMostRecentChecked = entry.name + " - " + entry.lastUpdate;
-    		String domainLeastChecked = "";
+    		LookupEntry entry = LookupEntry.find.where().orderBy("lastUpdate desc").setMaxRows(1).findUnique();
+    		String domainMostRecentChecked = entry.name;
+    		
+        	String sql = "select count(name), name from lookup_entry group by name order by count(name) asc limit 1";
+        	SqlRow row =  Ebean.createSqlQuery(sql).findUnique();
+    		
+        	String leastName = row.getString("name");
+        	
+        	String domainLeastChecked = leastName;
+        	
+//    		LookupEntry domainLeastChecked = LookupEntry.findLeastChecked();
     		Logger.info("LookupEntry mostRecentChecked: " + domainMostRecentChecked);
     		Logger.info("LookupEntry domainLeastChecked: " + domainLeastChecked);
 
 //        	res = ok(infomessage.render("You have successfully checked the current status of WhoIs service."));
         	return ok(
-        			results.render(User.findByEmail(request().username()), "You have started a check for the current status of the WhoIs service. Please refresh the 'Archivist Tasks > Check WhoIs' page using F5 in order to see changes.",
-        					 domainMostRecentChecked, domainLeastChecked)
+        			results.render(User.findByEmail(request().username()), domainMostRecentChecked, domainLeastChecked)
         	);
 //  			flash("message", "You have started a check for the current status of the WhoIs service. Please refresh this page using F5 in order to see changes.");
 //  			return index();
