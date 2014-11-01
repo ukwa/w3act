@@ -59,7 +59,6 @@ public class Collections extends AbstractController {
 	public static Result list(int pageNo, String sortBy, String order,
 			String filter) {
 		JsonNode node = getCollectionsData(filter);
-//		Logger.info("LookUp.list() " + node);
 		
 		return ok(list.render("Collections",
 				User.findByEmail(request().username()), filter,

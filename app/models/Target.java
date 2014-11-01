@@ -1598,10 +1598,13 @@ public class Target extends Model {
         		.add(Expr.or(
 	                    Expr.eq(Const.FIELD_COLLECTION_CATEGORIES, collection_url),
 	                    Expr.or(
-	    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, collection_url + Const.COMMA),
+	                    		Expr.or(
+		    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, collection_url + Const.COMMA),
+		    	                    Expr.startsWith(Const.FIELD_COLLECTION_CATEGORIES, collection_url + Const.COMMA)
+	                    		),
 	    	                    Expr.or(
-	    	    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + " " + collection_url),
-	    	    	                    Expr.contains(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + "  " + collection_url)
+	    	    	                    Expr.endsWith(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + " " + collection_url),
+	    	    	                    Expr.endsWith(Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + "  " + collection_url)
 	    	    	                 )
 	    	                 )
 	                 ))
