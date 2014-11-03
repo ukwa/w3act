@@ -1,4 +1,4 @@
-@(user: User)
+@(user: User, whoIsTrue: Integer, whoIsFalse: Integer)
 
 @styles = {
 	<style>
@@ -39,71 +39,8 @@
 
 @main("", user, scripts, styles) {
     
-   	<div class="page-header">
-	    <h1><a href="@routes.Passwords.edit()">Users & Agencies > Check WhoIs </a></h1>
-	</div>
-    
-    @warningmessage(flash)
-	    @helper.form(action=routes.CheckWhoIs.check(), 'id -> "check-form") {
-		<input type="hidden" name="url" value="@user.url">
-		<input type="hidden" name="uid" value="@user.uid">
+	@form(user, whoIsTrue, whoIsFalse)
 	
-		<div class="row padding-10">
-	   		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label for="password" class="col-sm-6 control-label">Targets count with 'WhoIs' value 'Yes'</label>
-				    <div class="col-sm-6">
-						<input class="form-control" value="@Target.findWhoIsCount(true)" disabled >
-					</div>
-				</div>
-			</div>
-	   	</div>
-		
-		<div class="row padding-10">
-	   		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label for="password" class="col-sm-6 control-label">Targets count with 'WhoIs' value 'No'</label>
-				    <div class="col-sm-6">
-						<input class="form-control" value="@Target.findWhoIsCount(false)" disabled>
-					</div>
-				</div>
-			</div>
-	   	</div>
-		
-		<div class="alert alert-info">
-			In order to refresh the 'WhoIs' criteria for targets please use the 'Check' button. This will trigger a new check. 
-		</div>
-	
-		<div class="row padding-10">
-	   		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label for="total" class="col-sm-6 control-label">Number of targets to check <small class="text-center">(The number of targets for which the elapsed time since the last check is greatest)</small></label>
-				    <div class="col-sm-6">
-						<input class="form-control" name="total" id="total" value="50">
-					</div>
-				</div>
-			</div>
-	   	</div>
-		
-		<div class="row padding-10 pull-right">
-	   		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="check" id="checkButton">Check</button>
-		       </div>
-			</div>
-		</div>
-	}
 }
 
-<div id="modalLoader" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog modal-vertical-centered-progress">
-    	<div class="modal-content">
-			<div class="modal-body">
-			    <div class="progress progress-striped active">
-			        <div class="progress-bar" style="width: 100%;">
-			        </div>
-			    </div>
-			</div>
-		</div>
-	</div>
-</div>
+

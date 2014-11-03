@@ -1,7 +1,6 @@
 package controllers;
 
 
-import java.util.Date;
 import java.util.List;
 
 import models.LookupEntry;
@@ -14,17 +13,12 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
-import uk.bl.api.WhoIsThread;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import views.html.whois.index;
 import views.html.whois.results;
-import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
-import com.avaje.ebean.Query;
-import com.avaje.ebean.RawSql;
-import com.avaje.ebean.RawSqlBuilder;
 import com.avaje.ebean.SqlRow;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -53,20 +47,11 @@ public class CheckWhoIs extends AbstractController {
      * Display the user edit panel for this URL.
      */
     public static Result index() {
-        return ok(index.render(User.findByEmail(request().username()))); 
+    	Integer whoIsTrue = Target.findWhoIsCount(true);
+    	Integer whoIsFalse = Target.findWhoIsCount(false);
+        return ok(index.render(User.findByEmail(request().username()), whoIsTrue, whoIsFalse)); 
     }
     
-	/**
-	 * This method prepares Collection form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-      	return ok(
-  			index.render(User.findByEmail(request().username()))
-        );
-    }
-        
     /**
      * This method saves changed password in the same object. The "version" field in the User object
      * contains the timestamp of the change. 
@@ -97,23 +82,27 @@ public class CheckWhoIs extends AbstractController {
 //		    most recent domain checked (and when)
 //		    the domain least recently checked (and when)
     		
-    		LookupEntry entry = LookupEntry.find.where().orderBy("lastUpdate desc").setMaxRows(1).findUnique();
-    		String domainMostRecentChecked = entry.name;
-    		
-        	String sql = "select count(name), name from lookup_entry group by name order by count(name) asc limit 1";
-        	SqlRow row =  Ebean.createSqlQuery(sql).findUnique();
-    		
-        	String leastName = row.getString("name");
+//    		List of all targets sorted by date of last WhoIs check
+//    		showing the least recently checked first.
         	
-        	String domainLeastChecked = leastName;
-        	
-//    		LookupEntry domainLeastChecked = LookupEntry.findLeastChecked();
-    		Logger.info("LookupEntry mostRecentChecked: " + domainMostRecentChecked);
-    		Logger.info("LookupEntry domainLeastChecked: " + domainLeastChecked);
-
+    		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.field_url, t.last_update as target_date, l.last_update as lookup_date, (l.last_update::timestamp - t.last_update::timestamp) as diff from target t, lookup_entry l where t.field_url = l.name order by diff asc");
+    		if (total > 0) {
+    			lookupSql.append(" limit ").append(total);
+    		}
+    		lookupSql.append(";");
+    		
+    		List<SqlRow> rows = Ebean.createSqlQuery(lookupSql.toString()).findList();
+    		
+//    		for (SqlRow r : rows) {
+//    			Logger.info(r.getString("lookup_name") + " " +  r.getTimestamp("target_date") + " "  + r.getTimestamp("lookup_date"));
+//    		}
 //        	res = ok(infomessage.render("You have successfully checked the current status of WhoIs service."));
+    		
+        	Integer whoIsTrue = Target.findWhoIsCount(true);
+        	Integer whoIsFalse = Target.findWhoIsCount(false);
+        	
         	return ok(
-        			results.render(User.findByEmail(request().username()), domainMostRecentChecked, domainLeastChecked)
+        			results.render(User.findByEmail(request().username()), whoIsTrue, whoIsFalse, rows)
         	);
 //  			flash("message", "You have started a check for the current status of the WhoIs service. Please refresh this page using F5 in order to see changes.");
 //  			return index();

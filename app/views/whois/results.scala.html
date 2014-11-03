@@ -1,21 +1,78 @@
-@(user: User, domainMostChecked: String, domainLeastChecked: String)
+@(user: User, whoIsTrue: Integer, whoIsFalse: Integer, results: List[com.avaje.ebean.SqlRow])
 
-@main("", user) {
+@styles = {
+	<style>
+		.modal-vertical-centered {
+			transform: translate(0, 50%) !important;
+		  	-ms-transform: translate(0, 50%) !important; /* IE 9 */
+		  	-webkit-transform: translate(0, 50%) !important; /* Safari and Chrome */
+		}
+	
+	.modal-vertical-centered-progress {
+		transform: translate(0, 300%) !important;
+	  	-ms-transform: translate(0, 300%) !important; /* IE 9 */
+	  	-webkit-transform: translate(0, 300%) !important; /* Safari and Chrome */
+	}
+	</style>
+
+}
+
+@scripts = {
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+			$('#checkButton').on('click', function() {
+				modalLoader();
+				$('#check-form').submit();
+
+			});
+
+			var total = getURLParameter('total');
+			if (total.length > 0) {
+				$('#total').val(total);
+			}
+			
+			function modalLoader() {
+				$('#modalLoader').modal({
+				    backdrop: true,
+				    keyboard: true
+				});
+			}
+		});
+	</script>
+}
+
+@getDateDiff(date1: Date, date2: Date, timeUnit: java.util.concurrent.TimeUnit) = @{
+    var diffInMillies = date2.getTime() - date1.getTime();
+    timeUnit.convert(diffInMillies, java.util.concurrent.TimeUnit.MILLISECONDS);
+}
+
+@main("", user, scripts, styles) {
+
+	@form(user, whoIsTrue, whoIsFalse)
 
 
 	<div class="container">
 	
 		<h1>Whois Results</h1>
 		
-		<h3>Most Checked Domain</h3>
-		<div class="alert alert-success" role="alert">
-			@domainMostChecked
-		</div>
-			
-		<h3>Least Checked Domain</h3>
-		<div class="alert alert-info" role="alert">
-			@domainLeastChecked
-		</div>
-
+		<table class="table">
+			<tr>
+				<th>#</th>
+				<th>Domain</th>
+				<th>Target Date</th>
+				<th>Last Checked</th>
+				<th>Difference</th>
+			</tr>
+		@for((row, index) <- results.zipWithIndex) {
+			<tr>
+				<td>@(index+1))</td>
+				<td>@row.getString("lookup_name")</td>
+				<td>@row.getTimestamp("target_date")</td>
+				<td>@row.getTimestamp("lookup_date")</td>
+				<td>@row.get("diff")</td>
+			</tr>
+		}
+		</table>
 	</div>
 }

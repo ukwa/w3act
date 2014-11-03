@@ -525,8 +525,7 @@ public class Scope {
     	while (itr.hasNext()) {
     		Target target = itr.next();
         	try {
-	        	Logger.info("checkWhoisThread count: " + count + ", URL: " + target.field_url +
-	        			", last update: " + String.valueOf(target.lastUpdate));
+	        	Logger.info("checkWhoisThread count: " + count + ", URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
 	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.field_url));
 	        	Logger.info("whoIsRes: " + whoIsRes);
 	        	res = whoIsRes.isUKRegistrant();

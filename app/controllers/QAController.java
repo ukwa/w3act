@@ -55,12 +55,12 @@ public class QAController extends AbstractController {
     public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus) {
     	
     	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
-    	Logger.info("Calling QAController.list() collection: " + collection);
+    	Logger.info("Calling QAController.list() collection: " + collection + " - " + qaStatus);
 //    	if (page.getTotalRowCount() == 0) {
 //    		pageNo = 0;
 //        	page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
 //    	}
-    	Logger.info("Called QAController.list() collection: " + collection);
+    	Logger.info("Called QAController.list() collection: " + collection + " - " + qaStatus);
     	
         return ok(
         	list.render(
@@ -125,6 +125,9 @@ public class QAController extends AbstractController {
     			Logger.info("Can't find QA status for URL: " + query_qa_status_name + ". " + e);
     		}
     	} 
+    	if (StringUtils.isEmpty(query_qa_status)) {
+    		query_qa_status = "FILLER_STATUS";
+    	}
     	Logger.info("query_qa_status: " + query_qa_status);
     	
     	if (StringUtils.isEmpty(action)) {
