@@ -85,7 +85,7 @@ public class CheckWhoIs extends AbstractController {
 //    		List of all targets sorted by date of last WhoIs check
 //    		showing the least recently checked first.
         	
-    		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.field_url, t.last_update as target_date, l.last_update as lookup_date, (l.last_update::timestamp - t.last_update::timestamp) as diff from target t, lookup_entry l where t.field_url = l.name order by diff asc");
+    		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.field_url, t.last_update as target_date, l.last_update as lookup_date, (l.last_update::timestamp - t.last_update::timestamp) as diff from target t, lookup_entry l where t.field_url = l.name order by diff desc");
     		if (total > 0) {
     			lookupSql.append(" limit ").append(total);
     		}
