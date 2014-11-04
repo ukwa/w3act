@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import com.avaje.ebean.Page;
 
@@ -33,6 +34,8 @@ public class Document extends Model {
 	public Journal journal;
     public String landingPageUrl;
     public String documentUrl;
+    @Transient
+    public String htmlFilename;
     @Required
     @Column(columnDefinition = "TEXT")
 	public String title;

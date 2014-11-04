@@ -12,7 +12,7 @@
 	<script type="text/javascript">
 		function getSelectionText() {
 			var text = "";
-			var win=document.getElementById("landing_page").contentWindow;
+			var win=document.getElementById("document_view").contentWindow;
 			//var win=window;
 			if (win.getSelection) {
 				var node = win.getSelection().anchorNode;
@@ -44,6 +44,11 @@
 			}
 			return text;
 		}
+
+		function fillInput(id) {
+			document.getElementById(id).value = getSelectionText().trim();
+		}
+		
 		function openPopup(url) {
 			var breite = screen.width;
 			var hoehe = screen.height; 
@@ -56,7 +61,7 @@
 					"scrollbars=yes"
 			);
 		}
-
+		
 		function show(element) {
 			element.style.display = "block";
 		}
@@ -99,10 +104,19 @@
 		else if (window.attachEvent) { // IE DOM
 			window.attachEvent('onload', function() { toggleVisibility(); }, false);
 		}*@
+
+		
+		@*$(function() {
+			document.getElementById("document_view").contentWindow.onmouseup =
+				function showOptions(event) {
+					alert(event.screenX + ", " + event.screenY);
+				};
+		});*@
 	</script>
 }
 
 @main(title, user, scripts) {
+	
 	<div class="page-header">
     	<h1><a href="@routes.Documents.list()">Documents</a> > @form("filename").value</h1>
 	</div>
@@ -120,7 +134,9 @@
 
 			@defining('class -> "form-control") { textualElement =>
 				@inputText(form("title"), '_label -> "Title", textualElement)
+				<input type="button" class="btn btn-success" value="fill" onclick="fillInput('title')">
 				@inputText(form("doi"), '_label -> "DOI (Digital Object Identifier)", textualElement)
+				<input type="button" class="btn btn-success" value="fill" onclick="fillInput('doi')">
 				@inputText(form("publicationDate"), '_label -> "Publication Date", textualElement)
 				@inputText(form("filename"), '_label -> "Filename", textualElement)
 				@select(form("type"),
@@ -159,7 +175,8 @@
 		</div>
 		
 		<div class="col-md-7">
-			<iframe id="landing_page" src="@routes.Helper.passthrough(form("landingPageUrl").value,"")" width="100%" height="600" />
+			<iframe id="document_view" src="@routes.Assets.at(form("htmlFilename").value)"
+				width="100%" height="600" />
 		</div>
 	}
 }

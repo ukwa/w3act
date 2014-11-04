@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import play.mvc.Security;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
+import uk.bl.api.CrawlData;
 import views.html.documents.edit;
 import views.html.documents.list;
 
@@ -35,6 +37,7 @@ public class Documents extends AbstractController {
 		Logger.info("Documents.edit()");
 		
 		Document document = getDocumentFromDB(id);
+		document.htmlFilename = document.filename.split("\\.")[0] + ".html";
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
 		
 		return ok(edit.render("Document" + id, documentForm,
@@ -151,6 +154,19 @@ public class Documents extends AbstractController {
      */
     public static Result list(int pageNo, String sortBy, String order, String filter) {
     	Logger.info("Documents.list()");
+    	
+    	/*List<String> watchedTargetUrls = Arrays.asList(
+    			"http://www.ifs.org.uk/publications/re",
+    			"http://www.thinknpc.org/publications/",
+    			"http://www.ofsted.gov.uk/inspection-reports/surveys",
+    			"http://www.parliament.uk/business/committees/committees-a-z/commons-select/home-affairs-committee/publications/",
+    			"https://www.gov.uk/government/publications"
+    			);
+    	
+    	for (String watchedTargetUrl : watchedTargetUrls) {
+    		List<Document> documentList = CrawlData.crawlForDocuments(watchedTargetUrl);
+    		Ebean.save(documentList);
+    	}*/
     	
         return ok(
         	list.render(
