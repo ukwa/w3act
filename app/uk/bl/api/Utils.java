@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,6 +27,8 @@ import com.avaje.ebean.SqlUpdate;
 
 import play.Logger;
 import uk.bl.Const;
+
+import org.postgresql.util.PGInterval;
 
 /**
  * Helper class.
@@ -553,6 +557,33 @@ public class Utils {
     public static void removeAssociationFromDb(String tableName, String columnName, Long id) {
         SqlUpdate removeOldAssociation = Ebean.createSqlUpdate("DELETE FROM " + tableName + " WHERE " + columnName + " = " + id);
         removeOldAssociation.execute();     	
+    }
+    
+    public static String formatSqlTimestamp(Timestamp timestamp) {
+    	if (timestamp != null) {
+			String formatted = new SimpleDateFormat("E dd MMM yyyy HH:mm:ss ").format(timestamp);
+			return formatted;
+    	}
+		return "";
+	}
+    
+    public static String convertPGIntervalToDate(Object object) {
+    	PGInterval pgInterval = (PGInterval)object;
+    	int years = pgInterval.getYears();
+    	int months = pgInterval.getMonths();
+    	int days = pgInterval.getDays();
+    	int hours = pgInterval.getHours();
+    	int minutes = pgInterval.getMinutes();
+    	double seconds = pgInterval.getSeconds();
+    	
+    	StringBuilder builder = new StringBuilder("");
+    	if (years > 0) builder.append(years + " years ");
+    	if (months > 0) builder.append(months + " months ");
+    	if (days > 0) builder.append(days + " days " );
+    	if (hours > 0) builder.append(hours + " hours ");
+    	if (minutes > 0) builder.append(minutes + " minutes ");
+    	if (seconds > 0) builder.append(Math.round(seconds) + " seconds ");
+    	return builder.toString();
     }
 }
 

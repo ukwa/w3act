@@ -1,5 +1,7 @@
 @(user: User, whoIsTrue: Integer, whoIsFalse: Integer, results: List[com.avaje.ebean.SqlRow])
 
+@import uk.bl.api.Utils
+
 @styles = {
 	<style>
 		.modal-vertical-centered {
@@ -42,15 +44,9 @@
 	</script>
 }
 
-@getDateDiff(date1: Date, date2: Date, timeUnit: java.util.concurrent.TimeUnit) = @{
-    var diffInMillies = date2.getTime() - date1.getTime();
-    timeUnit.convert(diffInMillies, java.util.concurrent.TimeUnit.MILLISECONDS);
-}
-
 @main("", user, scripts, styles) {
 
 	@form(user, whoIsTrue, whoIsFalse)
-
 
 	<div class="container">
 	
@@ -60,7 +56,6 @@
 			<tr>
 				<th>#</th>
 				<th>Domain</th>
-				<th>Target Date</th>
 				<th>Last Checked</th>
 				<th>Difference</th>
 			</tr>
@@ -68,9 +63,8 @@
 			<tr>
 				<td>@(index+1))</td>
 				<td>@row.getString("lookup_name")</td>
-				<td>@row.getTimestamp("target_date")</td>
-				<td>@row.getTimestamp("lookup_date")</td>
-				<td>@row.get("diff")</td>
+				<td>@Utils.formatSqlTimestamp(row.getTimestamp("lookup_date"))</td>
+				<td>@Utils.convertPGIntervalToDate(row.get("diff"))</td>
 			</tr>
 		}
 		</table>
