@@ -109,6 +109,8 @@ GET     /tags/new/:tag                      controllers.Tags.create(tag)
 POST    /tags	                          	controllers.Tags.save()
 
 GET     /documents/list						controllers.Documents.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET    	/documents/search					controllers.Documents.search()
+GET    	/documents/filterbyjson/:name		controllers.Documents.filterByJson(name)
 GET		/documents/unsaved					controllers.Documents.continueEdit()
 GET		/documents/:document				controllers.Documents.edit(document: Long)
 POST	/documents							controllers.Documents.save()

@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
 import play.data.format.Formats.DateTime;
@@ -36,6 +37,8 @@ public class Document extends Model {
     public String documentUrl;
     @Transient
     public String htmlFilename;
+    @Transient
+    public String url;
     @Required
     @Column(columnDefinition = "TEXT")
 	public String title;
@@ -77,5 +80,12 @@ public class Document extends Model {
         		.setFetchAhead(false)
         		.getPage(page);
     }
+    
+	public static List<Document> filterByTitle(String title) {
+		List<Document> res = new ArrayList<Document>();
+        ExpressionList<Document> ll = find.where().icontains("title", title);
+    	res = ll.findList();
+		return res;
+	}
     
 }

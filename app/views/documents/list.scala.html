@@ -10,7 +10,7 @@
 	<script>
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
-			applySearch(context, 'flags'); 
+			applySearch(context, 'documents'); 
 		});
 	</script>
 }
@@ -85,6 +85,21 @@
 	</div>
 		
     <article class="documents">
+    
+		<div id="forms">
+   			@warningmessage(flash)
+   			@helper.form(action=routes.Documents.search, 'class -> "form-inline") {
+	   			<div class="input-group">
+					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
+	   				<input type="hidden" name="s" value="@currentSortBy">
+	   				<input type="hidden" name="o" value="@currentOrder">
+					<input type="text" class="form-control lookup-form-control" name="q" placeholder="Enter Document Name" value="@searchstr" id="search-query">
+		   			<span class="input-group-btn">
+						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for tag by name">Search</button>						
+					</span>
+				</div>
+			}
+		</div>	
     
     	@pagination
     	
