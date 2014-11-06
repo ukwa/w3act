@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import play.data.format.Formats.DateTime;
 import play.data.validation.Constraints.Required;
@@ -29,8 +30,10 @@ public class Document extends Model {
 	@ManyToOne
 	@JoinColumn(name="id_instance")
 	public Instance instance;
+	@JsonIgnore
 	@OneToOne(mappedBy="document")
 	public Book book;
+	@JsonIgnore
 	@OneToOne(mappedBy="document")
 	public Journal journal;
     public String landingPageUrl;

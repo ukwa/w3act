@@ -46,7 +46,10 @@
 		}
 
 		function fillInput(id) {
+			//var date = new Date(getSelectionText().trim());
+			//console.log(date);
 			document.getElementById(id).value = getSelectionText().trim();
+			$("#selection_menu").css({display: "none"});
 		}
 		
 		function openPopup(url) {
@@ -63,20 +66,20 @@
 		}
 		
 		function show(element) {
-			element.style.display = "block";
+			element.css({display: "block"});
 		}
 
 		function hide(element) {
-			element.style.display = "none";
+			element.css({display: "none"});
 		}
 		
 		function toggleVisibility() {
 			var select = document.getElementById("type");
 			var type = select.selectedIndex;
-			var book_general = document.getElementById("book_general");
-			var book = document.getElementById("book");
-			var journal_general = document.getElementById("journal_general");
-			var journal_article = document.getElementById("journal_article");
+			var book_general = $("#book_general, #book_general_buttons");
+			var book = $("#book");
+			var journal_general = $("#journal_general");
+			var journal_article = $("#journal_article, #journal_article_buttons");
 			hide(book_general);
 			hide(book);
 			hide(journal_general);
@@ -98,20 +101,24 @@
 					break;
 			}
 		}
-
-		@*if (window.addEventListener)  // W3C DOM
-			window.addEventListener('load', function() { toggleVisibility(); }, false);
-		else if (window.attachEvent) { // IE DOM
-			window.attachEvent('onload', function() { toggleVisibility(); }, false);
-		}*@
-
 		
-		@*$(function() {
+		var previousSelection="";
+		
+		$(function() {
+			toggleVisibility();
 			document.getElementById("document_view").contentWindow.onmouseup =
 				function showOptions(event) {
-					alert(event.screenX + ", " + event.screenY);
+					console.log(event);
+					var selectionText = getSelectionText();
+					if (selectionText && previousSelection != selectionText) {
+						$("#selection_menu").css({display: "block"});
+						$("#selection_menu").css({left: event.pageX, top: event.pageY+10});
+					} else {
+						$("#selection_menu").css({display: "none"});
+					}
+					previousSelection = selectionText;
 				};
-		});*@
+		});
 	</script>
 }
 
@@ -134,27 +141,25 @@
 
 			@defining('class -> "form-control") { textualElement =>
 				@inputText(form("title"), '_label -> "Title", textualElement)
-				<input type="button" class="btn btn-success" value="fill" onclick="fillInput('title')">
 				@inputText(form("doi"), '_label -> "DOI (Digital Object Identifier)", textualElement)
-				<input type="button" class="btn btn-success" value="fill" onclick="fillInput('doi')">
 				@inputText(form("publicationDate"), '_label -> "Publication Date", textualElement)
 				@inputText(form("filename"), '_label -> "Filename", textualElement)
 				@select(form("type"),
 					options(List("","Book", "Book Chapter", "Journal Article", "Journal Issue")),
 					'_label -> "Submission Type", 'onchange -> "toggleVisibility()", textualElement)
-				<div id="book_general" style="@if(!form("type").value.toLowerCase.startsWith("book")) {display: none}">
+				<div id="book_general">
 					@inputText(form("book.isbn"), '_label -> "ISBN", textualElement)
 					@inputText(form("book.author"), '_label -> "Author(s)", textualElement)
 					@inputText(form("book.corporate_author"), '_label -> "Corporate Author", textualElement)
 					@checkbox(form("book.priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
 				</div>
-				<div id="book" style="@if(form("type").value.toLowerCase != "book") {display: none}">
+				<div id="book">
 					@inputText(form("book.series"), '_label -> "Series", textualElement)
 					@inputText(form("book.publisher"), '_label -> "Publisher", textualElement)
 					@inputText(form("book.edition"), '_label -> "Edition", textualElement)
 					@inputText(form("book.publicationYear"), '_label -> "Year of Publication", textualElement)
 				</div>
-				<div id="journal_general" style="@if(!form("type").value.toLowerCase.startsWith("journal")) {display: none}">
+				<div id="journal_general">
 					@select(form("journal.journalTitleId"),
 						options(journalTitles),
 						'_label -> "Journal Title", textualElement)
@@ -163,20 +168,41 @@
 					@inputText(form("journal.volume"), '_label -> "Volume", textualElement)
 					@inputText(form("journal.issue"), '_label -> "Issue/Part", textualElement)
 				</div>
-				<div id="journal_article" style="@if(form("type").value.toLowerCase != "journal article") {display: none}">
+				<div id="journal_article">
 					@inputText(form("journal.author"), '_label -> "Author(s)", textualElement)
 				</div>
 			}
 			
 			<a target="landingPage" onclick="openPopup('@form("landingPageUrl").value')">Open Landing Page</a><br>
 			<a target="document" onclick="openPopup('@form("documentUrl").value')">Open Document</a><br>
-			<a onclick="getSelectionText()">get selection</a><br>
 			<input type="submit" class="btn primary" value="Save">
 		</div>
 		
 		<div class="col-md-7">
+			<div id="selection_menu" class="navbar navbar-default" style="display: none; position: absolute;
+				margin-left: 15px; padding: 8px">
+				<div>
+					<input type="button" class="btn btn-success" value="Title" onclick="fillInput('title')" style="width: 100%">
+				</div>
+				<div style="padding-top: 5px">
+					<input type="button" class="btn btn-success" value="DOI" onclick="fillInput('doi')" style="width: 100%">
+				</div>
+				@*<div style="padding-top: 5px">
+					<input type="button" class="btn btn-success" value="Publication Date" onclick="fillInput('publicationDate')" style="width: 100%">
+				</div>*@
+				<div id="book_general_buttons">
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Author(s)" onclick="fillInput('book_author')" style="width: 100%">
+					</div>
+				</div>
+				<div id="journal_article_buttons">
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Author(s)" onclick="fillInput('journal_author')" style="width: 100%">
+					</div>
+				</div>
+			</div>
 			<iframe id="document_view" src="@routes.Assets.at(form("htmlFilename").value)"
-				width="100%" height="600" />
+				width="100%" height="600"></iframe>
 		</div>
 	}
 }
