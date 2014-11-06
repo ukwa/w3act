@@ -1,4 +1,4 @@
-@(user: User, whoIsTrue: Integer, whoIsFalse: Integer, results: List[com.avaje.ebean.SqlRow])
+@(user: User, whoIsData: uk.bl.scope.WhoIsData)
 
 @import uk.bl.api.Utils
 
@@ -46,7 +46,7 @@
 
 @main("", user, scripts, styles) {
 
-	@form(user, whoIsTrue, whoIsFalse)
+	@form(user, whoIsData.getUkRegistrantCount, whoIsData.getNonUKRegistrantCount, whoIsData.getFailedCount)
 
 	<div class="container">
 	
@@ -56,13 +56,17 @@
 			<tr>
 				<th>#</th>
 				<th>Domain</th>
+				<th>Title</th>
+				<th>Target Date</th>
 				<th>Last Checked</th>
 				<th>Difference</th>
 			</tr>
-		@for((row, index) <- results.zipWithIndex) {
+		@for((row, index) <- whoIsData.getResults.zipWithIndex) {
 			<tr>
 				<td>@(index+1))</td>
 				<td>@row.getString("lookup_name")</td>
+				<td>@row.getString("title")</td>
+				<td>@Utils.formatSqlTimestamp(row.getTimestamp("target_date"))</td>
 				<td>@Utils.formatSqlTimestamp(row.getTimestamp("lookup_date"))</td>
 				<td>@Utils.convertPGIntervalToDate(row.get("diff"))</td>
 			</tr>

@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import uk.bl.wa.whois.JRubyWhois;
 import uk.bl.wa.whois.WhoisResult;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlRow;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 
@@ -96,7 +98,7 @@ public class Scope {
 	 * @param url The passed URL
 	 * @return normalized URL
 	 */
-	public static String normalizeUrl(String url) {
+	public static String normalizeUrl(String url, boolean slash) {
 		String res = url;
 		if (res != null && res.length() > 0) {
 	        if (!res.contains(WWW) && !res.contains(HTTP) && !res.contains(HTTPS)) {
@@ -107,12 +109,20 @@ public class Scope {
 		        	res = HTTP + res;
 		        }
 	        }
-	        if (!res.endsWith(END_STR)) {
+	        if (slash && !res.endsWith(END_STR)) {
 	        	res = res + END_STR;
 	        }
 		}
         Logger.info("normalized URL: " + res);
 		return res;
+	}
+
+	public static String normalizeUrl(String url) {
+		return normalizeUrl(url, true);
+	}
+
+	public static String normalizeUrlNoSlash(String url) {
+		return normalizeUrl(url, false);
 	}
 
 	/**
@@ -138,8 +148,9 @@ public class Scope {
 	 */
 	public static boolean isLookupExistsInDb(String url) {
         boolean res = false;
-        url = normalizeUrl(url);        
+        url = normalizeUrlNoSlash(url);        
         if (url != null && url.length() > 0) {
+        	Logger.info("normalizeUrl: " + url);
         	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
         	if (lookupEntryCount.size() > 0) {
         		res = true;
@@ -517,32 +528,103 @@ public class Scope {
     	Logger.info("checkWhoisThread: " + number);
 		boolean res = false;
     	JRubyWhois whoIs = new JRubyWhois();
-    	int count = 0;
-//    	List<Target> targetList = Target.findAllActive();
     	List<Target> targetList = Target.findLastActive(number);
     	Logger.info("targetList: " + targetList.size());
     	Iterator<Target> itr = targetList.iterator();
     	while (itr.hasNext()) {
     		Target target = itr.next();
         	try {
-	        	Logger.info("checkWhoisThread count: " + count + ", URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
+	        	Logger.info("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
 	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.field_url));
 	        	Logger.info("whoIsRes: " + whoIsRes);
+	        	// DOMAIN A UK REGISTRANT?
 	        	res = whoIsRes.isUKRegistrant();
 	        	Logger.info("isUKRegistrant?: " + res);
+	        	// STORE
 	        	storeInProjectDb(target.field_url, res);
+	        	// ASSIGN TO TARGET
 	        	target.isInScopeUkRegistrationValue = res;
 	    	} catch (Exception e) {
 	    		Logger.info("whois lookup message: " + e.getMessage());
 		        // store in project DB
+	    		// FAILED - UNCHECKED
 		        storeInProjectDb(target.field_url, false);
+		        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
 	        	target.isInScopeUkRegistrationValue = false;
 	    	}
         	Ebean.update(target);
-        	count++;
     	}
-    	Logger.info("whois res: " + res);        	
+//    	Logger.info("whois res: " + res);        	
 		return res;
+	}
+	
+	public static WhoIsData checkWhois(int number) throws WhoisException {
+    	Logger.info("checkWhoisThread: " + number);
+		boolean res = false;
+		List<Target> targets = new ArrayList<Target>();
+		int ukRegistrantCount = 0;
+		int nonUKRegistrantCount = 0;
+		int failedCount = 0;
+    	JRubyWhois whoIs = new JRubyWhois();
+    	List<Target> targetList = Target.findLastActive(number);
+    	Logger.info("targetList: " + targetList.size());
+    	Iterator<Target> itr = targetList.iterator();
+    	while (itr.hasNext()) {
+    		Target target = itr.next();
+        	try {
+//	        	Logger.info("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
+	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.field_url));
+//	        	Logger.info("whoIsRes: " + whoIsRes);
+	        	// DOMAIN A UK REGISTRANT?
+	        	res = whoIsRes.isUKRegistrant();
+	        	if (res) ukRegistrantCount++;
+	        	else nonUKRegistrantCount++;
+//	        	Logger.info("isUKRegistrant?: " + res);
+	        	// STORE
+	        	Logger.info("CHECK TO SAVE " + target.field_url);
+	        	storeInProjectDb(target.field_url, res);
+	        	// ASSIGN TO TARGET
+	        	target.isInScopeUkRegistrationValue = res;
+	        	ukRegistrantCount++;
+	    	} catch (Exception e) {
+	    		Logger.info("whois lookup message: " + e.getMessage());
+		        // store in project DB
+	    		// FAILED - UNCHECKED
+		        storeInProjectDb(target.field_url, false);
+		        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
+	        	target.isInScopeUkRegistrationValue = false;
+	        	failedCount++;
+	    	}
+        	Ebean.update(target);
+        	targets.add(target);
+    	}
+    	
+    	
+//        List<Target> result = Target.find.select("title").where().eq(Const.ACTIVE, true).orderBy(Const.LAST_UPDATE + " " + Const.DESC).setMaxRows(number).findList();
+
+    	
+    	
+
+		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.title as title, t.last_update as target_date, l.last_update as lookup_date, (l.last_update::timestamp - t.last_update::timestamp) as diff from lookup_entry l, target t "); 
+		lookupSql.append(" where l.name in (select tar.field_url from target as tar where tar.active = true order by tar.last_update desc ");
+		lookupSql.append(" limit ").append(number).append(") and t.field_url = l.name order by diff desc");
+
+		List<SqlRow> results = Ebean.createSqlQuery(lookupSql.toString()).findList();
+    	
+		
+//		for (SqlRow row : results) {
+//			Logger.info("row: " + row.getString("name") + " - " + row.get("diff"));
+//		}
+//    	List<LookupEntry> lookupEntries = LookupEntry.find.where().in("name", result).findList();
+//    	StringBuilder builder = new StringBuilder("name in (select tar.field_url from target tar where tar.active = true order by tar.last_update desc)");
+//    	List<LookupEntry> lookupEntries = LookupEntry.find.where().raw(builder.toString()).findList();
+
+
+//    	Logger.info("lookupEntries: " + lookupEntries.size());
+    	WhoIsData whoIsData = new WhoIsData(targets, results, ukRegistrantCount, nonUKRegistrantCount, failedCount);
+
+//    	Logger.info("whois res: " + res);        	
+		return whoIsData;
 	}
 	
 	/**
@@ -552,7 +634,9 @@ public class Scope {
 	 * @param res The evaluated result after checking by expert rules
 	 */
 	public static void storeInProjectDb(String url, boolean res) {
-		if (!isLookupExistsInDb(url)) {
+		boolean stored = isLookupExistsInDb(url);
+		Logger.info("STORED: " + stored + " - " + url);
+		if (!stored) {
 			LookupEntry lookupEntry = new LookupEntry();
 			lookupEntry.id = Utils.createId();
 			lookupEntry.url = Const.ACT_URL + lookupEntry.id;

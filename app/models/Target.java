@@ -17,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
@@ -223,6 +224,9 @@ public class Target extends Model {
     @Version
     public Timestamp lastUpdate;
     
+    @Transient
+    public LookupEntry lookupEntry;
+    
     /**
      * Constructor
      * @param title
@@ -354,12 +358,12 @@ public class Target extends Model {
      * @return Targets list
      */
     public static int findWhoIsCount(boolean value) {
-    	List<Target> res = new ArrayList<Target>();
+    	int count = 0;
     	if (value) {
 	        ExpressionList<Target> ll = find.where()
 	    	        .eq(Const.ACTIVE, true)
 	    	        .eq(Const.IS_IN_SCOPE_UK_REGISTRATION_VALUE, true);
-	        res = ll.findList();
+	        count = ll.findRowCount();
     	} else {
 	        ExpressionList<Target> ll = find.where()
 	    	        .eq(Const.ACTIVE, true)
@@ -368,9 +372,9 @@ public class Target extends Model {
 		                    Expr.isNull(Const.IS_IN_SCOPE_UK_REGISTRATION_VALUE)
 	    	        		)
 	    	        );
-	        res = ll.findList();
+	        count = ll.findRowCount();
     	}
-        return res.size();
+        return count;
     }
 
     /**

@@ -1,4 +1,4 @@
-@(user: User, whoIsTrue: Integer, whoIsFalse: Integer)
+@(user: User, whoIsData: uk.bl.scope.WhoIsData)
 
 @styles = {
 	<style>
@@ -39,7 +39,7 @@
 
 @main("", user, scripts, styles) {
     
-	@form(user, whoIsTrue, whoIsFalse)
+	@form(user, whoIsData.getUkRegistrantCount, whoIsData.getNonUKRegistrantCount, whoIsData.getFailedCount)
 	
 }
 

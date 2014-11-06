@@ -1,4 +1,4 @@
-@(user: User, whoIsTrue: Integer, whoIsFalse: Integer)
+@(user: User, ukRegistrantCount: Integer, nonUKRegistrantCount: Integer, failedCount: Integer)
 
    @warningmessage(flash)
    @helper.form(action=routes.CheckWhoIs.check(), 'id -> "check-form") {
@@ -12,9 +12,9 @@
 	<div class="row padding-10">
    		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
-				<label for="password" class="col-sm-6 control-label">Targets count with 'WhoIs' value 'Yes'</label>
+				<label for="password" class="col-sm-6 control-label">Tested and passed</label>
 			    <div class="col-sm-6">
-					<input class="form-control" value="@whoIsTrue" disabled>
+					<input class="form-control" value="@ukRegistrantCount" disabled>
 				</div>
 			</div>
 		</div>
@@ -23,14 +23,25 @@
 	<div class="row padding-10">
    		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
-				<label for="password" class="col-sm-6 control-label">Targets count with 'WhoIs' value 'No'</label>
+				<label for="password" class="col-sm-6 control-label">Tested and failed</label>
 			    <div class="col-sm-6">
-					<input class="form-control" value="@whoIsFalse" disabled>
+					<input class="form-control" value="@nonUKRegistrantCount" disabled>
 				</div>
 			</div>
 		</div>
    	</div>
 	
+	<div class="row padding-10">
+   		<div class="col-md-12 col-xs-12 col-sm-12">
+			<div class="form-group">
+				<label for="password" class="col-sm-6 control-label">Not Checked</label>
+			    <div class="col-sm-6">
+					<input class="form-control" value="@failedCount" disabled>
+				</div>
+			</div>
+		</div>
+   	</div>
+
 	<div class="alert alert-info">
 		In order to refresh the 'WhoIs' criteria for targets please use the 'Check' button. This will trigger a new check. 
 	</div>

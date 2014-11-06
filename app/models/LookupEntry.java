@@ -15,10 +15,7 @@ import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
-
-import com.avaje.ebean.SqlRow;
 
 @Entity
 @Table(name = "lookup_entry")
