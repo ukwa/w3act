@@ -523,7 +523,7 @@ create sequence flag_seq;
 
 create sequence instance_seq;
 
-create sequence lookup_entry_seq start with 1;
+create sequence lookup_entry_seq;
 
 create sequence mail_template_seq;
 
