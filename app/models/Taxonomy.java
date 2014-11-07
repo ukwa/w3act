@@ -7,10 +7,13 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.Logger;
@@ -32,7 +35,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Taxonomy extends Model {
      
     @Id
-    @Column(name="ID")
+    @Column(name="id")
+	@SequenceGenerator(name="seq_gen_taxonomy", sequenceName="taxonomy_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_gen_taxonomy") 
     public Long tid;
 
     //bi-directional many-to-many association to Target
@@ -108,11 +113,19 @@ public class Taxonomy extends Model {
     @Column(columnDefinition = "TEXT") 
     public String parents_all;
 
+    public Taxonomy() {}
+
     public Taxonomy(String name) {
         this.name = name;
     }
     
-    public Taxonomy() {
+    public Taxonomy(String name, String description, Long weight, Long nodeCount, Long feedNid, Boolean publish) {
+        this(name);
+        this.description = description;
+        this.weight = weight;
+        this.node_count = nodeCount;
+        this.feed_nid = feedNid;
+        this.publish = publish;
     }
     
     // -- Queries
@@ -312,8 +325,7 @@ public class Taxonomy extends Model {
     public static String findQaStatusUrl(String name) {
     	if (name.equals(Const.QAStatusType.PASSED_PUBLISH_NO_ACTION_REQUIRED.name())) {
     		name = "No QA issues found (OK to publish)";
-    	}
-    	if (name.equals(Const.QAStatusType.ISSUE_NOTED.name())) {
+    	} else if (name.equals(Const.QAStatusType.ISSUE_NOTED.name())) {
     		name = "QA issues found";
     	}
     	Taxonomy taxonomy = findQaIssueByName(name);
@@ -1153,5 +1165,13 @@ public class Taxonomy extends Model {
     	return taxonomy;
     }
 
+    @Override
+	public void save() {
+    	super.save();
+    	this.url = Const.ACT_URL + this.tid;
+    	this.parents_all = url;
+    	Logger.info("ID: " + this.tid);
+    	super.save();
+    }    
 }
 

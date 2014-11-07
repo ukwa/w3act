@@ -41,7 +41,7 @@ public class QAController extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.QAController.list(0, "title", "asc", "", "act-", "")
+            routes.QAController.list(0, "title", "asc", "", "act-", "", "")
         );
     
     /**
@@ -52,7 +52,7 @@ public class QAController extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus) {
+    public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus, String keyQaStatus) {
     	
     	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
     	Logger.info("Calling QAController.list() collection: " + collection + " - " + qaStatus);
@@ -72,7 +72,7 @@ public class QAController extends AbstractController {
         			sortBy, 
         			order,
         			collection,
-        			qaStatus)
+        			qaStatus, keyQaStatus)
 //        			Taxonomy.findQaStatus(qaStatus))
         	);
     }
@@ -94,7 +94,7 @@ public class QAController extends AbstractController {
 			Logger.info("Target name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.QAController.list(0, "title", "asc", "", "act-", "")
+	        		routes.QAController.list(0, "title", "asc", "", "act-", "", "")
 	        );
     	}    	
 
@@ -125,9 +125,7 @@ public class QAController extends AbstractController {
     			Logger.info("Can't find QA status for URL: " + query_qa_status_name + ". " + e);
     		}
     	} 
-    	if (StringUtils.isEmpty(query_qa_status)) {
-    		query_qa_status = "FILLER_STATUS";
-    	}
+
     	Logger.info("query_qa_status: " + query_qa_status);
     	
     	if (StringUtils.isEmpty(action)) {
@@ -139,7 +137,7 @@ public class QAController extends AbstractController {
 				    query_collection = Const.ACT_URL;
 				}
     			Logger.info("values: " + pageNo + " - " + sort + " - " + order + " - " + query + " - " + query_collection + " - " + query_qa_status);
-    	    	return redirect(routes.QAController.list(pageNo, sort, order, query, query_collection, query_qa_status));
+    	    	return redirect(routes.QAController.list(pageNo, sort, order, query, query_collection, query_qa_status, query_qa_status_name));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }

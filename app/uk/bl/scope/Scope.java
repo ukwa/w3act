@@ -638,12 +638,13 @@ public class Scope {
 		Logger.info("STORED: " + stored + " - " + url);
 		if (!stored) {
 			LookupEntry lookupEntry = new LookupEntry();
-			lookupEntry.id = Utils.createId();
-			lookupEntry.url = Const.ACT_URL + lookupEntry.id;
+//			lookupEntry.id = Utils.createId();
+//			lookupEntry.url = Const.ACT_URL + lookupEntry.id;
 			lookupEntry.name = url;
 			lookupEntry.scopevalue = res;
 	        Logger.info("Save lookup entry " + lookupEntry.toString());
-	    	Ebean.save(lookupEntry);	
+	        lookupEntry.save();
+//	    	Ebean.save(lookupEntry);	
 		}
     }
 	

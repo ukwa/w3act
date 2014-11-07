@@ -186,7 +186,7 @@ GET     /contact                                controllers.Contact.index()
 POST    /contact/send              	            controllers.Contact.send()
 
 GET     /qa                                     controllers.QAController.index()
-GET     /qa/list                                controllers.QAController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_collection ?= "", query_qa_status ?= "")
+GET     /qa/list                                controllers.QAController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_collection ?= "", query_qa_status ?= "", keyQaStatus ?= "")
 GET     /qa/search               		        controllers.QAController.search()
 GET    	/qa/filterbyjson/:name		            controllers.QAController.filterByJson(name)
 

@@ -6,7 +6,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -26,7 +29,10 @@ public class LookupEntry extends Model
 	 */
 	private static final long serialVersionUID = -2250699575468302989L;
 
-	@Id 
+    @Id
+    @Column(name="id")
+	@SequenceGenerator(name="seq_gen_lookup_entry", sequenceName="lookup_entry_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_gen_lookup_entry") 
     public Long id;
 	
     /**
@@ -158,5 +164,12 @@ public class LookupEntry extends Model
     public String toString() {
         return "LookupEntry(" + url + ")" + ", id:" + id + ", scopevalue: " + scopevalue;
     }
-    
+
+    @Override
+	public void save() {
+    	super.save();
+    	this.url = Const.ACT_URL + this.id;
+    	Logger.info("ID: " + this.id);
+    	super.save();
+    }
 }

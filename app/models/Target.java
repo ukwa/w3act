@@ -1280,8 +1280,10 @@ public class Target extends Model {
 	                    Expr.and(Expr.icontains(Const.TITLE, filter), Expr.eq(Const.ACTIVE, true))
 	                 ),
 	                 Expr.and(
-		                Expr.icontains(Const.FIELD_QA_STATUS, qaStatus),
-		                Expr.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection)
+	                	Expr.or(Expr.eq(Const.FIELD_QA_STATUS, qaStatus), // equals 'act-1'
+	                		 // like 'act-1,' like ', act-1'
+	                		 Expr.or(Expr.startsWith(Const.FIELD_QA_STATUS, qaStatus + ","), Expr.endsWith(Const.FIELD_QA_STATUS, ",%" + qaStatus))),
+	                	Expr.icontains(Const.FIELD_COLLECTION_CATEGORIES, collection)
 		             )
 	               )
         		)

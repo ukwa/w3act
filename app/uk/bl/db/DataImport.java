@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import models.ContactPerson;
 import models.DCollection;
 import models.Flag;
@@ -188,6 +190,8 @@ public enum DataImport {
             	Logger.info("Store error: " + e);
             }
         }
+    	Logger.info("CREATING TAXONOMIES");
+    	DataImport.INSTANCE.createQualityIssueTaxonomies();
 	}
 	
     /**
@@ -303,6 +307,21 @@ public enum DataImport {
         	}
         }
         return res;
+    }
+    
+    public void createQualityIssueTaxonomies() {
+    	saveQualityIssue(new Taxonomy(Const.QAStatusType.FAILED_DO_NOT_PUBLISH.name(), "<p>Failed do not publish</p>", 0L, 0L, 0L, false));
+    	saveQualityIssue(new Taxonomy(Const.QAStatusType.FAILED_PASS_TO_ENGINEER.name(), "<p>Failed pass to engineer</p>", 0L, 0L, 0L, false));
+    	saveQualityIssue(new Taxonomy(Const.QAStatusType.RECRAWL_REQUESTED.name(), "<p>Recrawl requested</p>", 0L, 0L, 0L, false));
+    }
+    
+    private void saveQualityIssue(Taxonomy taxonomy) {
+		String qaStatusUrl = Taxonomy.findQaStatusUrl(taxonomy.name);
+		if (StringUtils.isBlank(qaStatusUrl)) {
+			taxonomy.ttype = "quality issue";
+	    	taxonomy.save();
+	    	
+		}
     }
     
 	public static void main(String[] args) {
