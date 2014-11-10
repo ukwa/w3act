@@ -39,7 +39,7 @@ public class Instance extends ActModel {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4285620218930401425L;
 
 	//bi-directional many-to-one association to Organisation
 	@ManyToOne
@@ -156,7 +156,7 @@ public class Instance extends ActModel {
     @Column(columnDefinition = "text")
     public String fieldSubject; 
     @Column(columnDefinition = "text")
-    public String fieldSubsubject; 
+    public String fieldSubSubject; 
     @Column(columnDefinition = "text")
     public String fieldQaStatus; 
     @Column(columnDefinition = "text")
@@ -1010,7 +1010,7 @@ public class Instance extends ActModel {
      */
     public boolean hasSubSubject(String subject) {
     	boolean res = false;
-    	res = Utils.hasElementInList(subject, fieldSubsubject);
+    	res = Utils.hasElementInList(subject, this.fieldSubSubject);
     	return res;
     }
           

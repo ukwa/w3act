@@ -176,10 +176,10 @@
 					                }
 								</td>
 								<td>
-				                	<a class="brand" href="@target.field_url">@target.field_url</a>					                
+				                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl</a>					                
 								</td>
-								@if(target.url != null && target.created != null) {
-									<td>@Target.getDateAsString(target.created)</td>
+								@if(target.url != null && target.createdAt != null) {
+									<td>target.createdAt</td>
 								} else {
 									<td></td>
 								}		                  
@@ -212,10 +212,10 @@
 					                }
 								</td>
 								<td>
-				                	<a class="brand" href="@target.field_url">@target.field_url</a>					                
+				                	<a class="brand" href="@target.field_url">@target.fieldUrl</a>					                
 								</td>
-								@if(target.url != null && target.created != null) {
-									<td>@Target.getDateAsString(target.created)</td>
+								@if(target.url != null && target.createdAt != null) {
+									<td>@target.createdAt</td>
 								} else {
 									<td></td>
 								}		                  

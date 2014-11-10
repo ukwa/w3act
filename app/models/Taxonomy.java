@@ -7,13 +7,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import play.Logger;
@@ -29,89 +26,62 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * Taxonomy entity managed by Ebean
  */
-@SuppressWarnings("serial")
 @Entity 
-@Table(name = "taxonomy")
-public class Taxonomy extends Model {
+@Table(name = "Taxonomy")
+public class Taxonomy extends ActModel {
      
-    @Id
-    @Column(name="id")
-	@SequenceGenerator(name="seq_gen_taxonomy", sequenceName="taxonomy_seq")
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_gen_taxonomy") 
-    public Long tid;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8987367110038045775L;
 
-    //bi-directional many-to-many association to Target
+	//bi-directional many-to-many association to Target
     @ManyToMany
-	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
+	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="ID") }) 
     private List<Target> targets = new ArrayList<Target>();
  
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
     //bi-directional many-to-many association to Instance
     @ManyToMany
-	@JoinTable(name = Const.SUBJECT_INSTANCE, joinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_instance", referencedColumnName="ID") }) 
+	@JoinTable(name = Const.SUBJECT_INSTANCE, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
     private List<Instance> instances = new ArrayList<Instance>();
    
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-  
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-  
     //bi-directional many-to-many association to Target
     @ManyToMany
-	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "id_license", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
+	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
 	private List<Target> targetLicenses = new ArrayList<Target>();
-	   
-	public List<Target> getTargetLicenses() {
-		return this.targetLicenses;
-	}
-	  
-	public void setTargetLicenses(List<Target> targetLicenses) {
-	  	this.targetLicenses = targetLicenses;
-	}    
   
     @Required
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 
     public String ttype;  
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String description;
     public Long weight;
-    public Long node_count;
-    @Column(columnDefinition = "TEXT")
-    public String url;
-    @Column(columnDefinition = "TEXT")
+    public Long nodeCount;
+
+    @Column(columnDefinition = "text")
     public String vocabulary;
-    public Long feed_nid;    
+    public Long feedNid;    
     // lists
-    @Column(columnDefinition = "TEXT") 
-    public String field_owner;
-    @Column(columnDefinition = "TEXT") 
-    public String field_dates;
-    @Column(columnDefinition = "TEXT") 
-    public String field_publish;
+    @Column(columnDefinition = "text") 
+    public String fieldOwner;
+    @Column(columnDefinition = "text") 
+    public String fieldDates;
+    @Column(columnDefinition = "text") 
+    public String fieldPublish;
     /**
      * 'true' if collection should be made visible in the UI, default 'false'
      */
     @JsonIgnore
     public Boolean publish;
 //    @Required
-    @Column(columnDefinition = "TEXT") 
+    @Column(columnDefinition = "text") 
     public String parent;
-    @Column(columnDefinition = "TEXT") 
-    public String parents_all;
+    @Column(columnDefinition = "text") 
+    public String parentsAll;
 
     public Taxonomy() {}
 
@@ -123,8 +93,8 @@ public class Taxonomy extends Model {
         this(name);
         this.description = description;
         this.weight = weight;
-        this.node_count = nodeCount;
-        this.feed_nid = feedNid;
+        this.nodeCount = nodeCount;
+        this.feedNid = feedNid;
         this.publish = publish;
     }
     
@@ -133,6 +103,30 @@ public class Taxonomy extends Model {
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,Taxonomy> find = new Model.Finder(Long.class, Taxonomy.class);
     
+    public List<Target> getTargets() {
+    	return this.targets;
+    }
+    
+    public void setTargets(List<Target> targets) {
+    	this.targets = targets;
+    }    
+    
+    public List<Instance> getInstances() {
+    	return this.instances;
+    }
+  
+    public void setInstances(List<Instance> instances) {
+    	this.instances = instances;
+    }    
+  
+	public List<Target> getTargetLicenses() {
+		return this.targetLicenses;
+	}
+	  
+	public void setTargetLicenses(List<Target> targetLicenses) {
+	  	this.targetLicenses = targetLicenses;
+	}    
+	
     /**
      * Retrieve Taxonomy for user
      */
@@ -152,8 +146,8 @@ public class Taxonomy extends Model {
      * @param nid
      * @return object 
      */
-    public static Taxonomy findById(Long nid) {
-    	Taxonomy res = find.where().eq(Const.TID, nid).findUnique();
+    public static Taxonomy findById(Long id) {
+    	Taxonomy res = find.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
     
@@ -1014,9 +1008,9 @@ public class Taxonomy extends Model {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Target target = Target.findByUrl(targetUrl);
-    		if (target.field_subject != null) {
+    		if (target.fieldSubject != null) {
 //    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
-		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
+		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
 		    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 		    		Taxonomy subject = findByUrl(part);
@@ -1066,9 +1060,9 @@ public class Taxonomy extends Model {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Target target = Target.findByUrl(targetUrl);
-    		if (target.field_license != null) {
+    		if (target.fieldLicense != null) {
 //    			Logger.info("getSelectedLicenses() field_license: " + target.field_license);
-		    	String[] parts = target.field_license.split(Const.COMMA + " ");
+		    	String[] parts = target.fieldLicense.split(Const.COMMA + " ");
 		    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 		    		Taxonomy license = findByUrl(part);
@@ -1157,7 +1151,7 @@ public class Taxonomy extends Model {
 	}       
     	
     public String toString() {
-        return "Taxonomy(" + tid + ") with name: " + name;
+        return "Taxonomy(" + id + ") with name: " + name;
     }
     
     public static Taxonomy findByTypeAndUrl(String type, String url) {
@@ -1168,9 +1162,9 @@ public class Taxonomy extends Model {
     @Override
 	public void save() {
     	super.save();
-    	this.url = Const.ACT_URL + this.tid;
-    	this.parents_all = url;
-    	Logger.info("ID: " + this.tid);
+    	this.url = Const.ACT_URL + this.id;
+    	this.parentsAll = url;
+    	Logger.info("ID: " + this.id);
     	super.save();
     }    
 }

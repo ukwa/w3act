@@ -317,10 +317,10 @@
 				                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
 							</td>
 							<td>
-				                @target.field_url
+				                @target.fieldUrl
 							</td>
-							@if(target.url != null && target.created != null) {
-								<td>@Target.getDateAsString(target.created)</td>
+							@if(target.url != null && target.createdAt != null) {
+								<td>@target.createdAt</td>
 							} else {
 								<td></td>
 							}		                  

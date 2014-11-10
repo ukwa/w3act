@@ -1,14 +1,12 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -22,62 +20,52 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * This class allows archivist to manage nominations.
  */
 @Entity
-@Table(name = "nomination")
-public class Nomination extends Model
-{
+@Table(name = "Nomination")
+public class Nomination extends ActModel {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2357699575463702989L;
 
-	@Id 
-    public Long id;
-   
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-	
     /**
      * The name of the nomination. Derived from UKWA Nomination Form > Full name
      */
     @Required
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String name;
     
     /**
      * The title of the nomination. Derived from UKWA Nomination Form > Title of website
      */
     @Required
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String title;
     
     /**
      * The URL of the nomination. Derived from UKWA Nomination Form > URL of website
      */
     @Required
-    @Column(columnDefinition = "TEXT")
-    public String website_url;
+    @Column(columnDefinition = "text")
+    public String websiteUrl;
     
     /**
      * The email of the nomination. Derived from UKWA Nomination Form > Email address
      */
     @Required
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String email;
     
     /**
      * The telephone number of the nomination. Derived from UKWA Nomination Form > Telephone number
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String tel;
     
     /**
      * The address of the nomination. Derived from UKWA Nomination Form > Address
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String address;
     
     /**
@@ -85,36 +73,32 @@ public class Nomination extends Model
      * owner or not. Derived from UKWA Nomination Form > 
      * Are you the copyright holder or owner of the website?
      */
-    public Boolean nominated_website_owner;
+    public Boolean nominatedWebsiteOwner;
     
     /**
      * The justification of the nomination. Derived from UKWA Nomination Form > Your justification...
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String justification;
     
     /**
      * Allows the notes regarding nomination description. 
      * Derived from UKWA Nomination Form > Notes about your...
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String notes;
 
     /**
      * The date of the nomination. System generated.
      */
-    public String nomination_date;
+    public Date nominationDate;
     
     /**
      * Indicates that the new nomination has been inspected by Archivist.
      */
     @JsonIgnore
-    public Boolean nomination_checked;
+    public Boolean nominationChecked;
     
-    @Version
-    @JsonIgnore
-    public Timestamp lastUpdate;
-
     public static final Model.Finder<Long, Nomination> find = new Model.Finder<Long, Nomination>(Long.class, Nomination.class);
 
     public Nomination() {

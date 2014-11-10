@@ -1,19 +1,15 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -34,25 +30,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * User entity managed by Ebean
  */
-@SuppressWarnings("serial")
-@Entity 
-@Table(name="creator")
-public class User extends Model {
 
-    @Id 
-    @JsonIgnore
-    @Column(name="id")
-    public Long id;
-    public String url;
+@Table(name="Creator")
+public class User extends ActModel {
 
-    //bi-directional many-to-one association to Organisation
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5018094620896138537L;
+
+	//bi-directional many-to-one association to Organisation
+	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name="id_organisation") @JsonIgnore
+	@JoinColumn(name="organisation_id") 
 	public Organisation organisation;
 	
 	//bi-directional many-to-many association to Role
-	@ManyToMany(mappedBy="users") @JsonIgnore
-	public List<Role> role_to_user = new ArrayList<Role>();
+	@JsonIgnore
+	@ManyToMany(mappedBy="users") 
+	public List<Role> roleToUser = new ArrayList<Role>();
     	
     @JsonIgnore
     @Constraints.Required
@@ -66,32 +62,27 @@ public class User extends Model {
     public String password;
     
     @JsonIgnore
-    public String field_affiliation;
+    public String fieldAffiliation;
 
     @JsonIgnore
-    public String edit_url;
+    public String editUrl;
     @JsonIgnore
-    public String last_access;
+    public String lastAccess;
     @JsonIgnore
-    public String last_login;
-    @JsonIgnore
-    public String created;
+    public String lastLogin;
+
     @JsonIgnore
     public Long status;
     @JsonIgnore
     public String language;
     @JsonIgnore
-    public Long feed_nid;
+    public Long feedNid;
     
     // lists
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String revision; 
-
-    @JsonIgnore
-    @Version
-    public Timestamp lastUpdate;
 
     // -- Queries
     
@@ -122,8 +113,8 @@ public class User extends Model {
     public boolean hasRole(long roleId) {
     	boolean res = false;
 //    	Logger.info("hasRole() role id: " + roleId + ", role_to_user.size(): " + role_to_user.size());
-    	if (role_to_user != null && role_to_user.size() > 0) {
-    		Iterator<Role> itr = role_to_user.iterator();
+    	if (roleToUser != null && roleToUser.size() > 0) {
+    		Iterator<Role> itr = roleToUser.iterator();
     		while (itr.hasNext()) {
     			Role role = itr.next();
 //    	    	Logger.info("hasRole() role id: " + roleId + ", role_to_user id: " + role.id);
@@ -155,7 +146,7 @@ public class User extends Model {
     
     public List<? extends Role> getRoles()
     {
-    	return role_to_user;
+    	return roleToUser;
     }
 
     /**
@@ -279,9 +270,9 @@ public class User extends Model {
     	String res = "";
 //    	Logger.info("created: " + created + ", last_access: " + last_access + ", last_login: " + last_login);
     	try {
-    		long timestampCreated = Long.valueOf(created);
+    		long timestampCreated = createdAt.getTime();
     		Date dateCreated = new Date(timestampCreated * 1000);
-    		long timestampLastAccess = Long.valueOf(last_access);
+    		long timestampLastAccess = Long.valueOf(lastAccess);
     		Date dateLastAccess = new Date(timestampLastAccess * 1000);
 			Logger.info("date created: " + dateCreated);
 			Logger.info("date last access: " + dateLastAccess);
@@ -330,7 +321,7 @@ public class User extends Model {
     
     // Could really do with many_to_one relationship
     public Organisation getOrganisation() {
-    	return Organisation.findByUrl(field_affiliation);
+    	return Organisation.findByUrl(fieldAffiliation);
     }
 
     /**
@@ -364,9 +355,9 @@ public class User extends Model {
      * This method updates foreign key mapping between a user and an organisation.
      */
     public void updateOrganisation() {
-		if (field_affiliation != null
-				&& field_affiliation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(field_affiliation);
+		if (fieldAffiliation != null
+				&& fieldAffiliation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(fieldAffiliation);
 //            Logger.info("Add creator to organisation: " + organisation.toString());
             this.organisation = organisation;
 		}    	

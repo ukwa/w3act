@@ -10,18 +10,20 @@ import play.db.ebean.*;
 /**
  * Taxonomy vocabulary entity managed by Ebean
  */
-@SuppressWarnings("serial")
 @Entity 
-@Table(name = "taxonomy_vocabulary")
-public class TaxonomyVocabulary extends Model {
+@Table(name = "TaxonomyVocabulary")
+public class TaxonomyVocabulary extends ActModel {
 
-    @Id
-    public Long id;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4407791639097588217L;
+
     public String name;  
     public String machine_name;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String description;
-    public Long term_count;
+    public Long termCount;
     
     public TaxonomyVocabulary() {
     	super();
@@ -30,7 +32,6 @@ public class TaxonomyVocabulary extends Model {
     public TaxonomyVocabulary(String name) {
         this.name = name;
     }
-    
     
     // -- Queries
     

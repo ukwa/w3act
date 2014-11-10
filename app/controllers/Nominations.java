@@ -158,40 +158,37 @@ public class Nominations extends AbstractController {
             result.put("message", "Nomination " + name);
             Logger.debug("load nomination: " + name);
             Logger.debug("current nominations count for given name: " + Nomination.filterByName(name).size());
-            Long id = Utils.createId();
-            String url = Const.ACT_URL + id;
             String title = json.findPath(Const.TITLE).textValue();
             Logger.info("load nomination title: " + title);
-            String website_url = json.findPath(Const.WEBSITE_URL).textValue();
-            Logger.info("load nomination website_url: " + website_url);
+            String websiteUrl = json.findPath(Const.WEBSITE_URL).textValue();
+            Logger.info("load nomination website_url: " + websiteUrl);
             String email = json.findPath(Const.EMAIL).textValue();
             Logger.info("load nomination email: " + email);
             String tel = json.findPath(Const.TEL).textValue();
             Logger.info("load nomination tel: " + tel);
             String address = json.findPath(Const.ADDRESS).textValue();
             Logger.info("load nomination address: " + address);
-            boolean nominated_website_owner = json.findPath(Const.NOMINATED_WEBSITE_OWNER).booleanValue();
-            Logger.info("load nomination nominated_website_owner: " + nominated_website_owner);
+            boolean nominatedWebsiteOwner = json.findPath(Const.NOMINATED_WEBSITE_OWNER).booleanValue();
+            Logger.info("load nomination nominated_website_owner: " + nominatedWebsiteOwner);
             String justification = json.findPath(Const.JUSTIFICATION).textValue();
             Logger.info("load nomination justification: " + justification);
             String notes = json.findPath(Const.NOTES).textValue();
             Logger.info("load nomination notes: " + notes);
-            String nomination_date = json.findPath(Const.NOMINATION_DATE).textValue();
-            Logger.info("load nomination nomination_date: " + nomination_date);
+            String nominationDate = json.findPath(Const.NOMINATION_DATE).textValue();
+            Logger.info("load nomination nomination_date: " + nominationDate);
             Nomination nomination = new Nomination();
-            nomination.id = id;
             nomination.name = name;
-            nomination.url = url;
             nomination.title = title;
-            nomination.website_url = website_url;
+            nomination.websiteUrl = websiteUrl;
             nomination.email = email;
             nomination.tel = tel;
             nomination.address = address;
-            nomination.nominated_website_owner = nominated_website_owner;
+            nomination.nominatedWebsiteOwner = nominatedWebsiteOwner;
             nomination.justification = justification;
             nomination.notes = notes;
-            nomination.nomination_date = nomination_date;
-	       	Ebean.save(nomination);
+            // TODO: UNIX DATE
+//            nomination.nominationDate = nominationDate;
+            nomination.save();
 	        Logger.info("saved nomination: " + nomination.toString());
             Logger.debug("new nominations count for given name: " + Nomination.filterByName(name).size());
             return ok(result);
@@ -212,7 +209,7 @@ public class Nominations extends AbstractController {
 	    	nomination.title = getFormParam(Const.TITLE);
 	    }
 	    if (getFormParam(Const.WEBSITE_URL) != null) {
-	    	nomination.website_url = getFormParam(Const.WEBSITE_URL);
+	    	nomination.websiteUrl = getFormParam(Const.WEBSITE_URL);
 	    }
 	    if (getFormParam(Const.EMAIL) != null) {
 	    	nomination.email = getFormParam(Const.EMAIL);
@@ -233,10 +230,11 @@ public class Nominations extends AbstractController {
         	String startDateHumanView = getFormParam(Const.NOMINATION_DATE);
         	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
         	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
-        	nomination.nomination_date = startDateUnix;
+        	// TODO: UNIX DATE
+//        	nomination.nominationDate = startDateUnix;
         }        	    
-        nomination.nominated_website_owner = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATED_WEBSITE_OWNER));
-        nomination.nomination_checked = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATION_CHECKED));
+        nomination.nominatedWebsiteOwner = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATED_WEBSITE_OWNER));
+        nomination.nominationChecked = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATION_CHECKED));
 		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
 		nominationFormNew = nominationFormNew.fill(nomination);
       	return ok(
@@ -299,7 +297,7 @@ public class Nominations extends AbstractController {
         	    	nomination.title = getFormParam(Const.TITLE);
         	    }
         	    if (getFormParam(Const.WEBSITE_URL) != null) {
-        	    	nomination.website_url = getFormParam(Const.WEBSITE_URL);
+        	    	nomination.websiteUrl = getFormParam(Const.WEBSITE_URL);
         	    }
         	    if (getFormParam(Const.EMAIL) != null) {
         	    	nomination.email = getFormParam(Const.EMAIL);
@@ -320,10 +318,11 @@ public class Nominations extends AbstractController {
                 	String startDateHumanView = getFormParam(Const.NOMINATION_DATE);
                 	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
                 	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
-                	nomination.nomination_date = startDateUnix;
+                	// TODO: UNIX DATE
+//                	nomination.nominationDate = startDateUnix;
                 }        	    
-                nomination.nominated_website_owner = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATED_WEBSITE_OWNER));
-                nomination.nomination_checked = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATION_CHECKED));
+                nomination.nominatedWebsiteOwner = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATED_WEBSITE_OWNER));
+                nomination.nominationChecked = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATION_CHECKED));
             } catch (Exception e) {
             	Logger.info("Nomination not existing exception");
             }
@@ -412,7 +411,7 @@ public class Nominations extends AbstractController {
                 nomination.id = Utils.createId();
                 nomination.url = Const.ACT_URL + nomination.id;
         		Logger.info("add nomination with url: " + nomination.url + ", and name: " + nomination.name);
-            	nomination.website_url = target;
+            	nomination.websiteUrl = target;
                 if (getFormParam(Const.NAME) != null) {
                 	nomination.name = getFormParam(Const.NAME);
                 }
@@ -423,7 +422,8 @@ public class Nominations extends AbstractController {
                 	nomination.notes = getFormParam(Const.DESCRIPTION);
                 }
                 if (getFormParam(Const.LOG_DATE) != null) {
-                	nomination.nomination_date = getFormParam(Const.LOG_DATE);
+                	// TODO: UNIX DATE
+//                	nomination.nominationDate = getFormParam(Const.LOG_DATE);
                 }
                 if (isAgreed) {
 //                        if (isAgreed && noThirdPartyContent && mayPublish) {

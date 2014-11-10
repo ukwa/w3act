@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,7 +27,6 @@ import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
-import uk.bl.api.IdGenerator;
 import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
@@ -43,125 +43,119 @@ import controllers.Flags;
 /**
  * Target entity managed by Ebean
  */
-@SuppressWarnings("serial")
 @Entity 
-@Table(name = "target")
-public class Target extends Model {
+@Table(name = "Target")
+public class Target extends ActModel {
 
-    @Required
-    @Id @JsonIgnore
-    @Column(name="ID")
-    public Long nid; // Legacy Site ID
-    
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8283372689443804260L;
+
 	//bi-directional many-to-one association to Organisation
 	@ManyToOne
-	@JoinColumn(name="id_organisation")	@JsonIgnore
-	public Organisation organisation_to_target;
+	@JoinColumn(name="organisation_id")	@JsonIgnore
+	public Organisation organisationToTarget;
     
 	//bi-directional many-to-many association to Flag
-	@ManyToMany(mappedBy="targets") @JsonIgnore
-	public List<Flag> flag_to_target = new ArrayList<Flag>();
+	@JsonIgnore
+	@ManyToMany(mappedBy="targets") 
+	public List<Flag> flagToTarget = new ArrayList<Flag>();
     
 	//bi-directional many-to-many association to Tag
-	@ManyToMany(mappedBy="targets") @JsonIgnore
-	public List<Tag> tag_to_target = new ArrayList<Tag>();
+	@JsonIgnore
+	@ManyToMany(mappedBy="targets")
+	public List<Tag> tagToTarget = new ArrayList<Tag>();
 	
     //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="target_to_crawl_permission", cascade=CascadeType.PERSIST) @JsonIgnore
+	@JsonIgnore
+    @OneToMany(mappedBy="targetToCrawlPermission", cascade=CascadeType.PERSIST)
     private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
      
-    public List<CrawlPermission> getCrawlPermissions() {
-    	return this.crawlPermissions;
-    }
-    
-    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
-    	this.crawlPermissions = crawlPermissions;
-    }    
-    	
 	//bi-directional many-to-many association to DCollection
-	@ManyToMany(mappedBy="targets") @JsonIgnore
-	public List<Collection> collection_to_target = new ArrayList<Collection>();
+	@JsonIgnore
+	@ManyToMany(mappedBy="targets")
+	public List<Collection> collectionToTarget = new ArrayList<Collection>();
 	
 	//bi-directional many-to-many association to Subject
-	@ManyToMany(mappedBy="targets") @JsonIgnore
-	public List<Taxonomy> subject_to_target = new ArrayList<Taxonomy>();
+	@JsonIgnore
+	@ManyToMany(mappedBy="targets")
+	public List<Taxonomy> subjectToTarget = new ArrayList<Taxonomy>();
 	
 	//bi-directional many-to-many association to Subject
-	@ManyToMany(mappedBy="targets") @JsonIgnore
-	public List<Taxonomy> license_to_target = new ArrayList<Taxonomy>();
+	@JsonIgnore
+	@ManyToMany(mappedBy="targets")
+	public List<Taxonomy> licenseToTarget = new ArrayList<Taxonomy>();
 	
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String value;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String summary;
     public String format;
-    public String field_scope;
-    public String field_depth;
-    public Boolean field_via_correspondence;
-    public Boolean field_uk_postal_address;
-    public Boolean field_uk_hosting;
-    public String field_nominating_organisation;
-    public String field_crawl_frequency;
-    public String field_crawl_start_date;
-    public Boolean field_uk_domain;
-    public String field_crawl_permission;
-    public Boolean field_special_dispensation;
-    @Column(columnDefinition = "TEXT")
-    public String field_special_dispensation_reaso;
-    public Boolean field_uk_geoip;
-    public Boolean field_professional_judgement;
+    public String fieldScope;
+    public String fieldDepth;
+    public Boolean fieldViaCorrespondence;
+    public Boolean fieldUkPostalAddress;
+    public Boolean fieldUkHosting;
+    public String fieldNominatingOrganisation;
+    public String fieldCrawlFrequency;
+    public Date fieldCrawlStartDate;
+    public Date fieldCrawlEndDate;
+    public Boolean fieldUkDomain;
+    public String fieldCrawlPermission;
+    public Boolean fieldSpecialDispensation;
+    @Column(columnDefinition = "text")
+    public String fieldSpecialDispensationReason;
+    public Boolean fieldUkGeoIp;
+    public Boolean fieldProfessionalJudgement;
     public Long vid;
-    public Boolean is_new;
+    public Boolean isNew;
     public String type;
     
     @Required
     public String title;
     
     public String language;
-    public String url;
-    public String edit_url;
+    public String editUrl;
     public Long status;
     public Long promote;
     public Long sticky;
-    public String created;
-    public String changed;
     public String author; 
     public String log;
     public Long comment;
-    public Long comment_count;
-    public Long comment_count_new;
-    public Long feed_nid;
-    public String field_crawl_end_date;
-    public String field_live_site_status;
-    public Long field_wct_id;
-    public Long field_spt_id;
-    public Long legacy_site_id;
-    public Boolean field_no_ld_criteria_met;
-    public Boolean field_key_site;
-    @Column(columnDefinition = "TEXT")
-    public String field_professional_judgement_exp;
-    public Boolean field_ignore_robots_txt;
-    @Column(columnDefinition = "TEXT")
+    public Long commentCount;
+    public Long commentCountNew;
+    public Long feedNid;
+    public String fieldLiveSiteStatus;
+    public Long fieldWct_id;
+    public Long fieldSpt_id;
+    public Long legacySite_id;
+    public Boolean fieldNoLdCriteriaMet;
+    public Boolean fieldKeySite;
+    @Column(columnDefinition = "text")
+    public String fieldProfessionalJudgementExp;
+    public Boolean fieldIgnoreRobotsTxt;
+    @Column(columnDefinition = "text")
     public String revision; // revision comment for latest version of the target among targets with the same URL
     public Boolean active; // flag for the latest version of the target among targets with the same URL
-    public String white_list; // regex for white list URLs
-    public String black_list; // regex for black list URLs
-    public String date_of_publication;
-    @Column(columnDefinition = "TEXT")
+    public String whiteList; // regex for white list URLs
+    public String blackList; // regex for black list URLs
+    public Date dateOfPublication;
+    @Column(columnDefinition = "text")
     public String justification; 
-    @Column(columnDefinition = "TEXT")
-    public String selector_notes; 
-    @Column(columnDefinition = "TEXT")
-    public String archivist_notes; 
+    @Column(columnDefinition = "text")
+    public String selectorNotes; 
+    @Column(columnDefinition = "text")
+    public String archivistNotes; 
     @Required
-    public String selection_type; 
+    public String selectionType; 
     public String selector;     
-    @Column(columnDefinition = "TEXT")
-    public String flag_notes;
+    @Column(columnDefinition = "text")
+    public String flagNotes;
     /**
      * This field comprises the current tab name for view and edit pages.
      */
-    public String tabstatus;
+    public String tabStatus;
     
 	public Boolean isInScopeUkRegistrationValue;
 	public Boolean isInScopeDomainValue;
@@ -171,58 +165,54 @@ public class Target extends Model {
 
     // lists
     @Required
-    @Column(columnDefinition = "TEXT")
-    public String field_url; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
+    public String fieldUrl; 
+    @Column(columnDefinition = "text")
     public String domain; 
-    @Column(columnDefinition = "TEXT")
-    public String field_description; 
-    @Column(columnDefinition = "TEXT")
-    public String field_uk_postal_address_url; 
-    @Column(columnDefinition = "TEXT")
-    public String field_suggested_collections; 
-    @Column(columnDefinition = "TEXT")
-    public String field_collections; 
-    @Column(columnDefinition = "TEXT")
-    public String field_license; 
-    @Column(columnDefinition = "TEXT")
-    public String field_collection_categories; 
-    @Column(columnDefinition = "TEXT")
-    public String field_notes; 
-    @Column(columnDefinition = "TEXT")
-    public String field_instances; 
+    @Column(columnDefinition = "text")
+    public String fieldDescription; 
+    @Column(columnDefinition = "text")
+    public String fieldUkPostalAddressUrl; 
+    @Column(columnDefinition = "text")
+    public String fieldSuggestedCollections; 
+    @Column(columnDefinition = "text")
+    public String fieldCollections; 
+    @Column(columnDefinition = "text")
+    public String fieldLicense; 
+    @Column(columnDefinition = "text")
+    public String fieldCollectionCategories; 
+    @Column(columnDefinition = "text")
+    public String fieldNotes; 
+    @Column(columnDefinition = "text")
+    public String fieldInstances; 
     @Required
-    @Column(columnDefinition = "TEXT")
-    public String field_subject; 
+    @Column(columnDefinition = "text")
+    public String fieldSubject; 
     //@Required
-    @Column(columnDefinition = "TEXT")
-    public String field_subsubject; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
+    public String fieldSubSubject; 
+    @Column(columnDefinition = "text")
     public String keywords; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String tags; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String synonyms; 
-    @Column(columnDefinition = "TEXT")
-    public String originating_organisation; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
+    public String originatingOrganisation; 
+    @Column(columnDefinition = "text")
     public String flags; 
-    @Column(columnDefinition = "TEXT")
-    public String authors; 
-    @Column(columnDefinition = "TEXT")
-    public String field_qa_status; 
-    @Column(columnDefinition = "TEXT")
-    public String qa_status; 
-    @Column(columnDefinition = "TEXT")
-    public String qa_issue_category; 
-    @Column(columnDefinition = "TEXT")
-    public String qa_notes; 
-    @Column(columnDefinition = "TEXT")
-    public String quality_notes; 
-
-    
-    @Version
-    public Timestamp lastUpdate;
+    @Column(columnDefinition = "text")
+    public String authors;
+    @Column(columnDefinition = "text")
+    public String fieldQaStatus; 
+    @Column(columnDefinition = "text")
+    public String qaStatus; 
+    @Column(columnDefinition = "text")
+    public String qaIssueCategory; 
+    @Column(columnDefinition = "text")
+    public String qaNotes; 
+    @Column(columnDefinition = "text")
+    public String qualityNotes; 
     
     @Transient
     public LookupEntry lookupEntry;
@@ -238,51 +228,47 @@ public class Target extends Model {
     }
 
     public Target() {
-    	this.field_via_correspondence = false;
-    	this.field_uk_postal_address = false;    	
-    	this.field_uk_hosting = false;    	
-    	this.field_crawl_frequency = "domaincrawl";    	
-    	this.field_crawl_start_date = "";    	
-    	this.field_uk_domain = true;    	
-    	this.field_crawl_permission = "";    	
-    	this.field_special_dispensation = false;
-    	this.field_uk_geoip = true;
-    	this.field_professional_judgement = false;
+    	this.fieldViaCorrespondence = false;
+    	this.fieldUkPostalAddress = false;    	
+    	this.fieldUkHosting = false;    	
+    	this.fieldCrawlFrequency = "domaincrawl";    	
+    	this.fieldUkDomain = true;    	
+    	this.fieldCrawlPermission = "";    	
+    	this.fieldSpecialDispensation = false;
+    	this.fieldUkGeoIp = true;
+    	this.fieldProfessionalJudgement = false;
     	this.vid = 0L;
-    	this.is_new = false;
+    	this.isNew = false;
     	this.language = "en";
     	this.status = 1L;
     	this.promote = 0L;
     	this.sticky = 0L;
-    	this.created = "";
-    	this.changed = "";
     	this.log = "";
     	this.comment = 0L;
-    	this.comment_count = 0L;
-    	this.comment_count_new = 0L;
-    	this.feed_nid = 0L;
-    	this.field_crawl_end_date = "";
-    	this.field_live_site_status = "";
-    	this.field_spt_id = 0L;
-    	this.field_wct_id = 0L;
-    	this.field_no_ld_criteria_met = false;
-    	this.field_key_site = false;
-    	this.field_professional_judgement_exp = "";
-    	this.field_ignore_robots_txt = false;
-    	this.field_uk_postal_address_url = "";
-    	this.field_suggested_collections = "";
-    	this.field_collections = "";
-    	this.field_license = "";
-    	this.field_notes = "";
-    	this.field_instances = "";
-    	this.field_subject = "";
+    	this.commentCount = 0L;
+    	this.commentCountNew = 0L;
+    	this.feedNid = 0L;
+    	this.fieldLiveSiteStatus = "";
+    	this.fieldSpt_id = 0L;
+    	this.fieldWct_id = 0L;
+    	this.fieldNoLdCriteriaMet = false;
+    	this.fieldKeySite = false;
+    	this.fieldProfessionalJudgementExp = "";
+    	this.fieldIgnoreRobotsTxt = false;
+    	this.fieldUkPostalAddressUrl = "";
+    	this.fieldSuggestedCollections = "";
+    	this.fieldCollections = "";
+    	this.fieldLicense = "";
+    	this.fieldNotes = "";
+    	this.fieldInstances = "";
+    	this.fieldSubject = "";
 		this.value = "";
 		this.summary = "";
 		this.format = "";
-		this.field_scope = "root";
-		this.field_depth = "capped";
+		this.fieldScope = "root";
+		this.fieldDepth = "capped";
 		this.type = Const.URL;
-		this.field_collection_categories = "";
+		this.fieldCollectionCategories = "";
 //		this.field_nominating_organisation = Const.NONE;
     }
 
@@ -290,6 +276,14 @@ public class Target extends Model {
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,Target> find = new Model.Finder(Long.class, Target.class);
+    
+    public List<CrawlPermission> getCrawlPermissions() {
+    	return this.crawlPermissions;
+    }
+    
+    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
+    	this.crawlPermissions = crawlPermissions;
+    }  
     
     /**
      * Retrieve targets
@@ -327,7 +321,7 @@ public class Target extends Model {
      */
     public static List<Target> findAllforOrganisation(String url) {
     	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true).eq("field_nominating_organisation", url);
+        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true).eq("fieldNominatingOrganisation", url);
         res = ll.findList();
         return res;
 	}
@@ -440,7 +434,7 @@ public class Target extends Model {
 	 */
 	public int getDuplicateNumber() {
 		int res = 0;
-        ExpressionList<Target> ll = find.where().eq("field_url", this.field_url);
+        ExpressionList<Target> ll = find.where().eq("fieldUrl", this.fieldUrl);
         res = ll.findRowCount();
 		return res;
 	}
@@ -631,10 +625,10 @@ public class Target extends Model {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
-		        ExpressionList<Target> ll = find.where().contains("field_subject", target.field_subject);
+			if (target.fieldSubject != null && target.fieldSubject.length() > 0 && !subjects.contains(target.fieldSubject)) {
+		        ExpressionList<Target> ll = find.where().contains("field_subject", target.fieldSubject);
 		        if (ll.findRowCount() > 0) {
-		        	subjects.add(target.field_subject);
+		        	subjects.add(target.fieldSubject);
 		        }
 			}
 		}
@@ -817,14 +811,14 @@ public class Target extends Model {
         Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
         boolean res = false;  
         if (target != null
-        		&& (target.field_uk_postal_address 
-        		|| target.field_via_correspondence
-        		|| target.field_professional_judgement)) {
-        	Logger.debug("checkManualScope(): " + target.field_uk_postal_address + ", " + 
-        		target.field_via_correspondence + ", " + target.field_professional_judgement);
+        		&& (target.fieldUkPostalAddress 
+        		|| target.fieldViaCorrespondence
+        		|| target.fieldProfessionalJudgement)) {
+        	Logger.debug("checkManualScope(): " + target.fieldUkPostalAddress + ", " + 
+        		target.fieldViaCorrespondence + ", " + target.fieldProfessionalJudgement);
         	res = true;
         }
-        if (target != null && target.field_no_ld_criteria_met) {
+        if (target != null && target.fieldNoLdCriteriaMet) {
         	res = false;
         }
         return res;
@@ -839,9 +833,9 @@ public class Target extends Model {
         Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
         boolean res = false;  
         if (target != null 
-        		&& target.field_license != null 
-        		&& target.field_license.length() > 0 
-        		&& !target.field_license.toLowerCase().contains(Const.NONE)) {
+        		&& target.fieldLicense != null 
+        		&& target.fieldLicense.length() > 0 
+        		&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
         	res = true;
         }
         return res;
@@ -857,11 +851,11 @@ public class Target extends Model {
         boolean res = false;  
         Logger.info("hasGrantedLicense url: " + url);
         if (target != null 
-        		&& target.field_license != null 
-        		&& target.field_license.length() > 0 
-        		&& !target.field_license.toLowerCase().contains(Const.NONE)
-        		&& target.qa_status != null 
-        		&& target.qa_status.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+        		&& target.fieldLicense != null 
+        		&& target.fieldLicense.length() > 0 
+        		&& !target.fieldLicense.toLowerCase().contains(Const.NONE)
+        		&& target.qaStatus != null 
+        		&& target.qaStatus.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
         	res = true;
         }
         return res;
@@ -1036,7 +1030,7 @@ public class Target extends Model {
 		List<Target> res = new ArrayList<Target>();
         res = find.where()
         		.eq(Const.ACTIVE, true)
-        		.orderBy(Const.LAST_UPDATE + " " + Const.DESC).setMaxRows(number)
+        		.orderBy(Const.UPDATED_AT + " " + Const.DESC).setMaxRows(number)
 				.findList();
 		return res;
     }          
@@ -1086,7 +1080,7 @@ public class Target extends Model {
 
     // Could really do with many_to_one relationship
     public Organisation getOrganisation() {
-    	return Organisation.findByUrl(field_nominating_organisation);
+    	return Organisation.findByUrl(fieldNominatingOrganisation);
     }
 
     /**
@@ -1096,7 +1090,7 @@ public class Target extends Model {
      */
     public boolean hasSubject(String subject) {
     	boolean res = false;
-    	res = Utils.hasElementInList(subject, field_subject);
+    	res = Utils.hasElementInList(subject, fieldSubject);
     	return res;
     }
         
@@ -1107,7 +1101,7 @@ public class Target extends Model {
      */
     public boolean hasSubSubject(String subject) {
     	boolean res = false;
-    	res = Utils.hasElementInList(subject, field_subsubject);
+    	res = Utils.hasElementInList(subject, fieldSubSubject);
     	return res;
     }
         
@@ -1129,7 +1123,7 @@ public class Target extends Model {
      */
     public boolean hasLicense(String license) {
     	boolean res = false;
-    	res = Utils.hasElementInList(license, field_license);
+    	res = Utils.hasElementInList(license, fieldLicense);
     	return res;
     }
         
@@ -1140,7 +1134,7 @@ public class Target extends Model {
      */
     public boolean hasCollection(String collection) {
     	boolean res = false;
-    	res = Utils.hasElementInList(collection, field_suggested_collections);
+    	res = Utils.hasElementInList(collection, fieldSuggestedCollections);
     	return res;
     }
     
@@ -1452,13 +1446,15 @@ public class Target extends Model {
         		startDateUnix = "0" + startDateUnix;
         	}
         	Logger.info("startDateUnix: " + startDateUnix);
-    		expressionList = expressionList.ge(Const.CREATED, startDateUnix);
+        	// TODO: UNIX DATE
+    		expressionList = expressionList.ge(Const.CREATED_AT, startDateUnix);
     	} 
     	if (endDate != null && endDate.length() > 0) {
     		Logger.info("endDate: " + endDate);
         	String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
         	Logger.info("endDateUnix: " + endDateUnix);
-    		expressionList = expressionList.le(Const.CREATED, endDateUnix);
+        	// TODO: UNIX DATE
+    		expressionList = expressionList.le(Const.CREATED_AT, endDateUnix);
     	} 
     	if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
     		expressionList = expressionList.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
@@ -1466,20 +1462,20 @@ public class Target extends Model {
 
     	// new stuff
     	if (npld.equals(Const.NpldType.UK_POSTAL_ADDRESS.name())) {
-    		expressionList.eq("field_uk_postal_address", true);
+    		expressionList.eq(Const.FIELD_UK_POSTAL_ADDRESS, true);
     	} else if (npld.equals(Const.NpldType.VIA_CORRESPONDENCE.name())) {
-    		expressionList.eq("field_via_correspondence", true);
+    		expressionList.eq(Const.FIELD_VIA_CORRESPONDENCE, true);
     	} else if (npld.equals(Const.NpldType.NO_LD_CRITERIA_MET.name())) {
-    		expressionList.eq("field_no_ld_criteria_met", true);
+    		expressionList.eq(Const.FIELD_NO_LD_CRITERIA_MET, true);
     	} else if (npld.equals(Const.NpldType.PROFESSIONAL_JUDGEMENT.name())) {
-    		expressionList.eq("field_professional_judgement", true);
+    		expressionList.eq(Const.FIELD_PROFESSIONAL_JUDGEMENT, true);
     	} else if (npld.equals(Const.NONE)) {
-    		expressionList.eq("field_uk_postal_address", false);
-    		expressionList.eq("field_via_correspondence", false);
-    		expressionList.eq("field_no_ld_criteria_met", false);
+    		expressionList.eq(Const.FIELD_UK_POSTAL_ADDRESS, false);
+    		expressionList.eq(Const.FIELD_VIA_CORRESPONDENCE, false);
+    		expressionList.eq(Const.FIELD_NO_LD_CRITERIA_MET, false);
     		expressionList.eq("isUkHostingValue", false);
     		expressionList.eq("isInScopeUkRegistrationValue", false);
-    		expressionList.eq("field_professional_judgement", false);
+    		expressionList.eq(Const.FIELD_PROFESSIONAL_JUDGEMENT, false);
     		expressionList.add(Expr.raw("field_url NOT like '%" + Scope.UK_DOMAIN + "%' or field_url NOT like '%" + Scope.LONDON_DOMAIN + "%' or field_url NOT like '%" + Scope.SCOT_DOMAIN + "%'"));
     	} else if (npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
 //    		Expression ex = Expr.or(Expr.icontains("field_url", Scope.UK_DOMAIN), Expr.icontains("field_url", Scope.LONDON_DOMAIN));
@@ -1732,9 +1728,9 @@ public class Target extends Model {
 		while (itr.hasNext()) {
 			Target target = itr.next();
 	        if (target != null 
-	        		&& target.field_license != null 
-	        		&& target.field_license.length() > 0 
-	        		&& !target.field_license.toLowerCase().contains(Const.NONE)) {
+	        		&& target.fieldLicense != null 
+	        		&& target.fieldLicense.length() > 0 
+	        		&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
 	        	res.add(target);
 	        }
 		}
@@ -1763,9 +1759,9 @@ public class Target extends Model {
 		Iterator<Target> itr = targets.findList().iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			boolean isInScope = isInScopeIp(target.field_url, target.url);
+			boolean isInScope = isInScopeIp(target.fieldUrl, target.url);
 			if (!isInScope) {
-				isInScope = isInScopeDomain(target.field_url, target.url);
+				isInScope = isInScopeDomain(target.fieldUrl, target.url);
 			}
         	if (isInScope) {
         		Logger.debug("add to export ld: " + target);
@@ -1897,13 +1893,13 @@ public class Target extends Model {
 		Iterator<Target> itr = targets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if ((target.field_uk_postal_address 
-					|| target.field_via_correspondence
-					|| target.field_professional_judgement
-					|| target.field_no_ld_criteria_met) 
-					&& isHigherLevel(target.field_url, fieldUrl)
-					&& (!checkUkHosting(target.field_url)
-							&& !isInScopeDomain(target.field_url, target.url))) {
+			if ((target.fieldUkPostalAddress 
+					|| target.fieldViaCorrespondence
+					|| target.fieldProfessionalJudgement
+					|| target.fieldNoLdCriteriaMet) 
+					&& isHigherLevel(target.fieldUrl, fieldUrl)
+					&& (!checkUkHosting(target.fieldUrl)
+							&& !isInScopeDomain(target.fieldUrl, target.url))) {
 				unsorted.add(target);
 //				if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
 //					break;
@@ -1941,8 +1937,8 @@ public class Target extends Model {
 		Iterator<Target> itr = unsorted.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.created != null && target.created.length() > 0 && Long.valueOf(target.created) > latest) {
-				latest = Long.valueOf(target.created);
+			if (target.createdAt != null) {
+				latest = target.createdAt.getTime();
 				res = target;
 			}
 		}
@@ -1981,20 +1977,20 @@ public class Target extends Model {
 	}
 	    
 	public boolean isHigherLevel(String iterUrl) {
-		boolean highLevel = (this.field_url.contains(iterUrl) && this.field_url.indexOf(iterUrl) == 0 && this.field_url.length() > iterUrl.length());
+		boolean highLevel = (this.fieldUrl.contains(iterUrl) && this.fieldUrl.indexOf(iterUrl) == 0 && this.fieldUrl.length() > iterUrl.length());
 //		Logger.info("iterUrl: " + iterUrl  + " " + highLevel);
 		return highLevel;
 	}
 
 	public boolean validQAStatus(Target target) {
 //		Logger.info("validQAStatus field_url: " + target.field_url);
-		return (qa_status != null && target.qa_status.length() > 0 && !target.qa_status.toLowerCase().equals(Const.NONE));
+		return (qaStatus != null && target.qaStatus.length() > 0 && !target.qaStatus.toLowerCase().equals(Const.NONE));
 	}
 
 	public boolean hasLicenses() {
 //		Open UKWA licence for target being edited - disabled
 //		Other license for target being edited - disabled
-		return indicateLicenses(this.field_license);
+		return indicateLicenses(this.fieldLicense);
 	}
 	
 	public boolean hasHigherLicense() {
@@ -2002,7 +1998,7 @@ public class Target extends Model {
 //		Other license at higher level - disabled
 		Target higherTarget = this.getHigherLevelTarget();
 		if (higherTarget != null) {
-			return (indicateLicenses(higherTarget.field_license));
+			return (indicateLicenses(higherTarget.fieldLicense));
 		}
 		return false;
 	}
@@ -2032,13 +2028,13 @@ public class Target extends Model {
 	public Target getHigherLevelTarget() {
 		// field_url - the domain name
 		// field_license - act-168
-		if (StringUtils.isNotEmpty(this.field_url)) {
-			String normalisedUrl = Scope.normalizeUrl(this.field_url);
+		if (StringUtils.isNotEmpty(this.fieldUrl)) {
+			String normalisedUrl = Scope.normalizeUrl(this.fieldUrl);
 	        String domain = Scope.getDomainFromUrl(normalisedUrl);
 	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, domain).eq(Const.ACTIVE, true);
 	        List<Target> targets = ll.findList();
 			for (Target target : targets) {
-				if (isHigherLevel(target.field_url)) {
+				if (isHigherLevel(target.fieldUrl)) {
 					return target;
 				}
 			}
@@ -2059,11 +2055,11 @@ public class Target extends Model {
 //		Open UKWA Licence at higher level - disabled
 //		Open UKWA licence for target being edited - disabled
 		List<Target> results = new ArrayList<Target>();
-		if (StringUtils.isNotEmpty(this.field_url)) {
+		if (StringUtils.isNotEmpty(this.fieldUrl)) {
 			// first aggregate a list of active targets for associated URL
-			Logger.debug("getUkwaLicenceStatusList() fieldUrl: " + this.field_url);
-			this.field_url = Scope.normalizeUrl(this.field_url);
-	        String domain = Scope.getDomainFromUrl(this.field_url);
+			Logger.debug("getUkwaLicenceStatusList() fieldUrl: " + this.fieldUrl);
+			this.fieldUrl = Scope.normalizeUrl(this.fieldUrl);
+	        String domain = Scope.getDomainFromUrl(this.fieldUrl);
 			Logger.debug("getUkwaLicenceStatusList() domain: " + domain);
 			// get me Targets that contain the same domain so I can check the licenses. i.e higher level
 	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, domain).eq(Const.ACTIVE, true);
@@ -2083,7 +2079,7 @@ public class Target extends Model {
 				// license field checked as required in issue 176.
 //				Logger.info("validQAStatus: " + validQAStatus(target));
 				// higher level domain and has a license or higher level domain and has pending qa status
-				if ((isHigherLevel(target.field_url) && StringUtils.isNotBlank(target.field_license)) || (isHigherLevel(target.field_url) && validQAStatus(target))) {
+				if ((isHigherLevel(target.fieldUrl) && StringUtils.isNotBlank(target.fieldLicense)) || (isHigherLevel(target.fieldUrl) && validQAStatus(target))) {
 					results.add(target);
 				}
 			}
@@ -2098,11 +2094,11 @@ public class Target extends Model {
    * This method updates foreign key mapping between a Target and an Organisation.
    */
   public void updateOrganisation() {
-		if (field_nominating_organisation != null
-				&& field_nominating_organisation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(field_nominating_organisation);
+		if (this.fieldNominatingOrganisation != null
+				&& this.fieldNominatingOrganisation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(this.fieldNominatingOrganisation);
 //            Logger.info("Add target to organisation: " + organisation.toString());
-            this.organisation_to_target = organisation;
+            this.organisationToTarget = organisation;
 		}
     	
   }

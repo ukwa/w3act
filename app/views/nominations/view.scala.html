@@ -42,7 +42,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
 				    <div class="col-sm-6">
-						@nomination.website_url
+						@nomination.websiteUrl
 					</div>
 				</div>
 			</div>
@@ -86,7 +86,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Nominated Website Owner:</label>
 				    <div class="col-sm-6">
-				    @if(nomination.nominated_website_owner != null && nomination.nominated_website_owner) {
+				    @if(nomination.nominatedWebsiteOwner != null && nomination.nominatedWebsiteOwner) {
 		                yes
 		            } else {
 		                no
@@ -112,7 +112,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Nomination Checked:</label>
 				    <div class="col-sm-6">
-				    @if(nomination.nomination_checked != null && nomination.nomination_checked) {
+				    @if(nomination.nominationChecked != null && nomination.nominationChecked) {
 		                yes
 		            } else {
 		                no

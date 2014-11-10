@@ -1,16 +1,13 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -23,17 +20,13 @@ import com.avaje.ebean.ExpressionList;
  * This class supports the management of e-mail templates.
  */
 @Entity
-@Table(name = "mail_template")
-public class MailTemplate extends Model
-{
+@Table(name = "MailTemplate")
+public class MailTemplate extends ActModel {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2157694575463302989L;
-
-	@Id 
-    public Long id;
 
     //bi-directional one-to-many association to CrawlPermission
     @OneToMany(mappedBy="mailtemplate_to_crawlpermission", cascade=CascadeType.PERSIST)
@@ -48,15 +41,9 @@ public class MailTemplate extends Model
     }    
         
     /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-	
-    /**
      * The name of the e-mail.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     @Required
     public String name;
        
@@ -64,26 +51,26 @@ public class MailTemplate extends Model
      * E-mail type: Permission Request, Thank you - Online Permission Form, 
      * Thank you - Online Nomination by Owner, Opt out.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String ttype;
     
     /**
      * E-mail subject.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String subject;
 
     /**
      * E-mail from field.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     @Required
     public String fromEmail;
 
     /**
      * The place holders in E-mail that should be rewritten by user.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String placeHolders;
 
     /**
@@ -95,11 +82,8 @@ public class MailTemplate extends Model
     /**
      * Either text as a string or name of the associated text file.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String text;
-
-    @Version
-    public Timestamp lastUpdate;
 
     public static final Model.Finder<Long, MailTemplate> find = new Model.Finder<Long, MailTemplate>(Long.class, MailTemplate.class);
 

@@ -1,6 +1,5 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -8,13 +7,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,18 +24,13 @@ import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "permission")
-public class Permission extends Model
-{
+@Table(name = "Permission")
+public class Permission extends ActModel {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = -2250099575468302989L;
 
-	@Id @JsonIgnore
-	@Column(name="ID")
-    public Long id;
-    
 	//bi-directional many-to-one association to Role
 //	@ManyToOne
 //	@JoinColumn(name="id_role")
@@ -47,10 +38,28 @@ public class Permission extends Model
     
     //bi-directional many-to-many association to Role
     @ManyToMany
-	@JoinTable(name = Const.PERMISSION_ROLE, joinColumns = { @JoinColumn(name = "id_permission", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_role", referencedColumnName="ID") }) 
+	@JoinTable(name = Const.PERMISSION_ROLE, joinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
     private List<Role> roles = new ArrayList<Role>();
  
+    @Required
+    @Column(columnDefinition = "text")
+    public String name;
+
+    @JsonIgnore
+    @Column(columnDefinition = "text")
+    public String description;
+    
+    @JsonIgnore
+    @Column(columnDefinition = "text")
+    public String revision; 
+    
+    public static final Model.Finder<Long, Permission> find = new Model.Finder<Long, Permission>(Long.class, Permission.class);
+
+    public String getName() {
+        return name;
+    }
+
     public List<Role> getRoles() {
     	return this.roles;
     }
@@ -58,33 +67,7 @@ public class Permission extends Model
     public void setRoles(List<Role> roles) {
     	this.roles = roles;
     }    
-        
-    @Required
-    @Column(columnDefinition = "TEXT")
-    public String name;
-
-    @Column(columnDefinition = "TEXT")
-    public String url;
     
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String description;
-    
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String revision; 
-    
-    @JsonIgnore
-    @Version
-    public Timestamp lastUpdate;
-
-    public static final Model.Finder<Long, Permission> find = new Model.Finder<Long, Permission>(Long.class, Permission.class);
-
-    public String getName()
-    {
-        return name;
-    }
-
     /**
      * Retrieve an object by Id (id).
      * @param nid

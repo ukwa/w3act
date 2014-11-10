@@ -15,28 +15,21 @@
 */
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
-import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
@@ -44,18 +37,13 @@ import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "role")
-public class Role extends Model
-{
+@Table(name = "Role")
+public class Role extends ActModel {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 5670206529564297517L;
 
-	@Id @JsonIgnore
-    @Column(name="ID")
-	public Long id;
-    
 	//bi-directional many-to-many association to Permission
 	@ManyToMany(mappedBy="roles")
 	public List<Permission> permissionsMap = new ArrayList<Permission>();
@@ -64,51 +52,29 @@ public class Role extends Model
 //    @OneToMany(mappedBy="role", cascade=CascadeType.PERSIST)
 ////    @Column(name="permissionsMap")
 //    public List<Permission> permissionsMap = new ArrayList<Permission>();
-//     
-    public List<Permission> getPermissionsMap() {
-    	return this.permissionsMap;
-    }
-    
-    public void setPermissions(List<Permission> permissionsMap) {
-    	this.permissionsMap = permissionsMap;
-    }    
+//
         
     //bi-directional many-to-many association to User
     @ManyToMany
-	@JoinTable(name = Const.ROLE_USER, joinColumns = { @JoinColumn(name = "id_role", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_user", referencedColumnName="ID") }) 
+	@JoinTable(name = Const.ROLE_USER, joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
     private List<User> users = new ArrayList<User>();
  
-    public List<User> getUsers() {
-    	return this.users;
-    }
-    
-    public void setUsers(List<User> users) {
-    	this.users = users;
-    }    
-        
 	@Required
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "text")
     public String name;
 
-    @Column(columnDefinition = "TEXT")
-    public String url;
-
 //    @JsonIgnore
-//    @Column(columnDefinition = "TEXT")
+//    @Column(columnDefinition = "text")
 //    public String permissions;
 
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String description;
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String revision; 
-    
-    @JsonIgnore
-    @Version
-    public Timestamp lastUpdate;
 
     public static final Finder<Long, Role> find = new Finder<Long, Role>(Long.class, Role.class);
 
@@ -117,6 +83,22 @@ public class Role extends Model
         return name;
     }
 
+    public List<Permission> getPermissionsMap() {
+    	return this.permissionsMap;
+    }
+    
+    public void setPermissions(List<Permission> permissionsMap) {
+    	this.permissionsMap = permissionsMap;
+    }
+    
+    public List<User> getUsers() {
+    	return this.users;
+    }
+    
+    public void setUsers(List<User> users) {
+    	this.users = users;
+    }
+    
     /**
      * Retrieve an object by Id (id).
      * @param nid
@@ -317,7 +299,7 @@ public class Role extends Model
 //    	Logger.info("isIncludedByUrl() roleId: " + roleId + ",url: " + url);
     	try {
 	    	if (StringUtils.isNotEmpty(url)) {
-		    	List<Role> roles = User.findByUrl(url).role_to_user;
+		    	List<Role> roles = User.findByUrl(url).roleToUser;
 //		    	Logger.info("roles.size: "+ roles.size());
 		    	res = isIncluded(roleId, roles);
 	    	}
@@ -359,7 +341,7 @@ public class Role extends Model
     	if (role != null && role.name != null && role.name.length() > 0) {
     		try {
 	    		int roleIndex = Const.Roles.valueOf(role.name).ordinal();
-	    		int userIndex = getRoleSeverity(user.role_to_user);
+	    		int userIndex = getRoleSeverity(user.roleToUser);
 //	    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
 	    		if (roleIndex >= userIndex) {
 	    			res = true;

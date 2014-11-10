@@ -14,7 +14,10 @@ import uk.bl.Const;
 
 public class ActModel extends Model {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4282393560240621524L;
 
 	@Id
     @JsonIgnore

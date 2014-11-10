@@ -1,17 +1,14 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
@@ -25,68 +22,38 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open tags.
  */
 @Entity
-@Table(name = "tag")
-public class Tag extends Model
-{
+@Table(name = "Tag")
+public class Tag extends ActModel {
 
 	/**
 	 * file idwdsdsa
 	 */
 	private static final long serialVersionUID = -2257699575463702989L;
 
-	@Id 
-    @Column(name="ID")
-    public Long id;
-
     //bi-directional many-to-many association to Target
     @ManyToMany
-	@JoinTable(name = Const.TAG_TARGET, joinColumns = { @JoinColumn(name = "id_tag", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
+	@JoinTable(name = Const.TAG_TARGET, joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="ID") }) 
     private List<Target> targets = new ArrayList<Target>();
  
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
     //bi-directional many-to-many association to Instance
     @ManyToMany
-	@JoinTable(name = Const.TAG_INSTANCE, joinColumns = { @JoinColumn(name = "id_tag", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_instance", referencedColumnName="ID") }) 
+	@JoinTable(name = Const.TAG_INSTANCE, joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
     private List<Instance> instances = new ArrayList<Instance>();
     
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-    
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-	
     /**
      * The name of the tag.
      */
     @Required
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String name;
     
     /**
      * Allows the addition of further notes regarding tag description.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String description;
-
-    @Version
-    public Timestamp lastUpdate;
 
     public static final Model.Finder<Long, Tag> find = new Model.Finder<Long, Tag>(Long.class, Tag.class);
 
@@ -98,6 +65,22 @@ public class Tag extends Model
     {
         return name;
     }
+	
+    public List<Target> getTargets() {
+    	return this.targets;
+    }
+    
+    public void setTargets(List<Target> targets) {
+    	this.targets = targets;
+    }    
+    
+    public List<Instance> getInstances() {
+    	return this.instances;
+    }
+    
+    public void setInstances(List<Instance> instances) {
+    	this.instances = instances;
+    } 
 
     public static Tag findByName(String name)
     {

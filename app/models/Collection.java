@@ -23,10 +23,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "Collection")
 public class Collection extends ActModel {
 
-    /**
+	
+	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3043585612371074777L;
 
 	//bi-directional many-to-many association to Target
     @ManyToMany
@@ -461,9 +462,9 @@ public class Collection extends ActModel {
 		List<Collection> res = new ArrayList<Collection>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Target target = Target.findByUrl(targetUrl);
-    		if (target.field_collection_categories != null) {
+    		if (target.fieldCollectionCategories != null) {
 //    			Logger.info("getSelectedCollections() field_collection_categories: " + target.field_collection_categories);
-		    	String[] parts = target.field_collection_categories.split(Const.COMMA + " ");
+		    	String[] parts = target.fieldCollectionCategories.split(Const.COMMA + " ");
 		    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 		    		Collection collection = findByUrl(part);

@@ -506,8 +506,8 @@
 								<select name="organisation" id="mySel" class="form-control">
 					            	<option>None</option>
 					                @for(organisation <- Organisation.findAll()) {
-						                @if(organisation.title.equals(Organisation.findByUrl(form("field_nominating_organisation").value).title) 
-						                	|| organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
+						                @if(organisation.title.equals(Organisation.findByUrl(form("fieldNominatingOrganisation").value).title) 
+						                	|| organisation.title.equals(Organisation.findByUrl(user.fieldAffiliation).title)) {
 							                <option selected>@organisation.title</option>
 							            } else {
 						                    <option>@organisation.title</option>
@@ -527,7 +527,7 @@
 								<select multiple name="originating_organisation" id="mySel" class="form-control">
 					            	<option>None</option>
 					                @for(organisation <- Organisation.findAll()) {
-						                @if(organisation.title.equals(Organisation.findByUrl(form("originating_organisation").value).title)) {
+						                @if(organisation.title.equals(Organisation.findByUrl(form("originatingOrganisation").value).title)) {
 							                <option selected>@organisation.title</option>
 							            } else {
 						                    <option>@organisation.title</option>

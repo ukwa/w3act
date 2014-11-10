@@ -227,10 +227,10 @@
 											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
 								                <option>None</option>
 								                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
-					                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
-								                		<option selected>@curCrawlFrequency.field_crawl_frequency</option>
+					                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.fieldCrawlFrequency)) {
+								                		<option selected>@curCrawlFrequency.fieldCrawlFrequency</option>
 							                		} else {
-								                		<option>@curCrawlFrequency.field_crawl_frequency</option>
+								                		<option>@curCrawlFrequency.fieldCrawlFrequency</option>
 							                		}
 								                }
 											</select>
@@ -242,10 +242,10 @@
 											<select name="field_depth" class="form-control target-form-control" id="field-depth">
 									        	<option>None</option>
 									            @for(curDepth <- Targets.getDepth()) {
-							                  		@if(depth != null && depth.equals(curDepth.field_depth)) {
-									                	<option selected>@curDepth.field_depth</option>
+							                  		@if(depth != null && depth.equals(curDepth.fieldDepth)) {
+									                	<option selected>@curDepth.fieldDepth</option>
 									                } else {
-									                	<option>@curDepth.field_depth</option>
+									                	<option>@curDepth.fieldDepth</option>
 									                }
 												}
 											</select>
@@ -345,8 +345,8 @@
 									} else {
 										<td>N/A</td>
 									}
-									@if(target.url != null && target.get_field_list_as_str("field_url").length > 0) { 		                  
-										<td><a class="brand" href="@target.get_field_list_as_str("field_url")" target="_blank">@target.get_field_list_as_str("field_url")</a></td>
+									@if(target.url != null && target.get_field_list_as_str("fieldUrl").length > 0) { 		                  
+										<td><a class="brand" href="@target.get_field_list_as_str("fieldUrl")" target="_blank">@target.get_field_list_as_str("fieldUrl")</a></td>
 									} else {
 										<td>N/A</td>
 									}

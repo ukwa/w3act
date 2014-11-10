@@ -1,6 +1,5 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import play.Logger;
 import play.db.ebean.Model;
@@ -27,13 +25,13 @@ public class LookupEntry extends ActModel {
     /**
      * This field contains stored lookup URLs.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String name;
 
     /**
      * The type of lookup can be e.g. WHOIS, GEOIP ...
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String ttype;
     
     /**
@@ -41,9 +39,6 @@ public class LookupEntry extends ActModel {
      */
     public Boolean scopevalue;
     
-    @Version
-    public Timestamp lastUpdate;
-
     @Transient
     public Integer totalRows;
     

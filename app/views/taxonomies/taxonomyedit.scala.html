@@ -7,7 +7,7 @@
     </div>
     
 	<ul class="nav nav-tabs">
-		@if(Taxonomy.findById(taxonomy.tid) != null) {
+		@if(Taxonomy.findById(taxonomy.id) != null) {
 		<li><a href="@routes.TaxonomiesController.view(taxonomy.url)">View</a></li>
 		}
 		@if(user.hasRole("sys_admin")) {
@@ -17,7 +17,7 @@
 	
 	@helper.form(action=routes.TaxonomiesController.save) {
    		<input type="hidden" name="url" value="@taxonomy.url">
-   	    <input type="hidden" name="nid" value="@taxonomy.tid">
+   	    <input type="hidden" name="nid" value="@taxonomy.id">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">

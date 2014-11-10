@@ -161,9 +161,9 @@ public class Reports extends AbstractController {
 // 	    		CrawlPermission permission = itr.next();
 	    		sw.append(target.title);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.field_url);
+	    		sw.append(target.fieldUrl);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.created);
+	    		sw.append(target.createdAt + "");
 		 	    sw.append(Const.CSV_SEPARATOR);
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
@@ -198,13 +198,15 @@ public class Reports extends AbstractController {
     		Logger.info("startDate: " + startDate);
         	String startDateUnix = Utils.getUnixDateStringFromDateExt(startDate);
         	Logger.info("startDateUnix: " + startDateUnix);
-    		exp = exp.ge(Const.CREATED, startDateUnix);
+        	// TODO: UNIX DATE
+    		exp = exp.ge(Const.CREATED_AT, startDateUnix);
     	} 
     	if (endDate != null && endDate.length() > 0) {
     		Logger.info("endDate: " + endDate);
         	String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
         	Logger.info("endDateUnix: " + endDateUnix);
-    		exp = exp.le(Const.CREATED, endDateUnix);
+        	// TODO: UNIX DATE
+    		exp = exp.le(Const.CREATED_AT, endDateUnix);
     	} 
     	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
 //    		Logger.info("qa status: " + status);
@@ -219,8 +221,8 @@ public class Reports extends AbstractController {
 	        Iterator<Target> resIter = res.iterator();
 	        while (resIter.hasNext()) {
 	        	Target target = resIter.next();
-	        	if (target.field_url != null && target.field_url.length() > 0) {
-	        		List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target.field_url);
+	        	if (target.fieldUrl != null && target.fieldUrl.length() > 0) {
+	        		List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target.fieldUrl);
 	            	if (permissionList != null && permissionList.size() > 0) {
 	            		CrawlPermission permission = permissionList.get(0);
 	            		Logger.info("permission: " + permission);

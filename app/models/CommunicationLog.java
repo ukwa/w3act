@@ -21,13 +21,13 @@ import com.avaje.ebean.ExpressionList;
 @Entity
 @Table(name = "CommunicationLog")
 public class CommunicationLog extends ActModel {
+	
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6095384513958569564L;
 
 	/**
-	 * file id
-	 */
-	private static final long serialVersionUID = -2157699575463302989L;
-
-    /**
      * The name of the communication.
      */
     @Required

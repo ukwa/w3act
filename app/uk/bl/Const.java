@@ -99,7 +99,10 @@ public final class Const {
 	public static final String UND                = "und";
     public static final String NUMBER             = "number";
 	
-	/**
+    public static final String CREATED_AT			= "createdAt";
+    public static final String UPDATED_AT			= "updatedAt";
+
+    /**
 	 * SQL constants
 	 */
 	public static final String ASC                = "asc";
@@ -132,7 +135,7 @@ public final class Const {
 	 */
 	public static final String TID                = "tid";
 	public static final String TITLE              = "title";
-	public static final String FIELD_URL          = "fieldurl";
+	public static final String FIELD_URL          = "fieldUrl";
 	public static final String KEYSITE            = "keysite";
 	public static final String STATUS             = "status";
 	public static final String LIVE_SITE_STATUS   = "livesitestatus";
@@ -140,65 +143,63 @@ public final class Const {
 	public static final String SUBJECT            = "subject";
 	public static final String SUBSUBJECT         = "subsubject";
 	public static final String ORGANISATION       = "organisation";
-	public static final String ORIGINATING_ORGANISATION = "originating_organisation";
-	public static final String FIELD_SUGGESTED_COLLECTIONS = "field_suggested_collections";
+	public static final String ORIGINATING_ORGANISATION = "originatingOrganisation";
+	public static final String FIELD_SUGGESTED_COLLECTIONS = "fieldSuggestedCollections";
 	public static final String IS_IN_SCOPE_UK_REGISTRATION_VALUE = "isInScopeUkRegistrationValue";
 	public static final String FIELD_CRAWL_FREQUENCY = "field_crawl_frequency";
 	public static final String FIELD_COLLECTION_CATEGORIES = "fieldCollectionCategories";
-	public static final String FIELD_SCOPE        = "field_scope";
-	public static final String FIELD_DEPTH        = "field_depth";
+	public static final String FIELD_SCOPE        = "fieldScope";
+	public static final String FIELD_DEPTH        = "fieldDepth";
 	public static final String FLAG               = "flag";
 	public static final String REVISION           = "revision";
 	public static final String ACTIVE             = "active";
 	public static final String FIELD_WCT_ID       = "wct";
-	public static final String FIELD_WCT          = "field_wct_id";
+	public static final String FIELD_WCT          = "fieldWct_id";
 	public static final String FIELD_SPT_ID       = "spt";
 	public static final String FIELD_LICENSE      = "license";
-	public static final String FIELD_LICENSE_NODE = "field_license";
-	public static final String FIELD_UK_HOSTING   = "field_uk_hosting";
-	public static final String FIELD_UK_POSTAL_ADDRESS = "field_uk_postal_address";
-	public static final String FIELD_UK_POSTAL_ADDRESS_URL = "field_uk_postal_address_url";
-    public static final String FIELD_VIA_CORRESPONDENCE = "field_via_correspondence";
-    public static final String FIELD_NOTES        = "field_notes";
-    public static final String FIELD_PROFESSIONAL_JUDGEMENT = "field_professional_judgement";
-    public static final String FIELD_PROFESSIONAL_JUDGEMENT_EXP = "field_professional_judgement_exp";
-    public static final String FIELD_NO_LD_CRITERIA_MET = "field_no_ld_criteria_met";
-    public static final String FIELD_IGNORE_ROBOTS_TXT = "field_ignore_robots_txt";
-    public static final String FIELD_CRAWL_START_DATE = "field_crawl_start_date";
-    public static final String FIELD_CRAWL_END_DATE = "field_crawl_end_date";
-    public static final String WHITE_LIST = "white_list";
-    public static final String BLACK_LIST = "black_list";
+	public static final String FIELD_LICENSE_NODE = "fieldLicense";
+	public static final String FIELD_UK_HOSTING   = "fieldUkHosting";
+	public static final String FIELD_UK_POSTAL_ADDRESS = "fieldUkPostalAddress";
+	public static final String FIELD_UK_POSTAL_ADDRESS_URL = "fieldUkPostalAddressUrl";
+    public static final String FIELD_VIA_CORRESPONDENCE = "fieldViaCorrespondence";
+    public static final String FIELD_NOTES        = "fieldNotes";
+    public static final String FIELD_PROFESSIONAL_JUDGEMENT = "fieldProfessionalJudgement";
+    public static final String FIELD_PROFESSIONAL_JUDGEMENT_EXP = "fieldProfessionalJudgementExp";
+    public static final String FIELD_NO_LD_CRITERIA_MET = "fieldNoLdCriteriaMet";
+    public static final String FIELD_IGNORE_ROBOTS_TXT = "fieldIgnoreRobotsTxt";
+    public static final String FIELD_CRAWL_START_DATE = "fieldCrawlStartDate";
+    public static final String FIELD_CRAWL_END_DATE = "field_ErawlEndDate";
+    public static final String WHITE_LIST = "whiteList";
+    public static final String BLACK_LIST = "blackList";
     public static final String KEYWORDS = "keywords";
     public static final String SYNONYMS = "synonyms";
     public static final String SORTED = "sorted";
     public static final String LANGUAGE = "language";
     public static final String AUTHORS = "authors";
     public static final String FLAGS = "flags";
-	public static final String DATE_OF_PUBLICATION = "date_of_publication";
+	public static final String DATE_OF_PUBLICATION = "dateOfPublication";
 	public static final String JUSTIFICATION      = "justification";
-	public static final String SELECTION_TYPE     = "selection_type";
-	public static final String SELECTOR_NOTES     = "selector_notes";
-	public static final String ARCHIVIST_NOTES    = "archivist_notes";
-	public static final String LEGACY_SITE_ID     = "legacy_site_id";
+	public static final String SELECTION_TYPE     = "selectionType";
+	public static final String SELECTOR_NOTES     = "selectorNotes";
+	public static final String ARCHIVIST_NOTES    = "archivistNotes";
+	public static final String LEGACY_SITE_ID     = "legacySite_id";
 	public static final String FIELD_TIMESTAMP    = "fieldTimestamp";
-	public static final String QA_STATUS          = "qa_status";
-	public static final String QA_ISSUE_CATEGORY  = "qa_issue_category";
-	public static final String QA_NOTES           = "qa_notes";
-	public static final String QUALITY_NOTES      = "quality_notes";
+	public static final String QA_STATUS          = "qaStatus";
+	public static final String QA_ISSUE_CATEGORY  = "qaIssueCategory";
+	public static final String QA_NOTES           = "qaNotes";
+	public static final String QUALITY_NOTES      = "qualityNotes";
 	public static final String DOMAIN             = "domain";
-	public static final String CREATED            = "created";
-	public static final String FLAG_NOTES         = "flag_notes";
-	public static final String LAST_UPDATE        = "lastUpdate";
+	public static final String FLAG_NOTES         = "flagNotes";
 	public static final String CHANGED            = "changed";
 	public static final String TREE_KEYS          = "treeKeys";
 	public static final String SUBJECT_TREE_KEYS  = "subjectTreeKeys";
 	public static final String NA                 = "N/A";
 	public static final int    MAX_NPLD_LIST_SIZE = 3;
-	public static final String TAB_STATUS         = "tabstatus";
+	public static final String TAB_STATUS         = "tabStatus";
 	public static final String NPLD               = "npld";
 	public static final String TLD                = "tld";
-	public static final String FILTER_NPLD        = "filter_npld";
-	public static final String FILTER_TLD         = "filter_tld";
+	public static final String FILTER_NPLD        = "filterNpld";
+	public static final String FILTER_TLD         = "filterTld";
 	public static final String INSTANCE           = "instance";
 	
     /**

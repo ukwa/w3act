@@ -1,16 +1,13 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -24,103 +21,91 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * Organisation entity managed by Ebean
  */
-@SuppressWarnings("serial")
 @Entity 
-@Table(name = "organisation")
-public class Organisation extends Model {
+@Table(name = "Organisation")
+public class Organisation extends ActModel {
 
-    @Id @JsonIgnore
-    public Long id;
-    
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -651293364349635342L;
+
     //bi-directional many-to-one association to User
-    @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
     @JsonIgnore
+    @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
     private List<User> users = new ArrayList<User>();
      
-    public List<User> getUsers() {
-    	return this.users;
-    }
-    
-    public void setUsers(List<User> users) {
-    	this.users = users;
-    }    
-    
     //bi-directional one-to-many association to Target
-    @OneToMany(mappedBy="organisation_to_target", cascade=CascadeType.PERSIST)
     @JsonIgnore
+    @OneToMany(mappedBy="organisationToTarget", cascade=CascadeType.PERSIST)
     private List<Target> targets = new ArrayList<Target>();
-     
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
+
     //bi-directional many-to-one association to Instance
-    @OneToMany(mappedBy="organisation_to_instance", cascade=CascadeType.PERSIST)
     @JsonIgnore
+    @OneToMany(mappedBy="organisationToInstance", cascade=CascadeType.PERSIST)
     private List<Instance> instances = new ArrayList<Instance>();
-     
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-    
-    @Column(columnDefinition = "TEXT") @JsonIgnore
+
+    @JsonIgnore
+    @Column(columnDefinition = "text") 
     public String value;
+    
     @JsonIgnore
     public String summary;
+    
     @JsonIgnore
     public String format;
+    
     @JsonIgnore
     @Required
-    public String field_abbreviation;
+    public String fieldAbbreviation;
+    
     @JsonIgnore
     public Long vid;
+    
     @JsonIgnore
-    public Boolean is_new;
+    public Boolean isNew;
+    
     @JsonIgnore
     public String type;
+    
     @Required
     public String title;
+    
     @JsonIgnore
     public String language;
-    public String url;
+    
     @JsonIgnore
-    public String edit_url;
+    public String editUrl;
+    
     @JsonIgnore
     public Long status;
+    
     @JsonIgnore
     public Long promote;
+    
     @JsonIgnore
     public Long sticky;
-    @JsonIgnore
-    public String created;
-    @JsonIgnore
-    public String changed;
+    
     @JsonIgnore
     public String author;
+    
     @JsonIgnore
     public String log;
+    
     @JsonIgnore
     public Long comment;
     @JsonIgnore
-    public Long comment_count;
+    public Long commentCount;
+    
     @JsonIgnore
-    public Long comment_count_new;
-    @Column(columnDefinition = "TEXT") @JsonIgnore
+    public Long commentCountNew;
+    
+    @JsonIgnore
+    @Column(columnDefinition = "text")
     public String revision;
+    
     @JsonIgnore
-    public Long feed_nid;
-    
-    @Version @JsonIgnore
-    public Timestamp lastUpdate;
-    
+    public Long feedNid;
     
     public Organisation(String title) {
         this.title = title;
@@ -133,6 +118,31 @@ public class Organisation extends Model {
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Model.Finder<Long,Organisation> find = new Model.Finder(Long.class, Organisation.class);
+    
+    public List<User> getUsers() {
+    	return this.users;
+    }
+    
+    public void setUsers(List<User> users) {
+    	this.users = users;
+    }    
+    
+    public List<Target> getTargets() {
+    	return this.targets;
+    }
+    
+    public void setTargets(List<Target> targets) {
+    	this.targets = targets;
+    }    
+    
+    public List<Instance> getInstances() {
+    	return this.instances;
+    }
+    
+    public void setInstances(List<Instance> instances) {
+    	this.instances = instances;
+    }    
+    
     
     /**
      * Retrieve Organisation for user
