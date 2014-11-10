@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.DCollection;
+import models.Collection;
 import models.Target;
 import models.Taxonomy;
 import models.User;
@@ -194,7 +194,7 @@ public class QAController extends AbstractController {
     	}
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
-    	List<DCollection> collections = DCollection.getFirstLevelCollections();
+    	List<Collection> collections = Collection.getFirstLevelCollections();
     	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
     	Logger.info("collections main level size: " + collections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
@@ -209,15 +209,15 @@ public class QAController extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static String getCollectionTreeElements(List<DCollection> collectionList, String collectionUrl, boolean parent) { 
+    public static String getCollectionTreeElements(List<Collection> collectionList, String collectionUrl, boolean parent) { 
     	String res = "";
     	if (collectionList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
 	        sb.append("[");
-	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	Iterator<Collection> itr = collectionList.iterator();
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
-	    		DCollection collection = itr.next();
+	    		Collection collection = itr.next();
 //    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
 	    		if ((parent && (collection.parent.length() == 0 || collection.parent.toLowerCase().equals(Const.NONE))) 
@@ -265,7 +265,7 @@ public class QAController extends AbstractController {
     	String res = "";
         final StringBuffer sb = new StringBuffer();
     	sb.append(", \"children\":");
-    	List<DCollection> childCollections = DCollection.getChildLevelCollections(url);
+    	List<Collection> childCollections = Collection.getChildLevelCollections(url);
     	if (childCollections.size() > 0) {
 	    	sb.append(getCollectionTreeElements(childCollections, collectionUrl, false));
 	    	res = sb.toString();

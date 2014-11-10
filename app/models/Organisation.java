@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Organisation extends Model {
 
     @Id @JsonIgnore
-    public Long nid;
+    public Long id;
     
     //bi-directional many-to-one association to User
     @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
@@ -146,8 +146,8 @@ public class Organisation extends Model {
      * @param nid
      * @return object 
      */
-    public static Organisation findById(Long nid) {
-    	Organisation res = find.where().eq(Const.NID, nid).findUnique();
+    public static Organisation findById(Long id) {
+    	Organisation res = find.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
     
@@ -320,7 +320,7 @@ public class Organisation extends Model {
     }
             
     public String toString() {
-        return "Organisation(" + nid + ") with title: " + title + 
+        return "Organisation(" + id + ") with title: " + title + 
         	", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 

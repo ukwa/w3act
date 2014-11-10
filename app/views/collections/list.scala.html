@@ -1,4 +1,4 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[DCollection], currentSortBy: String, currentOrder: String, data :com.fasterxml.jackson.databind.JsonNode)
+@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[models.Collection], currentSortBy: String, currentOrder: String, data :com.fasterxml.jackson.databind.JsonNode)
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)

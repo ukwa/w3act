@@ -51,8 +51,8 @@ public final class Const {
 	public static final String FIELD_AFFILIATION  = "field_affiliation";
 	public static final String FIELD_SUBJECT      = "field_subject";
 	public static final String FIELD_QA_STATUS    = "field_qa_status";
-	public static final String FIELD_NOMINATING_ORGANISATION = "field_nominating_organisation";
-	public static final String FIELD_TARGET       = "field_target";
+	public static final String FIELD_NOMINATING_ORGANISATION = "fieldNominatingOrganisation";
+	public static final String FIELD_TARGET       = "fieldTarget";
 	public static final String FIELD_QA_ISSUE     = "field_qa_issue";
 	public static final String JSON               = ".json";
 	public static final String COMMA              = ",";
@@ -130,7 +130,6 @@ public final class Const {
 	/**
 	 * Target
 	 */
-	public static final String NID                = "nid";
 	public static final String TID                = "tid";
 	public static final String TITLE              = "title";
 	public static final String FIELD_URL          = "fieldurl";
@@ -145,7 +144,7 @@ public final class Const {
 	public static final String FIELD_SUGGESTED_COLLECTIONS = "field_suggested_collections";
 	public static final String IS_IN_SCOPE_UK_REGISTRATION_VALUE = "isInScopeUkRegistrationValue";
 	public static final String FIELD_CRAWL_FREQUENCY = "field_crawl_frequency";
-	public static final String FIELD_COLLECTION_CATEGORIES = "field_collection_categories";
+	public static final String FIELD_COLLECTION_CATEGORIES = "fieldCollectionCategories";
 	public static final String FIELD_SCOPE        = "field_scope";
 	public static final String FIELD_DEPTH        = "field_depth";
 	public static final String FLAG               = "flag";
@@ -181,7 +180,7 @@ public final class Const {
 	public static final String SELECTOR_NOTES     = "selector_notes";
 	public static final String ARCHIVIST_NOTES    = "archivist_notes";
 	public static final String LEGACY_SITE_ID     = "legacy_site_id";
-	public static final String FIELD_TIMESTAMP    = "field_timestamp";
+	public static final String FIELD_TIMESTAMP    = "fieldTimestamp";
 	public static final String QA_STATUS          = "qa_status";
 	public static final String QA_ISSUE_CATEGORY  = "qa_issue_category";
 	public static final String QA_NOTES           = "qa_notes";
@@ -542,7 +541,6 @@ public final class Const {
     	static {
     	guiMap.put(NAME,                     "Name");
     	guiMap.put(TITLE,                    "Title");
-    	guiMap.put(NID,                      "ID");
     	guiMap.put(ID,                       "ID");
     	guiMap.put(FIELD_SUBJECT,            "Subject");
     	guiMap.put(FIELD_URL_NODE,           "Seed URL(s)");

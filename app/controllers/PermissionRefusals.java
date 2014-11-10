@@ -5,7 +5,7 @@ import static play.data.Form.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.DCollection;
+import models.Collection;
 import models.PermissionRefusal;
 import models.Target;
 import models.User;

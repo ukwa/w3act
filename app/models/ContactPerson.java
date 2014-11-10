@@ -1,16 +1,13 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
@@ -23,17 +20,13 @@ import com.avaje.ebean.ExpressionList;
  * This class describes the contact person details.
  */
 @Entity
-@Table(name = "contact_person")
-public class ContactPerson extends Model
-{
+@Table(name = "ContactPerson")
+public class ContactPerson extends ActModel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2257099575463302989L;
-
-	@Id 
-    public Long id;
 
     //bi-directional one-to-many association to CrawlPermission
     @OneToMany(mappedBy="contactperson_to_crawlpermission", cascade=CascadeType.PERSIST)
@@ -48,53 +41,47 @@ public class ContactPerson extends Model
     }    
         
     /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-	
-    /**
      * The name of the contact person.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String name;
     
     /**
      * The job or position of the contact person within the relevant organisation.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String position;
     
     /**
      * Telephone contact details of the contact.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String phone;
     
     /**
      * E-mail address of the contact person.
      */
     @Required
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String email;
     
     /**
      * The postal address of the contact person.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String postalAddress;
     
     /**
      * The URL of a contact web form 
      * (in the absence of a known email address).
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String webForm;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String description;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String contactOrganisation; 
        
     /**
@@ -109,9 +96,6 @@ public class ContactPerson extends Model
      */
     public Boolean permissionChecked;
     
-    @Version
-    public Timestamp lastUpdate;
-
     public static final Model.Finder<Long, ContactPerson> find = new Model.Finder<Long, ContactPerson>(Long.class, ContactPerson.class);
 
     public ContactPerson() {}
@@ -136,7 +120,7 @@ public class ContactPerson extends Model
 
     /**
      * Retrieve an object by Id (id).
-     * @param nid
+     * @param id
      * @return object 
      */
     public static ContactPerson findById(Long id) {

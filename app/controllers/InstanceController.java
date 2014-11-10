@@ -76,31 +76,31 @@ public class InstanceController extends AbstractController {
 	public static Result info() {
 	    Instance newInstance = new Instance();
         try {
-    	    Instance instance = Instance.findById(Long.valueOf(getFormParam(Const.NID)));
+    	    Instance instance = Instance.findById(Long.valueOf(getFormParam(Const.ID)));
         	if (getFormParam(Const.FIELD_WCT_ID) != null && !getFormParam(Const.FIELD_WCT_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
-            	newInstance.field_wct_id = instance.field_wct_id;
+            	newInstance.fieldWct_id = instance.fieldWct_id;
             }
         	if (getFormParam(Const.FIELD_SPT_ID) != null && !getFormParam(Const.FIELD_SPT_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
-        		newInstance.field_spt_id = instance.field_spt_id;
+        		newInstance.fieldSpt_id = instance.fieldSpt_id;
         	}
         	if (getFormParam(Const.LEGACY_SITE_ID) != null && !getFormParam(Const.LEGACY_SITE_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
-        		newInstance.legacy_site_id = instance.legacy_site_id;
+        		newInstance.legacySite_id = instance.legacySite_id;
             }
         } catch (Exception e) {
         	Logger.info("The instance for given NID is not yet existing in database");
         } 	
-	    newInstance.nid = Long.valueOf(getFormParam(Const.NID));
+	    newInstance.id = Long.valueOf(getFormParam(Const.ID));
         if (newInstance.author == null) {
         	newInstance.author = getFormParam(Const.USER);
         }
-        newInstance.url = Const.ACT_URL + newInstance.nid;
+        newInstance.url = Const.ACT_URL + newInstance.id;
         newInstance.title = getFormParam(Const.TITLE);
-        newInstance.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
-        newInstance.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
-        newInstance.field_description = getFormParam(Const.DESCRIPTION);
+        newInstance.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
+        newInstance.fieldKeySite = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
+        newInstance.fieldDescription = getFormParam(Const.DESCRIPTION);
         if (getFormParam(Const.STATUS) != null) {
         	newInstance.status = Long.valueOf(getFormParam(Const.STATUS));
         } 
@@ -108,18 +108,18 @@ public class InstanceController extends AbstractController {
         	newInstance.language = getFormParam(Const.LANGUAGE);
         } 
         if (getFormParam(Const.SELECTION_TYPE) != null) {
-        	newInstance.selection_type = getFormParam(Const.SELECTION_TYPE);
+        	newInstance.selectionType = getFormParam(Const.SELECTION_TYPE);
         } 
         if (getFormParam(Const.SELECTOR_NOTES) != null) {
-        	newInstance.selector_notes = getFormParam(Const.SELECTOR_NOTES);
+        	newInstance.selectorNotes = getFormParam(Const.SELECTOR_NOTES);
         } 
         if (getFormParam(Const.ARCHIVIST_NOTES) != null) {
-        	newInstance.archivist_notes = getFormParam(Const.ARCHIVIST_NOTES);
+        	newInstance.archivistNotes = getFormParam(Const.ARCHIVIST_NOTES);
         } 
         if (getFormParam(Const.LEGACY_SITE_ID) != null 
         		&& getFormParam(Const.LEGACY_SITE_ID).length() > 0
         		&& Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
-        	newInstance.legacy_site_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
+        	newInstance.legacySite_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
         }
 
 		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
@@ -141,37 +141,37 @@ public class InstanceController extends AbstractController {
         	}
         }            
         if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
-        	newInstance.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
+        	newInstance.fieldLiveSiteStatus = getFormParam(Const.LIVE_SITE_STATUS);
         } 
         if (getFormParam(Const.FIELD_SUBJECT) != null) {
-        	newInstance.field_subject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
-    		Logger.debug("newInstance.field_subject: " + newInstance.field_subject);
-    		if (newInstance.field_subject == null) {
-    			newInstance.field_subject = Const.NONE;
+        	newInstance.fieldSubject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
+    		Logger.debug("newInstance.field_subject: " + newInstance.fieldSubject);
+    		if (newInstance.fieldSubject == null) {
+    			newInstance.fieldSubject = Const.NONE;
     		}
         } else {
-        	newInstance.field_subject = Const.NONE;
+        	newInstance.fieldSubject = Const.NONE;
         }            
 //		newInstance.updateSubject();
         if (getFormParam(Const.TREE_KEYS) != null) {
-        	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-        	newInstance.collection_to_instance = DCollection.convertUrlsToObjects(newInstance.field_collection_categories);
+        	newInstance.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+        	newInstance.collectionToInstance = Collection.convertUrlsToObjects(newInstance.fieldCollectionCategories);
 //        	newInstance.updateCollection();
-    		Logger.debug("newInstance.field_collection_categories: " + newInstance.field_collection_categories);
+    		Logger.debug("newInstance.field_collection_categories: " + newInstance.fieldCollectionCategories);
         }
         if (getFormParam(Const.ORGANISATION) != null) {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
-        		newInstance.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+        		newInstance.fieldNominatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
         		newInstance.updateOrganisation();
         	} else {
-        		newInstance.field_nominating_organisation = Const.NONE;
+        		newInstance.fieldNominatingOrganisation = Const.NONE;
         	}
         }
         if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
         	if (!getFormParam(Const.ORIGINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-        		newInstance.originating_organisation = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
+        		newInstance.originatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
         	} else {
-        		newInstance.originating_organisation = Const.NONE;
+        		newInstance.originatingOrganisation = Const.NONE;
         	}
         }
         if (getFormParam(Const.AUTHOR) != null) {
@@ -189,7 +189,7 @@ public class InstanceController extends AbstractController {
             		}
                 }
             	newInstance.tags = resTags;
-            	newInstance.tag_to_instance = Tag.convertUrlsToObjects(newInstance.tags);
+            	newInstance.tagToInstance = Tag.convertUrlsToObjects(newInstance.tags);
         	} else {
         		newInstance.tags = Const.NONE;
         	}
@@ -206,7 +206,7 @@ public class InstanceController extends AbstractController {
             		}
                 }
             	newInstance.flags = resFlags;
-            	newInstance.flag_to_instance = Flag.convertUrlsToObjects(newInstance.flags);
+            	newInstance.flagToInstance = Flag.convertUrlsToObjects(newInstance.flags);
         	} else {
         		newInstance.flags = Const.NONE;
         	}
@@ -215,57 +215,59 @@ public class InstanceController extends AbstractController {
         newInstance.summary = getFormParam(Const.SUMMARY);
         newInstance.revision = getFormParam(Const.REVISION);
         if (getFormParam(Const.FIELD_WCT_ID) != null  && getFormParam(Const.FIELD_WCT_ID).length() > 0) {
-        	newInstance.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
+        	newInstance.fieldWct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
         }
         if (getFormParam(Const.FIELD_SPT_ID) != null && getFormParam(Const.FIELD_SPT_ID).length() > 0) {
-        	newInstance.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+        	newInstance.fieldSpt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
         }
-        newInstance.field_license = getFormParam(Const.FIELD_LICENSE);
+        newInstance.fieldLicense = getFormParam(Const.FIELD_LICENSE);
 //        newInstance.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
-        newInstance.field_uk_hosting = Target.isInScopeIp(newInstance.field_url, newInstance.url);
-    	Logger.debug("field_uk_hosting: " + newInstance.field_uk_hosting);
-        newInstance.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
-        newInstance.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
-        newInstance.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
-        newInstance.field_notes = getFormParam(Const.FIELD_NOTES);
-        newInstance.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
-        newInstance.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
-        newInstance.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
-        newInstance.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));           
+        newInstance.fieldUkHosting = Target.isInScopeIp(newInstance.fieldUrl, newInstance.url);
+    	Logger.debug("field_uk_hosting: " + newInstance.fieldUkHosting);
+        newInstance.fieldUkPostalAddress = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
+        newInstance.fieldUkPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
+        newInstance.fieldViaCorrespondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
+        newInstance.fieldNotes = getFormParam(Const.FIELD_NOTES);
+        newInstance.fieldProfessionalJudgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
+        newInstance.fieldProfessionalJudgementExp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
+        newInstance.fieldNoLdCriteriaMet = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
+        newInstance.fieldIgnoreRobotsTxt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));           
         if (getFormParam(Const.FIELD_CRAWL_START_DATE) != null) {
         	String startDateHumanView = getFormParam(Const.FIELD_CRAWL_START_DATE);
         	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
         	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
-        	newInstance.field_crawl_start_date = startDateUnix;
+        	// TODO: UNIX DATE
+//        	newInstance.fieldCrawlStartDate = startDateUnix;
         }
         if (getFormParam(Const.FIELD_CRAWL_END_DATE) != null) {
         	String endDateHumanView = getFormParam(Const.FIELD_CRAWL_END_DATE);
         	String endDateUnix = Utils.getUnixDateStringFromDate(endDateHumanView);
         	Logger.info("endDateHumanView: " + endDateHumanView + ", endDateUnix: " + endDateUnix);
-        	newInstance.field_crawl_end_date = endDateUnix;
+        	// TODO: UNIX DATE
+//        	newInstance.fieldCrawlEndDate = endDateUnix;
         }
-        newInstance.date_of_publication = getFormParam(Const.DATE_OF_PUBLICATION);
-        newInstance.white_list = getFormParam(Const.WHITE_LIST);
-        newInstance.black_list = getFormParam(Const.BLACK_LIST);
+        newInstance.dateOfPublication = getFormParam(Const.DATE_OF_PUBLICATION);
+        newInstance.whiteList = getFormParam(Const.WHITE_LIST);
+        newInstance.blackList = getFormParam(Const.BLACK_LIST);
         if (getFormParam(Const.FIELD_DEPTH) != null) {
-        	newInstance.field_depth = Targets.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+        	newInstance.fieldDepth = Targets.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
         }
         if (getFormParam(Const.FIELD_SCOPE) != null) {
-        	newInstance.field_scope = Targets.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+        	newInstance.fieldScope = Targets.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
         }
-        newInstance.field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
+        newInstance.fieldCrawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
         newInstance.keywords = getFormParam(Const.KEYWORDS);
 //        Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
         newInstance.synonyms = getFormParam(Const.SYNONYMS);
         if (getFormParam(Const.FIELD_QA_STATUS) != null) {
-        	newInstance.field_qa_status = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
+        	newInstance.fieldQaStatus = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
         }             
         if (getFormParam(Const.QA_STATUS) != null) {
         	if (!getFormParam(Const.QA_STATUS).toLowerCase().contains(Const.NONE)) {
         		Logger.info("Instance qa status: " + getFormParam(Const.QA_STATUS));
-        		newInstance.qa_status = getFormParam(Const.QA_STATUS);
+        		newInstance.qaStatus = getFormParam(Const.QA_STATUS);
         	} else {
-        		newInstance.qa_status = Const.NONE;
+        		newInstance.qaStatus = Const.NONE;
         	}
         }
         if (getFormParam(Const.QA_ISSUE_CATEGORY) != null) {
@@ -280,13 +282,13 @@ public class InstanceController extends AbstractController {
             			resIssueCategories = resIssueCategories + issueCategory + Const.LIST_DELIMITER;
             		}
                 }
-            	newInstance.qa_issue_category = resIssueCategories;
+            	newInstance.qaIssueCategory = resIssueCategories;
         	} else {
-        		newInstance.qa_issue_category = Const.NONE;
+        		newInstance.qaIssueCategory = Const.NONE;
         	}
         }
-        newInstance.qa_notes = getFormParam(Const.QA_NOTES);
-        newInstance.quality_notes = getFormParam(Const.QUALITY_NOTES);
+        newInstance.qaNotes = getFormParam(Const.QA_NOTES);
+        newInstance.qualityNotes = getFormParam(Const.QUALITY_NOTES);
 
         Form<Instance> instanceFormNew = Form.form(Instance.class);
 		instanceFormNew = instanceFormNew.fill(newInstance);
@@ -309,7 +311,7 @@ public class InstanceController extends AbstractController {
         Logger.info("save: " + save);
         Logger.info("delete: " + delete);
         if (save != null) {
-        	Logger.info("input data for saving instance nid: " + getFormParam(Const.NID) + 
+        	Logger.info("input data for saving instance nid: " + getFormParam(Const.ID) + 
         			", url: " + getFormParam(Const.URL) + 
         			", field url: " + getFormParam(Const.FIELD_URL_NODE) + 
         			", title: " + getFormParam(Const.TITLE) + 
@@ -360,22 +362,22 @@ public class InstanceController extends AbstractController {
         	Instance newInstance = new Instance();
             boolean isExisting = true;
             try {
-        	    newInstance = Instance.findById(Long.valueOf(getFormParam(Const.NID)));
+        	    newInstance = Instance.findById(Long.valueOf(getFormParam(Const.ID)));
             } catch (Exception e) {
             	Logger.info("is not existing exception");
             	isExisting = false;
             	newInstance = new Instance();
-            	newInstance.nid = Long.valueOf(getFormParam(Const.NID));
+            	newInstance.id = Long.valueOf(getFormParam(Const.ID));
 //            	newInstance.url = getFormParam(Const.URL);            	
-        		newInstance.url = Const.ACT_URL + newInstance.nid;
-        		newInstance.edit_url = Const.WCT_URL + newInstance.nid;            	
+        		newInstance.url = Const.ACT_URL + newInstance.id;
+        		newInstance.editUrl = Const.WCT_URL + newInstance.id;            	
             }
             if (newInstance == null) {
             	newInstance = new Instance();
-            	newInstance.nid = Long.valueOf(getFormParam(Const.NID));
+            	newInstance.id = Long.valueOf(getFormParam(Const.ID));
 //            	newInstance.url = getFormParam(Const.URL);      
-        		newInstance.url = Const.ACT_URL + newInstance.nid;
-        		newInstance.edit_url = Const.WCT_URL + newInstance.nid;            	
+        		newInstance.url = Const.ACT_URL + newInstance.id;
+        		newInstance.editUrl = Const.WCT_URL + newInstance.id;            	
             	Logger.info("is not existing");
             	isExisting = false;
             }
@@ -390,11 +392,11 @@ public class InstanceController extends AbstractController {
             if (newInstance.author == null) {
             	newInstance.author = getFormParam(Const.USER);
             }
-//            Logger.info("new nid: " + newInstance.nid);
+//            Logger.info("new nid: " + newInstance.id);
             newInstance.title = getFormParam(Const.TITLE);
-            newInstance.field_url = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
-            newInstance.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
-            newInstance.field_description = getFormParam(Const.DESCRIPTION);
+            newInstance.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
+            newInstance.fieldKeySite = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
+            newInstance.fieldDescription = getFormParam(Const.DESCRIPTION);
             if (getFormParam(Const.STATUS) != null) {
             	newInstance.status = Long.valueOf(getFormParam(Const.STATUS));
             } 
@@ -402,17 +404,17 @@ public class InstanceController extends AbstractController {
             	newInstance.language = getFormParam(Const.LANGUAGE);
             } 
             if (getFormParam(Const.SELECTION_TYPE) != null) {
-            	newInstance.selection_type = getFormParam(Const.SELECTION_TYPE);
+            	newInstance.selectionType = getFormParam(Const.SELECTION_TYPE);
             } 
             if (getFormParam(Const.SELECTOR_NOTES) != null) {
-            	newInstance.selector_notes = getFormParam(Const.SELECTOR_NOTES);
+            	newInstance.selectorNotes = getFormParam(Const.SELECTOR_NOTES);
             } 
             if (getFormParam(Const.ARCHIVIST_NOTES) != null) {
-            	newInstance.archivist_notes = getFormParam(Const.ARCHIVIST_NOTES);
+            	newInstance.archivistNotes = getFormParam(Const.ARCHIVIST_NOTES);
             } 
             if (getFormParam(Const.LEGACY_SITE_ID) != null && getFormParam(Const.LEGACY_SITE_ID).length() > 0) {
         		Logger.info("legacy site id: " + getFormParam(Const.LEGACY_SITE_ID) + ".");
-            	newInstance.legacy_site_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
+            	newInstance.legacySite_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
             }
 
     		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
@@ -434,34 +436,34 @@ public class InstanceController extends AbstractController {
             	}
             }            
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
-            	newInstance.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
+            	newInstance.fieldLiveSiteStatus = getFormParam(Const.LIVE_SITE_STATUS);
             } 
             if (getFormParam(Const.FIELD_SUBJECT) != null) {
-            	newInstance.field_subject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
-        		Logger.debug("newInstance.field_subject: " + newInstance.field_subject);
+            	newInstance.fieldSubject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
+        		Logger.debug("newInstance.field_subject: " + newInstance.fieldSubject);
             } else {
-            	newInstance.field_subject = Const.NONE;
+            	newInstance.fieldSubject = Const.NONE;
             }            
-            Utils.removeAssociationFromDb(Const.SUBJECT_INSTANCE, Const.ID + "_" + Const.INSTANCE, newInstance.nid);
-            newInstance.subject_to_instance = Taxonomy.convertUrlsToObjects(newInstance.field_subject);
+            Utils.removeAssociationFromDb(Const.SUBJECT_INSTANCE, Const.ID + "_" + Const.INSTANCE, newInstance.id);
+            newInstance.subjectToInstance = Taxonomy.convertUrlsToObjects(newInstance.fieldSubject);
             if (getFormParam(Const.TREE_KEYS) != null) {
-            	newInstance.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-            	newInstance.collection_to_instance = DCollection.convertUrlsToObjects(newInstance.field_collection_categories);
-	    		Logger.debug("newInstance.field_collection_categories: " + newInstance.field_collection_categories);
+            	newInstance.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+            	newInstance.collectionToInstance = Collection.convertUrlsToObjects(newInstance.fieldCollectionCategories);
+	    		Logger.debug("newInstance.field_collection_categories: " + newInstance.fieldCollectionCategories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
-            		newInstance.field_nominating_organisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+            		newInstance.fieldNominatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
             		newInstance.updateOrganisation();
             	} else {
-            		newInstance.field_nominating_organisation = Const.NONE;
+            		newInstance.fieldNominatingOrganisation = Const.NONE;
             	}
             }
             if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
             	if (!getFormParam(Const.ORIGINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-            		newInstance.originating_organisation = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
+            		newInstance.originatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
             	} else {
-            		newInstance.originating_organisation = Const.NONE;
+            		newInstance.originatingOrganisation = Const.NONE;
             	}
             }
             if (getFormParam(Const.AUTHOR) != null) {
@@ -479,7 +481,7 @@ public class InstanceController extends AbstractController {
 	            		}
 	                }
 	            	newInstance.tags = resTags;
-	            	newInstance.tag_to_instance = Tag.convertUrlsToObjects(newInstance.tags);
+	            	newInstance.tagToInstance = Tag.convertUrlsToObjects(newInstance.tags);
             	} else {
             		newInstance.tags = Const.NONE;
             	}
@@ -496,7 +498,7 @@ public class InstanceController extends AbstractController {
 	            		}
 	                }
 	            	newInstance.flags = resFlags;
-	            	newInstance.flag_to_instance = Flag.convertUrlsToObjects(newInstance.flags);
+	            	newInstance.flagToInstance = Flag.convertUrlsToObjects(newInstance.flags);
             	} else {
             		newInstance.flags = Const.NONE;
             	}
@@ -505,77 +507,79 @@ public class InstanceController extends AbstractController {
             newInstance.summary = getFormParam(Const.SUMMARY);
             newInstance.revision = getFormParam(Const.REVISION);
             if (getFormParam(Const.FIELD_WCT_ID) != null  && getFormParam(Const.FIELD_WCT_ID).length() > 0) {
-            	newInstance.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
+            	newInstance.fieldWct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
             }
             if (getFormParam(Const.FIELD_SPT_ID) != null && getFormParam(Const.FIELD_SPT_ID).length() > 0) {
-            	newInstance.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+            	newInstance.fieldSpt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
             }
-            newInstance.field_license = getFormParam(Const.FIELD_LICENSE);
+            newInstance.fieldLicense = getFormParam(Const.FIELD_LICENSE);
 //            newInstance.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
-            newInstance.field_uk_hosting = Target.isInScopeIp(newInstance.field_url, newInstance.url);
-        	Logger.debug("field_uk_hosting: " + newInstance.field_uk_hosting);
-            newInstance.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
-            newInstance.field_uk_postal_address_url = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
-            Logger.debug("field_uk_postal_address: " + newInstance.field_uk_postal_address + 
-            		", field_uk_postal_address_url: " + newInstance.field_uk_postal_address_url);
-            if (newInstance.field_uk_postal_address 
-            		&& (newInstance.field_uk_postal_address_url == null || newInstance.field_uk_postal_address_url.length() == 0)) {
+            newInstance.fieldUkHosting = Target.isInScopeIp(newInstance.fieldUrl, newInstance.url);
+        	Logger.debug("field_uk_hosting: " + newInstance.fieldUkHosting);
+            newInstance.fieldUkPostalAddress = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
+            newInstance.fieldUkPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
+            Logger.debug("field_uk_postal_address: " + newInstance.fieldUkPostalAddress + 
+            		", field_uk_postal_address_url: " + newInstance.fieldUkPostalAddressUrl);
+            if (newInstance.fieldUkPostalAddress 
+            		&& (newInstance.fieldUkPostalAddressUrl == null || newInstance.fieldUkPostalAddressUrl.length() == 0)) {
             	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
 	  			flash("message", "If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
 	  			return info();
             }
-            newInstance.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
-            newInstance.field_notes = getFormParam(Const.FIELD_NOTES);
-            if (newInstance.field_via_correspondence 
+            newInstance.fieldViaCorrespondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
+            newInstance.fieldNotes = getFormParam(Const.FIELD_NOTES);
+            if (newInstance.fieldViaCorrespondence 
             		&& (newInstance.value == null || newInstance.value.length() == 0)) {
             	Logger.info("If Via Correspondence field has value 'Yes', the Notes field is required.");
 	  			flash("message", "If Via Correspondence field has value 'Yes', the Notes field is required.");
 	  			return info();
             }
-            newInstance.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
-            newInstance.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
-            if (newInstance.field_professional_judgement 
-            		&& (newInstance.field_professional_judgement_exp == null || newInstance.field_professional_judgement_exp.length() == 0)) {
+            newInstance.fieldProfessionalJudgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
+            newInstance.fieldProfessionalJudgementExp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
+            if (newInstance.fieldProfessionalJudgement 
+            		&& (newInstance.fieldProfessionalJudgementExp == null || newInstance.fieldProfessionalJudgementExp.length() == 0)) {
             	Logger.info("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
 	  			flash("message", "If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
 	  			return info();
             }
-            newInstance.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
-            newInstance.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));           
+            newInstance.fieldNoLdCriteriaMet = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
+            newInstance.fieldIgnoreRobotsTxt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));           
             if (getFormParam(Const.FIELD_CRAWL_START_DATE) != null) {
             	String startDateHumanView = getFormParam(Const.FIELD_CRAWL_START_DATE);
             	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
             	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
-            	newInstance.field_crawl_start_date = startDateUnix;
+            	// TODO: UNIX DATES
+//            	newInstance.fieldCrawlStartDate = startDateUnix;
             }
             if (getFormParam(Const.FIELD_CRAWL_END_DATE) != null) {
             	String endDateHumanView = getFormParam(Const.FIELD_CRAWL_END_DATE);
             	String endDateUnix = Utils.getUnixDateStringFromDate(endDateHumanView);
             	Logger.info("endDateHumanView: " + endDateHumanView + ", endDateUnix: " + endDateUnix);
-            	newInstance.field_crawl_end_date = endDateUnix;
+            	// TODO: UNIX DATES
+//            	newInstance.fieldcrawlEndDate = endDateUnix;
             }
-            newInstance.date_of_publication = getFormParam(Const.DATE_OF_PUBLICATION);
-            newInstance.white_list = getFormParam(Const.WHITE_LIST);
-            newInstance.black_list = getFormParam(Const.BLACK_LIST);
+            newInstance.dateOfPublication = getFormParam(Const.DATE_OF_PUBLICATION);
+            newInstance.whiteList = getFormParam(Const.WHITE_LIST);
+            newInstance.blackList = getFormParam(Const.BLACK_LIST);
             if (getFormParam(Const.FIELD_DEPTH) != null) {
-            	newInstance.field_depth = Targets.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+            	newInstance.fieldDepth = Targets.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
             }
             if (getFormParam(Const.FIELD_SCOPE) != null) {
-            	newInstance.field_scope = Targets.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+            	newInstance.fieldScope = Targets.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
             }
-            newInstance.field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
+            newInstance.fieldCrawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
             newInstance.keywords = getFormParam(Const.KEYWORDS);
 //            Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
             newInstance.synonyms = getFormParam(Const.SYNONYMS);
             if (getFormParam(Const.FIELD_QA_STATUS) != null) {
-            	newInstance.field_qa_status = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
+            	newInstance.fieldQaStatus = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
             }             
             if (getFormParam(Const.QA_STATUS) != null) {
             	if (!getFormParam(Const.QA_STATUS).toLowerCase().contains(Const.NONE)) {
             		Logger.info("Instance qa status: " + getFormParam(Const.QA_STATUS));
-            		newInstance.qa_status = getFormParam(Const.QA_STATUS);
+            		newInstance.qaStatus = getFormParam(Const.QA_STATUS);
             	} else {
-            		newInstance.qa_status = Const.NONE;
+            		newInstance.qaStatus = Const.NONE;
             	}
             }
             if (getFormParam(Const.QA_ISSUE_CATEGORY) != null) {
@@ -590,30 +594,31 @@ public class InstanceController extends AbstractController {
 	            			resIssueCategories = resIssueCategories + issueCategory + Const.LIST_DELIMITER;
 	            		}
 	                }
-	            	newInstance.qa_issue_category = resIssueCategories;
+	            	newInstance.qaIssueCategory = resIssueCategories;
             	} else {
-            		newInstance.qa_issue_category = Const.NONE;
+            		newInstance.qaIssueCategory = Const.NONE;
             	}
             }
-            newInstance.qa_notes = getFormParam(Const.QA_NOTES);
-            newInstance.quality_notes = getFormParam(Const.QUALITY_NOTES);
+            newInstance.qaNotes = getFormParam(Const.QA_NOTES);
+            newInstance.qualityNotes = getFormParam(Const.QUALITY_NOTES);
 
             long unixTime = System.currentTimeMillis() / 1000L;
             String changedTime = String.valueOf(unixTime);
             Logger.info("changed time: " + changedTime);
-            newInstance.changed = changedTime;
+            // TODO: UNIX DATE use updatedAt
+//            newInstance.updatedAt = changedTime;
 
         	if (!isExisting) {
             	Ebean.save(newInstance);
-    	        Logger.info("save instance: " + newInstance.nid);
+    	        Logger.info("save instance: " + newInstance.id);
         	} else {
-        		Logger.info("update instance: " + newInstance.nid);
+        		Logger.info("update instance: " + newInstance.id);
             	Ebean.update(newInstance);
         	}
 	        return redirect(routes.InstanceController.edit(newInstance.url));
         } 
         if (delete != null) {
-        	Long id = Long.valueOf(getFormParam(Const.NID));
+        	Long id = Long.valueOf(getFormParam(Const.ID));
         	Logger.info("deleting instance: " + id);
         	Instance instance = Instance.findById(id);
         	Ebean.delete(instance);
@@ -644,7 +649,7 @@ public class InstanceController extends AbstractController {
     	String res = "";
         final StringBuffer sb = new StringBuffer();
     	sb.append(", \"children\":");
-    	List<DCollection> childSuggestedCollections = DCollection.getChildLevelCollections(url);
+    	List<Collection> childSuggestedCollections = Collection.getChildLevelCollections(url);
     	if (childSuggestedCollections.size() > 0) {
 	    	sb.append(getTreeElements(childSuggestedCollections, targetUrl, false));
 	    	res = sb.toString();
@@ -663,8 +668,8 @@ public class InstanceController extends AbstractController {
     	String res = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance instance = Instance.findByUrl(targetUrl);
-    		if (instance.field_collection_categories != null && 
-    				instance.field_collection_categories.contains(collectionUrl)) {
+    		if (instance.fieldCollectionCategories != null && 
+    				instance.fieldCollectionCategories.contains(collectionUrl)) {
     			res = "\"select\": true ,";
     		}
     	}
@@ -678,15 +683,15 @@ public class InstanceController extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static String getTreeElements(List<DCollection> collectionList, String targetUrl, boolean parent) { 
+    public static String getTreeElements(List<Collection> collectionList, String targetUrl, boolean parent) { 
     	String res = "";
     	if (collectionList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
 	        sb.append("[");
-	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	Iterator<Collection> itr = collectionList.iterator();
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
-	    		DCollection collection = itr.next();
+	    		Collection collection = itr.next();
 //    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
 	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
@@ -718,7 +723,7 @@ public class InstanceController extends AbstractController {
 //    	Logger.info("getSuggestedCollections()");
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
-    	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
+    	List<Collection> suggestedCollections = Collection.getFirstLevelCollections();
     	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
 //    	Logger.info("suggestedCollections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
@@ -758,8 +763,8 @@ public class InstanceController extends AbstractController {
     	String res = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
-    		if (target.field_subject != null && 
-    				target.field_subject.contains(subjectUrl)) {
+    		if (target.fieldSubject != null && 
+    				target.fieldSubject.contains(subjectUrl)) {
     			res = "\"select\": true ,";
     		}
     	}
@@ -776,8 +781,8 @@ public class InstanceController extends AbstractController {
     	String res = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
-    		if (target.field_subject != null 
-    				&& (target.field_subject.toLowerCase().contains(Const.NONE.toLowerCase()))) {
+    		if (target.fieldSubject != null 
+    				&& (target.fieldSubject.toLowerCase().contains(Const.NONE.toLowerCase()))) {
     			res = "\"select\": true ,";
     		}
     	}

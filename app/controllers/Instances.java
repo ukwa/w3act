@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.DCollection;
+import models.Collection;
 import models.Instance;
 import models.Taxonomy;
 import models.User;
@@ -164,9 +164,9 @@ public class Instances extends AbstractController {
 				Logger.info("addEntry()");
 				Instance instance = new Instance();
 				instance.title = query;
-				instance.nid = Utils.createId();
-				instance.url = Const.ACT_URL + instance.nid;
-				instance.field_scope = "";
+				instance.id = Utils.createId();
+				instance.url = Const.ACT_URL + instance.id;
+				instance.fieldScope = "";
 				instance.revision = Const.INITIAL_REVISION;
 				Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
     			Form<Instance> instanceForm = Form.form(Instance.class);
@@ -191,9 +191,9 @@ public class Instances extends AbstractController {
         Logger.info("addEntry()");
     	Instance instance = new Instance();
     	instance.title = title;
-        instance.nid = Utils.createId();
-        instance.url = Const.ACT_URL + instance.nid;
-        instance.field_scope = "";
+        instance.id = Utils.createId();
+        instance.url = Const.ACT_URL + instance.id;
+        instance.fieldScope = "";
         instance.revision = Const.INITIAL_REVISION;
 		Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
 		Form<Instance> instanceForm = Form.form(Instance.class);
@@ -229,15 +229,15 @@ public class Instances extends AbstractController {
 		Iterator<Instance> itr = allInstances.iterator();
 		while (itr.hasNext()) {
 			Instance instance = itr.next();
-			if (instance.field_license != null && instance.field_license.length() > 0 && !subjects.contains(instance.field_license)) {
-		        ExpressionList<Instance> ll = Instance.find.where().contains("field_license", instance.field_license);
+			if (instance.fieldLicense != null && instance.fieldLicense.length() > 0 && !subjects.contains(instance.fieldLicense)) {
+		        ExpressionList<Instance> ll = Instance.find.where().contains("field_license", instance.fieldLicense);
 		        if (ll.findRowCount() > 0) {
-		        	Taxonomy taxonomy = Taxonomy.findByUrl(instance.field_license);
-		        	Logger.info("instance.field_license: " + instance.field_license + ".");
+		        	Taxonomy taxonomy = Taxonomy.findByUrl(instance.fieldLicense);
+		        	Logger.info("instance.field_license: " + instance.fieldLicense + ".");
 //		        	Logger.info("taxonomy url: " + taxonomy.url);
 //		        	Logger.info("license: " + taxonomy.name);
 		        	res.add(taxonomy);
-		        	subjects.add(instance.field_license);
+		        	subjects.add(instance.fieldLicense);
 		        }
 			}
 		}
@@ -256,11 +256,11 @@ public class Instances extends AbstractController {
 		Iterator<Instance> itr = allInstances.iterator();
 		while (itr.hasNext()) {
 			Instance instance = itr.next();
-			if (instance.field_crawl_frequency != null && instance.field_crawl_frequency.length() > 0 && !subjects.contains(instance.field_crawl_frequency)) {
-		        ExpressionList<Instance> ll = Instance.find.where().contains("field_crawl_frequency", instance.field_crawl_frequency);
+			if (instance.fieldCrawlFrequency != null && instance.fieldCrawlFrequency.length() > 0 && !subjects.contains(instance.fieldCrawlFrequency)) {
+		        ExpressionList<Instance> ll = Instance.find.where().contains("field_crawl_frequency", instance.fieldCrawlFrequency);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(instance);
-		        	subjects.add(instance.field_crawl_frequency);
+		        	subjects.add(instance.fieldCrawlFrequency);
 		        }
 			}
 		}
@@ -278,11 +278,11 @@ public class Instances extends AbstractController {
 		Iterator<Instance> itr = allInstances.iterator();
 		while (itr.hasNext()) {
 			Instance instance = itr.next();
-			if (instance.field_depth != null && instance.field_depth.length() > 0 && !subjects.contains(instance.field_depth)) {
-		        ExpressionList<Instance> ll = Instance.find.where().contains("field_depth", instance.field_depth);
+			if (instance.fieldDepth != null && instance.fieldDepth.length() > 0 && !subjects.contains(instance.fieldDepth)) {
+		        ExpressionList<Instance> ll = Instance.find.where().contains("field_depth", instance.fieldDepth);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(instance);
-		        	subjects.add(instance.field_depth);
+		        	subjects.add(instance.fieldDepth);
 		        }
 			}
 		}
@@ -301,12 +301,12 @@ public class Instances extends AbstractController {
 		Iterator<Instance> itr = allInstances.iterator();
 		while (itr.hasNext()) {
 			Instance instance = itr.next();
-			if (instance.field_collection_categories != null && instance.field_collection_categories.length() > 0 && !subjects.contains(instance.field_collection_categories)) {
-		        ExpressionList<Instance> ll = Instance.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, instance.field_collection_categories);
+			if (instance.fieldCollectionCategories != null && instance.fieldCollectionCategories.length() > 0 && !subjects.contains(instance.fieldCollectionCategories)) {
+		        ExpressionList<Instance> ll = Instance.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, instance.fieldCollectionCategories);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(instance);
-		        	subjects.add(instance.field_collection_categories);
-		        	Taxonomy taxonomy = Taxonomy.findByUrl(instance.field_collection_categories);
+		        	subjects.add(instance.fieldCollectionCategories);
+		        	Taxonomy taxonomy = Taxonomy.findByUrl(instance.fieldCollectionCategories);
 		        	taxonomies.add(taxonomy);
 		        }
 			}

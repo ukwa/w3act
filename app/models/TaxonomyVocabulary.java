@@ -16,7 +16,7 @@ import play.db.ebean.*;
 public class TaxonomyVocabulary extends Model {
 
     @Id
-    public Long vid;
+    public Long id;
     public String name;  
     public String machine_name;
     @Column(columnDefinition = "TEXT")
@@ -64,7 +64,7 @@ public class TaxonomyVocabulary extends Model {
     }
         
     public String toString() {
-        return "Taxonomy vocabulary (" + vid + ") with name: " + name;
+        return "Taxonomy vocabulary (" + id + ") with name: " + name;
     }
 
 }

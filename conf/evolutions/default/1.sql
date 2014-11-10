@@ -3,69 +3,71 @@
 
 # --- !Ups
 
-create table communication_log (
-  id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  curator                   TEXT,
-  date                      TEXT,
-  ttype                     TEXT,
-  permission                TEXT,
-  notes                     TEXT,
-  last_update               timestamp not null,
-  constraint pk_communication_log primary key (id))
+create table CommunicationLog (
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
+  url                       text,
+  name                      text,
+  curator                   text,
+  ttype                     text,
+  permission                text,
+  notes                     text,
+  createdAt                 timestamp not null,
+  updatedAt               	timestamp not null,
+  constraint pkCommunicationLog primary key (id))
 ;
 
-create table contact_person (
-  id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  position                  TEXT,
-  phone                     TEXT,
-  email                     TEXT,
-  postal_address            TEXT,
-  web_form                  TEXT,
-  description               TEXT,
-  contact_organisation      TEXT,
-  default_contact           boolean,
-  permission_checked        boolean,
-  last_update               timestamp not null,
-  constraint pk_contact_person primary key (id))
+create table ContactPerson (
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
+  url                       text,
+  name                      text,
+  position                  text,
+  phone                     text,
+  email                     text,
+  postalAddress            	text,
+  webForm                  	text,
+  description               text,
+  contactOrganisation      	text,
+  defaultContact           	boolean,
+  permissionChecked        	boolean,
+  createdAt                 timestamp not null,
+  updatedAt               	timestamp not null,
+  constraint pkContactPerson primary key (id))
 ;
 
-create table crawl_permission (
-  id                        bigint not null,
-  id_target                 bigint,
-  id_mailtemplate           bigint,
-  id_contactperson          bigint,
-  url                       TEXT,
-  name                      TEXT,
-  target                    TEXT,
-  description               TEXT,
-  any_other_information     TEXT,
-  status                    TEXT,
-  contact_person            TEXT,
-  creator_user              TEXT,
-  assigned_archivist        TEXT,
-  template                  TEXT,
-  license                   TEXT,
-  license_date              TEXT,
-  request_followup          boolean,
-  number_requests           bigint,
-  third_party_content       boolean,
+create table CrawlPermission (
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
+  target_id                 bigint,
+  mailTemplate_id           bigint,
+  contactPerson_id          bigint,
+  url                       text,
+  name                      text,
+  target                    text,
+  description               text,
+  anyOtherInformation     	text,
+  status                    text,
+  contactPerson            	text,
+  creatorUser              	text,
+  assignedArchivist        	text,
+  template                  text,
+  license                   text,
+  licenseDate              	timestamp not null,
+  requestFollowup          	boolean,
+  numberRequests           	bigint,
+  thirdPartyContent       	boolean,
   publish                   boolean,
   agree                     boolean,
-  last_update               timestamp not null,
-  constraint pk_crawl_permission primary key (id))
+  createdAt                 timestamp not null,
+  updatedAt               	timestamp not null,
+  constraint pkCrawlPermission primary key (id))
 ;
 
-create table dcollection (
-  ID                        bigint not null,
-  value                     TEXT,
-  summary                   TEXT,
+create table Collection (
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
+  value                     text,
+  summary                   text,
   format                    varchar(255),
   vid                       bigint,
-  is_new                    boolean,
+  isNew                    	boolean,
   type                      varchar(255),
   title                     varchar(255),
   language                  varchar(255),
@@ -74,139 +76,139 @@ create table dcollection (
   status                    bigint,
   promote                   bigint,
   sticky                    bigint,
-  created                   varchar(255),
-  changed                   varchar(255),
   author                    varchar(255),
   log                       varchar(255),
   comment                   bigint,
-  comment_count             bigint,
-  comment_count_new         bigint,
+  commentCount             	bigint,
+  commentCountNew         	bigint,
   revision                  varchar(255),
-  feed_nid                  bigint,
-  field_owner               TEXT,
-  field_dates               TEXT,
+  feedNid                  	bigint,
+  fieldOwner               	text,
+  fieldDates               	text,
   publish                   boolean,
-  field_targets             TEXT,
-  field_sub_collections     TEXT,
-  field_instances           TEXT,
+  fieldTargets             	text,
+  fieldSubCollections     	text,
+  fieldInstances           	text,
   weight                    bigint,
-  node_count                bigint,
-  vocabulary                TEXT,
-  parent                    TEXT,
-  parents_all               TEXT,
-  constraint pk_dcollection primary key (ID))
+  nodeCount                	bigint,
+  vocabulary                text,
+  parent                    text,
+  parentsAll               	text,
+  createdAt                 timestamp not null,
+  updatedAt                 timestamp not null,
+  constraint pkCollection primary key (id))
 ;
 
-create table flag (
-  ID                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  description               TEXT,
-  last_update               timestamp not null,
-  constraint pk_flag primary key (ID))
+create table Flag (
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
+  url                       text,
+  name                      text,
+  description               text,
+  createdAt                 timestamp not null,
+  updatedAt                 timestamp not null,
+  constraint pkFlag primary key (id))
 ;
 
-create table instance (
-  ID                        bigint not null,
-  id_organisation           bigint,
-  value                     TEXT,
-  summary                   TEXT,
-  act_url                   varchar(255),
-  wct_url                   varchar(255),
-  format                    varchar(255),
-  field_scope               varchar(255),
-  field_depth               varchar(255),
-  field_via_correspondence  boolean,
-  field_uk_postal_address   boolean,
-  field_uk_hosting          boolean,
-  field_nominating_organisation varchar(255),
-  field_crawl_frequency     varchar(255),
-  field_crawl_start_date    varchar(255),
-  field_uk_domain           boolean,
-  field_crawl_permission    varchar(255),
-  field_special_dispensation varchar(255),
-  field_uk_geoip            boolean,
-  field_professional_judgement boolean,
-  vid                       bigint,
-  is_new                    boolean,
-  type                      varchar(255),
-  title                     varchar(255),
-  language                  varchar(255),
-  url                       varchar(255),
-  edit_url                  varchar(255),
-  status                    bigint,
-  promote                   bigint,
-  sticky                    bigint,
-  created                   varchar(255),
-  changed                   varchar(255),
-  author                    varchar(255),
-  log                       varchar(255),
-  comment                   bigint,
-  comment_count             bigint,
-  comment_count_new         bigint,
-  feed_nid                  bigint,
-  field_crawl_end_date      varchar(255),
-  field_live_site_status    varchar(255),
-  field_wct_id              bigint,
-  field_spt_id              bigint,
-  field_no_ld_criteria_met  boolean,
-  field_key_site            boolean,
-  field_professional_judgement_exp TEXT,
-  field_ignore_robots_txt   boolean,
-  revision                  varchar(255),
-  field_qa_issues           TEXT,
-  field_target              TEXT,
-  field_description_of_qa_issues TEXT,
-  field_timestamp           TEXT,
-  field_published           boolean,
-  field_to_be_published     boolean,
-  date_of_publication       varchar(255),
-  justification             TEXT,
-  selector_notes            TEXT,
-  archivist_notes           TEXT,
-  selection_type            varchar(255),
-  selector                  varchar(255),
-  legacy_site_id            bigint,
-  white_list                varchar(255),
-  black_list                varchar(255),
-  field_url                 TEXT,
-  field_description         TEXT,
-  field_uk_postal_address_url TEXT,
-  field_suggested_collections TEXT,
-  field_collections         TEXT,
-  field_license             TEXT,
-  field_collection_categories TEXT,
-  field_notes               TEXT,
-  field_instances           TEXT,
-  field_subject             TEXT,
-  field_subsubject          TEXT,
-  field_qa_status           TEXT,
-  qa_status                 TEXT,
-  qa_issue_category         TEXT,
-  qa_notes                  TEXT,
-  quality_notes             TEXT,
-  keywords                  TEXT,
-  tags                      TEXT,
-  synonyms                  TEXT,
-  originating_organisation  TEXT,
-  flags                     TEXT,
-  authors                   TEXT,
-  last_update               timestamp not null,
-  constraint pk_instance primary key (ID))
+create table Instance (
+  id 								bigint(20) NOT NULL AUTO_INCREMENT,
+  organisation_id           		bigint not null,
+  value                     		text,
+  summary                   		text,
+  actUrl                   			varchar(255),
+  wctUrl                   			varchar(255),
+  format                    		varchar(255),
+  fieldScope               			varchar(255),
+  fieldDepth               			varchar(255),
+  fieldViaCorrespondence  			boolean,
+  fieldUkPostal_address   			boolean,
+  fieldUkHosting          			boolean,
+  fieldNominatingOrganisation 		varchar(255),
+  fieldCrawlFrequency     			varchar(255),
+  fieldCrawlStartDate    			varchar(255),
+  fieldUkDomain           			boolean,
+  fieldCrawlPermission    			varchar(255),
+  fieldSpecialDispensation 			varchar(255),
+  fieldUkGeoip            			boolean,
+  fieldProfessionalJudgement 		boolean,
+  vid                       		bigint,
+  isNew                    			boolean,
+  type                      		varchar(255),
+  title                     		varchar(255),
+  language                  		varchar(255),
+  url                       		varchar(255),
+  editUrl                  			varchar(255),
+  status                    		bigint,
+  promote                   		bigint,
+  sticky                    		bigint,
+  author                    		varchar(255),
+  log                       		varchar(255),
+  comment                   		bigint,
+  commentCount             			bigint,
+  commentCountNew         			bigint,
+  feedNid                  			bigint,
+  fieldCrawlEndDate      			varchar(255),
+  fieldLiveSiteStatus    			varchar(255),
+  fieldWct_id              			bigint,
+  fieldSpt_id              			bigint,
+  fieldNoldCriteriaMet  			boolean,
+  fieldKeySite            			boolean,
+  fieldProfessionalJudgementExp 	text,
+  fieldIgnoreRobotsTxt   			boolean,
+  revision                  		varchar(255),
+  fieldQaIssues           			text,
+  fieldTarget              			text,
+  fieldDescriptionOfQaIssues 		text,
+  fieldTimestamp           			timestamp NOT NULL,
+  fieldPublished           			boolean,
+  fieldToBePublished     			boolean,
+  dateofpublication       			varchar(255),
+  justification             		text,
+  selectorNotes            			text,
+  archivistNotes           			text,
+  selectionType            			varchar(255),
+  selector                  		varchar(255),
+  legacySite_id            			bigint,
+  whiteList                			varchar(255),
+  blackList                			varchar(255),
+  fieldUrl                 			text,
+  fieldDescription         			text,
+  fieldUkPostalAddressUrl 			text,
+  fieldSuggestedCollections 		text,
+  fieldCollections         			text,
+  fieldLicense             			text,
+  fieldCollectionCategories 		text,
+  fieldNotes               			text,
+  fieldInstances           			text,
+  fieldSubject             			text,
+  fieldSubsubject          			text,
+  fieldQaStatus           			text,
+  qaStatus                 			text,
+  qaIssueCategory         			text,
+  qaNotes                  			text,
+  qualityNotes             			text,
+  keywords                  		text,
+  tags                      		text,
+  synonyms                  		text,
+  originatingOrganisation  			text,
+  flags                     		text,
+  authors                   		text,
+  createdAt                 timestamp not null,
+  updatedAt                 timestamp not null,
+  constraint pk_instance primary key (id))
 ;
 
-create table lookup_entry (
-  id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  ttype                     TEXT,
-  scopevalue                boolean,
-  last_update               timestamp not null,
-  constraint pk_lookup_entry primary key (id))
+create table LookupEntry (
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
+  url                       text,
+  name                      text,
+  ttype                     text,
+  scopeValue                boolean,
+  updatedAt               	timestamp not null,
+  constraint pkLookupEntry primary key (id))
 ;
 
 create table mail_template (
-  id                        bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   url                       TEXT,
   name                      TEXT,
   ttype                     TEXT,
@@ -220,7 +222,7 @@ create table mail_template (
 ;
 
 create table nomination (
-  id                        bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   url                       TEXT,
   name                      TEXT,
   title                     TEXT,
@@ -238,7 +240,7 @@ create table nomination (
 ;
 
 create table organisation (
-  nid                       bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   value                     TEXT,
   summary                   varchar(255),
   format                    varchar(255),
@@ -263,21 +265,21 @@ create table organisation (
   revision                  TEXT,
   feed_nid                  bigint,
   last_update               timestamp not null,
-  constraint pk_organisation primary key (nid))
+  constraint pk_organisation primary key (id))
 ;
 
 create table permission (
-  ID                        bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   name                      TEXT,
   url                       TEXT,
   description               TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_permission primary key (ID))
+  constraint pk_permission primary key (id))
 ;
 
 create table permission_refusal (
-  id                        bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   url                       TEXT,
   name                      TEXT,
   date                      TEXT,
@@ -288,26 +290,26 @@ create table permission_refusal (
 ;
 
 create table role (
-  ID                        bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   name                      TEXT,
   url                       TEXT,
   description               TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_role primary key (ID))
+  constraint pk_role primary key (id))
 ;
 
 create table tag (
-  ID                        bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   url                       TEXT,
   name                      TEXT,
   description               TEXT,
   last_update               timestamp not null,
-  constraint pk_tag primary key (ID))
+  constraint pk_tag primary key (id))
 ;
 
 create table target (
-  ID                        bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   id_organisation           bigint,
   value                     TEXT,
   summary                   TEXT,
@@ -394,11 +396,11 @@ create table target (
   qa_notes                  TEXT,
   quality_notes             TEXT,
   last_update               timestamp not null,
-  constraint pk_target primary key (ID))
+  constraint pk_target primary key (id))
 ;
 
 create table taxonomy (
-  ID                        bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   name                      varchar(255),
   ttype                     varchar(255),
   description               TEXT,
@@ -413,20 +415,20 @@ create table taxonomy (
   publish                   boolean,
   parent                    TEXT,
   parents_all               TEXT,
-  constraint pk_taxonomy primary key (ID))
+  constraint pk_taxonomy primary key (id))
 ;
 
 create table taxonomy_vocabulary (
-  vid                       bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   name                      varchar(255),
   machine_name              varchar(255),
   description               TEXT,
   term_count                bigint,
-  constraint pk_taxonomy_vocabulary primary key (vid))
+  constraint pk_taxonomy_vocabulary primary key (id))
 ;
 
 create table creator (
-  ID                        bigint not null,
+  id 						bigint(20) NOT NULL AUTO_INCREMENT,
   url                       varchar(255),
   id_organisation           bigint,
   email                     varchar(255),
@@ -442,7 +444,7 @@ create table creator (
   feed_nid                  bigint,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_creator primary key (ID))
+  constraint pk_creator primary key (id))
 ;
 
 

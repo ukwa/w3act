@@ -1,14 +1,11 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -22,64 +19,51 @@ import com.avaje.ebean.ExpressionList;
  * outside ACT. Archivist is treating each individual communication as a unique record.
  */
 @Entity
-@Table(name = "communication_log")
-public class CommunicationLog extends Model
-{
+@Table(name = "CommunicationLog")
+public class CommunicationLog extends ActModel {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2157699575463302989L;
 
-	@Id 
-    public Long id;
-   
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-	
     /**
      * The name of the communication.
      */
     @Required
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String name;
     
     /**
      * The name of the curator with whom the communication took place.
      * This name should be auto-populated with name of logged-in user.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String curator;
     
     /**
      * The date of communication in format (dd/mm/yyyy).
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String date;
     
     /**
      * Communication type: Email, Phone, Letter, Web Form, Contact Detail Request, Other.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String ttype;
     
     /**
      * This field is for associated crawl permission ID.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String permission;
     
     /**
      * Allows the addition of further notes regarding communication.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String notes;
-
-    @Version
-    public Timestamp lastUpdate;
 
     public static final Model.Finder<Long, CommunicationLog> find = new Model.Finder<Long, CommunicationLog>(Long.class, CommunicationLog.class);
 

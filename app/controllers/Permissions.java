@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import models.DCollection;
+import models.Collection;
 import models.Permission;
 import models.Target;
 import models.User;

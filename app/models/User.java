@@ -39,9 +39,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="creator")
 public class User extends Model {
 
-    @Id @JsonIgnore
-    @Column(name="ID")
-    public Long uid;
+    @Id 
+    @JsonIgnore
+    @Column(name="id")
+    public Long id;
     public String url;
 
     //bi-directional many-to-one association to Organisation

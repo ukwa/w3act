@@ -80,7 +80,7 @@ public class Target extends Model {
     	
 	//bi-directional many-to-many association to DCollection
 	@ManyToMany(mappedBy="targets") @JsonIgnore
-	public List<DCollection> collection_to_target = new ArrayList<DCollection>();
+	public List<Collection> collection_to_target = new ArrayList<Collection>();
 	
 	//bi-directional many-to-many association to Subject
 	@ManyToMany(mappedBy="targets") @JsonIgnore
@@ -307,14 +307,6 @@ public class Target extends Model {
 	}
 
     /**
-     * Generate unique nid for target.
-     * @return
-     */
-    public static int generateId() {
-    	return IdGenerator.generateUniqueId();
-    }
-    
-    /**
      * This method retrieves all targets for given user.
      * @param url
      * @return
@@ -471,7 +463,7 @@ public class Target extends Model {
 	 */
 	public static boolean isTargetId(Long id) {
 		boolean res = false;
-		Target target = find.where().eq(Const.NID, id).findUnique();
+		Target target = find.where().eq(Const.ID, id).findUnique();
 		if (target != null) {
 			res = true;
 		}
@@ -780,9 +772,9 @@ public class Target extends Model {
      * @param nid
      * @return target 
      */
-    public static Target findById(Long nid) {
-        Logger.info("target nid: " + nid);       
-        Target res = find.where().eq(Const.NID, nid).findUnique();
+    public static Target findById(Long id) {
+        Logger.info("target nid: " + id);       
+        Target res = find.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
 
@@ -1401,9 +1393,9 @@ public class Target extends Model {
     	Iterator<Instance> itr = instanceList.iterator();
     	while (itr.hasNext()) {
     		Instance instance = itr.next();
-    		if (instance.field_target != null && instance.field_target.length() > 0) {
+    		if (instance.fieldTarget != null && instance.fieldTarget.length() > 0) {
 //    			Logger.info("Target.pageReportsQa() instance.field_target: " + instance.field_target);
-    			targetUrlCollection.add(instance.field_target);
+    			targetUrlCollection.add(instance.fieldTarget);
     		}
     	}
     	if (targetUrlCollection.size() > 0) {

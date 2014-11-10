@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import models.DCollection;
+import models.Collection;
 import models.Instance;
 import models.Organisation;
 import models.Role;
@@ -272,7 +272,7 @@ public class JsonUtils {
 				if (newUser.role_to_user == null || newUser.role_to_user.size() == 0) {
 					newUser.role_to_user = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
 				}
-				newUser.uid = null;
+				newUser.id = null;
 				// Logger.info("id: " + newUser.uid + ", url: " + newUser.url +
 				// ", email: " + newUser.email +
 				// ", name: " + newUser.name + ", password: " +
@@ -328,7 +328,7 @@ public class JsonUtils {
 				boolean isInList = false;
 				Iterator<Object> itrCollection = res.iterator();
 				while (itrCollection.hasNext()) {
-					DCollection collection = (DCollection) itrCollection.next();
+					Collection collection = (Collection) itrCollection.next();
 					if (collection.title.equals(taxonomy.name)) {
 						isInList = true;
 						// replace collection URL in Targets with the existing
@@ -345,18 +345,18 @@ public class JsonUtils {
 					}
 				}
 				if (!isInList) {
-					DCollection collection = new DCollection();
-					collection.nid = taxonomy.tid;
+					Collection collection = new Collection();
+					collection.id = taxonomy.tid;
 					collection.author = taxonomy.field_owner;
 					collection.summary = taxonomy.description;
 					collection.title = taxonomy.name;
-					collection.feed_nid = taxonomy.feed_nid;
+					collection.feedNid = taxonomy.feed_nid;
 					collection.url = taxonomy.url;
 					collection.weight = taxonomy.weight;
-					collection.node_count = taxonomy.node_count;
+					collection.nodeCount = taxonomy.node_count;
 					collection.vocabulary = taxonomy.vocabulary;
-					collection.field_owner = taxonomy.field_owner;
-					collection.field_dates = taxonomy.field_dates;
+					collection.fieldOwner = taxonomy.field_owner;
+					collection.fieldDates = taxonomy.field_dates;
 					if (taxonomy.field_publish != null) {
 						collection.publish = Utils
 								.getNormalizeBooleanString(taxonomy.field_publish);
@@ -367,7 +367,7 @@ public class JsonUtils {
 					} else {
 						collection.parent = taxonomy.parent;
 					}
-					collection.parents_all = taxonomy.parents_all;
+					collection.parentsAll = taxonomy.parents_all;
 					res.add(collection);
 				}
 			}
@@ -744,7 +744,7 @@ public class JsonUtils {
 					obj = new Target();
 				}
 				if (type.equals(Const.NodeType.COLLECTION)) {
-					obj = new DCollection();
+					obj = new Collection();
 				}
 				if (type.equals(Const.NodeType.ORGANISATION)) {
 					obj = new Organisation();
@@ -822,7 +822,7 @@ public class JsonUtils {
 					isNew = false;
 					existingUser.field_affiliation = newUser.field_affiliation;
 					existingUser.updateOrganisation();
-					existingUser.uid = newUser.uid;
+					existingUser.id = newUser.id;
 					existingUser.url = newUser.url;
 					existingUser.edit_url = newUser.edit_url;
 					existingUser.last_access = newUser.last_access;
@@ -1040,7 +1040,7 @@ public class JsonUtils {
 								} else if (f.getName().equals("qa_status")) {
 									// No QA issues found (OK to publish), QA issues found, Unknown
 									// PASSED_PUBLISH_NO_ACTION_REQUIRED, ISSUE_NOTED, None
-									String fieldQaIssues = ((Instance)obj).field_qa_issues;
+									String fieldQaIssues = ((Instance)obj).fieldQaIssues;
 									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
 //									Logger.info("Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
 									f.set(obj, convertedValue);
@@ -1076,7 +1076,7 @@ public class JsonUtils {
 							if (obj instanceof Instance) {
 								if (f.getName().equals(Const.FIELD_QA_STATUS)) {
 									Logger.info("checkSubNode - FIELD_QA_STATUS >>>>>>>>>>>> " + f.getName());
-									String fieldQaIssues = ((Instance)obj).field_qa_issues;
+									String fieldQaIssues = ((Instance)obj).fieldQaIssues;
 									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
 									Logger.info("checkSubNode Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
 									f.set(obj, convertedValue);
@@ -1145,11 +1145,11 @@ public class JsonUtils {
 			// Instance instance = instanceItr.next();
 			Instance instance = iter.next();
 			// Logger.info("map instance: " + instance.toString());
-			if (instance.field_target != null) {
+			if (instance.fieldTarget != null) {
 				Logger.info("map instance.field_target: "
-						+ instance.field_target);
-				Target target = Target.findByUrl(instance.field_target);
-				instance.field_url = target.field_url;
+						+ instance.fieldTarget);
+				Target target = Target.findByUrl(instance.fieldTarget);
+				instance.fieldUrl = target.field_url;
 				// Logger.info("Instance mapped to Target object: " +
 				// instance.field_url);
 				Ebean.update(instance);

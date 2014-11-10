@@ -1,16 +1,13 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
@@ -27,40 +24,30 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * handles crawl permission requests sent by e-mail to the owner.
  */
 @Entity
-@Table(name = "crawl_permission")
-public class CrawlPermission extends Model
-{
+@Table(name = "CrawlPermission")
+public class CrawlPermission extends ActModel {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2250099575463302989L;
 
-	@Id @JsonIgnore
-    public Long id;
-
 	//bi-directional many-to-one association to Target
 	@ManyToOne
-	@JoinColumn(name="id_target")
+	@JoinColumn(name="target_id")
 	public Target target_to_crawl_permission;
     
 	//bi-directional many-to-one association to MailTemplate
 	@ManyToOne
-	@JoinColumn(name="id_mailtemplate")
+	@JoinColumn(name="mailTemplate_id")
 	public MailTemplate mailtemplate_to_crawlpermission;
 	
 	//bi-directional many-to-one association to ContactPerson
 	@ManyToOne
-	@JoinColumn(name="id_contactperson")
+	@JoinColumn(name="contactPerson_id")
 	public ContactPerson contactperson_to_crawlpermission;
 	
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     @Required
     public String name;
     
@@ -68,16 +55,16 @@ public class CrawlPermission extends Model
      * This field contains target URL.
      */
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     @Required
     public String target;
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String description;
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String anyOtherInformation;
     
     /**
@@ -86,31 +73,31 @@ public class CrawlPermission extends Model
      * Usually populated by system actions, but may also be modified by Archivist 
      */
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String status; 
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String contactPerson; 
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String creatorUser; 
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String assignedArchivist; 
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String template; 
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String license;
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String licenseDate;
     
     /**
@@ -145,10 +132,6 @@ public class CrawlPermission extends Model
     @JsonIgnore
     public Boolean agree;
     
-    @JsonIgnore
-    @Version
-    public Timestamp lastUpdate;
-
     public static final Model.Finder<Long, CrawlPermission> find = new Model.Finder<Long, CrawlPermission>(Long.class, CrawlPermission.class);
 
     public CrawlPermission() {}

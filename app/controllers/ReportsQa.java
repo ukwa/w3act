@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.DCollection;
+import models.Collection;
 import models.Organisation;
 import models.Target;
 import models.User;
@@ -81,7 +81,7 @@ public class ReportsQa extends AbstractController {
     	String collection = "";
     	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
     		try {
-    			collection = DCollection.findByTitle(collection_name).url;
+    			collection = Collection.findByTitle(collection_name).url;
     		} catch (Exception e) {
     			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
     		}

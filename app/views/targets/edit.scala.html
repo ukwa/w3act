@@ -528,7 +528,7 @@
 							  <input type="hidden" id="treeKeys" name="treeKeys" value="@form("field_collection_categories").value">
 							  } else {
 							        @if(form("url").value != null) {
-	  									@DCollection.getCollectionsAsString(DCollection.getSelectedCollections(form("url").value))
+	  									@models.Collection.getCollectionsAsString(models.Collection.getSelectedCollections(form("url").value))
 	  								} else {
 	  								    none
 	  								}
@@ -1017,7 +1017,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Start date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_crawl_start_date" value="@Targets.showDate(form("field_crawl_start_date").value)" size="30" maxlength="2048" class="form-control" id="start-date"/>
+		 						<input type="text" name="field_crawl_start_date" value="@form("field_crawl_start_date").value" size="30" maxlength="2048" class="form-control" id="start-date"/>
 	                		</div>
 						</div>
 					</div>
@@ -1028,7 +1028,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">End date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_crawl_end_date" value="@Targets.showDate(form("field_crawl_end_date").value)" size="30" maxlength="2048" class="form-control" id="end-date"/>
+		 						<input type="text" name="field_crawl_end_date" value="@form("field_crawl_end_date").value" size="30" maxlength="2048" class="form-control" id="end-date"/>
 	                		</div>
 						</div>
 					</div>

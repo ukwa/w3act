@@ -1,26 +1,23 @@
 package models;
 
 import java.lang.reflect.Field;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
-import uk.bl.api.IdGenerator;
 import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
@@ -35,157 +32,150 @@ import controllers.Flags;
 /**
  * Instance instance entity managed by Ebean
  */
-@SuppressWarnings("serial")
 @Entity 
-@Table(name = "instance")
-public class Instance extends Model {
+@Table(name = "Instance")
+public class Instance extends ActModel {
 
-    @Required
-    @Id
-    @Column(name="ID")
-    public Long nid;
-    
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	//bi-directional many-to-one association to Organisation
 	@ManyToOne
-	@JoinColumn(name="id_organisation")
-	public Organisation organisation_to_instance;
+	@JoinColumn(name="organisation_id")
+	public Organisation organisationToInstance;
     	
 	//bi-directional many-to-many association to Subject
 	@ManyToMany(mappedBy="instances")
-	public List<Taxonomy> subject_to_instance = new ArrayList<Taxonomy>();
+	public List<Taxonomy> subjectToInstance = new ArrayList<Taxonomy>();
 
 	//bi-directional many-to-many association to DCollection
 	@ManyToMany(mappedBy="instances")
-	public List<DCollection> collection_to_instance = new ArrayList<DCollection>();
+	public List<Collection> collectionToInstance = new ArrayList<Collection>();
 	
 	//bi-directional many-to-many association to Flag
 	@ManyToMany(mappedBy="instances")
-	public List<Flag> flag_to_instance = new ArrayList<Flag>();
+	public List<Flag> flagToInstance = new ArrayList<Flag>();
     
 	//bi-directional many-to-many association to Tag
 	@ManyToMany(mappedBy="instances")
-	public List<Tag> tag_to_instance = new ArrayList<Tag>();
+	public List<Tag> tagToInstance = new ArrayList<Tag>();
 	
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String value;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String summary;
-    public String act_url;
-    public String wct_url;
+    public String actUrl;
+    public String wctUrl;
     public String format;
-    public String field_scope;
-    public String field_depth;
-    public Boolean field_via_correspondence;
-    public Boolean field_uk_postal_address;
-    public Boolean field_uk_hosting;
-    public String field_nominating_organisation;
-    public String field_crawl_frequency;
-    public String field_crawl_start_date;
-    public Boolean field_uk_domain;
-    public String field_crawl_permission;
-    public String field_special_dispensation;
-    public Boolean field_uk_geoip;
-    public Boolean field_professional_judgement;
+    public String fieldScope;
+    public String fieldDepth;
+    public Boolean fieldViaCorrespondence;
+    public Boolean fieldUkPostalAddress;
+    public Boolean fieldUkHosting;
+    public String fieldNominatingOrganisation;
+    public String fieldCrawlFrequency;
+    public Date fieldCrawlStartDate;
+    public Date fieldCrawlEndDate;
+    public Boolean fieldUkDomain;
+    public String fieldCrawlPermission;
+    public String fieldSpecialDispensation;
+    public Boolean fieldUkGeoip;
+    public Boolean fieldProfessionalJudgement;
     public Long vid;
-    public Boolean is_new;
+    public Boolean isNew;
     public String type;
     @Required
     public String title;
     public String language;
-    public String url;
-    public String edit_url;
+    public String editUrl;
     public Long status;
     public Long promote;
     public Long sticky;
-    public String created;
-    public String changed;
     public String author; 
     public String log;
     public Long comment;
-    public Long comment_count;
-    public Long comment_count_new;
-    public Long feed_nid;
-    public String field_crawl_end_date;
-    public String field_live_site_status;
-    public Long field_wct_id;
-    public Long field_spt_id;
-    public Boolean field_no_ld_criteria_met;
-    public Boolean field_key_site;
-    @Column(columnDefinition = "TEXT")
-    public String field_professional_judgement_exp;
-    public Boolean field_ignore_robots_txt;
+    public Long commentCount;
+    public Long commentCountNew;
+    public Long feedNid;
+    public String fieldLiveSiteStatus;
+    public Long fieldWct_id;
+    public Long fieldSpt_id;
+    public Boolean fieldNoLdCriteriaMet;
+    public Boolean fieldKeySite;
+    @Column(columnDefinition = "text")
+    public String fieldProfessionalJudgementExp;
+    public Boolean fieldIgnoreRobotsTxt;
     public String revision;
-    @Column(columnDefinition = "TEXT")
-    public String field_qa_issues;
-    @Column(columnDefinition = "TEXT")
-    public String field_target;
-    @Column(columnDefinition = "TEXT")
-    public String field_description_of_qa_issues;
-    @Column(columnDefinition = "TEXT")
-    public String field_timestamp;
-    public Boolean field_published;
-    public Boolean field_to_be_published;
-    public String date_of_publication;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
+    public String fieldQaIssues;
+    @Column(columnDefinition = "text")
+    public String fieldTarget;
+    @Column(columnDefinition = "text")
+    public String fieldDescriptionOfQaIssues;
+    @Column(columnDefinition = "text")
+    public Date fieldTimestamp;
+    public Boolean fieldPublished;
+    public Boolean fieldToBePublished;
+    public String dateOfPublication;
+    @Column(columnDefinition = "text")
     public String justification; 
-    @Column(columnDefinition = "TEXT")
-    public String selector_notes; 
-    @Column(columnDefinition = "TEXT")
-    public String archivist_notes; 
+    @Column(columnDefinition = "text")
+    public String selectorNotes; 
+    @Column(columnDefinition = "text")
+    public String archivistNotes; 
     @Required
-    public String selection_type; 
+    public String selectionType; 
     public String selector;     
-    public Long legacy_site_id;
-    public String white_list; // regex for white list URLs
-    public String black_list; // regex for black list URLs
-    
-    @Version
-    public Timestamp lastUpdate;
+    public Long legacySite_id;
+    public String whiteList; // regex for white list URLs
+    public String blackList; // regex for black list URLs
     
     // lists
     @Required
-    @Column(columnDefinition = "TEXT")
-    public String field_url; 
-    @Column(columnDefinition = "TEXT")
-    public String field_description; 
-    @Column(columnDefinition = "TEXT")
-    public String field_uk_postal_address_url; 
-    @Column(columnDefinition = "TEXT")
-    public String field_suggested_collections; 
-    @Column(columnDefinition = "TEXT")
-    public String field_collections; 
-    @Column(columnDefinition = "TEXT")
-    public String field_license; 
-    @Column(columnDefinition = "TEXT")
-    public String field_collection_categories; 
-    @Column(columnDefinition = "TEXT")
-    public String field_notes; 
-    @Column(columnDefinition = "TEXT")
-    public String field_instances; 
+    @Column(columnDefinition = "text")
+    public String fieldUrl; 
+    @Column(columnDefinition = "text")
+    public String fieldDescription; 
+    @Column(columnDefinition = "text")
+    public String fieldUkPostalAddressUrl; 
+    @Column(columnDefinition = "text")
+    public String fieldSuggestedCollections; 
+    @Column(columnDefinition = "text")
+    public String fieldCollections; 
+    @Column(columnDefinition = "text")
+    public String fieldLicense; 
+    @Column(columnDefinition = "text")
+    public String fieldCollectionCategories; 
+    @Column(columnDefinition = "text")
+    public String fieldNotes; 
+    @Column(columnDefinition = "text")
+    public String fieldInstances; 
     @Required
-    @Column(columnDefinition = "TEXT")
-    public String field_subject; 
-    @Column(columnDefinition = "TEXT")
-    public String field_subsubject; 
-    @Column(columnDefinition = "TEXT")
-    public String field_qa_status; 
-    @Column(columnDefinition = "TEXT")
-    public String qa_status; 
-    @Column(columnDefinition = "TEXT")
-    public String qa_issue_category; 
-    @Column(columnDefinition = "TEXT")
-    public String qa_notes; 
-    @Column(columnDefinition = "TEXT")
-    public String quality_notes; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
+    public String fieldSubject; 
+    @Column(columnDefinition = "text")
+    public String fieldSubsubject; 
+    @Column(columnDefinition = "text")
+    public String fieldQaStatus; 
+    @Column(columnDefinition = "text")
+    public String qaStatus; 
+    @Column(columnDefinition = "text")
+    public String qaIssueCategory; 
+    @Column(columnDefinition = "text")
+    public String qaNotes; 
+    @Column(columnDefinition = "text")
+    public String qualityNotes; 
+    @Column(columnDefinition = "text")
     public String keywords; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String tags; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String synonyms; 
-    @Column(columnDefinition = "TEXT")
-    public String originating_organisation; 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
+    public String originatingOrganisation; 
+    @Column(columnDefinition = "text")
     public String flags; 
     @Column(columnDefinition = "TEXT")
     public String authors; 
@@ -236,14 +226,6 @@ public class Instance extends Model {
 	}
 
     /**
-     * Generate unique nid for target.
-     * @return
-     */
-    public static int generateId() {
-    	return IdGenerator.generateUniqueId();
-    }
-    
-    /**
      * This method retrieves all targets for given user.
      * @param url
      * @return
@@ -262,7 +244,7 @@ public class Instance extends Model {
      */
     public static List<Instance> findAllforOrganisation(String url) {
     	List<Instance> res = new ArrayList<Instance>();
-        ExpressionList<Instance> ll = find.where().eq("field_nominating_organisation", url);
+        ExpressionList<Instance> ll = find.where().eq("fieldNominatingOrganisation", url);
         res = ll.findList();
         return res;
 	}
@@ -290,7 +272,7 @@ public class Instance extends Model {
      * This method translates database view to the HTML view.
      * @return list of Strings
      */
-	public List<String> get_field_list(String fieldName) {
+	public List<String> getFieldList(String fieldName) {
     	List<String> res = new ArrayList<String>();
     	try {
     		res.add(Const.EMPTY);
@@ -317,7 +299,7 @@ public class Instance extends Model {
 	 */
 	public int getDuplicateNumber() {
 		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("field_url", this.field_url);
+        ExpressionList<Instance> ll = find.where().eq("fieldUrl", this.fieldUrl);
         res = ll.findRowCount();
 		return res;
 	}
@@ -350,7 +332,7 @@ public class Instance extends Model {
 	 */
 	public static int getInstanceNumberBySubjectUrl(String url) {
 		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("field_subject", url);
+        ExpressionList<Instance> ll = find.where().eq("fieldSubject", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -361,7 +343,7 @@ public class Instance extends Model {
 	 */
 	public static int getInstanceNumberByOrganisationUrl(String url) {
 		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("field_nominating_organisation", url);
+        ExpressionList<Instance> ll = find.where().eq("fieldNominatingOrganisation", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -372,7 +354,7 @@ public class Instance extends Model {
 	 */
 	public static int getInstanceNumberByCrawlFrequency(String url) {
 		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("field_crawl_frequency", url);
+        ExpressionList<Instance> ll = find.where().eq("fieldCrawlFrequency", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -383,7 +365,7 @@ public class Instance extends Model {
 	 */
 	public static int getInstanceNumberByDepth(String url) {
 		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("field_depth", url);
+        ExpressionList<Instance> ll = find.where().eq("fieldDepth", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -394,7 +376,7 @@ public class Instance extends Model {
 	 */
 	public static int getInstanceNumberByLicense(String url) {
 		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("field_license", url);
+        ExpressionList<Instance> ll = find.where().eq("fieldLicense", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -405,7 +387,7 @@ public class Instance extends Model {
 	 */
 	public static int getInstanceNumberByScope(String url) {
 		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("field_scope", url);
+        ExpressionList<Instance> ll = find.where().eq("fieldScope", url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -416,7 +398,7 @@ public class Instance extends Model {
 	 */
 	public static List<Instance> filterUrl(String url) {
 		List<Instance> res = new ArrayList<Instance>();
-        ExpressionList<Instance> ll = find.where().contains("field_url", url);
+        ExpressionList<Instance> ll = find.where().contains("fieldUrl", url);
     	res = ll.findList();
 		return res;
 	}
@@ -458,7 +440,7 @@ public class Instance extends Model {
 	public static List<Instance> filterCuratorAndOrganisationUrl(String curatorUrl, String organisationUrl) {
 		List<Instance> res = new ArrayList<Instance>();
 		if (curatorUrl != null && organisationUrl != null) {
-	        ExpressionList<Instance> ll = find.where().contains("field_nominating_organisation", organisationUrl);
+	        ExpressionList<Instance> ll = find.where().contains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
 	    	res = ll.findList(); 
 		}
 		return res;
@@ -474,14 +456,18 @@ public class Instance extends Model {
 		Iterator<Instance> itr = allInstances.iterator();
 		while (itr.hasNext()) {
 			Instance target = itr.next();
-			if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
-		        ExpressionList<Instance> ll = find.where().contains("field_subject", target.field_subject);
+			if (target.fieldSubject != null && target.fieldSubject.length() > 0 && !subjects.contains(target.fieldSubject)) {
+		        ExpressionList<Instance> ll = find.where().contains("field_subject", target.fieldSubject);
 		        if (ll.findRowCount() > 0) {
-		        	subjects.add(target.field_subject);
+		        	subjects.add(target.fieldSubject);
 		        }
 			}
 		}
     	return subjects;
+	}
+	
+	public String getFieldUrlAsStr() {
+		return getFieldListAsStr("fieldUrl");
 	}
 	
 	/**
@@ -489,7 +475,7 @@ public class Instance extends Model {
 	 * @param fieldName
 	 * @return list of strings as a String
 	 */
-	public String get_field_list_as_str(String fieldName) {
+	public String getFieldListAsStr(String fieldName) {
     	List<String> res = new ArrayList<String>();
     	try {
     		res.add(Const.EMPTY);
@@ -520,7 +506,7 @@ public class Instance extends Model {
 	 * This method retrieves user name for the passed author URL.
 	 * @return
 	 */
-	public String get_user_by_id() {
+	public String getUserById() {
 		String res = "";
 		try {
 			if (author.length() > 0) {
@@ -586,12 +572,12 @@ public class Instance extends Model {
      * @param url
      * @return instance object 
      */
-    public static Instance findByTimestampAndUrl(String timestamp, String url) {
+    public static Instance findByTimestampAndUrl(Date timestamp, String url) {
     	Instance res = new Instance();
 //        Logger.info("instance timestamp: " + timestamp);
         
 		List<Instance> list = new ArrayList<Instance>();
-		if (timestamp != null && timestamp.length() > 0 && url != null && url.length() > 0) {
+		if (timestamp != null && url != null && url.length() > 0) {
 	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TIMESTAMP, timestamp).eq(Const.FIELD_TARGET, url);
 	    	list = ll.findList(); 
 		}
@@ -613,9 +599,9 @@ public class Instance extends Model {
      * @param nid
      * @return target 
      */
-    public static Instance findById(Long nid) {
-        Logger.info("target nid: " + nid);       
-        Instance res = find.where().eq(Const.NID, nid).findUnique();
+    public static Instance findById(Long id) {
+        Logger.info("target nid: " + id);       
+        Instance res = find.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
 
@@ -646,35 +632,39 @@ public class Instance extends Model {
 	 * @param url
 	 * @return timestamp value
 	 */
-	public static String showLatestTimestamp(String url) {
-		String res = "";
+	public static Date showLatestTimestamp(String url) {
+//		String res = "";
+        Date lastDate = null;
 		if (url != null && url.length() > 0) {
 			List<Instance> instanceList = new ArrayList<Instance>();
 	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
 	        instanceList = ll.findList(); 
 	        Iterator<Instance> itr = instanceList.iterator();
 //	        Date lastDate = new Date();
-	        String lastDate = "";
 	        while (itr.hasNext()) {
 	        	Instance instance = itr.next();
-	        	String curDate = instance.changed;
+	        	Date curDate = instance.createdAt;
 //	        	String curDate = instance.field_timestamp;
 //	        	Date curDate = new Date(instance.field_timestamp);
-	        	if (lastDate == null || lastDate.equals("")) {
+	        	if (lastDate == null) {
 	        		lastDate = curDate;
 	        	}
 //	        	Date lastDateTime = new Date(lastDate);
 //	        	Date curDateTime = new Date(curDate);
-	        	long lastDateTime = Long.parseLong(lastDate);
-	        	long curDateTime = Long.parseLong(curDate);
-	        	if (curDateTime > lastDateTime) {
+//	        	long lastDateTime = Long.parseLong(lastDate);
+//	        	long curDateTime = Long.parseLong(curDate);
+	        	
+	            if(curDate.after(lastDate)){
 	        		lastDate = curDate;
-	        	}
+	            }
+//	        	if (curDateTime > lastDateTime) {
+//	        		lastDate = curDate;
+//	        	}
 	        }
-	        res = Utils.getDateFromUnixDate(lastDate);
+//	        res = Utils.getDateFromUnixDate(lastDate);
 //	        res = Utils.showTimestamp(lastDate);
 		}
-		return res;		
+		return lastDate;		
 	}
 	
 	/**
@@ -698,7 +688,7 @@ public class Instance extends Model {
 	 */
 	public static String getLatestInstance(String url) {
 		String res = "";
-		String lastDate = "";
+		Date lastDate = null;
 		if (url != null && url.length() > 0) {
 			List<Instance> instanceList = new ArrayList<Instance>();
 	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
@@ -706,13 +696,14 @@ public class Instance extends Model {
 	        Iterator<Instance> itr = instanceList.iterator();
 	        while (itr.hasNext()) {
 	        	Instance instance = itr.next();
-	        	String curDate = instance.field_timestamp;
-	        	if (lastDate == null || lastDate.equals("")) {
+	        	Date curDate = instance.fieldTimestamp;
+	        	if (lastDate == null) {
 	        		lastDate = curDate;
 	        	}
-	        	long lastDateTime = Long.parseLong(lastDate);
-	        	long curDateTime = Long.parseLong(curDate);
-	        	if (curDateTime > lastDateTime) {
+//	        	long lastDateTime = Long.parseLong(lastDate);
+//	        	long curDateTime = Long.parseLong(curDate);
+	            if(curDate.after(lastDate)){
+//	        	if (curDateTime > lastDateTime) {
 	        		lastDate = curDate;
 	        	}
 	        }
@@ -785,7 +776,7 @@ public class Instance extends Model {
      */
     public boolean hasSubject(String subject) {
     	boolean res = false;
-    	res = Utils.hasElementInList(subject, field_subject);
+    	res = Utils.hasElementInList(subject, fieldSubject);
     	return res;
     }
         
@@ -796,7 +787,7 @@ public class Instance extends Model {
      */
     public boolean hasCollection(String collection) {
     	boolean res = false;
-    	res = Utils.hasElementInList(collection, field_suggested_collections);
+    	res = Utils.hasElementInList(collection, fieldSuggestedCollections);
     	return res;
     }
     
@@ -866,7 +857,7 @@ public class Instance extends Model {
     }          
     
     public Organisation getOrganisation() {
-    	return Organisation.findByUrl(field_nominating_organisation);
+    	return Organisation.findByUrl(fieldNominatingOrganisation);
     }
     
 	/**
@@ -1019,7 +1010,7 @@ public class Instance extends Model {
      */
     public boolean hasSubSubject(String subject) {
     	boolean res = false;
-    	res = Utils.hasElementInList(subject, field_subsubject);
+    	res = Utils.hasElementInList(subject, fieldSubsubject);
     	return res;
     }
           
@@ -1089,23 +1080,23 @@ public class Instance extends Model {
      * This method updates foreign key mapping between an Instance and an Organisation.
      */
     public void updateOrganisation() {
-		if (field_nominating_organisation != null
-				&& field_nominating_organisation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(field_nominating_organisation);
+		if (fieldNominatingOrganisation != null
+				&& fieldNominatingOrganisation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(fieldNominatingOrganisation);
 //            Logger.info("Add instance to organisation: " + organisation.toString());
-            this.organisation_to_instance = organisation;
+            this.organisationToInstance = organisation;
 		}
     	
     }
 		
     public String toString() {
-        return "Instance(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
-        ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
-        ", field_description: " + field_description + ", field_uk_postal_address_url: " + field_uk_postal_address_url +
-        ", field_suggested_collections: " + field_suggested_collections + ", field_collections: " + field_collections +
-        ", field_license: " + field_license + ", field_collection_categories: " + field_collection_categories +
-        ", field_notes: " + field_notes + ", field_instances: " + field_instances + 
-        ", field_subject: " + field_subject + ", format: " + format + ", summary: " + summary + ", value: " + value;
+        return "Instance(" + id + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + fieldCrawlFrequency + ", type: " + type +
+        ", field_uk_domain: " + fieldUkDomain + ", field_url: " + fieldUrl + 
+        ", field_description: " + fieldDescription + ", field_uk_postal_address_url: " + fieldUkPostalAddressUrl +
+        ", field_suggested_collections: " + fieldSuggestedCollections + ", field_collections: " + fieldCollections +
+        ", field_license: " + fieldLicense + ", field_collection_categories: " + fieldCollectionCategories +
+        ", field_notes: " + fieldNotes + ", field_instances: " + fieldInstances + 
+        ", field_subject: " + fieldSubject + ", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
 }

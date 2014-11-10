@@ -129,7 +129,7 @@ public class Passwords extends AbstractController {
             		String oldInputPassword = getFormParam(Const.OLD_PASSWORD);
             		user.password = getFormParam(Const.PASSWORD);
 			    	try {
-	                	String userDbPassword = User.findByUid(user.uid).password;
+	                	String userDbPassword = User.findByUid(user.id).password;
 	            		boolean isValidOldPassword = PasswordHash.validatePassword(oldInputPassword, userDbPassword);
 	            		if (!isValidOldPassword) {
 	                    	Logger.info("The old password is not correct.");

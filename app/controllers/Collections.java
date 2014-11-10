@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.DCollection;
+import models.Collection;
 import models.Target;
 import models.User;
 
@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class Collections extends AbstractController {
 
 	/**
-	 * Display the dcollections.
+	 * Display the Collections.
 	 */
 	public static Result index() {
 		Logger.info("DCollections.index()");
@@ -62,7 +62,7 @@ public class Collections extends AbstractController {
 		
 		return ok(list.render("Collections",
 				User.findByEmail(request().username()), filter,
-				DCollection.page(pageNo, 10, sortBy, order, filter), sortBy,
+				Collection.page(pageNo, 10, sortBy, order, filter), sortBy,
 				order, node));
 	}
 	
@@ -99,14 +99,12 @@ public class Collections extends AbstractController {
     		if (Const.ADDENTRY.equals(action)) {
 //        		return redirect(routes.Collections.create(query));
     	        Logger.info("create collection()");
-    	    	DCollection collection = new DCollection();
+    	    	Collection collection = new Collection();
     	    	collection.title = query;
-    	        collection.nid = Target.createId();
-    	        collection.url = Const.ACT_URL + collection.nid;
     			Logger.info("add collection with url: " + collection.url + ", and title: " + collection.title);
     			JsonNode node = getCollectionsTree(collection.url);
 //    			Logger.info("node tree: " + node.toString());
-    			Form<DCollection> collectionForm = Form.form(DCollection.class);
+    			Form<Collection> collectionForm = Form.form(Collection.class);
     			collectionForm = collectionForm.fill(collection);
     	        return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));    			
     		} 
@@ -122,7 +120,7 @@ public class Collections extends AbstractController {
     public static Result filterByJson(String name) {
     	JsonNode jsonData = null;
         if (name != null) {
-	        List<DCollection> dCollections = DCollection.filterByName(name);
+	        List<Collection> dCollections = Collection.filterByName(name);
 	        jsonData = Json.toJson(dCollections);
         }
         return ok(jsonData);
@@ -132,7 +130,7 @@ public class Collections extends AbstractController {
     public static Result view(String url) {
         return ok(
                 view.render(
-                        DCollection.findByUrl(url), User.findByEmail(request().username())
+                        Collection.findByUrl(url), User.findByEmail(request().username())
                 )
             );
     }
@@ -144,13 +142,11 @@ public class Collections extends AbstractController {
      */
     public static Result create(String title) {
         Logger.info("create collection()");
-    	DCollection collection = new DCollection();
+    	Collection collection = new Collection();
     	collection.title = title;
-        collection.nid = Target.createId();
-        collection.url = Const.ACT_URL + collection.nid;
 		Logger.info("add collection with url: " + collection.url + ", and title: " + collection.title);
 		JsonNode node = getCollectionsTree(collection.url);
-		Form<DCollection> collectionForm = Form.form(DCollection.class);
+		Form<Collection> collectionForm = Form.form(Collection.class);
 		collectionForm = collectionForm.fill(collection);
         return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));
     }
@@ -160,10 +156,10 @@ public class Collections extends AbstractController {
      */
     public static Result edit(String url) {
 		Logger.info("collection url: " + url);
-		DCollection collection = DCollection.findByUrl(url);
+		Collection collection = Collection.findByUrl(url);
 		Logger.info("collection title: " + collection.title + ", url: " + url);
 		JsonNode node = getCollectionsTree(collection.url);
-		Form<DCollection> collectionForm = Form.form(DCollection.class);
+		Form<Collection> collectionForm = Form.form(Collection.class);
 		collectionForm = collectionForm.fill(collection);
         return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));
     }
@@ -174,8 +170,8 @@ public class Collections extends AbstractController {
 	 * @return edit page with form and info message
 	 */
 	public static Result info() {
-    	DCollection collection = new DCollection();
-    	collection.nid = Long.valueOf(getFormParam(Const.NID));
+    	Collection collection = new Collection();
+    	collection.id = Long.valueOf(getFormParam(Const.ID));
     	collection.url = getFormParam(Const.URL);
     	collection.title = getFormParam(Const.TITLE);
     	collection.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
@@ -193,7 +189,7 @@ public class Collections extends AbstractController {
 	    	collection.revision = getFormParam(Const.REVISION);
 	    }
 		JsonNode node = getCollectionsTree(collection.url);
-		Form<DCollection> collectionFormNew = Form.form(DCollection.class);
+		Form<Collection> collectionFormNew = Form.form(Collection.class);
 		collectionFormNew = collectionFormNew.fill(collection);
       	return ok(
 	              edit.render(collectionFormNew, User.findByEmail(request().username()), node)
@@ -212,10 +208,10 @@ public class Collections extends AbstractController {
         String delete = getFormParam(Const.DELETE);
 //        Logger.info("save: " + save);
         if (save != null) {
-        	Logger.info("input data for saving collection nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.info("input data for saving collection nid: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", title: " + getFormParam(Const.TITLE) + ", revision: " + getFormParam(Const.REVISION));
         	
-        	Form<DCollection> collectionForm = Form.form(DCollection.class).bindFromRequest();
+        	Form<Collection> collectionForm = Form.form(Collection.class).bindFromRequest();
             if(collectionForm.hasErrors()) {
             	String missingFields = "";
             	for (String key : collectionForm.errors().keySet()) {
@@ -233,23 +229,23 @@ public class Collections extends AbstractController {
 	  			return info();
             }
         	
-        	DCollection collection = null;
+        	Collection collection = null;
             boolean isExisting = true;
             try {
                 try {
-                	collection = DCollection.findByUrl(getFormParam(Const.URL));
+                	collection = Collection.findByUrl(getFormParam(Const.URL));
                 } catch (Exception e) {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
-                	collection = new DCollection();
-                	collection.nid = Long.valueOf(getFormParam(Const.NID));
+                	collection = new Collection();
+                	collection.id = Long.valueOf(getFormParam(Const.ID));
                 	collection.url = getFormParam(Const.URL);
                 }
                 if (collection == null) {
                 	Logger.info("is not existing");
                 	isExisting = false;
-                	collection = new DCollection();
-                	collection.nid = Long.valueOf(getFormParam(Const.NID));
+                	collection = new Collection();
+                	collection.id = Long.valueOf(getFormParam(Const.ID));
                 	collection.url = getFormParam(Const.URL);
                 }
                 
@@ -299,11 +295,11 @@ public class Collections extends AbstractController {
         if (delete != null) {
         	String url = getFormParam(Const.URL);
         	Logger.info("deleting: " + url);
-        	DCollection collection = DCollection.findByUrl(url);
+        	Collection collection = Collection.findByUrl(url);
         	/**
         	 * Check whether children exist
         	 */
-            if (DCollection.hasChildren(collection.url)) {
+            if (Collection.hasChildren(collection.url)) {
             	Logger.info("This collection has children nodes. Please re-assign children to other nodes first.");
 	  			flash("message", "This collection has children nodes. Please re-assign children to other nodes first.");
 	  			return info();
@@ -325,7 +321,7 @@ public class Collections extends AbstractController {
      */
 
     private static JsonNode getCollectionsData(String url) {
-    	List<DCollection> collections = DCollection.getFirstLevelCollections();
+    	List<Collection> collections = Collection.getFirstLevelCollections();
     	List<ObjectNode> result = getCollectionTreeElements(collections, url, true);
     	Logger.info("collections main level size: " + collections.size());
     	JsonNode jsonData = Json.toJson(result);
@@ -339,14 +335,14 @@ public class Collections extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static List<ObjectNode> getCollectionTreeElements(List<DCollection> collectionList, String collectionUrl, boolean parent) { 
+    public static List<ObjectNode> getCollectionTreeElements(List<Collection> collectionList, String collectionUrl, boolean parent) { 
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 
 		if (collectionList.size() > 0) {
-	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	Iterator<Collection> itr = collectionList.iterator();
 	    	while (itr.hasNext()) {
-	    		DCollection collection = itr.next();
+	    		Collection collection = itr.next();
 	    		
 	    		if (collectionUrl.isEmpty() || (StringUtils.isNotEmpty(collectionUrl) && StringUtils.containsIgnoreCase(collection.title, collectionUrl))) {	    		
 		    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
@@ -357,7 +353,7 @@ public class Collections extends AbstractController {
 				    		child.put("select", true);
 				    	}
 						child.put("key", "\"" + collection.url + "\"");
-				    	List<DCollection> childCollections = DCollection.getChildLevelCollections(collection.url);
+				    	List<Collection> childCollections = Collection.getChildLevelCollections(collection.url);
 				    	if (childCollections.size() > 0) {
 				    		child.put("children", Json.toJson(getCollectionTreeElements(childCollections, collectionUrl, false)));
 				    	}
@@ -378,10 +374,10 @@ public class Collections extends AbstractController {
     private static JsonNode getCollectionsTree(String url) {
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
-    	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
+    	List<Collection> suggestedCollections = Collection.getFirstLevelCollections();
     	if (url != null && url.length() > 0) {
     		try {
-	    		DCollection collection = DCollection.findByUrl(url);
+	    		Collection collection = Collection.findByUrl(url);
 	    		if (StringUtils.isNotEmpty(collection.parent)) {
 	    			url = collection.parent;
 	    		}
@@ -403,7 +399,7 @@ public class Collections extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static String getTreeElements(List<DCollection> collectionList, String url, boolean parent) { 
+    public static String getTreeElements(List<Collection> collectionList, String url, boolean parent) { 
 //    	Logger.info("getTreeElements() target URL: " + targetUrl);
     	String res = "";
     	if (collectionList.size() > 0) {
@@ -413,10 +409,10 @@ public class Collections extends AbstractController {
 	        	sb.append("{\"title\": \"" + "None" + "\"," + checkNone(url) + 
 	        			" \"key\": \"" + "None" + "\"" + "}, ");
 	        }
-	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	Iterator<Collection> itr = collectionList.iterator();
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
-	    		DCollection collection = itr.next();
+	    		Collection collection = itr.next();
 //    			Logger.debug("getTreeElements() add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
 	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
@@ -486,7 +482,7 @@ public class Collections extends AbstractController {
     	String res = "";
         final StringBuffer sb = new StringBuffer();
     	sb.append(", \"children\":");
-    	List<DCollection> childSuggestedCollections = DCollection.getChildLevelCollections(url);
+    	List<Collection> childSuggestedCollections = Collection.getChildLevelCollections(url);
     	if (childSuggestedCollections.size() > 0) {
 	    	sb.append(getTreeElements(childSuggestedCollections, currentUrl, false));
 	    	res = sb.toString();

@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import models.CrawlPermission;
-import models.DCollection;
+import models.Collection;
 import models.Flag;
 import models.Organisation;
 import models.Tag;
@@ -53,7 +53,7 @@ public class TargetController extends AbstractController {
 	public static Result info() {
 	    Target targetObj = new Target();
         try {
-    	    Target target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
+    	    Target target = Target.findById(Long.valueOf(getFormParam(Const.ID)));
         	if (getFormParam(Const.FIELD_WCT_ID) != null && !getFormParam(Const.FIELD_WCT_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
             	targetObj.field_wct_id = target.field_wct_id;
@@ -71,7 +71,7 @@ public class TargetController extends AbstractController {
         } 	
 
 	    targetObj.field_url = getFormParam(Const.FIELD_URL_NODE);
-	    targetObj.nid = Long.valueOf(getFormParam(Const.NID));
+	    targetObj.nid = Long.valueOf(getFormParam(Const.ID));
 	    targetObj.url = Const.ACT_URL + targetObj.nid;
         targetObj.author = getFormParam(Const.USER);
         targetObj.title = getFormParam(Const.TITLE);
@@ -130,7 +130,7 @@ public class TargetController extends AbstractController {
         }
         if (getFormParam(Const.TREE_KEYS) != null) {
     		targetObj.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-        	targetObj.collection_to_target = DCollection.convertUrlsToObjects(targetObj.field_collection_categories);
+        	targetObj.collection_to_target = Collection.convertUrlsToObjects(targetObj.field_collection_categories);
 //    		targetObj.updateCollection();
         }
         if (getFormParam(Const.ORGANISATION) != null) {
@@ -277,7 +277,7 @@ public class TargetController extends AbstractController {
         Logger.info("save: " + save);
         Logger.info("delete: " + delete);
         if (save != null) {
-        	Logger.info("input data for the target saving nid: " + getFormParam(Const.NID) + 
+        	Logger.info("input data for the target saving nid: " + getFormParam(Const.ID) + 
         			", url: " + getFormParam(Const.URL) +
         			", field_subject: " + getFormParam(Const.FIELD_SUBJECT) + 
         			", field_url: " + getFormParam(Const.FIELD_URL_NODE) + 
@@ -318,7 +318,7 @@ public class TargetController extends AbstractController {
         	Target newTarget = new Target();
             boolean isExisting = true;
             try {
-        	    target = Target.findById(Long.valueOf(getFormParam(Const.NID)));
+        	    target = Target.findById(Long.valueOf(getFormParam(Const.ID)));
             } catch (Exception e) {
             	Logger.info("is not existing exception");
             	isExisting = false;
@@ -353,8 +353,6 @@ public class TargetController extends AbstractController {
             	Logger.info("is not existing");
             	isExisting = false;
             }
-            newTarget.nid = Target.createId();
-            newTarget.url = target.url;
             /**
              * Copy association fields
              */
@@ -433,7 +431,7 @@ public class TargetController extends AbstractController {
             }            
             if (getFormParam(Const.TREE_KEYS) != null) {
 	    		newTarget.field_collection_categories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-	        	newTarget.collection_to_target = DCollection.convertUrlsToObjects(newTarget.field_collection_categories);
+	        	newTarget.collection_to_target = Collection.convertUrlsToObjects(newTarget.field_collection_categories);
 	    		Logger.debug("newTarget.field_collection_categories: " + newTarget.field_collection_categories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
@@ -668,7 +666,7 @@ public class TargetController extends AbstractController {
 	        res = redirect(routes.Targets.view(newTarget.url) + getFormParam(Const.TAB_STATUS));
         } // end of save
         if (delete != null) {
-        	Long id = Long.valueOf(getFormParam(Const.NID));
+        	Long id = Long.valueOf(getFormParam(Const.ID));
         	Logger.info("deleting: " + id);
         	Target target = Target.findById(id);
         	Ebean.delete(target);
@@ -791,7 +789,7 @@ public class TargetController extends AbstractController {
     	String res = "";
         final StringBuffer sb = new StringBuffer();
     	sb.append(", \"children\":");
-    	List<DCollection> childSuggestedCollections = DCollection.getChildLevelCollections(url);
+    	List<Collection> childSuggestedCollections = Collection.getChildLevelCollections(url);
     	if (childSuggestedCollections.size() > 0) {
 	    	sb.append(getTreeElements(childSuggestedCollections, targetUrl, false));
 	    	res = sb.toString();
@@ -841,16 +839,16 @@ public class TargetController extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static String getTreeElements(List<DCollection> collectionList, String targetUrl, boolean parent) { 
+    public static String getTreeElements(List<Collection> collectionList, String targetUrl, boolean parent) { 
 //    	Logger.info("getTreeElements() target URL: " + targetUrl);
     	String res = "";
     	if (collectionList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
 	        sb.append("[");
-	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	Iterator<Collection> itr = collectionList.iterator();
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
-	    		DCollection collection = itr.next();
+	    		Collection collection = itr.next();
 //    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
 	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
@@ -881,16 +879,16 @@ public class TargetController extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static String getTreeElementsFilter(List<DCollection> collectionList, String targetUrl, boolean parent) { 
+    public static String getTreeElementsFilter(List<Collection> collectionList, String targetUrl, boolean parent) { 
 //    	Logger.info("getTreeElements() target URL: " + targetUrl);
     	String res = "";
     	if (collectionList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
 	        sb.append("[");
-	    	Iterator<DCollection> itr = collectionList.iterator();
+	    	Iterator<Collection> itr = collectionList.iterator();
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
-	    		DCollection collection = itr.next();
+	    		Collection collection = itr.next();
 //    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
 	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
@@ -924,7 +922,7 @@ public class TargetController extends AbstractController {
 //    	Logger.info("getSuggestedCollections() target URL: " + targetUrl);
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
-    	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
+    	List<Collection> suggestedCollections = Collection.getFirstLevelCollections();
     	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
 //    	Logger.info("collections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
@@ -942,7 +940,7 @@ public class TargetController extends AbstractController {
 //    	Logger.info("getSuggestedCollectionsFilter() target URL: " + targetUrl);
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
-    	List<DCollection> suggestedCollections = DCollection.getFirstLevelCollections();
+    	List<Collection> suggestedCollections = Collection.getFirstLevelCollections();
     	sb.append(getTreeElementsFilter(suggestedCollections, targetUrl, true));
 //    	Logger.info("collections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));

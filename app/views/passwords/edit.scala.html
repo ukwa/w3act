@@ -9,9 +9,9 @@
     @warningmessage(flash)
     @helper.form(action=routes.Passwords.save) {
 		<input type="hidden" name="url" value="@user.url">
-		<input type="hidden" name="uid" value="@user.uid">
+		<input type="hidden" name="uid" value="@user.id">
 	
-	    @if(User.findById(Long.valueOf(user.uid)) != null) {
+	    @if(User.findById(Long.valueOf(user.id)) != null) {
 		<div class="row padding-10">
 	   		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">

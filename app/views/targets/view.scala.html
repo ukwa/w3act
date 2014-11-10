@@ -339,7 +339,7 @@
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
 						        @if(target.url != null) {
-  									@DCollection.getCollectionsAsString(DCollection.getSelectedCollections(target.url))
+  									@models.Collection.getCollectionsAsString(models.Collection.getSelectedCollections(target.url))
   								} else {
   								    none
   								}
@@ -744,7 +744,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Start date</label>
 					    <div class="col-sm-6">
-	 						@Targets.showDate(target.field_crawl_start_date)
+	 						@target.field_crawl_start_date
                 		</div>
 					</div>
 				</div>
@@ -755,7 +755,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">End date</label>
 					    <div class="col-sm-6">
-	 						@Targets.showDate(target.field_crawl_end_date)
+	 						@target.field_crawl_end_date
                 		</div>
 					</div>
 				</div>

@@ -161,7 +161,7 @@ public class TaxonomiesController extends AbstractController {
         String delete = getFormParam(Const.DELETE);
 //        Logger.info("save: " + save);
         if (save != null) {
-        	Logger.info("save taxonomy nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.info("save taxonomy nid: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", title: " + getFormParam(Const.TITLE) + ", revision: " + getFormParam(Const.REVISION));
         	Taxonomy taxonomy = null;
             boolean isExisting = true;
@@ -172,14 +172,14 @@ public class TaxonomiesController extends AbstractController {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
                 	taxonomy = new Taxonomy();
-                	taxonomy.tid = Long.valueOf(getFormParam(Const.NID));
+                	taxonomy.tid = Long.valueOf(getFormParam(Const.ID));
                 	taxonomy.url = getFormParam(Const.URL);
                 }
                 if (taxonomy == null) {
                 	Logger.info("is not existing");
                 	isExisting = false;
                 	taxonomy = new Taxonomy();
-                	taxonomy.tid = Long.valueOf(getFormParam(Const.NID));
+                	taxonomy.tid = Long.valueOf(getFormParam(Const.ID));
                 	taxonomy.url = getFormParam(Const.URL);
                 }
                 

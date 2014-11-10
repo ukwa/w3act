@@ -3,11 +3,12 @@ package controllers;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import models.DCollection;
+import models.Collection;
 import models.Flag;
 import models.Organisation;
 import models.Target;
@@ -559,8 +560,6 @@ public class Targets extends AbstractController {
     	        Logger.info("create()");
     	    	Target target = new Target();
     	    	target.field_url = query;
-    	        target.nid = Target.createId();
-    	        target.url = Const.ACT_URL + target.nid;
     	        target.revision = Const.INITIAL_REVISION;
     	        target.active = true;
     	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
@@ -619,7 +618,7 @@ public class Targets extends AbstractController {
     	
         return ok(
         		sites.render(
-        			DCollection.findByUrl(collection_url),  
+        			Collection.findByUrl(collection_url),  
         			User.findByEmail(request().username()), 
         			filter, 
         			Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection_url), 
@@ -820,7 +819,7 @@ public class Targets extends AbstractController {
     	String collection = "";
     	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
     		try {
-    			collection = DCollection.findByTitle(collection_name).url;
+    			collection = Collection.findByTitle(collection_name).url;
     		} catch (Exception e) {
     			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
     		}
@@ -973,19 +972,6 @@ public class Targets extends AbstractController {
     	        Ebean.update(targetObj);
         	}
         }
-    }
-    
-    /**
-     * Show date in HTML page.
-     * @param value The unix timestamp string
-     * @return date in human understandable form
-     */
-    public static String showDate(String value) {
-    	String res = value;
-     	if (value != null) {
-     		res = Utils.getDateFromUnixDate(value);
-     	}
-        return res;
     }
     
     /**

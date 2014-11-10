@@ -1040,9 +1040,9 @@ public class Taxonomy extends Model {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
-    		if (target.field_subject != null) {
+    		if (target.fieldSubject != null) {
 //    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
-		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
+		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
 		    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 		    		Taxonomy subject = findByUrl(part);
@@ -1092,9 +1092,9 @@ public class Taxonomy extends Model {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
-    		if (target.field_subject != null) {
+    		if (target.fieldSubject != null) {
 //    			Logger.info("getSelectedSubjectsByInstance() field_subject: " + target.field_subject);
-		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
+		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
 		    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 		    		Taxonomy subject = findByUrl(part);

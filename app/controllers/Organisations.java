@@ -76,8 +76,6 @@ public class Organisations extends AbstractController {
     		if (Const.ADDENTRY.equals(action)) {
     	    	Organisation organisation = new Organisation();
     	    	organisation.title = query;
-    	        organisation.nid = Target.createId();
-    	        organisation.url = Const.ACT_URL + organisation.nid;
     			Logger.info("add with url: " + organisation.url + ", and title: " + organisation.title);
     			Form<Organisation> organisationForm = Form.form(Organisation.class);
     			organisationForm = organisationForm.fill(organisation);
@@ -97,8 +95,6 @@ public class Organisations extends AbstractController {
     public static Result create(String title) {
     	Organisation organisation = new Organisation();
     	organisation.title = title;
-        organisation.nid = Target.createId();
-        organisation.url = Const.ACT_URL + organisation.nid;
 		Logger.info("add organisation with url: " + organisation.url + ", and title: " + organisation.title);
 		Form<Organisation> organisationForm = Form.form(Organisation.class);
 		organisationForm = organisationForm.fill(organisation);
@@ -207,7 +203,7 @@ public class Organisations extends AbstractController {
 	 */
 	public static Result info() {
     	Organisation organisation = new Organisation();
-    	organisation.nid = Long.valueOf(getFormParam(Const.NID));
+    	organisation.id = Long.valueOf(getFormParam(Const.ID));
     	organisation.url = getFormParam(Const.URL);
     	organisation.title = getFormParam(Const.TITLE);
 	    if (getFormParam(Const.FIELD_ABBREVIATION) != null) {
@@ -241,7 +237,7 @@ public class Organisations extends AbstractController {
         String delete = getFormParam(Const.DELETE);
 //        Logger.info("save: " + save);
         if (save != null) {
-        	Logger.info("save organisation nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.info("save organisation nid: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", title: " + getFormParam(Const.TITLE) + ", revision: " + getFormParam(Const.REVISION) + 
         			", abbreviation: " + getFormParam(Const.FIELD_ABBREVIATION));
         	Form<Organisation> organisationForm = Form.form(Organisation.class).bindFromRequest();
@@ -273,14 +269,14 @@ public class Organisations extends AbstractController {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
                 	organisation = new Organisation();
-                	organisation.nid = Long.valueOf(getFormParam(Const.NID));
+                	organisation.id = Long.valueOf(getFormParam(Const.ID));
                 	organisation.url = getFormParam(Const.URL);
                 }
                 if (organisation == null) {
                 	Logger.info("is not existing");
                 	isExisting = false;
                 	organisation = new Organisation();
-                	organisation.nid = Long.valueOf(getFormParam(Const.NID));
+                	organisation.id = Long.valueOf(getFormParam(Const.ID));
                 	organisation.url = getFormParam(Const.URL);
                 }
                 

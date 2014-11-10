@@ -155,7 +155,7 @@ public class Roles extends AbstractController {
 	 */
 	public static Result info() {
     	Role role = new Role();
-    	role.id = Long.valueOf(getFormParam(Const.NID));
+    	role.id = Long.valueOf(getFormParam(Const.ID));
     	role.url = getFormParam(Const.URL);
         role.name = getFormParam(Const.NAME);
 	    if (getFormParam(Const.DESCRIPTION) != null) {
@@ -210,7 +210,7 @@ public class Roles extends AbstractController {
         String delete = getFormParam(Const.DELETE);
 //        Logger.debug("save role: " + save);
         if (save != null) {
-        	Logger.debug("save role nid: " + getFormParam(Const.NID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.debug("save role nid: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
         	Form<Role> roleForm = Form.form(Role.class).bindFromRequest();
             if(roleForm.hasErrors()) {
@@ -237,14 +237,14 @@ public class Roles extends AbstractController {
                 	Logger.debug("is not existing exception");
                 	isExisting = false;
                 	role = new Role();
-                	role.id = Long.valueOf(getFormParam(Const.NID));
+                	role.id = Long.valueOf(getFormParam(Const.ID));
                 	role.url = getFormParam(Const.URL);
                 }
                 if (role == null) {
                 	Logger.debug("is not existing");
                 	isExisting = false;
                 	role = new Role();
-                	role.id = Long.valueOf(getFormParam(Const.NID));
+                	role.id = Long.valueOf(getFormParam(Const.ID));
                 	role.url = getFormParam(Const.URL);
                 }
                 

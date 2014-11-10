@@ -1,17 +1,14 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -24,18 +21,13 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open flags.
  */
 @Entity
-@Table(name = "flag")
-public class Flag extends Model
-{
+@Table(name = "Flag")
+public class Flag extends ActModel {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2257699575463702989L;
-
-	@Id 
-    @Column(name="ID")
-    public Long id;
 
     //bi-directional many-to-many association to Target
     @ManyToMany
@@ -66,26 +58,17 @@ public class Flag extends Model
     }    
     
     /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-	
-    /**
      * The name of the refusal.
      */
     @Required
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String name;
     
     /**
      * Allows the addition of further notes regarding flag description.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String description;
-
-    @Version
-    public Timestamp lastUpdate;
 
     public static final Model.Finder<Long, Flag> find = new Model.Finder<Long, Flag>(Long.class, Flag.class);
 

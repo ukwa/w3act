@@ -10,7 +10,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import models.ContactPerson;
-import models.DCollection;
+import models.Collection;
 import models.Flag;
 import models.Instance;
 import models.MailTemplate;
@@ -148,7 +148,7 @@ public enum DataImport {
 	            	// Create association between Target and Organisation
 	            	target.updateOrganisation();
                     // Create association between Target and DCollection
-                	target.collection_to_target = DCollection.convertUrlsToObjects(target.field_collection_categories);
+                	target.collection_to_target = Collection.convertUrlsToObjects(target.field_collection_categories);
                     // Create association between Target and Subject (Taxonomy)
                 	target.subject_to_target = Taxonomy.convertUrlsToObjects(target.field_subject);
                     // Create association between Target and License (Taxonomy)
@@ -167,13 +167,13 @@ public enum DataImport {
 	                // Create association between Instance and Organisation
                     instance.updateOrganisation();
                     // Create association between Instance and DCollection
-                	instance.collection_to_instance = DCollection.convertUrlsToObjects(instance.field_collection_categories);
+                	instance.collectionToInstance = Collection.convertUrlsToObjects(instance.fieldCollectionCategories);
                     // Create association between Instance and Subject (Taxonomy)
-                	instance.subject_to_instance = Taxonomy.convertUrlsToObjects(instance.field_subject);                    
+                	instance.subjectToInstance = Taxonomy.convertUrlsToObjects(instance.fieldSubject);                    
                     // Create association between Instance and Flag
-                	instance.flag_to_instance = Flag.convertUrlsToObjects(instance.flags);
+                	instance.flagToInstance = Flag.convertUrlsToObjects(instance.flags);
                     // Create association between Instance and Tag
-                	instance.tag_to_instance = Tag.convertUrlsToObjects(instance.tags);
+                	instance.tagToInstance = Tag.convertUrlsToObjects(instance.tags);
         			Ebean.update(instance);
 	            }
                 // Create association between Permission and Role
@@ -206,8 +206,6 @@ public enum DataImport {
         while (sectionItr.hasNext()) {
 	        if (cls == User.class) {
             	User user = (User) sectionItr.next();
-            	user.uid = Utils.createId();
-            	user.url = Const.ACT_URL + user.uid;
         		try {
 					user.password = PasswordHash.createHash(user.password);
 //					Logger.info("hash password: " + user.password);
@@ -234,8 +232,6 @@ public enum DataImport {
 	        }
 	        if (cls == Organisation.class) {
 	        	Organisation organisation = (Organisation) sectionItr.next();
-	        	organisation.nid = Utils.createId();
-	        	organisation.url= Const.ACT_URL + organisation.nid;
                 Logger.info("Predefined " + Organisation.class.getSimpleName() + ": " + organisation.toString());
 	        }
 	        if (cls == MailTemplate.class) {

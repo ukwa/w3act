@@ -98,8 +98,6 @@ public class Curators extends AbstractController {
     		if (Const.ADDENTRY.equals(action)) {
     	    	User user = new User();
     	    	user.name = query;
-    	        user.uid = Utils.createId();
-    	        user.url = Const.ACT_URL + user.uid;
     	    	user.role_to_user = Role.setDefaultRole();
     	        user.email = user.name + "@bl.uk";
     	        Logger.info("add curator entry with url: " + user.url + ", and name: " + user.name);
@@ -122,8 +120,8 @@ public class Curators extends AbstractController {
 
     	User user = new User();
     	user.name = title;
-        user.uid = Target.createId();
-        user.url = Const.ACT_URL + user.uid;
+        user.id = Target.createId();
+        user.url = Const.ACT_URL + user.id;
     	user.role_to_user = Role.setDefaultRole();
         user.email = user.name + "@bl.uk";
         Logger.info("add curator with url: " + user.url + ", and name: " + user.name);
@@ -186,7 +184,7 @@ public class Curators extends AbstractController {
 	 */
 	public static Result info() {
    	    User user = new User();
-   	    user.uid = Long.valueOf(getFormParam(Const.UID));
+   	    user.id = Long.valueOf(getFormParam(Const.ID));
    	    user.url = getFormParam(Const.URL);
 	    user.name = getFormParam(Const.NAME);
     	user.email = user.name + "@";
@@ -246,7 +244,7 @@ public class Curators extends AbstractController {
         String delete = getFormParam("delete");
 //        Logger.info("save: " + save);
         if (save != null) {
-        	Logger.info("save updated user uid: " + getFormParam(Const.UID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.info("save updated user id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME) + ", roles: " + getFormParam(Const.ROLES) +
         			", revision: " + getFormParam(Const.REVISION) + ", email: " + getFormParam(Const.EMAIL) +
         			", organisation: " + getFormParam(Const.ORGANISATION));
@@ -276,14 +274,14 @@ public class Curators extends AbstractController {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
                 	user = new User();
-            	    user.uid = Long.valueOf(getFormParam(Const.UID));
+            	    user.id = Long.valueOf(getFormParam(Const.UID));
             	    user.url = getFormParam(Const.URL);
                 }
                 if (user == null) {
                 	Logger.info("is not existing");
                 	isExisting = false;
                 	user = new User();
-            	    user.uid = Long.valueOf(getFormParam(Const.UID));
+            	    user.id = Long.valueOf(getFormParam(Const.UID));
             	    user.url = getFormParam(Const.URL);
                 }
                 
@@ -329,7 +327,7 @@ public class Curators extends AbstractController {
 		                }
 	                }
 		        }
-                Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.uid);
+                Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.id);
 		        if (roleStr.length() == 0) {
 		        	user.role_to_user = null;
 		        } else {
@@ -366,7 +364,7 @@ public class Curators extends AbstractController {
             		String oldInputPassword = getFormParam(Const.OLD_PASSWORD);
             		user.password = getFormParam(Const.PASSWORD);
 			    	try {
-	                	String userDbPassword = User.findByUid(user.uid).password;
+	                	String userDbPassword = User.findByUid(user.id).password;
 	            		boolean isValidOldPassword = PasswordHash.validatePassword(oldInputPassword, userDbPassword);
 	            		if (!isValidOldPassword) {
 	                    	Logger.info("The old password is not correct.");

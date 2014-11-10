@@ -1,4 +1,4 @@
-@(collection: DCollection, user: User) @main("", user) {
+@(collection: models.Collection, user: User) @main("", user) {
 
 	<div class="page-header">
 		<h1><a href="@routes.Collections.index()">Taxonomies > Collections > </a>Collection @collection.title (@Target.findAllforCollection(collection.url).size() targets)</h1>
@@ -31,7 +31,7 @@
 				    <div class="col-sm-6">
 				    @if(collection.parent != null && collection.parent.length() > 0) {
 					    @if(!collection.parent.equals("None")) {
-				    		@DCollection.findByUrl(collection.parent).title
+				    		@models.Collection.findByUrl(collection.parent).title
 				    	} else {
 				    	    none
 				    	}
