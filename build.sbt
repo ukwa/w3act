@@ -17,5 +17,4 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.3",
   "com.rabbitmq" % "amqp-client" % "3.3.1",
   "org.jsoup" % "jsoup" % "1.8.1"
-  //"org.avaje" % "ebean" % "2.7.1"  
 )

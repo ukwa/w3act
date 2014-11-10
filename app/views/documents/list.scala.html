@@ -1,4 +1,4 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String)
+@(watchedTarget: WatchedTarget, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.Documents.list(newPage, sortBy, order, searchstr)
+    routes.Documents.list(1, newPage, sortBy, order, searchstr)
     
 }
 
@@ -78,7 +78,7 @@
 		</div>
 }
 
-@main(title, user, scripts, styles) {
+@main("", user, scripts, styles) {
 
 	<div class="page-header">
 	    <h1>Documents</h1>
@@ -109,6 +109,7 @@
 					@header("title", "Title")
 					@header("landingPageUrl", "Landing Page")
 					@header("documentUrl", "Document")
+					@header("submitted", "New")
 				</tr>
 			</thead>
 			<tbody>
@@ -117,12 +118,17 @@
 					<td><a href="@routes.Documents.edit(document.id)">@document.title</a></td>
 					<td><a href="@document.landingPageUrl">@document.landingPageUrl</a></td>
 					<td><a href="@document.documentUrl">@document.documentUrl</a></td>
+					<td>@if(!document.submitted) {new}</td>
 				</tr>
 			}
 			</tbody>
 		</table>
 		
 		@pagination
+		
+		@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
+			<input type="submit" class="btn btn-success" value="Live Crawl">
+		}
 		
 	</article>
 }

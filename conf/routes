@@ -108,16 +108,21 @@ GET     /tags/:tag/edit                     controllers.Tags.edit(tag)
 GET     /tags/new/:tag                      controllers.Tags.create(tag)
 POST    /tags	                          	controllers.Tags.save()
 
-GET     /documents/list						controllers.Documents.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 GET    	/documents/search					controllers.Documents.search()
 GET    	/documents/filterbyjson/:name		controllers.Documents.filterByJson(name)
 GET		/documents/unsaved					controllers.Documents.continueEdit()
-GET		/documents/:document				controllers.Documents.edit(document: Long)
+GET		/documents/:document				controllers.Documents.view(document: Long)
+GET		/documents/:document/edit			controllers.Documents.edit(document: Long)
+GET		/documents/:document/submit			controllers.Documents.submit(document: Long)
 POST	/documents							controllers.Documents.save()
 
 GET		/targets/:target/journaltitles		controllers.JournalTitles.addJournalTitle(target: Long, toDocument: Boolean ?= false)
 GET		/journaltitles/:journaltitle		controllers.JournalTitles.edit(journaltitle: Long)
 POST	/journaltitles						controllers.JournalTitles.save(toDocument: Boolean ?= false)
+
+GET		/watchedtargets/list				controllers.WatchedTargets.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET     /watchedtargets/:watchedtarget		controllers.Documents.list(watchedtarget: Long, p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+POST	/watchedtargets/crawl				controllers.WatchedTargets.crawl(watchedtarget: Long)
 
 GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)
 

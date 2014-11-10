@@ -60,7 +60,7 @@
 	<div class="page-header">
     	<h1>
     		@if(toDocument) {
-				<a href="@routes.Documents.list()">Documents</a> >
+				<a href="@routes.Documents.list(1)">Documents</a> >
 				<a href="@routes.Documents.continueEdit()">@play.mvc.Controller.session("filename")</a> >
 			} else {
 				<a href="@routes.Targets.index()">Targets</a> >

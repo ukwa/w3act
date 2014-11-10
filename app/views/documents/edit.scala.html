@@ -1,12 +1,10 @@
-@(title: String, form: Form[Document], user: User, journalTitles: java.util.Map[String, String])
+@(title: String, form: Form[Document], user: User, journalTitles: java.util.Map[String, String], editable: Boolean)
 
-@import helper.checkbox
-@import helper.inputDate
-@import helper.inputText
 @import helper.options
-@import helper.select
 @import scala.List
-@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+@import templates.checkbox
+@import templates.inputText
+@import templates.select
 
 @scripts = {
 	<script type="text/javascript">
@@ -106,18 +104,20 @@
 		
 		$(function() {
 			toggleVisibility();
-			document.getElementById("document_view").contentWindow.onmouseup =
-				function showOptions(event) {
-					console.log(event);
-					var selectionText = getSelectionText();
-					if (selectionText && previousSelection != selectionText) {
-						$("#selection_menu").css({display: "block"});
-						$("#selection_menu").css({left: event.pageX, top: event.pageY+10});
-					} else {
-						$("#selection_menu").css({display: "none"});
-					}
-					previousSelection = selectionText;
-				};
+			@if(editable) {
+				document.getElementById("document_view").contentWindow.onmouseup =
+					function showOptions(event) {
+						console.log(event);
+						var selectionText = getSelectionText();
+						if (selectionText && previousSelection != selectionText) {
+							$("#selection_menu").css({display: "block"});
+							$("#selection_menu").css({left: event.pageX, top: event.pageY+10});
+						} else {
+							$("#selection_menu").css({display: "none"});
+						}
+						previousSelection = selectionText;
+					};
+			}
 		});
 	</script>
 }
@@ -125,10 +125,22 @@
 @main(title, user, scripts) {
 	
 	<div class="page-header">
-    	<h1><a href="@routes.Documents.list()">Documents</a> > @form("filename").value</h1>
+    	<h1><a href="@routes.Documents.list(1)">Documents</a> > @form("filename").value</h1>
 	</div>
 	
-	@helper.form(action = routes.Documents.save()) {
+	<ul class="nav nav-tabs">
+		@if(editable) {
+			<li><a href="@routes.Documents.view(new Long(form("id").value))">View</a></li>
+			<li class="active"><a href="#">Edit</a></li>
+		} else {
+			<li class="active"><a href="#">View</a></li>
+			@if(form("submitted").value == "false") {
+				<li><a href="@routes.Documents.edit(new Long(form("id").value))">Edit</a></li>
+			}
+		}
+	</ul>
+	
+	@helper.form(if (editable) routes.Documents.save() else routes.Documents.submit(new Long(form("id").value))) {
 		<div class="col-md-5">
 			<input type="hidden" name="id" value="@form("id").value">
 			<input type="hidden" name="landingPageUrl" value="@form("landingPageUrl").value">
@@ -139,43 +151,48 @@
 			<input type="hidden" name="journal.id" value="@form("journal.id").value">
 			<input type="hidden" name="journal.id_document" value="@form("id").value">
 
-			@defining('class -> "form-control") { textualElement =>
-				@inputText(form("title"), '_label -> "Title", textualElement)
-				@inputText(form("doi"), '_label -> "DOI (Digital Object Identifier)", textualElement)
-				@inputText(form("publicationDate"), '_label -> "Publication Date", textualElement)
-				@inputText(form("filename"), '_label -> "Filename", textualElement)
-				@select(form("type"),
-					options(List("","Book", "Book Chapter", "Journal Article", "Journal Issue")),
-					'_label -> "Submission Type", 'onchange -> "toggleVisibility()", textualElement)
-				<div id="book_general">
-					@inputText(form("book.isbn"), '_label -> "ISBN", textualElement)
-					@inputText(form("book.author"), '_label -> "Author(s)", textualElement)
-					@inputText(form("book.corporate_author"), '_label -> "Corporate Author", textualElement)
-					@checkbox(form("book.priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
-				</div>
-				<div id="book">
-					@inputText(form("book.series"), '_label -> "Series", textualElement)
-					@inputText(form("book.publisher"), '_label -> "Publisher", textualElement)
-					@inputText(form("book.edition"), '_label -> "Edition", textualElement)
-					@inputText(form("book.publicationYear"), '_label -> "Year of Publication", textualElement)
-				</div>
-				<div id="journal_general">
-					@select(form("journal.journalTitleId"),
-						options(journalTitles),
-						'_label -> "Journal Title", textualElement)
+			@inputText(form("title"), editable, '_label -> "Title")
+			@inputText(form("doi"), editable, '_label -> "DOI (Digital Object Identifier)")
+			@inputText(form("publicationDate"), editable, '_label -> "Publication Date")
+			@inputText(form("filename"), editable, '_label -> "Filename")
+			@select(form("type"),
+				options(List("","Book", "Book Chapter", "Journal Article", "Journal Issue")),
+				editable,
+				'_label -> "Submission Type", 'onchange -> "toggleVisibility()")
+			<div id="book_general">
+				@inputText(form("book.isbn"), editable, '_label -> "ISBN")
+				@inputText(form("book.author"), editable, '_label -> "Author(s)")
+				@inputText(form("book.corporateAuthor"), editable, '_label -> "Corporate Author")
+				@checkbox(form("book.priorityCataloguing"), editable, '_label -> "Priority Cataloguing")
+			</div>
+			<div id="book">
+				@inputText(form("book.series"), editable, '_label -> "Series")
+				@inputText(form("book.publisher"), editable, '_label -> "Publisher")
+				@inputText(form("book.edition"), editable, '_label -> "Edition")
+				@inputText(form("book.publicationYear"), editable, '_label -> "Year of Publication")
+			</div>
+			<div id="journal_general">
+				@select(form("journal.journalTitleId"), options(journalTitles), editable, '_label -> "Journal Title")
+				@if(editable) {
 					<input type="submit" name="journalTitle" class="btn btn-success" value="New Journal Title">
-					@inputText(form("journal.publicationYear"), '_label -> "Year of Publication", textualElement)
-					@inputText(form("journal.volume"), '_label -> "Volume", textualElement)
-					@inputText(form("journal.issue"), '_label -> "Issue/Part", textualElement)
-				</div>
-				<div id="journal_article">
-					@inputText(form("journal.author"), '_label -> "Author(s)", textualElement)
-				</div>
-			}
+				}
+				@inputText(form("journal.publicationYear"), editable, '_label -> "Year of Publication")
+				@inputText(form("journal.volume"), editable, '_label -> "Volume")
+				@inputText(form("journal.issue"), editable, '_label -> "Issue/Part")
+			</div>
+			<div id="journal_article">
+				@inputText(form("journal.author"), editable, '_label -> "Author(s)")
+			</div>
 			
 			<a target="landingPage" onclick="openPopup('@form("landingPageUrl").value')">Open Landing Page</a><br>
 			<a target="document" onclick="openPopup('@form("documentUrl").value')">Open Document</a><br>
-			<input type="submit" class="btn primary" value="Save">
+			@if(editable) {
+				<input type="submit" class="btn primary" value="Save">
+			} else {
+				@if(form("submitted").value == "false" && !form("type").value.isEmpty) {
+					<input type="submit" name="submit" class="btn primary" value="Submit">
+				}
+			}
 		</div>
 		
 		<div class="col-md-7">

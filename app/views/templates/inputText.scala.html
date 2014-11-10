@@ -1,0 +1,11 @@
+@(field: Field, editable: Boolean, args: (Symbol, Any)*)
+
+@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+
+@if(editable) {
+	@helper.inputText(field, (args :+ 'class -> "form-control"): _*)
+} else {
+	@helper.input(field, args: _*) { (id, name, value, args) =>
+		@value
+	}
+}

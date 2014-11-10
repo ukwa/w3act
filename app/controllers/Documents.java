@@ -43,15 +43,24 @@ public class Documents extends AbstractController {
 			"filename", "type", "journal.journalTitleId", "journal.publicationYear",
 			"journal.volume", "journal.issue", "journal.author");*/
 	
+	public static Result view(Long id) {
+		return render(id, false);
+	}
+	
 	public static Result edit(Long id) {
-		Logger.info("Documents.edit()");
+		return render(id, true);
+	}
+	
+	private static Result render(Long id, boolean editable) {
+		Logger.info("Documents.render()");
 		
 		Document document = getDocumentFromDB(id);
 		document.htmlFilename = document.filename.split("\\.")[0] + ".html";
+		if (document.submitted) editable = false;
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
 		
 		return ok(edit.render("Document" + id, documentForm,
-				User.findByEmail(request().username()), getJournalTitles()));
+				User.findByEmail(request().username()), getJournalTitles(), editable));
 	}
 	
 	public static Result continueEdit() {
@@ -64,7 +73,7 @@ public class Documents extends AbstractController {
 		documentForm.discardErrors();
 		
 		return ok(edit.render("Document", documentForm,
-				User.findByEmail(request().username()), getJournalTitles()));
+				User.findByEmail(request().username()), getJournalTitles(), true));
 	}
 
 	public static Result save() {
@@ -91,7 +100,7 @@ public class Documents extends AbstractController {
 		if (documentForm.hasErrors()) {
 			Logger.info("Show errors in html");
 			return badRequest(edit.render("Document", documentForm,
-					User.findByEmail(request().username()), getJournalTitles()));
+					User.findByEmail(request().username()), getJournalTitles(), true));
 		}
 		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
 		Document document = documentForm.get();
@@ -124,6 +133,13 @@ public class Documents extends AbstractController {
 		}
 
 		return redirect(routes.Documents.edit(document.id));
+	}
+	
+	public static Result submit(Long id) {
+		Document document = Document.find.byId(id);
+		document.submitted = true;
+		Ebean.save(document);
+		return redirect(routes.Documents.view(id));
 	}
 	
 	public static Document getDocumentFromDB(long id) {
@@ -162,7 +178,7 @@ public class Documents extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on Documents
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter) {
+    public static Result list(Long watchedTargetId, int pageNo, String sortBy, String order, String filter) {
     	Logger.info("Documents.list()");
     	
     	/*List<WatchedTarget> watchedTargets = Arrays.asList(
@@ -180,10 +196,10 @@ public class Documents extends AbstractController {
     	
         return ok(
         	list.render(
-        			"Documents", 
+        			WatchedTarget.find.byId(watchedTargetId),
         			User.findByEmail(request().username()), 
         			filter, 
-        			Document.page(pageNo, 10, sortBy, order, filter), 
+        			Document.page(watchedTargetId, pageNo, 10, sortBy, order, filter), 
         			sortBy, 
         			order)
         	);
@@ -200,7 +216,7 @@ public class Documents extends AbstractController {
 			Logger.info("Document name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Documents.list(0, "name", "asc", "")
+	        		routes.Documents.list(1, 0, "title", "asc", "")
 	        );
     	}
 
@@ -212,7 +228,7 @@ public class Documents extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Documents.list(pageNo, sort, order, query));
+    	    	return redirect(routes.Documents.list(1, pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }

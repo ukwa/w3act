@@ -27,14 +27,16 @@ public class Document extends Model {
 	
     @Id
     public Long id;
-	@ManyToOne
+	@ManyToOne @JsonIgnore
 	@JoinColumn(name="id_instance")
 	public Instance instance;
-	@JsonIgnore
-	@OneToOne(mappedBy="document")
+	@ManyToOne @JsonIgnore
+	@JoinColumn(name="id_watched_target")
+	public WatchedTarget watchedTarget;
+	public boolean submitted;
+	@OneToOne(mappedBy="document") @JsonIgnore
 	public Book book;
-	@JsonIgnore
-	@OneToOne(mappedBy="document")
+	@OneToOne(mappedBy="document") @JsonIgnore
 	public Journal journal;
     public String landingPageUrl;
     public String documentUrl;
@@ -52,7 +54,7 @@ public class Document extends Model {
 	public String filename;
     public String type;
     
-    public static final Model.Finder<Long, Document> find = new Model.Finder<Long, Document>(Long.class, Document.class);
+    public static final Model.Finder<Long, Document> find = new Model.Finder<>(Long.class, Document.class);
     
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -75,9 +77,10 @@ public class Document extends Model {
         return errors.isEmpty() ? null : errors;
     }
     
-    public static Page<Document> page(int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Document> page(Long watchedTargetId, int page, int pageSize, String sortBy, String order, String filter) {
 
-        return find.where().icontains("title", filter)
+        return find.where().eq("id_watched_target", watchedTargetId)
+        		.icontains("title", filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

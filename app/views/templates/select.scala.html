@@ -1,0 +1,14 @@
+@(field: Field, options: Seq[(String, String)], editable: Boolean, args: (Symbol, Any)*)
+
+@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+
+@if(editable) {
+	@helper.select(field, options, (args :+ 'class -> "form-control"): _*)
+} else {
+	@helper.input(field, args: _*) { (id, name, value, args) =>
+		@value
+		<div style="display: none">
+			@helper.select(field, options, args.toSeq: _*)
+		</div>
+	}
+}

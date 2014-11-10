@@ -1,5 +1,13 @@
 # --- !Ups
 
+create table watched_target (
+  id			bigint primary key,
+  id_target		bigint references target (id),
+  id_creator		bigint references creator (id),
+  field_url		TEXT,
+  deep_document_search	boolean not null
+);
+
 create table journal_title (
   id			bigint primary key,
   id_target		bigint references target (id),
@@ -21,6 +29,8 @@ create table subject_journal_title (
 create table document (
   id			bigint primary key,
   id_instance		bigint references instance (id),
+  id_watched_target	bigint references watched_target (id),
+  submitted		boolean not null,
   landing_page_url	varchar(255),
   document_url		varchar(255),
   title			TEXT not null,
@@ -53,6 +63,7 @@ create table journal (
   author		varchar(255)
 );
 
+create sequence watched_target_seq;
 create sequence journal_title_seq;
 create sequence document_seq;
 create sequence book_seq;
@@ -60,12 +71,14 @@ create sequence journal_seq;
 
 # --- !Downs
 
+drop table if exists watched_target cascade;
 drop table if exists journal_title cascade;
 drop table if exists subject_journal_title cascade;
 drop table if exists document cascade;
 drop table if exists book cascade;
 drop table if exists journal cascade;
 
+drop sequence if exists watched_target_seq;
 drop sequence if exists journal_title_seq;
 drop sequence if exists document_seq;
 drop sequence if exists book_seq;

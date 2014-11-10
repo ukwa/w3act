@@ -1,0 +1,23 @@
+@(user: User, watchedTargets: List[WatchedTarget])
+
+@main("", user) {
+
+	<div class="page-header">
+	    <h1>Watched Targets</h1>
+	</div>
+		
+    <article class="documents">
+    	
+		<table>
+			@for(watchedTarget <- watchedTargets) {
+				<tr>
+					<td><a href="@routes.Documents.list(watchedTarget.id)">@watchedTarget.fieldUrl</a></td>
+				</tr>
+			}
+		</table>
+
+		
+	</article>
+}
+
+

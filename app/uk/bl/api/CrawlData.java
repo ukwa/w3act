@@ -54,9 +54,9 @@ public class CrawlData {
 		knownSites = new HashSet<>();
 		foundDocuments = new ArrayList<>();
 		
-		knownSites.add(watchedTarget.url);
+		knownSites.add(watchedTarget.fieldUrl);
 		Set<Link> fringe = new HashSet<>();
-		fringe.add(new Link(null, watchedTarget.url));
+		fringe.add(new Link(null, watchedTarget.fieldUrl));
 		breathFirstSearch(watchedTarget, fringe, 1);
 		
 		return foundDocuments;
@@ -123,6 +123,7 @@ public class CrawlData {
 									document.documentUrl = targetUrl;
 									document.filename = targetUrl.substring(targetUrl.lastIndexOf('/')+1);
 									document.title = document.filename.substring(0, document.filename.indexOf('.'));
+									document.watchedTarget = watchedTarget;
 									foundDocuments.add(document);
 								} else if(domainIsEqual(link.target,targetUrl) &&
 										(linkDepth > 0 || watchedTarget.deepDocumentSearch)) {
@@ -143,6 +144,7 @@ public class CrawlData {
 						document.documentUrl = link.target;
 						document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
 						document.title = document.filename.substring(0, document.filename.indexOf('.'));
+						document.watchedTarget = watchedTarget;
 						foundDocuments.add(document);
 						System.out.println("hidden pdf: " + document.filename + " (url: " + link.target + ")");
 					}
