@@ -22,7 +22,7 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open tags.
  */
 @Entity
-@Table(name = "Tag")
+@Table(name = "tag")
 public class Tag extends ActModel {
 
 	/**

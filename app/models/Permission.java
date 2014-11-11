@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -24,7 +26,7 @@ import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "Permission")
+@Table(name = "permission")
 public class Permission extends ActModel {
     /**
 	 * 
@@ -37,9 +39,9 @@ public class Permission extends ActModel {
 //	public Role role;
     
     //bi-directional many-to-many association to Role
-    @ManyToMany
 	@JoinTable(name = Const.PERMISSION_ROLE, joinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Role> roles = new ArrayList<Role>();
  
     @Required

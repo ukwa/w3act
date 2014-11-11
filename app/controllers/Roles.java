@@ -402,7 +402,7 @@ public class Roles extends AbstractController {
 	public static String showPermissions(Long roleId) {
     	String res = "";
     	Role role = Role.findById(roleId);
-    	Logger.info("showPermissions size: " + role.permissionsMap.size());
+    	Logger.info("showPermissions size: " + role.permissions.size());
     	if (role.getPermissionsMap() != null && role.getPermissionsMap().size() > 0) {
     		Iterator<Permission> itr = role.getPermissionsMap().iterator();
     		while (itr.hasNext()) {

@@ -18,7 +18,7 @@ import com.avaje.ebean.ExpressionList;
  * (usually outside ACT), and why.
  */
 @Entity
-@Table(name = "PermissionRefusal")
+@Table(name = "permission_refusal")
 public class PermissionRefusal extends ActModel {
 
 	/**

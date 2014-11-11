@@ -20,7 +20,7 @@ import com.avaje.ebean.ExpressionList;
  * This class describes the contact person details.
  */
 @Entity
-@Table(name = "ContactPerson")
+@Table(name = "contact_person")
 public class ContactPerson extends ActModel {
 
 	/**
@@ -29,17 +29,9 @@ public class ContactPerson extends ActModel {
 	private static final long serialVersionUID = -2257099575463302989L;
 
     //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="contactperson_to_crawlpermission", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="contactPersonToCrawlPermission", cascade=CascadeType.PERSIST)
     private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
-     
-    public List<CrawlPermission> getCrawlPermissions() {
-    	return this.crawlPermissions;
-    }
-    
-    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
-    	this.crawlPermissions = crawlPermissions;
-    }    
-        
+
     /**
      * The name of the contact person.
      */
@@ -109,6 +101,14 @@ public class ContactPerson extends ActModel {
     {
         return name;
     }
+	
+    public List<CrawlPermission> getCrawlPermissions() {
+    	return this.crawlPermissions;
+    }
+    
+    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
+    	this.crawlPermissions = crawlPermissions;
+    }    
 
     public static ContactPerson findByName(String name)
     {

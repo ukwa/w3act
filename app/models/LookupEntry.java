@@ -15,7 +15,7 @@ import uk.bl.Const;
 import com.avaje.ebean.ExpressionList;
 
 @Entity
-@Table(name = "LookupEntry")
+@Table(name = "lookup_entry")
 public class LookupEntry extends ActModel {
     /**
 	 * 

@@ -20,7 +20,7 @@ import com.avaje.ebean.ExpressionList;
  * This class supports the management of e-mail templates.
  */
 @Entity
-@Table(name = "MailTemplate")
+@Table(name = "mail_template")
 public class MailTemplate extends ActModel {
 
 	/**
@@ -29,17 +29,9 @@ public class MailTemplate extends ActModel {
 	private static final long serialVersionUID = -2157694575463302989L;
 
     //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="mailtemplate_to_crawlpermission", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="mailTemplateToCrawlPermission", cascade=CascadeType.PERSIST)
     private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
      
-    public List<CrawlPermission> getCrawlPermissions() {
-    	return this.crawlPermissions;
-    }
-    
-    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
-    	this.crawlPermissions = crawlPermissions;
-    }    
-        
     /**
      * The name of the e-mail.
      */
@@ -97,6 +89,14 @@ public class MailTemplate extends ActModel {
         return name;
     }
 
+    public List<CrawlPermission> getCrawlPermissions() {
+    	return this.crawlPermissions;
+    }
+    
+    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
+    	this.crawlPermissions = crawlPermissions;
+    }    
+        
     public static MailTemplate findByName(String name)
     {
         return find.where()

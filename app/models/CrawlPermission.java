@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * handles crawl permission requests sent by e-mail to the owner.
  */
 @Entity
-@Table(name = "CrawlPermission")
+@Table(name = "crawl_permission")
 public class CrawlPermission extends ActModel {
 
 	/**
@@ -35,17 +35,17 @@ public class CrawlPermission extends ActModel {
 	//bi-directional many-to-one association to Target
 	@ManyToOne
 	@JoinColumn(name="target_id")
-	public Target target_to_crawl_permission;
+	public Target targetToCrawlPermission;
     
 	//bi-directional many-to-one association to MailTemplate
 	@ManyToOne
 	@JoinColumn(name="mailTemplate_id")
-	public MailTemplate mailtemplate_to_crawlpermission;
+	public MailTemplate mailTemplateToCrawlPermission;
 	
 	//bi-directional many-to-one association to ContactPerson
 	@ManyToOne
 	@JoinColumn(name="contactPerson_id")
-	public ContactPerson contactperson_to_crawlpermission;
+	public ContactPerson contactPersonToCrawlPermission;
 	
     @Column(columnDefinition = "text")
     @Required
@@ -418,7 +418,7 @@ public class CrawlPermission extends ActModel {
 				&& target.length() > 0) {
 			Target targetObj = Target.findByTarget(target);
 //            Logger.info("Add crawl permission to target: " + targetObj.toString());
-            this.target_to_crawl_permission = targetObj;
+            this.targetToCrawlPermission = targetObj;
 		}
     	
     }
@@ -427,12 +427,12 @@ public class CrawlPermission extends ActModel {
      * This method updates foreign key mapping between a CrawlPermission and a MailTemplate.
      */
     public void updateMailTemplate() {
-        this.mailtemplate_to_crawlpermission = null;
+        this.mailTemplateToCrawlPermission = null;
 		if (template != null
 				&& template.length() > 0) {
 			MailTemplate mailTemplate = MailTemplate.findByUrl(template);
 //            Logger.info("Add crawl permission to mail template: " + mailTemplate.toString());
-            this.mailtemplate_to_crawlpermission = mailTemplate;
+            this.mailTemplateToCrawlPermission = mailTemplate;
 		}    	
     }
     
@@ -440,12 +440,12 @@ public class CrawlPermission extends ActModel {
      * This method updates foreign key mapping between a CrawlPermission and a ContactPerson.
      */
     public void updateContactPerson() {
-        this.contactperson_to_crawlpermission = null;
+        this.contactPersonToCrawlPermission = null;
 		if (contactPerson != null
 				&& contactPerson.length() > 0) {
 			ContactPerson contactPersonObj = ContactPerson.findByUrl(contactPerson);
 //            Logger.info("Add crawl permission to contactPerson: " + contactPerson.toString());
-            this.contactperson_to_crawlpermission = contactPersonObj;
+            this.contactPersonToCrawlPermission = contactPersonObj;
 		}    	
     }
     

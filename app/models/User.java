@@ -5,8 +5,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -30,8 +34,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * User entity managed by Ebean
  */
-
-@Table(name="Creator")
+@Entity
+@Table(name="creator")
 public class User extends ActModel {
 
     /**
@@ -47,8 +51,10 @@ public class User extends ActModel {
 	
 	//bi-directional many-to-many association to Role
 	@JsonIgnore
-	@ManyToMany(mappedBy="users") 
-	public List<Role> roleToUser = new ArrayList<Role>();
+	@JoinTable(name = Const.ROLE_USER, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	public List<Role> roles = new ArrayList<Role>();
     	
     @JsonIgnore
     @Constraints.Required
@@ -62,7 +68,7 @@ public class User extends ActModel {
     public String password;
     
     @JsonIgnore
-    public String fieldAffiliation;
+    public String affiliation;
 
     @JsonIgnore
     public String editUrl;
@@ -113,8 +119,8 @@ public class User extends ActModel {
     public boolean hasRole(long roleId) {
     	boolean res = false;
 //    	Logger.info("hasRole() role id: " + roleId + ", role_to_user.size(): " + role_to_user.size());
-    	if (roleToUser != null && roleToUser.size() > 0) {
-    		Iterator<Role> itr = roleToUser.iterator();
+    	if (roles != null && roles.size() > 0) {
+    		Iterator<Role> itr = roles.iterator();
     		while (itr.hasNext()) {
     			Role role = itr.next();
 //    	    	Logger.info("hasRole() role id: " + roleId + ", role_to_user id: " + role.id);
@@ -146,7 +152,7 @@ public class User extends ActModel {
     
     public List<? extends Role> getRoles()
     {
-    	return roleToUser;
+    	return roles;
     }
 
     /**
@@ -321,7 +327,7 @@ public class User extends ActModel {
     
     // Could really do with many_to_one relationship
     public Organisation getOrganisation() {
-    	return Organisation.findByUrl(fieldAffiliation);
+    	return Organisation.findByUrl(affiliation);
     }
 
     /**
@@ -355,9 +361,9 @@ public class User extends ActModel {
      * This method updates foreign key mapping between a user and an organisation.
      */
     public void updateOrganisation() {
-		if (fieldAffiliation != null
-				&& fieldAffiliation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(fieldAffiliation);
+		if (affiliation != null
+				&& affiliation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(affiliation);
 //            Logger.info("Add creator to organisation: " + organisation.toString());
             this.organisation = organisation;
 		}    	

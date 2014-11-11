@@ -11,7 +11,7 @@ import play.db.ebean.*;
  * Taxonomy vocabulary entity managed by Ebean
  */
 @Entity 
-@Table(name = "TaxonomyVocabulary")
+@Table(name = "taxonomy_vocabulary")
 public class TaxonomyVocabulary extends ActModel {
 
     /**

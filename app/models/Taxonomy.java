@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * Taxonomy entity managed by Ebean
  */
 @Entity 
-@Table(name = "Taxonomy")
+@Table(name = "taxonomy")
 public class Taxonomy extends ActModel {
      
     /**

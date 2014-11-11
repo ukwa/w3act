@@ -2,7 +2,6 @@ package models;
 
 import java.io.StringWriter;
 import java.lang.reflect.Field;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -12,14 +11,12 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,7 +41,7 @@ import controllers.Flags;
  * Target entity managed by Ebean
  */
 @Entity 
-@Table(name = "Target")
+@Table(name = "target")
 public class Target extends ActModel {
 
 	/**

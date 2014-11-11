@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * This class allows archivist to manage nominations.
  */
 @Entity
-@Table(name = "Nomination")
+@Table(name = "nomination")
 public class Nomination extends ActModel {
 
 	/**

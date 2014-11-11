@@ -33,7 +33,7 @@ import controllers.Flags;
  * Instance instance entity managed by Ebean
  */
 @Entity 
-@Table(name = "Instance")
+@Table(name = "instance")
 public class Instance extends ActModel {
 
 	/**

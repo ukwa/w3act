@@ -37,7 +37,7 @@ import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "Role")
+@Table(name = "role")
 public class Role extends ActModel {
     /**
 	 * 
@@ -45,8 +45,10 @@ public class Role extends ActModel {
 	private static final long serialVersionUID = 5670206529564297517L;
 
 	//bi-directional many-to-many association to Permission
+	@JoinTable(name = Const.PERMISSION_ROLE, joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
+			inverseJoinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") }) 
 	@ManyToMany(mappedBy="roles")
-	public List<Permission> permissionsMap = new ArrayList<Permission>();
+	public List<Permission> permissions = new ArrayList<Permission>();
 	
 //    //bi-directional many-to-one association to Role
 //    @OneToMany(mappedBy="role", cascade=CascadeType.PERSIST)
@@ -84,11 +86,11 @@ public class Role extends ActModel {
     }
 
     public List<Permission> getPermissionsMap() {
-    	return this.permissionsMap;
+    	return this.permissions;
     }
     
     public void setPermissions(List<Permission> permissionsMap) {
-    	this.permissionsMap = permissionsMap;
+    	this.permissions = permissionsMap;
     }
     
     public List<User> getUsers() {
@@ -176,8 +178,8 @@ public class Role extends ActModel {
     public boolean hasPermission(long permissionId) {
     	boolean res = false;
 //    	Logger.info("hasPermission() permission id: " + permissionId + ", permission_to_user.size(): " + permission_to_user.size());
-    	if (permissionsMap != null && permissionsMap.size() > 0) {
-    		Iterator<Permission> itr = permissionsMap.iterator();
+    	if (permissions != null && permissions.size() > 0) {
+    		Iterator<Permission> itr = permissions.iterator();
     		while (itr.hasNext()) {
     			Permission permission = itr.next();
 //    	    	Logger.info("hasPermission() permission id: " + permissionId + ", permissionMap id: " + permission.id);
@@ -197,7 +199,7 @@ public class Role extends ActModel {
      */
     public List<? extends Permission> getPermissions()
     {
-    	return permissionsMap;
+    	return permissions;
     }
 
 //    public List<Permission> getPermissions()
@@ -299,7 +301,7 @@ public class Role extends ActModel {
 //    	Logger.info("isIncludedByUrl() roleId: " + roleId + ",url: " + url);
     	try {
 	    	if (StringUtils.isNotEmpty(url)) {
-		    	List<Role> roles = User.findByUrl(url).roleToUser;
+		    	List<Role> roles = User.findByUrl(url).roles;
 //		    	Logger.info("roles.size: "+ roles.size());
 		    	res = isIncluded(roleId, roles);
 	    	}
@@ -341,7 +343,7 @@ public class Role extends ActModel {
     	if (role != null && role.name != null && role.name.length() > 0) {
     		try {
 	    		int roleIndex = Const.Roles.valueOf(role.name).ordinal();
-	    		int userIndex = getRoleSeverity(user.roleToUser);
+	    		int userIndex = getRoleSeverity(user.roles);
 //	    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
 	    		if (roleIndex >= userIndex) {
 	    			res = true;

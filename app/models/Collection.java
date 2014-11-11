@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * DCollection entity managed by Ebean
  */
 @Entity
-@Table(name = "Collection")
+@Table(name = "collection")
 public class Collection extends ActModel {
 
 	

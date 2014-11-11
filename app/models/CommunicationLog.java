@@ -19,7 +19,7 @@ import com.avaje.ebean.ExpressionList;
  * outside ACT. Archivist is treating each individual communication as a unique record.
  */
 @Entity
-@Table(name = "CommunicationLog")
+@Table(name = "communication_log")
 public class CommunicationLog extends ActModel {
 	
     /**

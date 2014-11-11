@@ -98,7 +98,7 @@ public class Curators extends AbstractController {
     		if (Const.ADDENTRY.equals(action)) {
     	    	User user = new User();
     	    	user.name = query;
-    	    	user.roleToUser = Role.setDefaultRole();
+    	    	user.roles = Role.setDefaultRole();
     	        user.email = user.name + "@bl.uk";
     	        Logger.info("add curator entry with url: " + user.url + ", and name: " + user.name);
     			Form<User> userForm = Form.form(User.class);
@@ -122,7 +122,7 @@ public class Curators extends AbstractController {
     	user.name = title;
         user.id = Target.createId();
         user.url = Const.ACT_URL + user.id;
-    	user.roleToUser = Role.setDefaultRole();
+    	user.roles = Role.setDefaultRole();
         user.email = user.name + "@bl.uk";
         Logger.info("add curator with url: " + user.url + ", and name: " + user.name);
 		Form<User> userForm = Form.form(User.class);
@@ -194,10 +194,10 @@ public class Curators extends AbstractController {
         if (getFormParam(Const.ORGANISATION) != null) {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
 //        		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
-        		user.fieldAffiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+        		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
         		user.updateOrganisation();
         	} else {
-        		user.fieldAffiliation = Const.NONE;
+        		user.affiliation = Const.NONE;
         	}
         }
         String roleStr = "";
@@ -217,9 +217,9 @@ public class Curators extends AbstractController {
             }
         }
         if (roleStr.length() == 0) {
-        	user.roleToUser = null;
+        	user.roles = null;
         } else {
-        	user.roleToUser = Role.convertUrlsToObjects(roleStr);
+        	user.roles = Role.convertUrlsToObjects(roleStr);
         }
         Logger.info("roleStr: "+ roleStr);
         if (getFormParam(Const.REVISION) != null) {
@@ -305,10 +305,10 @@ public class Curators extends AbstractController {
                 if (getFormParam(Const.ORGANISATION) != null) {
                 	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
 //                		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
-                		user.fieldAffiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+                		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
                 		user.updateOrganisation();
                 	} else {
-                		user.fieldAffiliation = Const.NONE;
+                		user.affiliation = Const.NONE;
                 	}
                 }
                 String roleStr = "";
@@ -329,9 +329,9 @@ public class Curators extends AbstractController {
 		        }
                 Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.id);
 		        if (roleStr.length() == 0) {
-		        	user.roleToUser = null;
+		        	user.roles = null;
 		        } else {
-		        	user.roleToUser = Role.convertUrlsToObjects(roleStr);
+		        	user.roles = Role.convertUrlsToObjects(roleStr);
 		        }
 //		        Logger.info("roleStr: "+ roleStr + ", user.role_to_user size: " + user.role_to_user.size());
                 if (getFormParam(Const.REVISION) != null) {
@@ -400,8 +400,8 @@ public class Curators extends AbstractController {
     public static String showRoles(Long userId) {
     	String res = "";
     	User user = User.findById(userId);
-    	if (user.roleToUser != null && user.roleToUser.size() > 0) {
-    		Iterator<Role> itr = user.roleToUser.iterator();
+    	if (user.roles != null && user.roles.size() > 0) {
+    		Iterator<Role> itr = user.roles.iterator();
     		while (itr.hasNext()) {
     			Role role = itr.next();
     			if (res.length() == 0) {

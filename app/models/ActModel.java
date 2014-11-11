@@ -3,8 +3,8 @@ package models;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,7 +12,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
-public class ActModel extends Model {
+@MappedSuperclass
+abstract class ActModel extends Model {
 
 	/**
 	 * 
@@ -20,8 +21,6 @@ public class ActModel extends Model {
 	private static final long serialVersionUID = -4282393560240621524L;
 
 	@Id
-    @JsonIgnore
-    @Column(name="id")
     public Long id;
     
 	public String url;

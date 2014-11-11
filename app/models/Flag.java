@@ -21,7 +21,7 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open flags.
  */
 @Entity
-@Table(name = "Flag")
+@Table(name = "flag")
 public class Flag extends ActModel {
 
 	/**
@@ -31,8 +31,8 @@ public class Flag extends ActModel {
 
     //bi-directional many-to-many association to Target
     @ManyToMany
-	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "id_flag", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
+	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
     private List<Target> targets = new ArrayList<Target>();
  
     public List<Target> getTargets() {
@@ -45,17 +45,9 @@ public class Flag extends ActModel {
     
     //bi-directional many-to-many association to Instance
     @ManyToMany
-	@JoinTable(name = Const.FLAG_INSTANCE, joinColumns = { @JoinColumn(name = "id_flag", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_instance", referencedColumnName="ID") }) 
+	@JoinTable(name = Const.FLAG_INSTANCE, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
     private List<Instance> instances = new ArrayList<Instance>();
-    
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
     
     /**
      * The name of the refusal.
@@ -77,6 +69,14 @@ public class Flag extends ActModel {
         return name;
     }
 
+    public List<Instance> getInstances() {
+    	return this.instances;
+    }
+    
+    public void setInstances(List<Instance> instances) {
+    	this.instances = instances;
+    }    
+    
     public static Flag findByName(String name)
     {
         return find.where()

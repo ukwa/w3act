@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * Organisation entity managed by Ebean
  */
 @Entity 
-@Table(name = "Organisation")
+@Table(name = "organisation")
 public class Organisation extends ActModel {
 
     /**

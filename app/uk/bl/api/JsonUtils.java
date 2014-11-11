@@ -268,8 +268,8 @@ public class JsonUtils {
 //				if (newUser.roles == null || newUser.roles.length() == 0) {
 //					newUser.roles = Const.DEFAULT_BL_ROLE;
 //				}
-				if (newUser.roleToUser == null || newUser.roleToUser.size() == 0) {
-					newUser.roleToUser = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
+				if (newUser.roles == null || newUser.roles.size() == 0) {
+					newUser.roles = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
 				}
 				newUser.id = null;
 				// Logger.info("id: " + newUser.uid + ", url: " + newUser.url +
@@ -300,7 +300,7 @@ public class JsonUtils {
 			Iterator<User> userItr = userList.iterator();
 			while (userItr.hasNext()) {
 				User user = userItr.next();
-				user.fieldAffiliation = organisation.url;
+				user.affiliation = organisation.url;
 				user.updateOrganisation();
 				Ebean.update(user);
 			}
@@ -819,7 +819,7 @@ public class JsonUtils {
 				User existingUser = User.findByName(newUser.name);
 				if (existingUser != null && existingUser.name.length() > 0) {
 					isNew = false;
-					existingUser.fieldAffiliation = newUser.fieldAffiliation;
+					existingUser.affiliation = newUser.affiliation;
 					existingUser.updateOrganisation();
 					existingUser.id = newUser.id;
 					existingUser.url = newUser.url;
