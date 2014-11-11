@@ -125,8 +125,9 @@ public class TaxonomiesController extends AbstractController {
     public static Result create(String name) {
     	Taxonomy taxonomy = new Taxonomy();
     	taxonomy.name = name;
-        taxonomy.tid = Target.createId();
-        taxonomy.url = Const.ACT_URL + taxonomy.tid;
+    	// TODO: createId
+        taxonomy.id = Target.createId();
+        taxonomy.url = Const.ACT_URL + taxonomy.id;
 		Logger.info("add entry with url: " + taxonomy.url + ", and name: " + taxonomy.name);
         return ok(
                 taxonomyedit.render(
@@ -172,14 +173,16 @@ public class TaxonomiesController extends AbstractController {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
                 	taxonomy = new Taxonomy();
-                	taxonomy.tid = Long.valueOf(getFormParam(Const.ID));
+                	// TODO: createId
+                	taxonomy.id = Long.valueOf(getFormParam(Const.ID));
                 	taxonomy.url = getFormParam(Const.URL);
                 }
                 if (taxonomy == null) {
                 	Logger.info("is not existing");
                 	isExisting = false;
                 	taxonomy = new Taxonomy();
-                	taxonomy.tid = Long.valueOf(getFormParam(Const.ID));
+                	// TODO: createId
+                	taxonomy.id = Long.valueOf(getFormParam(Const.ID));
                 	taxonomy.url = getFormParam(Const.URL);
                 }
                 

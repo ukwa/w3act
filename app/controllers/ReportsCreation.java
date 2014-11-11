@@ -33,7 +33,7 @@ public class ReportsCreation extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-    	return redirect(routes.ReportsCreation.targets(0, Const.CREATED, Const.DESC, "", "", 
+    	return redirect(routes.ReportsCreation.targets(0, Const.CREATED_AT, Const.DESC, "", "", 
     			Utils.getCurrentDate(), "", "", "", Const.EITHER));
     }
 

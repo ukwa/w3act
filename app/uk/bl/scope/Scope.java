@@ -13,7 +13,6 @@ import models.LookupEntry;
 import models.Target;
 import play.Logger;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.wa.whois.JRubyWhois;
 import uk.bl.wa.whois.WhoisResult;
@@ -168,28 +167,28 @@ public class Scope {
 	 */
 	public static void updateLookupEntry(Target target, boolean newStatus) {
         boolean res = false;
-        Logger.info("updateLookupEntry() field URL: " + target.field_url + ", new QA status: " + newStatus);
-        String url = normalizeUrl(target.field_url);
+        Logger.info("updateLookupEntry() field URL: " + target.fieldUrl + ", new QA status: " + newStatus);
+        String url = normalizeUrl(target.fieldUrl);
         
         /**
          * Check for fields of target that not yet stored in database.
          */
         if (target != null
-        		&& (target.field_uk_postal_address 
-        		|| target.field_via_correspondence
-        		|| target.field_professional_judgement)) {
-        	Logger.debug("updateLookupEntry(): " + target.field_uk_postal_address + ", " + 
-        		target.field_via_correspondence + ", " + target.field_professional_judgement);
+        		&& (target.fieldUkPostalAddress 
+        		|| target.fieldViaCorrespondence
+        		|| target.fieldProfessionalJudgement)) {
+        	Logger.debug("updateLookupEntry(): " + target.fieldUkPostalAddress + ", " + 
+        		target.fieldViaCorrespondence + ", " + target.fieldProfessionalJudgement);
         	res = true;
         }
-        if (target != null && target.field_no_ld_criteria_met) {
+        if (target != null && target.fieldNoLdCriteriaMet) {
         	res = false;
         }
         
         if (target != null 
-        		&& target.field_license != null 
-        		&& target.field_license.length() > 0 
-        		&& !target.field_license.toLowerCase().contains(Const.NONE)) {
+        		&& target.fieldLicense != null 
+        		&& target.fieldLicense.length() > 0 
+        		&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
         	res = true;
         }
 
@@ -534,21 +533,21 @@ public class Scope {
     	while (itr.hasNext()) {
     		Target target = itr.next();
         	try {
-	        	Logger.info("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
-	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.field_url));
+	        	Logger.info("checkWhoisThread URL: " + target.fieldUrl + ", last update: " + String.valueOf(target.updatedAt));
+	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.fieldUrl));
 	        	Logger.info("whoIsRes: " + whoIsRes);
 	        	// DOMAIN A UK REGISTRANT?
 	        	res = whoIsRes.isUKRegistrant();
 	        	Logger.info("isUKRegistrant?: " + res);
 	        	// STORE
-	        	storeInProjectDb(target.field_url, res);
+	        	storeInProjectDb(target.fieldUrl, res);
 	        	// ASSIGN TO TARGET
 	        	target.isInScopeUkRegistrationValue = res;
 	    	} catch (Exception e) {
 	    		Logger.info("whois lookup message: " + e.getMessage());
 		        // store in project DB
 	    		// FAILED - UNCHECKED
-		        storeInProjectDb(target.field_url, false);
+		        storeInProjectDb(target.fieldUrl, false);
 		        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
 	        	target.isInScopeUkRegistrationValue = false;
 	    	}
@@ -573,7 +572,7 @@ public class Scope {
     		Target target = itr.next();
         	try {
 //	        	Logger.info("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
-	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.field_url));
+	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.fieldUrl));
 //	        	Logger.info("whoIsRes: " + whoIsRes);
 	        	// DOMAIN A UK REGISTRANT?
 	        	res = whoIsRes.isUKRegistrant();
@@ -581,8 +580,8 @@ public class Scope {
 	        	else nonUKRegistrantCount++;
 //	        	Logger.info("isUKRegistrant?: " + res);
 	        	// STORE
-	        	Logger.info("CHECK TO SAVE " + target.field_url);
-	        	storeInProjectDb(target.field_url, res);
+	        	Logger.info("CHECK TO SAVE " + target.fieldUrl);
+	        	storeInProjectDb(target.fieldUrl, res);
 	        	// ASSIGN TO TARGET
 	        	target.isInScopeUkRegistrationValue = res;
 	        	ukRegistrantCount++;
@@ -590,7 +589,7 @@ public class Scope {
 	    		Logger.info("whois lookup message: " + e.getMessage());
 		        // store in project DB
 	    		// FAILED - UNCHECKED
-		        storeInProjectDb(target.field_url, false);
+		        storeInProjectDb(target.fieldUrl, false);
 		        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
 	        	target.isInScopeUkRegistrationValue = false;
 	        	failedCount++;
@@ -605,9 +604,9 @@ public class Scope {
     	
     	
 
-		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.title as title, t.last_update as target_date, l.last_update as lookup_date, (l.last_update::timestamp - t.last_update::timestamp) as diff from lookup_entry l, target t "); 
-		lookupSql.append(" where l.name in (select tar.field_url from target as tar where tar.active = true order by tar.last_update desc ");
-		lookupSql.append(" limit ").append(number).append(") and t.field_url = l.name order by diff desc");
+		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.title as title, t.updatedAt as target_date, l.updatedAt as lookup_date, (l.updatedAt::timestamp - t.updatedAt::timestamp) as diff from LookupEntry l, Target t "); 
+		lookupSql.append(" where l.name in (select tar.fieldUrl from target as tar where tar.active = true order by tar.updatedAt desc ");
+		lookupSql.append(" limit ").append(number).append(") and t.fieldUrl = l.name order by diff desc");
 
 		List<SqlRow> results = Ebean.createSqlQuery(lookupSql.toString()).findList();
     	

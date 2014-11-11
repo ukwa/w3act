@@ -4,7 +4,6 @@ import static play.data.Form.form;
 
 import java.util.List;
 
-import models.Collection;
 import models.Nomination;
 import models.User;
 

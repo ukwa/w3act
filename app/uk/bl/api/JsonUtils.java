@@ -28,7 +28,6 @@ import play.Play;
 import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.Const.NodeType;
-import uk.bl.Const.QAStatusType;
 import uk.bl.Const.TaxonomyType;
 import uk.bl.scope.Scope;
 
@@ -158,9 +157,9 @@ public class JsonUtils {
 					Target obj = (Target) itr.next();
 					obj.revision = Const.INITIAL_REVISION;
 					obj.active = true;
-					obj.selection_type = Const.SelectionType.SELECTION.name();
+					obj.selectionType = Const.SelectionType.SELECTION.name();
 					if (obj.vid > 0) {
-						obj.edit_url = Const.WCT_URL + obj.vid;
+						obj.editUrl = Const.WCT_URL + obj.vid;
 					}
 					if (obj.language != null && obj.language.equals(Const.UND)) {
 						obj.language = "";
@@ -171,7 +170,7 @@ public class JsonUtils {
 //		        	Logger.debug("calculate NPLD scope for target: " + obj.field_url + ", ID: " + obj.url);
 //		        	obj.isInScopeUkRegistrationValue   = Target.isInScopeUkRegistration(obj.field_url);
 //		        	Logger.debug("   isInScopeUkRegistrationValue (WhoIs): " + obj.isInScopeUkRegistrationValue);
-		        	obj.isInScopeDomainValue           = Target.isInScopeDomain(obj.field_url, obj.url);
+		        	obj.isInScopeDomainValue           = Target.isInScopeDomain(obj.fieldUrl, obj.url);
 		        	Logger.debug("   isInScopeDomainValue (UK_DOMAIN): " + obj.isInScopeDomainValue);
 //		        	obj.isUkHostingValue               = Target.checkUkHosting(obj.field_url);
 //		        	Logger.debug("   isUkHostingValue (GeoIp): " + obj.isUkHostingValue);
@@ -183,7 +182,7 @@ public class JsonUtils {
 				if (type.equals(NodeType.ORGANISATION)) {
 					Organisation obj = (Organisation) itr.next();
 					if (obj.vid > 0) {
-						obj.edit_url = Const.WCT_URL + obj.vid;
+						obj.editUrl = Const.WCT_URL + obj.vid;
 					}
 					// } else {
 					// Object obj = itr.next();
@@ -269,8 +268,8 @@ public class JsonUtils {
 //				if (newUser.roles == null || newUser.roles.length() == 0) {
 //					newUser.roles = Const.DEFAULT_BL_ROLE;
 //				}
-				if (newUser.role_to_user == null || newUser.role_to_user.size() == 0) {
-					newUser.role_to_user = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
+				if (newUser.roleToUser == null || newUser.roleToUser.size() == 0) {
+					newUser.roleToUser = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
 				}
 				newUser.id = null;
 				// Logger.info("id: " + newUser.uid + ", url: " + newUser.url +
@@ -297,11 +296,11 @@ public class JsonUtils {
 		while (organisationItr.hasNext()) {
 			Organisation organisation = organisationItr.next();
 			List<User> userList = User
-					.findByOrganisation(organisation.field_abbreviation);
+					.findByOrganisation(organisation.fieldAbbreviation);
 			Iterator<User> userItr = userList.iterator();
 			while (userItr.hasNext()) {
 				User user = userItr.next();
-				user.field_affiliation = organisation.url;
+				user.fieldAffiliation = organisation.url;
 				user.updateOrganisation();
 				Ebean.update(user);
 			}
@@ -338,7 +337,7 @@ public class JsonUtils {
 						Iterator<Target> itrTargets = targets.iterator();
 						while (itrTargets.hasNext()) {
 							Target target = itrTargets.next();
-							target.field_suggested_collections = collection.url;
+							target.fieldSuggestedCollections = collection.url;
 							Ebean.update(target);
 						}
 						break;
@@ -346,20 +345,20 @@ public class JsonUtils {
 				}
 				if (!isInList) {
 					Collection collection = new Collection();
-					collection.id = taxonomy.tid;
-					collection.author = taxonomy.field_owner;
+					collection.id = taxonomy.id;
+					collection.author = taxonomy.fieldOwner;
 					collection.summary = taxonomy.description;
 					collection.title = taxonomy.name;
-					collection.feedNid = taxonomy.feed_nid;
+					collection.feedNid = taxonomy.feedNid;
 					collection.url = taxonomy.url;
 					collection.weight = taxonomy.weight;
-					collection.nodeCount = taxonomy.node_count;
+					collection.nodeCount = taxonomy.nodeCount;
 					collection.vocabulary = taxonomy.vocabulary;
-					collection.fieldOwner = taxonomy.field_owner;
-					collection.fieldDates = taxonomy.field_dates;
-					if (taxonomy.field_publish != null) {
+					collection.fieldOwner = taxonomy.fieldOwner;
+					collection.fieldDates = taxonomy.fieldDates;
+					if (taxonomy.fieldPublish != null) {
 						collection.publish = Utils
-								.getNormalizeBooleanString(taxonomy.field_publish);
+								.getNormalizeBooleanString(taxonomy.fieldPublish);
 					}
 					if (taxonomy.parent == null
 							|| taxonomy.parent.length() == 0) {
@@ -367,7 +366,7 @@ public class JsonUtils {
 					} else {
 						collection.parent = taxonomy.parent;
 					}
-					collection.parentsAll = taxonomy.parents_all;
+					collection.parentsAll = taxonomy.parentsAll;
 					res.add(collection);
 				}
 			}
@@ -477,16 +476,16 @@ public class JsonUtils {
 					readListFromString(target.author, urlList, type, null, res);
 				}
 				if (type.equals(NodeType.TAXONOMY)) {
-					readListFromString(target.field_collection_categories,
+					readListFromString(target.fieldCollectionCategories,
 							urlList, type, TaxonomyType.COLLECTION, res);
-					readListFromString(target.field_suggested_collections,
+					readListFromString(target.fieldSuggestedCollections,
 							urlList, type, TaxonomyType.COLLECTION, res);
-					readListFromString(target.field_license, urlList, type,
+					readListFromString(target.fieldLicense, urlList, type,
 							TaxonomyType.LICENSE, res);
-					readListFromString(target.field_subject, urlList, type,
+					readListFromString(target.fieldSubject, urlList, type,
 							TaxonomyType.SUBJECT, res);
 //					Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
-					readListFromString(target.field_qa_status, urlList, type,
+					readListFromString(target.fieldQaStatus, urlList, type,
 							TaxonomyType.QUALITY_ISSUE, res);
 				}
 				if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
@@ -820,17 +819,17 @@ public class JsonUtils {
 				User existingUser = User.findByName(newUser.name);
 				if (existingUser != null && existingUser.name.length() > 0) {
 					isNew = false;
-					existingUser.field_affiliation = newUser.field_affiliation;
+					existingUser.fieldAffiliation = newUser.fieldAffiliation;
 					existingUser.updateOrganisation();
 					existingUser.id = newUser.id;
 					existingUser.url = newUser.url;
-					existingUser.edit_url = newUser.edit_url;
-					existingUser.last_access = newUser.last_access;
-					existingUser.last_login = newUser.last_login;
-					existingUser.created = newUser.created;
+					existingUser.editUrl = newUser.editUrl;
+					existingUser.lastAccess = newUser.lastAccess;
+					existingUser.lastLogin = newUser.lastLogin;
+					existingUser.createdAt = newUser.createdAt;
 					existingUser.status = newUser.status;
 					existingUser.language = newUser.language;
-					existingUser.feed_nid = newUser.feed_nid;
+					existingUser.feedNid = newUser.feedNid;
 					existingUser.update();
 				}
 			}
@@ -1149,7 +1148,7 @@ public class JsonUtils {
 				Logger.info("map instance.field_target: "
 						+ instance.fieldTarget);
 				Target target = Target.findByUrl(instance.fieldTarget);
-				instance.fieldUrl = target.field_url;
+				instance.fieldUrl = target.fieldUrl;
 				// Logger.info("Instance mapped to Target object: " +
 				// instance.field_url);
 				Ebean.update(instance);
@@ -1165,21 +1164,12 @@ public class JsonUtils {
 		Iterator<Target> targetItr = targetList.iterator();
 		while (targetItr.hasNext()) {
 			Target target = targetItr.next();
-			if (target.field_url != null) {
-				target.domain = Scope.getDomainFromUrl(target.field_url);
+			if (target.fieldUrl != null) {
+				target.domain = Scope.getDomainFromUrl(target.fieldUrl);
 				Logger.info("Target domain: " + target.domain
-						+ " mapped to Target field URL: " + target.field_url);
+						+ " mapped to Target field URL: " + target.fieldUrl);
 				Ebean.update(target);
 			}
 		}
-	}
-	
-	private static String getQaStatus(String value) {
-		for (QAStatusType qaStatusType :QAStatusType.values()) {
-			if (qaStatusType.name().equals(value)) {
-				return value;
-			}
-		}
-		return null;
 	}
 }

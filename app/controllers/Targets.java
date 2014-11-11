@@ -3,7 +3,6 @@ package controllers;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -73,9 +72,9 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_subject != null && target.field_subject.length() > 0 && !res.contains(target)) {
+			if (target.fieldSubject != null && target.fieldSubject.length() > 0 && !res.contains(target)) {
 //				if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_subject", target.field_subject);
+		        ExpressionList<Target> ll = Target.find.where().contains("field_subject", target.fieldSubject);
 		        if (ll.findRowCount() > 0) {
 //		        	subjects.add(target.field_subject);
 		        	res.add(target);
@@ -96,11 +95,11 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_scope != null && target.field_scope.length() > 0 && !subjects.contains(target.field_scope)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_scope", target.field_scope);
+			if (target.fieldScope != null && target.fieldScope.length() > 0 && !subjects.contains(target.fieldScope)) {
+		        ExpressionList<Target> ll = Target.find.where().contains("field_scope", target.fieldScope);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.field_scope);
+		        	subjects.add(target.fieldScope);
 		        }
 			}
 		}
@@ -134,8 +133,8 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_license != null) {
-				String curLicense = target.field_license.replace(Const.LIST_DELIMITER, "");
+			if (target.fieldLicense != null) {
+				String curLicense = target.fieldLicense.replace(Const.LIST_DELIMITER, "");
 				if (curLicense.length() > 0 && !subjects.contains(curLicense)) {
 			        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_LICENSE_NODE, curLicense);
 			        if (ll.findRowCount() > 0) {
@@ -174,11 +173,11 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_crawl_frequency != null && target.field_crawl_frequency.length() > 0 && !subjects.contains(target.field_crawl_frequency)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_crawl_frequency", target.field_crawl_frequency);
+			if (target.fieldCrawlFrequency != null && target.fieldCrawlFrequency.length() > 0 && !subjects.contains(target.fieldCrawlFrequency)) {
+		        ExpressionList<Target> ll = Target.find.where().contains("field_crawl_frequency", target.fieldCrawlFrequency);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.field_crawl_frequency);
+		        	subjects.add(target.fieldCrawlFrequency);
 		        }
 			}
 		}
@@ -196,11 +195,11 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_depth != null && target.field_depth.length() > 0 && !subjects.contains(target.field_depth)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_depth", target.field_depth);
+			if (target.fieldDepth != null && target.fieldDepth.length() > 0 && !subjects.contains(target.fieldDepth)) {
+		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_DEPTH, target.fieldDepth);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.field_depth);
+		        	subjects.add(target.fieldDepth);
 		        }
 			}
 		}
@@ -219,12 +218,12 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_collection_categories != null && target.field_collection_categories.length() > 0 && !subjects.contains(target.field_collection_categories)) {
-		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, target.field_collection_categories);
+			if (target.fieldCollectionCategories != null && target.fieldCollectionCategories.length() > 0 && !subjects.contains(target.fieldCollectionCategories)) {
+		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, target.fieldCollectionCategories);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.field_collection_categories);
-		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.field_collection_categories);
+		        	subjects.add(target.fieldCollectionCategories);
+		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.fieldCollectionCategories);
 		        	taxonomies.add(taxonomy);
 		        }
 			}
@@ -508,7 +507,8 @@ public class Targets extends AbstractController {
 				 	                    		value = User.findByUrl((String) value).name;
 				 	                    	}
 				 	                    }
-				 	                    if (field.getName().equals(Const.CREATED)) {
+				 	                    // TODO: CREATED_AT
+				 	                    if (field.getName().equals(Const.CREATED_AT)) {
 				 	                    	if (value != null) {
 				 	                    		value = Utils.showTimestampInTable((String) value);
 				 	                    	}
@@ -559,13 +559,13 @@ public class Targets extends AbstractController {
     		if (Const.ADDENTRY.equals(action)) {
     	        Logger.info("create()");
     	    	Target target = new Target();
-    	    	target.field_url = query;
+    	    	target.fieldUrl = query;
     	        target.revision = Const.INITIAL_REVISION;
     	        target.active = true;
     	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
     	        	target.author = User.findByEmail(request().username()).url;
-    	        	target.field_subsubject = Const.NONE;
-    	        	target.field_subject = Const.NONE;
+    	        	target.fieldSubSubject = Const.NONE;
+    	        	target.fieldSubject = Const.NONE;
     	        }
 //	        	target.qa_status = Const.NONE_VALUE;
     			Logger.info("add target with url: " + target.url);
@@ -591,9 +591,10 @@ public class Targets extends AbstractController {
     public static Result create(String title) {
         Logger.info("create()");
     	Target target = new Target();
-    	target.field_url = title;
-        target.nid = Target.createId();
-        target.url = Const.ACT_URL + target.nid;
+    	target.fieldUrl = title;
+    	// TODO: createId
+//        target.id = Target.createId();
+//        target.url = Const.ACT_URL + target.id;
         target.revision = Const.INITIAL_REVISION;
         target.active = true;
 		Logger.info("add entry with target url: " + target.url);
@@ -866,9 +867,9 @@ public class Targets extends AbstractController {
     public static Result edit(String url) {
 		Logger.info("Targets.edit() url: " + url);
 		Target target = Target.findByUrl(url);
-		if (target.field_subject == null || target.field_subject.length() == 0) {
+		if (target.fieldSubject == null || target.fieldSubject.length() == 0) {
 			Logger.info("Targets.edit() set subject value to 'None' for imported targets.");
-			target.field_subject = Const.NONE;
+			target.fieldSubject = Const.NONE;
 			Ebean.update(target);
 		}		
 		Logger.info("Targets.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
@@ -967,7 +968,7 @@ public class Targets extends AbstractController {
         if (fieldUrl != null) {
         	Target targetObj = Target.findByFieldUrl(fieldUrl);
         	if (targetObj != null && targetObj.url != null) {
-	        	targetObj.qa_status = qaStatus;
+	        	targetObj.qaStatus = qaStatus;
 	        	Logger.debug("update Qa Status for target object: " + qaStatus);
     	        Ebean.update(targetObj);
         	}
@@ -1079,7 +1080,7 @@ public class Targets extends AbstractController {
         	Iterator<Target> itr = targets.iterator();
         	while (itr.hasNext()) {
         		Target target = itr.next();
-        		sb.append(target.title + " " + target.field_url);
+        		sb.append(target.title + " " + target.fieldUrl);
                 sb.append(System.getProperty("line.separator"));
         	}
             res = sb.toString();

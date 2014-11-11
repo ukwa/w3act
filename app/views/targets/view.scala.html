@@ -121,7 +121,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="nid" value="@target.nid" size="30" readonly>
+								<input class="form-control" name="nid" value="@target.id" size="30" readonly>
 							</div>
 						</div>
 					</div>
@@ -148,7 +148,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.checkUkHosting(target.field_url)) {
+								@if(Target.checkUkHosting(target.fieldUrl)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -353,7 +353,7 @@
 						<div class="form-group">
 			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
 						    <div class="col-sm-6">
-						        @if(target.url != null && target.field_nominatingOrganisation != null) {
+						        @if(target.url != null && target.fieldNominatingOrganisation != null) {
   									@Organisation.getNominatingOrganisation(target.fieldNominatingOrganisation)
   								} else {
   								    none
@@ -368,7 +368,7 @@
 						<div class="form-group">
 			              	<label for="inputAuthors" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea readonly class="form-control" name="originating_organisation" id="originatingOrganisation" cols="100" rows="1" value="@target.originating_organisation">@target.originatingOrganisation</textarea>
+				            	<textarea readonly class="form-control" name="originating_organisation" id="originatingOrganisation" cols="100" rows="1" value="@target.originatingOrganisation">@target.originatingOrganisation</textarea>
 							</div>
 						</div>
 					</div>
@@ -744,7 +744,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Start date</label>
 					    <div class="col-sm-6">
-	 						@target.fieldCrawlStartSate
+	 						@target.fieldCrawlStartDate
                 		</div>
 					</div>
 				</div>
@@ -885,7 +885,7 @@
 						<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@target.fieldUrl">In other web archives</a>
 					</div>
 				    <div class="panel-footer">
-			        	<a class="brand" target="_blank" href="@target.field_url">Live site</a>
+			        	<a class="brand" target="_blank" href="@target.fieldUrl">Live site</a>
 					</div>
 				</div>
 			</div>
@@ -903,8 +903,8 @@
 				<div id="collapseRevisions" class="panel-collapse collapse">
 	       			@for(prevTarget <- Target.findRevisions(target.url)) {
 	       			<div class="panel-footer">
-	       				<a class="brand" href="@routes.Targets.viewrevision(prevTarget.nid)">
-	         				(@prevTarget.nid) &nbsp; @prevTarget.revision &nbsp; @prevTarget.lastUpdate</a>
+	       				<a class="brand" href="@routes.Targets.viewrevision(prevTarget.id)">
+	         				(@prevTarget.id) &nbsp; @prevTarget.revision &nbsp; @prevTarget.updatedAt</a>
 	       			</div>
 	       			}
 	     		</div>

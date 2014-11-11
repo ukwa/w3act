@@ -560,14 +560,14 @@ public class Target extends ActModel {
 	 */
 	public static List<Target> filterUrl(String url) {
 		List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().icontains("field_url", url);
+        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL, url);
     	res = ll.findList();
 		return res;
 	}
 	
 	public static List<Target> filterActiveUrl(String url) {
 		List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true).contains("field_url", url);
+        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true).contains(Const.FIELD_URL, url);
     	res = ll.findList();
 		return res;
 	}
@@ -1068,14 +1068,6 @@ public class Target extends ActModel {
 		}
  	    sw.append(Const.CSV_LINE_END);
  	    return sw.toString();
-
-//        return "Target(" + nid + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + field_crawl_frequency + ", type: " + type +
-//        ", field_uk_domain: " + field_uk_domain + ", field_url: " + field_url + 
-//        ", field_description: " + field_description + ", field_uk_postal_address_url: " + field_uk_postal_address_url +
-//        ", field_suggested_collections: " + field_suggested_collections + ", field_collections: " + field_collections +
-//        ", field_license: " + field_license + ", field_collection_categories: " + field_collection_categories +
-//        ", field_notes: " + field_notes + ", field_instances: " + field_instances + 
-//        ", field_subject: " + field_subject + ", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
     // Could really do with many_to_one relationship
@@ -1236,7 +1228,7 @@ public class Target extends ActModel {
         return find.where()
            		.eq(Const.ACTIVE, true)
         		.add(Expr.or(
-	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.FIELD_URL, filter),
 	                    Expr.icontains(Const.TITLE, filter)
 	                 ))
         		.orderBy(sortBy + " " + order)
@@ -1262,7 +1254,7 @@ public class Target extends ActModel {
         return find.where(
         		  Expr.and(
         			 Expr.or(
-        				Expr.and(Expr.icontains(Const.FIELD_URL_NODE, filter), Expr.eq(Const.ACTIVE, true)),
+        				Expr.and(Expr.icontains(Const.FIELD_URL, filter), Expr.eq(Const.ACTIVE, true)),
 	                    Expr.and(Expr.icontains(Const.TITLE, filter), Expr.eq(Const.ACTIVE, true))
 	                 ),
 	                 Expr.and(
@@ -1303,7 +1295,7 @@ public class Target extends ActModel {
     	Page<Target> res = null;
    		exp = exp.eq(Const.ACTIVE, true);
    		exp = exp.add(Expr.or(
-		                    Expr.icontains(Const.FIELD_URL_NODE, filterUrl),
+		                    Expr.icontains(Const.FIELD_URL, filterUrl),
 		                    Expr.icontains(Const.TITLE, filterUrl)
 		                ));
     	if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
@@ -1476,11 +1468,11 @@ public class Target extends ActModel {
     		expressionList.eq("isUkHostingValue", false);
     		expressionList.eq("isInScopeUkRegistrationValue", false);
     		expressionList.eq(Const.FIELD_PROFESSIONAL_JUDGEMENT, false);
-    		expressionList.add(Expr.raw("field_url NOT like '%" + Scope.UK_DOMAIN + "%' or field_url NOT like '%" + Scope.LONDON_DOMAIN + "%' or field_url NOT like '%" + Scope.SCOT_DOMAIN + "%'"));
+    		expressionList.add(Expr.raw("fieldUrl NOT like '%" + Scope.UK_DOMAIN + "%' or fieldUrl NOT like '%" + Scope.LONDON_DOMAIN + "%' or fieldUrl NOT like '%" + Scope.SCOT_DOMAIN + "%'"));
     	} else if (npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
 //    		Expression ex = Expr.or(Expr.icontains("field_url", Scope.UK_DOMAIN), Expr.icontains("field_url", Scope.LONDON_DOMAIN));
 //    		exp.add(Expr.or(ex, Expr.icontains("field_url", Scope.SCOT_DOMAIN)));
-    		expressionList.add(Expr.raw("field_url like '%" + Scope.UK_DOMAIN + "%' or field_url like '%" + Scope.LONDON_DOMAIN + "%' or field_url like '%" + Scope.SCOT_DOMAIN + "%'"));
+    		expressionList.add(Expr.raw("fieldUrl like '%" + Scope.UK_DOMAIN + "%' or fieldUrl like '%" + Scope.LONDON_DOMAIN + "%' or fieldUrl like '%" + Scope.SCOT_DOMAIN + "%'"));
     	} else if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
     		// uk hosting
     		expressionList.eq("isUkHostingValue", true);
@@ -1585,7 +1577,7 @@ public class Target extends ActModel {
 
         return find.where()
         		.add(Expr.or(
-	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.FIELD_URL, filter),
 	                    Expr.icontains(Const.TITLE, filter)
 	                 ))
 	            .eq(Const.ACTIVE, true)
@@ -1626,7 +1618,7 @@ public class Target extends ActModel {
 
         return find.where()
         		.add(Expr.or(
-	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.FIELD_URL, filter),
 	                    Expr.icontains(Const.TITLE, filter)
 	                 ))
 	            .eq(Const.ACTIVE, true)
@@ -1663,7 +1655,7 @@ public class Target extends ActModel {
 
         return find.where()
         		.add(Expr.or(
-	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.FIELD_URL, filter),
 	                    Expr.icontains(Const.TITLE, filter)
 	                 ))
 	            .eq(Const.ACTIVE, true)
@@ -1693,7 +1685,7 @@ public class Target extends ActModel {
 
         return find.where()
         		.add(Expr.or(
-	                    Expr.icontains(Const.FIELD_URL_NODE, filter),
+	                    Expr.icontains(Const.FIELD_URL, filter),
 	                    Expr.icontains(Const.TITLE, filter)
 	                 ))
 	            .eq(Const.ACTIVE, true)
@@ -1781,7 +1773,7 @@ public class Target extends ActModel {
     	Target res = new Target();
         Logger.info("findByFieldUrl() target url: " + url);        
         if (url != null) {
-	        res = find.where().eq(Const.FIELD_URL_NODE, url).eq(Const.ACTIVE, true).findUnique();
+	        res = find.where().eq(Const.FIELD_URL, url).eq(Const.ACTIVE, true).findUnique();
         }
     	return res;
     }          
@@ -1879,7 +1871,7 @@ public class Target extends ActModel {
 	        String domain = Scope.getDomainFromUrl(fieldUrl);
 			Logger.debug("getNpldStatusList() domain: " + domain);
 	        ExpressionList<Target> ll = find.where()
-	        		.icontains(Const.FIELD_URL_NODE, domain)
+	        		.icontains(Const.FIELD_URL, domain)
 	        		.eq(Const.FIELD_UK_HOSTING, false)
 		    		.eq(Const.ACTIVE, true);
 			targets = ll.findList();
@@ -2031,7 +2023,7 @@ public class Target extends ActModel {
 		if (StringUtils.isNotEmpty(this.fieldUrl)) {
 			String normalisedUrl = Scope.normalizeUrl(this.fieldUrl);
 	        String domain = Scope.getDomainFromUrl(normalisedUrl);
-	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, domain).eq(Const.ACTIVE, true);
+	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL, domain).eq(Const.ACTIVE, true);
 	        List<Target> targets = ll.findList();
 			for (Target target : targets) {
 				if (isHigherLevel(target.fieldUrl)) {
@@ -2062,7 +2054,7 @@ public class Target extends ActModel {
 	        String domain = Scope.getDomainFromUrl(this.fieldUrl);
 			Logger.debug("getUkwaLicenceStatusList() domain: " + domain);
 			// get me Targets that contain the same domain so I can check the licenses. i.e higher level
-	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL_NODE, domain).eq(Const.ACTIVE, true);
+	        ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL, domain).eq(Const.ACTIVE, true);
 	        List<Target> targets = ll.findList();
 	        
 			Logger.info("Targets containing domain "  + domain + " - " + targets.size());

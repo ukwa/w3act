@@ -127,7 +127,7 @@
 			@for(target <- currentPage.getList) {
             <tr>
             	<td>
-            		<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a>
+            		<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("field_url")</a>
 				</td>
                	@if(target.fieldCollectionCategories != null && models.Collection.getSelectedCollections(target.url) != null) { 
                	<td>

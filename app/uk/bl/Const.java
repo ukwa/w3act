@@ -168,7 +168,7 @@ public final class Const {
     public static final String FIELD_NO_LD_CRITERIA_MET = "fieldNoLdCriteriaMet";
     public static final String FIELD_IGNORE_ROBOTS_TXT = "fieldIgnoreRobotsTxt";
     public static final String FIELD_CRAWL_START_DATE = "fieldCrawlStartDate";
-    public static final String FIELD_CRAWL_END_DATE = "field_ErawlEndDate";
+    public static final String FIELD_CRAWL_END_DATE = "fieldCrawlEndDate";
     public static final String WHITE_LIST = "whiteList";
     public static final String BLACK_LIST = "blackList";
     public static final String KEYWORDS = "keywords";

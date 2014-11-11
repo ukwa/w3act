@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import models.Collection;
 import models.Permission;
 import models.Target;
 import models.User;
@@ -21,8 +20,6 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
-import views.html.permissions.edit;
 import views.html.permissions.*;
 
 /**

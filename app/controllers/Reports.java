@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import models.ContactPerson;
 import models.CrawlPermission;
 import models.Organisation;
 import models.Target;

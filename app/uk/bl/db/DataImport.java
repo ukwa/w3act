@@ -148,15 +148,15 @@ public enum DataImport {
 	            	// Create association between Target and Organisation
 	            	target.updateOrganisation();
                     // Create association between Target and DCollection
-                	target.collection_to_target = Collection.convertUrlsToObjects(target.field_collection_categories);
+                	target.collectionToTarget = Collection.convertUrlsToObjects(target.fieldCollectionCategories);
                     // Create association between Target and Subject (Taxonomy)
-                	target.subject_to_target = Taxonomy.convertUrlsToObjects(target.field_subject);
+                	target.subjectToTarget = Taxonomy.convertUrlsToObjects(target.fieldSubject);
                     // Create association between Target and License (Taxonomy)
-                	target.license_to_target = Taxonomy.convertUrlsToObjects(target.field_license);
+                	target.licenseToTarget = Taxonomy.convertUrlsToObjects(target.fieldLicense);
                     // Create association between Target and Flag
-                	target.flag_to_target = Flag.convertUrlsToObjects(target.flags);
+                	target.flagToTarget = Flag.convertUrlsToObjects(target.flags);
                     // Create association between Target and Tag
-                	target.tag_to_target = Tag.convertUrlsToObjects(target.tags);
+                	target.tagToTarget = Tag.convertUrlsToObjects(target.tags);
         			Ebean.update(target);
 	            }
                 // Create associations for Instance
@@ -215,19 +215,20 @@ public enum DataImport {
 					Logger.info("initial password creation - key specification error: " + e);
 				}
                 Logger.info("Predefined " + User.class.getSimpleName() + ": " + user.toString());
-                Logger.info("+++ user role_to_user size: " + user.role_to_user.size());
+                Logger.info("+++ user role_to_user size: " + user.roleToUser.size());
 	        }
 	        if (cls == Role.class) {
             	Role role = (Role) sectionItr.next();
-            	role.id = Utils.createId();
-	        	role.url= Const.ACT_URL + role.id;
+            	// TODO: createId - shouldn't need this as it will assign ids on save
+//            	role.id = Utils.createId();
+//	        	role.url= Const.ACT_URL + role.id;
                 Logger.info("Predefined " + Role.class.getSimpleName() + ": " + role.toString());
                 Logger.info("+++ role permissionsMap size: " + role.permissionsMap.size());
 	        }
 	        if (cls == Permission.class) {
 	        	Permission permission = (Permission) sectionItr.next();
-	        	permission.id = Utils.createId();
-	        	permission.url= Const.ACT_URL + permission.id;
+//	        	permission.id = Utils.createId();
+//	        	permission.url= Const.ACT_URL + permission.id;
                 Logger.info("Predefined " + Permission.class.getSimpleName() + ": " + permission.toString());
 	        }
 	        if (cls == Organisation.class) {
@@ -236,36 +237,37 @@ public enum DataImport {
 	        }
 	        if (cls == MailTemplate.class) {
 	        	MailTemplate mailTemplate = (MailTemplate) sectionItr.next();
-	        	mailTemplate.id = Utils.createId();
-	        	mailTemplate.url = Const.ACT_URL + mailTemplate.id;
+//	        	mailTemplate.id = Utils.createId();
+//	        	mailTemplate.url = Const.ACT_URL + mailTemplate.id;
 	        	mailTemplate.readInitialTemplate();
                 Logger.info("Predefined " + MailTemplate.class.getSimpleName() + ": " + mailTemplate.toString());
 	        }
 	        if (cls == ContactPerson.class) {
 	        	ContactPerson contactPerson = (ContactPerson) sectionItr.next();
-	        	contactPerson.id = Utils.createId();
-	        	contactPerson.url = Const.ACT_URL + contactPerson.id;
+//	        	contactPerson.id = Utils.createId();
+//	        	contactPerson.url = Const.ACT_URL + contactPerson.id;
                 Logger.info("Predefined " + ContactPerson.class.getSimpleName() + ": " + contactPerson.toString());
 	        }
 	        if (cls == Tag.class) {
 	        	Tag tag = (Tag) sectionItr.next();
-	        	tag.id = Utils.createId();
-	        	tag.url = Const.ACT_URL + tag.id;
+//	        	tag.id = Utils.createId();
+//	        	tag.url = Const.ACT_URL + tag.id;
                 Logger.info("Predefined " + Tag.class.getSimpleName() + ": " + tag.toString());
 	        }
 	        if (cls == Flag.class) {
 	        	Flag flag = (Flag) sectionItr.next();
-	        	flag.id = Utils.createId();
-	        	flag.url = Const.ACT_URL + flag.id;
+//	        	flag.id = Utils.createId();
+//	        	flag.url = Const.ACT_URL + flag.id;
                 Logger.info("Predefined " + Flag.class.getSimpleName() + ": " + flag.toString());
 	        }
 	        if (cls == Taxonomy.class) {
 	        	Taxonomy taxonomy = (Taxonomy) sectionItr.next();
-	        	taxonomy.tid = Utils.createId();
-	        	taxonomy.url = Const.ACT_URL + taxonomy.tid;
+//	        	taxonomy.id = Utils.createId();
+//	        	taxonomy.url = Const.ACT_URL + taxonomy.id;
                 Logger.info("Predefined " + Taxonomy.class.getSimpleName() + ": " + taxonomy.toString());
 	        }
         }
+        // TODO: will this call model.save?
         Ebean.save(sectionList);
     }
 
@@ -277,11 +279,11 @@ public enum DataImport {
         Iterator<Target> itr = targets.iterator();
         while (itr.hasNext()) {
         	Target target = itr.next();
-			if (target.field_collection_categories != null && target.field_collection_categories.contains("_")) {
-				target.field_collection_categories = target.field_collection_categories.replace("_", "/");
+			if (target.fieldCollectionCategories != null && target.fieldCollectionCategories.contains("_")) {
+				target.fieldCollectionCategories = target.fieldCollectionCategories.replace("_", "/");
 			}
-			if (target.field_license != null && target.field_license.contains("_")) {
-				target.field_license = target.field_license.replace("_", "/");
+			if (target.fieldLicense != null && target.fieldLicense.contains("_")) {
+				target.fieldLicense = target.fieldLicense.replace("_", "/");
 			}
             Ebean.update(target);
 		}

@@ -5,7 +5,6 @@ import static play.data.Form.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.Collection;
 import models.PermissionRefusal;
 import models.Target;
 import models.User;
@@ -17,7 +16,6 @@ import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
-//import play.mvc.Http.Session;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;

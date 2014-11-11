@@ -3,7 +3,6 @@ package controllers;
 
 import java.util.List;
 
-import models.LookupEntry;
 import models.Target;
 import models.User;
 import play.Logger;
@@ -19,8 +18,6 @@ import uk.bl.scope.WhoIsData;
 import views.html.whois.index;
 import views.html.whois.results;
 
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.SqlRow;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -61,46 +58,15 @@ public class CheckWhoIs extends AbstractController {
      * @throws WhoisException 
      */
     public static Result check(int total) throws WhoisException {
-//    	Result res = null;
     	Logger.info("CheckWhoIs controller check() " + total);
         String check = getFormParam("check");
         if (check != null || total > 0) {
         	Logger.info("target number to check: " + getFormParam(Const.NUMBER));
-//        	int number = 50;
             if (getFormParam(Const.NUMBER) != null 
             		&& getFormParam(Const.NUMBER).length() > 0
             		&& Utils.isNumeric(getFormParam(Const.NUMBER))) {
             	total = Integer.valueOf(getFormParam(Const.NUMBER));
             }
-//        	new WhoIsThread("WhoIs check").start();
-//        	Target target = new Target();
-//        	WhoIsThread notifier = new WhoIsThread(target, number);
-//    		Thread notifierThread = new Thread(notifier, "notifierWhoIsThread");
-//    		notifierThread.start();
-    		
-
-//    		Visual feedback should include:
-//		    most recent domain checked (and when)
-//		    the domain least recently checked (and when)
-    		
-//    		List of all targets sorted by date of last WhoIs check
-//    		showing the least recently checked first.
-        	
-//	        res = find.where().eq(Const.ACTIVE, true).orderBy(Const.LAST_UPDATE + " " + Const.DESC).setMaxRows(number).findList();
-			
-//    		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.field_url, t.last_update as target_date, l.last_update as lookup_date, (l.last_update::timestamp - t.last_update::timestamp) as diff from target t, lookup_entry l where t.field_url = l.name order by diff desc");
-//    		
-//    		if (total > 0) {
-//    			lookupSql.append(" limit ").append(total);
-//    		}
-//    		lookupSql.append(";");
-    		
-//    		List<SqlRow> rows = Ebean.createSqlQuery(lookupSql.toString()).findList();
-    		
-//    		for (SqlRow r : rows) {
-//    			Logger.info(r.getString("lookup_name") + " " +  r.getTimestamp("target_date") + " "  + r.getTimestamp("lookup_date"));
-//    		}
-//        	res = ok(infomessage.render("You have successfully checked the current status of WhoIs service."));
 
 			WhoIsData whoIsData = Scope.checkWhois(total);
 
@@ -108,8 +74,6 @@ public class CheckWhoIs extends AbstractController {
         	return ok(
         			results.render(User.findByEmail(request().username()), whoIsData)
         	);
-//  			flash("message", "You have started a check for the current status of the WhoIs service. Please refresh this page using F5 in order to see changes.");
-//  			return index();
         } 
         return index();
     }    

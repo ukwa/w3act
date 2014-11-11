@@ -1,29 +1,19 @@
 package controllers;
 
-import static play.data.Form.form;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Iterator;
 import java.util.List;
 
-import models.Organisation;
-import models.Role;
-import models.Target;
 import models.User;
 
-import org.apache.commons.lang3.StringUtils;
-
 import play.Logger;
-import play.data.DynamicForm;
-import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.PasswordHash;
-import uk.bl.api.Utils;
 import views.html.passwords.edit;
 import views.html.infomessage;
 

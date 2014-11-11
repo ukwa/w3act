@@ -8,7 +8,6 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import models.Collection;
 import models.Tag;
 import models.Target;
 import models.User;

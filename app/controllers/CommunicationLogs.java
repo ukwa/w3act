@@ -7,8 +7,6 @@ import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.CommunicationLog;
-import models.Collection;
-import models.Permission;
 import models.Target;
 import models.User;
 import models.CrawlPermission;

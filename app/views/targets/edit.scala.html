@@ -188,7 +188,7 @@
 	        <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
 		    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
 			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-				@if(Target.isInScopeAllWithoutLicense(form("field_url").value, form("url").value)) {
+				@if(Target.isInScopeAllWithoutLicense(form("fieldUrl").value, form("url").value)) {
 					<font color="green">(+)</font>
 				} else {
 					<font color="red">(-)</font>
@@ -269,8 +269,8 @@
 								<small class="text-center">(One or more URLs, separated by comma)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(form("field_url").value != null) {
-									<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form("field_url").value">
+								@if(form("fieldUrl").value != null) {
+									<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form("fieldUrl").value">
 								} else {
 									<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form("title").value">
 								}
@@ -286,7 +286,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.checkUkHosting(form("field_url").value)) {
+								@if(Target.checkUkHosting(form("fieldUrl").value)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -303,7 +303,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeDomain(form("field_url").value, form("url").value)) {
+								@if(Target.isInScopeDomain(form("fieldUrl").value, form("url").value)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -320,7 +320,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeUkRegistration(form("field_url").value)) {
+								@if(Target.isInScopeUkRegistration(form("fieldUrl").value)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -336,16 +336,16 @@
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
 								<select name="field_qa_status" id="field_qa_status" class="form-control">
-									@if(form("field_qa_status").value != null) {
-										@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
-							                @if(form("field_qa_status").value.contains(taxonomy.url)) {             
+									@if(form("fieldQaStatus").value != null) {
+										@for(taxonomy <- Taxonomy.findListByType("qualityIssue")) {
+							                @if(form("fieldQaStatus").value.contains(taxonomy.url)) {             
 											 	<option value="@taxonomy.name" selected>@taxonomy.name</option>
 										 	} else {
 											 	<option value="@taxonomy.name">@taxonomy.name</option>
 										 	}									 	
 									    }
 									} else {
-										@for(taxonomy <- Taxonomy.findListByType("quality_issue")) {
+										@for(taxonomy <- Taxonomy.findListByType("qualityIssue")) {
 							                @if(taxonomy.name.equals("Unknown")) {             
 											 	<option value="@taxonomy.name" selected>@taxonomy.name</option>
 										 	} else {
@@ -365,28 +365,28 @@
 							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If known, please add the current status of the site)</small></label>
 						    <div class="col-sm-6">
 								<label class="radio-inline">
-							  		@if(form("field_live_site_status").value != null && form("field_live_site_status").value.equals("N/A")) {
+							  		@if(form("fieldLiveSiteStatus").value != null && form("fieldLiveSiteStatus").value.equals("N/A")) {
 							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio" checked="checked"> N/A
 							        } else {
 							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio"> N/A
 							        }
 								</label>
 								<label class="radio-inline">
-							  		@if(form("field_live_site_status").value != null && form("field_live_site_status").value.equals("Still live")) {
+							  		@if(form("fieldLiveSiteStatus").value != null && form("fieldLiveSiteStatus").value.equals("Still live")) {
 							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio" checked="checked"> Still live 
 							        } else {
 							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio"> Still live 
 							        }
 								</label>
 								<label class="radio-inline">
-							  		@if(form("field_live_site_status").value != null && form("field_live_site_status").value.equals("No longer updated")) {
+							  		@if(form("fieldLiveSiteStatus").value != null && form("fieldLiveSiteStatus").value.equals("No longer updated")) {
 							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio" checked="checked"> No longer updated 
 							        } else {
 							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio"> No longer updated 
 							        }
 								</label>
 								<label class="radio-inline">
-							  		@if(form("field_live_site_status").value != null && form("field_live_site_status").value.equals("Vanished")) {
+							  		@if(form("fieldLiveSiteStatus").value != null && form("fieldLiveSiteStatus").value.equals("Vanished")) {
 							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio" checked="checked"> Vanished
 							        } else {
 							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio"> Vanished
@@ -402,7 +402,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_key_site").value != null && form("field_key_site").value == "true") {             
+				                @if(form("fieldKeySite").value != null && form("fieldKeySite").value == "true") {             
 					                <input type="checkbox" name="keysite" value="true" checked />
 				                } else {
 					                <input type="checkbox" name="keysite" value="true"/>
@@ -418,9 +418,9 @@
 							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
 						    <div class="col-sm-6">
 	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
-			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" value="@form("field_wct_id").value">
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" value="@form("fieldWct_id").value">
 			              	} else {
-			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@form("field_wct_id").value">
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@form("fieldWct_id").value">
 			              	}
 							</div>
 						</div>
@@ -433,9 +433,9 @@
 			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
 						    <div class="col-sm-6">
 	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
-			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" value="@form("field_spt_id").value">
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" value="@form("fieldSpt_id").value">
 			              	} else {
-			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@form("field_spt_id").value">
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@form("fieldSpt_id").value">
 			                }
 							</div>
 						</div>
@@ -503,11 +503,11 @@
 						    <div class="col-sm-6">
 			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || (form("author").value != null && user.url.equals(form("author").value))) {
 							  <div id="subjectTree"></div>
-							  <input type="hidden" id="field_subject" name="field_subject" value="@form("field_subject").value">
+							  <input type="hidden" id="field_subject" name="field_subject" value="@form("fieldSubject").value">
 							  } else {
 							        @if(form("url").value != null) {
 	  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjects(form("url").value))
-								        <input type="hidden" id="field_subject" name="field_subject" value="@form("field_subject").value">
+								        <input type="hidden" id="field_subject" name="field_subject" value="@form("fieldSubject").value">
 	  								} else {
 	  								    none
 								        <input type="hidden" id="field_subject" name="field_subject" value="none">
@@ -546,7 +546,7 @@
 								<select name="organisation" id="mySel" class="form-control">
 					            	<option>None</option>
 					                @for(organisation <- Organisation.findAll()) {
-						                @if(organisation.title.equals(Organisation.findByUrl(form("field_nominating_organisation").value).title)) {
+						                @if(organisation.title.equals(Organisation.findByUrl(form("fieldNominatingOrganisation").value).title)) {
 							                <option selected>@organisation.title</option>
 							            } else {
 						                    <option>@organisation.title</option>
@@ -563,7 +563,7 @@
 						<div class="form-group">
 			              	<label for="inputAuthors" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@form("originating_organisation").value">@form("originating_organisation").value</textarea>
+				            	<textarea class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@form("originatingOrganisation").value">@form("originatingOrganisation").value</textarea>
 							</div>
 						</div>
 					</div>
@@ -649,7 +649,7 @@
 						<div class="form-group">
 			              	<label for="inputFlagNotes" class="col-sm-6 control-label">Flag notes <small class="text-center">(More details about the flagged issue)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="flag_notes" id="flag_notes" cols="100" rows="1" value="@form("flag_notes").value">@form("flag_notes").value</textarea>
+				            	<textarea class="form-control" name="flag_notes" id="flag_notes" cols="100" rows="1" value="@form("flagNotes").value">@form("flagNotes").value</textarea>
 							</div>
 						</div>
 					</div>
@@ -661,7 +661,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Date of publication</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="date_of_publication" value="@form("date_of_publication").value" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
+		 						<input type="text" name="date_of_publication" value="@form("dateOfPublication").value" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
 	                		</div>
 						</div>
 					</div>
@@ -686,14 +686,14 @@
 			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
 								<select name="selection_type" id="selection_type" class="form-control">
-					                @for(selection_type <- Target.getAllSelectionTypes()) {
-						                @if(selection_type.equals(form("selection_type").value)) {
-						                	<option selected>@form("selection_type").value</option>
+					                @for(selectionType <- Target.getAllSelectionTypes()) {
+						                @if(selectionType.equals(form("selectionType").value)) {
+						                	<option selected>@form("selectionType").value</option>
 						                } else {
-						                	@if(form("selection_type").value == null && selection_type.equals("SELECTION")) {
-						                	<option selected>@selection_type</option>
+						                	@if(form("selectionType").value == null && selectionType.equals("SELECTION")) {
+						                	<option selected>@selectionType</option>
 						                	} else {
-						                	<option>@selection_type</option>
+						                	<option>@selectionType</option>
 						                	}
 						                }
 					                }
@@ -708,7 +708,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(This field allows further notes to selection for WA team, not captured in Justification field.)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="selector_notes" id="input_selector_notes" cols="100" rows="1" value="@form("selector_notes").value">@form("selector_notes").value</textarea>
+				            	<textarea class="form-control" name="selector_notes" id="input_selector_notes" cols="100" rows="1" value="@form("selectorNotes").value">@form("selectorNotes").value</textarea>
 							</div>
 						</div>
 					</div>
@@ -719,7 +719,7 @@
 						<div class="form-group">
 							<label for="legacy_cite_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
 						    <div class="col-sm-6">
-			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form("legacy_site_id").value">
+			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form("legacySite_id").value">
 							</div>
 						</div>
 					</div>
@@ -741,11 +741,11 @@
 					</div>
 				</div>		
 				
-				@if(Targets.indicateNpldStatus(form("field_url").value)) {    	
+				@if(Targets.indicateNpldStatus(form("fieldUrl").value)) {    	
 				<div class="padding-20">
 					<div class="alert alert-info">
 						NB. There are other records within this domain for which data has already been provided.
-						@for(targetObj <- Target.getNpldStatusList(form("field_url").value)) {
+						@for(targetObj <- Target.getNpldStatusList(form("fieldUrl").value)) {
 							<p><a href="@routes.Targets.view(targetObj.url)">@targetObj.title @targetObj.fieldUrl</a></p>
 						}
 					</div>
@@ -759,7 +759,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.checkUkHosting(form("field_url").value)) {
+								@if(Target.checkUkHosting(form("fieldUrl").value)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -776,7 +776,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeDomain(form("field_url").value, form("url").value)) {
+								@if(Target.isInScopeDomain(form("fieldUrl").value, form("url").value)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -793,7 +793,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeUkRegistration(form("field_url").value)) {
+								@if(Target.isInScopeUkRegistration(form("fieldUrl").value)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -808,7 +808,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_uk_postal_address").value != null && form("field_uk_postal_address").value == "true") {             
+				                @if(form("fieldUkPostalAddress").value != null && form("fieldUkPostalAddress").value == "true") {             
 					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_uk_postal_address" value="true" />
@@ -823,7 +823,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_uk_postal_address_url" value="@form("field_uk_postal_address_url").value" size="60" maxlength="2048" class="form-control" />
+		 						<input type="text" name="field_uk_postal_address_url" value="@form("fieldUkPostalAddressUrl").value" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>
@@ -834,7 +834,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_via_correspondence").value != null && form("field_via_correspondence").value == "true") {             
+				                @if(form("fieldViaCorrespondence").value != null && form("fieldViaCorrespondence").value == "true") {             
 					                <input type="checkbox" name="field_via_correspondence" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_via_correspondence" value="true" />
@@ -861,7 +861,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_professional_judgement").value != null && form("field_professional_judgement").value == "true") {             
+				                @if(form("fieldProfessionalJudgement").value != null && form("fieldProfessionalJudgement").value == "true") {             
 					                <input type="checkbox" name="field_professional_judgement" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_professional_judgement" value="true" />
@@ -876,7 +876,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
 						    <div class="col-sm-6">
-			 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@form("field_professional_judgement_exp").value</textarea>
+			 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@form("fieldProfessionalJudgementExp").value</textarea>
 							</div>
 						</div>
 					</div>
@@ -888,7 +888,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_no_ld_criteria_met").value != null && form("field_no_ld_criteria_met").value == "true") {             
+				                @if(form("field_no_ld_criteria_met").value != null && form("fieldNoLdCriteriaMet").value == "true") {             
 					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked/>
 				                } else {
 				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true" />
@@ -908,11 +908,11 @@
 							<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
 								<select name="field_scope" id="field_scope" class="form-control">
-					                @for(field_scope <- Target.getAllScopeTypes()) {
-						                @if(field_scope.equals(form("field_scope").value)) {
-						                	<option selected>@Targets.getScopeGuiName(form("field_scope").value)</option>
+					                @for(fieldScope <- Target.getAllScopeTypes()) {
+						                @if(fieldScope.equals(form("fieldScope").value)) {
+						                	<option selected>@Targets.getScopeGuiName(form("fieldScope").value)</option>
 						                } else {
-						                	<option>@Targets.getScopeGuiName(field_scope)</option>
+						                	<option>@Targets.getScopeGuiName(fieldScope)</option>
 						                }
 					                }
 								</select>
@@ -927,11 +927,11 @@
 							<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
 								<select name="field_depth" id="field_depth" class="form-control">
-					                @for(field_depth <- Target.getAllDepthTypes()) {
-						                @if(field_depth.equals(form("field_depth").value)) {
-						                	<option selected>@Targets.getDepthGuiName(form("field_depth").value)</option>
+					                @for(fieldDepth <- Target.getAllDepthTypes()) {
+						                @if(fieldDepth.equals(form("fieldDepth").value)) {
+						                	<option selected>@Targets.getDepthGuiName(form("fieldDepth").value)</option>
 						                } else {
-						                	<option>@Targets.getDepthGuiName(field_depth)</option>
+						                	<option>@Targets.getDepthGuiName(fieldDepth)</option>
 						                }
 					                }
 								</select>
@@ -945,7 +945,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_ignore_robots_txt").value != null && form("field_ignore_robots_txt").value == "true") {             
+				                @if(form("fieldIgnoreRobotsTxt").value != null && form("fieldIgnoreRobotsTxt").value == "true") {             
 					                <input type="checkbox" name="field_ignore_robots_txt" value="true" checked />
 				                } else {
 					                <input type="checkbox" name="field_ignore_robots_txt" value="true"/>
@@ -961,47 +961,47 @@
 							<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
 						    <div class="col-sm-6">
 				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Domain Crawl Only")) {
+				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Domain Crawl Only")) {
 					 					<option selected>Domain Crawl Only</option>
 						            } else {						                
 					 					<option>Domain Crawl Only</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Annually")) {
+				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Annually")) {
 					 					<option selected>Annually</option>
 						            } else {						                
 					 					<option>Annually</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Six-monthly")) {
+				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Six-monthly")) {
 					 					<option selected>Six-monthly</option>
 						            } else {						                
 					 					<option>Six-monthly</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Quarterly")) {
+				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Quarterly")) {
 					 					<option selected>Quarterly</option>
 						            } else {						                
 					 					<option>Quarterly</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Monthly")) {
+				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Monthly")) {
 					 					<option selected>Monthly</option>
 						            } else {						                
 					 					<option>Monthly</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Old-Monthly-DO-NOT-USE")) {
+				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Old-Monthly-DO-NOT-USE")) {
 					 					<option selected>Old-Monthly-DO-NOT-USE</option>
 						            } else {						                
 					 					<option>Old-Monthly-DO-NOT-USE</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Weekly")) {
+				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Weekly")) {
 					 					<option selected>Weekly</option>
 						            } else {						                
 					 					<option>Weekly</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Daily")) {
+				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Daily")) {
 					 					<option selected>Daily</option>
 						            } else {						                
 					 					<option>Daily</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Never Crawl")) {
+				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Never Crawl")) {
 					 					<option selected>Never Crawl</option>
 						            } else {						                
 					 					<option>Never Crawl</option>
@@ -1017,7 +1017,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Start date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_crawl_start_date" value="@form("field_crawl_start_date").value" size="30" maxlength="2048" class="form-control" id="start-date"/>
+		 						<input type="text" name="field_crawl_start_date" value="@form("fieldCrawlStartDate").value" size="30" maxlength="2048" class="form-control" id="start-date"/>
 	                		</div>
 						</div>
 					</div>
@@ -1028,7 +1028,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">End date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_crawl_end_date" value="@form("field_crawl_end_date").value" size="30" maxlength="2048" class="form-control" id="end-date"/>
+		 						<input type="text" name="field_crawl_end_date" value="@form("fieldCrawlEndDate").value" size="30" maxlength="2048" class="form-control" id="end-date"/>
 	                		</div>
 						</div>
 					</div>
@@ -1039,7 +1039,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">White list</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="white_list" value="@form("white_list").value" size="30" maxlength="2048" class="form-control" />
+		 						<input type="text" name="white_list" value="@form("whiteList").value" size="30" maxlength="2048" class="form-control" />
 	                		</div>
 						</div>
 					</div>
@@ -1050,7 +1050,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Black list</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="black_list" value="@form("black_list").value" size="30" maxlength="2048" class="form-control" />
+		 						<input type="text" name="black_list" value="@form("blackList").value" size="30" maxlength="2048" class="form-control" />
 	                		</div>
 						</div>
 					</div>
@@ -1089,11 +1089,11 @@
 						    <div class="col-sm-6">
 				    	    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 					    	    
-								@if(form("qa_status").value != null) { 
-								    @if(form("qa_status").value.equals("None") || form("qa_status").value.length() == 0) { 
+								@if(form("qaStatus").value != null) { 
+								    @if(form("qaStatus").value.equals("None") || form("qaStatus").value.length() == 0) { 
 									<select multiple name="license" id="edit-field-license" class="form-control" size="2">
 									} else {
-									    @if(user.hasRole("sys_admin") && !form("qa_status").value.equals("None") && form("qa_status").value.length() >= 0) {
+									    @if(user.hasRole("sys_admin") && !form("qaStatus").value.equals("None") && form("qaStatus").value.length() >= 0) {
 										<select name="license" id="edit-field-license" class="form-control" size="2">
 										} else {
 										<select name="license" id="edit-field-license" class="form-control" size="2" disabled>
@@ -1105,7 +1105,7 @@
 							}
 								 	<option>None</option>
 								    @for(taxonomy <- Targets.getLicenses()) {
-						                @if(form("field_license").value != null && form("field_license").value.contains(taxonomy.url)) {             
+						                @if(form("fieldLicense").value != null && form("fieldLicense").value.contains(taxonomy.url)) {             
 										 	<option selected>@taxonomy.name</option>
 									 	} else {
 										 	<option>@taxonomy.name</option>
@@ -1140,7 +1140,7 @@
 								}
 									<option>None</option>
 					                @for(status <- CrawlPermission.getAllStatus()) {
-						                @if(status.equals(form("qa_status").value)) {
+						                @if(status.equals(form("qaStatus").value)) {
 						                	<option selected>@status</option>
 						                } else {
 						                	<option>@status</option>
@@ -1158,9 +1158,9 @@
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
 								@if(form("url").value != null && Target.existInDb(form("url").value)
-								    && form("qa_status").value != null 
-								    && (form("qa_status").value.equals("None")
-								    || form("qa_status").value.length() == 0)) {
+								    && form("qaStatus").value != null 
+								    && (form("qaStatus").value.equals("None")
+								    || form("qaStatus").value.length() == 0)) {
 									@if(!form.get.indicateLicenses) {
 										<button type="submit" name="request" class="btn btn-success">Open License Request</button>
 									}
@@ -1190,7 +1190,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
 					    <div class="col-sm-6">
-			            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" value="@form("archivist_notes").value">@form("archivist_notes").value</textarea>
+			            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" value="@form("archivistNotes").value">@form("archivistNotes").value</textarea>
 						</div>
 					</div>
 				</div>
@@ -1220,16 +1220,16 @@
 					</div>
 					<div id="collapseInstances" class="panel-collapse collapse">
 						<div class="panel-footer">
-							<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@form("field_url").value">In QA Wayback</a>
+							<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@form("fieldUrl").value">In QA Wayback</a>
 						</div>
 					    <div class="panel-footer">
-				        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@form("field_url").value">In Open UK Web Archive</a>
+				        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@form("fieldUrl").value">In Open UK Web Archive</a>
 						</div>
 						<div class="panel-footer">
-							<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@form("field_url").value">In other web archives</a>
+							<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@form("fieldUrl").value">In other web archives</a>
 						</div>
 					    <div class="panel-footer">
-				        	<a class="brand" target="_blank" href="@form("field_url").value">Live site</a>
+				        	<a class="brand" target="_blank" href="@form("fieldUrl").value">Live site</a>
 						</div>
 					</div>
 				</div>
@@ -1252,12 +1252,12 @@
 				    	&& !user.hasRole("sys_admin") 
 				    	&& !user.url.equals(form("author").value)) { 
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
-				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
+				       @if(Target.findById(Long.valueOf(form("id").value)) != null) {
 					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
 					   }
 					} else {
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
-				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
+				       @if(Target.findById(Long.valueOf(form("id").value)) != null) {
 					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
 					   }
 					}

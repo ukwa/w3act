@@ -100,8 +100,8 @@ public class Subjects extends AbstractController {
     	        Logger.info("create subject()");
     	    	Taxonomy subject = new Taxonomy();
     	    	subject.name = query;
-    	        subject.tid = Target.createId();
-    	        subject.url = Const.ACT_URL + subject.tid;
+//    	        subject.id = Target.createId();
+//    	        subject.url = Const.ACT_URL + subject.tid;
     			Logger.info("add subject with url: " + subject.url + ", and name: " + subject.name);
     			JsonNode node = getSubjectsTree(subject.url);
     			Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
@@ -144,8 +144,9 @@ public class Subjects extends AbstractController {
         Logger.info("create subject()");
     	Taxonomy subject = new Taxonomy();
     	subject.name = name;
-        subject.tid = Target.createId();
-        subject.url = Const.ACT_URL + subject.tid;
+    	// TODO: createId
+//        subject.id = Target.createId();
+//        subject.url = Const.ACT_URL + subject.id;
 		Logger.info("add subject with url: " + subject.url + ", and name: " + subject.name);
 		JsonNode node = getSubjectsTree(subject.url);
 		Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
@@ -173,8 +174,9 @@ public class Subjects extends AbstractController {
 	 */
 	public static Result info() {
     	Taxonomy subject = new Taxonomy();
-    	subject.tid = Long.valueOf(getFormParam(Const.TID));
-    	subject.url = getFormParam(Const.URL);
+    	// TODO: createId
+//    	subject.id = Long.valueOf(getFormParam(Const.TID));
+//    	subject.url = getFormParam(Const.URL);
     	subject.name = getFormParam(Const.NAME);
         subject.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
 	    if (getFormParam(Const.TTYPE) != null) {
@@ -247,15 +249,17 @@ public class Subjects extends AbstractController {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
                 	subject = new Taxonomy();
-                	subject.tid = Long.valueOf(getFormParam(Const.TID));
-                	subject.url = getFormParam(Const.URL);
+                	// TODO: createId
+//                	subject.id = Long.valueOf(getFormParam(Const.TID));
+//                	subject.url = getFormParam(Const.URL);
                 }
                 if (subject == null) {
                 	Logger.info("is not existing");
                 	isExisting = false;
                 	subject = new Taxonomy();
-                	subject.tid = Long.valueOf(getFormParam(Const.TID));
-                	subject.url = getFormParam(Const.URL);
+                	// TODO: createId
+//                	subject.id = Long.valueOf(getFormParam(Const.TID));
+//                	subject.url = getFormParam(Const.URL);
                 }
                 
                 subject.name = getFormParam(Const.NAME);
