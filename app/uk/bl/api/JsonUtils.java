@@ -194,6 +194,86 @@ public class JsonUtils {
 		return res;
 	}
 
+	public static List<User> getCurators(NodeType type) {
+		List<User> users = new ArrayList<User>();
+		String urlStr = Const.URL_STR_BASE + type.toString().toLowerCase() + Const.JSON;
+		urlStr = authenticateAndLoadDrupal(urlStr, type);
+		String content = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+		JsonNode parentNode = Json.parse(content);
+		if (parentNode != null) {
+			int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
+			int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
+			Logger.info(firstPage + "/" + lastPage);
+			JsonNode rootNode = parentNode.path(Const.LIST_NODE);
+			Iterator<JsonNode> iterator = rootNode.iterator();
+			int count = 0;
+			while (iterator.hasNext()) {
+				Logger.info(count + ") ");
+				JsonNode node = iterator.next();
+				Iterator<Map.Entry<String, JsonNode>> elt = node.fields();
+				User user = new User();
+				
+				while (elt.hasNext()) {
+					Map.Entry<String, JsonNode> element = elt.next();
+					try {
+						String fieldName = element.getKey();
+						Field field = user.getClass().getField(fieldName);
+						Logger.info("Setting field " + field.getName() + " to " + element.getValue());
+						if (field.getType().isAssignableFrom(String.class)) {
+							String value = normalizeArchiveUrl(element.getValue().asText());
+							field.set(user, value);
+						} else if (field.getType().isAssignableFrom(Long.class)) {
+//							field.set(user, element.getValue().asLong());
+						} 
+						
+//						Iterator<JsonNode> it = valueNode.iterator();
+//						while (it.hasNext()) {
+//							String value = "";
+//							String fn = "";
+//							JsonNode subNode = it.next();
+//							Logger.info("List: " + subNode);
+//							if (subNode.has(Const.URI)) {
+//								fieldName = Const.URI;
+//							}
+//							if (subNode.has(Const.URL)) {
+//								fieldName = Const.URL;
+//							}
+//							String item = subNode.findPath(fn).textValue();
+////							if (isArchived) {
+////								item = normalizeArchiveUrl(item);
+////							}
+//							if (item != null) {
+//								if (res.length() > 0) {
+//									res = res + "," + item;
+//								} else {
+//									res = item;
+//								}
+//							}
+//						}
+					} catch (NoSuchFieldException e) {
+						Logger.error("NoSuchFieldException so will skip: '" + e.getMessage() + "'");
+					} catch (SecurityException e) {
+						Logger.error("SecurityException so will skip: '" + e.getMessage() + "'");
+					} catch (IllegalArgumentException e) {
+						Logger.error("IllegalArgumentException so will skip: '" + e.getMessage() + "'");
+					} catch (IllegalAccessException e) {
+						Logger.error("IllegalAccessException so will skip: '" + e.getMessage() + "'");
+					}						
+						Logger.info(element.getKey() + "=" + element.getValue());
+				}
+				Logger.info("Populated User: " + user);
+//					JsonNode resNode = getElement(node, f.getName());
+//					Logger.info("resNode: " + resNode);
+//					String jsonField = getStringList(resNode, f.getName(), false);
+//					Logger.info(f.getName() + "=" + jsonField);
+				count++;
+			}
+			Logger.info("No of Curators: " + count);
+		}
+//		Logger.info(content);
+		return users;
+	}
+	
 	/**
 	 * This method retrieves JSON data from Drupal for particular domain object
 	 * type (e.g. Curator...) without parameter e.g.
@@ -210,8 +290,7 @@ public class JsonUtils {
 			// aggregate data from drupal and store JSON content in a file
 			urlStr = authenticateAndLoadDrupal(urlStr, type);
 			// read file and store content in String
-			String content = JsonUtils.readJsonFromFile(type.toString()
-					.toLowerCase() + Const.OUT_FILE_PATH);
+			String content = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
 			// extract page information
 			JsonNode mainNode = Json.parse(content);
 			if (mainNode != null) {
@@ -226,8 +305,9 @@ public class JsonUtils {
 					// }
 					// String pageContent = downloadData(urlStr + "&" +
 					// Const.PAGE_IN_URL + String.valueOf(i), type);
+					// TODO: WHY DO THIS? already downloaded?
 					String pageContent = downloadData(urlStr, type);
-					// Logger.info("users content: " + pageContent);
+					Logger.info("users content: " + pageContent);
 					List<Object> pageList = JsonUtils.parseJson(pageContent,
 							type);
 					res.addAll(pageList);
@@ -296,11 +376,11 @@ public class JsonUtils {
 		while (organisationItr.hasNext()) {
 			Organisation organisation = organisationItr.next();
 			List<User> userList = User
-					.findByOrganisation(organisation.fieldAbbreviation);
+					.findByOrganisation(organisation.abbreviation);
 			Iterator<User> userItr = userList.iterator();
 			while (userItr.hasNext()) {
 				User user = userItr.next();
-				user.affiliation = organisation.url;
+				user.field_affiliation = organisation.url;
 				user.updateOrganisation();
 				Ebean.update(user);
 			}
@@ -819,17 +899,17 @@ public class JsonUtils {
 				User existingUser = User.findByName(newUser.name);
 				if (existingUser != null && existingUser.name.length() > 0) {
 					isNew = false;
-					existingUser.affiliation = newUser.affiliation;
+					existingUser.field_affiliation = newUser.field_affiliation;
 					existingUser.updateOrganisation();
 					existingUser.id = newUser.id;
 					existingUser.url = newUser.url;
-					existingUser.editUrl = newUser.editUrl;
-					existingUser.lastAccess = newUser.lastAccess;
-					existingUser.lastLogin = newUser.lastLogin;
+					existingUser.edit_url = newUser.edit_url;
+					existingUser.last_access = newUser.last_access;
+					existingUser.last_login = newUser.last_login;
 					existingUser.createdAt = newUser.createdAt;
 					existingUser.status = newUser.status;
 					existingUser.language = newUser.language;
-					existingUser.feedNid = newUser.feedNid;
+					existingUser.feed_nid = newUser.feed_nid;
 					existingUser.update();
 				}
 			}
@@ -992,8 +1072,7 @@ public class JsonUtils {
 					// int ll = 0;
 					// }
 					JsonNode resNode = getElement(node, f.getName());
-					String jsonField = getStringList(resNode, f.getName(),
-							false);
+					String jsonField = getStringList(resNode, f.getName(), false);
 					if (!f.getName().equals(
 							Const.targetMap.get(Const.FIELD_URL_NODE))) {
 						jsonField = normalizeArchiveUrl(jsonField);

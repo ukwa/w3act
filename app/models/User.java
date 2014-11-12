@@ -61,28 +61,29 @@ public class User extends ActModel {
     @Formats.NonEmpty
     public String email;
     
-    @Constraints.Required
-    public String name;
-    
     @JsonIgnore
     public String password;
     
+    // FROM ACT
+    @Constraints.Required
+    public String name;
     @JsonIgnore
-    public String affiliation;
-
+    public String field_affiliation;
     @JsonIgnore
-    public String editUrl;
+    public String edit_url;
     @JsonIgnore
-    public String lastAccess;
+    public String last_access;
     @JsonIgnore
-    public String lastLogin;
-
+    public String last_login;
     @JsonIgnore
     public Long status;
     @JsonIgnore
     public String language;
     @JsonIgnore
-    public Long feedNid;
+    public Long feed_nid;
+    @JsonIgnore
+    public Long uid;
+    
     
     // lists
     
@@ -278,7 +279,7 @@ public class User extends ActModel {
     	try {
     		long timestampCreated = createdAt.getTime();
     		Date dateCreated = new Date(timestampCreated * 1000);
-    		long timestampLastAccess = Long.valueOf(lastAccess);
+    		long timestampLastAccess = Long.valueOf(last_access);
     		Date dateLastAccess = new Date(timestampLastAccess * 1000);
 			Logger.info("date created: " + dateCreated);
 			Logger.info("date last access: " + dateLastAccess);
@@ -321,13 +322,9 @@ public class User extends ActModel {
 		return res;
 	}
     
-    public String toString() {
-        return "User(" + name + ")" + ", url:" + url;
-    }
-    
     // Could really do with many_to_one relationship
     public Organisation getOrganisation() {
-    	return Organisation.findByUrl(affiliation);
+    	return Organisation.findByUrl(field_affiliation);
     }
 
     /**
@@ -361,12 +358,25 @@ public class User extends ActModel {
      * This method updates foreign key mapping between a user and an organisation.
      */
     public void updateOrganisation() {
-		if (affiliation != null
-				&& affiliation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(affiliation);
+		if (field_affiliation != null
+				&& field_affiliation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(field_affiliation);
 //            Logger.info("Add creator to organisation: " + organisation.toString());
             this.organisation = organisation;
 		}    	
     }
+
+	@Override
+	public String toString() {
+		return "User [organisation=" + organisation + ", roles=" + roles
+				+ ", email=" + email + ", password=" + password + ", name="
+				+ name + ", field_affiliation=" + field_affiliation
+				+ ", edit_url=" + edit_url + ", last_access=" + last_access
+				+ ", last_login=" + last_login + ", status=" + status
+				+ ", language=" + language + ", feed_nid=" + feed_nid
+				+ ", uid=" + uid + ", revision=" + revision + ", id=" + id
+				+ ", url=" + url + ", createdAt=" + createdAt + ", updatedAt="
+				+ updatedAt + "]";
+	}
 }
 

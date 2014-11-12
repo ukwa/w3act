@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import play.db.ebean.Model;
@@ -35,7 +37,9 @@ abstract class ActModel extends Model {
 	public void save() {
     	// need to save to get the ID
     	super.save();
-    	this.url = Const.ACT_URL + this.id;
+    	if (StringUtils.isEmpty(this.url)) {
+    		this.url = Const.ACT_URL + this.id;
+    	}
     	this.createdAt = new Date();
     	super.save();
     }

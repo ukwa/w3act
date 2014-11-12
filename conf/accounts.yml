@@ -181,7 +181,7 @@ users:
         email:              wa-sysadm@bl.uk
         name:               Systems Administrator
         password:           sysAdmin
-        affiliation:        BL
+        field_affiliation:        BL
         roles:              [*sys_admin]
 
     - !!models.User
@@ -190,7 +190,7 @@ users:
         email:              archivist@bl.uk
         name:               Archivist
         password:           secret
-        affiliation:        BL
+        field_affiliation:        BL
         roles:              [*archivist]
 
     - !!models.User
@@ -199,7 +199,7 @@ users:
         email:              expert@bl.uk
         name:               Expert
         password:           secret
-        affiliation:        BL
+        field_affiliation:        BL
         roles:              [*expert_user]
 
     - !!models.User
@@ -208,7 +208,7 @@ users:
         email:              user@bl.uk
         name:               User
         password:           secret
-        affiliation:        BL
+        field_affiliation:        BL
         roles:              [*user]
     
     - !!models.User
@@ -217,7 +217,7 @@ users:
         email:              viewer@bl.uk
         name:               Viewer
         password:           secret
-        affiliation:        BL
+        field_affiliation:        BL
         roles:              [*viewer]
 
     - !!models.User
@@ -226,5 +226,5 @@ users:
         email:              roman.graf@ait.ac.at
         name:               Roman Graf
         password:           secret
-        affiliation:        AIT
+        field_affiliation:        AIT
         roles:              [*archivist]

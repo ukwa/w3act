@@ -57,7 +57,7 @@ public class Organisation extends ActModel {
     
     @JsonIgnore
     @Required
-    public String fieldAbbreviation;
+    public String abbreviation;
     
     @JsonIgnore
     public Long vid;

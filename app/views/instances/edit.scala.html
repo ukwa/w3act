@@ -507,7 +507,7 @@
 					            	<option>None</option>
 					                @for(organisation <- Organisation.findAll()) {
 						                @if(organisation.title.equals(Organisation.findByUrl(form("fieldNominatingOrganisation").value).title) 
-						                	|| organisation.title.equals(Organisation.findByUrl(user.affiliation).title)) {
+						                	|| organisation.title.equals(Organisation.findByUrl(user.field_affiliation).title)) {
 							                <option selected>@organisation.title</option>
 							            } else {
 						                    <option>@organisation.title</option>

@@ -37,43 +37,18 @@ public enum DataImport {
 	INSTANCE;
 
 	public void insert() {
-        if(Ebean.find(User.class).findRowCount() == 0) {
+//        if(Ebean.find(User.class).findRowCount() == 0) 
+        {
             try {
-                Logger.info("loading roles, permissions and users from configuration ...");
-                this.importAccounts();
-                this.importTaxonomies();
+//                this.importAccounts();
+//                this.importTaxonomies();
+//            	this.importTags();
+//            	this.importFlags();
+//            	this.importMailTemplates();
+//            	this.importContactPersons();
+//            	this.importOrganisations();
+            	this.importCurators();
 
-//                Logger.info("loading taxonomies from configuration ...");
-//                @SuppressWarnings("unchecked")
-//				Map<String,List<Object>> alltaxonomies = (Map<String,List<Object>>)Yaml.load("taxonomies.yml");
-//                insertInitialData(Const.TAXONOMIES, Taxonomy.class, alltaxonomies);	
-//                Logger.info("loading open tags from configuration ...");
-//                @SuppressWarnings("unchecked")
-//				Map<String,List<Object>> alltags = (Map<String,List<Object>>)Yaml.load("tags.yml");
-//                insertInitialData(Const.TAGS, Tag.class, alltags);	
-//                Logger.info("loading flags from configuration ...");
-//                @SuppressWarnings("unchecked")
-//				Map<String,List<Object>> allflags = (Map<String,List<Object>>)Yaml.load("flags.yml");
-//                insertInitialData(Const.FLAGS, Flag.class, allflags);	
-//                Logger.info("loading e-mail templates from configuration ...");
-//                @SuppressWarnings("unchecked")
-//				Map<String,List<Object>> alltemplates = (Map<String,List<Object>>)Yaml.load("templates.yml");
-//                insertInitialData(Const.MAILTEMPLATES, MailTemplate.class, alltemplates);	
-//                Logger.info("loading contact persons from configuration ...");
-//                @SuppressWarnings("unchecked")
-//				Map<String,List<Object>> allContactPersons = (Map<String,List<Object>>)Yaml.load("contact-persons.yml");
-//                insertInitialData(Const.CONTACTPERSONS, ContactPerson.class, allContactPersons);	
-//                Logger.info("loading organisations from configuration ...");
-//                @SuppressWarnings("unchecked")
-//				Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
-//                insertInitialData(Const.ORGANISATIONS, Organisation.class, all);
-//
-//                Logger.info("load curators ...");
-//		        List<Object> allCurators = JsonUtils.getDrupalDataBase(Const.NodeType.USER);
-//				// store curators in DB
-//                Ebean.save(allCurators);
-//                Logger.info("curators successfully loaded");
-//                Logger.info("load urls");
 //				// aggregate url data from drupal and store JSON content in a file
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
 //				// store urls in DB
@@ -187,11 +162,10 @@ public enum DataImport {
             	Logger.info("Store error: " + e);
             }
         }
-    	Logger.info("CREATING TAXONOMIES");
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void importAccounts() {
+		@SuppressWarnings("unchecked")
 		Map<String,List<User>> accounts = (Map<String,List<User>>)Yaml.load("Accounts.yml");
 		List<User> users = accounts.get(Const.USERS);
 		try {
@@ -206,30 +180,69 @@ public enum DataImport {
 				}
 				user.password = PasswordHash.createHash(user.password);
 				user.createdAt = new Date();
-		        Logger.info("Predefined " + User.class.getSimpleName() + ": " + user.toString());
-		        Logger.info("Roles size: " + user.roles.size());
 			}
 			Ebean.save(users);
-
 //			Logger.info("hash password: " + user.password);
 		} catch (NoSuchAlgorithmException e) {
 			Logger.info("initial password creation - no algorithm error: " + e);
 		} catch (InvalidKeySpecException e) {
 			Logger.info("initial password creation - key specification error: " + e);
 		}
+        Logger.info("Loaded Permissions, Roles and Users");
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void importTaxonomies() {
+		@SuppressWarnings("unchecked")
 		Map<String,List<Taxonomy>> allTaxonomies = (Map<String,List<Taxonomy>>)Yaml.load("taxonomies.yml");
 		List<Taxonomy> taxonomies = allTaxonomies.get(Const.TAXONOMIES);
 		for (Taxonomy taxonomy : taxonomies) {
 			taxonomy.save();
 		}
 		createQualityIssueTaxonomies();
+        Logger.info("Loaded Taxonomies");
 	}
 	
-    public void createQualityIssueTaxonomies() {
+	private void importTags() { 
+		@SuppressWarnings("unchecked")
+		Map<String,List<Tag>> allTags = (Map<String,List<Tag>>)Yaml.load("tags.yml");
+		List<Tag> tags = allTags.get(Const.TAGS);
+		for (Tag tag : tags) {
+			tag.save();
+		}
+        Logger.info("Loaded Tags");
+	}
+	
+	private void importFlags() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<Flag>> allFlags = (Map<String,List<Flag>>)Yaml.load("flags.yml");
+		List<Flag> flags = allFlags.get(Const.FLAGS);
+		for (Flag flag : flags) {
+			flag.save();
+		}
+        Logger.info("Loaded Flags");
+	}
+
+	private void importMailTemplates() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<MailTemplate>> allTemplates = (Map<String,List<MailTemplate>>)Yaml.load("mail-templates.yml");
+		List<MailTemplate> mailTemplates = allTemplates.get(Const.MAILTEMPLATES);
+		for (MailTemplate mailTemplate : mailTemplates) {
+			mailTemplate.save();
+		}
+        Logger.info("Loaded MailTemplates");
+	}
+	
+	private void importContactPersons() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<ContactPerson>> allContactPersons = (Map<String,List<ContactPerson>>)Yaml.load("contact-persons.yml");
+		List<ContactPerson> contactPersons = allContactPersons.get(Const.CONTACTPERSONS);
+		for (ContactPerson contactPerson : contactPersons) {
+			contactPerson.save();
+		}
+        Logger.info("Loaded ContactPersons");
+	}
+	
+    private void createQualityIssueTaxonomies() {
     	saveQualityIssue(new Taxonomy(Const.QAStatusType.FAILED_DO_NOT_PUBLISH.name(), "<p>Failed do not publish</p>", 0L, 0L, 0L, false));
     	saveQualityIssue(new Taxonomy(Const.QAStatusType.FAILED_PASS_TO_ENGINEER.name(), "<p>Failed pass to engineer</p>", 0L, 0L, 0L, false));
     	saveQualityIssue(new Taxonomy(Const.QAStatusType.RECRAWL_REQUESTED.name(), "<p>Recrawl requested</p>", 0L, 0L, 0L, false));
@@ -243,72 +256,23 @@ public enum DataImport {
 	    	
 		}
     }
-    
+
+	private void importOrganisations() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<Organisation>> allOrganisations = (Map<String,List<Organisation>>)Yaml.load("organisations.yml");
+		List<Organisation> organisations = allOrganisations.get(Const.ORGANISATIONS);
+		for (Organisation organisation : organisations) {
+			organisation.save();
+		}
+        Logger.info("Loaded Organisations");
+	}
+
+	private void importCurators() {
+		List<User> allCurators = JsonUtils.getCurators(Const.NodeType.USER);
+//      Ebean.save(allCurators);
+        Logger.info("Loaded Curators");
+	}
     /**
-     * This method adds different section elements described in initial-data file.
-     * @param sectionName
-     * @param cls The current object type
-     * @param all The whole data
-     */
-    private void insertInitialData(String sectionName, Class<?> cls, Map<String,List<Object>> all) {
-        List<Object> sectionList = all.get(sectionName);
-        Iterator<Object> sectionItr = sectionList.iterator();
-        while (sectionItr.hasNext()) {
-	        if (cls == User.class) {
-            	User user = (User) sectionItr.next();
-        		try {
-					user.password = PasswordHash.createHash(user.password);
-//					Logger.info("hash password: " + user.password);
-				} catch (NoSuchAlgorithmException e) {
-					Logger.info("initial password creation - no algorithm error: " + e);
-				} catch (InvalidKeySpecException e) {
-					Logger.info("initial password creation - key specification error: " + e);
-				}
-                Logger.info("Predefined " + User.class.getSimpleName() + ": " + user.toString());
-                Logger.info("+++ user role_to_user size: " + user.roles.size());
-	        }
-
-	        if (cls == Organisation.class) {
-	        	Organisation organisation = (Organisation) sectionItr.next();
-                Logger.info("Predefined " + Organisation.class.getSimpleName() + ": " + organisation.toString());
-	        }
-	        if (cls == MailTemplate.class) {
-	        	MailTemplate mailTemplate = (MailTemplate) sectionItr.next();
-//	        	mailTemplate.id = Utils.createId();
-//	        	mailTemplate.url = Const.ACT_URL + mailTemplate.id;
-	        	mailTemplate.readInitialTemplate();
-                Logger.info("Predefined " + MailTemplate.class.getSimpleName() + ": " + mailTemplate.toString());
-	        }
-	        if (cls == ContactPerson.class) {
-	        	ContactPerson contactPerson = (ContactPerson) sectionItr.next();
-//	        	contactPerson.id = Utils.createId();
-//	        	contactPerson.url = Const.ACT_URL + contactPerson.id;
-                Logger.info("Predefined " + ContactPerson.class.getSimpleName() + ": " + contactPerson.toString());
-	        }
-	        if (cls == Tag.class) {
-	        	Tag tag = (Tag) sectionItr.next();
-//	        	tag.id = Utils.createId();
-//	        	tag.url = Const.ACT_URL + tag.id;
-                Logger.info("Predefined " + Tag.class.getSimpleName() + ": " + tag.toString());
-	        }
-	        if (cls == Flag.class) {
-	        	Flag flag = (Flag) sectionItr.next();
-//	        	flag.id = Utils.createId();
-//	        	flag.url = Const.ACT_URL + flag.id;
-                Logger.info("Predefined " + Flag.class.getSimpleName() + ": " + flag.toString());
-	        }
-	        if (cls == Taxonomy.class) {
-	        	Taxonomy taxonomy = (Taxonomy) sectionItr.next();
-//	        	taxonomy.id = Utils.createId();
-//	        	taxonomy.url = Const.ACT_URL + taxonomy.id;
-                Logger.info("Predefined " + Taxonomy.class.getSimpleName() + ": " + taxonomy.toString());
-	        }
-        }
-        // TODO: will this call model.save?
-        Ebean.save(sectionList);
-    }
-
-	/**
 	 * normalize URL if there is "_" e.g. in taxonomy_term
 	 */
 	public void normalizeUrls() {
