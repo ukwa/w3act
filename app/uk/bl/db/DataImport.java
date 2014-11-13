@@ -40,14 +40,16 @@ public enum DataImport {
 //        if(Ebean.find(User.class).findRowCount() == 0) 
         {
             try {
-//                this.importAccounts();
+            	this.importPermissions();
+            	this.importRoles();
+                this.importAccounts();
 //                this.importTaxonomies();
 //            	this.importTags();
 //            	this.importFlags();
 //            	this.importMailTemplates();
 //            	this.importContactPersons();
 //            	this.importOrganisations();
-            	this.importCurators();
+//            	this.importCurators();
 
 //				// aggregate url data from drupal and store JSON content in a file
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
@@ -164,20 +166,26 @@ public enum DataImport {
         }
 	}
 	
+	private void importPermissions() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<Permission>> allPermissions = (Map<String,List<Permission>>)Yaml.load("Accounts.yml");
+		List<Permission> permissions = allPermissions.get(Const.PERMISSIONS);
+		Ebean.save(permissions);
+	}
+	
+	private void importRoles() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<Role>> allRoles = (Map<String,List<Role>>)Yaml.load("Accounts.yml");
+		List<Role> roles = allRoles.get(Const.ROLES);
+		Ebean.save(roles);
+	}
+	
 	private void importAccounts() {
 		@SuppressWarnings("unchecked")
 		Map<String,List<User>> accounts = (Map<String,List<User>>)Yaml.load("Accounts.yml");
 		List<User> users = accounts.get(Const.USERS);
 		try {
 			for (User user : users) {
-				List<Role> roles = user.roles;
-				for (Role role : roles) {
-					List<Permission> permissions = role.permissions;
-					for (Permission permission : permissions) {
-							permission.save();
-					}
-						role.save();
-				}
 				user.password = PasswordHash.createHash(user.password);
 				user.createdAt = new Date();
 			}
@@ -268,8 +276,7 @@ public enum DataImport {
 	}
 
 	private void importCurators() {
-		List<User> allCurators = JsonUtils.getCurators(Const.NodeType.USER);
-//      Ebean.save(allCurators);
+		JsonUtils.INSTANCE.convertCurators(Const.NodeType.USER);
         Logger.info("Loaded Curators");
 	}
     /**

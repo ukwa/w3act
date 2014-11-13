@@ -176,55 +176,43 @@ roles:
 
 users:
     - !!models.User
-        id:                 1
-        url:                act-1
         email:              wa-sysadm@bl.uk
         name:               Systems Administrator
         password:           sysAdmin
-        field_affiliation:        BL
+        fieldAffiliation:   BL
         roles:              [*sys_admin]
 
     - !!models.User
-        id:                 2
-        url:                act-2
         email:              archivist@bl.uk
         name:               Archivist
         password:           secret
-        field_affiliation:        BL
+        fieldAffiliation:   BL
         roles:              [*archivist]
 
     - !!models.User
-        id:                 3
-        url:                act-3
         email:              expert@bl.uk
         name:               Expert
         password:           secret
-        field_affiliation:        BL
+        fieldAffiliation:   BL
         roles:              [*expert_user]
 
     - !!models.User
-        id:                 4
-        url:                act-4
         email:              user@bl.uk
         name:               User
         password:           secret
-        field_affiliation:        BL
+        fieldAffiliation:   BL
         roles:              [*user]
     
     - !!models.User
-        id:                 5
-        url:                act-5
         email:              viewer@bl.uk
         name:               Viewer
         password:           secret
-        field_affiliation:        BL
+        fieldAffiliation:   BL
         roles:              [*viewer]
 
     - !!models.User
-        id:                 6
-        url:                act-6
         email:              roman.graf@ait.ac.at
         name:               Roman Graf
         password:           secret
-        field_affiliation:        AIT
+        fieldAffiliation:   AIT
         roles:              [*archivist]

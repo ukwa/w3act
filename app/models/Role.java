@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -47,7 +49,7 @@ public class Role extends ActModel {
 	//bi-directional many-to-many association to Permission
 	@JoinTable(name = Const.PERMISSION_ROLE, joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
 			inverseJoinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") }) 
-	@ManyToMany(mappedBy="roles")
+	@ManyToMany
 	public List<Permission> permissions = new ArrayList<Permission>();
 	
 //    //bi-directional many-to-one association to Role
@@ -406,10 +408,6 @@ public class Role extends ActModel {
 		return res;
 	}       
  
-   public String toString() {
-        return "Role(" + name + ")" + ", id:" + id;
-    }
-    
     /**
      * Return a page of User
      *
@@ -428,4 +426,10 @@ public class Role extends ActModel {
         		.getPage(page);
     }
 
+	@Override
+	public String toString() {
+		return "Role [permissions=" + permissions + ", users=" + users
+				+ ", name=" + name + ", description=" + description
+				+ ", revision=" + revision + "]";
+	}
 }

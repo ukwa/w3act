@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -25,11 +26,12 @@ import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.models.Field_Affiliation;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * User entity managed by Ebean
@@ -51,9 +53,9 @@ public class User extends ActModel {
 	
 	//bi-directional many-to-many association to Role
 	@JsonIgnore
+	@ManyToMany
 	@JoinTable(name = Const.ROLE_USER, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	public List<Role> roles = new ArrayList<Role>();
     	
     @JsonIgnore
@@ -68,7 +70,7 @@ public class User extends ActModel {
     @Constraints.Required
     public String name;
     @JsonIgnore
-    public String field_affiliation;
+    public String fieldAffiliation;
     @JsonIgnore
     public String edit_url;
     @JsonIgnore
@@ -81,13 +83,56 @@ public class User extends ActModel {
     public String language;
     @JsonIgnore
     public Long feed_nid;
-    @JsonIgnore
-    public Long uid;
     
+    @Transient
+    @JsonProperty
+    private Field_Affiliation field_affiliation;
     
-    // lists
+    @Transient
+    @JsonProperty
+    private String uid;
     
-    @JsonIgnore
+    @Transient
+    @JsonProperty
+    private String created;
+    
+    @Transient
+    @JsonProperty
+    private String mail;
+    
+    public Field_Affiliation getField_affiliation() {
+		return field_affiliation;
+	}
+
+	public void setField_affiliation(Field_Affiliation field_affiliation) {
+		this.field_affiliation = field_affiliation;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+
+	public String getCreated() {
+		return created;
+	}
+
+	public void setCreated(String created) {
+		this.created = created;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
+	@JsonIgnore
     @Column(columnDefinition = "text")
     public String revision; 
 
@@ -324,7 +369,7 @@ public class User extends ActModel {
     
     // Could really do with many_to_one relationship
     public Organisation getOrganisation() {
-    	return Organisation.findByUrl(field_affiliation);
+    	return Organisation.findByUrl(fieldAffiliation);
     }
 
     /**
@@ -358,9 +403,9 @@ public class User extends ActModel {
      * This method updates foreign key mapping between a user and an organisation.
      */
     public void updateOrganisation() {
-		if (field_affiliation != null
-				&& field_affiliation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(field_affiliation);
+		if (fieldAffiliation != null
+				&& fieldAffiliation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(fieldAffiliation);
 //            Logger.info("Add creator to organisation: " + organisation.toString());
             this.organisation = organisation;
 		}    	
@@ -370,13 +415,14 @@ public class User extends ActModel {
 	public String toString() {
 		return "User [organisation=" + organisation + ", roles=" + roles
 				+ ", email=" + email + ", password=" + password + ", name="
-				+ name + ", field_affiliation=" + field_affiliation
+				+ name + ", fieldAffiliation=" + fieldAffiliation
 				+ ", edit_url=" + edit_url + ", last_access=" + last_access
 				+ ", last_login=" + last_login + ", status=" + status
 				+ ", language=" + language + ", feed_nid=" + feed_nid
-				+ ", uid=" + uid + ", revision=" + revision + ", id=" + id
-				+ ", url=" + url + ", createdAt=" + createdAt + ", updatedAt="
-				+ updatedAt + "]";
+				+ ", field_affiliation=" + field_affiliation + ", uid=" + uid
+				+ ", created=" + created + ", mail=" + mail + ", revision="
+				+ revision + ", id=" + id + ", url=" + url + ", createdAt="
+				+ createdAt + ", updatedAt=" + updatedAt + "]";
 	}
 }
 

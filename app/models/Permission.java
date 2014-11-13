@@ -41,7 +41,7 @@ public class Permission extends ActModel {
     //bi-directional many-to-many association to Role
 	@JoinTable(name = Const.PERMISSION_ROLE, joinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany
     private List<Role> roles = new ArrayList<Role>();
  
     @Required

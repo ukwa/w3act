@@ -1,6 +1,7 @@
 package uk.bl.api;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -33,12 +34,16 @@ import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.QueryIterator;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * JSON object management.
  */
-public class JsonUtils {
+public enum JsonUtils {
 
 	/**
 	 * This method extracts page number from the JSON in order to evaluate first
@@ -48,6 +53,9 @@ public class JsonUtils {
 	 * @param field
 	 * @return page number as int
 	 */
+	
+	INSTANCE;
+
 	private static int getPageNumber(JsonNode node, String field) {
 		String page = getStringItem(node, field);
 		Logger.info("page url: " + page);
@@ -100,6 +108,82 @@ public class JsonUtils {
 		return res;
 	}
 
+	public void convertCurators(NodeType type) {
+		List<User> users = new ArrayList<User>();
+		String urlStr = Const.URL_STR_BASE + type.toString().toLowerCase() + Const.JSON;
+		urlStr = authenticateAndLoadDrupal(urlStr, type);
+		
+		Logger.info("urlStr: " + urlStr);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setSerializationInclusion(Include.NON_NULL);
+		
+		String content = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
+		JsonNode parentNode = Json.parse(content);
+		if (parentNode != null) {
+//			int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
+//			int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
+//			Logger.info(firstPage + "/" + lastPage);
+			JsonNode rootNode = parentNode.path(Const.LIST_NODE);
+			Iterator<JsonNode> iterator = rootNode.iterator();
+			int count = 0;
+			while (iterator.hasNext()) {
+				Logger.info(count + ") ");
+				JsonNode node = iterator.next();
+//				"field_affiliation":
+//				{
+//					"uri":"http://www.webarchive.org.uk/act/node/102","id":"102","resource":"node"
+//				},
+//				"uid":"279","name":"Aled Betts","url":"http://www.webarchive.org.uk/act/user/279","edit_url":"http://www.webarchive.org.uk/act/user/279/edit","created":"1409663132","language":"en","feed_nid":null
+
+//				User [
+//				      organisation=null, roles=[], email=null, password=null, name=Aled Betts, fieldAffiliation=null, edit_url=null, last_access=null, last_login=null, status=null, language=null, feed_nid=null, 
+//				      field_affiliation=null, uid=279, created=1409663132, mail=null, revision=, id=null, url=http://www.webarchive.org.uk/act/user/279, createdAt=null, updatedAt=null
+//				]
+						
+				Logger.info("json: " + node);
+
+				try {
+					User user = objectMapper.readValue(node.toString(), User.class);
+					this.processUser(user);
+					user.save();
+					Logger.info("user: " + user);
+				} catch (JsonParseException e) {
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				count++;
+			}
+			Logger.info("No of Curators: " + count);
+		}
+	}
+	
+	private void processUser(User user) {
+		if (StringUtils.isEmpty(user.email)) {
+			user.email = user.name.toLowerCase().replace(" ", ".") + "@bl.uk";
+		}
+		if (user.password == null || user.password.length() == 0) {
+			user.password = Const.DEFAULT_PASSWORD;
+		}
+		if (user.password.length() > 0) {
+			try {
+				user.password = PasswordHash.createHash(user.password);
+			} catch (NoSuchAlgorithmException e) {
+				Logger.info("initial password creation - no algorithm error: "
+						+ e);
+			} catch (InvalidKeySpecException e) {
+				Logger.info("initial password creation - key specification error: "
+						+ e);
+			}
+		}
+		if (user.roles == null || user.roles.isEmpty()) {
+			user.roles = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
+		}
+
+	}
 	/**
 	 * This method retrieves JSON data from Drupal for particular domain object
 	 * type (e.g. Target, Collection...) with parameters e.g.
@@ -194,86 +278,6 @@ public class JsonUtils {
 		return res;
 	}
 
-	public static List<User> getCurators(NodeType type) {
-		List<User> users = new ArrayList<User>();
-		String urlStr = Const.URL_STR_BASE + type.toString().toLowerCase() + Const.JSON;
-		urlStr = authenticateAndLoadDrupal(urlStr, type);
-		String content = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
-		JsonNode parentNode = Json.parse(content);
-		if (parentNode != null) {
-			int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
-			int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
-			Logger.info(firstPage + "/" + lastPage);
-			JsonNode rootNode = parentNode.path(Const.LIST_NODE);
-			Iterator<JsonNode> iterator = rootNode.iterator();
-			int count = 0;
-			while (iterator.hasNext()) {
-				Logger.info(count + ") ");
-				JsonNode node = iterator.next();
-				Iterator<Map.Entry<String, JsonNode>> elt = node.fields();
-				User user = new User();
-				
-				while (elt.hasNext()) {
-					Map.Entry<String, JsonNode> element = elt.next();
-					try {
-						String fieldName = element.getKey();
-						Field field = user.getClass().getField(fieldName);
-						Logger.info("Setting field " + field.getName() + " to " + element.getValue());
-						if (field.getType().isAssignableFrom(String.class)) {
-							String value = normalizeArchiveUrl(element.getValue().asText());
-							field.set(user, value);
-						} else if (field.getType().isAssignableFrom(Long.class)) {
-//							field.set(user, element.getValue().asLong());
-						} 
-						
-//						Iterator<JsonNode> it = valueNode.iterator();
-//						while (it.hasNext()) {
-//							String value = "";
-//							String fn = "";
-//							JsonNode subNode = it.next();
-//							Logger.info("List: " + subNode);
-//							if (subNode.has(Const.URI)) {
-//								fieldName = Const.URI;
-//							}
-//							if (subNode.has(Const.URL)) {
-//								fieldName = Const.URL;
-//							}
-//							String item = subNode.findPath(fn).textValue();
-////							if (isArchived) {
-////								item = normalizeArchiveUrl(item);
-////							}
-//							if (item != null) {
-//								if (res.length() > 0) {
-//									res = res + "," + item;
-//								} else {
-//									res = item;
-//								}
-//							}
-//						}
-					} catch (NoSuchFieldException e) {
-						Logger.error("NoSuchFieldException so will skip: '" + e.getMessage() + "'");
-					} catch (SecurityException e) {
-						Logger.error("SecurityException so will skip: '" + e.getMessage() + "'");
-					} catch (IllegalArgumentException e) {
-						Logger.error("IllegalArgumentException so will skip: '" + e.getMessage() + "'");
-					} catch (IllegalAccessException e) {
-						Logger.error("IllegalAccessException so will skip: '" + e.getMessage() + "'");
-					}						
-						Logger.info(element.getKey() + "=" + element.getValue());
-				}
-				Logger.info("Populated User: " + user);
-//					JsonNode resNode = getElement(node, f.getName());
-//					Logger.info("resNode: " + resNode);
-//					String jsonField = getStringList(resNode, f.getName(), false);
-//					Logger.info(f.getName() + "=" + jsonField);
-				count++;
-			}
-			Logger.info("No of Curators: " + count);
-		}
-//		Logger.info(content);
-		return users;
-	}
-	
 	/**
 	 * This method retrieves JSON data from Drupal for particular domain object
 	 * type (e.g. Curator...) without parameter e.g.
@@ -380,7 +384,7 @@ public class JsonUtils {
 			Iterator<User> userItr = userList.iterator();
 			while (userItr.hasNext()) {
 				User user = userItr.next();
-				user.field_affiliation = organisation.url;
+				user.fieldAffiliation = organisation.url;
 				user.updateOrganisation();
 				Ebean.update(user);
 			}
@@ -899,7 +903,7 @@ public class JsonUtils {
 				User existingUser = User.findByName(newUser.name);
 				if (existingUser != null && existingUser.name.length() > 0) {
 					isNew = false;
-					existingUser.field_affiliation = newUser.field_affiliation;
+					existingUser.fieldAffiliation = newUser.fieldAffiliation;
 					existingUser.updateOrganisation();
 					existingUser.id = newUser.id;
 					existingUser.url = newUser.url;

@@ -453,7 +453,6 @@ create table creator (
   status                    bigint,
   language                  varchar(255),
   feed_nid                  bigint,
-  uid                       bigint,
   revision                  text,
   updated_at                timestamp not null,
   constraint pk_creator primary key (id))
