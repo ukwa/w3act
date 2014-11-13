@@ -5,7 +5,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
@@ -108,56 +116,79 @@ public enum JsonUtils {
 		return res;
 	}
 
-	public void convertCurators(NodeType type) {
-		List<User> users = new ArrayList<User>();
+	private String getAuthenticatedContent(NodeType type) throws IOException {
 		String urlStr = Const.URL_STR_BASE + type.toString().toLowerCase() + Const.JSON;
-		urlStr = authenticateAndLoadDrupal(urlStr, type);
+		String user = Play.application().configuration().getString(Const.DRUPAL_USER);
+		String password = Play.application().configuration().getString(Const.DRUPAL_PASSWORD);
+
+        URL url = new URL(urlStr);
+        String authStr = user + ":" + password;
+        String authEncoded = Base64.encodeBytes(authStr.getBytes());
+
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setDoOutput(true);
+        connection.setRequestProperty("Authorization", "Basic " + authEncoded);
+        InputStream in = (InputStream) connection.getInputStream();
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+	    String content = readAll(br);
+        return content;
+	}
+	
+	
+	
+	 private static String readAll(Reader rd) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		int cp;
+		while ((cp = rd.read()) != -1) {
+		  sb.append((char) cp);
+		}
+		return sb.toString();
+	}
+	 
+	public void convertCurators(NodeType type) {
 		
-		Logger.info("urlStr: " + urlStr);
-		
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.setSerializationInclusion(Include.NON_NULL);
-		
-		String content = JsonUtils.readJsonFromFile(type.toString().toLowerCase() + Const.OUT_FILE_PATH);
-		JsonNode parentNode = Json.parse(content);
-		if (parentNode != null) {
-//			int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
-//			int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
-//			Logger.info(firstPage + "/" + lastPage);
-			JsonNode rootNode = parentNode.path(Const.LIST_NODE);
-			Iterator<JsonNode> iterator = rootNode.iterator();
+		try {
+
+		    String content = this.getAuthenticatedContent(type);		    
+		    JsonNode parentNode = Json.parse(content);
+		    
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.setSerializationInclusion(Include.NON_NULL);
+
 			int count = 0;
-			while (iterator.hasNext()) {
-				Logger.info(count + ") ");
-				JsonNode node = iterator.next();
-//				"field_affiliation":
-//				{
-//					"uri":"http://www.webarchive.org.uk/act/node/102","id":"102","resource":"node"
-//				},
-//				"uid":"279","name":"Aled Betts","url":"http://www.webarchive.org.uk/act/user/279","edit_url":"http://www.webarchive.org.uk/act/user/279/edit","created":"1409663132","language":"en","feed_nid":null
-
-//				User [
-//				      organisation=null, roles=[], email=null, password=null, name=Aled Betts, fieldAffiliation=null, edit_url=null, last_access=null, last_login=null, status=null, language=null, feed_nid=null, 
-//				      field_affiliation=null, uid=279, created=1409663132, mail=null, revision=, id=null, url=http://www.webarchive.org.uk/act/user/279, createdAt=null, updatedAt=null
-//				]
-						
-				Logger.info("json: " + node);
-
-				try {
+			if (parentNode != null) {
+				JsonNode rootNode = parentNode.path(Const.LIST_NODE);
+				Iterator<JsonNode> iterator = rootNode.iterator();
+				while (iterator.hasNext()) {
+					Logger.info(count + ") ");
+					JsonNode node = iterator.next();
+	//				"field_affiliation":
+	//				{
+	//					"uri":"http://www.webarchive.org.uk/act/node/102","id":"102","resource":"node"
+	//				},
+	//				"uid":"279","name":"Aled Betts","url":"http://www.webarchive.org.uk/act/user/279","edit_url":"http://www.webarchive.org.uk/act/user/279/edit","created":"1409663132","language":"en","feed_nid":null
+	
+	//				User [
+	//				      organisation=null, roles=[], email=null, password=null, name=Aled Betts, fieldAffiliation=null, edit_url=null, last_access=null, last_login=null, status=null, language=null, feed_nid=null, 
+	//				      field_affiliation=null, uid=279, created=1409663132, mail=null, revision=, id=null, url=http://www.webarchive.org.uk/act/user/279, createdAt=null, updatedAt=null
+	//				]
+							
+					Logger.info("json: " + node);
 					User user = objectMapper.readValue(node.toString(), User.class);
 					this.processUser(user);
 					user.save();
 					Logger.info("user: " + user);
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+					count++;
 				}
-				count++;
 			}
 			Logger.info("No of Curators: " + count);
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -182,6 +213,32 @@ public enum JsonUtils {
 		if (user.roles == null || user.roles.isEmpty()) {
 			user.roles = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
 		}
+
+	}
+	
+	public void convertUrls(NodeType type) {
+		
+		try {
+			String content = this.getAuthenticatedContent(type);
+
+			JsonNode parentNode = Json.parse(content);
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.setSerializationInclusion(Include.NON_NULL);
+			
+			if (parentNode != null) {
+				JsonNode rootNode = parentNode.path(Const.LIST_NODE);
+				Iterator<JsonNode> iterator = rootNode.iterator();
+				int count = 0;
+				while (iterator.hasNext()) {
+					Logger.info(count + ") ");
+					JsonNode node = iterator.next();
+					Logger.info(node.toString());
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 
 	}
 	/**

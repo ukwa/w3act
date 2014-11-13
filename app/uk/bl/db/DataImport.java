@@ -49,14 +49,17 @@ public enum DataImport {
 //            	this.importMailTemplates();
 //            	this.importContactPersons();
 //            	this.importOrganisations();
-//            	this.importCurators();
-
+            	this.importCurators();
+//            	this.importUrls();
 //				// aggregate url data from drupal and store JSON content in a file
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
 //				// store urls in DB
 //                Ebean.save(allUrls);
 //                Logger.info("targets successfully loaded");
-////                List<Target> targetList = (List<Target>) Target.find.all();
+
+                
+                
+                ////                List<Target> targetList = (List<Target>) Target.find.all();
 ////                Iterator<Target> targetItr = targetList.iterator();
 ////                while (targetItr.hasNext()) {
 ////                	Target target = targetItr.next();
@@ -279,6 +282,13 @@ public enum DataImport {
 		JsonUtils.INSTANCE.convertCurators(Const.NodeType.USER);
         Logger.info("Loaded Curators");
 	}
+	
+	private void importUrls() {
+		// store urls in DB
+        JsonUtils.INSTANCE.convertUrls(Const.NodeType.URL);
+        Logger.info("Loaded URLs");
+	}
+	
     /**
 	 * normalize URL if there is "_" e.g. in taxonomy_term
 	 */
