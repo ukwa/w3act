@@ -179,40 +179,40 @@ users:
         email:              wa-sysadm@bl.uk
         name:               Systems Administrator
         password:           sysAdmin
-        fieldAffiliation:   BL
+        affiliation:   BL
         roles:              [*sys_admin]
 
     - !!models.User
         email:              archivist@bl.uk
         name:               Archivist
         password:           secret
-        fieldAffiliation:   BL
+        affiliation:   BL
         roles:              [*archivist]
 
     - !!models.User
         email:              expert@bl.uk
         name:               Expert
         password:           secret
-        fieldAffiliation:   BL
+        affiliation:   BL
         roles:              [*expert_user]
 
     - !!models.User
         email:              user@bl.uk
         name:               User
         password:           secret
-        fieldAffiliation:   BL
+        affiliation:   BL
         roles:              [*user]
     
     - !!models.User
         email:              viewer@bl.uk
         name:               Viewer
         password:           secret
-        fieldAffiliation:   BL
+        affiliation:   BL
         roles:              [*viewer]
 
     - !!models.User
         email:              roman.graf@ait.ac.at
         name:               Roman Graf
         password:           secret
-        fieldAffiliation:   AIT
+        affiliation:   AIT
         roles:              [*archivist]

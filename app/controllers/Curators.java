@@ -194,10 +194,10 @@ public class Curators extends AbstractController {
         if (getFormParam(Const.ORGANISATION) != null) {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
 //        		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
-        		user.fieldAffiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+        		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
         		user.updateOrganisation();
         	} else {
-        		user.fieldAffiliation = Const.NONE;
+        		user.affiliation = Const.NONE;
         	}
         }
         String roleStr = "";
@@ -305,10 +305,10 @@ public class Curators extends AbstractController {
                 if (getFormParam(Const.ORGANISATION) != null) {
                 	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
 //                		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
-                		user.fieldAffiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+                		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
                 		user.updateOrganisation();
                 	} else {
-                		user.fieldAffiliation = Const.NONE;
+                		user.affiliation = Const.NONE;
                 	}
                 }
                 String roleStr = "";

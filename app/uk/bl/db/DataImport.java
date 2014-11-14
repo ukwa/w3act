@@ -42,14 +42,15 @@ public enum DataImport {
             try {
             	this.importPermissions();
             	this.importRoles();
+            	this.importCurators();
                 this.importAccounts();
+            	this.importExternalOrganisations();
 //                this.importTaxonomies();
 //            	this.importTags();
 //            	this.importFlags();
 //            	this.importMailTemplates();
 //            	this.importContactPersons();
 //            	this.importOrganisations();
-            	this.importCurators();
 //            	this.importUrls();
 //				// aggregate url data from drupal and store JSON content in a file
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
@@ -278,14 +279,18 @@ public enum DataImport {
         Logger.info("Loaded Organisations");
 	}
 
+	private void importExternalOrganisations() {
+		JsonUtils.INSTANCE.convertOrganisations();
+	}
+	
 	private void importCurators() {
-		JsonUtils.INSTANCE.convertCurators(Const.NodeType.USER);
+		JsonUtils.INSTANCE.convertCurators();
         Logger.info("Loaded Curators");
 	}
 	
 	private void importUrls() {
 		// store urls in DB
-        JsonUtils.INSTANCE.convertUrls(Const.NodeType.URL);
+        JsonUtils.INSTANCE.convertUrls();
         Logger.info("Loaded URLs");
 	}
 	

@@ -16,8 +16,12 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +42,8 @@ import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.Const.NodeType;
 import uk.bl.Const.TaxonomyType;
+import uk.bl.api.models.Author;
+import uk.bl.api.models.Field_Affiliation;
 import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
@@ -116,12 +122,12 @@ public enum JsonUtils {
 		return res;
 	}
 
-	private String getAuthenticatedContent(NodeType type) throws IOException {
-		String urlStr = Const.URL_STR_BASE + type.toString().toLowerCase() + Const.JSON;
+	private String getAuthenticatedContent(String jsonUrl) throws IOException {
+
 		String user = Play.application().configuration().getString(Const.DRUPAL_USER);
 		String password = Play.application().configuration().getString(Const.DRUPAL_PASSWORD);
 
-        URL url = new URL(urlStr);
+        URL url = new URL(jsonUrl);
         String authStr = user + ":" + password;
         String authEncoded = Base64.encodeBytes(authStr.getBytes());
 
@@ -135,9 +141,7 @@ public enum JsonUtils {
         return content;
 	}
 	
-	
-	
-	 private static String readAll(Reader rd) throws IOException {
+	private String readAll(Reader rd) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		int cp;
 		while ((cp = rd.read()) != -1) {
@@ -145,12 +149,88 @@ public enum JsonUtils {
 		}
 		return sb.toString();
 	}
-	 
-	public void convertCurators(NodeType type) {
+
+	private Date getDateFromSeconds(String secondsText) {
+    	long seconds = Long.valueOf(secondsText);
+		Date date = new Date(seconds*1000L);
+		Logger.info("converted date: " + date);
+		return date;
+	}
+	
+	public void convertOrganisations() {
+
+		try {
+			String jsonUrl = Const.URL_STR + Const.NodeType.ORGANISATION.toString().toLowerCase();
+		    String content = this.getAuthenticatedContent(jsonUrl);
+		    JsonNode parentNode = Json.parse(content);
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.setSerializationInclusion(Include.NON_NULL);
+			if (parentNode != null) {
+				JsonNode rootNode = parentNode.path(Const.LIST_NODE);
+				Iterator<JsonNode> iterator = rootNode.iterator();
+				while (iterator.hasNext()) {
+					JsonNode node = iterator.next();
+					Logger.info("json: " + node);
+					Organisation organisation = objectMapper.readValue(node.toString(), Organisation.class);
+					organisation.url = this.checkArchiveUrl(organisation.url);
+					organisation.edit_url = Const.WCT_URL + organisation.vid;
+					Author author = organisation.getAuthor();
+					if (author != null && StringUtils.isNotBlank(author.getUri())) {
+						organisation.authorRef = this.checkArchiveUrl(author.getUri());
+					}
+					
+					if (StringUtils.isNotBlank(organisation.getCreated())) {
+						organisation.createdAt = this.getDateFromSeconds(organisation.getCreated());
+					}
+					organisation.save();
+//					{
+//						"body":[],
+//						"field_abbreviation":"TCD",
+//						"nid":"7404",
+//						"vid":"12953",
+//						"is_new":false,
+//						"type":"organisation",
+//						"title":"Trinity College Dublin",
+//						"language":"en",
+//						"url":"http://www.webarchive.org.uk/act/node/7404",
+//						"edit_url":"http://www.webarchive.org.uk/act/node/7404/edit",
+//						"status":"1","promote":"0","sticky":"0",
+//						"created":"1383558808","changed":"1383558808",
+//						"author":{
+//							"uri":"http://www.webarchive.org.uk/act/user/1",
+//							"id":"1","resource":"user"
+//							},
+//						"log":"",
+//						"revision":null,
+//						"comment":"1",
+//						"comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null}
+//					}
+
+					//Organisation 
+//						[users=[], targets=[], instances=[], value=null, summary=null, format=null, 
+//								field_abbreviation=TCD, 
+//								body=[], nid=7404, vid=12953, is_new=false, type=organisation, title=Trinity College Dublin, language=en, 
+//								edit_url=http://www.webarchive.org.uk/act/node/7404/edit, status=1, promote=0, sticky=0, created=1383558808, changed=1383558808, 
+//									author=Author [uri=http://www.webarchive.org.uk/act/user/1, id=1, resource=user], 
+//									log=, revision=null, comment=1, comments=[], comment_count=0, comment_count_new=0, feed_nid=null]
+
+//					7404;"''";"''";"''";"TCD";12953;FALSE;"organisation";"Trinity College Dublin";"en";"act-7404";"wct-12953";1;0;0;"1383558808";"1383558808";"act-1";"''";1;0;0;"''";0;"2014-11-12 09:35:28.449"
+					
+					
+					Logger.info("organisation: " + organisation);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		    
+	}
+	
+	public void convertCurators() {
 		
 		try {
+			String jsonUrl = Const.URL_STR_BASE + Const.NodeType.USER.toString().toLowerCase() + Const.JSON;
 
-		    String content = this.getAuthenticatedContent(type);		    
+		    String content = this.getAuthenticatedContent(jsonUrl);		    
 		    JsonNode parentNode = Json.parse(content);
 		    
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -163,6 +243,7 @@ public enum JsonUtils {
 				while (iterator.hasNext()) {
 					Logger.info(count + ") ");
 					JsonNode node = iterator.next();
+					
 	//				"field_affiliation":
 	//				{
 	//					"uri":"http://www.webarchive.org.uk/act/node/102","id":"102","resource":"node"
@@ -176,7 +257,36 @@ public enum JsonUtils {
 							
 					Logger.info("json: " + node);
 					User user = objectMapper.readValue(node.toString(), User.class);
-					this.processUser(user);
+					if (StringUtils.isEmpty(user.email)) {
+						user.email = user.name.toLowerCase().replace(" ", ".") + "@bl.uk";
+					}
+					if (user.password == null || user.password.length() == 0) {
+						user.password = Const.DEFAULT_PASSWORD;
+					}
+					if (user.password.length() > 0) {
+						try {
+							user.password = PasswordHash.createHash(user.password);
+						} catch (NoSuchAlgorithmException e) {
+							Logger.error("initial password creation - no algorithm error: " + e);
+						} catch (InvalidKeySpecException e) {
+							Logger.error("initial password creation - key specification error: " + e);
+						}
+					}
+					if (user.roles == null || user.roles.isEmpty()) {
+						user.roles = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
+					}
+					user.url = this.checkArchiveUrl(user.url);
+					Logger.info("before: " + user.edit_url);
+					user.edit_url = this.checkArchiveUrl(user.edit_url);
+					Logger.info("after: " + user.edit_url);
+					if (StringUtils.isNotBlank(user.getCreated())) {
+						user.createdAt = this.getDateFromSeconds(user.getCreated());
+					}
+					Field_Affiliation fieldAffiliation = user.getField_affiliation();
+					if (fieldAffiliation!= null && StringUtils.isNotEmpty(fieldAffiliation.getUri())) {
+//						user.affiliation = fieldAffiliation.getur
+					}
+
 					user.save();
 					Logger.info("user: " + user);
 					count++;
@@ -191,35 +301,13 @@ public enum JsonUtils {
 			e.printStackTrace();
 		}
 	}
-	
-	private void processUser(User user) {
-		if (StringUtils.isEmpty(user.email)) {
-			user.email = user.name.toLowerCase().replace(" ", ".") + "@bl.uk";
-		}
-		if (user.password == null || user.password.length() == 0) {
-			user.password = Const.DEFAULT_PASSWORD;
-		}
-		if (user.password.length() > 0) {
-			try {
-				user.password = PasswordHash.createHash(user.password);
-			} catch (NoSuchAlgorithmException e) {
-				Logger.info("initial password creation - no algorithm error: "
-						+ e);
-			} catch (InvalidKeySpecException e) {
-				Logger.info("initial password creation - key specification error: "
-						+ e);
-			}
-		}
-		if (user.roles == null || user.roles.isEmpty()) {
-			user.roles = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
-		}
 
-	}
-	
-	public void convertUrls(NodeType type) {
+	public void convertUrls() {
 		
 		try {
-			String content = this.getAuthenticatedContent(type);
+			// TODO: CHECK JSON URL
+			String jsonUrl = Const.URL_STR + Const.NodeType.URL.toString().toLowerCase();
+			String content = this.getAuthenticatedContent(jsonUrl);
 
 			JsonNode parentNode = Json.parse(content);
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -249,7 +337,7 @@ public enum JsonUtils {
 	 * @param type
 	 * @return a list of retrieved objects
 	 */
-	public static List<Object> getDrupalData(NodeType type) {
+	public List<Object> getDrupalData(NodeType type) {
 		List<Object> res = new ArrayList<Object>();
 		try {
 			String urlStr = Const.URL_STR + type.toString().toLowerCase();
@@ -272,7 +360,7 @@ public enum JsonUtils {
 					// }
 					String pageContent = downloadData(urlStr + "&"
 							+ Const.PAGE_IN_URL + String.valueOf(i), type);
-					List<Object> pageList = JsonUtils.parseJson(pageContent,
+					List<Object> pageList = parseJson(pageContent,
 							type);
 					res.addAll(pageList);
 				}
@@ -323,7 +411,7 @@ public enum JsonUtils {
 				if (type.equals(NodeType.ORGANISATION)) {
 					Organisation obj = (Organisation) itr.next();
 					if (obj.vid > 0) {
-						obj.editUrl = Const.WCT_URL + obj.vid;
+						obj.edit_url = Const.WCT_URL + obj.vid;
 					}
 					// } else {
 					// Object obj = itr.next();
@@ -343,7 +431,7 @@ public enum JsonUtils {
 	 * @param type
 	 * @return a list of retrieved objects
 	 */
-	public static List<Object> getDrupalDataBase(NodeType type) {
+	public List<Object> getDrupalDataBase(NodeType type) {
 		List<Object> res = new ArrayList<Object>();
 		try {
 			String urlStr = Const.URL_STR_BASE + type.toString().toLowerCase()
@@ -369,7 +457,7 @@ public enum JsonUtils {
 					// TODO: WHY DO THIS? already downloaded?
 					String pageContent = downloadData(urlStr, type);
 					Logger.info("users content: " + pageContent);
-					List<Object> pageList = JsonUtils.parseJson(pageContent,
+					List<Object> pageList = parseJson(pageContent,
 							type);
 					res.addAll(pageList);
 				}
@@ -437,11 +525,11 @@ public enum JsonUtils {
 		while (organisationItr.hasNext()) {
 			Organisation organisation = organisationItr.next();
 			List<User> userList = User
-					.findByOrganisation(organisation.abbreviation);
+					.findByOrganisation(organisation.field_abbreviation);
 			Iterator<User> userItr = userList.iterator();
 			while (userItr.hasNext()) {
 				User user = userItr.next();
-				user.fieldAffiliation = organisation.url;
+				user.affiliation = organisation.url;
 				user.updateOrganisation();
 				Ebean.update(user);
 			}
@@ -525,14 +613,14 @@ public enum JsonUtils {
 	 *            The type of taxonomy
 	 * @param res
 	 */
-	private static void aggregateObjectList(String urlStr,
+	private void aggregateObjectList(String urlStr,
 			List<String> urlList, NodeType type, TaxonomyType taxonomy_type,
 			List<Object> res) {
 		Logger.info("extract data for: " + urlStr + " type: " + type);
 		String content = downloadData(urlStr, type);
 		JsonNode mainNode = Json.parse(content);
 		if (mainNode != null) {
-			List<Object> pageList = JsonUtils.parseJsonExt(content, type,
+			List<Object> pageList = parseJsonExt(content, type,
 					taxonomy_type, urlList, res);
 			res.addAll(pageList);
 		}
@@ -552,7 +640,7 @@ public enum JsonUtils {
 	 * @param res
 	 *            Resulting list
 	 */
-	public static void executeUrlRequest(String url, List<String> urlList,
+	public void executeUrlRequest(String url, List<String> urlList,
 			NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
 		url = getWebarchiveCreatorUrl(url, type);
 		String urlStr = url + Const.JSON;
@@ -576,7 +664,7 @@ public enum JsonUtils {
 	 * @param res
 	 *            Resulting list
 	 */
-	public static void readListFromString(String fieldName,
+	public void readListFromString(String fieldName,
 			List<String> urlList, NodeType type, TaxonomyType taxonomy_type,
 			List<Object> res) {
 //		Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
@@ -604,7 +692,7 @@ public enum JsonUtils {
 	 * @param type
 	 * @return a list of retrieved objects
 	 */
-	public static List<Object> extractDrupalData(NodeType type) {
+	public List<Object> extractDrupalData(NodeType type) {
 		List<Object> res = new ArrayList<Object>();
 		try {
 			List<String> urlList = new ArrayList<String>();
@@ -701,7 +789,7 @@ public enum JsonUtils {
 	 * @param path
 	 * @return list as a String
 	 */
-	public static String getStringList(JsonNode resNode, String path,
+	public String getStringList(JsonNode resNode, String path,
 			boolean isArchived) {
 		String res = "";
 		// Logger.info("getStringList path: " + path + ", resNode: " + resNode);
@@ -746,7 +834,7 @@ public enum JsonUtils {
 	 * @param url
 	 * @return identifier URL
 	 */
-	public static String checkArchiveUrl(String url) {
+	public String checkArchiveUrl(String url) {
 		// Logger.info("checkArchiveUrl() url: " + url);
 		String res = url;
 		if (url != null) {
@@ -808,7 +896,7 @@ public enum JsonUtils {
 	 * @param path
 	 * @return list as a String
 	 */
-	public static String getStringFromSubNode(JsonNode resNode, String path) {
+	public String getStringFromSubNode(JsonNode resNode, String path) {
 		String res = "";
 		// Logger.info("getStringList path: " + path + ", resNode: " + resNode);
 		if (resNode != null) {
@@ -869,7 +957,7 @@ public enum JsonUtils {
 	 * @param type
 	 * @return object list for particular domain object type
 	 */
-	public static List<Object> parseJson(String content, NodeType type) {
+	public List<Object> parseJson(String content, NodeType type) {
 		List<Object> res = new ArrayList<Object>();
 		JsonNode json = Json.parse(content);
 		if (json != null) {
@@ -914,7 +1002,7 @@ public enum JsonUtils {
 	 *            The type of taxonomy
 	 * @return object list for particular domain object type
 	 */
-	public static List<Object> parseJsonExt(String content, NodeType type,
+	public List<Object> parseJsonExt(String content, NodeType type,
 			TaxonomyType taxonomy_type, List<String> urlList,
 			List<Object> resList) {
 		List<Object> res = new ArrayList<Object>();
@@ -960,7 +1048,7 @@ public enum JsonUtils {
 				User existingUser = User.findByName(newUser.name);
 				if (existingUser != null && existingUser.name.length() > 0) {
 					isNew = false;
-					existingUser.fieldAffiliation = newUser.fieldAffiliation;
+					existingUser.affiliation = newUser.affiliation;
 					existingUser.updateOrganisation();
 					existingUser.id = newUser.id;
 					existingUser.url = newUser.url;
@@ -992,7 +1080,7 @@ public enum JsonUtils {
 	 * @param node
 	 * @param obj
 	 */
-	public static void parseJsonString(Field f, JsonNode node, Object obj) {
+	public void parseJsonString(Field f, JsonNode node, Object obj) {
 
 		try {
 			String jsonField = getStringItem(node, f.getName());
@@ -1035,7 +1123,7 @@ public enum JsonUtils {
 	 * @param obj
 	 * @return check result
 	 */
-	private static boolean checkSubNode(Field f, JsonNode node, Object obj,
+	private boolean checkSubNode(Field f, JsonNode node, Object obj,
 			List<String> urlList, NodeType type, TaxonomyType taxonomy_type,
 			List<Object> resList) {
 		boolean res = false;
@@ -1078,7 +1166,7 @@ public enum JsonUtils {
 	 *            A single URL or multiple URLs separated by comma
 	 * @return W3ACT URLs as a string
 	 */
-	public static String normalizeArchiveUrl(String str) {
+	public String normalizeArchiveUrl(String str) {
 		String res = "";
 		if (str != null && str.length() > 0) {
 			if (str.contains(Const.COMMA)) {
@@ -1107,7 +1195,7 @@ public enum JsonUtils {
 	 * @param node
 	 * @param obj
 	 */
-	public static void parseJsonNode(JsonNode node, Object obj) {
+	public void parseJsonNode(JsonNode node, Object obj) {
 		parseJsonNodeExt(node, obj, null, null, null, null);
 	}
 
@@ -1117,7 +1205,7 @@ public enum JsonUtils {
 	 * @param node
 	 * @param obj
 	 */
-	public static void parseJsonNodeExt(JsonNode node, Object obj,
+	public void parseJsonNodeExt(JsonNode node, Object obj,
 			List<String> urlList, NodeType type, TaxonomyType taxonomy_type,
 			List<Object> resList) {
 		Field[] fields = obj.getClass().getFields();

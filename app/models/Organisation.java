@@ -8,14 +8,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.models.Author;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
@@ -45,73 +48,136 @@ public class Organisation extends ActModel {
     @OneToMany(mappedBy="organisationToInstance", cascade=CascadeType.PERSIST)
     private List<Instance> instances = new ArrayList<Instance>();
 
+    @Required
+    @JsonProperty
+    public String title;
+
+    @JsonIgnore
+    @JsonProperty
+    public String edit_url;
+
+    @JsonIgnore
+    @JsonProperty
+    public String summary;
+    
+    public String authorRef;
+    
+    @JsonIgnore
+    @JsonProperty
+    @Required
+    @Column(name="affiliation")
+    public String field_abbreviation;
+
+    @JsonIgnore
+    @JsonProperty
+    @Column(columnDefinition = "text")
+    public String revision;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public String language;
+
+    @Transient
     @JsonIgnore
     @Column(columnDefinition = "text") 
     public String value;
-    
+
+    @Transient
     @JsonIgnore
-    public String summary;
+    @JsonProperty
+    public Long feed_nid;
     
+    @Transient
     @JsonIgnore
-    public String format;
+    @JsonProperty
+    public Long status;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long promote;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long sticky;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private String log;
     
+    @Transient
     @JsonIgnore
-    @Required
-    public String abbreviation;
+    @JsonProperty
+    private String created;
     
+    @Transient
     @JsonIgnore
+    @JsonProperty
+    private String changed;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private Author author;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private List<String> body;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private String nid;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
     public Long vid;
-    
+
+    @Transient
     @JsonIgnore
-    public Boolean isNew;
+    @JsonProperty
+    private Boolean is_new;
     
+    @Transient
     @JsonIgnore
+    @JsonProperty
     public String type;
     
-    @Required
-    public String title;
-    
+    @Transient
     @JsonIgnore
-    public String language;
-    
-    @JsonIgnore
-    public String editUrl;
-    
-    @JsonIgnore
-    public Long status;
-    
-    @JsonIgnore
-    public Long promote;
-    
-    @JsonIgnore
-    public Long sticky;
-    
-    @JsonIgnore
-    public String author;
-    
-    @JsonIgnore
-    public String log;
-    
-    @JsonIgnore
+    @JsonProperty
     public Long comment;
+
+    @Transient
     @JsonIgnore
-    public Long commentCount;
+    @JsonProperty
+    public List<String> comments;
     
+    @Transient
     @JsonIgnore
-    public Long commentCountNew;
+    @JsonProperty
+    public Long comment_count;
     
+    @Transient
     @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String revision;
+    @JsonProperty
+    public Long comment_count_new;
     
+    @Transient
     @JsonIgnore
-    public Long feedNid;
-    
+    @JsonProperty
+    public String format;
+
+
+    public Organisation() {}
+
     public Organisation(String title) {
         this.title = title;
-    }
-    
-    public Organisation() {
     }
     
     // -- Queries
@@ -329,11 +395,6 @@ public class Organisation extends ActModel {
         return Organisation.findByUrl(organisationUrl).title; 
     }
             
-    public String toString() {
-        return "Organisation(" + id + ") with title: " + title + 
-        	", format: " + format + ", summary: " + summary + ", value: " + value;
-    }
-
     /**
      * Return a page of Organisations
      *
@@ -351,5 +412,77 @@ public class Organisation extends ActModel {
         		.getPage(page);
     }
 
+	public List<String> getBody() {
+		return body;
+	}
+
+	public void setBody(List<String> body) {
+		this.body = body;
+	}
+
+	public String getNid() {
+		return nid;
+	}
+
+	public void setNid(String nid) {
+		this.nid = nid;
+	}
+
+	public Boolean getIs_new() {
+		return is_new;
+	}
+
+	public void setIs_new(Boolean is_new) {
+		this.is_new = is_new;
+	}
+
+	public String getCreated() {
+		return created;
+	}
+
+	public void setCreated(String created) {
+		this.created = created;
+	}
+
+	public String getChanged() {
+		return changed;
+	}
+
+	public void setChanged(String changed) {
+		this.changed = changed;
+	}
+
+	public Author getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(Author author) {
+		this.author = author;
+	}
+
+	public String getLog() {
+		return log;
+	}
+
+	public void setLog(String log) {
+		this.log = log;
+	}
+
+	@Override
+	public String toString() {
+		return "Organisation [users=" + users + ", targets=" + targets
+				+ ", instances=" + instances + ", value=" + value
+				+ ", summary=" + summary + ", format=" + format
+				+ ", field_abbreviation=" + field_abbreviation + ", body="
+				+ body + ", nid=" + nid + ", vid=" + vid + ", is_new=" + is_new
+				+ ", type=" + type + ", title=" + title + ", language="
+				+ language + ", edit_url=" + edit_url + ", status=" + status
+				+ ", promote=" + promote + ", sticky=" + sticky + ", created="
+				+ created + ", changed=" + changed + ", author=" + author
+				+ ", log=" + log + ", revision=" + revision + ", comment="
+				+ comment + ", comments=" + comments + ", comment_count="
+				+ comment_count + ", comment_count_new=" + comment_count_new
+				+ ", feed_nid=" + feed_nid + "]";
+	}
 }
 

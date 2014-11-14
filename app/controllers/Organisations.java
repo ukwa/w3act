@@ -206,7 +206,7 @@ public class Organisations extends AbstractController {
     	organisation.url = getFormParam(Const.URL);
     	organisation.title = getFormParam(Const.TITLE);
 	    if (getFormParam(Const.FIELD_ABBREVIATION) != null) {
-	    	organisation.abbreviation = getFormParam(Const.FIELD_ABBREVIATION);
+	    	organisation.field_abbreviation = getFormParam(Const.FIELD_ABBREVIATION);
 	    }
 	    if (getFormParam(Const.SUMMARY) != null) {
 	    	organisation.summary = getFormParam(Const.SUMMARY);
@@ -289,7 +289,7 @@ public class Organisations extends AbstractController {
         	    	organisation.title = getFormParam(Const.TITLE);
         	    }
         	    if (getFormParam(Const.FIELD_ABBREVIATION) != null) {
-        	    	organisation.abbreviation = getFormParam(Const.FIELD_ABBREVIATION);
+        	    	organisation.field_abbreviation = getFormParam(Const.FIELD_ABBREVIATION);
         	    }
         	    if (getFormParam(Const.SUMMARY) != null) {
         	    	organisation.summary = getFormParam(Const.SUMMARY);
@@ -376,8 +376,8 @@ public class Organisations extends AbstractController {
      */
     private static boolean isOrganisationLink(User user, Organisation organisation) {
     	boolean res = false;
-		if (user.fieldAffiliation != null && organisation.url != null 
-				&& user.fieldAffiliation.equals(organisation.url)) {
+		if (user.affiliation != null && organisation.url != null 
+				&& user.affiliation.equals(organisation.url)) {
 			res = true;
 		} 
 		return res;
@@ -392,7 +392,7 @@ public class Organisations extends AbstractController {
     private static void addLink(User user, Organisation organisation) {
 //		Logger.info("flag true add link: " + user.name);
     	if (!isOrganisationLink(user, organisation)) {
-    		user.fieldAffiliation = organisation.url;
+    		user.affiliation = organisation.url;
     		user.updateOrganisation();
         	Ebean.update(user);
     	}
@@ -408,7 +408,7 @@ public class Organisations extends AbstractController {
 //		Logger.info("flag false remove link: " + user.name);
     	if (isOrganisationLink(user, organisation)) {
     		Logger.info("remove link: " + user.name);
-    		user.fieldAffiliation = "";
+    		user.affiliation = "";
     		user.organisation = null;
         	Ebean.update(user);
     	}

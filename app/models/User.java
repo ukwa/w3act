@@ -67,34 +67,56 @@ public class User extends ActModel {
     // FROM ACT
     @Constraints.Required
     public String name;
+    
     @JsonIgnore
-    public String fieldAffiliation;
+    public String affiliation;
+    
     @JsonIgnore
+    @JsonProperty
     public String edit_url;
+    
+    @Transient
     @JsonIgnore
+    @JsonProperty
     public String last_access;
+    
+    @Transient
     @JsonIgnore
+    @JsonProperty
     public String last_login;
+    
+    @Transient
     @JsonIgnore
+    @JsonProperty
     public Long status;
+    
+    @Transient
     @JsonIgnore
+    @JsonProperty
     public String language;
+    
+    @Transient
     @JsonIgnore
+    @JsonProperty
     public Long feed_nid;
     
     @Transient
+    @JsonIgnore
     @JsonProperty
     private Field_Affiliation field_affiliation;
     
     @Transient
+    @JsonIgnore
     @JsonProperty
     private String uid;
     
     @Transient
+    @JsonIgnore
     @JsonProperty
     private String created;
     
     @Transient
+    @JsonIgnore
     @JsonProperty
     private String mail;
     
@@ -367,7 +389,7 @@ public class User extends ActModel {
     
     // Could really do with many_to_one relationship
     public Organisation getOrganisation() {
-    	return Organisation.findByUrl(fieldAffiliation);
+    	return Organisation.findByUrl(affiliation);
     }
 
     /**
@@ -401,9 +423,9 @@ public class User extends ActModel {
      * This method updates foreign key mapping between a user and an organisation.
      */
     public void updateOrganisation() {
-		if (fieldAffiliation != null
-				&& fieldAffiliation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(fieldAffiliation);
+		if (affiliation != null
+				&& affiliation.length() > 0) {
+			Organisation organisation = Organisation.findByUrl(affiliation);
 //            Logger.info("Add creator to organisation: " + organisation.toString());
             this.organisation = organisation;
 		}    	
@@ -413,7 +435,7 @@ public class User extends ActModel {
 	public String toString() {
 		return "User [organisation=" + organisation + ", roles=" + roles
 				+ ", email=" + email + ", password=" + password + ", name="
-				+ name + ", fieldAffiliation=" + fieldAffiliation
+				+ name + ", fieldAffiliation=" + affiliation
 				+ ", edit_url=" + edit_url + ", last_access=" + last_access
 				+ ", last_login=" + last_login + ", status=" + status
 				+ ", language=" + language + ", feed_nid=" + feed_nid

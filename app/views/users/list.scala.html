@@ -121,7 +121,7 @@
 					<td><a href="@routes.Curators.view(curator.url)">@curator.name</a></td>
 					<td>@curator.email</td>
 					<td>@Curators.showRoles(curator.id)</td>
-					@if(curator.fieldAffiliation != null 
+					@if(curator.affiliation != null 
 						&& curator.getOrganisation.url != null
 						&& curator.getOrganisation.title != null) {
 						<td><a href="@routes.Organisations.view(curator.getOrganisation.url)">

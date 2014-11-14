@@ -77,7 +77,7 @@
 							<select name="organisation" id="nom-org" class="form-control">
 				            <option>None</option>
 								@for(organisation <- Organisation.findAll()) {
-									@if(organisation.title.equals(Organisation.findByUrl(user.fieldAffiliation).title)) {
+									@if(organisation.title.equals(Organisation.findByUrl(user.affiliation).title)) {
 	             						<option selected disabled>@organisation.title</option>
 	         						} else {
 	                					<option disabled>@organisation.title</option>

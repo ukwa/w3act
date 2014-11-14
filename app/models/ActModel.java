@@ -10,6 +10,7 @@ import javax.persistence.Version;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -24,7 +25,8 @@ abstract class ActModel extends Model {
 
 	@Id
     public Long id;
-    
+	
+    @JsonProperty
 	public String url;
 
     @JsonIgnore
@@ -40,7 +42,9 @@ abstract class ActModel extends Model {
     	if (StringUtils.isEmpty(this.url)) {
     		this.url = Const.ACT_URL + this.id;
     	}
-    	this.createdAt = new Date();
+    	if (createdAt == null) {
+    		this.createdAt = new Date();
+    	}
     	super.save();
     }
 

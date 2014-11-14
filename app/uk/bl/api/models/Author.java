@@ -1,7 +1,7 @@
 package uk.bl.api.models;
 
-public class Field_Affiliation {
-	
+public class Author {
+
 	private String uri;
 	private String id;
 	private String resource;
@@ -9,6 +9,7 @@ public class Field_Affiliation {
 	public String getUri() {
 		return uri;
 	}
+	
 	public void setUri(String uri) {
 		this.uri = uri;
 	}
@@ -26,10 +27,10 @@ public class Field_Affiliation {
 	public void setResource(String resource) {
 		this.resource = resource;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Field_Affiliation [uri=" + uri + ", id=" + id + ", resource="
-				+ resource + "]";
+		return "Author [uri=" + uri + ", id=" + id + ", resource=" + resource
+				+ "]";
 	}
 }
