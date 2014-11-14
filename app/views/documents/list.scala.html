@@ -37,45 +37,8 @@
     }
     
     // Generate the link
-    routes.Documents.list(1, newPage, sortBy, order, searchstr)
+    routes.Documents.list(watchedTarget.id, newPage, sortBy, order, searchstr)
     
-}
-
-@**********************************
-* Helper generating table headers *
-***********************************@
-@header(key:String, title:String) = {
-    <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
-        <a href="@link(0, key)">@title</a>
-    </th>
-}
-
-@pagination = {
-		<div class="text-center">
-			<ul class="pagination">
-	        	@if(currentPage.hasPrev) {
-	            	<li class="prev">
-	                    <a href="@link(currentPage.getPageIndex - 1, null)">&larr; Previous</a>
-	                </li>
-	            } else {
-	                <li class="prev disabled">
-	                    <a>&larr; Previous</a>
-	                </li>
-	            }
-	            <li class="current">
-	                <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
-	            </li>
-	            @if(currentPage.hasNext) {
-	                <li class="next">
-	                    <a href="@link(currentPage.getPageIndex + 1, null)">Next &rarr;</a>
-	                </li>
-	            } else {
-	                <li class="next disabled">
-	                    <a>Next &rarr;</a>
-	                </li>
-				}
-			</ul>
-		</div>
 }
 
 @main("", user, scripts, styles) {
@@ -95,21 +58,21 @@
 	   				<input type="hidden" name="o" value="@currentOrder">
 					<input type="text" class="form-control lookup-form-control" name="q" placeholder="Enter Document Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for tag by name">Search</button>						
+						<button type="submit" class="btn btn-primary" id="search" name="action" value="search">Search</button>						
 					</span>
 				</div>
 			}
 		</div>	
     
-    	@pagination
+    	@pagination(currentPage, link)
     	
 		<table class="table table-hover">
 			<thead>
 				<tr>
-					@header("title", "Title")
-					@header("landingPageUrl", "Landing Page")
-					@header("documentUrl", "Document")
-					@header("submitted", "New")
+					@header("title", "Title", currentSortBy, currentOrder, link)
+					@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
+					@header("documentUrl", "Document", currentSortBy, currentOrder, link)
+					@header("submitted", "New", currentSortBy, currentOrder, link)
 				</tr>
 			</thead>
 			<tbody>
@@ -124,7 +87,7 @@
 			</tbody>
 		</table>
 		
-		@pagination
+		@pagination(currentPage, link)
 		
 		@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
 			<input type="submit" class="btn btn-success" value="Live Crawl">

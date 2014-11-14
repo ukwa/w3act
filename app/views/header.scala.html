@@ -1,0 +1,5 @@
+@(key:String, title:String, sortBy: String, order: String, link: (Int, String) => play.api.mvc.Call)
+
+<th class="@key.replace(".","_") header @if(sortBy == key) @{if(order == "asc") "headerSortDown" else "headerSortUp"}">
+	<a href="@link(0, key)">@title</a>
+</th>

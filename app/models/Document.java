@@ -42,8 +42,6 @@ public class Document extends Model {
     public String documentUrl;
     @Transient
     public String htmlFilename;
-    @Transient
-    public String url;
     @Required
     @Column(columnDefinition = "TEXT")
 	public String title;
@@ -53,6 +51,7 @@ public class Document extends Model {
     @Required
 	public String filename;
     public String type;
+    public String getUrl() { return ""+id; }
     
     public static final Model.Finder<Long, Document> find = new Model.Finder<>(Long.class, Document.class);
     
@@ -86,12 +85,5 @@ public class Document extends Model {
         		.setFetchAhead(false)
         		.getPage(page);
     }
-    
-	public static List<Document> filterByTitle(String title) {
-		List<Document> res = new ArrayList<Document>();
-        ExpressionList<Document> ll = find.where().icontains("title", title);
-    	res = ll.findList();
-		return res;
-	}
     
 }

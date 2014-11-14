@@ -197,10 +197,10 @@ public class Documents extends AbstractController {
         return ok(
         	list.render(
         			WatchedTarget.find.byId(watchedTargetId),
-        			User.findByEmail(request().username()), 
-        			filter, 
-        			Document.page(watchedTargetId, pageNo, 10, sortBy, order, filter), 
-        			sortBy, 
+        			User.findByEmail(request().username()),
+        			filter,
+        			Document.page(watchedTargetId, pageNo, 10, sortBy, order, filter),
+        			sortBy,
         			order)
         	);
     }
@@ -239,9 +239,7 @@ public class Documents extends AbstractController {
     public static Result filterByJson(String title) {
         JsonNode jsonData = null;
         if (title != null) {
-	        List<Document> documents = Document.filterByTitle(title);
-	        for (Document document : documents)
-	        	document.url = ""+document.id;
+	        List<Document> documents = Document.find.where().icontains("title", title).findList();
 	        jsonData = Json.toJson(documents);
         }
         return ok(jsonData);
