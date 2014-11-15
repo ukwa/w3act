@@ -73,7 +73,7 @@ public class TargetController extends AbstractController {
 	    targetObj.fieldUrl = getFormParam(Const.FIELD_URL_NODE);
 	    targetObj.id = Long.valueOf(getFormParam(Const.ID));
 	    targetObj.url = Const.ACT_URL + targetObj.id;
-        targetObj.author = getFormParam(Const.USER);
+        targetObj.authorRef = getFormParam(Const.USER);
         targetObj.title = getFormParam(Const.TITLE);
         targetObj.fieldKeySite = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
         targetObj.fieldDescription = getFormParam(Const.DESCRIPTION);
@@ -145,7 +145,7 @@ public class TargetController extends AbstractController {
        		targetObj.originatingOrganisation = getFormParam(Const.ORIGINATING_ORGANISATION);
         }
         if (getFormParam(Const.AUTHOR) != null) {
-       		targetObj.author = User.findByName(getFormParam(Const.AUTHOR)).url;
+       		targetObj.authorRef = User.findByName(getFormParam(Const.AUTHOR)).url;
         }
         if (getFormParam(Const.TAGS) != null) {
         	if (!getFormParam(Const.TAGS).toLowerCase().contains(Const.NONE)) {
@@ -361,9 +361,9 @@ public class TargetController extends AbstractController {
              */
             newTarget.organisationToTarget = target.organisationToTarget;
             
-            newTarget.author = target.author;
-            if (target.author == null) {
-            	newTarget.author = getFormParam(Const.USER);
+            newTarget.authorRef = target.authorRef;
+            if (target.authorRef == null) {
+            	newTarget.authorRef = getFormParam(Const.USER);
             }
             newTarget.fieldNominatingOrganisation = target.fieldNominatingOrganisation;
     		newTarget.updateOrganisation();
@@ -451,7 +451,7 @@ public class TargetController extends AbstractController {
             }
 //    		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);
             if (getFormParam(Const.AUTHOR) != null) {
-           		newTarget.author = User.findByName(getFormParam(Const.AUTHOR)).url;
+           		newTarget.authorRef = User.findByName(getFormParam(Const.AUTHOR)).url;
             }
             if (getFormParam(Const.TAGS) != null) {
             	if (!getFormParam(Const.TAGS).toLowerCase().contains(Const.NONE)) {
@@ -596,7 +596,7 @@ public class TargetController extends AbstractController {
             Logger.info("changed time: " + changedTime);
         	if (!isExisting) {
         		newTarget.url = Const.ACT_URL + newTarget.id;
-        		newTarget.editUrl = Const.WCT_URL + newTarget.id;
+        		newTarget.edit_url = Const.WCT_URL + newTarget.id;
         	} else {
                 target.active = false;
             	if (target.fieldUrl != null) {

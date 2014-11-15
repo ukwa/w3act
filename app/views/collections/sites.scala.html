@@ -142,7 +142,7 @@
                 }	                  
                 <td>@Taxonomy.findByUrl(target.fieldSubject).name</td>
                 @if(target.fieldNominatingOrganisation != null) { 
-				<td><a href="@routes.Curators.edit(target.author)">@User.findByUrl(target.author).name</a></td>
+				<td><a href="@routes.Curators.edit(target.authorRef)">@User.findByUrl(target.authorRef).name</a></td>
                 } else {
 	            	<td></td>
 				}	

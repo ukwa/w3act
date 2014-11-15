@@ -13,7 +13,7 @@ import javax.persistence.Transient;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
-import uk.bl.api.models.Author;
+import uk.bl.api.models.FieldModel;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -111,17 +111,17 @@ public class Organisation extends ActModel {
     @Transient
     @JsonIgnore
     @JsonProperty
-    private String created;
+    private Long created;
     
     @Transient
     @JsonIgnore
     @JsonProperty
-    private String changed;
+    private Long changed;
 
     @Transient
     @JsonIgnore
     @JsonProperty
-    private Author author;
+    private FieldModel author;
 
     @Transient
     @JsonIgnore
@@ -436,27 +436,27 @@ public class Organisation extends ActModel {
 		this.is_new = is_new;
 	}
 
-	public String getCreated() {
+	public Long getCreated() {
 		return created;
 	}
 
-	public void setCreated(String created) {
+	public void setCreated(Long created) {
 		this.created = created;
 	}
 
-	public String getChanged() {
+	public Long getChanged() {
 		return changed;
 	}
 
-	public void setChanged(String changed) {
+	public void setChanged(Long changed) {
 		this.changed = changed;
 	}
 
-	public Author getAuthor() {
+	public FieldModel getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(Author author) {
+	public void setAuthor(FieldModel author) {
 		this.author = author;
 	}
 

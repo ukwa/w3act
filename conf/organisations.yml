@@ -4,5 +4,5 @@ organisations:
 
     - !!models.Organisation
         title:              Austrian Institute of Technology
-        abbreviation:       AIT
+        field_abbreviation: AIT
         

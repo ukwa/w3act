@@ -563,7 +563,7 @@ public class Targets extends AbstractController {
     	        target.revision = Const.INITIAL_REVISION;
     	        target.active = true;
     	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
-    	        	target.author = User.findByEmail(request().username()).url;
+    	        	target.authorRef = User.findByEmail(request().username()).url;
     	        	target.fieldSubSubject = Const.NONE;
     	        	target.fieldSubject = Const.NONE;
     	        }

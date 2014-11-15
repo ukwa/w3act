@@ -24,7 +24,7 @@ import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import uk.bl.Const;
-import uk.bl.api.models.Field_Affiliation;
+import uk.bl.api.models.FieldModel;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -103,7 +103,7 @@ public class User extends ActModel {
     @Transient
     @JsonIgnore
     @JsonProperty
-    private Field_Affiliation field_affiliation;
+    private FieldModel field_affiliation;
     
     @Transient
     @JsonIgnore
@@ -113,18 +113,18 @@ public class User extends ActModel {
     @Transient
     @JsonIgnore
     @JsonProperty
-    private String created;
+    private Long created;
     
     @Transient
     @JsonIgnore
     @JsonProperty
     private String mail;
     
-    public Field_Affiliation getField_affiliation() {
+    public FieldModel getField_affiliation() {
 		return field_affiliation;
 	}
 
-	public void setField_affiliation(Field_Affiliation field_affiliation) {
+	public void setField_affiliation(FieldModel field_affiliation) {
 		this.field_affiliation = field_affiliation;
 	}
 
@@ -136,11 +136,11 @@ public class User extends ActModel {
 		this.uid = uid;
 	}
 
-	public String getCreated() {
+	public Long getCreated() {
 		return created;
 	}
 
-	public void setCreated(String created) {
+	public void setCreated(Long created) {
 		this.created = created;
 	}
 

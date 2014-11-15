@@ -25,7 +25,6 @@ import models.User;
 
 import com.avaje.ebean.Ebean;
 
-import controllers.Organisations;
 import play.Logger;
 import play.libs.Yaml;
 import uk.bl.Const;
@@ -37,21 +36,34 @@ public enum DataImport {
 	INSTANCE;
 
 	public void insert() {
-//        if(Ebean.find(User.class).findRowCount() == 0) 
-        {
-            try {
-            	this.importPermissions();
-            	this.importRoles();
-            	this.importExternalOrganisations();
-            	this.importCurators();
-                this.importAccounts();
-//                this.importTaxonomies();
-//            	this.importTags();
-//            	this.importFlags();
-//            	this.importMailTemplates();
-//            	this.importContactPersons();
-//            	this.importOrganisations();
-//            	this.importUrls();
+        try {
+
+			if (Ebean.find(User.class).findRowCount() == 0) {
+	        	this.importPermissions();
+	        	this.importRoles();
+	        	this.importExternalOrganisations();
+	        	this.importOrganisations();
+	        	this.importCurators();
+	            this.importAccounts();
+	        }
+			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
+				this.importTaxonomies();
+			}
+			if (Ebean.find(Tag.class).findRowCount() == 0) {
+	        	this.importTags();
+			}
+			if (Ebean.find(Flag.class).findRowCount() == 0) {
+	        	this.importFlags();
+			}
+			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
+	        	this.importMailTemplates();
+			}
+			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
+	        	this.importContactPersons();
+			}
+			if (Ebean.find(Target.class).findRowCount() == 0) {
+	        	this.importUrlsToTargets();
+			}
 //				// aggregate url data from drupal and store JSON content in a file
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
 //				// store urls in DB
@@ -165,9 +177,8 @@ public enum DataImport {
 //	            }
                 Logger.info("+++ Data import completed +++");
 	        } catch (Exception e) {
-            	Logger.info("Store error: " + e);
+            	e.printStackTrace();
             }
-        }
 	}
 	
 	private void importPermissions() {
@@ -288,9 +299,9 @@ public enum DataImport {
         Logger.info("Loaded Curators");
 	}
 	
-	private void importUrls() {
+	private void importUrlsToTargets() {
 		// store urls in DB
-        JsonUtils.INSTANCE.convertUrls();
+        JsonUtils.INSTANCE.convertUrlsToTargets();
         Logger.info("Loaded URLs");
 	}
 	

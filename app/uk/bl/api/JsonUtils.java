@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,8 +43,7 @@ import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.Const.NodeType;
 import uk.bl.Const.TaxonomyType;
-import uk.bl.api.models.Author;
-import uk.bl.api.models.Field_Affiliation;
+import uk.bl.api.models.FieldModel;
 import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
@@ -150,10 +150,12 @@ public enum JsonUtils {
 		return sb.toString();
 	}
 
-	private Date getDateFromSeconds(String secondsText) {
-    	long seconds = Long.valueOf(secondsText);
-		Date date = new Date(seconds*1000L);
-		Logger.info("converted date: " + date);
+	private Date getDateFromSeconds(Long seconds) {
+		Date date = null;
+		if (seconds != null) {
+			date = new Date(seconds*1000L);
+			Logger.info("converted date: " + date);
+		}
 		return date;
 	}
 	
@@ -174,14 +176,12 @@ public enum JsonUtils {
 					Organisation organisation = objectMapper.readValue(node.toString(), Organisation.class);
 					organisation.url = this.checkArchiveUrl(organisation.url);
 					organisation.edit_url = Const.WCT_URL + organisation.vid;
-					Author author = organisation.getAuthor();
+					FieldModel author = organisation.getAuthor();
 					if (author != null && StringUtils.isNotBlank(author.getUri())) {
 						organisation.authorRef = this.checkArchiveUrl(author.getUri());
 					}
 					
-					if (StringUtils.isNotBlank(organisation.getCreated())) {
-						organisation.createdAt = this.getDateFromSeconds(organisation.getCreated());
-					}
+					organisation.createdAt = this.getDateFromSeconds(organisation.getCreated());
 					organisation.save();
 //					{
 //						"body":[],
@@ -276,13 +276,9 @@ public enum JsonUtils {
 						user.roles = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
 					}
 					user.url = this.checkArchiveUrl(user.url);
-					Logger.info("before: " + user.edit_url);
 					user.edit_url = this.checkArchiveUrl(user.edit_url);
-					Logger.info("after: " + user.edit_url);
-					if (StringUtils.isNotBlank(user.getCreated())) {
-						user.createdAt = this.getDateFromSeconds(user.getCreated());
-					}
-					Field_Affiliation fieldAffiliation = user.getField_affiliation();
+					user.createdAt = this.getDateFromSeconds(user.getCreated());
+					FieldModel fieldAffiliation = user.getField_affiliation();
 					if (fieldAffiliation!= null) {
 						if (StringUtils.isNotEmpty(fieldAffiliation.getUri())) {
 							// TODO: DO WE NEED AFFILIATION? - USE ORGANISATION ID?
@@ -306,7 +302,8 @@ public enum JsonUtils {
 		}
 	}
 
-	public void convertUrls() {
+	@SuppressWarnings("unchecked")
+	public void convertUrlsToTargets() {
 		
 		try {
 			// TODO: CHECK JSON URL
@@ -315,17 +312,48 @@ public enum JsonUtils {
 
 			JsonNode parentNode = Json.parse(content);
 			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.setSerializationInclusion(Include.NON_NULL);
+			objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
 			
 			if (parentNode != null) {
 				JsonNode rootNode = parentNode.path(Const.LIST_NODE);
 				Iterator<JsonNode> iterator = rootNode.iterator();
 				int count = 0;
 				while (iterator.hasNext()) {
-					Logger.info(count + ") ");
 					JsonNode node = iterator.next();
-					Logger.info(node.toString());
+					Logger.info("json: " + node.toString());
+					
+					Target target = objectMapper.readValue(node.toString(), Target.class);
+
+					target.url = this.checkArchiveUrl(target.url);
+					target.edit_url = this.checkArchiveUrl(target.edit_url);
+					target.createdAt = this.getDateFromSeconds(target.getCreated());
+					
+					if (target.getBody() instanceof ArrayList) {
+						Logger.info("target: " + target.getBody());
+					} else if (target.getBody() instanceof LinkedHashMap) {
+						Map<String, String> bodyMap = (LinkedHashMap<String,String>)target.getBody();
+						Logger.info("target: " + bodyMap.get("value"));
+					}
+					
+					for (Map<String,String> map : target.getField_url()) {
+						Logger.info("Field Url: " + map.get("url").getClass());
+					}
+					
+					target.revision = Const.INITIAL_REVISION;
+					target.active = true;
+					target.selectionType = Const.SelectionType.SELECTION.name();
+					if (target.vid > 0) {
+						target.edit_url = Const.WCT_URL + target.vid;
+					}
+					if (StringUtils.isNotBlank(target.language) && target.language.equals(Const.UND)) {
+						target.language = "";
+					}
+		        	target.isInScopeDomainValue = Target.isInScopeDomain(target.fieldUrl, target.url);
+		        	Logger.info("isInScopeDomainValue (UK_DOMAIN): " + target.isInScopeDomainValue);
+		        	target.save();
+		        	count++;
 				}
+				Logger.info("Target count: " + count);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -392,7 +420,7 @@ public enum JsonUtils {
 					obj.active = true;
 					obj.selectionType = Const.SelectionType.SELECTION.name();
 					if (obj.vid > 0) {
-						obj.editUrl = Const.WCT_URL + obj.vid;
+						obj.edit_url = Const.WCT_URL + obj.vid;
 					}
 					if (obj.language != null && obj.language.equals(Const.UND)) {
 						obj.language = "";
@@ -706,7 +734,7 @@ public enum JsonUtils {
 				Target target = itr.next();
 				// String urlStr = "";
 				if (type.equals(NodeType.USER)) {
-					readListFromString(target.author, urlList, type, null, res);
+					readListFromString(target.authorRef, urlList, type, null, res);
 				}
 				if (type.equals(NodeType.TAXONOMY)) {
 					readListFromString(target.fieldCollectionCategories,

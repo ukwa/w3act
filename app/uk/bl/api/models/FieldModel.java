@@ -1,6 +1,6 @@
 package uk.bl.api.models;
 
-public class Field_Affiliation {
+public class FieldModel {
 	
 	private String uri;
 	private String id;
@@ -29,7 +29,8 @@ public class Field_Affiliation {
 	
 	@Override
 	public String toString() {
-		return "Field_Affiliation [uri=" + uri + ", id=" + id + ", resource="
+		return "FieldModel [uri=" + uri + ", id=" + id + ", resource="
 				+ resource + "]";
 	}
+	
 }
