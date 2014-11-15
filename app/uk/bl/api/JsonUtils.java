@@ -283,10 +283,14 @@ public enum JsonUtils {
 						user.createdAt = this.getDateFromSeconds(user.getCreated());
 					}
 					Field_Affiliation fieldAffiliation = user.getField_affiliation();
-					if (fieldAffiliation!= null && StringUtils.isNotEmpty(fieldAffiliation.getUri())) {
-//						user.affiliation = fieldAffiliation.getur
+					if (fieldAffiliation!= null) {
+						if (StringUtils.isNotEmpty(fieldAffiliation.getUri())) {
+							// TODO: DO WE NEED AFFILIATION? - USE ORGANISATION ID?
+							user.affiliation = this.checkArchiveUrl(fieldAffiliation.getUri());;
+							Organisation organisation = Organisation.findByUrl(user.affiliation);
+							user.organisation = organisation;
+						}
 					}
-
 					user.save();
 					Logger.info("user: " + user);
 					count++;

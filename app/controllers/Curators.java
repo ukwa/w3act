@@ -240,155 +240,156 @@ public class Curators extends AbstractController {
      */
     public static Result save() {
     	Result res = null;
-        String save = getFormParam("save");
-        String delete = getFormParam("delete");
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save updated user id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME) + ", roles: " + getFormParam(Const.ROLES) +
-        			", revision: " + getFormParam(Const.REVISION) + ", email: " + getFormParam(Const.EMAIL) +
-        			", organisation: " + getFormParam(Const.ORGANISATION));
-        	Form<User> userForm = Form.form(User.class).bindFromRequest();
-            if(userForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : userForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    key = Utils.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + userForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
-            }
-        	User user = null;
-            boolean isExisting = true;
-            try {
-                try {
-            	    user = User.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	user = new User();
-            	    user.id = Long.valueOf(getFormParam(Const.UID));
-            	    user.url = getFormParam(Const.URL);
-                }
-                if (user == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	user = new User();
-            	    user.id = Long.valueOf(getFormParam(Const.UID));
-            	    user.url = getFormParam(Const.URL);
-                }
-                
-        	    user.name = getFormParam(Const.NAME);
-        	    if (getFormParam(Const.EMAIL) != null) {
-        	    	try {
-	        	    	if (getFormParam(Const.EMAIL).length() > 0 
-	        	    			&& User.findByEmail(getFormParam(Const.EMAIL)) != null
-	        	    			&& !getFormParam(Const.EMAIL).equals(user.email)) {
-	        	    		String msg = "The given email '" + getFormParam(Const.EMAIL) + 
-	                    			"' already exists in database. Please give another email or use existing user.";
-	                    	Logger.info(msg);
-	        	  			flash("message", msg);
-	        	  			return info();
-	        	    	}
-        	    	} catch (Exception e) {
-        	    		Logger.info("Given email is not yet in database");
-        	    	}
-        	    	user.email = getFormParam(Const.EMAIL);
-        	    }
-                if (getFormParam(Const.ORGANISATION) != null) {
-                	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
-//                		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
-                		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
-                		user.updateOrganisation();
-                	} else {
-                		user.affiliation = Const.NONE;
-                	}
-                }
-                String roleStr = "";
-		        List<Role> roleList = Role.findAll();
-		        Iterator<Role> roleItr = roleList.iterator();
-		        while (roleItr.hasNext()) {
-		        	Role role = roleItr.next();
-	                if (getFormParam(role.name) != null) {
-		                boolean roleFlag = Utils.getNormalizeBooleanString(getFormParam(role.name));
-		                if (roleFlag) {
-		                	if (roleStr.length() == 0) {
-		                		roleStr = role.name;
-		                	} else {
-		                		roleStr = roleStr + ", " + role.name;
-		                	}
-		                }
-	                }
-		        }
-                Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.id);
-		        if (roleStr.length() == 0) {
-		        	user.roles = null;
-		        } else {
-		        	user.roles = Role.convertUrlsToObjects(roleStr);
-		        }
-//		        Logger.info("roleStr: "+ roleStr + ", user.role_to_user size: " + user.role_to_user.size());
-                if (getFormParam(Const.REVISION) != null) {
-                	user.revision = getFormParam(Const.REVISION);
-                }
-            } catch (Exception e) {
-            	Logger.info("User not existing exception");
-            }
-            
-        	if (!isExisting) {
-                if (getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0) {
-                	Logger.info("The password field is empty.");
-    	  			flash("message", "The password field is empty.");
-    	  			return info();
-                } else {
-        	    	user.password = getFormParam(Const.PASSWORD);
-			    	try {
-						user.password = PasswordHash.createHash(user.password);
-					} catch (NoSuchAlgorithmException e) {
-						Logger.info("change password - no algorithm error: " + e);
-					} catch (InvalidKeySpecException e) {
-						Logger.info("change password - key specification error: " + e);
-					}
-        	    }
-               	Ebean.save(user);
-    	        Logger.info("save user: " + user.toString());
-        	} else {
-                if (!(getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0
-                		|| getFormParam(Const.OLD_PASSWORD) == null || getFormParam(Const.OLD_PASSWORD).length() == 0)) {
-            		String oldInputPassword = getFormParam(Const.OLD_PASSWORD);
-            		user.password = getFormParam(Const.PASSWORD);
-			    	try {
-	                	String userDbPassword = User.findByUid(user.id).password;
-	            		boolean isValidOldPassword = PasswordHash.validatePassword(oldInputPassword, userDbPassword);
-	            		if (!isValidOldPassword) {
-	                    	Logger.info("The old password is not correct.");
-	        	  			flash("message", "The old password is not correct.");
-	        	  			return info();	            		
-	        	  		} else {
-	        	  			user.password = PasswordHash.createHash(user.password);
-	        	  		}
-					} catch (NoSuchAlgorithmException e) {
-						Logger.info("change password - no algorithm error: " + e);
-					} catch (InvalidKeySpecException e) {
-						Logger.info("change password - key specification error: " + e);
-					}
-        	    }
-           		Logger.info("update user: " + user.toString());
-                Ebean.update(user);
-        	}
-	        res = redirect(routes.Curators.edit(user.url));
-        } 
-        if (delete != null) {
-        	User user = User.findByUrl(getFormParam(Const.URL));
-        	Ebean.delete(user);
-	        res = redirect(routes.Curators.index()); 
-        }
+    	// TODO: KL TO FIX
+//        String save = getFormParam("save");
+//        String delete = getFormParam("delete");
+////        Logger.info("save: " + save);
+//        if (save != null) {
+//        	Logger.info("save updated user id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
+//        			", name: " + getFormParam(Const.NAME) + ", roles: " + getFormParam(Const.ROLES) +
+//        			", revision: " + getFormParam(Const.REVISION) + ", email: " + getFormParam(Const.EMAIL) +
+//        			", organisation: " + getFormParam(Const.ORGANISATION));
+//        	Form<User> userForm = Form.form(User.class).bindFromRequest();
+//            if(userForm.hasErrors()) {
+//            	String missingFields = "";
+//            	for (String key : userForm.errors().keySet()) {
+//            	    Logger.debug("key: " +  key);
+//            	    key = Utils.showMissingField(key);
+//            	    if (missingFields.length() == 0) {
+//            	    	missingFields = key;
+//            	    } else {
+//            	    	missingFields = missingFields + Const.COMMA + " " + key;
+//            	    }
+//            	}
+//            	Logger.info("form errors size: " + userForm.errors().size() + ", " + missingFields);
+//	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+//	  					" Missing fields are: " + missingFields);
+//	  			return info();
+//            }
+//        	User user = null;
+//            boolean isExisting = true;
+//            try {
+//                try {
+//            	    user = User.findByUrl(getFormParam(Const.URL));
+//                } catch (Exception e) {
+//                	Logger.info("is not existing exception");
+//                	isExisting = false;
+//                	user = new User();
+//            	    user.id = Long.valueOf(getFormParam(Const.UID));
+//            	    user.url = getFormParam(Const.URL);
+//                }
+//                if (user == null) {
+//                	Logger.info("is not existing");
+//                	isExisting = false;
+//                	user = new User();
+//            	    user.id = Long.valueOf(getFormParam(Const.UID));
+//            	    user.url = getFormParam(Const.URL);
+//                }
+//                
+//        	    user.name = getFormParam(Const.NAME);
+//        	    if (getFormParam(Const.EMAIL) != null) {
+//        	    	try {
+//	        	    	if (getFormParam(Const.EMAIL).length() > 0 
+//	        	    			&& User.findByEmail(getFormParam(Const.EMAIL)) != null
+//	        	    			&& !getFormParam(Const.EMAIL).equals(user.email)) {
+//	        	    		String msg = "The given email '" + getFormParam(Const.EMAIL) + 
+//	                    			"' already exists in database. Please give another email or use existing user.";
+//	                    	Logger.info(msg);
+//	        	  			flash("message", msg);
+//	        	  			return info();
+//	        	    	}
+//        	    	} catch (Exception e) {
+//        	    		Logger.info("Given email is not yet in database");
+//        	    	}
+//        	    	user.email = getFormParam(Const.EMAIL);
+//        	    }
+//                if (getFormParam(Const.ORGANISATION) != null) {
+//                	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
+////                		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
+//                		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+//                		user.updateOrganisation();
+//                	} else {
+//                		user.affiliation = Const.NONE;
+//                	}
+//                }
+//                String roleStr = "";
+//		        List<Role> roleList = Role.findAll();
+//		        Iterator<Role> roleItr = roleList.iterator();
+//		        while (roleItr.hasNext()) {
+//		        	Role role = roleItr.next();
+//	                if (getFormParam(role.name) != null) {
+//		                boolean roleFlag = Utils.getNormalizeBooleanString(getFormParam(role.name));
+//		                if (roleFlag) {
+//		                	if (roleStr.length() == 0) {
+//		                		roleStr = role.name;
+//		                	} else {
+//		                		roleStr = roleStr + ", " + role.name;
+//		                	}
+//		                }
+//	                }
+//		        }
+//                Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.id);
+//		        if (roleStr.length() == 0) {
+//		        	user.roles = null;
+//		        } else {
+//		        	user.roles = Role.convertUrlsToObjects(roleStr);
+//		        }
+////		        Logger.info("roleStr: "+ roleStr + ", user.role_to_user size: " + user.role_to_user.size());
+//                if (getFormParam(Const.REVISION) != null) {
+//                	user.revision = getFormParam(Const.REVISION);
+//                }
+//            } catch (Exception e) {
+//            	Logger.info("User not existing exception");
+//            }
+//            
+//        	if (!isExisting) {
+//                if (getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0) {
+//                	Logger.info("The password field is empty.");
+//    	  			flash("message", "The password field is empty.");
+//    	  			return info();
+//                } else {
+//        	    	user.password = getFormParam(Const.PASSWORD);
+//			    	try {
+//						user.password = PasswordHash.createHash(user.password);
+//					} catch (NoSuchAlgorithmException e) {
+//						Logger.info("change password - no algorithm error: " + e);
+//					} catch (InvalidKeySpecException e) {
+//						Logger.info("change password - key specification error: " + e);
+//					}
+//        	    }
+//               	Ebean.save(user);
+//    	        Logger.info("save user: " + user.toString());
+//        	} else {
+//                if (!(getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0
+//                		|| getFormParam(Const.OLD_PASSWORD) == null || getFormParam(Const.OLD_PASSWORD).length() == 0)) {
+//            		String oldInputPassword = getFormParam(Const.OLD_PASSWORD);
+//            		user.password = getFormParam(Const.PASSWORD);
+//			    	try {
+//	                	String userDbPassword = User.findByUid(user.id).password;
+//	            		boolean isValidOldPassword = PasswordHash.validatePassword(oldInputPassword, userDbPassword);
+//	            		if (!isValidOldPassword) {
+//	                    	Logger.info("The old password is not correct.");
+//	        	  			flash("message", "The old password is not correct.");
+//	        	  			return info();	            		
+//	        	  		} else {
+//	        	  			user.password = PasswordHash.createHash(user.password);
+//	        	  		}
+//					} catch (NoSuchAlgorithmException e) {
+//						Logger.info("change password - no algorithm error: " + e);
+//					} catch (InvalidKeySpecException e) {
+//						Logger.info("change password - key specification error: " + e);
+//					}
+//        	    }
+//           		Logger.info("update user: " + user.toString());
+//                Ebean.update(user);
+//        	}
+//	        res = redirect(routes.Curators.edit(user.url));
+//        } 
+//        if (delete != null) {
+//        	User user = User.findByUrl(getFormParam(Const.URL));
+//        	Ebean.delete(user);
+//	        res = redirect(routes.Curators.index()); 
+//        }
         return res;
     }
     

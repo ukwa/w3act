@@ -42,9 +42,9 @@ public enum DataImport {
             try {
             	this.importPermissions();
             	this.importRoles();
+            	this.importExternalOrganisations();
             	this.importCurators();
                 this.importAccounts();
-            	this.importExternalOrganisations();
 //                this.importTaxonomies();
 //            	this.importTags();
 //            	this.importFlags();

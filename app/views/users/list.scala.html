@@ -1,4 +1,4 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[User], currentSortBy: String, currentOrder: String)
+@(title: String, user: User, filter: String, currentPage: com.avaje.ebean.Page[User], currentSortBy: String, currentOrder: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.Curators.list(newPage, sortBy, order, searchstr)
+    routes.Curators.list(newPage, sortBy, order, filter)
     
 }
 
@@ -92,7 +92,7 @@
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
    					<input type="hidden" name="s" value="@currentSortBy">
    					<input type="hidden" name="o" value="@currentOrder">
-					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Name" value="@searchstr" id="search-query">
+					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter Name" value="@filter" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
@@ -121,11 +121,9 @@
 					<td><a href="@routes.Curators.view(curator.url)">@curator.name</a></td>
 					<td>@curator.email</td>
 					<td>@Curators.showRoles(curator.id)</td>
-					@if(curator.affiliation != null 
-						&& curator.getOrganisation.url != null
-						&& curator.getOrganisation.title != null) {
-						<td><a href="@routes.Organisations.view(curator.getOrganisation.url)">
-							@curator.getOrganisation.title</a></td>
+					@if(curator.organisation != null) {
+						<td><a href="@routes.Organisations.view(curator.organisation.url)">
+							@curator.organisation.title</a></td>
 					} else {
 					  <td></td>
 					}

@@ -471,18 +471,20 @@ public class Organisation extends ActModel {
 	@Override
 	public String toString() {
 		return "Organisation [users=" + users + ", targets=" + targets
-				+ ", instances=" + instances + ", value=" + value
-				+ ", summary=" + summary + ", format=" + format
-				+ ", field_abbreviation=" + field_abbreviation + ", body="
+				+ ", instances=" + instances + ", title=" + title
+				+ ", edit_url=" + edit_url + ", summary=" + summary
+				+ ", authorRef=" + authorRef + ", field_abbreviation="
+				+ field_abbreviation + ", revision=" + revision + ", language="
+				+ language + ", value=" + value + ", feed_nid=" + feed_nid
+				+ ", status=" + status + ", promote=" + promote + ", sticky="
+				+ sticky + ", log=" + log + ", created=" + created
+				+ ", changed=" + changed + ", author=" + author + ", body="
 				+ body + ", nid=" + nid + ", vid=" + vid + ", is_new=" + is_new
-				+ ", type=" + type + ", title=" + title + ", language="
-				+ language + ", edit_url=" + edit_url + ", status=" + status
-				+ ", promote=" + promote + ", sticky=" + sticky + ", created="
-				+ created + ", changed=" + changed + ", author=" + author
-				+ ", log=" + log + ", revision=" + revision + ", comment="
-				+ comment + ", comments=" + comments + ", comment_count="
-				+ comment_count + ", comment_count_new=" + comment_count_new
-				+ ", feed_nid=" + feed_nid + "]";
+				+ ", type=" + type + ", comment=" + comment + ", comments="
+				+ comments + ", comment_count=" + comment_count
+				+ ", comment_count_new=" + comment_count_new + ", format="
+				+ format + ", id=" + id + ", url=" + url + ", createdAt="
+				+ createdAt + ", updatedAt=" + updatedAt + "]";
 	}
 }
 

@@ -178,6 +178,23 @@ public class User extends ActModel {
     }
     
     /**
+     * Retrieve all users.
+     */
+    public static List<User> findAll() {
+        return find.all();
+    }
+
+    /**
+     * Retrieve an object by Id (id).
+     * @param id
+     * @return object 
+     */
+    public static User findById(Long id) {
+    	User res = find.byId(String.valueOf(id));
+    	return res;
+    }
+    
+    /**
      * This method checks whether user has a role by its id.
      * @param roleName
      * @return true if exists
@@ -221,23 +238,6 @@ public class User extends ActModel {
     	return roles;
     }
 
-    /**
-     * Retrieve all users.
-     */
-    public static List<User> findAll() {
-        return find.all();
-    }
-
-    /**
-     * Retrieve an object by Id (uid).
-     * @param nid
-     * @return object 
-     */
-    public static User findById(Long uid) {
-    	User res = find.where().eq(Const.UID, uid).findUnique();
-    	return res;
-    }
-    
     /**
      * This method returns all users alphabetically sorted.
      * @return user list
@@ -388,10 +388,10 @@ public class User extends ActModel {
 	}
     
     // Could really do with many_to_one relationship
-    public Organisation getOrganisation() {
-    	return Organisation.findByUrl(affiliation);
-    }
-
+//    public Organisation getOrganisation() {
+//    	return Organisation.findByUrl(affiliation);
+//    }
+//
     /**
      * This method shows user in HTML page.
      * @param userUrl The link to user in Target object field 'author'
