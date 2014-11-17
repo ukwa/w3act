@@ -129,11 +129,11 @@ public class Target extends ActModel {
 	public Boolean isInScopeIpValue;
 	public Boolean isInScopeIpWithoutLicenseValue;
 
-	// lists
 	@Column(columnDefinition = "text")
 	public String domain;
 	@Column(columnDefinition = "text")
 	public String fieldDescription;
+	
 	@Column(columnDefinition = "text")
 	public String fieldUkPostalAddressUrl;
 	@Column(columnDefinition = "text")
@@ -227,6 +227,7 @@ public class Target extends ActModel {
 	@JsonProperty
 	public Boolean field_special_dispensation;
 
+	@Column(columnDefinition = "text")
 	@JsonIgnore
 	@JsonProperty
 	public String field_special_dispensation_reaso;
@@ -255,6 +256,7 @@ public class Target extends ActModel {
 	@JsonProperty
 	public Boolean field_professional_judgement;
 
+	@Column(columnDefinition = "text")
 	@JsonIgnore
 	@JsonProperty
 	public String field_professional_judgement_exp;
@@ -270,6 +272,7 @@ public class Target extends ActModel {
 	@JsonProperty
 	public String language;
 
+	@Column(columnDefinition = "text")
 	@JsonIgnore
 	@JsonProperty
 	public String revision;
@@ -323,12 +326,12 @@ public class Target extends ActModel {
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private Object field_suggested_collections;
+	private List<FieldModel> field_suggested_collections;
 
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private Object field_collections;
+	private List<FieldModel> field_collections;
 
 	@Transient
 	@JsonIgnore
@@ -343,7 +346,7 @@ public class Target extends ActModel {
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private Object field_license;
+	private List<FieldModel> field_license;
 
 	@Transient
 	@JsonIgnore
@@ -433,7 +436,7 @@ public class Target extends ActModel {
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private Object field_collection_categories;
+	private List<FieldModel> field_collection_categories;
 
 	@Transient
 	@JsonIgnore
@@ -469,7 +472,7 @@ public class Target extends ActModel {
 		this.field_crawl_frequency = "domaincrawl";
 		this.fieldUkDomain = true;
 //		this.field_uk_domain = "yes";
-		this.field_crawl_permission = "";
+//		this.field_crawl_permission = "";
 		this.field_special_dispensation = false;
 		this.fieldUkGeoip = true;
 //		this.field_uk_geoip = "yes";
@@ -477,32 +480,32 @@ public class Target extends ActModel {
 		// this.isNew = false;
 //		this.language = "en";
 		// this.status = 1L;
-		this.promote = 0L;
-		this.sticky = 0L;
-		this.log = "";
-		this.comment = 0L;
-		this.feed_nid = 0L;
-		this.field_live_site_status = "";
-		this.field_spt_id = 0L;
-		this.field_wct_id = 0L;
+//		this.promote = 0L;
+//		this.sticky = 0L;
+//		this.log = "";
+//		this.comment = 0L;
+//		this.feed_nid = 0L;
+//		this.field_live_site_status = "";
+//		this.field_spt_id = 0L;
+//		this.field_wct_id = 0L;
 		this.field_no_ld_criteria_met = false;
 		this.field_key_site = false;
-		this.field_professional_judgement_exp = "";
+//		this.field_professional_judgement_exp = "";
 		this.field_ignore_robots_txt = false;
-		this.fieldUkPostalAddressUrl = "";
-		this.fieldSuggestedCollections = "";
-		this.fieldCollections = "";
-		this.fieldLicense = "";
-		this.fieldNotes = "";
-		this.fieldInstances = "";
-		this.fieldSubject = "";
+//		this.fieldUkPostalAddressUrl = "";
+//		this.fieldSuggestedCollections = "";
+//		this.fieldCollections = "";
+//		this.fieldCollectionCategories = "";
+//		this.fieldLicense = "";
+//		this.fieldNotes = "";
+//		this.fieldInstances = "";
+//		this.fieldSubject = "";
 //		this.value = "";
 //		this.summary = "";
 //		this.format = "";
 		this.field_scope = "root";
 		this.field_depth = "capped";
 		this.type = Const.URL;
-		this.fieldCollectionCategories = "";
 		// this.field_nominating_organisation = Const.NONE;
 	}
 
@@ -2661,20 +2664,20 @@ public class Target extends ActModel {
 		this.field_crawl_frequency = field_crawl_frequency;
 	}
 
-	public Object getField_suggested_collections() {
+	public List<FieldModel> getField_suggested_collections() {
 		return field_suggested_collections;
 	}
 
 	public void setField_suggested_collections(
-			Object field_suggested_collections) {
+			List<FieldModel> field_suggested_collections) {
 		this.field_suggested_collections = field_suggested_collections;
 	}
 
-	public Object getField_collections() {
+	public List<FieldModel> getField_collections() {
 		return field_collections;
 	}
 
-	public void setField_collections(Object field_collections) {
+	public void setField_collections(List<FieldModel> field_collections) {
 		this.field_collections = field_collections;
 	}
 
@@ -2702,11 +2705,11 @@ public class Target extends ActModel {
 		this.field_uk_domain = field_uk_domain;
 	}
 
-	public Object getField_license() {
+	public List<FieldModel> getField_license() {
 		return field_license;
 	}
 
-	public void setField_license(Object field_license) {
+	public void setField_license(List<FieldModel> field_license) {
 		this.field_license = field_license;
 	}
 
@@ -2718,12 +2721,12 @@ public class Target extends ActModel {
 		this.field_crawl_permission = field_crawl_permission;
 	}
 
-	public Object getField_collection_categories() {
+	public List<FieldModel> getField_collection_categories() {
 		return field_collection_categories;
 	}
 
 	public void setField_collection_categories(
-			Object field_collection_categories) {
+			List<FieldModel> field_collection_categories) {
 		this.field_collection_categories = field_collection_categories;
 	}
 

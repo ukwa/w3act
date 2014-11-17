@@ -43,7 +43,6 @@ public class User extends ActModel {
 	 */
 	private static final long serialVersionUID = -5018094620896138537L;
 
-	//bi-directional many-to-one association to Organisation
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="organisation_id") 

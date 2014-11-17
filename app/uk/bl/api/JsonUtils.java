@@ -217,6 +217,11 @@ public enum JsonUtils {
 							
 					Logger.info("json: " + node);
 					User user = objectMapper.readValue(node.toString(), User.class);
+					
+					// TODO: KL ANONYMOUS USER?
+					if (user.name.toLowerCase().equals("anonymous")) {
+						continue;
+					}
 					if (StringUtils.isEmpty(user.email)) {
 						user.email = user.name.toLowerCase().replace(" ", ".") + "@bl.uk";
 					}
@@ -276,155 +281,241 @@ public enum JsonUtils {
 			objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
 			
 			if (parentNode != null) {
-				JsonNode rootNode = parentNode.path(Const.LIST_NODE);
-				Iterator<JsonNode> iterator = rootNode.iterator();
+				
+				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
+				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
+
 				int count = 0;
-				while (iterator.hasNext()) {
-					JsonNode node = iterator.next();
-					Logger.info("json: " + node.toString());
+				for (int i=firstPage; i<=lastPage; i++) {
 					
-					Target target = objectMapper.readValue(node.toString(), Target.class);
-
-					target.url = this.getActUrl(target.getNid());
-					target.edit_url = this.getWctUrl(target.vid);
-					target.createdAt = this.getDateFromSeconds(target.getCreated());
+					StringBuilder targetsUrl = new StringBuilder(jsonUrl).append("&").append(Const.PAGE_IN_URL).append(String.valueOf(i));
+					String pageContent = this.getAuthenticatedContent(targetsUrl.toString());
+					JsonNode mainNode = Json.parse(pageContent.toString());
 					
-					if (target.getBody() instanceof LinkedHashMap) {
-						Map<String, String> bodyMap = (LinkedHashMap<String,String>)target.getBody();
-						String value = bodyMap.get("value");
-						String format = bodyMap.get("format");
-						String summary = bodyMap.get("summary");
-						if (StringUtils.isNotEmpty(value)) {
-							target.value = value;
+					JsonNode rootNode = mainNode.path(Const.LIST_NODE);
+					Iterator<JsonNode> iterator = rootNode.iterator();
+					while (iterator.hasNext()) {
+						JsonNode node = iterator.next();
+						Logger.info("json: " + node.toString());
+						
+						Target target = objectMapper.readValue(node.toString(), Target.class);
+	
+						target.url = this.getActUrl(target.getNid());
+						target.edit_url = this.getWctUrl(target.vid);
+						target.createdAt = this.getDateFromSeconds(target.getCreated());
+						
+						if (target.getBody() instanceof LinkedHashMap) {
+							Map<String, String> bodyMap = (LinkedHashMap<String,String>)target.getBody();
+							String value = bodyMap.get("value");
+							String format = bodyMap.get("format");
+							String summary = bodyMap.get("summary");
+							if (StringUtils.isNotEmpty(value)) {
+								target.value = value;
+							}
+							if (StringUtils.isNotEmpty(format)) {
+								target.format = format;
+							}
+							if (StringUtils.isNotEmpty(summary)) {
+								target.summary = summary;
+							}
 						}
-						if (StringUtils.isNotEmpty(format)) {
-							target.format = format;
+						
+						List<String> fieldUrls = new ArrayList<String>();
+						for (Map<String,String> map : target.getField_url()) {
+							Logger.info("Field Url: " + map.get("url"));
+							fieldUrls.add(map.get("url"));
 						}
-						if (StringUtils.isNotEmpty(summary)) {
-							target.summary = summary;
+						
+						if (!fieldUrls.isEmpty()) {
+							target.fieldUrl = StringUtils.join(fieldUrls, ", ");
 						}
-					}
-
-					FieldModel fieldNominatingOrganisation = target.getField_nominating_organisation();
-					
-					if (fieldNominatingOrganisation != null && StringUtils.isNotEmpty(fieldNominatingOrganisation.getId())) {
-						String orgUrl = this.getActUrl(fieldNominatingOrganisation.getId());
-						if (StringUtils.isNotEmpty(orgUrl)) {
-							target.organisation = Organisation.findByUrl(orgUrl);
+						
+						if (target.getField_description() != null && target.getField_description() instanceof Map) {
+							Map<String, String> fieldDescription = (Map<String, String>)target.getField_description();
+							String value = fieldDescription.get("value");
+							String summary = fieldDescription.get("summary");
+							if (StringUtils.isNotEmpty(value)) {
+								target.fieldDescription = value;
+							}
+							
+							if (StringUtils.isNotEmpty(summary)) {
+								// populate if not already filled in by body->value
+								if (StringUtils.isEmpty(target.summary)) {
+									target.summary = summary;
+								}
+							}
 						}
+						
+						if (target.getField_uk_postal_address_url() != null && target.getField_uk_postal_address_url() instanceof Map) {
+							Map<String,String> postalAddressUrl = (Map<String,String>)target.getField_uk_postal_address_url();
+							String url = postalAddressUrl.get("url");
+							target.fieldUkPostalAddressUrl = url;
+						}
+	
+						if (target.getField_suggested_collections() != null) {
+							List<FieldModel> suggestCollections = target.getField_suggested_collections();
+							List<String> suggestCollectionsList = new ArrayList<String>();
+							for (FieldModel fieldModel : suggestCollections) {
+								String actUrl = this.getActUrl(fieldModel.getId());
+								suggestCollectionsList.add(actUrl);
+							}
+							if (!suggestCollectionsList.isEmpty()) {
+								target.fieldSuggestedCollections = StringUtils.join(suggestCollectionsList, ", ");
+							}
+						}
+	
+						if (target.getField_license() != null) {
+							List<FieldModel> licenses = target.getField_license();
+							List<String> licensesList = new ArrayList<String>();
+							for (FieldModel fieldModel : licenses) {
+								String actUrl = this.getActUrl(fieldModel.getId());
+								licensesList.add(actUrl);
+							}
+							if (!licensesList.isEmpty()) {
+								target.fieldLicense = StringUtils.join(licensesList, ", ");
+							}
+						}
+						
+						if (target.getField_collection_categories() != null) {
+							List<FieldModel> collectionCategories = target.getField_collection_categories();
+							List<String> collectionCategoriesList = new ArrayList<String>();
+							for (FieldModel fieldModel : collectionCategories) {
+								String actUrl = this.getActUrl(fieldModel.getId());
+								collectionCategoriesList.add(actUrl);
+							}
+							if (!collectionCategoriesList.isEmpty()) {
+								target.fieldCollectionCategories = StringUtils.join(collectionCategoriesList, ", ");
+							}
+						}
+	
+						if (target.getField_collections() != null) {
+							List<FieldModel> collections = target.getField_collections();
+							List<String> collectionsList = new ArrayList<String>();
+							for (FieldModel fieldModel : collections) {
+								String actUrl = this.getActUrl(fieldModel.getId());
+								collectionsList.add(actUrl);
+							}
+							if (!collectionsList.isEmpty()) {
+								target.fieldCollections = StringUtils.join(collectionsList, ", ");
+							}
+						}
+						
+						FieldModel fieldNominatingOrganisation = target.getField_nominating_organisation();
+						
+						if (fieldNominatingOrganisation != null && StringUtils.isNotEmpty(fieldNominatingOrganisation.getId())) {
+							String orgUrl = this.getActUrl(fieldNominatingOrganisation.getId());
+							if (StringUtils.isNotEmpty(orgUrl)) {
+								target.organisation = Organisation.findByUrl(orgUrl);
+							}
+						}
+						
+						if (target.getField_crawl_start_date() != null) {
+							target.fieldCrawlStartDate = getDateFromSeconds(target.getField_crawl_start_date());
+						}
+						if (target.getField_crawl_end_date() != null) {
+							target.fieldCrawlEndDate = getDateFromSeconds(target.getField_crawl_end_date());
+						}
+						
+						target.createdAt = this.getDateFromSeconds(target.getCreated());
+	
+						FieldModel author = target.getAuthor();
+						if (author != null) {
+							User authorUser = User.findByUrl(this.getActUrl(author.getId()));
+							target.authorUser = authorUser;
+						}
+						
+						target.fieldUkDomain = BooleanUtils.toBoolean(target.getField_uk_domain());
+						target.fieldUkGeoip = BooleanUtils.toBoolean(target.getField_uk_geoip());
+	
+						
+						target.revision = Const.INITIAL_REVISION;
+						target.active = true;
+						target.selectionType = Const.SelectionType.SELECTION.name();
+						if (StringUtils.isNotBlank(target.language) && target.language.equals(Const.UND)) {
+							target.language = null;
+						}
+	
+						target.isInScopeUkRegistrationValue = false;
+			        	target.isInScopeDomainValue = Target.isInScopeDomain(target.fieldUrl, target.url);
+						target.isUkHostingValue = false; 
+						target.isInScopeIpValue = false;
+						target.isInScopeIpWithoutLicenseValue = false;
+						
+						if (target.field_no_ld_criteria_met == null) {
+							target.field_no_ld_criteria_met = false;
+						}
+	
+						if (target.field_key_site == null) {
+							target.field_key_site = false;
+						}
+						
+						if (target.field_ignore_robots_txt == null) {
+							target.field_ignore_robots_txt = false;
+						}
+						
+						// TODO: KL
+						// target.domain
+						// target.field_description
+	
+	//					{"body":[],"field_scope":"root","field_url":[{"url":"http://www.cats.org.uk/"}],"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/16","id":"16","resource":"taxonomy_term"},"field_depth":"capped","field_via_correspondence":false,"field_uk_postal_address":false,"field_uk_hosting":false,"field_description":{"value":"<p>website of animal welfare organisation</p>\n","summary":"","format":"filtered_html"},"field_uk_postal_address_url":[],"field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},"field_crawl_frequency":"domaincrawl","field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/108","id":"108","resource":"node"}],"field_collections":[],"field_crawl_start_date":null,"field_crawl_end_date":null,"field_uk_domain":"Yes","field_license":[],"field_crawl_permission":"","field_collection_categories":[],"field_special_dispensation":false,"field_special_dispensation_reaso":null,"field_live_site_status":null,"field_notes":[],"field_wct_id":null,"field_spt_id":null,"field_snapshots":[],"field_no_ld_criteria_met":null,"field_key_site":null,"field_uk_geoip":"Yes","field_professional_judgement":false,"field_professional_judgement_exp":null,"field_ignore_robots_txt":null,"field_instances":[],"nid":"109","vid":"113","is_new":false,"type":"url","title":"Cats Protection","language":"en","url":"http://www.webarchive.org.uk/act/node/109","edit_url":"http://www.webarchive.org.uk/act/node/109/edit","status":"1","promote":"0","sticky":"0","created":"1363770213","changed":"1375215708","author":{"uri":"http://www.webarchive.org.uk/act/user/61","id":"61","resource":"user"},"log":"","revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null}
+	////		        	 {"body":{"value":"<p>UK address on contacts page</p>\n",
+	////		        	"summary":"",
+	////		        	"format":"plain_text"},
+	////		        	"field_scope":"root",
+	//		        	"field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
+	////		        	"field_depth":"capped",
+	////		        	"field_via_correspondence":false,
+	////		        	"field_uk_postal_address":true,
+	////		        	"field_uk_hosting":false,
+	//		        	"field_description":[],
+	//		        	"field_uk_postal_address_url":{"url":"http://www.childrenslegalcentre.com/index.php?page=contact_us"},
+	////		        	"field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},
+	////		        	"field_crawl_frequency":"domaincrawl",
+	//		        	"field_suggested_collections":[],
+	//		        	"field_collections":[],
+	////		        	"field_crawl_start_date":null,
+	////		        	"field_crawl_end_date":null,
+	//		        	"field_uk_domain":"No",
+	//		        	"field_license":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/168","id":"168","resource":"taxonomy_term"}],
+	////		        	"field_crawl_permission":"",
+	//		        	"field_collection_categories":[],
+	////		        	"field_special_dispensation":false,
+	////		        	"field_special_dispensation_reaso":null,
+	////		        	"field_live_site_status":null,
+	//		        	"field_notes":[],
+	////		        	"field_wct_id":"128704","field_spt_id":"141374",
+	//		        	"field_snapshots":[],
+	////		        	"field_no_ld_criteria_met":null,
+	////		        	"field_key_site":null,
+	//		        	"field_uk_geoip":"Yes",
+	////		        	"field_professional_judgement":false,
+	////		        	"field_professional_judgement_exp":null,
+	////		        	"field_ignore_robots_txt":null,
+	//		        	"field_instances":[],
+	////		        	"nid":"17",
+	////		        	"vid":"17",
+	////		        	"is_new":false,
+	////		        	"type":"url",
+	////		        	"title":"Children's Legal Centre (CLC)",
+	////		        	"language":"und",
+	////		        	"url":"http://www.webarchive.org.uk/act/node/17",
+	////		        	"edit_url":"http://www.webarchive.org.uk/act/node/17/edit",
+	////		        	"status":"1",
+	////		        	"promote":"0",
+	////		        	"sticky":"0",
+	////		        	"created":"1355322059",
+	////		        	"changed":"1387368879",
+	////		        	"author":{"uri":"http://www.webarchive.org.uk/act/user/9","id":"9","resource":"user"},
+	////		        	"log":"Updated by FeedsNodeProcessor",
+	////		        	"revision":null,
+	////		        	"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":"0"}
+	//		        	
+			        	
+			        	target.save();
+			        	count++;
 					}
-					
-					if (target.getField_crawl_start_date() != null) {
-						target.fieldCrawlStartDate = getDateFromSeconds(target.getField_crawl_start_date());
-					}
-					if (target.getField_crawl_end_date() != null) {
-						target.fieldCrawlEndDate = getDateFromSeconds(target.getField_crawl_end_date());
-					}
-					
-					target.createdAt = this.getDateFromSeconds(target.getCreated());
-
-					FieldModel author = target.getAuthor();
-					if (author != null) {
-						User authorUser = User.findByUrl(this.getActUrl(author.getId()));
-						target.authorUser = authorUser;
-					}
-					
-					target.fieldUkDomain = BooleanUtils.toBoolean(target.getField_uk_domain());
-					target.fieldUkGeoip = BooleanUtils.toBoolean(target.getField_uk_geoip());
-
-					List<String> fieldUrls = new ArrayList<String>();
-					for (Map<String,String> map : target.getField_url()) {
-						Logger.info("Field Url: " + map.get("url"));
-						fieldUrls.add(map.get("url"));
-					}
-					
-					if (!fieldUrls.isEmpty()) {
-						target.fieldUrl = StringUtils.join(fieldUrls, ", ");
-					}
-					
-					target.revision = Const.INITIAL_REVISION;
-					target.active = true;
-					target.selectionType = Const.SelectionType.SELECTION.name();
-					if (StringUtils.isNotBlank(target.language) && target.language.equals(Const.UND)) {
-						target.language = null;
-					}
-
-					target.isInScopeUkRegistrationValue = false;
-		        	target.isInScopeDomainValue = Target.isInScopeDomain(target.fieldUrl, target.url);
-					target.isUkHostingValue = false; 
-					target.isInScopeIpValue = false;
-					target.isInScopeIpWithoutLicenseValue = false;
-					
-					if (target.field_no_ld_criteria_met == null) {
-						target.field_no_ld_criteria_met = false;
-					}
-
-					if (target.field_key_site == null) {
-						target.field_key_site = false;
-					}
-					
-					if (target.field_ignore_robots_txt == null) {
-						target.field_ignore_robots_txt = false;
-					}
-
-		        	
-////		        	 {"body":{"value":"<p>UK address on contacts page</p>\n",
-////		        	"summary":"",
-////		        	"format":"plain_text"},
-////		        	"field_scope":"root",
-//		        	"field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
-////		        	"field_depth":"capped",
-////		        	"field_via_correspondence":false,
-////		        	"field_uk_postal_address":true,
-////		        	"field_uk_hosting":false,
-//		        	"field_description":[],
-//		        	"field_uk_postal_address_url":{"url":"http://www.childrenslegalcentre.com/index.php?page=contact_us"},
-////		        	"field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},
-////		        	"field_crawl_frequency":"domaincrawl",
-//		        	"field_suggested_collections":[],
-//		        	"field_collections":[],
-////		        	"field_crawl_start_date":null,
-////		        	"field_crawl_end_date":null,
-//		        	"field_uk_domain":"No",
-//		        	"field_license":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/168","id":"168","resource":"taxonomy_term"}],
-////		        	"field_crawl_permission":"",
-//		        	"field_collection_categories":[],
-////		        	"field_special_dispensation":false,
-////		        	"field_special_dispensation_reaso":null,
-////		        	"field_live_site_status":null,
-//		        	"field_notes":[],
-////		        	"field_wct_id":"128704","field_spt_id":"141374",
-//		        	"field_snapshots":[],
-////		        	"field_no_ld_criteria_met":null,
-////		        	"field_key_site":null,
-//		        	"field_uk_geoip":"Yes",
-////		        	"field_professional_judgement":false,
-////		        	"field_professional_judgement_exp":null,
-////		        	"field_ignore_robots_txt":null,
-//		        	"field_instances":[],
-////		        	"nid":"17",
-////		        	"vid":"17",
-////		        	"is_new":false,
-////		        	"type":"url",
-////		        	"title":"Children's Legal Centre (CLC)",
-////		        	"language":"und",
-////		        	"url":"http://www.webarchive.org.uk/act/node/17",
-////		        	"edit_url":"http://www.webarchive.org.uk/act/node/17/edit",
-////		        	"status":"1",
-////		        	"promote":"0",
-////		        	"sticky":"0",
-////		        	"created":"1355322059",
-////		        	"changed":"1387368879",
-////		        	"author":{"uri":"http://www.webarchive.org.uk/act/user/9","id":"9","resource":"user"},
-////		        	"log":"Updated by FeedsNodeProcessor",
-////		        	"revision":null,
-////		        	"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":"0"}
-//		        	
-		        	
-		        	target.save();
-		        	count++;
 				}
-				Logger.info("Target count: " + count);
+
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
