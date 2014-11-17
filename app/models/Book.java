@@ -3,7 +3,6 @@ package models;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import play.data.validation.Constraints.Required;
@@ -21,7 +20,6 @@ public class Book extends Model {
 	@JoinColumn(name="id_document")
 	public Document document;
 	public String isbn;
-	public String author;
 	public String corporateAuthor;
 	public boolean priorityCataloguing;
 	public String series;

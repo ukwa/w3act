@@ -12,45 +12,41 @@ function completeYear(year) {
 	}
 	return year
 }
+function formatDate(day, month, year) {
+	return withLeadingZero(day) + "-" + withLeadingZero(month) + "-" + completeYear(year);
+}
 function parseDate(rawDate) {
+	var months = [
+		"Jan(?:uary)?", "Feb(?:ruary)?", "Mar(?:ch)?",
+		"Apr(?:il)?", "May", "Jun(?:e)?",
+		"Jul(?:y)?", "Aug(?:ust)?", "Sep(?:tember)?",
+		"Oct(?:ober)?", "Nov(?:ember)?", "Dec(?:ember)?"
+	];
 	var separator = "[ .,\\-/] ?";
 	var day = "(0?[1-9]|[12][0-9]|3[01])";
-	var processedDate = rawDate.replace(/Jan(?:uary)?/i, "01")
-		.replace(/Feb(?:ruary)?/i, "02")
-		.replace(/Mar(?:ch)?/i, "03")
-		.replace(/Apr(?:il)?/i, "04")
-		.replace(/May/i, "05")
-		.replace(/Jun(?:e)?/i, "06")
-		.replace(/Jul(?:y)?/i, "07")
-		.replace(/Aug(?:ust)?/i, "08")
-		.replace(/Sep(?:tember)?/i, "09")
-		.replace(/Oct(?:ober)?/i, "10")
-		.replace(/Nov(?:ember)?/i, "11")
-		.replace(/Dec(?:ember)?/i, "12")
-	var month = "(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|" +
-		"Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|0?[1-9]|1[0-2])";
+	var month = "(" + months.join("|") + "|0?[1-9]|1[0-2])";
 	var year = "(\\d{4}|\\d{2})";
 	var dmy = new RegExp("^" + day + separator + month + separator + year + "$","i");
 	var mdy = new RegExp("^" + month + separator + day + separator + year + "$","i");
 	var ymd = new RegExp("^" + year + separator + month + separator + day + "$","i");
 	var my = new RegExp("^" + month + separator + year + "$","i");
 	var y = new RegExp("^" + year + "$");
-	//dmy.exec(rawDate);
-	//return RegExp.$1 + "-" + RegExp.$2 + "-" + RegExp.$3;
-	if (dmy.test(rawDate)) {
-		console.log("dmy");
-		return processedDate.replace(dmy, function (match, p1, p2, p3) { return withLeadingZero(p1) + "-" + withLeadingZero(p2) + "-" + completeYear(p3); });
-	} else if (mdy.test(rawDate)) {
-		console.log("mdy");
-		return processedDate.replace(mdy, function (match, p1, p2, p3) { return withLeadingZero(p2) + "-" + withLeadingZero(p1) + "-" + completeYear(p3); });
-	} else if (ymd.test(rawDate)) {
-		console.log("ymd");
-		return processedDate.replace(ymd, function (match, p1, p2, p3) { return withLeadingZero(p3) + "-" + withLeadingZero(p2) + "-" + completeYear(p1); });
-	} else if (my.test(rawDate)) {
-		console.log("my");
-		return processedDate.replace(my, function (match, p1, p2) { return "01-" + withLeadingZero(p1) + "-" + completeYear(p2); });
-	} else if (y.test(rawDate)) {
-		console.log("y");
-		return processedDate.replace(y, function (match, p1) { return "01-01-" + completeYear(p1); });
-	}
+	var processedDate = rawDate;
+	for (var i = 0; i < months.length; i++)
+		processedDate = processedDate.replace(new RegExp(months[i], "i"), "" + (i + 1));
+	if (dmy.test(rawDate))
+		return processedDate.replace(dmy,
+			function (match, p1, p2, p3) { return formatDate(p1, p2, p3); });
+	if (mdy.test(rawDate))
+		return processedDate.replace(mdy,
+			function (match, p1, p2, p3) { return formatDate(p2, p1, p3); });
+	if (ymd.test(rawDate))
+		return processedDate.replace(ymd,
+			function (match, p1, p2, p3) { return formatDate(p3, p2, p1); });
+	if (my.test(rawDate))
+		return processedDate.replace(my,
+			function (match, p1, p2) { return formatDate("1", p1, p2); });
+	if (y.test(rawDate))
+		return processedDate.replace(y,
+			function (match, p1) { return formatDate("1", "1", p1); });
 }

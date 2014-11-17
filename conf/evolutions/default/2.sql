@@ -37,14 +37,19 @@ create table document (
   doi			varchar(255),
   publication_date	date,
   filename		varchar(255) not null,
-  type			varchar(255)
+  type			varchar(255),
+  author1fn		varchar(255),
+  author1ln		varchar(255),
+  author2fn		varchar(255),
+  author2ln		varchar(255),
+  author3fn		varchar(255),
+  author3ln		varchar(255)
 );
 
 create table book (
   id			bigint primary key,
   id_document		bigint references document (id),
   isbn			varchar(255),
-  author		varchar(255),
   corporate_author	varchar(255),
   priority_cataloguing	boolean not null,
   series		varchar(255),
@@ -59,8 +64,7 @@ create table journal (
   id_journal_title	bigint references journal_title (id),
   publication_year	integer not null,
   volume		varchar(255) not null,
-  issue			varchar(255),
-  author		varchar(255)
+  issue			varchar(255)
 );
 
 create sequence watched_target_seq;

@@ -51,6 +51,12 @@ public class Document extends Model {
     @Required
 	public String filename;
     public String type;
+	public String author1Fn;
+	public String author1Ln;
+	public String author2Fn;
+	public String author2Ln;
+	public String author3Fn;
+	public String author3Ln;
     public String getUrl() { return ""+id; }
     
     public static final Model.Finder<Long, Document> find = new Model.Finder<>(Long.class, Document.class);
@@ -58,22 +64,38 @@ public class Document extends Model {
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
         String required = "This field is required";
-        if (type.toLowerCase().startsWith("journal")) {
+        if (isJournalArticleOrIssue()) {
         	if (journal.journalTitleId == null)
                 errors.add(new ValidationError("journal.journalTitleId", required));
         	if (journal.publicationYear == null)
                 errors.add(new ValidationError("journal.publicationYear", required));
         	if (journal.volume.isEmpty() && journal.issue.isEmpty())
                 errors.add(new ValidationError("journal.issue", "Complete Volume or Issue/Part or both"));
-        } else if (type.toLowerCase().startsWith("book")) {
-        	if (type.toLowerCase().equals("book")) {
-        		if (book.publisher.isEmpty())
-        			errors.add(new ValidationError("book.publisher", required));
-        		if (book.publicationYear == null)
-        			errors.add(new ValidationError("book.publicationYear", required));
-        	}
+        } else if (isWholeBook()) {
+        	if (book.publisher.isEmpty())
+        		errors.add(new ValidationError("book.publisher", required));
+        	if (book.publicationYear == null)
+        		errors.add(new ValidationError("book.publicationYear", required));
         }
         return errors.isEmpty() ? null : errors;
+    }
+    
+    public boolean isWholeBook() { return type.equals(DocumentType.BOOK.toString()); }
+    
+    public boolean isBookChapter() { return type.equals(DocumentType.BOOK_CHAPTER.toString()); }
+    
+    public boolean isJournalArticle() { return type.equals(DocumentType.JOURNAL_ARTICLE.toString()); }
+    
+    public boolean isJournalIssue() { return type.equals(DocumentType.JOURNAL_ISSUE.toString()); }
+	
+	public boolean isBookOrBookChapter() { return isWholeBook() || isBookChapter(); }
+	
+	public boolean isJournalArticleOrIssue() { return isJournalArticle() || isJournalIssue(); }
+    
+    public void clearImproperFields() {
+    	if (isJournalIssue()) {
+    		author1Fn = author1Ln = author2Fn = author2Ln = author3Fn = author3Ln = "";
+    	}
     }
     
     public static Page<Document> page(Long watchedTargetId, int page, int pageSize, String sortBy, String order, String filter) {

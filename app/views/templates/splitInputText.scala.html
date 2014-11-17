@@ -1,0 +1,20 @@
+@(field1: Field, field2: Field, editable: Boolean, args: (Symbol, Any)*)
+
+@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+
+@if(editable) {
+	@helper.input(field1, (args :+ 'class -> "form-control"): _*) { (id, name, value, args) =>
+		<div class="row">
+			<div class="col-sm-6" style="padding-right: 4px">
+				<input type="text" name="@name" id="@id" value="@value" @toHtmlArgs(args)>
+			</div>
+			<div class="col-sm-6" style="padding-left: 4px">
+				<input type="text" name="@field2.name" id="@field2.id" value="@field2.value" @toHtmlArgs(args)>
+			</div>
+		</div>
+	}
+} else {
+	@helper.input(field1, args: _*) { (id, name, value, args) =>
+		@value @field2.value
+	}
+}

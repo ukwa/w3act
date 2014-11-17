@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import models.Book;
 import models.Document;
+import models.DocumentType;
 import models.Journal;
 import models.JournalTitle;
 import models.Tag;
@@ -104,25 +105,26 @@ public class Documents extends AbstractController {
 		}
 		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
 		Document document = documentForm.get();
+		document.clearImproperFields();
 		Ebean.update(document);
 		
-		if (!document.type.toLowerCase().startsWith("book") && document.book.id != null) {
+		if (!document.isBookOrBookChapter() && document.book.id != null) {
 			Book book = Ebean.find(Book.class, document.book.id);
 			Ebean.delete(book);
 		}
-		if (!document.type.toLowerCase().startsWith("journal") && document.journal.id != null) {
+		if (!document.isJournalArticleOrIssue() && document.journal.id != null) {
 			Journal journal = Ebean.find(Journal.class, document.journal.id);
 			Ebean.delete(journal);
 		}
 		
-		if (document.type.toLowerCase().startsWith("book")) {
+		if (document.isBookOrBookChapter()) {
 			document.book.document = document;
 			if (document.book.id == null) {
 				Ebean.save(document.book);
 			} else {
 				Ebean.update(document.book);
 			}
-		} else if (document.type.toLowerCase().startsWith("journal")) {
+		} else if (document.isJournalArticleOrIssue()) {
 			document.journal.document = document;
 			document.journal.journalTitle = Ebean.find(JournalTitle.class, document.journal.journalTitleId);
 			if (document.journal.id == null) {

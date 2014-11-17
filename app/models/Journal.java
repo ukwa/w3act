@@ -31,5 +31,4 @@ public class Journal extends Model {
     public Integer publicationYear;
 	public String volume;
 	public String issue;
-	public String author;
 }

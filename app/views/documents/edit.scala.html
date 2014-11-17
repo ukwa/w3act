@@ -5,6 +5,7 @@
 @import templates.checkbox
 @import templates.inputText
 @import templates.select
+@import templates.splitInputText
 
 @scripts = {
 	<script src="@routes.Assets.at("javascripts/parse-date.js")" type="text/javascript"></script>
@@ -56,6 +57,17 @@
 				document.getElementById(id).value = parseDate(rawDate);
 			$("#selection_menu").css({display: "none"});
 		}
+
+		function fillAuthor() {
+			var author = getSelectionText().trim();
+			var authorNumber = 1;
+			while (authorNumber < 3 && document.getElementById("author" + authorNumber + "Fn").value)
+				authorNumber++;
+			var spacePosition = author.indexOf(" ");
+			document.getElementById("author" + authorNumber + "Fn").value = author.substring(0, spacePosition);
+			document.getElementById("author" + authorNumber + "Ln").value = author.substring(spacePosition + 1);
+			$("#selection_menu").css({display: "none"});
+		}
 		
 		function openPopup(url) {
 			var breite = screen.width;
@@ -82,26 +94,28 @@
 			var select = document.getElementById("type");
 			var type = select.selectedIndex;
 			var book_general = $("#book_general, #book_general_buttons");
-			var book = $("#book");
-			var journal_general = $("#journal_general");
-			var journal_article = $("#journal_article, #journal_article_buttons");
+			var book = $("#book, #book_buttons");
+			var journal_general = $("#journal_general, #journal_general_buttons");
+			var author = $("#author, #author_buttons");
 			hide(book_general);
 			hide(book);
 			hide(journal_general);
-			hide(journal_article);
+			hide(author);
 			switch(type) {
 				case 1:
 					show(book_general);
 					show(book);
+					show(author);
 					break;
-				case 2:
+				@*case BOOK_CHAPTER:
 					show(book_general);
+					show(author);
+					break;*@
+				case 2:
+					show(journal_general);
+					show(author);
 					break;
 				case 3:
-					show(journal_general);
-					show(journal_article);
-					break;
-				case 4:
 					show(journal_general);
 					break;
 			}
@@ -117,8 +131,11 @@
 						console.log(event);
 						var selectionText = getSelectionText();
 						if (selectionText && previousSelection != selectionText) {
-							$("#selection_menu").css({display: "block"});
-							$("#selection_menu").css({left: event.pageX - 50, top: event.pageY + 15});
+							$("#selection_menu").css({display: "block", left: event.pageX - 50});
+							if (event.pageY < 300)
+								$("#selection_menu").css({top: event.pageY + 15, bottom: "auto"});
+							else
+								$("#selection_menu").css({bottom: 600 - event.pageY, top: "auto"});
 						} else {
 							$("#selection_menu").css({display: "none"});
 						}
@@ -152,7 +169,7 @@
 			<input type="hidden" name="id" value="@form("id").value">
 			<input type="hidden" name="landingPageUrl" value="@form("landingPageUrl").value">
 			<input type="hidden" name="documentUrl" value="@form("documentUrl").value">
-			<input type="hidden" name="filename" value="@form("filename").value">
+			<input type="hidden" name="htmlFilename" value="@form("htmlFilename").value">
 			<input type="hidden" name="book.id" value="@form("book.id").value">
 			<input type="hidden" name="book.id_document" value="@form("id").value">
 			<input type="hidden" name="journal.id" value="@form("journal.id").value">
@@ -163,12 +180,11 @@
 			@inputText(form("publicationDate"), editable, '_label -> "Publication Date")
 			@inputText(form("filename"), editable, '_label -> "Filename")
 			@select(form("type"),
-				options(List("","Book", "Book Chapter", "Journal Article", "Journal Issue")),
+				options(List("","Book", "Journal Article", "Journal Issue")),
 				editable,
 				'_label -> "Submission Type", 'onchange -> "toggleVisibility()")
 			<div id="book_general">
 				@inputText(form("book.isbn"), editable, '_label -> "ISBN")
-				@inputText(form("book.author"), editable, '_label -> "Author(s)")
 				@inputText(form("book.corporateAuthor"), editable, '_label -> "Corporate Author")
 				@checkbox(form("book.priorityCataloguing"), editable, '_label -> "Priority Cataloguing")
 			</div>
@@ -187,8 +203,10 @@
 				@inputText(form("journal.volume"), editable, '_label -> "Volume")
 				@inputText(form("journal.issue"), editable, '_label -> "Issue/Part")
 			</div>
-			<div id="journal_article">
-				@inputText(form("journal.author"), editable, '_label -> "Author(s)")
+			<div id="author">
+				@splitInputText(form("author1Fn"), form("author1Ln"), editable, '_label -> "Author(s)")
+				@splitInputText(form("author2Fn"), form("author2Ln"), editable, '_label -> "")
+				@splitInputText(form("author3Fn"), form("author3Ln"), editable, '_label -> "")
 			</div>
 			
 			<a target="landingPage" onclick="openPopup('@form("landingPageUrl").value')">Open Landing Page</a><br>
@@ -216,12 +234,40 @@
 				</div>
 				<div id="book_general_buttons">
 					<div style="padding-top: 5px">
-						<input type="button" class="btn btn-success" value="Author(s)" onclick="fillInput('book_author')" style="width: 100%">
+						<input type="button" class="btn btn-success" value="ISBN" onclick="fillInput('book_isbn')" style="width: 100%">
+					</div>
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Corporate Author" onclick="fillInput('book_corporateAuthor')" style="width: 100%">
 					</div>
 				</div>
-				<div id="journal_article_buttons">
+				<div id="book_buttons">
 					<div style="padding-top: 5px">
-						<input type="button" class="btn btn-success" value="Author(s)" onclick="fillInput('journal_author')" style="width: 100%">
+						<input type="button" class="btn btn-success" value="Series" onclick="fillInput('book_series')" style="width: 100%">
+					</div>
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Publisher" onclick="fillInput('book_publisher')" style="width: 100%">
+					</div>
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Edition" onclick="fillInput('book_edition')" style="width: 100%">
+					</div>
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Year of Publication" onclick="fillInput('book_publicationYear')" style="width: 100%">
+					</div>
+				</div>
+				<div id="journal_general_buttons">
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Year of Publication" onclick="fillInput('journal_publicationYear')" style="width: 100%">
+					</div>
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Volume" onclick="fillInput('journal_volume')" style="width: 100%">
+					</div>
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Issue/Part" onclick="fillInput('journal_issue')" style="width: 100%">
+					</div>
+				</div>
+				<div id="author_buttons">
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Author" onclick="fillAuthor()" style="width: 100%">
 					</div>
 				</div>
 			</div>
