@@ -422,14 +422,15 @@ public class User extends ActModel {
     /**
      * This method updates foreign key mapping between a user and an organisation.
      */
-    public void updateOrganisation() {
-		if (affiliation != null
-				&& affiliation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(affiliation);
-//            Logger.info("Add creator to organisation: " + organisation.toString());
-            this.organisation = organisation;
-		}    	
-    }
+    // TODO: KL WHY THIS? to change organisation?
+//    public void updateOrganisation() {
+//		if (affiliation != null
+//				&& affiliation.length() > 0) {
+//			Organisation organisation = Organisation.findByUrl(affiliation);
+////            Logger.info("Add creator to organisation: " + organisation.toString());
+//            this.organisation = organisation;
+//		}    	
+//    }
 
 	@Override
 	public String toString() {

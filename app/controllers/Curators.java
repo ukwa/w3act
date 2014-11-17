@@ -195,7 +195,8 @@ public class Curators extends AbstractController {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
 //        		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
         		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
-        		user.updateOrganisation();
+        		// TODO: KL WHY THIS?
+//        		user.updateOrganisation();
         	} else {
         		user.affiliation = Const.NONE;
         	}

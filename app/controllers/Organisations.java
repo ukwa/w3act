@@ -393,7 +393,7 @@ public class Organisations extends AbstractController {
 //		Logger.info("flag true add link: " + user.name);
     	if (!isOrganisationLink(user, organisation)) {
     		user.affiliation = organisation.url;
-    		user.updateOrganisation();
+//    		user.updateOrganisation();
         	Ebean.update(user);
     	}
 	}

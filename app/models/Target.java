@@ -54,7 +54,13 @@ public class Target extends ActModel {
 	@ManyToOne
 	@JoinColumn(name = "organisation_id")
 	@JsonIgnore
-	public Organisation organisationToTarget;
+	public Organisation organisation;
+	
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	@JsonIgnore
+	public User authorUser;
+	
 
 	// bi-directional many-to-many association to Flag
 	@JsonIgnore
@@ -86,68 +92,30 @@ public class Target extends ActModel {
 	@ManyToMany(mappedBy = "targets")
 	public List<Taxonomy> licenseToTarget = new ArrayList<Taxonomy>();
 
-	@Column(columnDefinition = "text")
-	public String value;
-	@Column(columnDefinition = "text")
-	public String summary;
-	public String format;
-	public String fieldScope;
-	public String fieldDepth;
-	public Boolean fieldViaCorrespondence;
-	public Boolean fieldUkPostalAddress;
-	public Boolean fieldUkHosting;
-	public String fieldNominatingOrganisation;
-	public String fieldCrawlFrequency;
 	public Date fieldCrawlStartDate;
 	public Date fieldCrawlEndDate;
-	public Boolean fieldUkDomain;
-	public String fieldCrawlPermission;
-	public Boolean fieldSpecialDispensation;
-	@Column(columnDefinition = "text")
-	public String fieldSpecialDispensationReason;
-	public Boolean fieldUkGeoIp;
-	public Boolean fieldProfessionalJudgement;
 
-	// @Required
-	// public String title;
-	//
-	// public String language;
-	// public String editUrl;
-	// public Long status;
-	// public Long promote;
-	// public Long sticky;
-	// public String author;
-	// public String log;
-	// public Long comment;
-	public Long commentCount;
-	public Long commentCountNew;
-	public Long feedNid;
-	public String fieldLiveSiteStatus;
-	public Long fieldWct_id;
-	public Long fieldSpt_id;
-	public Long legacySite_id;
-	public Boolean fieldNoLdCriteriaMet;
-	public Boolean fieldKeySite;
-	@Column(columnDefinition = "text")
-	public String fieldProfessionalJudgementExp;
-	public Boolean fieldIgnoreRobotsTxt;
-	// @Column(columnDefinition = "text")
-	// public String revision; // revision comment for latest version of the
-	// target among targets with the same URL
+	public Long legacySiteId;
+	
 	public Boolean active; // flag for the latest version of the target among
 							// targets with the same URL
 	public String whiteList; // regex for white list URLs
 	public String blackList; // regex for black list URLs
+	
 	public Date dateOfPublication;
+	
 	@Column(columnDefinition = "text")
 	public String justification;
+	
 	@Column(columnDefinition = "text")
 	public String selectorNotes;
+	
 	@Column(columnDefinition = "text")
 	public String archivistNotes;
+	
 	@Required
 	public String selectionType;
-	public String selector;
+	
 	@Column(columnDefinition = "text")
 	public String flagNotes;
 	/**
@@ -162,9 +130,6 @@ public class Target extends ActModel {
 	public Boolean isInScopeIpWithoutLicenseValue;
 
 	// lists
-	@Required
-	@Column(columnDefinition = "text")
-	public String fieldUrl;
 	@Column(columnDefinition = "text")
 	public String domain;
 	@Column(columnDefinition = "text")
@@ -212,23 +177,125 @@ public class Target extends ActModel {
 	@Column(columnDefinition = "text")
 	public String qualityNotes;
 
-	@Transient
-	public LookupEntry lookupEntry;
+	@Required
+	@Column(columnDefinition = "text")
+	public String fieldUrl;
 
-	public String authorRef;
+	@JsonIgnore
+	@JsonProperty
+	public String title;
+
+	@Column(columnDefinition = "text")
+	@JsonProperty
+	public String value;
+	
+	@Column(columnDefinition = "text")
+	public String summary;
+
+	@JsonProperty
+	public String edit_url;
+
+	@JsonIgnore
+	@JsonProperty
+	public String field_scope;
+
+	@JsonIgnore
+	@JsonProperty
+	public String field_depth;
+	
+	@JsonIgnore
+	@JsonProperty
+	public Boolean field_via_correspondence;
+
+	@JsonIgnore
+	@JsonProperty
+	public Boolean field_uk_postal_address;
+	
+	@JsonIgnore
+	@JsonProperty
+	public Boolean field_uk_hosting;
+	
+	@JsonIgnore
+	@JsonProperty
+	public String field_crawl_frequency;
+
+	public Boolean fieldUkDomain;
+	
+	public Boolean fieldUkGeoip;
+	
+	@JsonIgnore
+	@JsonProperty
+	public Boolean field_special_dispensation;
+
+	@JsonIgnore
+	@JsonProperty
+	public String field_special_dispensation_reaso;
+
+	@JsonIgnore
+	@JsonProperty
+	public String field_live_site_status;
+
+	@JsonIgnore
+	@JsonProperty
+	public Long field_wct_id;
+
+	@JsonIgnore
+	@JsonProperty
+	public Long field_spt_id;
+
+	@JsonIgnore
+	@JsonProperty
+	public Boolean field_no_ld_criteria_met;
+
+	@JsonIgnore
+	@JsonProperty
+	public Boolean field_key_site;
+
+	@JsonIgnore
+	@JsonProperty
+	public Boolean field_professional_judgement;
+
+	@JsonIgnore
+	@JsonProperty
+	public String field_professional_judgement_exp;
+
+	@JsonIgnore
+	@JsonProperty
+	public Boolean field_ignore_robots_txt;
+	
+	@JsonIgnore
+	public String format;
+
+	@JsonIgnore
+	@JsonProperty
+	public String language;
+
+	@JsonIgnore
+	@JsonProperty
+	public String revision;
+
+
+	@Transient
+	@JsonIgnore
+	@JsonProperty
+	private String field_uk_domain;
+	
+	@Transient
+	@JsonIgnore
+	@JsonProperty
+	private String field_uk_geoip;
+	
+	@Transient
+	@JsonIgnore
+	@JsonProperty
+	private String field_crawl_permission;
 
 	@Transient
 	@JsonIgnore
 	@JsonProperty
 	private Object body;
 
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String field_scope;
-
 	@SuppressWarnings("rawtypes")
-	@Transient
 	@JsonIgnore
 	@JsonProperty
 	private List<Map> field_url;
@@ -238,26 +305,6 @@ public class Target extends ActModel {
 	@JsonProperty
 	private FieldModel field_subject;
 	
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String field_depth;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Boolean field_via_correspondence;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Boolean field_uk_postal_address;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Boolean field_uk_hosting;
-
 	@Transient
 	@JsonIgnore
 	@JsonProperty
@@ -276,11 +323,6 @@ public class Target extends ActModel {
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private String field_crawl_frequency;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
 	private Object field_suggested_collections;
 
 	@Transient
@@ -291,17 +333,12 @@ public class Target extends ActModel {
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private String field_crawl_start_date;
+	private Long field_crawl_start_date;
 
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private String field_crawl_end_date;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String field_uk_domain;
+	private Long field_crawl_end_date;
 
 	@Transient
 	@JsonIgnore
@@ -311,97 +348,17 @@ public class Target extends ActModel {
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private String field_crawl_permission;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Object field_collection_categories;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Boolean field_special_dispensation;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String field_special_dispensation_reaso;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private FieldModel field_qa_status;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String field_live_site_status;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Object field_notes;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String field_wct_id;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String field_spt_id;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Object field_snapshots;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Boolean field_no_ld_criteria_met;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Boolean field_key_site;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String field_uk_geoip;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Boolean field_professional_judgement;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String field_professional_judgement_exp;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Boolean field_ignore_robots_txt;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
 	private Object field_instances;
 
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private Long nid;
+	private String nid;
 
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	public Long vid;
+	public String vid;
 
 	@Transient
 	@JsonIgnore
@@ -412,22 +369,6 @@ public class Target extends ActModel {
 	@JsonIgnore
 	@JsonProperty
 	private String type;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	public String title;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	public String language;
-
-	@JsonProperty
-	public String url;
-
-	@JsonProperty
-	public String edit_url;
 
 	@Transient
 	@JsonIgnore
@@ -467,11 +408,6 @@ public class Target extends ActModel {
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	public String revision;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
 	private Long comment;
 
 	@Transient
@@ -492,7 +428,27 @@ public class Target extends ActModel {
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private String feed_nid;
+	private Long feed_nid;
+	
+	@Transient
+	@JsonIgnore
+	@JsonProperty
+	private Object field_collection_categories;
+
+	@Transient
+	@JsonIgnore
+	@JsonProperty
+	private FieldModel field_qa_status;
+
+	@Transient
+	@JsonIgnore
+	@JsonProperty
+	private Object field_snapshots;
+
+	@Transient
+	@JsonIgnore
+	@JsonProperty
+	private Object field_notes;
 
 	//
 	/**
@@ -507,33 +463,32 @@ public class Target extends ActModel {
 	}
 
 	public Target() {
-		this.fieldViaCorrespondence = false;
-		this.fieldUkPostalAddress = false;
-		this.fieldUkHosting = false;
-		this.fieldCrawlFrequency = "domaincrawl";
+		this.field_via_correspondence = false;
+		this.field_uk_postal_address = false;
+		this.field_uk_hosting = false;
+		this.field_crawl_frequency = "domaincrawl";
 		this.fieldUkDomain = true;
-		this.fieldCrawlPermission = "";
-		this.fieldSpecialDispensation = false;
-		this.fieldUkGeoIp = true;
-		this.fieldProfessionalJudgement = false;
-		this.vid = 0L;
+//		this.field_uk_domain = "yes";
+		this.field_crawl_permission = "";
+		this.field_special_dispensation = false;
+		this.fieldUkGeoip = true;
+//		this.field_uk_geoip = "yes";
+		this.field_professional_judgement = false;
 		// this.isNew = false;
-		this.language = "en";
+//		this.language = "en";
 		// this.status = 1L;
 		this.promote = 0L;
 		this.sticky = 0L;
 		this.log = "";
 		this.comment = 0L;
-		this.commentCount = 0L;
-		this.commentCountNew = 0L;
-		this.feedNid = 0L;
-		this.fieldLiveSiteStatus = "";
-		this.fieldSpt_id = 0L;
-		this.fieldWct_id = 0L;
-		this.fieldNoLdCriteriaMet = false;
-		this.fieldKeySite = false;
-		this.fieldProfessionalJudgementExp = "";
-		this.fieldIgnoreRobotsTxt = false;
+		this.feed_nid = 0L;
+		this.field_live_site_status = "";
+		this.field_spt_id = 0L;
+		this.field_wct_id = 0L;
+		this.field_no_ld_criteria_met = false;
+		this.field_key_site = false;
+		this.field_professional_judgement_exp = "";
+		this.field_ignore_robots_txt = false;
 		this.fieldUkPostalAddressUrl = "";
 		this.fieldSuggestedCollections = "";
 		this.fieldCollections = "";
@@ -541,11 +496,11 @@ public class Target extends ActModel {
 		this.fieldNotes = "";
 		this.fieldInstances = "";
 		this.fieldSubject = "";
-		this.value = "";
-		this.summary = "";
-		this.format = "";
-		this.fieldScope = "root";
-		this.fieldDepth = "capped";
+//		this.value = "";
+//		this.summary = "";
+//		this.format = "";
+		this.field_scope = "root";
+		this.field_depth = "capped";
 		this.type = Const.URL;
 		this.fieldCollectionCategories = "";
 		// this.field_nominating_organisation = Const.NONE;
@@ -604,7 +559,7 @@ public class Target extends ActModel {
 	public static List<Target> findAllforOrganisation(String url) {
 		List<Target> res = new ArrayList<Target>();
 		ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true)
-				.eq("fieldNominatingOrganisation", url);
+				.eq(Const.FIELD_NOMINATING_ORGANISATION, url);
 		res = ll.findList();
 		return res;
 	}
@@ -1150,14 +1105,14 @@ public class Target extends ActModel {
 				.findUnique();
 		boolean res = false;
 		if (target != null
-				&& (target.fieldUkPostalAddress
-						|| target.fieldViaCorrespondence || target.fieldProfessionalJudgement)) {
-			Logger.debug("checkManualScope(): " + target.fieldUkPostalAddress
-					+ ", " + target.fieldViaCorrespondence + ", "
-					+ target.fieldProfessionalJudgement);
+				&& (target.field_uk_postal_address
+						|| target.field_via_correspondence || target.field_professional_judgement)) {
+			Logger.debug("checkManualScope(): " + target.field_uk_postal_address
+					+ ", " + target.field_via_correspondence + ", "
+					+ target.field_professional_judgement);
 			res = true;
 		}
-		if (target != null && target.fieldNoLdCriteriaMet) {
+		if (target != null && target.field_no_ld_criteria_met) {
 			res = false;
 		}
 		return res;
@@ -1445,9 +1400,10 @@ public class Target extends ActModel {
 //	}
 
 	// Could really do with many_to_one relationship
-	public Organisation getOrganisation() {
-		return Organisation.findByUrl(fieldNominatingOrganisation);
-	}
+	// TODO: KL
+//	public Organisation getOrganisation() {
+//		return Organisation.findByUrl(field_no);
+//	}
 
 	/**
 	 * This method evaluates if element is in a list separated by list delimiter
@@ -2369,8 +2325,8 @@ public class Target extends ActModel {
 		Iterator<Target> itr = targets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if ((target.fieldUkPostalAddress || target.fieldViaCorrespondence
-					|| target.fieldProfessionalJudgement || target.fieldNoLdCriteriaMet)
+			if ((target.field_uk_postal_address || target.field_via_correspondence
+					|| target.field_professional_judgement || target.field_no_ld_criteria_met)
 					&& isHigherLevel(target.fieldUrl, fieldUrl)
 					&& (!checkUkHosting(target.fieldUrl) && !isInScopeDomain(
 							target.fieldUrl, target.url))) {
@@ -2593,15 +2549,16 @@ public class Target extends ActModel {
 	 * Organisation.
 	 */
 	public void updateOrganisation() {
-		if (this.fieldNominatingOrganisation != null
-				&& this.fieldNominatingOrganisation.length() > 0) {
-			Organisation organisation = Organisation
-					.findByUrl(this.fieldNominatingOrganisation);
+		// TODO: KL
+
+		//		if (this.fieldNominatingOrganisation != null
+//				&& this.fieldNominatingOrganisation.length() > 0) {
+//			Organisation organisation = Organisation
+//					.findByUrl(this.fieldNominatingOrganisation);
 			// Logger.info("Add target to organisation: " +
 			// organisation.toString());
-			this.organisationToTarget = organisation;
-		}
-
+//			this.organisation = organisation;
+//		}
 	}
 
 	public Object getBody() {
@@ -2721,19 +2678,19 @@ public class Target extends ActModel {
 		this.field_collections = field_collections;
 	}
 
-	public String getField_crawl_start_date() {
+	public Long getField_crawl_start_date() {
 		return field_crawl_start_date;
 	}
 
-	public void setField_crawl_start_date(String field_crawl_start_date) {
+	public void setField_crawl_start_date(Long field_crawl_start_date) {
 		this.field_crawl_start_date = field_crawl_start_date;
 	}
 
-	public String getField_crawl_end_date() {
+	public Long getField_crawl_end_date() {
 		return field_crawl_end_date;
 	}
 
-	public void setField_crawl_end_date(String field_crawl_end_date) {
+	public void setField_crawl_end_date(Long field_crawl_end_date) {
 		this.field_crawl_end_date = field_crawl_end_date;
 	}
 
@@ -2811,19 +2768,19 @@ public class Target extends ActModel {
 		this.field_notes = field_notes;
 	}
 
-	public String getField_wct_id() {
+	public Long getField_wct_id() {
 		return field_wct_id;
 	}
 
-	public void setField_wct_id(String field_wct_id) {
+	public void setField_wct_id(Long field_wct_id) {
 		this.field_wct_id = field_wct_id;
 	}
 
-	public String getField_spt_id() {
+	public Long getField_spt_id() {
 		return field_spt_id;
 	}
 
-	public void setField_spt_id(String field_spt_id) {
+	public void setField_spt_id(Long field_spt_id) {
 		this.field_spt_id = field_spt_id;
 	}
 
@@ -2893,19 +2850,19 @@ public class Target extends ActModel {
 		this.field_instances = field_instances;
 	}
 
-	public Long getNid() {
+	public String getNid() {
 		return nid;
 	}
 
-	public void setNid(Long nid) {
+	public void setNid(String nid) {
 		this.nid = nid;
 	}
 
-	public Long getVid() {
+	public String getVid() {
 		return vid;
 	}
 
-	public void setVid(Long vid) {
+	public void setVid(String vid) {
 		this.vid = vid;
 	}
 
@@ -2931,6 +2888,14 @@ public class Target extends ActModel {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
 	}
 
 	public String getLanguage() {
@@ -3053,11 +3018,11 @@ public class Target extends ActModel {
 		this.comment_count_new = comment_count_new;
 	}
 
-	public String getFeed_nid() {
+	public Long getFeed_nid() {
 		return feed_nid;
 	}
 
-	public void setFeed_nid(String feed_nid) {
+	public void setFeed_nid(Long feed_nid) {
 		this.feed_nid = feed_nid;
 	}
 

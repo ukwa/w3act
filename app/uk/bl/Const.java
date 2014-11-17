@@ -148,8 +148,8 @@ public final class Const {
 	public static final String IS_IN_SCOPE_UK_REGISTRATION_VALUE = "isInScopeUkRegistrationValue";
 	public static final String FIELD_CRAWL_FREQUENCY = "field_crawl_frequency";
 	public static final String FIELD_COLLECTION_CATEGORIES = "fieldCollectionCategories";
-	public static final String FIELD_SCOPE        = "fieldScope";
-	public static final String FIELD_DEPTH        = "fieldDepth";
+	public static final String FIELD_SCOPE        = "field_scope";
+	public static final String FIELD_DEPTH        = "field_depth";
 	public static final String FLAG               = "flag";
 	public static final String REVISION           = "revision";
 	public static final String ACTIVE             = "active";
@@ -158,10 +158,10 @@ public final class Const {
 	public static final String FIELD_SPT_ID       = "spt";
 	public static final String FIELD_LICENSE      = "license";
 	public static final String FIELD_LICENSE_NODE = "fieldLicense";
-	public static final String FIELD_UK_HOSTING   = "fieldUkHosting";
-	public static final String FIELD_UK_POSTAL_ADDRESS = "fieldUkPostalAddress";
-	public static final String FIELD_UK_POSTAL_ADDRESS_URL = "fieldUkPostalAddressUrl";
-    public static final String FIELD_VIA_CORRESPONDENCE = "fieldViaCorrespondence";
+	public static final String FIELD_UK_HOSTING   = "field_uk_hosting";
+	public static final String FIELD_UK_POSTAL_ADDRESS = "field_uk_postal_address";
+	public static final String FIELD_UK_POSTAL_ADDRESS_URL = "field_uk_postal_address_url";
+    public static final String FIELD_VIA_CORRESPONDENCE = "field_via_correspondence";
     public static final String FIELD_NOTES        = "fieldNotes";
     public static final String FIELD_PROFESSIONAL_JUDGEMENT = "fieldProfessionalJudgement";
     public static final String FIELD_PROFESSIONAL_JUDGEMENT_EXP = "fieldProfessionalJudgementExp";
@@ -182,7 +182,7 @@ public final class Const {
 	public static final String SELECTION_TYPE     = "selectionType";
 	public static final String SELECTOR_NOTES     = "selectorNotes";
 	public static final String ARCHIVIST_NOTES    = "archivistNotes";
-	public static final String LEGACY_SITE_ID     = "legacySite_id";
+	public static final String LEGACY_SITE_ID     = "legacySiteId";
 	public static final String FIELD_TIMESTAMP    = "fieldTimestamp";
 	public static final String QA_STATUS          = "qaStatus";
 	public static final String QA_ISSUE_CATEGORY  = "qaIssueCategory";

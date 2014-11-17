@@ -95,11 +95,11 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.fieldScope != null && target.fieldScope.length() > 0 && !subjects.contains(target.fieldScope)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_scope", target.fieldScope);
+			if (target.field_scope != null && target.field_scope.length() > 0 && !subjects.contains(target.field_scope)) {
+		        ExpressionList<Target> ll = Target.find.where().contains("field_scope", target.field_scope);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.fieldScope);
+		        	subjects.add(target.field_scope);
 		        }
 			}
 		}
@@ -173,11 +173,11 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.fieldCrawlFrequency != null && target.fieldCrawlFrequency.length() > 0 && !subjects.contains(target.fieldCrawlFrequency)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_crawl_frequency", target.fieldCrawlFrequency);
+			if (target.field_crawl_frequency != null && target.field_crawl_frequency.length() > 0 && !subjects.contains(target.field_crawl_frequency)) {
+		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_CRAWL_FREQUENCY, target.field_crawl_frequency);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.fieldCrawlFrequency);
+		        	subjects.add(target.field_crawl_frequency);
 		        }
 			}
 		}
@@ -195,11 +195,11 @@ public class Targets extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.fieldDepth != null && target.fieldDepth.length() > 0 && !subjects.contains(target.fieldDepth)) {
-		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_DEPTH, target.fieldDepth);
+			if (target.field_depth != null && target.field_depth.length() > 0 && !subjects.contains(target.field_depth)) {
+		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_DEPTH, target.field_depth);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.fieldDepth);
+		        	subjects.add(target.field_depth);
 		        }
 			}
 		}
@@ -563,7 +563,7 @@ public class Targets extends AbstractController {
     	        target.revision = Const.INITIAL_REVISION;
     	        target.active = true;
     	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
-    	        	target.authorRef = User.findByEmail(request().username()).url;
+    	        	target.authorUser.url = User.findByEmail(request().username()).url;
     	        	target.fieldSubSubject = Const.NONE;
     	        	target.fieldSubject = Const.NONE;
     	        }

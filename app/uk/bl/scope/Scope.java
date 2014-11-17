@@ -174,14 +174,14 @@ public class Scope {
          * Check for fields of target that not yet stored in database.
          */
         if (target != null
-        		&& (target.fieldUkPostalAddress 
-        		|| target.fieldViaCorrespondence
-        		|| target.fieldProfessionalJudgement)) {
-        	Logger.debug("updateLookupEntry(): " + target.fieldUkPostalAddress + ", " + 
-        		target.fieldViaCorrespondence + ", " + target.fieldProfessionalJudgement);
+        		&& (target.field_uk_postal_address 
+        		|| target.field_via_correspondence
+        		|| target.field_professional_judgement)) {
+        	Logger.debug("updateLookupEntry(): " + target.field_uk_postal_address + ", " + 
+        		target.field_via_correspondence + ", " + target.field_professional_judgement);
         	res = true;
         }
-        if (target != null && target.fieldNoLdCriteriaMet) {
+        if (target != null && target.field_no_ld_criteria_met) {
         	res = false;
         }
         

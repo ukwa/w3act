@@ -1,32 +1,26 @@
 package uk.bl.api;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import models.Collection;
@@ -70,58 +64,23 @@ public enum JsonUtils {
 	
 	INSTANCE;
 
-	private static int getPageNumber(JsonNode node, String field) {
-		String page = getStringItem(node, field);
-		Logger.info("page url: " + page);
-		int idxPage = page.indexOf(Const.PAGE_IN_URL)
-				+ Const.PAGE_IN_URL.length();
-		return Integer.parseInt(page.substring(idxPage));
+	private String getActUrl(String jsonId) {
+		return this.getUrl(Const.ACT_URL, jsonId);
 	}
-
-	/**
-	 * This method authenticates Drupal and loads data for particular node type.
-	 * 
-	 * @param urlStr
-	 *            The Drupal data response
-	 * @param type
-	 *            The node type
-	 * @return extracted data
-	 */
-	private static String authenticateAndLoadDrupal(String urlStr, NodeType type) {
-		String res = urlStr;
-		String user = Play.application().configuration().getString(Const.DRUPAL_USER);
-		String password = Play.application().configuration().getString(Const.DRUPAL_PASSWORD);
-
-		Logger.info("authenticateAndLoadDrupal() url: " + urlStr);
-		HttpBasicAuth.downloadFileWithAuth(urlStr, user, password, type
-				.toString().toLowerCase() + Const.OUT_FILE_PATH);
-		res = urlStr;
-		return res;
+	
+	private String getWctUrl(String jsonId) {
+		return this.getUrl(Const.WCT_URL, jsonId);
 	}
-
-	/**
-	 * This method downloads remote data using HTTP request and retrieves
-	 * contentfor passed type.
-	 * 
-	 * @param urlStr
-	 * @param type
-	 * @return list of objects
-	 */
-	private static String downloadData(String urlStr, NodeType type) {
-		String res = "";
-		if (urlStr != null && urlStr.length() > 0) {
-			// aggregate data from drupal and store JSON content in a file
-			urlStr = authenticateAndLoadDrupal(urlStr, type);
-			// HttpBasicAuth.downloadFileWithAuth(urlStr, Const.AUTH_USER,
-			// Const.AUTH_PASSWORD, type.toString().toLowerCase() +
-			// Const.OUT_FILE_PATH);
-			// read file and store content in String
-			res = JsonUtils.readJsonFromFile(type.toString().toLowerCase()
-					+ Const.OUT_FILE_PATH);
+	
+	private String getUrl(String prefix, String jsonId) {
+		String actUrl = null;
+		if (StringUtils.isNotEmpty(jsonId)) {
+			StringBuilder url = new StringBuilder(prefix).append(jsonId);
+			actUrl = url.toString();
 		}
-		return res;
+		return actUrl;
 	}
-
+	
 	private String getAuthenticatedContent(String jsonUrl) throws IOException {
 
 		String user = Play.application().configuration().getString(Const.DRUPAL_USER);
@@ -174,11 +133,12 @@ public enum JsonUtils {
 					JsonNode node = iterator.next();
 					Logger.info("json: " + node);
 					Organisation organisation = objectMapper.readValue(node.toString(), Organisation.class);
-					organisation.url = this.checkArchiveUrl(organisation.url);
-					organisation.edit_url = Const.WCT_URL + organisation.vid;
+					organisation.url = this.getActUrl(organisation.getNid());
+					organisation.edit_url = this.getWctUrl(organisation.vid);
 					FieldModel author = organisation.getAuthor();
-					if (author != null && StringUtils.isNotBlank(author.getUri())) {
-						organisation.authorRef = this.checkArchiveUrl(author.getUri());
+					if (author != null && StringUtils.isNotBlank(author.getId())) {
+						User authorUser = User.findByUrl(this.getActUrl(author.getId()));
+						organisation.authorUser = authorUser;
 					}
 					
 					organisation.createdAt = this.getDateFromSeconds(organisation.getCreated());
@@ -282,7 +242,8 @@ public enum JsonUtils {
 					if (fieldAffiliation!= null) {
 						if (StringUtils.isNotEmpty(fieldAffiliation.getUri())) {
 							// TODO: DO WE NEED AFFILIATION? - USE ORGANISATION ID?
-							user.affiliation = this.checkArchiveUrl(fieldAffiliation.getUri());;
+//							user.affiliation = this.checkArchiveUrl(fieldAffiliation.getUri());
+							user.affiliation = this.getActUrl(fieldAffiliation.getId());
 							Organisation organisation = Organisation.findByUrl(user.affiliation);
 							user.organisation = organisation;
 						}
@@ -324,32 +285,142 @@ public enum JsonUtils {
 					
 					Target target = objectMapper.readValue(node.toString(), Target.class);
 
-					target.url = this.checkArchiveUrl(target.url);
-					target.edit_url = this.checkArchiveUrl(target.edit_url);
+					target.url = this.getActUrl(target.getNid());
+					target.edit_url = this.getWctUrl(target.vid);
 					target.createdAt = this.getDateFromSeconds(target.getCreated());
 					
-					if (target.getBody() instanceof ArrayList) {
-						Logger.info("target: " + target.getBody());
-					} else if (target.getBody() instanceof LinkedHashMap) {
+					if (target.getBody() instanceof LinkedHashMap) {
 						Map<String, String> bodyMap = (LinkedHashMap<String,String>)target.getBody();
-						Logger.info("target: " + bodyMap.get("value"));
+						String value = bodyMap.get("value");
+						String format = bodyMap.get("format");
+						String summary = bodyMap.get("summary");
+						if (StringUtils.isNotEmpty(value)) {
+							target.value = value;
+						}
+						if (StringUtils.isNotEmpty(format)) {
+							target.format = format;
+						}
+						if (StringUtils.isNotEmpty(summary)) {
+							target.summary = summary;
+						}
+					}
+
+					FieldModel fieldNominatingOrganisation = target.getField_nominating_organisation();
+					
+					if (fieldNominatingOrganisation != null && StringUtils.isNotEmpty(fieldNominatingOrganisation.getId())) {
+						String orgUrl = this.getActUrl(fieldNominatingOrganisation.getId());
+						if (StringUtils.isNotEmpty(orgUrl)) {
+							target.organisation = Organisation.findByUrl(orgUrl);
+						}
 					}
 					
+					if (target.getField_crawl_start_date() != null) {
+						target.fieldCrawlStartDate = getDateFromSeconds(target.getField_crawl_start_date());
+					}
+					if (target.getField_crawl_end_date() != null) {
+						target.fieldCrawlEndDate = getDateFromSeconds(target.getField_crawl_end_date());
+					}
+					
+					target.createdAt = this.getDateFromSeconds(target.getCreated());
+
+					FieldModel author = target.getAuthor();
+					if (author != null) {
+						User authorUser = User.findByUrl(this.getActUrl(author.getId()));
+						target.authorUser = authorUser;
+					}
+					
+					target.fieldUkDomain = BooleanUtils.toBoolean(target.getField_uk_domain());
+					target.fieldUkGeoip = BooleanUtils.toBoolean(target.getField_uk_geoip());
+
+					List<String> fieldUrls = new ArrayList<String>();
 					for (Map<String,String> map : target.getField_url()) {
-						Logger.info("Field Url: " + map.get("url").getClass());
+						Logger.info("Field Url: " + map.get("url"));
+						fieldUrls.add(map.get("url"));
+					}
+					
+					if (!fieldUrls.isEmpty()) {
+						target.fieldUrl = StringUtils.join(fieldUrls, ", ");
 					}
 					
 					target.revision = Const.INITIAL_REVISION;
 					target.active = true;
 					target.selectionType = Const.SelectionType.SELECTION.name();
-					if (target.vid > 0) {
-						target.edit_url = Const.WCT_URL + target.vid;
-					}
 					if (StringUtils.isNotBlank(target.language) && target.language.equals(Const.UND)) {
-						target.language = "";
+						target.language = null;
 					}
+
+					target.isInScopeUkRegistrationValue = false;
 		        	target.isInScopeDomainValue = Target.isInScopeDomain(target.fieldUrl, target.url);
-		        	Logger.info("isInScopeDomainValue (UK_DOMAIN): " + target.isInScopeDomainValue);
+					target.isUkHostingValue = false; 
+					target.isInScopeIpValue = false;
+					target.isInScopeIpWithoutLicenseValue = false;
+					
+					if (target.field_no_ld_criteria_met == null) {
+						target.field_no_ld_criteria_met = false;
+					}
+
+					if (target.field_key_site == null) {
+						target.field_key_site = false;
+					}
+					
+					if (target.field_ignore_robots_txt == null) {
+						target.field_ignore_robots_txt = false;
+					}
+
+		        	
+////		        	 {"body":{"value":"<p>UK address on contacts page</p>\n",
+////		        	"summary":"",
+////		        	"format":"plain_text"},
+////		        	"field_scope":"root",
+//		        	"field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
+////		        	"field_depth":"capped",
+////		        	"field_via_correspondence":false,
+////		        	"field_uk_postal_address":true,
+////		        	"field_uk_hosting":false,
+//		        	"field_description":[],
+//		        	"field_uk_postal_address_url":{"url":"http://www.childrenslegalcentre.com/index.php?page=contact_us"},
+////		        	"field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},
+////		        	"field_crawl_frequency":"domaincrawl",
+//		        	"field_suggested_collections":[],
+//		        	"field_collections":[],
+////		        	"field_crawl_start_date":null,
+////		        	"field_crawl_end_date":null,
+//		        	"field_uk_domain":"No",
+//		        	"field_license":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/168","id":"168","resource":"taxonomy_term"}],
+////		        	"field_crawl_permission":"",
+//		        	"field_collection_categories":[],
+////		        	"field_special_dispensation":false,
+////		        	"field_special_dispensation_reaso":null,
+////		        	"field_live_site_status":null,
+//		        	"field_notes":[],
+////		        	"field_wct_id":"128704","field_spt_id":"141374",
+//		        	"field_snapshots":[],
+////		        	"field_no_ld_criteria_met":null,
+////		        	"field_key_site":null,
+//		        	"field_uk_geoip":"Yes",
+////		        	"field_professional_judgement":false,
+////		        	"field_professional_judgement_exp":null,
+////		        	"field_ignore_robots_txt":null,
+//		        	"field_instances":[],
+////		        	"nid":"17",
+////		        	"vid":"17",
+////		        	"is_new":false,
+////		        	"type":"url",
+////		        	"title":"Children's Legal Centre (CLC)",
+////		        	"language":"und",
+////		        	"url":"http://www.webarchive.org.uk/act/node/17",
+////		        	"edit_url":"http://www.webarchive.org.uk/act/node/17/edit",
+////		        	"status":"1",
+////		        	"promote":"0",
+////		        	"sticky":"0",
+////		        	"created":"1355322059",
+////		        	"changed":"1387368879",
+////		        	"author":{"uri":"http://www.webarchive.org.uk/act/user/9","id":"9","resource":"user"},
+////		        	"log":"Updated by FeedsNodeProcessor",
+////		        	"revision":null,
+////		        	"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":"0"}
+//		        	
+		        	
 		        	target.save();
 		        	count++;
 				}
@@ -419,9 +490,9 @@ public enum JsonUtils {
 					obj.revision = Const.INITIAL_REVISION;
 					obj.active = true;
 					obj.selectionType = Const.SelectionType.SELECTION.name();
-					if (obj.vid > 0) {
+//					if (obj.vid > 0) {
 						obj.edit_url = Const.WCT_URL + obj.vid;
-					}
+//					}
 					if (obj.language != null && obj.language.equals(Const.UND)) {
 						obj.language = "";
 					}
@@ -442,9 +513,9 @@ public enum JsonUtils {
 				}
 				if (type.equals(NodeType.ORGANISATION)) {
 					Organisation obj = (Organisation) itr.next();
-					if (obj.vid > 0) {
+//					if (obj.vid > 0) {
 						obj.edit_url = Const.WCT_URL + obj.vid;
-					}
+//					}
 					// } else {
 					// Object obj = itr.next();
 					// Logger.info("itr.next: " + obj + ", idx: " + idx);
@@ -546,6 +617,58 @@ public enum JsonUtils {
 		return res;
 	}
 
+	private static int getPageNumber(JsonNode node, String field) {
+		String page = getStringItem(node, field);
+		Logger.info("page url: " + page);
+		int idxPage = page.indexOf(Const.PAGE_IN_URL)
+				+ Const.PAGE_IN_URL.length();
+		return Integer.parseInt(page.substring(idxPage));
+	}
+
+	/**
+	 * This method authenticates Drupal and loads data for particular node type.
+	 * 
+	 * @param urlStr
+	 *            The Drupal data response
+	 * @param type
+	 *            The node type
+	 * @return extracted data
+	 */
+	private static String authenticateAndLoadDrupal(String urlStr, NodeType type) {
+		String res = urlStr;
+		String user = Play.application().configuration().getString(Const.DRUPAL_USER);
+		String password = Play.application().configuration().getString(Const.DRUPAL_PASSWORD);
+
+		Logger.info("authenticateAndLoadDrupal() url: " + urlStr);
+		HttpBasicAuth.downloadFileWithAuth(urlStr, user, password, type
+				.toString().toLowerCase() + Const.OUT_FILE_PATH);
+		res = urlStr;
+		return res;
+	}
+
+	/**
+	 * This method downloads remote data using HTTP request and retrieves
+	 * contentfor passed type.
+	 * 
+	 * @param urlStr
+	 * @param type
+	 * @return list of objects
+	 */
+	private static String downloadData(String urlStr, NodeType type) {
+		String res = "";
+		if (urlStr != null && urlStr.length() > 0) {
+			// aggregate data from drupal and store JSON content in a file
+			urlStr = authenticateAndLoadDrupal(urlStr, type);
+			// HttpBasicAuth.downloadFileWithAuth(urlStr, Const.AUTH_USER,
+			// Const.AUTH_PASSWORD, type.toString().toLowerCase() +
+			// Const.OUT_FILE_PATH);
+			// read file and store content in String
+			res = JsonUtils.readJsonFromFile(type.toString().toLowerCase()
+					+ Const.OUT_FILE_PATH);
+		}
+		return res;
+	}
+	
 	/**
 	 * This method replace textual link in User to Organisation
 	 * "field_affiliation" e.g. "BL" by generated Organisation URL e.g.
@@ -562,7 +685,8 @@ public enum JsonUtils {
 			while (userItr.hasNext()) {
 				User user = userItr.next();
 				user.affiliation = organisation.url;
-				user.updateOrganisation();
+        		// TODO: KL
+//				user.updateOrganisation();
 				Ebean.update(user);
 			}
 		}
@@ -734,7 +858,7 @@ public enum JsonUtils {
 				Target target = itr.next();
 				// String urlStr = "";
 				if (type.equals(NodeType.USER)) {
-					readListFromString(target.authorRef, urlList, type, null, res);
+//					readListFromString(target.authorRef, urlList, type, null, res);
 				}
 				if (type.equals(NodeType.TAXONOMY)) {
 					readListFromString(target.fieldCollectionCategories,
@@ -1081,7 +1205,8 @@ public enum JsonUtils {
 				if (existingUser != null && existingUser.name.length() > 0) {
 					isNew = false;
 					existingUser.affiliation = newUser.affiliation;
-					existingUser.updateOrganisation();
+            		// TODO: KL
+//					existingUser.updateOrganisation();
 					existingUser.id = newUser.id;
 					existingUser.url = newUser.url;
 					existingUser.edit_url = newUser.edit_url;

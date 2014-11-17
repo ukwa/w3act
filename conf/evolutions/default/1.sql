@@ -250,7 +250,7 @@ create table organisation (
   title                     varchar(255),
   edit_url                  varchar(255),
   summary                   varchar(255),
-  author_ref                varchar(255),
+  author_id                 bigint,
   affiliation               varchar(255),
   revision                  text,
   updated_at                timestamp not null,
@@ -306,35 +306,10 @@ create table target (
   url                       varchar(255),
   created_at                timestamp,
   organisation_id           bigint,
-  value                     text,
-  summary                   text,
-  format                    varchar(255),
-  field_scope               varchar(255),
-  field_depth               varchar(255),
-  field_via_correspondence  boolean,
-  field_uk_postal_address   boolean,
-  field_uk_hosting          boolean,
-  field_nominating_organisation varchar(255),
-  field_crawl_frequency     varchar(255),
+  author_id                 bigint,
   field_crawl_start_date    timestamp,
   field_crawl_end_date      timestamp,
-  field_uk_domain           boolean,
-  field_crawl_permission    varchar(255),
-  field_special_dispensation boolean,
-  field_special_dispensation_reason text,
-  field_uk_geo_ip           boolean,
-  field_professional_judgement boolean,
-  comment_count             bigint,
-  comment_count_new         bigint,
-  feed_nid                  bigint,
-  field_live_site_status    varchar(255),
-  field_wct_id              bigint,
-  field_spt_id              bigint,
   legacy_site_id            bigint,
-  field_no_ld_criteria_met  boolean,
-  field_key_site            boolean,
-  field_professional_judgement_exp text,
-  field_ignore_robots_txt   boolean,
   active                    boolean,
   white_list                varchar(255),
   black_list                varchar(255),
@@ -343,7 +318,6 @@ create table target (
   selector_notes            text,
   archivist_notes           text,
   selection_type            varchar(255),
-  selector                  varchar(255),
   flag_notes                text,
   tab_status                varchar(255),
   is_in_scope_uk_registration_value boolean,
@@ -351,7 +325,6 @@ create table target (
   is_uk_hosting_value       boolean,
   is_in_scope_ip_value      boolean,
   is_in_scope_ip_without_license_value boolean,
-  field_url                 text,
   domain                    text,
   field_description         text,
   field_uk_postal_address_url text,
@@ -374,8 +347,32 @@ create table target (
   qa_issue_category         text,
   qa_notes                  text,
   quality_notes             text,
-  author_ref                varchar(255),
+  field_url                 text,
+  title                     varchar(255),
+  value                     text,
+  summary                   text,
   edit_url                  varchar(255),
+  field_scope               varchar(255),
+  field_depth               varchar(255),
+  field_via_correspondence  boolean,
+  field_uk_postal_address   boolean,
+  field_uk_hosting          boolean,
+  field_crawl_frequency     varchar(255),
+  field_uk_domain           boolean,
+  field_uk_geoip            boolean,
+  field_special_dispensation boolean,
+  field_special_dispensation_reaso varchar(255),
+  field_live_site_status    varchar(255),
+  field_wct_id              bigint,
+  field_spt_id              bigint,
+  field_no_ld_criteria_met  boolean,
+  field_key_site            boolean,
+  field_professional_judgement boolean,
+  field_professional_judgement_exp varchar(255),
+  field_ignore_robots_txt   boolean,
+  format                    varchar(255),
+  language                  varchar(255),
+  revision                  varchar(255),
   updated_at                timestamp not null,
   constraint pk_target primary key (id))
 ;
@@ -536,12 +533,16 @@ alter table crawl_permission add constraint fk_crawl_permission_mailTempla_2 for
 create index ix_crawl_permission_mailTempla_2 on crawl_permission (mailTemplate_id);
 alter table crawl_permission add constraint fk_crawl_permission_contactPer_3 foreign key (contactPerson_id) references contact_person (id);
 create index ix_crawl_permission_contactPer_3 on crawl_permission (contactPerson_id);
-alter table instance add constraint fk_instance_organisationToInst_4 foreign key (organisation_id) references organisation (id);
-create index ix_instance_organisationToInst_4 on instance (organisation_id);
-alter table target add constraint fk_target_organisationToTarget_5 foreign key (organisation_id) references organisation (id);
-create index ix_target_organisationToTarget_5 on target (organisation_id);
-alter table creator add constraint fk_creator_organisation_6 foreign key (organisation_id) references organisation (id);
-create index ix_creator_organisation_6 on creator (organisation_id);
+alter table instance add constraint fk_instance_organisation_4 foreign key (organisation_id) references organisation (id);
+create index ix_instance_organisation_4 on instance (organisation_id);
+alter table organisation add constraint fk_organisation_authorUser_5 foreign key (author_id) references creator (id);
+create index ix_organisation_authorUser_5 on organisation (author_id);
+alter table target add constraint fk_target_organisation_6 foreign key (organisation_id) references organisation (id);
+create index ix_target_organisation_6 on target (organisation_id);
+alter table target add constraint fk_target_authorUser_7 foreign key (author_id) references creator (id);
+create index ix_target_authorUser_7 on target (author_id);
+alter table creator add constraint fk_creator_organisation_8 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_8 on creator (organisation_id);
 
 
 

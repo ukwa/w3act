@@ -399,8 +399,8 @@
 						<div class="form-group">
 			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
 						    <div class="col-sm-6">
-						        @if(instance.url != null && instance.fieldNominatingOrganisation != null) {
-  									@Organisation.getNominatingOrganisation(instance.fieldNominatingOrganisation)
+						        @if(instance.organisation != null) {
+  									@instance.organisation.title
   								} else {
   								    none
   								}

@@ -6,9 +6,13 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.apache.commons.lang3.StringUtils;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -40,12 +44,12 @@ public class Organisation extends ActModel {
      
     //bi-directional one-to-many association to Target
     @JsonIgnore
-    @OneToMany(mappedBy="organisationToTarget", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
     private List<Target> targets = new ArrayList<Target>();
 
     //bi-directional many-to-one association to Instance
     @JsonIgnore
-    @OneToMany(mappedBy="organisationToInstance", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
     private List<Instance> instances = new ArrayList<Instance>();
 
     @Required
@@ -60,8 +64,11 @@ public class Organisation extends ActModel {
     @JsonProperty
     public String summary;
     
-    public String authorRef;
-    
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	@JsonIgnore
+	public User authorUser;
+
     @JsonIgnore
     @JsonProperty
     @Required
@@ -136,7 +143,7 @@ public class Organisation extends ActModel {
     @Transient
     @JsonIgnore
     @JsonProperty
-    public Long vid;
+    public String vid;
 
     @Transient
     @JsonIgnore
@@ -295,23 +302,21 @@ public class Organisation extends ActModel {
      * @return organisation name
      */
     public static Organisation findByUrl(String url) {
-//    	Logger.info("organisation findByUrl: " + url);
-    	Organisation res = new Organisation();
-    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
-    		res = find.where().eq(Const.URL, url).findUnique();
-//    		Logger.info("found: " + res);
-    		if (res == null) {
-    			res = new Organisation();
-        		res.title = Const.NONE;
-        		res.url = Const.NONE;
+    	Organisation organisation = new Organisation();
+//    	if (StringUtils.isNotEmpty(url) && !url.equals(Const.NONE)) {
+    	if (StringUtils.isNotEmpty(url)) {
+    		organisation = find.where().eq(Const.URL, url).findUnique();
+    		// TODO: KL why does he create a new one?
+    		if (organisation == null) {
+    			organisation = new Organisation();
+        		organisation.title = Const.NONE;
+        		organisation.url = Const.NONE;
     		}
     	} else {
-    		res.title = Const.NONE;
-    		res.url = Const.NONE;
-//    		Logger.info("not found: " + res);
+    		organisation.title = Const.NONE;
+    		organisation.url = Const.NONE;
     	}
-//		Logger.info("return: " + res);
-    	return res;
+    	return organisation;
     }
 
     /**
@@ -385,16 +390,6 @@ public class Organisation extends ActModel {
         return find.all();
     }
 
-    /**
-     * This method shows nominating organisation in HTML page.
-     * @param organisationUrl The link to organisation in Target object field 
-     * 'field_nominating_organisation'
-     * @return
-     */
-    public static String getNominatingOrganisation(String organisationUrl) {
-        return Organisation.findByUrl(organisationUrl).title; 
-    }
-            
     /**
      * Return a page of Organisations
      *
@@ -473,7 +468,7 @@ public class Organisation extends ActModel {
 		return "Organisation [users=" + users + ", targets=" + targets
 				+ ", instances=" + instances + ", title=" + title
 				+ ", edit_url=" + edit_url + ", summary=" + summary
-				+ ", authorRef=" + authorRef + ", field_abbreviation="
+				+ ", authorUser=" + authorUser + ", field_abbreviation="
 				+ field_abbreviation + ", revision=" + revision + ", language="
 				+ language + ", value=" + value + ", feed_nid=" + feed_nid
 				+ ", status=" + status + ", promote=" + promote + ", sticky="

@@ -209,7 +209,7 @@
 		<input type="hidden" name="nid" value="@form("nid").value">
 		<input type="hidden" name="url" value="@form("url").value">
         <input type="hidden" name="user" value="@user.url">	
-		<input type="hidden" id="tabstatus" name="tabstatus" value="@form("tabstatus").value">
+		<input type="hidden" id="tabstatus" name="tabstatus" value="@form("tabStatus").value">
 
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {     			     		
 		<div class="row padding-10 pull-right">
@@ -719,7 +719,7 @@
 						<div class="form-group">
 							<label for="legacy_cite_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
 						    <div class="col-sm-6">
-			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form("legacySite_id").value">
+			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form("legacySiteId").value">
 							</div>
 						</div>
 					</div>
@@ -808,7 +808,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 						    <div class="col-sm-6">
-				                @if(form("fieldUkPostalAddress").value != null && form("fieldUkPostalAddress").value == "true") {             
+				                @if(form("field_uk_postal_address").value != null && form("field_uk_postal_address").value == "true") {             
 					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_uk_postal_address" value="true" />
@@ -834,7 +834,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("fieldViaCorrespondence").value != null && form("fieldViaCorrespondence").value == "true") {             
+				                @if(form("field_via_correspondence").value != null && form("field_via_correspondence").value == "true") {             
 					                <input type="checkbox" name="field_via_correspondence" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_via_correspondence" value="true" />
@@ -908,11 +908,11 @@
 							<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
 								<select name="field_scope" id="field_scope" class="form-control">
-					                @for(fieldScope <- Target.getAllScopeTypes()) {
-						                @if(fieldScope.equals(form("fieldScope").value)) {
-						                	<option selected>@Targets.getScopeGuiName(form("fieldScope").value)</option>
+					                @for(field_scope <- Target.getAllScopeTypes()) {
+						                @if(field_scope.equals(form("field_scope").value)) {
+						                	<option selected>@Targets.getScopeGuiName(form("field_scope").value)</option>
 						                } else {
-						                	<option>@Targets.getScopeGuiName(fieldScope)</option>
+						                	<option>@Targets.getScopeGuiName(field_scope)</option>
 						                }
 					                }
 								</select>
@@ -927,11 +927,11 @@
 							<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
 								<select name="field_depth" id="field_depth" class="form-control">
-					                @for(fieldDepth <- Target.getAllDepthTypes()) {
-						                @if(fieldDepth.equals(form("fieldDepth").value)) {
-						                	<option selected>@Targets.getDepthGuiName(form("fieldDepth").value)</option>
+					                @for(field_depth <- Target.getAllDepthTypes()) {
+						                @if(field_depth.equals(form("field_depth").value)) {
+						                	<option selected>@Targets.getDepthGuiName(form("field_depth").value)</option>
 						                } else {
-						                	<option>@Targets.getDepthGuiName(fieldDepth)</option>
+						                	<option>@Targets.getDepthGuiName(field_depth)</option>
 						                }
 					                }
 								</select>
@@ -961,47 +961,47 @@
 							<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
 						    <div class="col-sm-6">
 				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Domain Crawl Only")) {
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Domain Crawl Only")) {
 					 					<option selected>Domain Crawl Only</option>
 						            } else {						                
 					 					<option>Domain Crawl Only</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Annually")) {
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Annually")) {
 					 					<option selected>Annually</option>
 						            } else {						                
 					 					<option>Annually</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Six-monthly")) {
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Six-monthly")) {
 					 					<option selected>Six-monthly</option>
 						            } else {						                
 					 					<option>Six-monthly</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Quarterly")) {
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Quarterly")) {
 					 					<option selected>Quarterly</option>
 						            } else {						                
 					 					<option>Quarterly</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Monthly")) {
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Monthly")) {
 					 					<option selected>Monthly</option>
 						            } else {						                
 					 					<option>Monthly</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Old-Monthly-DO-NOT-USE")) {
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Old-Monthly-DO-NOT-USE")) {
 					 					<option selected>Old-Monthly-DO-NOT-USE</option>
 						            } else {						                
 					 					<option>Old-Monthly-DO-NOT-USE</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Weekly")) {
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Weekly")) {
 					 					<option selected>Weekly</option>
 						            } else {						                
 					 					<option>Weekly</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Daily")) {
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Daily")) {
 					 					<option selected>Daily</option>
 						            } else {						                
 					 					<option>Daily</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Never Crawl")) {
+				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Never Crawl")) {
 					 					<option selected>Never Crawl</option>
 						            } else {						                
 					 					<option>Never Crawl</option>

@@ -71,7 +71,7 @@
 	<ul class="nav nav-tabs">
 	   <li class="active"><a href="#">View</a></li>
 	   @if(((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) 
-	   		|| (user.hasRole("user") && user.url.equals(target.authorRef))) {
+	   		|| (user.hasRole("user") && user.url.equals(target.authorUser.url))) {
 	   <li><a onclick="switchPage(); return false;" href="@routes.Targets.edit(target.url)">Edit</a></li>
 	   }
 	</ul>
@@ -212,22 +212,22 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If known, please add the current status of the site)</small></label>
 						    <div class="col-sm-6">
-							  		@if(target.fieldLiveSiteStatus != null && target.fieldLiveSiteStatus.equals("N/A")) {
+							  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("N/A")) {
 							        	N/A
 							        }
-							  		@if(target.fieldLiveSiteStatus != null && target.fieldLiveSiteStatus.equals("Still live")) {
+							  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("Still live")) {
 							        	Still live 
 							        }
-							  		@if(target.fieldLiveSiteStatus != null && target.fieldLiveSiteStatus.equals("No longer updated")) {
+							  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("No longer updated")) {
 							        	No longer updated 
 							        }
-							  		@if(target.fieldLiveSiteStatus != null && target.fieldLiveSiteStatus.equals("Vanished")) {
+							  		@if(target.field_live_site_status != null && target.field_live_site_status.equals("Vanished")) {
 							        	Vanished
 							        }
-							  		@if(target.fieldLiveSiteStatus != null && !target.fieldLiveSiteStatus.equals("Vanished")
-							  			&& !target.fieldLiveSiteStatus.equals("No longer updated")
-							  			&& !target.fieldLiveSiteStatus.equals("Still live")
-							  			&& !target.fieldLiveSiteStatus.equals("N/A")) {
+							  		@if(target.field_live_site_status != null && !target.field_live_site_status.equals("Vanished")
+							  			&& !target.field_live_site_status.equals("No longer updated")
+							  			&& !target.field_live_site_status.equals("Still live")
+							  			&& !target.field_live_site_status.equals("N/A")) {
 							        	none
 							        }
 							</div>
@@ -240,7 +240,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
 						    <div class="col-sm-6">
-				                @if(target.fieldKeySite != null && target.fieldKeySite) {  
+				                @if(target.field_key_site != null && target.field_key_site) {  
 				                   yes           
 				                } else {
 				                   no
@@ -255,7 +255,7 @@
 						<div class="form-group">
 							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
 						    <div class="col-sm-6">
-			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@target.fieldWct_id">
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@target.field_wct_id">
 							</div>
 						</div>
 					</div>
@@ -266,7 +266,7 @@
 						<div class="form-group">
 			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
 						    <div class="col-sm-6">
-			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@target.fieldSpt_id">
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@target.field_spt_id">
 							</div>
 						</div>
 					</div>
@@ -353,8 +353,8 @@
 						<div class="form-group">
 			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
 						    <div class="col-sm-6">
-						        @if(target.url != null && target.fieldNominatingOrganisation != null) {
-  									@Organisation.getNominatingOrganisation(target.fieldNominatingOrganisation)
+						        @if(target.organisation != null) {
+  									@target.organisation.title
   								} else {
   								    none
   								}
@@ -379,8 +379,8 @@
 						<div class="form-group">
 			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
 						    <div class="col-sm-6">
-						        @if(target.url != null && target.authorRef != null) {
-  									@User.showUser(target.authorRef)
+						        @if(target.url != null && target.authorUser != null) {
+  									@User.showUser(target.authorUser.url)
   								} else {
   								    none
   								}
@@ -502,7 +502,7 @@
 						<div class="form-group">
 							<label for="legacy_site_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
 						    <div class="col-sm-6">
-			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@target.legacySite_id" readonly>
+			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@target.legacySiteId" readonly>
 							</div>
 						</div>
 					</div>
@@ -589,7 +589,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 						    <div class="col-sm-6">
-				                @if(target.fieldUkPostalAddress != null && target.fieldUkPostalAddress) {             
+				                @if(target.field_uk_postal_address != null && target.field_uk_postal_address) {             
 					                yes
 				                } else {
 					                no
@@ -615,7 +615,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 						    <div class="col-sm-6">
-				                @if(target.fieldViaCorrespondence != null && target.fieldViaCorrespondence) {             
+				                @if(target.field_via_correspondence != null && target.field_via_correspondence) {             
 					                yes
 				                } else {
 					                no
@@ -642,7 +642,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
 						    <div class="col-sm-6">
-				                @if(target.fieldProfessionalJudgement != null && target.fieldProfessionalJudgement) {             
+				                @if(target.field_professional_judgement != null && target.field_professional_judgement) {             
 					                yes
 				                } else {
 					                no
@@ -657,7 +657,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
 						    <div class="col-sm-6">
-			 					<textarea readonly name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@target.fieldProfessionalJudgementExp</textarea>
+			 					<textarea readonly name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@target.field_professional_judgement_exp</textarea>
 							</div>
 						</div>
 					</div>
@@ -669,7 +669,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
-				                @if(target.fieldNoLdCriteriaMet != null && target.fieldNoLdCriteriaMet) {             
+				                @if(target.field_no_ld_criteria_met != null && target.field_no_ld_criteria_met) {             
 					                yes
 				                } else {
 				                	no
@@ -688,8 +688,8 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Scope<font color="red">*</font> <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 					    <div class="col-sm-6">
-			                @if(target.fieldScope != null) {             
-				                @Targets.getScopeGuiName(target.fieldScope)
+			                @if(target.field_scope != null) {             
+				                @Targets.getScopeGuiName(target.field_scope)
 			                } else {
 				                none
 			                }
@@ -703,8 +703,8 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Depth<font color="red">*</font> <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 					    <div class="col-sm-6">
-			                @if(target.fieldDepth != null) {             
-				                @Targets.getDepthGuiName(target.fieldDepth)
+			                @if(target.field_depth != null) {             
+				                @Targets.getDepthGuiName(target.field_depth)
 			                } else {
 				                none
 			                }
@@ -718,7 +718,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
 					    <div class="col-sm-6">
-			                @if(target.fieldIgnoreRobotsTxt != null && target.fieldIgnoreRobotsTxt) {             
+			                @if(target.field_ignore_robots_txt != null && target.field_ignore_robots_txt) {             
 				                yes
 			                } else {
 				                no
@@ -733,7 +733,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."><font color="red">*</font></span> <small class="text-center">(How often should this site be archived?)</small></label>
 					    <div class="col-sm-6">
-	 						<input type="text" name="field_crawl_frequency" value="@target.fieldCrawlFrequency" size="60" maxlength="2048" class="form-control" readonly/>
+	 						<input type="text" name="field_crawl_frequency" value="@target.field_crawl_frequency" size="60" maxlength="2048" class="form-control" readonly/>
 						</div>
 					</div>
 				</div>

@@ -114,7 +114,7 @@
 				<tr>
 					@header("title", "Title")
 					@header("url", "URL(s)")
-					@header("field_nominating_organisation", "Organisation")
+					@header("organisation", "Organisation")
 					<th>Crawled URL(s)</th>
 					<th>Crawl Frequency</th>
 					<th>User</th>
@@ -130,17 +130,17 @@
 					<td><a class="brand" href="opera.bl.uk:/8080/wayback/*@target.get_field_list_as_str("fieldUrl")" target="_blank">(mid-crawl),</a>
 	                 	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url=http://@target.get_field_list_as_str("fieldUrl")" target="_blank">(archival),</a>
 	                 	<a class="brand" href="@target.get_field_list_as_str("fieldUrl")" target="_blank">(live)</a></td>
-					@if(target.getOrganisation != null 
-						&& target.getOrganisation.url != null
-						&& target.getOrganisation.title != null) {
-						<td><a href="@routes.Organisations.view(target.getOrganisation.url)">
-							@target.getOrganisation.title</a></td>
+					@if(target.organisation != null 
+						&& target.organisation.url != null
+						&& target.organisation.title != null) {
+						<td><a href="@routes.Organisations.view(target.organisation.url)">
+							@target.organisation.title</a></td>
 					} else {
 						<td></td>
 					}
 					<td>0</td>
-					<td>@target.fieldCrawlFrequency</td>
-					<td><a class="brand" href="@routes.Curators.edit(target.authorRef)">@target.get_user_by_id()</a></td>
+					<td>@target.field_crawl_frequency</td>
+					<td><a class="brand" href="@routes.Curators.edit(target.authorUser.url)">@target.get_user_by_id()</a></td>
 					<td>@Taxonomy.findByUrl(target.fieldQaStatus).name</td>
 					@if(target.fieldUrl != null && target.url != null) {
 					<td>@target.checkScopeStr(target.fieldUrl, target.url)</td>

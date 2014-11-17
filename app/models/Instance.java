@@ -44,7 +44,7 @@ public class Instance extends ActModel {
 	//bi-directional many-to-one association to Organisation
 	@ManyToOne
 	@JoinColumn(name="organisation_id")
-	public Organisation organisationToInstance;
+	public Organisation organisation;
     	
 	//bi-directional many-to-many association to Subject
 	@ManyToMany(mappedBy="instances")
@@ -387,7 +387,7 @@ public class Instance extends ActModel {
 	 */
 	public static int getInstanceNumberByScope(String url) {
 		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("fieldScope", url);
+        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_SCOPE, url);
         res = ll.findRowCount();
 		return res;
 	}
@@ -1084,7 +1084,7 @@ public class Instance extends ActModel {
 				&& fieldNominatingOrganisation.length() > 0) {
 			Organisation organisation = Organisation.findByUrl(fieldNominatingOrganisation);
 //            Logger.info("Add instance to organisation: " + organisation.toString());
-            this.organisationToInstance = organisation;
+            this.organisation = organisation;
 		}
     	
     }

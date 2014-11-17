@@ -227,10 +227,10 @@
 											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
 								                <option>None</option>
 								                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
-					                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.fieldCrawlFrequency)) {
-								                		<option selected>@curCrawlFrequency.fieldCrawlFrequency</option>
+					                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
+								                		<option selected>@curCrawlFrequency.field_crawl_frequency</option>
 							                		} else {
-								                		<option>@curCrawlFrequency.fieldCrawlFrequency</option>
+								                		<option>@curCrawlFrequency.field_crawl_frequency</option>
 							                		}
 								                }
 											</select>
@@ -242,10 +242,10 @@
 											<select name="field_depth" class="form-control target-form-control" id="field-depth">
 									        	<option>None</option>
 									            @for(curDepth <- Targets.getDepth()) {
-							                  		@if(depth != null && depth.equals(curDepth.fieldDepth)) {
-									                	<option selected>@curDepth.fieldDepth</option>
+							                  		@if(depth != null && depth.equals(curDepth.field_depth)) {
+									                	<option selected>@curDepth.field_depth</option>
 									                } else {
-									                	<option>@curDepth.fieldDepth</option>
+									                	<option>@curDepth.field_depth</option>
 									                }
 												}
 											</select>
