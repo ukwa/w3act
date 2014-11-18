@@ -7,21 +7,23 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.models.FieldModel;
 
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Taxonomy entity managed by Ebean
@@ -36,65 +38,118 @@ public class Taxonomy extends ActModel {
 	private static final long serialVersionUID = -8987367110038045775L;
 
 	//bi-directional many-to-many association to Target
+    @JsonIgnore
     @ManyToMany
 	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="ID") }) 
     private List<Target> targets = new ArrayList<Target>();
  
     //bi-directional many-to-many association to Instance
+    @JsonIgnore
     @ManyToMany
 	@JoinTable(name = Const.SUBJECT_INSTANCE, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
     private List<Instance> instances = new ArrayList<Instance>();
    
     //bi-directional many-to-many association to Target
+    @JsonIgnore
     @ManyToMany
 	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
 	private List<Target> targetLicenses = new ArrayList<Target>();
   
     @Required
+    @JsonProperty
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 
+    @JsonIgnore
     public String ttype;  
-    @Column(columnDefinition = "text")
-    public String description;
-    public Long weight;
-    public Long nodeCount;
 
     @Column(columnDefinition = "text")
+    @JsonProperty
+    public String description;
+
+    @JsonProperty
+    public Long weight;
+
+    @Column(columnDefinition = "text")
+    @JsonProperty
     public String vocabulary;
-    public Long feedNid;    
+
     // lists
     @Column(columnDefinition = "text") 
+    @JsonIgnore
     public String fieldOwner;
     @Column(columnDefinition = "text") 
+    @JsonIgnore
     public String fieldDates;
     @Column(columnDefinition = "text") 
+    @JsonIgnore
     public String fieldPublish;
-    /**
-     * 'true' if collection should be made visible in the UI, default 'false'
-     */
+
+    
     @JsonIgnore
     public Boolean publish;
 //    @Required
+
     @Column(columnDefinition = "text") 
     public String parent;
+
     @Column(columnDefinition = "text") 
+    @JsonIgnore
     public String parentsAll;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private Long tid;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long node_count;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty(value="vocabulary")
+    private Object vocabularyList;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty(value="parent")
+    private List<FieldModel> parentList;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private List<FieldModel> parents_all;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long feed_nid;    
+
+//    {"tid":"108","name":"Physics","description":"","weight":"0","node_count":0,"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/108","vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/6","id":"6","resource":"taxonomy_vocabulary"},
+//    "parent":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/99","id":99,"resource":"taxonomy_term"}],
+//    "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/108","id":"108","resource":"taxonomy_term"},{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/99","id":"99","resource":"taxonomy_term"}],
+//    "feed_nid":"0"}
 
     public Taxonomy() {}
 
+    public Taxonomy(Long tid) {
+    	this.tid = tid;
+    }
+    
     public Taxonomy(String name) {
         this.name = name;
     }
     
-    public Taxonomy(String name, String description, Long weight, Long nodeCount, Long feedNid, Boolean publish) {
+    public Taxonomy(String name, String description, Long weight, Long nodeCount, Long feed_nid, Boolean publish) {
         this(name);
         this.description = description;
         this.weight = weight;
-        this.nodeCount = nodeCount;
-        this.feedNid = feedNid;
+        this.node_count = nodeCount;
+        this.feed_nid = feed_nid;
         this.publish = publish;
     }
     
@@ -1163,9 +1218,81 @@ public class Taxonomy extends ActModel {
 	public void save() {
     	super.save();
     	this.url = Const.ACT_URL + this.id;
-    	this.parentsAll = url;
+//    	this.parentsAll = url;
     	Logger.info("ID: " + this.id);
     	super.save();
-    }    
+    }
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Long getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Long weight) {
+		this.weight = weight;
+	}
+
+	public Long getTid() {
+		return tid;
+	}
+
+	public void setTid(Long tid) {
+		this.tid = tid;
+	}
+
+	public Long getNode_count() {
+		return node_count;
+	}
+
+	public void setNode_count(Long node_count) {
+		this.node_count = node_count;
+	}
+
+	public Object getVocabularyList() {
+		return vocabularyList;
+	}
+
+	public void setVocabularyList(Object vocabularyList) {
+		this.vocabularyList = vocabularyList;
+	}
+
+	public List<FieldModel> getParentList() {
+		return parentList;
+	}
+
+	public void setParentList(List<FieldModel> parentList) {
+		this.parentList = parentList;
+	}
+
+	public List<FieldModel> getParents_all() {
+		return parents_all;
+	}
+
+	public void setParents_all(List<FieldModel> parents_all) {
+		this.parents_all = parents_all;
+	}
+
+	public Long getFeed_nid() {
+		return feed_nid;
+	}
+
+	public void setFeed_nid(Long feed_nid) {
+		this.feed_nid = feed_nid;
+	}
 }
 

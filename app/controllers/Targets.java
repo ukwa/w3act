@@ -283,26 +283,31 @@ public class Targets extends AbstractController {
     public static Result targets(int pageNo, String sortBy, String order, String filter, String curator,
     		String organisation, String subject, String crawlFrequency, String depth, String collection, 
     		String license, int pageSize, String flag) {
-    	Logger.info("Targets.targets() subject: " + subject);   	
+    	Logger.info("Pre Targets.targets() subject: " + subject);
+    	
+    	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
+				subject, crawlFrequency, depth, collection, license, flag);
+    	
+    	Logger.info("Post Targets.targets() subject: " + subject);
+    	
         return ok(
         	targets.render(
         			"Targets", 
         			User.findByEmail(request().username()), 
-        			filter, 
-        			Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
-        					subject, crawlFrequency, depth, collection, license, flag), 
+        			filter,
+        			pageTargets,
         			sortBy, 
         			order, 
-                	curator, 
-                	organisation, 
-                	subject, 
-                	crawlFrequency, 
-                	depth, 
-                	collection, 
-                	license, 
-                	pageSize,
-                	flag)
-        	);
+        	    	curator, 
+        	    	organisation, 
+        	    	subject, 
+        	    	crawlFrequency, 
+        	    	depth, 
+        	    	collection, 
+        	    	license, 
+        	    	pageSize,
+        	    	flag)
+        		);
     }
 	
     /**

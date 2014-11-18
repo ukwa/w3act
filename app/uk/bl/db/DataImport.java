@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import models.ContactPerson;
 import models.Collection;
 import models.Flag;
-import models.Instance;
 import models.MailTemplate;
 import models.Organisation;
 import models.Permission;
@@ -41,7 +40,7 @@ public enum DataImport {
 			if (Ebean.find(User.class).findRowCount() == 0) {
 	        	this.importPermissions();
 	        	this.importRoles();
-	        	this.importExternalOrganisations();
+	        	this.importJsonOrganisations();
 	        	this.importOrganisations();
 	        	this.importCurators();
 	            this.importAccounts();
@@ -61,9 +60,15 @@ public enum DataImport {
 			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
 	        	this.importContactPersons();
 			}
-			if (Ebean.find(Target.class).findRowCount() == 0) {
+//			if (Ebean.find(Target.class).findRowCount() == 0) {
 	        	this.importUrlsToTargets();
-			}
+//			}
+//			if (Ebean.find(Collection.class).findRowCount() == 0) {
+//	        	this.importCollections();
+//			}
+//			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
+//	        	this.importJsonTaxonomies();
+//			}
 //				// aggregate url data from drupal and store JSON content in a file
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
 //				// store urls in DB
@@ -91,14 +96,16 @@ public enum DataImport {
 //                Ebean.save(allSingleOrganisations);
 //                JsonUtils.normalizeOrganisationUrlInUser();
 //                Logger.info("organisations successfully loaded");
+			
 //                Logger.info("load taxonomies ...");
 //                // aggregate original taxonomies from drupal extracting information from aggregated data
-//		        List<Object> allTaxonomies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY);
+//		        List<Object> allTaxonomies = JsonUtils.INSTANCE.extractDrupalData(Const.NodeType.TAXONOMY);
 ////		        List<Taxonomy> cleanedTaxonomies = cleanUpTaxonomies(allTaxonomies);
 //				// store taxonomies in DB
 //                Ebean.save(allTaxonomies);
 ////                Ebean.save(cleanedTaxonomies);
 //                Logger.info("taxonomies successfully loaded");
+			
 //                // due to merging of different original object models the resulting 
 //                // collection set is evaluated from particular taxonomy type
 //                Logger.info("load collections ..."); 
@@ -106,6 +113,7 @@ public enum DataImport {
 //				// store collections in DB
 //                Ebean.save(allCollections);
 //                Logger.info("collections successfully loaded");
+			
 //                Logger.info("load instances");
 //				// aggregate instances data from drupal and store JSON content in a file
 //		        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
@@ -290,7 +298,7 @@ public enum DataImport {
         Logger.info("Loaded Organisations");
 	}
 
-	private void importExternalOrganisations() {
+	private void importJsonOrganisations() {
 		JsonUtils.INSTANCE.convertOrganisations();
 	}
 	
@@ -303,6 +311,18 @@ public enum DataImport {
 		// store urls in DB
         JsonUtils.INSTANCE.convertUrlsToTargets();
         Logger.info("Loaded URLs");
+	}
+
+	private void importJsonTaxonomies() {
+		// store urls in DB
+        JsonUtils.INSTANCE.convertTaxonomies();
+        Logger.info("Loaded JSON Taxonomies");
+	}
+	
+	private void importCollections() {
+		// store urls in DB
+        JsonUtils.INSTANCE.convertCollections();
+        Logger.info("Loaded Collections");
 	}
 	
     /**

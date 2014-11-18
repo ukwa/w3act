@@ -304,6 +304,7 @@ public enum JsonUtils {
 						target.edit_url = this.getWctUrl(target.vid);
 						target.createdAt = this.getDateFromSeconds(target.getCreated());
 						
+						// {"body":{"value":"<p>UK address on contacts page</p>\n", "summary":"", "format":"plain_text"},
 						if (target.getBody() instanceof LinkedHashMap) {
 							Map<String, String> bodyMap = (LinkedHashMap<String,String>)target.getBody();
 							String value = bodyMap.get("value");
@@ -320,16 +321,17 @@ public enum JsonUtils {
 							}
 						}
 						
+						// "field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
 						List<String> fieldUrls = new ArrayList<String>();
 						for (Map<String,String> map : target.getField_url()) {
 							Logger.info("Field Url: " + map.get("url"));
 							fieldUrls.add(map.get("url"));
 						}
-						
 						if (!fieldUrls.isEmpty()) {
 							target.fieldUrl = StringUtils.join(fieldUrls, ", ");
 						}
 						
+						// "field_description":[],
 						if (target.getField_description() != null && target.getField_description() instanceof Map) {
 							Map<String, String> fieldDescription = (Map<String, String>)target.getField_description();
 							String value = fieldDescription.get("value");
@@ -346,48 +348,98 @@ public enum JsonUtils {
 							}
 						}
 						
+						// "field_uk_postal_address_url":{"url":"http://www.childrenslegalcentre.com/index.php?page=contact_us"},
 						if (target.getField_uk_postal_address_url() != null && target.getField_uk_postal_address_url() instanceof Map) {
 							Map<String,String> postalAddressUrl = (Map<String,String>)target.getField_uk_postal_address_url();
 							String url = postalAddressUrl.get("url");
 							target.fieldUkPostalAddressUrl = url;
 						}
 	
+						// "field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},
+						FieldModel fieldNominatingOrganisation = target.getField_nominating_organisation();
+						if (fieldNominatingOrganisation != null && StringUtils.isNotEmpty(fieldNominatingOrganisation.getId())) {
+							String orgUrl = this.getActUrl(fieldNominatingOrganisation.getId());
+							if (StringUtils.isNotEmpty(orgUrl)) {
+								target.organisation = Organisation.findByUrl(orgUrl);
+							}
+						}
+						
+						List<String> existingTaxonomyUrls = new ArrayList<String>();
+						
+						// "field_suggested_collections":[],
 						if (target.getField_suggested_collections() != null) {
 							List<FieldModel> suggestCollections = target.getField_suggested_collections();
 							List<String> suggestCollectionsList = new ArrayList<String>();
 							for (FieldModel fieldModel : suggestCollections) {
 								String actUrl = this.getActUrl(fieldModel.getId());
 								suggestCollectionsList.add(actUrl);
+								
+								String url = getWebarchiveCreatorUrl(actUrl, Const.NodeType.TAXONOMY);
+								if (!existingTaxonomyUrls.contains(url)) {
+									existingTaxonomyUrls.add(url);
+									StringBuilder taxonomyUrl = new StringBuilder(url).append(Const.JSON);
+									String taxonomyContent = this.getAuthenticatedContent(taxonomyUrl.toString());
+									JsonNode taxonomyNode = Json.parse(taxonomyContent.toString());
+									Logger.info("taxonomy url: " + taxonomyContent);
+									ObjectMapper taxonomyMapper = new ObjectMapper();
+									taxonomyMapper.setSerializationInclusion(Include.NON_NULL);
+									if (taxonomyNode != null) {
+										Iterator<JsonNode> it = taxonomyNode.iterator();
+										while (it.hasNext()) {
+											JsonNode jsonNode = it.next();
+											Logger.info("json: " + jsonNode);
+											Taxonomy taxonomy = taxonomyMapper.readValue(jsonNode.toString(), Taxonomy.class);
+											Logger.info("taxonomy: " + taxonomy);
+										}
+									}
+								}
 							}
+							
+							// DO TAXONOMY SAVING HERE
+							
+//							readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
+//							readListFromString(target.fieldSuggestedCollections, urlList, type, TaxonomyType.COLLECTION, res);
+//							readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
+//							readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
+////							Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
+//							readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
+							
+//							public void readListFromString(String fieldName, List<String> urlList, NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
+//								Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
+//								readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
+//								if (fieldName != null && fieldName.length() > 0) {
+//			
+//										executeUrlRequest(fieldName, urlList, type, taxonomy_type, res);
+//									}
+//								}
+//			
+//						public void executeUrlRequest(String url, List<String> urlList,
+//										NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
+//									url = getWebarchiveCreatorUrl(url, type);
+//									String urlStr = url + Const.JSON;
+//									if (!urlList.contains(urlStr)) {
+//										urlList.add(urlStr);
+//										aggregateObjectList(urlStr, urlList, type, taxonomy_type, res);
+//									}
+//								}
+//
+//						}
+//							
+//							
+//							
+//							
+//							
+//							
+							
+							
+							
+							
 							if (!suggestCollectionsList.isEmpty()) {
 								target.fieldSuggestedCollections = StringUtils.join(suggestCollectionsList, ", ");
 							}
 						}
-	
-						if (target.getField_license() != null) {
-							List<FieldModel> licenses = target.getField_license();
-							List<String> licensesList = new ArrayList<String>();
-							for (FieldModel fieldModel : licenses) {
-								String actUrl = this.getActUrl(fieldModel.getId());
-								licensesList.add(actUrl);
-							}
-							if (!licensesList.isEmpty()) {
-								target.fieldLicense = StringUtils.join(licensesList, ", ");
-							}
-						}
-						
-						if (target.getField_collection_categories() != null) {
-							List<FieldModel> collectionCategories = target.getField_collection_categories();
-							List<String> collectionCategoriesList = new ArrayList<String>();
-							for (FieldModel fieldModel : collectionCategories) {
-								String actUrl = this.getActUrl(fieldModel.getId());
-								collectionCategoriesList.add(actUrl);
-							}
-							if (!collectionCategoriesList.isEmpty()) {
-								target.fieldCollectionCategories = StringUtils.join(collectionCategoriesList, ", ");
-							}
-						}
-	
+
+						// "field_collections":[],
 						if (target.getField_collections() != null) {
 							List<FieldModel> collections = target.getField_collections();
 							List<String> collectionsList = new ArrayList<String>();
@@ -400,29 +452,72 @@ public enum JsonUtils {
 							}
 						}
 						
-						FieldModel fieldNominatingOrganisation = target.getField_nominating_organisation();
-						
-						if (fieldNominatingOrganisation != null && StringUtils.isNotEmpty(fieldNominatingOrganisation.getId())) {
-							String orgUrl = this.getActUrl(fieldNominatingOrganisation.getId());
-							if (StringUtils.isNotEmpty(orgUrl)) {
-								target.organisation = Organisation.findByUrl(orgUrl);
+						// "field_license":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/168","id":"168","resource":"taxonomy_term"}],
+						if (target.getField_license() != null) {
+							List<FieldModel> licenses = target.getField_license();
+							List<String> licensesList = new ArrayList<String>();
+							for (FieldModel fieldModel : licenses) {
+								String actUrl = this.getActUrl(fieldModel.getId());
+								licensesList.add(actUrl);
+							}
+							if (!licensesList.isEmpty()) {
+								target.fieldLicense = StringUtils.join(licensesList, ", ");
 							}
 						}
 						
+						// "field_collection_categories":[],
+						if (target.getField_collection_categories() != null) {
+							List<FieldModel> collectionCategories = target.getField_collection_categories();
+							List<String> collectionCategoriesList = new ArrayList<String>();
+							for (FieldModel fieldModel : collectionCategories) {
+								String actUrl = this.getActUrl(fieldModel.getId());
+								collectionCategoriesList.add(actUrl);
+							}
+							if (!collectionCategoriesList.isEmpty()) {
+								target.fieldCollectionCategories = StringUtils.join(collectionCategoriesList, ", ");
+							}
+						}
+						
+						// "field_crawl_start_date":null,
 						if (target.getField_crawl_start_date() != null) {
 							target.fieldCrawlStartDate = getDateFromSeconds(target.getField_crawl_start_date());
 						}
+						// "field_crawl_end_date":null,
 						if (target.getField_crawl_end_date() != null) {
 							target.fieldCrawlEndDate = getDateFromSeconds(target.getField_crawl_end_date());
 						}
 						
-						target.createdAt = this.getDateFromSeconds(target.getCreated());
-	
+						// "field_notes":{"value":"<p>There are missing documents in this gather for example <a href=\"https://www.wjec.co.uk/uploads/publications/16330.pdf\">https://www.wjec.co.uk/uploads/publications/16330.pdf</a>. It could be a capping issue. I have taken off the cap.</p>\n","format":"filtered_html"}
+						if (target.getField_notes() != null && target.getField_notes() instanceof Map) {
+							Map<String,String> fieldNotes = (Map<String,String>)target.getField_notes();
+							String value = fieldNotes.get("value");
+							target.fieldNotes = value;
+						}
+						
+						// "field_snapshots":[{"uri":"http://www.webarchive.org.uk/act/field_collection_item/6","id":"6","resource":"field_collection_item"}]
+						if (target.getField_snapshots() != null) {
+							List<FieldModel> fieldSnapshots = target.getField_snapshots();
+							List<String> fieldSnapshotsList = new ArrayList<String>();
+							for (FieldModel fieldModel : fieldSnapshots) {
+								String actUrl = this.getActUrl(fieldModel.getId());
+								fieldSnapshotsList.add(actUrl);
+							}
+							if (!fieldSnapshotsList.isEmpty()) {
+								// TODO: KL COLLECTIONS?
+//								target. = StringUtils.join(fieldSnapshotsList, ", ");
+							}					
+						}
+						
+						// "field_instances":[],
+
+						// "author":{"uri":"http://www.webarchive.org.uk/act/user/9","id":"9","resource":"user"},
 						FieldModel author = target.getAuthor();
 						if (author != null) {
 							User authorUser = User.findByUrl(this.getActUrl(author.getId()));
 							target.authorUser = authorUser;
 						}
+
+//						"comments":[],
 						
 						target.fieldUkDomain = BooleanUtils.toBoolean(target.getField_uk_domain());
 						target.fieldUkGeoip = BooleanUtils.toBoolean(target.getField_uk_geoip());
@@ -453,45 +548,34 @@ public enum JsonUtils {
 							target.field_ignore_robots_txt = false;
 						}
 						
+						target.createdAt = this.getDateFromSeconds(target.getCreated());
+
+//			        	target.save();
+			        	count++;
+
 						// TODO: KL
 						// target.domain
-						// target.field_description
 	
 	//					{"body":[],"field_scope":"root","field_url":[{"url":"http://www.cats.org.uk/"}],"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/16","id":"16","resource":"taxonomy_term"},"field_depth":"capped","field_via_correspondence":false,"field_uk_postal_address":false,"field_uk_hosting":false,"field_description":{"value":"<p>website of animal welfare organisation</p>\n","summary":"","format":"filtered_html"},"field_uk_postal_address_url":[],"field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},"field_crawl_frequency":"domaincrawl","field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/108","id":"108","resource":"node"}],"field_collections":[],"field_crawl_start_date":null,"field_crawl_end_date":null,"field_uk_domain":"Yes","field_license":[],"field_crawl_permission":"","field_collection_categories":[],"field_special_dispensation":false,"field_special_dispensation_reaso":null,"field_live_site_status":null,"field_notes":[],"field_wct_id":null,"field_spt_id":null,"field_snapshots":[],"field_no_ld_criteria_met":null,"field_key_site":null,"field_uk_geoip":"Yes","field_professional_judgement":false,"field_professional_judgement_exp":null,"field_ignore_robots_txt":null,"field_instances":[],"nid":"109","vid":"113","is_new":false,"type":"url","title":"Cats Protection","language":"en","url":"http://www.webarchive.org.uk/act/node/109","edit_url":"http://www.webarchive.org.uk/act/node/109/edit","status":"1","promote":"0","sticky":"0","created":"1363770213","changed":"1375215708","author":{"uri":"http://www.webarchive.org.uk/act/user/61","id":"61","resource":"user"},"log":"","revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null}
-	////		        	 {"body":{"value":"<p>UK address on contacts page</p>\n",
-	////		        	"summary":"",
-	////		        	"format":"plain_text"},
+
 	////		        	"field_scope":"root",
-	//		        	"field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
 	////		        	"field_depth":"capped",
 	////		        	"field_via_correspondence":false,
 	////		        	"field_uk_postal_address":true,
 	////		        	"field_uk_hosting":false,
-	//		        	"field_description":[],
-	//		        	"field_uk_postal_address_url":{"url":"http://www.childrenslegalcentre.com/index.php?page=contact_us"},
-	////		        	"field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},
 	////		        	"field_crawl_frequency":"domaincrawl",
-	//		        	"field_suggested_collections":[],
-	//		        	"field_collections":[],
-	////		        	"field_crawl_start_date":null,
-	////		        	"field_crawl_end_date":null,
 	//		        	"field_uk_domain":"No",
-	//		        	"field_license":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/168","id":"168","resource":"taxonomy_term"}],
 	////		        	"field_crawl_permission":"",
-	//		        	"field_collection_categories":[],
 	////		        	"field_special_dispensation":false,
 	////		        	"field_special_dispensation_reaso":null,
 	////		        	"field_live_site_status":null,
-	//		        	"field_notes":[],
 	////		        	"field_wct_id":"128704","field_spt_id":"141374",
-	//		        	"field_snapshots":[],
 	////		        	"field_no_ld_criteria_met":null,
 	////		        	"field_key_site":null,
 	//		        	"field_uk_geoip":"Yes",
 	////		        	"field_professional_judgement":false,
 	////		        	"field_professional_judgement_exp":null,
 	////		        	"field_ignore_robots_txt":null,
-	//		        	"field_instances":[],
 	////		        	"nid":"17",
 	////		        	"vid":"17",
 	////		        	"is_new":false,
@@ -505,14 +589,11 @@ public enum JsonUtils {
 	////		        	"sticky":"0",
 	////		        	"created":"1355322059",
 	////		        	"changed":"1387368879",
-	////		        	"author":{"uri":"http://www.webarchive.org.uk/act/user/9","id":"9","resource":"user"},
 	////		        	"log":"Updated by FeedsNodeProcessor",
 	////		        	"revision":null,
-	////		        	"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":"0"}
+	////		        	"comment":"2","comment_count":"0","comment_count_new":"0","feed_nid":"0"}
 	//		        	
 			        	
-			        	target.save();
-			        	count++;
 					}
 				}
 
@@ -523,6 +604,52 @@ public enum JsonUtils {
 		}		
 
 	}
+
+	public void convertTaxonomies() {
+		try {
+			String jsonUrl = Const.URL_STR + Const.NodeType.TAXONOMY.toString().toLowerCase();
+		    String content = this.getAuthenticatedContent(jsonUrl);
+		    JsonNode parentNode = Json.parse(content);
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.setSerializationInclusion(Include.NON_NULL);
+			if (parentNode != null) {
+				JsonNode rootNode = parentNode.path(Const.LIST_NODE);
+				Iterator<JsonNode> iterator = rootNode.iterator();
+				while (iterator.hasNext()) {
+					JsonNode node = iterator.next();
+					Logger.info("json: " + node);
+					Taxonomy taxonomy = objectMapper.readValue(node.toString(), Taxonomy.class);
+					Logger.info("taxonomy: " + taxonomy);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		 
+	}
+	
+	public void convertCollections() {
+
+		try {
+			String jsonUrl = Const.URL_STR + Const.NodeType.COLLECTION.toString().toLowerCase();
+		    String content = this.getAuthenticatedContent(jsonUrl);
+		    JsonNode parentNode = Json.parse(content);
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.setSerializationInclusion(Include.NON_NULL);
+			if (parentNode != null) {
+				JsonNode rootNode = parentNode.path(Const.LIST_NODE);
+				Iterator<JsonNode> iterator = rootNode.iterator();
+				while (iterator.hasNext()) {
+					JsonNode node = iterator.next();
+					Logger.info("json: " + node);
+					Collection collection = objectMapper.readValue(node.toString(), Collection.class);
+					Logger.info("collection: " + collection);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		 
+	}
+	
 	/**
 	 * This method retrieves JSON data from Drupal for particular domain object
 	 * type (e.g. Target, Collection...) with parameters e.g.
@@ -825,10 +952,10 @@ public enum JsonUtils {
 					collection.author = taxonomy.fieldOwner;
 					collection.summary = taxonomy.description;
 					collection.title = taxonomy.name;
-					collection.feedNid = taxonomy.feedNid;
+					collection.feedNid = taxonomy.feed_nid;
 					collection.url = taxonomy.url;
 					collection.weight = taxonomy.weight;
-					collection.nodeCount = taxonomy.nodeCount;
+					collection.nodeCount = taxonomy.node_count;
 					collection.vocabulary = taxonomy.vocabulary;
 					collection.fieldOwner = taxonomy.fieldOwner;
 					collection.fieldDates = taxonomy.fieldDates;
@@ -889,7 +1016,9 @@ public enum JsonUtils {
 	 */
 	public void executeUrlRequest(String url, List<String> urlList,
 			NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
+		Logger.info("exc 1" + url);
 		url = getWebarchiveCreatorUrl(url, type);
+		Logger.info("exc 2" + url);
 		String urlStr = url + Const.JSON;
 		if (!urlList.contains(urlStr)) {
 			urlList.add(urlStr);
@@ -911,17 +1040,18 @@ public enum JsonUtils {
 	 * @param res
 	 *            Resulting list
 	 */
-	public void readListFromString(String fieldName,
-			List<String> urlList, NodeType type, TaxonomyType taxonomy_type,
-			List<Object> res) {
+	public void readListFromString(String fieldName, List<String> urlList, NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
 //		Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
+//		readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
 		if (fieldName != null && fieldName.length() > 0) {
 			if (fieldName.contains(Const.COMMA)) {
 				List<String> resList = Arrays.asList(fieldName
 						.split(Const.COMMA));
 				Iterator<String> itr = resList.iterator();
 				while (itr.hasNext()) {
-					executeUrlRequest(itr.next(), urlList, type, taxonomy_type,
+					String next = itr.next();
+					Logger.info("next: " + next);
+					executeUrlRequest(next, urlList, type, taxonomy_type,
 							res);
 				}
 			} else {
@@ -952,17 +1082,12 @@ public enum JsonUtils {
 //					readListFromString(target.authorRef, urlList, type, null, res);
 				}
 				if (type.equals(NodeType.TAXONOMY)) {
-					readListFromString(target.fieldCollectionCategories,
-							urlList, type, TaxonomyType.COLLECTION, res);
-					readListFromString(target.fieldSuggestedCollections,
-							urlList, type, TaxonomyType.COLLECTION, res);
-					readListFromString(target.fieldLicense, urlList, type,
-							TaxonomyType.LICENSE, res);
-					readListFromString(target.fieldSubject, urlList, type,
-							TaxonomyType.SUBJECT, res);
+					readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
+					readListFromString(target.fieldSuggestedCollections, urlList, type, TaxonomyType.COLLECTION, res);
+					readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
+					readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
 //					Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
-					readListFromString(target.fieldQaStatus, urlList, type,
-							TaxonomyType.QUALITY_ISSUE, res);
+					readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
 				}
 				if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
 					List<Taxonomy> taxonomies = Taxonomy.findAll();

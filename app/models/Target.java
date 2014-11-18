@@ -446,7 +446,7 @@ public class Target extends ActModel {
 	@Transient
 	@JsonIgnore
 	@JsonProperty
-	private Object field_snapshots;
+	private List<FieldModel> field_snapshots;
 
 	@Transient
 	@JsonIgnore
@@ -1674,14 +1674,12 @@ public class Target extends ActModel {
 		ExpressionList<Target> exp = Target.find.where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);
-		exp = exp.add(Expr.or(Expr.icontains(Const.FIELD_URL, filterUrl),
-				Expr.icontains(Const.TITLE, filterUrl)));
+		exp = exp.add(Expr.or(Expr.icontains(Const.FIELD_URL, filterUrl), Expr.icontains(Const.TITLE, filterUrl)));
 		if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
-			exp = exp.icontains(Const.AUTHOR, curatorUrl);
+//			exp = exp.icontains(Const.AUTHOR, curatorUrl);
 		}
 		if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
-			exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION,
-					organisationUrl);
+//			exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
 		}
 		Logger.debug("pageTargets() subject: " + subjectUrl);
 		if (subjectUrl != null && !subjectUrl.equals(Const.EMPTY)) {
@@ -1704,25 +1702,19 @@ public class Target extends ActModel {
 				&& !depth.toLowerCase().equals(Const.NONE)) {
 			exp = exp.icontains(Const.FIELD_DEPTH, depth);
 		}
-		Logger.debug("pageTargets() suggested_collections: "
-				+ suggested_collections);
-		if (suggested_collections != null
-				&& !suggested_collections.equals(Const.NONE)) {
-			exp = exp.icontains(Const.FIELD_COLLECTION_CATEGORIES,
-					suggested_collections);
+		Logger.debug("pageTargets() suggested_collections: " + suggested_collections);
+		if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
+			exp = exp.icontains(Const.FIELD_COLLECTION_CATEGORIES, suggested_collections);
 			// exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS,
 			// suggested_collections);
 		}
-		if (license != null && !license.equals("")
-				&& !license.toLowerCase().equals(Const.NONE)) {
+		if (license != null && !license.equals("") && !license.toLowerCase().equals(Const.NONE)) {
 			exp = exp.icontains(Const.FIELD_LICENSE_NODE, license);
 		}
-		if (flag != null && !flag.equals("")
-				&& !flag.toLowerCase().equals(Const.NONE)) {
+		if (flag != null && !flag.equals("") && !flag.toLowerCase().equals(Const.NONE)) {
 			exp = exp.icontains(Const.FLAGS, flag);
 		}
-		res = exp.query().orderBy(sortBy + " " + order).orderBy(Const.DOMAIN)
-				.findPagingList(pageSize).setFetchAhead(false).getPage(page);
+		res = exp.query().orderBy(sortBy + " " + order).orderBy(Const.DOMAIN).findPagingList(pageSize).setFetchAhead(false).getPage(page);
 		Logger.debug("Expression list size: " + res.getTotalRowCount());
 		return res;
 	}
@@ -2787,11 +2779,11 @@ public class Target extends ActModel {
 		this.field_spt_id = field_spt_id;
 	}
 
-	public Object getField_snapshots() {
+	public List<FieldModel> getField_snapshots() {
 		return field_snapshots;
 	}
 
-	public void setField_snapshots(Object field_snapshots) {
+	public void setField_snapshots(List<FieldModel> field_snapshots) {
 		this.field_snapshots = field_snapshots;
 	}
 

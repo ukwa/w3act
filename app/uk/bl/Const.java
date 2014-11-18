@@ -51,7 +51,7 @@ public final class Const {
 	public static final String FIELD_AFFILIATION  = "field_affiliation";
 	public static final String FIELD_SUBJECT      = "field_subject";
 	public static final String FIELD_QA_STATUS    = "field_qa_status";
-	public static final String FIELD_NOMINATING_ORGANISATION = "fieldNominatingOrganisation";
+	public static final String FIELD_NOMINATING_ORGANISATION = "field_nominating_organisation";
 	public static final String FIELD_TARGET       = "fieldTarget";
 	public static final String FIELD_QA_ISSUE     = "field_qa_issue";
 	public static final String JSON               = ".json";
@@ -135,7 +135,7 @@ public final class Const {
 	 */
 	public static final String TID                = "tid";
 	public static final String TITLE              = "title";
-	public static final String FIELD_URL          = "fieldUrl";
+	public static final String FIELD_URL          = "field_url";
 	public static final String KEYSITE            = "keysite";
 	public static final String STATUS             = "status";
 	public static final String LIVE_SITE_STATUS   = "livesitestatus";
@@ -147,7 +147,7 @@ public final class Const {
 	public static final String FIELD_SUGGESTED_COLLECTIONS = "fieldSuggestedCollections";
 	public static final String IS_IN_SCOPE_UK_REGISTRATION_VALUE = "isInScopeUkRegistrationValue";
 	public static final String FIELD_CRAWL_FREQUENCY = "field_crawl_frequency";
-	public static final String FIELD_COLLECTION_CATEGORIES = "fieldCollectionCategories";
+	public static final String FIELD_COLLECTION_CATEGORIES = "field_collection_categories";
 	public static final String FIELD_SCOPE        = "field_scope";
 	public static final String FIELD_DEPTH        = "field_depth";
 	public static final String FLAG               = "flag";
@@ -157,7 +157,7 @@ public final class Const {
 	public static final String FIELD_WCT          = "fieldWct_id";
 	public static final String FIELD_SPT_ID       = "spt";
 	public static final String FIELD_LICENSE      = "license";
-	public static final String FIELD_LICENSE_NODE = "fieldLicense";
+	public static final String FIELD_LICENSE_NODE = "field_license";
 	public static final String FIELD_UK_HOSTING   = "field_uk_hosting";
 	public static final String FIELD_UK_POSTAL_ADDRESS = "field_uk_postal_address";
 	public static final String FIELD_UK_POSTAL_ADDRESS_URL = "field_uk_postal_address_url";
