@@ -54,9 +54,9 @@ public class CrawlData {
 		knownSites = new HashSet<>();
 		foundDocuments = new ArrayList<>();
 		
-		knownSites.add(watchedTarget.fieldUrl);
+		knownSites.add(watchedTarget.target.field_url);
 		Set<Link> fringe = new HashSet<>();
-		fringe.add(new Link(null, watchedTarget.fieldUrl));
+		fringe.add(new Link(null, watchedTarget.target.field_url));
 		breathFirstSearch(watchedTarget, fringe, 1);
 		
 		return foundDocuments;

@@ -56,6 +56,7 @@
 			if (formattedDate)
 				document.getElementById(id).value = parseDate(rawDate);
 			$("#selection_menu").css({display: "none"});
+			fillYear();
 		}
 
 		function fillAuthor() {
@@ -67,6 +68,18 @@
 			document.getElementById("author" + authorNumber + "Fn").value = author.substring(0, spacePosition);
 			document.getElementById("author" + authorNumber + "Ln").value = author.substring(spacePosition + 1);
 			$("#selection_menu").css({display: "none"});
+		}
+
+		function fillYear() {
+			var date = document.getElementById("publicationDate").value;
+			var publicationYear = document.getElementById("publicationYear");
+			if (date.indexOf("-") >= 0) {
+				var dateParts = date.split("-");
+				publicationYear.value = dateParts[dateParts.length-1];
+				publicationYear.readOnly = true;
+			} else {
+				publicationYear.readOnly = false;
+			}
 		}
 		
 		function openPopup(url) {
@@ -149,7 +162,11 @@
 @main(title, user, scripts) {
 	
 	<div class="page-header">
-    	<h1><a href="@routes.Documents.list(1)">Documents</a> > @form("filename").value</h1>
+    	<h1>
+    		<a href="@routes.WatchedTargets.list()">Watched Targets</a> >
+    		<a href="@routes.Documents.list(new Long(form("watchedTarget.id").value))">@form("watchedTarget.target.title").value</a> >
+    		@form("filename").value
+    	</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
@@ -174,10 +191,14 @@
 			<input type="hidden" name="book.id_document" value="@form("id").value">
 			<input type="hidden" name="journal.id" value="@form("journal.id").value">
 			<input type="hidden" name="journal.id_document" value="@form("id").value">
+			<input type="hidden" name="watchedTarget.id" value="@form("watchedTarget.id").value">
+			<input type="hidden" name="watchedTarget.target.nid" value="@form("watchedTarget.target.nid").value">
+			<input type="hidden" name="watchedTarget.target.title" value="@form("watchedTarget.target.title").value">
 
 			@inputText(form("title"), editable, '_label -> "Title")
 			@inputText(form("doi"), editable, '_label -> "DOI (Digital Object Identifier)")
-			@inputText(form("publicationDate"), editable, '_label -> "Publication Date")
+			@inputText(form("publicationDate"), editable, '_label -> "Publication Date", 'onchange -> "fillYear()")
+			@inputText(form("publicationYear"), editable, '_label -> "Year of Publication")
 			@inputText(form("filename"), editable, '_label -> "Filename")
 			@select(form("type"),
 				options(List("","Book", "Journal Article", "Journal Issue")),
@@ -192,14 +213,12 @@
 				@inputText(form("book.series"), editable, '_label -> "Series")
 				@inputText(form("book.publisher"), editable, '_label -> "Publisher")
 				@inputText(form("book.edition"), editable, '_label -> "Edition")
-				@inputText(form("book.publicationYear"), editable, '_label -> "Year of Publication")
 			</div>
 			<div id="journal_general">
 				@select(form("journal.journalTitleId"), options(journalTitles), editable, '_label -> "Journal Title")
 				@if(editable) {
 					<input type="submit" name="journalTitle" class="btn btn-success" value="New Journal Title">
 				}
-				@inputText(form("journal.publicationYear"), editable, '_label -> "Year of Publication")
 				@inputText(form("journal.volume"), editable, '_label -> "Volume")
 				@inputText(form("journal.issue"), editable, '_label -> "Issue/Part")
 			</div>
@@ -232,6 +251,9 @@
 				<div style="padding-top: 5px">
 					<input type="button" class="btn btn-success" value="Publication Date" onclick="fillDate('publicationDate')" style="width: 100%">
 				</div>
+				<div style="padding-top: 5px">
+					<input type="button" class="btn btn-success" value="Year of Publication" onclick="fillInput('publicationYear')" style="width: 100%">
+				</div>
 				<div id="book_general_buttons">
 					<div style="padding-top: 5px">
 						<input type="button" class="btn btn-success" value="ISBN" onclick="fillInput('book_isbn')" style="width: 100%">
@@ -250,14 +272,8 @@
 					<div style="padding-top: 5px">
 						<input type="button" class="btn btn-success" value="Edition" onclick="fillInput('book_edition')" style="width: 100%">
 					</div>
-					<div style="padding-top: 5px">
-						<input type="button" class="btn btn-success" value="Year of Publication" onclick="fillInput('book_publicationYear')" style="width: 100%">
-					</div>
 				</div>
 				<div id="journal_general_buttons">
-					<div style="padding-top: 5px">
-						<input type="button" class="btn btn-success" value="Year of Publication" onclick="fillInput('journal_publicationYear')" style="width: 100%">
-					</div>
 					<div style="padding-top: 5px">
 						<input type="button" class="btn btn-success" value="Volume" onclick="fillInput('journal_volume')" style="width: 100%">
 					</div>

@@ -27,8 +27,6 @@ public class Journal extends Model {
 	@Required
 	@Transient
 	public Long journalTitleId;
-	@Required
-    public Integer publicationYear;
 	public String volume;
 	public String issue;
 }

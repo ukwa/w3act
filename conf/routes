@@ -122,7 +122,7 @@ POST	/journaltitles						controllers.JournalTitles.save(toDocument: Boolean ?= f
 
 GET    	/watchedtargets/search				controllers.WatchedTargets.search()
 GET    	/watchedtargets/filterbyjson/:url	controllers.WatchedTargets.filterByJson(url)
-GET		/watchedtargets/list				controllers.WatchedTargets.list(p:Int ?= 0, s ?= "fieldUrl", o ?= "asc", f ?= "")
+GET		/watchedtargets/list				controllers.WatchedTargets.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 GET     /watchedtargets/:watchedtarget		controllers.Documents.list(watchedtarget: Long, p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 POST	/watchedtargets/crawl				controllers.WatchedTargets.crawl(watchedtarget: Long)
 

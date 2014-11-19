@@ -65,13 +65,15 @@
 		<table class="table table-hover">
 			<thead>
 				<tr>
-					@header("fieldUrl", "Url", currentSortBy, currentOrder, link)
+					@header("target.title", "Title", currentSortBy, currentOrder, link)
+					@header("target.field_url", "Url", currentSortBy, currentOrder, link)
 				</tr>
 			</thead>
 			<tbody>
 			@for(watchedTarget <- currentPage.getList) {
 				<tr>
-					<td><a href="@routes.Documents.list(watchedTarget.id)">@watchedTarget.fieldUrl</a></td>
+					<td><a href="@routes.Documents.list(watchedTarget.id)">@watchedTarget.target.title</a></td>
+					<td><a href="@watchedTarget.target.field_url">@watchedTarget.target.field_url</a></td>
 				</tr>
 			}
 			</tbody>

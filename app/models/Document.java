@@ -48,6 +48,8 @@ public class Document extends Model {
 	public String doi;
 	@DateTime(pattern="dd-MM-yyyy")
 	public Date publicationDate;
+	@Required
+    public Integer publicationYear;
     @Required
 	public String filename;
     public String type;
@@ -67,15 +69,11 @@ public class Document extends Model {
         if (isJournalArticleOrIssue()) {
         	if (journal.journalTitleId == null)
                 errors.add(new ValidationError("journal.journalTitleId", required));
-        	if (journal.publicationYear == null)
-                errors.add(new ValidationError("journal.publicationYear", required));
         	if (journal.volume.isEmpty() && journal.issue.isEmpty())
                 errors.add(new ValidationError("journal.issue", "Complete Volume or Issue/Part or both"));
         } else if (isWholeBook()) {
         	if (book.publisher.isEmpty())
         		errors.add(new ValidationError("book.publisher", required));
-        	if (book.publicationYear == null)
-        		errors.add(new ValidationError("book.publicationYear", required));
         }
         return errors.isEmpty() ? null : errors;
     }

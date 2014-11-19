@@ -26,7 +26,5 @@ public class Book extends Model {
 	@Required
 	public String publisher;
 	public String edition;
-	@Required
-    public Integer publicationYear;
 	
 }

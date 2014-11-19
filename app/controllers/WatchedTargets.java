@@ -39,14 +39,19 @@ public class WatchedTargets extends AbstractController {
     	
     	User user = User.findByEmail(request().username());
     	
-    	/*List<WatchedTarget> watchedTargetsTestData = Arrays.asList(
-    			new WatchedTarget(user, "http://www.ifs.org.uk/publications/re", false),
-    			new WatchedTarget(user, "http://www.thinknpc.org/publications/", true),
-    			new WatchedTarget(user, "http://www.ofsted.gov.uk/resources/surveys", false),
-    			new WatchedTarget(user, "http://www.parliament.uk/business/committees/committees-a-z/commons-select/home-affairs-committee/publications/", false),
-    			new WatchedTarget(user, "https://www.gov.uk/government/publications", false)
-    			);
-    	Ebean.save(watchedTargetsTestData);*/
+    	if (WatchedTarget.find.findRowCount() == 0) {
+	    	List<WatchedTarget> watchedTargetsTestData = Arrays.asList(
+	    			new WatchedTarget(user, "ifs", "act-ifs", "http://www.ifs.org.uk/publications/re", false),
+	    			new WatchedTarget(user, "thinknpc", "act-thinknpc", "http://www.thinknpc.org/publications/", true),
+	    			new WatchedTarget(user, "ofsted", "act-ofsted", "http://www.ofsted.gov.uk/resources/surveys", false),
+	    			new WatchedTarget(user, "parliament", "act-parliament", "http://www.parliament.uk/business/committees/committees-a-z/commons-select/home-affairs-committee/publications/", false),
+	    			new WatchedTarget(user, "gov", "act-gov", "https://www.gov.uk/government/publications", false)
+	    			);
+	    	for (WatchedTarget watchedTarget : watchedTargetsTestData) {
+	    		Ebean.save(watchedTarget.target);
+	    	}
+	    	Ebean.save(watchedTargetsTestData);
+    	}
     	    	
         return ok(
         	list.render(

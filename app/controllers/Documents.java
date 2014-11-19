@@ -86,7 +86,8 @@ public class Documents extends AbstractController {
 		
 		if (journalTitle != null) {
 			session().putAll(documentForm.data());
-			return redirect(routes.JournalTitles.addJournalTitle(1, true));
+			return redirect(routes.JournalTitles.addJournalTitle(
+					new Long(documentForm.apply("watchedTarget.target.nid").value()), true));
 		}
 		
 		Logger.info("Errors: " + documentForm.hasErrors());
