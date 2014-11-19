@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -13,7 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 import play.Logger;
@@ -32,8 +32,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Taxonomy entity managed by Ebean
  */
 @Entity
-@MappedSuperclass
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="ttype")
 public class Taxonomy extends ActModel {
      
     /**
@@ -73,12 +73,13 @@ public class Taxonomy extends ActModel {
 	@JoinColumn(name = "taxonomy_vocabulary_id")
 	private TaxonomyVocabulary taxonomyVocabulary;
 	
+	@Column(insertable=false, updatable=false)
+	public String ttype;
+	 
     @Required
     @JsonProperty
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 
-    @JsonIgnore
-    public String ttype;  
 
     @Column(columnDefinition = "text")
     @JsonProperty
@@ -1349,11 +1350,19 @@ public class Taxonomy extends ActModel {
 	public void setTaxonomyVocabulary(TaxonomyVocabulary taxonomyVocabulary) {
 		this.taxonomyVocabulary = taxonomyVocabulary;
 	}
+	
+	public String getTtype() {
+		return ttype;
+	}
+
+	public void setTtype(String ttype) {
+		this.ttype = ttype;
+	}
 
 	@Override
 	public String toString() {
-		return "Taxonomy [name=" + name + ", ttype=" + ttype + ", description="
-				+ description + ", tid=" + tid + ", node_count=" + node_count
+		return "Taxonomy [name=" + name + ", description="
+				+ description + ", tid=" + tid + ", ttype=" + ttype + " node_count=" + node_count
 				+ ", vocabularyList=" + vocabularyValue + ", parentList="
 				+ parentList + ", parents_all=" + parents_all + ", feed_nid="
 				+ feed_nid + ", weight=" + weight + ", field_owner="

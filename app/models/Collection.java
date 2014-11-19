@@ -19,10 +19,9 @@ import uk.bl.Const;
  * DCollection entity managed by Ebean
  */
 @Entity
-@Table(name = "collection")
+@DiscriminatorValue("collection")
 public class Collection extends Taxonomy {
 
-	
 	/**
 	 * 
 	 */
@@ -401,7 +400,7 @@ public class Collection extends Taxonomy {
 
 	@Override
 	public String toString() {
-		return "Collection [name=" + name + ", ttype=" + ttype
+		return "Collection [name=" + name
 				+ ", description=" + description + ", vocabulary=" + vocabulary
 				+ ", publish=" + publish + ", parent=" + parent
 				+ ", parentsAll=" + parentsAll + ", node_count=" + node_count

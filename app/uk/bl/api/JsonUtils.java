@@ -569,7 +569,7 @@ public enum JsonUtils {
 
 
 	public Taxonomy convertTaxonomies(String actUrl, List<String> existingTaxonomyUrls) throws IOException {
-		Taxonomy taxonomy = null;
+		Collection taxonomy = null;
 		String url = getWebarchiveCreatorUrl(actUrl, Const.NodeType.TAXONOMY);
 		if (!existingTaxonomyUrls.contains(url)) {
 			existingTaxonomyUrls.add(url);
@@ -580,13 +580,13 @@ public enum JsonUtils {
 			Logger.info("taxonomy content: " + taxonomyContent);
 			ObjectMapper taxonomyMapper = new ObjectMapper();
 			taxonomyMapper.setSerializationInclusion(Include.NON_NULL);
-			taxonomy = taxonomyMapper.readValue(taxonomyContent, Taxonomy.class);
+			taxonomy = taxonomyMapper.readValue(taxonomyContent, Collection.class);
 			Logger.info("taxonomy: " + taxonomy);
 			taxonomy.url = this.getActUrl(taxonomy.getTid());
 			Taxonomy lookup = Taxonomy.findByUrl(taxonomy.url);
 			Logger.info("lookup: " + lookup);
 			if (lookup == null) {
-				taxonomy.ttype = TaxonomyType.COLLECTION.toString().toLowerCase();
+//				taxonomy.ttype = TaxonomyType.COLLECTION.toString().toLowerCase();
 				if (taxonomy.getField_owner() != null) {
 					List<FieldModel> fieldOwners = taxonomy.getField_owner();
 					for (FieldModel fieldOwner : fieldOwners) {
@@ -611,6 +611,7 @@ public enum JsonUtils {
 					}
 					taxonomy.setTaxonomyVocabulary(taxonomyVocabulary);
 				}
+//				Ebean.save(taxonomy);
 				taxonomy.save();
 			}
 			
@@ -1395,19 +1396,19 @@ public enum JsonUtils {
 			parseJsonNodeExt(node, obj, urlList, type, taxonomy_type, res);
 			boolean hasEmptyName = false;
 			if (type.equals(Const.NodeType.TAXONOMY)) {
-				((Taxonomy) obj).ttype = taxonomy_type.toString().toLowerCase();
+//				((Taxonomy) obj).ttype = taxonomy_type.toString().toLowerCase();
 				if (((Taxonomy) obj).name == null
 						|| ((Taxonomy) obj).name.length() == 0) {
 					hasEmptyName = true;
 				}
-				if (((Taxonomy) obj).ttype != null
-						&& ((Taxonomy) obj).ttype.equals(Const.LICENCE)) {
-					if (((Taxonomy) obj).name != null
-							&& ((Taxonomy) obj).name
-									.equals(Const.OLD_UKWA_LICENSE)) {
-						((Taxonomy) obj).name = Const.NEW_UKWA_LICENSE;
-					}
-				}
+//				if (((Taxonomy) obj).ttype != null
+//						&& ((Taxonomy) obj).ttype.equals(Const.LICENCE)) {
+//					if (((Taxonomy) obj).name != null
+//							&& ((Taxonomy) obj).name
+//									.equals(Const.OLD_UKWA_LICENSE)) {
+//						((Taxonomy) obj).name = Const.NEW_UKWA_LICENSE;
+//					}
+//				}
 //				((Taxonomy) obj).tid = Utils.createId();
 				// Logger.info("taxonomy type: " +
 				// taxonomy_type.toString().toLowerCase());

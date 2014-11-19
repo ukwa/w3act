@@ -2,351 +2,351 @@
 
 taxonomies:
 
-    - !!models.Taxonomy
+    - !!models.License
         ttype:        license
         name:         Open UKWA Licence (2014-)
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Art and Design
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Architecture
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Comedy and Humour
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Dance
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Family History / Genealogy
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Film / Cinema
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Geography
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         History
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Languages
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Literature
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Local History
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Music
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         News and Contemporary Events
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Philosophy and Ethics
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Publishing, Printing and Bookselling
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Religion
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         Theatre
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Arts & Humanities        
         name:         TV and Radio
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Agriculture, Fishing, and Forestry
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Banking, Insurance, Accountancy and Financial Economics
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Business Studies and Management Theory
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Company Web Sites
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Economic Development, Enterprise and Aid
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Economics and Economic Theory
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Employment, Unemployment and Labour Economics
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Industries
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Marketing and Market Research
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Trade, Commerce, and Globalisation
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Business, Economy & Industry        
         name:         Transport and Infrastructure
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Education & Research     
         name:         Dictionaries, Encyclopaedias, and Reference Works
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Education & Research     
         name:         Further Education
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Education & Research     
         name:         Higher Education
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Education & Research     
         name:         Libraries, Archives and Museums
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Education & Research     
         name:         Lifelong Learning
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Education & Research     
         name:         Preschool Education
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Education & Research     
         name:         School Education
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Education & Research     
         name:         Special Needs Education
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Education & Research     
         name:         Vocational Education
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Central Government
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Civil Rights, Pressure Groups, and Trade Unions
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Crime, Criminology, Police and Prisons
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Devolved Government
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Inter-Governmental Agencies
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         International Relations, Diplomacy, and Peace
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Law and Legal System
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Local Government
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Political Parties
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Politics, Political Theory and Political Systems
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Government, Law & Politics     
         name:         Public Inquiries
 
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Medicine & Health     
         name:         Alternative Medicine / Complementary Medicine
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Medicine & Health     
         name:         Conditions and Diseases
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Medicine & Health     
         name:         Health Organisations and Services
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Medicine & Health     
         name:         Medicines, Treatments and Therapies
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Medicine & Health     
         name:         Public Health and Safety
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Science & Technology
         name:         Computer Science, Information Technology and Web Technology
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Science & Technology
         name:         Engineering
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Science & Technology
         name:         Environment
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Science & Technology
         name:         Life Sciences
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Science & Technology
         name:         Mathematics
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Science & Technology
         name:         Physical Sciences
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Science & Technology
         name:         Popular Science
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Science & Technology
         name:         Zoology, Veterinary Science and Animal Health
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Society & Culture
         name:         Communities
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Society & Culture
         name:         Digital Society
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Society & Culture
         name:         Food and Drink
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Society & Culture
         name:         Social Problems and Welfare
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Society & Culture
         name:         Sociology, Anthropology and Population Studies
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Society & Culture
         name:         Sports and Recreation
         
-    - !!models.Taxonomy
+    - !!models.Subject
         ttype:        subsubject
         parent:       Society & Culture
         name:         Travel & Tourism
