@@ -5,6 +5,7 @@ import java.util.*;
 import javax.persistence.*;
 
 import play.db.ebean.*;
+import uk.bl.Const;
 
 
 /**
@@ -23,7 +24,8 @@ public class TaxonomyVocabulary extends ActModel {
     public String machine_name;
     @Column(columnDefinition = "text")
     public String description;
-    public Long termCount;
+    public Long term_count;
+    public Long vid;
     
     public TaxonomyVocabulary() {
     	super();
@@ -43,6 +45,11 @@ public class TaxonomyVocabulary extends ActModel {
      */
     public static List<TaxonomyVocabulary> findInvolving() {
         return find.all();
+    }
+    
+    public static TaxonomyVocabulary findByVid(Long vid) {
+    	TaxonomyVocabulary tv = find.where().eq("vid", vid).findUnique();
+    	return tv;
     }
     
     /**

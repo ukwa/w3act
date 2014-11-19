@@ -7,10 +7,13 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 import play.Logger;
@@ -28,8 +31,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Taxonomy entity managed by Ebean
  */
-@Entity 
-@Table(name = "taxonomy")
+@Entity
+@MappedSuperclass
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Taxonomy extends ActModel {
      
     /**
@@ -58,6 +62,17 @@ public class Taxonomy extends ActModel {
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
 	private List<Target> targetLicenses = new ArrayList<Target>();
   
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = Const.TAXONOMY_USER, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+	inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
+	private List<User> ownerUsers;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "taxonomy_vocabulary_id")
+	private TaxonomyVocabulary taxonomyVocabulary;
+	
     @Required
     @JsonProperty
     public String name; 
@@ -69,40 +84,34 @@ public class Taxonomy extends ActModel {
     @JsonProperty
     public String description;
 
-    @JsonProperty
-    public Long weight;
-
     @Column(columnDefinition = "text")
-    @JsonProperty
+    @JsonIgnore
     public String vocabulary;
 
-    // lists
-    @Column(columnDefinition = "text") 
     @JsonIgnore
-    public String fieldOwner;
-    @Column(columnDefinition = "text") 
-    @JsonIgnore
-    public String fieldDates;
-    @Column(columnDefinition = "text") 
-    @JsonIgnore
-    public String fieldPublish;
-
+    @JsonProperty
+    private Boolean field_publish;
     
     @JsonIgnore
     public Boolean publish;
 //    @Required
 
     @Column(columnDefinition = "text") 
+    @JsonIgnore
     public String parent;
 
     @Column(columnDefinition = "text") 
     @JsonIgnore
     public String parentsAll;
 
+	@Column(columnDefinition = "text")
+	@JsonProperty
+	public String revision;
+
     @Transient
     @JsonIgnore
     @JsonProperty
-    private Long tid;
+    private String tid;
     
     @Transient
     @JsonIgnore
@@ -110,9 +119,8 @@ public class Taxonomy extends ActModel {
     public Long node_count;
     
     @Transient
-    @JsonIgnore
     @JsonProperty(value="vocabulary")
-    private Object vocabularyList;
+    private FieldModel vocabularyValue;
     
     @Transient
     @JsonIgnore
@@ -127,19 +135,29 @@ public class Taxonomy extends ActModel {
     @Transient
     @JsonIgnore
     @JsonProperty
-    public Long feed_nid;    
+    public Long feed_nid;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long weight;
 
-//    {"tid":"108","name":"Physics","description":"","weight":"0","node_count":0,"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/108","vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/6","id":"6","resource":"taxonomy_vocabulary"},
-//    "parent":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/99","id":99,"resource":"taxonomy_term"}],
-//    "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/108","id":"108","resource":"taxonomy_term"},{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/99","id":"99","resource":"taxonomy_term"}],
-//    "feed_nid":"0"}
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private List<FieldModel> field_owner;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private Object field_dates;
+    
+//    {"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+//    "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
+//    "field_publish":true,"tid":"250","name":"European Parliament Elections 2014","description":"","weight":"0","node_count":10,"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250","vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},"parent":[],"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
 
     public Taxonomy() {}
 
-    public Taxonomy(Long tid) {
-    	this.tid = tid;
-    }
-    
     public Taxonomy(String name) {
         this.name = name;
     }
@@ -247,21 +265,22 @@ public class Taxonomy extends ActModel {
      * @return taxonomy object
      */
     public static Taxonomy findByUrl(String url) {
-    	Taxonomy res = new Taxonomy();
+    	Taxonomy res = null;
 //        Logger.info("taxonomy url: " + url);
         
         if (url != null && url.length() > 0 && !url.contains(Const.COMMA)) {
 	        // in order to replace "taxonomy_term" read from target.collection_categories by "taxonomy/term"
 //	        url = url.replace("_", "/"); 
 	        Taxonomy res2 = find.where().eq(Const.URL, url).findUnique();
-	        if (res2 == null) {
-	        	res.name = Const.NONE;
-	        } else {
-	        	res = res2;
-	        }
+	        return res2;
+//	        if (res2 == null) {
+//	        	res.name = Const.NONE;
+//	        } else {
+//	        	res = res2;
+//	        }
 //	        Logger.info("taxonomy name: " + res.name);
         } else {
-        	res.name = Const.NONE;
+//        	res.name = Const.NONE;
         }
 //        return find.where().eq(Const.URL, url).findUnique();
     	return res;
@@ -1205,10 +1224,6 @@ public class Taxonomy extends ActModel {
 		return res;
 	}       
     	
-    public String toString() {
-        return "Taxonomy(" + id + ") with name: " + name;
-    }
-    
     public static Taxonomy findByTypeAndUrl(String type, String url) {
         Taxonomy taxonomy = find.where().eq(Const.TTYPE, type).eq(Const.URL, url).findUnique();
     	return taxonomy;
@@ -1247,11 +1262,11 @@ public class Taxonomy extends ActModel {
 		this.weight = weight;
 	}
 
-	public Long getTid() {
+	public String getTid() {
 		return tid;
 	}
 
-	public void setTid(Long tid) {
+	public void setTid(String tid) {
 		this.tid = tid;
 	}
 
@@ -1263,12 +1278,12 @@ public class Taxonomy extends ActModel {
 		this.node_count = node_count;
 	}
 
-	public Object getVocabularyList() {
-		return vocabularyList;
+	public FieldModel getVocabularyValue() {
+		return vocabularyValue;
 	}
 
-	public void setVocabularyList(Object vocabularyList) {
-		this.vocabularyList = vocabularyList;
+	public void setVocabularyValue(FieldModel vocabularyValue) {
+		this.vocabularyValue = vocabularyValue;
 	}
 
 	public List<FieldModel> getParentList() {
@@ -1293,6 +1308,57 @@ public class Taxonomy extends ActModel {
 
 	public void setFeed_nid(Long feed_nid) {
 		this.feed_nid = feed_nid;
+	}
+
+	public List<FieldModel> getField_owner() {
+		return field_owner;
+	}
+
+	public void setField_owner(List<FieldModel> field_owner) {
+		this.field_owner = field_owner;
+	}
+
+	public Object getField_dates() {
+		return field_dates;
+	}
+
+	public void setField_dates(Object field_dates) {
+		this.field_dates = field_dates;
+	}
+
+	public Boolean getField_publish() {
+		return field_publish;
+	}
+
+	public void setField_publish(Boolean field_publish) {
+		this.field_publish = field_publish;
+	}
+
+	public List<User> getOwnerUsers() {
+		return ownerUsers;
+	}
+
+	public void setOwnerUsers(List<User> ownerUsers) {
+		this.ownerUsers = ownerUsers;
+	}
+
+	public TaxonomyVocabulary getTaxonomyVocabulary() {
+		return taxonomyVocabulary;
+	}
+
+	public void setTaxonomyVocabulary(TaxonomyVocabulary taxonomyVocabulary) {
+		this.taxonomyVocabulary = taxonomyVocabulary;
+	}
+
+	@Override
+	public String toString() {
+		return "Taxonomy [name=" + name + ", ttype=" + ttype + ", description="
+				+ description + ", tid=" + tid + ", node_count=" + node_count
+				+ ", vocabularyList=" + vocabularyValue + ", parentList="
+				+ parentList + ", parents_all=" + parents_all + ", feed_nid="
+				+ feed_nid + ", weight=" + weight + ", field_owner="
+				+ field_owner + ", field_dates=" + field_dates
+				+ ", field_publish=" + field_publish + "]";
 	}
 }
 

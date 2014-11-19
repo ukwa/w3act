@@ -153,7 +153,7 @@ public class InstanceController extends AbstractController {
 //		newInstance.updateSubject();
         if (getFormParam(Const.TREE_KEYS) != null) {
         	newInstance.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-        	newInstance.collectionToInstance = Collection.convertUrlsToObjects(newInstance.fieldCollectionCategories);
+//        	newInstance.collectionToInstance = Collection.convertUrlsToObjects(newInstance.fieldCollectionCategories);
 //        	newInstance.updateCollection();
     		Logger.debug("newInstance.field_collection_categories: " + newInstance.fieldCollectionCategories);
         }
@@ -446,7 +446,7 @@ public class InstanceController extends AbstractController {
             newInstance.subjectToInstance = Taxonomy.convertUrlsToObjects(newInstance.fieldSubject);
             if (getFormParam(Const.TREE_KEYS) != null) {
             	newInstance.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-            	newInstance.collectionToInstance = Collection.convertUrlsToObjects(newInstance.fieldCollectionCategories);
+//            	newInstance.collectionToInstance = Collection.convertUrlsToObjects(newInstance.fieldCollectionCategories);
 	    		Logger.debug("newInstance.field_collection_categories: " + newInstance.fieldCollectionCategories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
@@ -699,7 +699,7 @@ public class InstanceController extends AbstractController {
 		    			sb.append(", ");
 		    		}
 //	    			Logger.debug("added");
-					sb.append("{\"title\": \"" + collection.title + "\"," + checkSelection(collection.url, targetUrl) + 
+					sb.append("{\"title\": \"" + collection.name + "\"," + checkSelection(collection.url, targetUrl) + 
 							" \"key\": \"" + collection.url + "\"" + 
 							getChildren(collection.url, targetUrl) + "}");
 	    		}

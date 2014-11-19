@@ -5,23 +5,22 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
 import play.Logger;
-import play.data.validation.Constraints.Required;
 import play.db.ebean.*;
 import uk.bl.Const;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * DCollection entity managed by Ebean
  */
 @Entity
 @Table(name = "collection")
-public class Collection extends ActModel {
+public class Collection extends Taxonomy {
 
 	
 	/**
@@ -41,126 +40,10 @@ public class Collection extends ActModel {
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
     private List<Instance> instances = new ArrayList<Instance>();
     
-    @JsonIgnore
-    @Column(columnDefinition = "text") 
-    public String value;
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String summary;
-    
-    @JsonIgnore
-    public String format;
-    
-    @JsonIgnore
-    public Long vid;
-    
-    @JsonIgnore
-    public Boolean isNew;
-    
-    @JsonIgnore
-    public String type;
-    
-    @Required
-    public String title;
-    
-    @JsonIgnore
-    public String language;
-    
-    @JsonIgnore
-    public String editUrl;
-    
-    @JsonIgnore
-    public Long status;
-    
-    @JsonIgnore
-    public Long promote;
-    
-    @JsonIgnore
-    public Long sticky;
-    
-    @JsonIgnore
-    public String author;
-    
-    @JsonIgnore
-    public String log;
-    
-    @JsonIgnore
-    public Long comment;
-    
-    @JsonIgnore
-    public Long commentCount;
-    
-    @JsonIgnore
-    public Long commentCountNew;
-    
-    @JsonIgnore
-    public String revision;
-    
-    @JsonIgnore
-    public Long feedNid;    
-    
-    @Column(columnDefinition = "text") 
-    public String fieldOwner;
-    
-    @Column(columnDefinition = "text") 
-    public String fieldDates;
-    
-    /**
-     * 'true' if collection should be made visible in the UI, default 'false'
-     */
-    @JsonIgnore
-    public Boolean publish;
-    
-    // lists
-    @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String fieldTargets; 
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String fieldSubCollections;
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text") 
-    public String fieldInstances;
-    
-    // additional fields from taxonomy
-    @JsonIgnore
-    public Long weight;
-    
-    @JsonIgnore
-    public Long nodeCount;
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text") 
-    public String vocabulary;
-    
-    // lists
-    @JsonIgnore
-    @Column(columnDefinition = "text")  
-    public String parent;
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text")  
-    public String parentsAll;
-
-
-    /**
-     * Constructor
-     * @param title
-     */
-    public Collection(String title) {
-        this.title = title;
-        this.publish = false;
-    }
-
     public Collection() {
     	super();
         this.publish = false;
     }
-    
-    // -- Queries
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,Collection> find = new Model.Finder(Long.class, Collection.class);
@@ -182,16 +65,9 @@ public class Collection extends ActModel {
     }        
     
     /**
-     * Retrieve dcollections 
-     */
-    public static List<Collection> findInvolving() {
-        return find.all();
-    }
-    
-    /**
      * Retrieve all collections.
      */
-    public static List<Collection> findAll() {
+    public static List<Collection> findAllCollections() {
         return find.all();
     }
     
@@ -211,7 +87,7 @@ public class Collection extends ActModel {
      */
     public static List<Collection> findAllSorted() {
     	List<Collection> res = new ArrayList<Collection>();
-    	Page<Collection> page = page(0, find.all().size(), Const.TITLE, Const.ASC, "");
+    	Page<Collection> page = pager(0, find.all().size(), Const.NAME, Const.ASC, "");
     	res = page.getList();
         return res;
     }
@@ -220,7 +96,8 @@ public class Collection extends ActModel {
      * Create a new dcollection.
      */
     public static Collection create(String title) {
-        Collection dcollection = new Collection(title);
+        Collection dcollection = new Collection();
+        dcollection.name = title;
         dcollection.save();
         return dcollection;
     }
@@ -230,7 +107,7 @@ public class Collection extends ActModel {
      */
     public static String rename(Long dcollectionId, String newName) {
         Collection dcollection = (Collection) find.ref(dcollectionId);
-        dcollection.title = newName;
+        dcollection.name = newName;
         dcollection.update();
         return newName;
     }
@@ -271,7 +148,7 @@ public class Collection extends ActModel {
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
     	} else {
-    		res.title = Const.NONE;
+    		res.name = Const.NONE;
     	}
     	return res;
     }
@@ -331,34 +208,34 @@ public class Collection extends ActModel {
     
     /**
      * Retrieve a collection by title.
-     * @param title
+     * @param name
      * @return collection object
      */
-    public static Collection findByTitle(String title) {
+    public static Collection findByTitle(String name) {
     	Collection res = new Collection();
-    	if (title != null && title.length() > 0) {
-    		res = find.where().eq(Const.TITLE, title).findUnique();
+    	if (name != null && name.length() > 0) {
+    		res = find.where().eq(Const.NAME, name).findUnique();
     	} else {
-    		res.title = Const.NONE;
+    		res.name = Const.NONE;
     	}
     	return res;
     }
     
     /**
      * Retrieve a collection by title.
-     * @param title
+     * @param name
      * @return collection object
      */
-    public static Collection findByTitleExt(String title) {
+    public static Collection findByTitleExt(String name) {
     	Collection res = new Collection();
-    	if (title != null && title.length() > 0) {
+    	if (name != null && name.length() > 0) {
 //    		Logger.info("p1: " + name);
-    		if (title.contains(Const.COMMA)) {
-    			title = title.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
+    		if (name.contains(Const.COMMA)) {
+    			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
     		}
-    		res = find.where().eq(Const.TITLE, title).findUnique();
+    		res = find.where().eq(Const.NAME, name).findUnique();
     	} else {
-    		res.title = Const.NONE;
+    		res.name = Const.NONE;
     	}
     	return res;
     }
@@ -368,9 +245,9 @@ public class Collection extends ActModel {
 	 * @param title
 	 * @return
 	 */
-	public static List<Collection> filterByName(String name) {
+	public static List<Collection> filterByCollectionName(String name) {
 		List<Collection> res = new ArrayList<Collection>();
-        ExpressionList<Collection> ll = find.where().icontains(Const.TITLE, name);
+        ExpressionList<Collection> ll = find.where().icontains(Const.NAME, name);
     	res = ll.findList();
 		return res;
 	}       
@@ -387,7 +264,7 @@ public class Collection extends ActModel {
 		    	String[] parts = urls.split(Const.LIST_DELIMITER);
 		    	for (String part: parts)
 		        {
-		    		String name = findByUrl(part).title;
+		    		String name = findByUrl(part).name;
 		    		res = res + name + Const.LIST_DELIMITER;
 		        }
 	    	} else {
@@ -438,12 +315,12 @@ public class Collection extends ActModel {
 		while (itr.hasNext()) {
 			Collection collection = itr.next();
 			if (firstTime) {
-//				Logger.info("add first collection.title: " + collection.title);
-				res = collection.title;
+//				Logger.info("add first collection.name: " + collection.name);
+				res = collection.name;
 				firstTime = false;
 			} else {
-//				Logger.info("add collection.title: " + collection.title);
-				res = res + Const.COMMA + " " + collection.title;
+//				Logger.info("add collection.name: " + collection.name);
+				res = res + Const.COMMA + " " + collection.name;
 			}
 		}
 		if (res.length() == 0) {
@@ -468,8 +345,8 @@ public class Collection extends ActModel {
 		    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 		    		Collection collection = findByUrl(part);
-		    		if (collection != null && collection.title != null && collection.title.length() > 0) {
-//			    		Logger.info("collection title: " + collection.title);
+		    		if (collection != null && StringUtils.isNotEmpty(collection.name)) {
+//			    		Logger.info("collection title: " + collection.name);
 		    			res.add(collection);
 		    		}
 		    	}
@@ -494,8 +371,8 @@ public class Collection extends ActModel {
 		    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 		    		Collection collection = findByUrl(part);
-		    		if (collection != null && collection.title != null && collection.title.length() > 0) {
-//			    		Logger.info("collection title: " + collection.title);
+		    		if (collection != null && StringUtils.isNotEmpty(collection.name)) {
+//			    		Logger.info("collection title: " + collection.name);
 		    			res.add(collection);
 		    		}
 		    	}
@@ -504,32 +381,6 @@ public class Collection extends ActModel {
 		return res;
 	}       
     
-	/**
-	 * This method retrieves selected collections from target object.
-	 * @param targetUrl
-	 * @return
-	 */
-	public static List<Collection> convertUrlsToObjects(String urls) {
-		List<Collection> res = new ArrayList<Collection>();
-   		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
-	    	String[] parts = urls.split(Const.COMMA + " ");
-	    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-	    		Collection collection = findByUrl(part);
-	    		if (collection != null && collection.title != null && collection.title.length() > 0) {
-//			    	Logger.info("collection title: " + collection.title);
-	    			res.add(collection);
-	    		}
-	    	}
-    	}
-		return res;
-	}       
-    	
-    public String toString() {
-        return "Collection(" + id + ") with title: " + title + ", field_targets: " + fieldTargets +
-        		 ", field_instances: " + fieldInstances +", format: " + format + ", summary: " + summary + ", value: " + value;
-    }
-
     /**
      * Return a page of Target
      *
@@ -539,7 +390,7 @@ public class Collection extends ActModel {
      * @param order Sort order (either or asc or desc)
      * @param filter Filter applied on the name column
      */
-    public static Page<Collection> page(int page, int pageSize, String sortBy, String order, String filter) {
+	public static Page<Collection> pager(int page, int pageSize, String sortBy, String order, String filter) {
 
         return find.where().contains("title", filter)
         		.orderBy(sortBy + " " + order)
@@ -547,6 +398,17 @@ public class Collection extends ActModel {
         		.setFetchAhead(false)
         		.getPage(page);
     }
-       
+
+	@Override
+	public String toString() {
+		return "Collection [name=" + name + ", ttype=" + ttype
+				+ ", description=" + description + ", vocabulary=" + vocabulary
+				+ ", publish=" + publish + ", parent=" + parent
+				+ ", parentsAll=" + parentsAll + ", node_count=" + node_count
+				+ ", feed_nid=" + feed_nid + ", weight=" + weight + ", id="
+				+ id + ", url=" + url + ", createdAt=" + createdAt
+				+ ", updatedAt=" + updatedAt + "]";
+	}
+    
 }
 

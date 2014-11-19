@@ -148,11 +148,11 @@
 					            	<div class="col-sm-6">
 										<select name="field_suggested_collections" id="suggested_collections" class="form-control target-form-control">
 							                <option>None</option>
-							                @for(cur_collection <- models.Collection.findAll()) {
+							                @for(cur_collection <- models.Collection.findAllCollections()) {
 								                @if(collection != null && collection.equals(cur_collection.url)) {
-								                	<option selected>@cur_collection.title</option>
+								                	<option selected>@cur_collection.name</option>
 								                } else {
-								                	<option>@cur_collection.title</option>
+								                	<option>@cur_collection.name</option>
 								                }
 							                }
 										</select>

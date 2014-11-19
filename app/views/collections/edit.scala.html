@@ -141,7 +141,7 @@
 					<div id="parent-panel" class="panel-collapse collapse">
 						<ul>
 		            		@for(curParent <- models.Collection.getParentsByUrl(form("url").value)) {
-		            			<li><a class="brand" href="@routes.Collections.view(curParent.url)">(@curParent.id) &nbsp; @curParent.title</a></li>
+		            			<li><a class="brand" href="@routes.Collections.view(curParent.url)">(@curParent.id) &nbsp; @curParent.name</a></li>
 				            }
 			            </ul>
 					</div>

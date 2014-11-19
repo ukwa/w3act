@@ -228,7 +228,7 @@ public class QAController extends AbstractController {
 		    			sb.append(", ");
 		    		}
 //	    			Logger.debug("added");
-					sb.append("{\"title\": \"" + collection.title + "\"," + checkCollectionSelection(collection.url, collectionUrl) + 
+					sb.append("{\"title\": \"" + collection.name + "\"," + checkCollectionSelection(collection.url, collectionUrl) + 
 							" \"key\": \"" + collection.url + "\"" + 
 							getChildren(collection.url, collectionUrl) + "}");
 	    		}

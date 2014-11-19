@@ -234,7 +234,7 @@ public class Instances extends AbstractController {
 		        	Taxonomy taxonomy = Taxonomy.findByUrl(instance.fieldLicense);
 		        	Logger.info("instance.field_license: " + instance.fieldLicense + ".");
 //		        	Logger.info("taxonomy url: " + taxonomy.url);
-//		        	Logger.info("license: " + taxonomy.name);
+//		        	Logger.info("license: " + taxonomy.title);
 		        	res.add(taxonomy);
 		        	subjects.add(instance.fieldLicense);
 		        }

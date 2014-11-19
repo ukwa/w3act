@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import models.ContactPerson;
-import models.Collection;
 import models.Flag;
 import models.MailTemplate;
 import models.Organisation;
@@ -45,9 +44,6 @@ public enum DataImport {
 	        	this.importCurators();
 	            this.importAccounts();
 	        }
-			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
-				this.importTaxonomies();
-			}
 			if (Ebean.find(Tag.class).findRowCount() == 0) {
 	        	this.importTags();
 			}
@@ -60,14 +56,15 @@ public enum DataImport {
 			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
 	        	this.importContactPersons();
 			}
-//			if (Ebean.find(Target.class).findRowCount() == 0) {
+			if (Ebean.find(Target.class).findRowCount() == 0) {
 	        	this.importUrlsToTargets();
-//			}
+			}
+			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
+				this.importTaxonomies();
+			}
+	        	
 //			if (Ebean.find(Collection.class).findRowCount() == 0) {
 //	        	this.importCollections();
-//			}
-//			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
-//	        	this.importJsonTaxonomies();
 //			}
 //				// aggregate url data from drupal and store JSON content in a file
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
@@ -105,6 +102,9 @@ public enum DataImport {
 //                Ebean.save(allTaxonomies);
 ////                Ebean.save(cleanedTaxonomies);
 //                Logger.info("taxonomies successfully loaded");
+			
+			
+			
 			
 //                // due to merging of different original object models the resulting 
 //                // collection set is evaluated from particular taxonomy type
@@ -313,12 +313,6 @@ public enum DataImport {
         Logger.info("Loaded URLs");
 	}
 
-	private void importJsonTaxonomies() {
-		// store urls in DB
-        JsonUtils.INSTANCE.convertTaxonomies();
-        Logger.info("Loaded JSON Taxonomies");
-	}
-	
 	private void importCollections() {
 		// store urls in DB
         JsonUtils.INSTANCE.convertCollections();

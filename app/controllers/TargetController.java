@@ -131,7 +131,8 @@ public class TargetController extends AbstractController {
         }
         if (getFormParam(Const.TREE_KEYS) != null) {
     		targetObj.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-        	targetObj.collectionToTarget = Collection.convertUrlsToObjects(targetObj.fieldCollectionCategories);
+    		// TODO: KL SHOULD ALREADY HAVE COLLECTIONS
+//        	targetObj.collectionToTarget = Collection.convertUrlsToObjects(targetObj.fieldCollectionCategories);
 //    		targetObj.updateCollection();
         }
         if (getFormParam(Const.ORGANISATION) != null) {
@@ -438,7 +439,7 @@ public class TargetController extends AbstractController {
             }            
             if (getFormParam(Const.TREE_KEYS) != null) {
 	    		newTarget.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-	        	newTarget.collectionToTarget = Collection.convertUrlsToObjects(newTarget.fieldCollectionCategories);
+//	        	newTarget.collectionToTarget = Collection.convertUrlsToObjects(newTarget.fieldCollectionCategories);
 	    		Logger.debug("newTarget.field_collection_categories: " + newTarget.fieldCollectionCategories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
@@ -862,7 +863,7 @@ public class TargetController extends AbstractController {
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
 	    		Collection collection = itr.next();
-//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
+//    			Logger.debug("add collection: " + collection.name + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
 	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
 		    		if (firstTime) {
@@ -871,7 +872,7 @@ public class TargetController extends AbstractController {
 		    			sb.append(", ");
 		    		}
 //	    			Logger.debug("added");
-					sb.append("{\"title\": \"" + collection.title + "\"," + checkSelection(collection.url, targetUrl) + 
+					sb.append("{\"title\": \"" + collection.name + "\"," + checkSelection(collection.url, targetUrl) + 
 							" \"key\": \"" + collection.url + "\"" + 
 							getChildren(collection.url, targetUrl) + 
 							"}");
@@ -902,7 +903,7 @@ public class TargetController extends AbstractController {
 	    	boolean firstTime = true;
 	    	while (itr.hasNext()) {
 	    		Collection collection = itr.next();
-//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
+//    			Logger.debug("add collection: " + collection.name + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
 	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
 		    		if (firstTime) {
@@ -911,7 +912,7 @@ public class TargetController extends AbstractController {
 		    			sb.append(", ");
 		    		}
 //	    			Logger.debug("added");
-					sb.append("{\"title\": \"" + collection.title + "\"," + checkSelectionFilter(collection.url, targetUrl) + 
+					sb.append("{\"title\": \"" + collection.name + "\"," + checkSelectionFilter(collection.url, targetUrl) + 
 							" \"key\": \"" + collection.url + "\"" + 
 							getChildren(collection.url, targetUrl) + 
 							"}");

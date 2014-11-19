@@ -364,79 +364,24 @@ public enum JsonUtils {
 							}
 						}
 						
-						List<String> existingTaxonomyUrls = new ArrayList<String>();
 						
 						// "field_suggested_collections":[],
 						if (target.getField_suggested_collections() != null) {
 							List<FieldModel> suggestCollections = target.getField_suggested_collections();
 							List<String> suggestCollectionsList = new ArrayList<String>();
+							
+							List<String> existingTaxonomyUrls = new ArrayList<String>();
 							for (FieldModel fieldModel : suggestCollections) {
 								String actUrl = this.getActUrl(fieldModel.getId());
 								suggestCollectionsList.add(actUrl);
-								
-								String url = getWebarchiveCreatorUrl(actUrl, Const.NodeType.TAXONOMY);
-								if (!existingTaxonomyUrls.contains(url)) {
-									existingTaxonomyUrls.add(url);
-									StringBuilder taxonomyUrl = new StringBuilder(url).append(Const.JSON);
-									String taxonomyContent = this.getAuthenticatedContent(taxonomyUrl.toString());
-									JsonNode taxonomyNode = Json.parse(taxonomyContent.toString());
-									Logger.info("taxonomy url: " + taxonomyContent);
-									ObjectMapper taxonomyMapper = new ObjectMapper();
-									taxonomyMapper.setSerializationInclusion(Include.NON_NULL);
-									if (taxonomyNode != null) {
-										Iterator<JsonNode> it = taxonomyNode.iterator();
-										while (it.hasNext()) {
-											JsonNode jsonNode = it.next();
-											Logger.info("json: " + jsonNode);
-											Taxonomy taxonomy = taxonomyMapper.readValue(jsonNode.toString(), Taxonomy.class);
-											Logger.info("taxonomy: " + taxonomy);
-										}
-									}
-								}
+								// TODO: KL SAVE THE TAXONOMIES BUT DON'T NEED SUGGESTED COLLECTIONS FOR TARGET?
+								this.convertTaxonomies(actUrl, existingTaxonomyUrls);
 							}
 							
-							// DO TAXONOMY SAVING HERE
-							
-//							readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
-//							readListFromString(target.fieldSuggestedCollections, urlList, type, TaxonomyType.COLLECTION, res);
-//							readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
-//							readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
-////							Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
-//							readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
-							
-//							public void readListFromString(String fieldName, List<String> urlList, NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
-//								Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
-//								readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
-//								if (fieldName != null && fieldName.length() > 0) {
-//			
-//										executeUrlRequest(fieldName, urlList, type, taxonomy_type, res);
-//									}
-//								}
-//			
-//						public void executeUrlRequest(String url, List<String> urlList,
-//										NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
-//									url = getWebarchiveCreatorUrl(url, type);
-//									String urlStr = url + Const.JSON;
-//									if (!urlList.contains(urlStr)) {
-//										urlList.add(urlStr);
-//										aggregateObjectList(urlStr, urlList, type, taxonomy_type, res);
-//									}
-//								}
-//
-//						}
-//							
-//							
-//							
-//							
-//							
-//							
-							
-							
-							
-							
-							if (!suggestCollectionsList.isEmpty()) {
-								target.fieldSuggestedCollections = StringUtils.join(suggestCollectionsList, ", ");
-							}
+							// TODO: KL DO WE NEED TO PERSIST SUGGEST COLLECTIONS?
+//							if (!suggestCollectionsList.isEmpty()) {
+//								target.fieldSuggestedCollections = StringUtils.join(suggestCollectionsList, ", ");
+//							}
 						}
 
 						// "field_collections":[],
@@ -465,17 +410,25 @@ public enum JsonUtils {
 							}
 						}
 						
+//						readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
+//						readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
+//						readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
+						
 						// "field_collection_categories":[],
+
 						if (target.getField_collection_categories() != null) {
 							List<FieldModel> collectionCategories = target.getField_collection_categories();
 							List<String> collectionCategoriesList = new ArrayList<String>();
+							
+							List<String> existingTaxonomyUrls = new ArrayList<String>();
 							for (FieldModel fieldModel : collectionCategories) {
 								String actUrl = this.getActUrl(fieldModel.getId());
 								collectionCategoriesList.add(actUrl);
+								this.convertTaxonomies(actUrl, existingTaxonomyUrls);
 							}
-							if (!collectionCategoriesList.isEmpty()) {
-								target.fieldCollectionCategories = StringUtils.join(collectionCategoriesList, ", ");
-							}
+//							if (!collectionCategoriesList.isEmpty()) {
+//								target.fieldCollectionCategories = StringUtils.join(collectionCategoriesList, ", ");
+//							}
 						}
 						
 						// "field_crawl_start_date":null,
@@ -550,7 +503,7 @@ public enum JsonUtils {
 						
 						target.createdAt = this.getDateFromSeconds(target.getCreated());
 
-//			        	target.save();
+			        	target.save();
 			        	count++;
 
 						// TODO: KL
@@ -604,27 +557,76 @@ public enum JsonUtils {
 		}		
 
 	}
+	
+	public static List<Collection> convertCollections(String actUrl) {
+		List<Collection> res = new ArrayList<Collection>();
+		Collection collection = Collection.findByUrl(actUrl);
+		if (collection != null && StringUtils.isNotEmpty(collection.name)) {
+			res.add(collection);
+		}
+		return res;
+	}       
 
-	public void convertTaxonomies() {
-		try {
-			String jsonUrl = Const.URL_STR + Const.NodeType.TAXONOMY.toString().toLowerCase();
-		    String content = this.getAuthenticatedContent(jsonUrl);
-		    JsonNode parentNode = Json.parse(content);
-			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.setSerializationInclusion(Include.NON_NULL);
-			if (parentNode != null) {
-				JsonNode rootNode = parentNode.path(Const.LIST_NODE);
-				Iterator<JsonNode> iterator = rootNode.iterator();
-				while (iterator.hasNext()) {
-					JsonNode node = iterator.next();
-					Logger.info("json: " + node);
-					Taxonomy taxonomy = objectMapper.readValue(node.toString(), Taxonomy.class);
-					Logger.info("taxonomy: " + taxonomy);
+
+	public Taxonomy convertTaxonomies(String actUrl, List<String> existingTaxonomyUrls) throws IOException {
+		Taxonomy taxonomy = null;
+		String url = getWebarchiveCreatorUrl(actUrl, Const.NodeType.TAXONOMY);
+		if (!existingTaxonomyUrls.contains(url)) {
+			existingTaxonomyUrls.add(url);
+			StringBuilder taxonomyUrl = new StringBuilder(url).append(Const.JSON);
+			String taxonomyContent = this.getAuthenticatedContent(taxonomyUrl.toString());
+//			JsonNode taxonomyNode = Json.parse(taxonomyContent.toString());
+			Logger.info("taxonomy url: " + taxonomyUrl);
+			Logger.info("taxonomy content: " + taxonomyContent);
+			ObjectMapper taxonomyMapper = new ObjectMapper();
+			taxonomyMapper.setSerializationInclusion(Include.NON_NULL);
+			taxonomy = taxonomyMapper.readValue(taxonomyContent, Taxonomy.class);
+			Logger.info("taxonomy: " + taxonomy);
+			taxonomy.url = this.getActUrl(taxonomy.getTid());
+			Taxonomy lookup = Taxonomy.findByUrl(taxonomy.url);
+			Logger.info("lookup: " + lookup);
+			if (lookup == null) {
+				taxonomy.ttype = TaxonomyType.COLLECTION.toString().toLowerCase();
+				if (taxonomy.getField_owner() != null) {
+					List<FieldModel> fieldOwners = taxonomy.getField_owner();
+					for (FieldModel fieldOwner : fieldOwners) {
+						String fieldActUrl = this.getActUrl(fieldOwner.getId());
+						User owner = User.findByUrl(fieldActUrl);
+						taxonomy.getOwnerUsers().add(owner);
+					}
 				}
+				// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
+				if (taxonomy.getVocabularyValue() != null) {
+					FieldModel fmTaxVocab = taxonomy.getVocabularyValue();
+					Long vid = Long.valueOf(fmTaxVocab.getId());
+					TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.findByVid(vid);
+					if (taxonomyVocabulary == null) {
+						String tvUrl = fmTaxVocab.getUri().replace("\\", "");
+						StringBuilder taxonomyVocabularyUrl = new StringBuilder(tvUrl).append(Const.JSON);
+						String tvContent = this.getAuthenticatedContent(taxonomyVocabularyUrl.toString());
+						ObjectMapper tvMapper = new ObjectMapper();
+						tvMapper.setSerializationInclusion(Include.NON_NULL);
+						taxonomyVocabulary = tvMapper.readValue(tvContent, TaxonomyVocabulary.class);
+						taxonomyVocabulary.save();
+					}
+					taxonomy.setTaxonomyVocabulary(taxonomyVocabulary);
+				}
+				taxonomy.save();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		 
+			
+//			"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+//			"field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
+//			"field_publish":true,
+//			"tid":"250",
+//			"name":"European Parliament Elections 2014","description":"",
+//			"weight":"0",
+//			"node_count":10,
+//			"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
+//			"vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
+//			"parent":[],
+//			"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+		}
+		return taxonomy;
 	}
 	
 	public void convertCollections() {
@@ -919,9 +921,8 @@ public enum JsonUtils {
 	 */
 	public static List<Object> readCollectionsFromTaxonomies() {
 		List<Object> res = new ArrayList<Object>();
-		List<Taxonomy> taxonomyList = Taxonomy
-				.findListByType(TaxonomyType.COLLECTION.toString()
-						.toLowerCase());
+		// find all taxonomies by "collection" type 
+		List<Taxonomy> taxonomyList = Taxonomy.findListByType(TaxonomyType.COLLECTION.toString().toLowerCase());
 		Iterator<Taxonomy> itr = taxonomyList.iterator();
 		while (itr.hasNext()) {
 			Taxonomy taxonomy = itr.next();
@@ -931,40 +932,40 @@ public enum JsonUtils {
 				Iterator<Object> itrCollection = res.iterator();
 				while (itrCollection.hasNext()) {
 					Collection collection = (Collection) itrCollection.next();
-					if (collection.title.equals(taxonomy.name)) {
+					if (collection.name.equals(taxonomy.name)) {
 						isInList = true;
 						// replace collection URL in Targets with the existing
 						// one
-						List<Target> targets = Target
-								.findAllByCollectionUrl(taxonomy.url);
+						List<Target> targets = Target.findAllByCollectionUrl(taxonomy.url);
 						Iterator<Target> itrTargets = targets.iterator();
 						while (itrTargets.hasNext()) {
 							Target target = itrTargets.next();
-							target.fieldSuggestedCollections = collection.url;
+							// TODO: KL DO WE NEED TO PERSIST SUGGEST COLLECTIONS?
+//							target.fieldSuggestedCollections = collection.url;
 							Ebean.update(target);
 						}
 						break;
 					}
 				}
 				if (!isInList) {
+					// create collections
 					Collection collection = new Collection();
 					collection.id = taxonomy.id;
-					collection.author = taxonomy.fieldOwner;
-					collection.summary = taxonomy.description;
-					collection.title = taxonomy.name;
-					collection.feedNid = taxonomy.feed_nid;
-					collection.url = taxonomy.url;
-					collection.weight = taxonomy.weight;
-					collection.nodeCount = taxonomy.node_count;
-					collection.vocabulary = taxonomy.vocabulary;
-					collection.fieldOwner = taxonomy.fieldOwner;
-					collection.fieldDates = taxonomy.fieldDates;
-					if (taxonomy.fieldPublish != null) {
-						collection.publish = Utils
-								.getNormalizeBooleanString(taxonomy.fieldPublish);
-					}
-					if (taxonomy.parent == null
-							|| taxonomy.parent.length() == 0) {
+					// TODO: KL do I need this after the refactor?
+//					collection.author = taxonomy.fieldOwner;
+//					collection.summary = taxonomy.description;
+//					collection.title = taxonomy.name;
+//					collection.fee = taxonomy.feed_nid;
+//					collection.url = taxonomy.url;
+//					collection.weight = taxonomy.weight;
+//					collection.nodeCount = taxonomy.node_count;
+//					collection.vocabulary = taxonomy.vocabulary;
+//					collection.fieldOwner = taxonomy.fieldOwner;
+//					collection.fieldDates = taxonomy.fieldDates;
+//					if (taxonomy.fieldPublish != null) {
+//						collection.publish = Utils.getNormalizeBooleanString(taxonomy.fieldPublish);
+//					}
+					if (taxonomy.parent == null || taxonomy.parent.length() == 0) {
 						collection.parent = Const.NONE_VALUE;
 					} else {
 						collection.parent = taxonomy.parent;
@@ -1083,20 +1084,21 @@ public enum JsonUtils {
 				}
 				if (type.equals(NodeType.TAXONOMY)) {
 					readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
-					readListFromString(target.fieldSuggestedCollections, urlList, type, TaxonomyType.COLLECTION, res);
+					// TODO: KL DO WE NEED TO PERSIST SUGGEST COLLECTIONS?
+//					readListFromString(target.fieldSuggestedCollections, urlList, type, TaxonomyType.COLLECTION, res);
 					readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
 					readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
 //					Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
 					readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
 				}
 				if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
-					List<Taxonomy> taxonomies = Taxonomy.findAll();
-					Iterator<Taxonomy> taxonomyItr = taxonomies.iterator();
-					while (taxonomyItr.hasNext()) {
-						Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
-						readListFromString(taxonomy.vocabulary, urlList, type,
-								null, res);
-					}
+//					List<Taxonomy> taxonomies = Taxonomy.findAll();
+//					Iterator<Taxonomy> taxonomyItr = taxonomies.iterator();
+//					while (taxonomyItr.hasNext()) {
+//						Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
+//						readListFromString(taxonomy.vocabulary, urlList, type,
+//								null, res);
+//					}
 				}
 				// if (type.equals(NodeType.INSTANCE)) {
 				// readListFromString(target.field_qa_issues, urlList, type,

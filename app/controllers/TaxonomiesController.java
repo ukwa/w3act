@@ -49,13 +49,8 @@ public class TaxonomiesController extends AbstractController {
 	 * @param filter
 	 *            Filter applied on target urls
 	 */
-	public static Result list(int pageNo, String sortBy, String order,
-			String filter) {
-		Logger.info("LookUp.list()");
-		return ok(list.render("TaxonomiesList",
-				User.findByEmail(request().username()), filter,
-				Taxonomy.page(pageNo, 10, sortBy, order, filter), sortBy,
-				order));
+	public static Result list(int pageNo, String sortBy, String order, String filter) {
+		return null;
 	}
 	
 	/**
@@ -100,12 +95,7 @@ public class TaxonomiesController extends AbstractController {
 
 	@BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
-    	JsonNode jsonData = null;
-        if (name != null) {
-	        List<Taxonomy> taxonomiesList = Taxonomy.filterByName(name);
-	        jsonData = Json.toJson(taxonomiesList);
-        }
-        return ok(jsonData);
+		return null;
     }
 	    
 	  
@@ -140,14 +130,7 @@ public class TaxonomiesController extends AbstractController {
      * Display the taxonomy edit panel for this URL.
      */
     public static Result edit(String url) {
-		Logger.info("taxonomy url: " + url);
-		Taxonomy taxonomy = Taxonomy.findByUrl(url);
-		Logger.info("taxonomy name: " + taxonomy.name + ", url: " + url);
-        return ok(
-                taxonomyedit.render(
-                        Taxonomy.findByUrl(url), User.findByEmail(request().username())
-                )
-            );
+		return null;
     }
 
     /**

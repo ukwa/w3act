@@ -136,8 +136,7 @@ public class Target extends ActModel {
 	
 	@Column(columnDefinition = "text")
 	public String fieldUkPostalAddressUrl;
-	@Column(columnDefinition = "text")
-	public String fieldSuggestedCollections;
+
 	@Column(columnDefinition = "text")
 	public String fieldCollections;
 	@Column(columnDefinition = "text")
@@ -273,10 +272,8 @@ public class Target extends ActModel {
 	public String language;
 
 	@Column(columnDefinition = "text")
-	@JsonIgnore
 	@JsonProperty
 	public String revision;
-
 
 	@Transient
 	@JsonIgnore
@@ -1457,19 +1454,6 @@ public class Target extends ActModel {
 	public boolean hasLicense(String license) {
 		boolean res = false;
 		res = Utils.hasElementInList(license, fieldLicense);
-		return res;
-	}
-
-	/**
-	 * This method evaluates if a collection is in a list separated by list
-	 * delimiter e.g. ', '.
-	 * 
-	 * @param subject
-	 * @return true if in list
-	 */
-	public boolean hasCollection(String collection) {
-		boolean res = false;
-		res = Utils.hasElementInList(collection, fieldSuggestedCollections);
 		return res;
 	}
 

@@ -62,7 +62,7 @@ public class Collections extends AbstractController {
 		
 		return ok(list.render("Collections",
 				User.findByEmail(request().username()), filter,
-				Collection.page(pageNo, 10, sortBy, order, filter), sortBy,
+				Collection.pager(pageNo, 10, sortBy, order, filter), sortBy,
 				order, node));
 	}
 	
@@ -100,8 +100,8 @@ public class Collections extends AbstractController {
 //        		return redirect(routes.Collections.create(query));
     	        Logger.info("create collection()");
     	    	Collection collection = new Collection();
-    	    	collection.title = query;
-    			Logger.info("add collection with url: " + collection.url + ", and title: " + collection.title);
+    	    	collection.name = query;
+    			Logger.info("add collection with url: " + collection.url + ", and title: " + collection.name);
     			JsonNode node = getCollectionsTree(collection.url);
 //    			Logger.info("node tree: " + node.toString());
     			Form<Collection> collectionForm = Form.form(Collection.class);
@@ -120,7 +120,7 @@ public class Collections extends AbstractController {
     public static Result filterByJson(String name) {
     	JsonNode jsonData = null;
         if (name != null) {
-	        List<Collection> dCollections = Collection.filterByName(name);
+	        List<Collection> dCollections = Collection.filterByCollectionName(name);
 	        jsonData = Json.toJson(dCollections);
         }
         return ok(jsonData);
@@ -143,8 +143,8 @@ public class Collections extends AbstractController {
     public static Result create(String title) {
         Logger.info("create collection()");
     	Collection collection = new Collection();
-    	collection.title = title;
-		Logger.info("add collection with url: " + collection.url + ", and title: " + collection.title);
+    	collection.name = title;
+		Logger.info("add collection with url: " + collection.url + ", and title: " + collection.name);
 		JsonNode node = getCollectionsTree(collection.url);
 		Form<Collection> collectionForm = Form.form(Collection.class);
 		collectionForm = collectionForm.fill(collection);
@@ -157,7 +157,7 @@ public class Collections extends AbstractController {
     public static Result edit(String url) {
 		Logger.info("collection url: " + url);
 		Collection collection = Collection.findByUrl(url);
-		Logger.info("collection title: " + collection.title + ", url: " + url);
+		Logger.info("collection title: " + collection.name + ", url: " + url);
 		JsonNode node = getCollectionsTree(collection.url);
 		Form<Collection> collectionForm = Form.form(Collection.class);
 		collectionForm = collectionForm.fill(collection);
@@ -173,14 +173,14 @@ public class Collections extends AbstractController {
     	Collection collection = new Collection();
     	collection.id = Long.valueOf(getFormParam(Const.ID));
     	collection.url = getFormParam(Const.URL);
-    	collection.title = getFormParam(Const.TITLE);
+    	collection.name = getFormParam(Const.TITLE);
     	collection.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
         if (getFormParam(Const.TREE_KEYS) != null) {
     		collection.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
     		Logger.debug("collection parent: " + collection.parent);
         }
 	    if (getFormParam(Const.SUMMARY) != null) {
-	    	collection.summary = getFormParam(Const.SUMMARY);
+	    	collection.description = getFormParam(Const.SUMMARY);
 	    }
 	    if (collection.revision == null) {
 	    	collection.revision = "";
@@ -249,7 +249,7 @@ public class Collections extends AbstractController {
                 	collection.url = getFormParam(Const.URL);
                 }
                 
-                collection.title = getFormParam(Const.TITLE);
+                collection.name = getFormParam(Const.TITLE);
                 collection.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
 //        	    if (getFormParam(Const.PARENT) != null) {
 //                	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
@@ -271,7 +271,7 @@ public class Collections extends AbstractController {
                     }
                 }
         	    if (getFormParam(Const.SUMMARY) != null) {
-        	    	collection.summary = getFormParam(Const.SUMMARY);
+        	    	collection.description = getFormParam(Const.SUMMARY);
         	    }
         	    if (collection.revision == null) {
         	    	collection.revision = "";
@@ -344,10 +344,10 @@ public class Collections extends AbstractController {
 	    	while (itr.hasNext()) {
 	    		Collection collection = itr.next();
 	    		
-	    		if (collectionUrl.isEmpty() || (StringUtils.isNotEmpty(collectionUrl) && StringUtils.containsIgnoreCase(collection.title, collectionUrl))) {	    		
+	    		if (collectionUrl.isEmpty() || (StringUtils.isNotEmpty(collectionUrl) && StringUtils.containsIgnoreCase(collection.name, collectionUrl))) {	    		
 		    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
 						ObjectNode child = nodeFactory.objectNode();
-						child.put("title", collection.title + " (" + Target.findAllforCollection(collection.url).size() + ")");
+						child.put("title", collection.name + " (" + Target.findAllforCollection(collection.url).size() + ")");
 						child.put("url", String.valueOf(routes.Collections.view(collection.url)));
 				    	if (StringUtils.isNotEmpty(collection.url) && collection.url.equalsIgnoreCase(collectionUrl)) {
 				    		child.put("select", true);
@@ -422,7 +422,7 @@ public class Collections extends AbstractController {
 		    			sb.append(", ");
 		    		}
 //	    			Logger.debug("added");
-					sb.append("{\"title\": \"" + collection.title + "\"," + checkSelection(collection.url, url) + 
+					sb.append("{\"title\": \"" + collection.name + "\"," + checkSelection(collection.url, url) + 
 							" \"key\": \"" + collection.url + "\"" + 
 							getChildren(collection.url, url) + "}");
 	    		}
