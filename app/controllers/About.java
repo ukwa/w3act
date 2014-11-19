@@ -33,10 +33,10 @@ public class About extends Controller {
      * This method retrieves the last commit hash from Github.
      * @return last commit hash value
      */
-    public static String getLastCommitHash() {
+    public static String getVersion() {
     	String res = "";
     	try {
-    		BufferedReader br = new BufferedReader(new FileReader(Const.LAST_VERSION_FILE));
+    		BufferedReader br = new BufferedReader(new FileReader(Const.VERSION_FILE));
     		try {
     			StringBuilder sb = new StringBuilder();
     			String line = br.readLine();
