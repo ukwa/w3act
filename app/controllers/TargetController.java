@@ -432,7 +432,7 @@ public class TargetController extends AbstractController {
             		Logger.info("after removing 'None' value is it was combined with another subject");      		
             	}
             	newTarget.fieldSubject = subjectListStr;
-            	newTarget.subjectToTarget = Taxonomy.convertUrlsToObjects(newTarget.fieldSubject);
+//            	newTarget.subject = Taxonomy.convertUrlsToObjects(newTarget.fieldSubject);
         		Logger.debug("newTarget.field_subject: " + newTarget.fieldSubject);
             } else {
             	newTarget.fieldSubject = Const.NONE;
@@ -618,8 +618,8 @@ public class TargetController extends AbstractController {
                  * Reset association fields
                  */
                 target.organisation = null;
-                target.collectionToTarget = null;
-                target.subjectToTarget = null;
+                target.collections = null;
+                target.subject = null;
                 // TODO: can we not use JPA annotations for these?
                 Utils.removeAssociationFromDb(Const.SUBJECT_TARGET, Const.ID + "_" + Const.TARGET, target.id);
                 Utils.removeAssociationFromDb(Const.COLLECTION_TARGET, Const.ID + "_" + Const.TARGET, target.id);
@@ -628,7 +628,7 @@ public class TargetController extends AbstractController {
                 Utils.removeAssociationFromDb(Const.TAG_TARGET, Const.ID + "_" + Const.TARGET, target.id);
                 target.flagToTarget = null;
                 target.tagToTarget = null;
-                Logger.info("+++ subject_to_target object before target nid: " + target.id + ", update: " + target.subjectToTarget);
+                Logger.info("+++ subject_to_target object before target nid: " + target.id + ", update: " + target.subject);
             	Ebean.update(target);
         	}
         	if (newTarget.fieldUrl != null) {
@@ -659,11 +659,11 @@ public class TargetController extends AbstractController {
         	newTarget.isInScopeIpValue               = newScope;
         	newTarget.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(newTarget.fieldUrl, newTarget.url);
         	
-        	List<Taxonomy> subjects = newTarget.subjectToTarget;
-        	Iterator<Taxonomy> itrSubjects = subjects.iterator();
-        	while (itrSubjects.hasNext()) {
-        		Logger.info("+++ subject_to_target before target save: " + itrSubjects.next().toString());
-        	}
+        	Taxonomy subject = newTarget.subject;
+//        	Iterator<Taxonomy> itrSubjects = subjects.iterator();
+//        	while (itrSubjects.hasNext()) {
+//        		Logger.info("+++ subject_to_target before target save: " + itrSubjects.next().toString());
+//        	}
         	Ebean.save(newTarget);
         	try {
 	            /**

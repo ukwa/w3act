@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 
 import models.ContactPerson;
 import models.Flag;
@@ -148,7 +147,7 @@ public enum DataImport {
 //                    // Create association between Target and DCollection
 //                	target.collectionToTarget = Collection.convertUrlsToObjects(target.fieldCollectionCategories);
 //                    // Create association between Target and Subject (Taxonomy)
-//                	target.subjectToTarget = Taxonomy.convertUrlsToObjects(target.fieldSubject);
+//                	target.subject = Taxonomy.convertUrlsToObjects(target.fieldSubject);
 //                    // Create association between Target and License (Taxonomy)
 //                	target.licenseToTarget = Taxonomy.convertUrlsToObjects(target.fieldLicense);
 //                    // Create association between Target and Flag
@@ -229,7 +228,6 @@ public enum DataImport {
 		for (Taxonomy taxonomy : taxonomies) {
 			taxonomy.save();
 		}
-		createQualityIssueTaxonomies();
         Logger.info("Loaded Taxonomies");
 	}
 	
@@ -273,21 +271,6 @@ public enum DataImport {
         Logger.info("Loaded ContactPersons");
 	}
 	
-    private void createQualityIssueTaxonomies() {
-    	saveQualityIssue(new Taxonomy(Const.QAStatusType.FAILED_DO_NOT_PUBLISH.name(), "<p>Failed do not publish</p>", 0L, 0L, 0L, false));
-    	saveQualityIssue(new Taxonomy(Const.QAStatusType.FAILED_PASS_TO_ENGINEER.name(), "<p>Failed pass to engineer</p>", 0L, 0L, 0L, false));
-    	saveQualityIssue(new Taxonomy(Const.QAStatusType.RECRAWL_REQUESTED.name(), "<p>Recrawl requested</p>", 0L, 0L, 0L, false));
-    }
-    
-    private void saveQualityIssue(Taxonomy taxonomy) {
-		String qaStatusUrl = Taxonomy.findQaStatusUrl(taxonomy.name);
-		if (StringUtils.isBlank(qaStatusUrl)) {
-			taxonomy.ttype = "quality issue";
-	    	taxonomy.save();
-	    	
-		}
-    }
-
 	private void importOrganisations() {
 		@SuppressWarnings("unchecked")
 		Map<String,List<Organisation>> allOrganisations = (Map<String,List<Organisation>>)Yaml.load("organisations.yml");
@@ -313,12 +296,6 @@ public enum DataImport {
         Logger.info("Loaded URLs");
 	}
 
-	private void importCollections() {
-		// store urls in DB
-        JsonUtils.INSTANCE.convertCollections();
-        Logger.info("Loaded Collections");
-	}
-	
     /**
 	 * normalize URL if there is "_" e.g. in taxonomy_term
 	 */

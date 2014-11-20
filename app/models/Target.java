@@ -80,12 +80,13 @@ public class Target extends ActModel {
 	// bi-directional many-to-many association to DCollection
 	@JsonIgnore
 	@ManyToMany(mappedBy = "targets")
-	public List<Collection> collectionToTarget = new ArrayList<Collection>();
+	public List<Collection> collections = new ArrayList<Collection>();
 
 	// bi-directional many-to-many association to Subject
 	@JsonIgnore
-	@ManyToMany(mappedBy = "targets")
-	public List<Taxonomy> subjectToTarget = new ArrayList<Taxonomy>();
+	@ManyToOne
+	@JoinColumn(name = "subject_id")
+	public Subject subject;
 
 	// bi-directional many-to-many association to Subject
 	@JsonIgnore

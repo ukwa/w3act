@@ -351,4 +351,18 @@ taxonomies:
         parent:       Society & Culture
         name:         Travel & Tourism
         
-        
+    - !!models.QualityIssue
+        ttype:        quality issue
+        name:         Failed, Do Not Publish
+        description:  <p>Failed do not publish</p>
+
+    - !!models.QualityIssue
+        ttype:        quality issue
+        name:         Failed, Pass to Engineer
+        description:  <p>Failed pass to engineer</p>
+
+    - !!models.QualityIssue
+        ttype:        quality issue
+        name:         Recrawl Requested        
+        description:  <p>Recrawl requested</p>
+

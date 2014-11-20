@@ -269,6 +269,7 @@ create table target (
   created_at                timestamp,
   organisation_id           bigint,
   author_id                 bigint,
+  subject_id                bigint,
   field_crawl_start_date    timestamp,
   field_crawl_end_date      timestamp,
   legacy_site_id            bigint,
@@ -346,8 +347,6 @@ create table taxonomy (
   taxonomy_vocabulary_id    bigint,
   name                      varchar(255),
   description               text,
-  vocabulary                text,
-  field_publish             boolean,
   publish                   boolean,
   parent                    text,
   parents_all               text,
@@ -444,6 +443,12 @@ create table taxonomy_user (
   user_id                        bigint not null,
   constraint pk_taxonomy_user primary key (taxonomy_id, user_id))
 ;
+
+create table taxonomy_parents (
+  taxonomy_id                    bigint not null,
+  parent_id                      bigint not null,
+  constraint pk_taxonomy_parents primary key (taxonomy_id, parent_id))
+;
 create sequence communication_log_seq;
 
 create sequence contact_person_seq;
@@ -492,10 +497,12 @@ alter table target add constraint fk_target_organisation_6 foreign key (organisa
 create index ix_target_organisation_6 on target (organisation_id);
 alter table target add constraint fk_target_authorUser_7 foreign key (author_id) references creator (id);
 create index ix_target_authorUser_7 on target (author_id);
-alter table taxonomy add constraint fk_taxonomy_taxonomyVocabulary_8 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
-create index ix_taxonomy_taxonomyVocabulary_8 on taxonomy (taxonomy_vocabulary_id);
-alter table creator add constraint fk_creator_organisation_9 foreign key (organisation_id) references organisation (id);
-create index ix_creator_organisation_9 on creator (organisation_id);
+alter table target add constraint fk_target_subject_8 foreign key (subject_id) references taxonomy (id);
+create index ix_target_subject_8 on target (subject_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyVocabulary_9 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
+create index ix_taxonomy_taxonomyVocabulary_9 on taxonomy (taxonomy_vocabulary_id);
+alter table creator add constraint fk_creator_organisation_10 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_10 on creator (organisation_id);
 
 
 
@@ -538,6 +545,10 @@ alter table license_target add constraint fk_license_target_target_02 foreign ke
 alter table taxonomy_user add constraint fk_taxonomy_user_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
 
 alter table taxonomy_user add constraint fk_taxonomy_user_creator_02 foreign key (user_id) references creator (id);
+
+alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
+
+alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_02 foreign key (parent_id) references taxonomy (id);
 
 # --- !Downs
 
@@ -590,6 +601,8 @@ drop table if exists taxonomy cascade;
 drop table if exists license_target cascade;
 
 drop table if exists taxonomy_user cascade;
+
+drop table if exists taxonomy_parents cascade;
 
 drop table if exists taxonomy_vocabulary cascade;
 

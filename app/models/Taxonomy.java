@@ -85,18 +85,9 @@ public class Taxonomy extends ActModel {
     @JsonProperty
     public String description;
 
-    @Column(columnDefinition = "text")
-    @JsonIgnore
-    public String vocabulary;
-
-    @JsonIgnore
-    @JsonProperty
-    private Boolean field_publish;
-    
-    @JsonIgnore
+    @JsonProperty(value="field_publish")
     public Boolean publish;
-//    @Required
-
+    
     @Column(columnDefinition = "text") 
     @JsonIgnore
     public String parent;
@@ -109,6 +100,12 @@ public class Taxonomy extends ActModel {
 	@JsonProperty
 	public String revision;
 
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = Const.TAXONOMY_PARENTS, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
+	private List<Taxonomy> parentsList;
+	
     @Transient
     @JsonIgnore
     @JsonProperty
@@ -126,7 +123,7 @@ public class Taxonomy extends ActModel {
     @Transient
     @JsonIgnore
     @JsonProperty(value="parent")
-    private List<FieldModel> parentList;
+    private List<FieldModel> parentFieldList;
     
     @Transient
     @JsonIgnore
@@ -163,13 +160,9 @@ public class Taxonomy extends ActModel {
         this.name = name;
     }
     
-    public Taxonomy(String name, String description, Long weight, Long nodeCount, Long feed_nid, Boolean publish) {
+    public Taxonomy(String name, String description) {
         this(name);
         this.description = description;
-        this.weight = weight;
-        this.node_count = nodeCount;
-        this.feed_nid = feed_nid;
-        this.publish = publish;
     }
     
     // -- Queries
@@ -1287,12 +1280,12 @@ public class Taxonomy extends ActModel {
 		this.vocabularyValue = vocabularyValue;
 	}
 
-	public List<FieldModel> getParentList() {
-		return parentList;
+	public List<FieldModel> getParentFieldList() {
+		return parentFieldList;
 	}
 
-	public void setParentList(List<FieldModel> parentList) {
-		this.parentList = parentList;
+	public void setParentFieldList(List<FieldModel> parentFieldList) {
+		this.parentFieldList = parentFieldList;
 	}
 
 	public List<FieldModel> getParents_all() {
@@ -1327,12 +1320,12 @@ public class Taxonomy extends ActModel {
 		this.field_dates = field_dates;
 	}
 
-	public Boolean getField_publish() {
-		return field_publish;
+	public Boolean getPublish() {
+		return publish;
 	}
 
-	public void setField_publish(Boolean field_publish) {
-		this.field_publish = field_publish;
+	public void setPublish(Boolean publish) {
+		this.publish = publish;
 	}
 
 	public List<User> getOwnerUsers() {
@@ -1359,15 +1352,24 @@ public class Taxonomy extends ActModel {
 		this.ttype = ttype;
 	}
 
+	
+	public List<Taxonomy> getParentsList() {
+		return parentsList;
+	}
+
+	public void setParentsList(List<Taxonomy> parentsList) {
+		this.parentsList = parentsList;
+	}
+
 	@Override
 	public String toString() {
 		return "Taxonomy [name=" + name + ", description="
 				+ description + ", tid=" + tid + ", ttype=" + ttype + " node_count=" + node_count
 				+ ", vocabularyList=" + vocabularyValue + ", parentList="
-				+ parentList + ", parents_all=" + parents_all + ", feed_nid="
+				+ parentFieldList + ", parents_all=" + parents_all + ", feed_nid="
 				+ feed_nid + ", weight=" + weight + ", field_owner="
 				+ field_owner + ", field_dates=" + field_dates
-				+ ", field_publish=" + field_publish + "]";
+				+ ", publish=" + publish + "]";
 	}
 }
 

@@ -27,6 +27,7 @@ import models.Collection;
 import models.Instance;
 import models.Organisation;
 import models.Role;
+import models.Subject;
 import models.Target;
 import models.Taxonomy;
 import models.TaxonomyVocabulary;
@@ -284,11 +285,12 @@ public enum JsonUtils {
 				
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
-
+				
 				int count = 0;
 				for (int i=firstPage; i<=lastPage; i++) {
 					
 					StringBuilder targetsUrl = new StringBuilder(jsonUrl).append("&").append(Const.PAGE_IN_URL).append(String.valueOf(i));
+					Logger.info("targets url: " + targetsUrl);
 					String pageContent = this.getAuthenticatedContent(targetsUrl.toString());
 					JsonNode mainNode = Json.parse(pageContent.toString());
 					
@@ -331,6 +333,13 @@ public enum JsonUtils {
 							target.fieldUrl = StringUtils.join(fieldUrls, ", ");
 						}
 						
+//						"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
+						FieldModel fieldSubject = target.getField_subject();
+						if (fieldSubject != null) {
+							Subject subject = this.convertSubject(fieldSubject);
+							target.subject = subject;
+						}
+						
 						// "field_description":[],
 						if (target.getField_description() != null && target.getField_description() instanceof Map) {
 							Map<String, String> fieldDescription = (Map<String, String>)target.getField_description();
@@ -364,24 +373,20 @@ public enum JsonUtils {
 							}
 						}
 						
-						
-						// "field_suggested_collections":[],
+						// "field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/2013","id":"2013","resource":"node"}],
 						if (target.getField_suggested_collections() != null) {
 							List<FieldModel> suggestCollections = target.getField_suggested_collections();
-							List<String> suggestCollectionsList = new ArrayList<String>();
 							
-							List<String> existingTaxonomyUrls = new ArrayList<String>();
 							for (FieldModel fieldModel : suggestCollections) {
-								String actUrl = this.getActUrl(fieldModel.getId());
-								suggestCollectionsList.add(actUrl);
-								// TODO: KL SAVE THE TAXONOMIES BUT DON'T NEED SUGGESTED COLLECTIONS FOR TARGET?
-								this.convertTaxonomies(actUrl, existingTaxonomyUrls);
+								
+								Collection collection = this.convertCollection(fieldModel);
+								
+								if (collection != null) {
+									target.collections.add(collection);
+								}
+
 							}
 							
-							// TODO: KL DO WE NEED TO PERSIST SUGGEST COLLECTIONS?
-//							if (!suggestCollectionsList.isEmpty()) {
-//								target.fieldSuggestedCollections = StringUtils.join(suggestCollectionsList, ", ");
-//							}
 						}
 
 						// "field_collections":[],
@@ -410,25 +415,19 @@ public enum JsonUtils {
 							}
 						}
 						
-//						readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
-//						readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
-//						readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
-						
-						// "field_collection_categories":[],
 
+						// "field_collection_categories":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/160","id":"160","resource":"taxonomy_term"}],
 						if (target.getField_collection_categories() != null) {
 							List<FieldModel> collectionCategories = target.getField_collection_categories();
-							List<String> collectionCategoriesList = new ArrayList<String>();
 							
-							List<String> existingTaxonomyUrls = new ArrayList<String>();
 							for (FieldModel fieldModel : collectionCategories) {
-								String actUrl = this.getActUrl(fieldModel.getId());
-								collectionCategoriesList.add(actUrl);
-								this.convertTaxonomies(actUrl, existingTaxonomyUrls);
+								Collection collection = this.convertCollection(fieldModel);
+								
+								if (collection != null) {
+									target.collections.add(collection);
+								}
+								
 							}
-//							if (!collectionCategoriesList.isEmpty()) {
-//								target.fieldCollectionCategories = StringUtils.join(collectionCategoriesList, ", ");
-//							}
 						}
 						
 						// "field_crawl_start_date":null,
@@ -509,7 +508,11 @@ public enum JsonUtils {
 						// TODO: KL
 						// target.domain
 	
-	//					{"body":[],"field_scope":"root","field_url":[{"url":"http://www.cats.org.uk/"}],"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/16","id":"16","resource":"taxonomy_term"},"field_depth":"capped","field_via_correspondence":false,"field_uk_postal_address":false,"field_uk_hosting":false,"field_description":{"value":"<p>website of animal welfare organisation</p>\n","summary":"","format":"filtered_html"},"field_uk_postal_address_url":[],"field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},"field_crawl_frequency":"domaincrawl","field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/108","id":"108","resource":"node"}],"field_collections":[],"field_crawl_start_date":null,"field_crawl_end_date":null,"field_uk_domain":"Yes","field_license":[],"field_crawl_permission":"","field_collection_categories":[],"field_special_dispensation":false,"field_special_dispensation_reaso":null,"field_live_site_status":null,"field_notes":[],"field_wct_id":null,"field_spt_id":null,"field_snapshots":[],"field_no_ld_criteria_met":null,"field_key_site":null,"field_uk_geoip":"Yes","field_professional_judgement":false,"field_professional_judgement_exp":null,"field_ignore_robots_txt":null,"field_instances":[],"nid":"109","vid":"113","is_new":false,"type":"url","title":"Cats Protection","language":"en","url":"http://www.webarchive.org.uk/act/node/109","edit_url":"http://www.webarchive.org.uk/act/node/109/edit","status":"1","promote":"0","sticky":"0","created":"1363770213","changed":"1375215708","author":{"uri":"http://www.webarchive.org.uk/act/user/61","id":"61","resource":"user"},"log":"","revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null}
+	//					{"body":[],"field_scope":"root","field_url":[{"url":"http://www.cats.org.uk/"}],
+//			        	"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/16","id":"16","resource":"taxonomy_term"},"
+//			        	field_depth":"capped","field_via_correspondence":false,"field_uk_postal_address":false,"field_uk_hosting":false,
+//			        	"field_description":{"value":"<p>website of animal welfare organisation</p>\n","summary":"","format":"filtered_html"},
+//			        	"field_uk_postal_address_url":[],"field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},"field_crawl_frequency":"domaincrawl","field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/108","id":"108","resource":"node"}],"field_collections":[],"field_crawl_start_date":null,"field_crawl_end_date":null,"field_uk_domain":"Yes","field_license":[],"field_crawl_permission":"","field_collection_categories":[],"field_special_dispensation":false,"field_special_dispensation_reaso":null,"field_live_site_status":null,"field_notes":[],"field_wct_id":null,"field_spt_id":null,"field_snapshots":[],"field_no_ld_criteria_met":null,"field_key_site":null,"field_uk_geoip":"Yes","field_professional_judgement":false,"field_professional_judgement_exp":null,"field_ignore_robots_txt":null,"field_instances":[],"nid":"109","vid":"113","is_new":false,"type":"url","title":"Cats Protection","language":"en","url":"http://www.webarchive.org.uk/act/node/109","edit_url":"http://www.webarchive.org.uk/act/node/109/edit","status":"1","promote":"0","sticky":"0","created":"1363770213","changed":"1375215708","author":{"uri":"http://www.webarchive.org.uk/act/user/61","id":"61","resource":"user"},"log":"","revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null}
 
 	////		        	"field_scope":"root",
 	////		        	"field_depth":"capped",
@@ -558,7 +561,7 @@ public enum JsonUtils {
 
 	}
 	
-	public static List<Collection> convertCollections(String actUrl) {
+	public static List<Collection> convertCollections2(String actUrl) {
 		List<Collection> res = new ArrayList<Collection>();
 		Collection collection = Collection.findByUrl(actUrl);
 		if (collection != null && StringUtils.isNotEmpty(collection.name)) {
@@ -567,9 +570,125 @@ public enum JsonUtils {
 		return res;
 	}       
 
+	public Collection convertCollection(FieldModel fieldModel) throws IOException {
+		
+		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+		Collection collection = null;
+		String content = this.getAuthenticatedContent(url.toString());
+		
+		Logger.info("collection url: " + url);
+		Logger.info("collection content: " + content);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		collection = mapper.readValue(content, Collection.class);
+		Logger.info("collection: " + collection);
+		
+		if (StringUtils.isNotEmpty(collection.name)) {
+			collection.url = this.getActUrl(collection.getTid());
+			
+			// find to see if it's stored already
+			
+			Collection lookup = Collection.findByUrl(collection.url);
+			
+			Logger.info("lookup: " + lookup + " using " + collection.url);
+	
+			if (lookup == null) {
+				// ownerUsers
+				if (collection.getField_owner() != null) {
+					List<FieldModel> fieldOwners = collection.getField_owner();
+					for (FieldModel fieldOwner : fieldOwners) {
+						String fieldActUrl = this.getActUrl(fieldOwner.getId());
+						User owner = User.findByUrl(fieldActUrl);
+						collection.getOwnerUsers().add(owner);
+					}
+				}
+				// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
+				if (collection.getVocabularyValue() != null) {
+					FieldModel fmTaxVocab = collection.getVocabularyValue();
+					Long vid = Long.valueOf(fmTaxVocab.getId());
+					TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.findByVid(vid);
+					if (taxonomyVocabulary == null) {
+						String tvUrl = fmTaxVocab.getUri().replace("\\", "");
+						StringBuilder taxonomyVocabularyUrl = new StringBuilder(tvUrl).append(Const.JSON);
+						String tvContent = this.getAuthenticatedContent(taxonomyVocabularyUrl.toString());
+						ObjectMapper tvMapper = new ObjectMapper();
+						tvMapper.setSerializationInclusion(Include.NON_NULL);
+						taxonomyVocabulary = tvMapper.readValue(tvContent, TaxonomyVocabulary.class);
+						taxonomyVocabulary.save();
+					}
+					collection.setTaxonomyVocabulary(taxonomyVocabulary);
+				}
+				Logger.info("act-url: " + collection.url);
+				List<FieldModel> parentFieldList = collection.getParentFieldList();
+				for (FieldModel parentFieldModel : parentFieldList) {
+					
+					String actUrl = this.getActUrl(parentFieldModel.getId());
+					Collection parentCollection = Collection.findByUrl(actUrl);
+					if (parentCollection == null) {
+						parentCollection = convertCollection(parentFieldModel);
+					}
+					collection.getParentsList().add(parentCollection);
+				}
+				collection.save();
+			} else {
+				collection = lookup;
+			}
+			Logger.info("collection id: " + collection.id);
+	
+//			"field_collection_categories":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/160","id":"160","resource":"taxonomy_term"}],
+//			"field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/2013","id":"2013","resource":"node"}],
+			
+			
+	//			"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+	//			"field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
+	//			"field_publish":true,
+	//			"tid":"250",
+	//			"name":"European Parliament Elections 2014","description":"",
+	//			"weight":"0",
+	//			"node_count":10,
+	//			"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
+	//			"vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
+	//			"parent":[],
+	//			"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+		}
+		return collection;
+	}
+	
+	private Subject convertSubject(FieldModel fieldModel) throws IOException {
+//		"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
+		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+		Subject subject = null;
+		String content = this.getAuthenticatedContent(url.toString());
+		
+		Logger.info("subject url: " + url);
+		Logger.info("subject content: " + content);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		subject = mapper.readValue(content, Subject.class);
+		Logger.info("subject: " + subject);
+		
+		subject.url = this.getActUrl(subject.getTid());
+		
+		// find to see if it's stored already
+		
+		Subject lookup = Subject.findByUrl(subject.url);
+		
+		Logger.info("lookup: " + lookup + " using " + subject.url);
+
+		if (lookup == null) {
+			subject.save();
+		} else {
+			subject = lookup;
+		}
+		Logger.info("subject url: " + subject.url);
+		return subject;
+	}
+
 
 	public Taxonomy convertTaxonomies(String actUrl, List<String> existingTaxonomyUrls) throws IOException {
-		Collection taxonomy = null;
+		Taxonomy taxonomy = null;
 		String url = getWebarchiveCreatorUrl(actUrl, Const.NodeType.TAXONOMY);
 		if (!existingTaxonomyUrls.contains(url)) {
 			existingTaxonomyUrls.add(url);
@@ -583,7 +702,8 @@ public enum JsonUtils {
 			taxonomy = taxonomyMapper.readValue(taxonomyContent, Collection.class);
 			Logger.info("taxonomy: " + taxonomy);
 			taxonomy.url = this.getActUrl(taxonomy.getTid());
-			Taxonomy lookup = Taxonomy.findByUrl(taxonomy.url);
+			// find by name to see if it's stored already
+			Taxonomy lookup = Taxonomy.findByName(taxonomy.name);
 			Logger.info("lookup: " + lookup);
 			if (lookup == null) {
 //				taxonomy.ttype = TaxonomyType.COLLECTION.toString().toLowerCase();
@@ -611,8 +731,9 @@ public enum JsonUtils {
 					}
 					taxonomy.setTaxonomyVocabulary(taxonomyVocabulary);
 				}
-//				Ebean.save(taxonomy);
 				taxonomy.save();
+			} else {
+				taxonomy = lookup;
 			}
 			
 //			"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
@@ -628,29 +749,6 @@ public enum JsonUtils {
 //			"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
 		}
 		return taxonomy;
-	}
-	
-	public void convertCollections() {
-
-		try {
-			String jsonUrl = Const.URL_STR + Const.NodeType.COLLECTION.toString().toLowerCase();
-		    String content = this.getAuthenticatedContent(jsonUrl);
-		    JsonNode parentNode = Json.parse(content);
-			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.setSerializationInclusion(Include.NON_NULL);
-			if (parentNode != null) {
-				JsonNode rootNode = parentNode.path(Const.LIST_NODE);
-				Iterator<JsonNode> iterator = rootNode.iterator();
-				while (iterator.hasNext()) {
-					JsonNode node = iterator.next();
-					Logger.info("json: " + node);
-					Collection collection = objectMapper.readValue(node.toString(), Collection.class);
-					Logger.info("collection: " + collection);
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		 
 	}
 	
 	/**

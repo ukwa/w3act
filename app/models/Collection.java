@@ -31,7 +31,7 @@ public class Collection extends Taxonomy {
     @ManyToMany
 	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
-    private List<Target> targets = new ArrayList<Target>();
+    private List<Target> targets;
  
     //bi-directional many-to-many association to Instance
     @ManyToMany
@@ -79,6 +79,11 @@ public class Collection extends Taxonomy {
     	Collection res = find.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
+    
+    public static Collection findByName(String name) {
+    	Collection collection = find.where().eq(Const.NAME, name).findUnique();
+    	return collection;
+    }
     
     /**
      * This method returns all collections related alphabetically sorted.
@@ -142,14 +147,8 @@ public class Collection extends Taxonomy {
      * @return collection
      */
     public static Collection findByUrl(String url) {
-//    	Logger.info("collection findByUrl: " + url);
-    	Collection res = new Collection();
-    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
-    		res = find.where().eq(Const.URL, url).findUnique();
-    	} else {
-    		res.name = Const.NONE;
-    	}
-    	return res;
+    	Collection collection = find.where().eq(Const.URL, url).findUnique();
+    	return collection;
     }
 
     /**
@@ -400,14 +399,13 @@ public class Collection extends Taxonomy {
 
 	@Override
 	public String toString() {
-		return "Collection [name=" + name
-				+ ", description=" + description + ", vocabulary=" + vocabulary
-				+ ", publish=" + publish + ", parent=" + parent
-				+ ", parentsAll=" + parentsAll + ", node_count=" + node_count
+		return "Collection [ttype=" + ttype + ", name=" + name
+				+ ", description=" + description + ", publish=" + publish
+				+ ", parent=" + parent + ", parentsAll=" + parentsAll
+				+ ", revision=" + revision + ", node_count=" + node_count
 				+ ", feed_nid=" + feed_nid + ", weight=" + weight + ", id="
 				+ id + ", url=" + url + ", createdAt=" + createdAt
 				+ ", updatedAt=" + updatedAt + "]";
 	}
-    
 }
 
