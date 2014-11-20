@@ -1,4 +1,4 @@
-@(watchedTarget: WatchedTarget, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String)
+@(watchedTarget: WatchedTarget, user: User, submitted: Boolean, searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.Documents.list(watchedTarget.id, newPage, sortBy, order, searchstr)
+    routes.Documents.list(watchedTarget.id, submitted, newPage, sortBy, order, searchstr)
     
 }
 
@@ -48,7 +48,17 @@
 	    	<a href="@routes.WatchedTargets.list()">Watched Targets</a> > @watchedTarget.target.title
 	    </h1>
 	</div>
-		
+	
+	<ul class="nav nav-tabs">
+		@if(!submitted) {
+			<li class="active"><a href="#">New</a></li>
+			<li><a href="@routes.Documents.list(watchedTarget.id, true)">Submitted</a></li>
+		} else {
+			<li><a href="@routes.Documents.list(watchedTarget.id, false)">New</a></li>
+			<li class="active"><a href="#">Submitted</a></li>
+		}
+	</ul>
+	
     <article class="documents">
     
 		<div id="forms">
@@ -58,6 +68,7 @@
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   				<input type="hidden" name="s" value="@currentSortBy">
 	   				<input type="hidden" name="o" value="@currentOrder">
+	   				<input type="hidden" name="watchedTarget.id" value="@watchedTarget.id" />
 					<input type="text" class="form-control lookup-form-control" name="q" placeholder="Enter Document Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search">Search</button>						
@@ -74,7 +85,6 @@
 					@header("title", "Title", currentSortBy, currentOrder, link)
 					@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
 					@header("documentUrl", "Document", currentSortBy, currentOrder, link)
-					@header("submitted", "New", currentSortBy, currentOrder, link)
 				</tr>
 			</thead>
 			<tbody>
@@ -83,7 +93,6 @@
 					<td><a href="@routes.Documents.edit(document.id)">@document.title</a></td>
 					<td><a href="@document.landingPageUrl">@document.landingPageUrl</a></td>
 					<td><a href="@document.documentUrl">@document.documentUrl</a></td>
-					<td>@if(!document.submitted) {new}</td>
 				</tr>
 			}
 			</tbody>

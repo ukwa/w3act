@@ -74,7 +74,7 @@ public class WatchedTargets extends AbstractController {
 			Logger.info("Document name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.WatchedTargets.list(0, "fieldUrl", "asc", "")
+	        		routes.WatchedTargets.list(0, "title", "asc", "")
 	        );
     	}
 
@@ -103,14 +103,15 @@ public class WatchedTargets extends AbstractController {
     			newDocumentList.add(document);
     	
     	Ebean.save(newDocumentList);
-    	return redirect(routes.Documents.list(id, 0, "title", "asc", ""));
+    	return redirect(routes.Documents.list(id, true, 0, "title", "asc", ""));
     }
     
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result filterByJson(String fieldUrl) {
+    public static Result filterByJson(String title) {
         JsonNode jsonData = null;
-        if (fieldUrl != null) {
-	        List<WatchedTarget> watchedTargets = WatchedTarget.find.where().icontains("fieldUrl", fieldUrl).findList();
+        if (title != null) {
+	        List<WatchedTarget> watchedTargets = WatchedTarget.find.where().join("target")
+	        		.where().icontains("target.title", title).findList();
 	        jsonData = Json.toJson(watchedTargets);
         }
         return ok(jsonData);

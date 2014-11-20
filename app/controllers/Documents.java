@@ -181,7 +181,7 @@ public class Documents extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on Documents
      */
-    public static Result list(Long watchedTargetId, int pageNo, String sortBy, String order, String filter) {
+    public static Result list(Long watchedTargetId, boolean submitted, int pageNo, String sortBy, String order, String filter) {
     	Logger.info("Documents.list()");
     	
     	/*List<WatchedTarget> watchedTargets = Arrays.asList(
@@ -201,8 +201,9 @@ public class Documents extends AbstractController {
         	list.render(
         			WatchedTarget.find.byId(watchedTargetId),
         			User.findByEmail(request().username()),
+        			submitted,
         			filter,
-        			Document.page(watchedTargetId, pageNo, 10, sortBy, order, filter),
+        			Document.page(watchedTargetId, submitted, pageNo, 10, sortBy, order, filter),
         			sortBy,
         			order)
         	);
@@ -219,7 +220,7 @@ public class Documents extends AbstractController {
 			Logger.info("Document name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Documents.list(1, 0, "title", "asc", "")
+	        		routes.Documents.list(new Long(form.get("watchedTarget.id")), true, 0, "title", "asc", "")
 	        );
     	}
 
@@ -231,7 +232,7 @@ public class Documents extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Documents.list(1, pageNo, sort, order, query));
+    	    	return redirect(routes.Documents.list(new Long(form.get("watchedTarget.id")), true, pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }

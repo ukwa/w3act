@@ -14,7 +14,7 @@ import models.Tag;
 import models.Target;
 import models.Taxonomy;
 import models.User;
-
+import models.WatchedTarget;
 import play.Logger;
 import play.Play;
 import play.data.DynamicForm;
@@ -623,6 +623,9 @@ public class TargetController extends AbstractController {
                 target.tag_to_target = null;
                 Logger.info("+++ subject_to_target object before target nid: " + target.nid + ", update: " + target.subject_to_target);
             	Ebean.update(target);
+            	if (getFormParam("watched").equals("true")) {
+            		Ebean.save(new WatchedTarget(target));
+            	}
         	}
         	if (newTarget.field_url != null) {
             	Logger.info("current target field_url: " + newTarget.field_url);
@@ -655,6 +658,9 @@ public class TargetController extends AbstractController {
         		Logger.info("+++ subject_to_target before target save: " + itrSubjects.next().toString());
         	}
         	Ebean.save(newTarget);
+        	if (getFormParam("watched").equals("true")) {
+        		Ebean.save(new WatchedTarget(newTarget));
+        	}
         	try {
 	            /**
 	             * Create or update association between CrawlPermission and Target

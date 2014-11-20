@@ -78,13 +78,13 @@ public class Document extends Model {
         return errors.isEmpty() ? null : errors;
     }
     
-    public boolean isWholeBook() { return type.equals(DocumentType.BOOK.toString()); }
+    public boolean isWholeBook() { return type != null && type.equals(DocumentType.BOOK.toString()); }
     
-    public boolean isBookChapter() { return type.equals(DocumentType.BOOK_CHAPTER.toString()); }
+    public boolean isBookChapter() { return type != null && type.equals(DocumentType.BOOK_CHAPTER.toString()); }
     
-    public boolean isJournalArticle() { return type.equals(DocumentType.JOURNAL_ARTICLE.toString()); }
+    public boolean isJournalArticle() { return type != null && type.equals(DocumentType.JOURNAL_ARTICLE.toString()); }
     
-    public boolean isJournalIssue() { return type.equals(DocumentType.JOURNAL_ISSUE.toString()); }
+    public boolean isJournalIssue() { return type != null && type.equals(DocumentType.JOURNAL_ISSUE.toString()); }
 	
 	public boolean isBookOrBookChapter() { return isWholeBook() || isBookChapter(); }
 	
@@ -96,9 +96,10 @@ public class Document extends Model {
     	}
     }
     
-    public static Page<Document> page(Long watchedTargetId, int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Document> page(Long watchedTargetId, boolean submitted, int page, int pageSize, String sortBy, String order, String filter) {
 
         return find.where().eq("id_watched_target", watchedTargetId)
+        		.eq("submitted", submitted)
         		.icontains("title", filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)

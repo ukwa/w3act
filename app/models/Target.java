@@ -17,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
@@ -221,7 +222,9 @@ public class Target extends Model {
     public String qa_notes; 
     @Column(columnDefinition = "TEXT")
     public String quality_notes; 
-
+    
+    @Transient
+    public boolean watched;
     
     @Version
     public Timestamp lastUpdate;
