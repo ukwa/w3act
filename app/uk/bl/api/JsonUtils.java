@@ -82,6 +82,14 @@ public enum JsonUtils {
 		return actUrl;
 	}
 	
+	private String getActUrlFromWebArchive(String url) {
+		return new StringBuilder(Const.ACT_URL).append(url.substring(url.lastIndexOf("/") + 1)).toString();
+	}
+
+	private String getWctUrlFromWebArchive(String url) {
+		return new StringBuilder(Const.WCT_URL).append(url.replace(Const.EDIT_LINK, "").substring(url.lastIndexOf("/") + 1)).toString();
+	}
+
 	private String getAuthenticatedContent(String jsonUrl) throws IOException {
 
 		String user = Play.application().configuration().getString(Const.DRUPAL_USER);
@@ -241,8 +249,8 @@ public enum JsonUtils {
 					if (user.roles == null || user.roles.isEmpty()) {
 						user.roles = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
 					}
-					user.url = this.checkArchiveUrl(user.url);
-					user.edit_url = this.checkArchiveUrl(user.edit_url);
+					user.url = this.getActUrlFromWebArchive(user.url);
+					user.edit_url = this.getWctUrlFromWebArchive(user.edit_url);
 					user.createdAt = this.getDateFromSeconds(user.getCreated());
 					FieldModel fieldAffiliation = user.getField_affiliation();
 					if (fieldAffiliation!= null) {
@@ -372,19 +380,22 @@ public enum JsonUtils {
 								target.organisation = Organisation.findByUrl(orgUrl);
 							}
 						}
-						
+						// some are dead nodes
 						// "field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/2013","id":"2013","resource":"node"}],
+						// "field_suggested_collections":[{"uri":"http://webarchive.org.uk/act/node/108","id":"108","resource":"node"}]
 						if (target.getField_suggested_collections() != null) {
 							List<FieldModel> suggestCollections = target.getField_suggested_collections();
 							
 							for (FieldModel fieldModel : suggestCollections) {
-								
-								Collection collection = this.convertCollection(fieldModel);
-								
-								if (collection != null) {
-									target.collections.add(collection);
+								try {
+									Collection collection = this.convertCollection(fieldModel);
+									
+									if (collection != null) {
+										target.collections.add(collection);
+									}
+								} catch (IOException e) {
+									Logger.error("Move onto the next Collection: " + e.getMessage());
 								}
-
 							}
 							
 						}
@@ -570,7 +581,25 @@ public enum JsonUtils {
 		return res;
 	}       
 
-	public Collection convertCollection(FieldModel fieldModel) throws IOException {
+	private void convertTaxonomyVocabulary(Taxonomy taxonomy) throws IOException {
+		if (taxonomy.getVocabularyValue() != null) {
+			FieldModel fmTaxVocab = taxonomy.getVocabularyValue();
+			Long vid = Long.valueOf(fmTaxVocab.getId());
+			TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.findByVid(vid);
+			if (taxonomyVocabulary == null) {
+				String tvUrl = fmTaxVocab.getUri().replace("\\", "");
+				StringBuilder taxonomyVocabularyUrl = new StringBuilder(tvUrl).append(Const.JSON);
+				String tvContent = this.getAuthenticatedContent(taxonomyVocabularyUrl.toString());
+				ObjectMapper tvMapper = new ObjectMapper();
+				tvMapper.setSerializationInclusion(Include.NON_NULL);
+				taxonomyVocabulary = tvMapper.readValue(tvContent, TaxonomyVocabulary.class);
+				taxonomyVocabulary.save();
+			}
+			taxonomy.setTaxonomyVocabulary(taxonomyVocabulary);
+		}
+	}
+	
+	private Collection convertCollection(FieldModel fieldModel) throws IOException {
 		
 		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
 		Collection collection = null;
@@ -604,22 +633,11 @@ public enum JsonUtils {
 					}
 				}
 				// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
-				if (collection.getVocabularyValue() != null) {
-					FieldModel fmTaxVocab = collection.getVocabularyValue();
-					Long vid = Long.valueOf(fmTaxVocab.getId());
-					TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.findByVid(vid);
-					if (taxonomyVocabulary == null) {
-						String tvUrl = fmTaxVocab.getUri().replace("\\", "");
-						StringBuilder taxonomyVocabularyUrl = new StringBuilder(tvUrl).append(Const.JSON);
-						String tvContent = this.getAuthenticatedContent(taxonomyVocabularyUrl.toString());
-						ObjectMapper tvMapper = new ObjectMapper();
-						tvMapper.setSerializationInclusion(Include.NON_NULL);
-						taxonomyVocabulary = tvMapper.readValue(tvContent, TaxonomyVocabulary.class);
-						taxonomyVocabulary.save();
-					}
-					collection.setTaxonomyVocabulary(taxonomyVocabulary);
-				}
+				
+				this.convertTaxonomyVocabulary(collection);
+
 				Logger.info("act-url: " + collection.url);
+				Logger.info("getParentFieldList: " + collection.getParentFieldList());
 				List<FieldModel> parentFieldList = collection.getParentFieldList();
 				for (FieldModel parentFieldModel : parentFieldList) {
 					
@@ -678,6 +696,8 @@ public enum JsonUtils {
 		Logger.info("lookup: " + lookup + " using " + subject.url);
 
 		if (lookup == null) {
+			
+			this.convertTaxonomyVocabulary(subject);
 			subject.save();
 		} else {
 			subject = lookup;

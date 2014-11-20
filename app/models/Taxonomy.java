@@ -107,13 +107,11 @@ public class Taxonomy extends ActModel {
 	private List<Taxonomy> parentsList;
 	
     @Transient
-    @JsonIgnore
     @JsonProperty
     private String tid;
     
     @Transient
     @JsonIgnore
-    @JsonProperty
     public Long node_count;
     
     @Transient
@@ -121,32 +119,26 @@ public class Taxonomy extends ActModel {
     private FieldModel vocabularyValue;
     
     @Transient
-    @JsonIgnore
     @JsonProperty(value="parent")
     private List<FieldModel> parentFieldList;
     
     @Transient
-    @JsonIgnore
-    @JsonProperty
+    @JsonProperty(value="parents_all")
     private List<FieldModel> parents_all;
     
     @Transient
     @JsonIgnore
-    @JsonProperty
     public Long feed_nid;
     
     @Transient
     @JsonIgnore
-    @JsonProperty
     public Long weight;
 
     @Transient
-    @JsonIgnore
     @JsonProperty
     private List<FieldModel> field_owner;
     
     @Transient
-    @JsonIgnore
     @JsonProperty
     private Object field_dates;
     
@@ -1221,15 +1213,6 @@ public class Taxonomy extends ActModel {
     public static Taxonomy findByTypeAndUrl(String type, String url) {
         Taxonomy taxonomy = find.where().eq(Const.TTYPE, type).eq(Const.URL, url).findUnique();
     	return taxonomy;
-    }
-
-    @Override
-	public void save() {
-    	super.save();
-    	this.url = Const.ACT_URL + this.id;
-//    	this.parentsAll = url;
-    	Logger.info("ID: " + this.id);
-    	super.save();
     }
 
 	public String getName() {
