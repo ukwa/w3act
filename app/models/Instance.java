@@ -13,18 +13,23 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import uk.bl.api.models.FieldModel;
+import uk.bl.api.models.FieldValue;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.avaje.ebean.QueryIterator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import controllers.Flags;
 
@@ -34,25 +39,20 @@ import controllers.Flags;
  */
 @Entity 
 @Table(name = "instance")
-public class Instance extends ActModel {
+public class Instance extends JsonModel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4285620218930401425L;
 
-	//bi-directional many-to-one association to Organisation
-	@ManyToOne
-	@JoinColumn(name="organisation_id")
-	public Organisation organisation;
-    	
 	//bi-directional many-to-many association to Subject
 	@ManyToMany(mappedBy="instances")
-	public List<Taxonomy> subjectToInstance = new ArrayList<Taxonomy>();
+	public List<Taxonomy> subjects = new ArrayList<Taxonomy>();
 
 	//bi-directional many-to-many association to DCollection
 	@ManyToMany(mappedBy="instances")
-	public List<Collection> collectionToInstance = new ArrayList<Collection>();
+	public List<Collection> collections = new ArrayList<Collection>();
 	
 	//bi-directional many-to-many association to Flag
 	@ManyToMany(mappedBy="instances")
@@ -62,12 +62,86 @@ public class Instance extends ActModel {
 	@ManyToMany(mappedBy="instances")
 	public List<Tag> tagToInstance = new ArrayList<Tag>();
 	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "target_id")
+	public Target target;
+	
+    public Date fieldTimestamp;
+	
     @Column(columnDefinition = "text")
     public String value;
     @Column(columnDefinition = "text")
     public String summary;
-    public String actUrl;
-    public String wctUrl;
+    
+    public Date fieldDate;
+    
+	@JsonProperty
+	public String edit_url;
+	
+	@Transient
+	@JsonProperty
+	private String field_timestamp;
+	
+	@Transient
+	@JsonProperty
+	private FieldModel field_qa_issues;
+
+	@Transient
+	@JsonProperty
+	private FieldModel field_target;
+
+	@Transient
+	@JsonProperty
+	private FieldValue field_description_of_qa_issues;
+	
+	@Transient
+	@JsonProperty
+	private Boolean field_published;
+	
+	@Transient
+	@JsonProperty
+	private Boolean field_to_be_published_;
+
+	
+//	same "body":{
+//		"value":"too much data here",
+//		"summary":"","format":"filtered_html"
+//		},
+//		"field_timestamp":"20130908110118",
+//		"field_qa_issues":{
+//			"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/165","id":"165","resource":"taxonomy_term"
+//			},
+//		"field_target":{
+//				"uri":"http:\/\/webarchive.org.uk\/act\/node\/676","id":"676","resource":"node"
+//			},
+//		"field_description_of_qa_issues":{
+//				"value":"\u003Cp\u003ESite not live\u003C\/p\u003E\n","format":"filtered_html"
+//			},
+//		"field_published":false,
+//		"field_to_be_published_":false,
+	
+//	same	"nid":"12954",
+//	same	"vid":"20109",
+//	same	"is_new":false,
+//	same	"type":"instance",
+//	same 	"title":"20130908110118",
+//	same 	"language":"und",
+//	same	"url":"http:\/\/webarchive.org.uk\/act\/node\/12954",
+//	same	"edit_url":"http:\/\/webarchive.org.uk\/act\/node\/12954\/edit",
+//	same 	"status":"1",
+//	same 	"promote":"0",
+//	same 	"sticky":"0",
+//	same	"created":"1394535642",
+//	same	"changed":"1394551688",
+//	same	"log":"",
+//	same	"revision":null,
+//	same	"comment":"1",
+//	same	"comments":[],
+//	same	"comment_count":"0",
+//	same	"comment_count_new":"0",
+//	same	"feed_nid":null}
+
     public String format;
     public String fieldScope;
     public String fieldDepth;
@@ -83,22 +157,10 @@ public class Instance extends ActModel {
     public String fieldSpecialDispensation;
     public Boolean fieldUkGeoip;
     public Boolean fieldProfessionalJudgement;
-    public Long vid;
-    public Boolean isNew;
-    public String type;
-    @Required
-    public String title;
-    public String language;
-    public String editUrl;
-    public Long status;
-    public Long promote;
-    public Long sticky;
+
     public String author; 
     public String log;
-    public Long comment;
-    public Long commentCount;
-    public Long commentCountNew;
-    public Long feedNid;
+
     public String fieldLiveSiteStatus;
     public Long fieldWct_id;
     public Long fieldSpt_id;
@@ -115,7 +177,8 @@ public class Instance extends ActModel {
     @Column(columnDefinition = "text")
     public String fieldDescriptionOfQaIssues;
     @Column(columnDefinition = "text")
-    public Date fieldTimestamp;
+    
+    
     public Boolean fieldPublished;
     public Boolean fieldToBePublished;
     public String dateOfPublication;
@@ -1088,8 +1151,57 @@ public class Instance extends ActModel {
 		}
     	
     }
-		
-    public String toString() {
+    
+    public String getField_timestamp() {
+		return field_timestamp;
+	}
+
+	public void setField_timestamp(String field_timestamp) {
+		this.field_timestamp = field_timestamp;
+	}
+
+	public FieldModel getField_qa_issues() {
+		return field_qa_issues;
+	}
+
+	public void setField_qa_issues(FieldModel field_qa_issues) {
+		this.field_qa_issues = field_qa_issues;
+	}
+
+	public FieldModel getField_target() {
+		return field_target;
+	}
+
+	public void setField_target(FieldModel field_target) {
+		this.field_target = field_target;
+	}
+
+	public FieldValue getField_description_of_qa_issues() {
+		return field_description_of_qa_issues;
+	}
+
+	public void setField_description_of_qa_issues(
+			FieldValue field_description_of_qa_issues) {
+		this.field_description_of_qa_issues = field_description_of_qa_issues;
+	}
+
+	public Boolean getField_published() {
+		return field_published;
+	}
+
+	public void setField_published(Boolean field_published) {
+		this.field_published = field_published;
+	}
+
+	public Boolean getField_to_be_published_() {
+		return field_to_be_published_;
+	}
+
+	public void setField_to_be_published_(Boolean field_to_be_published_) {
+		this.field_to_be_published_ = field_to_be_published_;
+	}
+
+	public String toString() {
         return "Instance(" + id + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + fieldCrawlFrequency + ", type: " + type +
         ", field_uk_domain: " + fieldUkDomain + ", field_url: " + fieldUrl + 
         ", field_description: " + fieldDescription + ", field_uk_postal_address_url: " + fieldUkPostalAddressUrl +

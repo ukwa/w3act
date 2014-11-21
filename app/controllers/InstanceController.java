@@ -368,14 +368,14 @@ public class InstanceController extends AbstractController {
             	newInstance.id = Long.valueOf(getFormParam(Const.ID));
 //            	newInstance.url = getFormParam(Const.URL);            	
         		newInstance.url = Const.ACT_URL + newInstance.id;
-        		newInstance.editUrl = Const.WCT_URL + newInstance.id;            	
+        		newInstance.edit_url = Const.WCT_URL + newInstance.id;            	
             }
             if (newInstance == null) {
             	newInstance = new Instance();
             	newInstance.id = Long.valueOf(getFormParam(Const.ID));
 //            	newInstance.url = getFormParam(Const.URL);      
         		newInstance.url = Const.ACT_URL + newInstance.id;
-        		newInstance.editUrl = Const.WCT_URL + newInstance.id;            	
+        		newInstance.edit_url = Const.WCT_URL + newInstance.id;            	
             	Logger.info("is not existing");
             	isExisting = false;
             }
@@ -443,7 +443,7 @@ public class InstanceController extends AbstractController {
             	newInstance.fieldSubject = Const.NONE;
             }            
             Utils.removeAssociationFromDb(Const.SUBJECT_INSTANCE, Const.ID + "_" + Const.INSTANCE, newInstance.id);
-            newInstance.subjectToInstance = Taxonomy.convertUrlsToObjects(newInstance.fieldSubject);
+            newInstance.subjects = Taxonomy.convertUrlsToObjects(newInstance.fieldSubject);
             if (getFormParam(Const.TREE_KEYS) != null) {
             	newInstance.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
 //            	newInstance.collectionToInstance = Collection.convertUrlsToObjects(newInstance.fieldCollectionCategories);

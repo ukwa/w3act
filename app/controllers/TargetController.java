@@ -216,7 +216,7 @@ public class TargetController extends AbstractController {
             		}
                 }
             	targetObj.fieldLicense = resLicenses;
-            	targetObj.licenseToTarget = Taxonomy.convertUrlsToObjects(targetObj.fieldLicense);
+            	targetObj.licenses = Taxonomy.convertUrlsToObjects(targetObj.fieldLicense);
 //        		targetObj.updateLicense();
         	} else {
         		targetObj.fieldLicense = Const.NONE;
@@ -533,7 +533,7 @@ public class TargetController extends AbstractController {
 	            		}
 	                }
 	            	newTarget.fieldLicense = resLicenses;
-                	newTarget.licenseToTarget = Taxonomy.convertUrlsToObjects(newTarget.fieldLicense);
+                	newTarget.licenses = Taxonomy.convertUrlsToObjects(newTarget.fieldLicense);
             	} else {
             		newTarget.fieldLicense = Const.NONE;
             	}

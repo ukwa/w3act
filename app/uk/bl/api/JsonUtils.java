@@ -12,6 +12,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -25,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import models.Collection;
 import models.Instance;
+import models.License;
 import models.Organisation;
 import models.Role;
 import models.Subject;
@@ -39,6 +43,7 @@ import uk.bl.Const;
 import uk.bl.Const.NodeType;
 import uk.bl.Const.TaxonomyType;
 import uk.bl.api.models.FieldModel;
+import uk.bl.api.models.FieldValue;
 import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
@@ -81,13 +86,18 @@ public enum JsonUtils {
 		}
 		return actUrl;
 	}
+
+	private String getUrlFromWebArchive(String prefix, String url) {
+		return new StringBuilder(prefix).append(url.substring(url.lastIndexOf("/") + 1)).toString();
+	}
 	
 	private String getActUrlFromWebArchive(String url) {
-		return new StringBuilder(Const.ACT_URL).append(url.substring(url.lastIndexOf("/") + 1)).toString();
+		return this.getUrlFromWebArchive(Const.ACT_URL, url);
 	}
 
 	private String getWctUrlFromWebArchive(String url) {
-		return new StringBuilder(Const.WCT_URL).append(url.replace(Const.EDIT_LINK, "").substring(url.lastIndexOf("/") + 1)).toString();
+		StringBuilder stringBuilder = new StringBuilder(url.replace(Const.EDIT_LINK, ""));
+		return this.getUrlFromWebArchive(Const.WCT_URL, stringBuilder.toString());
 	}
 
 	private String getAuthenticatedContent(String jsonUrl) throws IOException {
@@ -213,16 +223,18 @@ public enum JsonUtils {
 					Logger.info(count + ") ");
 					JsonNode node = iterator.next();
 					
-	//				"field_affiliation":
-	//				{
-	//					"uri":"http://www.webarchive.org.uk/act/node/102","id":"102","resource":"node"
-	//				},
-	//				"uid":"279","name":"Aled Betts","url":"http://www.webarchive.org.uk/act/user/279","edit_url":"http://www.webarchive.org.uk/act/user/279/edit","created":"1409663132","language":"en","feed_nid":null
+//					"field_affiliation":
+//					{
+//						"uri":"http://www.webarchive.org.uk/act/node/102","id":"102","resource":"node"
+//					},
+//					"uid":"279","name":"Aled Betts",
+//					"url":"http://www.webarchive.org.uk/act/user/279",
+//					"edit_url":"http://www.webarchive.org.uk/act/user/279/edit","created":"1409663132","language":"en","feed_nid":null
 	
-	//				User [
-	//				      organisation=null, roles=[], email=null, password=null, name=Aled Betts, fieldAffiliation=null, edit_url=null, last_access=null, last_login=null, status=null, language=null, feed_nid=null, 
-	//				      field_affiliation=null, uid=279, created=1409663132, mail=null, revision=, id=null, url=http://www.webarchive.org.uk/act/user/279, createdAt=null, updatedAt=null
-	//				]
+//					User [
+//					      organisation=null, roles=[], email=null, password=null, name=Aled Betts, fieldAffiliation=null, edit_url=null, last_access=null, last_login=null, status=null, language=null, feed_nid=null, 
+//					      field_affiliation=null, uid=279, created=1409663132, mail=null, revision=, id=null, url=http://www.webarchive.org.uk/act/user/279, createdAt=null, updatedAt=null
+//					]
 							
 					Logger.info("json: " + node);
 					User user = objectMapper.readValue(node.toString(), User.class);
@@ -341,7 +353,8 @@ public enum JsonUtils {
 							target.fieldUrl = StringUtils.join(fieldUrls, ", ");
 						}
 						
-//						"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
+						// "field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
+						// "field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/16","id":"16","resource":"taxonomy_term"},"
 						FieldModel fieldSubject = target.getField_subject();
 						if (fieldSubject != null) {
 							Subject subject = this.convertSubject(fieldSubject);
@@ -383,50 +396,53 @@ public enum JsonUtils {
 						// some are dead nodes
 						// "field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/2013","id":"2013","resource":"node"}],
 						// "field_suggested_collections":[{"uri":"http://webarchive.org.uk/act/node/108","id":"108","resource":"node"}]
-						if (target.getField_suggested_collections() != null) {
-							List<FieldModel> suggestCollections = target.getField_suggested_collections();
-							
-							for (FieldModel fieldModel : suggestCollections) {
-								try {
-									Collection collection = this.convertCollection(fieldModel);
-									
-									if (collection != null) {
-										target.collections.add(collection);
-									}
-								} catch (IOException e) {
-									Logger.error("Move onto the next Collection: " + e.getMessage());
-								}
-							}
-							
-						}
+						// KL UNUSED
+//						if (target.getField_suggested_collections() != null) {
+//							List<FieldModel> suggestCollections = target.getField_suggested_collections();
+//							
+//							for (FieldModel fieldModel : suggestCollections) {
+//								try {
+//									Collection collection = this.convertCollection(fieldModel);
+//									
+//									if (collection != null) {
+//										target.collections.add(collection);
+//									}
+//								} catch (IOException e) {
+//									Logger.error("Move onto the next Collection: " + e.getMessage());
+//								}
+//							}
+//							
+//						}
 
 						// "field_collections":[],
-						if (target.getField_collections() != null) {
-							List<FieldModel> collections = target.getField_collections();
-							List<String> collectionsList = new ArrayList<String>();
-							for (FieldModel fieldModel : collections) {
-								String actUrl = this.getActUrl(fieldModel.getId());
-								collectionsList.add(actUrl);
-							}
-							if (!collectionsList.isEmpty()) {
-								target.fieldCollections = StringUtils.join(collectionsList, ", ");
-							}
-						}
+						// KL UNUSED
+//						if (target.getField_collections() != null) {
+//							List<FieldModel> collections = target.getField_collections();
+//							for (FieldModel fieldModel : collections) {
+//								try {
+//									Collection collection = this.convertCollection(fieldModel);
+//									
+//									if (collection != null) {
+//										target.collections.add(collection);
+//									}
+//								} catch (IOException e) {
+//									Logger.error("Move onto the next Collection: " + e.getMessage());
+//								}
+//							}
+//						}
 						
 						// "field_license":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/168","id":"168","resource":"taxonomy_term"}],
 						if (target.getField_license() != null) {
 							List<FieldModel> licenses = target.getField_license();
-							List<String> licensesList = new ArrayList<String>();
 							for (FieldModel fieldModel : licenses) {
-								String actUrl = this.getActUrl(fieldModel.getId());
-								licensesList.add(actUrl);
-							}
-							if (!licensesList.isEmpty()) {
-								target.fieldLicense = StringUtils.join(licensesList, ", ");
+								License license = this.convertLicense(fieldModel);
+								
+								if (license != null) {
+									target.licenses.add(license);
+								}
 							}
 						}
 						
-
 						// "field_collection_categories":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/160","id":"160","resource":"taxonomy_term"}],
 						if (target.getField_collection_categories() != null) {
 							List<FieldModel> collectionCategories = target.getField_collection_categories();
@@ -472,6 +488,7 @@ public enum JsonUtils {
 						}
 						
 						// "field_instances":[],
+						target.getField_instances();
 
 						// "author":{"uri":"http://www.webarchive.org.uk/act/user/9","id":"9","resource":"user"},
 						FieldModel author = target.getAuthor();
@@ -518,49 +535,6 @@ public enum JsonUtils {
 
 						// TODO: KL
 						// target.domain
-	
-	//					{"body":[],"field_scope":"root","field_url":[{"url":"http://www.cats.org.uk/"}],
-//			        	"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/16","id":"16","resource":"taxonomy_term"},"
-//			        	field_depth":"capped","field_via_correspondence":false,"field_uk_postal_address":false,"field_uk_hosting":false,
-//			        	"field_description":{"value":"<p>website of animal welfare organisation</p>\n","summary":"","format":"filtered_html"},
-//			        	"field_uk_postal_address_url":[],"field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},"field_crawl_frequency":"domaincrawl","field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/108","id":"108","resource":"node"}],"field_collections":[],"field_crawl_start_date":null,"field_crawl_end_date":null,"field_uk_domain":"Yes","field_license":[],"field_crawl_permission":"","field_collection_categories":[],"field_special_dispensation":false,"field_special_dispensation_reaso":null,"field_live_site_status":null,"field_notes":[],"field_wct_id":null,"field_spt_id":null,"field_snapshots":[],"field_no_ld_criteria_met":null,"field_key_site":null,"field_uk_geoip":"Yes","field_professional_judgement":false,"field_professional_judgement_exp":null,"field_ignore_robots_txt":null,"field_instances":[],"nid":"109","vid":"113","is_new":false,"type":"url","title":"Cats Protection","language":"en","url":"http://www.webarchive.org.uk/act/node/109","edit_url":"http://www.webarchive.org.uk/act/node/109/edit","status":"1","promote":"0","sticky":"0","created":"1363770213","changed":"1375215708","author":{"uri":"http://www.webarchive.org.uk/act/user/61","id":"61","resource":"user"},"log":"","revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null}
-
-	////		        	"field_scope":"root",
-	////		        	"field_depth":"capped",
-	////		        	"field_via_correspondence":false,
-	////		        	"field_uk_postal_address":true,
-	////		        	"field_uk_hosting":false,
-	////		        	"field_crawl_frequency":"domaincrawl",
-	//		        	"field_uk_domain":"No",
-	////		        	"field_crawl_permission":"",
-	////		        	"field_special_dispensation":false,
-	////		        	"field_special_dispensation_reaso":null,
-	////		        	"field_live_site_status":null,
-	////		        	"field_wct_id":"128704","field_spt_id":"141374",
-	////		        	"field_no_ld_criteria_met":null,
-	////		        	"field_key_site":null,
-	//		        	"field_uk_geoip":"Yes",
-	////		        	"field_professional_judgement":false,
-	////		        	"field_professional_judgement_exp":null,
-	////		        	"field_ignore_robots_txt":null,
-	////		        	"nid":"17",
-	////		        	"vid":"17",
-	////		        	"is_new":false,
-	////		        	"type":"url",
-	////		        	"title":"Children's Legal Centre (CLC)",
-	////		        	"language":"und",
-	////		        	"url":"http://www.webarchive.org.uk/act/node/17",
-	////		        	"edit_url":"http://www.webarchive.org.uk/act/node/17/edit",
-	////		        	"status":"1",
-	////		        	"promote":"0",
-	////		        	"sticky":"0",
-	////		        	"created":"1355322059",
-	////		        	"changed":"1387368879",
-	////		        	"log":"Updated by FeedsNodeProcessor",
-	////		        	"revision":null,
-	////		        	"comment":"2","comment_count":"0","comment_count_new":"0","feed_nid":"0"}
-	//		        	
-			        	
 					}
 				}
 
@@ -572,15 +546,119 @@ public enum JsonUtils {
 
 	}
 	
-	public static List<Collection> convertCollections2(String actUrl) {
-		List<Collection> res = new ArrayList<Collection>();
-		Collection collection = Collection.findByUrl(actUrl);
-		if (collection != null && StringUtils.isNotEmpty(collection.name)) {
-			res.add(collection);
-		}
-		return res;
-	}       
+	@SuppressWarnings("unchecked")
+	public void convertInstances() {
+		try {
+			// TODO: CHECK JSON URL
+			String jsonUrl = Const.URL_STR + Const.NodeType.INSTANCE.toString().toLowerCase();
+			String content = this.getAuthenticatedContent(jsonUrl);
 
+			JsonNode parentNode = Json.parse(content);
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
+			
+			if (parentNode != null) {
+				
+				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
+				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
+				
+				int count = 0;
+				for (int i=firstPage; i<=lastPage; i++) {
+					
+					StringBuilder instanceUrl = new StringBuilder(jsonUrl).append("&").append(Const.PAGE_IN_URL).append(String.valueOf(i));
+					Logger.info("instance url: " + instanceUrl);
+					String pageContent = this.getAuthenticatedContent(instanceUrl.toString());
+					JsonNode mainNode = Json.parse(pageContent.toString());
+					
+					JsonNode rootNode = mainNode.path(Const.LIST_NODE);
+					Iterator<JsonNode> iterator = rootNode.iterator();
+					while (iterator.hasNext()) {
+						JsonNode node = iterator.next();
+						Logger.info("json: " + node.toString());
+						
+						Instance instance = objectMapper.readValue(node.toString(), Instance.class);
+	
+						instance.url = this.getActUrl(instance.getNid());
+						instance.edit_url = this.getWctUrl(instance.vid);
+						instance.createdAt = this.getDateFromSeconds(instance.getCreated());
+						
+						// {"body":{"value":"<p>UK address on contacts page</p>\n", "summary":"", "format":"plain_text"},
+						if (instance.getBody() instanceof LinkedHashMap) {
+							Map<String, String> bodyMap = (LinkedHashMap<String,String>)instance.getBody();
+							String value = bodyMap.get("value");
+							String format = bodyMap.get("format");
+							String summary = bodyMap.get("summary");
+							if (StringUtils.isNotEmpty(value)) {
+								instance.value = value;
+							}
+							if (StringUtils.isNotEmpty(format)) {
+								instance.format = format;
+							}
+							if (StringUtils.isNotEmpty(summary)) {
+								instance.summary = summary;
+							}
+						}
+						
+						String timestamp = instance.getField_timestamp();
+						// "field_timestamp":"20130908110118",
+						if (StringUtils.isNotEmpty(timestamp)) {
+							DateFormat dateFormat = new SimpleDateFormat("yyyyMMddssmmhh");
+							try {
+								Date fieldDate = dateFormat.parse(timestamp);
+							    instance.fieldDate = fieldDate;
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						
+//						"field_qa_issues":{
+//							"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/165","id":"165","resource":"taxonomy_term"
+//							},
+						FieldModel qaIssues = instance.getField_qa_issues();
+
+//						"field_target":{
+//								"uri":"http:\/\/webarchive.org.uk\/act\/node\/676","id":"676","resource":"node"
+//							},
+						FieldModel fieldTarget = instance.getField_target();
+						String actUrl = this.getActUrl(fieldTarget.getId());
+						Target target = Target.findByUrl(actUrl);
+						if (target != null) {
+							instance.target = target;
+						}
+//						"field_description_of_qa_issues":{
+//							"value":"\u003Cp\u003ESite not live\u003C\/p\u003E\n","format":"filtered_html"
+//						},
+						FieldValue descOfQaIssues = instance.getField_description_of_qa_issues();
+						if (descOfQaIssues != null) {
+							instance.fieldQaIssues = descOfQaIssues.getValue();
+							instance.format = descOfQaIssues.getFormat();
+						}
+						
+//						"field_published":false,
+//						"field_to_be_published_":false,
+						
+						
+						instance.revision = Const.INITIAL_REVISION;
+						instance.selectionType = Const.SelectionType.SELECTION.name();
+						if (StringUtils.isNotBlank(instance.language) && instance.language.equals(Const.UND)) {
+							instance.language = null;
+						}
+	
+						instance.createdAt = this.getDateFromSeconds(instance.getCreated());
+
+			        	instance.save();
+			        	count++;
+					}
+				}
+
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+	
 	private void convertTaxonomyVocabulary(Taxonomy taxonomy) throws IOException {
 		if (taxonomy.getVocabularyValue() != null) {
 			FieldModel fmTaxVocab = taxonomy.getVocabularyValue();
@@ -613,63 +691,58 @@ public enum JsonUtils {
 		collection = mapper.readValue(content, Collection.class);
 		Logger.info("collection: " + collection);
 		
-		if (StringUtils.isNotEmpty(collection.name)) {
-			collection.url = this.getActUrl(collection.getTid());
-			
-			// find to see if it's stored already
-			
-			Collection lookup = Collection.findByUrl(collection.url);
-			
-			Logger.info("lookup: " + lookup + " using " + collection.url);
-	
-			if (lookup == null) {
-				// ownerUsers
-				if (collection.getField_owner() != null) {
-					List<FieldModel> fieldOwners = collection.getField_owner();
-					for (FieldModel fieldOwner : fieldOwners) {
-						String fieldActUrl = this.getActUrl(fieldOwner.getId());
-						User owner = User.findByUrl(fieldActUrl);
-						collection.getOwnerUsers().add(owner);
-					}
-				}
-				// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
-				
-				this.convertTaxonomyVocabulary(collection);
+		collection.url = this.getActUrl(collection.getTid());
+		
+		// find to see if it's stored already
+		
+		Collection lookup = Collection.findByUrl(collection.url);
+		
+		Logger.info("lookup: " + lookup + " using " + collection.url);
 
-				Logger.info("act-url: " + collection.url);
-				Logger.info("getParentFieldList: " + collection.getParentFieldList());
-				List<FieldModel> parentFieldList = collection.getParentFieldList();
-				for (FieldModel parentFieldModel : parentFieldList) {
-					
-					String actUrl = this.getActUrl(parentFieldModel.getId());
-					Collection parentCollection = Collection.findByUrl(actUrl);
-					if (parentCollection == null) {
-						parentCollection = convertCollection(parentFieldModel);
-					}
-					collection.getParentsList().add(parentCollection);
+		if (lookup == null) {
+			// ownerUsers
+			if (collection.getField_owner() != null) {
+				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+				List<FieldModel> fieldOwners = collection.getField_owner();
+				for (FieldModel fieldOwner : fieldOwners) {
+					String fieldActUrl = this.getActUrl(fieldOwner.getId());
+					User owner = User.findByUrl(fieldActUrl);
+					collection.getOwnerUsers().add(owner);
 				}
-				collection.save();
-			} else {
-				collection = lookup;
 			}
-			Logger.info("collection id: " + collection.id);
-	
-//			"field_collection_categories":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/160","id":"160","resource":"taxonomy_term"}],
-//			"field_suggested_collections":[{"uri":"http://www.webarchive.org.uk/act/node/2013","id":"2013","resource":"node"}],
 			
+			// "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
+			// "field_publish":true,
+			// "tid":"250",
+			// "name":"European Parliament Elections 2014","description":"",
+			// "weight":"0",
+			// "node_count":10,
+			// "url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
 			
-	//			"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-	//			"field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
-	//			"field_publish":true,
-	//			"tid":"250",
-	//			"name":"European Parliament Elections 2014","description":"",
-	//			"weight":"0",
-	//			"node_count":10,
-	//			"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
-	//			"vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-	//			"parent":[],
-	//			"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
+			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
+			this.convertTaxonomyVocabulary(collection);
+
+			Logger.info("act-url: " + collection.url);
+			Logger.info("getParentFieldList: " + collection.getParentFieldList());
+			// "parent":[],
+			List<FieldModel> parentFieldList = collection.getParentFieldList();
+			for (FieldModel parentFieldModel : parentFieldList) {
+				
+				String actUrl = this.getActUrl(parentFieldModel.getId());
+				Collection parentCollection = Collection.findByUrl(actUrl);
+				if (parentCollection == null) {
+					parentCollection = convertCollection(parentFieldModel);
+				}
+				collection.getParentsList().add(parentCollection);
+			}
+			// TODO: KL parents_all doesn't seem to be used by views/controllers
+			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+			collection.save();
+		} else {
+			collection = lookup;
 		}
+		Logger.info("collection id: " + collection.id);
 		return collection;
 	}
 	
@@ -706,68 +779,145 @@ public enum JsonUtils {
 		return subject;
 	}
 
+	private License convertLicense(FieldModel fieldModel) throws IOException {
+		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+		License license = null;
+		String content = this.getAuthenticatedContent(url.toString());
+		
+		Logger.info("license url: " + url);
+		Logger.info("license content: " + content);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		license = mapper.readValue(content, License.class);
+		Logger.info("license: " + license);
+		
+		license.url = this.getActUrl(license.getTid());
+		
+		// find to see if it's stored already
+		
+		License lookup = License.findByUrl(license.url);
+		
+		Logger.info("lookup: " + lookup + " using " + license.url);
 
-	public Taxonomy convertTaxonomies(String actUrl, List<String> existingTaxonomyUrls) throws IOException {
-		Taxonomy taxonomy = null;
-		String url = getWebarchiveCreatorUrl(actUrl, Const.NodeType.TAXONOMY);
-		if (!existingTaxonomyUrls.contains(url)) {
-			existingTaxonomyUrls.add(url);
-			StringBuilder taxonomyUrl = new StringBuilder(url).append(Const.JSON);
-			String taxonomyContent = this.getAuthenticatedContent(taxonomyUrl.toString());
-//			JsonNode taxonomyNode = Json.parse(taxonomyContent.toString());
-			Logger.info("taxonomy url: " + taxonomyUrl);
-			Logger.info("taxonomy content: " + taxonomyContent);
-			ObjectMapper taxonomyMapper = new ObjectMapper();
-			taxonomyMapper.setSerializationInclusion(Include.NON_NULL);
-			taxonomy = taxonomyMapper.readValue(taxonomyContent, Collection.class);
-			Logger.info("taxonomy: " + taxonomy);
-			taxonomy.url = this.getActUrl(taxonomy.getTid());
-			// find by name to see if it's stored already
-			Taxonomy lookup = Taxonomy.findByName(taxonomy.name);
-			Logger.info("lookup: " + lookup);
-			if (lookup == null) {
-//				taxonomy.ttype = TaxonomyType.COLLECTION.toString().toLowerCase();
-				if (taxonomy.getField_owner() != null) {
-					List<FieldModel> fieldOwners = taxonomy.getField_owner();
-					for (FieldModel fieldOwner : fieldOwners) {
-						String fieldActUrl = this.getActUrl(fieldOwner.getId());
-						User owner = User.findByUrl(fieldActUrl);
-						taxonomy.getOwnerUsers().add(owner);
-					}
+		if (lookup == null) {
+			// ownerUsers
+			if (license.getField_owner() != null) {
+				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+				List<FieldModel> fieldOwners = license.getField_owner();
+				for (FieldModel fieldOwner : fieldOwners) {
+					String fieldActUrl = this.getActUrl(fieldOwner.getId());
+					User owner = User.findByUrl(fieldActUrl);
+					license.getOwnerUsers().add(owner);
 				}
-				// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
-				if (taxonomy.getVocabularyValue() != null) {
-					FieldModel fmTaxVocab = taxonomy.getVocabularyValue();
-					Long vid = Long.valueOf(fmTaxVocab.getId());
-					TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.findByVid(vid);
-					if (taxonomyVocabulary == null) {
-						String tvUrl = fmTaxVocab.getUri().replace("\\", "");
-						StringBuilder taxonomyVocabularyUrl = new StringBuilder(tvUrl).append(Const.JSON);
-						String tvContent = this.getAuthenticatedContent(taxonomyVocabularyUrl.toString());
-						ObjectMapper tvMapper = new ObjectMapper();
-						tvMapper.setSerializationInclusion(Include.NON_NULL);
-						taxonomyVocabulary = tvMapper.readValue(tvContent, TaxonomyVocabulary.class);
-						taxonomyVocabulary.save();
-					}
-					taxonomy.setTaxonomyVocabulary(taxonomyVocabulary);
-				}
-				taxonomy.save();
-			} else {
-				taxonomy = lookup;
 			}
 			
-//			"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-//			"field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
-//			"field_publish":true,
-//			"tid":"250",
-//			"name":"European Parliament Elections 2014","description":"",
-//			"weight":"0",
-//			"node_count":10,
-//			"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
-//			"vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-//			"parent":[],
-//			"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
+			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
+			this.convertTaxonomyVocabulary(license);
+
+			Logger.info("act-url: " + license.url);
+			Logger.info("getParentFieldList: " + license.getParentFieldList());
+			// "parent":[],
+			List<FieldModel> parentFieldList = license.getParentFieldList();
+			for (FieldModel parentFieldModel : parentFieldList) {
+				
+				String actUrl = this.getActUrl(parentFieldModel.getId());
+				Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
+				if (parentTaxonomy == null) {
+					parentTaxonomy = this.convertTaxonomy(parentFieldModel);
+				}
+				license.getParentsList().add(parentTaxonomy);
+			}
+			// TODO: KL parents_all doesn't seem to be used by views/controllers
+			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+			license.save();
+		} else {
+			license = lookup;
 		}
+		
+		Logger.info("taxonomy id: " + license.id);
+		return license;
+	}
+	
+	private Taxonomy convertTaxonomy(FieldModel fieldModel) throws IOException {
+		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+		Taxonomy taxonomy = null;
+		String content = this.getAuthenticatedContent(url.toString());
+		
+		Logger.info("taxonomy url: " + url);
+		Logger.info("taxonomy content: " + content);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		taxonomy = mapper.readValue(content, Taxonomy.class);
+		Logger.info("collection: " + taxonomy);
+		
+		taxonomy.url = this.getActUrl(taxonomy.getTid());
+		
+		// find to see if it's stored already
+		
+		Taxonomy lookup = Taxonomy.findByUrl(taxonomy.url);
+		
+		Logger.info("lookup: " + lookup + " using " + taxonomy.url);
+
+		if (lookup == null) {
+			// ownerUsers
+			if (taxonomy.getField_owner() != null) {
+				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+				List<FieldModel> fieldOwners = taxonomy.getField_owner();
+				for (FieldModel fieldOwner : fieldOwners) {
+					String fieldActUrl = this.getActUrl(fieldOwner.getId());
+					User owner = User.findByUrl(fieldActUrl);
+					taxonomy.getOwnerUsers().add(owner);
+				}
+			}
+			
+			// "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
+			// "field_publish":true,
+			// "tid":"250",
+			// "name":"European Parliament Elections 2014","description":"",
+			// "weight":"0",
+			// "node_count":10,
+			// "url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
+			
+			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
+			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
+			this.convertTaxonomyVocabulary(taxonomy);
+
+			Logger.info("act-url: " + taxonomy.url);
+			Logger.info("getParentFieldList: " + taxonomy.getParentFieldList());
+			// "parent":[],
+			List<FieldModel> parentFieldList = taxonomy.getParentFieldList();
+			for (FieldModel parentFieldModel : parentFieldList) {
+				
+				String actUrl = this.getActUrl(parentFieldModel.getId());
+				Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
+				if (parentTaxonomy == null) {
+					parentTaxonomy = this.convertTaxonomy(parentFieldModel);
+				}
+				taxonomy.getParentsList().add(parentTaxonomy);
+			}
+			// TODO: KL parents_all doesn't seem to be used by views/controllers
+			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+			taxonomy.save();
+		} else {
+			taxonomy = lookup;
+		}
+		
+//		"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+//		"field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
+//		"field_publish":true,
+//		"tid":"250",
+//		"name":"European Parliament Elections 2014","description":"",
+//		"weight":"0",
+//		"node_count":10,
+//		"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
+//		"vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
+//		"parent":[],
+//		"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+
+		Logger.info("taxonomy id: " + taxonomy.id);
 		return taxonomy;
 	}
 	

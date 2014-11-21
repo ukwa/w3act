@@ -16,7 +16,7 @@
 						MailTemplate.findByName(template).text
 						, "||URL||"
 						, "||LINK||"
-						, permission.target
+						, permission.targetName
 						, CrawlPermissions.injectServerName(routes.LicenceController.form(permission.url).absoluteURL(request()).toString()))">	
 	
 	<div class="row padding-10">

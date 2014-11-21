@@ -45,7 +45,7 @@ public class LicenceController extends AbstractController {
     public static Result form(String permissionUrl) {
 		return ok(
             ukwalicence.render(permissionUrl, CrawlPermission.showByUrl(permissionUrl).name, 
-            		CrawlPermission.showByUrl(permissionUrl).target, "", "", "", "", "", "", "")
+            		CrawlPermission.showByUrl(permissionUrl).targetName, "", "", "", "", "", "", "")
         );
     }
     
@@ -84,7 +84,7 @@ public class LicenceController extends AbstractController {
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.WEBSITE_TITLE_ACK + Const.TWO_POINTS + permission.name + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.WEB_ADDRESS_ACK + Const.TWO_POINTS + permission.target + Const.CSV_LINE_END);
+		sb.append(Const.WEB_ADDRESS_ACK + Const.TWO_POINTS + permission.targetName + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.NAME_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).name + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
@@ -180,7 +180,7 @@ public class LicenceController extends AbstractController {
         	    if (permissionList != null && permissionList.size() > 0) {
         	    	CrawlPermission permission = permissionList.get(0);
                 	Logger.info("found crawl permission: " + permission);
-            	    permission.target = target;
+            	    permission.targetName = target;
                     if (getFormParam(Const.NAME) != null) {
                         permission.name = getFormParam(Const.NAME);
                     }
@@ -262,8 +262,8 @@ public class LicenceController extends AbstractController {
                 	Ebean.update(permission);
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);
-        	        CrawlPermissions.updateAllByTarget(permission.url, permission.target, permission.status);
-        	        Targets.updateQaStatus(permission.target, permission.status);
+        	        CrawlPermissions.updateAllByTarget(permission.url, permission.targetName, permission.status);
+        	        Targets.updateQaStatus(permission.targetName, permission.status);
         	    	Logger.debug("before sendAcknowledgementToSiteOwner mailTemplate: " + getFormParam(Const.EMAIL));
         	        if (getFormParam(Const.EMAIL) != null) {
         	        	sendAcknowledgementToSiteOwner(getFormParam(Const.EMAIL), permission);
@@ -272,8 +272,8 @@ public class LicenceController extends AbstractController {
 	                    if (getFormParam(Const.LICENCE) != null) {
 	                    	String licenceName = getFormParam(Const.LICENCE);
 	                    	Taxonomy licenceTaxonomy = Taxonomy.findByName(licenceName);
-	                    	Logger.info("Permission target: " + permission.target);
-	                    	Target targetObj = Target.findByTarget(permission.target);
+	                    	Logger.info("Permission target: " + permission.targetName);
+	                    	Target targetObj = Target.findByTarget(permission.targetName);
 	                    	Logger.info("Target object: " + targetObj);
 	                    	if (targetObj != null) {
 	                    		targetObj.fieldLicense = licenceTaxonomy.url;
@@ -286,7 +286,7 @@ public class LicenceController extends AbstractController {
 	                    	    	if (current_target.fieldUrl != null) {
 	                    	    		if (current_target.fieldUrl.contains(Const.SLASH_DELIMITER)) {
 	                    			    	String[] parts = current_target.fieldUrl.split(Const.SLASH_DELIMITER);
-	                    			    	if (parts[0].equals(permission.target)) {
+	                    			    	if (parts[0].equals(permission.targetName)) {
 				                    			current_target.fieldLicense = licenceTaxonomy.url;
 					                    		Ebean.update(current_target);
 	                    			    	}

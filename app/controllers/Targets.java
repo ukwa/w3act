@@ -590,7 +590,7 @@ public class Targets extends AbstractController {
     
     /**
      * Add new entry.
-     * @param target
+     * @param targetName
      * @return
      */
     public static Result create(String title) {

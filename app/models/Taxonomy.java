@@ -251,25 +251,8 @@ public class Taxonomy extends ActModel {
      * @return taxonomy object
      */
     public static Taxonomy findByUrl(String url) {
-    	Taxonomy res = null;
-//        Logger.info("taxonomy url: " + url);
-        
-        if (url != null && url.length() > 0 && !url.contains(Const.COMMA)) {
-	        // in order to replace "taxonomy_term" read from target.collection_categories by "taxonomy/term"
-//	        url = url.replace("_", "/"); 
-	        Taxonomy res2 = find.where().eq(Const.URL, url).findUnique();
-	        return res2;
-//	        if (res2 == null) {
-//	        	res.name = Const.NONE;
-//	        } else {
-//	        	res = res2;
-//	        }
-//	        Logger.info("taxonomy name: " + res.name);
-        } else {
-//        	res.name = Const.NONE;
-        }
-//        return find.where().eq(Const.URL, url).findUnique();
-    	return res;
+    	Taxonomy taxonomy = find.where().eq(Const.URL, url).findUnique();
+    	return taxonomy;
     }          
     
     /**
@@ -931,7 +914,7 @@ public class Taxonomy extends ActModel {
     /**
      * This method calculates selected taxonomies for presentation in view page.
      * @param type The type of taxonomy
-     * @param target The instance object
+     * @param targetName The instance object
      * @return taxonomy list as a string
      */
     public static String getSelectedSubjectsByInstance(String type, Instance instance) {
@@ -992,7 +975,7 @@ public class Taxonomy extends ActModel {
     /**
      * This method calculates selected taxonomies in second level for presentation in view page.
      * @param type The type of taxonomy
-     * @param target The target object
+     * @param targetName The target object
      * @return taxonomy list as a string
      */
     public static String getSelectedSubjectsList(String type, String targetUrl) {
@@ -1028,7 +1011,7 @@ public class Taxonomy extends ActModel {
     /**
      * This method calculates selected taxonomies in second level for presentation in view page.
      * @param type The type of taxonomy
-     * @param target The instance object
+     * @param targetName The instance object
      * @return taxonomy list as a string
      */
     public static String getSelectedSubjectsByInstanceSecondLevel(String type, Instance instance) {

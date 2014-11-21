@@ -265,9 +265,9 @@ public class CrawlPermissions extends AbstractController {
         permission.status = Const.CrawlPermissionStatus.QUEUED.name();
         permission.template = Const.MailTemplateType.PERMISSION_REQUEST.name();
     	permission.updateMailTemplate();
-        permission.target = target;
+        permission.targetName = target;
         User user = User.findByEmail(request().username());
-		Logger.info("add entry with url: " + permission.url + ", name: " + permission.name + ", and target: " + permission.target + ", " + user.email);
+		Logger.info("add entry with url: " + permission.url + ", name: " + permission.name + ", and target: " + permission.targetName + ", " + user.email);
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
       	return ok(
@@ -285,14 +285,14 @@ public class CrawlPermissions extends AbstractController {
 	    	permission.description = getFormParam(Const.DESCRIPTION);
 	    }
 	    if (getFormParam(Const.TARGET) != null) {
-	    	permission.target = getFormParam(Const.TARGET);
+	    	permission.targetName = getFormParam(Const.TARGET);
 	    	permission.updateTarget();
 	    }
 		permission.contactPerson = Const.NONE;
         if (getFormParam(Const.CONTACT_PERSON) != null) {
             permission.contactPerson = getFormParam(Const.CONTACT_PERSON);
             
-            Logger.info("contactPerson: " + permission.contactPerson + ", " + permission.description + ", " + permission.target);
+            Logger.info("contactPerson: " + permission.contactPerson + ", " + permission.description + ", " + permission.targetName);
             
             if (requireContactPerson) {
 	            try {
@@ -437,7 +437,7 @@ public class CrawlPermissions extends AbstractController {
         	    	permission.description = getFormParam(Const.DESCRIPTION);
         	    }
         	    if (getFormParam(Const.TARGET) != null) {
-        	    	permission.target = getFormParam(Const.TARGET);
+        	    	permission.targetName = getFormParam(Const.TARGET);
         	    	permission.updateTarget();
         	    }
         		permission.contactPerson = Const.NONE;
@@ -531,16 +531,16 @@ public class CrawlPermissions extends AbstractController {
     	        Logger.info("save crawl permission: " + permission.toString());
     	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.SAVE);
     	        Ebean.save(log);
-    	        updateAllByTarget(permission.url, permission.target, permission.status);
-    	        Targets.updateQaStatus(permission.target, permission.status);
+    	        updateAllByTarget(permission.url, permission.targetName, permission.status);
+    	        Targets.updateQaStatus(permission.targetName, permission.status);
         	} else {
            		Logger.info("update crawl permission: " + permission.toString());
                	Ebean.update(permission);
                	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
     	        Ebean.save(log);
-           		Logger.info("update: " + permission.url + ", " + permission.target + ", " + permission.status);
-    	        updateAllByTarget(permission.url, permission.target, permission.status);
-    	        Targets.updateQaStatus(permission.target, permission.status);
+           		Logger.info("update: " + permission.url + ", " + permission.targetName + ", " + permission.status);
+    	        updateAllByTarget(permission.url, permission.targetName, permission.status);
+    	        Targets.updateQaStatus(permission.targetName, permission.status);
         	}
         	Logger.info("Crawl permission was saved with status " + permission.status);
   			flash("message", "Crawl permission was saved with status " + permission.status);
@@ -702,8 +702,8 @@ public class CrawlPermissions extends AbstractController {
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
         	        Ebean.save(log);
                 	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
-        	        updateAllByTarget(permission.url, permission.target, permission.status);
-        	        Targets.updateQaStatus(permission.target, permission.status);
+        	        updateAllByTarget(permission.url, permission.targetName, permission.status);
+        	        Targets.updateQaStatus(permission.targetName, permission.status);
                 }
             }
         }
@@ -817,7 +817,7 @@ public class CrawlPermissions extends AbstractController {
 	                	messageBody = mailTemplate.text;
 	//                	String messageBody = mailTemplate.readTemplate();
 	                	String[] placeHolderArray = Utils.getMailArray(mailTemplate.placeHolders);
-	            		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.target);
+	            		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.targetName);
 	            		Logger.info("setPendingSelectedCrawlPermissions current: " + routes.LicenceController.form(permission.url).absoluteURL(request()).toString());
 	            		String licenseUrl = routes.LicenceController.form(permission.url).absoluteURL(request()).toString();
 	            		licenseUrl = injectServerName(licenseUrl);
@@ -827,7 +827,7 @@ public class CrawlPermissions extends AbstractController {
 		                			messageBody
 		    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
 		    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
-		    						, permission.target
+		    						, permission.targetName
 		    						, licenseUrl);
             		} else {
             			Logger.debug("selected 'None' template type");
@@ -841,8 +841,8 @@ public class CrawlPermissions extends AbstractController {
 	        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
 	        	        Ebean.save(log);
 	                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
-	        	        updateAllByTarget(permission.url, permission.target, permission.status);
-	        	        Targets.updateQaStatus(permission.target, permission.status);
+	        	        updateAllByTarget(permission.url, permission.targetName, permission.status);
+	        	        Targets.updateQaStatus(permission.targetName, permission.status);
                 	} else {
 	                	Logger.info("Missing contact email. Please check contact person");
 	        	        res = false;

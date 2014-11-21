@@ -35,7 +35,7 @@ public class CrawlPermission extends ActModel {
 	//bi-directional many-to-one association to Target
 	@ManyToOne
 	@JoinColumn(name="target_id")
-	public Target targetToCrawlPermission;
+	public Target target;
     
 	//bi-directional many-to-one association to MailTemplate
 	@ManyToOne
@@ -57,7 +57,7 @@ public class CrawlPermission extends ActModel {
     @JsonIgnore
     @Column(columnDefinition = "text")
     @Required
-    public String target;
+    public String targetName;
     
     @JsonIgnore
     @Column(columnDefinition = "text")
@@ -414,11 +414,11 @@ public class CrawlPermission extends ActModel {
      * This method updates foreign key mapping between a CrawlPermission and a Target.
      */
     public void updateTarget() {
-		if (target != null
-				&& target.length() > 0) {
-			Target targetObj = Target.findByTarget(target);
+		if (targetName != null
+				&& targetName.length() > 0) {
+			Target targetObj = Target.findByTarget(targetName);
 //            Logger.info("Add crawl permission to target: " + targetObj.toString());
-            this.targetToCrawlPermission = targetObj;
+            this.target = targetObj;
 		}
     	
     }

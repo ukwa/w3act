@@ -43,25 +43,18 @@ import controllers.Flags;
  */
 @Entity
 @Table(name = "target")
-public class Target extends ActModel {
+public class Target extends JsonModel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8283372689443804260L;
 
-	// bi-directional many-to-one association to Organisation
-	@ManyToOne
-	@JoinColumn(name = "organisation_id")
-	@JsonIgnore
-	public Organisation organisation;
-	
 	@ManyToOne
 	@JoinColumn(name = "author_id")
 	@JsonIgnore
 	public User authorUser;
 	
-
 	// bi-directional many-to-many association to Flag
 	@JsonIgnore
 	@ManyToMany(mappedBy = "targets")
@@ -74,7 +67,7 @@ public class Target extends ActModel {
 
 	// bi-directional one-to-many association to CrawlPermission
 	@JsonIgnore
-	@OneToMany(mappedBy = "targetToCrawlPermission", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
 	private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
 
 	// bi-directional many-to-many association to DCollection
@@ -91,7 +84,12 @@ public class Target extends ActModel {
 	// bi-directional many-to-many association to Subject
 	@JsonIgnore
 	@ManyToMany(mappedBy = "targets")
-	public List<Taxonomy> licenseToTarget = new ArrayList<Taxonomy>();
+	public List<Taxonomy> licenses = new ArrayList<Taxonomy>();
+
+	// bi-directional one-to-many association to CrawlPermission
+	@JsonIgnore
+	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	private List<Instance> instances = new ArrayList<Instance>();
 
 	public Date fieldCrawlStartDate;
 	public Date fieldCrawlEndDate;
@@ -139,8 +137,6 @@ public class Target extends ActModel {
 	public String fieldUkPostalAddressUrl;
 
 	@Column(columnDefinition = "text")
-	public String fieldCollections;
-	@Column(columnDefinition = "text")
 	public String fieldLicense;
 	@Column(columnDefinition = "text")
 	public String fieldCollectionCategories;
@@ -181,19 +177,12 @@ public class Target extends ActModel {
 	@Column(columnDefinition = "text")
 	public String fieldUrl;
 
-	@JsonIgnore
-	@JsonProperty
-	public String title;
-
 	@Column(columnDefinition = "text")
 	@JsonProperty
 	public String value;
 	
 	@Column(columnDefinition = "text")
 	public String summary;
-
-	@JsonProperty
-	public String edit_url;
 
 	@JsonIgnore
 	@JsonProperty
@@ -211,11 +200,9 @@ public class Target extends ActModel {
 	@JsonProperty
 	public Boolean field_uk_postal_address;
 	
-	@JsonIgnore
 	@JsonProperty
 	public Boolean field_uk_hosting;
 	
-	@JsonIgnore
 	@JsonProperty
 	public String field_crawl_frequency;
 
@@ -223,116 +210,82 @@ public class Target extends ActModel {
 	
 	public Boolean fieldUkGeoip;
 	
-	@JsonIgnore
 	@JsonProperty
 	public Boolean field_special_dispensation;
 
 	@Column(columnDefinition = "text")
-	@JsonIgnore
 	@JsonProperty
 	public String field_special_dispensation_reaso;
 
-	@JsonIgnore
 	@JsonProperty
 	public String field_live_site_status;
 
-	@JsonIgnore
 	@JsonProperty
 	public Long field_wct_id;
 
-	@JsonIgnore
 	@JsonProperty
 	public Long field_spt_id;
 
-	@JsonIgnore
 	@JsonProperty
 	public Boolean field_no_ld_criteria_met;
 
-	@JsonIgnore
 	@JsonProperty
 	public Boolean field_key_site;
 
-	@JsonIgnore
 	@JsonProperty
 	public Boolean field_professional_judgement;
 
 	@Column(columnDefinition = "text")
-	@JsonIgnore
 	@JsonProperty
 	public String field_professional_judgement_exp;
 
-	@JsonIgnore
 	@JsonProperty
 	public Boolean field_ignore_robots_txt;
 	
 	@JsonIgnore
 	public String format;
 
-	@JsonIgnore
-	@JsonProperty
-	public String language;
-
-	@Column(columnDefinition = "text")
-	@JsonProperty
-	public String revision;
-
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private String field_uk_domain;
 	
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private String field_uk_geoip;
 	
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private String field_crawl_permission;
 
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Object body;
-
 	@SuppressWarnings("rawtypes")
-	@JsonIgnore
 	@JsonProperty
 	private List<Map> field_url;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private FieldModel field_subject;
 	
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private Object field_description;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private Object field_uk_postal_address_url;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private FieldModel field_nominating_organisation;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private List<FieldModel> field_suggested_collections;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private List<FieldModel> field_collections;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private Long field_crawl_start_date;
 
@@ -342,112 +295,30 @@ public class Target extends ActModel {
 	private Long field_crawl_end_date;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private List<FieldModel> field_license;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private Object field_instances;
 
 	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String nid;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	public String vid;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Boolean is_new;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String type;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String status;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Long promote;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Long sticky;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Long created;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Long changed;
-
-	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private FieldModel author;
 
 	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private String log;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Long comment;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Object comments;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Long comment_count;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Long comment_count_new;
-
-	@Transient
-	@JsonIgnore
-	@JsonProperty
-	private Long feed_nid;
-	
-	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private List<FieldModel> field_collection_categories;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private FieldModel field_qa_status;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private List<FieldModel> field_snapshots;
 
 	@Transient
-	@JsonIgnore
 	@JsonProperty
 	private Object field_notes;
 
@@ -2541,14 +2412,6 @@ public class Target extends ActModel {
 //		}
 	}
 
-	public Object getBody() {
-		return body;
-	}
-
-	public void setBody(Object body) {
-		this.body = body;
-	}
-
 	public String getField_scope() {
 		return field_scope;
 	}
@@ -2830,46 +2693,6 @@ public class Target extends ActModel {
 		this.field_instances = field_instances;
 	}
 
-	public String getNid() {
-		return nid;
-	}
-
-	public void setNid(String nid) {
-		this.nid = nid;
-	}
-
-	public String getVid() {
-		return vid;
-	}
-
-	public void setVid(String vid) {
-		this.vid = vid;
-	}
-
-	public Boolean getIs_new() {
-		return is_new;
-	}
-
-	public void setIs_new(Boolean is_new) {
-		this.is_new = is_new;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	
 	public String getFormat() {
 		return format;
 	}
@@ -2886,61 +2709,6 @@ public class Target extends ActModel {
 		this.language = language;
 	}
 
-	// public String getUrl() {
-	// return url;
-	// }
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getEdit_url() {
-		return edit_url;
-	}
-
-	public void setEdit_url(String edit_url) {
-		this.edit_url = edit_url;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Long getPromote() {
-		return promote;
-	}
-
-	public void setPromote(Long promote) {
-		this.promote = promote;
-	}
-
-	public Long getSticky() {
-		return sticky;
-	}
-
-	public void setSticky(Long sticky) {
-		this.sticky = sticky;
-	}
-
-	public Long getCreated() {
-		return created;
-	}
-
-	public void setCreated(Long created) {
-		this.created = created;
-	}
-
-	public Long getChanged() {
-		return changed;
-	}
-
-	public void setChanged(Long changed) {
-		this.changed = changed;
-	}
 
 	public FieldModel getAuthor() {
 		return author;
@@ -2950,109 +2718,79 @@ public class Target extends ActModel {
 		this.author = author;
 	}
 
-	public String getLog() {
-		return log;
-	}
-
-	public void setLog(String log) {
-		this.log = log;
-	}
-
-	public String getRevision() {
-		return revision;
-	}
-
-	public void setRevision(String revision) {
-		this.revision = revision;
-	}
-
-	public Long getComment() {
-		return comment;
-	}
-
-	public void setComment(Long comment) {
-		this.comment = comment;
-	}
-
-	public Object getComments() {
-		return comments;
-	}
-
-	public void setComments(Object comments) {
-		this.comments = comments;
-	}
-
-	public Long getComment_count() {
-		return comment_count;
-	}
-
-	public void setComment_count(Long comment_count) {
-		this.comment_count = comment_count;
-	}
-
-	public Long getComment_count_new() {
-		return comment_count_new;
-	}
-
-	public void setComment_count_new(Long comment_count_new) {
-		this.comment_count_new = comment_count_new;
-	}
-
-	public Long getFeed_nid() {
-		return feed_nid;
-	}
-
-	public void setFeed_nid(Long feed_nid) {
-		this.feed_nid = feed_nid;
-	}
-
 	@Override
 	public String toString() {
-		return "Target [body=" + body + ", field_scope=" + field_scope
-				+ ", field_url=" + field_url + ", field_subject="
-				+ field_subject + ", field_depth=" + field_depth
-				+ ", field_via_correspondence=" + field_via_correspondence
-				+ ", field_uk_postal_address=" + field_uk_postal_address
-				+ ", field_uk_hosting=" + field_uk_hosting
-				+ ", field_description=" + field_description
-				+ ", field_uk_postal_address_url="
-				+ field_uk_postal_address_url
-				+ ", field_nominating_organisation="
-				+ field_nominating_organisation + ", field_crawl_frequency="
-				+ field_crawl_frequency + ", field_suggested_collections="
-				+ field_suggested_collections + ", field_collections="
-				+ field_collections + ", field_crawl_start_date="
-				+ field_crawl_start_date + ", field_crawl_end_date="
-				+ field_crawl_end_date + ", field_uk_domain=" + field_uk_domain
-				+ ", field_license=" + field_license
-				+ ", field_crawl_permission=" + field_crawl_permission
-				+ ", field_collection_categories="
-				+ field_collection_categories + ", field_special_dispensation="
-				+ field_special_dispensation
+		return "Target [organisation=" + organisation + ", authorUser="
+				+ authorUser + ", collections=" + collections + ", subject="
+				+ subject + ", licenses=" + licenses + ", fieldCrawlStartDate="
+				+ fieldCrawlStartDate + ", fieldCrawlEndDate="
+				+ fieldCrawlEndDate + ", legacySiteId=" + legacySiteId
+				+ ", active=" + active + ", whiteList=" + whiteList
+				+ ", blackList=" + blackList + ", dateOfPublication="
+				+ dateOfPublication + ", justification=" + justification
+				+ ", selectorNotes=" + selectorNotes + ", archivistNotes="
+				+ archivistNotes + ", selectionType=" + selectionType
+				+ ", flagNotes=" + flagNotes + ", tabStatus=" + tabStatus
+				+ ", isInScopeUkRegistrationValue="
+				+ isInScopeUkRegistrationValue + ", isInScopeDomainValue="
+				+ isInScopeDomainValue + ", isUkHostingValue="
+				+ isUkHostingValue + ", isInScopeIpValue=" + isInScopeIpValue
+				+ ", isInScopeIpWithoutLicenseValue="
+				+ isInScopeIpWithoutLicenseValue + ", domain=" + domain
+				+ ", fieldDescription=" + fieldDescription
+				+ ", fieldUkPostalAddressUrl=" + fieldUkPostalAddressUrl
+				+ ", fieldLicense=" + fieldLicense
+				+ ", fieldCollectionCategories=" + fieldCollectionCategories
+				+ ", fieldNotes=" + fieldNotes + ", fieldInstances="
+				+ fieldInstances + ", fieldSubject=" + fieldSubject
+				+ ", fieldSubSubject=" + fieldSubSubject + ", keywords="
+				+ keywords + ", tags=" + tags + ", synonyms=" + synonyms
+				+ ", flags=" + flags + ", authors=" + authors
+				+ ", fieldQaStatus=" + fieldQaStatus + ", qaStatus=" + qaStatus
+				+ ", qaIssueCategory=" + qaIssueCategory + ", qaNotes="
+				+ qaNotes + ", qualityNotes=" + qualityNotes + ", fieldUrl="
+				+ fieldUrl + ", value=" + value + ", summary=" + summary
+				+ ", field_scope=" + field_scope + ", field_depth="
+				+ field_depth + ", field_via_correspondence="
+				+ field_via_correspondence + ", field_uk_postal_address="
+				+ field_uk_postal_address + ", field_uk_hosting="
+				+ field_uk_hosting + ", field_crawl_frequency="
+				+ field_crawl_frequency + ", fieldUkDomain=" + fieldUkDomain
+				+ ", fieldUkGeoip=" + fieldUkGeoip
+				+ ", field_special_dispensation=" + field_special_dispensation
 				+ ", field_special_dispensation_reaso="
-				+ field_special_dispensation_reaso + ", field_qa_status="
-				+ field_qa_status + ", field_live_site_status="
-				+ field_live_site_status + ", field_notes=" + field_notes
+				+ field_special_dispensation_reaso
+				+ ", field_live_site_status=" + field_live_site_status
 				+ ", field_wct_id=" + field_wct_id + ", field_spt_id="
-				+ field_spt_id + ", field_snapshots=" + field_snapshots
-				+ ", field_no_ld_criteria_met=" + field_no_ld_criteria_met
-				+ ", field_key_site=" + field_key_site + ", field_uk_geoip="
-				+ field_uk_geoip + ", field_professional_judgement="
+				+ field_spt_id + ", field_no_ld_criteria_met="
+				+ field_no_ld_criteria_met + ", field_key_site="
+				+ field_key_site + ", field_professional_judgement="
 				+ field_professional_judgement
 				+ ", field_professional_judgement_exp="
 				+ field_professional_judgement_exp
 				+ ", field_ignore_robots_txt=" + field_ignore_robots_txt
-				+ ", field_instances=" + field_instances + ", nid=" + nid
-				+ ", vid=" + vid + ", is_new=" + is_new + ", type=" + type
-				+ ", title=" + title + ", language=" + language + ", url="
-				+ url + ", edit_url=" + edit_url + ", status=" + status
-				+ ", promote=" + promote + ", sticky=" + sticky + ", created="
-				+ created + ", changed=" + changed + ", author=" + author
-				+ ", log=" + log + ", revision=" + revision + ", comment="
-				+ comment + ", comments=" + comments + ", comment_count="
-				+ comment_count + ", comment_count_new=" + comment_count_new
-				+ ", feed_nid=" + feed_nid + "]";
+				+ ", format=" + format + ", field_uk_domain=" + field_uk_domain
+				+ ", field_uk_geoip=" + field_uk_geoip
+				+ ", field_crawl_permission=" + field_crawl_permission
+				+ ", field_url=" + field_url + ", field_subject="
+				+ field_subject + ", field_description=" + field_description
+				+ ", field_uk_postal_address_url="
+				+ field_uk_postal_address_url
+				+ ", field_nominating_organisation="
+				+ field_nominating_organisation
+				+ ", field_suggested_collections="
+				+ field_suggested_collections + ", field_collections="
+				+ field_collections + ", field_crawl_start_date="
+				+ field_crawl_start_date + ", field_crawl_end_date="
+				+ field_crawl_end_date + ", field_license=" + field_license
+				+ ", field_instances=" + field_instances + ", author=" + author
+				+ ", field_collection_categories="
+				+ field_collection_categories + ", field_qa_status="
+				+ field_qa_status + ", field_snapshots=" + field_snapshots
+				+ ", field_notes=" + field_notes + ", title=" + title
+				+ ", edit_url=" + edit_url + ", language=" + language
+				+ ", revision=" + revision + ", vid=" + vid + ", type=" + type
+				+ ", status=" + status + ", id=" + id + ", url=" + url
+				+ ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
 	}
-	
-	
 }

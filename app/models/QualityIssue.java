@@ -25,4 +25,9 @@ public class QualityIssue extends Taxonomy {
     public static QualityIssue findByName(String name) {
     	return find.where().eq(Const.NAME, name).findUnique();
     }
+    
+    public static QualityIssue findByUrl(String url) {
+    	QualityIssue QualityIssue = find.where().eq(Const.URL, url).findUnique();
+    	return QualityIssue;
+    }
 }
