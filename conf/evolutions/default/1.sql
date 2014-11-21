@@ -43,7 +43,7 @@ create table crawl_permission (
   mailTemplate_id           bigint,
   contactPerson_id          bigint,
   name                      text,
-  target                    text,
+  target_name               text,
   description               text,
   any_other_information     text,
   status                    text,
@@ -77,10 +77,16 @@ create table instance (
   url                       varchar(255),
   created_at                timestamp,
   organisation_id           bigint,
+  title                     varchar(255),
+  edit_url                  varchar(255),
+  language                  varchar(255),
+  revision                  text,
+  qaissue_id                bigint,
+  target_id                 bigint,
+  field_timestamp           timestamp,
   value                     text,
   summary                   text,
-  act_url                   varchar(255),
-  wct_url                   varchar(255),
+  field_date                timestamp,
   format                    varchar(255),
   field_scope               varchar(255),
   field_depth               varchar(255),
@@ -96,21 +102,7 @@ create table instance (
   field_special_dispensation varchar(255),
   field_uk_geoip            boolean,
   field_professional_judgement boolean,
-  vid                       bigint,
-  is_new                    boolean,
-  type                      varchar(255),
-  title                     varchar(255),
-  language                  varchar(255),
-  edit_url                  varchar(255),
-  status                    bigint,
-  promote                   bigint,
-  sticky                    bigint,
   author                    varchar(255),
-  log                       varchar(255),
-  comment                   bigint,
-  comment_count             bigint,
-  comment_count_new         bigint,
-  feed_nid                  bigint,
   field_live_site_status    varchar(255),
   field_wct_id              bigint,
   field_spt_id              bigint,
@@ -118,12 +110,9 @@ create table instance (
   field_key_site            boolean,
   field_professional_judgement_exp text,
   field_ignore_robots_txt   boolean,
-  revision                  varchar(255),
-  field_qa_issues           text,
   field_target              text,
   field_description_of_qa_issues text,
-  field_timestamp           text,
-  field_published           boolean,
+  field_published           text,
   field_to_be_published     boolean,
   date_of_publication       varchar(255),
   justification             text,
@@ -145,8 +134,6 @@ create table instance (
   field_instances           text,
   field_subject             text,
   field_sub_subject         text,
-  field_qa_status           text,
-  qa_status                 text,
   qa_issue_category         text,
   qa_notes                  text,
   quality_notes             text,
@@ -268,6 +255,10 @@ create table target (
   url                       varchar(255),
   created_at                timestamp,
   organisation_id           bigint,
+  title                     varchar(255),
+  edit_url                  varchar(255),
+  language                  varchar(255),
+  revision                  text,
   author_id                 bigint,
   subject_id                bigint,
   field_crawl_start_date    timestamp,
@@ -291,11 +282,9 @@ create table target (
   domain                    text,
   field_description         text,
   field_uk_postal_address_url text,
-  field_collections         text,
   field_license             text,
   field_collection_categories text,
   field_notes               text,
-  field_instances           text,
   field_subject             text,
   field_sub_subject         text,
   keywords                  text,
@@ -310,10 +299,8 @@ create table target (
   qa_notes                  text,
   quality_notes             text,
   field_url                 text,
-  title                     varchar(255),
   value                     text,
   summary                   text,
-  edit_url                  varchar(255),
   field_scope               varchar(255),
   field_depth               varchar(255),
   field_via_correspondence  boolean,
@@ -333,8 +320,6 @@ create table target (
   field_professional_judgement_exp text,
   field_ignore_robots_txt   boolean,
   format                    varchar(255),
-  language                  varchar(255),
-  revision                  text,
   updated_at                timestamp not null,
   constraint pk_target primary key (id))
 ;
@@ -483,26 +468,30 @@ create sequence taxonomy_vocabulary_seq;
 
 create sequence creator_seq;
 
-alter table crawl_permission add constraint fk_crawl_permission_targetToCr_1 foreign key (target_id) references target (id);
-create index ix_crawl_permission_targetToCr_1 on crawl_permission (target_id);
+alter table crawl_permission add constraint fk_crawl_permission_target_1 foreign key (target_id) references target (id);
+create index ix_crawl_permission_target_1 on crawl_permission (target_id);
 alter table crawl_permission add constraint fk_crawl_permission_mailTempla_2 foreign key (mailTemplate_id) references mail_template (id);
 create index ix_crawl_permission_mailTempla_2 on crawl_permission (mailTemplate_id);
 alter table crawl_permission add constraint fk_crawl_permission_contactPer_3 foreign key (contactPerson_id) references contact_person (id);
 create index ix_crawl_permission_contactPer_3 on crawl_permission (contactPerson_id);
 alter table instance add constraint fk_instance_organisation_4 foreign key (organisation_id) references organisation (id);
 create index ix_instance_organisation_4 on instance (organisation_id);
-alter table organisation add constraint fk_organisation_authorUser_5 foreign key (author_id) references creator (id);
-create index ix_organisation_authorUser_5 on organisation (author_id);
-alter table target add constraint fk_target_organisation_6 foreign key (organisation_id) references organisation (id);
-create index ix_target_organisation_6 on target (organisation_id);
-alter table target add constraint fk_target_authorUser_7 foreign key (author_id) references creator (id);
-create index ix_target_authorUser_7 on target (author_id);
-alter table target add constraint fk_target_subject_8 foreign key (subject_id) references taxonomy (id);
-create index ix_target_subject_8 on target (subject_id);
-alter table taxonomy add constraint fk_taxonomy_taxonomyVocabulary_9 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
-create index ix_taxonomy_taxonomyVocabulary_9 on taxonomy (taxonomy_vocabulary_id);
-alter table creator add constraint fk_creator_organisation_10 foreign key (organisation_id) references organisation (id);
-create index ix_creator_organisation_10 on creator (organisation_id);
+alter table instance add constraint fk_instance_qaIssue_5 foreign key (qaissue_id) references taxonomy (id);
+create index ix_instance_qaIssue_5 on instance (qaissue_id);
+alter table instance add constraint fk_instance_target_6 foreign key (target_id) references target (id);
+create index ix_instance_target_6 on instance (target_id);
+alter table organisation add constraint fk_organisation_authorUser_7 foreign key (author_id) references creator (id);
+create index ix_organisation_authorUser_7 on organisation (author_id);
+alter table target add constraint fk_target_organisation_8 foreign key (organisation_id) references organisation (id);
+create index ix_target_organisation_8 on target (organisation_id);
+alter table target add constraint fk_target_authorUser_9 foreign key (author_id) references creator (id);
+create index ix_target_authorUser_9 on target (author_id);
+alter table target add constraint fk_target_subject_10 foreign key (subject_id) references taxonomy (id);
+create index ix_target_subject_10 on target (subject_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyVocabular_11 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
+create index ix_taxonomy_taxonomyVocabular_11 on taxonomy (taxonomy_vocabulary_id);
+alter table creator add constraint fk_creator_organisation_12 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_12 on creator (organisation_id);
 
 
 

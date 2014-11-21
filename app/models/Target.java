@@ -60,7 +60,7 @@ public class Target extends JsonModel {
 	@ManyToMany(mappedBy = "targets")
 	public List<Flag> flagToTarget = new ArrayList<Flag>();
 
-	// bi-directional many-to-many association to Tag
+	// bi-directional many-to-many aRssociation to Tag
 	@JsonIgnore
 	@ManyToMany(mappedBy = "targets")
 	public List<Tag> tagToTarget = new ArrayList<Tag>();
@@ -73,7 +73,7 @@ public class Target extends JsonModel {
 	// bi-directional many-to-many association to DCollection
 	@JsonIgnore
 	@ManyToMany(mappedBy = "targets")
-	public List<Collection> collections = new ArrayList<Collection>();
+	public List<Taxonomy> collections = new ArrayList<Taxonomy>();
 
 	// bi-directional many-to-many association to Subject
 	@JsonIgnore
@@ -142,8 +142,7 @@ public class Target extends JsonModel {
 	public String fieldCollectionCategories;
 	@Column(columnDefinition = "text")
 	public String fieldNotes;
-	@Column(columnDefinition = "text")
-	public String fieldInstances;
+
 	@Required
 	@Column(columnDefinition = "text")
 	public String fieldSubject;
@@ -2741,8 +2740,7 @@ public class Target extends JsonModel {
 				+ ", fieldUkPostalAddressUrl=" + fieldUkPostalAddressUrl
 				+ ", fieldLicense=" + fieldLicense
 				+ ", fieldCollectionCategories=" + fieldCollectionCategories
-				+ ", fieldNotes=" + fieldNotes + ", fieldInstances="
-				+ fieldInstances + ", fieldSubject=" + fieldSubject
+				+ ", fieldNotes=" + fieldNotes + ", fieldSubject=" + fieldSubject
 				+ ", fieldSubSubject=" + fieldSubSubject + ", keywords="
 				+ keywords + ", tags=" + tags + ", synonyms=" + synonyms
 				+ ", flags=" + flags + ", authors=" + authors

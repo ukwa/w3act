@@ -8,9 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 import models.ContactPerson;
 import models.Flag;
+import models.Instance;
 import models.MailTemplate;
 import models.Organisation;
 import models.Permission;
@@ -57,6 +57,9 @@ public enum DataImport {
 			}
 			if (Ebean.find(Target.class).findRowCount() == 0) {
 	        	this.importUrlsToTargets();
+			}
+			if (Ebean.find(Instance.class).findRowCount() == 0) {
+				this.importInstances();
 			}
 			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
 				this.importTaxonomies();
@@ -288,6 +291,7 @@ public enum DataImport {
 
 	private void importJsonOrganisations() {
 		JsonUtils.INSTANCE.convertOrganisations();
+        Logger.info("Loaded Json Organisations");
 	}
 	
 	private void importCurators() {
@@ -299,6 +303,11 @@ public enum DataImport {
 		// store urls in DB
         JsonUtils.INSTANCE.convertUrlsToTargets();
         Logger.info("Loaded URLs");
+	}
+	
+	private void importInstances() {
+        JsonUtils.INSTANCE.convertInstances();;
+        Logger.info("Loaded Instances");
 	}
 
     /**

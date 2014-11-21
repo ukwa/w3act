@@ -30,6 +30,7 @@ import models.Collection;
 import models.Instance;
 import models.License;
 import models.Organisation;
+import models.QaIssue;
 import models.Role;
 import models.Subject;
 import models.Target;
@@ -615,7 +616,22 @@ public enum JsonUtils {
 //						"field_qa_issues":{
 //							"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/165","id":"165","resource":"taxonomy_term"
 //							},
-						FieldModel qaIssues = instance.getField_qa_issues();
+//						"field_description_of_qa_issues":{
+//						"value":"\u003Cp\u003ESite not live\u003C\/p\u003E\n","format":"filtered_html"
+//					},
+						FieldModel qaIssueField = instance.getField_qa_issues();
+						if (qaIssueField != null) {
+							String actUrl = this.getActUrl(qaIssueField.getId());
+							QaIssue qaIssue = QaIssue.findByUrl(actUrl);
+							if (qaIssue == null) {
+								qaIssue = this.convertQaIssue(qaIssueField);
+								FieldValue descOfQaIssue = instance.getField_description_of_qa_issues();
+								if (descOfQaIssue != null) {
+									qaIssue.description = descOfQaIssue.getValue();
+								}
+							}
+							instance.qaIssue = qaIssue;
+						}
 
 //						"field_target":{
 //								"uri":"http:\/\/webarchive.org.uk\/act\/node\/676","id":"676","resource":"node"
@@ -625,14 +641,6 @@ public enum JsonUtils {
 						Target target = Target.findByUrl(actUrl);
 						if (target != null) {
 							instance.target = target;
-						}
-//						"field_description_of_qa_issues":{
-//							"value":"\u003Cp\u003ESite not live\u003C\/p\u003E\n","format":"filtered_html"
-//						},
-						FieldValue descOfQaIssues = instance.getField_description_of_qa_issues();
-						if (descOfQaIssues != null) {
-							instance.fieldQaIssues = descOfQaIssues.getValue();
-							instance.format = descOfQaIssues.getFormat();
 						}
 						
 //						"field_published":false,
@@ -839,6 +847,40 @@ public enum JsonUtils {
 		Logger.info("taxonomy id: " + license.id);
 		return license;
 	}
+	
+	private QaIssue convertQaIssue(FieldModel fieldModel) throws IOException {
+//		"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
+		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+		QaIssue qaIssue = null;
+		String content = this.getAuthenticatedContent(url.toString());
+		
+		Logger.info("subject url: " + url);
+		Logger.info("subject content: " + content);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setSerializationInclusion(Include.NON_NULL);
+		qaIssue = mapper.readValue(content, QaIssue.class);
+		Logger.info("qaIssue: " + qaIssue);
+		
+		qaIssue.url = this.getActUrl(qaIssue.getTid());
+		
+		// find to see if it's stored already
+		
+		QaIssue lookup = QaIssue.findByUrl(qaIssue.url);
+		
+		Logger.info("lookup: " + lookup + " using " + qaIssue.url);
+
+		if (lookup == null) {
+			
+			this.convertTaxonomyVocabulary(qaIssue);
+			qaIssue.save();
+		} else {
+			qaIssue = lookup;
+		}
+		Logger.info("qaIssue url: " + qaIssue.url);
+		return qaIssue;
+	}
+	
 	
 	private Taxonomy convertTaxonomy(FieldModel fieldModel) throws IOException {
 		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
@@ -1911,11 +1953,10 @@ public enum JsonUtils {
 								} else if (f.getName().equals("qa_status")) {
 									// No QA issues found (OK to publish), QA issues found, Unknown
 									// PASSED_PUBLISH_NO_ACTION_REQUIRED, ISSUE_NOTED, None
-									String fieldQaIssues = ((Instance)obj).fieldQaIssues;
-									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
-//									Logger.info("Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
-									f.set(obj, convertedValue);
-//									((Instance)obj).field_qa_status = convertedValue;
+									// TODO: KL
+//									String fieldQaIssues = ((Instance)obj).fieldQaIssues;
+//									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
+//									f.set(obj, convertedValue);
 								} else if (f.getName().equals("qa_notes")) {
 //									"qa_notes":"","quality_notes"
 //									Description of QA Issues > QA Notes
@@ -1947,10 +1988,10 @@ public enum JsonUtils {
 							if (obj instanceof Instance) {
 								if (f.getName().equals(Const.FIELD_QA_STATUS)) {
 									Logger.info("checkSubNode - FIELD_QA_STATUS >>>>>>>>>>>> " + f.getName());
-									String fieldQaIssues = ((Instance)obj).fieldQaIssues;
-									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
-									Logger.info("checkSubNode Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
-									f.set(obj, convertedValue);
+									// TODO: KL
+//									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
+//									Logger.info("checkSubNode Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
+//									f.set(obj, convertedValue);
 								}
 							}
 						}

@@ -52,7 +52,7 @@ public class Instance extends JsonModel {
 
 	//bi-directional many-to-many association to DCollection
 	@ManyToMany(mappedBy="instances")
-	public List<Collection> collections = new ArrayList<Collection>();
+	public List<Taxonomy> collections = new ArrayList<Taxonomy>();
 	
 	//bi-directional many-to-many association to Flag
 	@ManyToMany(mappedBy="instances")
@@ -61,6 +61,11 @@ public class Instance extends JsonModel {
 	//bi-directional many-to-many association to Tag
 	@ManyToMany(mappedBy="instances")
 	public List<Tag> tagToInstance = new ArrayList<Tag>();
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "qaissue_id")
+	public QaIssue qaIssue;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -171,8 +176,6 @@ public class Instance extends JsonModel {
     public Boolean fieldIgnoreRobotsTxt;
     public String revision;
     @Column(columnDefinition = "text")
-    public String fieldQaIssues;
-    @Column(columnDefinition = "text")
     public String fieldTarget;
     @Column(columnDefinition = "text")
     public String fieldDescriptionOfQaIssues;
@@ -220,10 +223,7 @@ public class Instance extends JsonModel {
     public String fieldSubject; 
     @Column(columnDefinition = "text")
     public String fieldSubSubject; 
-    @Column(columnDefinition = "text")
-    public String fieldQaStatus; 
-    @Column(columnDefinition = "text")
-    public String qaStatus; 
+    
     @Column(columnDefinition = "text")
     public String qaIssueCategory; 
     @Column(columnDefinition = "text")
@@ -509,25 +509,25 @@ public class Instance extends JsonModel {
 		return res;
 	}
 	
-	/**
-	 * This method filters targets by given URLs.
-	 * @return duplicate count
-	 */
-	public static List<String> getSubjects() {
-		List<String> subjects = new ArrayList<String>();
-		List<Instance> allInstances = find.all();
-		Iterator<Instance> itr = allInstances.iterator();
-		while (itr.hasNext()) {
-			Instance target = itr.next();
-			if (target.fieldSubject != null && target.fieldSubject.length() > 0 && !subjects.contains(target.fieldSubject)) {
-		        ExpressionList<Instance> ll = find.where().contains("field_subject", target.fieldSubject);
-		        if (ll.findRowCount() > 0) {
-		        	subjects.add(target.fieldSubject);
-		        }
-			}
-		}
-    	return subjects;
-	}
+//	/**
+//	 * This method filters targets by given URLs.
+//	 * @return duplicate count
+//	 */
+//	public static List<String> getSubjects() {
+//		List<String> subjects = new ArrayList<String>();
+//		List<Instance> allInstances = find.all();
+//		Iterator<Instance> itr = allInstances.iterator();
+//		while (itr.hasNext()) {
+//			Instance target = itr.next();
+//			if (target.fieldSubject != null && target.fieldSubject.length() > 0 && !subjects.contains(target.fieldSubject)) {
+//		        ExpressionList<Instance> ll = find.where().contains("field_subject", target.fieldSubject);
+//		        if (ll.findRowCount() > 0) {
+//		        	subjects.add(target.fieldSubject);
+//		        }
+//			}
+//		}
+//    	return subjects;
+//	}
 	
 	public String getFieldUrlAsStr() {
 		return getFieldListAsStr("fieldUrl");

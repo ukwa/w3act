@@ -258,14 +258,15 @@ public class InstanceController extends AbstractController {
 //        Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
         newInstance.synonyms = getFormParam(Const.SYNONYMS);
         if (getFormParam(Const.FIELD_QA_STATUS) != null) {
-        	newInstance.fieldQaStatus = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
+        	// TODO: KL
+//        	newInstance.fieldQaStatus = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
         }             
         if (getFormParam(Const.QA_STATUS) != null) {
         	if (!getFormParam(Const.QA_STATUS).toLowerCase().contains(Const.NONE)) {
         		Logger.info("Instance qa status: " + getFormParam(Const.QA_STATUS));
-        		newInstance.qaStatus = getFormParam(Const.QA_STATUS);
+        		newInstance.qaIssue.name = getFormParam(Const.QA_STATUS);
         	} else {
-        		newInstance.qaStatus = Const.NONE;
+        		newInstance.qaIssue.name = Const.NONE;
         	}
         }
         if (getFormParam(Const.QA_ISSUE_CATEGORY) != null) {
@@ -570,14 +571,15 @@ public class InstanceController extends AbstractController {
 //            Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
             newInstance.synonyms = getFormParam(Const.SYNONYMS);
             if (getFormParam(Const.FIELD_QA_STATUS) != null) {
-            	newInstance.fieldQaStatus = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
+            	// TODO: KL
+//            	newInstance.fieldQaStatus = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
             }             
             if (getFormParam(Const.QA_STATUS) != null) {
             	if (!getFormParam(Const.QA_STATUS).toLowerCase().contains(Const.NONE)) {
             		Logger.info("Instance qa status: " + getFormParam(Const.QA_STATUS));
-            		newInstance.qaStatus = getFormParam(Const.QA_STATUS);
+            		newInstance.qaIssue.name = getFormParam(Const.QA_STATUS);
             	} else {
-            		newInstance.qaStatus = Const.NONE;
+            		newInstance.qaIssue.name = Const.NONE;
             	}
             }
             if (getFormParam(Const.QA_ISSUE_CATEGORY) != null) {

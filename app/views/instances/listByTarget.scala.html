@@ -128,7 +128,7 @@
 					<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.getFieldUrlAsStr">(mid-crawl),</a>
 	                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
 	                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
-					<td>@uk.bl.Const.QAStatusType.getQaStatus(instance.qaStatus).getValue()</td>
+					<td>@uk.bl.Const.QAStatusType.getQaStatus(instance.qaIssue.name).getValue()</td>
 					<td>@instance.updatedAt</td>
 					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.getFieldUrlAsStr">(mementos)</a></td>
 				</tr>

@@ -8,7 +8,7 @@ import uk.bl.Const;
 
 @Entity
 @DiscriminatorValue("quality issue")
-public class QualityIssue extends Taxonomy {
+public class QaIssue extends Taxonomy {
 
 	/**
 	 * 
@@ -16,18 +16,18 @@ public class QualityIssue extends Taxonomy {
 	private static final long serialVersionUID = 2451400178750071013L;
 
 	@SuppressWarnings("rawtypes")
-	public static Model.Finder<Long,QualityIssue> find = new Model.Finder(Long.class, QualityIssue.class);
+	public static Model.Finder<Long,QaIssue> find = new Model.Finder(Long.class, QaIssue.class);
 
-    public QualityIssue(String name, String description) {
+    public QaIssue(String name, String description) {
     	super(name, description);
     }
     
-    public static QualityIssue findByName(String name) {
+    public static QaIssue findByName(String name) {
     	return find.where().eq(Const.NAME, name).findUnique();
     }
     
-    public static QualityIssue findByUrl(String url) {
-    	QualityIssue QualityIssue = find.where().eq(Const.URL, url).findUnique();
+    public static QaIssue findByUrl(String url) {
+    	QaIssue QualityIssue = find.where().eq(Const.URL, url).findUnique();
     	return QualityIssue;
     }
 }

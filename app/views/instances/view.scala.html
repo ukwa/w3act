@@ -106,8 +106,8 @@
 					<div class="form-group">
 		            	<label for="qa_status" class="col-sm-6 control-label">QA Status</label>
 		            	<div class="col-sm-6">
-					        @if(instance.qaStatus != null && instance.qaStatus.length() > 0) {
-								@instance.qaStatus
+					        @if(instance.qaIssue.name != null && instance.qaIssue.name.length() > 0) {
+								@instance.qaIssue.name
 							} else {
 							    <p>none</p>
 							}
