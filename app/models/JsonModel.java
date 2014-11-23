@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @MappedSuperclass
-abstract class JsonModel extends ActModel {
+public class JsonModel extends ActModel {
 
 	/**
 	 * 

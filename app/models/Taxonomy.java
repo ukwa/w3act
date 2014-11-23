@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -34,8 +35,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="ttype")
+//@DiscriminatorValue("taxonomy")
 public class Taxonomy extends ActModel {
      
+	public final static String TAXONOMY_TERM = "taxonomy_term";
+	
     /**
 	 * 
 	 */

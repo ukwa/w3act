@@ -347,7 +347,6 @@ create table taxonomy_vocabulary (
   name                      varchar(255),
   machine_name              varchar(255),
   description               text,
-  term_count                bigint,
   vid                       bigint,
   updated_at                timestamp not null,
   constraint pk_taxonomy_vocabulary primary key (id))

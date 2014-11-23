@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import models.Collection;
 import models.ContactPerson;
 import models.Flag;
 import models.Instance;
@@ -18,6 +19,7 @@ import models.Role;
 import models.Tag;
 import models.Target;
 import models.Taxonomy;
+import models.TaxonomyVocabulary;
 import models.User;
 
 import com.avaje.ebean.Ebean;
@@ -43,26 +45,32 @@ public enum DataImport {
 	        	this.importCurators();
 	            this.importAccounts();
 	        }
-			if (Ebean.find(Tag.class).findRowCount() == 0) {
-	        	this.importTags();
-			}
-			if (Ebean.find(Flag.class).findRowCount() == 0) {
-	        	this.importFlags();
-			}
-			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
-	        	this.importMailTemplates();
-			}
-			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
-	        	this.importContactPersons();
-			}
-			if (Ebean.find(Target.class).findRowCount() == 0) {
-	        	this.importUrlsToTargets();
-			}
-			if (Ebean.find(Instance.class).findRowCount() == 0) {
-				this.importInstances();
+//			if (Ebean.find(Tag.class).findRowCount() == 0) {
+//	        	this.importTags();
+//			}
+//			if (Ebean.find(Flag.class).findRowCount() == 0) {
+//	        	this.importFlags();
+//			}
+//			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
+//	        	this.importMailTemplates();
+//			}
+//			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
+//	        	this.importContactPersons();
+//			}
+			if (Ebean.find(TaxonomyVocabulary.class).findRowCount() == 0) {
+				// TODO: import these for Taxonomy types - Collection, License etc
+				this.importJsonTaxonomyVocabularies();
 			}
 			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
+				this.importJsonTaxonomies();
 				this.importTaxonomies();
+			}
+			
+			if (Ebean.find(Target.class).findRowCount() == 0) {
+//	        	this.importUrlsToTargets();
+			}
+			if (Ebean.find(Instance.class).findRowCount() == 0) {
+//				this.importInstances();
 			}
 	        	
 //			if (Ebean.find(Collection.class).findRowCount() == 0) {
@@ -229,11 +237,25 @@ public enum DataImport {
         Logger.info("Loaded Permissions, Roles and Users");
 	}
 	
+	private void importJsonTaxonomyVocabularies() {
+		JsonUtils.INSTANCE.convertTaxonomyVocabulary();
+        Logger.info("Loaded Json Taxonomies Vocabularies");
+	}
+
+	private void importJsonTaxonomies() {
+		JsonUtils.INSTANCE.convertTaxonomies();
+        Logger.info("Loaded Json Taxonomies");
+	}
+	
 	private void importTaxonomies() {
 		@SuppressWarnings("unchecked")
 		Map<String,List<Taxonomy>> allTaxonomies = (Map<String,List<Taxonomy>>)Yaml.load("taxonomies.yml");
 		List<Taxonomy> taxonomies = allTaxonomies.get(Const.TAXONOMIES);
+		TaxonomyVocabulary tv = null;
 		for (Taxonomy taxonomy : taxonomies) {
+			tv = TaxonomyVocabulary.findByMachineName(taxonomy.ttype);
+			Logger.info("ttype: " + taxonomy.ttype + " - " + tv);
+			taxonomy.setTaxonomyVocabulary(tv);
 			taxonomy.save();
 		}
         Logger.info("Loaded Taxonomies");
@@ -301,7 +323,7 @@ public enum DataImport {
 	
 	private void importUrlsToTargets() {
 		// store urls in DB
-        JsonUtils.INSTANCE.convertUrlsToTargets();
+        JsonUtils.INSTANCE.convertTargets();
         Logger.info("Loaded URLs");
 	}
 	

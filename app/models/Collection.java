@@ -19,7 +19,7 @@ import uk.bl.Const;
  * DCollection entity managed by Ebean
  */
 @Entity
-@DiscriminatorValue("collection")
+@DiscriminatorValue("collections")
 public class Collection extends Taxonomy {
 
 	/**

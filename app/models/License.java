@@ -7,7 +7,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 @Entity
-@DiscriminatorValue("license")
+@DiscriminatorValue("licenses")
 public class License extends Taxonomy {
 
 	/**

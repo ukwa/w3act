@@ -7,7 +7,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 @Entity
-@DiscriminatorValue("quality issue")
+@DiscriminatorValue("quality_issues")
 public class QaIssue extends Taxonomy {
 
 	/**

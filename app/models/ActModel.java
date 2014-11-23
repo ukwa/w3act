@@ -16,7 +16,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 @MappedSuperclass
-abstract class ActModel extends Model {
+public class ActModel extends Model {
 
 	/**
 	 * 
