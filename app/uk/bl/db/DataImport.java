@@ -67,10 +67,10 @@ public enum DataImport {
 			}
 			
 			if (Ebean.find(Target.class).findRowCount() == 0) {
-	        	this.importUrlsToTargets();
+	        	this.importTargets();
 			}
 			if (Ebean.find(Instance.class).findRowCount() == 0) {
-//				this.importInstances();
+				this.importInstances();
 			}
 	        	
 //			if (Ebean.find(Collection.class).findRowCount() == 0) {
@@ -322,7 +322,7 @@ public enum DataImport {
         Logger.info("Loaded Curators");
 	}
 	
-	private void importUrlsToTargets() {
+	private void importTargets() {
 		// store urls in DB
         JsonUtils.INSTANCE.convertTargets();
         Logger.info("Loaded URLs");

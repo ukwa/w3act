@@ -10,7 +10,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -46,26 +45,16 @@ public class Instance extends JsonModel {
 	 */
 	private static final long serialVersionUID = 4285620218930401425L;
 
-	//bi-directional many-to-many association to Subject
-	@ManyToMany(mappedBy="instances")
+	// TODO: KL THIS THINGS ARE POPULATE VIA THE INSTANCECONTROLLER
 	public List<Taxonomy> subjects = new ArrayList<Taxonomy>();
-
-	//bi-directional many-to-many association to DCollection
-	@ManyToMany(mappedBy="instances")
 	public List<Taxonomy> collections = new ArrayList<Taxonomy>();
-	
-	//bi-directional many-to-many association to Flag
-	@ManyToMany(mappedBy="instances")
 	public List<Flag> flagToInstance = new ArrayList<Flag>();
-    
-	//bi-directional many-to-many association to Tag
-	@ManyToMany(mappedBy="instances")
 	public List<Tag> tagToInstance = new ArrayList<Tag>();
 
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "qaissue_id")
-	public QaIssue qaIssue;
+	public Taxonomy qaIssue;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -98,7 +87,7 @@ public class Instance extends JsonModel {
 
 	@Transient
 	@JsonProperty
-	private FieldValue field_description_of_qa_issues;
+	private Object field_description_of_qa_issues;
 	
 	@Transient
 	@JsonProperty
@@ -139,6 +128,7 @@ public class Instance extends JsonModel {
 //	same 	"sticky":"0",
 //	same	"created":"1394535642",
 //	same	"changed":"1394551688",
+//	same	"author":{"uri":"http://webarchive.org.uk/act/user/80","id":"80","resource":"user"},
 //	same	"log":"",
 //	same	"revision":null,
 //	same	"comment":"1",
@@ -146,7 +136,7 @@ public class Instance extends JsonModel {
 //	same	"comment_count":"0",
 //	same	"comment_count_new":"0",
 //	same	"feed_nid":null}
-
+	
     public String format;
     public String fieldScope;
     public String fieldDepth;
@@ -1176,12 +1166,12 @@ public class Instance extends JsonModel {
 		this.field_target = field_target;
 	}
 
-	public FieldValue getField_description_of_qa_issues() {
+	public Object getField_description_of_qa_issues() {
 		return field_description_of_qa_issues;
 	}
 
 	public void setField_description_of_qa_issues(
-			FieldValue field_description_of_qa_issues) {
+			Object field_description_of_qa_issues) {
 		this.field_description_of_qa_issues = field_description_of_qa_issues;
 	}
 

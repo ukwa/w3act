@@ -106,7 +106,6 @@ create table instance (
   field_special_dispensation varchar(255),
   field_uk_geoip            boolean,
   field_professional_judgement boolean,
-  author                    varchar(255),
   field_live_site_status    varchar(255),
   field_wct_id              bigint,
   field_spt_id              bigint,
@@ -295,11 +294,7 @@ create table target (
   domain                    text,
   field_description         text,
   field_uk_postal_address_url text,
-  field_license             text,
-  field_collection_categories text,
   field_notes               text,
-  field_subject             text,
-  field_sub_subject         text,
   keywords                  text,
   tags                      text,
   synonyms                  text,
@@ -421,22 +416,16 @@ create table tag_instance (
   constraint pk_tag_instance primary key (tag_id, instance_id))
 ;
 
-create table subject_target (
-  taxonomy_id                    bigint not null,
+create table collection_target (
   target_id                      bigint not null,
-  constraint pk_subject_target primary key (taxonomy_id, target_id))
-;
-
-create table subject_instance (
-  taxonomy_id                    bigint not null,
-  instance_id                    bigint not null,
-  constraint pk_subject_instance primary key (taxonomy_id, instance_id))
+  collection_id                  bigint not null,
+  constraint pk_collection_target primary key (target_id, collection_id))
 ;
 
 create table license_target (
-  license_id                     bigint not null,
   target_id                      bigint not null,
-  constraint pk_license_target primary key (license_id, target_id))
+  license_id                     bigint not null,
+  constraint pk_license_target primary key (target_id, license_id))
 ;
 
 create table taxonomy_user (
@@ -455,6 +444,12 @@ create table taxonomy_parents_all (
   taxonomy_id                    bigint not null,
   parent_id                      bigint not null,
   constraint pk_taxonomy_parents_all primary key (taxonomy_id, parent_id))
+;
+
+create table collection_instance (
+  collection_id                  bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_collection_instance primary key (collection_id, instance_id))
 ;
 create sequence communication_log_seq;
 
@@ -541,17 +536,13 @@ alter table tag_instance add constraint fk_tag_instance_tag_01 foreign key (tag_
 
 alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
 
-alter table subject_target add constraint fk_subject_target_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
+alter table collection_target add constraint fk_collection_target_target_01 foreign key (target_id) references target (id);
 
-alter table subject_target add constraint fk_subject_target_target_02 foreign key (target_id) references target (ID);
+alter table collection_target add constraint fk_collection_target_taxonomy_02 foreign key (collection_id) references taxonomy (id);
 
-alter table subject_instance add constraint fk_subject_instance_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
+alter table license_target add constraint fk_license_target_target_01 foreign key (target_id) references target (id);
 
-alter table subject_instance add constraint fk_subject_instance_instance_02 foreign key (instance_id) references instance (id);
-
-alter table license_target add constraint fk_license_target_taxonomy_01 foreign key (license_id) references taxonomy (id);
-
-alter table license_target add constraint fk_license_target_target_02 foreign key (target_id) references target (id);
+alter table license_target add constraint fk_license_target_taxonomy_02 foreign key (license_id) references taxonomy (id);
 
 alter table taxonomy_user add constraint fk_taxonomy_user_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
 
@@ -564,6 +555,10 @@ alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_02 fore
 alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_01 foreign key (taxonomy_id) references taxonomy (id);
 
 alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_02 foreign key (parent_id) references taxonomy (id);
+
+alter table collection_instance add constraint fk_collection_instance_taxono_01 foreign key (collection_id) references taxonomy (id);
+
+alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (instance_id) references instance (id);
 
 # --- !Downs
 
@@ -580,10 +575,6 @@ drop table if exists flag_target cascade;
 drop table if exists flag_instance cascade;
 
 drop table if exists instance cascade;
-
-drop table if exists subject_instance cascade;
-
-drop table if exists tag_instance cascade;
 
 drop table if exists lookup_entry cascade;
 
@@ -607,13 +598,15 @@ drop table if exists tag cascade;
 
 drop table if exists tag_target cascade;
 
+drop table if exists tag_instance cascade;
+
 drop table if exists target cascade;
 
-drop table if exists subject_target cascade;
-
-drop table if exists taxonomy cascade;
+drop table if exists collection_target cascade;
 
 drop table if exists license_target cascade;
+
+drop table if exists taxonomy cascade;
 
 drop table if exists taxonomy_user cascade;
 

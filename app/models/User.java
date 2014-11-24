@@ -5,12 +5,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -44,11 +46,14 @@ public class User extends ActModel {
 	private static final long serialVersionUID = -5018094620896138537L;
 
 	@JsonIgnore
+	@OneToMany(mappedBy = "authorUser", cascade = CascadeType.PERSIST)
+	public List<Target> targets = new ArrayList<Target>();
+
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="organisation_id") 
 	public Organisation organisation;
 	
-	//bi-directional many-to-many association to Role
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = Const.ROLE_USER, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") },

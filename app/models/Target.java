@@ -12,6 +12,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -55,42 +56,40 @@ public class Target extends JsonModel {
 	@JoinColumn(name = "author_id")
 	@JsonIgnore
 	public User authorUser;
-	
-	// bi-directional many-to-many association to Flag
-	@JsonIgnore
-	@ManyToMany(mappedBy = "targets")
-	public List<Flag> flagToTarget = new ArrayList<Flag>();
 
-	// bi-directional many-to-many aRssociation to Tag
-	@JsonIgnore
-	@ManyToMany(mappedBy = "targets")
-	public List<Tag> tagToTarget = new ArrayList<Tag>();
-
-	// bi-directional one-to-many association to CrawlPermission
-	@JsonIgnore
-	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
-	private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
-
-	// bi-directional many-to-many association to DCollection
-	@JsonIgnore
-	@ManyToMany(mappedBy = "targets")
-	public List<Taxonomy> collections = new ArrayList<Taxonomy>();
-
-	// bi-directional many-to-many association to Subject
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "subject_id")
 	public Taxonomy subject;
 
-	// bi-directional many-to-many association to Subject
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
+	public List<Taxonomy> collections;
+
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
+	public List<Taxonomy> licenses;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	private List<CrawlPermission> crawlPermissions;
+
 	@JsonIgnore
 	@ManyToMany(mappedBy = "targets")
-	public List<Taxonomy> licenses = new ArrayList<Taxonomy>();
+	public List<Flag> flagToTarget;
+
+	@JsonIgnore
+	@ManyToMany(mappedBy = "targets")
+	public List<Tag> tagToTarget;
 
 	// bi-directional one-to-many association to CrawlPermission
 	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
-	private List<Instance> instances = new ArrayList<Instance>();
+	private List<Instance> instances;
 
 	public Date fieldCrawlStartDate;
 	public Date fieldCrawlEndDate;
@@ -292,10 +291,6 @@ public class Target extends JsonModel {
 	@Transient
 	@JsonProperty
 	private Object field_instances;
-
-	@Transient
-	@JsonProperty
-	private FieldModel author;
 
 	@Transient
 	@JsonProperty
@@ -819,7 +814,7 @@ public class Target extends JsonModel {
 			// TODO: KL
 			// res = User.findByUrl(author).name;
 		} catch (Exception e) {
-			Logger.info("no user found for url: " + author + ". " + e);
+			Logger.info("no user found for url: " + this.getAuthor() + ". " + e);
 		}
 		return res;
 	}
@@ -2710,15 +2705,6 @@ public class Target extends JsonModel {
 		this.language = language;
 	}
 
-
-	public FieldModel getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(FieldModel author) {
-		this.author = author;
-	}
-
 	@Override
 	public String toString() {
 		return "Target [organisation=" + organisation + ", authorUser="
@@ -2780,7 +2766,7 @@ public class Target extends JsonModel {
 				+ field_collections + ", field_crawl_start_date="
 				+ field_crawl_start_date + ", field_crawl_end_date="
 				+ field_crawl_end_date + ", field_license=" + field_license
-				+ ", field_instances=" + field_instances + ", author=" + author
+				+ ", field_instances=" + field_instances
 				+ ", field_collection_categories="
 				+ field_collection_categories + ", field_qa_status="
 				+ field_qa_status + ", field_snapshots=" + field_snapshots

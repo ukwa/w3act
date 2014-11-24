@@ -4,6 +4,8 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import play.db.ebean.*;
 
 /**
@@ -31,6 +33,10 @@ public class TaxonomyVocabulary extends ActModel {
 	public final static String SUBJECT = "subject";
 	
 	public final static String TAGS = "tags";
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "taxonomyVocabulary", cascade = CascadeType.PERSIST)
+	public List<Taxonomy> taxonomies;
 	
     public String name;  
     public String machine_name;

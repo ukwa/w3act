@@ -6,6 +6,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import uk.bl.api.models.FieldModel;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -100,6 +102,10 @@ public class JsonModel extends ActModel {
 	@JsonProperty
 	private Long feed_nid;
 
+	@Transient
+	@JsonProperty
+	private FieldModel author;
+	
 	public String getTitle() {
 		return title;
 	}
@@ -258,6 +264,14 @@ public class JsonModel extends ActModel {
 
 	public void setFeed_nid(Long feed_nid) {
 		this.feed_nid = feed_nid;
+	}
+
+	public FieldModel getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(FieldModel author) {
+		this.author = author;
 	}
 
 //	same	"nid":"12954",

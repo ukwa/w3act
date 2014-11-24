@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import play.Logger;
@@ -46,38 +48,33 @@ public class Taxonomy extends ActModel {
 	 */
 	private static final long serialVersionUID = -8987367110038045775L;
 
-	//bi-directional many-to-many association to Target
+	@JsonIgnore
+	@OneToMany(mappedBy = "subject", cascade = CascadeType.PERSIST)
+	public List<Target> subjectTargets;
+
     @JsonIgnore
     @ManyToMany
-	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="ID") }) 
-    private List<Target> targets = new ArrayList<Target>();
- 
-    //bi-directional many-to-many association to Instance
-    @JsonIgnore
-    @ManyToMany
-	@JoinTable(name = Const.SUBJECT_INSTANCE, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
-    private List<Instance> instances = new ArrayList<Instance>();
-   
-    //bi-directional many-to-many association to Target
+	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
+			inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
+	public List<Target> collectionTargets;
+	
     @JsonIgnore
     @ManyToMany
 	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
-	private List<Target> targetLicenses = new ArrayList<Target>();
-  
+	public List<Target> licenseTargets;
+
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = Const.TAXONOMY_USER, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
 	inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
-	private List<User> ownerUsers;
+	public List<User> ownerUsers;
 
 	@JsonIgnore
 	@NotNull
 	@ManyToOne(optional=false)
 	@JoinColumn(name = "taxonomy_vocabulary_id")
-	private TaxonomyVocabulary taxonomyVocabulary;
+	public TaxonomyVocabulary taxonomyVocabulary;
 	
 	@Column(insertable=false, updatable=false)
 	public String ttype;
@@ -174,30 +171,6 @@ public class Taxonomy extends ActModel {
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,Taxonomy> find = new Model.Finder(Long.class, Taxonomy.class);
     
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-  
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-  
-	public List<Target> getTargetLicenses() {
-		return this.targetLicenses;
-	}
-	  
-	public void setTargetLicenses(List<Target> targetLicenses) {
-	  	this.targetLicenses = targetLicenses;
-	}    
-	
     /**
      * Retrieve Taxonomy for user
      */

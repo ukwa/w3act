@@ -50,6 +50,7 @@ import uk.bl.Const;
 import uk.bl.Const.NodeType;
 import uk.bl.Const.TaxonomyType;
 import uk.bl.api.models.FieldModel;
+import uk.bl.api.models.FieldValue;
 import uk.bl.exception.TaxonomyNotFoundException;
 import uk.bl.scope.Scope;
 
@@ -978,17 +979,19 @@ public enum JsonUtils {
 //						"value":"\u003Cp\u003ESite not live\u003C\/p\u003E\n","format":"filtered_html"
 //					},
 						FieldModel qaIssueField = instance.getField_qa_issues();
-						if (qaIssueField != null) {
-//							String actUrl = this.getActUrl(qaIssueField.getId());
-//							QaIssue qaIssue = QaIssue.findByUrl(actUrl);
-//							if (qaIssue == null) {
-//								qaIssue = this.convertQaIssue(qaIssueField);
-//								FieldValue descOfQaIssue = instance.getField_description_of_qa_issues();
-//								if (descOfQaIssue != null) {
-//									qaIssue.description = descOfQaIssue.getValue();
-//								}
-//							}
-//							instance.qaIssue = qaIssue;
+						try {
+							if (qaIssueField != null) {
+								Taxonomy qaIssue = this.getTaxonomy(qaIssueField);
+								
+								if (instance.getField_description_of_qa_issues() instanceof LinkedHashMap) {
+									Map<String, String> qaDesc = (LinkedHashMap<String,String>) instance.getField_description_of_qa_issues();
+									Logger.info("qaDesc: " + qaDesc);
+//									qaIssue.description = fv.getValue();
+								}
+								instance.qaIssue = qaIssue;
+							}
+						} catch (TaxonomyNotFoundException tnfe) {
+							tnfe.printStackTrace();
 						}
 
 //						"field_target":{
@@ -1003,8 +1006,7 @@ public enum JsonUtils {
 						
 //						"field_published":false,
 //						"field_to_be_published_":false,
-						
-						
+												
 						instance.revision = Const.INITIAL_REVISION;
 						instance.selectionType = Const.SelectionType.SELECTION.name();
 						if (StringUtils.isNotBlank(instance.language) && instance.language.equals(Const.UND)) {
