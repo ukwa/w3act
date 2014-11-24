@@ -14,7 +14,6 @@ import models.Tag;
 import models.Target;
 import models.Taxonomy;
 import models.User;
-
 import play.Logger;
 import play.Play;
 import play.data.DynamicForm;
@@ -23,6 +22,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
+import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
@@ -120,17 +120,16 @@ public class TargetController extends AbstractController {
         	if (subjectListStr != null && subjectListStr.length() > 0
         			&& subjectListStr.toLowerCase().contains(Const.NONE)
         			&& subjectListStr.contains(Const.COMMA)) {
-        	    targetObj.fieldSubject = Const.NONE;
+//        	    targetObj.fieldSubject = Const.NONE;
         	} else {
-        		targetObj.fieldSubject = subjectListStr;
+//        		targetObj.fieldSubject = subjectListStr;
         	}
 //        	targetObj.updateSubject();
-    		Logger.debug("targetObj.field_subject: " + targetObj.fieldSubject);
         } else {
-        	targetObj.fieldSubject = Const.NONE;
+//        	targetObj.fieldSubject = Const.NONE;
         }
         if (getFormParam(Const.TREE_KEYS) != null) {
-    		targetObj.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+//    		targetObj.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
     		// TODO: KL SHOULD ALREADY HAVE COLLECTIONS
 //        	targetObj.collectionToTarget = Collection.convertUrlsToObjects(targetObj.fieldCollectionCategories);
 //    		targetObj.updateCollection();
@@ -215,11 +214,11 @@ public class TargetController extends AbstractController {
             			resLicenses = resLicenses + Taxonomy.findByFullNameExt(curLicense, Const.LICENCE).url + Const.LIST_DELIMITER;
             		}
                 }
-            	targetObj.fieldLicense = resLicenses;
-            	targetObj.licenses = Taxonomy.convertUrlsToObjects(targetObj.fieldLicense);
+//            	targetObj.fieldLicense = resLicenses;
+//            	targetObj.licenses = Taxonomy.convertUrlsToObjects(targetObj.fieldLicense);
 //        		targetObj.updateLicense();
         	} else {
-        		targetObj.fieldLicense = Const.NONE;
+//        		targetObj.fieldLicense = Const.NONE;
         	}
         }
         targetObj.field_uk_hosting = Target.checkUkHosting(targetObj.fieldUrl);
@@ -372,7 +371,7 @@ public class TargetController extends AbstractController {
 //            }
 //            newTarget.fieldNominatingOrganisation = target.fieldNominatingOrganisation;
     		newTarget.updateOrganisation();
-            newTarget.fieldCollectionCategories = target.fieldCollectionCategories;
+//            newTarget.fieldCollectionCategories = target.fieldCollectionCategories;
             newTarget.title = getFormParam(Const.TITLE);
             newTarget.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
@@ -431,16 +430,16 @@ public class TargetController extends AbstractController {
             		}
             		Logger.info("after removing 'None' value is it was combined with another subject");      		
             	}
-            	newTarget.fieldSubject = subjectListStr;
+//            	newTarget.fieldSubject = subjectListStr;
 //            	newTarget.subject = Taxonomy.convertUrlsToObjects(newTarget.fieldSubject);
-        		Logger.debug("newTarget.field_subject: " + newTarget.fieldSubject);
+//        		Logger.debug("newTarget.field_subject: " + newTarget.fieldSubject);
             } else {
-            	newTarget.fieldSubject = Const.NONE;
+//            	newTarget.fieldSubject = Const.NONE;
             }            
             if (getFormParam(Const.TREE_KEYS) != null) {
-	    		newTarget.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+//	    		newTarget.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
 //	        	newTarget.collectionToTarget = Collection.convertUrlsToObjects(newTarget.fieldCollectionCategories);
-	    		Logger.debug("newTarget.field_collection_categories: " + newTarget.fieldCollectionCategories);
+//	    		Logger.debug("newTarget.field_collection_categories: " + newTarget.fieldCollectionCategories);
             }
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
@@ -532,10 +531,10 @@ public class TargetController extends AbstractController {
 	            			resLicenses = resLicenses + Taxonomy.findByFullNameExt(curLicense, Const.LICENCE).url + Const.LIST_DELIMITER;
 	            		}
 	                }
-	            	newTarget.fieldLicense = resLicenses;
-                	newTarget.licenses = Taxonomy.convertUrlsToObjects(newTarget.fieldLicense);
+//	            	newTarget.fieldLicense = resLicenses;
+//                	newTarget.licenses = Taxonomy.convertUrlsToObjects(newTarget.fieldLicense);
             	} else {
-            		newTarget.fieldLicense = Const.NONE;
+//            		newTarget.fieldLicense = Const.NONE;
             	}
             }
             newTarget.field_uk_hosting = Target.checkUkHosting(newTarget.fieldUrl);
@@ -822,8 +821,8 @@ public class TargetController extends AbstractController {
     	String res = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Target target = Target.findByUrl(targetUrl);
-    		if (target.fieldCollectionCategories != null && 
-    				target.fieldCollectionCategories.contains(collectionUrl)) {
+    		if (target.collections != null && 
+    				target.collections.contains(collectionUrl)) {
     			res = "\"select\": true ,";
     		}
     	}
@@ -991,16 +990,17 @@ public class TargetController extends AbstractController {
      * @return
      */
     public static String checkSubjectSelection(String subjectUrl, String targetUrl) {
-    	String res = "";
-    	if (targetUrl != null && targetUrl.length() > 0) {
-//    		if (subjectUrl != null && targetUrl.equals(subjectUrl)) {
-    		Target target = Target.findByUrl(targetUrl);
-    		if (target.fieldSubject != null && 
-    				target.fieldSubject.contains(subjectUrl)) {
-    			res = "\"select\": true ,";
-    		}
-    	}
-    	return res;
+//    	String res = "";
+//    	if (targetUrl != null && targetUrl.length() > 0) {
+////    		if (subjectUrl != null && targetUrl.equals(subjectUrl)) {
+//    		Target target = Target.findByUrl(targetUrl);
+//    		if (target.fieldSubject != null && 
+//    				target.fieldSubject.contains(subjectUrl)) {
+//    			res = "\"select\": true ,";
+//    		}
+//    	}
+//    	return res;
+		throw new NotImplementedError();
     }
     
     /**
@@ -1042,15 +1042,16 @@ public class TargetController extends AbstractController {
      * @return
      */
     public static String checkNone(String targetUrl) {
-    	String res = "";
-    	if (targetUrl != null && targetUrl.length() > 0) {
-    		Target target = Target.findByUrl(targetUrl);
-    		if (target.fieldSubject != null 
-    				&& (target.fieldSubject.toLowerCase().contains(Const.NONE.toLowerCase()))) {
-    			res = "\"select\": true ,";
-    		}
-    	}
-    	return res;
+//    	String res = "";
+//    	if (targetUrl != null && targetUrl.length() > 0) {
+//    		Target target = Target.findByUrl(targetUrl);
+//    		if (target.fieldSubject != null 
+//    				&& (target.fieldSubject.toLowerCase().contains(Const.NONE.toLowerCase()))) {
+//    			res = "\"select\": true ,";
+//    		}
+//    	}
+//    	return res;
+		throw new NotImplementedError();
     }
     
     /**

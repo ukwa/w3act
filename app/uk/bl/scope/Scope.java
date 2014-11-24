@@ -185,12 +185,12 @@ public class Scope {
         	res = false;
         }
         
-        if (target != null 
-        		&& target.fieldLicense != null 
-        		&& target.fieldLicense.length() > 0 
-        		&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
-        	res = true;
-        }
+//        if (target != null 
+//        		&& target.fieldLicense != null 
+//        		&& target.fieldLicense.length() > 0 
+//        		&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
+//        	res = true;
+//        }
 
         Logger.debug("updateLookupEntry() new scope: " + newStatus + ", fields check: " + res);
         if (!newStatus && res) {

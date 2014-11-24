@@ -276,7 +276,7 @@ public class LicenceController extends AbstractController {
 	                    	Target targetObj = Target.findByTarget(permission.targetName);
 	                    	Logger.info("Target object: " + targetObj);
 	                    	if (targetObj != null) {
-	                    		targetObj.fieldLicense = licenceTaxonomy.url;
+//	                    		targetObj.fieldLicense = licenceTaxonomy.url;
 	                    		Ebean.update(targetObj);
 	                    		// lookup for all targets with lower level and update licence
 	                    		List<Target> associatedTargetList = Target.findAllTargetsWithLowerLevel(target);
@@ -287,7 +287,7 @@ public class LicenceController extends AbstractController {
 	                    	    		if (current_target.fieldUrl.contains(Const.SLASH_DELIMITER)) {
 	                    			    	String[] parts = current_target.fieldUrl.split(Const.SLASH_DELIMITER);
 	                    			    	if (parts[0].equals(permission.targetName)) {
-				                    			current_target.fieldLicense = licenceTaxonomy.url;
+//				                    			current_target.fieldLicense = licenceTaxonomy.url;
 					                    		Ebean.update(current_target);
 	                    			    	}
 	                    	    		}

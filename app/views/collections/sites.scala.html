@@ -129,7 +129,7 @@
             	<td>
             		<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("field_url")</a>
 				</td>
-               	@if(target.fieldCollectionCategories != null && models.Collection.getSelectedCollections(target.url) != null) { 
+               	@if(target.collections != null && models.Collection.getSelectedCollections(target.url) != null) { 
                	<td>
 					@for(col <- models.Collection.getSelectedCollections(target.url)) {
 	               		@if(col.url != null) {
@@ -140,9 +140,9 @@
                 } else {
 	                <td></td>
                 }	                  
-                <td>@Taxonomy.findByUrl(target.fieldSubject).name</td>
+                <td>@target.subject.name</td>
                 @if(target.organisation != null) { 
-				<td><a href="@routes.Curators.edit(target.authorUser.url)">@User.findByUrl(target.authorUser.url).name</a></td>
+				<td><a href="@routes.Curators.edit(target.authorUser.url)">@target.authorUser.name</a></td>
                 } else {
 	            	<td></td>
 				}	

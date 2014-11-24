@@ -128,9 +128,9 @@
         	@for(target <- currentPage.getList) {		              
 				<tr>
 					<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
-	   				@if(target.fieldCollectionCategories != null && Taxonomy.findListByUrl(target.fieldCollectionCategories) != null) { 
+	   				@if(target.collections != null) { 
 		  				<td>
-						  	@for(taxonomy <- Taxonomy.findListByUrl(target.fieldCollectionCategories)) {
+						  	@for(taxonomy <- target.collections) {
 						  	    @if(taxonomy.url != null) {
 									<a href="@routes.TaxonomiesController.edit(taxonomy.url)">@taxonomy.name</a>,&nbsp;
 								}
@@ -139,9 +139,9 @@
 	   				} else {
 						<td></td>
 	   				}	                  
-					<td>@Taxonomy.findByUrl(target.fieldSubject).name</td>
+					<td>@target.subject.name</td>
 	   				@if(target.organisation != null) { 
-	    				<td><a href="@routes.Curators.edit(target.authorUser.url)">@User.findByUrl(target.authorUser.url).name</a></td>
+	    				<td><a href="@routes.Curators.edit(target.authorUser.url)">@target.authorUser.name</a></td>
 					} else {
 	    				<td></td>
 					}	

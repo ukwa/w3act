@@ -50,6 +50,7 @@ import uk.bl.Const;
 import uk.bl.Const.NodeType;
 import uk.bl.Const.TaxonomyType;
 import uk.bl.api.models.FieldModel;
+import uk.bl.exception.TaxonomyNotFoundException;
 import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
@@ -706,8 +707,12 @@ public enum JsonUtils {
 						// "field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/16","id":"16","resource":"taxonomy_term"},"
 						FieldModel fieldSubject = target.getField_subject();
 						if (fieldSubject != null) {
-//							Subject subject = this.convertSubject(fieldSubject);
-//							target.subject = subject;
+							try {
+								Taxonomy subject = this.getTaxonomy(fieldSubject);
+								target.subject = subject;
+							} catch (TaxonomyNotFoundException tnfe) {
+								tnfe.printStackTrace();
+							}
 						}
 						
 						// "field_description":[],
@@ -784,11 +789,14 @@ public enum JsonUtils {
 						if (target.getField_license() != null) {
 							List<FieldModel> licenses = target.getField_license();
 							for (FieldModel fieldModel : licenses) {
-//								License license = this.convertLicense(fieldModel);
-//								
-//								if (license != null) {
-//									target.licenses.add(license);
-//								}
+								try {
+									Taxonomy license = this.getTaxonomy(fieldModel);
+									if (license != null) {
+										target.licenses.add(license);
+									}
+								} catch (TaxonomyNotFoundException tnfe) {
+									tnfe.printStackTrace();
+								}
 							}
 						}
 						
@@ -797,12 +805,14 @@ public enum JsonUtils {
 							List<FieldModel> collectionCategories = target.getField_collection_categories();
 							
 							for (FieldModel fieldModel : collectionCategories) {
-//								Collection collection = this.convertCollection(fieldModel);
-//								
-//								if (collection != null) {
-//									target.collections.add(collection);
-//								}
-								
+								try {
+									Taxonomy collection = this.getTaxonomy(fieldModel);
+									if (collection != null) {
+										target.collections.add(collection);
+									}
+								} catch (TaxonomyNotFoundException tnfe) {
+									tnfe.printStackTrace();
+								}
 							}
 						}
 						
@@ -1086,105 +1096,44 @@ public enum JsonUtils {
 //		return collection;
 //	}
 	
+	private Taxonomy getTaxonomy(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
+		String actUrl = this.getActUrl(fieldModel.getId());
+		Taxonomy taxonomy = Taxonomy.findByUrl(actUrl);
+		if (taxonomy == null) {
+			throw new TaxonomyNotFoundException("No Taxonomy for actUrl: " + actUrl);
+		}
+		return taxonomy;
+	}
+	
 //	private Subject convertSubject(FieldModel fieldModel) throws IOException {
 ////		"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
-//		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
-//		Subject subject = null;
-//		String content = this.getAuthenticatedContent(url.toString());
-//		
-//		Logger.info("subject url: " + url);
-//		Logger.info("subject content: " + content);
-//		
-//		ObjectMapper mapper = new ObjectMapper();
-//		mapper.setSerializationInclusion(Include.NON_NULL);
-//		subject = mapper.readValue(content, Subject.class);
-//		Logger.info("subject: " + subject);
-//		
-//		subject.url = this.getActUrl(subject.getTid());
+//		String actUrl = this.getActUrl(fieldModel.getId());
 //		
 //		// find to see if it's stored already
 //		
-//		Subject lookup = Subject.findByUrl(subject.url);
+//		Subject subject = Subject.findByUrl(actUrl);
 //		
-//		Logger.info("lookup: " + lookup + " using " + subject.url);
+//		Logger.info("lookup: " + subject + " using " + actUrl);
 //
-//		if (lookup == null) {
-//			
-//			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(subject);
-//			if (taxonomyVocabulary != null) {
-//				subject.setTaxonomyVocabulary(taxonomyVocabulary);
-//			}
-//			subject.save();
-//		} else {
-//			subject = lookup;
-//		}
-//		Logger.info("subject url: " + subject.url);
+//		if (subject == null) {
+//			throw new IOException();
+//		} 
 //		return subject;
 //	}
 
 //	private License convertLicense(FieldModel fieldModel) throws IOException {
-//		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
-//		License license = null;
-//		String content = this.getAuthenticatedContent(url.toString());
-//		
-//		Logger.info("license url: " + url);
-//		Logger.info("license content: " + content);
-//		
-//		ObjectMapper objectMapper = new ObjectMapper();
-//		objectMapper.setSerializationInclusion(Include.NON_NULL);
-//		license = objectMapper.readValue(content, License.class);
-//		Logger.info("license: " + license);
-//		
-//		license.url = this.getActUrl(license.getTid());
+//		String actUrl = this.getActUrl(fieldModel.getId());
 //		
 //		// find to see if it's stored already
 //		
-//		License lookup = License.findByUrl(license.url);
+//		Subject subject = Subject.findByUrl(actUrl);
 //		
-//		Logger.info("lookup: " + lookup + " using " + license.url);
+//		Logger.info("lookup: " + subject + " using " + actUrl);
 //
-//		if (lookup == null) {
-//			// ownerUsers
-//			if (license.getField_owner() != null) {
-//				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-//				List<FieldModel> fieldOwners = license.getField_owner();
-//				for (FieldModel fieldOwner : fieldOwners) {
-//					String fieldActUrl = this.getActUrl(fieldOwner.getId());
-//					User owner = User.findByUrl(fieldActUrl);
-//					license.getOwnerUsers().add(owner);
-//				}
-//			}
-//			
-//			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
-//			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-//
-//			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(license);
-//			if (taxonomyVocabulary != null) {
-//				license.setTaxonomyVocabulary(taxonomyVocabulary);
-//			}
-//			
-//			Logger.info("act-url: " + license.url);
-//			Logger.info("getParentFieldList: " + license.getParentFieldList());
-//			// "parent":[],
-//			List<FieldModel> parentFieldList = license.getParentFieldList();
-//			for (FieldModel parentFieldModel : parentFieldList) {
-//				
-//				String actUrl = this.getActUrl(parentFieldModel.getId());
-//				Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
-//				if (parentTaxonomy == null) {
-//					parentTaxonomy = this.convertTaxonomy(parentFieldModel, objectMapper);
-//				}
-//				license.getParentsList().add(parentTaxonomy);
-//			}
-//			// TODO: KL parents_all doesn't seem to be used by views/controllers
-//			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
-//			license.save();
-//		} else {
-//			license = lookup;
-//		}
-//		
-//		Logger.info("taxonomy id: " + license.id);
-//		return license;
+//		if (subject == null) {
+//			throw new IOException();
+//		} 
+//		return subject;
 //	}
 	
 //	private QaIssue convertQaIssue(FieldModel fieldModel) throws IOException {
@@ -1656,11 +1605,11 @@ public enum JsonUtils {
 //					readListFromString(target.authorRef, urlList, type, null, res);
 				}
 				if (type.equals(NodeType.TAXONOMY)) {
-					readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
+//					readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
 					// TODO: KL DO WE NEED TO PERSIST SUGGEST COLLECTIONS?
 //					readListFromString(target.fieldSuggestedCollections, urlList, type, TaxonomyType.COLLECTION, res);
-					readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
-					readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
+//					readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
+//					readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
 //					Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
 					readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
 				}

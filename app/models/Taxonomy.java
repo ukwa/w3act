@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
+import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.models.FieldModel;
 
@@ -1059,23 +1060,24 @@ public class Taxonomy extends ActModel {
 	 */
 	public static List<Taxonomy> getSelectedSubjects(String targetUrl) {
 //		Logger.info("getSelectedSubjects() targetUrl: " + targetUrl);
-		List<Taxonomy> res = new ArrayList<Taxonomy>();
-    	if (targetUrl != null && targetUrl.length() > 0) {
-    		Target target = Target.findByUrl(targetUrl);
-    		if (target.fieldSubject != null) {
-//    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
-		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Taxonomy subject = findByUrl(part);
-		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-//			    		Logger.info("subject name: " + subject.name);
-		    			res.add(subject);
-		    		}
-		    	}
-    		}
-    	}
-		return res;
+//		List<Taxonomy> res = new ArrayList<Taxonomy>();
+//    	if (targetUrl != null && targetUrl.length() > 0) {
+//    		Target target = Target.findByUrl(targetUrl);
+//    		if (target.fieldSubject != null) {
+////    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
+//		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
+//		    	for (String part: parts) {
+////		    		Logger.info("part: " + part);
+//		    		Taxonomy subject = findByUrl(part);
+//		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+////			    		Logger.info("subject name: " + subject.name);
+//		    			res.add(subject);
+//		    		}
+//		    	}
+//    		}
+//    	}
+//		return res;
+		throw new NotImplementedError();
 	}       
     
 	/**
@@ -1111,23 +1113,24 @@ public class Taxonomy extends ActModel {
 	 */
 	public static List<Taxonomy> getSelectedLicenses(String targetUrl) {
 //		Logger.info("getSelectedLicenses() targetUrl: " + targetUrl);
-		List<Taxonomy> res = new ArrayList<Taxonomy>();
-    	if (targetUrl != null && targetUrl.length() > 0) {
-    		Target target = Target.findByUrl(targetUrl);
-    		if (target.fieldLicense != null) {
-//    			Logger.info("getSelectedLicenses() field_license: " + target.field_license);
-		    	String[] parts = target.fieldLicense.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Taxonomy license = findByUrl(part);
-		    		if (license != null && license.name != null && license.name.length() > 0) {
-//			    		Logger.info("license name: " + license.name);
-		    			res.add(license);
-		    		}
-		    	}
-    		}
-    	}
-		return res;
+//		List<Taxonomy> res = new ArrayList<Taxonomy>();
+//    	if (targetUrl != null && targetUrl.length() > 0) {
+//    		Target target = Target.findByUrl(targetUrl);
+//    		if (target.fieldLicense != null) {
+////    			Logger.info("getSelectedLicenses() field_license: " + target.field_license);
+//		    	String[] parts = target.fieldLicense.split(Const.COMMA + " ");
+//		    	for (String part: parts) {
+////		    		Logger.info("part: " + part);
+//		    		Taxonomy license = findByUrl(part);
+//		    		if (license != null && license.name != null && license.name.length() > 0) {
+////			    		Logger.info("license name: " + license.name);
+//		    			res.add(license);
+//		    		}
+//		    	}
+//    		}
+//    	}
+//		return res;
+		throw new NotImplementedError();
 	}       
     
 	/**

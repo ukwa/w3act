@@ -13,6 +13,7 @@ import com.avaje.ebean.Page;
 
 import play.Logger;
 import play.db.ebean.*;
+import scala.NotImplementedError;
 import uk.bl.Const;
 
 /**
@@ -334,23 +335,24 @@ public class Collection extends Taxonomy {
 	 */
 	public static List<Collection> getSelectedCollections(String targetUrl) {
 //		Logger.info("getSelectedCollections() targetUrl: " + targetUrl);
-		List<Collection> res = new ArrayList<Collection>();
-    	if (targetUrl != null && targetUrl.length() > 0) {
-    		Target target = Target.findByUrl(targetUrl);
-    		if (target.fieldCollectionCategories != null) {
-//    			Logger.info("getSelectedCollections() field_collection_categories: " + target.field_collection_categories);
-		    	String[] parts = target.fieldCollectionCategories.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Collection collection = findByUrl(part);
-		    		if (collection != null && StringUtils.isNotEmpty(collection.name)) {
-//			    		Logger.info("collection title: " + collection.name);
-		    			res.add(collection);
-		    		}
-		    	}
-    		}
-    	}
-		return res;
+//		List<Collection> res = new ArrayList<Collection>();
+//    	if (targetUrl != null && targetUrl.length() > 0) {
+//    		Target target = Target.findByUrl(targetUrl);
+//    		if (target.fieldCollectionCategories != null) {
+////    			Logger.info("getSelectedCollections() field_collection_categories: " + target.field_collection_categories);
+//		    	String[] parts = target.fieldCollectionCategories.split(Const.COMMA + " ");
+//		    	for (String part: parts) {
+////		    		Logger.info("part: " + part);
+//		    		Collection collection = findByUrl(part);
+//		    		if (collection != null && StringUtils.isNotEmpty(collection.name)) {
+////			    		Logger.info("collection title: " + collection.name);
+//		    			res.add(collection);
+//		    		}
+//		    	}
+//    		}
+//    	}
+//		return res;
+		throw new NotImplementedError();
 	}       
     
 	/**

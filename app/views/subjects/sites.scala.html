@@ -128,7 +128,7 @@
             		<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a>
 				</td>
 				<!-- 
-               	@if(target.fieldSubject != null && Taxonomy.getSelectedSubjects(target.url) != null) { 
+               	@if(target.subject != null && Taxonomy.getSelectedSubjects(target.url) != null) { 
                	<td>
 					@for(subject <- Taxonomy.getSelectedSubjects(target.url)) {
 	               		@if(subject.url != null) {
@@ -140,9 +140,9 @@
 	                <td></td>
                 }	 
                  -->                 
-                <td>@Taxonomy.findTaxonomyNamesByUrl(target.fieldSubject)</td>
+                <td>@target.subject.name)</td>
                 @if(target.organisation != null) { 
-				<td><a href="@routes.Curators.edit(target.authorUser.url)">@User.findByUrl(target.authorUser.url).name</a></td>
+				<td><a href="@routes.Curators.edit(target.authorUser.url)">@target.authorUser.name</a></td>
                 } else {
 	            	<td></td>
 				}	

@@ -23,6 +23,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
+import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.collections.sites;
@@ -70,18 +71,19 @@ public class Targets extends AbstractController {
 //		List<String> subjects = new ArrayList<String>();
 		List<Target> allTargets = Target.find.all();
 		Iterator<Target> itr = allTargets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			if (target.fieldSubject != null && target.fieldSubject.length() > 0 && !res.contains(target)) {
-//				if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_subject", target.fieldSubject);
-		        if (ll.findRowCount() > 0) {
-//		        	subjects.add(target.field_subject);
-		        	res.add(target);
-		        }
-			}
-		}
-    	return res;
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target.fieldSubject != null && target.fieldSubject.length() > 0 && !res.contains(target)) {
+////				if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
+//		        ExpressionList<Target> ll = Target.find.where().contains("field_subject", target.fieldSubject);
+//		        if (ll.findRowCount() > 0) {
+////		        	subjects.add(target.field_subject);
+//		        	res.add(target);
+//		        }
+//			}
+//		}
+//    	return res;
+		throw new NotImplementedError();
 	}
 	
 	/**
@@ -131,25 +133,26 @@ public class Targets extends AbstractController {
 		List<String> subjects = new ArrayList<String>();
 		List<Target> allTargets = Target.find.all();
 		Iterator<Target> itr = allTargets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			if (target.fieldLicense != null) {
-				String curLicense = target.fieldLicense.replace(Const.LIST_DELIMITER, "");
-				if (curLicense.length() > 0 && !subjects.contains(curLicense)) {
-			        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_LICENSE_NODE, curLicense);
-			        if (ll.findRowCount() > 0) {
-			        	Taxonomy taxonomy = Taxonomy.findByUrl(curLicense);
-			        	Logger.info("curLicense: " + curLicense + ".");
-	//		        	Logger.info("taxonomy url: " + taxonomy.url);
-	//		        	Logger.info("license: " + taxonomy.name);
-			        	res.add(taxonomy);
-			        	subjects.add(curLicense);
-			        }
-				}
-			}
-		}
-//		Logger.info("getLicense res: " + res);
-    	return res;
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target.fieldLicense != null) {
+//				String curLicense = target.fieldLicense.replace(Const.LIST_DELIMITER, "");
+//				if (curLicense.length() > 0 && !subjects.contains(curLicense)) {
+//			        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_LICENSE_NODE, curLicense);
+//			        if (ll.findRowCount() > 0) {
+//			        	Taxonomy taxonomy = Taxonomy.findByUrl(curLicense);
+//			        	Logger.info("curLicense: " + curLicense + ".");
+//	//		        	Logger.info("taxonomy url: " + taxonomy.url);
+//	//		        	Logger.info("license: " + taxonomy.name);
+//			        	res.add(taxonomy);
+//			        	subjects.add(curLicense);
+//			        }
+//				}
+//			}
+//		}
+////		Logger.info("getLicense res: " + res);
+//    	return res;
+		throw new NotImplementedError();
 	}
 	
 	/**
@@ -211,24 +214,25 @@ public class Targets extends AbstractController {
 	 * @return collection categories list
 	 */
 	public static List<Taxonomy> getCollectionCategories() {
-		List<Target> res = new ArrayList<Target>();
-		List<String> subjects = new ArrayList<String>();
-		List<Taxonomy> taxonomies = new ArrayList<Taxonomy>();
-		List<Target> allTargets = Target.find.all();
-		Iterator<Target> itr = allTargets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			if (target.fieldCollectionCategories != null && target.fieldCollectionCategories.length() > 0 && !subjects.contains(target.fieldCollectionCategories)) {
-		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, target.fieldCollectionCategories);
-		        if (ll.findRowCount() > 0) {
-		        	res.add(target);
-		        	subjects.add(target.fieldCollectionCategories);
-		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.fieldCollectionCategories);
-		        	taxonomies.add(taxonomy);
-		        }
-			}
-		}
-    	return taxonomies;
+//		List<Target> res = new ArrayList<Target>();
+//		List<String> subjects = new ArrayList<String>();
+//		List<Taxonomy> taxonomies = new ArrayList<Taxonomy>();
+//		List<Target> allTargets = Target.find.all();
+//		Iterator<Target> itr = allTargets.iterator();
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target.collections != null && !subjects.contains(target.fieldCollectionCategories)) {
+//		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, target.fieldCollectionCategories);
+//		        if (ll.findRowCount() > 0) {
+//		        	res.add(target);
+//		        	subjects.add(target.fieldCollectionCategories);
+//		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.fieldCollectionCategories);
+//		        	taxonomies.add(taxonomy);
+//		        }
+//			}
+//		}
+//    	return taxonomies;
+		throw new NotImplementedError();
 	}
 	
 
@@ -569,8 +573,8 @@ public class Targets extends AbstractController {
     	        target.active = true;
     	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
     	        	target.authorUser.url = User.findByEmail(request().username()).url;
-    	        	target.fieldSubSubject = Const.NONE;
-    	        	target.fieldSubject = Const.NONE;
+//    	        	target.fieldSubSubject = Const.NONE;
+//    	        	target.fieldSubject = Const.NONE;
     	        }
 //	        	target.qa_status = Const.NONE_VALUE;
     			Logger.info("add target with url: " + target.url);
@@ -872,11 +876,11 @@ public class Targets extends AbstractController {
     public static Result edit(String url) {
 		Logger.info("Targets.edit() url: " + url);
 		Target target = Target.findByUrl(url);
-		if (target.fieldSubject == null || target.fieldSubject.length() == 0) {
-			Logger.info("Targets.edit() set subject value to 'None' for imported targets.");
-			target.fieldSubject = Const.NONE;
-			Ebean.update(target);
-		}		
+//		if (target.fieldSubject == null || target.fieldSubject.length() == 0) {
+//			Logger.info("Targets.edit() set subject value to 'None' for imported targets.");
+//			target.fieldSubject = Const.NONE;
+//			Ebean.update(target);
+//		}		
 		Logger.info("Targets.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(Target.findByUrl(url));

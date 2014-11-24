@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
+import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
@@ -79,7 +80,7 @@ public class Target extends JsonModel {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "subject_id")
-	public Subject subject;
+	public Taxonomy subject;
 
 	// bi-directional many-to-many association to Subject
 	@JsonIgnore
@@ -137,18 +138,8 @@ public class Target extends JsonModel {
 	public String fieldUkPostalAddressUrl;
 
 	@Column(columnDefinition = "text")
-	public String fieldLicense;
-	@Column(columnDefinition = "text")
-	public String fieldCollectionCategories;
-	@Column(columnDefinition = "text")
 	public String fieldNotes;
 
-	@Required
-	@Column(columnDefinition = "text")
-	public String fieldSubject;
-	// @Required
-	@Column(columnDefinition = "text")
-	public String fieldSubSubject;
 	@Column(columnDefinition = "text")
 	public String keywords;
 	@Column(columnDefinition = "text")
@@ -172,6 +163,7 @@ public class Target extends JsonModel {
 	@Column(columnDefinition = "text")
 	public String qualityNotes;
 
+	
 	@Required
 	@Column(columnDefinition = "text")
 	public String fieldUrl;
@@ -767,18 +759,19 @@ public class Target extends JsonModel {
 		List<String> subjects = new ArrayList<String>();
 		List<Target> allTargets = find.all();
 		Iterator<Target> itr = allTargets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			if (target.fieldSubject != null && target.fieldSubject.length() > 0
-					&& !subjects.contains(target.fieldSubject)) {
-				ExpressionList<Target> ll = find.where().contains(
-						"field_subject", target.fieldSubject);
-				if (ll.findRowCount() > 0) {
-					subjects.add(target.fieldSubject);
-				}
-			}
-		}
-		return subjects;
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target.fieldSubject != null && target.fieldSubject.length() > 0
+//					&& !subjects.contains(target.fieldSubject)) {
+//				ExpressionList<Target> ll = find.where().contains(
+//						"field_subject", target.fieldSubject);
+//				if (ll.findRowCount() > 0) {
+//					subjects.add(target.fieldSubject);
+//				}
+//			}
+//		}
+//		return subjects;
+		throw new NotImplementedError();
 	}
 
 	/**
@@ -998,13 +991,14 @@ public class Target extends JsonModel {
 	public static boolean checkLicense(String url) {
 		Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true)
 				.findUnique();
-		boolean res = false;
-		if (target != null && target.fieldLicense != null
-				&& target.fieldLicense.length() > 0
-				&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
-			res = true;
-		}
-		return res;
+//		boolean res = false;
+//		if (target != null && target.li != null
+//				&& target.fieldLicense.length() > 0
+//				&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
+//			res = true;
+//		}
+		throw new NotImplementedError();
+//		return res;
 	}
 
 	/**
@@ -1018,16 +1012,17 @@ public class Target extends JsonModel {
 				.findUnique();
 		boolean res = false;
 		Logger.info("hasGrantedLicense url: " + url);
-		if (target != null
-				&& target.fieldLicense != null
-				&& target.fieldLicense.length() > 0
-				&& !target.fieldLicense.toLowerCase().contains(Const.NONE)
-				&& target.qaStatus != null
-				&& target.qaStatus.equals(Const.CrawlPermissionStatus.GRANTED
-						.name())) {
-			res = true;
-		}
-		return res;
+//		if (target != null
+//				&& target.fieldLicense != null
+//				&& target.fieldLicense.length() > 0
+//				&& !target.fieldLicense.toLowerCase().contains(Const.NONE)
+//				&& target.qaStatus != null
+//				&& target.qaStatus.equals(Const.CrawlPermissionStatus.GRANTED
+//						.name())) {
+//			res = true;
+//		}
+//		return res;
+		throw new NotImplementedError();
 	}
 
 	/**
@@ -1284,9 +1279,10 @@ public class Target extends JsonModel {
 	 * @return true if in list
 	 */
 	public boolean hasSubject(String subject) {
-		boolean res = false;
-		res = Utils.hasElementInList(subject, fieldSubject);
-		return res;
+//		boolean res = false;
+//		res = Utils.hasElementInList(subject, fieldSubject);
+//		return res;
+		throw new NotImplementedError();
 	}
 
 	/**
@@ -1297,9 +1293,10 @@ public class Target extends JsonModel {
 	 * @return true if in list
 	 */
 	public boolean hasSubSubject(String subject) {
-		boolean res = false;
-		res = Utils.hasElementInList(subject, fieldSubSubject);
-		return res;
+//		boolean res = false;
+//		res = Utils.hasElementInList(subject, fieldSubSubject);
+//		return res;
+		throw new NotImplementedError();
 	}
 
 	/**
@@ -1323,9 +1320,10 @@ public class Target extends JsonModel {
 	 * @return true if in list
 	 */
 	public boolean hasLicense(String license) {
-		boolean res = false;
-		res = Utils.hasElementInList(license, fieldLicense);
-		return res;
+//		boolean res = false;
+//		res = Utils.hasElementInList(license, fieldLicense);
+//		return res;
+		throw new NotImplementedError();
 	}
 
 	/**
@@ -1999,16 +1997,17 @@ public class Target extends JsonModel {
 		 * specific 'UKWA Licensing' (i.e. where field_license is not empty).
 		 */
 		Iterator<Target> itr = targets.findList().iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			if (target != null && target.fieldLicense != null
-					&& target.fieldLicense.length() > 0
-					&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
-				res.add(target);
-			}
-		}
-		Logger.info("exportByFrequency() resulting list size: " + res.size());
-		return res;
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target != null && target.fieldLicense != null
+//					&& target.fieldLicense.length() > 0
+//					&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
+//				res.add(target);
+//			}
+//		}
+//		Logger.info("exportByFrequency() resulting list size: " + res.size());
+//		return res;
+		throw new NotImplementedError();
 	}
 
 	/**
@@ -2280,17 +2279,19 @@ public class Target extends JsonModel {
 	public boolean hasLicenses() {
 		// Open UKWA licence for target being edited - disabled
 		// Other license for target being edited - disabled
-		return indicateLicenses(this.fieldLicense);
+//		return indicateLicenses(this.fieldLicense);
+		throw new NotImplementedError();
 	}
 
 	public boolean hasHigherLicense() {
 		// Open UKWA Licence at higher level - disabled
 		// Other license at higher level - disabled
-		Target higherTarget = this.getHigherLevelTarget();
-		if (higherTarget != null) {
-			return (indicateLicenses(higherTarget.fieldLicense));
-		}
-		return false;
+//		Target higherTarget = this.getHigherLevelTarget();
+//		if (higherTarget != null) {
+//			return (indicateLicenses(higherTarget.fieldLicense));
+//		}
+//		return false;
+		throw new NotImplementedError();
 	}
 
 	public boolean indicateUkwaLicenceStatus() {
@@ -2380,11 +2381,12 @@ public class Target extends JsonModel {
 				// Logger.info("validQAStatus: " + validQAStatus(target));
 				// higher level domain and has a license or higher level domain
 				// and has pending qa status
-				if ((isHigherLevel(target.fieldUrl) && StringUtils
-						.isNotBlank(target.fieldLicense))
-						|| (isHigherLevel(target.fieldUrl) && validQAStatus(target))) {
-					results.add(target);
-				}
+//				if ((isHigherLevel(target.fieldUrl) && StringUtils
+//						.isNotBlank(target.fieldLicense))
+//						|| (isHigherLevel(target.fieldUrl) && validQAStatus(target))) {
+//					results.add(target);
+//				}
+				throw new NotImplementedError();
 			}
 			// what about current target license?
 		}
@@ -2738,10 +2740,7 @@ public class Target extends JsonModel {
 				+ isInScopeIpWithoutLicenseValue + ", domain=" + domain
 				+ ", fieldDescription=" + fieldDescription
 				+ ", fieldUkPostalAddressUrl=" + fieldUkPostalAddressUrl
-				+ ", fieldLicense=" + fieldLicense
-				+ ", fieldCollectionCategories=" + fieldCollectionCategories
-				+ ", fieldNotes=" + fieldNotes + ", fieldSubject=" + fieldSubject
-				+ ", fieldSubSubject=" + fieldSubSubject + ", keywords="
+				+ ", fieldNotes=" + fieldNotes + ", keywords="
 				+ keywords + ", tags=" + tags + ", synonyms=" + synonyms
 				+ ", flags=" + flags + ", authors=" + authors
 				+ ", fieldQaStatus=" + fieldQaStatus + ", qaStatus=" + qaStatus

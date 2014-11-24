@@ -28,6 +28,7 @@ import play.libs.Yaml;
 import uk.bl.Const;
 import uk.bl.api.JsonUtils;
 import uk.bl.api.PasswordHash;
+import uk.bl.api.Utils;
 
 public enum DataImport {
 
@@ -62,11 +63,11 @@ public enum DataImport {
 			}
 			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
 				this.importJsonTaxonomies();
-//				this.importTaxonomies();
+				this.importTaxonomies();
 			}
 			
 			if (Ebean.find(Target.class).findRowCount() == 0) {
-//	        	this.importUrlsToTargets();
+	        	this.importUrlsToTargets();
 			}
 			if (Ebean.find(Instance.class).findRowCount() == 0) {
 //				this.importInstances();
@@ -255,6 +256,7 @@ public enum DataImport {
 			tv = TaxonomyVocabulary.findByMachineName(taxonomy.ttype);
 			Logger.info("ttype: " + taxonomy.ttype + " - " + tv);
 			taxonomy.setTaxonomyVocabulary(tv);
+			taxonomy.url = Const.ACT_URL + Utils.createId();
 			taxonomy.save();
 		}
         Logger.info("Loaded Taxonomies");
@@ -339,12 +341,12 @@ public enum DataImport {
         Iterator<Target> itr = targets.iterator();
         while (itr.hasNext()) {
         	Target target = itr.next();
-			if (target.fieldCollectionCategories != null && target.fieldCollectionCategories.contains("_")) {
-				target.fieldCollectionCategories = target.fieldCollectionCategories.replace("_", "/");
-			}
-			if (target.fieldLicense != null && target.fieldLicense.contains("_")) {
-				target.fieldLicense = target.fieldLicense.replace("_", "/");
-			}
+//			if (target.fieldCollectionCategories != null && target.fieldCollectionCategories.contains("_")) {
+//				target.fieldCollectionCategories = target.fieldCollectionCategories.replace("_", "/");
+//			}
+//			if (target.fieldLicense != null && target.fieldLicense.contains("_")) {
+//				target.fieldLicense = target.fieldLicense.replace("_", "/");
+//			}
             Ebean.update(target);
 		}
 	}

@@ -183,8 +183,10 @@
 			@for(target <- currentPage.getList) {
             <tr>
 				<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
-				<td>@Taxonomy.findByUrl(target.fieldCollectionCategories).name</td>
-				<td>@Taxonomy.findByUrl(target.fieldSubject).name</td>
+				@for(collection <- target.collections) {
+					<td>@collection.name</td>
+				}
+				<td>@target.subject.name</td>
 				<td><a href="@routes.Curators.edit(target.authorUser.url)">@User.findByUrl(target.authorUser.url).name</a></td>
 				<td><a class="brand" href="@routes.Targets.view(target.url)">@Instance.findAllByTarget(target.url)</a></td>
             </tr>
