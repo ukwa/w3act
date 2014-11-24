@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -26,6 +25,7 @@ import uk.bl.api.models.FieldModel;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.avaje.ebean.validation.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -73,7 +73,8 @@ public class Taxonomy extends ActModel {
 	private List<User> ownerUsers;
 
 	@JsonIgnore
-	@ManyToOne
+	@NotNull
+	@ManyToOne(optional=false)
 	@JoinColumn(name = "taxonomy_vocabulary_id")
 	private TaxonomyVocabulary taxonomyVocabulary;
 	
@@ -109,7 +110,13 @@ public class Taxonomy extends ActModel {
 	@JoinTable(name = Const.TAXONOMY_PARENTS, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
 	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
 	private List<Taxonomy> parentsList;
-	
+
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = Const.TAXONOMY_PARENTS_ALL, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
+	private List<Taxonomy> parentsAllList;
+
     @Transient
     @JsonProperty
     private String tid;
@@ -1329,6 +1336,14 @@ public class Taxonomy extends ActModel {
 
 	public void setParentsList(List<Taxonomy> parentsList) {
 		this.parentsList = parentsList;
+	}
+
+	public List<Taxonomy> getParentsAllList() {
+		return parentsAllList;
+	}
+
+	public void setParentsAllList(List<Taxonomy> parentsAllList) {
+		this.parentsAllList = parentsAllList;
 	}
 
 	@Override

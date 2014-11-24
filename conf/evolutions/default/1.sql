@@ -14,6 +14,7 @@ create table communication_log (
   permission                text,
   notes                     text,
   updated_at                timestamp not null,
+  constraint uq_communication_log_url unique (url),
   constraint pk_communication_log primary key (id))
 ;
 
@@ -32,6 +33,7 @@ create table contact_person (
   default_contact           boolean,
   permission_checked        boolean,
   updated_at                timestamp not null,
+  constraint uq_contact_person_url unique (url),
   constraint pk_contact_person primary key (id))
 ;
 
@@ -59,6 +61,7 @@ create table crawl_permission (
   publish                   boolean,
   agree                     boolean,
   updated_at                timestamp not null,
+  constraint uq_crawl_permission_url unique (url),
   constraint pk_crawl_permission primary key (id))
 ;
 
@@ -69,6 +72,7 @@ create table flag (
   name                      text,
   description               text,
   updated_at                timestamp not null,
+  constraint uq_flag_url unique (url),
   constraint pk_flag primary key (id))
 ;
 
@@ -144,6 +148,7 @@ create table instance (
   flags                     text,
   authors                   TEXT,
   updated_at                timestamp not null,
+  constraint uq_instance_url unique (url),
   constraint pk_instance primary key (id))
 ;
 
@@ -155,6 +160,7 @@ create table lookup_entry (
   ttype                     text,
   scopevalue                boolean,
   updated_at                timestamp not null,
+  constraint uq_lookup_entry_url unique (url),
   constraint pk_lookup_entry primary key (id))
 ;
 
@@ -170,6 +176,7 @@ create table mail_template (
   default_email             boolean,
   text                      text,
   updated_at                timestamp not null,
+  constraint uq_mail_template_url unique (url),
   constraint pk_mail_template primary key (id))
 ;
 
@@ -189,6 +196,7 @@ create table nomination (
   nomination_date           timestamp,
   nomination_checked        boolean,
   updated_at                timestamp not null,
+  constraint uq_nomination_url unique (url),
   constraint pk_nomination primary key (id))
 ;
 
@@ -203,6 +211,7 @@ create table organisation (
   affiliation               varchar(255),
   revision                  text,
   updated_at                timestamp not null,
+  constraint uq_organisation_url unique (url),
   constraint pk_organisation primary key (id))
 ;
 
@@ -214,6 +223,7 @@ create table permission (
   description               text,
   revision                  text,
   updated_at                timestamp not null,
+  constraint uq_permission_url unique (url),
   constraint pk_permission primary key (id))
 ;
 
@@ -226,6 +236,7 @@ create table permission_refusal (
   ttype                     text,
   reason                    text,
   updated_at                timestamp not null,
+  constraint uq_permission_refusal_url unique (url),
   constraint pk_permission_refusal primary key (id))
 ;
 
@@ -237,6 +248,7 @@ create table role (
   description               text,
   revision                  text,
   updated_at                timestamp not null,
+  constraint uq_role_url unique (url),
   constraint pk_role primary key (id))
 ;
 
@@ -247,6 +259,7 @@ create table tag (
   name                      text,
   description               text,
   updated_at                timestamp not null,
+  constraint uq_tag_url unique (url),
   constraint pk_tag primary key (id))
 ;
 
@@ -321,6 +334,7 @@ create table target (
   field_ignore_robots_txt   boolean,
   format                    varchar(255),
   updated_at                timestamp not null,
+  constraint uq_target_url unique (url),
   constraint pk_target primary key (id))
 ;
 
@@ -329,7 +343,7 @@ create table taxonomy (
   id                        bigint not null,
   url                       varchar(255),
   created_at                timestamp,
-  taxonomy_vocabulary_id    bigint,
+  taxonomy_vocabulary_id    bigint not null,
   name                      varchar(255),
   description               text,
   publish                   boolean,
@@ -337,6 +351,7 @@ create table taxonomy (
   parents_all               text,
   revision                  text,
   updated_at                timestamp not null,
+  constraint uq_taxonomy_url unique (url),
   constraint pk_taxonomy primary key (id))
 ;
 
@@ -349,6 +364,7 @@ create table taxonomy_vocabulary (
   description               text,
   vid                       bigint,
   updated_at                timestamp not null,
+  constraint uq_taxonomy_vocabulary_url unique (url),
   constraint pk_taxonomy_vocabulary primary key (id))
 ;
 
@@ -364,6 +380,7 @@ create table creator (
   edit_url                  varchar(255),
   revision                  text,
   updated_at                timestamp not null,
+  constraint uq_creator_url unique (url),
   constraint pk_creator primary key (id))
 ;
 
@@ -432,6 +449,12 @@ create table taxonomy_parents (
   taxonomy_id                    bigint not null,
   parent_id                      bigint not null,
   constraint pk_taxonomy_parents primary key (taxonomy_id, parent_id))
+;
+
+create table taxonomy_parents_all (
+  taxonomy_id                    bigint not null,
+  parent_id                      bigint not null,
+  constraint pk_taxonomy_parents_all primary key (taxonomy_id, parent_id))
 ;
 create sequence communication_log_seq;
 
@@ -538,6 +561,10 @@ alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_01 fore
 
 alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_02 foreign key (parent_id) references taxonomy (id);
 
+alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_01 foreign key (taxonomy_id) references taxonomy (id);
+
+alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_02 foreign key (parent_id) references taxonomy (id);
+
 # --- !Downs
 
 drop table if exists communication_log cascade;
@@ -591,6 +618,8 @@ drop table if exists license_target cascade;
 drop table if exists taxonomy_user cascade;
 
 drop table if exists taxonomy_parents cascade;
+
+drop table if exists taxonomy_parents_all cascade;
 
 drop table if exists taxonomy_vocabulary cascade;
 

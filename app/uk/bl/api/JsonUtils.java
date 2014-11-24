@@ -30,7 +30,6 @@ import java.util.Map;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import models.ActModel;
 import models.Collection;
 import models.CollectionArea;
 import models.Instance;
@@ -273,7 +272,6 @@ public enum JsonUtils {
 					
 					StringBuilder usersUrl = new StringBuilder(jsonUrl).append("?").append(Const.PAGE_IN_URL).append(String.valueOf(i));	
 				
-				
 					String pageContent = this.getAuthenticatedContent(usersUrl.toString());
 					
 					JsonNode mainNode = Json.parse(pageContent.toString());
@@ -351,6 +349,89 @@ public enum JsonUtils {
 		}
 	}
 	
+	public void convertTaxonomyVocabulary() {
+//		http://www.webarchive.org.uk/act/taxonomy_vocabulary.json?page=0
+		
+//		{"self":"http:\/\/webarchive.org.uk\/act\/taxonomy_vocabulary?page=0","first":"http:\/\/webarchive.org.uk\/act\/taxonomy_vocabulary?page=0","last":"http:\/\/webarchive.org.uk\/act\/taxonomy_vocabulary?page=0","list":[
+
+//		http://www.webarchive.org.uk/act/taxonomy_term.json
+		try {
+
+			String jsonUrl = Const.URL_STR_BASE + TaxonomyVocabulary.TAXONOMY_VOCABULARY + Const.JSON;
+
+		    String content = this.getAuthenticatedContent(jsonUrl);		    
+		    JsonNode parentNode = Json.parse(content);
+		    
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.setSerializationInclusion(Include.NON_NULL);
+
+			int count = 0;
+			if (parentNode != null) {
+				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
+				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
+				
+				for (int i=firstPage; i<=lastPage; i++) {
+					
+					StringBuilder url = new StringBuilder(jsonUrl).append("?").append(Const.PAGE_IN_URL).append(String.valueOf(i));	
+				
+					String pageContent = this.getAuthenticatedContent(url.toString());
+					
+					JsonNode mainNode = Json.parse(pageContent.toString());
+					
+					JsonNode rootNode = mainNode.path(Const.LIST_NODE);
+					Iterator<JsonNode> iterator = rootNode.iterator();
+					while (iterator.hasNext()) {
+						Logger.info(count + ") ");
+						JsonNode node = iterator.next();
+
+//						{"vid":"5","name":"Web Archive Collections","machine_name":"collections","description":"Taxonomy for structuring collections.","term_count":"160"},
+//						{"vid":"6","name":"Collection Areas","machine_name":"collection_areas","description":"Taxonomy for linking up with BL Collection Strategy subject terms.","term_count":"37"},
+//						{"vid":"4","name":"Licenses","machine_name":"licenses","description":"List of licenses under which content has been archived.","term_count":"2"},
+//						{"vid":"7","name":"Quality Issues","machine_name":"quality_issues","description":"Taxonomy used to categorise QA issues.","term_count":"3"},
+//						{"vid":"2","name":"Subject","machine_name":"subject","description":"Subject tags","term_count":"76"},
+//						{"vid":"1","name":"Tags","machine_name":"tags","description":"Use tags to group articles on similar topics into categories.","term_count":"0"}
+
+						Logger.info("json: " + node);
+						TaxonomyVocabulary taxonomyVocabulary = objectMapper.readValue(node.toString(), TaxonomyVocabulary.class);
+
+						ObjectMapper mapper = new ObjectMapper();
+						mapper.setSerializationInclusion(Include.NON_NULL);
+
+						Logger.info("taxonomy: " + taxonomyVocabulary);
+						
+						// find to see if it's stored already
+						
+						TaxonomyVocabulary lookup = TaxonomyVocabulary.findByVid(taxonomyVocabulary.getVid());
+						
+						Logger.info("lookup: " + lookup + " using " + taxonomyVocabulary.getVid());
+
+						if (lookup == null) {
+							taxonomyVocabulary.save();
+						}
+						
+						Logger.info("taxonomyVocabulary: " + taxonomyVocabulary);
+						count++;
+					}
+				}
+			}
+			Logger.info("No of Taxonomies: " + count);
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private TaxonomyVocabulary getTaxonomyVocabulary(Taxonomy taxonomy) throws IOException {
+		FieldModel fmTaxVocab = taxonomy.getVocabularyValue();
+		Logger.info("TaxonomyVocabulary: " + fmTaxVocab.getId());
+		Long vid = Long.valueOf(fmTaxVocab.getId());
+		TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.findByVid(vid);
+		return taxonomyVocabulary;
+	}
+	
 	public void convertTaxonomies() {
 //		http://www.webarchive.org.uk/act/taxonomy_term.json
 		try {
@@ -398,121 +479,23 @@ public enum JsonUtils {
 //						"parents_all":[{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/170","id":"170","resource":"taxonomy_term"}],
 //						"feed_nid":null
 						
-//							"field_owner":[],
-//							"field_dates":[],
-//							"field_publish":null,
-//							"tid":"153",
-//							"name":"19th Century English Literature",
-//							"description":"","weight":"0","node_count":0,
-//							"url":"http:\/\/webarchive.org.uk\/act\/taxonomy\/term\/153",
-//							"vocabulary":{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-//							"parent":[],"parents_all":[{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/153","id":"153","resource":"taxonomy_term"}],
-//							"feed_nid":null},
-//						
-//							"field_owner":[],
-//							"field_dates":
-//								{"value":"1396306800","value2":"1404082800","duration":7776000},
-//							"field_publish":false,
-//							"tid":"257",
-//							"name":"Academia \u0026 think tanks",
-//							"description":"","weight":"0","node_count":10,
-//							"url":"http:\/\/webarchive.org.uk\/act\/taxonomy\/term\/257",
-//							"vocabulary":{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-//							"parent":[{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/250","id":250,"resource":"taxonomy_term"}],
-//							"parents_all":[
-//							               {"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/257","id":"257","resource":"taxonomy_term"},
-//							               {"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}
-//							              ],
-//							"feed_nid":null}
-						
 						Logger.info("json: " + node);
 						
 						String row = node.toString();
-						// just read in the Taxonomy Vocabulary
+						// just read in the Taxonomy Vocabulary???
 						Taxonomy taxonomy = objectMapper.readValue(row, Taxonomy.class);
 
 						// find to see if it's stored already
-						Taxonomy lookup = Taxonomy.findByUrl(taxonomy.url);
+						String actUrl = this.getActUrl(taxonomy.getTid());
+						Taxonomy lookup = Taxonomy.findByUrl(actUrl);
 						
 						Logger.info("lookup: " + lookup + " using " + taxonomy.url);
 
 						if (lookup == null) {
 							
-							FieldModel fm = taxonomy.getVocabularyValue();
-							if (fm != null) {
-								Long vid = Long.valueOf(fm.getId());
-								TaxonomyVocabulary tv = TaxonomyVocabulary.findByVid(vid);
-								String machineName = tv.getMachine_name();
-								Logger.info("machineName: " + machineName);
-								switch (machineName) {
-									case TaxonomyVocabulary.COLLECTION:
-										taxonomy = objectMapper.readValue(row, Collection.class);
-										break;
-									case TaxonomyVocabulary.LICENSES:
-										taxonomy = objectMapper.readValue(row, License.class);
-										break;
-									case TaxonomyVocabulary.QUALITY_ISSUES:
-										taxonomy = objectMapper.readValue(row, QaIssue.class);
-										break;
-									case TaxonomyVocabulary.SUBJECT:
-										taxonomy = objectMapper.readValue(row, Subject.class);
-										break;
-									case TaxonomyVocabulary.COLLECTION_AREAS:
-										taxonomy = objectMapper.readValue(row, CollectionArea.class);
-										break;
-									case TaxonomyVocabulary.TAGS:
-										taxonomy = objectMapper.readValue(row, TagTaxonomy.class);
-										break;
-									default:
-								}
-							}
-							taxonomy.url = this.getActUrl(taxonomy.getTid());
-							Logger.info("taxonomy: " + taxonomy);
-							
-							// ownerUsers
-							if (taxonomy.getField_owner() != null) {
-								// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-								List<FieldModel> fieldOwners = taxonomy.getField_owner();
-								for (FieldModel fieldOwner : fieldOwners) {
-									String fieldActUrl = this.getActUrl(fieldOwner.getId());
-									User owner = User.findByUrl(fieldActUrl);
-									taxonomy.getOwnerUsers().add(owner);
-								}
-							}
-							
-							// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED. BUT IS REQUIRED FOR TYPE
 							// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-							TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(taxonomy);
-							if (taxonomyVocabulary != null) {
-								taxonomy.setTaxonomyVocabulary(taxonomyVocabulary);
-							}
-
-							// "parent":[],
-							List<FieldModel> parentFieldList = taxonomy.getParentFieldList();
-							for (FieldModel parentFieldModel : parentFieldList) {
-								
-								String actUrl = this.getActUrl(parentFieldModel.getId());
-								Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
-								if (parentTaxonomy == null) {
-									// pass node? TODO: KL DUPLICATES?
-//									parentTaxonomy = this.convertTaxonomy(parentFieldModel);
-								}
-//								taxonomy.getParentsList().add(parentTaxonomy);
-							}
-							// TODO: KL parents_all doesn't seem to be used by views/controllers
-							// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
-							List<FieldModel> parentAllFieldList = taxonomy.getParents_all();
-							for (FieldModel parentAllFieldModel : parentAllFieldList) {
-								String actUrl = this.getActUrl(parentAllFieldModel.getId());
-								Taxonomy parentAllTaxonomy = Taxonomy.findByUrl(actUrl);
-								// pass node?
-								if (parentAllTaxonomy == null) {
-//									parentAllTaxonomy = this.convertTaxonomy(parentAllFieldModel);
-								}
-							}
-
+							taxonomy = this.convertTaxonomy(taxonomy, row, objectMapper);
 							taxonomy.save();
-
 						}
 						
 //						"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
@@ -541,9 +524,116 @@ public enum JsonUtils {
 			e.printStackTrace();
 		}
 	}
+	
+	private Taxonomy getTaxonomySubType(Long vid, ObjectMapper objectMapper, String row) throws JsonParseException, JsonMappingException, IOException {
+		Taxonomy taxonomy = null;
+		TaxonomyVocabulary tv = TaxonomyVocabulary.findByVid(vid);
+		String machineName = tv.getMachine_name();
+		Logger.info("machineName: " + machineName);
+		switch (machineName) {
+			case TaxonomyVocabulary.COLLECTION:
+				taxonomy = objectMapper.readValue(row, Collection.class);
+				break;
+			case TaxonomyVocabulary.LICENSES:
+				taxonomy = objectMapper.readValue(row, License.class);
+				break;
+			case TaxonomyVocabulary.QUALITY_ISSUES:
+				taxonomy = objectMapper.readValue(row, QaIssue.class);
+				break;
+			case TaxonomyVocabulary.SUBJECT:
+				taxonomy = objectMapper.readValue(row, Subject.class);
+				break;
+			case TaxonomyVocabulary.COLLECTION_AREAS:
+				taxonomy = objectMapper.readValue(row, CollectionArea.class);
+				break;
+			case TaxonomyVocabulary.TAGS:
+				taxonomy = objectMapper.readValue(row, TagTaxonomy.class);
+				break;
+			default:
+		}
+		return taxonomy;
+	}
+	
+	private void convertTaxonomyOwners(List<FieldModel> fieldOwners, List<User> taxonomyOwners) {
+		for (FieldModel fieldOwner : fieldOwners) {
+			String fieldActUrl = this.getActUrl(fieldOwner.getId());
+			User owner = User.findByUrl(fieldActUrl);
+			taxonomyOwners.add(owner);
+		}
+	}
 
-	public void convertJsonToDataObjects(String jsonUrl, Class<ActModel> classType) {
+	private void convertParents(List<FieldModel> fieldParents, List<Taxonomy> parents, ObjectMapper objectMapper) throws IOException {
+		for (FieldModel parentFieldModel : fieldParents) {
+			String actUrl = this.getActUrl(parentFieldModel.getId());
+			Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
+			if (parentTaxonomy == null) {
+				parentTaxonomy = this.convertFieldTaxonomy(parentFieldModel, objectMapper);
+				Logger.info("parentTaxonomy TYPE: " + parentTaxonomy.getClass());
+				parentTaxonomy.save();
+			}
+			parents.add(parentTaxonomy);
+		}
+	}
+
+	private void convertParentsAll(List<FieldModel> fieldParentsAll, List<Taxonomy> parentsAll, ObjectMapper objectMapper) throws IOException {
+		// TODO: KL parents_all doesn't seem to be used by views/controllers
+		for (FieldModel parentAllFieldModel : fieldParentsAll) {
+			String actUrl = this.getActUrl(parentAllFieldModel.getId());
+			// save so we don't save twice because of parent
+			Taxonomy parentAllTaxonomy = Taxonomy.findByUrl(actUrl);
+			// pass node?
+			if (parentAllTaxonomy == null) {
+				parentAllTaxonomy = this.convertFieldTaxonomy(parentAllFieldModel, objectMapper);
+				Logger.info("parentAllTaxonomy TYPE: " + parentAllTaxonomy.getClass());
+				parentAllTaxonomy.save();
+			}
+			parentsAll.add(parentAllTaxonomy);
+		}
+	}
+	
+	private Taxonomy convertTaxonomy(Taxonomy taxonomy, String row, ObjectMapper objectMapper) throws IOException {
+		// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
+		TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(taxonomy);
+		// to get the correct Taxonomy Instance
+		Long vid = taxonomyVocabulary.getVid();
+		Logger.info("vocabulary id: " + vid);
+		taxonomy = this.getTaxonomySubType(vid, objectMapper, row);
 		
+//		taxonomy.id = Long.valueOf(taxonomy.getTid());
+		taxonomy.url = this.getActUrl(taxonomy.getTid());
+		
+		taxonomy.setTaxonomyVocabulary(taxonomyVocabulary);
+		
+		// ownerUsers
+		if (taxonomy.getField_owner() != null) {
+			// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+			this.convertTaxonomyOwners(taxonomy.getField_owner(), taxonomy.getOwnerUsers());
+		}
+		
+		// save first so we can use the ID - so we don't save twice because of parent
+		taxonomy.save();
+	
+		// "parent":[],
+		this.convertParents(taxonomy.getParentFieldList(), taxonomy.getParentsList(), objectMapper);
+		Logger.info("TAXONOMY AFTER PARENT: " + taxonomy.id + " " + taxonomy.name);
+		// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+		this.convertParentsAll(taxonomy.getParents_all(), taxonomy.getParentsAllList(), objectMapper);
+		Logger.info("TAXONOMY AFTER PARENT ALL: " + taxonomy.id + " " + taxonomy.name);
+		return taxonomy;
+	}
+	
+	private Taxonomy convertFieldTaxonomy(FieldModel fieldModel, ObjectMapper objectMapper) throws IOException {
+		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+		String content = this.getAuthenticatedContent(url.toString());
+		
+		Taxonomy taxonomy = objectMapper.readValue(content, Taxonomy.class);
+		
+		Logger.info("taxonomy url: " + url);
+		Logger.info("taxonomy content: " + content);
+
+		taxonomy = this.convertTaxonomy(taxonomy, content, objectMapper);
+		
+		return taxonomy;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -925,385 +1015,215 @@ public enum JsonUtils {
 		}		
 	}
 	
-	public void convertTaxonomyVocabulary() {
-//		http://www.webarchive.org.uk/act/taxonomy_vocabulary.json?page=0
-		
-//		{"self":"http:\/\/webarchive.org.uk\/act\/taxonomy_vocabulary?page=0","first":"http:\/\/webarchive.org.uk\/act\/taxonomy_vocabulary?page=0","last":"http:\/\/webarchive.org.uk\/act\/taxonomy_vocabulary?page=0","list":[
-
-//		http://www.webarchive.org.uk/act/taxonomy_term.json
-		try {
-
-			String jsonUrl = Const.URL_STR_BASE + TaxonomyVocabulary.TAXONOMY_VOCABULARY + Const.JSON;
-
-		    String content = this.getAuthenticatedContent(jsonUrl);		    
-		    JsonNode parentNode = Json.parse(content);
-		    
-			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.setSerializationInclusion(Include.NON_NULL);
-
-			int count = 0;
-			if (parentNode != null) {
-				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
-				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
-				
-				for (int i=firstPage; i<=lastPage; i++) {
-					
-					StringBuilder url = new StringBuilder(jsonUrl).append("?").append(Const.PAGE_IN_URL).append(String.valueOf(i));	
-				
-					String pageContent = this.getAuthenticatedContent(url.toString());
-					
-					JsonNode mainNode = Json.parse(pageContent.toString());
-					
-					JsonNode rootNode = mainNode.path(Const.LIST_NODE);
-					Iterator<JsonNode> iterator = rootNode.iterator();
-					while (iterator.hasNext()) {
-						Logger.info(count + ") ");
-						JsonNode node = iterator.next();
-
-//						{"vid":"5","name":"Web Archive Collections","machine_name":"collections","description":"Taxonomy for structuring collections.","term_count":"160"},
-//						{"vid":"6","name":"Collection Areas","machine_name":"collection_areas","description":"Taxonomy for linking up with BL Collection Strategy subject terms.","term_count":"37"},
-//						{"vid":"4","name":"Licenses","machine_name":"licenses","description":"List of licenses under which content has been archived.","term_count":"2"},
-//						{"vid":"7","name":"Quality Issues","machine_name":"quality_issues","description":"Taxonomy used to categorise QA issues.","term_count":"3"},
-//						{"vid":"2","name":"Subject","machine_name":"subject","description":"Subject tags","term_count":"76"},
-//						{"vid":"1","name":"Tags","machine_name":"tags","description":"Use tags to group articles on similar topics into categories.","term_count":"0"}
-
-						Logger.info("json: " + node);
-						TaxonomyVocabulary taxonomyVocabulary = objectMapper.readValue(node.toString(), TaxonomyVocabulary.class);
-
-						ObjectMapper mapper = new ObjectMapper();
-						mapper.setSerializationInclusion(Include.NON_NULL);
-
-						Logger.info("taxonomy: " + taxonomyVocabulary);
-						
-						// find to see if it's stored already
-						
-						TaxonomyVocabulary lookup = TaxonomyVocabulary.findByVid(taxonomyVocabulary.getVid());
-						
-						Logger.info("lookup: " + lookup + " using " + taxonomyVocabulary.getVid());
-
-						if (lookup == null) {
-							taxonomyVocabulary.save();
-						}
-						
-						Logger.info("taxonomyVocabulary: " + taxonomyVocabulary);
-						count++;
-					}
-				}
-			}
-			Logger.info("No of Taxonomies: " + count);
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	private Collection convertCollection(FieldModel fieldModel) throws IOException {
+//		
+//		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+//		Collection collection = null;
+//		String content = this.getAuthenticatedContent(url.toString());
+//		
+//		Logger.info("collection url: " + url);
+//		Logger.info("collection content: " + content);
+//		
+//		ObjectMapper mapper = new ObjectMapper();
+//		mapper.setSerializationInclusion(Include.NON_NULL);
+//		collection = mapper.readValue(content, Collection.class);
+//		Logger.info("collection: " + collection);
+//		
+//		collection.url = this.getActUrl(collection.getTid());
+//		
+//		// find to see if it's stored already
+//		
+//		Collection lookup = Collection.findByUrl(collection.url);
+//		
+//		Logger.info("lookup: " + lookup + " using " + collection.url);
+//
+//		if (lookup == null) {
+//			// ownerUsers
+//			if (collection.getField_owner() != null) {
+//				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+//				List<FieldModel> fieldOwners = collection.getField_owner();
+//				for (FieldModel fieldOwner : fieldOwners) {
+//					String fieldActUrl = this.getActUrl(fieldOwner.getId());
+//					User owner = User.findByUrl(fieldActUrl);
+//					collection.getOwnerUsers().add(owner);
+//				}
+//			}
+//			
+//			// "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
+//			// "field_publish":true,
+//			// "tid":"250",
+//			// "name":"European Parliament Elections 2014","description":"",
+//			// "weight":"0",
+//			// "node_count":10,
+//			// "url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
+//			
+//			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
+//			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
+//			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(collection);
+//			if (taxonomyVocabulary != null) {
+//				collection.setTaxonomyVocabulary(taxonomyVocabulary);
+//			}
+//			Logger.info("act-url: " + collection.url);
+//			Logger.info("getParentFieldList: " + collection.getParentFieldList());
+//			// "parent":[],
+//			List<FieldModel> parentFieldList = collection.getParentFieldList();
+//			for (FieldModel parentFieldModel : parentFieldList) {
+//				
+//				String actUrl = this.getActUrl(parentFieldModel.getId());
+//				Collection parentCollection = Collection.findByUrl(actUrl);
+//				if (parentCollection == null) {
+//					parentCollection = convertCollection(parentFieldModel);
+//				}
+//				collection.getParentsList().add(parentCollection);
+//			}
+//			// TODO: KL parents_all doesn't seem to be used by views/controllers
+//			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+//			collection.save();
+//		} else {
+//			collection = lookup;
+//		}
+//		Logger.info("collection id: " + collection.id);
+//		return collection;
+//	}
 	
-	private TaxonomyVocabulary getTaxonomyVocabulary(Taxonomy taxonomy) throws IOException {
-		FieldModel fmTaxVocab = taxonomy.getVocabularyValue();
-		if (fmTaxVocab != null) {
-			Long vid = Long.valueOf(fmTaxVocab.getId());
-			TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.findByVid(vid);
-			return taxonomyVocabulary;
-		}
-		return null;
-	}
+//	private Subject convertSubject(FieldModel fieldModel) throws IOException {
+////		"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
+//		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+//		Subject subject = null;
+//		String content = this.getAuthenticatedContent(url.toString());
+//		
+//		Logger.info("subject url: " + url);
+//		Logger.info("subject content: " + content);
+//		
+//		ObjectMapper mapper = new ObjectMapper();
+//		mapper.setSerializationInclusion(Include.NON_NULL);
+//		subject = mapper.readValue(content, Subject.class);
+//		Logger.info("subject: " + subject);
+//		
+//		subject.url = this.getActUrl(subject.getTid());
+//		
+//		// find to see if it's stored already
+//		
+//		Subject lookup = Subject.findByUrl(subject.url);
+//		
+//		Logger.info("lookup: " + lookup + " using " + subject.url);
+//
+//		if (lookup == null) {
+//			
+//			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(subject);
+//			if (taxonomyVocabulary != null) {
+//				subject.setTaxonomyVocabulary(taxonomyVocabulary);
+//			}
+//			subject.save();
+//		} else {
+//			subject = lookup;
+//		}
+//		Logger.info("subject url: " + subject.url);
+//		return subject;
+//	}
+
+//	private License convertLicense(FieldModel fieldModel) throws IOException {
+//		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+//		License license = null;
+//		String content = this.getAuthenticatedContent(url.toString());
+//		
+//		Logger.info("license url: " + url);
+//		Logger.info("license content: " + content);
+//		
+//		ObjectMapper objectMapper = new ObjectMapper();
+//		objectMapper.setSerializationInclusion(Include.NON_NULL);
+//		license = objectMapper.readValue(content, License.class);
+//		Logger.info("license: " + license);
+//		
+//		license.url = this.getActUrl(license.getTid());
+//		
+//		// find to see if it's stored already
+//		
+//		License lookup = License.findByUrl(license.url);
+//		
+//		Logger.info("lookup: " + lookup + " using " + license.url);
+//
+//		if (lookup == null) {
+//			// ownerUsers
+//			if (license.getField_owner() != null) {
+//				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+//				List<FieldModel> fieldOwners = license.getField_owner();
+//				for (FieldModel fieldOwner : fieldOwners) {
+//					String fieldActUrl = this.getActUrl(fieldOwner.getId());
+//					User owner = User.findByUrl(fieldActUrl);
+//					license.getOwnerUsers().add(owner);
+//				}
+//			}
+//			
+//			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
+//			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
+//
+//			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(license);
+//			if (taxonomyVocabulary != null) {
+//				license.setTaxonomyVocabulary(taxonomyVocabulary);
+//			}
+//			
+//			Logger.info("act-url: " + license.url);
+//			Logger.info("getParentFieldList: " + license.getParentFieldList());
+//			// "parent":[],
+//			List<FieldModel> parentFieldList = license.getParentFieldList();
+//			for (FieldModel parentFieldModel : parentFieldList) {
+//				
+//				String actUrl = this.getActUrl(parentFieldModel.getId());
+//				Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
+//				if (parentTaxonomy == null) {
+//					parentTaxonomy = this.convertTaxonomy(parentFieldModel, objectMapper);
+//				}
+//				license.getParentsList().add(parentTaxonomy);
+//			}
+//			// TODO: KL parents_all doesn't seem to be used by views/controllers
+//			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+//			license.save();
+//		} else {
+//			license = lookup;
+//		}
+//		
+//		Logger.info("taxonomy id: " + license.id);
+//		return license;
+//	}
 	
-	private Collection convertCollection(FieldModel fieldModel) throws IOException {
-		
-		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
-		Collection collection = null;
-		String content = this.getAuthenticatedContent(url.toString());
-		
-		Logger.info("collection url: " + url);
-		Logger.info("collection content: " + content);
-		
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		collection = mapper.readValue(content, Collection.class);
-		Logger.info("collection: " + collection);
-		
-		collection.url = this.getActUrl(collection.getTid());
-		
-		// find to see if it's stored already
-		
-		Collection lookup = Collection.findByUrl(collection.url);
-		
-		Logger.info("lookup: " + lookup + " using " + collection.url);
-
-		if (lookup == null) {
-			// ownerUsers
-			if (collection.getField_owner() != null) {
-				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-				List<FieldModel> fieldOwners = collection.getField_owner();
-				for (FieldModel fieldOwner : fieldOwners) {
-					String fieldActUrl = this.getActUrl(fieldOwner.getId());
-					User owner = User.findByUrl(fieldActUrl);
-					collection.getOwnerUsers().add(owner);
-				}
-			}
-			
-			// "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
-			// "field_publish":true,
-			// "tid":"250",
-			// "name":"European Parliament Elections 2014","description":"",
-			// "weight":"0",
-			// "node_count":10,
-			// "url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
-			
-			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
-			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(collection);
-			if (taxonomyVocabulary != null) {
-				collection.setTaxonomyVocabulary(taxonomyVocabulary);
-			}
-			Logger.info("act-url: " + collection.url);
-			Logger.info("getParentFieldList: " + collection.getParentFieldList());
-			// "parent":[],
-			List<FieldModel> parentFieldList = collection.getParentFieldList();
-			for (FieldModel parentFieldModel : parentFieldList) {
-				
-				String actUrl = this.getActUrl(parentFieldModel.getId());
-				Collection parentCollection = Collection.findByUrl(actUrl);
-				if (parentCollection == null) {
-					parentCollection = convertCollection(parentFieldModel);
-				}
-				collection.getParentsList().add(parentCollection);
-			}
-			// TODO: KL parents_all doesn't seem to be used by views/controllers
-			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
-			collection.save();
-		} else {
-			collection = lookup;
-		}
-		Logger.info("collection id: " + collection.id);
-		return collection;
-	}
-	
-	private Subject convertSubject(FieldModel fieldModel) throws IOException {
-//		"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
-		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
-		Subject subject = null;
-		String content = this.getAuthenticatedContent(url.toString());
-		
-		Logger.info("subject url: " + url);
-		Logger.info("subject content: " + content);
-		
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		subject = mapper.readValue(content, Subject.class);
-		Logger.info("subject: " + subject);
-		
-		subject.url = this.getActUrl(subject.getTid());
-		
-		// find to see if it's stored already
-		
-		Subject lookup = Subject.findByUrl(subject.url);
-		
-		Logger.info("lookup: " + lookup + " using " + subject.url);
-
-		if (lookup == null) {
-			
-			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(subject);
-			if (taxonomyVocabulary != null) {
-				subject.setTaxonomyVocabulary(taxonomyVocabulary);
-			}
-			subject.save();
-		} else {
-			subject = lookup;
-		}
-		Logger.info("subject url: " + subject.url);
-		return subject;
-	}
-
-	private License convertLicense(FieldModel fieldModel) throws IOException {
-		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
-		License license = null;
-		String content = this.getAuthenticatedContent(url.toString());
-		
-		Logger.info("license url: " + url);
-		Logger.info("license content: " + content);
-		
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		license = mapper.readValue(content, License.class);
-		Logger.info("license: " + license);
-		
-		license.url = this.getActUrl(license.getTid());
-		
-		// find to see if it's stored already
-		
-		License lookup = License.findByUrl(license.url);
-		
-		Logger.info("lookup: " + lookup + " using " + license.url);
-
-		if (lookup == null) {
-			// ownerUsers
-			if (license.getField_owner() != null) {
-				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-				List<FieldModel> fieldOwners = license.getField_owner();
-				for (FieldModel fieldOwner : fieldOwners) {
-					String fieldActUrl = this.getActUrl(fieldOwner.getId());
-					User owner = User.findByUrl(fieldActUrl);
-					license.getOwnerUsers().add(owner);
-				}
-			}
-			
-			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
-			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-
-			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(license);
-			if (taxonomyVocabulary != null) {
-				license.setTaxonomyVocabulary(taxonomyVocabulary);
-			}
-			
-			Logger.info("act-url: " + license.url);
-			Logger.info("getParentFieldList: " + license.getParentFieldList());
-			// "parent":[],
-			List<FieldModel> parentFieldList = license.getParentFieldList();
-			for (FieldModel parentFieldModel : parentFieldList) {
-				
-				String actUrl = this.getActUrl(parentFieldModel.getId());
-				Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
-				if (parentTaxonomy == null) {
-					parentTaxonomy = this.convertTaxonomy(parentFieldModel);
-				}
-				license.getParentsList().add(parentTaxonomy);
-			}
-			// TODO: KL parents_all doesn't seem to be used by views/controllers
-			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
-			license.save();
-		} else {
-			license = lookup;
-		}
-		
-		Logger.info("taxonomy id: " + license.id);
-		return license;
-	}
-	
-	private QaIssue convertQaIssue(FieldModel fieldModel) throws IOException {
-//		"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
-		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
-		QaIssue qaIssue = null;
-		String content = this.getAuthenticatedContent(url.toString());
-		
-		Logger.info("subject url: " + url);
-		Logger.info("subject content: " + content);
-		
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		qaIssue = mapper.readValue(content, QaIssue.class);
-		Logger.info("qaIssue: " + qaIssue);
-		
-		qaIssue.url = this.getActUrl(qaIssue.getTid());
-		
-		// find to see if it's stored already
-		
-		QaIssue lookup = QaIssue.findByUrl(qaIssue.url);
-		
-		Logger.info("lookup: " + lookup + " using " + qaIssue.url);
-
-		if (lookup == null) {
-			
-			this.getTaxonomyVocabulary(qaIssue);
-			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(qaIssue);
-			if (taxonomyVocabulary != null) {
-				qaIssue.setTaxonomyVocabulary(taxonomyVocabulary);
-			}
-
-			qaIssue.save();
-		} else {
-			qaIssue = lookup;
-		}
-		Logger.info("qaIssue url: " + qaIssue.url);
-		return qaIssue;
-	}
-	
-	
-	private Taxonomy convertTaxonomy(FieldModel fieldModel) throws IOException {
-		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
-		Taxonomy taxonomy = null;
-		String content = this.getAuthenticatedContent(url.toString());
-		
-		Logger.info("taxonomy url: " + url);
-		Logger.info("taxonomy content: " + content);
-		
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		taxonomy = mapper.readValue(content, Taxonomy.class);
-		Logger.info("collection: " + taxonomy);
-		
-		taxonomy.url = this.getActUrl(taxonomy.getTid());
-		
-		// find to see if it's stored already
-		
-		Taxonomy lookup = Taxonomy.findByUrl(taxonomy.url);
-		
-		Logger.info("lookup: " + lookup + " using " + taxonomy.url);
-
-		if (lookup == null) {
-			// ownerUsers
-			if (taxonomy.getField_owner() != null) {
-				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-				List<FieldModel> fieldOwners = taxonomy.getField_owner();
-				for (FieldModel fieldOwner : fieldOwners) {
-					String fieldActUrl = this.getActUrl(fieldOwner.getId());
-					User owner = User.findByUrl(fieldActUrl);
-					taxonomy.getOwnerUsers().add(owner);
-				}
-			}
-			
-			// "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
-			// "field_publish":true,
-			// "tid":"250",
-			// "name":"European Parliament Elections 2014","description":"",
-			// "weight":"0",
-			// "node_count":10,
-			// "url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
-			
-			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
-			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(taxonomy);
-			if (taxonomyVocabulary != null) {
-				taxonomy.setTaxonomyVocabulary(taxonomyVocabulary);
-			}
-			
-			Logger.info("act-url: " + taxonomy.url);
-			Logger.info("getParentFieldList: " + taxonomy.getParentFieldList());
-			// "parent":[],
-			List<FieldModel> parentFieldList = taxonomy.getParentFieldList();
-			for (FieldModel parentFieldModel : parentFieldList) {
-				
-				String actUrl = this.getActUrl(parentFieldModel.getId());
-				Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
-				if (parentTaxonomy == null) {
-					parentTaxonomy = this.convertTaxonomy(parentFieldModel);
-				}
-				taxonomy.getParentsList().add(parentTaxonomy);
-			}
-			// TODO: KL parents_all doesn't seem to be used by views/controllers
-			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
-			taxonomy.save();
-		} else {
-			taxonomy = lookup;
-		}
-		
-//		"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-//		"field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
-//		"field_publish":true,
-//		"tid":"250",
-//		"name":"European Parliament Elections 2014","description":"",
-//		"weight":"0",
-//		"node_count":10,
-//		"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
-//		"vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-//		"parent":[],
-//		"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
-
-		Logger.info("taxonomy id: " + taxonomy.id);
-		return taxonomy;
-	}
+//	private QaIssue convertQaIssue(FieldModel fieldModel) throws IOException {
+////		"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
+//		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
+//		QaIssue qaIssue = null;
+//		String content = this.getAuthenticatedContent(url.toString());
+//		
+//		Logger.info("subject url: " + url);
+//		Logger.info("subject content: " + content);
+//		
+//		ObjectMapper mapper = new ObjectMapper();
+//		mapper.setSerializationInclusion(Include.NON_NULL);
+//		qaIssue = mapper.readValue(content, QaIssue.class);
+//		Logger.info("qaIssue: " + qaIssue);
+//		
+//		qaIssue.url = this.getActUrl(qaIssue.getTid());
+//		
+//		// find to see if it's stored already
+//		
+//		QaIssue lookup = QaIssue.findByUrl(qaIssue.url);
+//		
+//		Logger.info("lookup: " + lookup + " using " + qaIssue.url);
+//
+//		if (lookup == null) {
+//			
+//			this.getTaxonomyVocabulary(qaIssue);
+//			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(qaIssue);
+//			if (taxonomyVocabulary != null) {
+//				qaIssue.setTaxonomyVocabulary(taxonomyVocabulary);
+//			}
+//
+//			qaIssue.save();
+//		} else {
+//			qaIssue = lookup;
+//		}
+//		Logger.info("qaIssue url: " + qaIssue.url);
+//		return qaIssue;
+//	}
 	
 	/**
 	 * This method retrieves JSON data from Drupal for particular domain object

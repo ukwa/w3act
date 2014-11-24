@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import models.Collection;
 import models.ContactPerson;
 import models.Flag;
 import models.Instance;
@@ -63,7 +62,7 @@ public enum DataImport {
 			}
 			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
 				this.importJsonTaxonomies();
-				this.importTaxonomies();
+//				this.importTaxonomies();
 			}
 			
 			if (Ebean.find(Target.class).findRowCount() == 0) {
