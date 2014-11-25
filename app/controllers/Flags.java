@@ -135,7 +135,7 @@ public class Flags extends AbstractController {
     	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
-    		res = models.Flag.findAll();
+    		res = models.Flag.findAllFlags();
     	}
         return res;
     }
@@ -260,7 +260,7 @@ public class Flags extends AbstractController {
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;
         if (name != null) {
-	        List<Flag> flags = Flag.filterByName(name);
+	        List<Flag> flags = Flag.filterByFlagName(name);
 	        jsonData = Json.toJson(flags);
         }
         return ok(jsonData);
@@ -315,7 +315,7 @@ public class Flags extends AbstractController {
         			"Flags", 
         			User.findByEmail(request().username()), 
         			filter, 
-        			Flag.page(pageNo, 10, sortBy, order, filter), 
+        			Flag.pager(pageNo, 10, sortBy, order, filter), 
         			sortBy, 
         			order)
         	);

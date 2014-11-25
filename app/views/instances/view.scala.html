@@ -141,9 +141,9 @@
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-		            	<label for="quality_notes" class="col-sm-6 control-label">Quality Notes</label>
+		            	<label for="quality_notes" class="col-sm-6 control-label">Technical Notes</label>
 		            	<div class="col-sm-6">
-			            	<textarea class="form-control" name="quality_notes" id="quality_notes" cols="100" rows="1" value="@instance.qualityNotes" readonly>@instance.qualityNotes</textarea>
+			            	<textarea class="form-control" name="quality_notes" id="quality_notes" cols="100" rows="1" value="@instance.technicalNotes" readonly>@instance.technicalNotes</textarea>
 						</div>
 		         	</div>
 				</div>
@@ -414,7 +414,7 @@
 						<div class="form-group">
 			              	<label for="mySel" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea readonly class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@instance.originatingOrganisation">@instance.originatingOrganisation</textarea>
+				            	<textarea readonly class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@instance.organisation.url">@instance.organisation.url</textarea>
 							</div>
 						</div>
 					</div>
@@ -425,8 +425,8 @@
 						<div class="form-group">
 			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
 						    <div class="col-sm-6">
-						        @if(instance.url != null && instance.author != null) {
-  									@User.showUser(instance.author)
+						        @if(instance.authorUser != null) {
+  									@User.showUser(instance.authorUser.url)
   								} else {
   								    none
   								}
@@ -455,7 +455,7 @@
 						<div class="form-group">
 							<label for="inputContactPerson" class="col-sm-6 control-label">Author(s) <small class="text-center">(a named individual responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea readonly class="form-control" name="authors" id="authors" cols="100" rows="1" value="@instance.authors">@instance.authors</textarea>
+				            	<textarea readonly class="form-control" name="authors" id="authors" cols="100" rows="1" value="@instance.authorUser.name">@instance.authorUser.name</textarea>
 							</div>
 						</div>
 					</div>

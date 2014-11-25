@@ -22,61 +22,16 @@ import com.avaje.ebean.Page;
  */
 @Entity
 @Table(name = "flag")
-public class Flag extends ActModel {
+public class Flag extends Taxonomy {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2257699575463702989L;
 
-    //bi-directional many-to-many association to Target
-    @ManyToMany
-	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
-    private List<Target> targets = new ArrayList<Target>();
- 
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
-    //bi-directional many-to-many association to Instance
-    @ManyToMany
-	@JoinTable(name = Const.FLAG_INSTANCE, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
-    private List<Instance> instances = new ArrayList<Instance>();
-    
-    /**
-     * The name of the refusal.
-     */
-    @Required
-    @Column(columnDefinition = "text")
-    public String name;
-    
-    /**
-     * Allows the addition of further notes regarding flag description.
-     */
-    @Column(columnDefinition = "text")
-    public String description;
 
     public static final Model.Finder<Long, Flag> find = new Model.Finder<Long, Flag>(Long.class, Flag.class);
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-    
     public static Flag findByName(String name)
     {
         return find.where()
@@ -117,7 +72,7 @@ public class Flag extends ActModel {
 	 * @param name
 	 * @return
 	 */
-	public static List<Flag> filterByName(String name) {
+	public static List<Flag> filterByFlagName(String name) {
 		List<Flag> res = new ArrayList<Flag>();
         ExpressionList<Flag> ll = find.where().icontains(Const.NAME, name);
     	res = ll.findList();
@@ -127,7 +82,7 @@ public class Flag extends ActModel {
     /**
      * Retrieve all flags.
      */
-    public static List<Flag> findAll() {
+    public static List<Flag> findAllFlags() {
         return find.all();
     }
     
@@ -136,7 +91,7 @@ public class Flag extends ActModel {
 	 * @param targetUrl
 	 * @return
 	 */
-	public static List<Flag> convertUrlsToObjects(String urls) {
+	public static List<Flag> convertUrlsToFlagObjects(String urls) {
 		List<Flag> res = new ArrayList<Flag>();
    		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
 	    	String[] parts = urls.split(Const.COMMA + " ");
@@ -165,7 +120,7 @@ public class Flag extends ActModel {
      * @param order Sort order (either or asc or desc)
      * @param filter Filter applied on the name column
      */
-    public static Page<Flag> page(int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Flag> pager(int page, int pageSize, String sortBy, String order, String filter) {
 
         return find.where().icontains("name", filter)
         		.orderBy(sortBy + " " + order)

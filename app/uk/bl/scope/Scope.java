@@ -167,8 +167,8 @@ public class Scope {
 	 */
 	public static void updateLookupEntry(Target target, boolean newStatus) {
         boolean res = false;
-        Logger.info("updateLookupEntry() field URL: " + target.fieldUrl + ", new QA status: " + newStatus);
-        String url = normalizeUrl(target.fieldUrl);
+        Logger.info("updateLookupEntry() field URL: " + target.fieldUrl() + ", new QA status: " + newStatus);
+        String url = normalizeUrl(target.fieldUrl());
         
         /**
          * Check for fields of target that not yet stored in database.
@@ -533,21 +533,21 @@ public class Scope {
     	while (itr.hasNext()) {
     		Target target = itr.next();
         	try {
-	        	Logger.info("checkWhoisThread URL: " + target.fieldUrl + ", last update: " + String.valueOf(target.updatedAt));
-	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.fieldUrl));
+	        	Logger.info("checkWhoisThread URL: " + target.fieldUrl() + ", last update: " + String.valueOf(target.updatedAt));
+	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.fieldUrl()));
 	        	Logger.info("whoIsRes: " + whoIsRes);
 	        	// DOMAIN A UK REGISTRANT?
 	        	res = whoIsRes.isUKRegistrant();
 	        	Logger.info("isUKRegistrant?: " + res);
 	        	// STORE
-	        	storeInProjectDb(target.fieldUrl, res);
+	        	storeInProjectDb(target.fieldUrl(), res);
 	        	// ASSIGN TO TARGET
 	        	target.isInScopeUkRegistrationValue = res;
 	    	} catch (Exception e) {
 	    		Logger.info("whois lookup message: " + e.getMessage());
 		        // store in project DB
 	    		// FAILED - UNCHECKED
-		        storeInProjectDb(target.fieldUrl, false);
+		        storeInProjectDb(target.fieldUrl(), false);
 		        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
 	        	target.isInScopeUkRegistrationValue = false;
 	    	}
@@ -572,7 +572,7 @@ public class Scope {
     		Target target = itr.next();
         	try {
 //	        	Logger.info("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
-	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.fieldUrl));
+	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.fieldUrl()));
 //	        	Logger.info("whoIsRes: " + whoIsRes);
 	        	// DOMAIN A UK REGISTRANT?
 	        	res = whoIsRes.isUKRegistrant();
@@ -580,8 +580,8 @@ public class Scope {
 	        	else nonUKRegistrantCount++;
 //	        	Logger.info("isUKRegistrant?: " + res);
 	        	// STORE
-	        	Logger.info("CHECK TO SAVE " + target.fieldUrl);
-	        	storeInProjectDb(target.fieldUrl, res);
+	        	Logger.info("CHECK TO SAVE " + target.fieldUrl());
+	        	storeInProjectDb(target.fieldUrl(), res);
 	        	// ASSIGN TO TARGET
 	        	target.isInScopeUkRegistrationValue = res;
 	        	ukRegistrantCount++;
@@ -589,7 +589,7 @@ public class Scope {
 	    		Logger.info("whois lookup message: " + e.getMessage());
 		        // store in project DB
 	    		// FAILED - UNCHECKED
-		        storeInProjectDb(target.fieldUrl, false);
+		        storeInProjectDb(target.fieldUrl(), false);
 		        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
 	        	target.isInScopeUkRegistrationValue = false;
 	        	failedCount++;

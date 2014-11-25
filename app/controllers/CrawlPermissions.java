@@ -113,8 +113,9 @@ public class CrawlPermissions extends AbstractController {
     	String target = "";
     	String status = "";
     	if (targetUrl != null && targetUrl.length() > 0) {
-    		target = Target.findByUrl(targetUrl).fieldUrl;
-    		status = Target.findByUrl(targetUrl).qaStatus;
+    		Target targObj = Target.findByUrl(targetUrl);
+    		target = targObj.fieldUrl();
+    		status = targObj.qaIssue.url;
     	}
     	Logger.info("showCrawlPermissions: " + targetUrl + ", target: " + target);
 //        List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);

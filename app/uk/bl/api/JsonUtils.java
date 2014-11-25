@@ -50,7 +50,6 @@ import uk.bl.Const;
 import uk.bl.Const.NodeType;
 import uk.bl.Const.TaxonomyType;
 import uk.bl.api.models.FieldModel;
-import uk.bl.api.models.FieldValue;
 import uk.bl.exception.TaxonomyNotFoundException;
 import uk.bl.scope.Scope;
 
@@ -677,6 +676,16 @@ public enum JsonUtils {
 						target.edit_url = this.getWctUrl(target.vid);
 						target.createdAt = this.getDateFromSeconds(target.getCreated());
 						
+						FieldModel qaIssueField = target.getField_qa_status();
+						try {
+							if (qaIssueField != null) {
+								Taxonomy qaIssue = this.getTaxonomy(qaIssueField);
+								target.qaIssue = qaIssue;
+							}
+						} catch (TaxonomyNotFoundException tnfe) {
+							tnfe.printStackTrace();
+						}
+
 						// {"body":{"value":"<p>UK address on contacts page</p>\n", "summary":"", "format":"plain_text"},
 						if (target.getBody() instanceof LinkedHashMap) {
 							Map<String, String> bodyMap = (LinkedHashMap<String,String>)target.getBody();
@@ -698,10 +707,14 @@ public enum JsonUtils {
 						List<String> fieldUrls = new ArrayList<String>();
 						for (Map<String,String> map : target.getField_url()) {
 							Logger.info("Field Url: " + map.get("url"));
-							fieldUrls.add(map.get("url"));
+							String url = map.get("url");
+							// TODO: KL THIS IS A LIST OF URLS 
+							target.domain = Scope.getDomainFromUrl(url);
+							fieldUrls.add(url);
+
 						}
 						if (!fieldUrls.isEmpty()) {
-							target.fieldUrl = StringUtils.join(fieldUrls, ", ");
+							target.fieldUrls = fieldUrls;
 						}
 						
 						// "field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
@@ -871,7 +884,7 @@ public enum JsonUtils {
 						}
 	
 						target.isInScopeUkRegistrationValue = false;
-			        	target.isInScopeDomainValue = Target.isInScopeDomain(target.fieldUrl, target.url);
+			        	target.isInScopeDomainValue = Target.isInScopeDomain(target.fieldUrl(), target.url);
 						target.isUkHostingValue = false; 
 						target.isInScopeIpValue = false;
 						target.isInScopeIpWithoutLicenseValue = false;
@@ -926,7 +939,6 @@ public enum JsonUtils {
 				for (int i=firstPage; i<=lastPage; i++) {
 					
 					StringBuilder instanceUrl = new StringBuilder(jsonUrl).append("&").append(Const.PAGE_IN_URL).append(String.valueOf(i));
-					Logger.info("instance url: " + instanceUrl);
 					String pageContent = this.getAuthenticatedContent(instanceUrl.toString());
 					JsonNode mainNode = Json.parse(pageContent.toString());
 					
@@ -934,7 +946,6 @@ public enum JsonUtils {
 					Iterator<JsonNode> iterator = rootNode.iterator();
 					while (iterator.hasNext()) {
 						JsonNode node = iterator.next();
-						Logger.info("json: " + node.toString());
 						
 						Instance instance = objectMapper.readValue(node.toString(), Instance.class);
 	
@@ -942,6 +953,14 @@ public enum JsonUtils {
 						instance.edit_url = this.getWctUrl(instance.vid);
 						instance.createdAt = this.getDateFromSeconds(instance.getCreated());
 						
+//						"author":{"uri":"http://webarchive.org.uk/act/user/80","id":"80","resource":"user"}
+						FieldModel author = instance.getAuthor();
+						if (author != null) {
+							User authorUser = User.findByUrl(this.getActUrl(author.getId()));
+							Logger.info("Author found: " + authorUser.name);
+							instance.authorUser = authorUser;
+						}
+
 						// {"body":{"value":"<p>UK address on contacts page</p>\n", "summary":"", "format":"plain_text"},
 						if (instance.getBody() instanceof LinkedHashMap) {
 							Map<String, String> bodyMap = (LinkedHashMap<String,String>)instance.getBody();
@@ -949,7 +968,7 @@ public enum JsonUtils {
 							String format = bodyMap.get("format");
 							String summary = bodyMap.get("summary");
 							if (StringUtils.isNotEmpty(value)) {
-								instance.value = value;
+								instance.technicalNotes = value;
 							}
 							if (StringUtils.isNotEmpty(format)) {
 								instance.format = format;
@@ -982,12 +1001,11 @@ public enum JsonUtils {
 						try {
 							if (qaIssueField != null) {
 								Taxonomy qaIssue = this.getTaxonomy(qaIssueField);
-								
-								if (instance.getField_description_of_qa_issues() instanceof LinkedHashMap) {
-									Map<String, String> qaDesc = (LinkedHashMap<String,String>) instance.getField_description_of_qa_issues();
-									Logger.info("qaDesc: " + qaDesc);
-//									qaIssue.description = fv.getValue();
-								}
+//								if (instance.getField_description_of_qa_issues() instanceof LinkedHashMap) {
+//									Map<String, String> qaDesc = (LinkedHashMap<String,String>) instance.getField_description_of_qa_issues();
+//									Logger.info("qaDesc: " + qaDesc.get("value"));
+//									qaIssue.description = qaDesc.get("value");
+//								}
 								instance.qaIssue = qaIssue;
 							}
 						} catch (TaxonomyNotFoundException tnfe) {
@@ -1246,7 +1264,7 @@ public enum JsonUtils {
 //		        	Logger.debug("calculate NPLD scope for target: " + obj.field_url + ", ID: " + obj.url);
 //		        	obj.isInScopeUkRegistrationValue   = Target.isInScopeUkRegistration(obj.field_url);
 //		        	Logger.debug("   isInScopeUkRegistrationValue (WhoIs): " + obj.isInScopeUkRegistrationValue);
-		        	obj.isInScopeDomainValue           = Target.isInScopeDomain(obj.fieldUrl, obj.url);
+		        	obj.isInScopeDomainValue           = Target.isInScopeDomain(obj.fieldUrl(), obj.url);
 		        	Logger.debug("   isInScopeDomainValue (UK_DOMAIN): " + obj.isInScopeDomainValue);
 //		        	obj.isUkHostingValue               = Target.checkUkHosting(obj.field_url);
 //		        	Logger.debug("   isUkHostingValue (GeoIp): " + obj.isUkHostingValue);
@@ -1613,7 +1631,7 @@ public enum JsonUtils {
 //					readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
 //					readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
 //					Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
-					readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
+//					readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
 				}
 				if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
 //					List<Taxonomy> taxonomies = Taxonomy.findAll();
@@ -2274,7 +2292,7 @@ public enum JsonUtils {
 				Logger.info("map instance.field_target: "
 						+ instance.fieldTarget);
 				Target target = Target.findByUrl(instance.fieldTarget);
-				instance.fieldUrl = target.fieldUrl;
+				instance.fieldUrl = target.fieldUrl();
 				// Logger.info("Instance mapped to Target object: " +
 				// instance.field_url);
 				Ebean.update(instance);
@@ -2290,10 +2308,10 @@ public enum JsonUtils {
 		Iterator<Target> targetItr = targetList.iterator();
 		while (targetItr.hasNext()) {
 			Target target = targetItr.next();
-			if (target.fieldUrl != null) {
-				target.domain = Scope.getDomainFromUrl(target.fieldUrl);
+			if (target.fieldUrl() != null) {
+				target.domain = Scope.getDomainFromUrl(target.fieldUrl());
 				Logger.info("Target domain: " + target.domain
-						+ " mapped to Target field URL: " + target.fieldUrl);
+						+ " mapped to Target field URL: " + target.fieldUrl());
 				Ebean.update(target);
 			}
 		}

@@ -17,10 +17,10 @@ import javax.persistence.Transient;
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
+import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
-import uk.bl.api.models.FieldValue;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
@@ -38,7 +38,7 @@ import controllers.Flags;
  */
 @Entity 
 @Table(name = "instance")
-public class Instance extends JsonModel {
+public class Instance extends UrlModel {
 
 	/**
 	 * 
@@ -55,6 +55,11 @@ public class Instance extends JsonModel {
 	@ManyToOne
 	@JoinColumn(name = "qaissue_id")
 	public Taxonomy qaIssue;
+
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	@JsonIgnore
+	public User authorUser;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -65,6 +70,7 @@ public class Instance extends JsonModel {
 	
     @Column(columnDefinition = "text")
     public String value;
+    
     @Column(columnDefinition = "text")
     public String summary;
     
@@ -97,45 +103,39 @@ public class Instance extends JsonModel {
 	@JsonProperty
 	private Boolean field_to_be_published_;
 
-	
-//	same "body":{
-//		"value":"too much data here",
-//		"summary":"","format":"filtered_html"
+//	"body":{
+//		"value":"\u003Cp\u003EWCT ID: 179535873\u003Cbr \/\u003E\nSeeds: [\u0027\u003Ca href=\u0022http:\/\/www.islamic-relief.org.uk\/\u0022\u003Ehttp:\/\/www.islamic-relief.org.uk\/\u003C\/a\u003E\u0027]\u003Cbr \/\u003E\nJob ID: weekly-mon2300\u003Cbr \/\u003E\nWayback URLs: \u003Ca href=\u0022http:\/\/opera.bl.uk:8080\/wayback\/20140127231546\/http:\/\/www.islamic-relief.org.uk\/\u0022\u003Ehttp:\/\/opera.bl.uk:8080\/wayback\/20140127231546\/http:\/\/www.islamic-relief...\u003C\/a\u003E\u003C\/p\u003E\n\u003Cpre\u003E\n{\n        \u0022www.islamic-relief.org.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u0022200\u0022:15743,\n                        \u00220\u0022:1,\n                        \u0022301\u0022:277,\n                        \u0022302\u0022:8,\n                        \u00221\u0022:1,\n                        \u0022404\u0022:58,\n                        \u0022-6\u0022:1,\n                        \u0022502\u0022:6\n                },\n                \u0022data_size\u0022:\u0022554.0 MB\u0022\n        },\n        \u0022plus.google.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:293,\n                        \u0022404\u0022:7,\n                        \u0022301\u0022:1\n                },\n                \u0022data_size\u0022:\u00228.0 MB\u0022\n        },\n        \u0022www.youtube.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:69,\n                        \u0022302\u0022:4,\n                        \u0022303\u0022:5\n                },\n                \u0022data_size\u0022:\u00222.0 MB\u0022\n        },\n        \u0022www.bbc.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:2,\n                        \u0022200\u0022:175,\n                        \u0022302\u0022:2,\n                        \u0022404\u0022:3,\n                        \u0022301\u0022:2\n                },\n                \u0022data_size\u0022:\u00222.0 MB\u0022\n        },\n        \u0022s.ytimg.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:24,\n                        \u0022-7\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u0022451.0 kB\u0022\n        },\n        \u0022news.bbcimg.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:91\n                },\n                \u0022data_size\u0022:\u0022185.0 kB\u0022\n        },\n        \u0022prezi.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:4,\n                        \u0022302\u0022:1\n                },\n                \u0022data_size\u0022:\u0022105.0 kB\u0022\n        },\n        \u0022opera.bl.uk:9090\u0022:{\n                \u0022response_codes\u0022:{\n                        \u0022200\u0022:6\n                },\n                \u0022data_size\u0022:\u002279.0 kB\u0022\n        },\n        \u0022node1.bbcimg.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:52\n                },\n                \u0022data_size\u0022:\u002250.0 kB\u0022\n        },\n        \u0022dublincore.org\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:10\n                },\n                \u0022data_size\u0022:\u002240.0 kB\u0022\n        },\n        \u0022gmpg.org\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:10\n                },\n                \u0022data_size\u0022:\u002234.0 kB\u0022\n        },\n        \u0022static.bbci.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:29\n                },\n                \u0022data_size\u0022:\u002231.0 kB\u0022\n        },\n        \u0022www.google.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:2,\n                        \u0022200\u0022:4\n                },\n                \u0022data_size\u0022:\u002225.0 kB\u0022\n        },\n        \u0022www.google.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:2,\n                        \u0022200\u0022:4\n                },\n                \u0022data_size\u0022:\u002225.0 kB\u0022\n        },\n        \u0022platform.twitter.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:2,\n                        \u0022-7\u0022:1,\n                        \u0022403\u0022:4\n                },\n                \u0022data_size\u0022:\u002218.0 kB\u0022\n        },\n        \u0022www.flickr.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:2\n                },\n                \u0022data_size\u0022:\u00227.0 kB\u0022\n        },\n        \u0022emp.bbci.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022302\u0022:2\n                },\n                \u0022data_size\u0022:\u00226.0 kB\u0022\n        },\n        \u0022maps.gstatic.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:2,\n                        \u0022200\u0022:2\n                },\n                \u0022data_size\u0022:\u00226.0 kB\u0022\n        },\n        \u0022ajax.googleapis.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022404\u0022:1\n                },\n                \u0022data_size\u0022:\u00225.0 kB\u0022\n        },\n        \u0022stats.g.doubleclick.net\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:2,\n                        \u0022404\u0022:4\n                },\n                \u0022data_size\u0022:\u00224.0 kB\u0022\n        },\n        \u0022www.googleadservices.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:4\n                },\n                \u0022data_size\u0022:\u00223.0 kB\u0022\n        },\n        \u0022purl.org\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u00223.0 kB\u0022\n        },\n        \u0022i1.ytimg.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u00222.0 kB\u0022\n        },\n        \u0022lh6.googleusercontent.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022404\u0022:1\n                },\n                \u0022data_size\u0022:\u00222.0 kB\u0022\n        },\n        \u0022lh5.googleusercontent.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022404\u0022:1\n                },\n                \u0022data_size\u0022:\u00222.0 kB\u0022\n        },\n        \u0022lh4.googleusercontent.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022404\u0022:1\n                },\n                \u0022data_size\u0022:\u00222.0 kB\u0022\n        },\n        \u0022lh3.googleusercontent.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022404\u0022:1\n                },\n                \u0022data_size\u0022:\u00222.0 kB\u0022\n        },\n        \u0022yt3.ggpht.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022404\u0022:1\n                },\n                \u0022data_size\u0022:\u00222.0 kB\u0022\n        },\n        \u0022yt4.ggpht.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022404\u0022:1\n                },\n                \u0022data_size\u0022:\u00222.0 kB\u0022\n        },\n        \u0022m.youtube.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:2\n                },\n                \u0022data_size\u0022:\u00222.0 kB\u0022\n        },\n        \u0022feeds.bbci.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022404\u0022:1\n                },\n                \u0022data_size\u0022:\u00222.0 kB\u0022\n        },\n        \u0022p2-puz5j25sijgue-ew7nej4taelourup-if-v6exp3-v4.metric.gstatic.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u00221.0 kB\u0022\n        },\n        \u0022youtour.sandbox.google.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u00221.0 kB\u0022\n        },\n        \u0022youtu.be\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u00221.0 kB\u0022\n        },\n        \u0022dnn506yrbagrg.cloudfront.net\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022403\u0022:4\n                },\n                \u0022data_size\u0022:\u00221.0 kB\u0022\n        },\n        \u0022bit.ly\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:2,\n                        \u0022301\u0022:1\n                },\n                \u0022data_size\u0022:\u00221.0 kB\u0022\n        },\n        \u0022open.live.bbc.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:2,\n                        \u0022200\u0022:2\n                },\n                \u0022data_size\u0022:\u00221.0 kB\u0022\n        },\n        \u0022static.bbc.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:2\n                },\n                \u0022data_size\u0022:\u00221.0 kB\u0022\n        },\n        \u0022www.live.bbc.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:2\n                },\n                \u0022data_size\u0022:\u00221.0 kB\u0022\n        },\n        \u0022ichef.bbci.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:2\n                },\n                \u0022data_size\u0022:\u00221.0 kB\u0022\n        },\n        \u0022p.jwpcdn.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u0022973.0 bytes\u0022\n        },\n        \u0022ssl.p.jwpcdn.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u0022972.0 bytes\u0022\n        },\n        \u0022apis.google.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022301\u0022:1\n                },\n                \u0022data_size\u0022:\u0022824.0 bytes\u0022\n        },\n        \u0022sec.levexis.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:4\n                },\n                \u0022data_size\u0022:\u0022740.0 bytes\u0022\n        },\n        \u0022i.creativecommons.org\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u0022654.0 bytes\u0022\n        },\n        \u0022www.gstatic.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022-9998\u0022:1\n                },\n                \u0022data_size\u0022:\u0022558.0 bytes\u0022\n        },\n        \u0022ssl.gstatic.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022-9998\u0022:1\n                },\n                \u0022data_size\u0022:\u0022558.0 bytes\u0022\n        },\n        \u0022s3.amazonaws.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022403\u0022:2\n                },\n                \u0022data_size\u0022:\u0022521.0 bytes\u0022\n        },\n        \u0022trk.cetrk.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022403\u0022:2\n                },\n                \u0022data_size\u0022:\u0022519.0 bytes\u0022\n        },\n        \u0022gdata.youtube.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022-9998\u0022:1\n                },\n                \u0022data_size\u0022:\u0022516.0 bytes\u0022\n        },\n        \u0022googleads.g.doubleclick.net\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:2,\n                        \u0022200\u0022:2,\n                        \u0022-9998\u0022:2\n                },\n                \u0022data_size\u0022:\u0022466.0 bytes\u0022\n        },\n        \u0022maps.googleapis.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022-9998\u0022:1\n                },\n                \u0022data_size\u0022:\u0022457.0 bytes\u0022\n        },\n        \u0022ib.adnxs.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u0022370.0 bytes\u0022\n        },\n        \u0022sa.bbc.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:2,\n                        \u0022200\u0022:1,\n                        \u0022404\u0022:1\n                },\n                \u0022data_size\u0022:\u0022351.0 bytes\u0022\n        },\n        \u0022s2.googleusercontent.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:2,\n                        \u0022-9998\u0022:2\n                },\n                \u0022data_size\u0022:\u0022257.0 bytes\u0022\n        },\n        \u0022prezi-a.akamaihd.net\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022404\u0022:2\n                },\n                \u0022data_size\u0022:\u0022127.0 bytes\u0022\n        },\n        \u0022stats.bbc.co.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022-404\u0022:1,\n                        \u0022-3\u0022:1\n                },\n                \u0022data_size\u0022:\u002299.0 bytes\u0022\n        },\n        \u0022cdn.syndication.twimg.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022200\u0022:1,\n                        \u0022-9998\u0022:1\n                },\n                \u0022data_size\u0022:\u002285.0 bytes\u0022\n        },\n        \u0022pbs.twimg.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022400\u0022:2\n                },\n                \u0022data_size\u0022:\u002265.0 bytes\u0022\n        },\n        \u0022pfa.levexis.com\u0022:{\n                \u0022response_codes\u0022:{\n                        \u00221\u0022:1,\n                        \u0022204\u0022:4\n                },\n                \u0022data_size\u0022:\u002252.0 bytes\u0022\n        },\n        \u0022m.islamic-relief.org.uk\u0022:{\n                \u0022response_codes\u0022:{\n                        \u0022-1\u0022:1\n                },\n                \u0022data_size\u0022:\u00220.0 bytes\u0022\n        }\n}\n\u003C\/pre\u003E",
+//		"summary":"",
+//		"format":"full_html"
 //		},
-//		"field_timestamp":"20130908110118",
-//		"field_qa_issues":{
-//			"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/165","id":"165","resource":"taxonomy_term"
-//			},
-//		"field_target":{
-//				"uri":"http:\/\/webarchive.org.uk\/act\/node\/676","id":"676","resource":"node"
-//			},
-//		"field_description_of_qa_issues":{
-//				"value":"\u003Cp\u003ESite not live\u003C\/p\u003E\n","format":"filtered_html"
-//			},
-//		"field_published":false,
-//		"field_to_be_published_":false,
+//	"field_timestamp":"20140127231546",
+//	"field_qa_issues":{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/164","id":"164","resource":"taxonomy_term"},
+//	"field_target":{"uri":"http:\/\/webarchive.org.uk\/act\/node\/7483","id":"7483","resource":"node"},
+//	"field_description_of_qa_issues":[],
+//	"field_published":true,
+//	"field_to_be_published_":true,
 	
-//	same	"nid":"12954",
-//	same	"vid":"20109",
-//	same	"is_new":false,
-//	same	"type":"instance",
-//	same 	"title":"20130908110118",
-//	same 	"language":"und",
-//	same	"url":"http:\/\/webarchive.org.uk\/act\/node\/12954",
-//	same	"edit_url":"http:\/\/webarchive.org.uk\/act\/node\/12954\/edit",
-//	same 	"status":"1",
-//	same 	"promote":"0",
-//	same 	"sticky":"0",
-//	same	"created":"1394535642",
-//	same	"changed":"1394551688",
-//	same	"author":{"uri":"http://webarchive.org.uk/act/user/80","id":"80","resource":"user"},
-//	same	"log":"",
-//	same	"revision":null,
-//	same	"comment":"1",
-//	same	"comments":[],
-//	same	"comment_count":"0",
-//	same	"comment_count_new":"0",
-//	same	"feed_nid":null}
+//same	"nid":"12681",
+//same	"vid":"19395",
+//same	"is_new":false,
+//same	"type":"instance",
+//same	"title":"20140127231546",
+//same	"language":"en",
+//same	"url":"http:\/\/webarchive.org.uk\/act\/node\/12681",
+//same	"edit_url":"http:\/\/webarchive.org.uk\/act\/node\/12681\/edit",
+//same	"status":"1",
+//same	"promote":"0",
+//same	"sticky":"0",
+//same	"created":"1390990524",
+//same	"changed":"1393383436",
+//same	"author":{"uri":"http:\/\/webarchive.org.uk\/act\/user\/80","id":"80","resource":"user"},
+//same	"log":"",
+//same	"revision":null,
+//same	"comment":"1",
+//same	"comments":[],
+//same	"comment_count":"0",
+//same	"comment_count_new":"0",
+//same	"feed_nid":null}
 	
     public String format;
     public String fieldScope;
@@ -153,7 +153,6 @@ public class Instance extends JsonModel {
     public Boolean fieldUkGeoip;
     public Boolean fieldProfessionalJudgement;
 
-    public String author; 
     public String log;
 
     public String fieldLiveSiteStatus;
@@ -191,47 +190,61 @@ public class Instance extends JsonModel {
     // lists
     @Required
     @Column(columnDefinition = "text")
-    public String fieldUrl; 
+    public String fieldUrl;
+    
     @Column(columnDefinition = "text")
     public String fieldDescription; 
+    
     @Column(columnDefinition = "text")
-    public String fieldUkPostalAddressUrl; 
+    public String fieldUkPostalAddressUrl;
+    
     @Column(columnDefinition = "text")
-    public String fieldSuggestedCollections; 
+    public String fieldSuggestedCollections;
+    
     @Column(columnDefinition = "text")
-    public String fieldCollections; 
+    public String fieldCollections;
+    
     @Column(columnDefinition = "text")
-    public String fieldLicense; 
+    public String fieldLicense;
+    
     @Column(columnDefinition = "text")
-    public String fieldCollectionCategories; 
+    public String fieldCollectionCategories;
+    
     @Column(columnDefinition = "text")
-    public String fieldNotes; 
+    public String fieldNotes;
+    
     @Column(columnDefinition = "text")
-    public String fieldInstances; 
+    public String fieldInstances;
+    
     @Required
     @Column(columnDefinition = "text")
-    public String fieldSubject; 
+    public String fieldSubject;
+    
     @Column(columnDefinition = "text")
     public String fieldSubSubject; 
     
     @Column(columnDefinition = "text")
-    public String qaIssueCategory; 
+    public String qaIssueCategory;
+    
+//    Description of QA Issues (Andy's ACT) > QA Notes (w3ACT)
     @Column(columnDefinition = "text")
-    public String qaNotes; 
+    public String qaNotes;
+    
+//    Body (Andy's ACT) > Quality Notes (currently in Wc3ACT) but which we should rename TEchnical Notes.
     @Column(columnDefinition = "text")
-    public String qualityNotes; 
+    public String technicalNotes;
+    
     @Column(columnDefinition = "text")
-    public String keywords; 
+    public String keywords;
+    
     @Column(columnDefinition = "text")
-    public String tags; 
+    public String tags;
+    
     @Column(columnDefinition = "text")
     public String synonyms; 
-    @Column(columnDefinition = "text")
-    public String originatingOrganisation; 
+    
     @Column(columnDefinition = "text")
     public String flags; 
-    @Column(columnDefinition = "TEXT")
-    public String authors; 
 
     public Instance() {
     	super();
@@ -560,15 +573,10 @@ public class Instance extends JsonModel {
 	 * @return
 	 */
 	public String getUserById() {
-		String res = "";
-		try {
-			if (author.length() > 0) {
-				res = User.findByUrl(author).name;
-			}
-		} catch (Exception e) {
-			Logger.info("no user found for url: " + author + ". " + e);
+		if (authorUser != null) {
+			return authorUser.name;
 		}
-		return res;
+		return null;
 	}
 	
     /**
@@ -850,9 +858,10 @@ public class Instance extends JsonModel {
      * @return true if in list
      */
     public boolean hasContactPerson(String curContactPerson) {
-    	boolean res = false;
-    	res = Utils.hasElementInList(curContactPerson, authors);
-    	return res;
+//    	boolean res = false;
+//    	res = Utils.hasElementInList(curContactPerson, authors);
+//    	return res;
+    	throw new NotImplementedError();
     }
     
     /**

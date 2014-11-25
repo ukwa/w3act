@@ -129,25 +129,36 @@ public enum DataImport {
 			
 			
 //		        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
-			
-			
-			
 //		        Logger.info("Number of instances: " + allInstances.size());
 //				// store instances in DB
 //                Ebean.save(allInstances);
 //                Logger.info("instances successfully loaded");
+			
+			
+			
+			
 //                JsonUtils.mapInstancesToTargets();
 //                Logger.info("map instances to targets");
-//                JsonUtils.getDomainForTargets();
+			
+			
+			
+//          TODO: KL DO THIS WHEN IMPORTING THE URLS 
+			//JsonUtils.getDomainForTargets();
+			
+			
+			
+			
 //                Logger.info("Target domains extracted");
-//                normalizeUrls();
+//          TODO:      normalizeUrls();
+			
+			
 //                // Create association between Creator and Organisation
 //	            List<User> creatorList = (List<User>) User.find.all();
 //	            Iterator<User> creatorItr = creatorList.iterator();
 //	            while (creatorItr.hasNext()) {
 //	              	User creator = creatorItr.next();
 ////                    Logger.info("Test creator test object: " + creator.toString());
-//                    creator.updateOrganisation();
+//                    creator.updateOrganisation(); // NO NEED AS WE ARE USING ORM AND ALREADY IMPORTED
 //                    // Create association between User and Role
 ////                	creator.role_to_user = Role.convertUrlsToObjects(creator.roles);
 //        			Ebean.update(creator);
@@ -161,7 +172,9 @@ public enum DataImport {
 //	            	// Create association between Target and Organisation
 //	            	target.updateOrganisation();
 //                    // Create association between Target and DCollection
+			
 //                	target.collectionToTarget = Collection.convertUrlsToObjects(target.fieldCollectionCategories);
+			
 //                    // Create association between Target and Subject (Taxonomy)
 //                	target.subject = Taxonomy.convertUrlsToObjects(target.fieldSubject);
 //                    // Create association between Target and License (Taxonomy)
@@ -182,14 +195,18 @@ public enum DataImport {
 //                    // Create association between Instance and DCollection
 //                	instance.collectionToInstance = Collection.convertUrlsToObjects(instance.fieldCollectionCategories);
 //                    // Create association between Instance and Subject (Taxonomy)
-//                	instance.subjectToInstance = Taxonomy.convertUrlsToObjects(instance.fieldSubject);                    
+//                	instance.subjectToInstance = Taxonomy.convertUrlsToObjects(instance.fieldSubject); 
+			
+			
 //                    // Create association between Instance and Flag
-//                	instance.flagToInstance = Flag.convertUrlsToObjects(instance.flags);
+//         TODO: KL       	instance.flagToInstance = Flag.convertUrlsToObjects(instance.flags);
 //                    // Create association between Instance and Tag
-//                	instance.tagToInstance = Tag.convertUrlsToObjects(instance.tags);
+//         TODO: KL       	instance.tagToInstance = Tag.convertUrlsToObjects(instance.tags);
 //        			Ebean.update(instance);
 //	            }
 //                // Create association between Permission and Role
+			
+			// TODO: KL WHY WE NEED TO DO THIS?
 //	            List<Permission> permissionList = (List<Permission>) Permission.find.all();
 //	            Iterator<Permission> permissionItr = permissionList.iterator();
 //	            while (permissionItr.hasNext()) {

@@ -283,9 +283,9 @@ public class LicenceController extends AbstractController {
 	                    		Iterator<Target> itr = associatedTargetList.iterator();
 	                    		while (itr.hasNext()) {
 	                    			Target current_target = itr.next();
-	                    	    	if (current_target.fieldUrl != null) {
-	                    	    		if (current_target.fieldUrl.contains(Const.SLASH_DELIMITER)) {
-	                    			    	String[] parts = current_target.fieldUrl.split(Const.SLASH_DELIMITER);
+	                    	    	if (current_target.fieldUrl() != null) {
+	                    	    		if (current_target.fieldUrl().contains(Const.SLASH_DELIMITER)) {
+	                    			    	String[] parts = current_target.fieldUrl().split(Const.SLASH_DELIMITER);
 	                    			    	if (parts[0].equals(permission.targetName)) {
 //				                    			current_target.fieldLicense = licenceTaxonomy.url;
 					                    		Ebean.update(current_target);

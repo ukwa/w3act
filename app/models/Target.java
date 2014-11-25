@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -38,30 +40,37 @@ import com.avaje.ebean.Query;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import controllers.Flags;
-
 /**
  * Target entity managed by Ebean
  */
 @Entity
 @Table(name = "target")
-public class Target extends JsonModel {
+public class Target extends UrlModel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8283372689443804260L;
 
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "qaissue_id")
+	public Taxonomy qaIssue;
+	
 	@ManyToOne
 	@JoinColumn(name = "author_id")
 	@JsonIgnore
 	public User authorUser;
 
 	@JsonIgnore
+	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	public List<Instance> instances;
+
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "subject_id")
 	public Taxonomy subject;
-
+	
     @JsonIgnore
     @ManyToMany
 	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
@@ -75,21 +84,20 @@ public class Target extends JsonModel {
 	public List<Taxonomy> licenses;
 
 	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = Const.TAG_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="ID") }) 
+	public List<Tag> tags;
+	
+	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
+    public List<Target> flags;
+	
+	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
 	private List<CrawlPermission> crawlPermissions;
-
-	@JsonIgnore
-	@ManyToMany(mappedBy = "targets")
-	public List<Flag> flagToTarget;
-
-	@JsonIgnore
-	@ManyToMany(mappedBy = "targets")
-	public List<Tag> tagToTarget;
-
-	// bi-directional one-to-many association to CrawlPermission
-	@JsonIgnore
-	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
-	private List<Instance> instances;
 
 	public Date fieldCrawlStartDate;
 	public Date fieldCrawlEndDate;
@@ -130,6 +138,7 @@ public class Target extends JsonModel {
 
 	@Column(columnDefinition = "text")
 	public String domain;
+	
 	@Column(columnDefinition = "text")
 	public String fieldDescription;
 	
@@ -141,32 +150,19 @@ public class Target extends JsonModel {
 
 	@Column(columnDefinition = "text")
 	public String keywords;
-	@Column(columnDefinition = "text")
-	public String tags;
+	
 	@Column(columnDefinition = "text")
 	public String synonyms;
-	@Column(columnDefinition = "text")
-	public String originatingOrganisation;
-	@Column(columnDefinition = "text")
-	public String flags;
-	@Column(columnDefinition = "text")
-	public String authors;
-	@Column(columnDefinition = "text")
-	public String fieldQaStatus;
-	@Column(columnDefinition = "text")
-	public String qaStatus;
-	@Column(columnDefinition = "text")
-	public String qaIssueCategory;
-	@Column(columnDefinition = "text")
-	public String qaNotes;
-	@Column(columnDefinition = "text")
-	public String qualityNotes;
 
-	
 	@Required
-	@Column(columnDefinition = "text")
-	public String fieldUrl;
-
+	@JsonIgnore
+	@CollectionTable(
+		    name = "field_urls",
+		    joinColumns=@JoinColumn(name = "id", referencedColumnName = "id")
+		)
+	@Column(name="field_url")
+	public List<String> fieldUrls;
+	
 	@Column(columnDefinition = "text")
 	@JsonProperty
 	public String value;
@@ -538,7 +534,7 @@ public class Target extends JsonModel {
 	 */
 	public int getDuplicateNumber() {
 		int res = 0;
-		ExpressionList<Target> ll = find.where().eq("fieldUrl", this.fieldUrl);
+		ExpressionList<Target> ll = find.where().eq("fieldUrl", this.fieldUrl());
 		res = ll.findRowCount();
 		return res;
 	}
@@ -1330,7 +1326,7 @@ public class Target extends JsonModel {
 	 */
 	public boolean hasContactPerson(String curContactPerson) {
 		boolean res = false;
-		res = Utils.hasElementInList(curContactPerson, authors);
+		res = Utils.hasElementInList(curContactPerson, this.authorUser.url);
 		return res;
 	}
 
@@ -2028,9 +2024,9 @@ public class Target extends JsonModel {
 		Iterator<Target> itr = targets.findList().iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			boolean isInScope = isInScopeIp(target.fieldUrl, target.url);
+			boolean isInScope = isInScopeIp(target.fieldUrl(), target.url);
 			if (!isInScope) {
-				isInScope = isInScopeDomain(target.fieldUrl, target.url);
+				isInScope = isInScopeDomain(target.fieldUrl(), target.url);
 			}
 			if (isInScope) {
 				Logger.debug("add to export ld: " + target);
@@ -2064,31 +2060,32 @@ public class Target extends JsonModel {
 	 * @return flag list as a string
 	 */
 	public String getSelectedFlags() {
-		String res = "";
-		boolean firstTime = true;
-		if (this.flags != null) {
-			if (this.flags.contains(Const.LIST_DELIMITER)) {
-				String[] parts = this.flags.split(Const.LIST_DELIMITER);
-				for (String part : parts) {
-					try {
-						if (firstTime) {
-							res = Flags.getGuiName(Flag.findByUrl(part).name);
-							firstTime = false;
-						} else {
-							res = res
-									+ Const.LIST_DELIMITER
-									+ Flags.getGuiName(Flag.findByUrl(part).name);
-						}
-					} catch (Exception e) {
-						Logger.error("getSelectedFlags error: " + e);
-					}
-				}
-			}
-		}
-		if (res.length() == 0) {
-			res = Const.NONE;
-		}
-		return res;
+//		String res = "";
+//		boolean firstTime = true;
+//		if (this.flags != null) {
+//			if (this.flags.contains(Const.LIST_DELIMITER)) {
+//				String[] parts = this.flags.split(Const.LIST_DELIMITER);
+//				for (String part : parts) {
+//					try {
+//						if (firstTime) {
+//							res = Flags.getGuiName(Flag.findByUrl(part).name);
+//							firstTime = false;
+//						} else {
+//							res = res
+//									+ Const.LIST_DELIMITER
+//									+ Flags.getGuiName(Flag.findByUrl(part).name);
+//						}
+//					} catch (Exception e) {
+//						Logger.error("getSelectedFlags error: " + e);
+//					}
+//				}
+//			}
+//		}
+//		if (res.length() == 0) {
+//			res = Const.NONE;
+//		}
+//		return res;
+		throw new NotImplementedError();
 	}
 
 	/**
@@ -2097,30 +2094,31 @@ public class Target extends JsonModel {
 	 * @return tag list as a string
 	 */
 	public String getSelectedTags() {
-		String res = "";
-		boolean firstTime = true;
-		if (this.tags != null) {
-			if (this.tags.contains(Const.LIST_DELIMITER)) {
-				String[] parts = this.tags.split(Const.LIST_DELIMITER);
-				for (String part : parts) {
-					try {
-						if (firstTime) {
-							res = Tag.findByUrl(part).name;
-							firstTime = false;
-						} else {
-							res = res + Const.LIST_DELIMITER
-									+ Tag.findByUrl(part).name;
-						}
-					} catch (Exception e) {
-						Logger.error("getSelectedTags error: " + e);
-					}
-				}
-			}
-		}
-		if (res.length() == 0) {
-			res = Const.NONE;
-		}
-		return res;
+//		String res = "";
+//		boolean firstTime = true;
+//		if (this.tags != null) {
+//			if (this.tags.contains(Const.LIST_DELIMITER)) {
+//				String[] parts = this.tags.split(Const.LIST_DELIMITER);
+//				for (String part : parts) {
+//					try {
+//						if (firstTime) {
+//							res = Tag.findByUrl(part).name;
+//							firstTime = false;
+//						} else {
+//							res = res + Const.LIST_DELIMITER
+//									+ Tag.findByUrl(part).name;
+//						}
+//					} catch (Exception e) {
+//						Logger.error("getSelectedTags error: " + e);
+//					}
+//				}
+//			}
+//		}
+//		if (res.length() == 0) {
+//			res = Const.NONE;
+//		}
+//		return res;
+		throw new NotImplementedError();
 	}
 
 	/**
@@ -2169,11 +2167,13 @@ public class Target extends JsonModel {
 		Iterator<Target> itr = targets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
+			
+			// TODO: KL WHAT ABOUT THE COMMA SEPARATED URLS?
 			if ((target.field_uk_postal_address || target.field_via_correspondence
 					|| target.field_professional_judgement || target.field_no_ld_criteria_met)
-					&& isHigherLevel(target.fieldUrl, fieldUrl)
-					&& (!checkUkHosting(target.fieldUrl) && !isInScopeDomain(
-							target.fieldUrl, target.url))) {
+					&& isHigherLevel(target.fieldUrl(), fieldUrl)
+					&& (!checkUkHosting(target.fieldUrl()) && !isInScopeDomain(
+							target.fieldUrl(), target.url))) {
 				unsorted.add(target);
 				// if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
 				// break;
@@ -2258,8 +2258,8 @@ public class Target extends JsonModel {
 	}
 
 	public boolean isHigherLevel(String iterUrl) {
-		boolean highLevel = (this.fieldUrl.contains(iterUrl)
-				&& this.fieldUrl.indexOf(iterUrl) == 0 && this.fieldUrl
+		boolean highLevel = (this.fieldUrl().contains(iterUrl)
+				&& this.fieldUrl().indexOf(iterUrl) == 0 && this.fieldUrl()
 				.length() > iterUrl.length());
 		// Logger.info("iterUrl: " + iterUrl + " " + highLevel);
 		return highLevel;
@@ -2267,7 +2267,7 @@ public class Target extends JsonModel {
 
 	public boolean validQAStatus(Target target) {
 		// Logger.info("validQAStatus field_url: " + target.field_url);
-		return (qaStatus != null && target.qaStatus.length() > 0 && !target.qaStatus
+		return (this.qaIssue != null && target.qaIssue.url.length() > 0 && !target.qaIssue.url
 				.toLowerCase().equals(Const.NONE));
 	}
 
@@ -2315,14 +2315,14 @@ public class Target extends JsonModel {
 	public Target getHigherLevelTarget() {
 		// field_url - the domain name
 		// field_license - act-168
-		if (StringUtils.isNotEmpty(this.fieldUrl)) {
-			String normalisedUrl = Scope.normalizeUrl(this.fieldUrl);
+		if (StringUtils.isNotEmpty(this.fieldUrl())) {
+			String normalisedUrl = Scope.normalizeUrl(this.fieldUrl());
 			String domain = Scope.getDomainFromUrl(normalisedUrl);
 			ExpressionList<Target> ll = find.where()
 					.icontains(Const.FIELD_URL, domain).eq(Const.ACTIVE, true);
 			List<Target> targets = ll.findList();
 			for (Target target : targets) {
-				if (isHigherLevel(target.fieldUrl)) {
+				if (isHigherLevel(target.fieldUrl())) {
 					return target;
 				}
 			}
@@ -2344,12 +2344,13 @@ public class Target extends JsonModel {
 		// Open UKWA Licence at higher level - disabled
 		// Open UKWA licence for target being edited - disabled
 		List<Target> results = new ArrayList<Target>();
-		if (StringUtils.isNotEmpty(this.fieldUrl)) {
+		if (StringUtils.isNotEmpty(this.fieldUrl())) {
 			// first aggregate a list of active targets for associated URL
 			Logger.debug("getUkwaLicenceStatusList() fieldUrl: "
-					+ this.fieldUrl);
-			this.fieldUrl = Scope.normalizeUrl(this.fieldUrl);
-			String domain = Scope.getDomainFromUrl(this.fieldUrl);
+					+ this.fieldUrl());
+			// TODO: KL REDO THIS
+//			this.fieldUrl = Scope.normalizeUrl(this.fieldUrl());
+			String domain = Scope.getDomainFromUrl(this.fieldUrl());
 			Logger.debug("getUkwaLicenceStatusList() domain: " + domain);
 			// get me Targets that contain the same domain so I can check the
 			// licenses. i.e higher level
@@ -2389,23 +2390,6 @@ public class Target extends JsonModel {
 		Logger.debug("getUkwaLicenceStatusList() targets result list size: "
 				+ results.size());
 		return results;
-	}
-
-	/**
-	 * This method updates foreign key mapping between a Target and an
-	 * Organisation.
-	 */
-	public void updateOrganisation() {
-		// TODO: KL
-
-		//		if (this.fieldNominatingOrganisation != null
-//				&& this.fieldNominatingOrganisation.length() > 0) {
-//			Organisation organisation = Organisation
-//					.findByUrl(this.fieldNominatingOrganisation);
-			// Logger.info("Add target to organisation: " +
-			// organisation.toString());
-//			this.organisation = organisation;
-//		}
 	}
 
 	public String getField_scope() {
@@ -2705,6 +2689,10 @@ public class Target extends JsonModel {
 		this.language = language;
 	}
 
+	public String fieldUrl() {
+		return StringUtils.join(this.fieldUrls, ", ");
+	}
+	
 	@Override
 	public String toString() {
 		return "Target [organisation=" + organisation + ", authorUser="
@@ -2728,11 +2716,8 @@ public class Target extends JsonModel {
 				+ ", fieldUkPostalAddressUrl=" + fieldUkPostalAddressUrl
 				+ ", fieldNotes=" + fieldNotes + ", keywords="
 				+ keywords + ", tags=" + tags + ", synonyms=" + synonyms
-				+ ", flags=" + flags + ", authors=" + authors
-				+ ", fieldQaStatus=" + fieldQaStatus + ", qaStatus=" + qaStatus
-				+ ", qaIssueCategory=" + qaIssueCategory + ", qaNotes="
-				+ qaNotes + ", qualityNotes=" + qualityNotes + ", fieldUrl="
-				+ fieldUrl + ", value=" + value + ", summary=" + summary
+				+ ", flags=" + flags + ", fieldUrl="
+				+ fieldUrl() + ", value=" + value + ", summary=" + summary
 				+ ", field_scope=" + field_scope + ", field_depth="
 				+ field_depth + ", field_via_correspondence="
 				+ field_via_correspondence + ", field_uk_postal_address="

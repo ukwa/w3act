@@ -86,6 +86,7 @@ create table instance (
   language                  varchar(255),
   revision                  text,
   qaissue_id                bigint,
+  author_id                 bigint,
   target_id                 bigint,
   field_timestamp           timestamp,
   value                     text,
@@ -145,7 +146,6 @@ create table instance (
   synonyms                  text,
   originating_organisation  text,
   flags                     text,
-  authors                   TEXT,
   updated_at                timestamp not null,
   constraint uq_instance_url unique (url),
   constraint pk_instance primary key (id))
@@ -495,20 +495,22 @@ alter table instance add constraint fk_instance_organisation_4 foreign key (orga
 create index ix_instance_organisation_4 on instance (organisation_id);
 alter table instance add constraint fk_instance_qaIssue_5 foreign key (qaissue_id) references taxonomy (id);
 create index ix_instance_qaIssue_5 on instance (qaissue_id);
-alter table instance add constraint fk_instance_target_6 foreign key (target_id) references target (id);
-create index ix_instance_target_6 on instance (target_id);
-alter table organisation add constraint fk_organisation_authorUser_7 foreign key (author_id) references creator (id);
-create index ix_organisation_authorUser_7 on organisation (author_id);
-alter table target add constraint fk_target_organisation_8 foreign key (organisation_id) references organisation (id);
-create index ix_target_organisation_8 on target (organisation_id);
-alter table target add constraint fk_target_authorUser_9 foreign key (author_id) references creator (id);
-create index ix_target_authorUser_9 on target (author_id);
-alter table target add constraint fk_target_subject_10 foreign key (subject_id) references taxonomy (id);
-create index ix_target_subject_10 on target (subject_id);
-alter table taxonomy add constraint fk_taxonomy_taxonomyVocabular_11 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
-create index ix_taxonomy_taxonomyVocabular_11 on taxonomy (taxonomy_vocabulary_id);
-alter table creator add constraint fk_creator_organisation_12 foreign key (organisation_id) references organisation (id);
-create index ix_creator_organisation_12 on creator (organisation_id);
+alter table instance add constraint fk_instance_authorUser_6 foreign key (author_id) references creator (id);
+create index ix_instance_authorUser_6 on instance (author_id);
+alter table instance add constraint fk_instance_target_7 foreign key (target_id) references target (id);
+create index ix_instance_target_7 on instance (target_id);
+alter table organisation add constraint fk_organisation_authorUser_8 foreign key (author_id) references creator (id);
+create index ix_organisation_authorUser_8 on organisation (author_id);
+alter table target add constraint fk_target_organisation_9 foreign key (organisation_id) references organisation (id);
+create index ix_target_organisation_9 on target (organisation_id);
+alter table target add constraint fk_target_authorUser_10 foreign key (author_id) references creator (id);
+create index ix_target_authorUser_10 on target (author_id);
+alter table target add constraint fk_target_subject_11 foreign key (subject_id) references taxonomy (id);
+create index ix_target_subject_11 on target (subject_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyVocabular_12 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
+create index ix_taxonomy_taxonomyVocabular_12 on taxonomy (taxonomy_vocabulary_id);
+alter table creator add constraint fk_creator_organisation_13 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_13 on creator (organisation_id);
 
 
 

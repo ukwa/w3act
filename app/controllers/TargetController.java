@@ -9,7 +9,6 @@ import java.util.List;
 import models.CrawlPermission;
 import models.Collection;
 import models.Flag;
-import models.Organisation;
 import models.Tag;
 import models.Target;
 import models.Taxonomy;
@@ -70,7 +69,8 @@ public class TargetController extends AbstractController {
         	Logger.info("The target for given NID is not yet existing in database");
         } 	
 
-	    targetObj.fieldUrl = getFormParam(Const.FIELD_URL_NODE);
+        // TODO: KL
+//	    targetObj.fieldUrl = getFormParam(Const.FIELD_URL_NODE);
 	    targetObj.id = Long.valueOf(getFormParam(Const.ID));
 	    targetObj.url = Const.ACT_URL + targetObj.id;
 	    // TODO: KL
@@ -82,15 +82,15 @@ public class TargetController extends AbstractController {
         	targetObj.flagNotes = getFormParam(Const.FLAG_NOTES);
         } 
         if (getFormParam(Const.FIELD_QA_STATUS) != null) {
-        	targetObj.fieldQaStatus = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
+        	targetObj.qaIssue.url = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
         } 
 //        if (getFormParam(Const.STATUS) != null) {
 //        	targetObj.status = Long.valueOf(getFormParam(Const.STATUS));
 //        } 
         if (getFormParam(Const.QA_STATUS) != null) {
-        	targetObj.qaStatus = getFormParam(Const.QA_STATUS);
+        	targetObj.qaIssue.url = getFormParam(Const.QA_STATUS);
         } else {
-        	targetObj.qaStatus = Const.NONE_VALUE;
+        	targetObj.qaIssue.url = Const.NONE_VALUE;
         }
         if (getFormParam(Const.LANGUAGE) != null) {
         	targetObj.language = getFormParam(Const.LANGUAGE);
@@ -110,7 +110,7 @@ public class TargetController extends AbstractController {
         	targetObj.legacySiteId = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
         }
         if (getFormParam(Const.AUTHORS) != null) {
-        	targetObj.authors = getFormParam(Const.AUTHORS);
+        	targetObj.authorUser.url = getFormParam(Const.AUTHORS);
         } 
         if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
         	targetObj.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
@@ -138,13 +138,13 @@ public class TargetController extends AbstractController {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
         		// TODO: KL NEEDS CHANGING
 //        		targetObj.fieldNominatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
-        		targetObj.updateOrganisation();
+//        		targetObj.updateOrganisation();
         	} else {
 //        		targetObj.fieldNominatingOrganisation = Const.NONE;
         	}
         }
         if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
-       		targetObj.originatingOrganisation = getFormParam(Const.ORIGINATING_ORGANISATION);
+       		targetObj.organisation.url = getFormParam(Const.ORIGINATING_ORGANISATION);
         }
         if (getFormParam(Const.AUTHOR) != null) {
         	// TODO: KL
@@ -160,14 +160,14 @@ public class TargetController extends AbstractController {
             			resTags = resTags + Tag.findByName(tag).url + Const.LIST_DELIMITER;
             		}
                 }
-            	targetObj.tags = resTags;
-            	targetObj.tagToTarget = Tag.convertUrlsToObjects(targetObj.tags);
+//            	targetObj.tags = resTags;
+//            	targetObj.tagToTarget = Tag.convertUrlsToObjects(targetObj.tags);
         	} else {
-        		targetObj.tags = Const.NONE;
+//        		targetObj.tags = Const.NONE;
         	}
         }
         String flagStr = "";
-        List<Flag> flagList = Flag.findAll();
+        List<Flag> flagList = Flag.findAllFlags();
         Iterator<Flag> flagItr = flagList.iterator();
         while (flagItr.hasNext()) {
         	Flag flag = flagItr.next();
@@ -184,12 +184,12 @@ public class TargetController extends AbstractController {
                 }
             }
         }
-        if (flagStr.length() == 0) {
-        	targetObj.flags = Const.NONE;
-        } else {
-        	targetObj.flags = flagStr;
-        	targetObj.flagToTarget = Flag.convertUrlsToObjects(targetObj.flags);
-        }
+//        if (flagStr.length() == 0) {
+//        	targetObj.flags = Const.NONE;
+//        } else {
+//        	targetObj.flags = flagStr;
+//        	targetObj.flagToTarget = Flag.convertUrlsToObjects(targetObj.flags);
+//        }
         Logger.info("flagStr: "+ flagStr + ", targetObj.flags: " + targetObj.flags);
         targetObj.justification = getFormParam(Const.JUSTIFICATION);
         targetObj.summary = getFormParam(Const.SUMMARY);
@@ -221,7 +221,7 @@ public class TargetController extends AbstractController {
 //        		targetObj.fieldLicense = Const.NONE;
         	}
         }
-        targetObj.field_uk_hosting = Target.checkUkHosting(targetObj.fieldUrl);
+        targetObj.field_uk_hosting = Target.checkUkHosting(targetObj.fieldUrl());
         targetObj.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
         targetObj.fieldUkPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
         targetObj.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
@@ -370,26 +370,27 @@ public class TargetController extends AbstractController {
 //            	newTarget.authorRef = getFormParam(Const.USER);
 //            }
 //            newTarget.fieldNominatingOrganisation = target.fieldNominatingOrganisation;
-    		newTarget.updateOrganisation();
+//    		newTarget.updateOrganisation();
 //            newTarget.fieldCollectionCategories = target.fieldCollectionCategories;
             newTarget.title = getFormParam(Const.TITLE);
-            newTarget.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
+            
+//            newTarget.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
             newTarget.fieldDescription = getFormParam(Const.DESCRIPTION);
             if (getFormParam(Const.FLAG_NOTES) != null) {
             	newTarget.flagNotes = getFormParam(Const.FLAG_NOTES);
             } 
             if (getFormParam(Const.FIELD_QA_STATUS) != null) {
-            	newTarget.fieldQaStatus = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
+            	newTarget.qaIssue.url = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
             } 
             if (getFormParam(Const.QA_STATUS) != null) {
             	Logger.debug("###   QA_STATUS");
-            	newTarget.qaStatus = getFormParam(Const.QA_STATUS);
-            	CrawlPermissions.updateAllByTargetStatusChange(newTarget.fieldUrl, newTarget.qaStatus);
+            	newTarget.qaIssue.url = getFormParam(Const.QA_STATUS);
+            	CrawlPermissions.updateAllByTargetStatusChange(newTarget.fieldUrl(), newTarget.qaIssue.url);
             } else {
-            	newTarget.qaStatus = Const.NONE_VALUE;
+            	newTarget.qaIssue.url = Const.NONE_VALUE;
             } 
-    		Logger.info("QA status: " + newTarget.qaStatus + ", getFormParam(Const.QA_STATUS): " + getFormParam(Const.QA_STATUS));
+    		Logger.info("QA status: " + newTarget.qaIssue.url + ", getFormParam(Const.QA_STATUS): " + getFormParam(Const.QA_STATUS));
             if (getFormParam(Const.LANGUAGE) != null) {
 //        		Logger.info("language: " + getFormParam(Const.LANGUAGE) + ".");
             	newTarget.language = getFormParam(Const.LANGUAGE);
@@ -412,7 +413,7 @@ public class TargetController extends AbstractController {
 
     		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
             if (getFormParam(Const.AUTHORS) != null) {
-            	newTarget.authors = getFormParam(Const.AUTHORS);
+            	newTarget.authorUser.url = getFormParam(Const.AUTHORS);
             } 
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
             	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
@@ -446,13 +447,13 @@ public class TargetController extends AbstractController {
             		Logger.info("nominating organisation: " + getFormParam(Const.ORGANISATION));
             		// TODO: KL
 //            		newTarget.fieldNominatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
-            		newTarget.updateOrganisation();
+//            		newTarget.updateOrganisation();
             	} else {
 //            		newTarget.fieldNominatingOrganisation = Const.NONE;
             	}
             }
             if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
-           		newTarget.originatingOrganisation = getFormParam(Const.ORIGINATING_ORGANISATION);
+           		newTarget.organisation.url = getFormParam(Const.ORIGINATING_ORGANISATION);
             }
 //    		Logger.info("author: " + getFormParam(Const.AUTHOR) + ", user: " + User.findByName(getFormParam(Const.AUTHOR)).url);
             if (getFormParam(Const.AUTHOR) != null) {
@@ -469,14 +470,14 @@ public class TargetController extends AbstractController {
 	            			resTags = resTags + Tag.findByName(tag).url + Const.LIST_DELIMITER;
 	            		}
 	                }
-	            	newTarget.tags = resTags;
-                	newTarget.tagToTarget = Tag.convertUrlsToObjects(newTarget.tags);
+//	            	newTarget.tags = resTags;
+//                	newTarget.tagToTarget = Tag.convertUrlsToObjects(newTarget.tags);
             	} else {
-            		newTarget.tags = Const.NONE;
+//            		newTarget.tags = Const.NONE;
             	}
             }
             String flagStr = "";
-            List<Flag> flagList = Flag.findAll();
+            List<Flag> flagList = Flag.findAllFlags();
             Iterator<Flag> flagItr = flagList.iterator();
             while (flagItr.hasNext()) {
             	Flag flag = flagItr.next();
@@ -493,12 +494,12 @@ public class TargetController extends AbstractController {
                     }
                 }
             }
-            if (flagStr.length() == 0) {
-            	newTarget.flags = Const.NONE;
-            } else {
-            	newTarget.flags = flagStr;
-            	newTarget.flagToTarget = Flag.convertUrlsToObjects(newTarget.flags);
-            }
+//            if (flagStr.length() == 0) {
+//            	newTarget.flags = Const.NONE;
+//            } else {
+//            	newTarget.flags = flagStr;
+//            	newTarget.flagToTarget = Flag.convertUrlsToObjects(newTarget.flags);
+//            }
             Logger.info("flagStr: "+ flagStr + ", newTarget.flags: " + newTarget.flags);
             newTarget.justification = getFormParam(Const.JUSTIFICATION);
             newTarget.summary = getFormParam(Const.SUMMARY);
@@ -537,7 +538,7 @@ public class TargetController extends AbstractController {
 //            		newTarget.fieldLicense = Const.NONE;
             	}
             }
-            newTarget.field_uk_hosting = Target.checkUkHosting(newTarget.fieldUrl);
+            newTarget.field_uk_hosting = Target.checkUkHosting(newTarget.fieldUrl());
         	Logger.debug("field_uk_hosting: " + newTarget.field_uk_hosting);
             newTarget.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newTarget.fieldUkPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
@@ -605,12 +606,12 @@ public class TargetController extends AbstractController {
         		newTarget.edit_url = Const.WCT_URL + newTarget.id;
         	} else {
                 target.active = false;
-            	if (target.fieldUrl != null) {
-                	Logger.info("current target field_url: " + target.fieldUrl);
-            		target.domain = Scope.getDomainFromUrl(target.fieldUrl);
+            	if (target.fieldUrl() != null) {
+                	Logger.info("current target field_url: " + target.fieldUrl());
+            		target.domain = Scope.getDomainFromUrl(target.fieldUrl());
             	}
         		Logger.info("update target: " + target.id + ", obj: " + target.toString());
-                boolean newScope = Target.isInScopeIp(target.fieldUrl, target.url);
+                boolean newScope = Target.isInScopeIp(target.fieldUrl(), target.url);
                 // TODO: save new entry or update current
             	Scope.updateLookupEntry(target, newScope);
                 /**
@@ -625,14 +626,14 @@ public class TargetController extends AbstractController {
                 Utils.removeAssociationFromDb(Const.LICENSE_TARGET, Const.ID + "_" + Const.TARGET, target.id);
                 Utils.removeAssociationFromDb(Const.FLAG_TARGET, Const.ID + "_" + Const.TARGET, target.id);
                 Utils.removeAssociationFromDb(Const.TAG_TARGET, Const.ID + "_" + Const.TARGET, target.id);
-                target.flagToTarget = null;
-                target.tagToTarget = null;
+//                target.flagToTarget = null;
+//                target.tagToTarget = null;
                 Logger.info("+++ subject_to_target object before target nid: " + target.id + ", update: " + target.subject);
             	Ebean.update(target);
         	}
-        	if (newTarget.fieldUrl != null) {
-            	Logger.info("current target field_url: " + newTarget.fieldUrl);
-        		newTarget.domain = Scope.getDomainFromUrl(newTarget.fieldUrl);
+        	if (newTarget.fieldUrl() != null) {
+            	Logger.info("current target field_url: " + newTarget.fieldUrl());
+        		newTarget.domain = Scope.getDomainFromUrl(newTarget.fieldUrl());
         	}
         	
         	// TODO: UNIX DATE
@@ -645,18 +646,18 @@ public class TargetController extends AbstractController {
 //        			newTarget.createdAt = changedTime;
         		}
         	}
-            boolean newScope = Target.isInScopeIp(newTarget.fieldUrl, newTarget.url);
+            boolean newScope = Target.isInScopeIp(newTarget.fieldUrl(), newTarget.url);
             // TODO: save new entry or update current
             Scope.updateLookupEntry(newTarget, newScope);
         	
         	/**
         	 * NPLD scope values
         	 */
-        	newTarget.isInScopeUkRegistrationValue   = Target.isInScopeUkRegistration(newTarget.fieldUrl);
-        	newTarget.isInScopeDomainValue           = Target.isInScopeDomain(newTarget.fieldUrl, newTarget.url);
-        	newTarget.isUkHostingValue               = Target.checkUkHosting(newTarget.fieldUrl);
+        	newTarget.isInScopeUkRegistrationValue   = Target.isInScopeUkRegistration(newTarget.fieldUrl());
+        	newTarget.isInScopeDomainValue           = Target.isInScopeDomain(newTarget.fieldUrl(), newTarget.url);
+        	newTarget.isUkHostingValue               = Target.checkUkHosting(newTarget.fieldUrl());
         	newTarget.isInScopeIpValue               = newScope;
-        	newTarget.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(newTarget.fieldUrl, newTarget.url);
+        	newTarget.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(newTarget.fieldUrl(), newTarget.url);
         	
         	Taxonomy subject = newTarget.subject;
 //        	Iterator<Taxonomy> itrSubjects = subjects.iterator();
@@ -668,11 +669,11 @@ public class TargetController extends AbstractController {
 	            /**
 	             * Create or update association between CrawlPermission and Target
 	             */
-	            CrawlPermission crawlPermission = CrawlPermission.findByTarget(newTarget.fieldUrl);
+	            CrawlPermission crawlPermission = CrawlPermission.findByTarget(newTarget.fieldUrl());
 	            crawlPermission.updateTarget();
 	            Ebean.update(crawlPermission);
         	} catch (Exception e) {
-        		Logger.info("No crawl permission to update for URL: " + newTarget.fieldUrl);
+        		Logger.info("No crawl permission to update for URL: " + newTarget.fieldUrl());
         	}
 	        Logger.info("Your changes have been saved: " + newTarget.toString());
   			flash("message", "Your changes have been saved.");

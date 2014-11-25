@@ -271,7 +271,7 @@
 						            	<div class="col-md-8 col-sm-8">
 											<select name="flags" class="form-control target-form-control" id="flags">
 									        	<option>None</option>
-									            @for(curFlag <- Flag.findAll()) {
+									            @for(curFlag <- Flag.findAllFlags()) {
 							                  		@if(flag != null && flag.equals(curFlag.url)) {
 									                	<option selected>@Flags.getGuiName(curFlag.name)</option>
 									                } else {
@@ -355,8 +355,8 @@
 									} else {
 										<td></td>
 									}		                  
-									@if(target.url != null && target.qaStatus != null) {
-										<td>@target.qaStatus</td>
+									@if(target.url != null && target.qaIssue.url != null) {
+										<td>@target.qaIssue.url</td>
 									} else {
 										<td></td>
 									} -->		                  

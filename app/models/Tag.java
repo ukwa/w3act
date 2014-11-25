@@ -3,15 +3,10 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import play.Logger;
-import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -23,71 +18,17 @@ import com.avaje.ebean.Page;
  */
 @Entity
 @Table(name = "tag")
-public class Tag extends ActModel {
+public class Tag extends Taxonomy {
 
 	/**
-	 * file idwdsdsa
+	 * 
 	 */
 	private static final long serialVersionUID = -2257699575463702989L;
 
-    //bi-directional many-to-many association to Target
-    @ManyToMany
-	@JoinTable(name = Const.TAG_TARGET, joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="ID") }) 
-    private List<Target> targets = new ArrayList<Target>();
- 
-    //bi-directional many-to-many association to Instance
-    @ManyToMany
-	@JoinTable(name = Const.TAG_INSTANCE, joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
-    private List<Instance> instances = new ArrayList<Instance>();
-    
-    /**
-     * The name of the tag.
-     */
-    @Required
-    @Column(columnDefinition = "text")
-    public String name;
-    
-    /**
-     * Allows the addition of further notes regarding tag description.
-     */
-    @Column(columnDefinition = "text")
-    public String description;
-
     public static final Model.Finder<Long, Tag> find = new Model.Finder<Long, Tag>(Long.class, Tag.class);
 
-    public Tag() {
-		super();
-	}
-
-	public String getName()
-    {
-        return name;
-    }
-	
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    } 
-
-    public static Tag findByName(String name)
-    {
-        return find.where()
-                   .eq("name",
-                       name)
-                   .findUnique();
+    public static Tag findByName(String name) {
+    	return find.where().eq("name", name).findUnique();
     }
 
     /**
@@ -121,7 +62,7 @@ public class Tag extends ActModel {
 	 * @param name
 	 * @return
 	 */
-	public static List<Tag> filterByName(String name) {
+	public static List<Tag> filterByTagName(String name) {
 		List<Tag> res = new ArrayList<Tag>();
         ExpressionList<Tag> ll = find.where().icontains(Const.NAME, name);
     	res = ll.findList();
@@ -131,7 +72,7 @@ public class Tag extends ActModel {
     /**
      * Retrieve all tags.
      */
-    public static List<Tag> findAll() {
+    public static List<Tag> findAllTags() {
         return find.all();
     }
     
@@ -140,7 +81,7 @@ public class Tag extends ActModel {
 	 * @param targetUrl
 	 * @return
 	 */
-	public static List<Tag> convertUrlsToObjects(String urls) {
+	public static List<Tag> convertUrlsToTagObjects(String urls) {
 		List<Tag> res = new ArrayList<Tag>();
    		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
 	    	String[] parts = urls.split(Const.COMMA + " ");
@@ -169,7 +110,7 @@ public class Tag extends ActModel {
      * @param order Sort order (either or asc or desc)
      * @param filter Filter applied on the name column
      */
-    public static Page<Tag> page(int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Tag> pager(int page, int pageSize, String sortBy, String order, String filter) {
 
         return find.where().icontains("name", filter)
         		.orderBy(sortBy + " " + order)

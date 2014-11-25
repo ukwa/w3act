@@ -91,8 +91,8 @@ public class InstanceController extends AbstractController {
         	Logger.info("The instance for given NID is not yet existing in database");
         } 	
 	    newInstance.id = Long.valueOf(getFormParam(Const.ID));
-        if (newInstance.author == null) {
-        	newInstance.author = getFormParam(Const.USER);
+        if (newInstance.authorUser == null) {
+        	newInstance.authorUser.url = getFormParam(Const.USER);
         }
         newInstance.url = Const.ACT_URL + newInstance.id;
         newInstance.title = getFormParam(Const.TITLE);
@@ -133,9 +133,9 @@ public class InstanceController extends AbstractController {
                 		resContactPersons = resContactPersons + ContactPerson.findByName(contactPerson).url + Const.LIST_DELIMITER;
             		}
                 }
-            	newInstance.authors = resContactPersons;
+            	newInstance.authorUser.url = resContactPersons;
         	} else {
-        		newInstance.authors = Const.NONE;
+        		newInstance.authorUser.url = Const.NONE;
         	}
         }            
         if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
@@ -167,13 +167,13 @@ public class InstanceController extends AbstractController {
         }
         if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
         	if (!getFormParam(Const.ORIGINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-        		newInstance.originatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
+        		newInstance.organisation.url = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
         	} else {
-        		newInstance.originatingOrganisation = Const.NONE;
+        		newInstance.organisation.url = Const.NONE;
         	}
         }
         if (getFormParam(Const.AUTHOR) != null) {
-       		newInstance.author = User.findByName(getFormParam(Const.AUTHOR)).url;
+       		newInstance.authorUser.url = User.findByName(getFormParam(Const.AUTHOR)).url;
         }
         if (getFormParam(Const.TAGS) != null) {
         	if (!getFormParam(Const.TAGS).toLowerCase().contains(Const.NONE)) {
@@ -187,7 +187,7 @@ public class InstanceController extends AbstractController {
             		}
                 }
             	newInstance.tags = resTags;
-            	newInstance.tagToInstance = Tag.convertUrlsToObjects(newInstance.tags);
+//            	newInstance.tagToInstance = Tag.convertUrlsToObjects(newInstance.tags);
         	} else {
         		newInstance.tags = Const.NONE;
         	}
@@ -204,7 +204,7 @@ public class InstanceController extends AbstractController {
             		}
                 }
             	newInstance.flags = resFlags;
-            	newInstance.flagToInstance = Flag.convertUrlsToObjects(newInstance.flags);
+//            	newInstance.flagToInstance = Flag.convertUrlsToObjects(newInstance.flags);
         	} else {
         		newInstance.flags = Const.NONE;
         	}
@@ -287,7 +287,7 @@ public class InstanceController extends AbstractController {
         	}
         }
         newInstance.qaNotes = getFormParam(Const.QA_NOTES);
-        newInstance.qualityNotes = getFormParam(Const.QUALITY_NOTES);
+        newInstance.technicalNotes = getFormParam(Const.QUALITY_NOTES);
 
         Form<Instance> instanceFormNew = Form.form(Instance.class);
 		instanceFormNew = instanceFormNew.fill(newInstance);
@@ -388,8 +388,8 @@ public class InstanceController extends AbstractController {
 //            	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
 //        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
 //        	}    	
-            if (newInstance.author == null) {
-            	newInstance.author = getFormParam(Const.USER);
+            if (newInstance.authorUser == null) {
+            	newInstance.authorUser.url = getFormParam(Const.USER);
             }
 //            Logger.info("new nid: " + newInstance.id);
             newInstance.title = getFormParam(Const.TITLE);
@@ -429,9 +429,9 @@ public class InstanceController extends AbstractController {
 	                		resContactPersons = resContactPersons + ContactPerson.findByName(contactPerson).url + Const.LIST_DELIMITER;
 	            		}
 	                }
-	            	newInstance.authors = resContactPersons;
+	            	newInstance.authorUser.url = resContactPersons;
             	} else {
-            		newInstance.authors = Const.NONE;
+            		newInstance.authorUser.url = Const.NONE;
             	}
             }            
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
@@ -460,13 +460,13 @@ public class InstanceController extends AbstractController {
             }
             if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
             	if (!getFormParam(Const.ORIGINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-            		newInstance.originatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
+            		newInstance.organisation.url = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
             	} else {
-            		newInstance.originatingOrganisation = Const.NONE;
+            		newInstance.organisation.url = Const.NONE;
             	}
             }
             if (getFormParam(Const.AUTHOR) != null) {
-           		newInstance.author = User.findByName(getFormParam(Const.AUTHOR)).url;
+           		newInstance.authorUser.url = User.findByName(getFormParam(Const.AUTHOR)).url;
             }
             if (getFormParam(Const.TAGS) != null) {
             	if (!getFormParam(Const.TAGS).toLowerCase().contains(Const.NONE)) {
@@ -480,7 +480,7 @@ public class InstanceController extends AbstractController {
 	            		}
 	                }
 	            	newInstance.tags = resTags;
-	            	newInstance.tagToInstance = Tag.convertUrlsToObjects(newInstance.tags);
+//	            	newInstance.tagToInstance = Tag.convertUrlsToObjects(newInstance.tags);
             	} else {
             		newInstance.tags = Const.NONE;
             	}
@@ -497,9 +497,9 @@ public class InstanceController extends AbstractController {
 	            		}
 	                }
 	            	newInstance.flags = resFlags;
-	            	newInstance.flagToInstance = Flag.convertUrlsToObjects(newInstance.flags);
+//	            	newInstance.flagToInstance = Flag.convertUrlsToObjects(newInstance.flags);
             	} else {
-            		newInstance.flags = Const.NONE;
+//            		newInstance.flags = Const.NONE;
             	}
             }
             newInstance.justification = getFormParam(Const.JUSTIFICATION);
@@ -600,7 +600,7 @@ public class InstanceController extends AbstractController {
             	}
             }
             newInstance.qaNotes = getFormParam(Const.QA_NOTES);
-            newInstance.qualityNotes = getFormParam(Const.QUALITY_NOTES);
+            newInstance.technicalNotes = getFormParam(Const.QUALITY_NOTES);
 
             long unixTime = System.currentTimeMillis() / 1000L;
             String changedTime = String.valueOf(unixTime);

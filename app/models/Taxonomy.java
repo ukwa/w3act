@@ -63,7 +63,27 @@ public class Taxonomy extends ActModel {
 	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
 	public List<Target> licenseTargets;
+    
+    @ManyToMany
+	@JoinTable(name = Const.TAG_TARGET, joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="ID") }) 
+    public List<Target> tagTargets;
+ 
+    @ManyToMany
+	@JoinTable(name = Const.TAG_INSTANCE, joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+    public List<Instance> tagInstances;
 
+    @ManyToMany
+	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
+    public List<Target> flagTargets;
+
+    @ManyToMany
+	@JoinTable(name = Const.FLAG_INSTANCE, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+    public List<Instance> instances;
+    
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = Const.TAXONOMY_USER, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },

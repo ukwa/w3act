@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @MappedSuperclass
-public class JsonModel extends ActModel {
+abstract class UrlModel extends ActModel {
 
 	/**
 	 * 
@@ -64,47 +64,47 @@ public class JsonModel extends ActModel {
 
 	@Transient
 	@JsonProperty
-	private Long promote;
+	protected Long promote;
 
 	@Transient
 	@JsonProperty
-	private Long sticky;
+	protected Long sticky;
 
 	@Transient
 	@JsonProperty
-	private Long created;
+	protected Long created;
 
 	@Transient
 	@JsonProperty
-	private Long changed;
+	protected Long changed;
 	
 	@Transient
 	@JsonProperty
-	private String log;
+	protected String log;
 
 	@Transient
 	@JsonProperty
-	private Long comment;
+	protected Long comment;
 
 	@Transient
 	@JsonProperty
-	private Object comments;
+	protected Object comments;
 
 	@Transient
 	@JsonProperty
-	private Long comment_count;
+	protected Long comment_count;
 
 	@Transient
 	@JsonProperty
-	private Long comment_count_new;
+	protected Long comment_count_new;
 
 	@Transient
 	@JsonProperty
-	private Long feed_nid;
+	protected Long feed_nid;
 
 	@Transient
 	@JsonProperty
-	private FieldModel author;
+	protected FieldModel author;
 	
 	public String getTitle() {
 		return title;

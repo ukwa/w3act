@@ -568,7 +568,8 @@ public class Targets extends AbstractController {
     		if (Const.ADDENTRY.equals(action)) {
     	        Logger.info("create()");
     	    	Target target = new Target();
-    	    	target.fieldUrl = query;
+    	    	// TODO: KL
+//    	    	target.fieldUrl = query;
     	        target.revision = Const.INITIAL_REVISION;
     	        target.active = true;
     	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
@@ -600,7 +601,8 @@ public class Targets extends AbstractController {
     public static Result create(String title) {
         Logger.info("create()");
     	Target target = new Target();
-    	target.fieldUrl = title;
+    	// TODO: KL
+//    	target.fieldUrl = title;
     	// TODO: createId
 //        target.id = Target.createId();
 //        target.url = Const.ACT_URL + target.id;
@@ -977,7 +979,7 @@ public class Targets extends AbstractController {
         if (fieldUrl != null) {
         	Target targetObj = Target.findByFieldUrl(fieldUrl);
         	if (targetObj != null && targetObj.url != null) {
-	        	targetObj.qaStatus = qaStatus;
+	        	targetObj.qaIssue.url = qaStatus;
 	        	Logger.debug("update Qa Status for target object: " + qaStatus);
     	        Ebean.update(targetObj);
         	}
@@ -1089,7 +1091,7 @@ public class Targets extends AbstractController {
         	Iterator<Target> itr = targets.iterator();
         	while (itr.hasNext()) {
         		Target target = itr.next();
-        		sb.append(target.title + " " + target.fieldUrl);
+        		sb.append(target.title + " " + target.fieldUrl());
                 sb.append(System.getProperty("line.separator"));
         	}
             res = sb.toString();

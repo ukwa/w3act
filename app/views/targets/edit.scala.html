@@ -459,7 +459,7 @@
 			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
 						    <div class="col-sm-6">
 								<select multiple name="tags" id="tags" class="form-control">
-					                @for(tag <- Tag.findAll()) {
+					                @for(tag <- Tag.findAllTags()) {
 						                @if(form("tags").value != null && form("tags").value.contains(tag.url)) {
 						                	<option selected>@tag.name</option>
 						                } else {
@@ -629,7 +629,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
 						    <div class="col-sm-6">
-						        @for(flag <- Flag.findAll()) {
+						        @for(flag <- Flag.findAllFlags()) {
 									<label class="checkbox-inline">
 						                @if(form("flags").value != null && form("flags").value.contains(flag.name)) {
 						                	<input type="checkbox" name="@flag.name" value="true" checked />

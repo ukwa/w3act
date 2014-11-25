@@ -160,7 +160,7 @@ public class Reports extends AbstractController {
 // 	    		CrawlPermission permission = itr.next();
 	    		sw.append(target.title);
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.fieldUrl);
+	    		sw.append(target.fieldUrl());
 		 	    sw.append(Const.CSV_SEPARATOR);
 	    		sw.append(target.createdAt + "");
 		 	    sw.append(Const.CSV_SEPARATOR);
@@ -220,8 +220,8 @@ public class Reports extends AbstractController {
 	        Iterator<Target> resIter = res.iterator();
 	        while (resIter.hasNext()) {
 	        	Target target = resIter.next();
-	        	if (target.fieldUrl != null && target.fieldUrl.length() > 0) {
-	        		List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target.fieldUrl);
+	        	if (target.fieldUrl() != null && target.fieldUrl().length() > 0) {
+	        		List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target.fieldUrl());
 	            	if (permissionList != null && permissionList.size() > 0) {
 	            		CrawlPermission permission = permissionList.get(0);
 	            		Logger.info("permission: " + permission);

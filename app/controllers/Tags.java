@@ -133,7 +133,7 @@ public class Tags extends AbstractController {
     	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
-    		res = models.Tag.findAll();
+    		res = models.Tag.findAllTags();
     	}
         return res;
     }
@@ -261,7 +261,7 @@ public class Tags extends AbstractController {
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;
         if (name != null) {
-	        List<Tag> tags = Tag.filterByName(name);
+	        List<Tag> tags = Tag.filterByTagName(name);
 	        jsonData = Json.toJson(tags);
         }
         return ok(jsonData);
@@ -282,7 +282,7 @@ public class Tags extends AbstractController {
         			"Tags", 
         			User.findByEmail(request().username()), 
         			filter, 
-        			Tag.page(pageNo, 10, sortBy, order, filter), 
+        			Tag.pager(pageNo, 10, sortBy, order, filter), 
         			sortBy, 
         			order)
         	);

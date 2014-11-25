@@ -197,8 +197,8 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
-						        @if(target.fieldQaStatus != null && Taxonomy.findByUrl(target.fieldQaStatus) != null) {
-						  			@Taxonomy.findByUrl(target.fieldQaStatus).name 						          
+						        @if(target.qaIssue != null) {
+						  			@target.qaIssue.name 						          
 						        } else {
 						        	none
 								}
@@ -368,7 +368,7 @@
 						<div class="form-group">
 			              	<label for="inputAuthors" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea readonly class="form-control" name="originating_organisation" id="originatingOrganisation" cols="100" rows="1" value="@target.originatingOrganisation">@target.originatingOrganisation</textarea>
+				            	<textarea readonly class="form-control" name="originating_organisation" id="originatingOrganisation" cols="100" rows="1" value="@target.organisation.url">@target.organisation.url</textarea>
 							</div>
 						</div>
 					</div>
@@ -409,7 +409,7 @@
 						<div class="form-group">
 			              	<label for="inputAuthors" class="col-sm-6 control-label">Author(s) <small class="text-center">(A named individual responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea readonly class="form-control" name="authors" id="authors" cols="100" rows="1" value="@target.authors">@target.authors</textarea>
+				            	<textarea readonly class="form-control" name="authors" id="authors" cols="100" rows="1" value="@target.authorUser.name">@target.authorUser.name</textarea>
 							</div>
 						</div>
 					</div>
@@ -420,7 +420,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
 						    <div class="col-sm-6">
-						        @for(flag <- Flag.findAll()) {
+						        @for(flag <- Flag.findAllFlags()) {
 									<label class="checkbox-inline">
 						                @if(target.flags != null && target.flags.contains(flag.name)) {
 						                	<input type="checkbox" name="@Flags.getGuiName(flag.name)" value="true" checked disabled />
@@ -830,7 +830,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
 						    <div class="col-sm-6">
-		 						<input readonly type="text" name="licensingStatus" value="@target.qaStatus" size="60" maxlength="2048" class="form-control" />
+		 						<input readonly type="text" name="licensingStatus" value="@target.qaIssue.url" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>

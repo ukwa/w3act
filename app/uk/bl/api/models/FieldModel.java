@@ -2,6 +2,7 @@ package uk.bl.api.models;
 
 public class FieldModel {
 	
+//	"author":{"uri":"http://webarchive.org.uk/act/user/80","id":"80","resource":"user"}
 	private String uri;
 	private String id;
 	private String resource;
