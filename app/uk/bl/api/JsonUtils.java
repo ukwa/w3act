@@ -1124,76 +1124,7 @@ public enum JsonUtils {
 		}
 		return taxonomy;
 	}
-	
-//	private Subject convertSubject(FieldModel fieldModel) throws IOException {
-////		"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
-//		String actUrl = this.getActUrl(fieldModel.getId());
-//		
-//		// find to see if it's stored already
-//		
-//		Subject subject = Subject.findByUrl(actUrl);
-//		
-//		Logger.info("lookup: " + subject + " using " + actUrl);
-//
-//		if (subject == null) {
-//			throw new IOException();
-//		} 
-//		return subject;
-//	}
 
-//	private License convertLicense(FieldModel fieldModel) throws IOException {
-//		String actUrl = this.getActUrl(fieldModel.getId());
-//		
-//		// find to see if it's stored already
-//		
-//		Subject subject = Subject.findByUrl(actUrl);
-//		
-//		Logger.info("lookup: " + subject + " using " + actUrl);
-//
-//		if (subject == null) {
-//			throw new IOException();
-//		} 
-//		return subject;
-//	}
-	
-//	private QaIssue convertQaIssue(FieldModel fieldModel) throws IOException {
-////		"field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
-//		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
-//		QaIssue qaIssue = null;
-//		String content = this.getAuthenticatedContent(url.toString());
-//		
-//		Logger.info("subject url: " + url);
-//		Logger.info("subject content: " + content);
-//		
-//		ObjectMapper mapper = new ObjectMapper();
-//		mapper.setSerializationInclusion(Include.NON_NULL);
-//		qaIssue = mapper.readValue(content, QaIssue.class);
-//		Logger.info("qaIssue: " + qaIssue);
-//		
-//		qaIssue.url = this.getActUrl(qaIssue.getTid());
-//		
-//		// find to see if it's stored already
-//		
-//		QaIssue lookup = QaIssue.findByUrl(qaIssue.url);
-//		
-//		Logger.info("lookup: " + lookup + " using " + qaIssue.url);
-//
-//		if (lookup == null) {
-//			
-//			this.getTaxonomyVocabulary(qaIssue);
-//			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(qaIssue);
-//			if (taxonomyVocabulary != null) {
-//				qaIssue.setTaxonomyVocabulary(taxonomyVocabulary);
-//			}
-//
-//			qaIssue.save();
-//		} else {
-//			qaIssue = lookup;
-//		}
-//		Logger.info("qaIssue url: " + qaIssue.url);
-//		return qaIssue;
-//	}
-	
 //	/**
 //	 * This method retrieves JSON data from Drupal for particular domain object
 //	 * type (e.g. Target, Collection...) with parameters e.g.

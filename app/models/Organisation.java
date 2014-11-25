@@ -40,17 +40,12 @@ public class Organisation extends ActModel {
     //bi-directional many-to-one association to User
     @JsonIgnore
     @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
-    private List<User> users = new ArrayList<User>();
+    public List<User> users;
      
     //bi-directional one-to-many association to Target
     @JsonIgnore
     @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
-    private List<Target> targets = new ArrayList<Target>();
-
-    //bi-directional many-to-one association to Instance
-    @JsonIgnore
-    @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
-    private List<Instance> instances = new ArrayList<Instance>();
+    public List<Target> targets;
 
     @Required
     @JsonProperty
@@ -191,31 +186,6 @@ public class Organisation extends ActModel {
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Model.Finder<Long,Organisation> find = new Model.Finder(Long.class, Organisation.class);
-    
-    public List<User> getUsers() {
-    	return this.users;
-    }
-    
-    public void setUsers(List<User> users) {
-    	this.users = users;
-    }    
-    
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-    
     
     /**
      * Retrieve Organisation for user
@@ -465,8 +435,7 @@ public class Organisation extends ActModel {
 
 	@Override
 	public String toString() {
-		return "Organisation [users=" + users + ", targets=" + targets
-				+ ", instances=" + instances + ", title=" + title
+		return "Organisation [users=" + users + ", targets=" + targets + ", title=" + title
 				+ ", edit_url=" + edit_url + ", summary=" + summary
 				+ ", authorUser=" + authorUser + ", field_abbreviation="
 				+ field_abbreviation + ", revision=" + revision + ", language="
