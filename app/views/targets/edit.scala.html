@@ -1,6 +1,7 @@
 @(form: Form[Target], user: User)
 
 @import helper.checkbox
+@import helper.inputText
 @implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
 
 @script = {
@@ -1188,6 +1189,7 @@
 	        
 			<div class="tab-pane fade" id="documents">
 				@checkbox(form("watched"), '_label -> "watched", 'class -> "checkbox")
+				@inputText(form("documentUrlScheme"), '_label -> "Document Url Scheme", 'class -> "form-control")
 	        </div>
 	        
 		</div>

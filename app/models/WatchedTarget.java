@@ -1,19 +1,14 @@
 package models;
 
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import play.db.ebean.Model;
-import uk.bl.Const;
 
 @Entity
 public class WatchedTarget extends Model {
@@ -25,23 +20,23 @@ public class WatchedTarget extends Model {
 	@ManyToOne @JsonIgnore
 	@JoinColumn(name="id_creator")
 	public User user;
-	public boolean deepDocumentSearch;
+	public String documentUrlScheme;
 	public String getUrl() { return ""+id; }
 	public String getName() { return target.title; }
 	
 	public static final Model.Finder<Long, WatchedTarget> find = new Model.Finder<>(Long.class, WatchedTarget.class);
 	
-	public WatchedTarget(User user, String title, String url, String field_url, boolean deepDocumentSearch) {
+	public WatchedTarget(User user, String title, String url, String field_url, String documentUrlScheme) {
 		this.user = user;
-		this.deepDocumentSearch = deepDocumentSearch;
+		this.documentUrlScheme = documentUrlScheme;
 		target = new Target(title, url);
 		target.field_url = field_url;
 	}
 	
-    public WatchedTarget(Target target) {
+    public WatchedTarget(Target target, String documentUrlScheme) {
 		this.target = target;
-		deepDocumentSearch = true;
 		user = User.findByUrl(target.author);
+		this.documentUrlScheme = documentUrlScheme;
 	}
 	public static Page<WatchedTarget> page(User user, int page, int pageSize, String sortBy, String order, String filter) {
     	

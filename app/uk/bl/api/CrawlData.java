@@ -97,69 +97,78 @@ public class CrawlData {
 	}*/
 	
 	private static void breathFirstSearch (WatchedTarget watchedTarget, Set<Link> fringe, int linkDepth) {
+		if (linkDepth < -1 || (linkDepth == -1 && !foundDocuments.isEmpty())) return;
 		Set<Link> children = new HashSet<>();
 		for (Link link : fringe) {
 			try {
-				Connection connection = Jsoup.connect(link.target);
-				
-				connection.request().method(Method.GET);
-				connection.ignoreContentType(true);
-				connection.execute();
-				
-				Response response = connection.response();
-				
-				if (response.contentType().contains("html")) {
-					if (linkDepth >= 0) {
-						org.jsoup.nodes.Document doc = response.parse();
-						
-						for(Element element : doc.select("a[href]")){
-							String targetUrl = element.absUrl("href");
-							if (!knownSites.contains(targetUrl)) {
-								if (targetUrl.endsWith(".pdf")) {
-									knownSites.add(targetUrl);
-									System.out.println("pdf: " + targetUrl + " (via " + link.target + ")");
-									Document document = new Document();
-									document.landingPageUrl = link.target;
-									document.documentUrl = targetUrl;
-									document.filename = targetUrl.substring(targetUrl.lastIndexOf('/')+1);
-									document.title = document.filename.substring(0, document.filename.indexOf('.'));
-									document.watchedTarget = watchedTarget;
-									foundDocuments.add(document);
-								} else if(domainIsEqual(link.target,targetUrl) &&
-										(linkDepth > 0 || watchedTarget.deepDocumentSearch)) {
-									knownSites.add(targetUrl);
-									//System.out.println(targetUrl + " (via " + link.target + ")");
-									children.add(new Link(link.target, targetUrl));
+				if (linkDepth >= 0 || urlMatchesScheme(link.target, watchedTarget.documentUrlScheme)) {
+					Connection connection = Jsoup.connect(link.target);
+					
+					connection.request().method(Method.GET);
+					connection.ignoreContentType(true);
+					connection.execute();
+					
+					Response response = connection.response();
+					
+					if (response.contentType().contains("html")) {
+						if (linkDepth >= 0) {
+							org.jsoup.nodes.Document doc = response.parse();
+							
+							for(Element element : doc.select("a[href]")) {
+								String targetUrl = element.absUrl("href");
+								if (!knownSites.contains(targetUrl)) {
+									if (targetUrl.endsWith(".pdf")) {
+										if (urlMatchesScheme(targetUrl, watchedTarget.documentUrlScheme)) {
+											knownSites.add(targetUrl);
+											System.out.println("pdf: " + targetUrl + " (via " + link.target + ")");
+											Document document = new Document();
+											document.landingPageUrl = link.target;
+											document.documentUrl = targetUrl;
+											document.filename = targetUrl.substring(targetUrl.lastIndexOf('/')+1);
+											document.title = document.filename.substring(0, document.filename.indexOf('.'));
+											document.watchedTarget = watchedTarget;
+											foundDocuments.add(document);
+										}
+									} else if(domainIsEqual(link.target,targetUrl)) {
+										knownSites.add(targetUrl);
+										//System.out.println(targetUrl + " (via " + link.target + ")");
+										children.add(new Link(link.target, targetUrl));
+									}
 								}
 							}
 						}
-					}
-				} else if (watchedTarget.deepDocumentSearch) {
-					System.out.println("contentType: " + response.contentType());
-					//System.out.println("contentDisposition: " + response.header("Content-Disposition"));
-					String contentDisposition = response.header("Content-Disposition");
-					if (contentDisposition != null && contentDisposition.endsWith(".pdf")) {
-						Document document = new Document();
-						document.landingPageUrl = link.source;
-						document.documentUrl = link.target;
-						document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
-						document.title = document.filename.substring(0, document.filename.indexOf('.'));
-						document.watchedTarget = watchedTarget;
-						foundDocuments.add(document);
-						System.out.println("hidden pdf: " + document.filename + " (url: " + link.target + ")");
+					} else if (urlMatchesScheme(link.target, watchedTarget.documentUrlScheme)) {
+						System.out.println("contentType: " + response.contentType());
+						//System.out.println("contentDisposition: " + response.header("Content-Disposition"));
+						String contentDisposition = response.header("Content-Disposition");
+						if (contentDisposition != null && contentDisposition.endsWith(".pdf")) {
+							Document document = new Document();
+							document.landingPageUrl = link.source;
+							document.documentUrl = link.target;
+							document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
+							document.title = document.filename.substring(0, document.filename.indexOf('.'));
+							document.watchedTarget = watchedTarget;
+							foundDocuments.add(document);
+							System.out.println("hidden pdf: " + document.filename + " (url: " + link.target + ")");
+						}
 					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		if (linkDepth > 0 || (watchedTarget.deepDocumentSearch && linkDepth == 0))
-			breathFirstSearch(watchedTarget, children, linkDepth - 1);
+		
+		breathFirstSearch(watchedTarget, children, linkDepth - 1);
 	}
 
 	private static boolean domainIsEqual(String url, String targetUrl) {
 		if (targetUrl.split("/").length <= 2) return false;
 		return url.split("/")[2].equals(targetUrl.split("/")[2]);
+	}
+	
+	private static boolean urlMatchesScheme(String url, String scheme) {
+		String urlWithoutProtocol = url.substring(url.indexOf("//") + 2);
+		return urlWithoutProtocol.startsWith(scheme);
 	}
 	
 }

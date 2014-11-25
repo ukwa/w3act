@@ -4,7 +4,7 @@ create table watched_target (
   id			bigint primary key,
   id_target		bigint references target (id),
   id_creator		bigint references creator (id),
-  deep_document_search	boolean not null
+  document_url_scheme	varchar(255)
 );
 
 create table journal_title (

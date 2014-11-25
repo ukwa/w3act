@@ -41,11 +41,16 @@ public class WatchedTargets extends AbstractController {
     	
     	if (WatchedTarget.find.findRowCount() == 0) {
 	    	List<WatchedTarget> watchedTargetsTestData = Arrays.asList(
-	    			new WatchedTarget(user, "ifs", "act-ifs", "http://www.ifs.org.uk/publications/re", false),
-	    			new WatchedTarget(user, "thinknpc", "act-thinknpc", "http://www.thinknpc.org/publications/", true),
-	    			new WatchedTarget(user, "ofsted", "act-ofsted", "http://www.ofsted.gov.uk/resources/surveys", false),
-	    			new WatchedTarget(user, "parliament", "act-parliament", "http://www.parliament.uk/business/committees/committees-a-z/commons-select/home-affairs-committee/publications/", false),
-	    			new WatchedTarget(user, "gov", "act-gov", "https://www.gov.uk/government/publications", false)
+	    			new WatchedTarget(user, "ifs", "act-ifs",
+	    					"http://www.ifs.org.uk/publications/re", "www.ifs.org.uk/uploads/publications"),
+	    			new WatchedTarget(user, "thinknpc", "act-thinknpc",
+	    					"http://www.thinknpc.org/publications/", "www.thinknpc.org"),
+	    			new WatchedTarget(user, "ofsted", "act-ofsted",
+	    					"http://www.ofsted.gov.uk/resources/surveys", "www.ofsted.gov.uk/sites/default/files/documents"),
+	    			new WatchedTarget(user, "parliament", "act-parliament",
+	    					"http://www.parliament.uk/business/committees/committees-a-z/commons-select/home-affairs-committee/publications/", "www.publications.parliament.uk"),
+	    			new WatchedTarget(user, "gov", "act-gov",
+	    					"https://www.gov.uk/government/publications", "www.gov.uk/government/uploads")
 	    			);
 	    	for (WatchedTarget watchedTarget : watchedTargetsTestData) {
 	    		Ebean.save(watchedTarget.target);
@@ -103,7 +108,7 @@ public class WatchedTargets extends AbstractController {
     			newDocumentList.add(document);
     	
     	Ebean.save(newDocumentList);
-    	return redirect(routes.Documents.list(id, true, 0, "title", "asc", ""));
+    	return redirect(routes.Documents.list(id, false, 0, "title", "asc", ""));
     }
     
     @BodyParser.Of(BodyParser.Json.class)
