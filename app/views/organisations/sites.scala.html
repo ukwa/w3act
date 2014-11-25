@@ -39,7 +39,7 @@
     }
     
     // Generate the link
-    routes.Targets.organisationTargets(newPage, sortBy, order, searchurl, organisation.url)
+    routes.TargetController.organisationTargets(newPage, sortBy, order, searchurl, organisation.url)
     
 }
 
@@ -97,7 +97,7 @@
     
 	<div id="forms">
 		@warningmessage(flash)
-		@helper.form(action=routes.Targets.searchTargetsByOrganisation, 'class -> "form-inline") {
+		@helper.form(action=routes.TargetController.searchTargetsByOrganisation, 'class -> "form-inline") {
    			<div class="input-group">
    				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
   					<input type="hidden" name="s" value="@currentSortBy">
@@ -127,7 +127,7 @@
 		<tbody>
         	@for(target <- currentPage.getList) {		              
 				<tr>
-					<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
+					<td><a class="brand" href="@routes.TargetController.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
 	   				@if(target.collections != null) { 
 		  				<td>
 						  	@for(taxonomy <- target.collections) {

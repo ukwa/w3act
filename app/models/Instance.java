@@ -187,11 +187,6 @@ public class Instance extends UrlModel {
     public String whiteList; // regex for white list URLs
     public String blackList; // regex for black list URLs
     
-    // lists
-    @Required
-    @Column(columnDefinition = "text")
-    public String fieldUrl;
-    
     @Column(columnDefinition = "text")
     public String fieldDescription; 
     
@@ -364,10 +359,11 @@ public class Instance extends UrlModel {
 	 * @return duplicate count
 	 */
 	public int getDuplicateNumber() {
-		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq("fieldUrl", this.fieldUrl);
-        res = ll.findRowCount();
-		return res;
+//		int res = 0;
+//        ExpressionList<Instance> ll = find.where().eq("fieldUrl", this.fieldUrl);
+//        res = ll.findRowCount();
+//		return res;
+		throw new NotImplementedError();
 	}
 	
 	/**
@@ -1202,7 +1198,7 @@ public class Instance extends UrlModel {
 
 	public String toString() {
         return "Instance(" + id + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + fieldCrawlFrequency + ", type: " + type +
-        ", field_uk_domain: " + fieldUkDomain + ", field_url: " + fieldUrl + 
+        ", field_uk_domain: " + fieldUkDomain + 
         ", field_description: " + fieldDescription + ", field_uk_postal_address_url: " + fieldUkPostalAddressUrl +
         ", field_suggested_collections: " + fieldSuggestedCollections + ", field_collections: " + fieldCollections +
         ", field_license: " + fieldLicense + ", field_collection_categories: " + fieldCollectionCategories +

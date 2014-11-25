@@ -7,7 +7,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 @Entity
-@DiscriminatorValue("subject")
+@DiscriminatorValue("subjects")
 public class Subject extends Taxonomy {
 
 	/**

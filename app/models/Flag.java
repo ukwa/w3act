@@ -3,14 +3,9 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 
-import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -21,7 +16,7 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open flags.
  */
 @Entity
-@Table(name = "flag")
+@DiscriminatorValue("flags")
 public class Flag extends Taxonomy {
 
 	/**

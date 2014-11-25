@@ -39,7 +39,7 @@
     }
     
     // Generate the link
-    routes.Targets.subjectTargets(newPage, sortBy, order, searchurl, subject.url)
+    routes.TargetController.subjectTargets(newPage, sortBy, order, searchurl, subject.url)
     
 }
 
@@ -96,7 +96,7 @@
     
 	<div id="forms">
 		@warningmessage(flash)
-		@helper.form(action=routes.Targets.searchTargetsBySubject, 'class -> "form-inline") {
+		@helper.form(action=routes.TargetController.searchTargetsBySubject, 'class -> "form-inline") {
    			<div class="input-group">
    				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
   					<input type="hidden" name="s" value="@currentSortBy">
@@ -125,7 +125,7 @@
 			@for(target <- currentPage.getList) {
             <tr>
             	<td>
-            		<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a>
+            		<a class="brand" href="@routes.TargetController.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a>
 				</td>
 				<!-- 
                	@if(target.subject != null && Taxonomy.getSelectedSubjects(target.url) != null) { 

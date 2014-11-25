@@ -2,9 +2,7 @@ package uk.bl.db;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,27 +43,21 @@ public enum DataImport {
 	        	this.importCurators();
 	            this.importAccounts();
 	        }
-//			if (Ebean.find(Tag.class).findRowCount() == 0) {
-//	        	this.importTags();
-//			}
-//			if (Ebean.find(Flag.class).findRowCount() == 0) {
-//	        	this.importFlags();
-//			}
-//			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
-//	        	this.importMailTemplates();
-//			}
-//			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
-//	        	this.importContactPersons();
-//			}
+			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
+	        	this.importMailTemplates();
+			}
+			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
+	        	this.importContactPersons();
+			}
 			if (Ebean.find(TaxonomyVocabulary.class).findRowCount() == 0) {
-				// TODO: import these for Taxonomy types - Collection, License etc
 				this.importJsonTaxonomyVocabularies();
 			}
 			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
 				this.importJsonTaxonomies();
 				this.importTaxonomies();
+	        	this.importTags();
+	        	this.importFlags();
 			}
-			
 			if (Ebean.find(Target.class).findRowCount() == 0) {
 	        	this.importTargets();
 			}
@@ -103,7 +95,6 @@ public enum DataImport {
 //                Ebean.save(allSingleOrganisations);
 //                JsonUtils.normalizeOrganisationUrlInUser();
 //                Logger.info("organisations successfully loaded");
-			
 //                Logger.info("load taxonomies ...");
 //                // aggregate original taxonomies from drupal extracting information from aggregated data
 //		        List<Object> allTaxonomies = JsonUtils.INSTANCE.extractDrupalData(Const.NodeType.TAXONOMY);
@@ -112,10 +103,6 @@ public enum DataImport {
 //                Ebean.save(allTaxonomies);
 ////                Ebean.save(cleanedTaxonomies);
 //                Logger.info("taxonomies successfully loaded");
-			
-			
-			
-			
 //                // due to merging of different original object models the resulting 
 //                // collection set is evaluated from particular taxonomy type
 //                Logger.info("load collections ..."); 
@@ -133,25 +120,11 @@ public enum DataImport {
 //				// store instances in DB
 //                Ebean.save(allInstances);
 //                Logger.info("instances successfully loaded");
-			
-			
-			
-			
 //                JsonUtils.mapInstancesToTargets();
 //                Logger.info("map instances to targets");
-			
-			
-			
-//          TODO: KL DO THIS WHEN IMPORTING THE URLS 
 			//JsonUtils.getDomainForTargets();
-			
-			
-			
-			
 //                Logger.info("Target domains extracted");
-//          TODO:      normalizeUrls();
-			
-			
+//          normalizeUrls();
 //                // Create association between Creator and Organisation
 //	            List<User> creatorList = (List<User>) User.find.all();
 //	            Iterator<User> creatorItr = creatorList.iterator();
@@ -172,9 +145,7 @@ public enum DataImport {
 //	            	// Create association between Target and Organisation
 //	            	target.updateOrganisation();
 //                    // Create association between Target and DCollection
-			
 //                	target.collectionToTarget = Collection.convertUrlsToObjects(target.fieldCollectionCategories);
-			
 //                    // Create association between Target and Subject (Taxonomy)
 //                	target.subject = Taxonomy.convertUrlsToObjects(target.fieldSubject);
 //                    // Create association between Target and License (Taxonomy)
@@ -195,17 +166,14 @@ public enum DataImport {
 //                    // Create association between Instance and DCollection
 //                	instance.collectionToInstance = Collection.convertUrlsToObjects(instance.fieldCollectionCategories);
 //                    // Create association between Instance and Subject (Taxonomy)
-//                	instance.subjectToInstance = Taxonomy.convertUrlsToObjects(instance.fieldSubject); 
-			
-			
+//                	instance.subjectToInstance = Taxonomy.convertUrlsToObjects(instance.fieldSubject); 		
 //                    // Create association between Instance and Flag
-//         TODO: KL       	instance.flagToInstance = Flag.convertUrlsToObjects(instance.flags);
+//         instance.flagToInstance = Flag.convertUrlsToObjects(instance.flags);
 //                    // Create association between Instance and Tag
-//         TODO: KL       	instance.tagToInstance = Tag.convertUrlsToObjects(instance.tags);
+//         instance.tagToInstance = Tag.convertUrlsToObjects(instance.tags);
 //        			Ebean.update(instance);
 //	            }
-//                // Create association between Permission and Role
-			
+//                // Create association between Permission and Role			
 			// TODO: KL WHY WE NEED TO DO THIS?
 //	            List<Permission> permissionList = (List<Permission>) Permission.find.all();
 //	            Iterator<Permission> permissionItr = permissionList.iterator();
@@ -350,41 +318,41 @@ public enum DataImport {
         Logger.info("Loaded Instances");
 	}
 
-    /**
-	 * normalize URL if there is "_" e.g. in taxonomy_term
-	 */
-	public void normalizeUrls() {
-        List<Target> targets = Target.findAll();
-        Iterator<Target> itr = targets.iterator();
-        while (itr.hasNext()) {
-        	Target target = itr.next();
-//			if (target.fieldCollectionCategories != null && target.fieldCollectionCategories.contains("_")) {
-//				target.fieldCollectionCategories = target.fieldCollectionCategories.replace("_", "/");
-//			}
-//			if (target.fieldLicense != null && target.fieldLicense.contains("_")) {
-//				target.fieldLicense = target.fieldLicense.replace("_", "/");
-//			}
-            Ebean.update(target);
-		}
-	}
+//    /**
+//	 * normalize URL if there is "_" e.g. in taxonomy_term
+//	 */
+//	public void normalizeUrls() {
+//        List<Target> targets = Target.findAll();
+//        Iterator<Target> itr = targets.iterator();
+//        while (itr.hasNext()) {
+//        	Target target = itr.next();
+////			if (target.fieldCollectionCategories != null && target.fieldCollectionCategories.contains("_")) {
+////				target.fieldCollectionCategories = target.fieldCollectionCategories.replace("_", "/");
+////			}
+////			if (target.fieldLicense != null && target.fieldLicense.contains("_")) {
+////				target.fieldLicense = target.fieldLicense.replace("_", "/");
+////			}
+//            Ebean.update(target);
+//		}
+//	}
 
-    /**
-     * This method removes from taxonomy list old subject taxonomies.
-     * @param taxonomyList
-     * @return
-     */
-    public List<Taxonomy> cleanUpTaxonomies(List<Object> taxonomyList) {
-    	List<Taxonomy> res = new ArrayList<Taxonomy>();
-        Iterator<Object> taxonomyItr = taxonomyList.iterator();
-        while (taxonomyItr.hasNext()) {
-        	Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
-        	if (!(taxonomy.ttype.equals(Const.SUBJECT) && (taxonomy.parent == null || taxonomy.parent.length() == 0)) 
-        			&& !(taxonomy.ttype.equals(Const.SUBSUBJECT) && taxonomy.parent.contains(Const.ACT_URL))) {
-        		res.add(taxonomy);
-        	}
-        }
-        return res;
-    }
+//    /**
+//     * This method removes from taxonomy list old subject taxonomies.
+//     * @param taxonomyList
+//     * @return
+//     */
+//    public List<Taxonomy> cleanUpTaxonomies(List<Object> taxonomyList) {
+//    	List<Taxonomy> res = new ArrayList<Taxonomy>();
+//        Iterator<Object> taxonomyItr = taxonomyList.iterator();
+//        while (taxonomyItr.hasNext()) {
+//        	Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
+//        	if (!(taxonomy.ttype.equals(Const.SUBJECT) && (taxonomy.parent == null || taxonomy.parent.length() == 0)) 
+//        			&& !(taxonomy.ttype.equals(Const.SUBSUBJECT) && taxonomy.parent.contains(Const.ACT_URL))) {
+//        		res.add(taxonomy);
+//        	}
+//        }
+//        return res;
+//    }
     
 	public static void main(String[] args) {
 		Logger.info("start");

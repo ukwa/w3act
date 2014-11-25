@@ -533,7 +533,7 @@ public class CrawlPermissions extends AbstractController {
     	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.SAVE);
     	        Ebean.save(log);
     	        updateAllByTarget(permission.url, permission.targetName, permission.status);
-    	        Targets.updateQaStatus(permission.targetName, permission.status);
+    	        TargetController.updateQaStatus(permission.targetName, permission.status);
         	} else {
            		Logger.info("update crawl permission: " + permission.toString());
                	Ebean.update(permission);
@@ -541,7 +541,7 @@ public class CrawlPermissions extends AbstractController {
     	        Ebean.save(log);
            		Logger.info("update: " + permission.url + ", " + permission.targetName + ", " + permission.status);
     	        updateAllByTarget(permission.url, permission.targetName, permission.status);
-    	        Targets.updateQaStatus(permission.targetName, permission.status);
+    	        TargetController.updateQaStatus(permission.targetName, permission.status);
         	}
         	Logger.info("Crawl permission was saved with status " + permission.status);
   			flash("message", "Crawl permission was saved with status " + permission.status);
@@ -704,7 +704,7 @@ public class CrawlPermissions extends AbstractController {
         	        Ebean.save(log);
                 	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
         	        updateAllByTarget(permission.url, permission.targetName, permission.status);
-        	        Targets.updateQaStatus(permission.targetName, permission.status);
+        	        TargetController.updateQaStatus(permission.targetName, permission.status);
                 }
             }
         }
@@ -843,7 +843,7 @@ public class CrawlPermissions extends AbstractController {
 	        	        Ebean.save(log);
 	                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
 	        	        updateAllByTarget(permission.url, permission.targetName, permission.status);
-	        	        Targets.updateQaStatus(permission.targetName, permission.status);
+	        	        TargetController.updateQaStatus(permission.targetName, permission.status);
                 	} else {
 	                	Logger.info("Missing contact email. Please check contact person");
 	        	        res = false;

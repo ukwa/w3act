@@ -216,7 +216,7 @@
 				    <button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
 				    }
 					@if(form("target").value != null && form("target").value.length() > 0) {
-					<a href="@routes.Targets.view(Target.findByTarget(form("target").value).url)" class="btn btn-primary" title="Return to the target record">Back to Target Record</a>
+					<a href="@routes.TargetController.view(Target.findByTarget(form("target").value).url)" class="btn btn-primary" title="Return to the target record">Back to Target Record</a>
 					}
 		       </div>
 			</div>

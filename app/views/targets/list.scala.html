@@ -39,7 +39,7 @@
     }
     
     // Generate the link
-    routes.Targets.list(newPage, sortBy, order, searchurl)
+    routes.TargetController.list(newPage, sortBy, order, searchurl)
     
 }
 
@@ -82,14 +82,14 @@
 
 @main(title, user, scripts, styles) {
 	<div class="page-header">    
-    	<h1><a href="@routes.Targets.index()">Targets > </a>Look up a URL</h1>
+    	<h1><a href="@routes.TargetController.index()">Targets > </a>Look up a URL</h1>
     </div>
     
     <article class="lookup">
     
 		<div id="forms">
 			@warningmessage(flash)
-			@helper.form(action=routes.Targets.search, 'class -> "form-inline") {
+			@helper.form(action=routes.TargetController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
    					<input type="hidden" name="s" value="@currentSortBy">
@@ -126,7 +126,7 @@
 			<tbody>
 				@for(target <- currentPage.getList) {
 				<tr>
-					<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")" target="_blank">@target.get_field_list_as_str("fieldUrl")</a></td>
+					<td><a class="brand" href="@routes.TargetController.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")" target="_blank">@target.get_field_list_as_str("fieldUrl")</a></td>
 					<td><a class="brand" href="opera.bl.uk:/8080/wayback/*@target.get_field_list_as_str("fieldUrl")" target="_blank">(mid-crawl),</a>
 	                 	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url=http://@target.get_field_list_as_str("fieldUrl")" target="_blank">(archival),</a>
 	                 	<a class="brand" href="@target.get_field_list_as_str("fieldUrl")" target="_blank">(live)</a></td>

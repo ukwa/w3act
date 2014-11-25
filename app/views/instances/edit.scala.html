@@ -861,9 +861,9 @@
 								<select name="field_scope" id="field_scope" class="form-control">
 					                @for(fieldScope <- Target.getAllScopeTypes()) {
 						                @if(fieldScope.equals(form("fieldScope").value)) {
-						                	<option selected>@Targets.getScopeGuiName(form("fieldScope").value)</option>
+						                	<option selected>@TargetController.getScopeGuiName(form("fieldScope").value)</option>
 						                } else {
-						                	<option>@Targets.getScopeGuiName(fieldScope)</option>
+						                	<option>@TargetController.getScopeGuiName(fieldScope)</option>
 						                }
 					                }
 								</select>
@@ -880,9 +880,9 @@
 								<select name="field_depth" id="field_depth" class="form-control">
 					                @for(fieldDepth <- Target.getAllDepthTypes()) {
 						                @if(fieldDepth.equals(form("fieldDepth").value)) {
-						                	<option selected>@Targets.getDepthGuiName(form("fieldDepth").value)</option>
+						                	<option selected>@TargetController.getDepthGuiName(form("fieldDepth").value)</option>
 						                } else {
-						                	<option>@Targets.getDepthGuiName(fieldDepth)</option>
+						                	<option>@TargetController.getDepthGuiName(fieldDepth)</option>
 						                }
 					                }
 								</select>

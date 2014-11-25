@@ -3,8 +3,8 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 import play.Logger;
 import play.db.ebean.Model;
@@ -17,7 +17,7 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open tags.
  */
 @Entity
-@Table(name = "tag")
+@DiscriminatorValue("tags")
 public class Tag extends Taxonomy {
 
 	/**

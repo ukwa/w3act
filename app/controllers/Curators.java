@@ -174,7 +174,7 @@ public class Curators extends AbstractController {
     }
     
     public static Result sites(String url) {
-        return redirect(routes.Targets.userTargets(0, "title", "asc", "", url, "", ""));
+        return redirect(routes.TargetController.userTargets(0, "title", "asc", "", url, "", ""));
     }
     
 	/**

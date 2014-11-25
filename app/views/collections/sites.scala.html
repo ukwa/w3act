@@ -41,7 +41,7 @@
     }
     
     // Generate the link
-    routes.Targets.collectionTargets(newPage, sortBy, order, searchurl, collection.url)
+    routes.TargetController.collectionTargets(newPage, sortBy, order, searchurl, collection.url)
     
 }
 
@@ -98,7 +98,7 @@
     
 	<div id="forms">
 		@warningmessage(flash)
-		@helper.form(action=routes.Targets.searchTargetsByCollection, 'class -> "form-inline") {
+		@helper.form(action=routes.TargetController.searchTargetsByCollection, 'class -> "form-inline") {
    			<div class="input-group">
    				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
   					<input type="hidden" name="s" value="@currentSortBy">
@@ -127,7 +127,7 @@
 			@for(target <- currentPage.getList) {
             <tr>
             	<td>
-            		<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("field_url")</a>
+            		<a class="brand" href="@routes.TargetController.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("field_url")</a>
 				</td>
                	@if(target.collections != null && models.Collection.getSelectedCollections(target.url) != null) { 
                	<td>

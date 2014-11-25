@@ -332,7 +332,7 @@ public class Subjects extends AbstractController {
      * @return
      */
     public static Result sites(String url) {
-        return redirect(routes.Targets.subjectTargets(0, Const.TITLE, Const.ASC, "", url));
+        return redirect(routes.TargetController.subjectTargets(0, Const.TITLE, Const.ASC, "", url));
     }  
 
     /**

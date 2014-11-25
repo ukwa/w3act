@@ -311,7 +311,7 @@ public class Collections extends AbstractController {
     }
 	    
     public static Result sites(String url) {
-        return redirect(routes.Targets.collectionTargets(0, "title", "asc", "", url));
+        return redirect(routes.TargetController.collectionTargets(0, "title", "asc", "", url));
     }    
 
     /**

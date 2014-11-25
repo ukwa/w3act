@@ -89,7 +89,7 @@
     }
     
     // Generate the link
-    routes.Targets.targets(newPage, sortBy, order, searchurl, curatorUrl, organisationUrl, subjectUrl, crawlFrequency, depth, collection, license, pageSize)
+    routes.TargetController.targets(newPage, sortBy, order, searchurl, curatorUrl, organisationUrl, subjectUrl, crawlFrequency, depth, collection, license, pageSize)
     
 }
 
@@ -132,13 +132,13 @@
 
 @main(title, user, scripts, styles) {
 	<div class="page-header">
-	    <h1><a href="@routes.Targets.index()">Targets > </a>Overview</h1>
+	    <h1><a href="@routes.TargetController.index()">Targets > </a>Overview</h1>
 	</div>	    
     <article class="targets">
     
 		@warningmessage(flash)
 		
-		@helper.form(action=routes.Targets.searchTargets) {
+		@helper.form(action=routes.TargetController.searchTargets) {
         	<div id="forms">
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
@@ -226,7 +226,7 @@
 						            	<div class="col-md-8 col-sm-8">
 											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
 								                <option>None</option>
-								                @for(curCrawlFrequency <- Targets.getCrawlFrequency()) {
+								                @for(curCrawlFrequency <- TargetController.getCrawlFrequency()) {
 					                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.field_crawl_frequency)) {
 								                		<option selected>@curCrawlFrequency.field_crawl_frequency</option>
 							                		} else {
@@ -241,7 +241,7 @@
 						            	<div class="col-md-8 col-sm-8">
 											<select name="field_depth" class="form-control target-form-control" id="field-depth">
 									        	<option>None</option>
-									            @for(curDepth <- Targets.getDepth()) {
+									            @for(curDepth <- TargetController.getDepth()) {
 							                  		@if(depth != null && depth.equals(curDepth.field_depth)) {
 									                	<option selected>@curDepth.field_depth</option>
 									                } else {
@@ -256,7 +256,7 @@
 						            	<div class="col-md-8 col-sm-8">
 											<select name="field_license" class="form-control target-form-control" id="license">
 									        	<option>None</option>
-									            @for(curLicense <- Targets.getLicense()) {
+									            @for(curLicense <- TargetController.getLicense()) {
 							                 		@if(license != null && license.equals(curLicense.url)) {
 								                		<option selected>@curLicense.name</option>
 								                	} else {
@@ -341,7 +341,7 @@
 								@for(target <- currentPage.getList) {
 				                <tr>
 									@if(target.title != null && target.title.length > 0) {
-										<td><a href="@routes.Targets.view(target.url)">@target.title</a></td>
+										<td><a href="@routes.TargetController.view(target.url)">@target.title</a></td>
 									} else {
 										<td>N/A</td>
 									}

@@ -40,7 +40,7 @@
     }
     
     // Generate the link
-    routes.Targets.userTargets(newPage, sortBy, order, searchurl, user.url, subjectUrl, collection)
+    routes.TargetController.userTargets(newPage, sortBy, order, searchurl, user.url, subjectUrl, collection)
     
 }
 
@@ -96,7 +96,7 @@
 	</ul>
     
 	@warningmessage(flash)
-	@helper.form(action=routes.Targets.searchTargetsByUser) {
+	@helper.form(action=routes.TargetController.searchTargetsByUser) {
 	<div id="forms">
    			<div class="input-group">
    				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
@@ -182,13 +182,13 @@
 		<tbody>
 			@for(target <- currentPage.getList) {
             <tr>
-				<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
+				<td><a class="brand" href="@routes.TargetController.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
 				@for(collection <- target.collections) {
 					<td>@collection.name</td>
 				}
 				<td>@target.subject.name</td>
 				<td><a href="@routes.Curators.edit(target.authorUser.url)">@User.findByUrl(target.authorUser.url).name</a></td>
-				<td><a class="brand" href="@routes.Targets.view(target.url)">@Instance.findAllByTarget(target.url)</a></td>
+				<td><a class="brand" href="@routes.TargetController.view(target.url)">@Instance.findAllByTarget(target.url)</a></td>
             </tr>
             }
 		</tbody>

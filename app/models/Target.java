@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -1145,6 +1144,10 @@ public class Target extends UrlModel {
 	 * @return result as a flag
 	 */
 	public static boolean isInScopeDomain(String url, String nidUrl) {
+		
+//		@if(Target.isInScopeDomain(instance.target.fieldUrl(), instance.url)) {
+
+		
 		try {
 			return Scope.checkScopeDomain(url, nidUrl);
 		} catch (WhoisException ex) {

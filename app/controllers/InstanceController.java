@@ -96,7 +96,7 @@ public class InstanceController extends AbstractController {
         }
         newInstance.url = Const.ACT_URL + newInstance.id;
         newInstance.title = getFormParam(Const.TITLE);
-        newInstance.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
+//        newInstance.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
         newInstance.fieldKeySite = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
         newInstance.fieldDescription = getFormParam(Const.DESCRIPTION);
         if (getFormParam(Const.STATUS) != null) {
@@ -220,7 +220,7 @@ public class InstanceController extends AbstractController {
         }
         newInstance.fieldLicense = getFormParam(Const.FIELD_LICENSE);
 //        newInstance.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
-        newInstance.fieldUkHosting = Target.isInScopeIp(newInstance.fieldUrl, newInstance.url);
+        newInstance.fieldUkHosting = Target.isInScopeIp(newInstance.target.fieldUrl(), newInstance.url);
     	Logger.debug("field_uk_hosting: " + newInstance.fieldUkHosting);
         newInstance.fieldUkPostalAddress = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
         newInstance.fieldUkPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
@@ -248,10 +248,10 @@ public class InstanceController extends AbstractController {
         newInstance.whiteList = getFormParam(Const.WHITE_LIST);
         newInstance.blackList = getFormParam(Const.BLACK_LIST);
         if (getFormParam(Const.FIELD_DEPTH) != null) {
-        	newInstance.fieldDepth = Targets.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+        	newInstance.fieldDepth = TargetController.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
         }
         if (getFormParam(Const.FIELD_SCOPE) != null) {
-        	newInstance.fieldScope = Targets.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+        	newInstance.fieldScope = TargetController.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
         }
         newInstance.fieldCrawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
         newInstance.keywords = getFormParam(Const.KEYWORDS);
@@ -393,7 +393,7 @@ public class InstanceController extends AbstractController {
             }
 //            Logger.info("new nid: " + newInstance.id);
             newInstance.title = getFormParam(Const.TITLE);
-            newInstance.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
+//            newInstance.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newInstance.fieldKeySite = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
             newInstance.fieldDescription = getFormParam(Const.DESCRIPTION);
             if (getFormParam(Const.STATUS) != null) {
@@ -513,7 +513,7 @@ public class InstanceController extends AbstractController {
             }
             newInstance.fieldLicense = getFormParam(Const.FIELD_LICENSE);
 //            newInstance.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
-            newInstance.fieldUkHosting = Target.isInScopeIp(newInstance.fieldUrl, newInstance.url);
+            newInstance.fieldUkHosting = Target.isInScopeIp(newInstance.target.fieldUrl(), newInstance.url);
         	Logger.debug("field_uk_hosting: " + newInstance.fieldUkHosting);
             newInstance.fieldUkPostalAddress = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newInstance.fieldUkPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
@@ -561,10 +561,10 @@ public class InstanceController extends AbstractController {
             newInstance.whiteList = getFormParam(Const.WHITE_LIST);
             newInstance.blackList = getFormParam(Const.BLACK_LIST);
             if (getFormParam(Const.FIELD_DEPTH) != null) {
-            	newInstance.fieldDepth = Targets.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+            	newInstance.fieldDepth = TargetController.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
             }
             if (getFormParam(Const.FIELD_SCOPE) != null) {
-            	newInstance.fieldScope = Targets.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+            	newInstance.fieldScope = TargetController.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
             }
             newInstance.fieldCrawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
             newInstance.keywords = getFormParam(Const.KEYWORDS);

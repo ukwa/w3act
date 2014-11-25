@@ -213,7 +213,7 @@
 			<tbody>
 				@for(target <- currentPage.getList) {
 				<tr>
-					<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
+					<td><a class="brand" href="@routes.TargetController.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
 					<td><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
 					<td><a class="brand" href="@routes.Instances.showByTarget(target.url)">@Instance.findAllByTarget(target.url)</a></td>
 					<td><a class="brand" href="@routes.InstanceController.edit(Instance.getLatestInstance(target.url))?tab=qa">@Instance.showLatestTimestamp(target.url)</a></td>

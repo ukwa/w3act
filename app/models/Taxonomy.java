@@ -91,8 +91,7 @@ public class Taxonomy extends ActModel {
 	public List<User> ownerUsers;
 
 	@JsonIgnore
-	@NotNull
-	@ManyToOne(optional=false)
+	@ManyToOne(optional=true)
 	@JoinColumn(name = "taxonomy_vocabulary_id")
 	public TaxonomyVocabulary taxonomyVocabulary;
 	

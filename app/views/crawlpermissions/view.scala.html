@@ -176,7 +176,7 @@
 					<a href="@routes.CrawlPermissions.index()" class="btn btn-primary" title="Go to the email queue">Send </a>					
 				}
 				@if(permission.targetName != null && permission.targetName.length() > 0) {
-				<a href="@routes.Targets.view(Target.findByTarget(permission.targetName).url)" class="btn btn-primary" title="Return to the target record">Back to Target Record</a>
+				<a href="@routes.TargetController.view(Target.findByTarget(permission.targetName).url)" class="btn btn-primary" title="Return to the target record">Back to Target Record</a>
 				}
 	       </div>
 		</div>

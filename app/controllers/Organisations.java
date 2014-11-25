@@ -159,7 +159,7 @@ public class Organisations extends AbstractController {
     }    
     
     public static Result sites(String url) {
-        return redirect(routes.Targets.organisationTargets(0, Const.TITLE, Const.ASC, "", url));
+        return redirect(routes.TargetController.organisationTargets(0, Const.TITLE, Const.ASC, "", url));
     }
     
     /**
