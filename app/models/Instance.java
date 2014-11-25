@@ -46,10 +46,10 @@ public class Instance extends UrlModel {
 	private static final long serialVersionUID = 4285620218930401425L;
 
 	// TODO: KL THIS THINGS ARE POPULATE VIA THE INSTANCECONTROLLER
-	public List<Taxonomy> subjects = new ArrayList<Taxonomy>();
-	public List<Taxonomy> collections = new ArrayList<Taxonomy>();
-	public List<Flag> flagToInstance = new ArrayList<Flag>();
-	public List<Tag> tagToInstance = new ArrayList<Tag>();
+//	public List<Taxonomy> subjects = new ArrayList<Taxonomy>();
+//	public List<Taxonomy> collections = new ArrayList<Taxonomy>();
+//	public List<Flag> flagToInstance = new ArrayList<Flag>();
+//	public List<Tag> tagToInstance = new ArrayList<Tag>();
 
 	@JsonIgnore
 	@ManyToOne
@@ -1137,15 +1137,15 @@ public class Instance extends UrlModel {
     /**
      * This method updates foreign key mapping between an Instance and an Organisation.
      */
-    public void updateOrganisation() {
-		if (fieldNominatingOrganisation != null
-				&& fieldNominatingOrganisation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(fieldNominatingOrganisation);
-//            Logger.info("Add instance to organisation: " + organisation.toString());
-            this.organisation = organisation;
-		}
-    	
-    }
+//    public void updateOrganisation() {
+//		if (fieldNominatingOrganisation != null
+//				&& fieldNominatingOrganisation.length() > 0) {
+//			Organisation organisation = Organisation.findByUrl(fieldNominatingOrganisation);
+////            Logger.info("Add instance to organisation: " + organisation.toString());
+//            this.organisation = organisation;
+//		}
+//    	
+//    }
     
     public String getField_timestamp() {
 		return field_timestamp;

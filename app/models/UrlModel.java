@@ -19,12 +19,6 @@ abstract class UrlModel extends ActModel {
 	 */
 	private static final long serialVersionUID = 2497175981252269093L;
 
-	// bi-directional many-to-one association to Organisation
-	@ManyToOne
-	@JoinColumn(name = "organisation_id")
-	@JsonIgnore
-	public Organisation organisation;
-
 	@JsonProperty
 	public String title;
 	

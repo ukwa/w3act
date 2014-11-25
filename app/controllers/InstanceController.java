@@ -160,16 +160,16 @@ public class InstanceController extends AbstractController {
         if (getFormParam(Const.ORGANISATION) != null) {
         	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
         		newInstance.fieldNominatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
-        		newInstance.updateOrganisation();
+//        		newInstance.updateOrganisation();
         	} else {
         		newInstance.fieldNominatingOrganisation = Const.NONE;
         	}
         }
         if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
         	if (!getFormParam(Const.ORIGINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-        		newInstance.organisation.url = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
+        		newInstance.target.organisation.url = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
         	} else {
-        		newInstance.organisation.url = Const.NONE;
+        		newInstance.target.organisation.url = Const.NONE;
         	}
         }
         if (getFormParam(Const.AUTHOR) != null) {
@@ -444,7 +444,7 @@ public class InstanceController extends AbstractController {
             	newInstance.fieldSubject = Const.NONE;
             }            
             Utils.removeAssociationFromDb(Const.SUBJECT_INSTANCE, Const.ID + "_" + Const.INSTANCE, newInstance.id);
-            newInstance.subjects = Taxonomy.convertUrlsToObjects(newInstance.fieldSubject);
+//            newInstance.subjects = Taxonomy.convertUrlsToObjects(newInstance.fieldSubject);
             if (getFormParam(Const.TREE_KEYS) != null) {
             	newInstance.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
 //            	newInstance.collectionToInstance = Collection.convertUrlsToObjects(newInstance.fieldCollectionCategories);
@@ -453,16 +453,16 @@ public class InstanceController extends AbstractController {
             if (getFormParam(Const.ORGANISATION) != null) {
             	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
             		newInstance.fieldNominatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
-            		newInstance.updateOrganisation();
+//            		newInstance.updateOrganisation();
             	} else {
             		newInstance.fieldNominatingOrganisation = Const.NONE;
             	}
             }
             if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
             	if (!getFormParam(Const.ORIGINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-            		newInstance.organisation.url = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
+            		newInstance.target.organisation.url = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
             	} else {
-            		newInstance.organisation.url = Const.NONE;
+            		newInstance.target.organisation.url = Const.NONE;
             	}
             }
             if (getFormParam(Const.AUTHOR) != null) {

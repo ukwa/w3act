@@ -399,8 +399,8 @@
 						<div class="form-group">
 			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
 						    <div class="col-sm-6">
-						        @if(instance.organisation != null) {
-  									@instance.organisation.title
+						        @if(instance.target.organisation != null) {
+  									@instance.target.organisation.title
   								} else {
   								    none
   								}
@@ -414,7 +414,7 @@
 						<div class="form-group">
 			              	<label for="mySel" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea readonly class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@instance.organisation.url">@instance.organisation.url</textarea>
+				            	<textarea readonly class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@instance.target.organisation.url">@instance.target.organisation.url</textarea>
 							</div>
 						</div>
 					</div>

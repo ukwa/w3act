@@ -70,6 +70,11 @@ public class Target extends UrlModel {
 	@JoinColumn(name = "subject_id")
 	public Taxonomy subject;
 	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "organisation_id")
+	public Organisation organisation;
+
     @JsonIgnore
     @ManyToMany
 	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
