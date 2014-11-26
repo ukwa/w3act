@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,8 +13,8 @@ import javax.persistence.Table;
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
+import scala.NotImplementedError;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -40,24 +41,16 @@ public class CrawlPermission extends ActModel {
 	//bi-directional many-to-one association to MailTemplate
 	@ManyToOne
 	@JoinColumn(name="mailTemplate_id")
-	public MailTemplate mailTemplateToCrawlPermission;
+	public MailTemplate mailTemplate;
 	
 	//bi-directional many-to-one association to ContactPerson
 	@ManyToOne
 	@JoinColumn(name="contactPerson_id")
-	public ContactPerson contactPersonToCrawlPermission;
+	public ContactPerson contactPerson;
 	
     @Column(columnDefinition = "text")
     @Required
     public String name;
-    
-    /**
-     * This field contains target URL.
-     */
-    @JsonIgnore
-    @Column(columnDefinition = "text")
-    @Required
-    public String targetName;
     
     @JsonIgnore
     @Column(columnDefinition = "text")
@@ -66,6 +59,11 @@ public class CrawlPermission extends ActModel {
     @JsonIgnore
     @Column(columnDefinition = "text")
     public String anyOtherInformation;
+    
+    @JsonIgnore
+	@ManyToOne
+	@JoinColumn(name="archivist_id")
+    public User user; 
     
     /**
      * Records status of permission process e.g. 
@@ -77,28 +75,9 @@ public class CrawlPermission extends ActModel {
     public String status; 
     
     @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String contactPerson; 
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String creatorUser; 
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String assignedArchivist; 
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String template; 
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String license;
-    
-    @JsonIgnore
-    @Column(columnDefinition = "text")
-    public String licenseDate;
+	@ManyToOne
+	@JoinColumn(name="license_id")
+    public License license; 
     
     /**
      * This is a checkbox defining whether follow up e-mails should be send.
@@ -302,9 +281,10 @@ public class CrawlPermission extends ActModel {
      * @return true if in list
      */
     public boolean hasContactPerson(String curContactPerson) {
-    	boolean res = false;
-    	res = Utils.hasElementInList(curContactPerson, contactPerson);
-    	return res;
+//    	boolean res = false;
+//    	res = Utils.hasElementInList(curContactPerson, contactPerson);
+//    	return res;
+    	throw new NotImplementedError();
     }
 
     /**
@@ -410,45 +390,6 @@ public class CrawlPermission extends ActModel {
         return "CrawlPermission(" + name + ")" + ", id:" + id;
     }    
 
-    /**
-     * This method updates foreign key mapping between a CrawlPermission and a Target.
-     */
-    public void updateTarget() {
-		if (targetName != null
-				&& targetName.length() > 0) {
-			Target targetObj = Target.findByTarget(targetName);
-//            Logger.info("Add crawl permission to target: " + targetObj.toString());
-            this.target = targetObj;
-		}
-    	
-    }
-    
-    /**
-     * This method updates foreign key mapping between a CrawlPermission and a MailTemplate.
-     */
-    public void updateMailTemplate() {
-        this.mailTemplateToCrawlPermission = null;
-		if (template != null
-				&& template.length() > 0) {
-			MailTemplate mailTemplate = MailTemplate.findByUrl(template);
-//            Logger.info("Add crawl permission to mail template: " + mailTemplate.toString());
-            this.mailTemplateToCrawlPermission = mailTemplate;
-		}    	
-    }
-    
-    /**
-     * This method updates foreign key mapping between a CrawlPermission and a ContactPerson.
-     */
-    public void updateContactPerson() {
-        this.contactPersonToCrawlPermission = null;
-		if (contactPerson != null
-				&& contactPerson.length() > 0) {
-			ContactPerson contactPersonObj = ContactPerson.findByUrl(contactPerson);
-//            Logger.info("Add crawl permission to contactPerson: " + contactPerson.toString());
-            this.contactPersonToCrawlPermission = contactPersonObj;
-		}    	
-    }
-    
     public static CrawlPermission create(Long id, String url) {
     	return new CrawlPermission(id, url);
     }

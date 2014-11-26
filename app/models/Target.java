@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -56,9 +55,9 @@ public class Target extends UrlModel {
 	@JoinColumn(name = "qaissue_id")
 	public Taxonomy qaIssue;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "author_id")
-	@JsonIgnore
 	public User authorUser;
 
 	@JsonIgnore
@@ -102,6 +101,11 @@ public class Target extends UrlModel {
 	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
 	private List<CrawlPermission> crawlPermissions;
+
+	@JsonIgnore
+	@Required
+	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	public List<FieldUrl> fieldUrls;
 
 	public Date fieldCrawlStartDate;
 	public Date fieldCrawlEndDate;
@@ -157,15 +161,6 @@ public class Target extends UrlModel {
 	
 	@Column(columnDefinition = "text")
 	public String synonyms;
-
-	@Required
-	@JsonIgnore
-	@CollectionTable(
-		    name = "field_urls",
-		    joinColumns=@JoinColumn(name = "id", referencedColumnName = "id")
-		)
-	@Column(name="field_url")
-	public List<String> fieldUrls;
 	
 	@Column(columnDefinition = "text")
 	@JsonProperty
@@ -536,12 +531,12 @@ public class Target extends UrlModel {
 	 * 
 	 * @return duplicate count
 	 */
-	public int getDuplicateNumber() {
-		int res = 0;
-		ExpressionList<Target> ll = find.where().eq("fieldUrl", this.fieldUrl());
-		res = ll.findRowCount();
-		return res;
-	}
+//	public int getDuplicateNumber() {
+//		int res = 0;
+//		ExpressionList<Target> ll = find.fetch("fieldUrls").where().eq("fieldUrls.url", this.fieldUrl());
+//		res = ll.findRowCount();
+//		return res;
+//	}
 
 	/**
 	 * This method computes a number of targets per user for given user URL.
@@ -681,16 +676,14 @@ public class Target extends UrlModel {
 	 */
 	public static List<Target> filterUrl(String url) {
 		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> ll = find.where()
-				.icontains(Const.FIELD_URL, url);
+		ExpressionList<Target> ll = find.fetch("fieldUrls").where().icontains("fieldUrls.url", url);
 		res = ll.findList();
 		return res;
 	}
 
 	public static List<Target> filterActiveUrl(String url) {
 		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true)
-				.contains(Const.FIELD_URL, url);
+		ExpressionList<Target> ll = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true).contains("fieldUrls.url", url);
 		res = ll.findList();
 		return res;
 	}
@@ -800,6 +793,7 @@ public class Target extends UrlModel {
 		}
 		// System.out.println(res_str.length());
 		// String res_str = "test";
+		Logger.info("" + res_str);
 		return res_str;
 	}
 
@@ -986,14 +980,12 @@ public class Target extends UrlModel {
 	public static boolean checkLicense(String url) {
 		Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true)
 				.findUnique();
-//		boolean res = false;
-//		if (target != null && target.li != null
-//				&& target.fieldLicense.length() > 0
-//				&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
+		boolean res = false;
+//		if (target != null && target.li != null && target.fieldLicense.length() > 0 && !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
 //			res = true;
 //		}
-		throw new NotImplementedError();
-//		return res;
+//		throw new NotImplementedError();
+		return res;
 	}
 
 	/**
@@ -1432,32 +1424,6 @@ public class Target extends UrlModel {
 	 * @param filter
 	 *            Filter applied on the name column
 	 */
-	public static Page<Target> page(int page, int pageSize, String sortBy,
-			String order, String filter) {
-
-		return find
-				.where()
-				.eq(Const.ACTIVE, true)
-				.add(Expr.or(Expr.icontains(Const.FIELD_URL, filter),
-						Expr.icontains(Const.TITLE, filter)))
-				.orderBy(sortBy + " " + order).findPagingList(pageSize)
-				.setFetchAhead(false).getPage(page);
-	}
-
-	/**
-	 * Return a page of Target
-	 * 
-	 * @param page
-	 *            Page to display
-	 * @param pageSize
-	 *            Number of targets per page
-	 * @param sortBy
-	 *            Target property used for sorting
-	 * @param order
-	 *            Sort order (either or asc or desc)
-	 * @param filter
-	 *            Filter applied on the name column
-	 */
 	public static Page<Target> pageQa(int page, int pageSize, String sortBy,
 			String order, String filter, String collection, String qaStatus) {
 
@@ -1526,46 +1492,46 @@ public class Target extends UrlModel {
 		ExpressionList<Target> exp = Target.find.where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);
-		exp = exp.add(Expr.or(Expr.icontains(Const.FIELD_URL, filterUrl), Expr.icontains(Const.TITLE, filterUrl)));
-		if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
-//			exp = exp.icontains(Const.AUTHOR, curatorUrl);
-		}
-		if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
-//			exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
-		}
-		Logger.debug("pageTargets() subject: " + subjectUrl);
-		if (subjectUrl != null && !subjectUrl.equals(Const.EMPTY)) {
-			if (subjectUrl.toLowerCase().equals(Const.NONE)) {
-				exp = exp.add(Expr.or(
-						Expr.eq(Const.FIELD_SUBJECT, ""),
-						Expr.icontains(Const.FIELD_SUBJECT,
-								subjectUrl.toLowerCase())));
-			} else {
-				exp = exp.icontains(Const.FIELD_SUBJECT, subjectUrl);
-			}
-		}
-		Logger.debug("pageTargets() crawlFrequency: " + crawlFrequency
-				+ ", depth: " + depth + ", license: " + license);
-		if (crawlFrequency != null && !crawlFrequency.equals("")
-				&& !crawlFrequency.toLowerCase().equals(Const.NONE)) {
-			exp = exp.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
-		}
-		if (depth != null && !depth.equals("")
-				&& !depth.toLowerCase().equals(Const.NONE)) {
-			exp = exp.icontains(Const.FIELD_DEPTH, depth);
-		}
-		Logger.debug("pageTargets() suggested_collections: " + suggested_collections);
-		if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
-			exp = exp.icontains(Const.FIELD_COLLECTION_CATEGORIES, suggested_collections);
-			// exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS,
-			// suggested_collections);
-		}
-		if (license != null && !license.equals("") && !license.toLowerCase().equals(Const.NONE)) {
-			exp = exp.icontains(Const.FIELD_LICENSE_NODE, license);
-		}
-		if (flag != null && !flag.equals("") && !flag.toLowerCase().equals(Const.NONE)) {
-			exp = exp.icontains(Const.FLAGS, flag);
-		}
+//		exp = exp.add(Expr.or(Expr.icontains(Const.FIELD_URL, filterUrl), Expr.icontains(Const.TITLE, filterUrl)));
+//		if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
+////			exp = exp.icontains(Const.AUTHOR, curatorUrl);
+//		}
+//		if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
+////			exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
+//		}
+//		Logger.debug("pageTargets() subject: " + subjectUrl);
+//		if (subjectUrl != null && !subjectUrl.equals(Const.EMPTY)) {
+//			if (subjectUrl.toLowerCase().equals(Const.NONE)) {
+//				exp = exp.add(Expr.or(
+//						Expr.eq(Const.FIELD_SUBJECT, ""),
+//						Expr.icontains(Const.FIELD_SUBJECT,
+//								subjectUrl.toLowerCase())));
+//			} else {
+//				exp = exp.icontains(Const.FIELD_SUBJECT, subjectUrl);
+//			}
+//		}
+//		Logger.debug("pageTargets() crawlFrequency: " + crawlFrequency
+//				+ ", depth: " + depth + ", license: " + license);
+//		if (crawlFrequency != null && !crawlFrequency.equals("")
+//				&& !crawlFrequency.toLowerCase().equals(Const.NONE)) {
+//			exp = exp.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
+//		}
+//		if (depth != null && !depth.equals("")
+//				&& !depth.toLowerCase().equals(Const.NONE)) {
+//			exp = exp.icontains(Const.FIELD_DEPTH, depth);
+//		}
+//		Logger.debug("pageTargets() suggested_collections: " + suggested_collections);
+//		if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
+//			exp = exp.icontains(Const.FIELD_COLLECTION_CATEGORIES, suggested_collections);
+//			// exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS,
+//			// suggested_collections);
+//		}
+//		if (license != null && !license.equals("") && !license.toLowerCase().equals(Const.NONE)) {
+//			exp = exp.icontains(Const.FIELD_LICENSE_NODE, license);
+//		}
+//		if (flag != null && !flag.equals("") && !flag.toLowerCase().equals(Const.NONE)) {
+//			exp = exp.icontains(Const.FLAGS, flag);
+//		}
 		res = exp.query().orderBy(sortBy + " " + order).orderBy(Const.DOMAIN).findPagingList(pageSize).setFetchAhead(false).getPage(page);
 		Logger.debug("Expression list size: " + res.getTotalRowCount());
 		return res;
@@ -2067,67 +2033,67 @@ public class Target extends UrlModel {
 	 * 
 	 * @return flag list as a string
 	 */
-	public String getSelectedFlags() {
-//		String res = "";
-//		boolean firstTime = true;
-//		if (this.flags != null) {
-//			if (this.flags.contains(Const.LIST_DELIMITER)) {
-//				String[] parts = this.flags.split(Const.LIST_DELIMITER);
-//				for (String part : parts) {
-//					try {
-//						if (firstTime) {
-//							res = Flags.getGuiName(Flag.findByUrl(part).name);
-//							firstTime = false;
-//						} else {
-//							res = res
-//									+ Const.LIST_DELIMITER
-//									+ Flags.getGuiName(Flag.findByUrl(part).name);
-//						}
-//					} catch (Exception e) {
-//						Logger.error("getSelectedFlags error: " + e);
-//					}
-//				}
-//			}
-//		}
-//		if (res.length() == 0) {
-//			res = Const.NONE;
-//		}
-//		return res;
-		throw new NotImplementedError();
-	}
+//	public String getSelectedFlags() {
+////		String res = "";
+////		boolean firstTime = true;
+////		if (this.flags != null) {
+////			if (this.flags.contains(Const.LIST_DELIMITER)) {
+////				String[] parts = this.flags.split(Const.LIST_DELIMITER);
+////				for (String part : parts) {
+////					try {
+////						if (firstTime) {
+////							res = Flags.getGuiName(Flag.findByUrl(part).name);
+////							firstTime = false;
+////						} else {
+////							res = res
+////									+ Const.LIST_DELIMITER
+////									+ Flags.getGuiName(Flag.findByUrl(part).name);
+////						}
+////					} catch (Exception e) {
+////						Logger.error("getSelectedFlags error: " + e);
+////					}
+////				}
+////			}
+////		}
+////		if (res.length() == 0) {
+////			res = Const.NONE;
+////		}
+////		return res;
+//		throw new NotImplementedError();
+//	}
 
 	/**
 	 * This method calculates selected tags for presentation in view page.
 	 * 
 	 * @return tag list as a string
 	 */
-	public String getSelectedTags() {
-//		String res = "";
-//		boolean firstTime = true;
-//		if (this.tags != null) {
-//			if (this.tags.contains(Const.LIST_DELIMITER)) {
-//				String[] parts = this.tags.split(Const.LIST_DELIMITER);
-//				for (String part : parts) {
-//					try {
-//						if (firstTime) {
-//							res = Tag.findByUrl(part).name;
-//							firstTime = false;
-//						} else {
-//							res = res + Const.LIST_DELIMITER
-//									+ Tag.findByUrl(part).name;
-//						}
-//					} catch (Exception e) {
-//						Logger.error("getSelectedTags error: " + e);
-//					}
-//				}
-//			}
-//		}
-//		if (res.length() == 0) {
-//			res = Const.NONE;
-//		}
-//		return res;
-		throw new NotImplementedError();
-	}
+//	public String getSelectedTags() {
+////		String res = "";
+////		boolean firstTime = true;
+////		if (this.tags != null) {
+////			if (this.tags.contains(Const.LIST_DELIMITER)) {
+////				String[] parts = this.tags.split(Const.LIST_DELIMITER);
+////				for (String part : parts) {
+////					try {
+////						if (firstTime) {
+////							res = Tag.findByUrl(part).name;
+////							firstTime = false;
+////						} else {
+////							res = res + Const.LIST_DELIMITER
+////									+ Tag.findByUrl(part).name;
+////						}
+////					} catch (Exception e) {
+////						Logger.error("getSelectedTags error: " + e);
+////					}
+////				}
+////			}
+////		}
+////		if (res.length() == 0) {
+////			res = Const.NONE;
+////		}
+////		return res;
+//		throw new NotImplementedError();
+//	}
 
 	/**
 	 * This method returns status value as a String
@@ -2256,6 +2222,7 @@ public class Target extends UrlModel {
 	 *            The current URL
 	 * @return
 	 */
+	@JsonIgnore
 	public static boolean isHigherLevel(String iterUrl, String currentUrl) {
 		boolean res = false;
 		if (currentUrl.contains(iterUrl) && currentUrl.indexOf(iterUrl) == 0
@@ -2265,6 +2232,7 @@ public class Target extends UrlModel {
 		return res;
 	}
 
+	@JsonIgnore
 	public boolean isHigherLevel(String iterUrl) {
 		boolean highLevel = (this.fieldUrl().contains(iterUrl)
 				&& this.fieldUrl().indexOf(iterUrl) == 0 && this.fieldUrl()
@@ -2273,12 +2241,14 @@ public class Target extends UrlModel {
 		return highLevel;
 	}
 
+	@JsonIgnore
 	public boolean validQAStatus(Target target) {
 		// Logger.info("validQAStatus field_url: " + target.field_url);
 		return (this.qaIssue != null && target.qaIssue.url.length() > 0 && !target.qaIssue.url
 				.toLowerCase().equals(Const.NONE));
 	}
 
+	@JsonIgnore
 	public boolean hasLicenses() {
 		// Open UKWA licence for target being edited - disabled
 		// Other license for target being edited - disabled
@@ -2286,6 +2256,7 @@ public class Target extends UrlModel {
 		throw new NotImplementedError();
 	}
 
+	@JsonIgnore
 	public boolean hasHigherLicense() {
 		// Open UKWA Licence at higher level - disabled
 		// Other license at higher level - disabled
@@ -2320,6 +2291,7 @@ public class Target extends UrlModel {
 		return (indicateUkwaLicenceStatus() || hasLicenses() || hasHigherLicense());
 	}
 
+	@JsonIgnore
 	public Target getHigherLevelTarget() {
 		// field_url - the domain name
 		// field_license - act-168
@@ -2698,7 +2670,11 @@ public class Target extends UrlModel {
 	}
 
 	public String fieldUrl() {
-		return StringUtils.join(this.fieldUrls, ", ");
+		List<String> urls = new ArrayList<String>();
+		for (FieldUrl fieldUrl : this.fieldUrls) {
+			urls.add(fieldUrl.url);
+		}
+		return StringUtils.join(urls, ", ");
 	}
 	
 	@Override

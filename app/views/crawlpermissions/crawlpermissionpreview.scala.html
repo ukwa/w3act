@@ -16,7 +16,7 @@
 						MailTemplate.findByName(template).text
 						, "||URL||"
 						, "||LINK||"
-						, permission.targetName
+						, permission.target.title
 						, CrawlPermissions.injectServerName(routes.LicenceController.form(permission.url).absoluteURL(request()).toString()))">	
 	
 	<div class="row padding-10">
@@ -51,7 +51,7 @@
 						MailTemplate.findByName(template).text
 						, "||URL||"
 						, "||LINK||"
-						, permission.targetName
+						, permission.target.title
 						, CrawlPermissions.injectServerName(routes.LicenceController.form(permission.url).absoluteURL(request()).toString()))
 					</textarea>
 				</div>

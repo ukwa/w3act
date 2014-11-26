@@ -4,13 +4,13 @@
 @main("", user) {
     
 	<div class="page-header">
-	    <h1><a href="@routes.CommunicationLogs.index()">Archivist Tasks > Communication Logs ></a>Communication log @log.name</h1>
+	    <h1><a href="@routes.CommunicationLogController.index()">Archivist Tasks > Communication Logs ></a>Communication log @log.name</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.CommunicationLogs.view(log.url)">View</a></li>
+	   <li class="active"><a href="@routes.CommunicationLogController.view(log.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   	<li><a href="@routes.CommunicationLogs.edit(log.url)">Edit</a></li>
+	   	<li><a href="@routes.CommunicationLogController.edit(log.url)">Edit</a></li>
 	   }
 	</ul>
 
@@ -30,7 +30,7 @@
 			<div class="form-group">
 				<label class="col-sm-6 control-label">Curator</label>
 			    <div class="col-sm-6">
-					<input type="text" name="curator" value="@User.findByUrl(log.curator).name" size="30" maxlength="2048" class="form-control" id="curator" readonly/>
+					<input type="text" name="curator" value="@log.user.name" size="30" maxlength="2048" class="form-control" id="curator" readonly/>
            		</div>
 			</div>
 		</div>
@@ -63,7 +63,7 @@
 			<div class="form-group">
               	<label for="status" class="col-sm-6 control-label">Crawl Permissions</label>
 			    <div class="col-sm-6">
-					<input type="text" name="permissions" value="@CrawlPermission.findByUrl(log.permission).name" size="30" maxlength="2048" class="form-control" id="permissions" readonly/>
+					<input type="text" name="permissions" value="@log.crawlPermission.name" size="30" maxlength="2048" class="form-control" id="permissions" readonly/>
            		</div>
 			</div>
 		</div>

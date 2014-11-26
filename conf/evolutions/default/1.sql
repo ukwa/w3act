@@ -65,6 +65,16 @@ create table crawl_permission (
   constraint pk_crawl_permission primary key (id))
 ;
 
+create table field_url (
+  id                        bigint not null,
+  url                       varchar(255),
+  created_at                timestamp,
+  target_id                 bigint,
+  updated_at                timestamp not null,
+  constraint uq_field_url_url unique (url),
+  constraint pk_field_url primary key (id))
+;
+
 create table instance (
   id                        bigint not null,
   url                       varchar(255),
@@ -417,6 +427,8 @@ create sequence contact_person_seq;
 
 create sequence crawl_permission_seq;
 
+create sequence field_url_seq;
+
 create sequence instance_seq;
 
 create sequence lookup_entry_seq;
@@ -441,142 +453,144 @@ create sequence taxonomy_vocabulary_seq;
 
 create sequence creator_seq;
 
-alter table crawl_permission add constraint fk_crawl_permission_target_1 foreign key (target_id) references target (id) on delete restrict on update restrict;
+alter table crawl_permission add constraint fk_crawl_permission_target_1 foreign key (target_id) references target (id);
 create index ix_crawl_permission_target_1 on crawl_permission (target_id);
-alter table crawl_permission add constraint fk_crawl_permission_mailTempla_2 foreign key (mailTemplate_id) references mail_template (id) on delete restrict on update restrict;
+alter table crawl_permission add constraint fk_crawl_permission_mailTempla_2 foreign key (mailTemplate_id) references mail_template (id);
 create index ix_crawl_permission_mailTempla_2 on crawl_permission (mailTemplate_id);
-alter table crawl_permission add constraint fk_crawl_permission_contactPer_3 foreign key (contactPerson_id) references contact_person (id) on delete restrict on update restrict;
+alter table crawl_permission add constraint fk_crawl_permission_contactPer_3 foreign key (contactPerson_id) references contact_person (id);
 create index ix_crawl_permission_contactPer_3 on crawl_permission (contactPerson_id);
-alter table instance add constraint fk_instance_qaIssue_4 foreign key (qaissue_id) references taxonomy (id) on delete restrict on update restrict;
-create index ix_instance_qaIssue_4 on instance (qaissue_id);
-alter table instance add constraint fk_instance_authorUser_5 foreign key (author_id) references creator (id) on delete restrict on update restrict;
-create index ix_instance_authorUser_5 on instance (author_id);
-alter table instance add constraint fk_instance_target_6 foreign key (target_id) references target (id) on delete restrict on update restrict;
-create index ix_instance_target_6 on instance (target_id);
-alter table organisation add constraint fk_organisation_authorUser_7 foreign key (author_id) references creator (id) on delete restrict on update restrict;
-create index ix_organisation_authorUser_7 on organisation (author_id);
-alter table target add constraint fk_target_qaIssue_8 foreign key (qaissue_id) references taxonomy (id) on delete restrict on update restrict;
-create index ix_target_qaIssue_8 on target (qaissue_id);
-alter table target add constraint fk_target_authorUser_9 foreign key (author_id) references creator (id) on delete restrict on update restrict;
-create index ix_target_authorUser_9 on target (author_id);
-alter table target add constraint fk_target_subject_10 foreign key (subject_id) references taxonomy (id) on delete restrict on update restrict;
-create index ix_target_subject_10 on target (subject_id);
-alter table target add constraint fk_target_organisation_11 foreign key (organisation_id) references organisation (id) on delete restrict on update restrict;
-create index ix_target_organisation_11 on target (organisation_id);
-alter table taxonomy add constraint fk_taxonomy_taxonomyVocabular_12 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id) on delete restrict on update restrict;
-create index ix_taxonomy_taxonomyVocabular_12 on taxonomy (taxonomy_vocabulary_id);
-alter table creator add constraint fk_creator_organisation_13 foreign key (organisation_id) references organisation (id) on delete restrict on update restrict;
-create index ix_creator_organisation_13 on creator (organisation_id);
+alter table field_url add constraint fk_field_url_target_4 foreign key (target_id) references target (id);
+create index ix_field_url_target_4 on field_url (target_id);
+alter table instance add constraint fk_instance_qaIssue_5 foreign key (qaissue_id) references taxonomy (id);
+create index ix_instance_qaIssue_5 on instance (qaissue_id);
+alter table instance add constraint fk_instance_authorUser_6 foreign key (author_id) references creator (id);
+create index ix_instance_authorUser_6 on instance (author_id);
+alter table instance add constraint fk_instance_target_7 foreign key (target_id) references target (id);
+create index ix_instance_target_7 on instance (target_id);
+alter table organisation add constraint fk_organisation_authorUser_8 foreign key (author_id) references creator (id);
+create index ix_organisation_authorUser_8 on organisation (author_id);
+alter table target add constraint fk_target_qaIssue_9 foreign key (qaissue_id) references taxonomy (id);
+create index ix_target_qaIssue_9 on target (qaissue_id);
+alter table target add constraint fk_target_authorUser_10 foreign key (author_id) references creator (id);
+create index ix_target_authorUser_10 on target (author_id);
+alter table target add constraint fk_target_subject_11 foreign key (subject_id) references taxonomy (id);
+create index ix_target_subject_11 on target (subject_id);
+alter table target add constraint fk_target_organisation_12 foreign key (organisation_id) references organisation (id);
+create index ix_target_organisation_12 on target (organisation_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyVocabular_13 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
+create index ix_taxonomy_taxonomyVocabular_13 on taxonomy (taxonomy_vocabulary_id);
+alter table creator add constraint fk_creator_organisation_14 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_14 on creator (organisation_id);
 
 
 
-alter table permission_role add constraint fk_permission_role_permission_01 foreign key (permission_id) references permission (id) on delete restrict on update restrict;
+alter table permission_role add constraint fk_permission_role_permission_01 foreign key (permission_id) references permission (id);
 
-alter table permission_role add constraint fk_permission_role_role_02 foreign key (role_id) references role (id) on delete restrict on update restrict;
+alter table permission_role add constraint fk_permission_role_role_02 foreign key (role_id) references role (id);
 
-alter table role_user add constraint fk_role_user_role_01 foreign key (role_id) references role (id) on delete restrict on update restrict;
+alter table role_user add constraint fk_role_user_role_01 foreign key (role_id) references role (id);
 
-alter table role_user add constraint fk_role_user_creator_02 foreign key (user_id) references creator (id) on delete restrict on update restrict;
+alter table role_user add constraint fk_role_user_creator_02 foreign key (user_id) references creator (id);
 
-alter table collection_target add constraint fk_collection_target_target_01 foreign key (target_id) references target (id) on delete restrict on update restrict;
+alter table collection_target add constraint fk_collection_target_target_01 foreign key (target_id) references target (id);
 
-alter table collection_target add constraint fk_collection_target_taxonomy_02 foreign key (collection_id) references taxonomy (id) on delete restrict on update restrict;
+alter table collection_target add constraint fk_collection_target_taxonomy_02 foreign key (collection_id) references taxonomy (id);
 
-alter table license_target add constraint fk_license_target_target_01 foreign key (target_id) references target (id) on delete restrict on update restrict;
+alter table license_target add constraint fk_license_target_target_01 foreign key (target_id) references target (id);
 
-alter table license_target add constraint fk_license_target_taxonomy_02 foreign key (license_id) references taxonomy (id) on delete restrict on update restrict;
+alter table license_target add constraint fk_license_target_taxonomy_02 foreign key (license_id) references taxonomy (id);
 
-alter table tag_target add constraint fk_tag_target_target_01 foreign key (target_id) references target (id) on delete restrict on update restrict;
+alter table tag_target add constraint fk_tag_target_target_01 foreign key (target_id) references target (id);
 
-alter table tag_target add constraint fk_tag_target_taxonomy_02 foreign key (tag_id) references taxonomy (ID) on delete restrict on update restrict;
+alter table tag_target add constraint fk_tag_target_taxonomy_02 foreign key (tag_id) references taxonomy (ID);
 
-alter table flag_target add constraint fk_flag_target_target_01 foreign key (target_id) references target (id) on delete restrict on update restrict;
+alter table flag_target add constraint fk_flag_target_target_01 foreign key (target_id) references target (id);
 
-alter table flag_target add constraint fk_flag_target_target_02 foreign key (flag_id) references target (id) on delete restrict on update restrict;
+alter table flag_target add constraint fk_flag_target_target_02 foreign key (flag_id) references target (id);
 
-alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key (tag_id) references taxonomy (id) on delete restrict on update restrict;
+alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key (tag_id) references taxonomy (id);
 
-alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id) on delete restrict on update restrict;
+alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
 
-alter table flag_instance add constraint fk_flag_instance_taxonomy_01 foreign key (flag_id) references taxonomy (id) on delete restrict on update restrict;
+alter table flag_instance add constraint fk_flag_instance_taxonomy_01 foreign key (flag_id) references taxonomy (id);
 
-alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (instance_id) references instance (id) on delete restrict on update restrict;
+alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (instance_id) references instance (id);
 
-alter table taxonomy_user add constraint fk_taxonomy_user_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id) on delete restrict on update restrict;
+alter table taxonomy_user add constraint fk_taxonomy_user_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
 
-alter table taxonomy_user add constraint fk_taxonomy_user_creator_02 foreign key (user_id) references creator (id) on delete restrict on update restrict;
+alter table taxonomy_user add constraint fk_taxonomy_user_creator_02 foreign key (user_id) references creator (id);
 
-alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id) on delete restrict on update restrict;
+alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
 
-alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_02 foreign key (parent_id) references taxonomy (id) on delete restrict on update restrict;
+alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_02 foreign key (parent_id) references taxonomy (id);
 
-alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_01 foreign key (taxonomy_id) references taxonomy (id) on delete restrict on update restrict;
+alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_01 foreign key (taxonomy_id) references taxonomy (id);
 
-alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_02 foreign key (parent_id) references taxonomy (id) on delete restrict on update restrict;
+alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_02 foreign key (parent_id) references taxonomy (id);
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+drop table if exists communication_log cascade;
 
-drop table if exists communication_log;
+drop table if exists contact_person cascade;
 
-drop table if exists contact_person;
+drop table if exists crawl_permission cascade;
 
-drop table if exists crawl_permission;
+drop table if exists field_url cascade;
 
-drop table if exists instance;
+drop table if exists instance cascade;
 
-drop table if exists lookup_entry;
+drop table if exists lookup_entry cascade;
 
-drop table if exists mail_template;
+drop table if exists mail_template cascade;
 
-drop table if exists nomination;
+drop table if exists nomination cascade;
 
-drop table if exists organisation;
+drop table if exists organisation cascade;
 
-drop table if exists permission;
+drop table if exists permission cascade;
 
-drop table if exists permission_role;
+drop table if exists permission_role cascade;
 
-drop table if exists permission_refusal;
+drop table if exists permission_refusal cascade;
 
-drop table if exists role;
+drop table if exists role cascade;
 
-drop table if exists role_user;
+drop table if exists role_user cascade;
 
-drop table if exists target;
+drop table if exists target cascade;
 
-drop table if exists collection_target;
+drop table if exists collection_target cascade;
 
-drop table if exists license_target;
+drop table if exists license_target cascade;
 
-drop table if exists tag_target;
+drop table if exists tag_target cascade;
 
-drop table if exists flag_target;
+drop table if exists flag_target cascade;
 
-drop table if exists taxonomy;
+drop table if exists taxonomy cascade;
 
-drop table if exists tag_instance;
+drop table if exists tag_instance cascade;
 
-drop table if exists flag_instance;
+drop table if exists flag_instance cascade;
 
-drop table if exists taxonomy_user;
+drop table if exists taxonomy_user cascade;
 
-drop table if exists taxonomy_parents;
+drop table if exists taxonomy_parents cascade;
 
-drop table if exists taxonomy_parents_all;
+drop table if exists taxonomy_parents_all cascade;
 
-drop table if exists taxonomy_vocabulary;
+drop table if exists taxonomy_vocabulary cascade;
 
-drop table if exists creator;
-
-SET REFERENTIAL_INTEGRITY TRUE;
+drop table if exists creator cascade;
 
 drop sequence if exists communication_log_seq;
 
 drop sequence if exists contact_person_seq;
 
 drop sequence if exists crawl_permission_seq;
+
+drop sequence if exists field_url_seq;
 
 drop sequence if exists instance_seq;
 

@@ -37,6 +37,7 @@ import views.html.licence.ukwalicenceresult;
 import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -260,13 +261,21 @@ public class TargetController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("Targets.list()");
+    	Logger.info("TargetController.list()");
+    	
+    	Page<Target> pages = Target.find.fetch("fieldUrls").where()
+			.eq(Const.ACTIVE, true)
+			.add(Expr.or(Expr.icontains("fieldUrls.url", filter), Expr.icontains("t0.title", filter)))
+			.orderBy("t0.title" + " " + order)
+			.findPagingList(10)
+			.setFetchAhead(false).getPage(pageNo);
+    	
         return ok(
         	list.render(
         			"Lookup", 
         			User.findByEmail(request().username()), 
         			filter, 
-        			Target.page(pageNo, 10, sortBy, order, filter), 
+        			pages, 
         			sortBy, 
         			order)
         	);
@@ -1721,7 +1730,6 @@ public class TargetController extends AbstractController {
         	newTarget.isInScopeIpValue               = newScope;
         	newTarget.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(newTarget.fieldUrl(), newTarget.url);
         	
-        	Taxonomy subject = newTarget.subject;
 //        	Iterator<Taxonomy> itrSubjects = subjects.iterator();
 //        	while (itrSubjects.hasNext()) {
 //        		Logger.info("+++ subject_to_target before target save: " + itrSubjects.next().toString());
@@ -1732,7 +1740,6 @@ public class TargetController extends AbstractController {
 	             * Create or update association between CrawlPermission and Target
 	             */
 	            CrawlPermission crawlPermission = CrawlPermission.findByTarget(newTarget.fieldUrl());
-	            crawlPermission.updateTarget();
 	            Ebean.update(crawlPermission);
         	} catch (Exception e) {
         		Logger.info("No crawl permission to update for URL: " + newTarget.fieldUrl());

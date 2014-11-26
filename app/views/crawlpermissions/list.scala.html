@@ -171,10 +171,10 @@
 							<a href="@permission.target">@permission.target</a>			                
 						</td>
 						<td>
-			                @ContactPerson.findNamesByUrls(permission.contactPerson)
+			                @permission.contactPerson.name
 						</td>
 						<td>
-			                <a href="@routes.CommunicationLogs.showLogs(permission.url)">Log</a>
+			                <a href="@routes.CommunicationLogController.showLogs(permission.url)">Log</a>
 						</td>
 						<td>
 						    @if(permission.status.equals("GRANTED")) {

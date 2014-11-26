@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
  * Manage logs.
  */
 @Security.Authenticated(Secured.class)
-public class CommunicationLogs extends AbstractController {
+public class CommunicationLogController extends AbstractController {
   
     /**
      * Display the log.
@@ -92,9 +92,9 @@ public class CommunicationLogs extends AbstractController {
             	log.name = name;
                 log.id = Target.createId();
                 log.url = Const.ACT_URL + log.id;
-                log.curator = User.findByEmail(request().username()).url;        
+                log.user = User.findByEmail(request().username());        
         		Logger.info("add communication log entry with url: " + log.url + ", and name: " + 
-        				log.name + ", curator: " + log.curator);
+        				log.name + ", curator: " + log.user);
         		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
         		logFormNew = logFormNew.fill(log);
               	return ok(
@@ -159,9 +159,9 @@ public class CommunicationLogs extends AbstractController {
     	log.name = name;
         log.id = Target.createId();
         log.url = Const.ACT_URL + log.id;
-        log.curator = User.findByEmail(request().username()).url;        
+        log.user = User.findByEmail(request().username());        
 		Logger.info("add communication log entry with url: " + log.url + ", and name: " + 
-				log.name + ", curator: " + log.curator);
+				log.name + ", curator: " + log.user);
 		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
 		logFormNew = logFormNew.fill(log);
       	return ok(
@@ -189,14 +189,14 @@ public class CommunicationLogs extends AbstractController {
 	    }
 	    Logger.info("permission: " + getFormParam(Const.PERMISSIONS));
 	    if (getFormParam(Const.PERMISSIONS) != null) {
-	    	log.permission = CrawlPermission.findByName(getFormParam(Const.PERMISSIONS)).url;
-    	    Logger.info("log.permission: " + log.permission);
+	    	log.crawlPermission = CrawlPermission.findByName(getFormParam(Const.PERMISSIONS));
+    	    Logger.info("log.permission: " + log.crawlPermission);
 	    }
 	    if (getFormParam(Const.NOTES) != null) {
 	    	log.notes = getFormParam(Const.NOTES);
 	    }
 	    if (getFormParam(Const.CURATOR) != null) {
-	    	log.curator = User.findByName(getFormParam(Const.CURATOR)).url;
+	    	log.user = User.findByName(getFormParam(Const.CURATOR));
 	    }    	
 		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
 		logFormNew = logFormNew.fill(log);
@@ -268,14 +268,14 @@ public class CommunicationLogs extends AbstractController {
         	    }
         	    Logger.info("permission: " + getFormParam(Const.PERMISSIONS));
         	    if (getFormParam(Const.PERMISSIONS) != null) {
-        	    	log.permission = CrawlPermission.findByName(getFormParam(Const.PERMISSIONS)).url;
-            	    Logger.info("log.permission: " + log.permission);
+        	    	log.crawlPermission = CrawlPermission.findByName(getFormParam(Const.PERMISSIONS));
+            	    Logger.info("log.permission: " + log.crawlPermission);
         	    }
         	    if (getFormParam(Const.NOTES) != null) {
         	    	log.notes = getFormParam(Const.NOTES);
         	    }
         	    if (getFormParam(Const.CURATOR) != null) {
-        	    	log.curator = User.findByName(getFormParam(Const.CURATOR)).url;
+        	    	log.user = User.findByName(getFormParam(Const.CURATOR));
         	    }
             } catch (Exception e) {
             	Logger.info("CommunicationLog not existing exception");
@@ -288,14 +288,14 @@ public class CommunicationLogs extends AbstractController {
            		Logger.info("update log: " + log.toString());
                	Ebean.update(log);
         	}
-	        return redirect(routes.CommunicationLogs.edit(log.url));
+	        return redirect(routes.CommunicationLogController.edit(log.url));
         } 
         if (delete != null) {
         	CommunicationLog log = CommunicationLog.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(log);
-	        res = redirect(routes.CommunicationLogs.index()); 
+	        res = redirect(routes.CommunicationLogController.index()); 
         }
-    	res = redirect(routes.CommunicationLogs.index()); 
+    	res = redirect(routes.CommunicationLogController.index()); 
         return res;
     }	   
 

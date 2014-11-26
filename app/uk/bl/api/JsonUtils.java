@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import models.Collection;
 import models.CollectionArea;
+import models.FieldUrl;
 import models.Instance;
 import models.License;
 import models.Organisation;
@@ -704,13 +705,13 @@ public enum JsonUtils {
 						}
 						
 						// "field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
-						List<String> fieldUrls = new ArrayList<String>();
+						List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
 						for (Map<String,String> map : target.getField_url()) {
 							Logger.info("Field Url: " + map.get("url"));
 							String url = map.get("url");
 							// TODO: KL THIS IS A LIST OF URLS 
 							target.domain = Scope.getDomainFromUrl(url);
-							fieldUrls.add(url);
+							fieldUrls.add(new FieldUrl(url));
 
 						}
 						if (!fieldUrls.isEmpty()) {

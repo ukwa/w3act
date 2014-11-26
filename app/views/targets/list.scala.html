@@ -8,7 +8,7 @@
 			context = @play.api.Play.current.configuration.getString("application.context");
 			searchContext = 'targets';
 			applySearchTargetsTab(context, searchContext);
-			scopeCheck(context);
+//			scopeCheck(context);
 		});
 	</script>
 }
@@ -126,13 +126,18 @@
 			<tbody>
 				@for(target <- currentPage.getList) {
 				<tr>
-					<td><a class="brand" href="@routes.TargetController.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")" target="_blank">@target.get_field_list_as_str("fieldUrl")</a></td>
-					<td><a class="brand" href="opera.bl.uk:/8080/wayback/*@target.get_field_list_as_str("fieldUrl")" target="_blank">(mid-crawl),</a>
-	                 	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url=http://@target.get_field_list_as_str("fieldUrl")" target="_blank">(archival),</a>
-	                 	<a class="brand" href="@target.get_field_list_as_str("fieldUrl")" target="_blank">(live)</a></td>
-					@if(target.organisation != null 
-						&& target.organisation.url != null
-						&& target.organisation.title != null) {
+					<td>
+						<a class="brand" href="@routes.TargetController.view(target.url)">@target.title</a><br>
+						@for(fieldUrl <- target.fieldUrls) {
+							<a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a>
+						}
+					</td>
+					<td>
+						<a class="brand" href="opera.bl.uk:/8080/wayback/*@target.fieldUrl()" target="_blank">(mid-crawl),</a>
+	                 	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url=http://@target.fieldUrl()" target="_blank">(archival),</a>
+	                 	<a class="brand" href="@target.fieldUrl()" target="_blank">(live)</a>
+	                 </td>
+					@if(target.organisation != null) {
 						<td><a href="@routes.Organisations.view(target.organisation.url)">
 							@target.organisation.title</a></td>
 					} else {
@@ -140,14 +145,24 @@
 					}
 					<td>0</td>
 					<td>@target.field_crawl_frequency</td>
-					<td><a class="brand" href="@routes.Curators.edit(target.authorUser.url)">@target.get_user_by_id()</a></td>
-					<td>@target.qaIssue.name</td>
-					@if(target.fieldUrl != null && target.url != null) {
-					<td>@target.checkScopeStr(target.fieldUrl, target.url)</td>
-					} else {
-						<td></td>
-					}
-					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@target.get_field_list_as_str("fieldUrl")" target="_blank">(mementos)</a></td>
+					<td>
+						@if(target.authorUser != null) {
+							<a class="brand" href="@routes.Curators.edit(target.authorUser.url)">@target.authorUser.name</a>
+						}
+					</td>
+					<td>
+						@if(target.qaIssue != null) {
+							@target.qaIssue.name
+						}
+					</td>
+					<td>
+						@if(target.fieldUrls != null && target.url != null) {
+							@for(fieldUrl <- target.fieldUrls) {
+								@target.checkScopeStr(fieldUrl.url, target.url)
+							}
+						}
+					</td>
+					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@target.fieldUrl()" target="_blank">(mementos)</a></td>
 				</tr>
 				}
 			</tbody>

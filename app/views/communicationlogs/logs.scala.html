@@ -33,7 +33,7 @@
     <article class="permissions">
 
 		<div id="forms">
-			@helper.form(action=routes.CommunicationLogs.search, 'class -> "form-inline") {
+			@helper.form(action=routes.CommunicationLogController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter communication log Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
@@ -91,12 +91,12 @@
 			<tbody>
 			@logs.map { log =>		              
 				<tr>
-					<td><a href="@routes.CommunicationLogs.view(log.url)">@log.name</a></td>
+					<td><a href="@routes.CommunicationLogController.view(log.url)">@log.name</a></td>
 					<td>@log.date</td>
 					<td>@log.ttype</td>
-					<td>@User.findByUrl(log.curator).name</td>
-					@if(log.permission != null && log.permission.length() > 0) {
-					<td>@CrawlPermission.showByUrl(log.permission).name</td>
+					<td>@log.user.name</td>
+					@if(log.crawlPermission != null) {
+					<td>@log.crawlPermission.name</td>
 					} else {
 					<td></td>
 					}

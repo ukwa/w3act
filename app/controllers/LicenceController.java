@@ -45,7 +45,7 @@ public class LicenceController extends AbstractController {
     public static Result form(String permissionUrl) {
 		return ok(
             ukwalicence.render(permissionUrl, CrawlPermission.showByUrl(permissionUrl).name, 
-            		CrawlPermission.showByUrl(permissionUrl).targetName, "", "", "", "", "", "", "")
+            		CrawlPermission.showByUrl(permissionUrl).target.title, "", "", "", "", "", "", "")
         );
     }
     
@@ -84,19 +84,19 @@ public class LicenceController extends AbstractController {
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.WEBSITE_TITLE_ACK + Const.TWO_POINTS + permission.name + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.WEB_ADDRESS_ACK + Const.TWO_POINTS + permission.targetName + Const.CSV_LINE_END);
+		sb.append(Const.WEB_ADDRESS_ACK + Const.TWO_POINTS + permission.target.title + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.NAME_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).name + Const.CSV_LINE_END);
+		sb.append(Const.NAME_ACK + Const.TWO_POINTS + permission.contactPerson.name + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.POSITION_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).position + Const.CSV_LINE_END);
+		sb.append(Const.POSITION_ACK + Const.TWO_POINTS + permission.contactPerson.position + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.EMAIL_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).email + Const.CSV_LINE_END);
+		sb.append(Const.EMAIL_ACK + Const.TWO_POINTS + permission.contactPerson.email + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.CONTACT_ORGANISATION_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).contactOrganisation + Const.CSV_LINE_END);
+		sb.append(Const.CONTACT_ORGANISATION_ACK + Const.TWO_POINTS + permission.contactPerson.contactOrganisation + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.TEL_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).phone + Const.CSV_LINE_END);
+		sb.append(Const.TEL_ACK + Const.TWO_POINTS + permission.contactPerson.phone + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.POSTAL_ADDRESS_ACK + Const.TWO_POINTS + ContactPerson.showByUrl(permission.contactPerson).postalAddress + Const.CSV_LINE_END);
+		sb.append(Const.POSTAL_ADDRESS_ACK + Const.TWO_POINTS + permission.contactPerson.postalAddress + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.DESCRIPTION_ACK + Const.TWO_POINTS + permission.anyOtherInformation + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
@@ -104,7 +104,7 @@ public class LicenceController extends AbstractController {
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.AGREE_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.agree) + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.DATE_ACK + Const.TWO_POINTS + permission.licenseDate + Const.CSV_LINE_END);
+		sb.append(Const.DATE_ACK + Const.TWO_POINTS + permission.createdAt + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.PUBLICITY_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.publish) + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
@@ -180,12 +180,12 @@ public class LicenceController extends AbstractController {
         	    if (permissionList != null && permissionList.size() > 0) {
         	    	CrawlPermission permission = permissionList.get(0);
                 	Logger.info("found crawl permission: " + permission);
-            	    permission.targetName = target;
+            	    permission.target.title = target;
                     if (getFormParam(Const.NAME) != null) {
                         permission.name = getFormParam(Const.NAME);
                     }
                     if (getFormParam(Const.CONTACT_PERSON) != null) {
-                        permission.contactPerson = getFormParam(Const.CONTACT_PERSON);
+                        permission.contactPerson.name = getFormParam(Const.CONTACT_PERSON);
                     }
                     if (getFormParam(Const.DESCRIPTION) != null) {
                         permission.anyOtherInformation = getFormParam(Const.DESCRIPTION);
@@ -214,7 +214,7 @@ public class LicenceController extends AbstractController {
                         	// update existing contact person
                         	Ebean.update(contactPerson);
                 	        Logger.info("update contact person: " + contactPerson.toString());
-                            permission.contactPerson = contactPerson.url;
+                            permission.contactPerson = contactPerson;
                         } catch (Exception e) {
                         	Logger.error("Owner not found: " + ownerName);
                         }
@@ -241,14 +241,12 @@ public class LicenceController extends AbstractController {
                             }
                         	Ebean.save(person);
                 	        Logger.info("save contact person: " + person.toString());
-                            permission.contactPerson = person.url;
+                            permission.contactPerson = person;
                         }
                     }
-                    if (getFormParam(Const.LOG_DATE) != null) {
-                        permission.licenseDate = getFormParam(Const.LOG_DATE);
-                    }
+
                     if (getFormParam(Const.LICENCE) != null) {
-                    	permission.license = getFormParam(Const.LICENCE);
+                    	permission.license.name = getFormParam(Const.LICENCE);
                     }                    
                     if (isAgreed) {
 //                        if (isAgreed && noThirdPartyContent && mayPublish) {
@@ -260,10 +258,10 @@ public class LicenceController extends AbstractController {
                     permission.thirdPartyContent = noThirdPartyContent;
                     permission.publish = mayPublish;
                 	Ebean.update(permission);
-        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission.url, permission.creatorUser, Const.UPDATE);
+        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
         	        Ebean.save(log);
-        	        CrawlPermissions.updateAllByTarget(permission.url, permission.targetName, permission.status);
-        	        TargetController.updateQaStatus(permission.targetName, permission.status);
+        	        CrawlPermissions.updateAllByTarget(permission.url, permission.target.title, permission.status);
+        	        TargetController.updateQaStatus(permission.target.title, permission.status);
         	    	Logger.debug("before sendAcknowledgementToSiteOwner mailTemplate: " + getFormParam(Const.EMAIL));
         	        if (getFormParam(Const.EMAIL) != null) {
         	        	sendAcknowledgementToSiteOwner(getFormParam(Const.EMAIL), permission);
@@ -272,8 +270,8 @@ public class LicenceController extends AbstractController {
 	                    if (getFormParam(Const.LICENCE) != null) {
 	                    	String licenceName = getFormParam(Const.LICENCE);
 	                    	Taxonomy licenceTaxonomy = Taxonomy.findByName(licenceName);
-	                    	Logger.info("Permission target: " + permission.targetName);
-	                    	Target targetObj = Target.findByTarget(permission.targetName);
+	                    	Logger.info("Permission target: " + permission.target.title);
+	                    	Target targetObj = Target.findByTarget(permission.target.title);
 	                    	Logger.info("Target object: " + targetObj);
 	                    	if (targetObj != null) {
 //	                    		targetObj.fieldLicense = licenceTaxonomy.url;
@@ -286,7 +284,7 @@ public class LicenceController extends AbstractController {
 	                    	    	if (current_target.fieldUrl() != null) {
 	                    	    		if (current_target.fieldUrl().contains(Const.SLASH_DELIMITER)) {
 	                    			    	String[] parts = current_target.fieldUrl().split(Const.SLASH_DELIMITER);
-	                    			    	if (parts[0].equals(permission.targetName)) {
+	                    			    	if (parts[0].equals(permission.target.title)) {
 //				                    			current_target.fieldLicense = licenceTaxonomy.url;
 					                    		Ebean.update(current_target);
 	                    			    	}

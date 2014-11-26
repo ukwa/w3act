@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import play.data.validation.Constraints.Required;
@@ -13,6 +15,7 @@ import uk.bl.Const;
 import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class supports the management of logging communications occurring
@@ -33,13 +36,11 @@ public class CommunicationLog extends ActModel {
     @Required
     @Column(columnDefinition = "text")
     public String name;
-    
-    /**
-     * The name of the curator with whom the communication took place.
-     * This name should be auto-populated with name of logged-in user.
-     */
-    @Column(columnDefinition = "text")
-    public String curator;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	public User user;
     
     /**
      * The date of communication in format (dd/mm/yyyy).
@@ -53,11 +54,10 @@ public class CommunicationLog extends ActModel {
     @Column(columnDefinition = "text")
     public String ttype;
     
-    /**
-     * This field is for associated crawl permission ID.
-     */
-    @Column(columnDefinition = "text")
-    public String permission;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "crawlPermission_id")
+	public CrawlPermission crawlPermission;
     
     /**
      * Allows the addition of further notes regarding communication.
@@ -67,13 +67,7 @@ public class CommunicationLog extends ActModel {
 
     public static final Model.Finder<Long, CommunicationLog> find = new Model.Finder<Long, CommunicationLog>(Long.class, CommunicationLog.class);
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public static CommunicationLog findByName(String name)
-    {
+    public static CommunicationLog findByName(String name) {
         return find.where()
                    .eq("name",
                        name)
@@ -143,20 +137,20 @@ public class CommunicationLog extends ActModel {
      * like creation of permission, date when permission was queued, send and granted
      * or refused. 
      * @param name The title of the log entry
-     * @param permission The crawl permission
+     * @param crawlPermission The crawl permission
      * @param user The responsible user
      * @param notes Additional information about log entry like save, update, remove
      */
-    public static CommunicationLog logHistory(String name, String permission, String user, String notes) {
+    public static CommunicationLog logHistory(String name, CrawlPermission crawlPermission, User user, String notes) {
         CommunicationLog log = new CommunicationLog();
         log.id = Utils.createId();
         log.url = Const.ACT_URL + log.id;
 //        log.curator = User.findByEmail(request().username()).url; 
-        log.curator = user;
+        log.user = user;
         log.ttype = Const.CommunicationLogTypes.OTHER.name();
         log.date = Utils.getCurrentDate();
         log.name = name;
-        log.permission = permission;
+        log.crawlPermission = crawlPermission;
         log.notes = notes;
        	return log;
     }
