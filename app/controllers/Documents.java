@@ -1,22 +1,17 @@
 package controllers;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.avaje.ebean.Ebean;
-import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.Book;
 import models.Document;
-import models.DocumentType;
 import models.Journal;
 import models.JournalTitle;
-import models.Tag;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -33,16 +28,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
 import uk.bl.Const;
-import uk.bl.api.CrawlData;
 import views.html.documents.edit;
 import views.html.documents.list;
 
 @Security.Authenticated(Secured.class)
 public class Documents extends AbstractController {
-	
-	/*public static List<String> modifiableFieldList = Arrays.asList("id", "title", "doi", "publicationDate",
-			"filename", "type", "journal.journalTitleId", "journal.publicationYear",
-			"journal.volume", "journal.issue", "journal.author");*/
 	
 	public static Result view(Long id) {
 		return render(id, false);
@@ -183,19 +173,6 @@ public class Documents extends AbstractController {
      */
     public static Result list(Long watchedTargetId, boolean submitted, int pageNo, String sortBy, String order, String filter) {
     	Logger.info("Documents.list()");
-    	
-    	/*List<WatchedTarget> watchedTargets = Arrays.asList(
-    			new WatchedTarget("http://www.ifs.org.uk/publications/re", false),
-    			new WatchedTarget("http://www.thinknpc.org/publications/", true),
-    			new WatchedTarget("http://www.ofsted.gov.uk/resources/surveys", false),
-    			new WatchedTarget("http://www.parliament.uk/business/committees/committees-a-z/commons-select/home-affairs-committee/publications/", false),
-    			new WatchedTarget("https://www.gov.uk/government/publications", false)
-    			);
-    	
-    	for (WatchedTarget watchedTarget : watchedTargets) {
-    		List<Document> documentList = CrawlData.crawlForDocuments(watchedTarget);
-    		Ebean.save(documentList);
-    	}*/
     	
         return ok(
         	list.render(

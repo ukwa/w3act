@@ -1,4 +1,4 @@
-package uk.bl.api;
+package uk.bl.crawling;
 
 public class Link {
 	public String source;

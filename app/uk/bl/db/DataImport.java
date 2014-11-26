@@ -28,10 +28,10 @@ import controllers.Organisations;
 import play.Logger;
 import play.libs.Yaml;
 import uk.bl.Const;
-import uk.bl.api.CrawlData;
 import uk.bl.api.JsonUtils;
 import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
+import uk.bl.crawling.Crawler;
 
 public enum DataImport {
 
@@ -76,8 +76,6 @@ public enum DataImport {
 				Map<String,List<Object>> allDocuments = (Map<String,List<Object>>)Yaml.load("documents.yml");
                 insertInitialData(Const.JOURNAL_TITLES, JournalTitle.class, allDocuments);
                 insertInitialData(Const.DOCUMENTS, Document.class, allDocuments);
-                List<Document> documentList = CrawlData.retrieveDocuments();
-    	    	Ebean.save(documentList);
                 
                 Logger.info("load curators ...");
 		        List<Object> allCurators = JsonUtils.getDrupalDataBase(Const.NodeType.USER);

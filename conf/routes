@@ -126,8 +126,6 @@ GET		/watchedtargets/list				controllers.WatchedTargets.list(p:Int ?= 0, s ?= "t
 GET     /watchedtargets/:watchedtarget		controllers.Documents.list(watchedtarget: Long, submitted: Boolean ?= false, p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 POST	/watchedtargets/crawl				controllers.WatchedTargets.crawl(watchedtarget: Long)
 
-GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)
-
 GET     /flags                              controllers.Flags.index()
 GET     /flags/list							controllers.Flags.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET    	/flags/search                       controllers.Flags.search()

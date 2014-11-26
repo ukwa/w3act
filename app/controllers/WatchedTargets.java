@@ -20,7 +20,7 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.CrawlData;
+import uk.bl.crawling.Crawler;
 import views.html.watchedtargets.list;
 
 @Security.Authenticated(Secured.class)
@@ -100,7 +100,7 @@ public class WatchedTargets extends AbstractController {
     
     public static Result crawl(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
-    	List<Document> documentList = CrawlData.crawlForDocuments(watchedTarget);
+    	List<Document> documentList = (new Crawler()).crawlForDocuments(watchedTarget);
     	List<Document> newDocumentList = new ArrayList<>();
     	
     	for (Document document : documentList)

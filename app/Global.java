@@ -1,13 +1,16 @@
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import akka.actor.ActorRef;
+import akka.actor.Props;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
-import uk.bl.Const;
-import uk.bl.api.JsonUtils;
+import scala.concurrent.duration.Duration;
 import uk.bl.db.DataImport;
+import uk.bl.crawling.CrawlActor;
 import play.mvc.*;
 import play.mvc.Http.*;
+import play.libs.Akka;
 import play.libs.F.*;
 import static play.mvc.Results.*;
 
@@ -22,6 +25,16 @@ public class Global extends GlobalSettings {
     	if (dataImport) {
     		DataImport.INSTANCE.insert();
     	}
+    	
+    	ActorRef myActor = Akka.system().actorOf(Props.create(CrawlActor.class));
+		Akka.system().scheduler().schedule(
+				Duration.create(0, TimeUnit.MILLISECONDS), //Initial delay 0 milliseconds
+				Duration.create(12, TimeUnit.HOURS),     //Frequency 12 hours
+				myActor,
+				new CrawlActor.StartMessage(),
+				Akka.system().dispatcher(),
+				null
+    	);
     }
     
     public Promise<Result> onError(RequestHeader request, Throwable t) {
