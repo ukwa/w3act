@@ -29,8 +29,8 @@ public class MailTemplate extends ActModel {
 	private static final long serialVersionUID = -2157694575463302989L;
 
     //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="mailTemplateToCrawlPermission", cascade=CascadeType.PERSIST)
-    private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
+    @OneToMany(mappedBy="mailTemplate", cascade=CascadeType.PERSIST)
+    public List<CrawlPermission> crawlPermissions;
      
     /**
      * The name of the e-mail.
@@ -89,14 +89,6 @@ public class MailTemplate extends ActModel {
         return name;
     }
 
-    public List<CrawlPermission> getCrawlPermissions() {
-    	return this.crawlPermissions;
-    }
-    
-    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
-    	this.crawlPermissions = crawlPermissions;
-    }    
-        
     public static MailTemplate findByName(String name)
     {
         return find.where()

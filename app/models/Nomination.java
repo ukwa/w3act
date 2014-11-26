@@ -89,11 +89,6 @@ public class Nomination extends ActModel {
     public String notes;
 
     /**
-     * The date of the nomination. System generated.
-     */
-    public Date nominationDate;
-    
-    /**
      * Indicates that the new nomination has been inspected by Archivist.
      */
     @JsonIgnore
