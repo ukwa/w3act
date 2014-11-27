@@ -61,30 +61,35 @@ public class Target extends UrlModel {
 	public User authorUser;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
-	public List<Instance> instances;
-
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "subject_id")
-	public Taxonomy subject;
-	
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "organisation_id")
 	public Organisation organisation;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "crawlPermission_id")
+	public CrawlPermission crawlPermission;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "license_id")
+	public List<Taxonomy> licenses;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	public List<Instance> instances;
+
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
+	public List<Taxonomy> subjects;
 
     @JsonIgnore
     @ManyToMany
 	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
 	public List<Taxonomy> collections;
-
-    @JsonIgnore
-    @ManyToMany
-	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
-	public List<Taxonomy> licenses;
 
 	@JsonIgnore
     @ManyToMany
@@ -97,10 +102,6 @@ public class Target extends UrlModel {
 	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
     public List<Target> flags;
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
-	private List<CrawlPermission> crawlPermissions;
 
 	@JsonIgnore
 	@Required
@@ -364,14 +365,6 @@ public class Target extends UrlModel {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long, Target> find = new Model.Finder(
 			Long.class, Target.class);
-
-	public List<CrawlPermission> getCrawlPermissions() {
-		return this.crawlPermissions;
-	}
-
-	public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
-		this.crawlPermissions = crawlPermissions;
-	}
 
 	/**
 	 * Retrieve targets
@@ -743,24 +736,24 @@ public class Target extends UrlModel {
 	 * 
 	 * @return duplicate count
 	 */
-	public static List<String> getSubjects() {
-		List<String> subjects = new ArrayList<String>();
-		List<Target> allTargets = find.all();
-		Iterator<Target> itr = allTargets.iterator();
-//		while (itr.hasNext()) {
-//			Target target = itr.next();
-//			if (target.fieldSubject != null && target.fieldSubject.length() > 0
-//					&& !subjects.contains(target.fieldSubject)) {
-//				ExpressionList<Target> ll = find.where().contains(
-//						"field_subject", target.fieldSubject);
-//				if (ll.findRowCount() > 0) {
-//					subjects.add(target.fieldSubject);
-//				}
-//			}
-//		}
-//		return subjects;
-		throw new NotImplementedError();
-	}
+//	public static List<String> getSubjects() {
+//		List<String> subjects = new ArrayList<String>();
+//		List<Target> allTargets = find.all();
+//		Iterator<Target> itr = allTargets.iterator();
+////		while (itr.hasNext()) {
+////			Target target = itr.next();
+////			if (target.fieldSubject != null && target.fieldSubject.length() > 0
+////					&& !subjects.contains(target.fieldSubject)) {
+////				ExpressionList<Target> ll = find.where().contains(
+////						"field_subject", target.fieldSubject);
+////				if (ll.findRowCount() > 0) {
+////					subjects.add(target.fieldSubject);
+////				}
+////			}
+////		}
+////		return subjects;
+//		throw new NotImplementedError();
+//	}
 
 	/**
 	 * This method retrieves value of the list field.
@@ -837,6 +830,9 @@ public class Target extends UrlModel {
 		return res;
 	}
 
+	public static Target findByWct(String url) {
+		return find.where().eq("edit_url", url).findUnique();
+	}
 	/**
 	 * Check by URL if target object exists in database.
 	 * 
@@ -994,22 +990,20 @@ public class Target extends UrlModel {
 	 * @param url
 	 * @return true if license exists
 	 */
-	public static boolean hasGrantedLicense(String url) {
-		Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true)
-				.findUnique();
-		boolean res = false;
-		Logger.info("hasGrantedLicense url: " + url);
-//		if (target != null
-//				&& target.fieldLicense != null
-//				&& target.fieldLicense.length() > 0
-//				&& !target.fieldLicense.toLowerCase().contains(Const.NONE)
-//				&& target.qaStatus != null
-//				&& target.qaStatus.equals(Const.CrawlPermissionStatus.GRANTED
-//						.name())) {
-//			res = true;
+	public boolean hasGrantedLicense() {
+		Logger.info("hasGrantedLicense");
+//		if QAStatus is granted 
+//		this.crawlPermissions;
+//		this.qaIssue;
+//	    @if(permission.status.equals("GRANTED")) {
+		// TODO: KL check higher level license too
+		if (crawlPermission.name.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+			return true;
+		}
+//		if (this.qaIssue != null && this.qaIssue.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+//			return true;
 //		}
-//		return res;
-		throw new NotImplementedError();
+		return false;
 	}
 
 	/**
@@ -2680,8 +2674,8 @@ public class Target extends UrlModel {
 	@Override
 	public String toString() {
 		return "Target [organisation=" + organisation + ", authorUser="
-				+ authorUser + ", collections=" + collections + ", subject="
-				+ subject + ", licenses=" + licenses + ", fieldCrawlStartDate="
+				+ authorUser + ", collections=" + collections + ", subjects="
+				+ subjects + ", licenses=" + licenses + ", fieldCrawlStartDate="
 				+ fieldCrawlStartDate + ", fieldCrawlEndDate="
 				+ fieldCrawlEndDate + ", legacySiteId=" + legacySiteId
 				+ ", active=" + active + ", whiteList=" + whiteList

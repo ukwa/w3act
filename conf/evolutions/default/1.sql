@@ -8,10 +8,10 @@ create table communication_log (
   url                       varchar(255),
   created_at                timestamp,
   name                      text,
-  curator                   text,
+  user_id                   bigint,
   date                      text,
   ttype                     text,
-  permission                text,
+  crawlPermission_id        bigint,
   notes                     text,
   updated_at                timestamp not null,
   constraint uq_communication_log_url unique (url),
@@ -45,16 +45,11 @@ create table crawl_permission (
   mailTemplate_id           bigint,
   contactPerson_id          bigint,
   name                      text,
-  target_name               text,
   description               text,
   any_other_information     text,
+  archivist_id              bigint,
   status                    text,
-  contact_person            text,
-  creator_user              text,
-  assigned_archivist        text,
-  template                  text,
-  license                   text,
-  license_date              text,
+  license_id                bigint,
   request_followup          boolean,
   number_requests           bigint,
   third_party_content       boolean,
@@ -67,11 +62,10 @@ create table crawl_permission (
 
 create table field_url (
   id                        bigint not null,
-  url                       varchar(255),
+  url                       text,
   created_at                timestamp,
   target_id                 bigint,
   updated_at                timestamp not null,
-  constraint uq_field_url_url unique (url),
   constraint pk_field_url primary key (id))
 ;
 
@@ -188,7 +182,6 @@ create table nomination (
   nominated_website_owner   boolean,
   justification             text,
   notes                     text,
-  nomination_date           timestamp,
   nomination_checked        boolean,
   updated_at                timestamp not null,
   constraint uq_nomination_url unique (url),
@@ -453,34 +446,42 @@ create sequence taxonomy_vocabulary_seq;
 
 create sequence creator_seq;
 
-alter table crawl_permission add constraint fk_crawl_permission_target_1 foreign key (target_id) references target (id);
-create index ix_crawl_permission_target_1 on crawl_permission (target_id);
-alter table crawl_permission add constraint fk_crawl_permission_mailTempla_2 foreign key (mailTemplate_id) references mail_template (id);
-create index ix_crawl_permission_mailTempla_2 on crawl_permission (mailTemplate_id);
-alter table crawl_permission add constraint fk_crawl_permission_contactPer_3 foreign key (contactPerson_id) references contact_person (id);
-create index ix_crawl_permission_contactPer_3 on crawl_permission (contactPerson_id);
-alter table field_url add constraint fk_field_url_target_4 foreign key (target_id) references target (id);
-create index ix_field_url_target_4 on field_url (target_id);
-alter table instance add constraint fk_instance_qaIssue_5 foreign key (qaissue_id) references taxonomy (id);
-create index ix_instance_qaIssue_5 on instance (qaissue_id);
-alter table instance add constraint fk_instance_authorUser_6 foreign key (author_id) references creator (id);
-create index ix_instance_authorUser_6 on instance (author_id);
-alter table instance add constraint fk_instance_target_7 foreign key (target_id) references target (id);
-create index ix_instance_target_7 on instance (target_id);
-alter table organisation add constraint fk_organisation_authorUser_8 foreign key (author_id) references creator (id);
-create index ix_organisation_authorUser_8 on organisation (author_id);
-alter table target add constraint fk_target_qaIssue_9 foreign key (qaissue_id) references taxonomy (id);
-create index ix_target_qaIssue_9 on target (qaissue_id);
-alter table target add constraint fk_target_authorUser_10 foreign key (author_id) references creator (id);
-create index ix_target_authorUser_10 on target (author_id);
-alter table target add constraint fk_target_subject_11 foreign key (subject_id) references taxonomy (id);
-create index ix_target_subject_11 on target (subject_id);
-alter table target add constraint fk_target_organisation_12 foreign key (organisation_id) references organisation (id);
-create index ix_target_organisation_12 on target (organisation_id);
-alter table taxonomy add constraint fk_taxonomy_taxonomyVocabular_13 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
-create index ix_taxonomy_taxonomyVocabular_13 on taxonomy (taxonomy_vocabulary_id);
-alter table creator add constraint fk_creator_organisation_14 foreign key (organisation_id) references organisation (id);
-create index ix_creator_organisation_14 on creator (organisation_id);
+alter table communication_log add constraint fk_communication_log_user_1 foreign key (user_id) references creator (id);
+create index ix_communication_log_user_1 on communication_log (user_id);
+alter table communication_log add constraint fk_communication_log_crawlPerm_2 foreign key (crawlPermission_id) references crawl_permission (id);
+create index ix_communication_log_crawlPerm_2 on communication_log (crawlPermission_id);
+alter table crawl_permission add constraint fk_crawl_permission_target_3 foreign key (target_id) references target (id);
+create index ix_crawl_permission_target_3 on crawl_permission (target_id);
+alter table crawl_permission add constraint fk_crawl_permission_mailTempla_4 foreign key (mailTemplate_id) references mail_template (id);
+create index ix_crawl_permission_mailTempla_4 on crawl_permission (mailTemplate_id);
+alter table crawl_permission add constraint fk_crawl_permission_contactPer_5 foreign key (contactPerson_id) references contact_person (id);
+create index ix_crawl_permission_contactPer_5 on crawl_permission (contactPerson_id);
+alter table crawl_permission add constraint fk_crawl_permission_user_6 foreign key (archivist_id) references creator (id);
+create index ix_crawl_permission_user_6 on crawl_permission (archivist_id);
+alter table crawl_permission add constraint fk_crawl_permission_license_7 foreign key (license_id) references taxonomy (id);
+create index ix_crawl_permission_license_7 on crawl_permission (license_id);
+alter table field_url add constraint fk_field_url_target_8 foreign key (target_id) references target (id);
+create index ix_field_url_target_8 on field_url (target_id);
+alter table instance add constraint fk_instance_qaIssue_9 foreign key (qaissue_id) references taxonomy (id);
+create index ix_instance_qaIssue_9 on instance (qaissue_id);
+alter table instance add constraint fk_instance_authorUser_10 foreign key (author_id) references creator (id);
+create index ix_instance_authorUser_10 on instance (author_id);
+alter table instance add constraint fk_instance_target_11 foreign key (target_id) references target (id);
+create index ix_instance_target_11 on instance (target_id);
+alter table organisation add constraint fk_organisation_authorUser_12 foreign key (author_id) references creator (id);
+create index ix_organisation_authorUser_12 on organisation (author_id);
+alter table target add constraint fk_target_qaIssue_13 foreign key (qaissue_id) references taxonomy (id);
+create index ix_target_qaIssue_13 on target (qaissue_id);
+alter table target add constraint fk_target_authorUser_14 foreign key (author_id) references creator (id);
+create index ix_target_authorUser_14 on target (author_id);
+alter table target add constraint fk_target_subject_15 foreign key (subject_id) references taxonomy (id);
+create index ix_target_subject_15 on target (subject_id);
+alter table target add constraint fk_target_organisation_16 foreign key (organisation_id) references organisation (id);
+create index ix_target_organisation_16 on target (organisation_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyVocabular_17 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
+create index ix_taxonomy_taxonomyVocabular_17 on taxonomy (taxonomy_vocabulary_id);
+alter table creator add constraint fk_creator_organisation_18 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_18 on creator (organisation_id);
 
 
 

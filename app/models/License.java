@@ -1,5 +1,7 @@
 package models;
 
+import java.util.List;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -21,5 +23,9 @@ public class License extends Taxonomy {
     public static License findByUrl(String url) {
     	License license = find.where().eq(Const.URL, url).findUnique();
     	return license;
+    }
+    
+    public static List<License> findAllLicenses() {
+    	return find.all();
     }
 }

@@ -121,7 +121,7 @@ public enum JsonUtils {
 		} finally {
 			if (in != null) {
 				in.close();
-				Logger.info("inputstream closed");
+//				Logger.info("inputstream closed");
 			}
 		}
 	}
@@ -160,7 +160,7 @@ public enum JsonUtils {
 		Date date = null;
 		if (seconds != null) {
 			date = new Date(seconds*1000L);
-			Logger.info("converted date: " + date);
+//			Logger.info("converted date: " + date);
 		}
 		return date;
 	}
@@ -186,10 +186,11 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
+				Logger.info("Pages: " + firstPage + "/" + lastPage);
+				
 				for (int i=firstPage; i<=lastPage; i++) {
 					
 					StringBuilder targetsUrl = new StringBuilder(jsonUrl).append("&").append(Const.PAGE_IN_URL).append(String.valueOf(i));	
-				
 				
 					String pageContent = this.getAuthenticatedContent(targetsUrl.toString());
 					
@@ -199,7 +200,7 @@ public enum JsonUtils {
 					Iterator<JsonNode> iterator = rootNode.iterator();
 					while (iterator.hasNext()) {
 						JsonNode node = iterator.next();
-						Logger.info("json: " + node);
+//						Logger.info("json: " + node);
 						Organisation organisation = objectMapper.readValue(node.toString(), Organisation.class);
 						organisation.url = this.getActUrl(organisation.getNid());
 						organisation.edit_url = this.getWctUrl(organisation.vid);
@@ -270,6 +271,8 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
+				Logger.info("Pages: " + firstPage + "/" + lastPage);
+
 				for (int i=firstPage; i<=lastPage; i++) {
 					
 					StringBuilder usersUrl = new StringBuilder(jsonUrl).append("?").append(Const.PAGE_IN_URL).append(String.valueOf(i));	
@@ -297,7 +300,7 @@ public enum JsonUtils {
 	//					      field_affiliation=null, uid=279, created=1409663132, mail=null, revision=, id=null, url=http://www.webarchive.org.uk/act/user/279, createdAt=null, updatedAt=null
 	//					]
 								
-						Logger.info("json: " + node);
+//						Logger.info("json: " + node);
 						User user = objectMapper.readValue(node.toString(), User.class);
 						
 						// TODO: KL ANONYMOUS USER?
@@ -369,9 +372,12 @@ public enum JsonUtils {
 
 			int count = 0;
 			if (parentNode != null) {
+				
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
+				Logger.info("Pages: " + firstPage + "/" + lastPage);
+
 				for (int i=firstPage; i<=lastPage; i++) {
 					
 					StringBuilder url = new StringBuilder(jsonUrl).append("?").append(Const.PAGE_IN_URL).append(String.valueOf(i));	
@@ -393,7 +399,7 @@ public enum JsonUtils {
 //						{"vid":"2","name":"Subject","machine_name":"subject","description":"Subject tags","term_count":"76"},
 //						{"vid":"1","name":"Tags","machine_name":"tags","description":"Use tags to group articles on similar topics into categories.","term_count":"0"}
 
-						Logger.info("json: " + node);
+//						Logger.info("json: " + node);
 						TaxonomyVocabulary taxonomyVocabulary = objectMapper.readValue(node.toString(), TaxonomyVocabulary.class);
 
 						ObjectMapper mapper = new ObjectMapper();
@@ -428,7 +434,7 @@ public enum JsonUtils {
 
 	private TaxonomyVocabulary getTaxonomyVocabulary(Taxonomy taxonomy) throws IOException {
 		FieldModel fmTaxVocab = taxonomy.getVocabularyValue();
-		Logger.info("TaxonomyVocabulary: " + fmTaxVocab.getId());
+//		Logger.info("TaxonomyVocabulary: " + fmTaxVocab.getId());
 		Long vid = Long.valueOf(fmTaxVocab.getId());
 		TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.findByVid(vid);
 		return taxonomyVocabulary;
@@ -451,6 +457,8 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
+				Logger.info("Pages: " + firstPage + "/" + lastPage);
+
 				for (int i=firstPage; i<=lastPage; i++) {
 					
 					StringBuilder url = new StringBuilder(jsonUrl).append("?").append(Const.PAGE_IN_URL).append(String.valueOf(i));	
@@ -481,7 +489,7 @@ public enum JsonUtils {
 //						"parents_all":[{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/170","id":"170","resource":"taxonomy_term"}],
 //						"feed_nid":null
 						
-						Logger.info("json: " + node);
+//						Logger.info("json: " + node);
 						
 						String row = node.toString();
 						// just read in the Taxonomy Vocabulary???
@@ -617,10 +625,8 @@ public enum JsonUtils {
 	
 		// "parent":[],
 		this.convertParents(taxonomy.getParentFieldList(), taxonomy.getParentsList(), objectMapper);
-		Logger.info("TAXONOMY AFTER PARENT: " + taxonomy.id + " " + taxonomy.name);
 		// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
 		this.convertParentsAll(taxonomy.getParents_all(), taxonomy.getParentsAllList(), objectMapper);
-		Logger.info("TAXONOMY AFTER PARENT ALL: " + taxonomy.id + " " + taxonomy.name);
 		return taxonomy;
 	}
 	
@@ -631,7 +637,7 @@ public enum JsonUtils {
 		Taxonomy taxonomy = objectMapper.readValue(content, Taxonomy.class);
 		
 		Logger.info("taxonomy url: " + url);
-		Logger.info("taxonomy content: " + content);
+//		Logger.info("taxonomy content: " + content);
 
 		taxonomy = this.convertTaxonomy(taxonomy, content, objectMapper);
 		
@@ -655,11 +661,15 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
+				Logger.info("Pages: " + firstPage + "/" + lastPage);
+
 				int count = 0;
+				
 				for (int i=firstPage; i<=lastPage; i++) {
 					
 					StringBuilder targetsUrl = new StringBuilder(jsonUrl).append("&").append(Const.PAGE_IN_URL).append(String.valueOf(i));
-					Logger.info("targets url: " + targetsUrl);
+					
+//					Logger.info("targets url: " + targetsUrl);
 
 					String pageContent = this.getAuthenticatedContent(targetsUrl.toString());
 					
@@ -669,7 +679,7 @@ public enum JsonUtils {
 					Iterator<JsonNode> iterator = rootNode.iterator();
 					while (iterator.hasNext()) {
 						JsonNode node = iterator.next();
-						Logger.info("json: " + node.toString());
+//						Logger.info("json: " + node.toString());
 						
 						Target target = objectMapper.readValue(node.toString(), Target.class);
 	
@@ -724,7 +734,7 @@ public enum JsonUtils {
 						if (fieldSubject != null) {
 							try {
 								Taxonomy subject = this.getTaxonomy(fieldSubject);
-								target.subject = subject;
+								target.subjects.add(subject);
 							} catch (TaxonomyNotFoundException tnfe) {
 								tnfe.printStackTrace();
 							}
@@ -936,7 +946,10 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
+				Logger.info("Pages: " + firstPage + "/" + lastPage);
+
 				int count = 0;
+				
 				for (int i=firstPage; i<=lastPage; i++) {
 					
 					StringBuilder instanceUrl = new StringBuilder(jsonUrl).append("&").append(Const.PAGE_IN_URL).append(String.valueOf(i));
@@ -958,7 +971,7 @@ public enum JsonUtils {
 						FieldModel author = instance.getAuthor();
 						if (author != null) {
 							User authorUser = User.findByUrl(this.getActUrl(author.getId()));
-							Logger.info("Author found: " + authorUser.name);
+//							Logger.info("Author found: " + authorUser.name);
 							instance.authorUser = authorUser;
 						}
 

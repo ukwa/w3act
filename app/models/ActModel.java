@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -42,14 +41,12 @@ public class ActModel extends Model {
 	public void save() {
     	// need to save to get the ID
     	super.save();
-    	Logger.info("AFTER SAVE 1: " + this.url);
     	if (StringUtils.isEmpty(this.url)) {
     		this.url = Const.ACT_URL + this.id;
     	}
     	if (createdAt == null) {
     		this.createdAt = new Date();
     	}
-    	Logger.info("BEFORE SAVE 2: " + this.url);
     	super.save();
     }
 

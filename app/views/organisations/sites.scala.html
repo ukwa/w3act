@@ -127,7 +127,7 @@
 		<tbody>
         	@for(target <- currentPage.getList) {		              
 				<tr>
-					<td><a class="brand" href="@routes.TargetController.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
+					<td><a class="brand" href="@routes.TargetController.viewAct(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
 	   				@if(target.collections != null) { 
 		  				<td>
 						  	@for(taxonomy <- target.collections) {
@@ -139,7 +139,13 @@
 	   				} else {
 						<td></td>
 	   				}	                  
-					<td>@target.subject.name</td>
+					<td>
+	                	@if(target.subjects != null) {
+							@for(subject <- target.subjects) {                	
+	                			@subject.name
+	                		}
+	                	}
+					</td>
 	   				@if(target.organisation != null) { 
 	    				<td><a href="@routes.Curators.edit(target.authorUser.url)">@target.authorUser.name</a></td>
 					} else {

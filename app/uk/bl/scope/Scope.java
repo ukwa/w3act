@@ -112,7 +112,7 @@ public class Scope {
 	        	res = res + END_STR;
 	        }
 		}
-        Logger.info("normalized URL: " + res);
+//        Logger.info("normalized URL: " + res);
 		return res;
 	}
 
@@ -464,7 +464,7 @@ public class Scope {
 	 */
 	public static boolean checkScopeDomain(String url, String nidUrl) throws WhoisException {
         boolean res = false;
-        Logger.info("check for scope Domain url: " + url + ", nid: " + nidUrl);
+//        Logger.info("check for scope Domain url: " + url + ", nid: " + nidUrl);
         url = normalizeUrl(url);
         
         // Rule 3.1: check domain name
@@ -473,7 +473,7 @@ public class Scope {
 	        	res = true;
 	        }
         }
-		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
+//		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
         return res;
 	}
 	
@@ -676,9 +676,9 @@ public class Scope {
 		try {
 //			Logger.info("get host: " + new URL(url).getHost());
 			domain = new URL(url).getHost().replace(WWW, "");
-			Logger.info("extracted domain: " + domain);
+//			Logger.info("extracted domain: " + domain);
 		} catch (Exception e) {
-			Logger.info("domain calculation error for url=" + url + ". " + e.getMessage());
+			Logger.error("domain calculation error for url=" + url + ". " + e.getMessage());
 			domain = url;
 		}
         return domain;

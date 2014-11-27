@@ -162,19 +162,22 @@ GET    	/targets/search-targets-by-collection	controllers.TargetController.searc
 GET    	/targets/search-targets-by-organisation	controllers.TargetController.searchTargetsByOrganisation()
 GET     /targets/search-targets-by-user  	controllers.TargetController.searchTargetsByUser()
 GET    	/targets/search-targets-by-subject	controllers.TargetController.searchTargetsBySubject()
+
 GET    	/targets/filterbyjson/:url			controllers.TargetController.filterByJson(url)
-GET    	/targets/list                  		controllers.TargetController.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
-GET    	/targets/targets                  	controllers.TargetController.targets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_curator ?= "", query_organisation ?= "", query_subject ?= "empty", query_crawl_frequency ?= "", query_depth ?= "", query_collection ?= "none", query_license ?= "", page_size:Int ?= 10, query_flag ?= "")
+GET    	/targets/lookup                  	controllers.TargetController.lookup(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET    	/targets/list                  		controllers.TargetController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_curator ?= "", query_organisation ?= "", query_subject ?= "empty", query_crawl_frequency ?= "", query_depth ?= "", query_collection ?= "none", query_license ?= "", page_size:Int ?= 10, query_flag ?= "")
+
 GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", collection_url ?= "")
 GET    	/targets/organisationtargets/       controllers.TargetController.organisationTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", organisation_url ?= "")
 GET    	/targets/usertargets/           	controllers.TargetController.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", user_url ?= "", query_subject ?= "", query_collection ?= "")
 GET    	/targets/subjecttargets/        	controllers.TargetController.subjectTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", subject_url ?= "")
-GET     /targets/lookup						controllers.TargetController.lookup()
 #POST    /targets/new/create                 controllers.TargetController.create(title)
 GET    	/targets/export/ld/:frequency		controllers.TargetController.exportLdFrequencyJson(frequency)
 GET    	/targets/export/by/:frequency		controllers.TargetController.exportByFrequencyJson(frequency)
 
-GET     /targets/:id                      		controllers.TargetController.view(id)
+GET     /targets/:id                      	controllers.TargetController.view(id:Long)
+GET     /targets/act/:id                    controllers.TargetController.viewAct(id)
+GET     /targets/wct/:id                    controllers.TargetController.viewWct(id)
 GET     /targets/:revision/revision         controllers.TargetController.viewrevision(revision:Long)
 GET     /targets/edit                       controllers.TargetController.edit(target)
 

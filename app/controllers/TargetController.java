@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import models.CrawlPermission;
 import models.Collection;
 import models.Flag;
+import models.License;
 import models.Organisation;
 import models.Tag;
 import models.Target;
@@ -48,7 +49,7 @@ import com.rabbitmq.client.Channel;
 import views.html.targets.blank;
 import views.html.targets.edit;
 import views.html.targets.list;
-import views.html.targets.targets;
+import views.html.targets.lookup;
 import views.html.targets.view;
 import views.html.users.usersites;
 
@@ -65,7 +66,104 @@ public class TargetController extends AbstractController {
      * Display the targets.
      */
     public static Result index() {
-        return GO_TARGETS_HOME;
+        return GO_HOME;
+    }
+
+    /**
+     * Display the paginated list of targets.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     */
+    public static Result lookup(int pageNo, String sortBy, String order, String filter) {
+    	Logger.info("TargetController.lookup()");
+    	
+    	Page<Target> pages = Target.find.fetch("fieldUrls").where()
+			.eq(Const.ACTIVE, true)
+			.add(Expr.or(Expr.icontains("fieldUrls.url", filter), Expr.icontains("t0.title", filter)))
+			.orderBy("t0.title" + " " + order)
+			.findPagingList(10)
+			.setFetchAhead(false).getPage(pageNo);
+    	
+    	Logger.info("Total: " + pages.getTotalRowCount());
+    	
+        return ok(
+        	lookup.render(
+        			"Lookup", 
+        			User.findByEmail(request().username()), 
+        			filter, 
+        			pages, 
+        			sortBy, 
+        			order)
+        	);
+    }
+    
+    /**
+     * Display the paginated list of targets.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param filter Filter applied on target urls
+     * @param curator Author of the target
+     * @param organisation The author's organisation
+     * @param subject Target subject
+     * @param crawlFrequency The crawl frequency
+     * @param depth The crawl depth
+     * @param collection The associated collection
+     * @param license The license name
+     * @param pageSize The number of Target entries on the page
+     * @param flag The flag assigned by user
+     */
+    public static Result list(int pageNo, String sortBy, String order, String filter, String curator, String organisation, String subject, 
+    		String crawlFrequency, String depth, String collection, String license, int pageSize, String flag) {
+    	Logger.info("Pre Targets.list() subject: " + subject);
+    	
+    	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
+				subject, crawlFrequency, depth, collection, license, flag);
+    	
+    	List<License> licenses = License.findAllLicenses();
+    	Logger.info("Targets.list() licenses: " + licenses);
+    	
+        return ok(
+        	list.render(
+        			"Targets", 
+        			User.findByEmail(request().username()), 
+        			filter,
+        			pageTargets,
+        			sortBy, 
+        			order, 
+        	    	curator, 
+        	    	organisation, 
+        	    	subject, 
+        	    	crawlFrequency, 
+        	    	depth, 
+        	    	collection, 
+        	    	license, 
+        	    	pageSize,
+        	    	flag,
+        	    	licenses)
+        		);
+    }
+    
+    public static Result view(Long id) {
+    	Target target = Target.findById(id);
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(target, user));
+    }
+    
+    public static Result viewAct(String url) {
+    	Target target = Target.findByUrl(url);
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(target, user));
+    }
+
+    public static Result viewWct(String url) {
+    	Target target = Target.findByWct(url);
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(target, user));
     }
 
 	/**
@@ -134,11 +232,13 @@ public class TargetController extends AbstractController {
 	 * This method filters targets by given license.
 	 * @return license list
 	 */
-	public static List<Taxonomy> getLicense() {
-		List<Taxonomy> res = new ArrayList<Taxonomy>();
-		List<String> subjects = new ArrayList<String>();
-		List<Target> allTargets = Target.find.all();
-		Iterator<Target> itr = allTargets.iterator();
+//	public static List<Taxonomy> getLicense() {
+//		List<Taxonomy> licenses = new ArrayList<Taxonomy>();
+//		List<String> subjects = new ArrayList<String>();
+//		
+//		List<Target> allTargets = Target.find.all();
+//		
+//		Iterator<Target> itr = allTargets.iterator();
 //		while (itr.hasNext()) {
 //			Target target = itr.next();
 //			if (target.fieldLicense != null) {
@@ -150,16 +250,16 @@ public class TargetController extends AbstractController {
 //			        	Logger.info("curLicense: " + curLicense + ".");
 //	//		        	Logger.info("taxonomy url: " + taxonomy.url);
 //	//		        	Logger.info("license: " + taxonomy.name);
-//			        	res.add(taxonomy);
+//			        	licenses.add(taxonomy);
 //			        	subjects.add(curLicense);
 //			        }
 //				}
 //			}
 //		}
 ////		Logger.info("getLicense res: " + res);
-//    	return res;
-		throw new NotImplementedError();
-	}
+//    	return licenses;
+////		throw new NotImplementedError();
+//	}
 	
 	/**
 	 * This method returns all possible licenses.
@@ -251,83 +351,7 @@ public class TargetController extends AbstractController {
         }
         return ok(jsonData);
     }
-    
-    /**
-     * Display the paginated list of targets.
-     *
-     * @param page Current page number (starts from 0)
-     * @param sortBy Column to be sorted
-     * @param order Sort order (either asc or desc)
-     * @param filter Filter applied on target urls
-     */
-    public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("TargetController.list()");
-    	
-    	Page<Target> pages = Target.find.fetch("fieldUrls").where()
-			.eq(Const.ACTIVE, true)
-			.add(Expr.or(Expr.icontains("fieldUrls.url", filter), Expr.icontains("t0.title", filter)))
-			.orderBy("t0.title" + " " + order)
-			.findPagingList(10)
-			.setFetchAhead(false).getPage(pageNo);
-    	
-        return ok(
-        	list.render(
-        			"Lookup", 
-        			User.findByEmail(request().username()), 
-        			filter, 
-        			pages, 
-        			sortBy, 
-        			order)
-        	);
-    }
-	
-    /**
-     * Display the paginated list of targets.
-     *
-     * @param page Current page number (starts from 0)
-     * @param sortBy Column to be sorted
-     * @param order Sort order (either asc or desc)
-     * @param filter Filter applied on target urls
-     * @param curator Author of the target
-     * @param organisation The author's organisation
-     * @param subject Target subject
-     * @param crawlFrequency The crawl frequency
-     * @param depth The crawl depth
-     * @param collection The associated collection
-     * @param license The license name
-     * @param pageSize The number of Target entries on the page
-     * @param flag The flag assigned by user
-     */
-    public static Result targets(int pageNo, String sortBy, String order, String filter, String curator,
-    		String organisation, String subject, String crawlFrequency, String depth, String collection, 
-    		String license, int pageSize, String flag) {
-    	Logger.info("Pre Targets.targets() subject: " + subject);
-    	
-    	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
-				subject, crawlFrequency, depth, collection, license, flag);
-    	
-    	Logger.info("Post Targets.targets() subject: " + subject);
-    	
-        return ok(
-        	targets.render(
-        			"Targets", 
-        			User.findByEmail(request().username()), 
-        			filter,
-        			pageTargets,
-        			sortBy, 
-        			order, 
-        	    	curator, 
-        	    	organisation, 
-        	    	subject, 
-        	    	crawlFrequency, 
-        	    	depth, 
-        	    	collection, 
-        	    	license, 
-        	    	pageSize,
-        	    	flag)
-        		);
-    }
-	
+
     /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
@@ -342,7 +366,7 @@ public class TargetController extends AbstractController {
         		   && !Utils.isNumeric(form.get(Const.PAGE_SIZE)))) {
             Logger.info("You may only enter a numeric page size.");
   			flash("message", "You may only enter a numeric page size.");
-	        return GO_TARGETS_HOME;
+	        return GO_HOME;
     	}    	
     	
     	String action = form.get("action");
@@ -351,7 +375,7 @@ public class TargetController extends AbstractController {
 //    	if (StringUtils.isBlank(query)) {
 //			Logger.info("Target name is empty. Please write name in search window.");
 //			flash("message", "Please enter a name in the search window");
-//	        return GO_TARGETS_HOME;
+//	        return GO_HOME;
 //    	}    	
 
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
@@ -459,11 +483,11 @@ public class TargetController extends AbstractController {
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
     			return redirect(
-    	        		routes.TargetController.list(0, Const.TITLE, Const.ASC, query)
+    	        		routes.TargetController.lookup(0, Const.TITLE, Const.ASC, query)
     			        );
     		} 
     		else if (Const.CLEAR.equals(action)) {
-    			return GO_TARGETS_HOME;
+    			return GO_HOME;
     		} 
     		else if (Const.EXPORT.equals(action)) {
     			List<Target> exportTargets = new ArrayList<Target>();
@@ -475,12 +499,12 @@ public class TargetController extends AbstractController {
     			exportTargets.addAll(pageAll.getList());
 				Logger.info("export size: " + exportTargets.size());
     			export(exportTargets);
-    	    	return redirect(routes.TargetController.targets(pageNo, sort, order, query, curator, organisation, 
+    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
     	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
     		} 
     		else if (Const.SEARCH.equals(action) || Const.APPLY.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.TargetController.targets(pageNo, sort, order, query, curator, organisation, 
+    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
     	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
 		    } else {
 		    	return badRequest("This action is not allowed");
@@ -600,7 +624,7 @@ public class TargetController extends AbstractController {
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query));
+    	    	return redirect(routes.TargetController.lookup(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -869,21 +893,10 @@ public class TargetController extends AbstractController {
     	}
     }
         
-    /**
-     * Display the targets.
-     */
-    public static Result lookup() {
-    	Logger.info("Targets.lookup()");
-        return GO_HOME;
-    }
-
     public static Result GO_HOME = redirect(
-            routes.TargetController.list(0, Const.TITLE, Const.ASC, "")
+            routes.TargetController.list(0, Const.TITLE, Const.ASC, "", "", "", Const.EMPTY, "", "", Const.NONE, "", Const.PAGINATION_OFFSET, "")
         );
     
-    public static Result GO_TARGETS_HOME = redirect(
-            routes.TargetController.targets(0, Const.TITLE, Const.ASC, "", "", "", Const.EMPTY, "", "", Const.NONE, "", Const.PAGINATION_OFFSET, "")
-        );
        
     /**
      * Display the target edit panel for this URL.
@@ -901,18 +914,6 @@ public class TargetController extends AbstractController {
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(Target.findByUrl(url));
         return ok(edit.render(targetForm, User.findByEmail(request().username())));
-    }
-    
-    /**
-     * @param url The target identifier URL
-     * @return
-     */
-    public static Result view(String url) {
-        return ok(
-                view.render(
-                        Target.findByUrl(url), User.findByEmail(request().username())
-                )
-            );
     }
     
     /**
@@ -1690,7 +1691,7 @@ public class TargetController extends AbstractController {
                  */
                 target.organisation = null;
                 target.collections = null;
-                target.subject = null;
+                target.subjects = null;
                 // TODO: can we not use JPA annotations for these?
                 Utils.removeAssociationFromDb(Const.SUBJECT_TARGET, Const.ID + "_" + Const.TARGET, target.id);
                 Utils.removeAssociationFromDb(Const.COLLECTION_TARGET, Const.ID + "_" + Const.TARGET, target.id);
@@ -1699,7 +1700,7 @@ public class TargetController extends AbstractController {
                 Utils.removeAssociationFromDb(Const.TAG_TARGET, Const.ID + "_" + Const.TARGET, target.id);
 //                target.flagToTarget = null;
 //                target.tagToTarget = null;
-                Logger.info("+++ subject_to_target object before target nid: " + target.id + ", update: " + target.subject);
+                Logger.info("+++ subject_to_target object before target nid: " + target.id + ", update: " + target.subjects);
             	Ebean.update(target);
         	}
         	if (newTarget.fieldUrl() != null) {
@@ -1746,7 +1747,7 @@ public class TargetController extends AbstractController {
         	}
 	        Logger.info("Your changes have been saved: " + newTarget.toString());
   			flash("message", "Your changes have been saved.");
-	        res = redirect(routes.TargetController.view(newTarget.url) + getFormParam(Const.TAB_STATUS));
+	        res = redirect(routes.TargetController.viewAct(newTarget.url) + getFormParam(Const.TAB_STATUS));
         } // end of save
         if (delete != null) {
         	Long id = Long.valueOf(getFormParam(Const.ID));

@@ -63,7 +63,7 @@
 	<div class="padding-20">
 		<div class="alert alert-info">
 			Please be aware that this is not the current version of this record.
-			<a href="@routes.TargetController.view(target.url)">Click here for the most recent revision</a></li>
+			<a href="@routes.TargetController.viewAct(target.url)">Click here for the most recent revision</a></li>
 		</div>
 	</div>	
 	}	     	
@@ -93,7 +93,7 @@
 				}		        
 			</a></li>
 		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing
-		    	@if(Target.hasGrantedLicense(target.url)) {
+		    	@if(target.hasGrantedLicense) {
 					<font color="green">(+)</font>
 				} else {
 					<font color="red">(-)</font>
@@ -527,7 +527,7 @@
 					<div class="alert alert-info">
 						NB. There are other records within this domain for which data has already been provided.
 						@for(targetObj <- Target.getNpldStatusList(target.fieldUrl)) {
-							<p><a href="@routes.TargetController.view(targetObj.url)">@targetObj.title @targetObj.fieldUrl</a></p>
+							<p><a href="@routes.TargetController.viewAct(targetObj.url)">@targetObj.title @targetObj.fieldUrl</a></p>
 						}
 					</div>
 				</div>	
@@ -818,7 +818,7 @@
 					<div class="alert alert-info">
 						NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
 						@for(targetObj <- target.getUkwaLicenceStatusList) { 
-							<p><a href="@routes.TargetController.view(targetObj.url)">@targetObj.title @targetObj.fieldUrl</a></p>
+							<p><a href="@routes.TargetController.viewAct(targetObj.url)">@targetObj.title @targetObj.fieldUrl</a></p>
 						}
 					</div>
 				</div>	

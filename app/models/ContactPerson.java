@@ -29,7 +29,7 @@ public class ContactPerson extends ActModel {
 	private static final long serialVersionUID = -2257099575463302989L;
 
     //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="contactPersonToCrawlPermission", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="contactPerson", cascade=CascadeType.PERSIST)
     private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
 
     /**
