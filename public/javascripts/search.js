@@ -4,7 +4,7 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 	    var resultMap = {};
 		$('#search-query').typeahead({
 			remote: {
-				url: context + searchContext + '/filterbyjson/%QUERY',
+				url: context + '/' + searchContext + '/filterbyjson/%QUERY',
 				filter: function(items) {
 					var searchResults = [];
 					for (var i = 0; i < items.length; i++) {
