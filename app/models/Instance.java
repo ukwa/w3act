@@ -54,7 +54,7 @@ public class Instance extends UrlModel {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "qaissue_id")
-	public Taxonomy qaIssue;
+	public QaIssue qaIssue;
 
 	@ManyToOne
 	@JoinColumn(name = "author_id")

@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -23,6 +26,16 @@ public class Flag extends Taxonomy {
 	 * file id
 	 */
 	private static final long serialVersionUID = -2257699575463702989L;
+
+    @ManyToMany
+	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
+    public List<Target> targets;
+
+    @ManyToMany
+	@JoinTable(name = Const.FLAG_INSTANCE, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+    public List<Instance> instances;
 
 
     public static final Model.Finder<Long, Flag> find = new Model.Finder<Long, Flag>(Long.class, Flag.class);

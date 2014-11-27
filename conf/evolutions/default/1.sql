@@ -250,8 +250,8 @@ create table target (
   revision                  text,
   qaissue_id                bigint,
   author_id                 bigint,
-  subject_id                bigint,
   organisation_id           bigint,
+  crawlPermission_id        bigint,
   field_crawl_start_date    timestamp,
   field_crawl_end_date      timestamp,
   legacy_site_id            bigint,
@@ -361,16 +361,22 @@ create table role_user (
   constraint pk_role_user primary key (role_id, user_id))
 ;
 
-create table collection_target (
-  target_id                      bigint not null,
-  collection_id                  bigint not null,
-  constraint pk_collection_target primary key (target_id, collection_id))
-;
-
 create table license_target (
   target_id                      bigint not null,
   license_id                     bigint not null,
   constraint pk_license_target primary key (target_id, license_id))
+;
+
+create table subject_target (
+  target_id                      bigint not null,
+  subject_id                     bigint not null,
+  constraint pk_subject_target primary key (target_id, subject_id))
+;
+
+create table collection_target (
+  target_id                      bigint not null,
+  collection_id                  bigint not null,
+  constraint pk_collection_target primary key (target_id, collection_id))
 ;
 
 create table tag_target (
@@ -383,18 +389,6 @@ create table flag_target (
   target_id                      bigint not null,
   flag_id                        bigint not null,
   constraint pk_flag_target primary key (target_id, flag_id))
-;
-
-create table tag_instance (
-  tag_id                         bigint not null,
-  instance_id                    bigint not null,
-  constraint pk_tag_instance primary key (tag_id, instance_id))
-;
-
-create table flag_instance (
-  flag_id                        bigint not null,
-  instance_id                    bigint not null,
-  constraint pk_flag_instance primary key (flag_id, instance_id))
 ;
 
 create table taxonomy_user (
@@ -413,6 +407,24 @@ create table taxonomy_parents_all (
   taxonomy_id                    bigint not null,
   parent_id                      bigint not null,
   constraint pk_taxonomy_parents_all primary key (taxonomy_id, parent_id))
+;
+
+create table flag_instance (
+  flag_id                        bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_flag_instance primary key (flag_id, instance_id))
+;
+
+create table tag_instance (
+  tag_id                         bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_tag_instance primary key (tag_id, instance_id))
+;
+
+create table collection_instance (
+  collection_id                  bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_collection_instance primary key (collection_id, instance_id))
 ;
 create sequence communication_log_seq;
 
@@ -474,10 +486,10 @@ alter table target add constraint fk_target_qaIssue_13 foreign key (qaissue_id) 
 create index ix_target_qaIssue_13 on target (qaissue_id);
 alter table target add constraint fk_target_authorUser_14 foreign key (author_id) references creator (id);
 create index ix_target_authorUser_14 on target (author_id);
-alter table target add constraint fk_target_subject_15 foreign key (subject_id) references taxonomy (id);
-create index ix_target_subject_15 on target (subject_id);
-alter table target add constraint fk_target_organisation_16 foreign key (organisation_id) references organisation (id);
-create index ix_target_organisation_16 on target (organisation_id);
+alter table target add constraint fk_target_organisation_15 foreign key (organisation_id) references organisation (id);
+create index ix_target_organisation_15 on target (organisation_id);
+alter table target add constraint fk_target_crawlPermission_16 foreign key (crawlPermission_id) references crawl_permission (id);
+create index ix_target_crawlPermission_16 on target (crawlPermission_id);
 alter table taxonomy add constraint fk_taxonomy_taxonomyVocabular_17 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
 create index ix_taxonomy_taxonomyVocabular_17 on taxonomy (taxonomy_vocabulary_id);
 alter table creator add constraint fk_creator_organisation_18 foreign key (organisation_id) references organisation (id);
@@ -493,13 +505,17 @@ alter table role_user add constraint fk_role_user_role_01 foreign key (role_id) 
 
 alter table role_user add constraint fk_role_user_creator_02 foreign key (user_id) references creator (id);
 
-alter table collection_target add constraint fk_collection_target_target_01 foreign key (target_id) references target (id);
-
-alter table collection_target add constraint fk_collection_target_taxonomy_02 foreign key (collection_id) references taxonomy (id);
-
 alter table license_target add constraint fk_license_target_target_01 foreign key (target_id) references target (id);
 
 alter table license_target add constraint fk_license_target_taxonomy_02 foreign key (license_id) references taxonomy (id);
+
+alter table subject_target add constraint fk_subject_target_target_01 foreign key (target_id) references target (id);
+
+alter table subject_target add constraint fk_subject_target_taxonomy_02 foreign key (subject_id) references taxonomy (id);
+
+alter table collection_target add constraint fk_collection_target_target_01 foreign key (target_id) references target (id);
+
+alter table collection_target add constraint fk_collection_target_taxonomy_02 foreign key (collection_id) references taxonomy (id);
 
 alter table tag_target add constraint fk_tag_target_target_01 foreign key (target_id) references target (id);
 
@@ -508,14 +524,6 @@ alter table tag_target add constraint fk_tag_target_taxonomy_02 foreign key (tag
 alter table flag_target add constraint fk_flag_target_target_01 foreign key (target_id) references target (id);
 
 alter table flag_target add constraint fk_flag_target_target_02 foreign key (flag_id) references target (id);
-
-alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key (tag_id) references taxonomy (id);
-
-alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
-
-alter table flag_instance add constraint fk_flag_instance_taxonomy_01 foreign key (flag_id) references taxonomy (id);
-
-alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (instance_id) references instance (id);
 
 alter table taxonomy_user add constraint fk_taxonomy_user_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
 
@@ -528,6 +536,18 @@ alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_02 fore
 alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_01 foreign key (taxonomy_id) references taxonomy (id);
 
 alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_02 foreign key (parent_id) references taxonomy (id);
+
+alter table flag_instance add constraint fk_flag_instance_taxonomy_01 foreign key (flag_id) references taxonomy (id);
+
+alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (instance_id) references instance (id);
+
+alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key (tag_id) references taxonomy (id);
+
+alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
+
+alter table collection_instance add constraint fk_collection_instance_taxono_01 foreign key (collection_id) references taxonomy (id);
+
+alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (instance_id) references instance (id);
 
 # --- !Downs
 
@@ -561,19 +581,17 @@ drop table if exists role_user cascade;
 
 drop table if exists target cascade;
 
-drop table if exists collection_target cascade;
-
 drop table if exists license_target cascade;
+
+drop table if exists subject_target cascade;
+
+drop table if exists collection_target cascade;
 
 drop table if exists tag_target cascade;
 
 drop table if exists flag_target cascade;
 
 drop table if exists taxonomy cascade;
-
-drop table if exists tag_instance cascade;
-
-drop table if exists flag_instance cascade;
 
 drop table if exists taxonomy_user cascade;
 

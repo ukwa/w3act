@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import models.Collection;
 import models.CollectionArea;
 import models.FieldUrl;
+import models.Flag;
 import models.Instance;
 import models.License;
 import models.Organisation;
@@ -690,7 +691,7 @@ public enum JsonUtils {
 						FieldModel qaIssueField = target.getField_qa_status();
 						try {
 							if (qaIssueField != null) {
-								Taxonomy qaIssue = this.getTaxonomy(qaIssueField);
+								QaIssue qaIssue = this.getQaIssue(qaIssueField);
 								target.qaIssue = qaIssue;
 							}
 						} catch (TaxonomyNotFoundException tnfe) {
@@ -733,7 +734,7 @@ public enum JsonUtils {
 						FieldModel fieldSubject = target.getField_subject();
 						if (fieldSubject != null) {
 							try {
-								Taxonomy subject = this.getTaxonomy(fieldSubject);
+								Subject subject = this.getSubject(fieldSubject);
 								target.subjects.add(subject);
 							} catch (TaxonomyNotFoundException tnfe) {
 								tnfe.printStackTrace();
@@ -815,7 +816,7 @@ public enum JsonUtils {
 							List<FieldModel> licenses = target.getField_license();
 							for (FieldModel fieldModel : licenses) {
 								try {
-									Taxonomy license = this.getTaxonomy(fieldModel);
+									License license = this.getLicense(fieldModel);
 									if (license != null) {
 										target.licenses.add(license);
 									}
@@ -831,7 +832,7 @@ public enum JsonUtils {
 							
 							for (FieldModel fieldModel : collectionCategories) {
 								try {
-									Taxonomy collection = this.getTaxonomy(fieldModel);
+									Collection collection = this.getCollection(fieldModel);
 									if (collection != null) {
 										target.collections.add(collection);
 									}
@@ -1014,7 +1015,7 @@ public enum JsonUtils {
 						FieldModel qaIssueField = instance.getField_qa_issues();
 						try {
 							if (qaIssueField != null) {
-								Taxonomy qaIssue = this.getTaxonomy(qaIssueField);
+								QaIssue qaIssue = this.getQaIssue(qaIssueField);
 //								if (instance.getField_description_of_qa_issues() instanceof LinkedHashMap) {
 //									Map<String, String> qaDesc = (LinkedHashMap<String,String>) instance.getField_description_of_qa_issues();
 //									Logger.info("qaDesc: " + qaDesc.get("value"));
@@ -1059,86 +1060,42 @@ public enum JsonUtils {
 		}		
 	}
 	
-//	private Collection convertCollection(FieldModel fieldModel) throws IOException {
-//		
-//		StringBuilder url = new StringBuilder(fieldModel.getUri()).append(Const.JSON);
-//		Collection collection = null;
-//		String content = this.getAuthenticatedContent(url.toString());
-//		
-//		Logger.info("collection url: " + url);
-//		Logger.info("collection content: " + content);
-//		
-//		ObjectMapper mapper = new ObjectMapper();
-//		mapper.setSerializationInclusion(Include.NON_NULL);
-//		collection = mapper.readValue(content, Collection.class);
-//		Logger.info("collection: " + collection);
-//		
-//		collection.url = this.getActUrl(collection.getTid());
-//		
-//		// find to see if it's stored already
-//		
-//		Collection lookup = Collection.findByUrl(collection.url);
-//		
-//		Logger.info("lookup: " + lookup + " using " + collection.url);
-//
-//		if (lookup == null) {
-//			// ownerUsers
-//			if (collection.getField_owner() != null) {
-//				// "field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
-//				List<FieldModel> fieldOwners = collection.getField_owner();
-//				for (FieldModel fieldOwner : fieldOwners) {
-//					String fieldActUrl = this.getActUrl(fieldOwner.getId());
-//					User owner = User.findByUrl(fieldActUrl);
-//					collection.getOwnerUsers().add(owner);
-//				}
-//			}
-//			
-//			// "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
-//			// "field_publish":true,
-//			// "tid":"250",
-//			// "name":"European Parliament Elections 2014","description":"",
-//			// "weight":"0",
-//			// "node_count":10,
-//			// "url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250",
-//			
-//			// TODO: KL TaxonomyVocabulary IS CURRENTLY UNUSED
-//			// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-//			TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(collection);
-//			if (taxonomyVocabulary != null) {
-//				collection.setTaxonomyVocabulary(taxonomyVocabulary);
-//			}
-//			Logger.info("act-url: " + collection.url);
-//			Logger.info("getParentFieldList: " + collection.getParentFieldList());
-//			// "parent":[],
-//			List<FieldModel> parentFieldList = collection.getParentFieldList();
-//			for (FieldModel parentFieldModel : parentFieldList) {
-//				
-//				String actUrl = this.getActUrl(parentFieldModel.getId());
-//				Collection parentCollection = Collection.findByUrl(actUrl);
-//				if (parentCollection == null) {
-//					parentCollection = convertCollection(parentFieldModel);
-//				}
-//				collection.getParentsList().add(parentCollection);
-//			}
-//			// TODO: KL parents_all doesn't seem to be used by views/controllers
-//			// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
-//			collection.save();
-//		} else {
-//			collection = lookup;
-//		}
-//		Logger.info("collection id: " + collection.id);
-//		return collection;
-//	}
-	
-	private Taxonomy getTaxonomy(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
+	private License getLicense(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
 		String actUrl = this.getActUrl(fieldModel.getId());
-		Taxonomy taxonomy = Taxonomy.findByUrl(actUrl);
-		if (taxonomy == null) {
-			throw new TaxonomyNotFoundException("No Taxonomy for actUrl: " + actUrl);
+		License license = License.findByUrl(actUrl);
+		if (license == null) {
+			throw new TaxonomyNotFoundException("No License for actUrl: " + actUrl);
 		}
-		return taxonomy;
+		return license;
 	}
-
+	
+	private Subject getSubject(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
+		String actUrl = this.getActUrl(fieldModel.getId());
+		Subject subject = Subject.findByUrl(actUrl);
+		if (subject == null) {
+			throw new TaxonomyNotFoundException("No Subject for actUrl: " + actUrl);
+		}
+		return subject;
+	}
+	
+	private Collection getCollection(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
+		String actUrl = this.getActUrl(fieldModel.getId());
+		Collection collection = Collection.findByUrl(actUrl);
+		if (collection == null) {
+			throw new TaxonomyNotFoundException("No Collection for actUrl: " + actUrl);
+		}
+		return collection;
+	}
+	
+	private QaIssue getQaIssue(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
+		String actUrl = this.getActUrl(fieldModel.getId());
+		QaIssue qaIssue = QaIssue.findByUrl(actUrl);
+		if (qaIssue == null) {
+			throw new TaxonomyNotFoundException("No QaIssue for actUrl: " + actUrl);
+		}
+		return qaIssue;
+	}
+	
 //	/**
 //	 * This method retrieves JSON data from Drupal for particular domain object
 //	 * type (e.g. Target, Collection...) with parameters e.g.

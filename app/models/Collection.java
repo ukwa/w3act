@@ -28,22 +28,15 @@ public class Collection extends Taxonomy {
 	 */
 	private static final long serialVersionUID = 3043585612371074777L;
 
-	//bi-directional many-to-many association to Target
     @ManyToMany
 	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
     private List<Target> targets;
  
-    //bi-directional many-to-many association to Instance
     @ManyToMany
 	@JoinTable(name = Const.COLLECTION_INSTANCE, joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
-    private List<Instance> instances = new ArrayList<Instance>();
-    
-    public Collection() {
-    	super();
-        this.publish = false;
-    }
+    private List<Instance> instances;
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,Collection> find = new Model.Finder(Long.class, Collection.class);

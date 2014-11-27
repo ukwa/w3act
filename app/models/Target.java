@@ -53,7 +53,7 @@ public class Target extends UrlModel {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "qaissue_id")
-	public Taxonomy qaIssue;
+	public QaIssue qaIssue;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -71,25 +71,26 @@ public class Target extends UrlModel {
 	public CrawlPermission crawlPermission;
 
 	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "license_id")
-	public List<Taxonomy> licenses;
-
-	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
 	public List<Instance> instances;
+
+	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
+	public List<License> licenses;
 
     @JsonIgnore
     @ManyToMany
 	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
-	public List<Taxonomy> subjects;
+	public List<Subject> subjects;
 
     @JsonIgnore
     @ManyToMany
 	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
-	public List<Taxonomy> collections;
+	public List<Collection> collections;
 
 	@JsonIgnore
     @ManyToMany
