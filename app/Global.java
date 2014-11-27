@@ -26,7 +26,7 @@ public class Global extends GlobalSettings {
     		DataImport.INSTANCE.insert();
     	}
     	
-    	ActorRef myActor = Akka.system().actorOf(Props.create(CrawlActor.class));
+    	/*ActorRef myActor = Akka.system().actorOf(Props.create(CrawlActor.class));
 		Akka.system().scheduler().schedule(
 				Duration.create(0, TimeUnit.MILLISECONDS), //Initial delay 0 milliseconds
 				Duration.create(12, TimeUnit.HOURS),     //Frequency 12 hours
@@ -34,7 +34,7 @@ public class Global extends GlobalSettings {
 				new CrawlActor.StartMessage(),
 				Akka.system().dispatcher(),
 				null
-    	);
+    	);*/
     }
     
     public Promise<Result> onError(RequestHeader request, Throwable t) {

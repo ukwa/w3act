@@ -21,12 +21,14 @@ import play.Logger;
 public class Crawler {
 	private Set<String> knownSites;
 	private List<Document> foundDocuments;
+	private Integer maxDocuments;
 	
 	private static String waybackUrl = "http://www.webarchive.org.uk/wayback/archive/";
 	
-	public List<Document> crawlForDocuments(WatchedTarget watchedTarget) {
+	public List<Document> crawlForDocuments(WatchedTarget watchedTarget, Integer maxDocuments) {
 		knownSites = new HashSet<>();
 		foundDocuments = new ArrayList<>();
+		this.maxDocuments = maxDocuments;
 		
 		String seedUrl = waybackReplayUrl(watchedTarget.target.field_url, "20140522210454");
 		knownSites.add(seedUrl);
@@ -72,6 +74,7 @@ public class Crawler {
 											document.title = document.filename.substring(0, document.filename.indexOf('.'));
 											document.watchedTarget = watchedTarget;
 											foundDocuments.add(document);
+											if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
 										}
 									} else if(domainIsEqual(pageUrl, hrefUrl)) {
 										knownSites.add(waybackHrefUrl);
@@ -92,6 +95,7 @@ public class Crawler {
 							document.title = document.filename.substring(0, document.filename.indexOf('.'));
 							document.watchedTarget = watchedTarget;
 							foundDocuments.add(document);
+							if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
 							//System.out.println("hidden pdf: " + document.filename + " (url: " + pageUrl + ")");
 						}
 					}

@@ -1,6 +1,5 @@
 package controllers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import models.Document;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -20,7 +18,7 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.crawling.Crawler;
+import uk.bl.crawling.CrawlActor;
 import views.html.watchedtargets.list;
 
 @Security.Authenticated(Secured.class)
@@ -100,14 +98,7 @@ public class WatchedTargets extends AbstractController {
     
     public static Result crawl(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
-    	List<Document> documentList = (new Crawler()).crawlForDocuments(watchedTarget);
-    	List<Document> newDocumentList = new ArrayList<>();
-    	
-    	for (Document document : documentList)
-    		if (Document.find.where().eq("document_url", document.documentUrl).findRowCount() == 0)
-    			newDocumentList.add(document);
-    	
-    	Ebean.save(newDocumentList);
+    	CrawlActor.crawlAndConvertDocuments(watchedTarget, 3);
     	return redirect(routes.Documents.list(id, false, 0, "title", "asc", ""));
     }
     
