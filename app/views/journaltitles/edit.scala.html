@@ -92,7 +92,10 @@
 				@inputText(form("issn"), '_label -> "ISSN", textualElement)
 				@inputText(form("frequency"), '_label -> "Frequency", textualElement)
 				@inputText(form("publisherName"), '_label -> "Publisher Name", textualElement)
-				@select(form("language"), options(Target.getAllLanguage()), '_label -> "Language", textualElement)
+				@input(form("language"), '_label -> "Language") { (id, name, value, args) =>
+					@value
+					<input type="hidden" name="@name" id="@id" value="@value">
+				}
 				@checkbox(form("priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
 				@input(form("blCollectionSubset"), '_label -> "BL Collection Subset") { (id, name, value, args) =>
 					<span id="collectionTree"></span>

@@ -13,11 +13,11 @@ import models.WatchedTarget;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import play.Logger;
 import play.libs.F.*;
 import play.libs.F.Promise;
 
 public class CrawlActor extends UntypedActor {
-	LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 	
 	public static class StartMessage {}
     
@@ -30,9 +30,9 @@ public class CrawlActor extends UntypedActor {
 		}
 		
 		public List<Document> apply() {
-			log.info("Crawling " + watchedTarget.target.field_url);
+			Logger.info("Crawling " + watchedTarget.target.field_url);
 			crawlAndConvertDocuments(watchedTarget, null);
-			log.info("Finished crawling " + watchedTarget.target.field_url);
+			Logger.info("Finished crawling " + watchedTarget.target.field_url);
 			return null;
 		}
 
@@ -52,7 +52,7 @@ public class CrawlActor extends UntypedActor {
 			try {
 				convertPdfToHtml(document);
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.error(e.getMessage());
 			}
 		}
 		
@@ -75,7 +75,7 @@ public class CrawlActor extends UntypedActor {
 	
 	public void onReceive(Object message) throws Exception {
 		if (message instanceof StartMessage) {
-			log.info("Starting Crawl");
+			Logger.info("Starting Crawl");
 			List<WatchedTarget> watchedTargets = WatchedTarget.find.all();
 			for (WatchedTarget watchedTarget : watchedTargets) {
 				Promise.promise(new CrawlFunction(watchedTarget));

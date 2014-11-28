@@ -483,10 +483,12 @@ public final class Const {
 		EN,
 		DE;
     }
-    
+	
 	/**
-	 * The predominant language of target.
+	 * The predominant language of a journal title.
 	 */
+	public static final String JOURNAL_TITLE_LANGUAGE = "eng";
+    
 	public enum RequestTypes {
 		ALL,
 		FIRST_REQUEST,

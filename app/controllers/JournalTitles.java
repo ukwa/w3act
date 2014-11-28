@@ -12,6 +12,7 @@ import play.Logger;
 import play.data.Form;
 import play.mvc.Result;
 import play.mvc.Security;
+import uk.bl.Const;
 import views.html.journaltitles.edit;
 
 @Security.Authenticated(Secured.class)
@@ -24,6 +25,7 @@ public class JournalTitles extends AbstractController {
 		
 		JournalTitle journalTitle = new JournalTitle();
 		journalTitle.target = target;
+		journalTitle.language = Const.JOURNAL_TITLE_LANGUAGE;
 		journalTitle.subject = target.field_subject;
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 

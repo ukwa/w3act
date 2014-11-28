@@ -50,10 +50,14 @@ public class WatchedTargets extends AbstractController {
 	    			new WatchedTarget(user, "gov", "act-gov",
 	    					"https://www.gov.uk/government/publications", "www.gov.uk/government/uploads")
 	    			);
-	    	for (WatchedTarget watchedTarget : watchedTargetsTestData) {
-	    		Ebean.save(watchedTarget.target);
-	    	}
-	    	Ebean.save(watchedTargetsTestData);
+	    	try {
+		    	for (WatchedTarget watchedTarget : watchedTargetsTestData) {
+		    		Ebean.save(watchedTarget.target);
+		    	}
+		    	Ebean.save(watchedTargetsTestData);
+	    	} catch (Exception e) {
+				Logger.error(e.getMessage());
+			}
     	}
     	    	
         return ok(
