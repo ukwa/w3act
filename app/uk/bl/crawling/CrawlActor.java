@@ -61,7 +61,7 @@ public class CrawlActor extends UntypedActor {
 	
 	private static void convertPdfToHtml(Document document) throws IOException {
 		ProcessBuilder builder = new ProcessBuilder(
- 			"/bin/bash", "-c", "cd converter && ./convertPdfToHtml.sh " + document.documentUrl + " " + document.title);
+ 			"/bin/bash", "-c", "cd converter && ./convertPdfToHtml.sh " + document.documentUrl + " '" + document.title + "'");
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
 		/*BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));

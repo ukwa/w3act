@@ -1,6 +1,7 @@
 package uk.bl.crawling;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,7 +71,7 @@ public class Crawler {
 											Document document = new Document();
 											document.landingPageUrl = pageUrl;
 											document.documentUrl = hrefUrl;
-											document.filename = hrefUrl.substring(hrefUrl.lastIndexOf('/')+1);
+											document.filename = URLDecoder.decode(hrefUrl.substring(hrefUrl.lastIndexOf('/')+1), "UTF-8");
 											document.title = document.filename.substring(0, document.filename.indexOf('.'));
 											document.watchedTarget = watchedTarget;
 											foundDocuments.add(document);
