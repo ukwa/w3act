@@ -286,7 +286,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.checkUkHosting(form("fieldUrl").value)) {
+								@if(form.get.isUkHosting()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -303,7 +303,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeDomain(form("fieldUrl").value, form("url").value)) {
+								@if(form.get.isInScopeDomain()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -320,7 +320,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeUkRegistration(form("fieldUrl").value)) {
+								@if(form.get.isInScopeUkRegistration()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -741,11 +741,11 @@
 					</div>
 				</div>		
 				
-				@if(TargetController.indicateNpldStatus(form("fieldUrl").value)) {    	
+				@if(form.get.indicateNpldStatus()) {    	
 				<div class="padding-20">
 					<div class="alert alert-info">
 						NB. There are other records within this domain for which data has already been provided.
-						@for(targetObj <- Target.getNpldStatusList(form("fieldUrl").value)) {
+						@for(targetObj <- form.get.getNpldStatusList()) {
 							<p><a href="@routes.TargetController.viewAct(targetObj.url)">@targetObj.title @targetObj.fieldUrl</a></p>
 						}
 					</div>
@@ -759,7 +759,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.checkUkHosting(form("fieldUrl").value)) {
+								@if(form.get.isUkHosting()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -776,7 +776,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeDomain(form("fieldUrl").value, form("url").value)) {
+								@if(form.get.isInScopeDomain()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -793,7 +793,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeUkRegistration(form("fieldUrl").value)) {
+								@if(form.get.isInScopeUkRegistration()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>

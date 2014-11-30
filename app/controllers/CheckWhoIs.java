@@ -68,7 +68,7 @@ public class CheckWhoIs extends AbstractController {
             	total = Integer.valueOf(getFormParam(Const.NUMBER));
             }
 
-			WhoIsData whoIsData = Scope.checkWhois(total);
+			WhoIsData whoIsData = Scope.INSTANCE.checkWhois(total);
 
 			// need to match up with lookupentry and get the last_update
         	return ok(

@@ -63,7 +63,7 @@
 	<div class="padding-20">
 		<div class="alert alert-info">
 			Please be aware that this is not the current version of this record.
-			<a href="@routes.TargetController.viewAct(target.url)">Click here for the most recent revision</a></li>
+			<a href="@routes.TargetController.view(target.id)">Click here for the most recent revision</a></li>
 		</div>
 	</div>	
 	}	     	
@@ -148,7 +148,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.checkUkHosting(target.fieldUrl)) {
+								@if(target.isUkHosting()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -165,7 +165,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeDomain(target.fieldUrl, target.url)) {
+								@if(target.isInScopeDomain()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -182,7 +182,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeUkRegistration(target.fieldUrl)) {
+								@if(target.isInScopeUkRegistration()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -311,7 +311,7 @@
 						<div class="form-group">
 			              	<label for="inputDescription" class="col-sm-6 control-label">Description <small class="text-center">(A description of this web site)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" value="@target.fieldDescription" readonly>@target.fieldDescription</textarea>
+				            	<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" value="@target.description" readonly>@target.description</textarea>
 							</div>
 						</div>
 					</div>
@@ -322,8 +322,8 @@
 						<div class="form-group">
 			              	<label for="inputDescription" class="col-sm-6 control-label">Subject</label>
 			              	 <div class="col-sm-6">
-						        @if(target.url != null) {
-  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjects(target.url))
+			              	 	@if(target.subjectsAsString.length > 0) {
+				              	 	@target.subjectsAsString
   								} else {
   								    none
   								}
@@ -337,8 +337,8 @@
 						<div class="form-group">
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
-						        @if(target.url != null) {
-  									@models.Collection.getCollectionsAsString(models.Collection.getSelectedCollections(target.url))
+						        @if(target.collectionsAsString.length > 0) {
+						        	@target.collectionsAsString
   								} else {
   								    none
   								}
@@ -522,12 +522,12 @@
 						In order to be considered as in scope for Non-Print Legal Deposit, a resource must pass one of a series of tests.
 					</div>
 				</div>		     	
-				@if(TargetController.indicateNpldStatus(target.fieldUrl)) {    	
+				@if(target.indicateNpldStatus()) {    	
 				<div class="padding-20">
 					<div class="alert alert-info">
 						NB. There are other records within this domain for which data has already been provided.
-						@for(targetObj <- Target.getNpldStatusList(target.fieldUrl)) {
-							<p><a href="@routes.TargetController.viewAct(targetObj.url)">@targetObj.title @targetObj.fieldUrl</a></p>
+						@for(t <- target.getNpldStatusList()) {
+							<p><a href="@routes.TargetController.view(t.id)">@t.title @t.fieldUrl</a></p>
 						}
 					</div>
 				</div>	
@@ -539,7 +539,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.checkUkHosting(target.fieldUrl)) {
+								@if(target.isUkHosting()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -556,7 +556,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeDomain(target.fieldUrl, target.url)) {
+								@if(target.isInScopeDomain()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -573,7 +573,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isInScopeUkRegistration(target.fieldUrl)) {
+								@if(target.isInScopeUkRegistration()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -603,7 +603,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
 						    <div class="col-sm-6">
-		 						<input readonly type="text" name="field_uk_postal_address_url" value="@target.fieldUkPostalAddressUrl" size="60" maxlength="2048" class="form-control" />
+		 						<input readonly type="text" name="field_uk_postal_address_url" value="@target.ukPostalAddressUrl" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>

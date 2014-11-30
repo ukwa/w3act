@@ -121,31 +121,29 @@ public class TargetController extends AbstractController {
     		String crawlFrequency, String depth, String collection, String license, int pageSize, String flag) {
     	Logger.info("Pre Targets.list() subject: " + subject);
     	
-    	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, 
-				subject, crawlFrequency, depth, collection, license, flag);
+    	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, subject, crawlFrequency, depth, collection, license, flag);
     	
     	List<License> licenses = License.findAllLicenses();
     	Logger.info("Targets.list() licenses: " + licenses);
     	
-        return ok(
-        	list.render(
-        			"Targets", 
-        			User.findByEmail(request().username()), 
-        			filter,
-        			pageTargets,
-        			sortBy, 
-        			order, 
-        	    	curator, 
-        	    	organisation, 
-        	    	subject, 
-        	    	crawlFrequency, 
-        	    	depth, 
-        	    	collection, 
-        	    	license, 
-        	    	pageSize,
-        	    	flag,
-        	    	licenses)
-        		);
+        return ok(list.render(
+			"Targets", 
+			User.findByEmail(request().username()), 
+			filter,
+			pageTargets,
+			sortBy, 
+			order, 
+	    	curator, 
+	    	organisation, 
+	    	subject, 
+	    	crawlFrequency, 
+	    	depth, 
+	    	collection, 
+	    	license, 
+	    	pageSize,
+	    	flag,
+	    	licenses)
+		);
     }
     
     public static Result view(Long id) {
@@ -1083,14 +1081,14 @@ public class TargetController extends AbstractController {
 	 *             target record at a higher level within the same domain AND 
 	 *         (ii) where both 'UK hosting' and 'UK top-level domain' = No.
 	 */
-    public static boolean indicateNpldStatus(String fieldUrl) {
-    	boolean res = false;
-    	if (Target.getNpldStatusList(fieldUrl).size() > 0) {
-    		res = true;
-    	}
-    	Logger.info("indicateNpldStatus() res: " + res);
-    	return res;
-    }
+//    public static boolean indicateNpldStatus(String fieldUrl) {
+//    	boolean res = false;
+//    	if (Target.getNpldStatusList(fieldUrl).size() > 0) {
+//    		res = true;
+//    	}
+//    	Logger.info("indicateNpldStatus() res: " + res);
+//    	return res;
+//    }
     
 	/**
 	 * This method should give a list of the Target Titles and URLs for the 
@@ -1100,19 +1098,19 @@ public class TargetController extends AbstractController {
 	 */
     public static String showNpldStatusList(String fieldUrl) {
     	String res = "";
-        try {
-            StringBuilder sb = new StringBuilder();
-        	List<Target> targets = Target.getNpldStatusList(fieldUrl);
-        	Iterator<Target> itr = targets.iterator();
-        	while (itr.hasNext()) {
-        		Target target = itr.next();
-        		sb.append(target.title + " " + target.fieldUrl());
-                sb.append(System.getProperty("line.separator"));
-        	}
-            res = sb.toString();
-    	} catch (Exception e) {
-            Logger.error("showNpldStatusList() " + e.getMessage());
-        }
+//        try {
+//            StringBuilder sb = new StringBuilder();
+//        	List<Target> targets = Target.getNpldStatusList(fieldUrl);
+//        	Iterator<Target> itr = targets.iterator();
+//        	while (itr.hasNext()) {
+//        		Target target = itr.next();
+//        		sb.append(target.title + " " + target.fieldUrl());
+//                sb.append(System.getProperty("line.separator"));
+//        	}
+//            res = sb.toString();
+//    	} catch (Exception e) {
+//            Logger.error("showNpldStatusList() " + e.getMessage());
+//        }
     	return res;
     }
     
@@ -1149,7 +1147,7 @@ public class TargetController extends AbstractController {
 //        targetObj.authorRef = getFormParam(Const.USER);
         targetObj.title = getFormParam(Const.TITLE);
         targetObj.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
-        targetObj.fieldDescription = getFormParam(Const.DESCRIPTION);
+        targetObj.description = getFormParam(Const.DESCRIPTION);
         if (getFormParam(Const.FLAG_NOTES) != null) {
         	targetObj.flagNotes = getFormParam(Const.FLAG_NOTES);
         } 
@@ -1293,9 +1291,9 @@ public class TargetController extends AbstractController {
 //        		targetObj.fieldLicense = Const.NONE;
         	}
         }
-        targetObj.field_uk_hosting = Target.checkUkHosting(targetObj.fieldUrl());
+        targetObj.field_uk_hosting = targetObj.isUkHosting();
         targetObj.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
-        targetObj.fieldUkPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
+        targetObj.ukPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
         targetObj.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
         targetObj.value = getFormParam(Const.FIELD_NOTES);
         targetObj.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
@@ -1448,7 +1446,7 @@ public class TargetController extends AbstractController {
             
 //            newTarget.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
             newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
-            newTarget.fieldDescription = getFormParam(Const.DESCRIPTION);
+            newTarget.description = getFormParam(Const.DESCRIPTION);
             if (getFormParam(Const.FLAG_NOTES) != null) {
             	newTarget.flagNotes = getFormParam(Const.FLAG_NOTES);
             } 
@@ -1610,13 +1608,13 @@ public class TargetController extends AbstractController {
 //            		newTarget.fieldLicense = Const.NONE;
             	}
             }
-            newTarget.field_uk_hosting = Target.checkUkHosting(newTarget.fieldUrl());
+//            newTarget.field_uk_hosting = Scope.INSTANCE.checkUkHosting(newTarget.fieldUrl());
         	Logger.debug("field_uk_hosting: " + newTarget.field_uk_hosting);
             newTarget.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
-            newTarget.fieldUkPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
+            newTarget.ukPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
             Logger.debug("newTarget.field_uk_postal_address: " + newTarget.field_uk_postal_address);
             if (newTarget.field_uk_postal_address 
-            		&& (newTarget.fieldUkPostalAddressUrl == null || newTarget.fieldUkPostalAddressUrl.length() == 0)) {
+            		&& (newTarget.ukPostalAddressUrl == null || newTarget.ukPostalAddressUrl.length() == 0)) {
             	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
 	  			flash("message", "If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
 	  			return info();
@@ -1680,12 +1678,12 @@ public class TargetController extends AbstractController {
                 target.active = false;
             	if (target.fieldUrl() != null) {
                 	Logger.info("current target field_url: " + target.fieldUrl());
-            		target.domain = Scope.getDomainFromUrl(target.fieldUrl());
+//            		target.domain = Scope.INSTANCE.getDomainFromUrl(target.fieldUrl());
             	}
         		Logger.info("update target: " + target.id + ", obj: " + target.toString());
                 boolean newScope = Target.isInScopeIp(target.fieldUrl(), target.url);
                 // TODO: save new entry or update current
-            	Scope.updateLookupEntry(target, newScope);
+            	Scope.INSTANCE.updateLookupEntry(target, newScope);
                 /**
                  * Reset association fields
                  */
@@ -1705,7 +1703,7 @@ public class TargetController extends AbstractController {
         	}
         	if (newTarget.fieldUrl() != null) {
             	Logger.info("current target field_url: " + newTarget.fieldUrl());
-        		newTarget.domain = Scope.getDomainFromUrl(newTarget.fieldUrl());
+//        		newTarget.domain = Scope.INSTANCE.getDomainFromUrl(newTarget.fieldUrl());
         	}
         	
         	// TODO: UNIX DATE
@@ -1720,16 +1718,17 @@ public class TargetController extends AbstractController {
         	}
             boolean newScope = Target.isInScopeIp(newTarget.fieldUrl(), newTarget.url);
             // TODO: save new entry or update current
-            Scope.updateLookupEntry(newTarget, newScope);
+            Scope.INSTANCE.updateLookupEntry(newTarget, newScope);
         	
         	/**
         	 * NPLD scope values
         	 */
-        	newTarget.isInScopeUkRegistrationValue   = Target.isInScopeUkRegistration(newTarget.fieldUrl());
-        	newTarget.isInScopeDomainValue           = Target.isInScopeDomain(newTarget.fieldUrl(), newTarget.url);
-        	newTarget.isUkHostingValue               = Target.checkUkHosting(newTarget.fieldUrl());
-        	newTarget.isInScopeIpValue               = newScope;
-        	newTarget.isInScopeIpWithoutLicenseValue = Target.isInScopeIpWithoutLicense(newTarget.fieldUrl(), newTarget.url);
+            // TODO: KL NOW IN fieldUrls
+//        	newTarget.isInScopeUkRegistration   = newTarget.isInScopeUkRegistration();
+//        	newTarget.isInScopeDomain           = newTarget.isInScopeDomain();
+//        	newTarget.isUkHosting               = newTarget.isUkHosting();
+//        	newTarget.isInScopeIp               = newScope;
+//        	newTarget.isInScopeIpWithoutLicense = Target.isInScopeIpWithoutLicense(newTarget.fieldUrl(), newTarget.url);
         	
 //        	Iterator<Taxonomy> itrSubjects = subjects.iterator();
 //        	while (itrSubjects.hasNext()) {
@@ -1761,7 +1760,7 @@ public class TargetController extends AbstractController {
             		" and target: " + getFormParam(Const.FIELD_URL_NODE));
         	if (getFormParam(Const.TITLE) != null && getFormParam(Const.FIELD_URL_NODE) != null) {
                 String name = getFormParam(Const.TITLE);
-                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
+                String target = Scope.INSTANCE.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
     	        res = redirect(routes.CrawlPermissions.licenceRequestForTarget(name, target)); 
         	}
         }
@@ -1769,7 +1768,7 @@ public class TargetController extends AbstractController {
             Logger.debug("archive target title: " + getFormParam(Const.TITLE) + 
             		" with URL: " + getFormParam(Const.FIELD_URL_NODE));
         	if (getFormParam(Const.FIELD_URL_NODE) != null) {
-                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
+                String target = Scope.INSTANCE.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
     	        res = redirect(routes.TargetController.archiveTarget(target)); 
         	}
         }

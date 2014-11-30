@@ -22,8 +22,8 @@ public class WhoIsThread implements Runnable  {
     public void run() {
     	synchronized (target) {
 	        try {
-				boolean res = Scope.checkWhoisThread(number);
-				target.isInScopeUkRegistrationValue = res;
+				boolean res = Scope.INSTANCE.checkWhoisThread(number);
+//				target.isInScopeUkRegistration = res;
 			} catch (WhoisException e) {
 				Logger.error("WhoIsThread error: " + e.getStackTrace());
 			}

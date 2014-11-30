@@ -113,7 +113,7 @@
 			<tbody>
 				@for(organisation <- currentPage.getList) {
 					<tr>
-		           		<td><a href="@routes.Organisations.view(organisation.url)">@organisation.title</a></td>
+		           		<td><a href="@routes.Organisations.view(organisation.id)">@organisation.title</a></td>
 					</tr>
 		           }
 			</tbody>

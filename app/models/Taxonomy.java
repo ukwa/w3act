@@ -53,8 +53,8 @@ public class Taxonomy extends ActModel {
 
 	@JsonIgnore
 	@ManyToOne(optional=true)
-	@JoinColumn(name = "taxonomy_vocabulary_id")
-	public TaxonomyVocabulary taxonomyVocabulary;
+	@JoinColumn(name = "taxonomyType_id")
+	public TaxonomyType taxonomyType;
 	
 	@Column(insertable=false, updatable=false)
 	public String ttype;
@@ -1269,14 +1269,14 @@ public class Taxonomy extends ActModel {
 		this.ownerUsers = ownerUsers;
 	}
 
-	public TaxonomyVocabulary getTaxonomyVocabulary() {
-		return taxonomyVocabulary;
+	public TaxonomyType getTaxonomyType() {
+		return taxonomyType;
 	}
 
-	public void setTaxonomyVocabulary(TaxonomyVocabulary taxonomyVocabulary) {
-		this.taxonomyVocabulary = taxonomyVocabulary;
+	public void setTaxonomyType(TaxonomyType taxonomyType) {
+		this.taxonomyType = taxonomyType;
 	}
-	
+
 	public String getTtype() {
 		return ttype;
 	}

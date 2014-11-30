@@ -9,11 +9,11 @@
 	</div>
 	<ul class="nav nav-tabs">
 	   @if(User.findById(Long.valueOf(form("id").value)) != null) {
-	   <li><a href="@routes.Curators.view(form("url").value)">View</a></li>
-	   <li><a href="@routes.Curators.sites(form("url").value)">Targets</a></li> 
+	   <li><a href="@routes.Curators.view(form.get.id)">View</a></li>
+	   <li><a href="@routes.Curators.sites(form.get.url)">Targets</a></li> 
 	   }
 	   @if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.Curators.edit(form("url").value)">Edit</a></li>
+		   <li class="active"><a href="@routes.Curators.edit(form.get.id)">Edit</a></li>
 	   }
 	</ul>
     

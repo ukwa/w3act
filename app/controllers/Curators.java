@@ -147,27 +147,29 @@ public class Curators extends AbstractController {
         return ok(jsonData);
     }
     
-    /**
-     * Display the user view panel for this URL.
-     */
-    public static Result view(String url) {
-		Logger.info("view user url: " + url);
-		User user = User.findByUrl(url);
-		Logger.info("user name: " + user.name + ", url: " + url);
-        return ok(
-                view.render(
-                        User.findByUrl(url), User.findByEmail(request().username())
-                )
-            );
+    public static Result view(Long id) {
+    	User curator = User.findById(id);
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(curator, user));
+    }
+    
+    public static Result viewAct(String url) {
+    	User curator = User.findByUrl(url);
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(curator, user));
+    }
+
+    public static Result viewWct(String url) {
+    	User curator = User.findByWct(url);
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(curator, user));
     }
     
     /**
      * Display the user edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("user url: " + url);
-		User user = User.findByUrl(url);
-		Logger.info("user name: " + user.name + ", url: " + url);
+    public static Result edit(Long id) {
+		User user = User.findById(id);
 		Form<User> userForm = Form.form(User.class);
 		userForm = userForm.fill(user);
         return ok(views.html.users.edit.render(userForm, User.findByEmail(request().username()))); 
@@ -384,7 +386,7 @@ public class Curators extends AbstractController {
 //           		Logger.info("update user: " + user.toString());
 //                Ebean.update(user);
 //        	}
-//	        res = redirect(routes.Curators.edit(user.url));
+//	        res = redirect(routes.Curators.edit(user.id));
 //        } 
 //        if (delete != null) {
 //        	User user = User.findByUrl(getFormParam(Const.URL));

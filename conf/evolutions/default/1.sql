@@ -65,6 +65,12 @@ create table field_url (
   url                       text,
   created_at                timestamp,
   target_id                 bigint,
+  domain                    text,
+  is_in_scope_uk_registration boolean,
+  is_in_scope_domain        boolean,
+  is_uk_hosting             boolean,
+  is_in_scope_ip            boolean,
+  is_in_scope_ip_without_license boolean,
   updated_at                timestamp not null,
   constraint pk_field_url primary key (id))
 ;
@@ -265,14 +271,8 @@ create table target (
   selection_type            varchar(255),
   flag_notes                text,
   tab_status                varchar(255),
-  is_in_scope_uk_registration_value boolean,
-  is_in_scope_domain_value  boolean,
-  is_uk_hosting_value       boolean,
-  is_in_scope_ip_value      boolean,
-  is_in_scope_ip_without_license_value boolean,
-  domain                    text,
-  field_description         text,
-  field_uk_postal_address_url text,
+  description               text,
+  uk_postal_address_url     text,
   field_notes               text,
   keywords                  text,
   synonyms                  text,
@@ -307,7 +307,7 @@ create table taxonomy (
   id                        bigint not null,
   url                       varchar(255),
   created_at                timestamp,
-  taxonomy_vocabulary_id    bigint,
+  taxonomyType_id           bigint,
   name                      varchar(255),
   description               text,
   publish                   boolean,
@@ -315,11 +315,12 @@ create table taxonomy (
   parents_all               text,
   revision                  text,
   updated_at                timestamp not null,
+  status                    varchar(255),
   constraint uq_taxonomy_url unique (url),
   constraint pk_taxonomy primary key (id))
 ;
 
-create table taxonomy_vocabulary (
+create table taxonomy_type (
   id                        bigint not null,
   url                       varchar(255),
   created_at                timestamp,
@@ -328,8 +329,8 @@ create table taxonomy_vocabulary (
   description               text,
   vid                       bigint,
   updated_at                timestamp not null,
-  constraint uq_taxonomy_vocabulary_url unique (url),
-  constraint pk_taxonomy_vocabulary primary key (id))
+  constraint uq_taxonomy_type_url unique (url),
+  constraint pk_taxonomy_type primary key (id))
 ;
 
 create table creator (
@@ -454,7 +455,7 @@ create sequence target_seq;
 
 create sequence taxonomy_seq;
 
-create sequence taxonomy_vocabulary_seq;
+create sequence taxonomy_type_seq;
 
 create sequence creator_seq;
 
@@ -490,8 +491,8 @@ alter table target add constraint fk_target_organisation_15 foreign key (organis
 create index ix_target_organisation_15 on target (organisation_id);
 alter table target add constraint fk_target_crawlPermission_16 foreign key (crawlPermission_id) references crawl_permission (id);
 create index ix_target_crawlPermission_16 on target (crawlPermission_id);
-alter table taxonomy add constraint fk_taxonomy_taxonomyVocabular_17 foreign key (taxonomy_vocabulary_id) references taxonomy_vocabulary (id);
-create index ix_taxonomy_taxonomyVocabular_17 on taxonomy (taxonomy_vocabulary_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyType_17 foreign key (taxonomyType_id) references taxonomy_type (id);
+create index ix_taxonomy_taxonomyType_17 on taxonomy (taxonomyType_id);
 alter table creator add constraint fk_creator_organisation_18 foreign key (organisation_id) references organisation (id);
 create index ix_creator_organisation_18 on creator (organisation_id);
 
@@ -599,7 +600,7 @@ drop table if exists taxonomy_parents cascade;
 
 drop table if exists taxonomy_parents_all cascade;
 
-drop table if exists taxonomy_vocabulary cascade;
+drop table if exists taxonomy_type cascade;
 
 drop table if exists creator cascade;
 
@@ -631,7 +632,7 @@ drop sequence if exists target_seq;
 
 drop sequence if exists taxonomy_seq;
 
-drop sequence if exists taxonomy_vocabulary_seq;
+drop sequence if exists taxonomy_type_seq;
 
 drop sequence if exists creator_seq;
 

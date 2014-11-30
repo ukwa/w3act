@@ -140,20 +140,11 @@ public class Target extends UrlModel {
 	 */
 	public String tabStatus;
 
-	public Boolean isInScopeUkRegistrationValue;
-	public Boolean isInScopeDomainValue;
-	public Boolean isUkHostingValue;
-	public Boolean isInScopeIpValue;
-	public Boolean isInScopeIpWithoutLicenseValue;
-
 	@Column(columnDefinition = "text")
-	public String domain;
+	public String description;
 	
 	@Column(columnDefinition = "text")
-	public String fieldDescription;
-	
-	@Column(columnDefinition = "text")
-	public String fieldUkPostalAddressUrl;
+	public String ukPostalAddressUrl;
 
 	@Column(columnDefinition = "text")
 	public String fieldNotes;
@@ -305,6 +296,75 @@ public class Target extends UrlModel {
 	@JsonProperty
 	private Object field_notes;
 
+//		"body":[],
+//		"field_scope":"root",
+//		"field_url":[
+//		             {"url":"http:\/\/www.13baseraf.co.uk\/","attributes":[]},
+//		             {"url":"http:\/\/www.northlincsweb.net\/13Base\/","attributes":[]}],
+	
+	
+//		"field_depth":"capped",
+//		"field_via_correspondence":false,
+//		"field_uk_postal_address":false,
+//		"field_uk_hosting":false,
+
+	
+//		"field_description":[],
+
+//		"field_uk_postal_address_url":[],
+
+//		"field_nominating_organisation":{
+//			"uri":"http:\/\/webarchive.org.uk\/act\/node\/101","id":"101","resource":"node"
+//			},
+
+//		"field_crawl_frequency":"annual",
+
+//		"field_suggested_collections":[],
+//		"field_collections":[],
+
+//		"field_crawl_start_date":"1395968400",
+//		"field_crawl_end_date":"1401580800",
+//		"field_uk_domain":"No",
+
+//		"field_license":[
+//		                 {"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/168","id":"168","resource":"taxonomy_term"}],
+
+
+//		"field_crawl_permission":"",
+
+//		"field_collection_categories":[],
+//		"field_special_dispensation":false,
+//		"field_special_dispensation_reaso":null,
+//		"field_live_site_status":null,
+//		"field_notes":[],
+//		"field_wct_id":"235438128",
+//		"field_spt_id":"169073",
+//		"field_snapshots":[],
+
+//		"field_no_ld_criteria_met":false,
+//		"field_key_site":false,
+//		"field_uk_geoip":"Yes",
+//		"field_professional_judgement":false,
+//		"field_professional_judgement_exp":null,
+
+
+//		"field_ignore_robots_txt":false,
+//		"field_instances":[],
+//		"nid":"14171",
+//		"vid":"28185",
+//		"is_new":false,
+//		"type":"url",
+//		"title":"13 Base - RAF",
+//		"language":"en",
+//		"url":"http:\/\/webarchive.org.uk\/act\/node\/14171",
+//		"edit_url":"http:\/\/webarchive.org.uk\/act\/node\/14171\/edit",
+//		"status":"1","promote":"0","sticky":"0","created":"1395767857","changed":"1404815005",
+//		"author":{
+//				"uri":"http:\/\/webarchive.org.uk\/act\/user\/191","id":"191","resource":"user"
+//				},"log":"",
+//		"revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null
+	
+	
 	//
 	/**
 	 * Constructor
@@ -361,6 +421,28 @@ public class Target extends UrlModel {
 		// this.field_nominating_organisation = Const.NONE;
 	}
 
+	/**
+	 * This method checks whether license for Target with given URL is granted
+	 * 
+	 * @param url
+	 * @return true if license exists
+	 */
+	public boolean hasGrantedLicense() {
+		Logger.info("hasGrantedLicense");
+//		if QAStatus is granted 
+//		this.crawlPermissions;
+//		this.qaIssue;
+//	    @if(permission.status.equals("GRANTED")) {
+		// TODO: KL check higher level license too
+		if (crawlPermission != null && crawlPermission.name.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+			return true;
+		}
+//		if (this.qaIssue != null && this.qaIssue.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+//			return true;
+//		}
+		return false;
+	}
+	
 	// -- Queries
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -808,33 +890,6 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * Retrieve a Target by URL.
-	 * 
-	 * @param url
-	 * @return target
-	 */
-	public static Target findByUrl(String url) {
-		Target res = new Target();
-		// Logger.info("findByUrl() target url: " + url);
-
-		if (!url.contains(Const.COMMA)) {
-			// Target res2 = find.where().eq(Const.URL, url).findUnique();
-			Target res2 = find.where().eq(Const.URL, url)
-					.eq(Const.ACTIVE, true).findUnique();
-			if (res2 == null) {
-				res.title = Const.NONE;
-			} else {
-				res = res2;
-			}
-			// Logger.info("target title: " + res.title);
-		}
-		return res;
-	}
-
-	public static Target findByWct(String url) {
-		return find.where().eq("edit_url", url).findUnique();
-	}
-	/**
 	 * Check by URL if target object exists in database.
 	 * 
 	 * @param url
@@ -899,16 +954,16 @@ public class Target extends UrlModel {
 		return res;
 	}
 
-	/**
-	 * Retrieve a Target by Id (nid).
-	 * 
-	 * @param nid
-	 * @return target
-	 */
-	public static Target findById(Long id) {
-		Logger.info("target nid: " + id);
-		Target res = find.where().eq(Const.ID, id).findUnique();
-		return res;
+	public static Target findById(Long id) {	
+		return find.where().eq(Const.ID, id).findUnique();
+	}
+
+	public static Target findByUrl(String url) {
+		return find.where().eq(Const.URL, url).eq(Const.ACTIVE, true).findUnique();
+	}
+
+	public static Target findByWct(String url) {
+		return find.where().eq("edit_url", url).eq(Const.ACTIVE, true).findUnique();
 	}
 
 	/**
@@ -986,28 +1041,6 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * This method checks whether license for Target with given URL is granted
-	 * 
-	 * @param url
-	 * @return true if license exists
-	 */
-	public boolean hasGrantedLicense() {
-		Logger.info("hasGrantedLicense");
-//		if QAStatus is granted 
-//		this.crawlPermissions;
-//		this.qaIssue;
-//	    @if(permission.status.equals("GRANTED")) {
-		// TODO: KL check higher level license too
-		if (crawlPermission.name.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
-			return true;
-		}
-//		if (this.qaIssue != null && this.qaIssue.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
-//			return true;
-//		}
-		return false;
-	}
-
-	/**
 	 * This method checks whether the passed URL is in scope.
 	 * 
 	 * @param url
@@ -1018,7 +1051,7 @@ public class Target extends UrlModel {
 	 */
 	public static boolean isInScope(String url, String nidUrl) {
 		try {
-			return Scope.check(url, nidUrl);
+			return Scope.INSTANCE.check(url, nidUrl);
 		} catch (WhoisException ex) {
 			Logger.info("Exception: " + ex);
 			return false;
@@ -1032,15 +1065,57 @@ public class Target extends UrlModel {
 	 *            The search URL
 	 * @return result as a flag
 	 */
-	public static boolean checkUkHosting(String url) {
+	public boolean isUkHosting() {
 		try {
-			return Scope.checkGeoIp(url);
+			for (FieldUrl fieldUrl : this.fieldUrls) {
+				if (Scope.INSTANCE.checkGeoIp(fieldUrl.url)) {
+					return true;
+				}
+			}
 		} catch (Exception ex) {
 			Logger.info("Exception: " + ex);
-			return false;
 		}
+		return false;
 	}
 
+	/**
+	 * This method checks whether the passed URL is in scope for rules
+	 * associated with scope domain.
+	 * 
+	 * @param url
+	 *            The search URL
+	 * @param nidUrl
+	 *            The identifier URL in the project domain model
+	 * @return result as a flag
+	 */
+	public boolean isInScopeDomain() {
+		try {
+			for (FieldUrl fieldUrl : this.fieldUrls) {
+				// is it uk, london etc
+				return Scope.INSTANCE.checkScopeDomain(fieldUrl.url);
+			}
+		} catch (WhoisException ex) {
+			Logger.info("Exception: " + ex);
+		}
+		return false;
+	}
+	
+	/**
+	 * This method checks whether the passed URL is in scope for rules
+	 * associated with WhoIs scoping rule.
+	 * 
+	 * @param url
+	 *            The search URL
+	 * @return result as a flag
+	 * @throws WhoisException 
+	 */
+	public boolean isInScopeUkRegistration() throws WhoisException {
+		for (FieldUrl fieldUrl : this.fieldUrls) {
+			return Scope.INSTANCE.isInScopeUkRegistration(fieldUrl.url);
+		}
+		return false;
+	}
+	
 	/**
 	 * This method checks whether the passed URL is in scope for rules
 	 * associated with scope IP.
@@ -1055,7 +1130,8 @@ public class Target extends UrlModel {
 		try {
 			boolean isInScope = isInScopeIp(url, nidUrl);
 			if (!isInScope) {
-				isInScope = isInScopeDomain(url, nidUrl);
+				// TODO: KL TO REFACTOR
+//				isInScope = isInScopeDomain(url, nidUrl);
 			}
 			return isInScope;
 		} catch (Exception ex) {
@@ -1078,7 +1154,8 @@ public class Target extends UrlModel {
 		try {
 			boolean isInScope = isInScopeIpWithoutLicense(url, nidUrl);
 			if (!isInScope) {
-				isInScope = isInScopeDomain(url, nidUrl);
+			// TODO: KL TO REFACTOR
+//				isInScope = isInScopeDomain(url, nidUrl);
 			}
 			return isInScope;
 		} catch (Exception ex) {
@@ -1099,7 +1176,7 @@ public class Target extends UrlModel {
 	 */
 	public static boolean isInScopeIp(String url, String nidUrl) {
 		try {
-			return Scope.checkScopeIp(url, nidUrl);
+			return Scope.INSTANCE.checkScopeIp(url, nidUrl);
 		} catch (WhoisException ex) {
 			Logger.info("Exception: " + ex);
 			return false;
@@ -1118,47 +1195,7 @@ public class Target extends UrlModel {
 	 */
 	public static boolean isInScopeIpWithoutLicense(String url, String nidUrl) {
 		try {
-			return Scope.checkScopeIpWithoutLicense(url, nidUrl);
-		} catch (WhoisException ex) {
-			Logger.info("Exception: " + ex);
-			return false;
-		}
-	}
-
-	/**
-	 * This method checks whether the passed URL is in scope for rules
-	 * associated with scope domain.
-	 * 
-	 * @param url
-	 *            The search URL
-	 * @param nidUrl
-	 *            The identifier URL in the project domain model
-	 * @return result as a flag
-	 */
-	public static boolean isInScopeDomain(String url, String nidUrl) {
-		
-//		@if(Target.isInScopeDomain(instance.target.fieldUrl(), instance.url)) {
-
-		
-		try {
-			return Scope.checkScopeDomain(url, nidUrl);
-		} catch (WhoisException ex) {
-			Logger.info("Exception: " + ex);
-			return false;
-		}
-	}
-
-	/**
-	 * This method checks whether the passed URL is in scope for rules
-	 * associated with WhoIs scoping rule.
-	 * 
-	 * @param url
-	 *            The search URL
-	 * @return result as a flag
-	 */
-	public static boolean isInScopeUkRegistration(String url) {
-		try {
-			return Scope.checkWhois(url);
+			return Scope.INSTANCE.checkScopeIpWithoutLicense(url, nidUrl);
 		} catch (WhoisException ex) {
 			Logger.info("Exception: " + ex);
 			return false;
@@ -1179,7 +1216,7 @@ public class Target extends UrlModel {
 	 */
 	public static boolean isInScopeExt(String url, String nidUrl, String mode) {
 		try {
-			return Scope.checkExt(url, nidUrl, mode);
+			return Scope.INSTANCE.checkExt(url, nidUrl, mode);
 		} catch (WhoisException ex) {
 			Logger.info("Exception: " + ex);
 			return false;
@@ -1527,7 +1564,7 @@ public class Target extends UrlModel {
 //		if (flag != null && !flag.equals("") && !flag.toLowerCase().equals(Const.NONE)) {
 //			exp = exp.icontains(Const.FLAGS, flag);
 //		}
-		res = exp.query().orderBy(sortBy + " " + order).orderBy(Const.DOMAIN).findPagingList(pageSize).setFetchAhead(false).getPage(page);
+		res = exp.query().fetch("fieldUrls").orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
 		Logger.debug("Expression list size: " + res.getTotalRowCount());
 		return res;
 	}
@@ -1990,18 +2027,19 @@ public class Target extends UrlModel {
 		 * The resulting list should only include those records that are in
 		 * scope according to InScopeIp and InScopeDomain rules.
 		 */
-		Iterator<Target> itr = targets.findList().iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			boolean isInScope = isInScopeIp(target.fieldUrl(), target.url);
-			if (!isInScope) {
-				isInScope = isInScopeDomain(target.fieldUrl(), target.url);
-			}
-			if (isInScope) {
-				Logger.debug("add to export ld: " + target);
-				res.add(target);
-			}
-		}
+		// TODO: KL TO REFACTOR
+//		Iterator<Target> itr = targets.findList().iterator();
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			boolean isInScope = isInScopeIp(target.fieldUrl(), target.url);
+//			if (!isInScope) {
+//				isInScope = isInScopeDomain(target.fieldUrl(), target.url);
+//			}
+//			if (isInScope) {
+//				Logger.debug("add to export ld: " + target);
+//				res.add(target);
+//			}
+//		}
 		Logger.info("exportLdFrequency() resulting list size: " + res.size());
 		return res;
 	}
@@ -2103,6 +2141,22 @@ public class Target extends UrlModel {
 		return res;
 	}
 
+    public boolean indicateNpldStatus() {
+    	boolean res = false;
+//    	if (this.fieldUrls != null && !this.fieldUrls.isEmpty()) {
+//    	  	for (FieldUrl fieldUrl : fieldUrls) {
+//        		this.getNpldStatusList
+//        	}
+//    	}
+//    	
+//    	
+//    	if (Target.getNpldStatusList(fieldUrl).size() > 0) {
+//    		res = true;
+//    	}
+//    	Logger.info("indicateNpldStatus() res: " + res);
+    	return res;
+    }
+
 	/**
 	 * This method evaluates the Target list where NPLD status of (i) one or
 	 * more of the 'UK Postal Address', 'Via Correspondence', and/or
@@ -2112,61 +2166,60 @@ public class Target extends UrlModel {
 	 * 
 	 * @return target list
 	 */
-	public static List<Target> getNpldStatusList(String fieldUrl) {
+	public List<Target> getNpldStatusList() {
+		
 		List<Target> res = new ArrayList<Target>();
-		List<Target> unsorted = new ArrayList<Target>();
-		List<Target> targets = new ArrayList<Target>();
-		Logger.debug("getNpldStatusList() field URL: " + fieldUrl);
-		if (fieldUrl != null && fieldUrl.length() > 0) {
-			Logger.debug("getNpldStatusList() fieldUrl: " + fieldUrl);
-			fieldUrl = Scope.normalizeUrl(fieldUrl);
-			String domain = Scope.getDomainFromUrl(fieldUrl);
-			Logger.debug("getNpldStatusList() domain: " + domain);
-			ExpressionList<Target> ll = find.where()
-					.icontains(Const.FIELD_URL, domain)
-					.eq(Const.FIELD_UK_HOSTING, false).eq(Const.ACTIVE, true);
-			targets = ll.findList();
-		}
-		Logger.debug("getNpldStatusList() targets list size: " + targets.size());
-
-		/**
-		 * Check that UK top level domain is false, one of mentioned flags is
-		 * true and the domain is of higher level.
-		 */
-		Iterator<Target> itr = targets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			
-			// TODO: KL WHAT ABOUT THE COMMA SEPARATED URLS?
-			if ((target.field_uk_postal_address || target.field_via_correspondence
-					|| target.field_professional_judgement || target.field_no_ld_criteria_met)
-					&& isHigherLevel(target.fieldUrl(), fieldUrl)
-					&& (!checkUkHosting(target.fieldUrl()) && !isInScopeDomain(
-							target.fieldUrl(), target.url))) {
-				unsorted.add(target);
-				// if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
-				// break;
-				// }
-			}
-		}
-		Logger.debug("getNpldStatusList() targets unsorted result list size: "
-				+ unsorted.size());
-
-		/**
-		 * Check that UK top level domain is false, one of mentioned flags is
-		 * true and the domain is of higher level.
-		 */
-		for (int i = 0; i < Const.MAX_NPLD_LIST_SIZE; i++) {
-			if (i < unsorted.size()) {
-				Target target = getLatestCreatedTarget(unsorted);
-				if (target != null) {
-					res.add(i, target);
-					unsorted.remove(target);
-				}
-			}
-		}
-		Logger.debug("getNpldStatusList() targets result list size: "
-				+ res.size());
+//		List<Target> unsorted = new ArrayList<Target>();
+//		List<Target> targets = new ArrayList<Target>();
+//		
+//		for (FieldUrl fieldUrl : this.fieldUrls) {
+//			String url = this.normalizeUrl(fieldUrl.url);
+//			String domain = this.getDomainFromUrl(fieldUrl.url);
+//			Logger.debug("getNpldStatusList() domain: " + domain);
+//			
+//			ExpressionList<Target> ll = find.fetch("fieldUrls").where().icontains("fieldUrls.url", domain).eq(Const.FIELD_UK_HOSTING, false).eq(Const.ACTIVE, true);
+//			targets = ll.findList();
+//		}
+//
+//		Logger.debug("getNpldStatusList() targets list size: " + targets.size());
+//
+//		/**
+//		 * Check that UK top level domain is false, one of mentioned flags is
+//		 * true and the domain is of higher level.
+//		 */
+//		Iterator<Target> itr = targets.iterator();
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			
+//			// TODO: KL WHAT ABOUT THE COMMA SEPARATED URLS?
+//			if ((target.field_uk_postal_address || target.field_via_correspondence || target.field_professional_judgement || target.field_no_ld_criteria_met)
+//					&& isHigherLevel(target.fieldUrl(), fieldUrl)
+//					&& (!checkUkHosting(target.fieldUrl()) && !isInScopeDomain(
+//							target.fieldUrl(), target.url))) {
+//				unsorted.add(target);
+//				// if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
+//				// break;
+//				// }
+//			}
+//		}
+//		Logger.debug("getNpldStatusList() targets unsorted result list size: "
+//				+ unsorted.size());
+//
+//		/**
+//		 * Check that UK top level domain is false, one of mentioned flags is
+//		 * true and the domain is of higher level.
+//		 */
+//		for (int i = 0; i < Const.MAX_NPLD_LIST_SIZE; i++) {
+//			if (i < unsorted.size()) {
+//				Target target = getLatestCreatedTarget(unsorted);
+//				if (target != null) {
+//					res.add(i, target);
+//					unsorted.remove(target);
+//				}
+//			}
+//		}
+//		Logger.debug("getNpldStatusList() targets result list size: "
+//				+ res.size());
 		return res;
 	}
 
@@ -2291,8 +2344,8 @@ public class Target extends UrlModel {
 		// field_url - the domain name
 		// field_license - act-168
 		if (StringUtils.isNotEmpty(this.fieldUrl())) {
-			String normalisedUrl = Scope.normalizeUrl(this.fieldUrl());
-			String domain = Scope.getDomainFromUrl(normalisedUrl);
+			String normalisedUrl = Scope.INSTANCE.normalizeUrl(this.fieldUrl());
+			String domain = Scope.INSTANCE.getDomainFromUrl(normalisedUrl);
 			ExpressionList<Target> ll = find.where()
 					.icontains(Const.FIELD_URL, domain).eq(Const.ACTIVE, true);
 			List<Target> targets = ll.findList();
@@ -2319,13 +2372,10 @@ public class Target extends UrlModel {
 		// Open UKWA Licence at higher level - disabled
 		// Open UKWA licence for target being edited - disabled
 		List<Target> results = new ArrayList<Target>();
-		if (StringUtils.isNotEmpty(this.fieldUrl())) {
-			// first aggregate a list of active targets for associated URL
-			Logger.debug("getUkwaLicenceStatusList() fieldUrl: "
-					+ this.fieldUrl());
+		// first aggregate a list of active targets for associated URL
 			// TODO: KL REDO THIS
 //			this.fieldUrl = Scope.normalizeUrl(this.fieldUrl());
-			String domain = Scope.getDomainFromUrl(this.fieldUrl());
+			String domain = Scope.INSTANCE.getDomainFromUrl(this.fieldUrl());
 			Logger.debug("getUkwaLicenceStatusList() domain: " + domain);
 			// get me Targets that contain the same domain so I can check the
 			// licenses. i.e higher level
@@ -2358,7 +2408,6 @@ public class Target extends UrlModel {
 //					results.add(target);
 //				}
 				throw new NotImplementedError();
-			}
 			// what about current target license?
 		}
 
@@ -2672,6 +2721,22 @@ public class Target extends UrlModel {
 		return StringUtils.join(urls, ", ");
 	}
 	
+	public String subjectsAsString() {
+		List<String> names = new ArrayList<String>();
+		for (Subject subject : this.subjects) {
+			names.add(subject.name);
+		}
+		return StringUtils.join(names, ", ");
+	}
+	
+	public String collectionsAsString() {
+		List<String> names = new ArrayList<String>();
+		for (Collection collection : this.collections) {
+			names.add(collection.name);
+		}
+		return StringUtils.join(names, ", ");
+	}
+
 	@Override
 	public String toString() {
 		return "Target [organisation=" + organisation + ", authorUser="
@@ -2685,14 +2750,8 @@ public class Target extends UrlModel {
 				+ ", selectorNotes=" + selectorNotes + ", archivistNotes="
 				+ archivistNotes + ", selectionType=" + selectionType
 				+ ", flagNotes=" + flagNotes + ", tabStatus=" + tabStatus
-				+ ", isInScopeUkRegistrationValue="
-				+ isInScopeUkRegistrationValue + ", isInScopeDomainValue="
-				+ isInScopeDomainValue + ", isUkHostingValue="
-				+ isUkHostingValue + ", isInScopeIpValue=" + isInScopeIpValue
-				+ ", isInScopeIpWithoutLicenseValue="
-				+ isInScopeIpWithoutLicenseValue + ", domain=" + domain
-				+ ", fieldDescription=" + fieldDescription
-				+ ", fieldUkPostalAddressUrl=" + fieldUkPostalAddressUrl
+				+ ", fieldDescription=" + description
+				+ ", fieldUkPostalAddressUrl=" + ukPostalAddressUrl
 				+ ", fieldNotes=" + fieldNotes + ", keywords="
 				+ keywords + ", tags=" + tags + ", synonyms=" + synonyms
 				+ ", flags=" + flags + ", fieldUrl="

@@ -40,6 +40,18 @@ public class FieldUrl extends Model {
 	@JoinColumn(name = "target_id")
 	public Target target;
 
+	@Column(columnDefinition = "text")
+	public String domain;
+
+	/**
+	 * NPLD scope values
+	 */
+	public Boolean isInScopeUkRegistration;
+	public Boolean isInScopeDomain;
+	public Boolean isUkHosting;
+	public Boolean isInScopeIp;
+	public Boolean isInScopeIpWithoutLicense;
+	
 	public FieldUrl(String url) {
 		super();
 		this.url = url;

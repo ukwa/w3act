@@ -88,10 +88,10 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li><a href="@routes.Curators.view(user.url)">View</a></li>
+		<li><a href="@routes.Curators.view(user.id)">View</a></li>
 		<li class="active"><a href="@routes.Curators.sites(user.url)">Targets</a></li> 
 	    @if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || user.url.equals(admin.url)) {
-			<li><a href="@routes.Curators.edit(user.url)">Edit</a></li>
+			<li><a href="@routes.Curators.edit(user.id)">Edit</a></li>
 		}
 	</ul>
     
@@ -193,8 +193,8 @@
                 		}
                 	}
 				</td>
-				<td><a href="@routes.Curators.edit(target.authorUser.url)">@User.findByUrl(target.authorUser.url).name</a></td>
-				<td><a class="brand" href="@routes.TargetController.viewAct(target.url)">@Instance.findAllByTarget(target.url)</a></td>
+				<td><a href="@routes.Curators.edit(target.authorUser.id)">@User.findByUrl(target.authorUser.url).name</a></td>
+				<td><a class="brand" href="@routes.TargetController.view(target.id)">@Instance.findAllByTarget(target.url)</a></td>
             </tr>
             }
 		</tbody>

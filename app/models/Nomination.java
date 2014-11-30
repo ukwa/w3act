@@ -100,11 +100,6 @@ public class Nomination extends ActModel {
     	super();
     }
     
-    public String getName()
-    {
-        return name;
-    }
-
     public static Nomination findByName(String name)
     {
         return find.where()

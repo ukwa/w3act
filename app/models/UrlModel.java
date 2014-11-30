@@ -1,11 +1,13 @@
 package models;
 
+import java.io.IOException;
+import java.net.URL;
+
 import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import play.Logger;
 import uk.bl.api.models.FieldModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,11 +16,44 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @MappedSuperclass
 abstract class UrlModel extends ActModel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2497175981252269093L;
 
+	@JsonIgnore
+	@Transient
+	protected final String UK_DOMAIN       = ".uk";
+
+	@JsonIgnore
+	@Transient
+	protected final String LONDON_DOMAIN   = ".london";
+
+	@JsonIgnore
+	@Transient
+	protected final String SCOT_DOMAIN     = ".scot";
+
+	@JsonIgnore
+	@Transient
+	protected final String GEO_IP_SERVICE  = "GeoLite2-City.mmdb";
+
+	@JsonIgnore
+	@Transient
+	protected final String UK_COUNTRY_CODE = "GB";
+
+	@JsonIgnore
+	@Transient
+	protected final String HTTP            = "http://";
+
+	@JsonIgnore
+	@Transient
+	protected final String HTTPS           = "https://";
+
+	@JsonIgnore
+	@Transient
+	protected final String WWW             = "www.";
+
+	@JsonIgnore
+	@Transient
+	protected final String END_STR         = "/";
+	
 	@JsonProperty
 	public String title;
 	
@@ -266,6 +301,36 @@ abstract class UrlModel extends ActModel {
 
 	public void setAuthor(FieldModel author) {
 		this.author = author;
+	}
+	
+	public String getDomainFromUrl(String url) throws IOException {
+		return new URL(url).getHost().replace(WWW, "");
+    }
+	
+	public String normalizeUrl(String url) {
+		return this.normalizeUrl(url, true);
+	}
+
+	public String normalizeUrlNoSlash(String url) {
+		return this.normalizeUrl(url, false);
+	}
+	
+	private String normalizeUrl(String url, boolean slash) {
+		if (url != null && url.length() > 0) {
+	        if (!url.contains(WWW) && !url.contains(HTTP) && !url.contains(HTTPS)) {
+	        	url = WWW + url;
+	        }
+	        if (!url.contains(HTTP)) {
+		        if (!url.contains(HTTPS)) {
+		        	url = HTTP + url;
+		        }
+	        }
+	        if (slash && !url.endsWith(END_STR)) {
+	        	url = url + END_STR;
+	        }
+		}
+        Logger.info("normalized URL: " + url);
+		return url;
 	}
 
 //	same	"nid":"12954",

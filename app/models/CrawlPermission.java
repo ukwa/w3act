@@ -32,7 +32,9 @@ public class CrawlPermission extends ActModel {
 	 */
 	private static final long serialVersionUID = -2250099575463302989L;
 
-	//bi-directional many-to-one association to Target
+//	the permission can be inherited from a 'parent' target. 
+//	Targets could in theory have multiple crawl permissions. This is most likely in the case where a 
+//	permission was sent and then cancelled for whatever reason, and then another one sent to supersede it.
 	@ManyToOne
 	@JoinColumn(name="target_id")
 	public Target target;

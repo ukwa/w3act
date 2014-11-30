@@ -203,7 +203,15 @@ public class Organisation extends ActModel {
     	Organisation res = find.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
+
+    public static Organisation findByUrl(String url) {
+    	return find.where().eq(Const.URL, url).findUnique();
+    }
     
+	public static Organisation findByWct(String url) {
+		return find.where().eq("edit_url", url).findUnique();
+	}
+	
     /**
      * This method returns all organisations related alphabetically sorted.
      * @return user list
@@ -266,29 +274,6 @@ public class Organisation extends ActModel {
     	return res;
     }
     
-    /**
-     * Retrieve an organisation name by URL.
-     * @param url
-     * @return organisation name
-     */
-    public static Organisation findByUrl(String url) {
-    	Organisation organisation = new Organisation();
-//    	if (StringUtils.isNotEmpty(url) && !url.equals(Const.NONE)) {
-    	if (StringUtils.isNotEmpty(url)) {
-    		organisation = find.where().eq(Const.URL, url).findUnique();
-    		// TODO: KL why does he create a new one?
-    		if (organisation == null) {
-    			organisation = new Organisation();
-        		organisation.title = Const.NONE;
-        		organisation.url = Const.NONE;
-    		}
-    	} else {
-    		organisation.title = Const.NONE;
-    		organisation.url = Const.NONE;
-    	}
-    	return organisation;
-    }
-
     /**
      * Retrieve an organisation by title.
      * @param title

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import models.Organisation;
+import models.Target;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -147,17 +148,24 @@ public class Organisations extends AbstractController {
         	);
     }
 
-    /**
-     * Get View based on url
-     */
-    public static Result view(String url) {
-        return ok(
-                view.render(
-                        Organisation.findByUrl(url), User.findByEmail(request().username())
-                )
-            );
-    }    
+    public static Result view(Long id) {
+    	Organisation organisation = Organisation.findById(id);
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(organisation, user));
+    }
     
+    public static Result viewAct(String url) {
+    	Organisation organisation = Organisation.findByUrl(url);
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(organisation, user));
+    }
+
+    public static Result viewWct(String url) {
+    	Organisation organisation = Organisation.findByWct(url);
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(organisation, user));
+    }
+
     public static Result sites(String url) {
         return redirect(routes.TargetController.organisationTargets(0, Const.TITLE, Const.ASC, "", url));
     }

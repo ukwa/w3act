@@ -19,9 +19,6 @@ import uk.bl.Const;
 @MappedSuperclass
 public class ActModel extends Model {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4282393560240621524L;
 
 	@Id

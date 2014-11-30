@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import models.FieldUrl;
 import models.LookupEntry;
 import models.Target;
 import play.Logger;
@@ -50,8 +51,10 @@ import com.maxmind.geoip2.model.CityResponse;
  *      3.3 Use whois lookup service to check whether the given domain name is associated with the UK. 
  *          
  */
-public class Scope {
+public enum Scope {
 
+	INSTANCE;
+	
 	public static final String UK_DOMAIN       = ".uk";
 	public static final String LONDON_DOMAIN   = ".london";
 	public static final String SCOT_DOMAIN     = ".scot";
@@ -67,7 +70,7 @@ public class Scope {
 	 * @param ip - The host IP
 	 * @return true if in UK domain
 	 */
-	public static boolean queryDb(String ip) {
+	public boolean queryDb(String ip) {
 		boolean res = false;
 		// A File object pointing to your GeoIP2 or GeoLite2 database
 		File database = new File(GEO_IP_SERVICE);
@@ -97,7 +100,7 @@ public class Scope {
 	 * @param url The passed URL
 	 * @return normalized URL
 	 */
-	public static String normalizeUrl(String url, boolean slash) {
+	public String normalizeUrl(String url, boolean slash) {
 		String res = url;
 		if (res != null && res.length() > 0) {
 	        if (!res.contains(WWW) && !res.contains(HTTP) && !res.contains(HTTPS)) {
@@ -116,11 +119,11 @@ public class Scope {
 		return res;
 	}
 
-	public static String normalizeUrl(String url) {
+	public String normalizeUrl(String url) {
 		return normalizeUrl(url, true);
 	}
 
-	public static String normalizeUrlNoSlash(String url) {
+	public String normalizeUrlNoSlash(String url) {
 		return normalizeUrl(url, false);
 	}
 
@@ -132,7 +135,7 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException 
 	 */
-	public static boolean check(String url, String nidUrl) throws WhoisException {
+	public boolean check(String url, String nidUrl) throws WhoisException {
 	    return checkExt(url, nidUrl, Const.ScopeCheckType.ALL.name());
 	}
 	
@@ -145,7 +148,7 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean isLookupExistsInDb(String url) {
+	public boolean isLookupExistsInDb(String url) {
         boolean res = false;
         url = normalizeUrlNoSlash(url);        
         if (url != null && url.length() > 0) {
@@ -165,7 +168,7 @@ public class Scope {
 	 * @param target The target object
 	 * @param newStatus The QA status value
 	 */
-	public static void updateLookupEntry(Target target, boolean newStatus) {
+	public void updateLookupEntry(Target target, boolean newStatus) {
         boolean res = false;
         Logger.info("updateLookupEntry() field URL: " + target.fieldUrl() + ", new QA status: " + newStatus);
         String url = normalizeUrl(target.fieldUrl());
@@ -231,7 +234,7 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean checkExt(String url, String nidUrl, String mode) throws WhoisException {
+	public boolean checkExt(String url, String nidUrl, String mode) throws WhoisException {
         boolean res = false;
         Logger.info("check url: " + url + ", nid: " + nidUrl);
         url = normalizeUrl(url);
@@ -320,7 +323,7 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean checkScopeIp(String url, String nidUrl) throws WhoisException {
+	public boolean checkScopeIp(String url, String nidUrl) throws WhoisException {
         boolean res = false;
         Logger.info("check for scope IP url: " + url + ", nid: " + nidUrl);
         url = normalizeUrl(url);
@@ -394,7 +397,7 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean checkScopeIpWithoutLicense(String url, String nidUrl) throws WhoisException {
+	public boolean checkScopeIpWithoutLicense(String url, String nidUrl) throws WhoisException {
         boolean res = false;
         Logger.info("check for scope IP url: " + url + ", nid: " + nidUrl);
         url = normalizeUrl(url);
@@ -462,7 +465,7 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean checkScopeDomain(String url, String nidUrl) throws WhoisException {
+	public boolean checkScopeDomain(String url) throws WhoisException {
         boolean res = false;
 //        Logger.info("check for scope Domain url: " + url + ", nid: " + nidUrl);
         url = normalizeUrl(url);
@@ -482,7 +485,7 @@ public class Scope {
 	 * @param url
 	 * @return true if in UK domain
 	 */
-	public static boolean checkGeoIp(String url) {
+	public boolean checkGeoIp(String url) {
 		boolean res = false;
 		String ip = getIpFromUrl(url);
 		res = queryDb(ip);
@@ -496,7 +499,7 @@ public class Scope {
 	 * @return true if in UK domain
 	 * @throws WhoisException 
 	 */
-	public static boolean checkWhois(String url) throws WhoisException {
+	public boolean checkWhois(String url) throws WhoisException {
 		boolean res = false;
     	try {
         	JRubyWhois whoIs = new JRubyWhois();
@@ -523,7 +526,7 @@ public class Scope {
 	 * @return true if in UK domain
 	 * @throws WhoisException 
 	 */
-	public static boolean checkWhoisThread(int number) throws WhoisException {
+	public boolean checkWhoisThread(int number) throws WhoisException {
     	Logger.info("checkWhoisThread: " + number);
 		boolean res = false;
     	JRubyWhois whoIs = new JRubyWhois();
@@ -532,32 +535,34 @@ public class Scope {
     	Iterator<Target> itr = targetList.iterator();
     	while (itr.hasNext()) {
     		Target target = itr.next();
-        	try {
-	        	Logger.info("checkWhoisThread URL: " + target.fieldUrl() + ", last update: " + String.valueOf(target.updatedAt));
-	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.fieldUrl()));
-	        	Logger.info("whoIsRes: " + whoIsRes);
-	        	// DOMAIN A UK REGISTRANT?
-	        	res = whoIsRes.isUKRegistrant();
-	        	Logger.info("isUKRegistrant?: " + res);
-	        	// STORE
-	        	storeInProjectDb(target.fieldUrl(), res);
-	        	// ASSIGN TO TARGET
-	        	target.isInScopeUkRegistrationValue = res;
-	    	} catch (Exception e) {
-	    		Logger.info("whois lookup message: " + e.getMessage());
-		        // store in project DB
-	    		// FAILED - UNCHECKED
-		        storeInProjectDb(target.fieldUrl(), false);
-		        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
-	        	target.isInScopeUkRegistrationValue = false;
-	    	}
+    		for (FieldUrl fieldUrl : target.fieldUrls) {
+	        	try {
+		        	Logger.info("checkWhoisThread URL: " + target.fieldUrl() + ", last update: " + String.valueOf(target.updatedAt));
+		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
+		        	Logger.info("whoIsRes: " + whoIsRes);
+		        	// DOMAIN A UK REGISTRANT?
+		        	res = whoIsRes.isUKRegistrant();
+		        	Logger.info("isUKRegistrant?: " + res);
+		        	// STORE
+		        	storeInProjectDb(fieldUrl.url, res);
+		        	// ASSIGN TO TARGET
+		        	fieldUrl.isInScopeUkRegistration = res;
+		    	} catch (Exception e) {
+		    		Logger.info("whois lookup message: " + e.getMessage());
+			        // store in project DB
+		    		// FAILED - UNCHECKED
+			        storeInProjectDb(fieldUrl.url, false);
+			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
+		        	fieldUrl.isInScopeUkRegistration = false;
+		    	}
+    		}
         	Ebean.update(target);
     	}
 //    	Logger.info("whois res: " + res);        	
 		return res;
 	}
 	
-	public static WhoIsData checkWhois(int number) throws WhoisException {
+	public WhoIsData checkWhois(int number) throws WhoisException {
     	Logger.info("checkWhoisThread: " + number);
 		boolean res = false;
 		List<Target> targets = new ArrayList<Target>();
@@ -570,30 +575,32 @@ public class Scope {
     	Iterator<Target> itr = targetList.iterator();
     	while (itr.hasNext()) {
     		Target target = itr.next();
-        	try {
-//	        	Logger.info("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
-	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.fieldUrl()));
-//	        	Logger.info("whoIsRes: " + whoIsRes);
-	        	// DOMAIN A UK REGISTRANT?
-	        	res = whoIsRes.isUKRegistrant();
-	        	if (res) ukRegistrantCount++;
-	        	else nonUKRegistrantCount++;
-//	        	Logger.info("isUKRegistrant?: " + res);
-	        	// STORE
-	        	Logger.info("CHECK TO SAVE " + target.fieldUrl());
-	        	storeInProjectDb(target.fieldUrl(), res);
-	        	// ASSIGN TO TARGET
-	        	target.isInScopeUkRegistrationValue = res;
-	        	ukRegistrantCount++;
-	    	} catch (Exception e) {
-	    		Logger.info("whois lookup message: " + e.getMessage());
-		        // store in project DB
-	    		// FAILED - UNCHECKED
-		        storeInProjectDb(target.fieldUrl(), false);
-		        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
-	        	target.isInScopeUkRegistrationValue = false;
-	        	failedCount++;
-	    	}
+    		for (FieldUrl fieldUrl : target.fieldUrls) {
+	        	try {
+	//	        	Logger.info("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
+		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
+	//	        	Logger.info("whoIsRes: " + whoIsRes);
+		        	// DOMAIN A UK REGISTRANT?
+		        	res = whoIsRes.isUKRegistrant();
+		        	if (res) ukRegistrantCount++;
+		        	else nonUKRegistrantCount++;
+	//	        	Logger.info("isUKRegistrant?: " + res);
+		        	// STORE
+		        	Logger.info("CHECK TO SAVE " + target.fieldUrl());
+		        	storeInProjectDb(fieldUrl.url, res);
+		        	// ASSIGN TO TARGET
+		        	fieldUrl.isInScopeUkRegistration = res;
+		        	ukRegistrantCount++;
+		    	} catch (Exception e) {
+		    		Logger.info("whois lookup message: " + e.getMessage());
+			        // store in project DB
+		    		// FAILED - UNCHECKED
+			        storeInProjectDb(fieldUrl.url, false);
+			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
+		        	fieldUrl.isInScopeUkRegistration = false;
+		        	failedCount++;
+		    	}
+    		}
         	Ebean.update(target);
         	targets.add(target);
     	}
@@ -632,7 +639,7 @@ public class Scope {
 	 * @param url The search URL
 	 * @param res The evaluated result after checking by expert rules
 	 */
-	public static void storeInProjectDb(String url, boolean res) {
+	public void storeInProjectDb(String url, boolean res) {
 		boolean stored = isLookupExistsInDb(url);
 		Logger.info("STORED: " + stored + " - " + url);
 		if (!stored) {
@@ -652,7 +659,7 @@ public class Scope {
 	 * @param url
 	 * @return IP address as a string
 	 */
-	public static String getIpFromUrl(String url) {
+	public String getIpFromUrl(String url) {
 		String ip = "";
 		InetAddress address;
 		try {
@@ -671,7 +678,7 @@ public class Scope {
 	 * @param url
 	 * @return
 	 */
-	public static String getDomainFromUrl(String url) {
+	public String getDomainFromUrl(String url) {
 		String domain = "";
 		try {
 //			Logger.info("get host: " + new URL(url).getHost());
@@ -684,5 +691,15 @@ public class Scope {
         return domain;
 	}
 	
+	public boolean isUkHosting(String url) {
+		if (this.checkGeoIp(url)) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isInScopeUkRegistration(String url) throws WhoisException {
+		return checkWhois(url);
+	}
 }
 

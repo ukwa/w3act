@@ -16,7 +16,7 @@ import models.Role;
 import models.Tag;
 import models.Target;
 import models.Taxonomy;
-import models.TaxonomyVocabulary;
+import models.TaxonomyType;
 import models.User;
 
 import com.avaje.ebean.Ebean;
@@ -49,7 +49,7 @@ public enum DataImport {
 			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
 	        	this.importContactPersons();
 			}
-			if (Ebean.find(TaxonomyVocabulary.class).findRowCount() == 0) {
+			if (Ebean.find(TaxonomyType.class).findRowCount() == 0) {
 				this.importJsonTaxonomyVocabularies();
 			}
 			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
@@ -236,11 +236,11 @@ public enum DataImport {
 		@SuppressWarnings("unchecked")
 		Map<String,List<Taxonomy>> allTaxonomies = (Map<String,List<Taxonomy>>)Yaml.load("taxonomies.yml");
 		List<Taxonomy> taxonomies = allTaxonomies.get(Const.TAXONOMIES);
-		TaxonomyVocabulary tv = null;
+		TaxonomyType tv = null;
 		for (Taxonomy taxonomy : taxonomies) {
-			tv = TaxonomyVocabulary.findByMachineName(taxonomy.ttype);
+			tv = TaxonomyType.findByMachineName(taxonomy.ttype);
 			Logger.info("ttype: " + taxonomy.ttype + " - " + tv);
-			taxonomy.setTaxonomyVocabulary(tv);
+			taxonomy.setTaxonomyType(tv);
 			taxonomy.url = Const.ACT_URL + Utils.createId();
 			taxonomy.save();
 		}

@@ -7,7 +7,7 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-		<li><a href="@routes.Organisations.view(organisation.url)">View</a></li>
+		<li><a href="@routes.Organisations.view(organisation.id)">View</a></li>
 		<li><a href="@routes.Organisations.sites(organisation.url)">Sites</a></li> 
 		@if(user.hasRole("sys_admin")) {
 			<li><a href="@routes.Organisations.edit(organisation.url)">Edit</a></li>

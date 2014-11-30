@@ -188,17 +188,7 @@ public class User extends ActModel {
         return find.all();
     }
 
-    /**
-     * Retrieve an object by Id (id).
-     * @param id
-     * @return object 
-     */
-    public static User findById(Long id) {
-    	User res = find.byId(String.valueOf(id));
-    	return res;
-    }
-    
-    /**
+	/**
      * This method checks whether user has a role by its id.
      * @param roleName
      * @return true if exists
@@ -277,6 +267,16 @@ public class User extends ActModel {
     public static User findByUrl(String url) {
         return find.where().eq(Const.URL, url).findUnique();
     }
+    
+    public static User findById(Long id) {
+    	User res = find.byId(String.valueOf(id));
+    	return res;
+    }
+    
+	public static User findByWct(String url) {
+		return find.where().eq("edit_url", url).findUnique();
+	}
+
 
     /**
      * Retrieve a User by UID

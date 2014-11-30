@@ -272,12 +272,7 @@ public class Collection extends Taxonomy {
 	 */
 	public static List<Collection> getFirstLevelCollections() {
 		List<Collection> res = new ArrayList<Collection>();
-        ExpressionList<Collection> ll = find.where()
-        		.add(Expr.or(
-        				Expr.eq(Const.PARENT, ""),
-        				Expr.eq(Const.PARENT, Const.NONE_VALUE)
-    	                )
-    	        );
+        ExpressionList<Collection> ll = find.where().add(Expr.or(Expr.eq(Const.PARENT, ""), Expr.eq(Const.PARENT, Const.NONE_VALUE)));
     	res = ll.findList();
     	Logger.info("getFirstLevelCollections list size: " + res.size());
 		return res;

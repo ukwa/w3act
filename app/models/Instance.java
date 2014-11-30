@@ -778,7 +778,7 @@ public class Instance extends UrlModel {
 	 */
     public static boolean isInScope(String url, String nidUrl) {
     	try {
-    		return Scope.check(url, nidUrl);
+    		return Scope.INSTANCE.check(url, nidUrl);
     	} catch (WhoisException ex) {
     		Logger.info("Exception: " + ex);
     		return false;

@@ -12,8 +12,8 @@ import play.db.ebean.*;
  * Taxonomy vocabulary entity managed by Ebean
  */
 @Entity 
-@Table(name = "taxonomy_vocabulary")
-public class TaxonomyVocabulary extends ActModel {
+@Table(name = "taxonomy_type")
+public class TaxonomyType extends ActModel {
 
     /**
 	 * 
@@ -35,7 +35,7 @@ public class TaxonomyVocabulary extends ActModel {
 	public final static String TAGS = "tags";
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "taxonomyVocabulary", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "taxonomyType", cascade = CascadeType.PERSIST)
 	public List<Taxonomy> taxonomies;
 	
     public String name;  
@@ -53,36 +53,36 @@ public class TaxonomyVocabulary extends ActModel {
     
     //	{"vid":"5","name":"Web Archive Collections","machine_name":"collections","description":"Taxonomy for structuring collections.","term_count":"160"},
     
-    public TaxonomyVocabulary() {
+    public TaxonomyType() {
     	super();
     }
       
-    public TaxonomyVocabulary(String name) {
+    public TaxonomyType(String name) {
         this.name = name;
     }
     
     // -- Queries
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Model.Finder<Long,TaxonomyVocabulary> find = new Model.Finder(Long.class, TaxonomyVocabulary.class);
+	public static Model.Finder<Long,TaxonomyType> find = new Model.Finder(Long.class, TaxonomyType.class);
     
     /**
      * Retrieve Taxonomy for user
      */
-    public static List<TaxonomyVocabulary> findInvolving() {
+    public static List<TaxonomyType> findInvolving() {
         return find.all();
     }
     
-    public static TaxonomyVocabulary findByVid(Long vid) {
-    	TaxonomyVocabulary tv = find.where().eq("vid", vid).findUnique();
+    public static TaxonomyType findByVid(Long vid) {
+    	TaxonomyType tv = find.where().eq("vid", vid).findUnique();
     	return tv;
     }
     
     /**
      * Create a new Taxonomy.
      */
-    public static TaxonomyVocabulary create(String name) {
-        TaxonomyVocabulary Taxonomy = new TaxonomyVocabulary(name);
+    public static TaxonomyType create(String name) {
+        TaxonomyType Taxonomy = new TaxonomyType(name);
         Taxonomy.save();
         return Taxonomy;
     }
@@ -91,15 +91,15 @@ public class TaxonomyVocabulary extends ActModel {
      * Rename a Taxonomy
      */
     public static String rename(Long TaxonomyId, String newName) {
-        TaxonomyVocabulary Taxonomy = (TaxonomyVocabulary) find.ref(TaxonomyId);
+        TaxonomyType Taxonomy = (TaxonomyType) find.ref(TaxonomyId);
         Taxonomy.name = newName;
         Taxonomy.update();
         return newName;
     }
     
-    public static TaxonomyVocabulary findByMachineName(String machineName) {
-    	TaxonomyVocabulary taxonomyVocabulary = find.where().eq("machine_name", machineName).findUnique();
-    	return taxonomyVocabulary;
+    public static TaxonomyType findByMachineName(String machineName) {
+    	TaxonomyType taxonomyType = find.where().eq("machine_name", machineName).findUnique();
+    	return taxonomyType;
     }
 
 	public String getName() {

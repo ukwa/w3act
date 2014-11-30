@@ -30,9 +30,9 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 				$(this).val(datum.field_url);
 			}
 			if (urlTo !== undefined) {
-				window.location.replace(context + urlTo + "/" + "view?target=" + datum.url + "&tabStatus=overview");
+				window.location.replace(context + "/" + urlTo + "/" + datum.id + "&tabStatus=overview");
 			} else {
-				window.location.replace(context + searchContext + "/" + "view?target=" + datum.url); 
+				window.location.replace(context + "/" + searchContext + "/" + datum.id); 
 			}
 		});
 	}

@@ -87,7 +87,7 @@
     </div>
     
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.Organisations.view(organisation.url)">View</a></li>
+	   <li><a href="@routes.Organisations.view(organisation.id)">View</a></li>
 	   <li class="active"><a href="@routes.Organisations.sites(organisation.url)">Sites</a></li> 
 	   @if(user.hasRole("sys_admin")) {
 	   <li><a href="@routes.Organisations.edit(organisation.url)">Edit</a></li>
@@ -147,7 +147,7 @@
 	                	}
 					</td>
 	   				@if(target.organisation != null) { 
-	    				<td><a href="@routes.Curators.edit(target.authorUser.url)">@target.authorUser.name</a></td>
+	    				<td><a href="@routes.Curators.edit(target.authorUser.id)">@target.authorUser.name</a></td>
 					} else {
 	    				<td></td>
 					}	

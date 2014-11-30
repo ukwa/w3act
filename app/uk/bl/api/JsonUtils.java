@@ -29,7 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import models.Collection;
 import models.CollectionArea;
 import models.FieldUrl;
-import models.Flag;
 import models.Instance;
 import models.License;
 import models.Organisation;
@@ -39,7 +38,7 @@ import models.Subject;
 import models.Tag;
 import models.Target;
 import models.Taxonomy;
-import models.TaxonomyVocabulary;
+import models.TaxonomyType;
 import models.User;
 import play.Logger;
 import play.Play;
@@ -47,6 +46,7 @@ import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.api.models.FieldModel;
 import uk.bl.exception.TaxonomyNotFoundException;
+import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -363,7 +363,7 @@ public enum JsonUtils {
 //		http://www.webarchive.org.uk/act/taxonomy_term.json
 		try {
 
-			String jsonUrl = Const.URL_STR_BASE + TaxonomyVocabulary.TAXONOMY_VOCABULARY + Const.JSON;
+			String jsonUrl = Const.URL_STR_BASE + TaxonomyType.TAXONOMY_VOCABULARY + Const.JSON;
 
 		    String content = this.getAuthenticatedContent(jsonUrl);		    
 		    JsonNode parentNode = Json.parse(content);
@@ -401,24 +401,24 @@ public enum JsonUtils {
 //						{"vid":"1","name":"Tags","machine_name":"tags","description":"Use tags to group articles on similar topics into categories.","term_count":"0"}
 
 //						Logger.info("json: " + node);
-						TaxonomyVocabulary taxonomyVocabulary = objectMapper.readValue(node.toString(), TaxonomyVocabulary.class);
+						TaxonomyType taxonomyType = objectMapper.readValue(node.toString(), TaxonomyType.class);
 
 						ObjectMapper mapper = new ObjectMapper();
 						mapper.setSerializationInclusion(Include.NON_NULL);
 
-						Logger.info("taxonomy: " + taxonomyVocabulary);
+						Logger.info("taxonomy: " + taxonomyType);
 						
 						// find to see if it's stored already
 						
-						TaxonomyVocabulary lookup = TaxonomyVocabulary.findByVid(taxonomyVocabulary.getVid());
+						TaxonomyType lookup = TaxonomyType.findByVid(taxonomyType.getVid());
 						
-						Logger.info("lookup: " + lookup + " using " + taxonomyVocabulary.getVid());
+						Logger.info("lookup: " + lookup + " using " + taxonomyType.getVid());
 
 						if (lookup == null) {
-							taxonomyVocabulary.save();
+							taxonomyType.save();
 						}
 						
-						Logger.info("taxonomyVocabulary: " + taxonomyVocabulary);
+						Logger.info("taxonomyType: " + taxonomyType);
 						count++;
 					}
 				}
@@ -433,12 +433,12 @@ public enum JsonUtils {
 		}
 	}
 
-	private TaxonomyVocabulary getTaxonomyVocabulary(Taxonomy taxonomy) throws IOException {
+	private TaxonomyType getTaxonomyType(Taxonomy taxonomy) throws IOException {
 		FieldModel fmTaxVocab = taxonomy.getVocabularyValue();
-//		Logger.info("TaxonomyVocabulary: " + fmTaxVocab.getId());
+//		Logger.info("TaxonomyType: " + fmTaxVocab.getId());
 		Long vid = Long.valueOf(fmTaxVocab.getId());
-		TaxonomyVocabulary taxonomyVocabulary = TaxonomyVocabulary.findByVid(vid);
-		return taxonomyVocabulary;
+		TaxonomyType taxonomyType = TaxonomyType.findByVid(vid);
+		return taxonomyType;
 	}
 	
 	public void convertTaxonomies() {
@@ -538,26 +538,26 @@ public enum JsonUtils {
 	
 	private Taxonomy getTaxonomySubType(Long vid, ObjectMapper objectMapper, String row) throws JsonParseException, JsonMappingException, IOException {
 		Taxonomy taxonomy = null;
-		TaxonomyVocabulary tv = TaxonomyVocabulary.findByVid(vid);
+		TaxonomyType tv = TaxonomyType.findByVid(vid);
 		String machineName = tv.getMachine_name();
 		Logger.info("machineName: " + machineName);
 		switch (machineName) {
-			case TaxonomyVocabulary.COLLECTION:
+			case TaxonomyType.COLLECTION:
 				taxonomy = objectMapper.readValue(row, Collection.class);
 				break;
-			case TaxonomyVocabulary.LICENSES:
+			case TaxonomyType.LICENSES:
 				taxonomy = objectMapper.readValue(row, License.class);
 				break;
-			case TaxonomyVocabulary.QUALITY_ISSUES:
+			case TaxonomyType.QUALITY_ISSUES:
 				taxonomy = objectMapper.readValue(row, QaIssue.class);
 				break;
-			case TaxonomyVocabulary.SUBJECT:
+			case TaxonomyType.SUBJECT:
 				taxonomy = objectMapper.readValue(row, Subject.class);
 				break;
-			case TaxonomyVocabulary.COLLECTION_AREAS:
+			case TaxonomyType.COLLECTION_AREAS:
 				taxonomy = objectMapper.readValue(row, CollectionArea.class);
 				break;
-			case TaxonomyVocabulary.TAGS:
+			case TaxonomyType.TAGS:
 				taxonomy = objectMapper.readValue(row, Tag.class);
 				break;
 			default:
@@ -604,16 +604,16 @@ public enum JsonUtils {
 	
 	private Taxonomy convertTaxonomy(Taxonomy taxonomy, String row, ObjectMapper objectMapper) throws IOException {
 		// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
-		TaxonomyVocabulary taxonomyVocabulary = this.getTaxonomyVocabulary(taxonomy);
+		TaxonomyType taxonomyType = this.getTaxonomyType(taxonomy);
 		// to get the correct Taxonomy Instance
-		Long vid = taxonomyVocabulary.getVid();
+		Long vid = taxonomyType.getVid();
 		Logger.info("vocabulary id: " + vid);
 		taxonomy = this.getTaxonomySubType(vid, objectMapper, row);
 		
 //		taxonomy.id = Long.valueOf(taxonomy.getTid());
 		taxonomy.url = this.getActUrl(taxonomy.getTid());
 		
-		taxonomy.setTaxonomyVocabulary(taxonomyVocabulary);
+		taxonomy.setTaxonomyType(taxonomyType);
 		
 		// ownerUsers
 		if (taxonomy.getField_owner() != null) {
@@ -721,8 +721,14 @@ public enum JsonUtils {
 							Logger.info("Field Url: " + map.get("url"));
 							String url = map.get("url");
 							// TODO: KL THIS IS A LIST OF URLS 
-							target.domain = Scope.getDomainFromUrl(url);
-							fieldUrls.add(new FieldUrl(url));
+							FieldUrl fieldUrl = new FieldUrl(url);
+							fieldUrl.isInScopeUkRegistration = false; // check whois
+							fieldUrl.isInScopeDomain = Scope.INSTANCE.checkScopeDomain(url); // .uk .london .scot
+							fieldUrl.isUkHosting = false; // check if UK IP Address
+							fieldUrl.isInScopeIp = false;
+							fieldUrl.isInScopeIpWithoutLicense = false;
+							fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(url);
+							fieldUrls.add(fieldUrl);
 
 						}
 						if (!fieldUrls.isEmpty()) {
@@ -747,7 +753,7 @@ public enum JsonUtils {
 							String value = fieldDescription.get("value");
 							String summary = fieldDescription.get("summary");
 							if (StringUtils.isNotEmpty(value)) {
-								target.fieldDescription = value;
+								target.description = value;
 							}
 							
 							if (StringUtils.isNotEmpty(summary)) {
@@ -762,7 +768,7 @@ public enum JsonUtils {
 						if (target.getField_uk_postal_address_url() != null && target.getField_uk_postal_address_url() instanceof Map) {
 							Map<String,String> postalAddressUrl = (Map<String,String>)target.getField_uk_postal_address_url();
 							String url = postalAddressUrl.get("url");
-							target.fieldUkPostalAddressUrl = url;
+							target.ukPostalAddressUrl = url;
 						}
 	
 						// "field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},
@@ -895,12 +901,6 @@ public enum JsonUtils {
 							target.language = null;
 						}
 	
-						target.isInScopeUkRegistrationValue = false;
-			        	target.isInScopeDomainValue = Target.isInScopeDomain(target.fieldUrl(), target.url);
-						target.isUkHostingValue = false; 
-						target.isInScopeIpValue = false;
-						target.isInScopeIpWithoutLicenseValue = false;
-						
 						if (target.field_no_ld_criteria_met == null) {
 							target.field_no_ld_criteria_met = false;
 						}
@@ -917,14 +917,11 @@ public enum JsonUtils {
 
 			        	target.save();
 			        	count++;
-
-						// TODO: KL
-						// target.domain
 					}
 				}
 
 			}
-		} catch (IOException e) {
+		} catch (IOException | WhoisException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		

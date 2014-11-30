@@ -39,7 +39,7 @@
     }
     
     // Generate the link
-    routes.TargetController.list(newPage, sortBy, order, searchurl)
+    routes.TargetController.lookup(newPage, sortBy, order, searchurl)
     
 }
 
@@ -133,12 +133,14 @@
 						}
 					</td>
 					<td>
-						<a class="brand" href="opera.bl.uk:/8080/wayback/*@target.fieldUrl()" target="_blank">(mid-crawl),</a>
-	                 	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url=http://@target.fieldUrl()" target="_blank">(archival),</a>
-	                 	<a class="brand" href="@target.fieldUrl()" target="_blank">(live)</a>
+						@for(fieldUrl <- target.fieldUrls) {
+							<a class="brand" href="opera.bl.uk:/8080/wayback/*@fieldUrl.url" target="_blank">(mid-crawl),</a>
+		                 	<a class="brand" href="http://www.webarchive.org.uk/bluebox/search.jsf?url=@fieldUrl.url" target="_blank">(archival),</a>
+		                 	<a class="brand" href="@fieldUrl.url" target="_blank">(live)</a>
+		                 }
 	                 </td>
 					@if(target.organisation != null) {
-						<td><a href="@routes.Organisations.view(target.organisation.url)">
+						<td><a href="@routes.Organisations.view(target.organisation.id)">
 							@target.organisation.title</a></td>
 					} else {
 						<td></td>
@@ -147,7 +149,7 @@
 					<td>@target.field_crawl_frequency</td>
 					<td>
 						@if(target.authorUser != null) {
-							<a class="brand" href="@routes.Curators.edit(target.authorUser.url)">@target.authorUser.name</a>
+							<a class="brand" href="@routes.Curators.edit(target.authorUser.id)">@target.authorUser.name</a>
 						}
 					</td>
 					<td>
@@ -162,7 +164,11 @@
 							}
 						}
 					</td>
-					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@target.fieldUrl()" target="_blank">(mementos)</a></td>
+					<td>
+						@for(fieldUrl <- target.fieldUrls) {
+							<a class="brand" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url" target="_blank">(mementos)</a>
+						}
+					</td>
 				</tr>
 				}
 			</tbody>
