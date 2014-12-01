@@ -2,6 +2,8 @@ package controllers;
 
 import java.io.IOException;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -228,9 +230,16 @@ public class Documents extends AbstractController {
         return ok(jsonData);
     }
     
-    public static Result html(String filename) {
-    	File file = Play.application().getFile("../html/" + filename);
-    	return ok(file, filename);
+    public static Result html(String encodedFilename) {
+		try {
+			String filename = URLDecoder.decode(encodedFilename, "UTF-8");
+			File file = Play.application().getFile("../html/" + filename);
+			return ok(file, filename);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return ok();
 	}
 
 }
