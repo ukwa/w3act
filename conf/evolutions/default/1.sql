@@ -311,9 +311,9 @@ create table taxonomy (
   name                      varchar(255),
   description               text,
   publish                   boolean,
-  parent                    text,
   parents_all               text,
   revision                  text,
+  parent_id                 bigint,
   updated_at                timestamp not null,
   status                    varchar(255),
   constraint uq_taxonomy_url unique (url),
@@ -398,12 +398,6 @@ create table taxonomy_user (
   constraint pk_taxonomy_user primary key (taxonomy_id, user_id))
 ;
 
-create table taxonomy_parents (
-  taxonomy_id                    bigint not null,
-  parent_id                      bigint not null,
-  constraint pk_taxonomy_parents primary key (taxonomy_id, parent_id))
-;
-
 create table taxonomy_parents_all (
   taxonomy_id                    bigint not null,
   parent_id                      bigint not null,
@@ -420,6 +414,12 @@ create table tag_instance (
   tag_id                         bigint not null,
   instance_id                    bigint not null,
   constraint pk_tag_instance primary key (tag_id, instance_id))
+;
+
+create table subjects (
+  parent_id                      bigint not null,
+  id                             bigint not null,
+  constraint pk_subjects primary key (parent_id, id))
 ;
 
 create table collection_instance (
@@ -493,8 +493,10 @@ alter table target add constraint fk_target_crawlPermission_16 foreign key (craw
 create index ix_target_crawlPermission_16 on target (crawlPermission_id);
 alter table taxonomy add constraint fk_taxonomy_taxonomyType_17 foreign key (taxonomyType_id) references taxonomy_type (id);
 create index ix_taxonomy_taxonomyType_17 on taxonomy (taxonomyType_id);
-alter table creator add constraint fk_creator_organisation_18 foreign key (organisation_id) references organisation (id);
-create index ix_creator_organisation_18 on creator (organisation_id);
+alter table taxonomy add constraint fk_taxonomy_parent_18 foreign key (parent_id) references taxonomy (id);
+create index ix_taxonomy_parent_18 on taxonomy (parent_id);
+alter table creator add constraint fk_creator_organisation_19 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_19 on creator (organisation_id);
 
 
 
@@ -530,10 +532,6 @@ alter table taxonomy_user add constraint fk_taxonomy_user_taxonomy_01 foreign ke
 
 alter table taxonomy_user add constraint fk_taxonomy_user_creator_02 foreign key (user_id) references creator (id);
 
-alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
-
-alter table taxonomy_parents add constraint fk_taxonomy_parents_taxonomy_02 foreign key (parent_id) references taxonomy (id);
-
 alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_01 foreign key (taxonomy_id) references taxonomy (id);
 
 alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_02 foreign key (parent_id) references taxonomy (id);
@@ -545,6 +543,10 @@ alter table flag_instance add constraint fk_flag_instance_instance_02 foreign ke
 alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key (tag_id) references taxonomy (id);
 
 alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
+
+alter table subjects add constraint fk_subjects_taxonomy_01 foreign key (parent_id) references taxonomy (id);
+
+alter table subjects add constraint fk_subjects_taxonomy_02 foreign key (id) references taxonomy (id);
 
 alter table collection_instance add constraint fk_collection_instance_taxono_01 foreign key (collection_id) references taxonomy (id);
 
@@ -595,8 +597,6 @@ drop table if exists flag_target cascade;
 drop table if exists taxonomy cascade;
 
 drop table if exists taxonomy_user cascade;
-
-drop table if exists taxonomy_parents cascade;
 
 drop table if exists taxonomy_parents_all cascade;
 

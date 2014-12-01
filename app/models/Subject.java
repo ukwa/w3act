@@ -24,10 +24,14 @@ public class Subject extends Taxonomy {
 
     @JsonIgnore
     @ManyToMany
-	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") },
+	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") },
 			inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
 	public List<Target> targets;
 
+	@ManyToMany
+	@JoinTable(name = "subjects", joinColumns = { @JoinColumn(name = "parent_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
+	public List<Subject> children;
+	
 	@SuppressWarnings("rawtypes")
 	public static Model.Finder<Long,Subject> find = new Model.Finder(Long.class, Subject.class);
 

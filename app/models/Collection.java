@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
@@ -29,33 +28,20 @@ public class Collection extends Taxonomy {
 	private static final long serialVersionUID = 3043585612371074777L;
 
     @ManyToMany
-	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
+	@JoinTable(name = "collection_target", joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
-    private List<Target> targets;
+    public List<Target> targets;
  
     @ManyToMany
-	@JoinTable(name = Const.COLLECTION_INSTANCE, joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
+	@JoinTable(name = "collection_instance", joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
-    private List<Instance> instances;
+    public List<Instance> instances;
     
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="parent")
+	public List<Collection> children;
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,Collection> find = new Model.Finder(Long.class, Collection.class);
-    
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }        
     
     /**
      * Retrieve all collections.
@@ -267,29 +253,6 @@ public class Collection extends Taxonomy {
     }          
 	
 	/**
-	 * This method retrieves collections without parents - first level collections.
-	 * @return
-	 */
-	public static List<Collection> getFirstLevelCollections() {
-		List<Collection> res = new ArrayList<Collection>();
-        ExpressionList<Collection> ll = find.where().add(Expr.or(Expr.eq(Const.PARENT, ""), Expr.eq(Const.PARENT, Const.NONE_VALUE)));
-    	res = ll.findList();
-    	Logger.info("getFirstLevelCollections list size: " + res.size());
-		return res;
-	}       
-    
-	/**
-	 * This method retrieves collections with parents - child level collections.
-	 * @return
-	 */
-	public static List<Collection> getChildLevelCollections(String url) {
-		List<Collection> res = new ArrayList<Collection>();
-        ExpressionList<Collection> ll = find.where().eq(Const.PARENT, url);
-    	res = ll.findList();
-		return res;
-	}       
-    
-	/**
 	 * This method presents collection list for view page.
 	 * @param list
 	 * @return presentation string
@@ -369,6 +332,25 @@ public class Collection extends Taxonomy {
 		return res;
 	}       
     
+	public static List<Collection> getFirstLevelCollections() {
+	       List<Collection> rootCollections = find.where().isNull("parent").findList();
+	       Logger.info("getFirstLevelCollections list size: " + rootCollections.size());
+	       return rootCollections;
+	} 
+	
+	/**
+	 * This method retrieves collections with parents - child level collections.
+	 * @return
+	 */
+	public static List<Collection> getChildLevelCollections(String url) {
+        List<Collection> children = find.where().eq(Const.PARENT, url).findList();
+		return children;
+	}
+	
+	public static List<Collection> findChildrenByParentId(Long parentId) {
+		return find.where().eq("t0.parent_id", parentId).findList();
+	}
+	
     /**
      * Return a page of Target
      *
@@ -389,13 +371,11 @@ public class Collection extends Taxonomy {
 
 	@Override
 	public String toString() {
-		return "Collection [ttype=" + ttype + ", name=" + name
-				+ ", description=" + description + ", publish=" + publish
-				+ ", parent=" + parent + ", parentsAll=" + parentsAll
-				+ ", revision=" + revision + ", node_count=" + node_count
-				+ ", feed_nid=" + feed_nid + ", weight=" + weight + ", id="
-				+ id + ", url=" + url + ", createdAt=" + createdAt
-				+ ", updatedAt=" + updatedAt + "]";
+		return "Collection [targets=" + targets + ", children=" + children
+				+ ", ttype=" + ttype + ", name=" + name + ", parent=" + parent
+				+ "]";
 	}
+
+
 }
 

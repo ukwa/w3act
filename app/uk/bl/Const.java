@@ -406,8 +406,6 @@ public final class Const {
     public static final String ROLE_USER             = "role_user"; 
     public static final String PERMISSION_ROLE       = "permission_role"; 
     public static final String TAXONOMY_USER         = "taxonomy_user"; 
-    public static final String TAXONOMY_PARENTS  	 = "taxonomy_parents"; 
-    public static final String TAXONOMY_PARENTS_ALL  = "taxonomy_parents_all"; 
 
     // Types of the JSON nodes
 	public enum NodeType {

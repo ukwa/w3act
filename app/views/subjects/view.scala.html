@@ -31,8 +31,8 @@
 				<div class="form-group">
 	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
 				    <div class="col-sm-6">
-				    @if(subject.parent != null && subject.parent.length() > 0) { 
-		                @subject.parent
+				    @if(subject.parent != null) { 
+		                @subject.parent.name
 		            } else {
 		                None
 		            }

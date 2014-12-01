@@ -573,8 +573,18 @@ public enum JsonUtils {
 		}
 	}
 
-	private void convertParents(List<FieldModel> fieldParents, List<Taxonomy> parents, ObjectMapper objectMapper) throws IOException {
-		for (FieldModel parentFieldModel : fieldParents) {
+	private Taxonomy convertParents(List<FieldModel> fieldParents, Taxonomy taxonomy, ObjectMapper objectMapper) throws IOException {
+		Logger.info("fieldParents: " + fieldParents);
+		if (fieldParents != null && !fieldParents.isEmpty()) {
+			if (fieldParents.size() > 1) {
+				try {
+					throw new TaxonomyNotFoundException("fieldParents: " + fieldParents);
+				} catch (TaxonomyNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			FieldModel parentFieldModel = fieldParents.get(0);
 			String actUrl = this.getActUrl(parentFieldModel.getId());
 			Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
 			if (parentTaxonomy == null) {
@@ -582,11 +592,13 @@ public enum JsonUtils {
 				Logger.info("parentTaxonomy TYPE: " + parentTaxonomy.getClass());
 				parentTaxonomy.save();
 			}
-			parents.add(parentTaxonomy);
+			Logger.info("parentFieldModel: " + parentFieldModel + " - " + parentTaxonomy);
+			taxonomy.parent = parentTaxonomy;
 		}
+		return taxonomy;
 	}
 
-	private void convertParentsAll(List<FieldModel> fieldParentsAll, List<Taxonomy> parentsAll, ObjectMapper objectMapper) throws IOException {
+	private Taxonomy convertParentsAll(List<FieldModel> fieldParentsAll, Taxonomy taxonomy, ObjectMapper objectMapper) throws IOException {
 		// TODO: KL parents_all doesn't seem to be used by views/controllers
 		for (FieldModel parentAllFieldModel : fieldParentsAll) {
 			String actUrl = this.getActUrl(parentAllFieldModel.getId());
@@ -598,8 +610,9 @@ public enum JsonUtils {
 				Logger.info("parentAllTaxonomy TYPE: " + parentAllTaxonomy.getClass());
 				parentAllTaxonomy.save();
 			}
-			parentsAll.add(parentAllTaxonomy);
+			taxonomy.parentsAllList.add(parentAllTaxonomy);
 		}
+		return taxonomy;
 	}
 	
 	private Taxonomy convertTaxonomy(Taxonomy taxonomy, String row, ObjectMapper objectMapper) throws IOException {
@@ -625,9 +638,9 @@ public enum JsonUtils {
 		taxonomy.save();
 	
 		// "parent":[],
-		this.convertParents(taxonomy.getParentFieldList(), taxonomy.getParentsList(), objectMapper);
+		taxonomy = this.convertParents(taxonomy.getParentFieldList(), taxonomy, objectMapper);
 		// "parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
-		this.convertParentsAll(taxonomy.getParents_all(), taxonomy.getParentsAllList(), objectMapper);
+		taxonomy = this.convertParentsAll(taxonomy.getParents_all(), taxonomy, objectMapper);
 		return taxonomy;
 	}
 	

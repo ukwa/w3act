@@ -58,16 +58,13 @@ public enum DataImport {
 	        	this.importTags();
 	        	this.importFlags();
 			}
-			if (Ebean.find(Target.class).findRowCount() == 0) {
-	        	this.importTargets();
-			}
-			if (Ebean.find(Instance.class).findRowCount() == 0) {
-				this.importInstances();
-			}
-	        	
-//			if (Ebean.find(Collection.class).findRowCount() == 0) {
-//	        	this.importCollections();
+//			if (Ebean.find(Target.class).findRowCount() == 0) {
+//	        	this.importTargets();
 //			}
+//			if (Ebean.find(Instance.class).findRowCount() == 0) {
+//				this.importInstances();
+//			}
+	        	
 //				// aggregate url data from drupal and store JSON content in a file
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
 //				// store urls in DB

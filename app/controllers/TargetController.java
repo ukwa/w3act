@@ -1934,7 +1934,7 @@ public class TargetController extends AbstractController {
 	    		Collection collection = itr.next();
 //    			Logger.debug("add collection: " + collection.name + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
-	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
+	    		if ((parent && collection.parent == null) || !parent || collection.parent == null) {
 		    		if (firstTime) {
 		    			firstTime = false;
 		    		} else {
@@ -1974,7 +1974,7 @@ public class TargetController extends AbstractController {
 	    		Collection collection = itr.next();
 //    			Logger.debug("add collection: " + collection.name + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
-	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
+	    		if ((parent && collection.parent == null) || !parent || collection.parent == null) {
 		    		if (firstTime) {
 		    			firstTime = false;
 		    		} else {
@@ -2147,7 +2147,7 @@ public class TargetController extends AbstractController {
 	    		Taxonomy subject = itr.next();
 //    			Logger.debug("add subject: " + subject.name + ", with url: " + subject.url +
 //    					", parent:" + subject.parent + ", parent size: " + subject.parent.length());
-	    		if ((parent && subject.parent.length() == 0) || !parent) {
+	    		if ((parent && subject.parent == null) || !parent) {
 		    		if (firstTime) {
 		    			firstTime = false;
 		    		} else {
@@ -2191,7 +2191,7 @@ public class TargetController extends AbstractController {
 	    		Taxonomy subject = itr.next();
 //    			Logger.debug("add subject: " + subject.name + ", with url: " + subject.url +
 //    					", parent:" + subject.parent + ", parent size: " + subject.parent.length());
-	    		if ((parent && subject.parent.length() == 0) || !parent) {
+	    		if ((parent && subject.parent == null) || !parent) {
 		    		if (firstTime) {
 		    			firstTime = false;
 		    		} else {

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -39,7 +40,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Taxonomy extends ActModel {
      
 	public final static String TAXONOMY_TERM = "taxonomy_term";
-	
+    public static final String TAXONOMY_PARENTS  	 = "taxonomy_parents"; 
+    public static final String TAXONOMY_PARENTS_ALL  = "taxonomy_parents_all"; 
+
     /**
 	 * 
 	 */
@@ -73,28 +76,29 @@ public class Taxonomy extends ActModel {
     
     @Column(columnDefinition = "text") 
     @JsonIgnore
-    public String parent;
-
-    @Column(columnDefinition = "text") 
-    @JsonIgnore
     public String parentsAll;
 
 	@Column(columnDefinition = "text")
 	@JsonProperty
 	public String revision;
 
-	@JsonIgnore
-	@ManyToMany
-	@JoinTable(name = Const.TAXONOMY_PARENTS, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
-	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
-	private List<Taxonomy> parentsList;
+//	@JsonIgnore
+//	@ManyToMany
+//	@JoinTable(name = TAXONOMY_PARENTS, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+//	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
+//	public List<Taxonomy> parentsList;
 
 	@JsonIgnore
+    @ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name = "parent_id")
+	public Taxonomy parent;
+	
+	@JsonIgnore
 	@ManyToMany
-	@JoinTable(name = Const.TAXONOMY_PARENTS_ALL, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+	@JoinTable(name = TAXONOMY_PARENTS_ALL, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
 	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
-	private List<Taxonomy> parentsAllList;
-
+	public List<Taxonomy> parentsAllList;
+		
     @Transient
     @JsonProperty
     private String tid;
@@ -1283,23 +1287,6 @@ public class Taxonomy extends ActModel {
 
 	public void setTtype(String ttype) {
 		this.ttype = ttype;
-	}
-
-	
-	public List<Taxonomy> getParentsList() {
-		return parentsList;
-	}
-
-	public void setParentsList(List<Taxonomy> parentsList) {
-		this.parentsList = parentsList;
-	}
-
-	public List<Taxonomy> getParentsAllList() {
-		return parentsAllList;
-	}
-
-	public void setParentsAllList(List<Taxonomy> parentsAllList) {
-		this.parentsAllList = parentsAllList;
 	}
 
 	@Override

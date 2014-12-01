@@ -190,7 +190,7 @@ public class Subjects extends AbstractController {
 //        	}
 //	    }
         if (getFormParam(Const.TREE_KEYS) != null) {
-    		subject.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+//    		subject.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
     		Logger.debug("subject parent: " + subject.parent);
         	if (!getFormParam(Const.TREE_KEYS).toLowerCase().contains(Const.NONE)) {
         	    subject.ttype = Const.SUBSUBJECT;
@@ -280,7 +280,7 @@ public class Subjects extends AbstractController {
         	  			flash("message", "Please select only one parent.");
         	  			return info();
                     }
-            		if (StringUtils.isNotEmpty(subject.parent) && subject.parent.equals(subject.url)) {
+            		if (subject.parent != null) {
                     	Logger.info("It is not possible to assign a node to itself as a parent. Please select one parent.");
         	  			flash("message", "It is not possible to assign a node to itself as a parent. Please select one parent.");
         	  			return info();
@@ -288,12 +288,12 @@ public class Subjects extends AbstractController {
             		String parentUrl = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
             		if (parentUrl != null) {
             			if (!parentUrl.toLowerCase().equals(Const.NONE)) {
-            				subject.parent = Taxonomy.findByUrlExt(parentUrl).name;
+//            				subject.parent = Taxonomy.findByUrlExt(parentUrl).name;
                         	if (!getFormParam(Const.TREE_KEYS).toLowerCase().contains(Const.NONE)) {
         	            	    subject.ttype = Const.SUBSUBJECT;
         	            	}
             			} else {
-            				subject.parent = Const.NONE;
+//            				subject.parent = Const.NONE;
     	            	    subject.ttype = Const.SUBJECT;
             			}
             		}
@@ -369,7 +369,7 @@ public class Subjects extends AbstractController {
 	    		if (subjectUrl.isEmpty() 
 	    				|| (StringUtils.isNotEmpty(subjectUrl) && StringUtils.containsIgnoreCase(subject.name, subjectUrl))) {	    		
 //		    		if ((parent && subject.parent.length() == 0) || !parent) {
-			    	if ((parent && subject.parent.length() == 0) || !parent || (parent && subject.parent.equals(Const.NONE))) {
+			    	if ((parent && subject.parent == null) || !parent || (parent && subject.parent == null)) {
 						ObjectNode child = nodeFactory.objectNode();
 						child.put("title", subject.name);
 						child.put("url", String.valueOf(routes.Subjects.view(subject.url)));
@@ -402,8 +402,8 @@ public class Subjects extends AbstractController {
     	if (url != null && url.length() > 0) {
     		try {
 	    		Taxonomy subject = Taxonomy.findByUrl(url);
-	    		if (StringUtils.isNotEmpty(subject.parent)) {
-	    			url = subject.parent;
+	    		if (subject.parent != null) {
+//	    			url = subject.parent.id;
 	    		}
     		} catch (Exception e) {
     			Logger.info("New subject has no parent yet.");
@@ -439,7 +439,7 @@ public class Subjects extends AbstractController {
 	    		Taxonomy subject = itr.next();
 //    			Logger.debug("add subject: " + subject.name + ", with url: " + subject.url +
 //    					", parent:" + subject.parent + ", parent size: " + subject.parent.length());
-	    		if ((parent && subject.parent.length() == 0) || !parent || subject.parent.equals(Const.NONE_VALUE)) {
+	    		if ((parent && subject.parent == null) || !parent || subject.parent == null) {
 		    		if (firstTime) {
 		    			firstTime = false;
 		    		} else {

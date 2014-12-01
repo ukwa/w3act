@@ -8,6 +8,7 @@ import java.util.List;
 
 import models.Collection;
 import models.Target;
+import models.Taxonomy;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,8 +57,8 @@ public class Collections extends AbstractController {
 	 * @param filter
 	 *            Filter applied on target urls
 	 */
-	public static Result list(int pageNo, String sortBy, String order,
-			String filter) {
+	public static Result list(int pageNo, String sortBy, String order, String filter) {
+		
 		JsonNode node = getCollectionsData(filter);
 		
 		return ok(list.render("Collections",
@@ -176,7 +177,7 @@ public class Collections extends AbstractController {
     	collection.name = getFormParam(Const.TITLE);
     	collection.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
         if (getFormParam(Const.TREE_KEYS) != null) {
-    		collection.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+//    		collection.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
     		Logger.debug("collection parent: " + collection.parent);
         }
 	    if (getFormParam(Const.SUMMARY) != null) {
@@ -257,14 +258,14 @@ public class Collections extends AbstractController {
 //                	}
 //        	    }
                 if (getFormParam(Const.TREE_KEYS) != null) {
-            		collection.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
+//            		collection.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
             		Logger.debug("collection parent: " + collection.parent);
-            		if (StringUtils.isNotEmpty(collection.parent) && collection.parent.contains(Const.COMMA)) {
+            		if (collection.parent != null) {
                     	Logger.info("Please select only one parent.");
         	  			flash("message", "Please select only one parent.");
         	  			return info();
                     }
-            		if (StringUtils.isNotEmpty(collection.parent) && collection.parent.equals(collection.url)) {
+            		if (collection.parent != null) {
                     	Logger.info("It is not possible to assign a node to itself as a parent. Please select one parent.");
         	  			flash("message", "It is not possible to assign a node to itself as a parent. Please select one parent.");
         	  			return info();
@@ -323,8 +324,9 @@ public class Collections extends AbstractController {
     private static JsonNode getCollectionsData(String url) {
     	List<Collection> collections = Collection.getFirstLevelCollections();
     	List<ObjectNode> result = getCollectionTreeElements(collections, url, true);
-    	Logger.info("collections main level size: " + collections.size());
+//    	Logger.info("collections main level size: " + collections.size());
     	JsonNode jsonData = Json.toJson(result);
+//    	Logger.info("jsonData: " + jsonData);
         return jsonData;
     }
     
@@ -335,32 +337,27 @@ public class Collections extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static List<ObjectNode> getCollectionTreeElements(List<Collection> collectionList, String collectionUrl, boolean parent) { 
+    public static List<ObjectNode> getCollectionTreeElements(List<Collection> collectionList, String collectionUrl, boolean parent) {
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 
-		if (collectionList.size() > 0) {
-	    	Iterator<Collection> itr = collectionList.iterator();
-	    	while (itr.hasNext()) {
-	    		Collection collection = itr.next();
-	    		
-	    		if (collectionUrl.isEmpty() || (StringUtils.isNotEmpty(collectionUrl) && StringUtils.containsIgnoreCase(collection.name, collectionUrl))) {	    		
-		    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
-						ObjectNode child = nodeFactory.objectNode();
-						child.put("title", collection.name + " (" + Target.findAllforCollection(collection.url).size() + ")");
-						child.put("url", String.valueOf(routes.Collections.view(collection.url)));
-				    	if (StringUtils.isNotEmpty(collection.url) && collection.url.equalsIgnoreCase(collectionUrl)) {
-				    		child.put("select", true);
-				    	}
-						child.put("key", "\"" + collection.url + "\"");
-				    	List<Collection> childCollections = Collection.getChildLevelCollections(collection.url);
-				    	if (childCollections.size() > 0) {
-				    		child.put("children", Json.toJson(getCollectionTreeElements(childCollections, collectionUrl, false)));
-				    	}
-						result.add(child);
-		    		}
-	    		}
+    	Iterator<Collection> itr = collectionList.iterator();
+    	while (itr.hasNext()) {
+    		Collection collection = itr.next();
+			ObjectNode child = nodeFactory.objectNode();
+			child.put("title", collection.name + " (" + collection.targets.size() + ")");
+			child.put("url", String.valueOf(routes.Collections.view(collection.url)));
+			if (StringUtils.isNotEmpty(collection.url) && collection.url.equalsIgnoreCase(collectionUrl)) {
+	    		child.put("select", true);
 	    	}
+			child.put("key", "\"" + collection.url + "\"");
+	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
+	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
+//	    	Logger.info("children: " + children.size());
+	    	if (children.size() > 0) {
+	    		child.put("children", Json.toJson(getCollectionTreeElements(children, collectionUrl, false)));
+	    	}
+			result.add(child);
     	}
 //    	Logger.info("getTreeElements() res: " + result);
     	return result;
@@ -378,8 +375,8 @@ public class Collections extends AbstractController {
     	if (url != null && url.length() > 0) {
     		try {
 	    		Collection collection = Collection.findByUrl(url);
-	    		if (StringUtils.isNotEmpty(collection.parent)) {
-	    			url = collection.parent;
+	    		if (collection.parent != null) {
+//	    			url = collection.parent;
 	    		}
     		} catch (Exception e) {
     			Logger.info("New collection has no parent yet.");
@@ -415,7 +412,7 @@ public class Collections extends AbstractController {
 	    		Collection collection = itr.next();
 //    			Logger.debug("getTreeElements() add collection: " + collection.title + ", with url: " + collection.url +
 //    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
-	    		if ((parent && collection.parent.length() == 0) || !parent || collection.parent.equals(Const.NONE_VALUE)) {
+	    		if ((parent && collection.parent == null) || !parent || collection.parent == null) {
 		    		if (firstTime) {
 		    			firstTime = false;
 		    		} else {
