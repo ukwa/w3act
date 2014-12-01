@@ -63,10 +63,10 @@ public class Crawler {
 							for(Element element : doc.select("a[href]")) {
 								String waybackHrefUrl = element.absUrl("href");
 								String hrefUrl = urlFromWayback(waybackHrefUrl);
-								if (hrefUrl != null && !knownSites.contains(waybackHrefUrl)) {
+								if (hrefUrl != null && !knownSites.contains(hrefUrl)) {
 									if (hrefUrl.endsWith(".pdf")) {
 										if (urlMatchesScheme(hrefUrl, watchedTarget.documentUrlScheme)) {
-											knownSites.add(waybackHrefUrl);
+											knownSites.add(hrefUrl);
 											//System.out.println("pdf: " + hrefUrl + " (via " + link.target + ")");
 											Document document = new Document();
 											document.landingPageUrl = pageUrl;
@@ -78,7 +78,7 @@ public class Crawler {
 											if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
 										}
 									} else if(domainIsEqual(pageUrl, hrefUrl)) {
-										knownSites.add(waybackHrefUrl);
+										knownSites.add(hrefUrl);
 										children.add(new Link(link.target, waybackHrefUrl));
 									}
 								}

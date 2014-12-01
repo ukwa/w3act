@@ -1,13 +1,13 @@
 #### Production values
 application.name=w3act
-application.context="/w3act-ddhapt/"
+application.context="/act-ddhapt/"
 
 # Secret key
 # ~~~~~
 # The secret key is used to secure cryptographics functions.
 # If you deploy your application to several instances be sure to use the same key!
 #
-application.secret="E27D^[_<Lpt0vjad]de;3/i;tx3gpRmG4Byof/3nahO/dIo9gbsMWut1w3xg[>9W"
+application.secret=${?APPLICATION_SECRET}
 
 # Database configuration
 # ~~~~~ 
