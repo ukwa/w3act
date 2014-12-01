@@ -12,4 +12,5 @@ rm *.woff
 
 sed -i s/@font-face{[^}]*}// "$BASE_FILE_NAME.html"
 
-mv "$BASE_FILE_NAME.html" ../app/assets/
+mkdir -p ../../../html
+mv "$BASE_FILE_NAME.html" ../../../html/

@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
+import play.Play;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -225,5 +227,10 @@ public class Documents extends AbstractController {
         }
         return ok(jsonData);
     }
+    
+    public static Result html(String filename) {
+    	File file = Play.application().getFile("../html/" + filename);
+    	return ok(file, filename);
+	}
 
 }

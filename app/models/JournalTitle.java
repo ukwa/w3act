@@ -39,5 +39,32 @@ public class JournalTitle extends Model {
 	public String blCollectionSubset;
 	@Transient
 	public String subject;
+	
+	public static List<String> frequencies() {
+		List<String> frequencies = new ArrayList<String>();
+		Frequency[] values = Frequency.values();
+		for (int i=0; i < values.length; i++) {
+			frequencies.add(values[i].toString());
+	    }
+		return frequencies;
+	}
+	
+	public enum Frequency {
+		NO_FREQUENCY(""),
+		MONTHLY("Monthly"),
+		QUARTERLY("Quarterly"),
+		TWO_ISSUES_PER_YEAR("Two Issues per Year"),
+		YEARLY("Yearly");
+		
+        private String value;
 
+        private Frequency(String value) {
+                this.value = value;
+        }
+        
+        public String toString() {
+        	return value;
+        }
+    }
+	
 }

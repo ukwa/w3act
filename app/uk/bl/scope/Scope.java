@@ -59,7 +59,7 @@ public class Scope {
 	public static final String HTTP            = "http://";
 	public static final String HTTPS           = "https://";
 	public static final String WWW             = "www.";
-	public static final String END_STR         = "/";
+	//public static final String END_STR         = "/";
 
 	/**
 	 * This method queries geo IP from database
@@ -107,9 +107,9 @@ public class Scope {
 		        	res = HTTP + res;
 		        }
 	        }
-	        if (!res.endsWith(END_STR)) {
+	        /*if (!res.endsWith(END_STR)) {
 	        	res = res + END_STR;
-	        }
+	        }*/
 		}
         Logger.info("normalized URL: " + res);
 		return res;

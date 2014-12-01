@@ -90,7 +90,7 @@
 					<input type="hidden" name="@name" id="@id" value="@value">
 				}
 				@inputText(form("issn"), '_label -> "ISSN", textualElement)
-				@inputText(form("frequency"), '_label -> "Frequency", textualElement)
+				@select(form("frequency"), options(JournalTitle.frequencies), '_label -> "Frequency", textualElement)
 				@inputText(form("publisherName"), '_label -> "Publisher Name", textualElement)
 				@input(form("language"), '_label -> "Language") { (id, name, value, args) =>
 					@value

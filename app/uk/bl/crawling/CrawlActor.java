@@ -1,8 +1,6 @@
 package uk.bl.crawling;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +9,6 @@ import com.avaje.ebean.Ebean;
 import models.Document;
 import models.WatchedTarget;
 import akka.actor.UntypedActor;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
 import play.Logger;
 import play.libs.F.*;
 import play.libs.F.Promise;
@@ -61,7 +57,7 @@ public class CrawlActor extends UntypedActor {
 	
 	private static void convertPdfToHtml(Document document) throws IOException {
 		ProcessBuilder builder = new ProcessBuilder(
- 			"/bin/bash", "-c", "cd converter && ./convertPdfToHtml.sh " + document.documentUrl + " '" + document.title + "'");
+ 			"/bin/bash", "-c", "cd conf/converter && ./convertPdfToHtml.sh " + document.documentUrl + " '" + document.title + "'");
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
 		/*BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));

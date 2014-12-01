@@ -1,5 +1,6 @@
 package uk.bl;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,7 +89,7 @@ public final class Const {
 	public static final String BL_MAIL_ADDRESS    = "wa-sysadm@bl.uk";
 	public static final String TAGS               = "tags";
 	public static final String TAXONOMIES         = "taxonomies";
-	public static final String VERSION_FILE       = "version.txt";
+	public static final String VERSION_FILE       = "conf" + File.separator + "version.txt";
 	public static final String PLACE_HOLDER_DELIMITER = "||";
 	public static final String URL_PLACE_HOLDER   = "||URL||";
 	public static final String LINK_PLACE_HOLDER  = "||LINK||";
