@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -223,8 +224,12 @@ public class Target extends Model {
     @Column(columnDefinition = "TEXT")
     public String quality_notes; 
     
-    @Transient
-    public boolean watched;
+	@OneToOne(mappedBy="target") @JsonIgnore
+	public WatchedTarget watchedTarget;
+    
+    public boolean isWatched() {
+    	return watchedTarget != null;
+    }
     
     @Version
     public Timestamp lastUpdate;

@@ -1,5 +1,8 @@
 @(target: Target, user: User)
 
+@import templates.checkbox
+@import templates.inputText
+
 @script = {
 	<script>
     // This is the code that switches to the other page.
@@ -99,7 +102,7 @@
 					<font color="red">(-)</font>
 				}		        
 		    </a></li>
-		    <li><a href="#journalTitles" data-toggle="tab">Journal Titles</a></li>
+		    <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
       	</ul>
 	</div>
 	
@@ -838,8 +841,28 @@
 		     	</div>
 		</div>
 		
-		<div class="tab-pane fade" id="journalTitles">
-			<table>
+		<div class="tab-pane fade" id="watchedTarget">
+				<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">watched</label>
+						    <div class="col-sm-6">
+		 						<input disabled type="checkbox" @if(target.isWatched) { checked } class="checkbox" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Document URL Scheme</label>
+						    <div class="col-sm-6">
+		 						<input readonly type="text" value="@{if(target.watchedTarget != null) target.watchedTarget.documentUrlScheme}" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     <table>
 				@for(journalTitle <- target.journalTitles) {
 					<tr>
 						<td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>

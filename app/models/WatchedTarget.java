@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +15,7 @@ import play.db.ebean.Model;
 public class WatchedTarget extends Model {
 	@Id
 	public Long id;
-	@ManyToOne @JsonIgnore
+	@OneToOne @JsonIgnore
 	@JoinColumn(name="id_target")
 	public Target target;
 	@ManyToOne @JsonIgnore
@@ -40,7 +41,7 @@ public class WatchedTarget extends Model {
 	}
 	public static Page<WatchedTarget> page(User user, int page, int pageSize, String sortBy, String order, String filter) {
     	
-        return find.where().join("target").where()
+        return find.where()
         		.eq("id_creator", user.uid)
         		.icontains("target.field_url", filter)
         		.orderBy(sortBy + " " + order)

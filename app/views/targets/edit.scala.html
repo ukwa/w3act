@@ -1,8 +1,7 @@
 @(form: Form[Target], user: User)
 
-@import helper.checkbox
-@import helper.inputText
-@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+@import templates.checkbox
+@import templates.inputText
 
 @script = {
 	<script>	
@@ -205,7 +204,7 @@
 					<font color="red">(-)</font>
 				}		        
 		    </a></li>
-		    <li><a href="#documents" data-toggle="tab">Documents</a></li>
+		    <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
 	  	</ul>
 	</div>
 	@warningmessage(flash)
@@ -1187,9 +1186,9 @@
 		     	
 			</div>		     		        		     
 	        
-			<div class="tab-pane fade" id="documents">
-				@checkbox(form("watched"), '_label -> "watched", 'class -> "checkbox")
-				@inputText(form("documentUrlScheme"), '_label -> "Document Url Scheme", 'class -> "form-control")
+			<div class="tab-pane fade" id="watchedTarget">
+				@checkbox(form("watched"), true, '_label -> "watched")
+				@inputText(form("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")
 	        </div>
 	        
 		</div>
