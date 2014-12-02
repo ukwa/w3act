@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import models.Book;
 import models.Document;
+import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
 import models.User;
@@ -95,7 +96,8 @@ public class Documents extends AbstractController {
 		}
 		if (documentForm.hasErrors()) {
 			Logger.info("Show errors in html");
-			return badRequest(edit.render("Document", documentForm,
+			FlashMessage.validationWarning.send();
+			return status(303, edit.render("Document", documentForm,
 					User.findByEmail(request().username()), getJournalTitles(), true));
 		}
 		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
@@ -128,7 +130,9 @@ public class Documents extends AbstractController {
 				Ebean.update(document.journal);
 			}
 		}
-
+		
+		FlashMessage.updateSuccess.send();
+		
 		return redirect(routes.Documents.edit(document.id));
 	}
 	

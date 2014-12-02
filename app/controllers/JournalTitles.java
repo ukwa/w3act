@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.avaje.ebean.Ebean;
 
+import models.FlashMessage;
 import models.JournalTitle;
 import models.Target;
 import models.Taxonomy;
@@ -67,7 +68,8 @@ public class JournalTitles extends AbstractController {
 		
 		if (journalTitleForm.hasErrors()) {
 			Logger.info("Show errors in html");
-			return badRequest(edit.render("Journal Title", journalTitleForm,
+			FlashMessage.validationWarning.send();
+			return status(303, edit.render("Journal Title", journalTitleForm,
 					User.findByEmail(request().username()), toDocument));
 		}
 		
@@ -82,8 +84,10 @@ public class JournalTitles extends AbstractController {
 		flash("journalTitle", "" + journalTitle.id);
 		if (toDocument)
 			return redirect(routes.Documents.continueEdit());
-		else
+		else {
+			FlashMessage.updateSuccess.send();
 			return redirect(routes.JournalTitles.edit(journalTitle.id));
+		}
 	}
 
 }
