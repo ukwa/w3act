@@ -72,8 +72,8 @@
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Taxonomies<b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="@routes.Collections.index()">Collections</a></li>
-							<li><a href="@routes.Subjects.index()">Subjects</a></li>
+							<li><a href="@routes.CollectionController.index()">Collections</a></li>
+							<li><a href="@routes.SubjectController.index()">Subjects</a></li>
 							<li><a href="@routes.Tags.index()">Tags</a></li>
 							<li><a href="@routes.Flags.index()">Flags</a></li>
 							@if(user.hasRole("sys_admin")) {

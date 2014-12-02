@@ -736,7 +736,7 @@ public class TargetController extends AbstractController {
 //    	if (StringUtils.isBlank(query)) {
 //			Logger.info("Target name is empty. Please write name in search window.");
 //			flash("message", "Please enter a name in the search window");
-//	        return redirect(routes.Collections.list(0, "title", "asc", ""));
+//	        return redirect(routes.CollectionController.list(0, "title", "asc", ""));
 //    	}    	
 
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));

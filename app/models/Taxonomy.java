@@ -82,12 +82,6 @@ public class Taxonomy extends ActModel {
 	@JsonProperty
 	public String revision;
 
-//	@JsonIgnore
-//	@ManyToMany
-//	@JoinTable(name = TAXONOMY_PARENTS, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
-//	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
-//	public List<Taxonomy> parentsList;
-
 	@JsonIgnore
     @ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name = "parent_id")
@@ -135,6 +129,9 @@ public class Taxonomy extends ActModel {
     @JsonProperty
     private Object field_dates;
     
+    @Transient
+    public String parentName;
+    
 //    {"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
 //    "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
 //    "field_publish":true,"tid":"250","name":"European Parliament Elections 2014","description":"","weight":"0","node_count":10,"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250","vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},"parent":[],"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
@@ -177,8 +174,21 @@ public class Taxonomy extends ActModel {
     public static Taxonomy findById(Long id) {
     	Taxonomy res = find.where().eq(Const.ID, id).findUnique();
     	return res;
-    }          
+    }
     
+    /**
+     * Retrieve a taxonomy by title.
+     * @param title
+     * @return taxonomy object
+     */
+    public static Taxonomy findByName(String name) {
+    	return find.where().eq("name", name).findUnique();
+    }
+
+    public static Taxonomy findByNameAndType(String name, String type) {
+    	return find.where().eq("name", name).eq("ttype", type).findUnique();
+    }
+
     /**
      * Create a new Taxonomy.
      */
@@ -187,6 +197,7 @@ public class Taxonomy extends ActModel {
         Taxonomy.save();
         return Taxonomy;
     }
+
     
     /**
      * Rename a Taxonomy
@@ -403,26 +414,6 @@ public class Taxonomy extends ActModel {
     	return res;
     }
         
-    /**
-     * Retrieve a taxonomy by title.
-     * @param title
-     * @return taxonomy object
-     */
-    public static Taxonomy findByName(String name) {
-    	Taxonomy res = new Taxonomy();
-    	if (name != null && name.length() > 0) {
-//    		Logger.info("p1: " + name);
-    		if (name.contains(Const.COMMA)) {
-    			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
-    		}
-    		res = find.where().eq(Const.NAME, name).findUnique();
-    	} else {
-    		res.name = Const.NONE;
-    	}
-//		Logger.info("res: " + res);
-    	return res;
-    }
-
     /**
      * Retrieve a taxonomy by name. The origin of these subjects is from the configuration file.
      * @param title
@@ -1288,7 +1279,7 @@ public class Taxonomy extends ActModel {
 	public void setTtype(String ttype) {
 		this.ttype = ttype;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Taxonomy [name=" + name + ", description="

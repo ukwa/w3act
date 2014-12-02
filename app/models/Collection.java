@@ -40,8 +40,7 @@ public class Collection extends Taxonomy {
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="parent")
 	public List<Collection> children;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Model.Finder<Long,Collection> find = new Model.Finder(Long.class, Collection.class);
+	public static Model.Finder<Long,Collection> find = new Model.Finder<Long, Collection>(Long.class, Collection.class);
     
     /**
      * Retrieve all collections.
@@ -333,22 +332,13 @@ public class Collection extends Taxonomy {
 	}       
     
 	public static List<Collection> getFirstLevelCollections() {
-	       List<Collection> rootCollections = find.where().isNull("parent").findList();
+	       List<Collection> rootCollections = find.where().isNull("parent").order().asc("name").findList();
 	       Logger.info("getFirstLevelCollections list size: " + rootCollections.size());
 	       return rootCollections;
 	} 
 	
-	/**
-	 * This method retrieves collections with parents - child level collections.
-	 * @return
-	 */
-	public static List<Collection> getChildLevelCollections(String url) {
-        List<Collection> children = find.where().eq(Const.PARENT, url).findList();
-		return children;
-	}
-	
 	public static List<Collection> findChildrenByParentId(Long parentId) {
-		return find.where().eq("t0.parent_id", parentId).findList();
+		return find.where().eq("t0.parent_id", parentId).order().asc("name").findList();
 	}
 	
     /**
@@ -376,6 +366,15 @@ public class Collection extends Taxonomy {
 				+ "]";
 	}
 
+	/**
+	 * This method retrieves collections with parents - child level collections.
+	 * @return
+	 */
+	public static List<Collection> getChildLevelCollections(String url) {
+        List<Collection> children = find.where().eq(Const.PARENT, url).findList();
+		return children;
+	}
+	
 
 }
 

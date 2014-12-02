@@ -536,12 +536,11 @@ public enum JsonUtils {
 		}
 	}
 	
-	private Taxonomy getTaxonomySubType(Long vid, ObjectMapper objectMapper, String row) throws JsonParseException, JsonMappingException, IOException {
+	private Taxonomy getTaxonomyClassSubType(TaxonomyType taxonomyType, ObjectMapper objectMapper, String row) throws JsonParseException, JsonMappingException, IOException {
 		Taxonomy taxonomy = null;
-		TaxonomyType tv = TaxonomyType.findByVid(vid);
-		String machineName = tv.getMachine_name();
+		String machineName = taxonomyType.getMachine_name();
 		Logger.info("machineName: " + machineName);
-		switch (machineName) {
+		switch (machineName.toLowerCase()) {
 			case TaxonomyType.COLLECTION:
 				taxonomy = objectMapper.readValue(row, Collection.class);
 				break;
@@ -560,8 +559,11 @@ public enum JsonUtils {
 			case TaxonomyType.TAGS:
 				taxonomy = objectMapper.readValue(row, Tag.class);
 				break;
-			default:
+			default: 
+				Logger.info("Default hit");
+				break;
 		}
+		Logger.info("Taxonomy Type: " + taxonomy.getClass());
 		return taxonomy;
 	}
 	
@@ -619,9 +621,7 @@ public enum JsonUtils {
 		// "vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},
 		TaxonomyType taxonomyType = this.getTaxonomyType(taxonomy);
 		// to get the correct Taxonomy Instance
-		Long vid = taxonomyType.getVid();
-		Logger.info("vocabulary id: " + vid);
-		taxonomy = this.getTaxonomySubType(vid, objectMapper, row);
+		taxonomy = this.getTaxonomyClassSubType(taxonomyType, objectMapper, row);
 		
 //		taxonomy.id = Long.valueOf(taxonomy.getTid());
 		taxonomy.url = this.getActUrl(taxonomy.getTid());
@@ -656,6 +656,29 @@ public enum JsonUtils {
 		taxonomy = this.convertTaxonomy(taxonomy, content, objectMapper);
 		
 		return taxonomy;
+	}
+	
+	// some specific pre-pending 
+	private String validateUrl(String url) {
+		if (url.startsWith("at ")) {
+			url = url.replace("at ", "");
+		}
+		else if (url.startsWith("www.")) {
+			url = "http://" + url;
+		}
+		else if (url.startsWith("ttp")) {
+			url = url.replace("ttp", "");
+			url = "http://" + url;
+		}
+		else if (url.startsWith("ttps")) {
+			url = url.replace("ttps", "");
+			url = "https://" + url;
+		}
+		else if (!url.startsWith("http")) {
+			url = url.replace("ttp", "");
+			url = "http://" + url;
+		}
+		return url;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -731,8 +754,9 @@ public enum JsonUtils {
 						// "field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
 						List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
 						for (Map<String,String> map : target.getField_url()) {
-							Logger.info("Field Url: " + map.get("url"));
 							String url = map.get("url");
+							url = validateUrl(url);
+							Logger.info("Checked Url: " + url);
 							// TODO: KL THIS IS A LIST OF URLS 
 							FieldUrl fieldUrl = new FieldUrl(url);
 							fieldUrl.isInScopeUkRegistration = false; // check whois

@@ -85,15 +85,15 @@
 @main("", user, scripts, styles) {
     
    	<div class="page-header">
-		<h1><a href="@routes.Collections.index()">Taxonomies > Collections > </a>Collection @collection.name (@currentPage.getTotalRowCount targets)</h1>
+		<h1><a href="@routes.CollectionController.index()">Taxonomies > Collections > </a>Collection @collection.name (@currentPage.getTotalRowCount targets)</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li><a href="@routes.Collections.view(collection.url)">View</a></li>
+		<li><a href="@routes.CollectionController.view(collection.url)">View</a></li>
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		<li><a href="@routes.Collections.edit(collection.url)">Edit</a></li>
+		<li><a href="@routes.CollectionController.edit(collection.url)">Edit</a></li>
 		}
-		<li class="active"><a href="@routes.Collections.sites(collection.url)">Targets</a></li>
+		<li class="active"><a href="@routes.CollectionController.sites(collection.url)">Targets</a></li>
 	</ul>
     
 	<div id="forms">
@@ -133,7 +133,7 @@
                	<td>
 					@for(col <- models.Collection.getSelectedCollections(target.url)) {
 	               		@if(col.url != null) {
-	            			<a href="@routes.Collections.view(col.url)">@col.name</a>,&nbsp;
+	            			<a href="@routes.CollectionController.view(col.url)">@col.name</a>,&nbsp;
 	            		}
 		            }
    	            </td>

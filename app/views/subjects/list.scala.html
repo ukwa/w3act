@@ -1,4 +1,4 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[Taxonomy], currentSortBy: String, currentOrder: String, data :com.fasterxml.jackson.databind.JsonNode)
+@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[Subject], currentSortBy: String, currentOrder: String, data :com.fasterxml.jackson.databind.JsonNode)
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -9,7 +9,7 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'subjects'); 
 
             showTree(@getJson(data));
@@ -51,11 +51,11 @@
 
 @main(title, user, scripts, styles) {
 	<div class="page-header">
-	    <h1><a href="@routes.Subjects.index()">Taxonomies > </a>Subjects</h1>
+	    <h1><a href="@routes.SubjectController.index()">Taxonomies > </a>Subjects</h1>
 	</div>
  	<article class="collections">
 		<div id="forms">
-   			@helper.form(action=routes.Subjects.search, 'class -> "form-inline") {
+   			@helper.form(action=routes.SubjectController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   				<input type="hidden" name="s" value="@currentSortBy">

@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import models.Collection;
-import models.Target;
-import models.Taxonomy;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,23 +25,22 @@ import views.html.collections.list;
 import views.html.collections.view;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Security.Authenticated(Secured.class)
-public class Collections extends AbstractController {
+public class CollectionController extends AbstractController {
 
 	/**
 	 * Display the Collections.
 	 */
 	public static Result index() {
-		Logger.info("DCollections.index()");
 		return GO_HOME;
 	}
 
-	public static Result GO_HOME = redirect(routes.Collections.list(0, "title",
-			"asc", ""));
+	public static Result GO_HOME = redirect(routes.CollectionController.list(0, "title", "asc", ""));
 
 	/**
 	 * Display the paginated list of collections.
@@ -61,10 +58,9 @@ public class Collections extends AbstractController {
 		
 		JsonNode node = getCollectionsData(filter);
 		
-		return ok(list.render("Collections",
-				User.findByEmail(request().username()), filter,
-				Collection.pager(pageNo, 10, sortBy, order, filter), sortBy,
-				order, node));
+		Page<Collection> pages = Collection.pager(pageNo, 10, sortBy, order, filter);
+		
+		return ok(list.render("Collections", User.findByEmail(request().username()), filter, pages, sortBy, order, node));
 	}
 	
 	/**
@@ -85,7 +81,7 @@ public class Collections extends AbstractController {
 			Logger.info("Collection name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Collections.list(0, "title", "asc", "")
+	        		routes.CollectionController.list(0, "title", "asc", "")
 	        );
     	}
     	
@@ -98,7 +94,7 @@ public class Collections extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-//        		return redirect(routes.Collections.create(query));
+//        		return redirect(routes.CollectionController.create(query));
     	        Logger.info("create collection()");
     	    	Collection collection = new Collection();
     	    	collection.name = query;
@@ -110,7 +106,7 @@ public class Collections extends AbstractController {
     	        return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Collections.list(pageNo, sort, order, query));
+    	    	return redirect(routes.CollectionController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -291,7 +287,7 @@ public class Collections extends AbstractController {
            		Logger.info("update collection: " + collection.toString());
                	Ebean.update(collection);
         	}
-	        res = redirect(routes.Collections.edit(collection.url));
+	        res = redirect(routes.CollectionController.edit(collection.url));
         } 
         if (delete != null) {
         	String url = getFormParam(Const.URL);
@@ -306,7 +302,7 @@ public class Collections extends AbstractController {
 	  			return info();
             } 
         	Ebean.delete(collection);
-	        res = redirect(routes.Collections.index()); 
+	        res = redirect(routes.CollectionController.index()); 
         }
         return res;
     }
@@ -324,9 +320,7 @@ public class Collections extends AbstractController {
     private static JsonNode getCollectionsData(String url) {
     	List<Collection> collections = Collection.getFirstLevelCollections();
     	List<ObjectNode> result = getCollectionTreeElements(collections, url, true);
-//    	Logger.info("collections main level size: " + collections.size());
     	JsonNode jsonData = Json.toJson(result);
-//    	Logger.info("jsonData: " + jsonData);
         return jsonData;
     }
     
@@ -346,7 +340,7 @@ public class Collections extends AbstractController {
     		Collection collection = itr.next();
 			ObjectNode child = nodeFactory.objectNode();
 			child.put("title", collection.name + " (" + collection.targets.size() + ")");
-			child.put("url", String.valueOf(routes.Collections.view(collection.url)));
+			child.put("url", String.valueOf(routes.CollectionController.view(collection.url)));
 			if (StringUtils.isNotEmpty(collection.url) && collection.url.equalsIgnoreCase(collectionUrl)) {
 	    		child.put("select", true);
 	    	}

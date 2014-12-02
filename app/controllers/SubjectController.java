@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import models.Subject;
 import models.Taxonomy;
-import models.Target;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,12 +24,13 @@ import uk.bl.api.Utils;
 import views.html.subjects.*;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Security.Authenticated(Secured.class)
-public class Subjects extends AbstractController {
+public class SubjectController extends AbstractController {
 
 	/**
 	 * Display the subjects.
@@ -39,7 +40,7 @@ public class Subjects extends AbstractController {
 		return GO_HOME;
 	}
 
-	public static Result GO_HOME = redirect(routes.Subjects.list(0, "name",
+	public static Result GO_HOME = redirect(routes.SubjectController.list(0, "name",
 			"asc", ""));
 
 	/**
@@ -57,12 +58,10 @@ public class Subjects extends AbstractController {
 	public static Result list(int pageNo, String sortBy, String order,
 			String filter) {
 		JsonNode node = getSubjectsData(filter);
-//		Logger.info("LookUp.list() " + node);
 		
-		return ok(list.render("Subjects",
-				User.findByEmail(request().username()), filter,
-				Taxonomy.page(pageNo, 10, sortBy, order, filter), sortBy,
-				order, node));
+		Page<Subject> pages = Subject.pager(pageNo, 10, sortBy, order, filter);
+		
+		return ok(list.render("Subjects", User.findByEmail(request().username()), filter, pages, sortBy, order, node));
 	}
 	
 	/**
@@ -83,7 +82,7 @@ public class Subjects extends AbstractController {
 			Logger.info("Subject name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Subjects.list(0, "name", "asc", "")
+	        		routes.SubjectController.list(0, "name", "asc", "")
 	        );
     	}
     	
@@ -96,7 +95,7 @@ public class Subjects extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-//        		return redirect(routes.Subjects.create(query));
+//        		return redirect(routes.SubjectController.create(query));
     	        Logger.info("create subject()");
     	    	Taxonomy subject = new Taxonomy();
     	    	subject.name = query;
@@ -109,7 +108,7 @@ public class Subjects extends AbstractController {
     	        return ok(edit.render(subjectForm, User.findByEmail(request().username()), node));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Subjects.list(pageNo, sort, order, query));
+    	    	return redirect(routes.SubjectController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -314,14 +313,14 @@ public class Subjects extends AbstractController {
            		Logger.info("update subject: " + subject.toString());
                	Ebean.update(subject);
         	}
-	        res = redirect(routes.Subjects.edit(subject.url));
+	        res = redirect(routes.SubjectController.edit(subject.url));
         } 
         if (delete != null) {
         	String url = getFormParam(Const.URL);
         	Logger.info("deleting: " + url);
         	Taxonomy subject = Taxonomy.findByUrl(url);
         	Ebean.delete(subject);
-	        res = redirect(routes.Subjects.index()); 
+	        res = redirect(routes.SubjectController.index()); 
         }
         return res;
     }
@@ -341,11 +340,10 @@ public class Subjects extends AbstractController {
      * @return tree structure
      */
     private static JsonNode getSubjectsData(String url) {    	
-    	List<Taxonomy> subjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
+    	List<Subject> subjects = Subject.getFirstLevelSubjects();
     	List<ObjectNode> result = getSubjectTreeElements(subjects, url, true);
     	Logger.info("subjects main level size: " + subjects.size());
     	JsonNode jsonData = Json.toJson(result);
-//    	Logger.info("getSubjectsData() jsonData: " + jsonData);
         return jsonData;
     }
     
@@ -356,35 +354,25 @@ public class Subjects extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return subject object in JSON form
      */
-    public static List<ObjectNode> getSubjectTreeElements(List<Taxonomy> subjectList, String subjectUrl, boolean parent) { 
+    public static List<ObjectNode> getSubjectTreeElements(List<Subject> subjectList, String subjectUrl, boolean parent) { 
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 
-		if (subjectList.size() > 0) {
-	    	Iterator<Taxonomy> itr = subjectList.iterator();
-	    	while (itr.hasNext()) {
-	    		Taxonomy subject = itr.next();
-//	    		Logger.info("getSubjectTreeElements() subject name: " + subject.name + 
-//	    				", subjectUrl: " + subjectUrl + ", parent: " + parent + ", subject.parent: " + subject.parent);
-	    		if (subjectUrl.isEmpty() 
-	    				|| (StringUtils.isNotEmpty(subjectUrl) && StringUtils.containsIgnoreCase(subject.name, subjectUrl))) {	    		
-//		    		if ((parent && subject.parent.length() == 0) || !parent) {
-			    	if ((parent && subject.parent == null) || !parent || (parent && subject.parent == null)) {
-						ObjectNode child = nodeFactory.objectNode();
-						child.put("title", subject.name);
-						child.put("url", String.valueOf(routes.Subjects.view(subject.url)));
-				    	if (StringUtils.isNotEmpty(subject.url) && subject.url.equalsIgnoreCase(subjectUrl)) {
-				    		child.put("select", true);
-				    	}
-						child.put("key", "\"" + subject.url + "\"");
-				    	List<Taxonomy> childSubjects = Taxonomy.findSubSubjectsList(subject.name);
-				    	if (childSubjects.size() > 0) {
-				    		child.put("children", Json.toJson(getSubjectTreeElements(childSubjects, subjectUrl, false)));
-				    	}
-						result.add(child);
-		    		}
-	    		}
+    	Iterator<Subject> itr = subjectList.iterator();
+    	while (itr.hasNext()) {
+    		Subject subject = itr.next();
+			ObjectNode child = nodeFactory.objectNode();
+			child.put("title", subject.name);
+			child.put("url", String.valueOf(routes.SubjectController.view(subject.url)));
+	    	if (StringUtils.isNotEmpty(subject.url) && subject.url.equalsIgnoreCase(subjectUrl)) {
+	    		child.put("select", true);
 	    	}
+			child.put("key", "\"" + subject.url + "\"");
+	    	List<Subject> children = Subject.findChildrenByParentId(subject.id);
+	    	if (children.size() > 0) {
+	    		child.put("children", Json.toJson(getSubjectTreeElements(children, subjectUrl, false)));
+	    	}
+			result.add(child);
     	}
 //    	Logger.info("getSubjectTreeElements() res: " + result);
     	return result;

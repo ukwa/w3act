@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import models.ContactPerson;
 import models.Flag;
 import models.Instance;
@@ -58,12 +60,12 @@ public enum DataImport {
 	        	this.importTags();
 	        	this.importFlags();
 			}
-//			if (Ebean.find(Target.class).findRowCount() == 0) {
-//	        	this.importTargets();
-//			}
-//			if (Ebean.find(Instance.class).findRowCount() == 0) {
-//				this.importInstances();
-//			}
+			if (Ebean.find(Target.class).findRowCount() == 0) {
+	        	this.importTargets();
+			}
+			if (Ebean.find(Instance.class).findRowCount() == 0) {
+				this.importInstances();
+			}
 	        	
 //				// aggregate url data from drupal and store JSON content in a file
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
@@ -235,11 +237,23 @@ public enum DataImport {
 		List<Taxonomy> taxonomies = allTaxonomies.get(Const.TAXONOMIES);
 		TaxonomyType tv = null;
 		for (Taxonomy taxonomy : taxonomies) {
-			tv = TaxonomyType.findByMachineName(taxonomy.ttype);
-			Logger.info("ttype: " + taxonomy.ttype + " - " + tv);
-			taxonomy.setTaxonomyType(tv);
-			taxonomy.url = Const.ACT_URL + Utils.createId();
-			taxonomy.save();
+			
+			// see if they are already stored?
+			Taxonomy lookup = Taxonomy.findByNameAndType(taxonomy.name, taxonomy.ttype);
+			if (lookup == null) {
+				tv = TaxonomyType.findByMachineName(taxonomy.ttype);
+				Logger.info("ttype: " + taxonomy.ttype + " - " + tv);
+				taxonomy.setTaxonomyType(tv);
+				taxonomy.url = Const.ACT_URL + Utils.createId();
+				if (StringUtils.isNotEmpty(taxonomy.parentName)) {
+					Taxonomy parent = Taxonomy.findByNameAndType(taxonomy.parentName, taxonomy.ttype);
+					Logger.info("Parent found: " + parent);
+					if (parent != null) {
+						taxonomy.parent = parent;
+					}
+				}
+				taxonomy.save();
+			}
 		}
         Logger.info("Loaded Taxonomies");
 	}
@@ -249,6 +263,7 @@ public enum DataImport {
 		Map<String,List<Tag>> allTags = (Map<String,List<Tag>>)Yaml.load("tags.yml");
 		List<Tag> tags = allTags.get(Const.TAGS);
 		for (Tag tag : tags) {
+			tag.url = Const.ACT_URL + Utils.createId();
 			tag.save();
 		}
         Logger.info("Loaded Tags");
@@ -259,6 +274,7 @@ public enum DataImport {
 		Map<String,List<Flag>> allFlags = (Map<String,List<Flag>>)Yaml.load("flags.yml");
 		List<Flag> flags = allFlags.get(Const.FLAGS);
 		for (Flag flag : flags) {
+			flag.url = Const.ACT_URL + Utils.createId();
 			flag.save();
 		}
         Logger.info("Loaded Flags");
@@ -269,6 +285,7 @@ public enum DataImport {
 		Map<String,List<MailTemplate>> allTemplates = (Map<String,List<MailTemplate>>)Yaml.load("mail-templates.yml");
 		List<MailTemplate> mailTemplates = allTemplates.get(Const.MAILTEMPLATES);
 		for (MailTemplate mailTemplate : mailTemplates) {
+			mailTemplate.url = Const.ACT_URL + Utils.createId();
 			mailTemplate.save();
 		}
         Logger.info("Loaded MailTemplates");
@@ -279,6 +296,7 @@ public enum DataImport {
 		Map<String,List<ContactPerson>> allContactPersons = (Map<String,List<ContactPerson>>)Yaml.load("contact-persons.yml");
 		List<ContactPerson> contactPersons = allContactPersons.get(Const.CONTACTPERSONS);
 		for (ContactPerson contactPerson : contactPersons) {
+			contactPerson.url = Const.ACT_URL + Utils.createId();
 			contactPerson.save();
 		}
         Logger.info("Loaded ContactPersons");
@@ -289,6 +307,7 @@ public enum DataImport {
 		Map<String,List<Organisation>> allOrganisations = (Map<String,List<Organisation>>)Yaml.load("organisations.yml");
 		List<Organisation> organisations = allOrganisations.get(Const.ORGANISATIONS);
 		for (Organisation organisation : organisations) {
+			organisation.url = Const.ACT_URL + Utils.createId();
 			organisation.save();
 		}
         Logger.info("Loaded Organisations");

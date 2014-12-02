@@ -18,6 +18,8 @@ public class QaIssue extends Taxonomy {
 	@SuppressWarnings("rawtypes")
 	public static Model.Finder<Long,QaIssue> find = new Model.Finder(Long.class, QaIssue.class);
 
+	public QaIssue() {}
+	
     public QaIssue(String name, String description) {
     	super(name, description);
     }
