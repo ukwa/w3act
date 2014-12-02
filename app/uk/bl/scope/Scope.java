@@ -1,8 +1,11 @@
 package uk.bl.scope;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -468,6 +471,7 @@ public enum Scope {
 	public boolean checkScopeDomain(String url) throws WhoisException {
         boolean res = false;
 //        Logger.info("check for scope Domain url: " + url + ", nid: " + nidUrl);
+        // full domain with protocol
         url = normalizeUrl(url);
         
         // Rule 3.1: check domain name
@@ -479,7 +483,35 @@ public enum Scope {
 //		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
         return res;
 	}
-	
+
+	public boolean checkScopeDomain(List<FieldUrl> fieldUrls) throws WhoisException {
+        boolean res = false;
+
+//        for (FieldUrl fieldUrl : fieldUrls) {
+//            URL uri;
+//			try {
+//				uri = new URI(fieldUrl.url).normalize().toURL();
+//	            Logger.info("Normalised " + uri.toExternalForm());
+//			} catch (MalformedURLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (URISyntaxException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//            // Rule 3.1: check domain name
+////            if (!res && url != null && url.length() > 0) {
+////    	        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN) || url.contains(SCOT_DOMAIN)) {
+////    	        	res = true;
+////    	        }
+////            }
+//        }
+        
+
+//		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
+        return res;
+	}
+
 	/**
 	 * This method extracts host from the given URL and checks geo IP using geo IP database.
 	 * @param url
@@ -536,7 +568,6 @@ public enum Scope {
     	while (itr.hasNext()) {
     		Target target = itr.next();
     		for (FieldUrl fieldUrl : target.fieldUrls) {
-	        	try {
 		        	Logger.info("checkWhoisThread URL: " + target.fieldUrl() + ", last update: " + String.valueOf(target.updatedAt));
 		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
 		        	Logger.info("whoIsRes: " + whoIsRes);
@@ -546,15 +577,15 @@ public enum Scope {
 		        	// STORE
 		        	storeInProjectDb(fieldUrl.url, res);
 		        	// ASSIGN TO TARGET
-		        	fieldUrl.isInScopeUkRegistration = res;
-		    	} catch (Exception e) {
-		    		Logger.info("whois lookup message: " + e.getMessage());
-			        // store in project DB
-		    		// FAILED - UNCHECKED
-			        storeInProjectDb(fieldUrl.url, false);
-			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
-		        	fieldUrl.isInScopeUkRegistration = false;
-		    	}
+		        	target.isInScopeUkRegistration = res;
+
+//		        	Logger.info("whois lookup message: " + e.getMessage());
+//			        // store in project DB
+//		    		// FAILED - UNCHECKED
+//			        storeInProjectDb(fieldUrl.url, false);
+//			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
+//			        target.isInScopeUkRegistration = false;
+		    
     		}
         	Ebean.update(target);
     	}
@@ -589,7 +620,7 @@ public enum Scope {
 		        	Logger.info("CHECK TO SAVE " + target.fieldUrl());
 		        	storeInProjectDb(fieldUrl.url, res);
 		        	// ASSIGN TO TARGET
-		        	fieldUrl.isInScopeUkRegistration = res;
+		        	target.isInScopeUkRegistration = res;
 		        	ukRegistrantCount++;
 		    	} catch (Exception e) {
 		    		Logger.info("whois lookup message: " + e.getMessage());
@@ -597,7 +628,7 @@ public enum Scope {
 		    		// FAILED - UNCHECKED
 			        storeInProjectDb(fieldUrl.url, false);
 			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
-		        	fieldUrl.isInScopeUkRegistration = false;
+			        target.isInScopeUkRegistration = false;
 		        	failedCount++;
 		    	}
     		}
@@ -673,22 +704,35 @@ public enum Scope {
         return ip;
 	}
 	
-	/**
-	 * This method extracts domain name from the given URL.
-	 * @param url
-	 * @return
-	 */
+//	/**
+//	 * This method extracts domain name from the given URL.
+//	 * @param url
+//	 * @return
+//	 */
+//	public String getDomainFromUrl(String url) {
+//		String domain = "";
+//		try {
+////			Logger.info("get host: " + new URL(url).getHost());
+//			domain = new URL(url).getHost().replace(WWW, "");
+////			Logger.info("extracted domain: " + domain);
+//		} catch (Exception e) {
+//			Logger.error("domain calculation error for url=" + url + ". " + e.getMessage());
+//			domain = url;
+//		}
+//        return domain;
+//	}
+	
 	public String getDomainFromUrl(String url) {
-		String domain = "";
+	    URI uri;
 		try {
-//			Logger.info("get host: " + new URL(url).getHost());
-			domain = new URL(url).getHost().replace(WWW, "");
-//			Logger.info("extracted domain: " + domain);
-		} catch (Exception e) {
-			Logger.error("domain calculation error for url=" + url + ". " + e.getMessage());
-			domain = url;
+			uri = new URI(url);
+			String domain = uri.getHost();
+		    return domain.startsWith("www.") ? domain.substring(4) : domain;
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-        return domain;
+		return null;
 	}
 	
 	public boolean isUkHosting(String url) {

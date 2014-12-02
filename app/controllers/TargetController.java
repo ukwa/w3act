@@ -900,18 +900,13 @@ public class TargetController extends AbstractController {
      * Display the target edit panel for this URL.
      * @param url The target identifier URL
      */
-    public static Result edit(String url) {
-		Logger.info("Targets.edit() url: " + url);
-		Target target = Target.findByUrl(url);
-//		if (target.fieldSubject == null || target.fieldSubject.length() == 0) {
-//			Logger.info("Targets.edit() set subject value to 'None' for imported targets.");
-//			target.fieldSubject = Const.NONE;
-//			Ebean.update(target);
-//		}		
-		Logger.info("Targets.edit() target name: " + target.title + ", url: " + url + ", username: " + request().username());
+    public static Result edit(Long id) {
+		Logger.info("Targets.edit() id: " + id);
+		Target target = Target.findById(id);
 		Form<Target> targetForm = Form.form(Target.class);
-		targetForm = targetForm.fill(Target.findByUrl(url));
-        return ok(edit.render(targetForm, User.findByEmail(request().username())));
+		targetForm = targetForm.fill(target);
+		User user = User.findByEmail(request().username());
+        return ok(edit.render(targetForm, user));
     }
     
     /**

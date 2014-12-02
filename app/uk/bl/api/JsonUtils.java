@@ -759,18 +759,21 @@ public enum JsonUtils {
 							Logger.info("Checked Url: " + url);
 							// TODO: KL THIS IS A LIST OF URLS 
 							FieldUrl fieldUrl = new FieldUrl(url);
-							fieldUrl.isInScopeUkRegistration = false; // check whois
-							fieldUrl.isInScopeDomain = Scope.INSTANCE.checkScopeDomain(url); // .uk .london .scot
-							fieldUrl.isUkHosting = false; // check if UK IP Address
-							fieldUrl.isInScopeIp = false;
-							fieldUrl.isInScopeIpWithoutLicense = false;
-							fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(url);
+							fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(fieldUrl.url);
 							fieldUrls.add(fieldUrl);
 
 						}
 						if (!fieldUrls.isEmpty()) {
 							target.fieldUrls = fieldUrls;
 						}
+
+						target.isInScopeUkRegistration = false; // check whois
+						target.isInScopeDomain = Scope.INSTANCE.checkScopeDomain(target.fieldUrls);
+						// .uk .london .scot
+						target.isUkHosting = false; // check if UK IP Address
+						target.isInScopeIp = false;
+						target.isInScopeIpWithoutLicense = false;
+
 						
 						// "field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/10","id":"10","resource":"taxonomy_term"},
 						// "field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/16","id":"16","resource":"taxonomy_term"},"

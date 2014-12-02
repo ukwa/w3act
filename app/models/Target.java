@@ -109,6 +109,12 @@ public class Target extends UrlModel {
 	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
 	public List<FieldUrl> fieldUrls;
 
+	public Boolean isUkHosting;
+	public Boolean isInScopeUkRegistration;
+	public Boolean isInScopeDomain;
+	public Boolean isInScopeIp;
+	public Boolean isInScopeIpWithoutLicense;
+
 	public Date fieldCrawlStartDate;
 	public Date fieldCrawlEndDate;
 
@@ -955,7 +961,7 @@ public class Target extends UrlModel {
 	}
 
 	public static Target findById(Long id) {	
-		return find.where().eq(Const.ID, id).findUnique();
+		return find.where().eq("id", id).findUnique();
 	}
 
 	public static Target findByUrl(String url) {
@@ -1150,9 +1156,9 @@ public class Target extends UrlModel {
 	 *            The identifier URL in the project domain model
 	 * @return result as a flag
 	 */
-	public static boolean isInScopeAllWithoutLicense(String url, String nidUrl) {
+	public boolean isInScopeAllWithoutLicense() {
 		try {
-			boolean isInScope = isInScopeIpWithoutLicense(url, nidUrl);
+			boolean isInScope = isInScopeIpWithoutLicense(url, this.url);
 			if (!isInScope) {
 			// TODO: KL TO REFACTOR
 //				isInScope = isInScopeDomain(url, nidUrl);

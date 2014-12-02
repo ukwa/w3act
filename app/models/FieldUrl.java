@@ -42,15 +42,6 @@ public class FieldUrl extends Model {
 
 	@Column(columnDefinition = "text")
 	public String domain;
-
-	/**
-	 * NPLD scope values
-	 */
-	public Boolean isInScopeUkRegistration;
-	public Boolean isInScopeDomain;
-	public Boolean isUkHosting;
-	public Boolean isInScopeIp;
-	public Boolean isInScopeIpWithoutLicense;
 	
 	public FieldUrl(String url) {
 		super();

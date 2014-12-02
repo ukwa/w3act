@@ -15,8 +15,7 @@ public class QaIssue extends Taxonomy {
 	 */
 	private static final long serialVersionUID = 2451400178750071013L;
 
-	@SuppressWarnings("rawtypes")
-	public static Model.Finder<Long,QaIssue> find = new Model.Finder(Long.class, QaIssue.class);
+	public static Model.Finder<Long,QaIssue> find = new Model.Finder<Long, QaIssue>(Long.class, QaIssue.class);
 
 	public QaIssue() {}
 	

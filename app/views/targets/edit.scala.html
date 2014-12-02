@@ -188,7 +188,7 @@
 	        <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
 		    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
 			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-				@if(Target.isInScopeAllWithoutLicense(form("fieldUrl").value, form("url").value)) {
+				@if(form.get.isInScopeAllWithoutLicense) {
 					<font color="green">(+)</font>
 				} else {
 					<font color="red">(-)</font>

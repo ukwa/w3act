@@ -184,7 +184,7 @@ GET     /targets/:id                      	controllers.TargetController.view(id:
 GET     /targets/act/:id                    controllers.TargetController.viewAct(id)
 GET     /targets/wct/:id                    controllers.TargetController.viewWct(id)
 GET     /targets/:revision/revision         controllers.TargetController.viewrevision(revision:Long)
-GET     /targets/edit                       controllers.TargetController.edit(target)
+GET     /targets/edit/:id                   controllers.TargetController.edit(id:Long)
 
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissions.showCrawlPermissions(target)
 GET     /target/licencerequest          	controllers.CrawlPermissions.licenceRequestForTarget(name, target)
