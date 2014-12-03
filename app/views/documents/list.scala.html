@@ -101,7 +101,8 @@
 		@pagination(currentPage, link)
 		
 		@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
-			<input type="submit" class="btn btn-success" value="Live Crawl">
+			<input type="submit" class="btn btn-success" value="Live Crawl" onclick=
+				"return confirm('You will start a crawl with the seed:\n@{watchedTarget.target.field_url}\n\nDo you want to proceed?');">
 		}
 		
 	</article>

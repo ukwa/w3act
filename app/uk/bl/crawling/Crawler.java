@@ -24,6 +24,7 @@ public class Crawler {
 	private List<Document> foundDocuments;
 	private Integer maxDocuments;
 	
+	private static boolean crawlWayback = false;
 	private static String waybackUrl = "http://www.webarchive.org.uk/wayback/archive/";
 	
 	public List<Document> crawlForDocuments(WatchedTarget watchedTarget, Integer maxDocuments) {
@@ -31,7 +32,9 @@ public class Crawler {
 		foundDocuments = new ArrayList<>();
 		this.maxDocuments = maxDocuments;
 		
-		String seedUrl = waybackReplayUrl(watchedTarget.target.field_url, "20140522210454");
+		String seedUrl = crawlWayback ?
+				waybackReplayUrl(watchedTarget.target.field_url, "20140522210454") :
+				watchedTarget.target.field_url;
 		knownSites.add(seedUrl);
 		Set<Link> fringe = new HashSet<>();
 		fringe.add(new Link(null, seedUrl));
@@ -54,7 +57,8 @@ public class Crawler {
 					
 					Response response = connection.response();
 					
-					String pageUrl = urlFromWayback(link.target);
+					String pageUrl = crawlWayback ?
+							urlFromWayback(link.target) : link.target;
 					
 					if (response.contentType().contains("html")) {
 						if (linkDepth >= 0) {
@@ -62,7 +66,8 @@ public class Crawler {
 							
 							for(Element element : doc.select("a[href]")) {
 								String waybackHrefUrl = element.absUrl("href");
-								String hrefUrl = urlFromWayback(waybackHrefUrl);
+								String hrefUrl = crawlWayback ?
+										urlFromWayback(waybackHrefUrl) : waybackHrefUrl;
 								if (hrefUrl != null && !knownSites.contains(hrefUrl)) {
 									if (hrefUrl.endsWith(".pdf")) {
 										if (urlMatchesScheme(hrefUrl, watchedTarget.documentUrlScheme)) {
