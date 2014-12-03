@@ -495,34 +495,6 @@ public enum Scope {
         return res;
 	}
 
-	public boolean checkScopeDomain(List<FieldUrl> fieldUrls) throws WhoisException {
-        boolean res = false;
-
-//        for (FieldUrl fieldUrl : fieldUrls) {
-//            URL uri;
-//			try {
-//				uri = new URI(fieldUrl.url).normalize().toURL();
-//	            Logger.info("Normalised " + uri.toExternalForm());
-//			} catch (MalformedURLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (URISyntaxException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//            // Rule 3.1: check domain name
-////            if (!res && url != null && url.length() > 0) {
-////    	        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN) || url.contains(SCOT_DOMAIN)) {
-////    	        	res = true;
-////    	        }
-////            }
-//        }
-        
-
-//		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
-        return res;
-	}
-
 	/**
 	 * This method extracts host from the given URL and checks geo IP using geo IP database.
 	 * @param url
@@ -531,6 +503,7 @@ public enum Scope {
 	public boolean checkGeoIp(String url) {
 		boolean res = false;
 		String ip = getIpFromUrl(url);
+		Logger.info("ip: " + ip);
 		res = queryDb(ip);
 		return res;
 	}
@@ -556,7 +529,7 @@ public enum Scope {
     		Logger.info("whois lookup message: " + e.getMessage());
 	        // store in project DB
 	        storeInProjectDb(url, false);
-    		throw new WhoisException(e);
+//    		throw new WhoisException(e);
     	}
     	Logger.info("whois res: " + res);        	
 		return res;
@@ -588,7 +561,7 @@ public enum Scope {
 		        	// STORE
 		        	storeInProjectDb(fieldUrl.url, res);
 		        	// ASSIGN TO TARGET
-		        	target.isInScopeUkRegistration = res;
+		        	target.isUkRegistration = res;
 
 //		        	Logger.info("whois lookup message: " + e.getMessage());
 //			        // store in project DB
@@ -631,7 +604,7 @@ public enum Scope {
 		        	Logger.info("CHECK TO SAVE " + target.fieldUrl());
 		        	storeInProjectDb(fieldUrl.url, res);
 		        	// ASSIGN TO TARGET
-		        	target.isInScopeUkRegistration = res;
+		        	target.isUkRegistration = res;
 		        	ukRegistrantCount++;
 		    	} catch (Exception e) {
 		    		Logger.info("whois lookup message: " + e.getMessage());
@@ -639,7 +612,7 @@ public enum Scope {
 		    		// FAILED - UNCHECKED
 			        storeInProjectDb(fieldUrl.url, false);
 			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
-			        target.isInScopeUkRegistration = false;
+			        target.isUkRegistration = false;
 		        	failedCount++;
 		    	}
     		}
@@ -686,13 +659,10 @@ public enum Scope {
 		Logger.info("STORED: " + stored + " - " + url);
 		if (!stored) {
 			LookupEntry lookupEntry = new LookupEntry();
-//			lookupEntry.id = Utils.createId();
-//			lookupEntry.url = Const.ACT_URL + lookupEntry.id;
 			lookupEntry.name = url;
 			lookupEntry.scopevalue = res;
-	        Logger.info("Save lookup entry " + lookupEntry.toString());
 	        lookupEntry.save();
-//	    	Ebean.save(lookupEntry);	
+	        Logger.info("Saveed lookup entry " + lookupEntry.toString());
 		}
     }
 	
@@ -758,5 +728,37 @@ public enum Scope {
 	public boolean isInScopeUkRegistration(String url) throws WhoisException {
 		return checkWhois(url);
 	}
+
+	public boolean isUkHosting(List<FieldUrl> fieldUrls) {
+		for (FieldUrl fieldUrl : fieldUrls) {
+			if (!this.checkGeoIp(fieldUrl.url)) return false;
+		}
+		return true;
+	}
+	
+	public boolean isTopLevelDomain(List<FieldUrl> fieldUrls) throws WhoisException {
+        for (FieldUrl fieldUrl : fieldUrls) {
+            URL uri = null;
+			try {
+				uri = new URI(fieldUrl.url).normalize().toURL();
+			} catch (MalformedURLException | URISyntaxException e) {
+				e.printStackTrace();
+			}
+			String url = uri.toExternalForm();
+            Logger.info("Normalised " + url);
+            // Rule 3.1: check domain name
+	        if (!url.contains(UK_DOMAIN) && !url.contains(LONDON_DOMAIN) && !url.contains(SCOT_DOMAIN)) return false;
+        }
+//		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
+        return true;
+	}
+	
+	public boolean isUkRegistration(List<FieldUrl> fieldUrls) throws WhoisException {
+        for (FieldUrl fieldUrl : fieldUrls) {
+        	if (!checkWhois(fieldUrl.url)) return false;
+        }
+		return true;
+	}
+
 }
 

@@ -111,8 +111,9 @@ public class Target extends UrlModel {
 	public List<FieldUrl> fieldUrls;
 
 	public Boolean isUkHosting;
-	public Boolean isInScopeUkRegistration;
-	public Boolean isInScopeDomain;
+	public Boolean isTopLevelDomain;
+	public Boolean isUkRegistration;
+	
 	public Boolean isInScopeIp;
 	public Boolean isInScopeIpWithoutLicense;
 
@@ -1066,64 +1067,6 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * This method checks the passed URL for GeoIp lookup.
-	 * 
-	 * @param url
-	 *            The search URL
-	 * @return result as a flag
-	 */
-	public boolean isUkHosting() {
-		try {
-			for (FieldUrl fieldUrl : this.fieldUrls) {
-				if (Scope.INSTANCE.checkGeoIp(fieldUrl.url)) {
-					return true;
-				}
-			}
-		} catch (Exception ex) {
-			Logger.info("Exception: " + ex);
-		}
-		return false;
-	}
-
-	/**
-	 * This method checks whether the passed URL is in scope for rules
-	 * associated with scope domain.
-	 * 
-	 * @param url
-	 *            The search URL
-	 * @param nidUrl
-	 *            The identifier URL in the project domain model
-	 * @return result as a flag
-	 */
-	public boolean isInScopeDomain() {
-		try {
-			for (FieldUrl fieldUrl : this.fieldUrls) {
-				// is it uk, london etc
-				return Scope.INSTANCE.checkScopeDomain(fieldUrl.url);
-			}
-		} catch (WhoisException ex) {
-			Logger.info("Exception: " + ex);
-		}
-		return false;
-	}
-	
-	/**
-	 * This method checks whether the passed URL is in scope for rules
-	 * associated with WhoIs scoping rule.
-	 * 
-	 * @param url
-	 *            The search URL
-	 * @return result as a flag
-	 * @throws WhoisException 
-	 */
-	public boolean isInScopeUkRegistration() throws WhoisException {
-		for (FieldUrl fieldUrl : this.fieldUrls) {
-			return Scope.INSTANCE.isInScopeUkRegistration(fieldUrl.url);
-		}
-		return false;
-	}
-	
-	/**
 	 * This method checks whether the passed URL is in scope for rules
 	 * associated with scope IP.
 	 * 
@@ -1164,7 +1107,7 @@ public class Target extends UrlModel {
 				boolean isInScope = isInScopeIpWithoutLicense(fieldUrl.url, this.url);
 				if (!isInScope) {
 					// TODO: KL TO REFACTOR
-					isInScope = isInScopeDomain();
+					isInScope = Scope.INSTANCE.isTopLevelDomain(this.fieldUrls);
 				}
 				return isInScope;
 			}

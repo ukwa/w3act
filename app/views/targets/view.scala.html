@@ -148,7 +148,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(target.isUkHosting()) {
+								@if(target.isUkHosting) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -165,7 +165,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(target.isInScopeDomain()) {
+								@if(target.isTopLevelDomain) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -182,7 +182,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(target.isInScopeUkRegistration()) {
+								@if(target.isUkRegistration) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -539,7 +539,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(target.isUkHosting()) {
+								@if(target.isUkHosting) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -556,7 +556,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(target.isInScopeDomain()) {
+								@if(target.isTopLevelDomain) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -573,7 +573,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(target.isInScopeUkRegistration()) {
+								@if(target.isUkRegistration) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>

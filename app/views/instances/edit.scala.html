@@ -283,7 +283,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(form.get.target.isUkHosting()) {
+								@if(form.get.target.isUkHosting) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -300,7 +300,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(form.get.target.isInScopeDomain()) {
+								@if(form.get.target.isTopLevelDomain) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -317,7 +317,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(form.get.target.isInScopeUkRegistration()) {
+								@if(form.get.target.isUkRegistration) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -712,7 +712,7 @@
 								UK Hosting
 							</label>
 						    <div class="col-sm-6">
-								@if(form.get.target.isUkHosting()) {
+								@if(form.get.target.isUkHosting) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -729,7 +729,7 @@
 								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(form.get.target.isInScopeDomain()) {
+								@if(form.get.target.isTopLevelDomain) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -746,7 +746,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(form.get.target.isInScopeUkRegistration()) {
+								@if(form.get.target.isUkRegistration) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>

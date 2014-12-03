@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -779,12 +780,19 @@ public enum JsonUtils {
 						
 						if (!fieldUrls.isEmpty()) {
 							target.fieldUrls = fieldUrls;
+//							As for the multiple URL case, the logic should be that there is only one 
+//							"UK Hosting", 
+//							"UK top-level domain", 
+//							"UK Registration" 
+//							field, but all URLs have to meet it to get a tick.
+//							e.g. if all URLs end '.uk' then "UK top-level domain" is true.
+							target.isUkHosting = Scope.INSTANCE.isUkHosting(fieldUrls); // check if UK IP Address
+							target.isTopLevelDomain = Scope.INSTANCE.isTopLevelDomain(fieldUrls);
+							target.isUkRegistration = Scope.INSTANCE.isUkRegistration(fieldUrls);
+							Logger.info(target.isUkHosting + ", " + target.isTopLevelDomain + ", " + target.isUkRegistration);
+							// .uk .london .scot
 						}
 
-						target.isInScopeUkRegistration = false; // check whois
-						target.isInScopeDomain = Scope.INSTANCE.checkScopeDomain(target.fieldUrls);
-						// .uk .london .scot
-						target.isUkHosting = false; // check if UK IP Address
 						target.isInScopeIp = false;
 						target.isInScopeIpWithoutLicense = false;
 

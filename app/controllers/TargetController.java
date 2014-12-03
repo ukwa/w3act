@@ -1286,7 +1286,7 @@ public class TargetController extends AbstractController {
 //        		targetObj.fieldLicense = Const.NONE;
         	}
         }
-        targetObj.field_uk_hosting = targetObj.isUkHosting();
+//        targetObj.field_uk_hosting = Scope.INSTANCE.isUkHosting();
         targetObj.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
         targetObj.ukPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
         targetObj.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
