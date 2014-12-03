@@ -556,6 +556,7 @@ public class CrawlPermissions extends AbstractController {
     }	   
 
     public static Result templates() {
+    	// test
         return ok(
                 mailtemplates.render(
                     "MailTemplates", User.findByEmail(request().username()), models.MailTemplate.findAll(), "", ""

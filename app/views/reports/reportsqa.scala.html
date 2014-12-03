@@ -264,7 +264,7 @@
 			                <a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
 						</td>
 						<td>
-			                @Instance.findAllByTarget(target.url)
+							<a href="@routes.QAController.list(0,"title", "asc", target.domain, "","")">@Instance.findAllByTarget(target.url)</a>
 						</td>
 	                </tr>
 	                }
