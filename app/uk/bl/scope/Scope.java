@@ -1,7 +1,6 @@
 package uk.bl.scope;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -11,6 +10,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import models.FieldUrl;
 import models.LookupEntry;
@@ -61,6 +62,15 @@ public enum Scope {
 	public static final String UK_DOMAIN       = ".uk";
 	public static final String LONDON_DOMAIN   = ".london";
 	public static final String SCOT_DOMAIN     = ".scot";
+	public static List<String> DOMAINS;
+
+	static {
+		DOMAINS = new ArrayList<String>();
+		DOMAINS.add(UK_DOMAIN);
+		DOMAINS.add(LONDON_DOMAIN);
+		DOMAINS.add(SCOT_DOMAIN);
+	}
+	
 	public static final String GEO_IP_SERVICE  = "GeoLite2-City.mmdb";
 	public static final String UK_COUNTRY_CODE = "GB";
 	public static final String HTTP            = "http://";
@@ -727,7 +737,9 @@ public enum Scope {
 		try {
 			uri = new URI(url);
 			String domain = uri.getHost();
-		    return domain.startsWith("www.") ? domain.substring(4) : domain;
+			if (StringUtils.isNotEmpty(domain)) {
+				return domain.startsWith("www.") ? domain.substring(4) : domain;
+			}
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
