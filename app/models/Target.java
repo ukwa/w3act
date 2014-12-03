@@ -31,6 +31,7 @@ import uk.bl.api.models.FieldModel;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -1157,17 +1158,21 @@ public class Target extends UrlModel {
 	 * @return result as a flag
 	 */
 	public boolean isInScopeAllWithoutLicense() {
+		Logger.info("isInScopeAllWithoutLicense()");
 		try {
-			boolean isInScope = isInScopeIpWithoutLicense(url, this.url);
-			if (!isInScope) {
-			// TODO: KL TO REFACTOR
-//				isInScope = isInScopeDomain(url, nidUrl);
+			for (FieldUrl fieldUrl : this.fieldUrls) {
+				boolean isInScope = isInScopeIpWithoutLicense(fieldUrl.url, this.url);
+				if (!isInScope) {
+					// TODO: KL TO REFACTOR
+					isInScope = isInScopeDomain();
+				}
+				return isInScope;
 			}
-			return isInScope;
 		} catch (Exception ex) {
-			Logger.info("isInScopeAll() Exception: " + ex);
+			Logger.error("isInScopeAllWithoutLicense() Exception: " + ex);
 			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -2287,20 +2292,21 @@ public class Target extends UrlModel {
 	}
 
 	@JsonIgnore
-	public boolean isHigherLevel(String iterUrl) {
-		boolean highLevel = (this.fieldUrl().contains(iterUrl)
-				&& this.fieldUrl().indexOf(iterUrl) == 0 && this.fieldUrl()
-				.length() > iterUrl.length());
-		// Logger.info("iterUrl: " + iterUrl + " " + highLevel);
-		return highLevel;
+	public boolean isHigherLevel(String otherUrl) {
+		for (FieldUrl thisFieldUrl : this.fieldUrls) {
+			boolean highLevel = (thisFieldUrl.url.contains(otherUrl) 
+					&& thisFieldUrl.url.indexOf(otherUrl) == 0 
+					&& thisFieldUrl.url.length() > otherUrl.length());
+			// Logger.info("iterUrl: " + iterUrl + " " + highLevel);
+			return highLevel;
+		}
+		return false;
 	}
 
-	@JsonIgnore
-	public boolean validQAStatus(Target target) {
-		// Logger.info("validQAStatus field_url: " + target.field_url);
-		return (this.qaIssue != null && target.qaIssue.url.length() > 0 && !target.qaIssue.url
-				.toLowerCase().equals(Const.NONE));
-	}
+//	@JsonIgnore
+//	public boolean validQAStatus(Target target) {
+//		return (this.qaIssue != null && target.qaIssue.url.length() > 0 && !target.qaIssue.url.toLowerCase().equals(Const.NONE));
+//	}
 
 	@JsonIgnore
 	public boolean hasLicenses() {
@@ -2365,6 +2371,17 @@ public class Target extends UrlModel {
 		return null;
 	}
 
+	
+	public static List<Target> findHigherLevelUrls(String domain, String url) {
+		Logger.info("Parameters: " + domain + " - " + url.length());
+		String query = "find target fetch fieldUrls fetch licenses where fieldUrls.url like :domain and LENGTH(fieldUrls.url) < :length";
+        List<Target> targets = Ebean.createQuery(Target.class, query)
+        		.setParameter("domain", "%" + domain + "%")
+        		.setParameter("length", url.length()).where().or(Expr.isNotNull("licenses"), Expr.isNotNull("qaIssue")).findList();
+		return targets;
+	}
+
+	
 	/**
 	 * This method should give a list of the Target records, which have an Open
 	 * UKWA Licence request in progress for a target at a higher level in the
@@ -2381,23 +2398,44 @@ public class Target extends UrlModel {
 		// first aggregate a list of active targets for associated URL
 			// TODO: KL REDO THIS
 //			this.fieldUrl = Scope.normalizeUrl(this.fieldUrl());
-			String domain = Scope.INSTANCE.getDomainFromUrl(this.fieldUrl());
-			Logger.debug("getUkwaLicenceStatusList() domain: " + domain);
+		for (FieldUrl thisFieldUrl : this.fieldUrls) {
+			Logger.debug("getUkwaLicenceStatusList() domain: " + thisFieldUrl.domain);
+
+			// for all my field urls get me all that are shorter than me
+			List<Target> shorterFieldUrls = Target.findHigherLevelUrls(thisFieldUrl.domain, thisFieldUrl.url);
+			
+			for (Target target : shorterFieldUrls) {
+				// Then for each target from selected list look if ‘qa_status’
+				// field is not empty. If it is not empty then we know a crawl
+				// permission request has already been sent.
+				// also check if this target has a valid license too
+				// Then look if it is a target of a higher level domain
+				// analyzing given URL.
+				
+				// license field checked as required in issue 176.
+				// higher level domain and has a license or higher level domain
+				// and has pending qa status
+				
+//				if (((shorterFieldUrl.target.licenses != null && shorterFieldUrl.target.licenses.size() > 0))
+//						|| (shorterFieldUrl.target.qaIssue != null)) {
+					results.add(target);
+//				}
+			}
+		}
+
 			// get me Targets that contain the same domain so I can check the
 			// licenses. i.e higher level
-			ExpressionList<Target> ll = find.where()
-					.icontains(Const.FIELD_URL, domain).eq(Const.ACTIVE, true);
-			List<Target> targets = ll.findList();
-
-			Logger.info("Targets containing domain " + domain + " - "
-					+ targets.size());
+//			ExpressionList<Target> ll = find.where().icontains(Const.FIELD_URL, domain).eq(Const.ACTIVE, true);
+//			List<Target> targets = ll.findList();
+//
+//			Logger.info("Targets containing domain " + targets.size());
 
 			/**
 			 * Check that the domain is of higher level.
 			 */
-			Iterator<Target> itr = targets.iterator();
-			while (itr.hasNext()) {
-				Target target = itr.next();
+//			Iterator<Target> itr = targets.iterator();
+//			while (itr.hasNext()) {
+//				Target target = itr.next();
 				// Then for each target from selected list look if ‘qa_status’
 				// field is not empty. If it is not empty then we know a crawl
 				// permission request has already been sent.
@@ -2413,12 +2451,10 @@ public class Target extends UrlModel {
 //						|| (isHigherLevel(target.fieldUrl) && validQAStatus(target))) {
 //					results.add(target);
 //				}
-				throw new NotImplementedError();
+//				throw new NotImplementedError();
 			// what about current target license?
-		}
-
-		Logger.debug("getUkwaLicenceStatusList() targets result list size: "
-				+ results.size());
+//		}
+		Logger.debug("getUkwaLicenceStatusList() targets result list size: " + results.size());
 		return results;
 	}
 
@@ -2742,6 +2778,17 @@ public class Target extends UrlModel {
 		}
 		return StringUtils.join(names, ", ");
 	}
+	
+	public String licensesAsString() {
+		Logger.info("licensesAsString");
+		List<String> names = new ArrayList<String>();
+		for (License license : this.licenses) {
+			names.add(license.name);
+		}
+		Logger.info("" + names);
+		return StringUtils.join(names, ", ");
+	}
+
 
 	@Override
 	public String toString() {

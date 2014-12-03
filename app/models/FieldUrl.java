@@ -2,6 +2,7 @@ package models;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,8 +12,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import play.Logger;
 import play.db.ebean.Model;
+import play.db.ebean.Model.Finder;
+import uk.bl.Const;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Expr;
+import com.avaje.ebean.Expression;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -43,9 +50,21 @@ public class FieldUrl extends Model {
 	@Column(columnDefinition = "text")
 	public String domain;
 	
+	
+	public static Model.Finder<Long, FieldUrl> find = new Finder<Long, FieldUrl>(Long.class, FieldUrl.class);
+
 	public FieldUrl(String url) {
 		super();
 		this.url = url;
+	}
+
+	public static List<FieldUrl> findHigherLevelUrls(String domain, String url) {
+		Logger.info("Parameters: " + domain + " - " + url.length());
+		String query = "find fieldUrl fetch target fetch target.licenses where url like :domain and LENGTH(url) < :length";
+        List<FieldUrl> fieldUrls = Ebean.createQuery(FieldUrl.class, query)
+        		.setParameter("domain", "%" + domain + "%")
+        		.setParameter("length", url.length()).where().or(Expr.isNotNull("target.licenses"), Expr.isNotNull("target.qaIssue")).findList();
+		return fieldUrls;
 	}
 
     @Override

@@ -414,6 +414,7 @@ public enum Scope {
         boolean res = false;
         Logger.info("check for scope IP url: " + url + ", nid: " + nidUrl);
         url = normalizeUrl(url);
+        Logger.info("normalizeUrl: " + url);
         
         /**
          *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
