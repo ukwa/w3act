@@ -453,6 +453,7 @@ public class Target extends Model {
 	 * This method computes duplicates for target URLs.
 	 * @return duplicate count
 	 */
+	@JsonIgnore
 	public int getDuplicateNumber() {
 		int res = 0;
         ExpressionList<Target> ll = find.where().eq("field_url", this.field_url);
@@ -692,6 +693,7 @@ public class Target extends Model {
 	 * This method retrieves user name for the passed author URL.
 	 * @return
 	 */
+	@JsonIgnore
 	public String get_user_by_id() {
 		String res = "";
 		try {
@@ -1100,6 +1102,7 @@ public class Target extends Model {
     }
 
     // Could really do with many_to_one relationship
+    @JsonIgnore
     public Organisation getOrganisation() {
     	return Organisation.findByUrl(field_nominating_organisation);
     }
@@ -1804,6 +1807,7 @@ public class Target extends Model {
      * This method calculates selected flags for presentation in view page.
      * @return flag list as a string
      */
+    @JsonIgnore
     public String getSelectedFlags() {
     	String res = "";
     	boolean firstTime = true;
@@ -1835,6 +1839,7 @@ public class Target extends Model {
      * This method calculates selected tags for presentation in view page.
      * @return tag list as a string
      */
+    @JsonIgnore
     public String getSelectedTags() {
     	String res = "";
     	boolean firstTime = true;
@@ -1866,6 +1871,7 @@ public class Target extends Model {
      * This method returns status value as a String
      * @return
      */
+    @JsonIgnore
     public String getStatusStr() {
     	String res = Const.NA;
 		if (status != null) {
@@ -2039,6 +2045,7 @@ public class Target extends Model {
 		return (indicateUkwaLicenceStatus() || hasLicenses() || hasHigherLicense());
 	}
 	
+	@JsonIgnore
 	public Target getHigherLevelTarget() {
 		// field_url - the domain name
 		// field_license - act-168
