@@ -624,7 +624,7 @@ public class TargetController extends AbstractController {
                 target.tag_to_target = null;
                 Logger.info("+++ subject_to_target object before target nid: " + target.nid + ", update: " + target.subject_to_target);
             	Ebean.update(target);
-            	if (target.watchedTarget != null) {
+            	if (getFormParam("watched") == null && target.watchedTarget != null) {
             		WatchedTarget watchedTarget = WatchedTarget.find.byId(target.watchedTarget.id);
             		Ebean.delete(watchedTarget);
             	}
@@ -662,7 +662,14 @@ public class TargetController extends AbstractController {
         	}
         	Ebean.save(newTarget);
         	if (getFormParam("watched") != null && getFormParam("watched").equals("true")) {
-        		Ebean.save(new WatchedTarget(newTarget, getFormParam("watchedTarget.documentUrlScheme")));
+        		if (target.watchedTarget != null) {
+        			target.watchedTarget.target = newTarget;
+        			target.watchedTarget.documentUrlScheme = getFormParam("watchedTarget.documentUrlScheme");
+        			Ebean.update(target.watchedTarget);
+        		}
+        		else {
+        			Ebean.save(new WatchedTarget(newTarget, getFormParam("watchedTarget.documentUrlScheme")));
+        		}
         	}
         	try {
 	            /**

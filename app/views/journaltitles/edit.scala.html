@@ -1,6 +1,5 @@
 @(title: String, form: Form[JournalTitle], user: User, toDocument: Boolean)
 
-@import helper.checkbox
 @import helper.input
 @import helper.inputText
 @import helper.options
@@ -97,7 +96,6 @@
 					@value
 					<input type="hidden" name="@name" id="@id" value="@value">
 				}
-				@checkbox(form("priorityCataloguing"), '_label -> "Priority Cataloguing", 'class -> "checkbox")
 				@input(form("blCollectionSubset"), '_label -> "BL Collection Subset") { (id, name, value, args) =>
 					<span id="collectionTree"></span>
 					<input type="hidden" name="@name" id="@id" value="@value">

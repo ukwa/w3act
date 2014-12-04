@@ -52,10 +52,10 @@ public class WatchedTarget extends Model {
 	}
 	public static Page<WatchedTarget> page(User user, int page, int pageSize, String sortBy, String order, String filter) {
     	
-		String sql = "select wt.id, wt.id_creator, t.id, t.url, t.title, t.field_url, count(*) as documentCount"
+		String sql = "select wt.id, wt.id_creator, t.id, t.url, t.title, t.field_url, count(d.id) as documentCount"
 				+ " from watched_target wt"
 				+ " left outer join target t on t.id = wt.id_target"
-				+ " left outer join document on id_watched_target = wt.id"
+				+ " left outer join document d on id_watched_target = wt.id"
 				+ " group by wt.id, wt.id_creator, t.id, t.url, t.title, t.field_url";
 		
 		RawSql rawSql = RawSqlBuilder.parse(sql)

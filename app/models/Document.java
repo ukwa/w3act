@@ -52,6 +52,10 @@ public class Document extends Model {
     public Integer publicationYear;
     @Required
 	public String filename;
+    public boolean priorityCataloguing;
+    public boolean mbsPortal;
+    public boolean enviaPortal;
+    public boolean otherPortal;
     public String type;
 	public String author1Fn;
 	public String author1Ln;

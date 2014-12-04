@@ -15,7 +15,6 @@ create table journal_title (
   frequency		varchar(255),
   publisher_name	varchar(255) not null,
   language		varchar(255),
-  priority_cataloguing	boolean,
   bl_collection_subset	varchar(255)
 );
 
@@ -37,6 +36,10 @@ create table document (
   publication_date	date,
   publication_year	integer,
   filename		varchar(255) not null,
+  priority_cataloguing	boolean not null,
+  mbs_portal		boolean not null,
+  envia_portal		boolean not null,
+  other_portal		boolean not null,
   type			varchar(255),
   author1fn		varchar(255),
   author1ln		varchar(255),
@@ -51,7 +54,6 @@ create table book (
   id_document		bigint references document (id),
   isbn			varchar(255),
   corporate_author	varchar(255),
-  priority_cataloguing	boolean not null,
   series		varchar(255),
   publisher		varchar(255),
   edition		varchar(255)

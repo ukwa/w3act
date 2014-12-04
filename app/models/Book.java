@@ -21,7 +21,6 @@ public class Book extends Model {
 	public Document document;
 	public String isbn;
 	public String corporateAuthor;
-	public boolean priorityCataloguing;
 	public String series;
 	@Required
 	public String publisher;

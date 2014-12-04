@@ -102,6 +102,18 @@
 		function hide(element) {
 			element.css({display: "none"});
 		}
+
+		function toggleVisibilityServices() {
+			var priorityCataloguing = document.getElementById("priorityCataloguing").checked;
+			var services = $("#services");
+			var checkboxes = $("#mbsPortal, #enviaPortal, #otherPortal");
+			if (priorityCataloguing) {
+				show(services);
+			} else {
+				hide(services);
+				checkboxes.prop('checked', false);
+			}
+		}
 		
 		function toggleVisibility() {
 			var select = document.getElementById("type");
@@ -138,6 +150,7 @@
 		
 		$(function() {
 			toggleVisibility();
+			toggleVisibilityServices();
 			@if(editable) {
 				document.getElementById("document_view").contentWindow.onmouseup =
 					function showOptions(event) {
@@ -201,6 +214,21 @@
 			@inputText(form("publicationDate"), editable, '_label -> "Publication Date", 'onchange -> "fillYear()")
 			@inputText(form("publicationYear"), editable, '_label -> "Year of Publication")
 			@inputText(form("filename"), editable, '_label -> "Filename")
+			@checkbox(form("priorityCataloguing"),
+				editable,
+				'_label -> "Priority Cataloguing",
+				'onchange -> "toggleVisibilityServices()")
+			<div id="services">
+			@if(Target.find.byId(new Long(form("watchedTarget.target.nid").value)).indicateUkwaLicenceStatus) {
+				@checkbox(form("mbsPortal"), editable, '_label -> "MBS Portal")
+				@checkbox(form("enviaPortal"), editable, '_label -> "Envia Portal")
+				@checkbox(form("otherPortal"), editable, '_label -> "Other")
+			} else {
+				@checkbox(form("mbsPortal"), editable, '_label -> "MBS Portal", 'disabled -> "disabled")
+				@checkbox(form("enviaPortal"), editable, '_label -> "Envia Portal", 'disabled -> "disabled")
+				@checkbox(form("otherPortal"), editable, '_label -> "Other", 'disabled -> "disabled")
+			}
+			</div>
 			@select(form("type"),
 				options(List("","Book", "Journal Article", "Journal Issue")),
 				editable,
@@ -208,7 +236,6 @@
 			<div id="book_general">
 				@inputText(form("book.isbn"), editable, '_label -> "ISBN")
 				@inputText(form("book.corporateAuthor"), editable, '_label -> "Corporate Author")
-				@checkbox(form("book.priorityCataloguing"), editable, '_label -> "Priority Cataloguing")
 			</div>
 			<div id="book">
 				@inputText(form("book.series"), editable, '_label -> "Series")
