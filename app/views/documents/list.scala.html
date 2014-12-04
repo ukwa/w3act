@@ -91,8 +91,8 @@
 			@for(document <- currentPage.getList) {
 				<tr>
 					<td><a href="@routes.Documents.edit(document.id)">@document.title</a></td>
-					<td><a href="@document.landingPageUrl">@document.landingPageUrl</a></td>
-					<td><a href="@document.documentUrl">@document.documentUrl</a></td>
+					<td><a href="@document.landingPageUrl" target="_blank">@document.landingPageUrl</a></td>
+					<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
 				</tr>
 			}
 			</tbody>
