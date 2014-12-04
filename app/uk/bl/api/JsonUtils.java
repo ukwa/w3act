@@ -786,12 +786,21 @@ public enum JsonUtils {
 //							"UK Registration" 
 //							field, but all URLs have to meet it to get a tick.
 //							e.g. if all URLs end '.uk' then "UK top-level domain" is true.
-							target.isUkHosting = Scope.INSTANCE.isUkHosting(fieldUrls); // check if UK IP Address
-							target.isTopLevelDomain = Scope.INSTANCE.isTopLevelDomain(fieldUrls);
-							target.isUkRegistration = Scope.INSTANCE.isUkRegistration(fieldUrls);
-							Logger.info(target.isUkHosting + ", " + target.isTopLevelDomain + ", " + target.isUkRegistration);
+//							field_uk_hosting
+//							target.isUkHosting = Scope.INSTANCE.isUkHosting(fieldUrls); // check if UK IP Address
+//							field_uk_domain
+//							target.isTopLevelDomain = Scope.INSTANCE.isTopLevelDomain(fieldUrls);
+//							field_uk_geoip
+//							target.isUkRegistration = Scope.INSTANCE.isUkRegistration(fieldUrls);
+//							Logger.info(target.isUkHosting + ", " + target.isTopLevelDomain + ", " + target.isUkRegistration);
 							// .uk .london .scot
 						}
+
+						// uk hosting
+						target.isUkHosting = BooleanUtils.toBoolean(target.getField_uk_geoip());
+						
+						// top level domain
+						target.isTopLevelDomain = BooleanUtils.toBoolean(target.getField_uk_domain());
 
 						target.isInScopeIp = false;
 						target.isInScopeIpWithoutLicense = false;
@@ -912,18 +921,18 @@ public enum JsonUtils {
 						
 						// "field_crawl_start_date":null,
 						if (target.getField_crawl_start_date() != null) {
-							target.fieldCrawlStartDate = getDateFromSeconds(target.getField_crawl_start_date());
+							target.crawlStartDate = getDateFromSeconds(target.getField_crawl_start_date());
 						}
 						// "field_crawl_end_date":null,
 						if (target.getField_crawl_end_date() != null) {
-							target.fieldCrawlEndDate = getDateFromSeconds(target.getField_crawl_end_date());
+							target.crawlEndDate = getDateFromSeconds(target.getField_crawl_end_date());
 						}
 						
 						// "field_notes":{"value":"<p>There are missing documents in this gather for example <a href=\"https://www.wjec.co.uk/uploads/publications/16330.pdf\">https://www.wjec.co.uk/uploads/publications/16330.pdf</a>. It could be a capping issue. I have taken off the cap.</p>\n","format":"filtered_html"}
 						if (target.getField_notes() != null && target.getField_notes() instanceof Map) {
 							Map<String,String> fieldNotes = (Map<String,String>)target.getField_notes();
 							String value = fieldNotes.get("value");
-							target.fieldNotes = value;
+							target.notes = value;
 						}
 						
 						// "field_snapshots":[{"uri":"http://www.webarchive.org.uk/act/field_collection_item/6","id":"6","resource":"field_collection_item"}]
@@ -952,10 +961,6 @@ public enum JsonUtils {
 
 //						"comments":[],
 						
-						target.fieldUkDomain = BooleanUtils.toBoolean(target.getField_uk_domain());
-						target.fieldUkGeoip = BooleanUtils.toBoolean(target.getField_uk_geoip());
-	
-						
 						target.revision = Const.INITIAL_REVISION;
 						target.active = true;
 						target.selectionType = Const.SelectionType.SELECTION.name();
@@ -963,16 +968,16 @@ public enum JsonUtils {
 							target.language = null;
 						}
 	
-						if (target.field_no_ld_criteria_met == null) {
-							target.field_no_ld_criteria_met = false;
+						if (target.noLdCriteriaMet == null) {
+							target.noLdCriteriaMet = false;
 						}
 	
-						if (target.field_key_site == null) {
-							target.field_key_site = false;
+						if (target.keySite == null) {
+							target.keySite = false;
 						}
 						
-						if (target.field_ignore_robots_txt == null) {
-							target.field_ignore_robots_txt = false;
+						if (target.ignoreRobotsTxt == null) {
+							target.ignoreRobotsTxt = false;
 						}
 						
 						target.createdAt = this.getDateFromSeconds(target.getCreated());
@@ -983,7 +988,7 @@ public enum JsonUtils {
 				}
 
 			}
-		} catch (IOException | WhoisException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		

@@ -199,11 +199,11 @@ public class TargetController extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_scope != null && target.field_scope.length() > 0 && !subjects.contains(target.field_scope)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_scope", target.field_scope);
+			if (target.scope != null && target.scope.length() > 0 && !subjects.contains(target.scope)) {
+		        ExpressionList<Target> ll = Target.find.where().contains("field_scope", target.scope);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.field_scope);
+		        	subjects.add(target.scope);
 		        }
 			}
 		}
@@ -280,11 +280,11 @@ public class TargetController extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_crawl_frequency != null && target.field_crawl_frequency.length() > 0 && !subjects.contains(target.field_crawl_frequency)) {
-		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_CRAWL_FREQUENCY, target.field_crawl_frequency);
+			if (target.crawlFrequency != null && target.crawlFrequency.length() > 0 && !subjects.contains(target.crawlFrequency)) {
+		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_CRAWL_FREQUENCY, target.crawlFrequency);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.field_crawl_frequency);
+		        	subjects.add(target.crawlFrequency);
 		        }
 			}
 		}
@@ -302,11 +302,11 @@ public class TargetController extends AbstractController {
 		Iterator<Target> itr = allTargets.iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.field_depth != null && target.field_depth.length() > 0 && !subjects.contains(target.field_depth)) {
-		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_DEPTH, target.field_depth);
+			if (target.depth != null && target.depth.length() > 0 && !subjects.contains(target.depth)) {
+		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_DEPTH, target.depth);
 		        if (ll.findRowCount() > 0) {
 		        	res.add(target);
-		        	subjects.add(target.field_depth);
+		        	subjects.add(target.depth);
 		        }
 			}
 		}
@@ -1120,11 +1120,11 @@ public class TargetController extends AbstractController {
     	    Target target = Target.findById(Long.valueOf(getFormParam(Const.ID)));
         	if (getFormParam(Const.FIELD_WCT_ID) != null && !getFormParam(Const.FIELD_WCT_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
-            	targetObj.field_wct_id = target.field_wct_id;
+            	targetObj.wctId = target.wctId;
             }
         	if (getFormParam(Const.FIELD_SPT_ID) != null && !getFormParam(Const.FIELD_SPT_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
-            	targetObj.field_spt_id = target.field_spt_id;
+            	targetObj.sptId = target.sptId;
         	}
         	if (getFormParam(Const.LEGACY_SITE_ID) != null && !getFormParam(Const.LEGACY_SITE_ID).equals("")
         			&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
@@ -1141,7 +1141,7 @@ public class TargetController extends AbstractController {
 	    // TODO: KL
 //        targetObj.authorRef = getFormParam(Const.USER);
         targetObj.title = getFormParam(Const.TITLE);
-        targetObj.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
+        targetObj.keySite = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
         targetObj.description = getFormParam(Const.DESCRIPTION);
         if (getFormParam(Const.FLAG_NOTES) != null) {
         	targetObj.flagNotes = getFormParam(Const.FLAG_NOTES);
@@ -1178,7 +1178,7 @@ public class TargetController extends AbstractController {
         	targetObj.authorUser.url = getFormParam(Const.AUTHORS);
         } 
         if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
-        	targetObj.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
+        	targetObj.liveSiteStatus = getFormParam(Const.LIVE_SITE_STATUS);
         } 
         if (getFormParam(Const.FIELD_SUBJECT) != null) {
         	String subjectListStr = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
@@ -1262,12 +1262,12 @@ public class TargetController extends AbstractController {
         if (getFormParam(Const.FIELD_WCT_ID) != null 
         		&& getFormParam(Const.FIELD_WCT_ID).length() > 0
         		&& Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
-        	targetObj.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
+        	targetObj.wctId = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
         }
         if (getFormParam(Const.FIELD_SPT_ID) != null 
         		&& getFormParam(Const.FIELD_SPT_ID).length() > 0
         		&& Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
-        	targetObj.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+        	targetObj.sptId = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
         }
         if (getFormParam(Const.FIELD_LICENSE) != null) {
         	if (!getFormParam(Const.FIELD_LICENSE).toLowerCase().contains(Const.NONE)) {
@@ -1287,14 +1287,14 @@ public class TargetController extends AbstractController {
         	}
         }
 //        targetObj.field_uk_hosting = Scope.INSTANCE.isUkHosting();
-        targetObj.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
+        targetObj.ukPostalAddress = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
         targetObj.ukPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
-        targetObj.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
+        targetObj.viaCorrespondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
         targetObj.value = getFormParam(Const.FIELD_NOTES);
-        targetObj.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
-        targetObj.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
-        targetObj.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
-        targetObj.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
+        targetObj.professionalJudgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
+        targetObj.professionalJudgementExp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
+        targetObj.noLdCriteriaMet = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
+        targetObj.ignoreRobotsTxt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
         if (getFormParam(Const.FIELD_CRAWL_START_DATE) != null) {
         	String startDateHumanView = getFormParam(Const.FIELD_CRAWL_START_DATE);
         	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
@@ -1313,11 +1313,11 @@ public class TargetController extends AbstractController {
         targetObj.whiteList = getFormParam(Const.WHITE_LIST);
         targetObj.blackList = getFormParam(Const.BLACK_LIST);
         if (getFormParam(Const.FIELD_DEPTH) != null) {
-        	targetObj.field_depth = getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+        	targetObj.depth = getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
         }
-        targetObj.field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
+        targetObj.crawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
         if (getFormParam(Const.FIELD_SCOPE) != null) {
-        	targetObj.field_scope = getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+        	targetObj.scope = getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
         }
         targetObj.keywords = getFormParam(Const.KEYWORDS);
         targetObj.synonyms = getFormParam(Const.SYNONYMS);
@@ -1440,7 +1440,7 @@ public class TargetController extends AbstractController {
             newTarget.title = getFormParam(Const.TITLE);
             
 //            newTarget.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
-            newTarget.field_key_site = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
+            newTarget.keySite = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
             newTarget.description = getFormParam(Const.DESCRIPTION);
             if (getFormParam(Const.FLAG_NOTES) != null) {
             	newTarget.flagNotes = getFormParam(Const.FLAG_NOTES);
@@ -1481,7 +1481,7 @@ public class TargetController extends AbstractController {
             	newTarget.authorUser.url = getFormParam(Const.AUTHORS);
             } 
             if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
-            	newTarget.field_live_site_status = getFormParam(Const.LIVE_SITE_STATUS);
+            	newTarget.liveSiteStatus = getFormParam(Const.LIVE_SITE_STATUS);
             } 
             if (getFormParam(Const.FIELD_SUBJECT) != null) {
             	String subjectListStr = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
@@ -1572,12 +1572,12 @@ public class TargetController extends AbstractController {
             if (getFormParam(Const.FIELD_WCT_ID) != null 
             		&& getFormParam(Const.FIELD_WCT_ID).length() > 0
             		&& Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
-            	newTarget.field_wct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
+            	newTarget.wctId = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
             }
             if (getFormParam(Const.FIELD_SPT_ID) != null 
             		&& getFormParam(Const.FIELD_SPT_ID).length() > 0
             		&& Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
-            	newTarget.field_spt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
+            	newTarget.sptId = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
             }
             if (getFormParam(Const.FIELD_LICENSE) != null) {
             	if (!getFormParam(Const.FIELD_LICENSE).toLowerCase().contains(Const.NONE)) {
@@ -1604,36 +1604,35 @@ public class TargetController extends AbstractController {
             	}
             }
 //            newTarget.field_uk_hosting = Scope.INSTANCE.checkUkHosting(newTarget.fieldUrl());
-        	Logger.debug("field_uk_hosting: " + newTarget.field_uk_hosting);
-            newTarget.field_uk_postal_address = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
+            newTarget.ukPostalAddress = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
             newTarget.ukPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
-            Logger.debug("newTarget.field_uk_postal_address: " + newTarget.field_uk_postal_address);
-            if (newTarget.field_uk_postal_address 
+            Logger.debug("newTarget.field_uk_postal_address: " + newTarget.ukPostalAddress);
+            if (newTarget.ukPostalAddress 
             		&& (newTarget.ukPostalAddressUrl == null || newTarget.ukPostalAddressUrl.length() == 0)) {
             	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
 	  			flash("message", "If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
 	  			return info();
             }
-            newTarget.field_via_correspondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
+            newTarget.viaCorrespondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
             newTarget.value = getFormParam(Const.FIELD_NOTES);
-            if (newTarget.field_via_correspondence 
+            if (newTarget.viaCorrespondence 
             		&& (newTarget.value == null || newTarget.value.length() == 0)) {
             	Logger.info("If Via Correspondence field has value 'Yes', the Notes field is required.");
 	  			flash("message", "If Via Correspondence field has value 'Yes', the Notes field is required.");
 	  			return info();
             }
-            newTarget.field_professional_judgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
-            newTarget.field_professional_judgement_exp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
-            Logger.debug("newTarget.field_professional_judgement: " + newTarget.field_professional_judgement);
-            if (newTarget.field_professional_judgement 
-            		&& (newTarget.field_professional_judgement_exp == null || newTarget.field_professional_judgement_exp.length() == 0)) {
+            newTarget.professionalJudgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
+            newTarget.professionalJudgementExp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
+            Logger.debug("newTarget.field_professional_judgement: " + newTarget.professionalJudgement);
+            if (newTarget.professionalJudgement 
+            		&& (newTarget.professionalJudgementExp == null || newTarget.professionalJudgementExp.length() == 0)) {
             	Logger.info("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
 	  			flash("message", "If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
 	  			return info();
             }
-            newTarget.field_no_ld_criteria_met = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
+            newTarget.noLdCriteriaMet = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
 //            Logger.info("ignore robots: " + getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
-            newTarget.field_ignore_robots_txt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
+            newTarget.ignoreRobotsTxt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));
             if (getFormParam(Const.FIELD_CRAWL_START_DATE) != null) {
             	String startDateHumanView = getFormParam(Const.FIELD_CRAWL_START_DATE);
             	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
@@ -1654,11 +1653,11 @@ public class TargetController extends AbstractController {
             newTarget.whiteList = getFormParam(Const.WHITE_LIST);
             newTarget.blackList = getFormParam(Const.BLACK_LIST);
             if (getFormParam(Const.FIELD_DEPTH) != null) {
-            	newTarget.field_depth = getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+            	newTarget.depth = getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
             }
-            newTarget.field_crawl_frequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
+            newTarget.crawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
             if (getFormParam(Const.FIELD_SCOPE) != null) {
-            	newTarget.field_scope = getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+            	newTarget.scope = getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
             }
             newTarget.keywords = getFormParam(Const.KEYWORDS);
             newTarget.synonyms = getFormParam(Const.SYNONYMS);

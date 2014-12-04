@@ -35,6 +35,7 @@ import views.html.crawlpermissions.list;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -65,12 +66,15 @@ public class CrawlPermissions extends AbstractController {
      */
     public static Result list(int pageNo, String sortBy, String order, String filter, String status, String target, String sel) {
     	Logger.info("CrawlPermissions.list() " + filter);
+    	
+    	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status, target);
+    	
         return ok(
         	list.render(
         			"CrawlPermissions", 
         			User.findByEmail(request().username()), 
         			filter, 
-        			CrawlPermission.page(pageNo, 20, sortBy, order, filter, status, target), 
+        			pages, 
         			sortBy, 
         			order,
         			status,

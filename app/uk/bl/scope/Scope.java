@@ -190,14 +190,14 @@ public enum Scope {
          * Check for fields of target that not yet stored in database.
          */
         if (target != null
-        		&& (target.field_uk_postal_address 
-        		|| target.field_via_correspondence
-        		|| target.field_professional_judgement)) {
-        	Logger.debug("updateLookupEntry(): " + target.field_uk_postal_address + ", " + 
-        		target.field_via_correspondence + ", " + target.field_professional_judgement);
+        		&& (target.ukPostalAddress 
+        		|| target.viaCorrespondence
+        		|| target.professionalJudgement)) {
+        	Logger.debug("updateLookupEntry(): " + target.ukPostalAddress + ", " + 
+        		target.viaCorrespondence + ", " + target.professionalJudgement);
         	res = true;
         }
-        if (target != null && target.field_no_ld_criteria_met) {
+        if (target != null && target.noLdCriteriaMet) {
         	res = false;
         }
         
@@ -729,6 +729,7 @@ public enum Scope {
 		return checkWhois(url);
 	}
 
+	//	UK GeoIP
 	public boolean isUkHosting(List<FieldUrl> fieldUrls) {
 		for (FieldUrl fieldUrl : fieldUrls) {
 			if (!this.checkGeoIp(fieldUrl.url)) return false;
@@ -736,6 +737,7 @@ public enum Scope {
 		return true;
 	}
 	
+	//	UK Domain 
 	public boolean isTopLevelDomain(List<FieldUrl> fieldUrls) throws WhoisException {
         for (FieldUrl fieldUrl : fieldUrls) {
             URL uri = null;

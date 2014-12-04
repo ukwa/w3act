@@ -252,14 +252,13 @@ create table target (
   qaissue_id                bigint,
   author_id                 bigint,
   organisation_id           bigint,
-  crawlPermission_id        bigint,
   is_uk_hosting             boolean,
   is_top_level_domain       boolean,
   is_uk_registration        boolean,
   is_in_scope_ip            boolean,
   is_in_scope_ip_without_license boolean,
-  field_crawl_start_date    timestamp,
-  field_crawl_end_date      timestamp,
+  crawl_start_date          timestamp,
+  crawl_end_date            timestamp,
   legacy_site_id            bigint,
   active                    boolean,
   white_list                varchar(255),
@@ -273,29 +272,26 @@ create table target (
   tab_status                varchar(255),
   description               text,
   uk_postal_address_url     text,
-  field_notes               text,
+  notes                     text,
   keywords                  text,
   synonyms                  text,
   value                     text,
   summary                   text,
-  field_scope               varchar(255),
-  field_depth               varchar(255),
-  field_via_correspondence  boolean,
-  field_uk_postal_address   boolean,
-  field_uk_hosting          boolean,
-  field_crawl_frequency     varchar(255),
-  field_uk_domain           boolean,
-  field_uk_geoip            boolean,
-  field_special_dispensation boolean,
-  field_special_dispensation_reaso text,
-  field_live_site_status    varchar(255),
-  field_wct_id              bigint,
-  field_spt_id              bigint,
-  field_no_ld_criteria_met  boolean,
-  field_key_site            boolean,
-  field_professional_judgement boolean,
-  field_professional_judgement_exp text,
-  field_ignore_robots_txt   boolean,
+  scope                     varchar(255),
+  depth                     varchar(255),
+  via_correspondence        boolean,
+  uk_postal_address         boolean,
+  crawl_frequency           varchar(255),
+  special_dispensation      boolean,
+  special_dispensation_reason text,
+  live_site_status          varchar(255),
+  wct_id                    bigint,
+  spt_id                    bigint,
+  no_ld_criteria_met        boolean,
+  key_site                  boolean,
+  professional_judgement    boolean,
+  professional_judgement_exp text,
+  ignore_robots_txt         boolean,
   format                    varchar(255),
   updated_at                timestamp not null,
   constraint uq_target_url unique (url),
@@ -416,16 +412,16 @@ create table tag_instance (
   constraint pk_tag_instance primary key (tag_id, instance_id))
 ;
 
-create table subjects (
-  parent_id                      bigint not null,
-  id                             bigint not null,
-  constraint pk_subjects primary key (parent_id, id))
-;
-
 create table collection_instance (
   collection_id                  bigint not null,
   instance_id                    bigint not null,
   constraint pk_collection_instance primary key (collection_id, instance_id))
+;
+
+create table subjects (
+  parent_id                      bigint not null,
+  id                             bigint not null,
+  constraint pk_subjects primary key (parent_id, id))
 ;
 create sequence communication_log_seq;
 
@@ -489,14 +485,12 @@ alter table target add constraint fk_target_authorUser_14 foreign key (author_id
 create index ix_target_authorUser_14 on target (author_id);
 alter table target add constraint fk_target_organisation_15 foreign key (organisation_id) references organisation (id);
 create index ix_target_organisation_15 on target (organisation_id);
-alter table target add constraint fk_target_crawlPermission_16 foreign key (crawlPermission_id) references crawl_permission (id);
-create index ix_target_crawlPermission_16 on target (crawlPermission_id);
-alter table taxonomy add constraint fk_taxonomy_taxonomyType_17 foreign key (taxonomyType_id) references taxonomy_type (id);
-create index ix_taxonomy_taxonomyType_17 on taxonomy (taxonomyType_id);
-alter table taxonomy add constraint fk_taxonomy_parent_18 foreign key (parent_id) references taxonomy (id);
-create index ix_taxonomy_parent_18 on taxonomy (parent_id);
-alter table creator add constraint fk_creator_organisation_19 foreign key (organisation_id) references organisation (id);
-create index ix_creator_organisation_19 on creator (organisation_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyType_16 foreign key (taxonomyType_id) references taxonomy_type (id);
+create index ix_taxonomy_taxonomyType_16 on taxonomy (taxonomyType_id);
+alter table taxonomy add constraint fk_taxonomy_parent_17 foreign key (parent_id) references taxonomy (id);
+create index ix_taxonomy_parent_17 on taxonomy (parent_id);
+alter table creator add constraint fk_creator_organisation_18 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_18 on creator (organisation_id);
 
 
 
@@ -544,13 +538,13 @@ alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key 
 
 alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
 
-alter table subjects add constraint fk_subjects_taxonomy_01 foreign key (parent_id) references taxonomy (id);
-
-alter table subjects add constraint fk_subjects_taxonomy_02 foreign key (id) references taxonomy (id);
-
 alter table collection_instance add constraint fk_collection_instance_taxono_01 foreign key (collection_id) references taxonomy (id);
 
 alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (instance_id) references instance (id);
+
+alter table subjects add constraint fk_subjects_taxonomy_01 foreign key (parent_id) references taxonomy (id);
+
+alter table subjects add constraint fk_subjects_taxonomy_02 foreign key (id) references taxonomy (id);
 
 # --- !Downs
 

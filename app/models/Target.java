@@ -67,9 +67,8 @@ public class Target extends UrlModel {
 	public Organisation organisation;
 
 	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "crawlPermission_id")
-	public CrawlPermission crawlPermission;
+	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	public List<CrawlPermission> crawlPermissions;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
@@ -110,15 +109,18 @@ public class Target extends UrlModel {
 	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
 	public List<FieldUrl> fieldUrls;
 
-	public Boolean isUkHosting;
-	public Boolean isTopLevelDomain;
-	public Boolean isUkRegistration;
+
+	@JsonProperty("field_uk_hosting")
+	public Boolean isUkHosting = Boolean.FALSE;
+	
+	public Boolean isTopLevelDomain = Boolean.FALSE;
+	public Boolean isUkRegistration = Boolean.FALSE;
 	
 	public Boolean isInScopeIp;
 	public Boolean isInScopeIpWithoutLicense;
 
-	public Date fieldCrawlStartDate;
-	public Date fieldCrawlEndDate;
+	public Date crawlStartDate;
+	public Date crawlEndDate;
 
 	public Long legacySiteId;
 	
@@ -155,7 +157,7 @@ public class Target extends UrlModel {
 	public String ukPostalAddressUrl;
 
 	@Column(columnDefinition = "text")
-	public String fieldNotes;
+	public String notes;
 
 	@Column(columnDefinition = "text")
 	public String keywords;
@@ -170,63 +172,52 @@ public class Target extends UrlModel {
 	@Column(columnDefinition = "text")
 	public String summary;
 
-	@JsonIgnore
-	@JsonProperty
-	public String field_scope;
+	@JsonProperty("field_scope")
+	public String scope;
 
-	@JsonIgnore
-	@JsonProperty
-	public String field_depth;
+	@JsonProperty("field_depth")
+	public String depth;
 	
-	@JsonIgnore
-	@JsonProperty
-	public Boolean field_via_correspondence;
+	@JsonProperty("field_via_correspondence")
+	public Boolean viaCorrespondence;
 
-	@JsonIgnore
-	@JsonProperty
-	public Boolean field_uk_postal_address;
+	@JsonProperty("field_uk_postal_address")
+	public Boolean ukPostalAddress;
 	
-	@JsonProperty
-	public Boolean field_uk_hosting;
-	
-	@JsonProperty
-	public String field_crawl_frequency;
+	@JsonProperty("field_crawl_frequency")
+	public String crawlFrequency;
 
-	public Boolean fieldUkDomain;
-	
-	public Boolean fieldUkGeoip;
-	
-	@JsonProperty
-	public Boolean field_special_dispensation;
+	@JsonProperty("field_special_dispensation")
+	public Boolean specialDispensation;
 
 	@Column(columnDefinition = "text")
-	@JsonProperty
-	public String field_special_dispensation_reaso;
+	@JsonProperty("field_special_dispensation_reaso")
+	public String specialDispensationReason;
 
-	@JsonProperty
-	public String field_live_site_status;
+	@JsonProperty("field_live_site_status")
+	public String liveSiteStatus;
 
-	@JsonProperty
-	public Long field_wct_id;
+	@JsonProperty("field_wct_id")
+	public Long wctId;
 
-	@JsonProperty
-	public Long field_spt_id;
+	@JsonProperty("field_spt_id")
+	public Long sptId;
 
-	@JsonProperty
-	public Boolean field_no_ld_criteria_met;
+	@JsonProperty("field_no_ld_criteria_met")
+	public Boolean noLdCriteriaMet;
 
-	@JsonProperty
-	public Boolean field_key_site;
+	@JsonProperty("field_key_site")
+	public Boolean keySite;
 
-	@JsonProperty
-	public Boolean field_professional_judgement;
+	@JsonProperty("field_professional_judgement")
+	public Boolean professionalJudgement;
 
 	@Column(columnDefinition = "text")
-	@JsonProperty
-	public String field_professional_judgement_exp;
+	@JsonProperty("field_professional_judgement_exp")
+	public String professionalJudgementExp;
 
-	@JsonProperty
-	public Boolean field_ignore_robots_txt;
+	@JsonProperty("field_ignore_robots_txt")
+	public Boolean ignoreRobotsTxt;
 	
 	@JsonIgnore
 	public String format;
@@ -386,17 +377,14 @@ public class Target extends UrlModel {
 	}
 
 	public Target() {
-		this.field_via_correspondence = false;
-		this.field_uk_postal_address = false;
-		this.field_uk_hosting = false;
-		this.field_crawl_frequency = "domaincrawl";
-		this.fieldUkDomain = true;
+		this.viaCorrespondence = false;
+		this.ukPostalAddress = false;
+		this.crawlFrequency = "domaincrawl";
 //		this.field_uk_domain = "yes";
 //		this.field_crawl_permission = "";
-		this.field_special_dispensation = false;
-		this.fieldUkGeoip = true;
+		this.specialDispensation = false;
 //		this.field_uk_geoip = "yes";
-		this.field_professional_judgement = false;
+		this.professionalJudgement = false;
 		// this.isNew = false;
 //		this.language = "en";
 		// this.status = 1L;
@@ -408,10 +396,10 @@ public class Target extends UrlModel {
 //		this.field_live_site_status = "";
 //		this.field_spt_id = 0L;
 //		this.field_wct_id = 0L;
-		this.field_no_ld_criteria_met = false;
-		this.field_key_site = false;
+		this.noLdCriteriaMet = false;
+		this.keySite = false;
 //		this.field_professional_judgement_exp = "";
-		this.field_ignore_robots_txt = false;
+		this.ignoreRobotsTxt = false;
 //		this.fieldUkPostalAddressUrl = "";
 //		this.fieldSuggestedCollections = "";
 //		this.fieldCollections = "";
@@ -423,8 +411,8 @@ public class Target extends UrlModel {
 //		this.value = "";
 //		this.summary = "";
 //		this.format = "";
-		this.field_scope = "root";
-		this.field_depth = "capped";
+		this.scope = "root";
+		this.depth = "capped";
 		this.type = Const.URL;
 		// this.field_nominating_organisation = Const.NONE;
 	}
@@ -442,9 +430,15 @@ public class Target extends UrlModel {
 //		this.qaIssue;
 //	    @if(permission.status.equals("GRANTED")) {
 		// TODO: KL check higher level license too
-		if (crawlPermission != null && crawlPermission.name.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
-			return true;
+		for (CrawlPermission crawlPermission : this.crawlPermissions) {
+			if (crawlPermission.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+				Logger.info(Const.CrawlPermissionStatus.GRANTED.name());
+				return true;
+			}
 		}
+//		if (crawlPermission != null && crawlPermission.name.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
+//			return true;
+//		}
 //		if (this.qaIssue != null && this.qaIssue.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
 //			return true;
 //		}
@@ -1018,14 +1012,14 @@ public class Target extends UrlModel {
 				.findUnique();
 		boolean res = false;
 		if (target != null
-				&& (target.field_uk_postal_address
-						|| target.field_via_correspondence || target.field_professional_judgement)) {
-			Logger.debug("checkManualScope(): " + target.field_uk_postal_address
-					+ ", " + target.field_via_correspondence + ", "
-					+ target.field_professional_judgement);
+				&& (target.ukPostalAddress
+						|| target.viaCorrespondence || target.professionalJudgement)) {
+			Logger.debug("checkManualScope(): " + target.ukPostalAddress
+					+ ", " + target.viaCorrespondence + ", "
+					+ target.professionalJudgement);
 			res = true;
 		}
-		if (target != null && target.field_no_ld_criteria_met) {
+		if (target != null && target.noLdCriteriaMet) {
 			res = false;
 		}
 		return res;
@@ -2314,12 +2308,21 @@ public class Target extends UrlModel {
 		return null;
 	}
 
-	
-	public static List<Target> findHigherLevelUrls(String domain, String url) {
+	public static List<Target> findUkwaTargets(String domain, String url) {
 		Logger.info("Parameters: " + domain + " - " + url.length());
 		String query = "find target fetch fieldUrls fetch licenses where fieldUrls.url like :domain and LENGTH(fieldUrls.url) < :length";
         List<Target> targets = Ebean.createQuery(Target.class, query)
         		.setParameter("domain", "%" + domain + "%")
+        		.setParameter("length", url.length()).where().or(Expr.isNotNull("licenses"), Expr.isNotNull("qaIssue")).findList();
+		return targets;
+	}
+
+	
+	public static List<Target> findHigherLevelTargets(String domain, String url) {
+		Logger.info("Parameters: " + domain + " - " + url.length());
+		String query = "find target fetch fieldUrls fetch licenses where fieldUrls.url like :domain and LENGTH(fieldUrls.url) < :length";
+        List<Target> targets = Ebean.createQuery(Target.class, query)
+        		.setParameter("domain", domain)
         		.setParameter("length", url.length()).where().or(Expr.isNotNull("licenses"), Expr.isNotNull("qaIssue")).findList();
 		return targets;
 	}
@@ -2345,7 +2348,7 @@ public class Target extends UrlModel {
 			Logger.debug("getUkwaLicenceStatusList() domain: " + thisFieldUrl.domain);
 
 			// for all my field urls get me all that are shorter than me
-			List<Target> shorterFieldUrls = Target.findHigherLevelUrls(thisFieldUrl.domain, thisFieldUrl.url);
+			List<Target> shorterFieldUrls = Target.findHigherLevelTargets(thisFieldUrl.domain, thisFieldUrl.url);
 			
 			for (Target target : shorterFieldUrls) {
 				// Then for each target from selected list look if ‘qa_status’
@@ -2401,12 +2404,20 @@ public class Target extends UrlModel {
 		return results;
 	}
 
-	public String getField_scope() {
-		return field_scope;
+	public Boolean getIsUkHosting() {
+		return isUkHosting;
 	}
 
-	public void setField_scope(String field_scope) {
-		this.field_scope = field_scope;
+	public void setIsUkHosting(Boolean isUkHosting) {
+		this.isUkHosting = isUkHosting;
+	}
+
+	public String getScope() {
+		return scope;
+	}
+
+	public void setScope(String scope) {
+		this.scope = scope;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -2427,36 +2438,28 @@ public class Target extends UrlModel {
 		this.field_subject = field_subject;
 	}
 
-	public String getField_depth() {
-		return field_depth;
+	public String getDepth() {
+		return depth;
 	}
 
-	public void setField_depth(String field_depth) {
-		this.field_depth = field_depth;
+	public void setDepth(String depth) {
+		this.depth = depth;
 	}
 
-	public Boolean getField_via_correspondence() {
-		return field_via_correspondence;
+	public Boolean getViaCorrespondence() {
+		return viaCorrespondence;
 	}
 
-	public void setField_via_correspondence(Boolean field_via_correspondence) {
-		this.field_via_correspondence = field_via_correspondence;
+	public void setViaCorrespondence(Boolean viaCorrespondence) {
+		this.viaCorrespondence = viaCorrespondence;
 	}
 
-	public Boolean getField_uk_postal_address() {
-		return field_uk_postal_address;
+	public Boolean getUkPostalAddress() {
+		return ukPostalAddress;
 	}
 
-	public void setField_uk_postal_address(Boolean field_uk_postal_address) {
-		this.field_uk_postal_address = field_uk_postal_address;
-	}
-
-	public Boolean getField_uk_hosting() {
-		return field_uk_hosting;
-	}
-
-	public void setField_uk_hosting(Boolean field_uk_hosting) {
-		this.field_uk_hosting = field_uk_hosting;
+	public void setUkPostalAddress(Boolean ukPostalAddress) {
+		this.ukPostalAddress = ukPostalAddress;
 	}
 
 	public Object getField_description() {
@@ -2485,12 +2488,12 @@ public class Target extends UrlModel {
 		this.field_nominating_organisation = field_nominating_organisation;
 	}
 
-	public String getField_crawl_frequency() {
-		return field_crawl_frequency;
+	public String getCrawlFrequency() {
+		return crawlFrequency;
 	}
 
-	public void setField_crawl_frequency(String field_crawl_frequency) {
-		this.field_crawl_frequency = field_crawl_frequency;
+	public void setCrawlFrequency(String crawlFrequency) {
+		this.crawlFrequency = crawlFrequency;
 	}
 
 	public List<FieldModel> getField_suggested_collections() {
@@ -2559,21 +2562,20 @@ public class Target extends UrlModel {
 		this.field_collection_categories = field_collection_categories;
 	}
 
-	public Boolean getField_special_dispensation() {
-		return field_special_dispensation;
+	public Boolean getSpecialDispensation() {
+		return specialDispensation;
 	}
 
-	public void setField_special_dispensation(Boolean field_special_dispensation) {
-		this.field_special_dispensation = field_special_dispensation;
+	public void setSpecialDispensation(Boolean specialDispensation) {
+		this.specialDispensation = specialDispensation;
 	}
 
-	public String getField_special_dispensation_reaso() {
-		return field_special_dispensation_reaso;
+	public String getSpecialDispensationReason() {
+		return specialDispensationReason;
 	}
 
-	public void setField_special_dispensation_reaso(
-			String field_special_dispensation_reaso) {
-		this.field_special_dispensation_reaso = field_special_dispensation_reaso;
+	public void setSpecialDispensationReason(String specialDispensationReason) {
+		this.specialDispensationReason = specialDispensationReason;
 	}
 
 	public FieldModel getField_qa_status() {
@@ -2584,12 +2586,12 @@ public class Target extends UrlModel {
 		this.field_qa_status = field_qa_status;
 	}
 
-	public String getField_live_site_status() {
-		return field_live_site_status;
+	public String getLiveSiteStatus() {
+		return liveSiteStatus;
 	}
 
-	public void setField_live_site_status(String field_live_site_status) {
-		this.field_live_site_status = field_live_site_status;
+	public void setLiveSiteStatus(String liveSiteStatus) {
+		this.liveSiteStatus = liveSiteStatus;
 	}
 
 	public Object getField_notes() {
@@ -2600,20 +2602,20 @@ public class Target extends UrlModel {
 		this.field_notes = field_notes;
 	}
 
-	public Long getField_wct_id() {
-		return field_wct_id;
+	public Long getWctId() {
+		return wctId;
 	}
 
-	public void setField_wct_id(Long field_wct_id) {
-		this.field_wct_id = field_wct_id;
+	public void setWctId(Long wctId) {
+		this.wctId = wctId;
 	}
 
-	public Long getField_spt_id() {
-		return field_spt_id;
+	public Long getSptId() {
+		return sptId;
 	}
 
-	public void setField_spt_id(Long field_spt_id) {
-		this.field_spt_id = field_spt_id;
+	public void setSptId(Long sptId) {
+		this.sptId = sptId;
 	}
 
 	public List<FieldModel> getField_snapshots() {
@@ -2624,20 +2626,20 @@ public class Target extends UrlModel {
 		this.field_snapshots = field_snapshots;
 	}
 
-	public Boolean getField_no_ld_criteria_met() {
-		return field_no_ld_criteria_met;
+	public Boolean getNoLdCriteriaMet() {
+		return noLdCriteriaMet;
 	}
 
-	public void setField_no_ld_criteria_met(Boolean field_no_ld_criteria_met) {
-		this.field_no_ld_criteria_met = field_no_ld_criteria_met;
+	public void setNoLdCriteriaMet(Boolean noLdCriteriaMet) {
+		this.noLdCriteriaMet = noLdCriteriaMet;
 	}
 
-	public Boolean getField_key_site() {
-		return field_key_site;
+	public Boolean getKeySite() {
+		return keySite;
 	}
 
-	public void setField_key_site(Boolean field_key_site) {
-		this.field_key_site = field_key_site;
+	public void setKeySite(Boolean keySite) {
+		this.keySite = keySite;
 	}
 
 	public String getField_uk_geoip() {
@@ -2648,30 +2650,29 @@ public class Target extends UrlModel {
 		this.field_uk_geoip = field_uk_geoip;
 	}
 
-	public Boolean getField_professional_judgement() {
-		return field_professional_judgement;
+
+	public Boolean getProfessionalJudgement() {
+		return professionalJudgement;
 	}
 
-	public void setField_professional_judgement(
-			Boolean field_professional_judgement) {
-		this.field_professional_judgement = field_professional_judgement;
+	public void setProfessionalJudgement(Boolean professionalJudgement) {
+		this.professionalJudgement = professionalJudgement;
 	}
 
-	public String getField_professional_judgement_exp() {
-		return field_professional_judgement_exp;
+	public String getProfessionalJudgementExp() {
+		return professionalJudgementExp;
 	}
 
-	public void setField_professional_judgement_exp(
-			String field_professional_judgement_exp) {
-		this.field_professional_judgement_exp = field_professional_judgement_exp;
+	public void setProfessionalJudgementExp(String professionalJudgementExp) {
+		this.professionalJudgementExp = professionalJudgementExp;
 	}
 
-	public Boolean getField_ignore_robots_txt() {
-		return field_ignore_robots_txt;
+	public Boolean getIgnoreRobotsTxt() {
+		return ignoreRobotsTxt;
 	}
 
-	public void setField_ignore_robots_txt(Boolean field_ignore_robots_txt) {
-		this.field_ignore_robots_txt = field_ignore_robots_txt;
+	public void setIgnoreRobotsTxt(Boolean ignoreRobotsTxt) {
+		this.ignoreRobotsTxt = ignoreRobotsTxt;
 	}
 
 	public Object getField_instances() {
@@ -2738,8 +2739,8 @@ public class Target extends UrlModel {
 		return "Target [organisation=" + organisation + ", authorUser="
 				+ authorUser + ", collections=" + collections + ", subjects="
 				+ subjects + ", licenses=" + licenses + ", fieldCrawlStartDate="
-				+ fieldCrawlStartDate + ", fieldCrawlEndDate="
-				+ fieldCrawlEndDate + ", legacySiteId=" + legacySiteId
+				+ crawlStartDate + ", fieldCrawlEndDate="
+				+ crawlEndDate + ", legacySiteId=" + legacySiteId
 				+ ", active=" + active + ", whiteList=" + whiteList
 				+ ", blackList=" + blackList + ", dateOfPublication="
 				+ dateOfPublication + ", justification=" + justification
@@ -2748,29 +2749,26 @@ public class Target extends UrlModel {
 				+ ", flagNotes=" + flagNotes + ", tabStatus=" + tabStatus
 				+ ", fieldDescription=" + description
 				+ ", fieldUkPostalAddressUrl=" + ukPostalAddressUrl
-				+ ", fieldNotes=" + fieldNotes + ", keywords="
+				+ ", fieldNotes=" + notes + ", keywords="
 				+ keywords + ", tags=" + tags + ", synonyms=" + synonyms
 				+ ", flags=" + flags + ", fieldUrl="
 				+ fieldUrl() + ", value=" + value + ", summary=" + summary
-				+ ", field_scope=" + field_scope + ", field_depth="
-				+ field_depth + ", field_via_correspondence="
-				+ field_via_correspondence + ", field_uk_postal_address="
-				+ field_uk_postal_address + ", field_uk_hosting="
-				+ field_uk_hosting + ", field_crawl_frequency="
-				+ field_crawl_frequency + ", fieldUkDomain=" + fieldUkDomain
-				+ ", fieldUkGeoip=" + fieldUkGeoip
-				+ ", field_special_dispensation=" + field_special_dispensation
+				+ ", field_scope=" + scope + ", field_depth="
+				+ depth + ", field_via_correspondence="
+				+ viaCorrespondence + ", field_uk_postal_address="
+				+ ukPostalAddress + ", field_crawl_frequency="
+				+ crawlFrequency + ", field_special_dispensation=" + specialDispensation
 				+ ", field_special_dispensation_reaso="
-				+ field_special_dispensation_reaso
-				+ ", field_live_site_status=" + field_live_site_status
-				+ ", field_wct_id=" + field_wct_id + ", field_spt_id="
-				+ field_spt_id + ", field_no_ld_criteria_met="
-				+ field_no_ld_criteria_met + ", field_key_site="
-				+ field_key_site + ", field_professional_judgement="
-				+ field_professional_judgement
+				+ specialDispensationReason
+				+ ", field_live_site_status=" + liveSiteStatus
+				+ ", field_wct_id=" + wctId + ", field_spt_id="
+				+ sptId + ", field_no_ld_criteria_met="
+				+ noLdCriteriaMet + ", field_key_site="
+				+ keySite + ", field_professional_judgement="
+				+ professionalJudgement
 				+ ", field_professional_judgement_exp="
-				+ field_professional_judgement_exp
-				+ ", field_ignore_robots_txt=" + field_ignore_robots_txt
+				+ professionalJudgementExp
+				+ ", field_ignore_robots_txt=" + ignoreRobotsTxt
 				+ ", format=" + format + ", field_uk_domain=" + field_uk_domain
 				+ ", field_uk_geoip=" + field_uk_geoip
 				+ ", field_crawl_permission=" + field_crawl_permission

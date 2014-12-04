@@ -76,9 +76,6 @@ public class Instance extends UrlModel {
     
     public Date fieldDate;
     
-	@JsonProperty
-	public String edit_url;
-	
 	@Transient
 	@JsonProperty
 	private String field_timestamp;
