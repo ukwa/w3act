@@ -67,7 +67,7 @@
 				<tr>
 					@header("target.title", "Title", currentSortBy, currentOrder, link)
 					@header("target.field_url", "URL", currentSortBy, currentOrder, link)
-					@header("documentCount", "Documents", currentSortBy, currentOrder, link)
+					<th>Documents</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -75,7 +75,7 @@
 				<tr>
 					<td><a href="@routes.Targets.view(watchedTarget.target.url)">@watchedTarget.target.title</a></td>
 					<td><a href="@watchedTarget.target.field_url" target="_blank">@watchedTarget.target.field_url</a></td>
-					<td><a href="@routes.Documents.list(watchedTarget.id)">@watchedTarget.documentCount</a></td>
+					<td><a href="@routes.Documents.list(watchedTarget.id)">@watchedTarget.documents.size</a></td>
 				</tr>
 			}
 			</tbody>

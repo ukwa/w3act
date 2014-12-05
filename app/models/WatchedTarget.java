@@ -33,8 +33,8 @@ public class WatchedTarget extends Model {
 	public String documentUrlScheme;
 	public String getUrl() { return ""+id; }
 	public String getName() { return target.title; }
-	@Transient
-	public int documentCount;
+	//@Transient
+	//public int documentCount;
 	
 	public static final Model.Finder<Long, WatchedTarget> find = new Model.Finder<>(Long.class, WatchedTarget.class);
 	
@@ -54,7 +54,10 @@ public class WatchedTarget extends Model {
 	}
 	public static Page<WatchedTarget> page(User user, int page, int pageSize, String sortBy, String order, String filter) {
     	
-		String sql = "select wt.id, wt.id_creator, t.id, t.url, t.title, t.field_url, count(d.id) as documentCount"
+		// This part is a bit problematic with ebean (3.3.4),
+		// because then it isn't possible to get the row count with Page.getTotalRowCount()
+		
+		/*String sql = "select wt.id, wt.id_creator, t.id, t.url, t.title, t.field_url, count(d.id) as documentCount"
 				+ " from watched_target wt"
 				+ " left outer join target t on t.id = wt.id_target"
 				+ " left outer join document d on id_watched_target = wt.id"
@@ -66,9 +69,9 @@ public class WatchedTarget extends Model {
 				.columnMapping("t.url",  "target.url")
 				.columnMapping("t.title",  "target.title")
 				.columnMapping("t.field_url",  "target.field_url")
-				.create();
+				.create();*/
 		
-        return find.setRawSql(rawSql).where()
+        return find/*.setRawSql(rawSql)*/.where()
         		.eq("id_creator", user.uid)
         		.icontains("target.field_url", filter)
         		.orderBy(sortBy + " " + order)

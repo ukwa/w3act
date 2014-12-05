@@ -37,7 +37,7 @@ public class WatchedTargets extends AbstractController {
     	
     	User user = User.findByEmail(request().username());
     	
-    	if (WatchedTarget.find.findRowCount() == 0) {
+    	/*if (WatchedTarget.find.findRowCount() == 0) {
 	    	List<WatchedTarget> watchedTargetsTestData = Arrays.asList(
 	    			new WatchedTarget(user, "ifs", "act-ifs",
 	    					"http://www.ifs.org.uk/publications/re", "www.ifs.org.uk/uploads/publications"),
@@ -58,7 +58,7 @@ public class WatchedTargets extends AbstractController {
 	    	} catch (Exception e) {
 				Logger.error(e.getMessage());
 			}
-    	}
+    	}*/
     	    	
         return ok(
         	list.render(
