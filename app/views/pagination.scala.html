@@ -12,7 +12,11 @@
 			</li>
 		}
 		<li class="current">
-			<a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+			@if(currentPage.getTotalRowCount() == 0) {
+				<a>No Results</a>
+			} else {
+				<a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
+			}
 		</li>
 		@if(currentPage.hasNext) {
 			<li class="next">

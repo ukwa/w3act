@@ -43,6 +43,8 @@ public class WatchedTarget extends Model {
 		this.documentUrlScheme = documentUrlScheme;
 		target = new Target(title, url);
 		target.field_url = field_url;
+		target.active = true;
+		target.author = user.url;
 	}
 	
     public WatchedTarget(Target target, String documentUrlScheme) {
