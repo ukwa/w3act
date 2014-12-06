@@ -24,6 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
+import play.libs.Json;
+import play.mvc.BodyParser;
+import play.mvc.Result;
 import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.Utils;
@@ -38,6 +41,7 @@ import com.avaje.ebean.Page;
 import com.avaje.ebean.Query;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Target entity managed by Ebean
@@ -1307,20 +1311,6 @@ public class Target extends UrlModel {
 	public boolean hasContactPerson(String curContactPerson) {
 		boolean res = false;
 		res = Utils.hasElementInList(curContactPerson, this.authorUser.url);
-		return res;
-	}
-
-	/**
-	 * This method returns a list of all language values for target record.
-	 * 
-	 * @return
-	 */
-	public static List<String> getAllLanguage() {
-		List<String> res = new ArrayList<String>();
-		Const.TargetLanguage[] resArray = Const.TargetLanguage.values();
-		for (int i = 0; i < resArray.length; i++) {
-			res.add(resArray[i].name());
-		}
 		return res;
 	}
 
@@ -2733,7 +2723,10 @@ public class Target extends UrlModel {
 		return StringUtils.join(names, ", ");
 	}
 
-
+	public boolean isUkRegistration() {
+		return Scope.INSTANCE.isUkHosting(this.fieldUrls);
+	}
+	
 	@Override
 	public String toString() {
 		return "Target [organisation=" + organisation + ", authorUser="

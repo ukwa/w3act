@@ -62,17 +62,21 @@ public class QAController extends AbstractController {
 //    	}
     	Logger.info("Called QAController.list() collection: " + collection + " - " + qaStatus);
     	
+		User user = User.findByEmail(request().username());
+		JsonNode collectionData = getCollectionsData();
+		JsonNode subjectData = getSubjectsData();
+    	
         return ok(
         	list.render(
         			"QA", 
-        			User.findByEmail(request().username()), 
+        			user, 
         			filter, 
         			page,
 //        			Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus), 
         			sortBy, 
         			order,
         			collection,
-        			qaStatus, keyQaStatus)
+        			qaStatus, keyQaStatus, collectionData, subjectData)
 //        			Taxonomy.findQaStatus(qaStatus))
         	);
     }
@@ -186,21 +190,21 @@ public class QAController extends AbstractController {
      * @param collectionUrl This is an identifier for current selected object
      * @return tree structure
      */
-    @BodyParser.Of(BodyParser.Json.class)
-    public static Result getCollections(String collectionUrl) {
-    	Logger.info("QA dashboard getCollections()");
-    	if (collectionUrl == null || collectionUrl.length() == 0) {
-    		collectionUrl = Const.ACT_URL;
-    	}
-        JsonNode jsonData = null;
-        final StringBuffer sb = new StringBuffer();
-    	List<Collection> collections = Collection.getFirstLevelCollections();
-    	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
-    	Logger.info("collections main level size: " + collections.size());
-        jsonData = Json.toJson(Json.parse(sb.toString()));
-//    	Logger.info("getCollections() json: " + jsonData.toString());
-        return ok(jsonData);
-    }
+//    @BodyParser.Of(BodyParser.Json.class)
+//    public static Result getCollections(String collectionUrl) {
+//    	Logger.info("QA dashboard getCollections()");
+//    	if (collectionUrl == null || collectionUrl.length() == 0) {
+//    		collectionUrl = Const.ACT_URL;
+//    	}
+//        JsonNode jsonData = null;
+//        final StringBuffer sb = new StringBuffer();
+//    	List<Collection> collections = Collection.getFirstLevelCollections();
+//    	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
+//    	Logger.info("collections main level size: " + collections.size());
+//        jsonData = Json.toJson(Json.parse(sb.toString()));
+////    	Logger.info("getCollections() json: " + jsonData.toString());
+//        return ok(jsonData);
+//    }
         
     /**
    	 * This method calculates first order collections.
@@ -209,37 +213,37 @@ public class QAController extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static String getCollectionTreeElements(List<Collection> collectionList, String collectionUrl, boolean parent) { 
-    	String res = "";
-    	if (collectionList.size() > 0) {
-	        final StringBuffer sb = new StringBuffer();
-	        sb.append("[");
-	    	Iterator<Collection> itr = collectionList.iterator();
-	    	boolean firstTime = true;
-	    	while (itr.hasNext()) {
-	    		Collection collection = itr.next();
-//    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
-//    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
-	    		if ((parent && (collection.parent == null || collection.parent == null)) 
-	    				|| !parent) {
-		    		if (firstTime) {
-		    			firstTime = false;
-		    		} else {
-		    			sb.append(", ");
-		    		}
-//	    			Logger.debug("added");
-					sb.append("{\"title\": \"" + collection.name + "\"," + checkCollectionSelection(collection.url, collectionUrl) + 
-							" \"key\": \"" + collection.url + "\"" + 
-							getChildren(collection.url, collectionUrl) + "}");
-	    		}
-	    	}
-//	    	Logger.info("collectionList level size: " + collectionList.size());
-	    	sb.append("]");
-	    	res = sb.toString();
-//	    	Logger.info("getTreeElements() res: " + res);
-    	}
-    	return res;
-    }
+//    public static String getCollectionTreeElements(List<Collection> collectionList, String collectionUrl, boolean parent) { 
+//    	String res = "";
+//    	if (collectionList.size() > 0) {
+//	        final StringBuffer sb = new StringBuffer();
+//	        sb.append("[");
+//	    	Iterator<Collection> itr = collectionList.iterator();
+//	    	boolean firstTime = true;
+//	    	while (itr.hasNext()) {
+//	    		Collection collection = itr.next();
+////    			Logger.debug("add collection: " + collection.title + ", with url: " + collection.url +
+////    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
+//	    		if ((parent && (collection.parent == null || collection.parent == null)) 
+//	    				|| !parent) {
+//		    		if (firstTime) {
+//		    			firstTime = false;
+//		    		} else {
+//		    			sb.append(", ");
+//		    		}
+////	    			Logger.debug("added");
+//					sb.append("{\"title\": \"" + collection.name + "\"," + checkCollectionSelection(collection.url, collectionUrl) + 
+//							" \"key\": \"" + collection.url + "\"" + 
+//							getChildren(collection.url, collectionUrl) + "}");
+//	    		}
+//	    	}
+////	    	Logger.info("collectionList level size: " + collectionList.size());
+//	    	sb.append("]");
+//	    	res = sb.toString();
+////	    	Logger.info("getTreeElements() res: " + res);
+//    	}
+//    	return res;
+//    }
     
     /**
      * Mark collections that are stored in target object as selected

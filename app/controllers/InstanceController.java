@@ -746,7 +746,7 @@ public class InstanceController extends AbstractController {
     	Taxonomy subject = Taxonomy.findByUrl(url);
     	List<Taxonomy> childSubject = Taxonomy.findSubSubjectsList(subject.name);
     	if (childSubject.size() > 0) {
-	    	sb.append(getSubjectTreeElements(childSubject, targetUrl, false));
+	    	sb.append(getSubjectTreeElements2(childSubject, targetUrl, false));
 	    	res = sb.toString();
 //	    	Logger.info("getSubjectChildren() res: " + res);
     	}
@@ -796,7 +796,7 @@ public class InstanceController extends AbstractController {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    public static String getSubjectTreeElements(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
+    public static String getSubjectTreeElements2(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
 //    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
     	String res = "";
     	if (subjectList.size() > 0) {
@@ -844,7 +844,7 @@ public class InstanceController extends AbstractController {
         final StringBuffer sb = new StringBuffer();
     	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
 //    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
-    	sb.append(getSubjectTreeElements(parentSubjects, targetUrl, true));
+    	sb.append(getSubjectTreeElements2(parentSubjects, targetUrl, true));
 //    	Logger.info("subjects main level size: " + parentSubjects.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
 //    	Logger.info("getSubjectTree() json: " + jsonData.toString());

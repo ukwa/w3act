@@ -252,7 +252,8 @@ POST    /nominations                   		controllers.Nominations.save()
 
 
 # Forms
-POST    /target/save-target                 controllers.TargetController.saveTarget()
+POST    /target                	 			controllers.TargetController.save()
+
 POST    /instance/save-instance             controllers.InstanceController.saveInstance()
 POST    /user                     			controllers.Curators.save()
 
@@ -273,11 +274,11 @@ GET     /api/licencelevel/:url               controllers.CrawlPermissions.crawlP
 GET     /api/licenceprompthigherlevel/:url   controllers.CrawlPermissions.checkForHigherLevelPrompt(url)
 GET     /api/suggested_collections/:url      controllers.TargetController.getSuggestedCollections(url)
 GET     /api/suggested_collections_filter/:url      controllers.TargetController.getSuggestedCollectionsFilter(url)
-GET     /api/subjects/:url                   controllers.TargetController.getSubjectTree(url)
-GET     /api/subjects_filter/:url            controllers.TargetController.getSubjectTreeFilter(url)
+#GET     /api/subjects/:url                   controllers.TargetController.getSubjectTree(url)
+#GET     /api/subjects_filter/:url            controllers.TargetController.getSubjectTreeFilter(url)
 GET     /api/subjects_instance/:url          controllers.InstanceController.getSubjectTree(url)
 GET     /api/suggested_collections_instance/:url      controllers.InstanceController.getSuggestedCollections(url)
-GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
+#GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
 
 # Password management
 GET     /passwords                           controllers.Passwords.edit()
@@ -289,4 +290,4 @@ GET     /whois/check            			 controllers.CheckWhoIs.check(total:Int ?= 0)
 
 # Sample forms with validation
 GET     /targets/blank/						controllers.TargetController.blank()
-POST    /targets							controllers.TargetController.saveBlank()
+POST    /targets/save						controllers.TargetController.saveBlank()

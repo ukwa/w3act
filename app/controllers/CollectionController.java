@@ -310,52 +310,6 @@ public class CollectionController extends AbstractController {
     public static Result sites(String url) {
         return redirect(routes.TargetController.collectionTargets(0, "title", "asc", "", url));
     }    
-
-    /**
-     * This method computes a tree of collections in JSON format. 
-     * @param collectionUrl This is an identifier for current selected object
-     * @return tree structure
-     */
-
-    private static JsonNode getCollectionsData(String url) {
-    	List<Collection> collections = Collection.getFirstLevelCollections();
-    	List<ObjectNode> result = getCollectionTreeElements(collections, url, true);
-    	JsonNode jsonData = Json.toJson(result);
-        return jsonData;
-    }
-    
-    /**
-   	 * This method calculates first order collections.
-     * @param collectionList The list of all collections
-     * @param collectionUrl This is an identifier for current selected object
-     * @param parent This parameter is used to differentiate between root and children nodes
-     * @return collection object in JSON form
-     */
-    public static List<ObjectNode> getCollectionTreeElements(List<Collection> collectionList, String collectionUrl, boolean parent) {
-		List<ObjectNode> result = new ArrayList<ObjectNode>();
-		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
-
-    	Iterator<Collection> itr = collectionList.iterator();
-    	while (itr.hasNext()) {
-    		Collection collection = itr.next();
-			ObjectNode child = nodeFactory.objectNode();
-			child.put("title", collection.name + " (" + collection.targets.size() + ")");
-			child.put("url", String.valueOf(routes.CollectionController.view(collection.url)));
-			if (StringUtils.isNotEmpty(collection.url) && collection.url.equalsIgnoreCase(collectionUrl)) {
-	    		child.put("select", true);
-	    	}
-			child.put("key", "\"" + collection.url + "\"");
-	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
-	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
-//	    	Logger.info("children: " + children.size());
-	    	if (children.size() > 0) {
-	    		child.put("children", Json.toJson(getCollectionTreeElements(children, collectionUrl, false)));
-	    	}
-			result.add(child);
-    	}
-//    	Logger.info("getTreeElements() res: " + result);
-    	return result;
-    }
     
     /**
      * This method presents collections in a tree form.

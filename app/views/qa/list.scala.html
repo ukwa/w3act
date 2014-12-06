@@ -1,4 +1,8 @@
-@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, currentCollection: String, currentQaStatus: String, keyQaStatus: String)
+@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, currentCollection: String, currentQaStatus: String, keyQaStatus: String, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode)
+
+@getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
+	Html(data.toString)
+}
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
@@ -10,18 +14,20 @@
 			applySearch(context, searchContext);
 			scopeCheck(context);
 			
-		      SUGGESTED_COLLECTION_URI = '@routes.QAController.getCollections(currentCollection)';
-              $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
-              	$("#tree3").dynatree({
+			
+			showTree(@getJson(collectionData), "#tree3", "treeKeys");
+            
+            function showTree(data, id, key) {
+             	$(id).dynatree({
                 	checkbox: true,
-                	selectMode: 1,
+                	selectMode: 2,
                 	children: data,
                 	onSelect: function(select, node) {
                   		// Get a list of all selected nodes, and convert to a key array:
                   		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
                     		return node.data.key;
                   		});
-                  		document.getElementById('treeKeys').value = selKeys.join(", ");
+                  		document.getElementById(key).value = selKeys.join(", ");
                   		// Get a list of all selected TOP nodes
                   		var selRootNodes = node.tree.getSelectedNodes(true);
                   		// ... and convert to a key array:
@@ -29,8 +35,8 @@
                     		return node.data.key;
                   		});
                 	}
-              	});
-             })
+             	});
+            }
 			
          	$('#qa_status').change(function(event) {
         		console.log('qa_status');

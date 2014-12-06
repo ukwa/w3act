@@ -335,50 +335,6 @@ public class SubjectController extends AbstractController {
     }  
 
     /**
-     * This method computes a tree of subjects in JSON format. 
-     * @param subjectUrl This is an identifier for current selected object
-     * @return tree structure
-     */
-    private static JsonNode getSubjectsData(String url) {    	
-    	List<Subject> subjects = Subject.getFirstLevelSubjects();
-    	List<ObjectNode> result = getSubjectTreeElements(subjects, url, true);
-    	Logger.info("subjects main level size: " + subjects.size());
-    	JsonNode jsonData = Json.toJson(result);
-        return jsonData;
-    }
-    
-    /**
-   	 * This method calculates first order subjects.
-     * @param subjectList The list of all subjects
-     * @param subjectUrl This is an identifier for current selected object
-     * @param parent This parameter is used to differentiate between root and children nodes
-     * @return subject object in JSON form
-     */
-    public static List<ObjectNode> getSubjectTreeElements(List<Subject> subjectList, String subjectUrl, boolean parent) { 
-		List<ObjectNode> result = new ArrayList<ObjectNode>();
-		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
-
-    	Iterator<Subject> itr = subjectList.iterator();
-    	while (itr.hasNext()) {
-    		Subject subject = itr.next();
-			ObjectNode child = nodeFactory.objectNode();
-			child.put("title", subject.name);
-			child.put("url", String.valueOf(routes.SubjectController.view(subject.url)));
-	    	if (StringUtils.isNotEmpty(subject.url) && subject.url.equalsIgnoreCase(subjectUrl)) {
-	    		child.put("select", true);
-	    	}
-			child.put("key", "\"" + subject.url + "\"");
-	    	List<Subject> children = Subject.findChildrenByParentId(subject.id);
-	    	if (children.size() > 0) {
-	    		child.put("children", Json.toJson(getSubjectTreeElements(children, subjectUrl, false)));
-	    	}
-			result.add(child);
-    	}
-//    	Logger.info("getSubjectTreeElements() res: " + result);
-    	return result;
-    }
-
-    /**
      * This method presents subjects in a tree form.
      * @param url
      * @return

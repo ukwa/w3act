@@ -412,16 +412,16 @@ create table tag_instance (
   constraint pk_tag_instance primary key (tag_id, instance_id))
 ;
 
-create table collection_instance (
-  collection_id                  bigint not null,
-  instance_id                    bigint not null,
-  constraint pk_collection_instance primary key (collection_id, instance_id))
-;
-
 create table subjects (
   parent_id                      bigint not null,
   id                             bigint not null,
   constraint pk_subjects primary key (parent_id, id))
+;
+
+create table collection_instance (
+  collection_id                  bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_collection_instance primary key (collection_id, instance_id))
 ;
 create sequence communication_log_seq;
 
@@ -538,13 +538,13 @@ alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key 
 
 alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
 
-alter table collection_instance add constraint fk_collection_instance_taxono_01 foreign key (collection_id) references taxonomy (id);
-
-alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (instance_id) references instance (id);
-
 alter table subjects add constraint fk_subjects_taxonomy_01 foreign key (parent_id) references taxonomy (id);
 
 alter table subjects add constraint fk_subjects_taxonomy_02 foreign key (id) references taxonomy (id);
+
+alter table collection_instance add constraint fk_collection_instance_taxono_01 foreign key (collection_id) references taxonomy (id);
+
+alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (instance_id) references instance (id);
 
 # --- !Downs
 

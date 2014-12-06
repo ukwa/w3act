@@ -1,182 +1,169 @@
-@(form: Form[Target], user: User)
+@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode)
 
-@script = {
-	<script>	
+@getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
+	Html(data.toString)
+}
+
+@scripts = {
+	<script>
+	
 		(function() {
-	          var idle_timeout,
-	          SCOPE_URI = '/api/scope',
-	          MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
-	          TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
-	          IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
-        
-	          // Does the Scope lookup
-	          var doScope = function(text) {
-	              $.getJSON(SCOPE_URI + text, function(data) {
-	              //alert("Is in scope: " + data);
-	              var lab = document.querySelector('isInScope'); 
-	              if (data) {
+	        var idle_timeout,
+	        SCOPE_URI = '/api/scope',
+	        MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
+	        TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+	        IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+	  
+	        // Does the Scope lookup
+	        var doScope = function(text) {
+	            $.getJSON(SCOPE_URI + text, function(data) {
+	            //alert("Is in scope: " + data);
+	            var lab = document.querySelector('isInScope'); 
+	            if (data) {
 		              lab.innerHTML = "is in scope";
 		              lab.style = "color: green";
-	              } else {
+	            } else {
 		              lab.innerHTML = "is not in scope";
 		              lab.style = "color: red";
-	              }
-	            });
-	          };
-	          
-	          // Restarts the keyboard-idleness timeout
-	          var restartIdleTimeout = function(text) {
-	            if (idle_timeout)
-	              window.clearTimeout(idle_timeout);
-	            
-	            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
-	          };		
-	          
-			  $("#field_url").keyup(function() {
-					var text = $('input[name=field_url]').val();
-					
-				    if (text.length > MIN_TEXT_LENGTH) {
-				        restartIdleTimeout(text);
+	            }
+	          });
+	        };
+		})();	
+	
+		$(document).ready(function() {
+		          
+			// Restarts the keyboard-idleness timeout
+			var restartIdleTimeout = function(text) {
+				if (idle_timeout) {
+				    window.clearTimeout(idle_timeout);
+				}
 				
-				    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
-				        	doScope(text);
-				    }
-			  });
-
-		      SUGGESTED_COLLECTION_URI = '@routes.TargetController.getSuggestedCollections(form("url").value)';
-              $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
-              	$("#tree3").dynatree({
-                	checkbox: true,
-                	selectMode: 2,
-                	children: data,
-                	onSelect: function(select, node) {
-                  		// Get a list of all selected nodes, and convert to a key array:
-                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                    		return node.data.key;
-                  		});
-                  		document.getElementById('treeKeys').value = selKeys.join(", ");
-                  		// Get a list of all selected TOP nodes
-                  		var selRootNodes = node.tree.getSelectedNodes(true);
-                  		// ... and convert to a key array:
-                  		var selRootKeys = $.map(selRootNodes, function(node){
-                    		return node.data.key;
-                  		});
-                	}
-              	});
-             })
-             //.error(function(e) { alert('error'); alert(e); });
-
-		      SUBJECTS_URI = '@routes.TargetController.getSubjectTree(form("url").value)';
-	          $.getJSON(SUBJECTS_URI, function(data) {    	
-	            	$("#subjectTree").dynatree({
-	              	checkbox: true,
-	              	selectMode: 2,
-	              	children: data,
-	              	onSelect: function(select, node) {
-	                		// Get a list of all selected nodes, and convert to a key array:
-	                		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-	                  		return node.data.key;
-	                		});
-	                		document.getElementById('field_subject').value = selKeys.join(", ");
-	                		// Get a list of all selected TOP nodes
-	                		var selRootNodes = node.tree.getSelectedNodes(true);
-	                		// ... and convert to a key array:
-	                		var selRootKeys = $.map(selRootNodes, function(node){
-	                  		return node.data.key;
-	                		});
-	              	}
-	            	});
-	          })	          
-	})();
-		
-      // This is the code that switches to the other page.
-      // We do this via JavaScript, and not a normal hyperlink,
-      // because that way we can communicate the current nav pill status as part of the link URL.
-      function switchPage() {
-        var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
-        var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
+				idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
+			};		
+      
+			$("#field_url").keyup(function() {
+				var text = $('input[name=field_url]').val();
+	
+				if (text.length > MIN_TEXT_LENGTH) {
+					restartIdleTimeout(text);
+					if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1) {
+				       	doScope(text);
+					}
+				}
+			});
+			  
+			showTree(@getJson(collectionData), "#tree3", "treeKeys");
+			showTree(@getJson(subjectData), "#subjectTree", "field_subject");
+            
+			function showTree(data, id, key) {
+	        	//console.log(data);
+	         	$(id).dynatree({
+					checkbox: true,
+	            	selectMode: 2,
+	            	children: data,
+	            	onSelect: function(select, node) {
+	              		// Get a list of all selected nodes, and convert to a key array:
+	              		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+	                		return node.data.key;
+	              		});
+	              		document.getElementById(key).value = selKeys.join(", ");
+	              		// Get a list of all selected TOP nodes
+	              		var selRootNodes = node.tree.getSelectedNodes(true);
+	              		// ... and convert to a key array:
+	              		var selRootKeys = $.map(selRootNodes, function(node){
+	                		return node.data.key;
+	              		});
+	            	}
+	         	});
+	        }
+       
+			// This is the code that switches to the other page.
+			// We do this via JavaScript, and not a normal hyperlink,
+			// because that way we can communicate the current nav pill status as part of the link URL.
+			function switchPage() {
+		        var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
+		        var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
         
-  		// pass the current tab to the save method in order to load page in the same tab
-  		document.getElementById('tabstatus').value = activeTab.find('a').attr('href');
-        //alert(document.getElementById('tabstatus').value);
+		  		// pass the current tab to the save method in order to load page in the same tab
+		  		document.getElementById('tabstatus').value = activeTab.find('a').attr('href');
+		        //alert(document.getElementById('tabstatus').value);
         
-        // And finally we just attach the href to view.html and forward the browser. 
-        // An example URL would be: 'view.html#npld-scope'
-        window.location.href="@routes.TargetController.viewAct(form("url").value)" + href;
-      }
+		        // And finally we just attach the href to view.html and forward the browser. 
+		        // An example URL would be: 'view.html#npld-scope'
+		        window.location.href="@routes.TargetController.viewAct(form("url").value)" + href;
+			}
     
-      $(document).ready(function() {
-        // This happens right after the document is loaded.
-        // Our nav pills won't do anything by themselves, so we need to make sure we
-        // check if the current URL has a #-component and if so, we activate the
-        // appropriate pill.
-        var hash = window.location.hash;
-        if (hash.indexOf('#') == 0) {
-          // We have a hash - let's see if it matches with nav pill href
-          var el = $('#myNavbar a[href=' + hash + ']');
+			// This happens right after the document is loaded.
+			// Our nav pills won't do anything by themselves, so we need to make sure we
+			// check if the current URL has a #-component and if so, we activate the
+			// appropriate pill.
+	        var hash = window.location.hash;
+	        if (hash.indexOf('#') == 0) {
+				// We have a hash - let's see if it matches with nav pill href
+				var el = $('#myNavbar a[href=' + hash + ']');
         
-    	  // pass the current tab to the save method in order to load page in the same tab
-          document.getElementById('tabstatus').value = hash;
-          //alert(document.getElementById('tabstatus').value);
+				// pass the current tab to the save method in order to load page in the same tab
+				document.getElementById('tabstatus').value = hash;
+				//alert(document.getElementById('tabstatus').value);
 
-    	  // We have an <a> with this ID, and it has a parent node that's an <li>
-          if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
-            // So we activate this nav pill
-            $(el).tab('show');
-            window.scrollTo(0, 0);
-          }
-        } else {
-        	//console.log('tabstatus after validation: ' + document.getElementById('tabstatus').value);
-        	var valtab = document.getElementById('tabstatus').value;
-            if (valtab.indexOf('#') == 0) {
-                // We have a hash - let's see if it matches with nav pill href
-                var valel = $('#myNavbar a[href=' + valtab + ']');
-              
-          	    // We have an <a> with this ID, and it has a parent node that's an <li>
-                if (valel && valel.parent() && valel.parent().prop('tagName') == 'LI') {
-                  // So we activate this nav pill
-                  $(valel).tab('show');
-                  window.scrollTo(0, 0);
-                }
-            } 
-        }
+				// We have an <a> with this ID, and it has a parent node that's an <li>
+				if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
+					// So we activate this nav pill
+					$(el).tab('show');
+					window.scrollTo(0, 0);
+				}
+			} else {
+	        	//console.log('tabstatus after validation: ' + document.getElementById('tabstatus').value);
+	        	var valtab = document.getElementById('tabstatus').value;
+	            if (valtab.indexOf('#') == 0) {
+	                // We have a hash - let's see if it matches with nav pill href
+	                var valel = $('#myNavbar a[href=' + valtab + ']');
+	              
+	          	    // We have an <a> with this ID, and it has a parent node that's an <li>
+	                if (valel && valel.parent() && valel.parent().prop('tagName') == 'LI') {
+	                  // So we activate this nav pill
+	                  $(valel).tab('show');
+	                  window.scrollTo(0, 0);
+	                }
+	            } 
+			}
         
-        // This is completely optional!! But it keeps the hash in our current URL bar
-        // in sync with the tab we have selected, so the pages stay nice and bookmarkable
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-          window.location.hash = ($(e.target).attr('href'));
-          document.getElementById('tabstatus').value = ($(e.target).attr('href'));
-          //alert(document.getElementById('tabstatus').value);
-          window.scrollTo(0, 0);
-        })
-      });		
+			// This is completely optional!! But it keeps the hash in our current URL bar
+			// in sync with the tab we have selected, so the pages stay nice and bookmarkable
+			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+				window.location.hash = ($(e.target).attr('href'));
+				document.getElementById('tabstatus').value = ($(e.target).attr('href'));
+				//alert(document.getElementById('tabstatus').value);
+				window.scrollTo(0, 0);
+			})
+		});		
 	</script>
 }
 
-@style = {
+@styles = {
     <style>
-    #tab-content {
-      padding:20px;
-    }
-    
-    .tab-pane {
-      padding:20px 0;
-    }
+	    #tab-content {
+	      padding:20px;
+	    }
+	    
+	    .tab-pane {
+	      padding:20px 0;
+	    }
     </style>
 }
 
-@main("", user, script, style) {
+@main("", user, scripts, styles) {
     
    	<div class="page-header">
-	    <h1><a href="@routes.TargetController.index()">Targets > </a>Target @form("title").value</h1>
+	    <h1><a href="@routes.TargetController.index()">Targets > </a>Target @form.get.title</h1>
 	</div>  
 	
 	<ul class="nav nav-tabs">
-	   @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
-	   <li><a onclick="switchPage(); return false;" href="@routes.TargetController.viewAct(form("url").value)">View</a></li>
+	   @if(form.get != null) {
+	   <li><a onclick="switchPage(); return false;" href="@routes.TargetController.view(form.get.id)">View</a></li>
 	   }
 	   @if(((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) 
-	   		|| (user.hasRole("user") && user.url.equals(form("author").value))) {
+	   		|| (user.hasRole("user") && user.id == form.get.authorUser.id)) {
 	   <li class="active"><a href="#">Edit</a></li> 
 	   }
 	</ul>
@@ -204,7 +191,7 @@
 	  	</ul>
 	</div>
 	@warningmessage(flash)
-	@helper.form(action=routes.TargetController.saveTarget) {
+	@helper.form(action=routes.TargetController.save) {
 	
 		<input type="hidden" name="nid" value="@form("nid").value">
 		<input type="hidden" name="url" value="@form("url").value">
@@ -219,14 +206,14 @@
 				    	&& !user.hasRole("expert_user") 
 				    	&& !user.hasRole("archivist") 
 				    	&& !user.hasRole("sys_admin") 
-				    	&& !user.url.equals(form("author").value)) { 
+				    	&& user.id != form.get.authorUser.id) { 
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
-				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
+				       @if(form.get != null) {
 					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
 					   }
 					} else {
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
-				       @if(Target.findById(Long.valueOf(form("nid").value)) != null) {
+				       @if(form.get != null) {
 					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
 					   }
 					}
@@ -244,7 +231,7 @@
 						<div class="form-group">
 							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
 						    <div class="col-sm-6">
-				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="Title" type="text" value="@form("title").value">
+				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="Title" type="text" value="@form.get.title">
 							</div>
 						</div>
 					</div>
@@ -255,7 +242,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="nid" value="@form("nid").value" size="30" readonly>
+								<input class="form-control" name="nid" value="@form.get.id" size="30" readonly>
 							</div>
 						</div>
 					</div>
@@ -269,11 +256,7 @@
 								<small class="text-center">(One or more URLs, separated by comma)</small>
 							</label>
 						    <div class="col-sm-6">
-								@if(form("fieldUrl").value != null) {
-									<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form("fieldUrl").value">
-								} else {
-									<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form("title").value">
-								}
+								<input class="form-control" name="field_url" id="field_url" placeholder="url1, url2" type="text" value="@form.get.fieldUrl()">
 							</div>
 						</div>
 					</div>
@@ -320,7 +303,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(form.get.isUkRegistration) {
+								@if(form.get.isUkRegistration()) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -336,23 +319,15 @@
 							<label class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
 								<select name="field_qa_status" id="field_qa_status" class="form-control">
-									@if(form("fieldQaStatus").value != null) {
-										@for(taxonomy <- Taxonomy.findListByType("qualityIssue")) {
-							                @if(form("fieldQaStatus").value.contains(taxonomy.url)) {             
-											 	<option value="@taxonomy.name" selected>@taxonomy.name</option>
+									@if(form.get.qaIssue != null) {
+										@for(qaIssue <- QaIssue.findAllQaIssue()) {
+							                @if(form.get.qaIssue.id == qaIssue.id) {             
+											 	<option value="@qaIssue.id" selected>@qaIssue.name</option>
 										 	} else {
-											 	<option value="@taxonomy.name">@taxonomy.name</option>
+											 	<option value="@qaIssue.id">@qaIssue.name</option>
 										 	}									 	
 									    }
-									} else {
-										@for(taxonomy <- Taxonomy.findListByType("qualityIssue")) {
-							                @if(taxonomy.name.equals("Unknown")) {             
-											 	<option value="@taxonomy.name" selected>@taxonomy.name</option>
-										 	} else {
-											 	<option value="@taxonomy.name">@taxonomy.name</option>
-										 	}									 	
-									    }
-									}	
+									}
                                 </select>
 							</div>
 						</div>
@@ -365,28 +340,28 @@
 							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If known, please add the current status of the site)</small></label>
 						    <div class="col-sm-6">
 								<label class="radio-inline">
-							  		@if(form("fieldLiveSiteStatus").value != null && form("fieldLiveSiteStatus").value.equals("N/A")) {
+							  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals("N/A")) {
 							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio" checked="checked"> N/A
 							        } else {
 							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio"> N/A
 							        }
 								</label>
 								<label class="radio-inline">
-							  		@if(form("fieldLiveSiteStatus").value != null && form("fieldLiveSiteStatus").value.equals("Still live")) {
+							  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals("Still live")) {
 							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio" checked="checked"> Still live 
 							        } else {
 							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio"> Still live 
 							        }
 								</label>
 								<label class="radio-inline">
-							  		@if(form("fieldLiveSiteStatus").value != null && form("fieldLiveSiteStatus").value.equals("No longer updated")) {
+							  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals("No longer updated")) {
 							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio" checked="checked"> No longer updated 
 							        } else {
 							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio"> No longer updated 
 							        }
 								</label>
 								<label class="radio-inline">
-							  		@if(form("fieldLiveSiteStatus").value != null && form("fieldLiveSiteStatus").value.equals("Vanished")) {
+							  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals("Vanished")) {
 							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio" checked="checked"> Vanished
 							        } else {
 							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio"> Vanished
@@ -402,7 +377,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("fieldKeySite").value != null && form("fieldKeySite").value == "true") {             
+				                @if(form.get.keySite != null && form.get.keySite) {             
 					                <input type="checkbox" name="keysite" value="true" checked />
 				                } else {
 					                <input type="checkbox" name="keysite" value="true"/>
@@ -418,9 +393,9 @@
 							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
 						    <div class="col-sm-6">
 	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
-			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" value="@form("fieldWct_id").value">
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" value="@form.get.wctId">
 			              	} else {
-			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@form("fieldWct_id").value">
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@form.get.wctId">
 			              	}
 							</div>
 						</div>
@@ -433,9 +408,9 @@
 			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
 						    <div class="col-sm-6">
 	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
-			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" value="@form("fieldSpt_id").value">
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" value="@form.get.sptId".value">
 			              	} else {
-			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@form("fieldSpt_id").value">
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@form.get.sptId">
 			                }
 							</div>
 						</div>
@@ -447,7 +422,7 @@
 						<div class="form-group">
 			              	<label for="keywords" class="col-sm-6 control-label">Keyword(s) <small class="text-center">(The multiple private uncontrolled keywords)</small></label>
 						    <div class="col-sm-6">
-		 				  		<input id="keywords" type="text" name="keywords" value="@form("keywords").value" size="60" maxlength="2048" class="form-control" />
+		 				  		<input id="keywords" type="text" name="keywords" value="@form.get.keywords" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>
@@ -460,7 +435,7 @@
 						    <div class="col-sm-6">
 								<select multiple name="tags" id="tags" class="form-control">
 					                @for(tag <- Tag.findAllTags()) {
-						                @if(form("tags").value != null && form("tags").value.contains(tag.url)) {
+										@if(form.get.tags.contains(tag)) {
 						                	<option selected>@tag.name</option>
 						                } else {
 						                	<option>@tag.name</option>
@@ -477,7 +452,7 @@
 						<div class="form-group">
 			              	<label for="Synonyms" class="col-sm-6 control-label">Synonyms <small class="text-center">(The synonyms support manual logging of identical content hosted on multiple domains)</small></label>
 						    <div class="col-sm-6">
-		 				  		<input type="text" name="synonyms" value="@form("synonyms").value" size="60" maxlength="2048" class="form-control" />
+		 				  		<input type="text" name="synonyms" value="@form.get.synonyms" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>
@@ -490,7 +465,7 @@
 						<div class="form-group">
 			              	<label for="inputDescription" class="col-sm-6 control-label">Description <small class="text-center">(A description of this web site)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" value="@form("field_description").value">@form("field_description").value</textarea>
+				            	<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" value="@form.get.description">@form.get.description</textarea>
 							</div>
 						</div>
 					</div>
@@ -501,13 +476,13 @@
 						<div class="form-group">
 			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject. To select more than one, hold down the CTRL key.)</small></label>
 						    <div class="col-sm-6">
-			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || (form("author").value != null && user.url.equals(form("author").value))) {
+			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || (form.get.authorUser != null && user.id == form.get.authorUser.id)) {
 							  <div id="subjectTree"></div>
 							  <input type="hidden" id="field_subject" name="field_subject" value="@form("fieldSubject").value">
 							  } else {
-							        @if(form("url").value != null) {
-	  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjects(form("url").value))
-								        <input type="hidden" id="field_subject" name="field_subject" value="@form("fieldSubject").value">
+							        @if(form.get.subjects != null || !form.get.subjects.isEmpty()) {
+	  									@form.get.subjectsAsString
+								        <input type="hidden" id="field_subject" name="field_subject" value="@form.get.subjectsAsString">
 	  								} else {
 	  								    none
 								        <input type="hidden" id="field_subject" name="field_subject" value="none">
@@ -523,12 +498,12 @@
 						<div class="form-group">
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
-			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
-							  <div id="tree3"></div>
-							  <input type="hidden" id="treeKeys" name="treeKeys" value="@form("field_collection_categories").value">
-							  } else {
-							        @if(form("url").value != null) {
-	  									@models.Collection.getCollectionsAsString(models.Collection.getSelectedCollections(form("url").value))
+			    				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+							  		<div id="tree3"></div>
+							  		<input type="hidden" id="treeKeys" name="treeKeys" value="@form("field_collection_categories").value">
+							  	} else {
+							        @if(form.get.collections == null || !form.get.collections.isEmpty()) {
+							        	@form.get.collectionsAsString()
 	  								} else {
 	  								    none
 	  								}
@@ -546,10 +521,10 @@
 								<select name="organisation" id="mySel" class="form-control">
 					            	<option>None</option>
 					                @for(organisation <- Organisation.findAll()) {
-						                @if(organisation.title.equals(Organisation.findByUrl(form("fieldNominatingOrganisation").value).title)) {
-							                <option selected>@organisation.title</option>
+						                @if(organisation.id == form.get.organisation.id) {
+							                <option value="@organisation.id" selected>@organisation.title</option>
 							            } else {
-						                    <option>@organisation.title</option>
+						                    <option value="@organisation.id">@organisation.title</option>
 										}					            
 					                }
 								</select>
@@ -580,8 +555,7 @@
 							  		<select name="author" id="userSel" disabled class="form-control">
 							  	}
 					            @for(selUser <- User.findAll()) {
-						        	@if((form("author").value != null && selUser.url.equals(form("author").value))
-						            	|| (form("author").value == null && selUser.url.equals(user.url))) {
+						        	@if((form.get.authorUser != null && selUser.id == form.get.authorUser.id) || (form.get.authorUser == null && selUser.id == user.id)) {
 							            <option selected>@selUser.name</option>
 									} else {
 						            	<option>@selUser.name</option>
@@ -599,11 +573,11 @@
 			              	<label for="status" class="col-sm-6 control-label">Language <small class="text-center">(The predominant language in which the page is written)</small></label>
 						    <div class="col-sm-6">
 								<select name="language" id="language" class="form-control">
-					                @for(language <- Target.getAllLanguage()) {
-						                @if(language.equals(form("language").value)) {
-						                	<option selected>@form("language").value</option>
+					                @for(language <- uk.bl.Const.TargetLanguage.values()) {
+						                @if(form.get.language != null && form.get.language.equals(language.name)) {
+						                	<option value="@language.name" selected>@language.getValue</option>
 						                } else {
-						                	<option>@language</option>
+						                	<option value="@language.name">@language.getValue</option>
 						                }
 					                }
 								</select>

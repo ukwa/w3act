@@ -478,8 +478,27 @@ public final class Const {
 	 * The predominant language of target.
 	 */
 	public enum TargetLanguage {
-		EN,
-		DE;
+		EN("English"),
+		DE("Deutsche");
+		
+        private String value;
+
+        private TargetLanguage(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static TargetLanguage getLanguage(String name) {
+    		for (TargetLanguage language : TargetLanguage.values()) {
+    			if (language.name().equals(name)) {
+    				return language;
+    			}
+    		}
+    		return null;
+    	}
     }
     
 	/**

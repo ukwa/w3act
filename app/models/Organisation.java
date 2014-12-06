@@ -12,8 +12,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang3.StringUtils;
-
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
