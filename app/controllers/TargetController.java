@@ -919,7 +919,8 @@ public class TargetController extends AbstractController {
 		targetForm = targetForm.fill(target);
 		User user = User.findByEmail(request().username());
 		JsonNode collectionData = getCollectionsData();
-		JsonNode subjectData = getSubjectsData();
+//		Logger.info("subject ids: " + target.subjectIdsAsString());
+		JsonNode subjectData = getSubjectsData(target.subjects);
         return ok(edit.render(targetForm, user, collectionData, subjectData));
     }
     
@@ -1357,38 +1358,21 @@ public class TargetController extends AbstractController {
      */
     public static Result save() {
     	Result res = null;
-        String save = getFormParam("save");
         String delete = getFormParam("delete");
         String request = getFormParam(Const.REQUEST);
         String archive = getFormParam(Const.ARCHIVE);
-        Logger.info("save: " + save);
-        Logger.info("delete: " + delete);
-        if (save != null) {
-        	Logger.info("input data for the target saving nid: " + getFormParam(Const.ID) + 
-        			", url: " + getFormParam(Const.URL) +
-        			", field_subject: " + getFormParam(Const.FIELD_SUBJECT) + 
-        			", field_url: " + getFormParam(Const.FIELD_URL_NODE) + 
-        			", title: " + getFormParam(Const.TITLE) + ", keysite: " + getFormParam(Const.KEYSITE) +
-        			", description: " + getFormParam(Const.DESCRIPTION) + 
-        			", status: " + getFormParam(Const.STATUS) +
-        			", qa status: " + getFormParam(Const.QA_STATUS) +
-        			", subject: " + getFormParams(Const.SUBJECT) +
-        			", organisation: " + getFormParam(Const.ORGANISATION) +
-        			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
-        	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
-        	Logger.info("current tab: " + getFormParam(Const.TAB_STATUS));
-        	
+        if (targetForm.field("save") != null) {
         	Form<Target> targetForm = Form.form(Target.class).bindFromRequest();
             if(targetForm.hasErrors()) {
             	String missingFields = "";
             	for (String key : targetForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
-            	    key = Utils.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
+//            	    key = Utils.showMissingField(key);
+//            	    if (missingFields.length() == 0) {
+//            	    	missingFields = key;
+//            	    } else {
+//            	    	missingFields = missingFields + Const.COMMA + " " + key;
+//            	    }
             	}
             	if (missingFields != null) {
 	            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + missingFields);
@@ -1397,20 +1381,17 @@ public class TargetController extends AbstractController {
 		  			return info();
             	}
             }
-        	        	
-        	DynamicForm requestData = Form.form().bindFromRequest();
-        	String title = requestData.get(Const.TITLE);
-        	Logger.info("form title: " + title);
-            Target target = new Target();
+            Long id = Long.valueOf(targetForm.field("id").value());
+    	    Target targetFromDB = Target.findById(id);
+    	    Target targetFromForm  = targetForm.get();
+    	    
+    	    Logger.info("targetFromDB: " + targetFromDB);
+    	    Logger.info("targetFromForm: " + targetFromForm);
+    	    
+    	    
         	Target newTarget = new Target();
             boolean isExisting = true;
-            try {
-        	    target = Target.findById(Long.valueOf(getFormParam(Const.ID)));
-            } catch (Exception e) {
-            	Logger.info("is not existing exception");
-            	isExisting = false;
-            } 	
-        	
+
 //            Logger.info("wct id: " + getFormParam(Const.FIELD_WCT_ID) +
 //            		", isNumeric: " + Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID)));
             if (getFormParam(Const.FIELD_WCT_ID) != null 
@@ -1435,15 +1416,15 @@ public class TargetController extends AbstractController {
 	  			return info();
         	}    	
 
-            if (target == null) {
-            	target = new Target();
+            if (targetFromDB == null) {
+            	targetFromDB = new Target();
             	Logger.info("is not existing");
             	isExisting = false;
             }
             /**
              * Copy association fields
              */
-            newTarget.organisation = target.organisation;
+            newTarget.organisation = targetFromDB.organisation;
             
             // TODO: KL 
 //            newTarget.authorRef = target.authorRef;
@@ -1685,31 +1666,31 @@ public class TargetController extends AbstractController {
         		newTarget.url = Const.ACT_URL + newTarget.id;
         		newTarget.edit_url = Const.WCT_URL + newTarget.id;
         	} else {
-                target.active = false;
-            	if (target.fieldUrl() != null) {
-                	Logger.info("current target field_url: " + target.fieldUrl());
+                targetFromDB.active = false;
+            	if (targetFromDB.fieldUrl() != null) {
+                	Logger.info("current target field_url: " + targetFromDB.fieldUrl());
 //            		target.domain = Scope.INSTANCE.getDomainFromUrl(target.fieldUrl());
             	}
-        		Logger.info("update target: " + target.id + ", obj: " + target.toString());
-                boolean newScope = Target.isInScopeIp(target.fieldUrl(), target.url);
+        		Logger.info("update target: " + targetFromDB.id + ", obj: " + targetFromDB.toString());
+                boolean newScope = Target.isInScopeIp(targetFromDB.fieldUrl(), targetFromDB.url);
                 // TODO: save new entry or update current
-            	Scope.INSTANCE.updateLookupEntry(target, newScope);
+            	Scope.INSTANCE.updateLookupEntry(targetFromDB, newScope);
                 /**
                  * Reset association fields
                  */
-                target.organisation = null;
-                target.collections = null;
-                target.subjects = null;
+                targetFromDB.organisation = null;
+                targetFromDB.collections = null;
+                targetFromDB.subjects = null;
                 // TODO: can we not use JPA annotations for these?
-                Utils.removeAssociationFromDb(Const.SUBJECT_TARGET, Const.ID + "_" + Const.TARGET, target.id);
-                Utils.removeAssociationFromDb(Const.COLLECTION_TARGET, Const.ID + "_" + Const.TARGET, target.id);
-                Utils.removeAssociationFromDb(Const.LICENSE_TARGET, Const.ID + "_" + Const.TARGET, target.id);
-                Utils.removeAssociationFromDb(Const.FLAG_TARGET, Const.ID + "_" + Const.TARGET, target.id);
-                Utils.removeAssociationFromDb(Const.TAG_TARGET, Const.ID + "_" + Const.TARGET, target.id);
+                Utils.removeAssociationFromDb(Const.SUBJECT_TARGET, Const.ID + "_" + Const.TARGET, targetFromDB.id);
+                Utils.removeAssociationFromDb(Const.COLLECTION_TARGET, Const.ID + "_" + Const.TARGET, targetFromDB.id);
+                Utils.removeAssociationFromDb(Const.LICENSE_TARGET, Const.ID + "_" + Const.TARGET, targetFromDB.id);
+                Utils.removeAssociationFromDb(Const.FLAG_TARGET, Const.ID + "_" + Const.TARGET, targetFromDB.id);
+                Utils.removeAssociationFromDb(Const.TAG_TARGET, Const.ID + "_" + Const.TARGET, targetFromDB.id);
 //                target.flagToTarget = null;
 //                target.tagToTarget = null;
-                Logger.info("+++ subject_to_target object before target nid: " + target.id + ", update: " + target.subjects);
-            	Ebean.update(target);
+                Logger.info("+++ subject_to_target object before target nid: " + targetFromDB.id + ", update: " + targetFromDB.subjects);
+            	Ebean.update(targetFromDB);
         	}
         	if (newTarget.fieldUrl() != null) {
             	Logger.info("current target field_url: " + newTarget.fieldUrl());
@@ -1719,9 +1700,9 @@ public class TargetController extends AbstractController {
         	// TODO: UNIX DATE
 //        	newTarget.changed = changedTime;
         	if (newTarget.createdAt == null) {
-        		if (target != null && target.createdAt != null) {
-        			Logger.info("The creation time remains the same like in original revision of the target: " + target.createdAt);
-        			newTarget.createdAt = target.createdAt;
+        		if (targetFromDB != null && targetFromDB.createdAt != null) {
+        			Logger.info("The creation time remains the same like in original revision of the target: " + targetFromDB.createdAt);
+        			newTarget.createdAt = targetFromDB.createdAt;
         		} else {
 //        			newTarget.createdAt = changedTime;
         		}

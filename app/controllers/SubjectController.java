@@ -57,7 +57,7 @@ public class SubjectController extends AbstractController {
 	 */
 	public static Result list(int pageNo, String sortBy, String order,
 			String filter) {
-		JsonNode node = getSubjectsData(filter);
+		JsonNode node = getSubjectsData(null);
 		
 		Page<Subject> pages = Subject.pager(pageNo, 10, sortBy, order, filter);
 		

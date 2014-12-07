@@ -111,27 +111,35 @@ public class AbstractController extends Controller {
         return jsonData;
     }
     
+    protected static List<ObjectNode> getCollectionTreeElements(List<Collection> collections, String filter, boolean parent) {
+    	return getCollectionTreeElements(collections, filter, parent, null);
+    }
+    
     /**
    	 * This method calculates first order collections.
-     * @param collectionList The list of all collections
+     * @param collections The list of all collections
      * @param filter This is an identifier for current selected object
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    protected static List<ObjectNode> getCollectionTreeElements(List<Collection> collectionList, String filter, boolean parent) {
+    protected static List<ObjectNode> getCollectionTreeElements(List<Collection> collections, String filter, boolean parent, List<Long> myCollections) {
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 
-    	for (Collection collection : collectionList) {
+    	for (Collection collection : collections) {
 			ObjectNode child = nodeFactory.objectNode();
 			child.put("title", collection.name + " (" + collection.targets.size() + ")");
-			child.put("url", String.valueOf(routes.CollectionController.view(collection.url)));
-			if (StringUtils.isNotEmpty(collection.url) && collection.url.equalsIgnoreCase(filter)) {
-	    		child.put("select", true);
-	    	}
-			child.put("key", "\"" + collection.url + "\"");
+			child.put("url", String.valueOf(routes.CollectionController.view(collection.id)));
+			if (myCollections != null) {
+				for(Long id : myCollections) {
+					if (id == collection.id) {
+			    		child.put("select", true);
+			    	}
+				}
+			}
+			child.put("key", "\"" + collection.id + "\"");
 	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
-	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
+//	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
 //    	    	Logger.info("children: " + children.size());
 	    	if (children.size() > 0) {
 	    		child.put("children", Json.toJson(getCollectionTreeElements(children, filter, false)));
@@ -161,18 +169,25 @@ public class AbstractController extends Controller {
 	protected static JsonNode getSubjectsData() {
 		return getSubjectsData(null);
 	}
-	
+
+//	protected static JsonNode getSubjectsData(String filter) {    	
+//	}
+//	
 	/**
 	 * This method computes a tree of subjects in JSON format. 
 	 * @param subjectUrl This is an identifier for current selected object
 	 * @return tree structure
 	 */
-	protected static JsonNode getSubjectsData(String filter) {    	
-		List<Subject> subjects = Subject.getFirstLevelSubjects();
-		List<ObjectNode> result = getSubjectTreeElements(subjects, filter, true);
-		Logger.info("subjects main level size: " + subjects.size());
+	protected static JsonNode getSubjectsData(List<Subject> mySubjects) {    	
+		List<Subject> firstLevel = Subject.getFirstLevelSubjects();
+		List<ObjectNode> result = getSubjectTreeElements(firstLevel, true, mySubjects);
+		Logger.info("subjects main level size: " + firstLevel.size());
 		JsonNode jsonData = Json.toJson(result);
 	    return jsonData;
+	}
+
+	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> firstLevel, boolean parent, List<Subject> mySubjects) { 
+		return getSubjectTreeElements(firstLevel, null, parent, mySubjects);
 	}
 	
 	/**
@@ -182,7 +197,7 @@ public class AbstractController extends Controller {
 	 * @param parent This parameter is used to differentiate between root and children nodes
 	 * @return subject object in JSON form
 	 */
-	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent) { 
+	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent, List<Subject> mySubjects) { 
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 	
@@ -190,13 +205,13 @@ public class AbstractController extends Controller {
 			ObjectNode child = nodeFactory.objectNode();
 			child.put("title", subject.name);
 			child.put("url", String.valueOf(routes.SubjectController.view(subject.url)));
-	    	if (StringUtils.isNotEmpty(subject.url) && subject.url.equalsIgnoreCase(filter)) {
-	    		child.put("select", true);
-	    	}
-			child.put("key", "\"" + subject.url + "\"");
+			if (mySubjects != null && mySubjects.contains(subject)) {
+				child.put("select", true);
+			}
+			child.put("key", "\"" + subject.id + "\"");
 	    	List<Subject> children = Subject.findChildrenByParentId(subject.id);
 	    	if (children.size() > 0) {
-	    		child.put("children", Json.toJson(getSubjectTreeElements(children, filter, false)));
+	    		child.put("children", Json.toJson(getSubjectTreeElements(children, filter, false, mySubjects)));
 	    	}
 			result.add(child);
 		}

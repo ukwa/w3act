@@ -34,7 +34,8 @@ GET    	/collections/list                  	controllers.CollectionController.lis
 GET    	/collections/search                 controllers.CollectionController.search()
 GET    	/collections/filterbyjson/:name		controllers.CollectionController.filterByJson(name)
 GET     /collections/new/:title      		controllers.CollectionController.create(title)
-GET     /collections/:collection            controllers.CollectionController.view(collection)
+GET     /collections/:id            		controllers.CollectionController.view(id:Long)
+GET     /collections/:url            		controllers.CollectionController.viewAct(url)
 GET     /collections/:collection/edit       controllers.CollectionController.edit(collection)
 GET     /collections/:sites/sites			controllers.CollectionController.sites(sites)
 POST    /collections             			controllers.CollectionController.save()
@@ -252,7 +253,7 @@ POST    /nominations                   		controllers.Nominations.save()
 
 
 # Forms
-POST    /target                	 			controllers.TargetController.save()
+POST    /targets                	 		controllers.TargetController.save()
 
 POST    /instance/save-instance             controllers.InstanceController.saveInstance()
 POST    /user                     			controllers.Curators.save()

@@ -24,9 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
-import play.libs.Json;
-import play.mvc.BodyParser;
-import play.mvc.Result;
 import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.Utils;
@@ -41,7 +38,6 @@ import com.avaje.ebean.Page;
 import com.avaje.ebean.Query;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Target entity managed by Ebean
@@ -109,7 +105,6 @@ public class Target extends UrlModel {
     public List<Target> flags;
 
 	@JsonIgnore
-	@Required
 	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
 	public List<FieldUrl> fieldUrls;
 
@@ -452,7 +447,7 @@ public class Target extends UrlModel {
 	// -- Queries
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Model.Finder<Long, Target> find = new Model.Finder(
+	public static Model.Finder<Long, Target> find = new Model.Finder<Long, Target>(
 			Long.class, Target.class);
 
 	/**
@@ -576,7 +571,7 @@ public class Target extends UrlModel {
 	 * Rename a target
 	 */
 	public static String rename(Long targetId, String newName) {
-		Target target = (Target) find.ref(targetId);
+		Target target = find.ref(targetId);
 		target.title = newName;
 		target.update();
 		return newName;
@@ -1321,21 +1316,6 @@ public class Target extends UrlModel {
 	 */
 	public static Const.NpldType[] getAllNpldTypes() {
 		return Const.NpldType.values();
-	}
-
-	/**
-	 * This method returns a list of all selection type values for target
-	 * record.
-	 * 
-	 * @return
-	 */
-	public static List<String> getAllSelectionTypes() {
-		List<String> res = new ArrayList<String>();
-		Const.SelectionType[] resArray = Const.SelectionType.values();
-		for (int i = 0; i < resArray.length; i++) {
-			res.add(resArray[i].name());
-		}
-		return res;
 	}
 
 	/**
@@ -2697,12 +2677,40 @@ public class Target extends UrlModel {
 		return StringUtils.join(urls, ", ");
 	}
 	
+	public String subjectIdsAsString() {
+		List<Long> ids = new ArrayList<Long>();
+		for (Subject subject : this.subjects) {
+			ids.add(subject.id);
+		}
+		return StringUtils.join(ids, ", ");
+	}
+
+	public List<Long> subjectIds() {
+		List<Long> ids = new ArrayList<Long>();
+		for (Subject subject : this.subjects) {
+			ids.add(subject.id);
+		}
+		return ids;
+	}
+	
 	public String subjectsAsString() {
 		List<String> names = new ArrayList<String>();
 		for (Subject subject : this.subjects) {
 			names.add(subject.name);
 		}
 		return StringUtils.join(names, ", ");
+	}
+	
+	public List<Long> collectionIds() {
+		List<Long> ids = new ArrayList<Long>();
+		for (Collection collection : this.collections) {
+			ids.add(collection.id);
+		}
+		return ids;
+	}
+	
+	public String collectionIdsAsString() {
+		return StringUtils.join(collectionIds(), ", ");
 	}
 	
 	public String collectionsAsString() {

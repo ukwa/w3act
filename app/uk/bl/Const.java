@@ -574,8 +574,27 @@ public final class Const {
     }
     		
 	public enum SelectionType {
-		NOMINATION, // when created from UKWA
-		SELECTION;
+		NOMINATION("Nomination"), // when created from UKWA
+		SELECTION("Selection");
+		
+        private String value;
+
+        private SelectionType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static SelectionType getSelectionType(String name) {
+    		for (SelectionType selectionType : SelectionType.values()) {
+    			if (selectionType.name().equals(name)) {
+    				return selectionType;
+    			}
+    		}
+    		return null;
+    	}
     }
 	
     /**

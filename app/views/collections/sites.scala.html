@@ -89,7 +89,7 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li><a href="@routes.CollectionController.view(collection.url)">View</a></li>
+		<li><a href="@routes.CollectionController.view(collection.id)">View</a></li>
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		<li><a href="@routes.CollectionController.edit(collection.url)">Edit</a></li>
 		}
@@ -133,7 +133,7 @@
                	<td>
 					@for(col <- models.Collection.getSelectedCollections(target.url)) {
 	               		@if(col.url != null) {
-	            			<a href="@routes.CollectionController.view(col.url)">@col.name</a>,&nbsp;
+	            			<a href="@routes.CollectionController.view(col.id)">@col.name</a>,&nbsp;
 	            		}
 		            }
    	            </td>

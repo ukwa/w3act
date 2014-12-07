@@ -122,9 +122,14 @@ public class CollectionController extends AbstractController {
         }
         return ok(jsonData);
     }
-	    
-	  
-    public static Result view(String url) {
+	
+	public static Result view(Long id) {
+		User user = User.findByEmail(request().username());
+		Collection collection = Collection.findById(id);
+        return ok(view.render(collection, user));
+	}
+	
+    public static Result viewAct(String url) {
         return ok(
                 view.render(
                         Collection.findByUrl(url), User.findByEmail(request().username())
