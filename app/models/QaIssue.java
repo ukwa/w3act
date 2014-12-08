@@ -25,6 +25,10 @@ public class QaIssue extends Taxonomy {
     	super(name, description);
     }
     
+    public static QaIssue findById(Long id) {
+    	return find.byId(id);
+    }
+    
     public static List<QaIssue> findAllQaIssue() {
     	return find.all();
     }

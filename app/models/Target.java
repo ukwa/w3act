@@ -299,6 +299,9 @@ public class Target extends UrlModel {
 	@JsonProperty
 	private Object field_notes;
 
+	@Transient
+	public String formUrl;
+	
 //		"body":[],
 //		"field_scope":"root",
 //		"field_url":[
@@ -1393,7 +1396,7 @@ public class Target extends UrlModel {
 								Expr.eq(Const.ACTIVE, true))),
 						Expr.and(
 								Expr.or(Expr
-										.eq(Const.FIELD_QA_STATUS, qaStatus), // equals
+										.eq("field_qa_status", qaStatus), // equals
 																				// 'act-1'
 										// like 'act-1,' like ', act-1'
 										Expr.or(Expr.startsWith(
@@ -2739,48 +2742,46 @@ public class Target extends UrlModel {
 	public boolean isUkRegistration() {
 		return Scope.INSTANCE.isUkHosting(this.fieldUrls);
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Target [organisation=" + organisation + ", authorUser="
-				+ authorUser + ", collections=" + collections + ", subjects="
-				+ subjects + ", licenses=" + licenses + ", fieldCrawlStartDate="
-				+ crawlStartDate + ", fieldCrawlEndDate="
-				+ crawlEndDate + ", legacySiteId=" + legacySiteId
-				+ ", active=" + active + ", whiteList=" + whiteList
-				+ ", blackList=" + blackList + ", dateOfPublication="
-				+ dateOfPublication + ", justification=" + justification
-				+ ", selectorNotes=" + selectorNotes + ", archivistNotes="
-				+ archivistNotes + ", selectionType=" + selectionType
-				+ ", flagNotes=" + flagNotes + ", tabStatus=" + tabStatus
-				+ ", fieldDescription=" + description
-				+ ", fieldUkPostalAddressUrl=" + ukPostalAddressUrl
-				+ ", fieldNotes=" + notes + ", keywords="
-				+ keywords + ", tags=" + tags + ", synonyms=" + synonyms
-				+ ", flags=" + flags + ", fieldUrl="
-				+ fieldUrl() + ", value=" + value + ", summary=" + summary
-				+ ", field_scope=" + scope + ", field_depth="
-				+ depth + ", field_via_correspondence="
-				+ viaCorrespondence + ", field_uk_postal_address="
-				+ ukPostalAddress + ", field_crawl_frequency="
-				+ crawlFrequency + ", field_special_dispensation=" + specialDispensation
-				+ ", field_special_dispensation_reaso="
-				+ specialDispensationReason
-				+ ", field_live_site_status=" + liveSiteStatus
-				+ ", field_wct_id=" + wctId + ", field_spt_id="
-				+ sptId + ", field_no_ld_criteria_met="
-				+ noLdCriteriaMet + ", field_key_site="
-				+ keySite + ", field_professional_judgement="
-				+ professionalJudgement
-				+ ", field_professional_judgement_exp="
-				+ professionalJudgementExp
-				+ ", field_ignore_robots_txt=" + ignoreRobotsTxt
-				+ ", format=" + format + ", field_uk_domain=" + field_uk_domain
-				+ ", field_uk_geoip=" + field_uk_geoip
-				+ ", field_crawl_permission=" + field_crawl_permission
-				+ ", field_url=" + field_url + ", field_subject="
-				+ field_subject + ", field_description=" + field_description
-				+ ", field_uk_postal_address_url="
+		return "Target [qaIssue=" + qaIssue + ", authorUser=" + authorUser
+				+ ", authors=" + authors + ", organisation=" + organisation
+				+ ", crawlPermissions=" + crawlPermissions + ", instances="
+				+ instances + ", licenses=" + licenses + ", subjects="
+				+ subjects + ", collections=" + collections + ", tags=" + tags
+				+ ", flags=" + flags + ", fieldUrls=" + fieldUrls
+				+ ", isUkHosting=" + isUkHosting + ", isTopLevelDomain="
+				+ isTopLevelDomain + ", isUkRegistration=" + isUkRegistration
+				+ ", isInScopeIp=" + isInScopeIp
+				+ ", isInScopeIpWithoutLicense=" + isInScopeIpWithoutLicense
+				+ ", crawlStartDate=" + crawlStartDate + ", crawlEndDate="
+				+ crawlEndDate + ", legacySiteId=" + legacySiteId + ", active="
+				+ active + ", whiteList=" + whiteList + ", blackList="
+				+ blackList + ", dateOfPublication=" + dateOfPublication
+				+ ", justification=" + justification + ", selectorNotes="
+				+ selectorNotes + ", archivistNotes=" + archivistNotes
+				+ ", selectionType=" + selectionType + ", flagNotes="
+				+ flagNotes + ", tabStatus=" + tabStatus + ", description="
+				+ description + ", ukPostalAddressUrl=" + ukPostalAddressUrl
+				+ ", notes=" + notes + ", keywords=" + keywords + ", synonyms="
+				+ synonyms + ", value=" + value + ", summary=" + summary
+				+ ", scope=" + scope + ", depth=" + depth
+				+ ", viaCorrespondence=" + viaCorrespondence
+				+ ", ukPostalAddress=" + ukPostalAddress + ", crawlFrequency="
+				+ crawlFrequency + ", specialDispensation="
+				+ specialDispensation + ", specialDispensationReason="
+				+ specialDispensationReason + ", liveSiteStatus="
+				+ liveSiteStatus + ", wctId=" + wctId + ", sptId=" + sptId
+				+ ", noLdCriteriaMet=" + noLdCriteriaMet + ", keySite="
+				+ keySite + ", professionalJudgement=" + professionalJudgement
+				+ ", professionalJudgementExp=" + professionalJudgementExp
+				+ ", ignoreRobotsTxt=" + ignoreRobotsTxt + ", format=" + format
+				+ ", field_uk_domain=" + field_uk_domain + ", field_uk_geoip="
+				+ field_uk_geoip + ", field_crawl_permission="
+				+ field_crawl_permission + ", field_url=" + field_url
+				+ ", field_subject=" + field_subject + ", field_description="
+				+ field_description + ", field_uk_postal_address_url="
 				+ field_uk_postal_address_url
 				+ ", field_nominating_organisation="
 				+ field_nominating_organisation
@@ -2796,7 +2797,9 @@ public class Target extends UrlModel {
 				+ ", field_notes=" + field_notes + ", title=" + title
 				+ ", edit_url=" + edit_url + ", language=" + language
 				+ ", revision=" + revision + ", vid=" + vid + ", type=" + type
-				+ ", status=" + status + ", id=" + id + ", url=" + url
-				+ ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+				+ ", status=" + status + ", author=" + author + ", id=" + id
+				+ ", url=" + url + "]";
 	}
+	
+
 }

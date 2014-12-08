@@ -17,6 +17,7 @@ import models.FieldUrl;
 import models.Flag;
 import models.License;
 import models.Organisation;
+import models.QaIssue;
 import models.Subject;
 import models.Tag;
 import models.Target;
@@ -634,7 +635,8 @@ public class TargetController extends AbstractController {
     			JsonNode subjectData = getSubjectsData();
     			List<User> authors = User.findAll();
     			List<Tag> tags = Tag.findAllTags();
-    	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags));
+    			List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+    	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, qaIssues));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -669,7 +671,8 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData();
 		List<User> authors = User.findAll();
 		List<Tag> tags = Tag.findAllTags();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags));
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, qaIssues));
     }
     
     /**
@@ -924,6 +927,7 @@ public class TargetController extends AbstractController {
     public static Result edit(Long id) {
 		Logger.info("Targets.edit() id: " + id);
 		Target target = Target.findById(id);
+		target.formUrl = target.fieldUrl();
 		Form<Target> targetForm = Form.form(Target.class);
 		targetForm = targetForm.fill(target);
 		User user = User.findByEmail(request().username());
@@ -932,7 +936,8 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData(target.subjects);
 		List<User> authors = User.findAll();
 		List<Tag> tags = Tag.findAllTags();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags));
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, qaIssues));
     }
     
     /**
@@ -1362,7 +1367,8 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData();
 		List<User> authors = User.findAll();
 		List<Tag> tags = Tag.findAllTags();
-        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags));
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags, qaIssues));
     }
 
 	/**
@@ -1435,20 +1441,30 @@ public class TargetController extends AbstractController {
 
             String fieldUrl = requestData.get("fieldUrls");
             
-            String[] urls = fieldUrl.split(",");
-
-            List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
-            
-            for (String url : urls) {
-            	FieldUrl fu = new FieldUrl(url);
-            	// get domain
-            	fieldUrls.add(fu);
+            if (StringUtils.isNotEmpty(fieldUrl)) {
+	            String[] urls = fieldUrl.split(",");
+	            List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
+	            
+	            for (String url : urls) {
+	            	FieldUrl fu = FieldUrl.findByUrl(url.trim());
+	            	if (fu == null) {
+		            	fu = new FieldUrl(url.trim());
+		            	// get domain
+	            	}
+	            	fieldUrls.add(fu);
+	            }
+	            targetFromDB.fieldUrls = fieldUrls;
             }
             
             targetFromDB.title = targetFromForm.title;
-            targetFromDB.fieldUrls = fieldUrls;
             targetFromDB.organisation = targetFromForm.organisation;
-            targetFromDB.qaIssue = targetFromForm.qaIssue;
+            String qaIssueId = requestData.get("qaIssueId");
+            if (StringUtils.isNotEmpty(qaIssueId)) {
+            	Long qaId = Long.valueOf(qaIssueId);
+            	QaIssue qaIssue = QaIssue.findById(qaId);
+            	targetFromDB.qaIssue = qaIssue;
+            }
+            
             targetFromDB.liveSiteStatus = targetFromForm.liveSiteStatus;
             targetFromDB.keySite = targetFromForm.keySite;
             targetFromDB.wctId = targetFromForm.wctId;
@@ -1458,13 +1474,15 @@ public class TargetController extends AbstractController {
             List<Tag> newTags = new ArrayList<Tag>();
             String[] tagValues = formParams.get("tagList");
 
-            for(String tagValue: tagValues) {
-            	Long tagId = Long.valueOf(tagValue);
-            	Tag tag = Tag.findById(tagId);
-            	newTags.add(tag);
+            if (tagValues != null) {
+	            for(String tagValue: tagValues) {
+	            	Long tagId = Long.valueOf(tagValue);
+	            	Tag tag = Tag.findById(tagId);
+	            	newTags.add(tag);
+	            }
+	            targetFromDB.tags = newTags;
             }
             
-            targetFromDB.tags = newTags;
             targetFromDB.synonyms = targetFromForm.synonyms;
             targetFromDB.archivistNotes = targetFromForm.archivistNotes;
             targetFromDB.revision = targetFromForm.revision;
@@ -1473,7 +1491,7 @@ public class TargetController extends AbstractController {
             
             List<Subject> newSubjects = new ArrayList<Subject>();
             String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
-            Logger.info("subjectSelect: " + subjectSelect.length());
+            Logger.info("subjectSelect: " + subjectSelect);
             String[] subjects = subjectSelect.split(", ");
             if (StringUtils.isNotEmpty(subjectSelect)) {
 	            for (String sId : subjects) {
@@ -1482,12 +1500,12 @@ public class TargetController extends AbstractController {
 	            	Subject subject = Subject.findById(subjectId);
 	            	newSubjects.add(subject);
 	            }
+	            targetFromDB.subjects = newSubjects;
             }
-            targetFromDB.subjects = newSubjects;
             
             List<Collection> newCollections = new ArrayList<Collection>();
             String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
-            Logger.info("collectionSelect: " + collectionSelect.length());
+            Logger.info("collectionSelect: " + collectionSelect);
             String[] collections = collectionSelect.split(", ");
             if (StringUtils.isNotEmpty(collectionSelect)) {
 	            for (String cId : collections) {
@@ -1496,8 +1514,8 @@ public class TargetController extends AbstractController {
 	            	Collection collection = Collection.findById(collectionId);
 	            	newCollections.add(collection);
 	            }
+	            targetFromDB.collections = newCollections;
             }
-            targetFromDB.collections = newCollections;
             
             String organisationId = requestData.get("organisationId");
             if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("-1")) {
@@ -1552,7 +1570,8 @@ public class TargetController extends AbstractController {
 //			License (The license terms under which this site is archived and made available)
 //			Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)
             
-//            targetFromDB.save();
+            Logger.info("targetFromDB: " + targetFromDB);
+            targetFromDB.save();
         	User user = User.findByEmail(request().username());
             List<User> authors = User.findAll();
 	        return ok(view.render(targetFromDB, user, authors));

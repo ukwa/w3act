@@ -758,7 +758,7 @@ public final class Const {
     	subNodeMap.put(FIELD_AFFILIATION, URI);
     	subNodeMap.put(FIELD_NOMINATING_ORGANISATION, URI);
     	subNodeMap.put(FIELD_SUBJECT, URI);
-    	subNodeMap.put(FIELD_QA_STATUS, URI);
+//    	subNodeMap.put(FIELD_QA_STATUS, URI);
     	subNodeMap.put(FIELD_OWNER, URI);
     	subNodeMap.put(PARENT, URI);
     	subNodeMap.put(PARENTS_ALL, URI);

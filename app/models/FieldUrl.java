@@ -58,6 +58,9 @@ public class FieldUrl extends Model {
 		this.url = url;
 	}
 
+	public static FieldUrl findByUrl(String url) {
+		return find.where().eq("url", url).findUnique();
+	}
 	public static List<FieldUrl> findHigherLevelUrls(String domain, String url) {
 		Logger.info("Parameters: " + domain + " - " + url.length());
 		String query = "find fieldUrl fetch target fetch target.licenses where url like :domain and LENGTH(url) < :length";

@@ -146,7 +146,7 @@ public class AbstractController extends Controller {
 //	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
 //    	    	Logger.info("children: " + children.size());
 	    	if (children.size() > 0) {
-	    		child.put("children", Json.toJson(getCollectionTreeElements(children, filter, false)));
+	    		child.put("children", Json.toJson(getCollectionTreeElements(children, filter, false, myCollections)));
 	    	}
 			result.add(child);
     	}

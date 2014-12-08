@@ -1,4 +1,4 @@
-@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag])
+@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], qaIssues: List[QaIssue])
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -19,7 +19,7 @@
 	
 	        // And finally we just attach the href to view.html and forward the browser. 
 	        // An example URL would be: 'view.html#npld-scope'
-	        window.location.href="@routes.TargetController.viewAct(form("url").value)" + href;
+	        window.location.href="@routes.TargetController.view(form.get.id)" + href;
 		}
 	
 		(function() {
@@ -56,8 +56,8 @@
 				idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
 			};		
       
-			$("#field_url").keyup(function() {
-				var text = $('input[name=field_url]').val();
+			$("#fieldUrls").keyup(function() {
+				var text = $('input[name=fieldUrls]').val();
 	
 				if (text.length > MIN_TEXT_LENGTH) {
 					restartIdleTimeout(text);
@@ -260,7 +260,7 @@
 								<small class="text-center">(One or more URLs, separated by comma)</small>
 							</label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="fieldUrls" id="fieldUrls" placeholder="url1, url2" type="text" value="@form.get.fieldUrl()">
+								<input class="form-control" name="fieldUrls" id="fieldUrls" placeholder="url1, url2" type="text" value="@form.get.formUrl">
 							</div>
 						</div>
 					</div>
@@ -320,18 +320,16 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">QA Status</label>
+							<label for="qaIssueId" class="col-sm-6 control-label">QA Status</label>
 						    <div class="col-sm-6">
-								<select name="field_qa_status" id="field_qa_status" class="form-control">
-									@if(form.get.qaIssue != null) {
-										@for(qaIssue <- QaIssue.findAllQaIssue()) {
-							                @if(form.get.qaIssue.id == qaIssue.id) {             
-											 	<option value="@qaIssue.id" selected>@qaIssue.name</option>
-										 	} else {
-											 	<option value="@qaIssue.id">@qaIssue.name</option>
-										 	}									 	
-									    }
-									}
+								<select name="qaIssueId" id="qaIssueId" class="form-control">
+									@for(qaIssue <- qaIssues) {
+						                @if(form.get.qaIssue != null && form.get.qaIssue.id == qaIssue.id) {             
+									 		<option value="@qaIssue.id" selected>@qaIssue.name</option>
+									 	} else {
+										 	<option value="@qaIssue.id">@qaIssue.name</option>
+									 	}									 	
+								    }
                                 </select>
 							</div>
 						</div>
