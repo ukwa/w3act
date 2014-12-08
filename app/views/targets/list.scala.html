@@ -324,7 +324,7 @@
 								@for(target <- currentPage.getList) {
 				                <tr>
 									@if(target.title != null && target.title.length > 0) {
-										<td><a href="@routes.TargetController.viewAct(target.url)">@target.title</a></td>
+										<td><a href="@routes.TargetController.view(target.id)">@target.title</a></td>
 									} else {
 										<td>N/A</td>
 									}

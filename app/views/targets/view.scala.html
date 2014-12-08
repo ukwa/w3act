@@ -1,4 +1,4 @@
-@(target: Target, user: User)
+@(target: Target, user: User, authors: List[User])
 
 @script = {
 	<script>
@@ -365,7 +365,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="inputAuthors" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
+			              	<label for="originating_organisation" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
 						    	@if(target.organisation != null) {
 				            		<textarea readonly class="form-control" name="originating_organisation" id="originatingOrganisation" cols="100" rows="1" value="@target.organisation.url">@target.organisation.url</textarea>
@@ -383,7 +383,7 @@
 			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
 						    <div class="col-sm-6">
 						        @if(target.authorUser != null) {
-  									@User.showUser(target.authorUser.url)
+  									@target.authorUser.name
   								} else {
   								    none
   								}
@@ -400,7 +400,7 @@
 						        @if(target.language != null) {
   									@target.language
   								} else {
-  								    none
+  								    None
   								}
 							</div>
 						</div>
@@ -412,11 +412,11 @@
 						<div class="form-group">
 			              	<label for="inputAuthors" class="col-sm-6 control-label">Author(s) <small class="text-center">(A named individual responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-						    	@if(target.authorUser != null) {
-				            		<textarea readonly class="form-control" name="authors" id="authors" cols="100" rows="1" value="@target.authorUser.name">@target.authorUser.name</textarea>
-				            	} else {
-				            		<textarea readonly class="form-control" name="authors" id="authors" cols="100" rows="1" value=""></textarea>
-				            	}
+						    	@if(target.authors != null && target.authors.length > 0) {
+						    		@target.authors
+						    	} else {
+						    		None
+						    	}
 							</div>
 						</div>
 					</div>

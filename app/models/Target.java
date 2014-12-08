@@ -61,6 +61,11 @@ public class Target extends UrlModel {
 	@JoinColumn(name = "author_id")
 	public User authorUser;
 
+	
+	@JsonIgnore
+	@Column(columnDefinition = "text")
+	public String authors;
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "organisation_id")
@@ -76,36 +81,36 @@ public class Target extends UrlModel {
 
 	@JsonIgnore
     @ManyToMany
-	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+	@JoinTable(name = "license_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
 	public List<License> licenses;
 
     @JsonIgnore
     @ManyToMany
-	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
 	public List<Subject> subjects;
 
     @JsonIgnore
     @ManyToMany
-	@JoinTable(name = Const.COLLECTION_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+	@JoinTable(name = "collection_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
 	public List<Collection> collections;
 
 	@JsonIgnore
     @ManyToMany
-	@JoinTable(name = Const.TAG_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+	@JoinTable(name = "tag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="ID") }) 
 	public List<Tag> tags;
 	
 	@JsonIgnore
     @ManyToMany
-	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
+	@JoinTable(name = "flag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
     public List<Target> flags;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<FieldUrl> fieldUrls;
 
 
@@ -2730,7 +2735,7 @@ public class Target extends UrlModel {
 		Logger.info("" + names);
 		return StringUtils.join(names, ", ");
 	}
-
+	
 	public boolean isUkRegistration() {
 		return Scope.INSTANCE.isUkHosting(this.fieldUrls);
 	}

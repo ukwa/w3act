@@ -56,7 +56,7 @@ public class CollectionController extends AbstractController {
 	 */
 	public static Result list(int pageNo, String sortBy, String order, String filter) {
 		
-		JsonNode node = getCollectionsData(filter);
+		JsonNode node = getCollectionsDataByFilter(filter);
 		
 		Page<Collection> pages = Collection.pager(pageNo, 10, sortBy, order, filter);
 		

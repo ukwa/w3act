@@ -96,15 +96,22 @@ public class AbstractController extends Controller {
     }
        
     protected static JsonNode getCollectionsData() {
-    	return getCollectionsData(null);
+    	return getCollectionsDataByFilter(null);
     }
-    
+
+    protected static JsonNode getCollectionsData(List<Collection> myCollections) {
+    	List<Collection> collections = Collection.getFirstLevelCollections();
+    	List<ObjectNode> result = getCollectionTreeElements(collections, null, true, myCollections);
+    	JsonNode jsonData = Json.toJson(result);
+        return jsonData;
+    }
+
     /**
      * This method computes a tree of collections in JSON format. 
      * @param collectionUrl This is an identifier for current selected object
      * @return tree structure
      */
-    protected static JsonNode getCollectionsData(String filter) {
+    protected static JsonNode getCollectionsDataByFilter(String filter) {
     	List<Collection> collections = Collection.getFirstLevelCollections();
     	List<ObjectNode> result = getCollectionTreeElements(collections, filter, true);
     	JsonNode jsonData = Json.toJson(result);
@@ -122,7 +129,7 @@ public class AbstractController extends Controller {
      * @param parent This parameter is used to differentiate between root and children nodes
      * @return collection object in JSON form
      */
-    protected static List<ObjectNode> getCollectionTreeElements(List<Collection> collections, String filter, boolean parent, List<Long> myCollections) {
+    protected static List<ObjectNode> getCollectionTreeElements(List<Collection> collections, String filter, boolean parent, List<Collection> myCollections) {
 		List<ObjectNode> result = new ArrayList<ObjectNode>();
 		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 
@@ -130,13 +137,10 @@ public class AbstractController extends Controller {
 			ObjectNode child = nodeFactory.objectNode();
 			child.put("title", collection.name + " (" + collection.targets.size() + ")");
 			child.put("url", String.valueOf(routes.CollectionController.view(collection.id)));
-			if (myCollections != null) {
-				for(Long id : myCollections) {
-					if (id == collection.id) {
-			    		child.put("select", true);
-			    	}
-				}
+			if (myCollections != null && myCollections.contains(collection)) {
+				child.put("select", true);
 			}
+
 			child.put("key", "\"" + collection.id + "\"");
 	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
 //	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());

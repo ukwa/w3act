@@ -36,7 +36,12 @@ public class Subject extends Taxonomy {
 	
 	public static Model.Finder<Long,Subject> find = new Model.Finder<Long, Subject>(Long.class, Subject.class);
 
-    public static Subject findByUrl(String url) {
+    public static Subject findById(Long id) {
+    	Subject subject = find.byId(id);
+    	return subject;
+    }
+
+	public static Subject findByUrl(String url) {
     	Subject subject = find.where().eq(Const.URL, url).findUnique();
     	return subject;
     }
