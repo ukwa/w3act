@@ -3,33 +3,34 @@
 flags:
 
     - !!models.Flag
-        name:         PRIORITY_PERMISSION
+        name:         Priority Permission
         description:  This flag marks priority permission
 
     - !!models.Flag
-        name:         PRIORITY_CRAWL_AND_QA
+        name:         Priority Crawl & QA
         description:  This flag marks priority crawl and QA
 
     - !!models.Flag
-        name:         PRIORITY_QA
+        name:         Priority QA
         description:  This flag marks priority QA
 
     - !!models.Flag
-        name:         QA_ISSUE_APPEARANCE
+        name:         QA Issue - Appearance
         description:  This flag marks QA issue appearance
 
     - !!models.Flag
-        name:         QA_ISSUE_FUNCTIONALITY
+        name:         QA Issue - Functionality
         description:  This flag marks QA issue functionality
 
     - !!models.Flag
-        name:         QA_ISSUE_CONTENT
+        name:         QA Issue - Content
         description:  This flag marks QA issue content
 
     - !!models.Flag
-        name:         FOLLOW_UP_PERMISSION
+        name:         Follow Up Permission
         description:  This flag marks follow up permission
 
     - !!models.Flag
-        name:         GENERAL_CHANGE_REQUEST
+        name:         General Change Request
         description:  This flag marks general change request
+

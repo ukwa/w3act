@@ -4,10 +4,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,6 +39,10 @@ import play.mvc.Result;
 import play.mvc.Security;
 import scala.NotImplementedError;
 import uk.bl.Const;
+import uk.bl.Const.DepthType;
+import uk.bl.Const.ScopeType;
+import uk.bl.Const.SelectionType;
+import uk.bl.Const.TargetLanguage;
 import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
@@ -158,22 +168,19 @@ public class TargetController extends AbstractController {
     public static Result view(Long id) {
     	Target target = Target.findById(id);
     	User user = User.findByEmail(request().username());
-		List<User> authors = User.findAll();
-        return ok(view.render(target, user, authors));
+        return ok(view.render(target, user));
     }
     
     public static Result viewAct(String url) {
     	Target target = Target.findByUrl(url);
     	User user = User.findByEmail(request().username());
-		List<User> authors = User.findAll();
-        return ok(view.render(target, user, authors));
+        return ok(view.render(target, user));
     }
 
     public static Result viewWct(String url) {
     	Target target = Target.findByWct(url);
     	User user = User.findByEmail(request().username());
-		List<User> authors = User.findAll();
-        return ok(view.render(target, user, authors));
+        return ok(view.render(target, user));
     }
 
 	/**
@@ -635,8 +642,13 @@ public class TargetController extends AbstractController {
     			JsonNode subjectData = getSubjectsData();
     			List<User> authors = User.findAll();
     			List<Tag> tags = Tag.findAllTags();
+    			List<Flag> flags = Flag.findAllFlags();
     			List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-    	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, qaIssues));
+    			TargetLanguage[] languages = Const.TargetLanguage.values();
+    			SelectionType[] selectionTypes = Const.SelectionType.values();
+    			ScopeType[] scopeTypes = Const.ScopeType.values();
+    			DepthType[] depthTypes = Const.DepthType.values();
+    	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -671,9 +683,14 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData();
 		List<User> authors = User.findAll();
 		List<Tag> tags = Tag.findAllTags();
+		List<Flag> flags = Flag.findAllFlags();
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, qaIssues));
-    }
+		TargetLanguage[] languages = Const.TargetLanguage.values();
+		SelectionType[] selectionTypes = Const.SelectionType.values();
+		ScopeType[] scopeTypes = Const.ScopeType.values();
+		DepthType[] depthTypes = Const.DepthType.values();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
+	}
     
     /**
      * Display the paginated list of targets.
@@ -936,8 +953,13 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData(target.subjects);
 		List<User> authors = User.findAll();
 		List<Tag> tags = Tag.findAllTags();
+		List<Flag> flags = Flag.findAllFlags();
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, qaIssues));
+		TargetLanguage[] languages = Const.TargetLanguage.values();
+		SelectionType[] selectionTypes = Const.SelectionType.values();
+		ScopeType[] scopeTypes = Const.ScopeType.values();
+		DepthType[] depthTypes = Const.DepthType.values();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
     }
     
     /**
@@ -948,12 +970,7 @@ public class TargetController extends AbstractController {
     public static Result viewrevision(Long id) {
     	Target target = Target.findById(id);
     	User user = User.findByEmail(request().username());
-		List<User> authors = User.findAll();
-        return ok(
-                view.render(
-                        target, user, authors
-                )
-            );
+        return ok(view.render(target, user));
     }
     
     /**
@@ -1028,74 +1045,6 @@ public class TargetController extends AbstractController {
         }
     }
     
-    /**
-     * This method maps scope value to present predefined Scope values in GUI.
-     * @param name The predefined scope value.
-     * @return scope name that should be presented in GUI
-     */
-    public static String getScopeGuiName(String name) {
-    	String res = name;
-    	if (name != null && name.length() > 0) {
-    		String guiName = Const.guiScopeMap.get(name);
-    		if (guiName != null && guiName.length() > 0) {
-    			res = guiName;
-    		}
-    	}
-    	return res;
-    }
-    
-    /**
-     * This method calculates scope value from the GUI scope name.
-     * @param name The GUI scope value.
-     * @return original scope name 
-     */
-    public static String getScopeNameFromGuiName(String name) {
-    	String res = name;
-    	if (name != null && name.length() > 0) {
-			for (Map.Entry<String, String> entry : Const.guiScopeMap.entrySet()) {
-				if (entry.getValue().equals(name)) {
-					res = entry.getKey();
-					break;
-				}
-			}
-    	}
-    	return res;
-    }
-            
-    /**
-     * This method maps depth value to present predefined Scope values in GUI.
-     * @param name The predefined depth value.
-     * @return depth name that should be presented in GUI
-     */
-    public static String getDepthGuiName(String name) {
-    	String res = name;
-    	if (name != null && name.length() > 0) {
-    		String guiName = Const.guiDepthMap.get(name);
-    		if (guiName != null && guiName.length() > 0) {
-    			res = guiName;
-    		}
-    	}
-    	return res;
-    }
-    
-    /**
-     * This method calculates depth value from the GUI depth name.
-     * @param name The GUI depth value.
-     * @return original depth name 
-     */
-    public static String getDepthNameFromGuiName(String name) {
-    	String res = name;
-    	if (name != null && name.length() > 0) {
-			for (Map.Entry<String, String> entry : Const.guiDepthMap.entrySet()) {
-				if (entry.getValue().equals(name)) {
-					res = entry.getKey();
-					break;
-				}
-			}
-    	}
-    	return res;
-    }
-         
 	/**
 	 * This method indicates to the user in a target record if data has been entered 
 	 * by other users relating to NPLD status in another target record at a higher 
@@ -1347,11 +1296,11 @@ public class TargetController extends AbstractController {
         targetObj.whiteList = getFormParam(Const.WHITE_LIST);
         targetObj.blackList = getFormParam(Const.BLACK_LIST);
         if (getFormParam(Const.FIELD_DEPTH) != null) {
-        	targetObj.depth = getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+//        	targetObj.depth = getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
         }
         targetObj.crawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
         if (getFormParam(Const.FIELD_SCOPE) != null) {
-        	targetObj.scope = getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+//        	targetObj.scope = getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
         }
         targetObj.keywords = getFormParam(Const.KEYWORDS);
         targetObj.synonyms = getFormParam(Const.SYNONYMS);
@@ -1367,8 +1316,13 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData();
 		List<User> authors = User.findAll();
 		List<Tag> tags = Tag.findAllTags();
+		List<Flag> flags = Flag.findAllFlags();
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags, qaIssues));
+		TargetLanguage[] languages = Const.TargetLanguage.values();
+		SelectionType[] selectionTypes = Const.SelectionType.values();
+		ScopeType[] scopeTypes = Const.ScopeType.values();
+		DepthType[] depthTypes = Const.DepthType.values();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
     }
 
 	/**
@@ -1396,12 +1350,12 @@ public class TargetController extends AbstractController {
 //            	    	missingFields = missingFields + Const.COMMA + " " + key;
 //            	    }
             	}
-            	if (missingFields != null) {
-	            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + missingFields);
-		  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
-		  					"Missing fields are: " + missingFields);
-		  			return info();
-            	}
+//            	if (missingFields != null) {
+//	            	Logger.info("form errors size: " + targetForm.errors().size() + ", " + missingFields);
+//		  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
+//		  					"Missing fields are: " + missingFields);
+//		  			return info();
+//            	}
             }
 
 //          if (getFormParam(Const.FIELD_WCT_ID) != null && (getFormParam(Const.FIELD_WCT_ID).equals("") || !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID)))) {
@@ -1524,8 +1478,7 @@ public class TargetController extends AbstractController {
             	targetFromDB.organisation = organisation;
             }
 
-            // originating organsiation
-//            originatingOrganisation
+            targetFromDB.originatingOrganisation = targetFromForm.originatingOrganisation;
             
             String authorId = requestData.get("authorId");
             if (StringUtils.isNotEmpty(authorId)) {
@@ -1533,18 +1486,60 @@ public class TargetController extends AbstractController {
             	User author = User.findById(aId);
             	targetFromDB.authorUser = author;
             }
-            
-            targetFromDB.language = targetFromForm.language;
 
+            targetFromDB.language = targetFromForm.language;
+            Logger.info(targetFromDB.language + "/" + targetFromForm.language);
             targetFromDB.authors = targetFromForm.authors;
 
-            // flags
-            // flag notes
-            // date of pub
-            // justification
-//            Selection Type * (This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))
-//            Selector Notes (This field allows further notes to selection for WA team, not captured in Justification field.)
-//            Legacy site ID (ID used to identify paper licences.)
+            List<Flag> newFlags = new ArrayList<Flag>();
+            String[] flagValues = formParams.get("flagList");
+
+            if (flagValues != null) {
+	            for(String flagValue: flagValues) {
+	            	Logger.info("flagValue: " + flagValue);
+	            	Long flagId = Long.valueOf(flagValue);
+	            	Flag flag = Flag.findById(flagId);
+	            	newFlags.add(flag);
+	            }
+	            targetFromDB.flags = newFlags;
+            }
+            
+            targetFromDB.flagNotes = targetFromForm.flagNotes;
+            
+            String dateOfPublication = requestData.get("date_of_publication");
+        	if (dateOfPublication != null) {
+    			DateFormat formatter = new SimpleDateFormat("dd-MM-yy");
+    			try {
+					Date date = formatter.parse(dateOfPublication);
+	    			targetFromDB.dateOfPublication = date;
+				} catch (ParseException e) {
+					e.printStackTrace();
+		  			User user = User.findByEmail(request().username());
+		  			JsonNode collectionData = getCollectionsData(targetFromForm.collections);
+		  			JsonNode subjectData = getSubjectsData(targetFromForm.subjects);
+		  			List<User> authors = User.findAll();
+		  			List<Tag> tags = Tag.findAllTags();
+		  			List<Flag> flags = Flag.findAllFlags();
+		  			List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+	    			TargetLanguage[] languages = Const.TargetLanguage.values();
+	    			SelectionType[] selectionTypes = Const.SelectionType.values();
+	    			ScopeType[] scopeTypes = Const.ScopeType.values();
+	    			DepthType[] depthTypes = Const.DepthType.values();
+		  			flash("message", "Date of Publication (dd-mm-yy) - Incorrect Format");
+	    	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
+				}
+        	}
+            Logger.info("targetFromDB.dateOfPublication: " + targetFromDB.dateOfPublication);
+
+            targetFromDB.justification = targetFromForm.justification;
+            
+            targetFromDB.selectionType = targetFromForm.selectionType;
+            
+            targetFromDB.selectorNotes = targetFromForm.selectorNotes;
+            
+            targetFromDB.legacySiteId = targetFromForm.legacySiteId;
+            
+
 //				Scope (Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)
 //				Depth (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)
 //				Ignore Robots.txt (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)
@@ -1572,9 +1567,13 @@ public class TargetController extends AbstractController {
             
             Logger.info("targetFromDB: " + targetFromDB);
             targetFromDB.save();
-        	User user = User.findByEmail(request().username());
-            List<User> authors = User.findAll();
-	        return ok(view.render(targetFromDB, user, authors));
+//            targetFromDB.update();
+            
+//            User user = User.findByEmail(request().username());
+//            List<User> authors = User.findAll();
+//            return ok(view.render(targetFromDB, user, authors));
+            
+			return redirect(routes.TargetController.view(targetFromDB.id));
 
             // TODO: KL 
 //            newTarget.authorRef = target.authorRef;

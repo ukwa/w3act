@@ -8,6 +8,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import uk.bl.api.models.FieldModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -54,18 +55,16 @@ abstract class UrlModel extends ActModel {
 	@Transient
 	protected final String END_STR         = "/";
 	
-	@JsonProperty
+	@Required
 	public String title;
 	
-	@JsonProperty
-	public String edit_url;
-
-	@JsonProperty
 	public String language;
 
 	@Column(columnDefinition = "text")
-	@JsonProperty
 	public String revision;
+
+	@JsonProperty
+	public String edit_url;
 
 	@Transient
 	@JsonProperty
@@ -134,14 +133,6 @@ abstract class UrlModel extends ActModel {
 	@Transient
 	@JsonProperty
 	protected FieldModel author;
-	
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
 
 	public String getEdit_url() {
 		return edit_url;
@@ -149,22 +140,6 @@ abstract class UrlModel extends ActModel {
 
 	public void setEdit_url(String edit_url) {
 		this.edit_url = edit_url;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
-	public String getRevision() {
-		return revision;
-	}
-
-	public void setRevision(String revision) {
-		this.revision = revision;
 	}
 
 	public Object getBody() {
@@ -302,6 +277,7 @@ abstract class UrlModel extends ActModel {
 	public void setAuthor(FieldModel author) {
 		this.author = author;
 	}
+
 	
 	public String getDomainFromUrl(String url) throws IOException {
 		return new URL(url).getHost().replace(WWW, "");

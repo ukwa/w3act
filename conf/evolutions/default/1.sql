@@ -75,9 +75,9 @@ create table instance (
   url                       varchar(255),
   created_at                timestamp,
   title                     varchar(255),
-  edit_url                  varchar(255),
   language                  varchar(255),
   revision                  text,
+  edit_url                  varchar(255),
   qaissue_id                bigint,
   author_id                 bigint,
   target_id                 bigint,
@@ -246,12 +246,13 @@ create table target (
   url                       varchar(255),
   created_at                timestamp,
   title                     varchar(255),
-  edit_url                  varchar(255),
   language                  varchar(255),
   revision                  text,
+  edit_url                  varchar(255),
   qaissue_id                bigint,
   author_id                 bigint,
   authors                   text,
+  originating_organisation  text,
   organisation_id           bigint,
   is_uk_hosting             boolean,
   is_top_level_domain       boolean,
@@ -413,16 +414,16 @@ create table tag_instance (
   constraint pk_tag_instance primary key (tag_id, instance_id))
 ;
 
-create table subjects (
-  parent_id                      bigint not null,
-  id                             bigint not null,
-  constraint pk_subjects primary key (parent_id, id))
-;
-
 create table collection_instance (
   collection_id                  bigint not null,
   instance_id                    bigint not null,
   constraint pk_collection_instance primary key (collection_id, instance_id))
+;
+
+create table subjects (
+  parent_id                      bigint not null,
+  id                             bigint not null,
+  constraint pk_subjects primary key (parent_id, id))
 ;
 create sequence communication_log_seq;
 
@@ -521,7 +522,7 @@ alter table tag_target add constraint fk_tag_target_taxonomy_02 foreign key (tag
 
 alter table flag_target add constraint fk_flag_target_target_01 foreign key (target_id) references target (id);
 
-alter table flag_target add constraint fk_flag_target_target_02 foreign key (flag_id) references target (id);
+alter table flag_target add constraint fk_flag_target_taxonomy_02 foreign key (flag_id) references taxonomy (id);
 
 alter table taxonomy_user add constraint fk_taxonomy_user_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
 
@@ -539,13 +540,13 @@ alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key 
 
 alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
 
-alter table subjects add constraint fk_subjects_taxonomy_01 foreign key (parent_id) references taxonomy (id);
-
-alter table subjects add constraint fk_subjects_taxonomy_02 foreign key (id) references taxonomy (id);
-
 alter table collection_instance add constraint fk_collection_instance_taxono_01 foreign key (collection_id) references taxonomy (id);
 
 alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (instance_id) references instance (id);
+
+alter table subjects add constraint fk_subjects_taxonomy_01 foreign key (parent_id) references taxonomy (id);
+
+alter table subjects add constraint fk_subjects_taxonomy_02 foreign key (id) references taxonomy (id);
 
 # --- !Downs
 

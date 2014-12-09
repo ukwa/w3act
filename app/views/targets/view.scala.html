@@ -1,4 +1,4 @@
-@(target: Target, user: User, authors: List[User])
+@(target: Target, user: User)
 
 @script = {
 	<script>
@@ -288,6 +288,7 @@
 						<div class="form-group">
 			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
 						    <div class="col-sm-6">
+								@target.tagsAsString()						    
 							</div>
 						</div>
 					</div>
@@ -367,11 +368,7 @@
 						<div class="form-group">
 			              	<label for="originating_organisation" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-						    	@if(target.organisation != null) {
-				            		<textarea readonly class="form-control" name="originating_organisation" id="originatingOrganisation" cols="100" rows="1" value="@target.organisation.url">@target.organisation.url</textarea>
-				            	} else {
-				            		<textarea readonly class="form-control" name="originating_organisation" id="originatingOrganisation" cols="100" rows="1" value=""></textarea>
-				            	}
+			            		<textarea readonly class="form-control" name="originating_organisation" id="originatingOrganisation" cols="100" rows="1" value="@target.originatingOrganisation">@target.originatingOrganisation</textarea>
 							</div>
 						</div>
 					</div>
@@ -398,7 +395,7 @@
 			              	<label for="status" class="col-sm-6 control-label">Language <small class="text-center">(the predominant language in which the page is written)</small></label>
 						    <div class="col-sm-6">
 						        @if(target.language != null) {
-  									@target.language
+  									@uk.bl.Const.TargetLanguage.getLanguage(target.language).getValue
   								} else {
   								    None
   								}
@@ -427,16 +424,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
 						    <div class="col-sm-6">
-						        @for(flag <- Flag.findAllFlags()) {
-									<label class="checkbox-inline">
-						                @if(target.flags != null && target.flags.contains(flag.name)) {
-						                	<input type="checkbox" name="@Flags.getGuiName(flag.name)" value="true" checked disabled />
-						                } else {
-						                	<input type="checkbox" name="@Flags.getGuiName(flag.name)" value="true" disabled />
-						                }
-						                @Flags.getGuiName(flag.name)
-					                </label>
-					            }
+						    	@target.flagsAsString()
 							</div>
 						</div>
 					</div>
@@ -483,7 +471,7 @@
 			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
 						        @if(target.selectionType != null) {
-  									@target.selectionType
+						        	@uk.bl.Const.SelectionType.getSelectionType(target.selectionType).getValue
   								} else {
   								    none
   								}
@@ -696,7 +684,7 @@
 							<label class="col-sm-6 control-label">Scope<font color="red">*</font> <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
 				                @if(target.scope != null) {             
-					                @TargetController.getScopeGuiName(target.scope)
+									@uk.bl.Const.ScopeType.getScopeType(target.scope)
 				                } else {
 					                none
 				                }
@@ -711,7 +699,7 @@
 							<label class="col-sm-6 control-label">Depth<font color="red">*</font> <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
 				                @if(target.depth != null) {             
-					                @TargetController.getDepthGuiName(target.depth)
+					                @uk.bl.Const.DepthType.getDepthType(target.depth)
 				                } else {
 					                none
 				                }
@@ -837,7 +825,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
 						    <div class="col-sm-6">
-		 						<input readonly type="text" name="licensingStatus" value="@target.qaIssue" size="60" maxlength="2048" class="form-control" />
+		 						<input readonly type="text" name="licensingStatus" value="@target.qaIssue.name" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>

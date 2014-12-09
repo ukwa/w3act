@@ -597,38 +597,55 @@ public final class Const {
     	}
     }
 	
-    /**
-     * Help mapping to present predefined Scope values in GUI.
-     */
-    public static final Map<String, String> guiScopeMap = new HashMap<String, String>();
-    	static {
-		guiScopeMap.put("resource",   "Just this URL.");
-		guiScopeMap.put("plus1",      "This URL plus any directly linked resources.");
-		guiScopeMap.put("root",       "All URLs that start like this.");
-		guiScopeMap.put("subdomains", "All URLs that match match this host or any subdomains.");
-    }
-		
 	public enum ScopeType {
-		resource, 
-		plus1,
-		root,
-		subdomains;
+		resource("Just this URL."), 
+		plus1("This URL plus any directly linked resources."),
+		root("All URLs that start like this."),
+		subdomains("All URLs that match match this host or any subdomains.");
+		
+        private String value;
+
+        private ScopeType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static ScopeType getScopeType(String name) {
+    		for (ScopeType scopeType : ScopeType.values()) {
+    			if (scopeType.name().equals(name)) {
+    				return scopeType;
+    			}
+    		}
+    		return null;
+    	}
     }
     	
-    /**
-     * Help mapping to present predefined Depth values in GUI.
-     */
-    public static final Map<String, String> guiDepthMap = new HashMap<String, String>();
-    	static {
-		guiDepthMap.put("capped",       "Capped (small - 500MB)");
-		guiDepthMap.put("capped_large", "Capped (large - 2GB)");
-		guiDepthMap.put("deep",         "Uncapped");
-    }
-		
 	public enum DepthType {
-		capped, 
-		capped_large,
-		deep;
+		capped("Capped (small - 500MB)"),
+		capped_large("Capped (large - 2GB)"),
+		deep("Uncapped");
+		
+        private String value;
+
+        private DepthType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static DepthType getDepthType(String name) {
+    		for (DepthType depthType : DepthType.values()) {
+    			if (depthType.name().equals(name)) {
+    				return depthType;
+    			}
+    		}
+    		return null;
+    	}
     }
     	
 	/**
@@ -662,6 +679,27 @@ public final class Const {
     		return null;
     	}
 	}
+	
+	public enum NpldType {
+		UK_HOSTING("UK Hosting"),
+		UK_TOP_LEVEL_DOMAIN("UK Top Level Domain"),
+		UK_REGISTRATION("UK Registration"),
+		UK_POSTAL_ADDRESS("UK Postal Address"),
+		VIA_CORRESPONDENCE("Via Correspondance"),
+		PROFESSIONAL_JUDGEMENT("Professional Judgement"),
+		NO_LD_CRITERIA_MET("No LD Criteria Met");
+		
+        private String value;
+
+        private NpldType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    }
 	
 	/**
 	 * The QA issue category.
@@ -772,27 +810,6 @@ public final class Const {
 		DOMAIN;
     }    	
     	
-	public enum NpldType {
-		UK_HOSTING("UK Hosting"),
-		UK_TOP_LEVEL_DOMAIN("UK Top Level Domain"),
-		UK_REGISTRATION("UK Registration"),
-		UK_POSTAL_ADDRESS("UK Postal Address"),
-		VIA_CORRESPONDENCE("Via Correspondance"),
-		PROFESSIONAL_JUDGEMENT("Professional Judgement"),
-		NO_LD_CRITERIA_MET("No LD Criteria Met");
-		
-        private String value;
-
-        private NpldType(String value) {
-                this.value = value;
-        }
-        
-        public String getValue() {
-        	return value;
-        }
-
-    }    
-
     /**
      * DEFINITIONS FOR TESTING  	
      */

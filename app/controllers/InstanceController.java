@@ -248,10 +248,10 @@ public class InstanceController extends AbstractController {
         newInstance.whiteList = getFormParam(Const.WHITE_LIST);
         newInstance.blackList = getFormParam(Const.BLACK_LIST);
         if (getFormParam(Const.FIELD_DEPTH) != null) {
-        	newInstance.fieldDepth = TargetController.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+//        	newInstance.fieldDepth = TargetController.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
         }
         if (getFormParam(Const.FIELD_SCOPE) != null) {
-        	newInstance.fieldScope = TargetController.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+//        	newInstance.fieldScope = TargetController.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
         }
         newInstance.fieldCrawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
         newInstance.keywords = getFormParam(Const.KEYWORDS);
@@ -561,10 +561,10 @@ public class InstanceController extends AbstractController {
             newInstance.whiteList = getFormParam(Const.WHITE_LIST);
             newInstance.blackList = getFormParam(Const.BLACK_LIST);
             if (getFormParam(Const.FIELD_DEPTH) != null) {
-            	newInstance.fieldDepth = TargetController.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
+//            	newInstance.fieldDepth = TargetController.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
             }
             if (getFormParam(Const.FIELD_SCOPE) != null) {
-            	newInstance.fieldScope = TargetController.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
+//            	newInstance.fieldScope = TargetController.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
             }
             newInstance.fieldCrawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
             newInstance.keywords = getFormParam(Const.KEYWORDS);

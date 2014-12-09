@@ -1,4 +1,4 @@
-@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], qaIssues: List[QaIssue])
+@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType])
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -538,7 +538,7 @@
 						<div class="form-group">
 			              	<label for="originating_organisation" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="originatingOrganisation" id="originating_organisation" cols="100" rows="1" value="@form("originatingOrganisation").value">@form("originatingOrganisation").value</textarea>
+				            	<textarea class="form-control" name="originatingOrganisation" id="originating_organisation" cols="100" rows="1" value="@form.get.originatingOrganisation">@form.get.originatingOrganisation</textarea>
 							</div>
 						</div>
 					</div>
@@ -570,10 +570,10 @@
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="status" class="col-sm-6 control-label">Language <small class="text-center">(The predominant language in which the page is written)</small></label>
+			              	<label for="language" class="col-sm-6 control-label">Language <small class="text-center">(The predominant language in which the page is written)</small></label>
 						    <div class="col-sm-6">
 								<select name="language" id="language" class="form-control">
-					                @for(language <- uk.bl.Const.TargetLanguage.values()) {
+					                @for(language <- languages) {
 						                @if(form.get.language != null && form.get.language.equals(language.name)) {
 						                	<option value="@language.name" selected>@language.getValue</option>
 						                } else {
@@ -605,14 +605,14 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
 						    <div class="col-sm-6">
-						        @for(flag <- Flag.findAllFlags()) {
+						        @for((flag, index) <- flags.zipWithIndex) {
 									<label class="checkbox-inline">
-						                @if(form("flags").value != null && form("flags").value.contains(flag.name)) {
-						                	<input type="checkbox" name="@flag.name" value="true" checked />
+						                @if(form.get.flags.contains(flag)) {
+						                	<input type="checkbox" name="flagList" value="@flag.id" checked />
 						                } else {
-						                	<input type="checkbox" name="@flag.name" value="true" />
+						                	<input type="checkbox" name="flagList" value="@flag.id" />
 						                }
-						                @Flags.getGuiName(flag.name)
+						                @flag.name
 					                </label>
 					            }
 							</div>
@@ -625,7 +625,7 @@
 						<div class="form-group">
 			              	<label for="inputFlagNotes" class="col-sm-6 control-label">Flag notes <small class="text-center">(More details about the flagged issue)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="flag_notes" id="flag_notes" cols="100" rows="1" value="@form("flagNotes").value">@form("flagNotes").value</textarea>
+				            	<textarea class="form-control" name="flagNotes" id="flagNotes" cols="100" rows="1" value="@form.get.flagNotes">@form.get.flagNotes</textarea>
 							</div>
 						</div>
 					</div>
@@ -637,7 +637,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Date of publication</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="date_of_publication" value="@form("dateOfPublication").value" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
+		 						<input type="text" name="date_of_publication" value="@form.get.dateOfPublication" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
 	                		</div>
 						</div>
 					</div>
@@ -649,7 +649,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Justification <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="justification" id="inputJustification" cols="100" rows="1" value="@form("justification").value">@form("justification").value</textarea>
+				            	<textarea class="form-control" name="justification" id="inputJustification" cols="100" rows="1" value="@form.get.justification">@form.get.justification</textarea>
 							</div>
 						</div>
 					</div>
@@ -662,7 +662,7 @@
 			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
 								<select name="selectionType" id="selectionType" class="form-control">
-					                @for(selectionType <- uk.bl.Const.SelectionType.values()) {
+					                @for(selectionType <- selectionTypes) {
 						                @if(form.get.selectionType != null && form.get.selectionType.equals(selectionType.name)) {
 						                	<option value="@selectionType.name" selected>@selectionType.getValue</option>
 						                } else {
@@ -680,7 +680,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(This field allows further notes to selection for WA team, not captured in Justification field.)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="selector_notes" id="input_selector_notes" cols="100" rows="1" value="@form("selectorNotes").value">@form("selectorNotes").value</textarea>
+				            	<textarea class="form-control" name="selector_notes" id="input_selector_notes" cols="100" rows="1" value="@form.get.selectorNotes">@form.get.selectorNotes</textarea>
 							</div>
 						</div>
 					</div>
@@ -691,7 +691,7 @@
 						<div class="form-group">
 							<label for="legacy_cite_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
 						    <div class="col-sm-6">
-			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form("legacySiteId").value">
+			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form.get.legacySiteId">
 							</div>
 						</div>
 					</div>
@@ -714,14 +714,14 @@
 				</div>		
 				
 				@if(form.get.indicateNpldStatus()) {    	
-				<div class="padding-20">
-					<div class="alert alert-info">
-						NB. There are other records within this domain for which data has already been provided.
-						@for(targetObj <- form.get.getNpldStatusList()) {
-							<p><a href="@routes.TargetController.viewAct(targetObj.url)">@targetObj.title @targetObj.fieldUrl</a></p>
-						}
-					</div>
-				</div>	
+					<div class="padding-20">
+						<div class="alert alert-info">
+							NB. There are other records within this domain for which data has already been provided.
+							@for(targetObj <- form.get.getNpldStatusList()) {
+								<p><a href="@routes.TargetController.viewAct(targetObj.url)">@targetObj.title @targetObj.fieldUrl</a></p>
+							}
+						</div>
+					</div>	
 				}	     	
 
 	    		<div class="row padding-10">
@@ -780,7 +780,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_uk_postal_address").value != null && form("field_uk_postal_address").value == "true") {             
+				                @if(form.get.ukPostalAddress != null && form.get.ukPostalAddress) {             
 					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_uk_postal_address" value="true" />
@@ -795,7 +795,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_uk_postal_address_url" value="@form("fieldUkPostalAddressUrl").value" size="60" maxlength="2048" class="form-control" />
+		 						<input type="text" name="field_uk_postal_address_url" value="@form.get.ukPostalAddressUrl" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>
@@ -806,7 +806,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_via_correspondence").value != null && form("field_via_correspondence").value == "true") {             
+				                @if(form.get.viaCorrespondence != null && form.get.viaCorrespondence) {             
 					                <input type="checkbox" name="field_via_correspondence" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_via_correspondence" value="true" />
@@ -821,7 +821,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Via Correspondence: Notes <small class="text-center">(Please record details of correspondence with site owner)</small></label>
 						    <div class="col-sm-6">
-		 						<textarea name="field_notes" cols="100" rows="1" class="form-control">@form("value").value</textarea>
+		 						<textarea name="field_notes" cols="100" rows="1" class="form-control">@form.get.value</textarea>
 							</div>
 						</div>
 					</div>
@@ -833,7 +833,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("fieldProfessionalJudgement").value != null && form("fieldProfessionalJudgement").value == "true") {             
+				                @if(form.get.professionalJudgement != null && form.get.professionalJudgement) {             
 					                <input type="checkbox" name="field_professional_judgement" value="true" checked/>
 				                } else {
 					                <input type="checkbox" name="field_professional_judgement" value="true" />
@@ -848,7 +848,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
 						    <div class="col-sm-6">
-			 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@form("fieldProfessionalJudgementExp").value</textarea>
+			 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@form.get.professionalJudgementExp</textarea>
 							</div>
 						</div>
 					</div>
@@ -860,7 +860,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("field_no_ld_criteria_met").value != null && form("fieldNoLdCriteriaMet").value == "true") {             
+				                @if(form.get.noLdCriteriaMet != null && form.get.noLdCriteriaMet) {             
 					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked/>
 				                } else {
 				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true" />
@@ -880,11 +880,11 @@
 							<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
 								<select name="field_scope" id="field_scope" class="form-control">
-					                @for(field_scope <- Target.getAllScopeTypes()) {
-						                @if(field_scope.equals(form("field_scope").value)) {
-						                	<option selected>@TargetController.getScopeGuiName(form("field_scope").value)</option>
+					                @for(scopeType <- scopeTypes) {
+						                @if(form.get.scope != null && form.get.scope.equals(scopeType.name)) {
+						                	<option value="@scopeType.name" selected>@scopeType.getValue</option>
 						                } else {
-						                	<option>@TargetController.getScopeGuiName(field_scope)</option>
+						                	<option value="@scopeType.name">@scopeType.getValue</option>
 						                }
 					                }
 								</select>
@@ -899,11 +899,11 @@
 							<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
 								<select name="field_depth" id="field_depth" class="form-control">
-					                @for(field_depth <- Target.getAllDepthTypes()) {
-						                @if(field_depth.equals(form("field_depth").value)) {
-						                	<option selected>@TargetController.getDepthGuiName(form("field_depth").value)</option>
+					                @for(depthType <- depthTypes) {
+						                @if(form.get.depth != null && form.get.depth.equals(depthType.name)) {
+						                	<option value="@depthType.name" selected>@depthType.getValue</option>
 						                } else {
-						                	<option>@TargetController.getDepthGuiName(field_depth)</option>
+						                	<option value="@depthType.name">@depthType.getValue</option>
 						                }
 					                }
 								</select>
@@ -1162,7 +1162,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
 					    <div class="col-sm-6">
-			            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" value="@form("archivistNotes").value">@form("archivistNotes").value</textarea>
+			            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" value="@form.get.archivistNotes">@form.get.archivistNotes</textarea>
 						</div>
 					</div>
 				</div>
@@ -1175,7 +1175,7 @@
 					<div class="form-group">
 		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
 					    <div class="col-sm-6">
-               				<textarea class="form-control" name="revision" id="inputRevision">@form("revision").value</textarea>
+               				<textarea class="form-control" name="revision" id="inputRevision">@form.get.revision</textarea>
 						</div>
 					</div>
 				</div>

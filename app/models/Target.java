@@ -67,6 +67,10 @@ public class Target extends UrlModel {
 	public String authors;
 
 	@JsonIgnore
+	@Column(columnDefinition = "text")
+	public String originatingOrganisation;
+	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "organisation_id")
 	public Organisation organisation;
@@ -107,7 +111,7 @@ public class Target extends UrlModel {
     @ManyToMany
 	@JoinTable(name = "flag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
-    public List<Target> flags;
+    public List<Flag> flags;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
@@ -301,6 +305,12 @@ public class Target extends UrlModel {
 
 	@Transient
 	public String formUrl;
+
+//	public String title;
+//	
+//
+//	@Column(columnDefinition = "text")
+//	public String revision;
 	
 //		"body":[],
 //		"field_scope":"root",
@@ -2669,14 +2679,7 @@ public class Target extends UrlModel {
 		this.format = format;
 	}
 
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
+	
 	public String fieldUrl() {
 		List<String> urls = new ArrayList<String>();
 		for (FieldUrl fieldUrl : this.fieldUrls) {
@@ -2742,7 +2745,23 @@ public class Target extends UrlModel {
 	public boolean isUkRegistration() {
 		return Scope.INSTANCE.isUkHosting(this.fieldUrls);
 	}
+	
+	public String tagsAsString() {
+		List<String> names = new ArrayList<String>();
+		for (Tag tag : this.tags) {
+			names.add(tag.name);
+		}
+		return StringUtils.join(names, ", ");
+	}
 
+	public String flagsAsString() {
+		List<String> names = new ArrayList<String>();
+		for (Flag flag : this.flags) {
+			names.add(flag.name);
+		}
+		return StringUtils.join(names, ", ");
+	}
+	
 	@Override
 	public String toString() {
 		return "Target [qaIssue=" + qaIssue + ", authorUser=" + authorUser
