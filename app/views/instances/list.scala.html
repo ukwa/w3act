@@ -40,7 +40,7 @@
     }
     
     // Generate the link
-    routes.Instances.list(newPage, sortBy, order, searchurl)
+    routes.InstanceController.list(newPage, sortBy, order, searchurl)
     
 }
 
@@ -90,7 +90,7 @@
     
 		<div id="forms">
 			@warningmessage(flash)
-			@helper.form(action=routes.Instances.search, 'class -> "form-inline") {
+			@helper.form(action=routes.InstanceController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
    					<input type="hidden" name="s" value="@currentSortBy">
@@ -126,7 +126,7 @@
 			<tbody>
 				@for(instance <- currentPage.getList) {
 				<tr>
-					<td><a class="brand" href="@routes.InstanceController.edit(instance.url)">@instance.title</a><br><a class="brand" href="@instance.getFieldUrlAsStr">@instance.getFieldUrlAsStr</a></td>
+					<td><a class="brand" href="@routes.InstanceController.edit(instance.id)">@instance.title</a><br><a class="brand" href="@instance.getFieldUrlAsStr">@instance.getFieldUrlAsStr</a></td>
 					<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.getFieldUrlAsStr">(mid-crawl),</a>
 	                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
 	                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
@@ -140,8 +140,15 @@
 					}
 					<td>0</td>
 					<td>@instance.fieldCrawlFrequency</td>
-					<td><a class="brand" href="@routes.Curators.edit(instance.authorUser.id)">@instance.authorUser.name</a></td>
-					<td>@instance.qaIssue.name</td>
+					<td>
+						@if(instance.authorUser != null) {
+							<a class="brand" href="@routes.Curators.edit(instance.authorUser.id)">@instance.authorUser.name</a>
+						}
+					</td>
+					<td>@if(instance.qaIssue != null) {
+						@instance.qaIssue.name
+						}
+					</td>
 					<td>@instance.checkScope(instance.getFieldListAsStr("fieldUrl"))</td>
 					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.getFieldUrlAsStr">(mementos)</a></td>
 				</tr>

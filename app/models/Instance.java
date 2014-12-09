@@ -572,26 +572,17 @@ public class Instance extends UrlModel {
 		return null;
 	}
 	
-    /**
-     * Retrieve a Instance by URL.
-     * @param url
-     * @return instance object 
-     */
-    public static Instance findByUrl(String url) {
-    	Instance res = new Instance();
-//        Logger.info("instance url: " + url);
-        
-        if (!url.contains(Const.COMMA)) {
-	        Instance res2 = find.where().eq(Const.URL, url).findUnique();
-	        if (res2 == null) {
-	        	res.title = Const.NONE;
-	        } else {
-	        	res = res2;
-	        }
-//	        Logger.info("instance title: " + res.title);
-        }
-    	return res;
-    }          
+	public static Instance findById(Long id) {	
+		return find.where().eq("id", id).findUnique();
+	}
+
+	public static Instance findByUrl(String url) {
+		return find.where().eq(Const.URL, url).findUnique();
+	}
+
+	public static Instance findByWct(String url) {
+		return find.where().eq("edit_url", url).eq(Const.ACTIVE, true).findUnique();
+	}
 
     /**
      * Retrieve an Instance by timestamp.
@@ -645,17 +636,6 @@ public class Instance extends UrlModel {
         } else {
         	res = instance;
         }
-    	return res;
-    }          
-
-    /**
-     * Retrieve a Instance by Id (nid).
-     * @param nid
-     * @return target 
-     */
-    public static Instance findById(Long id) {
-        Logger.info("target nid: " + id);       
-        Instance res = find.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
 
@@ -740,8 +720,8 @@ public class Instance extends UrlModel {
 	 * @param url
 	 * @return link to the instance
 	 */
-	public static String getLatestInstance(String url) {
-		String res = "";
+	public static Instance getLatestInstance(String url) {
+		Instance res = null;
 		Date lastDate = null;
 		if (url != null && url.length() > 0) {
 			List<Instance> instanceList = new ArrayList<Instance>();
@@ -763,7 +743,7 @@ public class Instance extends UrlModel {
 	        }
 		}
 		Instance instance = Instance.findByTimestampAndUrl(lastDate, url);
-		res = instance.url;	
+		res = instance;	
 		return res;
 	}
 	
@@ -793,12 +773,17 @@ public class Instance extends UrlModel {
      */
     public static Page<Instance> page(int page, int pageSize, String sortBy, String order, String filter) {
 
-//    	Logger.info("Instnce.page() filter: " + filter);
-        return find.where().icontains(Const.FIELD_URL_NODE, filter)
-        		.orderBy(sortBy + " " + order)
-        		.findPagingList(pageSize)
-        		.setFetchAhead(false)
-        		.getPage(page);
+		ExpressionList<Instance> exp = find.where();
+		Page<Instance> results = exp.query().fetch("target").fetch("target.fieldUrls").where().icontains("target.fieldUrls.url", filter).orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);
+
+		Logger.info("results: " + results.getList());
+//		find.where().icontains(Const.FIELD_URL_NODE, filter)
+//		.orderBy(sortBy + " " + order)
+//		.findPagingList(pageSize)
+//		.setFetchAhead(false)
+//		.getPage(page)
+    	
+    	return results;
     }    
     
     /**

@@ -1507,7 +1507,7 @@ public class TargetController extends AbstractController {
             targetFromDB.flagNotes = targetFromForm.flagNotes;
             
             String dateOfPublication = requestData.get("date_of_publication");
-        	if (dateOfPublication != null) {
+        	if (StringUtils.isNotEmpty(dateOfPublication)) {
     			DateFormat formatter = new SimpleDateFormat("dd-MM-yy");
     			try {
 					Date date = formatter.parse(dateOfPublication);

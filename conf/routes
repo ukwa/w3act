@@ -161,13 +161,13 @@ GET     /mailtemplates/:template             	controllers.MailTemplates.view(tem
 GET     /mailtemplates/:template/edit        	controllers.MailTemplates.edit(template)
 POST    /mailtemplates                  		controllers.MailTemplates.save()
 
-GET     /targets                            controllers.TargetController.index()
-POST   	/targets/search          			controllers.TargetController.search()
-GET    	/targets/search-targets    			controllers.TargetController.searchTargets()
+GET     /targets                            	controllers.TargetController.index()
+POST   	/targets/search          				controllers.TargetController.search()
+GET    	/targets/search-targets    				controllers.TargetController.searchTargets()
 GET    	/targets/search-targets-by-collection	controllers.TargetController.searchTargetsByCollection()
 GET    	/targets/search-targets-by-organisation	controllers.TargetController.searchTargetsByOrganisation()
-GET     /targets/search-targets-by-user  	controllers.TargetController.searchTargetsByUser()
-GET    	/targets/search-targets-by-subject	controllers.TargetController.searchTargetsBySubject()
+GET     /targets/search-targets-by-user  		controllers.TargetController.searchTargetsByUser()
+GET    	/targets/search-targets-by-subject		controllers.TargetController.searchTargetsBySubject()
 
 GET    	/targets/filterbyjson/:url			controllers.TargetController.filterByJson(url)
 GET    	/targets/lookup                  	controllers.TargetController.lookup(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
@@ -186,10 +186,25 @@ GET     /targets/act/:id                    controllers.TargetController.viewAct
 GET     /targets/wct/:id                    controllers.TargetController.viewWct(id)
 GET     /targets/:revision/revision         controllers.TargetController.viewrevision(revision:Long)
 GET     /targets/edit/:id                   controllers.TargetController.edit(id:Long)
+POST    /targets                	 		controllers.TargetController.save()
 
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissions.showCrawlPermissions(target)
 GET     /target/licencerequest          	controllers.CrawlPermissions.licenceRequestForTarget(name, target)
 GET     /target/archive                 	controllers.TargetController.archiveTarget(target)
+
+GET     /instances/:id                		controllers.InstanceController.view(id:Long)
+GET     /instances/act/:id                  controllers.InstanceController.viewAct(id)
+GET     /instances/wct/:id                  controllers.InstanceController.viewWct(id)
+GET     /instances/:id/edit             	controllers.InstanceController.edit(id:Long)
+GET     /instances/:revision/revision       controllers.InstanceController.viewrevision(revision:Long)
+
+GET     /instances                          controllers.InstanceController.index()
+POST    /instances/search          			controllers.InstanceController.search()
+GET    	/instances/filterbyjson/:url		controllers.InstanceController.filterByJson(url)
+GET    	/instances/list/                  	controllers.InstanceController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET     /instances/new/:title      			controllers.InstanceController.create(title)
+GET    	/instances/listbytarget/           	controllers.InstanceController.listByTarget(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", t ?= "")
+GET     /instances/showbytarget/:url		controllers.InstanceController.showByTarget(url)
 
 GET     /contact                                controllers.Contact.index()
 POST    /contact/send              	            controllers.Contact.send()
@@ -207,10 +222,6 @@ GET     /exportlookup                           controllers.Export.index()
 GET     /exportlookup/csv                       controllers.Export.search()
 
 # Domain objects
-
-GET     /instance/:instance                 controllers.InstanceController.view(instance)
-GET     /instancerevision/:revision         controllers.InstanceController.viewrevision(revision:Long)
-GET     /instanceedit/:instance             controllers.InstanceController.edit(instance)
 
 GET     /contactpersons                     controllers.ContactPersons.index()
 GET    	/contactpersons/search              controllers.ContactPersons.search()
@@ -252,20 +263,8 @@ POST    /nominations/load/json         		controllers.Nominations.load()
 POST    /nominations                   		controllers.Nominations.save()
 
 
-# Forms
-POST    /targets                	 		controllers.TargetController.save()
-
 POST    /instance/save-instance             controllers.InstanceController.saveInstance()
 POST    /user                     			controllers.Curators.save()
-
-GET     /instances                          controllers.Instances.index()
-POST    /instances/search          			controllers.Instances.search()
-GET    	/instances/filterbyjson/:url		controllers.Instances.filterByJson(url)
-GET    	/instances/list/                  	controllers.Instances.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
-GET     /instances/new/:title      			controllers.Instances.create(title)
-GET    	/instances/listbytarget/           	controllers.Instances.listByTarget(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", t ?= "")
-GET     /instances/showbytarget/:url		controllers.Instances.showByTarget(url)
-
 
 # Scope
 GET     /api/scope/:url                      controllers.TargetController.isInScope(url)

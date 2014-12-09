@@ -64,7 +64,7 @@ public enum DataImport {
 	        	this.importTargets();
 			}
 			if (Ebean.find(Instance.class).findRowCount() == 0) {
-//				this.importInstances();
+				this.importInstances();
 			}
 	        	
 //				// aggregate url data from drupal and store JSON content in a file
