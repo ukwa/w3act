@@ -19,11 +19,13 @@ public class Global extends GlobalSettings {
     public void onStart(Application app) {
     	// should run in background and return view
     	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
+    	Boolean omitInstances = play.Play.application().configuration().getBoolean("application.data.import.omit_instances");
     	Logger.info("dataImport: " + dataImport);
 //        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 
-    	if (dataImport) {
-    		DataImport.INSTANCE.insert();
+    	if (dataImport != null && dataImport) {
+    		if (omitInstances == null) omitInstances = false;
+    		DataImport.INSTANCE.insert(!omitInstances);
     	}
     	
     	/*ActorRef myActor = Akka.system().actorOf(Props.create(CrawlActor.class));

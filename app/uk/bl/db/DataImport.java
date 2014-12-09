@@ -37,7 +37,7 @@ public enum DataImport {
 
 	INSTANCE;
 
-	public void insert() {
+	public void insert(boolean importInstances) {
         if(Ebean.find(User.class).findRowCount() == 0) {
             try {
                 Logger.info("loading roles, permissions and users from configuration ...");
@@ -71,11 +71,6 @@ public enum DataImport {
                 @SuppressWarnings("unchecked")
 				Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
                 insertInitialData(Const.ORGANISATIONS, Organisation.class, all);
-                Logger.info("loading documents from configuration ...");
-                @SuppressWarnings("unchecked")
-				Map<String,List<Object>> allDocuments = (Map<String,List<Object>>)Yaml.load("documents.yml");
-                insertInitialData(Const.JOURNAL_TITLES, JournalTitle.class, allDocuments);
-                insertInitialData(Const.DOCUMENTS, Document.class, allDocuments);
                 
                 Logger.info("load curators ...");
 		        List<Object> allCurators = JsonUtils.getDrupalDataBase(Const.NodeType.USER);
@@ -88,17 +83,6 @@ public enum DataImport {
 				// store urls in DB
                 Ebean.save(allUrls);
                 Logger.info("targets successfully loaded");
-//                List<Target> targetList = (List<Target>) Target.find.all();
-//                Iterator<Target> targetItr = targetList.iterator();
-//                while (targetItr.hasNext()) {
-//                	Target target = targetItr.next();
-////                    Logger.info("Target test object: " + target.toString());
-//					if (target.field_subject == null
-//							|| target.field_subject.length() == 0) {
-//						target.field_subject = Const.NONE;
-//						Ebean.update(target);
-//					}
-//                }
                 Logger.info("load organisations ...");
 				// aggregate organisations data from drupal and store JSON content in a file
 		        List<Object> allOrganisations = JsonUtils.getDrupalData(Const.NodeType.ORGANISATION);
@@ -122,15 +106,17 @@ public enum DataImport {
 				// store collections in DB
                 Ebean.save(allCollections);
                 Logger.info("collections successfully loaded");
-                Logger.info("load instances");
-				// aggregate instances data from drupal and store JSON content in a file
-		        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
-		        Logger.info("Number of instances: " + allInstances.size());
-				// store instances in DB
-                Ebean.save(allInstances);
-                Logger.info("instances successfully loaded");
-                JsonUtils.mapInstancesToTargets();
-                Logger.info("map instances to targets");
+                if (importInstances) {
+	                Logger.info("load instances");
+					// aggregate instances data from drupal and store JSON content in a file
+			        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
+			        Logger.info("Number of instances: " + allInstances.size());
+					// store instances in DB
+	                Ebean.save(allInstances);
+	                Logger.info("instances successfully loaded");
+	                JsonUtils.mapInstancesToTargets();
+	                Logger.info("map instances to targets");
+                }
                 JsonUtils.getDomainForTargets();
                 Logger.info("Target domains extracted");
                 normalizeUrls();

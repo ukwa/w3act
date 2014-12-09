@@ -41,6 +41,7 @@ logger.play=INFO
 logger.application=DEBUG
 
 application.data.import=true
+application.data.import.omit_instances=true
 
 # SMTP connection for email sending
 
