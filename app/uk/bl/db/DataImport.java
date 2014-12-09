@@ -308,7 +308,7 @@ public enum DataImport {
 	public static void main(String[] args) {
 		Logger.info("start");
 		new play.core.StaticApplication(new java.io.File("."));
-		DataImport.INSTANCE.insert();
+		DataImport.INSTANCE.insert(true);
 		Logger.info("finished");
 	}
 }
