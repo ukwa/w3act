@@ -19,7 +19,7 @@ public class Global extends GlobalSettings {
     public void onStart(Application app) {
     	// should run in background and return view
     	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
-    	Boolean omitInstances = play.Play.application().configuration().getBoolean("application.data.import.omit_instances");
+    	Boolean omitInstances = play.Play.application().configuration().getBoolean("application.data.omit_instances");
     	Logger.info("dataImport: " + dataImport);
 //        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 
