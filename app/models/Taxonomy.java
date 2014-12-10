@@ -1135,7 +1135,7 @@ public class Taxonomy extends Model {
 	    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 	    		Taxonomy subject = findByUrl(part);
-	    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+	    		if (subject != null && subject.tid != null && subject.name != null && subject.name.length() > 0) {
 //			    	Logger.info("subject name: " + subject.name);
 	    			res.add(subject);
 	    		}

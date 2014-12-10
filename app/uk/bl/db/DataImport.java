@@ -38,6 +38,12 @@ public enum DataImport {
 	INSTANCE;
 
 	public void insert(boolean importInstances) {
+		
+		//List<Object> allTaxonomies2 = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY);
+//        List<Taxonomy> cleanedTaxonomies = cleanUpTaxonomies(allTaxonomies);
+		// store taxonomies in DB
+        //Ebean.save(allTaxonomies2);
+		
         if(Ebean.find(User.class).findRowCount() == 0) {
             try {
                 Logger.info("loading roles, permissions and users from configuration ...");
@@ -168,18 +174,10 @@ public enum DataImport {
                 	instance.tag_to_instance = Tag.convertUrlsToObjects(instance.tags);
         			Ebean.update(instance);
 	            }
-                // Create association between Permission and Role
-	            List<Permission> permissionList = (List<Permission>) Permission.find.all();
-	            Iterator<Permission> permissionItr = permissionList.iterator();
-	            while (permissionItr.hasNext()) {
-	            	Permission permission = permissionItr.next();
-//                    Logger.info("Test permission test object: " + permission.toString());
-                    permission.updateRole();
-        			Ebean.update(permission);
-	            }
                 Logger.info("+++ Data import completed +++");
 	        } catch (Exception e) {
             	Logger.info("Store error: " + e);
+            	e.printStackTrace();
             }
         }
 	}

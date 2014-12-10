@@ -483,7 +483,7 @@ public class DCollection extends Model {
 	    	for (String part: parts) {
 //		    		Logger.info("part: " + part);
 	    		DCollection collection = findByUrl(part);
-	    		if (collection != null && collection.title != null && collection.title.length() > 0) {
+	    		if (collection != null && collection.nid != null && collection.title != null && collection.title.length() > 0) {
 //			    	Logger.info("collection title: " + collection.title);
 	    			res.add(collection);
 	    		}

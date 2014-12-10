@@ -65,8 +65,9 @@ public class JsonUtils {
 	 * @param type
 	 *            The node type
 	 * @return extracted data
+	 * @throws IOException 
 	 */
-	private static String authenticateAndLoadDrupal(String urlStr, NodeType type) {
+	private static String authenticateAndLoadDrupal(String urlStr, NodeType type) throws IOException {
 		String res = urlStr;
 		String user = Play.application().configuration().getString(Const.DRUPAL_USER);
 		String password = Play.application().configuration().getString(Const.DRUPAL_PASSWORD);
@@ -85,8 +86,9 @@ public class JsonUtils {
 	 * @param urlStr
 	 * @param type
 	 * @return list of objects
+	 * @throws IOException 
 	 */
-	private static String downloadData(String urlStr, NodeType type) {
+	private static String downloadData(String urlStr, NodeType type) throws IOException {
 		String res = "";
 		if (urlStr != null && urlStr.length() > 0) {
 			// aggregate data from drupal and store JSON content in a file
@@ -388,13 +390,19 @@ public class JsonUtils {
 	private static void aggregateObjectList(String urlStr,
 			List<String> urlList, NodeType type, TaxonomyType taxonomy_type,
 			List<Object> res) {
-		Logger.info("extract data for: " + urlStr + " type: " + type);
-		String content = downloadData(urlStr, type);
-		JsonNode mainNode = Json.parse(content);
-		if (mainNode != null) {
-			List<Object> pageList = JsonUtils.parseJsonExt(content, type,
-					taxonomy_type, urlList, res);
-			res.addAll(pageList);
+		try {
+			Logger.info("extract data for: " + urlStr + " type: " + type);
+		
+			String content = downloadData(urlStr, type);
+			JsonNode mainNode = Json.parse(content);
+			if (mainNode != null) {
+				List<Object> pageList = JsonUtils.parseJsonExt(content, type,
+						taxonomy_type, urlList, res);
+				res.addAll(pageList);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Logger.info("problem with download: " + e.getMessage());
 		}
 	}
 
@@ -446,7 +454,7 @@ public class JsonUtils {
 						.split(Const.COMMA));
 				Iterator<String> itr = resList.iterator();
 				while (itr.hasNext()) {
-					executeUrlRequest(itr.next(), urlList, type, taxonomy_type,
+					executeUrlRequest(itr.next().trim(), urlList, type, taxonomy_type,
 							res);
 				}
 			} else {
