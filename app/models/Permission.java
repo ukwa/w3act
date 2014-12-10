@@ -5,10 +5,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -39,7 +37,7 @@ public class Permission extends ActModel {
 //	public Role role;
     
     //bi-directional many-to-many association to Role
-	@JoinTable(name = Const.PERMISSION_ROLE, joinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") },
+	@JoinTable(name = "permission_role", joinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
 	@ManyToMany
     private List<Role> roles = new ArrayList<Role>();

@@ -87,7 +87,7 @@
         	<li id="li-overview"><a href="#overview" data-toggle="tab">Overview</a></li>
         	<li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
 	        <li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-			@if(Target.isInScopeAll(instance.target.fieldUrl(), instance.url)) {
+			@if(instance.target.isInScopeAll()) {
 				<font color="green">(+)</font>
 			} else {
 				<font color="red">(-)</font>
@@ -258,22 +258,22 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If know, please add the current status of the site)</small></label>
 						    <div class="col-sm-6">
-							  		@if(instance.fieldLiveSiteStatus != null && instance.fieldLiveSiteStatus.equals("N/A")) {
+							  		@if(instance.liveSiteStatus != null && instance.liveSiteStatus.equals("N/A")) {
 							        	N/A
 							        }
-							  		@if(instance.fieldLiveSiteStatus != null && instance.fieldLiveSiteStatus.equals("Still live")) {
+							  		@if(instance.liveSiteStatus != null && instance.liveSiteStatus.equals("Still live")) {
 							        	Still live 
 							        }
-							  		@if(instance.fieldLiveSiteStatus != null && instance.fieldLiveSiteStatus.equals("No longer updated")) {
+							  		@if(instance.liveSiteStatus != null && instance.liveSiteStatus.equals("No longer updated")) {
 							        	No longer updated 
 							        }
-							  		@if(instance.fieldLiveSiteStatus != null && instance.fieldLiveSiteStatus.equals("Vanished")) {
+							  		@if(instance.liveSiteStatus != null && instance.liveSiteStatus.equals("Vanished")) {
 							        	Vanished
 							        }
-							  		@if(instance.fieldLiveSiteStatus != null && !instance.fieldLiveSiteStatus.equals("Vanished")
-							  			&& !instance.fieldLiveSiteStatus.equals("No longer updated")
-							  			&& !instance.fieldLiveSiteStatus.equals("Still live")
-							  			&& !instance.fieldLiveSiteStatus.equals("N/A")) {
+							  		@if(instance.liveSiteStatus != null && !instance.liveSiteStatus.equals("Vanished")
+							  			&& !instance.liveSiteStatus.equals("No longer updated")
+							  			&& !instance.liveSiteStatus.equals("Still live")
+							  			&& !instance.liveSiteStatus.equals("N/A")) {
 							        	none
 							        }
 							</div>
@@ -286,7 +286,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
 						    <div class="col-sm-6">
-				                @if(instance.fieldKeySite != null && instance.fieldKeySite) {  
+				                @if(instance.keySite != null) {  
 				                   yes           
 				                } else {
 				                   no
@@ -301,7 +301,7 @@
 						<div class="form-group">
 							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
 						    <div class="col-sm-6">
-			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@instance.fieldWct_id">
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@instance.wctId">
 							</div>
 						</div>
 					</div>
@@ -312,7 +312,7 @@
 						<div class="form-group">
 			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
 						    <div class="col-sm-6">
-			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@instance.fieldSpt_id">
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@instance.sptId">
 							</div>
 						</div>
 					</div>
@@ -334,7 +334,7 @@
 						<div class="form-group">
 			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
 						    <div class="col-sm-6">
-						      	@instance.getSelectedTags()
+						    	@instance.tagsAsString()						    
 							</div>
 						</div>
 					</div>
@@ -358,7 +358,7 @@
 						<div class="form-group">
 			              	<label for="inputDescription" class="col-sm-6 control-label">Description <small class="text-center">(A description of this web site)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" value="@instance.fieldDescription" readonly>@instance.fieldDescription</textarea>
+				            	<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" value="@instance.description" readonly>@instance.description</textarea>
 							</div>
 						</div>
 					</div>
@@ -369,8 +369,8 @@
 						<div class="form-group">
 			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <font color="red">*</font></label>
 			              	 <div class="col-sm-6">
-						        @if(instance.url != null) {
-  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjectsByInstance(instance.url))
+			              	 	@if(instance.subjectsAsString.length > 0) {
+				              	 	@instance.subjectsAsString()
   								} else {
   								    none
   								}
@@ -384,8 +384,8 @@
 						<div class="form-group">
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
-						        @if(instance.url != null) {
-  									@models.Collection.getCollectionsAsString(models.Collection.getSelectedCollectionsByInstanceUrl(instance.url))
+						        @if(instance.collectionsAsString.length > 0) {
+						        	@instance.collectionsAsString
   								} else {
   								    none
   								}
@@ -414,7 +414,7 @@
 						<div class="form-group">
 			              	<label for="mySel" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea readonly class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@instance.target.organisation.url">@instance.target.organisation.url</textarea>
+								@instance.originatingOrganisationsAsString()
 							</div>
 						</div>
 					</div>
@@ -466,7 +466,7 @@
 						<div class="form-group">
 			              	<label for="status" class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
 						    <div class="col-sm-6">
-						      	@instance.getSelectedFlags()
+						      	@instance.flagsAsString()
 							</div>
 						</div>
 					</div>
@@ -501,7 +501,7 @@
 						<div class="form-group">
 			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
-						        @if(instance.url != null && instance.selectionType != null) {
+						        @if(instance.selectionType != null) {
   									@instance.selectionType
   								} else {
   								    none
@@ -539,7 +539,7 @@
 						<div class="form-group">
 							<label for="legacy_site_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
 						    <div class="col-sm-6">
-			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@instance.legacySite_id" readonly>
+			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@instance.legacySiteId" readonly>
 							</div>
 						</div>
 					</div>
@@ -612,7 +612,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 					    <div class="col-sm-6">
-			                @if(instance.fieldUkPostalAddress != null && instance.fieldUkPostalAddress) {             
+			                @if(instance.ukPostalAddress) {             
 				                yes
 			                } else {
 				                no
@@ -627,7 +627,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
 					    <div class="col-sm-6">
-	 						<input type="text" value="@instance.fieldUkPostalAddressUrl" size="60" maxlength="2048" class="form-control"  readonly/>
+	 						<input type="text" value="@instance.ukPostalAddressUrl" size="60" maxlength="2048" class="form-control"  readonly/>
 						</div>
 					</div>
 				</div>
@@ -638,7 +638,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 					    <div class="col-sm-6">
-				                @if(instance.fieldViaCorrespondence != null && instance.fieldViaCorrespondence) {             
+				                @if(instance.viaCorrespondence) {             
 					                yes
 				                } else {
 					                no
@@ -653,7 +653,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Notes <small class="text-center">(Any relevant notes, e.g. a more detailed description of this URL or set of URLs)</small></label>
 					    <div class="col-sm-6">
-	 						<textarea cols="100" rows="1" class="form-control" readonly>@instance.fieldNotes</textarea>
+	 						<textarea cols="100" rows="1" class="form-control" readonly>@instance.notes</textarea>
 						</div>
 					</div>
 				</div>
@@ -664,7 +664,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
 					    <div class="col-sm-6">
-			                @if(instance.fieldProfessionalJudgement != null && instance.fieldProfessionalJudgement) {             
+			                @if(instance.professionalJudgement) {             
 				                yes
 			                } else {
 				                no
@@ -679,7 +679,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
 					    <div class="col-sm-6">
-		 					<textarea cols="100" rows="1" class="form-control" readonly>@instance.fieldProfessionalJudgementExp</textarea>
+		 					<textarea cols="100" rows="1" class="form-control" readonly>@instance.professionalJudgementExp</textarea>
 						</div>
 					</div>
 				</div>
@@ -690,7 +690,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 					    <div class="col-sm-6">
-			                @if(instance.fieldNoLdCriteriaMet != null && instance.fieldNoLdCriteriaMet) {             
+			                @if(instance.noLdCriteriaMet) {             
 				                yes
 			                } else {
 			                	no
@@ -707,8 +707,8 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 					    <div class="col-sm-6">
-			                @if(instance.fieldScope != null) {             
-				                @instance.fieldScope
+			                @if(instance.scope != null) {             
+				                @instance.scope
 			                } else {
 				                none
 			                }
@@ -722,8 +722,8 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 					    <div class="col-sm-6">
-			                @if(instance.fieldDepth != null) {             
-				                @instance.fieldDepth
+			                @if(instance.depth != null) {             
+				                @instance.depth
 			                } else {
 				                none
 			                }
@@ -737,7 +737,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
 					    <div class="col-sm-6">
-			                @if(instance.fieldIgnoreRobotsTxt != null && instance.fieldIgnoreRobotsTxt) {             
+			                @if(instance.ignoreRobotsTxt != null && instance.ignoreRobotsTxt) {             
 				                yes
 			                } else {
 				                no
@@ -752,7 +752,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Crawl Frequency <small class="text-center">(How often should this site be archived?)</small></label>
 					    <div class="col-sm-6">
-	 						<input type="text" name="field_crawl_frequency" value="@instance.fieldCrawlFrequency" size="60" maxlength="2048" class="form-control" readonly/>
+	 						<input type="text" name="field_crawl_frequency" value="@instance.crawlFrequency" size="60" maxlength="2048" class="form-control" readonly/>
 						</div>
 					</div>
 				</div>
@@ -763,7 +763,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Start date</label>
 					    <div class="col-sm-6">
-	 						@instance.fieldCrawlStartDate
+	 						@instance.crawlStartDate
                 		</div>
 					</div>
 				</div>
@@ -774,7 +774,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">End date</label>
 					    <div class="col-sm-6">
-	 						@instance.fieldCrawlEndDate
+	 						@instance.crawlEndDate
                 		</div>
 					</div>
 				</div>
@@ -828,18 +828,20 @@
 					</a>
 				</div>
 				<div id="collapseInstances" class="panel-collapse collapse">
-					<div class="panel-footer">
-						<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@instance.target.fieldUrl()">In QA Wayback</a>
-					</div>
-				    <div class="panel-footer">
-			        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.target.fieldUrl()">In Open UK Web Archive</a>
-					</div>
-					<div class="panel-footer">
-						<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@instance.target.fieldUrl()">In other web archives</a>
-					</div>
-				    <div class="panel-footer">
-			        	<a class="brand" target="_blank" href="@instance.target.fieldUrl()">Live site</a>
-					</div>
+					@for(fieldUrl <- instance.target.fieldUrls) {
+						<div class="panel-footer">
+							<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@fieldUrl.url">In QA Wayback</a>
+						</div>
+					    <div class="panel-footer">
+				        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
+						</div>
+						<div class="panel-footer">
+							<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
+						</div>
+					    <div class="panel-footer">
+				        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
+						</div>
+					}
 				</div>
 			</div>
 		</div>

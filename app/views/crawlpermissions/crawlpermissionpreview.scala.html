@@ -5,10 +5,10 @@
 @main("", user) {
 
    	<div class="page-header">
-    	<h1><a href="@routes.CrawlPermissions.index()">Archivist Tasks > Crawl Permissions > </a>Crawl Permission Preview</h1>
+    	<h1><a href="@routes.CrawlPermissionController.index()">Archivist Tasks > Crawl Permissions > </a>Crawl Permission Preview</h1>
 	</div>
 
-	@helper.form(action=routes.CrawlPermissions.sendPreview) {
+	@helper.form(action=routes.CrawlPermissionController.sendPreview) {
 	
     <input type="hidden" name="email" value="@emails">		        
     <input type="hidden" name="subject" value="@MailTemplate.findByName(template).subject">		        
@@ -17,7 +17,7 @@
 						, "||URL||"
 						, "||LINK||"
 						, permission.target.title
-						, CrawlPermissions.injectServerName(routes.LicenceController.form(permission.url).absoluteURL(request()).toString()))">	
+						, CrawlPermissionController.injectServerName(routes.LicenceController.form(permission.url).absoluteURL(request()).toString()))">	
 	
 	<div class="row padding-10">
     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -52,7 +52,7 @@
 						, "||URL||"
 						, "||LINK||"
 						, permission.target.title
-						, CrawlPermissions.injectServerName(routes.LicenceController.form(permission.url).absoluteURL(request()).toString()))
+						, CrawlPermissionController.injectServerName(routes.LicenceController.form(permission.url).absoluteURL(request()).toString()))
 					</textarea>
 				</div>
 			</div>
@@ -71,5 +71,5 @@
 	}   	
 }
 } else {
-	@infomessage.render("Access Denied for URL @routes.CrawlPermissions.index()/preview")
+	@infomessage.render("Access Denied for URL @routes.CrawlPermissionController.index()/preview")
 }

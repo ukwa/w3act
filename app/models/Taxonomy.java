@@ -50,7 +50,7 @@ public class Taxonomy extends ActModel {
 
 	@JsonIgnore
 	@ManyToMany
-	@JoinTable(name = Const.TAXONOMY_USER, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+	@JoinTable(name = "taxonomy_user", joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
 	inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
 	public List<User> ownerUsers;
 
@@ -884,14 +884,14 @@ public class Taxonomy extends ActModel {
 		boolean firstTime = true;
 		while (itr.hasNext()) {
 			Taxonomy taxonomy = itr.next();
-			if(instance.hasSubject(taxonomy.url)) {
-				if (firstTime) {
-					res = taxonomy.name;
-					firstTime = false;
-				} else {
-					res = res + Const.COMMA + " " + taxonomy.name;
-				}
-			}
+//			if(instance.hasSubject(taxonomy.url)) {
+//				if (firstTime) {
+//					res = taxonomy.name;
+//					firstTime = false;
+//				} else {
+//					res = res + Const.COMMA + " " + taxonomy.name;
+//				}
+//			}
 		}
 		if (res.length() == 0) {
 			res = Const.NONE;
@@ -985,14 +985,14 @@ public class Taxonomy extends ActModel {
 			Iterator<Taxonomy> itrSub = subTaxonomyList.iterator();
 			while (itrSub.hasNext()) {
 				Taxonomy subTaxonomy = itrSub.next();
-				if(instance.hasSubSubject(subTaxonomy.url)) {
-					if (firstTime) {
-						res = subTaxonomy.name;
-						firstTime = false;
-					} else {
-						res = res + Const.COMMA + " " + subTaxonomy.name;
-					}
-				}
+//				if(instance.hasSubSubject(subTaxonomy.url)) {
+//					if (firstTime) {
+//						res = subTaxonomy.name;
+//						firstTime = false;
+//					} else {
+//						res = res + Const.COMMA + " " + subTaxonomy.name;
+//					}
+//				}
 			}
 		}
 		if (res.length() == 0) {
@@ -1038,18 +1038,18 @@ public class Taxonomy extends ActModel {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
-    		if (target.fieldSubject != null) {
-//    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
-		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Taxonomy subject = findByUrl(part);
-		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-//			    		Logger.info("subject name: " + subject.name);
-		    			res.add(subject);
-		    		}
-		    	}
-    		}
+//    		if (target.fieldSubject != null) {
+////    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
+//		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
+//		    	for (String part: parts) {
+////		    		Logger.info("part: " + part);
+//		    		Taxonomy subject = findByUrl(part);
+//		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+////			    		Logger.info("subject name: " + subject.name);
+//		    			res.add(subject);
+//		    		}
+//		    	}
+//    		}
     	}
 		return res;
 	}       
@@ -1091,18 +1091,18 @@ public class Taxonomy extends ActModel {
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
-    		if (target.fieldSubject != null) {
-//    			Logger.info("getSelectedSubjectsByInstance() field_subject: " + target.field_subject);
-		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Taxonomy subject = findByUrl(part);
-		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-//			    		Logger.info("subject name: " + subject.name);
-		    			res.add(subject);
-		    		}
-		    	}
-    		}
+//    		if (target.fieldSubject != null) {
+////    			Logger.info("getSelectedSubjectsByInstance() field_subject: " + target.field_subject);
+//		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
+//		    	for (String part: parts) {
+////		    		Logger.info("part: " + part);
+//		    		Taxonomy subject = findByUrl(part);
+//		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+////			    		Logger.info("subject name: " + subject.name);
+//		    			res.add(subject);
+//		    		}
+//		    	}
+//    		}
     	}
 		return res;
 	}       

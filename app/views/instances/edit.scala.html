@@ -1,131 +1,119 @@
-@(form: Form[Instance], user: User)
+@(form: Form[Instance], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType], licenses: List[License], crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus])
+
+@getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
+	Html(data.toString)
+}
 
 @script = {
 	<script>
-	(function() {
-	          var idle_timeout,
-	          SCOPE_URI = '/api/scope',
-	          MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
-	          TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
-	          IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
-        
-	          // Does the Scope lookup
-	          var doScope = function(text) {
-	              $.getJSON(SCOPE_URI + text, function(data) {
-	              //alert("Is in scope: " + data);
-	              var lab = document.getElementById('isInScope'); 
-	              if (data) {
-		              lab.innerHTML = "is in scope";
-		              lab.style = "color: green";
-	              } else {
-		              lab.innerHTML = "is not in scope";
-		              lab.style = "color: red";
-	              }
-	            });
-	          };
+		// This is the code that switches to the other page.
+		// We do this via JavaScript, and not a normal hyperlink,
+		// because that way we can communicate the current nav pill status as part of the link URL.
+		function switchPage() {
+			var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
+			var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
+			
+			// And finally we just attach the href to view.html and forward the browser. 
+			// An example URL would be: 'view.html#npld-scope'
+			window.location.href="@routes.InstanceController.view(form.get.id)" + href;
+		}
+  
+	
+		(function() {
+			var idle_timeout,
+			SCOPE_URI = '/api/scope',
+			MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
+			TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
+			IDLE_THRESHOLD = 500; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
+			
+			// Does the Scope lookup
+			var doScope = function(text) {
+				$.getJSON(SCOPE_URI + text, function(data) {
+					//alert("Is in scope: " + data);
+					var lab = document.getElementById('isInScope'); 
+					if (data) {
+						lab.innerHTML = "is in scope";
+						lab.style = "color: green";
+					} else {
+						lab.innerHTML = "is not in scope";
+						lab.style = "color: red";
+					}
+				});
+			};
+		})();
+		
+	    $(document).ready(function() {
 	          
-	          // Restarts the keyboard-idleness timeout
-	          var restartIdleTimeout = function(text) {
-	            if (idle_timeout)
-	              window.clearTimeout(idle_timeout);
+	        // Restarts the keyboard-idleness timeout
+			var restartIdleTimeout = function(text) {
+	        	if (idle_timeout)
+	            	window.clearTimeout(idle_timeout);
 	            
 	            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
-	          };		
+			};		
 	          
-			  $("#field_url").keyup(function() {
-					var text = $('input[name=field_url]').val();
+			$("#field_url").keyup(function() {
+				var text = $('input[name=field_url]').val();
 					
-				    if (text.length > MIN_TEXT_LENGTH) {
-				        restartIdleTimeout(text);
-				
-				    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
-				        	doScope(text);
-				    }
-			  });
+				if (text.length > MIN_TEXT_LENGTH) {
+			        restartIdleTimeout(text);
+			
+			    	if (TRIGGER_CHARS.indexOf(text[text.length - 1]) > -1)
+			        	doScope(text);
+			    }
+			});
 		
-		      SUGGESTED_COLLECTION_URI = '@routes.InstanceController.getSuggestedCollections(form("url").value)';
-              $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
-              	$("#tree3").dynatree({
-                	checkbox: true,
-                	selectMode: 2,
-                	children: data,
-                	onSelect: function(select, node) {
-                  		// Get a list of all selected nodes, and convert to a key array:
-                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                    		return node.data.key;
-                  		});
-                  		document.getElementById('treeKeys').value = selKeys.join(", ");
-                  		// Get a list of all selected TOP nodes
-                  		var selRootNodes = node.tree.getSelectedNodes(true);
-                  		// ... and convert to a key array:
-                  		var selRootKeys = $.map(selRootNodes, function(node){
-                    		return node.data.key;
-                  		});
-                	}
-              	});
-             })
+			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect");
+			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect");
+	            
+			function showTree(data, id, key) {
+	        	//console.log(data);
+	         	$(id).dynatree({
+					checkbox: true,
+	            	selectMode: 3,
+	            	children: data,
+	            	onSelect: function(select, node) {
+	              		// Get a list of all selected nodes, and convert to a key array:
+	              		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+	                		return node.data.key;
+	              		});
+	              		document.getElementById(key).value = selKeys.join(", ");
+	              		
+	              		console.log("test: " + document.getElementById(key).value);
+	              		// Get a list of all selected TOP nodes
+	              		var selRootNodes = node.tree.getSelectedNodes(true);
+	              		// ... and convert to a key array:
+	              		var selRootKeys = $.map(selRootNodes, function(node){
+	                		return node.data.key;
+	              		});
+	            	}
+	         	});
+	        }
 
-	      SUBJECTS_URI = '@routes.InstanceController.getSubjectTree(form("url").value)';
-          $.getJSON(SUBJECTS_URI, function(data) {    	
-            	$("#subjectTree").dynatree({
-              	checkbox: true,
-              	selectMode: 3,
-              	children: data,
-              	onSelect: function(select, node) {
-                		// Get a list of all selected nodes, and convert to a key array:
-                		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                  		return node.data.key;
-                		});
-                		document.getElementById('field_subject').value = selKeys.join(", ");
-                		// Get a list of all selected TOP nodes
-                		var selRootNodes = node.tree.getSelectedNodes(true);
-                		// ... and convert to a key array:
-                		var selRootKeys = $.map(selRootNodes, function(node){
-                  		return node.data.key;
-                		});
-              	}
-            	});
-          })
-		})();	
-	
-    // This is the code that switches to the other page.
-    // We do this via JavaScript, and not a normal hyperlink,
-    // because that way we can communicate the current nav pill status as part of the link URL.
-    function switchPage() {
-      var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
-      var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
+			// This happens right after the document is loaded.
+			// Our nav pills won't do anything by themselves, so we need to make sure we
+			// check if the current URL has a #-component and if so, we activate the
+			// appropriate pill.
+			var hash = window.location.hash;
+			if (hash.indexOf('#') == 0) {
+				// We have a hash - let's see if it matches with nav pill href
+				var el = $('#myNavbar a[href=' + hash + ']');
+			
+				// We have an <a> with this ID, and it has a parent node that's an <li>
+				if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
+				    // So we activate this nav pill
+				    $(el).tab('show');
+				    window.scrollTo(0, 0);
+				}
+			}
       
-      // And finally we just attach the href to view.html and forward the browser. 
-      // An example URL would be: 'view.html#npld-scope'
-      window.location.href="@routes.InstanceController.view(form.get.id)" + href;
-    }
-  
-    $(document).ready(function() {
-      // This happens right after the document is loaded.
-      // Our nav pills won't do anything by themselves, so we need to make sure we
-      // check if the current URL has a #-component and if so, we activate the
-      // appropriate pill.
-      var hash = window.location.hash;
-      if (hash.indexOf('#') == 0) {
-        // We have a hash - let's see if it matches with nav pill href
-        var el = $('#myNavbar a[href=' + hash + ']');
-      
-        // We have an <a> with this ID, and it has a parent node that's an <li>
-        if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
-          // So we activate this nav pill
-          $(el).tab('show');
-          window.scrollTo(0, 0);
-        }
-      }
-      
-      // This is completely optional!! But it keeps the hash in our current URL bar
-      // in sync with the tab we have selected, so the pages stay nice and bookmarkable
-      $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        window.location.hash = ($(e.target).attr('href'));
-        window.scrollTo(0, 0);
-      })
-    });		
-
+			// This is completely optional!! But it keeps the hash in our current URL bar
+			// in sync with the tab we have selected, so the pages stay nice and bookmarkable
+			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+				window.location.hash = ($(e.target).attr('href'));
+				window.scrollTo(0, 0);
+			})
+		});		
 	</script>
 }
 
@@ -150,7 +138,7 @@
 	        <li><a href="#overview" data-toggle="tab">Overview</a></li>
 	        <li><a href="#metadata" data-toggle="tab">Metadata</a></li>
 	        <li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-			@if(Target.isInScopeAll(form("fieldUrl").value, form("url").value)) {
+			@if(form.get.target.isInScopeAll()) {
 				<font color="green">(+)</font>
 			} else {
 				<font color="red">(-)</font>
@@ -162,7 +150,7 @@
 	</div>
 	
 	    @warningmessage(flash)
-		@helper.form(action=routes.InstanceController.saveInstance) {
+		@helper.form(action=routes.InstanceController.save) {
 	
 		<input type="hidden" name="id" value="@form("id").value">
 		<input type="hidden" name="url" value="@form("url").value">
@@ -462,15 +450,13 @@
 			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject. To select more than one, hold down the CTRL key.)</small></label>
 						    <div class="col-sm-6">
 			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
-							  <div id="subjectTree"></div>
-							  <input type="hidden" id="field_subject" name="field_subject" value="@form("fieldSubject").value">
+								  <div id="subjectTree"></div>
+								  <input type="hidden" id="subjectSelect" name="subjectSelect" value="@form.get.subjectIdsAsString()">
 							  } else {
-							        @if(form("url").value != null) {
-	  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjectsByInstance(form("url").value))
-								        <input type="hidden" id="field_subject" name="field_subject" value="@form("fieldSubject").value">
+							        @if(form.get.subjects != null || !form.get.subjects.isEmpty()) {
+	  									@form.get.subjectsAsString()
 	  								} else {
 	  								    none
-								        <input type="hidden" id="field_subject" name="field_subject" value="none">
 	  								}
 		     	              }	   
 							</div>
@@ -483,12 +469,12 @@
 						<div class="form-group">
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
-			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
-							  <div id="tree3"></div>
-							  <input type="hidden" id="treeKeys" name="treeKeys" value="@form("field_collection_categories").value">
-							  } else {
-							        @if(form("url").value != null) {
-	  									@models.Collection.getCollectionsAsString(models.Collection.getSelectedCollectionsByInstanceUrl(form("url").value))
+			    				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+							  		<div id="collectionTree"></div>
+							  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@form.get.collectionIdsAsString()">
+							  	} else {
+							        @if(form.get.collections == null || !form.get.collections.isEmpty()) {
+							        	@form.get.collectionsAsString()
 	  								} else {
 	  								    none
 	  								}
@@ -496,7 +482,7 @@
 							</div>
 						</div>
 					</div>
-		     	</div>	   
+		     	</div>	   		     	
 		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -569,11 +555,11 @@
 			              	<label for="status" class="col-sm-6 control-label">Language <small class="text-center">(The predominant language in which the page is written)</small></label>
 						    <div class="col-sm-6">
 								<select name="language" id="language" class="form-control">
-					                @for(language <- Instance.getAllLanguage()) {
-						                @if(language.equals(form("language").value)) {
-						                	<option selected>@form("language").value</option>
+					                @for(language <- languages) {
+						                @if(form.get.language != null && form.get.language.equals(language.name)) {
+						                	<option value="@language.name" selected>@language.getValue</option>
 						                } else {
-						                	<option>@language</option>
+						                	<option value="@language.name">@language.getValue</option>
 						                }
 					                }
 								</select>
@@ -643,12 +629,12 @@
 						<div class="form-group">
 			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
 						    <div class="col-sm-6">
-								<select name="selection_type" id="selection_type" class="form-control">
-					                @for(selectionType <- Instance.getAllSelectionTypes()) {
-						                @if(selectionType.equals(form("selectionType").value)) {
-						                	<option selected>@form("selectionType").value</option>
+								<select name="selectionType" id="selectionType" class="form-control">
+					                @for(selectionType <- selectionTypes) {
+						                @if(form.get.selectionType != null && form.get.selectionType.equals(selectionType.name)) {
+						                	<option value="@selectionType.name" selected>@selectionType.getValue</option>
 						                } else {
-						                	<option>@selectionType</option>
+						                	<option value="@selectionType.name">@selectionType.getValue</option>
 						                }
 					                }
 								</select>
@@ -859,11 +845,11 @@
 							<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
 								<select name="field_scope" id="field_scope" class="form-control">
-					                @for(fieldScope <- Target.getAllScopeTypes()) {
-						                @if(fieldScope.equals(form.get.fieldScope)) {
-						                	<option selected>@form.get.fieldScope</option>
+					                @for(scopeType <- scopeTypes) {
+						                @if(form.get.scope != null && form.get.scope.equals(scopeType.name)) {
+						                	<option value="@scopeType.name" selected>@scopeType.getValue</option>
 						                } else {
-						                	<option>@form.get.fieldScope</option>
+						                	<option value="@scopeType.name">@scopeType.getValue</option>
 						                }
 					                }
 								</select>
@@ -878,11 +864,11 @@
 							<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
 								<select name="field_depth" id="field_depth" class="form-control">
-					                @for(fieldDepth <- Target.getAllDepthTypes()) {
-						                @if(fieldDepth.equals(form.get.fieldDepth)) {
-						                	<option selected>@form.get.fieldDepth</option>
+					                @for(depthType <- depthTypes) {
+						                @if(form.get.depth != null && form.get.depth.equals(depthType.name)) {
+						                	<option value="@depthType.name" selected>@depthType.getValue</option>
 						                } else {
-						                	<option>@form.get.fieldDepth</option>
+						                	<option value="@depthType.name">@depthType.getValue</option>
 						                }
 					                }
 								</select>
@@ -896,7 +882,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("fieldIgnoreRobotsTxt").value != null && form("fieldIgnoreRobotsTxt").value) {             
+				                @if(form.get.ignoreRobotsTxt != null && form.get.ignoreRobotsTxt) {             
 					                <input type="checkbox" name="field_ignore_robots_txt" value="true" checked />
 				                } else {
 					                <input type="checkbox" name="field_ignore_robots_txt" value="true"/>
@@ -913,47 +899,47 @@
 							<label class="col-sm-6 control-label">Crawl Frequency <small class="text-center">(How often should this site be archived?)</small></label>
 						    <div class="col-sm-6">
 				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Domain Crawl Only")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Domain Crawl Only")) {
 					 					<option selected>Domain Crawl Only</option>
 						            } else {						                
 					 					<option>Domain Crawl Only</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Annually")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Annually")) {
 					 					<option selected>Annually</option>
 						            } else {						                
 					 					<option>Annually</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Six-monthly")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Six-monthly")) {
 					 					<option selected>Six-monthly</option>
 						            } else {						                
 					 					<option>Six-monthly</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Quarterly")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Quarterly")) {
 					 					<option selected>Quarterly</option>
 						            } else {						                
 					 					<option>Quarterly</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Monthly")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Monthly")) {
 					 					<option selected>Monthly</option>
 						            } else {						                
 					 					<option>Monthly</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Old-Monthly-DO-NOT-USE")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Old-Monthly-DO-NOT-USE")) {
 					 					<option selected>Old-Monthly-DO-NOT-USE</option>
 						            } else {						                
 					 					<option>Old-Monthly-DO-NOT-USE</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Weekly")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Weekly")) {
 					 					<option selected>Weekly</option>
 						            } else {						                
 					 					<option>Weekly</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Daily")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Daily")) {
 					 					<option selected>Daily</option>
 						            } else {						                
 					 					<option>Daily</option>
 					                }
-				             		@if(form("fieldCrawlFrequency").value != null && form("fieldCrawlFrequency").value.equals("Never Crawl")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Never Crawl")) {
 					 					<option selected>Never Crawl</option>
 						            } else {						                
 					 					<option>Never Crawl</option>
@@ -1017,12 +1003,12 @@
 							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site should be archived and made available)</small></label>
 						    <div class="col-sm-6">
 								<select name="license" id="edit-field-license" class="form-control" size="2">
-								 	<option>None</option>
-								    @for(taxonomy <- InstanceController.getLicense()) {
-						                @if(form("fieldLicense").value != null && form("fieldLicense").value.equals(taxonomy.url)) {             
-										 	<option selected>@taxonomy.name</option>
+								 	<option value="-1">None</option>
+								 	@for(license <- licenses) {
+						                @if(form.get.licenses.contains(license)) {             
+										 	<option value="@license.id" selected>@license.name</option>
 									 	} else {
-										 	<option>@taxonomy.name</option>
+										 	<option value="@license.id" >@license.name</option>
 									 	}									 	
 								    }	
 								</select>
@@ -1036,9 +1022,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
-								@if(form("url").value != null) {
-								<a href="@routes.CrawlPermissions.showCrawlPermissions(form("url").value)">Crawl Permissions</a>
-								}
+								<a href="@routes.CrawlPermissionController.showCrawlPermissions(form.get.url)">Crawl Permissions</a>
 							</div>
 						</div>
 					</div>
@@ -1053,7 +1037,7 @@
 					<div class="form-group">
 		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
 					    <div class="col-sm-6">
-               				<textarea class="form-control" name="revision" id="inputRevision">@form("revision").value</textarea>
+               				<textarea class="form-control" name="revision" id="inputRevision">@form.get.revision</textarea>
 						</div>
 					</div>
 				</div>
@@ -1069,18 +1053,20 @@
 						</a>
 					</div>
 					<div id="collapseInstances" class="panel-collapse collapse">
-						<div class="panel-footer">
-							<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@form("fieldUrl").value">In QA Wayback</a>
-						</div>
-					    <div class="panel-footer">
-				        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@form("fieldUrl").value">In Open UK Web Archive</a>
-						</div>
-						<div class="panel-footer">
-							<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@form("fieldUrl").value">In other web archives</a>
-						</div>
-					    <div class="panel-footer">
-				        	<a class="brand" target="_blank" href="@form("fieldUrl").value">Live site</a>
-						</div>
+						@for(fieldUrl <- form.get.target.fieldUrls) {
+							<div class="panel-footer">
+								<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@fieldUrl.url">In QA Wayback</a>
+							</div>
+						    <div class="panel-footer">
+					        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
+							</div>
+							<div class="panel-footer">
+								<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
+							</div>
+						    <div class="panel-footer">
+					        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
+							</div>
+						}
 					</div>
 				</div>
 			</div>
@@ -1096,9 +1082,7 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
 					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
-				    @if(Instance.findById(Long.valueOf(form("id").value)) != null) {
 					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
-					}
 		       </div>
 			</div>
 		</div>

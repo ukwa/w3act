@@ -7,6 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -37,14 +39,20 @@ public class Organisation extends ActModel {
 
     //bi-directional many-to-one association to User
     @JsonIgnore
-    @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="organisation", cascade=CascadeType.ALL)
     public List<User> users;
      
     //bi-directional one-to-many association to Target
     @JsonIgnore
-    @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="organisation", cascade=CascadeType.ALL)
     public List<Target> targets;
 
+	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "organisation_instance", joinColumns = { @JoinColumn(name = "organisation_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+	public List<Instance> instances;
+	
     @Required
     @JsonProperty
     public String title;

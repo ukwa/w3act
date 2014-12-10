@@ -48,10 +48,16 @@ public class License extends Taxonomy {
     
 	@JsonIgnore
     @ManyToMany
-	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") },
+	@JoinTable(name = "license_target", joinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
 	public List<Target> targets;
 
+	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "license_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
+	public List<Instance> instances;
+	
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,License> find = new Model.Finder(Long.class, License.class);
     
@@ -95,4 +101,30 @@ public class License extends Taxonomy {
     public boolean isSuperseded() {
     	return this.hasStatus(LicenseStatus.SUPERSEDED.name());
     }
+    
+    @Override
+ 	public int hashCode() {
+ 		final int prime = 31;
+ 		int result = super.hashCode();
+ 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+ 		return result;
+ 	}
+
+ 	@Override
+ 	public boolean equals(Object obj) {
+ 		if (this == obj)
+ 			return true;
+ 		if (!super.equals(obj))
+ 			return false;
+ 		if (getClass() != obj.getClass())
+ 			return false;
+ 		License other = (License) obj;
+ 		if (name == null) {
+ 			if (other.name != null)
+ 				return false;
+ 		} else if (!name.equals(other.name))
+ 			return false;
+ 		return true;
+ 	}
+
 }

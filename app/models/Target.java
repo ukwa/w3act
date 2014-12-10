@@ -3,7 +3,6 @@ package models;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -22,7 +20,6 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
-import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
@@ -52,29 +49,9 @@ public class Target extends UrlModel {
 	private static final long serialVersionUID = -8283372689443804260L;
 
 	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "qaissue_id")
-	public QaIssue qaIssue;
-	
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "author_id")
-	public User authorUser;
-
-	
-	@JsonIgnore
-	@Column(columnDefinition = "text")
-	public String authors;
-
-	@JsonIgnore
 	@Column(columnDefinition = "text")
 	public String originatingOrganisation;
 	
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "organisation_id")
-	public Organisation organisation;
-
 	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
 	public List<CrawlPermission> crawlPermissions;
@@ -104,7 +81,7 @@ public class Target extends UrlModel {
 	@JsonIgnore
     @ManyToMany
 	@JoinTable(name = "tag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="ID") }) 
+		inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") }) 
 	public List<Tag> tags;
 	
 	@JsonIgnore
@@ -117,39 +94,12 @@ public class Target extends UrlModel {
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<FieldUrl> fieldUrls;
 
-
-	@JsonProperty("field_uk_hosting")
-	public Boolean isUkHosting = Boolean.FALSE;
-	
-	public Boolean isTopLevelDomain = Boolean.FALSE;
-	public Boolean isUkRegistration = Boolean.FALSE;
-	
 	public Boolean isInScopeIp;
 	public Boolean isInScopeIpWithoutLicense;
 
-	public Date crawlStartDate;
-	public Date crawlEndDate;
-
-	public Long legacySiteId;
-	
 	public Boolean active; // flag for the latest version of the target among
 							// targets with the same URL
-	public String whiteList; // regex for white list URLs
-	public String blackList; // regex for black list URLs
-	
-	public Date dateOfPublication;
-	
-	@Column(columnDefinition = "text")
-	public String justification;
-	
-	@Column(columnDefinition = "text")
-	public String selectorNotes;
-	
-	@Column(columnDefinition = "text")
-	public String archivistNotes;
-	
-	@Required
-	public String selectionType;
+
 	
 	@Column(columnDefinition = "text")
 	public String flagNotes;
@@ -159,41 +109,11 @@ public class Target extends UrlModel {
 	public String tabStatus;
 
 	@Column(columnDefinition = "text")
-	public String description;
-	
-	@Column(columnDefinition = "text")
-	public String ukPostalAddressUrl;
-
-	@Column(columnDefinition = "text")
-	public String notes;
-
-	@Column(columnDefinition = "text")
-	public String keywords;
-	
-	@Column(columnDefinition = "text")
-	public String synonyms;
-	
-	@Column(columnDefinition = "text")
 	@JsonProperty
 	public String value;
 	
 	@Column(columnDefinition = "text")
 	public String summary;
-
-	@JsonProperty("field_scope")
-	public String scope;
-
-	@JsonProperty("field_depth")
-	public String depth;
-	
-	@JsonProperty("field_via_correspondence")
-	public Boolean viaCorrespondence;
-
-	@JsonProperty("field_uk_postal_address")
-	public Boolean ukPostalAddress;
-	
-	@JsonProperty("field_crawl_frequency")
-	public String crawlFrequency;
 
 	@JsonProperty("field_special_dispensation")
 	public Boolean specialDispensation;
@@ -201,34 +121,6 @@ public class Target extends UrlModel {
 	@Column(columnDefinition = "text")
 	@JsonProperty("field_special_dispensation_reaso")
 	public String specialDispensationReason;
-
-	@JsonProperty("field_live_site_status")
-	public String liveSiteStatus;
-
-	@JsonProperty("field_wct_id")
-	public Long wctId;
-
-	@JsonProperty("field_spt_id")
-	public Long sptId;
-
-	@JsonProperty("field_no_ld_criteria_met")
-	public Boolean noLdCriteriaMet;
-
-	@JsonProperty("field_key_site")
-	public Boolean keySite;
-
-	@JsonProperty("field_professional_judgement")
-	public Boolean professionalJudgement;
-
-	@Column(columnDefinition = "text")
-	@JsonProperty("field_professional_judgement_exp")
-	public String professionalJudgementExp;
-
-	@JsonProperty("field_ignore_robots_txt")
-	public Boolean ignoreRobotsTxt;
-	
-	@JsonIgnore
-	public String format;
 
 	@Transient
 	@JsonProperty
@@ -998,12 +890,60 @@ public class Target extends UrlModel {
 	public String checkScopeStr(String fieldUrl, String url) {
 		String res = "false";
 		if (fieldUrl != null && fieldUrl.length() > 0 && url != null
-				&& url.length() > 0 && Target.isInScopeAll(fieldUrl, url)) {
+				&& url.length() > 0 && this.isInScopeAll()) {
 			res = "true";
 		}
 		return res;
 	}
 
+	/**
+	 * This method checks whether the passed URL is in scope for rules
+	 * associated with scope IP.
+	 * 
+	 * @param url
+	 *            The search URL
+	 * @param nidUrl
+	 *            The identifier URL in the project domain model
+	 * @return result as a flag
+	 */
+	public boolean isInScopeAll() {
+		try {
+			boolean isInScope = false;
+			for (FieldUrl fieldUrl : this.fieldUrls) {
+				isInScope = isInScopeIp(fieldUrl.url);
+			}
+			if (!isInScope) {
+				// TODO: KL TO REFACTOR
+//				isInScope = isInScopeDomain(url, nidUrl);
+			}
+			return isInScope;
+		} catch (Exception ex) {
+			Logger.info("isInScopeAll() Exception: " + ex);
+			return false;
+		}
+	}
+
+	/**
+	 * This method checks whether the passed URL is in scope for rules
+	 * associated with scope IP.
+	 * 
+	 * @param url
+	 *            The search URL
+	 * @param nidUrl
+	 *            The identifier URL in the project domain model
+	 * @return result as a flag
+	 */
+	public boolean isInScopeIp(String url) {
+		try {
+			for (FieldUrl fieldUrl : this.fieldUrls) {
+				return Scope.INSTANCE.checkScopeIp(fieldUrl.url, this);
+			}
+		} catch (WhoisException ex) {
+			Logger.info("Exception: " + ex);
+		}
+		return false;
+	}
+	
 	/**
 	 * This method checks whether the passed URL is in scope.
 	 * 
@@ -1024,19 +964,13 @@ public class Target extends UrlModel {
 	 * @param url
 	 * @return true if one of manual settings is true
 	 */
-	public static boolean checkManualScope(String url) {
-		Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true)
-				.findUnique();
+	public boolean checkManualScope() {
 		boolean res = false;
-		if (target != null
-				&& (target.ukPostalAddress
-						|| target.viaCorrespondence || target.professionalJudgement)) {
-			Logger.debug("checkManualScope(): " + target.ukPostalAddress
-					+ ", " + target.viaCorrespondence + ", "
-					+ target.professionalJudgement);
+		if (this.ukPostalAddress || this.viaCorrespondence || this.professionalJudgement) {
+			Logger.debug("checkManualScope(): " + this.ukPostalAddress + ", " + this.viaCorrespondence + ", "+ this.professionalJudgement);
 			res = true;
 		}
-		if (target != null && target.noLdCriteriaMet) {
+		if (this.noLdCriteriaMet) {
 			res = false;
 		}
 		return res;
@@ -1048,14 +982,11 @@ public class Target extends UrlModel {
 	 * @param url
 	 * @return true if license exists
 	 */
-	public static boolean checkLicense(String url) {
-		Target target = find.where().eq(Const.URL, url).eq(Const.ACTIVE, true)
-				.findUnique();
+	public boolean checkLicense() {
 		boolean res = false;
-//		if (target != null && target.li != null && target.fieldLicense.length() > 0 && !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
-//			res = true;
-//		}
-//		throw new NotImplementedError();
+		if (this.licenses != null && !this.licenses.isEmpty()) {
+			res = true;
+		}
 		return res;
 	}
 
@@ -1068,35 +999,11 @@ public class Target extends UrlModel {
 	 *            The identifier URL in the project domain model
 	 * @return result as a flag
 	 */
-	public static boolean isInScope(String url, String nidUrl) {
+	public boolean isInScope(String url) {
 		try {
-			return Scope.INSTANCE.check(url, nidUrl);
+			return Scope.INSTANCE.check(url, this);
 		} catch (WhoisException ex) {
 			Logger.info("Exception: " + ex);
-			return false;
-		}
-	}
-
-	/**
-	 * This method checks whether the passed URL is in scope for rules
-	 * associated with scope IP.
-	 * 
-	 * @param url
-	 *            The search URL
-	 * @param nidUrl
-	 *            The identifier URL in the project domain model
-	 * @return result as a flag
-	 */
-	public static boolean isInScopeAll(String url, String nidUrl) {
-		try {
-			boolean isInScope = isInScopeIp(url, nidUrl);
-			if (!isInScope) {
-				// TODO: KL TO REFACTOR
-//				isInScope = isInScopeDomain(url, nidUrl);
-			}
-			return isInScope;
-		} catch (Exception ex) {
-			Logger.info("isInScopeAll() Exception: " + ex);
 			return false;
 		}
 	}
@@ -1115,7 +1022,7 @@ public class Target extends UrlModel {
 		Logger.info("isInScopeAllWithoutLicense()");
 		try {
 			for (FieldUrl fieldUrl : this.fieldUrls) {
-				boolean isInScope = isInScopeIpWithoutLicense(fieldUrl.url, this.url);
+				boolean isInScope = isInScopeIpWithoutLicense(fieldUrl.url);
 				if (!isInScope) {
 					// TODO: KL TO REFACTOR
 					isInScope = Scope.INSTANCE.isTopLevelDomain(this.fieldUrls);
@@ -1129,24 +1036,6 @@ public class Target extends UrlModel {
 		return false;
 	}
 
-	/**
-	 * This method checks whether the passed URL is in scope for rules
-	 * associated with scope IP.
-	 * 
-	 * @param url
-	 *            The search URL
-	 * @param nidUrl
-	 *            The identifier URL in the project domain model
-	 * @return result as a flag
-	 */
-	public static boolean isInScopeIp(String url, String nidUrl) {
-		try {
-			return Scope.INSTANCE.checkScopeIp(url, nidUrl);
-		} catch (WhoisException ex) {
-			Logger.info("Exception: " + ex);
-			return false;
-		}
-	}
 
 	/**
 	 * This method checks whether the passed URL is in scope for rules
@@ -1158,9 +1047,9 @@ public class Target extends UrlModel {
 	 *            The identifier URL in the project domain model
 	 * @return result as a flag
 	 */
-	public static boolean isInScopeIpWithoutLicense(String url, String nidUrl) {
+	public boolean isInScopeIpWithoutLicense(String url) {
 		try {
-			return Scope.INSTANCE.checkScopeIpWithoutLicense(url, nidUrl);
+			return Scope.INSTANCE.checkScopeIpWithoutLicense(url, this);
 		} catch (WhoisException ex) {
 			Logger.info("Exception: " + ex);
 			return false;
@@ -1179,9 +1068,9 @@ public class Target extends UrlModel {
 	 *            The mode of checking
 	 * @return result as a flag
 	 */
-	public static boolean isInScopeExt(String url, String nidUrl, String mode) {
+	public static boolean isInScopeExt(String url, Target target, String mode) {
 		try {
-			return Scope.INSTANCE.checkExt(url, nidUrl, mode);
+			return Scope.INSTANCE.checkExt(url, target, mode);
 		} catch (WhoisException ex) {
 			Logger.info("Exception: " + ex);
 			return false;
@@ -1553,15 +1442,15 @@ public class Target extends UrlModel {
 		}
 		List<String> targetUrlCollection = new ArrayList<String>();
 		Iterator<Instance> itr = instanceList.iterator();
-		while (itr.hasNext()) {
-			Instance instance = itr.next();
-			if (instance.fieldTarget != null
-					&& instance.fieldTarget.length() > 0) {
-				// Logger.info("Target.pageReportsQa() instance.field_target: "
-				// + instance.field_target);
-				targetUrlCollection.add(instance.fieldTarget);
-			}
-		}
+//		while (itr.hasNext()) {
+//			Instance instance = itr.next();
+//			if (instance.fieldTarget != null
+//					&& instance.fieldTarget.length() > 0) {
+//				// Logger.info("Target.pageReportsQa() instance.field_target: "
+//				// + instance.field_target);
+//				targetUrlCollection.add(instance.fieldTarget);
+//			}
+//		}
 		if (targetUrlCollection.size() > 0) {
 			exp = exp.in(Const.URL, targetUrlCollection);
 		}
@@ -2689,11 +2578,7 @@ public class Target extends UrlModel {
 	}
 	
 	public String subjectIdsAsString() {
-		List<Long> ids = new ArrayList<Long>();
-		for (Subject subject : this.subjects) {
-			ids.add(subject.id);
-		}
-		return StringUtils.join(ids, ", ");
+		return StringUtils.join(this.subjectIds(), ", ");
 	}
 
 	public List<Long> subjectIds() {
@@ -2783,7 +2668,7 @@ public class Target extends UrlModel {
 				+ ", selectionType=" + selectionType + ", flagNotes="
 				+ flagNotes + ", tabStatus=" + tabStatus + ", description="
 				+ description + ", ukPostalAddressUrl=" + ukPostalAddressUrl
-				+ ", notes=" + notes + ", keywords=" + keywords + ", synonyms="
+				+ ", keywords=" + keywords + ", synonyms="
 				+ synonyms + ", value=" + value + ", summary=" + summary
 				+ ", scope=" + scope + ", depth=" + depth
 				+ ", viaCorrespondence=" + viaCorrespondence

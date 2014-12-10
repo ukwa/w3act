@@ -1,4 +1,4 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[CrawlPermission], currentSortBy: String, currentOrder: String, cur_status: String, target: String, sel: String)
+@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[CrawlPermission], currentSortBy: String, currentOrder: String, cur_status: String, target: String, sel: String, crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.CrawlPermissions.list(newPage, sortBy, order, searchstr, cur_status, target)
+    routes.CrawlPermissionController.list(newPage, sortBy, order, searchstr, cur_status, target)
     
 }
 
@@ -83,22 +83,22 @@
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.CrawlPermissions.index()">Archivist Tasks > </a>Crawl Permissions</h1>
+	    <h1><a href="@routes.CrawlPermissionController.index()">Archivist Tasks > </a>Crawl Permissions</h1>
 	</div>
 	
     <ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.CrawlPermissions.index()">Permissions Queue</a></li>
-	   <li><a href="@routes.CrawlPermissions.templates()">Mail Templates</a></li> 
-	   <li><a href="@routes.CrawlPermissions.contactpersons()">Contact Persons</a></li> 
-	   <li><a href="@routes.CrawlPermissions.licences()">License Templates</a></li> 
-	   <!-- li><a href="@routes.CrawlPermissions.refusals()">Refusals</a></li--> 
-	   <li><a href="@routes.CrawlPermissions.communicationLogs()">Communication Logging</a></li> 
+	   <li class="active"><a href="@routes.CrawlPermissionController.index()">Permissions Queue</a></li>
+	   <li><a href="@routes.CrawlPermissionController.templates()">Mail Templates</a></li> 
+	   <li><a href="@routes.CrawlPermissionController.contactpersons()">Contact Persons</a></li> 
+	   <li><a href="@routes.CrawlPermissionController.licences()">License Templates</a></li> 
+	   <!-- li><a href="@routes.CrawlPermissionController.refusals()">Refusals</a></li--> 
+	   <li><a href="@routes.CrawlPermissionController.communicationLogs()">Communication Logging</a></li> 
 	</ul>
 		
     <article class="permissions">
 
 		<div id="forms">
-   			@helper.form(action=routes.CrawlPermissions.search, 'class -> "form-inline") {
+   			@helper.form(action=routes.CrawlPermissionController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter crawl permission name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
@@ -123,11 +123,11 @@
 									    <div class="col-sm-6">
 											<select name="status" id="status" class="form-control">
 												<option>None</option>
-								                @for(status <- CrawlPermission.getAllStatus()) {
-									                @if(status.equals(cur_status)) {
-									                	<option selected>@status</option>
+								                @for(status <- crawlPermissionStatuses) {
+									                @if(status.name.equals(cur_status)) {
+									                	<option value="@status.name" selected>@status.getValue</option>
 									                } else {
-									                	<option>@status</option>
+									                	<option value="@status.name">@status.getValue</option>
 									                }
 								                }
 											</select>
@@ -143,7 +143,7 @@
 		
 	@pagination
 
-	@helper.form(action=routes.CrawlPermissions.send, 'class -> "form-inline") {
+	@helper.form(action=routes.CrawlPermissionController.send, 'class -> "form-inline") {
 	   	<div class="row padding-20">
 			<table class="table table-hover">
 				<thead>
@@ -161,9 +161,9 @@
 						<td>
 							<label class="checkbox-inline">
 							@if(sel.equals("selectall")) {
-				                <input type="checkbox" name="@permission.name" value="true" checked /> <a href="@routes.CrawlPermissions.view(permission.url)">@permission.name</a>
+				                <input type="checkbox" name="@permission.name" value="true" checked /> <a href="@routes.CrawlPermissionController.view(permission.url)">@permission.name</a>
 				            } else { 
-				                <input type="checkbox" name="@permission.name" value="true" /> <a href="@routes.CrawlPermissions.view(permission.url)">@permission.name</a>
+				                <input type="checkbox" name="@permission.name" value="true" /> <a href="@routes.CrawlPermissionController.view(permission.url)">@permission.name</a>
 				            } 
 							</label>
 						</td>
@@ -214,7 +214,7 @@
 					</div>
 				</div>
 				<div class="btn-group">		
-				@if(currentPage.getTotalRowCount() > 0 && CrawlPermissions.haveContactPerson(currentPage.getList())) {
+				@if(currentPage.getTotalRowCount() > 0 && CrawlPermissionController.haveContactPerson(currentPage.getList())) {
 					<button type="submit" class="btn btn-primary" name="selectall">Select all</button>
 					<button type="submit" class="btn btn-primary" name="deselectall">Deselect all</button>
 					<!-- button type="submit" class="btn btn-primary" name="sendall">Send all</button-->
@@ -241,7 +241,7 @@
     @if(user.hasRole("expert_user") || user.hasRole("user")) {
     	@infomessage.render("Your Open UKWA License email has now been queued.")
     } else {
-    	@infomessage.render("Access Denied for URL @routes.CrawlPermissions.index()/list")
+    	@infomessage.render("Access Denied for URL @routes.CrawlPermissionController.index()/list")
 	}
 }
 

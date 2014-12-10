@@ -29,12 +29,12 @@ public class Tag extends Taxonomy {
 	private static final long serialVersionUID = -2257699575463702989L;
 	
     @ManyToMany
-	@JoinTable(name = Const.TAG_TARGET, joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="ID") }) 
+	@JoinTable(name = "tag_target", joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
     public List<Target> targets;
 
     @ManyToMany
-	@JoinTable(name = Const.TAG_INSTANCE, joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
+	@JoinTable(name = "tag_instance", joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
     public List<Instance> instances;
     

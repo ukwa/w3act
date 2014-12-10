@@ -2,8 +2,11 @@ package models;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -58,6 +61,9 @@ abstract class UrlModel extends ActModel {
 	@Required
 	public String title;
 	
+	@Column(columnDefinition = "text")
+	public String description;
+	
 	public String language;
 
 	@Column(columnDefinition = "text")
@@ -65,6 +71,108 @@ abstract class UrlModel extends ActModel {
 
 	@JsonProperty
 	public String edit_url;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "qaissue_id")
+	public QaIssue qaIssue;
+
+	@JsonProperty("field_uk_hosting")
+	public Boolean isUkHosting = Boolean.FALSE;
+	
+	public Boolean isTopLevelDomain = Boolean.FALSE;
+	public Boolean isUkRegistration = Boolean.FALSE;
+	
+	@JsonProperty("field_live_site_status")
+	public String liveSiteStatus;
+
+	@JsonProperty("field_key_site")
+	public Boolean keySite;
+
+	@JsonProperty("field_wct_id")
+	public Long wctId;
+
+	@JsonProperty("field_spt_id")
+	public Long sptId;
+	
+    @Column(columnDefinition = "text")
+	public String keywords;
+	
+	@Column(columnDefinition = "text")
+	public String synonyms;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "organisation_id")
+	public Organisation organisation;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	public User authorUser;
+
+	@JsonIgnore
+	@Column(columnDefinition = "text")
+	public String authors;
+
+	public Date dateOfPublication;
+	
+	@Column(columnDefinition = "text")
+	public String justification;
+
+	@Required
+	public String selectionType;
+
+	@Column(columnDefinition = "text")
+	public String selectorNotes;
+	
+	@Column(columnDefinition = "text")
+	public String archivistNotes;
+
+	public Long legacySiteId;
+	
+	@JsonProperty("field_uk_postal_address")
+	public Boolean ukPostalAddress;
+
+	@Column(columnDefinition = "text")
+	public String ukPostalAddressUrl;
+	
+	@JsonProperty("field_via_correspondence")
+	public Boolean viaCorrespondence;
+	
+	@JsonProperty("field_professional_judgement")
+	public Boolean professionalJudgement;
+
+	@Column(columnDefinition = "text")
+	@JsonProperty("field_professional_judgement_exp")
+	public String professionalJudgementExp;
+	
+	@JsonProperty("field_no_ld_criteria_met")
+	public Boolean noLdCriteriaMet;
+
+	@JsonProperty("field_scope")
+	public String scope;
+	
+	@JsonProperty("field_depth")
+	public String depth;
+	
+	@JsonProperty("field_ignore_robots_txt")
+	public Boolean ignoreRobotsTxt;
+	
+	@JsonProperty("field_crawl_frequency")
+	public String crawlFrequency;
+
+	public Date crawlStartDate;
+	public Date crawlEndDate;
+	
+	public String whiteList; // regex for white list URLs
+	public String blackList; // regex for black list URLs
+	
+	@Column(columnDefinition = "text")
+	public String notes;
+	
+	@JsonIgnore
+	public String format;
 
 	@Transient
 	@JsonProperty

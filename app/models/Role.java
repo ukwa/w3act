@@ -19,10 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -47,7 +45,7 @@ public class Role extends ActModel {
 	private static final long serialVersionUID = 5670206529564297517L;
 
 	//bi-directional many-to-many association to Permission
-	@JoinTable(name = Const.PERMISSION_ROLE, joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
+	@JoinTable(name = "permission_role", joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
 			inverseJoinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") }) 
 	@ManyToMany
 	public List<Permission> permissions = new ArrayList<Permission>();
@@ -60,7 +58,7 @@ public class Role extends ActModel {
         
     //bi-directional many-to-many association to User
     @ManyToMany
-	@JoinTable(name = Const.ROLE_USER, joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
+	@JoinTable(name = "role_user", joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
     private List<User> users = new ArrayList<User>();
  

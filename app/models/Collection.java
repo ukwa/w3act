@@ -37,7 +37,7 @@ public class Collection extends Taxonomy {
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
     public List<Instance> instances;
     
-    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="parent")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="parent")
 	public List<Collection> children;
 
 	public static Model.Finder<Long,Collection> find = new Model.Finder<Long, Collection>(Long.class, Collection.class);
@@ -303,32 +303,6 @@ public class Collection extends Taxonomy {
 //    	}
 //		return res;
 		throw new NotImplementedError();
-	}       
-    
-	/**
-	 * This method retrieves selected suggested collections from instance object.
-	 * @param targetUrl
-	 * @return
-	 */
-	public static List<Collection> getSelectedCollectionsByInstanceUrl(String instanceUrl) {
-//		Logger.info("getSelectedCollections() instanceUrl: " + instanceUrl);
-		List<Collection> res = new ArrayList<Collection>();
-    	if (instanceUrl != null && instanceUrl.length() > 0) {
-    		Instance instance = Instance.findByUrl(instanceUrl);
-    		if (instance.fieldCollectionCategories != null) {
-//    			Logger.info("getSelectedCollections() field_collection_categories: " + target.field_collection_categories);
-		    	String[] parts = instance.fieldCollectionCategories.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Collection collection = findByUrl(part);
-		    		if (collection != null && StringUtils.isNotEmpty(collection.name)) {
-//			    		Logger.info("collection title: " + collection.name);
-		    			res.add(collection);
-		    		}
-		    	}
-    		}
-    	}
-		return res;
 	}       
     
 	public static List<Collection> getFirstLevelCollections() {

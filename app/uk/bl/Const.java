@@ -391,22 +391,6 @@ public final class Const {
     public static final String GITHUB = "https://github.com/ukwa/w3act/commits/master/"; 
     public static final String LAST_COMMIT = "/ukwa/w3act/commit/"; 
 	
-	/**
-	 * Database associations
-	 */
-    public static final String SUBJECT_TARGET        = "subject_target"; 
-    public static final String SUBJECT_INSTANCE      = "subject_instance"; 
-    public static final String COLLECTION_TARGET     = "collection_target"; 
-    public static final String COLLECTION_INSTANCE   = "collection_instance"; 
-    public static final String LICENSE_TARGET        = "license_target"; 
-    public static final String TAG_TARGET            = "tag_target"; 
-    public static final String FLAG_TARGET           = "flag_target"; 
-    public static final String TAG_INSTANCE          = "tag_instance"; 
-    public static final String FLAG_INSTANCE         = "flag_instance"; 
-    public static final String ROLE_USER             = "role_user"; 
-    public static final String PERMISSION_ROLE       = "permission_role"; 
-    public static final String TAXONOMY_USER         = "taxonomy_user"; 
-
     // Types of the JSON nodes
 	public enum NodeType {
         URL, 
@@ -426,19 +410,6 @@ public final class Const {
 		QUALITY_ISSUE;
     }
 	
-	/**
-	 * Records status of permission process.
-	 */
-	public enum CrawlPermissionStatus {
-		NOT_INITIATED,
-		QUEUED,
-		PENDING,
-		REFUSED,
-		EMAIL_REJECTED,
-		GRANTED,
-		SUPERSEDED;
-    }
-    
     /**
      * E-mail type
      */
@@ -474,33 +445,6 @@ public final class Const {
 		OTHER;
     }
     	
-	/**
-	 * The predominant language of target.
-	 */
-	public enum TargetLanguage {
-		EN("English"),
-		DE("Deutsche");
-		
-        private String value;
-
-        private TargetLanguage(String value) {
-                this.value = value;
-        }
-        
-        public String getValue() {
-        	return value;
-        }
-
-    	public static TargetLanguage getLanguage(String name) {
-    		for (TargetLanguage language : TargetLanguage.values()) {
-    			if (language.name().equals(name)) {
-    				return language;
-    			}
-    		}
-    		return null;
-    	}
-    }
-    
 	/**
 	 * The predominant language of target.
 	 */
@@ -572,7 +516,66 @@ public final class Const {
     	guiMap.put(FIELD_ABBREVIATION,       "Abbreviation");
     	guiMap.put(FROM_EMAIL,               "From E-mail");
     }
-    		
+
+	/**
+	 * Records status of permission process.
+	 */
+	public enum CrawlPermissionStatus {
+		NOT_INITIATED("Not Initiated"),
+		QUEUED("Queued"),
+		PENDING("Pending"),
+		REFUSED("Refused"),
+		EMAIL_REJECTED("Email Rejected"),
+		GRANTED("Granted"),
+		SUPERSEDED("Superseded");
+		
+        private String value;
+
+        private CrawlPermissionStatus(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static CrawlPermissionStatus getCrawlPermissionStatus(String name) {
+    		for (CrawlPermissionStatus crawlPermissionStatus : CrawlPermissionStatus.values()) {
+    			if (crawlPermissionStatus.name().equals(name)) {
+    				return crawlPermissionStatus;
+    			}
+    		}
+    		return null;
+    	}
+	}
+
+	/**
+	 * The predominant language of target.
+	 */
+	public enum TargetLanguage {
+		EN("English"),
+		DE("Deutsche");
+		
+        private String value;
+
+        private TargetLanguage(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static TargetLanguage getLanguage(String name) {
+    		for (TargetLanguage language : TargetLanguage.values()) {
+    			if (language.name().equals(name)) {
+    				return language;
+    			}
+    		}
+    		return null;
+    	}
+    }
+    
 	public enum SelectionType {
 		NOMINATION("Nomination"), // when created from UKWA
 		SELECTION("Selection");
@@ -705,21 +708,41 @@ public final class Const {
 	 * The QA issue category.
 	 */
 	public enum QAIssueCategory { 
-		APPEARANCE_BACKGROUND_TEXT_COLOUR_AND_FONT,
-		APPEARANCE_CHARACTERS,
-		APPEARANCE_FORMATTING_OF_THE_PAGE,
-		FUNCTIONALITY_LANGUAGE,
-		FUNCTIONALITY_ACCESSIBILITY,
-		FUNCTIONALITY_NAVIGATION,
-		FUNCTIONALITY_MEDIA,
-		CONTENT_IMAGES,
-		CONTENT_VIDEO,
-		CONTENT_DOCUMENTS,
-		CONTENT_PAGES_SUB_SECTIONS,
-		CONTENT_MENUS,
-		OTHER;
+		APPEARANCE_BACKGROUND_TEXT_COLOUR_AND_FONT("Appearance Background Text Colour and Font"),
+		APPEARANCE_CHARACTERS("Appearance Characters"),
+		APPEARANCE_FORMATTING_OF_THE_PAGE("Appearance Formatting of the Page"),
+		FUNCTIONALITY_LANGUAGE("Functionality Language"),
+		FUNCTIONALITY_ACCESSIBILITY("Functionality Accessibility"),
+		FUNCTIONALITY_NAVIGATION("Functionality Navigation"),
+		FUNCTIONALITY_MEDIA("Functionality Media"),
+		CONTENT_IMAGES("Content Images"),
+		CONTENT_VIDEO("Content Video"),
+		CONTENT_DOCUMENTS("Content Documents"),
+		CONTENT_PAGES_SUB_SECTIONS("Content Pages Sub-sections"),
+		CONTENT_MENUS("Content Menus"),
+		OTHER("Other");
+		
+        private String value;
+
+        private QAIssueCategory(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static QAIssueCategory getQAIssueCategory(String name) {
+    		for (QAIssueCategory qaIssueCategory : QAIssueCategory.values()) {
+    			if (qaIssueCategory.name().equals(name)) {
+    				return qaIssueCategory;
+    			}
+    		}
+    		return null;
+    	}
     }
-    
+
+	
 	/**
 	 * The report QA status types.
 	 */

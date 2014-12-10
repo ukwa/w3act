@@ -8,16 +8,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import models.CrawlPermission;
 import models.Collection;
 import models.FieldUrl;
 import models.Flag;
@@ -39,13 +36,13 @@ import play.mvc.Result;
 import play.mvc.Security;
 import scala.NotImplementedError;
 import uk.bl.Const;
+import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.Const.DepthType;
 import uk.bl.Const.ScopeType;
 import uk.bl.Const.SelectionType;
 import uk.bl.Const.TargetLanguage;
 import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
-import uk.bl.scope.Scope;
 import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
 import views.html.infomessage;
@@ -277,16 +274,6 @@ public class TargetController extends AbstractController {
 //    	return licenses;
 ////		throw new NotImplementedError();
 //	}
-	
-	/**
-	 * This method returns all possible licenses.
-	 * @return license list
-	 */
-	public static List<Taxonomy> getLicenses() {
-		List<Taxonomy> res = new ArrayList<Taxonomy>();
-		res = Taxonomy.findByType(Const.LICENCE);
-    	return res;
-	}
 	
 	/**
 	 * This method filters targets by crawl frequency.
@@ -648,7 +635,9 @@ public class TargetController extends AbstractController {
     			SelectionType[] selectionTypes = Const.SelectionType.values();
     			ScopeType[] scopeTypes = Const.ScopeType.values();
     			DepthType[] depthTypes = Const.DepthType.values();
-    	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
+	  			List<License> licenses = License.findAllLicenses();
+	  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+	  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -689,7 +678,9 @@ public class TargetController extends AbstractController {
 		SelectionType[] selectionTypes = Const.SelectionType.values();
 		ScopeType[] scopeTypes = Const.ScopeType.values();
 		DepthType[] depthTypes = Const.DepthType.values();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
+		List<License> licenses = License.findAllLicenses();
+		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
 	}
     
     /**
@@ -959,7 +950,9 @@ public class TargetController extends AbstractController {
 		SelectionType[] selectionTypes = Const.SelectionType.values();
 		ScopeType[] scopeTypes = Const.ScopeType.values();
 		DepthType[] depthTypes = Const.DepthType.values();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
+		List<License> licenses = License.findAllLicenses();
+		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
     }
     
     /**
@@ -1322,7 +1315,9 @@ public class TargetController extends AbstractController {
 		SelectionType[] selectionTypes = Const.SelectionType.values();
 		ScopeType[] scopeTypes = Const.ScopeType.values();
 		DepthType[] depthTypes = Const.DepthType.values();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
+		List<License> licenses = License.findAllLicenses();
+		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
     }
 
 	/**
@@ -1525,8 +1520,10 @@ public class TargetController extends AbstractController {
 	    			SelectionType[] selectionTypes = Const.SelectionType.values();
 	    			ScopeType[] scopeTypes = Const.ScopeType.values();
 	    			DepthType[] depthTypes = Const.DepthType.values();
+		  			List<License> licenses = License.findAllLicenses();
+		  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		  			flash("message", "Date of Publication (dd-mm-yy) - Incorrect Format");
-	    	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes));
+		  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
 				}
         	}
             Logger.info("targetFromDB.dateOfPublication: " + targetFromDB.dateOfPublication);
@@ -1900,7 +1897,7 @@ public class TargetController extends AbstractController {
 //        	if (getFormParam(Const.TITLE) != null && getFormParam(Const.FIELD_URL_NODE) != null) {
 //                String name = getFormParam(Const.TITLE);
 //                String target = Scope.INSTANCE.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
-//    	        res = redirect(routes.CrawlPermissions.licenceRequestForTarget(name, target)); 
+//    	        res = redirect(routes.CrawlPermissionController.licenceRequestForTarget(name, target)); 
 //        	}
 //        }
 //        if (archive != null) {
@@ -1993,12 +1990,12 @@ public class TargetController extends AbstractController {
      * @return JSON result
      * @throws WhoisException 
      */
-    public static Result isInScope(String url) throws WhoisException {
-//    	Logger.info("isInScope controller: " + url);
-    	boolean res = Target.isInScope(url, null);
-//    	Logger.info("isInScope res: " + res);
-    	return ok(Json.toJson(res));
-    }
+//    public static Result isInScope(String url) throws WhoisException {
+////    	Logger.info("isInScope controller: " + url);
+//    	boolean res = Target.isInScope(url, null);
+////    	Logger.info("isInScope res: " + res);
+//    	return ok(Json.toJson(res));
+//    }
     
     /**
      * This method calculates collection children - objects that have parents.

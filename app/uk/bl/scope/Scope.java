@@ -148,8 +148,8 @@ public enum Scope {
 	 * @return true if in scope
 	 * @throws WhoisException 
 	 */
-	public boolean check(String url, String nidUrl) throws WhoisException {
-	    return checkExt(url, nidUrl, Const.ScopeCheckType.ALL.name());
+	public boolean check(String url, Target target) throws WhoisException {
+	    return checkExt(url, target, Const.ScopeCheckType.ALL.name());
 	}
 	
 	/**
@@ -247,9 +247,9 @@ public enum Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public boolean checkExt(String url, String nidUrl, String mode) throws WhoisException {
+	public boolean checkExt(String url, Target target, String mode) throws WhoisException {
         boolean res = false;
-        Logger.info("check url: " + url + ", nid: " + nidUrl);
+        Logger.info("check url: " + url + ", nid: " + target.id);
         url = normalizeUrl(url);
         
         /**
@@ -284,19 +284,19 @@ public enum Scope {
 	         * 
 	         */
 	        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-	        if (nidUrl != null && nidUrl.length() > 0 
+	        if (target != null 
 	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
 	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
 	        	if (!res) {
-	        		res = Target.checkManualScope(nidUrl);
+	        		res = target.checkManualScope();
 	        	}
 	        }
 	
 	    	// Rule 2: by permission
-	        if (!res && nidUrl != null && nidUrl.length() > 0
+	        if (!res && target != null
 	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
 	    	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
-	        	res = Target.checkLicense(nidUrl);
+	        	res = target.checkLicense();
 	        }
 	
 	        // Rule 3.1: check domain name
@@ -336,9 +336,9 @@ public enum Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public boolean checkScopeIp(String url, String nidUrl) throws WhoisException {
+	public boolean checkScopeIp(String url, Target target) throws WhoisException {
         boolean res = false;
-        Logger.info("check for scope IP url: " + url + ", nid: " + nidUrl);
+        Logger.info("check for scope IP url: " + url + ", nid: " + target.id);
         url = normalizeUrl(url);
         
         /**
@@ -355,16 +355,14 @@ public enum Scope {
          * 
          */
         // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-        if (nidUrl != null && nidUrl.length() > 0) {
-        	if (!res) {
-        		res = Target.checkManualScope(nidUrl);
-        		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
-        	}
-        }
+    	if (!res) {
+    		res = target.checkManualScope();
+    		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
+    	}
 
     	// Rule 2: by permission
-        if (!res && nidUrl != null && nidUrl.length() > 0) {
-        	res = Target.checkLicense(nidUrl);
+        if (!res && target != null) {
+        	res = target.checkLicense();
     		Logger.debug("checkScopeIp() after license check (field: field_license): " + res);
         }
 
@@ -410,9 +408,9 @@ public enum Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public boolean checkScopeIpWithoutLicense(String url, String nidUrl) throws WhoisException {
+	public boolean checkScopeIpWithoutLicense(String url, Target target) throws WhoisException {
         boolean res = false;
-        Logger.info("check for scope IP url: " + url + ", nid: " + nidUrl);
+        Logger.info("check for scope IP url: " + url + ", nid: " + target.id);
         url = normalizeUrl(url);
         Logger.info("normalizeUrl: " + url);
         
@@ -430,9 +428,9 @@ public enum Scope {
          * 
          */
         // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-        if (nidUrl != null && nidUrl.length() > 0) {
+        if (target != null) {
         	if (!res) {
-        		res = Target.checkManualScope(nidUrl);
+        		res = target.checkManualScope();
         		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
         	}
         }

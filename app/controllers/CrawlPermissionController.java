@@ -23,9 +23,11 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.api.Utils;
 import uk.bl.scope.EmailHelper;
 import views.html.crawlpermissions.edit;
+import views.html.crawlpermissions.view;
 import views.html.communicationlogs.logs;
 import views.html.crawlpermissions.crawlpermissionpreview;
 import views.html.licence.licences;
@@ -42,7 +44,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * Manage permissions.
  */
 @Security.Authenticated(Secured.class)
-public class CrawlPermissions extends AbstractController {
+public class CrawlPermissionController extends AbstractController {
   
     /**
      * Display the crawl permissions.
@@ -53,7 +55,7 @@ public class CrawlPermissions extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-        routes.CrawlPermissions.list(0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "", Const.SELECT_ALL)
+        routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "", Const.SELECT_ALL)
     );
     
     /**
@@ -68,7 +70,9 @@ public class CrawlPermissions extends AbstractController {
     	Logger.info("CrawlPermissions.list() " + filter);
     	
     	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status, target);
-    	
+
+    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+
         return ok(
         	list.render(
         			"CrawlPermissions", 
@@ -79,7 +83,8 @@ public class CrawlPermissions extends AbstractController {
         			order,
         			status,
         			target,
-        			sel)
+        			sel,
+        			crawlPermissionStatuses)
         	);
     }
     
@@ -93,17 +98,16 @@ public class CrawlPermissions extends AbstractController {
 		Logger.info("permission name: " + permission.name + ", url: " + url);
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
+    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
       	return ok(
-	              edit.render(permissionFormNew, User.findByEmail(request().username()))
+	              edit.render(permissionFormNew, User.findByEmail(request().username()), crawlPermissionStatuses)
 	            );
     }
     
     public static Result view(String url) {
-        return ok(
-        		views.html.crawlpermissions.view.render(
-                		models.CrawlPermission.findByUrl(url), User.findByEmail(request().username())
-                )
-            );
+    	User user = User.findByEmail(request().username());
+    	CrawlPermission crawlPermission = CrawlPermission.findByUrl(url);
+        return ok(view.render(crawlPermission, user));
     }
     
     /**
@@ -124,7 +128,7 @@ public class CrawlPermissions extends AbstractController {
     	Logger.info("showCrawlPermissions: " + targetUrl + ", target: " + target);
 //        List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);
 //    	Logger.info("showCrawlPermissions count: " + resList.size());
-    	res = redirect(routes.CrawlPermissions.list(0, Const.NAME, Const.ASC, "", status, target, Const.SELECT_ALL));
+    	res = redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", status, target, Const.SELECT_ALL));
 //        res = ok(
 //        		views.html.crawlpermissions.list.render(
 //                    "CrawlPermissions", User.findByEmail(request().username()), resList, "", status
@@ -153,7 +157,7 @@ public class CrawlPermissions extends AbstractController {
         if (StringUtils.isBlank(name)) {
 			Logger.info("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
-	    	return redirect(routes.CrawlPermissions.list(0, Const.NAME, Const.ASC, name, status, "", Const.SELECT_ALL));
+	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, "", Const.SELECT_ALL));
 //			return ok(
 //					views.html.crawlpermissions.list.render(
 //                        "CrawlPermissions", User.findByEmail(request().username()), resList, "", status
@@ -179,12 +183,13 @@ public class CrawlPermissions extends AbstractController {
         		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
         		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
         		permissionFormNew = permissionFormNew.fill(permission);
+            	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
               	return ok(
-        	              edit.render(permissionFormNew, User.findByEmail(request().username()))
+        	              edit.render(permissionFormNew, User.findByEmail(request().username()), crawlPermissionStatuses)
         	            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.CrawlPermissions.list(0, Const.NAME, Const.ASC, name, status, "", Const.SELECT_ALL));
+    	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, "", Const.SELECT_ALL));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -246,8 +251,9 @@ public class CrawlPermissions extends AbstractController {
 		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
+    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
       	return ok(
-	              edit.render(permissionFormNew, User.findByEmail(request().username()))
+	              edit.render(permissionFormNew, User.findByEmail(request().username()), crawlPermissionStatuses)
 	            );
     }
       
@@ -272,8 +278,9 @@ public class CrawlPermissions extends AbstractController {
 		Logger.info("add entry with url: " + permission.url + ", name: " + permission.name + ", and target: " + permission.target.title + ", " + user.email);
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
+    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
       	return ok(
-	              edit.render(permissionFormNew, user)
+	              edit.render(permissionFormNew, user, crawlPermissionStatuses)
 	            );
     }
 
@@ -340,9 +347,9 @@ public class CrawlPermissions extends AbstractController {
 	 * @return edit page with form and info message
 	 */
 	public static Result info() {
-
+    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
       	return ok(
-	              edit.render(processForm(), User.findByEmail(request().username()))
+	              edit.render(processForm(), User.findByEmail(request().username()), crawlPermissionStatuses)
 	            );
     }
     
@@ -408,8 +415,9 @@ public class CrawlPermissions extends AbstractController {
 	    	    	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
 	    	                	Logger.info(msg + " - " + getFormParam(Const.EMAIL));
 	    	    	  			flash("message", msg);
+	    	    	  	    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 	    	    	  	      	return ok(
-	    	    	  	              edit.render(processForm(true), User.findByEmail(request().username()))
+	    	    	  	              edit.render(processForm(true), User.findByEmail(request().username()), crawlPermissionStatuses)
 	    	    	  	            );
 	    	            	}
 	                	}
@@ -540,14 +548,14 @@ public class CrawlPermissions extends AbstractController {
         	}
         	Logger.info("Crawl permission was saved with status " + permission.status);
   			flash("message", "Crawl permission was saved with status " + permission.status);
-	        return redirect(routes.CrawlPermissions.view(permission.url));
+	        return redirect(routes.CrawlPermissionController.view(permission.url));
         } 
         if (delete != null) {
         	CrawlPermission permission = CrawlPermission.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(permission);
-	        res = redirect(routes.CrawlPermissions.index()); 
+	        res = redirect(routes.CrawlPermissionController.index()); 
         }
-    	res = redirect(routes.CrawlPermissions.index()); 
+    	res = redirect(routes.CrawlPermissionController.index()); 
         return res;
     }	   
 
@@ -877,7 +885,7 @@ public class CrawlPermissions extends AbstractController {
             if (!sendingRes) {
     			flash("message", "Missing contact email. Please check contact person");
             }
-        	res = redirect(routes.CrawlPermissions.index()); 
+        	res = redirect(routes.CrawlPermissionController.index()); 
         }
         if (sendsome != null) {
         	Logger.info("send some crawl permission requests");
@@ -885,7 +893,7 @@ public class CrawlPermissions extends AbstractController {
             if (!sendingRes) {
     			flash("message", "Missing contact email. Please check contact person");
             }
-	        res = redirect(routes.CrawlPermissions.index()); 
+	        res = redirect(routes.CrawlPermissionController.index()); 
         }
         if (preview != null) {
         	Logger.info("preview crawl permission requests");        	
@@ -898,16 +906,16 @@ public class CrawlPermissions extends AbstractController {
         if (reject != null) {
         	Logger.info("reject crawl permission requests");
         	rejectSelectedCrawlPermissions();        	
-	        res = redirect(routes.CrawlPermissions.index()); 
+	        res = redirect(routes.CrawlPermissionController.index()); 
         }
         if (selectall != null) {
         	Logger.info("select all listed in page crawl permissions");
-        	res = redirect(routes.CrawlPermissions.list(
+        	res = redirect(routes.CrawlPermissionController.list(
         			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "", Const.SELECT_ALL));
         }
         if (deselectall != null) {
         	Logger.info("deselect all listed in page crawl permissions");
-        	res = redirect(routes.CrawlPermissions.list(
+        	res = redirect(routes.CrawlPermissionController.list(
         			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "", Const.DESELECT_ALL));
         }
         return res;
@@ -935,7 +943,7 @@ public class CrawlPermissions extends AbstractController {
             if (!sendingRes) {
     			flash("message", "Missing contact email. Please check contact person");
             }
-	        res = redirect(routes.CrawlPermissions.index()); 
+	        res = redirect(routes.CrawlPermissionController.index()); 
         }
         return res;
     }

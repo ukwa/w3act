@@ -56,7 +56,7 @@ public class User extends ActModel {
 	
 	@JsonIgnore
 	@ManyToMany
-	@JoinTable(name = Const.ROLE_USER, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") },
+	@JoinTable(name = "role_user", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
 	public List<Role> roles = new ArrayList<Role>();
     	

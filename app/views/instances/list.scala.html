@@ -5,8 +5,8 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
-			searchContext = 'instances';
+			context = '@play.api.Play.current.configuration.getString("application.context")'
+			searchContext = '/instances';
 			urlTo = 'instance';
 			applySearch(context, searchContext, urlTo);
 			scopeCheck(context);
@@ -130,23 +130,22 @@
 					<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.getFieldUrlAsStr">(mid-crawl),</a>
 	                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
 	                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
-					@if(instance.getOrganisation != null 
-						&& instance.getOrganisation.url != null
-						&& instance.getOrganisation.title != null) {
-						<td><a href="@routes.Organisations.view(instance.getOrganisation.id)">
-							@instance.getOrganisation.title</a></td>
+					@if(instance.organisation != null && instance.organisation.title != null) {
+						<td><a href="@routes.Organisations.view(instance.organisation.id)">
+							@instance.organisation.title</a></td>
 					} else {
 						<td></td>
 					}
 					<td>0</td>
-					<td>@instance.fieldCrawlFrequency</td>
+					<td>@instance.crawlFrequency</td>
 					<td>
 						@if(instance.authorUser != null) {
 							<a class="brand" href="@routes.Curators.edit(instance.authorUser.id)">@instance.authorUser.name</a>
 						}
 					</td>
-					<td>@if(instance.qaIssue != null) {
-						@instance.qaIssue.name
+					<td>
+						@if(instance.qaIssue != null) {
+							@instance.qaIssue.name
 						}
 					</td>
 					<td>@instance.checkScope(instance.getFieldListAsStr("fieldUrl"))</td>

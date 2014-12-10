@@ -264,19 +264,6 @@ public class CrawlPermission extends ActModel {
     }
     
     /**
-     * This method returns a list of all status values for crawl permission record.
-     * @return
-     */
-    public static List<String> getAllStatus() {
-    	List<String> res = new ArrayList<String>();
-	    Const.CrawlPermissionStatus[] resArray = Const.CrawlPermissionStatus.values();
-	    for (int i=0; i < resArray.length; i++) {
-		    res.add(resArray[i].name());
-	    }
-	    return res;
-    }         
-
-    /**
      * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
      * @param subject
      * @return true if in list

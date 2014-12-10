@@ -1,4 +1,4 @@
-@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType])
+@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType], licenses: List[License], crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus])
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -917,7 +917,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
 						    <div class="col-sm-6">
-				                @if(form("fieldIgnoreRobotsTxt").value != null && form("fieldIgnoreRobotsTxt").value == "true") {             
+				                @if(form.get.ignoreRobotsTxt != null && form.get.ignoreRobotsTxt) {             
 					                <input type="checkbox" name="field_ignore_robots_txt" value="true" checked />
 				                } else {
 					                <input type="checkbox" name="field_ignore_robots_txt" value="true"/>
@@ -933,47 +933,47 @@
 							<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
 						    <div class="col-sm-6">
 				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Domain Crawl Only")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Domain Crawl Only")) {
 					 					<option selected>Domain Crawl Only</option>
 						            } else {						                
 					 					<option>Domain Crawl Only</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Annually")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Annually")) {
 					 					<option selected>Annually</option>
 						            } else {						                
 					 					<option>Annually</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Six-monthly")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Six-monthly")) {
 					 					<option selected>Six-monthly</option>
 						            } else {						                
 					 					<option>Six-monthly</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Quarterly")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Quarterly")) {
 					 					<option selected>Quarterly</option>
 						            } else {						                
 					 					<option>Quarterly</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Monthly")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Monthly")) {
 					 					<option selected>Monthly</option>
 						            } else {						                
 					 					<option>Monthly</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Old-Monthly-DO-NOT-USE")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Old-Monthly-DO-NOT-USE")) {
 					 					<option selected>Old-Monthly-DO-NOT-USE</option>
 						            } else {						                
 					 					<option>Old-Monthly-DO-NOT-USE</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Weekly")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Weekly")) {
 					 					<option selected>Weekly</option>
 						            } else {						                
 					 					<option>Weekly</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Daily")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Daily")) {
 					 					<option selected>Daily</option>
 						            } else {						                
 					 					<option>Daily</option>
 					                }
-				             		@if(form("field_crawl_frequency").value != null && form("field_crawl_frequency").value.equals("Never Crawl")) {
+				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Never Crawl")) {
 					 					<option selected>Never Crawl</option>
 						            } else {						                
 					 					<option>Never Crawl</option>
@@ -989,7 +989,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Start date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_crawl_start_date" value="@form("fieldCrawlStartDate").value" size="30" maxlength="2048" class="form-control" id="start-date"/>
+		 						<input type="text" name="field_crawl_start_date" value="@form.get.crawlStartDate" size="30" maxlength="2048" class="form-control" id="start-date"/>
 	                		</div>
 						</div>
 					</div>
@@ -1000,7 +1000,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">End date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_crawl_end_date" value="@form("fieldCrawlEndDate").value" size="30" maxlength="2048" class="form-control" id="end-date"/>
+		 						<input type="text" name="field_crawl_end_date" value="@form.get.crawlEndDate" size="30" maxlength="2048" class="form-control" id="end-date"/>
 	                		</div>
 						</div>
 					</div>
@@ -1011,7 +1011,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">White list</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="white_list" value="@form("whiteList").value" size="30" maxlength="2048" class="form-control" />
+		 						<input type="text" name="white_list" value="@form.get.whiteList" size="30" maxlength="2048" class="form-control" />
 	                		</div>
 						</div>
 					</div>
@@ -1022,7 +1022,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Black list</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="black_list" value="@form("blackList").value" size="30" maxlength="2048" class="form-control" />
+		 						<input type="text" name="black_list" value="@form.get.blackList" size="30" maxlength="2048" class="form-control" />
 	                		</div>
 						</div>
 					</div>
@@ -1033,7 +1033,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
-								@if(form("url").value != null && Target.existInDb(form("url").value)) {
+								@if(form.get != null) {
 									@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 								<button type="submit" name="archive" class="btn btn-success">Archive this now</button>
 									}
@@ -1059,28 +1059,27 @@
 						<div class="form-group">
 							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site is archived and made available)</small></label>
 						    <div class="col-sm-6">
-				    	    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-					    	    
-								@if(form("qaStatus").value != null) { 
-								    @if(form("qaStatus").value.equals("None") || form("qaStatus").value.length() == 0) { 
-									<select multiple name="license" id="edit-field-license" class="form-control" size="2">
-									} else {
-									    @if(user.hasRole("sys_admin") && !form("qaStatus").value.equals("None") && form("qaStatus").value.length() >= 0) {
-										<select name="license" id="edit-field-license" class="form-control" size="2">
+					    	    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+									@if(form.get.qaIssue != null) { 
+									    @if(form.get.qaIssue.id == -1) { 
+											<select multiple name="license" id="edit-field-license" class="form-control" size="2">
 										} else {
-										<select name="license" id="edit-field-license" class="form-control" size="2" disabled>
+										    @if(user.hasRole("sys_admin")) {
+												<select name="license" id="edit-field-license" class="form-control" size="2">
+											} else {
+												<select name="license" id="edit-field-license" class="form-control" size="2" disabled>
+											}
 										}
+									} else {
+									<select name="license" id="edit-field-license" class="form-control" size="2" disabled>
 									}
-								} else {
-								<select name="license" id="edit-field-license" class="form-control" size="2" disabled>
 								}
-							}
-								 	<option>None</option>
-								    @for(taxonomy <- TargetController.getLicenses()) {
-						                @if(form("fieldLicense").value != null && form("fieldLicense").value.contains(taxonomy.url)) {             
-										 	<option selected>@taxonomy.name</option>
+									<option>None</option>
+								    @for(license <- licenses) {
+						                @if(form.get.licenses.contains(license)) {             
+										 	<option value="@license.id" selected>@license.name</option>
 									 	} else {
-										 	<option>@taxonomy.name</option>
+										 	<option value="@license.id" >@license.name</option>
 									 	}									 	
 								    }	
 								</select>
@@ -1090,14 +1089,14 @@
 		     	</div>	
 
 				@if(form.get.indicateUkwaLicenceStatus) {    	
-				<div class="padding-20">
-					<div class="alert alert-info">
-						NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
-						@for(target <- form.get.getUkwaLicenceStatusList) { 
-							<p><a href="@routes.TargetController.view(target.id)">@target.title @target.fieldUrl()</a></p>
-						}
-					</div>
-				</div>	
+					<div class="padding-20">
+						<div class="alert alert-info">
+							NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
+							@for(target <- form.get.getUkwaLicenceStatusList) { 
+								<p><a href="@routes.TargetController.view(target.id)">@target.title @target.fieldUrl()</a></p>
+							}
+						</div>
+					</div>	
 				}	     			     	
 		     	
 	    		<div class="row padding-10">
@@ -1111,11 +1110,11 @@
 								<select disabled name="qa_status" id="qa_status" class="form-control">
 								}
 									<option>None</option>
-					                @for(status <- CrawlPermission.getAllStatus()) {
+					                @for(status <- crawlPermissionStatuses) {
 						                @if(status.equals(form("qaStatus").value)) {
-						                	<option selected>@status</option>
+						                	<option value="@status.name" selected>@status.getValue</option>
 						                } else {
-						                	<option>@status</option>
+						                	<option value="@status.name" >@status.getValue</option>
 						                }
 					                }
 								</select>
@@ -1129,16 +1128,13 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
-								@if(form("url").value != null && Target.existInDb(form("url").value)
-								    && form("qaStatus").value != null 
-								    && (form("qaStatus").value.equals("None")
-								    || form("qaStatus").value.length() == 0)) {
+								@if(form.get != null && form.get.qaIssue != null && form.get.qaIssue == -1) {
 									@if(!form.get.indicateLicenses) {
 										<button type="submit" name="request" class="btn btn-success">Open License Request</button>
 									}
-								   @if(form("url").value != null && (user.hasRole("sys_admin") || user.hasRole("archivist"))) {
-								   <a href="@routes.CrawlPermissions.showCrawlPermissions(form("url").value)">Crawl Permissions</a>
-								   }
+									@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+								   		<a href="@routes.CrawlPermissionController.showCrawlPermissions(form.get.url)">Crawl Permissions</a>
+								   	}
 								} else {
 								<button disabled type="submit" name="request" class="btn btn-success">Open License Request</button>
 								<div class="padding-20">
@@ -1191,18 +1187,20 @@
 						</a>
 					</div>
 					<div id="collapseInstances" class="panel-collapse collapse">
-						<div class="panel-footer">
-							<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@form("fieldUrl").value">In QA Wayback</a>
-						</div>
-					    <div class="panel-footer">
-				        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@form("fieldUrl").value">In Open UK Web Archive</a>
-						</div>
-						<div class="panel-footer">
-							<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@form("fieldUrl").value">In other web archives</a>
-						</div>
-					    <div class="panel-footer">
-				        	<a class="brand" target="_blank" href="@form("fieldUrl").value">Live site</a>
-						</div>
+						@for(fieldUrl <- form.get.fieldUrls) {
+							<div class="panel-footer">
+								<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@fieldUrl.url">In QA Wayback</a>
+							</div>
+						    <div class="panel-footer">
+					        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
+							</div>
+							<div class="panel-footer">
+								<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
+							</div>
+						    <div class="panel-footer">
+					        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
+							</div>
+						}
 					</div>
 				</div>
 			</div>
@@ -1215,27 +1213,27 @@
 		</div>
 
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {     			     		
-		<div class="row padding-10 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">
-				    @if(form.get.authorUser != null && user.hasRole("user") 
-				    	&& !user.hasRole("expert_user") 
-				    	&& !user.hasRole("archivist") 
-				    	&& !user.hasRole("sys_admin") 
-				    	&& user.id != form.get.authorUser.id) { 
-						<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
-						@if(form.get != null) {
-							<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
+			<div class="row padding-10 pull-right">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="btn-group">
+					    @if(form.get.authorUser != null && user.hasRole("user") 
+					    	&& !user.hasRole("expert_user") 
+					    	&& !user.hasRole("archivist") 
+					    	&& !user.hasRole("sys_admin") 
+					    	&& user.id != form.get.authorUser.id) { 
+							<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
+							@if(form.get != null) {
+								<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
+							}
+						} else {
+							<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
+					       	@if(form.get != null) {
+								<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
+						   	}
 						}
-					} else {
-						<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
-				       	@if(form.get != null) {
-							<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
-					   	}
-					}
-		       </div>
+			       </div>
+				</div>
 			</div>
-		</div>
 		}
 	}
 }

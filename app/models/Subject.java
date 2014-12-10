@@ -34,6 +34,12 @@ public class Subject extends Taxonomy {
 	@JoinTable(name = "subjects", joinColumns = { @JoinColumn(name = "parent_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
 	public List<Subject> children;
 	
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "subject_instance", joinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+	public List<Instance> instances;
+	
 	public static Model.Finder<Long,Subject> find = new Model.Finder<Long, Subject>(Long.class, Subject.class);
 
     public static Subject findById(Long id) {

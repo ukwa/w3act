@@ -10,12 +10,15 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
-import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
@@ -30,8 +33,6 @@ import com.avaje.ebean.QueryIterator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import controllers.Flags;
-
 
 /**
  * Instance instance entity managed by Ebean
@@ -45,22 +46,52 @@ public class Instance extends UrlModel {
 	 */
 	private static final long serialVersionUID = 4285620218930401425L;
 
-	// TODO: KL THIS THINGS ARE POPULATE VIA THE INSTANCECONTROLLER
-//	public List<Taxonomy> subjects = new ArrayList<Taxonomy>();
-//	public List<Taxonomy> collections = new ArrayList<Taxonomy>();
-//	public List<Flag> flagToInstance = new ArrayList<Flag>();
-//	public List<Tag> tagToInstance = new ArrayList<Tag>();
-
 	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "qaissue_id")
-	public QaIssue qaIssue;
-
-	@ManyToOne
-	@JoinColumn(name = "author_id")
-	@JsonIgnore
-	public User authorUser;
+    @ManyToMany
+	@JoinTable(name = "tag_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") }) 
+	public List<Tag> tags;
 	
+	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "flag_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
+    public List<Flag> flags;
+
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "subject_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
+	public List<Subject> subjects;
+
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "collection_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
+	public List<Collection> collections;
+
+	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "organisation_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "organisation_id", referencedColumnName="id") }) 
+	public List<Organisation> originatingOrganisations;
+	
+	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "license_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
+	public List<License> licenses;
+	
+    public String qaIssueCategory;
+    
+//  Description of QA Issues (Andy's ACT) > QA Notes (w3ACT)
+    @Column(columnDefinition = "text")
+    public String qaNotes;
+    
+//  Body (Andy's ACT) > Quality Notes (currently in Wc3ACT) but which we should rename TEchnical Notes.
+    @Column(columnDefinition = "text")
+	public String technicalNotes;
+    
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "target_id")
@@ -134,113 +165,10 @@ public class Instance extends UrlModel {
 //same	"comment_count_new":"0",
 //same	"feed_nid":null}
 	
-    public String format;
-    public String fieldScope;
-    public String fieldDepth;
-    public Boolean fieldViaCorrespondence;
-    public Boolean fieldUkPostalAddress;
-    public Boolean fieldUkHosting;
-    public String fieldNominatingOrganisation;
-    public String fieldCrawlFrequency;
-    public Date fieldCrawlStartDate;
-    public Date fieldCrawlEndDate;
-    public Boolean fieldUkDomain;
-    public String fieldCrawlPermission;
-    public String fieldSpecialDispensation;
-    public Boolean fieldUkGeoip;
-    public Boolean fieldProfessionalJudgement;
-
     public String log;
 
-    public String fieldLiveSiteStatus;
-    public Long fieldWct_id;
-    public Long fieldSpt_id;
-    public Boolean fieldNoLdCriteriaMet;
-    public Boolean fieldKeySite;
-    @Column(columnDefinition = "text")
-    public String fieldProfessionalJudgementExp;
-    public Boolean fieldIgnoreRobotsTxt;
-    public String revision;
-    @Column(columnDefinition = "text")
-    public String fieldTarget;
-    @Column(columnDefinition = "text")
-    public String fieldDescriptionOfQaIssues;
-    @Column(columnDefinition = "text")
-    
-    
-    public Boolean fieldPublished;
-    public Boolean fieldToBePublished;
-    public String dateOfPublication;
-    @Column(columnDefinition = "text")
-    public String justification; 
-    @Column(columnDefinition = "text")
-    public String selectorNotes; 
-    @Column(columnDefinition = "text")
-    public String archivistNotes; 
-    @Required
-    public String selectionType; 
-    public String selector;     
-    public Long legacySite_id;
-    public String whiteList; // regex for white list URLs
-    public String blackList; // regex for black list URLs
-    
-    @Column(columnDefinition = "text")
-    public String fieldDescription; 
-    
-    @Column(columnDefinition = "text")
-    public String fieldUkPostalAddressUrl;
-    
-    @Column(columnDefinition = "text")
-    public String fieldSuggestedCollections;
-    
-    @Column(columnDefinition = "text")
-    public String fieldCollections;
-    
-    @Column(columnDefinition = "text")
-    public String fieldLicense;
-    
-    @Column(columnDefinition = "text")
-    public String fieldCollectionCategories;
-    
-    @Column(columnDefinition = "text")
-    public String fieldNotes;
-    
-    @Column(columnDefinition = "text")
-    public String fieldInstances;
-    
-    @Required
-    @Column(columnDefinition = "text")
-    public String fieldSubject;
-    
-    @Column(columnDefinition = "text")
-    public String fieldSubSubject; 
-    
-    @Column(columnDefinition = "text")
-    public String qaIssueCategory;
-    
-//    Description of QA Issues (Andy's ACT) > QA Notes (w3ACT)
-    @Column(columnDefinition = "text")
-    public String qaNotes;
-    
-//    Body (Andy's ACT) > Quality Notes (currently in Wc3ACT) but which we should rename TEchnical Notes.
-    @Column(columnDefinition = "text")
-    public String technicalNotes;
-    
-    @Column(columnDefinition = "text")
-    public String keywords;
-    
-    @Column(columnDefinition = "text")
-    public String tags;
-    
-    @Column(columnDefinition = "text")
-    public String synonyms; 
-    
-    @Column(columnDefinition = "text")
-    public String flags; 
 
-    public Instance() {
-    	super();
-    }
+    public Instance() {}
 
     /**
      * Constructor
@@ -456,10 +384,7 @@ public class Instance extends UrlModel {
 	 * @return duplicate count
 	 */
 	public static List<Instance> filterUrl(String url) {
-		List<Instance> res = new ArrayList<Instance>();
-        ExpressionList<Instance> ll = find.where().contains("fieldUrl", url);
-    	res = ll.findList();
-		return res;
+		return find.fetch("target").fetch("target.fieldUrls").where().contains("target.fieldUrls.url", url).findList();
 	}
 	
 	/**
@@ -753,9 +678,9 @@ public class Instance extends UrlModel {
 	 * @param url
 	 * @return result as a flag
 	 */
-    public static boolean isInScope(String url, String nidUrl) {
+    public boolean isInScope(String url, String nidUrl) {
     	try {
-    		return Scope.INSTANCE.check(url, nidUrl);
+    		return Scope.INSTANCE.check(url, this.target);
     	} catch (WhoisException ex) {
     		Logger.info("Exception: " + ex);
     		return false;
@@ -773,8 +698,7 @@ public class Instance extends UrlModel {
      */
     public static Page<Instance> page(int page, int pageSize, String sortBy, String order, String filter) {
 
-		ExpressionList<Instance> exp = find.where();
-		Page<Instance> results = exp.query().fetch("target").fetch("target.fieldUrls").where().icontains("target.fieldUrls.url", filter).orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);
+		Page<Instance> results = find.where().query().fetch("target").fetch("target.fieldUrls").where().icontains("target.fieldUrls.url", filter).orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);
 
 		Logger.info("results: " + results.getList());
 //		find.where().icontains(Const.FIELD_URL_NODE, filter)
@@ -809,66 +733,6 @@ public class Instance extends UrlModel {
     }    
     
     /**
-     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
-     * @param subject
-     * @return true if in list
-     */
-    public boolean hasSubject(String subject) {
-    	boolean res = false;
-    	res = Utils.hasElementInList(subject, fieldSubject);
-    	return res;
-    }
-        
-    /**
-     * This method evaluates if a collection is in a list separated by list delimiter e.g. ', '.
-     * @param subject
-     * @return true if in list
-     */
-    public boolean hasCollection(String collection) {
-    	boolean res = false;
-    	res = Utils.hasElementInList(collection, fieldSuggestedCollections);
-    	return res;
-    }
-    
-    /**
-     * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
-     * @param subject
-     * @return true if in list
-     */
-    public boolean hasContactPerson(String curContactPerson) {
-//    	boolean res = false;
-//    	res = Utils.hasElementInList(curContactPerson, authors);
-//    	return res;
-    	throw new NotImplementedError();
-    }
-    
-    /**
-     * This method returns a list of all language values for target record.
-     * @return
-     */
-    public static List<String> getAllLanguage() {
-    	List<String> res = new ArrayList<String>();
-	    Const.TargetLanguage[] resArray = Const.TargetLanguage.values();
-	    for (int i=0; i < resArray.length; i++) {
-		    res.add(resArray[i].name());
-	    }
-	    return res;
-    }         
-
-    /**
-     * This method returns a list of all selection type values for target record.
-     * @return
-     */
-    public static List<String> getAllSelectionTypes() {
-    	List<String> res = new ArrayList<String>();
-	    Const.SelectionType[] resArray = Const.SelectionType.values();
-	    for (int i=0; i < resArray.length; i++) {
-		    res.add(resArray[i].name());
-	    }
-	    return res;
-    }         
-
-    /**
      * This method returns a list of all flag values for target record.
      * @return
      */
@@ -895,10 +759,6 @@ public class Instance extends UrlModel {
 		}
 		return res;
     }          
-    
-    public Organisation getOrganisation() {
-    	return Organisation.findByUrl(fieldNominatingOrganisation);
-    }
     
 	/**
 	 * This method checks whether the passed URL is in scope. 
@@ -1048,74 +908,12 @@ public class Instance extends UrlModel {
      * @param subject
      * @return true if in list
      */
-    public boolean hasSubSubject(String subject) {
-    	boolean res = false;
-    	res = Utils.hasElementInList(subject, this.fieldSubSubject);
-    	return res;
-    }
+//    public boolean hasSubSubject(String subject) {
+//    	boolean res = false;
+//    	res = Utils.hasElementInList(subject, this.fieldSubSubject);
+//    	return res;
+//    }
           
-    /**
-     * This method calculates selected tags for presentation in view page.
-     * @return tag list as a string
-     */
-    public String getSelectedTags() {
-    	String res = "";
-    	boolean firstTime = true;
-    	if (this.tags != null) {
-    		if (this.tags.contains(Const.LIST_DELIMITER)) {
-		    	String[] parts = this.tags.split(Const.LIST_DELIMITER);
-		    	for (String part: parts)
-		        {
-		    		try {
-		    			if (firstTime) {
-		    				res = Tag.findByUrl(part).name;
-		    				firstTime = false;
-		    			} else {
-		    				res = res + Const.LIST_DELIMITER + Tag.findByUrl(part).name;
-		    			}
-		    		} catch (Exception e) {
-		    			Logger.error("getSelectedTags error: " + e);
-		    		}
-		        }
-	    	}
-    	}
-		if (res.length() == 0) {
-			res = Const.NONE;
-		}
-        return res;
-    }
-    
-    /**
-     * This method calculates selected flags for presentation in view page.
-     * @return flag list as a string
-     */
-    public String getSelectedFlags() {
-    	String res = "";
-    	boolean firstTime = true;
-    	if (this.flags != null) {
-    		if (this.flags.contains(Const.LIST_DELIMITER)) {
-		    	String[] parts = this.flags.split(Const.LIST_DELIMITER);
-		    	for (String part: parts)
-		        {
-		    		try {
-		    			if (firstTime) {
-		    				res = Flags.getGuiName(Flag.findByUrl(part).name);
-		    				firstTime = false;
-		    			} else {
-		    				res = res + Const.LIST_DELIMITER + Flags.getGuiName(Flag.findByUrl(part).name);
-		    			}
-		    		} catch (Exception e) {
-		    			Logger.error("getSelectedFlags error: " + e);
-		    		}
-		        }
-	    	}
-    	}
-		if (res.length() == 0) {
-			res = Const.NONE;
-		}
-        return res;
-    }
-        
     /**
      * This method updates foreign key mapping between an Instance and an Organisation.
      */
@@ -1177,16 +975,69 @@ public class Instance extends UrlModel {
 	public void setField_to_be_published_(Boolean field_to_be_published_) {
 		this.field_to_be_published_ = field_to_be_published_;
 	}
+	
+	public String subjectIdsAsString() {
+		return StringUtils.join(this.subjectIds(), ", ");
+	}
 
-	public String toString() {
-        return "Instance(" + id + ") with" + " title: " + title  + " url: " + url + ", field_crawl_frequency: " + fieldCrawlFrequency + ", type: " + type +
-        ", field_uk_domain: " + fieldUkDomain + 
-        ", field_description: " + fieldDescription + ", field_uk_postal_address_url: " + fieldUkPostalAddressUrl +
-        ", field_suggested_collections: " + fieldSuggestedCollections + ", field_collections: " + fieldCollections +
-        ", field_license: " + fieldLicense + ", field_collection_categories: " + fieldCollectionCategories +
-        ", field_notes: " + fieldNotes + ", field_instances: " + fieldInstances + 
-        ", field_subject: " + fieldSubject + ", format: " + format + ", summary: " + summary + ", value: " + value;
-    }
-
+	public List<Long> subjectIds() {
+		List<Long> ids = new ArrayList<Long>();
+		for (Subject subject : this.subjects) {
+			ids.add(subject.id);
+		}
+		return ids;
+	}
+	
+	public String subjectsAsString() {
+		List<String> names = new ArrayList<String>();
+		for (Subject subject : this.subjects) {
+			names.add(subject.name);
+		}
+		return StringUtils.join(names, ", ");
+	}
+	
+	public List<Long> collectionIds() {
+		List<Long> ids = new ArrayList<Long>();
+		for (Collection collection : this.collections) {
+			ids.add(collection.id);
+		}
+		return ids;
+	}
+	
+	public String collectionIdsAsString() {
+		return StringUtils.join(collectionIds(), ", ");
+	}
+	
+	public String collectionsAsString() {
+		List<String> names = new ArrayList<String>();
+		for (Collection collection : this.collections) {
+			names.add(collection.name);
+		}
+		return StringUtils.join(names, ", ");
+	}
+	
+	public String tagsAsString() {
+		List<String> names = new ArrayList<String>();
+		for (Tag tag : this.tags) {
+			names.add(tag.name);
+		}
+		return StringUtils.join(names, ", ");
+	}
+	
+	public String flagsAsString() {
+		List<String> names = new ArrayList<String>();
+		for (Flag flag : this.flags) {
+			names.add(flag.name);
+		}
+		return StringUtils.join(names, ", ");
+	}
+	
+	public String originatingOrganisationsAsString() {
+		List<String> names = new ArrayList<String>();
+		for (Organisation organisation : this.originatingOrganisations) {
+			names.add(organisation.title);
+		}
+		return StringUtils.join(names, ", ");
+	}
 }
 

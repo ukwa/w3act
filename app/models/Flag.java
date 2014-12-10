@@ -28,12 +28,12 @@ public class Flag extends Taxonomy {
 	private static final long serialVersionUID = -2257699575463702989L;
 
     @ManyToMany
-	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+	@JoinTable(name = "flag_target", joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
     public List<Target> targets;
 
     @ManyToMany
-	@JoinTable(name = Const.FLAG_INSTANCE, joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+	@JoinTable(name = "flag_instance", joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
     public List<Instance> instances;
 
