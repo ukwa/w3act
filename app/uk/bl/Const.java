@@ -742,6 +742,39 @@ public final class Const {
     	}
     }
 
+	/**
+	 * The QA issue category.
+	 */
+	public enum CrawlFrequency { 
+		DOMAIN_CRAWL_ONLY("Domain Crawl Only"),
+		ANNUALLY("Annually"),
+		SIX_MONTHLY("Six-monthly"),
+		QUARTERLY("Quarterly"),
+		MONTLY("Monthly"),
+		OLD_MONTHLY_DO_NOT_USE("Old-Monthly-DO-NOT-USE"),
+		WEEKLY("Weekly"),
+		DAILY("Daily"),
+		NEVER_CRAWL("Never Crawl");
+
+        private String value;
+
+        private CrawlFrequency(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static CrawlFrequency getCrawlFrequency(String name) {
+    		for (CrawlFrequency crawlFrequency : CrawlFrequency.values()) {
+    			if (crawlFrequency.name().equals(name)) {
+    				return crawlFrequency;
+    			}
+    		}
+    		return null;
+    	}
+    }
 	
 	/**
 	 * The report QA status types.

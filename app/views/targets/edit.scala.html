@@ -1,4 +1,4 @@
-@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType], licenses: List[License], crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus])
+@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType], licenses: List[License], crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency])
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -933,51 +933,13 @@
 							<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
 						    <div class="col-sm-6">
 				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
-				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Domain Crawl Only")) {
-					 					<option selected>Domain Crawl Only</option>
-						            } else {						                
-					 					<option>Domain Crawl Only</option>
-					                }
-				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Annually")) {
-					 					<option selected>Annually</option>
-						            } else {						                
-					 					<option>Annually</option>
-					                }
-				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Six-monthly")) {
-					 					<option selected>Six-monthly</option>
-						            } else {						                
-					 					<option>Six-monthly</option>
-					                }
-				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Quarterly")) {
-					 					<option selected>Quarterly</option>
-						            } else {						                
-					 					<option>Quarterly</option>
-					                }
-				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Monthly")) {
-					 					<option selected>Monthly</option>
-						            } else {						                
-					 					<option>Monthly</option>
-					                }
-				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Old-Monthly-DO-NOT-USE")) {
-					 					<option selected>Old-Monthly-DO-NOT-USE</option>
-						            } else {						                
-					 					<option>Old-Monthly-DO-NOT-USE</option>
-					                }
-				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Weekly")) {
-					 					<option selected>Weekly</option>
-						            } else {						                
-					 					<option>Weekly</option>
-					                }
-				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Daily")) {
-					 					<option selected>Daily</option>
-						            } else {						                
-					 					<option>Daily</option>
-					                }
-				             		@if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals("Never Crawl")) {
-					 					<option selected>Never Crawl</option>
-						            } else {						                
-					 					<option>Never Crawl</option>
-					                }
+					                @for(crawlFrequency <- crawlFrequencies) {
+						                @if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals(crawlFrequency.name)) {
+						                	<option value="@crawlFrequency.name" selected>@crawlFrequency.getValue</option>
+						                } else {
+						                	<option value="@crawlFrequency.name">@crawlFrequency.getValue</option>
+						                }
+									}
 				 				</select>
 				 			</div>
 						</div>

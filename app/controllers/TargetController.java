@@ -36,6 +36,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import scala.NotImplementedError;
 import uk.bl.Const;
+import uk.bl.Const.CrawlFrequency;
 import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.Const.DepthType;
 import uk.bl.Const.ScopeType;
@@ -637,7 +638,8 @@ public class TargetController extends AbstractController {
     			DepthType[] depthTypes = Const.DepthType.values();
 	  			List<License> licenses = License.findAllLicenses();
 	  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-	  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
+	  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+	  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -680,7 +682,8 @@ public class TargetController extends AbstractController {
 		DepthType[] depthTypes = Const.DepthType.values();
 		List<License> licenses = License.findAllLicenses();
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
+		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
 	}
     
     /**
@@ -952,7 +955,8 @@ public class TargetController extends AbstractController {
 		DepthType[] depthTypes = Const.DepthType.values();
 		List<License> licenses = License.findAllLicenses();
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
+		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
     }
     
     /**
@@ -1317,7 +1321,8 @@ public class TargetController extends AbstractController {
 		DepthType[] depthTypes = Const.DepthType.values();
 		List<License> licenses = License.findAllLicenses();
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
+		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
     }
 
 	/**
@@ -1522,8 +1527,9 @@ public class TargetController extends AbstractController {
 	    			DepthType[] depthTypes = Const.DepthType.values();
 		  			List<License> licenses = License.findAllLicenses();
 		  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+		  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 		  			flash("message", "Date of Publication (dd-mm-yy) - Incorrect Format");
-		  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
+		  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
 				}
         	}
             Logger.info("targetFromDB.dateOfPublication: " + targetFromDB.dateOfPublication);

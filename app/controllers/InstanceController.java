@@ -30,8 +30,10 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.Const.CrawlFrequency;
 import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.Const.DepthType;
+import uk.bl.Const.QAIssueCategory;
 import uk.bl.Const.ScopeType;
 import uk.bl.Const.SelectionType;
 import uk.bl.Const.TargetLanguage;
@@ -202,7 +204,10 @@ public class InstanceController extends AbstractController {
     			DepthType[] depthTypes = Const.DepthType.values();
 	  			List<License> licenses = License.findAllLicenses();
 	  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-	  	        return ok(edit.render(instanceForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
+	  			QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
+	  			List<Organisation> organisations = Organisation.findAll();
+	  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+	  	        return ok(edit.render(instanceForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, qaIssueCategories, organisations, crawlFrequencies));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -241,7 +246,10 @@ public class InstanceController extends AbstractController {
 		DepthType[] depthTypes = Const.DepthType.values();
 		List<License> licenses = License.findAllLicenses();
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-        return ok(edit.render(instanceForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
+		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
+		List<Organisation> organisations = Organisation.findAll();
+		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+        return ok(edit.render(instanceForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, qaIssueCategories, organisations, crawlFrequencies));
     }
     
     /**
@@ -381,7 +389,10 @@ public class InstanceController extends AbstractController {
 		DepthType[] depthTypes = Const.DepthType.values();
 		List<License> licenses = License.findAllLicenses();
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-        return ok(edit.render(instanceForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
+		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
+		List<Organisation> organisations = Organisation.findAll();
+		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+        return ok(edit.render(instanceForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, qaIssueCategories, organisations, crawlFrequencies));
     }
     
     public static Result view(Long id) {
@@ -655,7 +666,10 @@ public class InstanceController extends AbstractController {
 		DepthType[] depthTypes = Const.DepthType.values();
 		List<License> licenses = License.findAllLicenses();
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-        return ok(edit.render(instanceFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses));
+		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
+		List<Organisation> organisations = Organisation.findAll();
+		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+        return ok(edit.render(instanceFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, qaIssueCategories, organisations, crawlFrequencies));
 	}
     
     /**
