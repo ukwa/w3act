@@ -192,22 +192,9 @@ public class InstanceController extends AbstractController {
     			Form<Instance> instanceForm = Form.form(Instance.class);
     			instanceForm = instanceForm.fill(instance);
     			User user = User.findByEmail(request().username());
-    			JsonNode collectionData = getCollectionsData();
-    			JsonNode subjectData = getSubjectsData();
-    			List<User> authors = User.findAll();
-    			List<Tag> tags = Tag.findAllTags();
-    			List<Flag> flags = Flag.findAllFlags();
     			List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-    			TargetLanguage[] languages = Const.TargetLanguage.values();
-    			SelectionType[] selectionTypes = Const.SelectionType.values();
-    			ScopeType[] scopeTypes = Const.ScopeType.values();
-    			DepthType[] depthTypes = Const.DepthType.values();
-	  			List<License> licenses = License.findAllLicenses();
-	  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 	  			QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
-	  			List<Organisation> organisations = Organisation.findAll();
-	  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-	  	        return ok(edit.render(instanceForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, qaIssueCategories, organisations, crawlFrequencies));
+	  	        return ok(edit.render(instanceForm, user, qaIssues, qaIssueCategories));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -237,19 +224,9 @@ public class InstanceController extends AbstractController {
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
 		List<User> authors = User.findAll();
-		List<Tag> tags = Tag.findAllTags();
-		List<Flag> flags = Flag.findAllFlags();
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-		TargetLanguage[] languages = Const.TargetLanguage.values();
-		SelectionType[] selectionTypes = Const.SelectionType.values();
-		ScopeType[] scopeTypes = Const.ScopeType.values();
-		DepthType[] depthTypes = Const.DepthType.values();
-		List<License> licenses = License.findAllLicenses();
-		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
-		List<Organisation> organisations = Organisation.findAll();
-		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-        return ok(edit.render(instanceForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, qaIssueCategories, organisations, crawlFrequencies));
+        return ok(edit.render(instanceForm, user, qaIssues, qaIssueCategories));
     }
     
     /**
@@ -380,19 +357,9 @@ public class InstanceController extends AbstractController {
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
 		List<User> authors = User.findAll();
-		List<Tag> tags = Tag.findAllTags();
-		List<Flag> flags = Flag.findAllFlags();
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-		TargetLanguage[] languages = Const.TargetLanguage.values();
-		SelectionType[] selectionTypes = Const.SelectionType.values();
-		ScopeType[] scopeTypes = Const.ScopeType.values();
-		DepthType[] depthTypes = Const.DepthType.values();
-		List<License> licenses = License.findAllLicenses();
-		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
-		List<Organisation> organisations = Organisation.findAll();
-		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-        return ok(edit.render(instanceForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, qaIssueCategories, organisations, crawlFrequencies));
+        return ok(edit.render(instanceForm, user, qaIssues, qaIssueCategories));
     }
     
     public static Result view(Long id) {
@@ -466,13 +433,13 @@ public class InstanceController extends AbstractController {
         	newInstance.language = getFormParam(Const.LANGUAGE);
         } 
         if (getFormParam(Const.SELECTION_TYPE) != null) {
-        	newInstance.selectionType = getFormParam(Const.SELECTION_TYPE);
+//        	newInstance.selectionType = getFormParam(Const.SELECTION_TYPE);
         } 
         if (getFormParam(Const.SELECTOR_NOTES) != null) {
-        	newInstance.selectorNotes = getFormParam(Const.SELECTOR_NOTES);
+//        	newInstance.selectorNotes = getFormParam(Const.SELECTOR_NOTES);
         } 
         if (getFormParam(Const.ARCHIVIST_NOTES) != null) {
-        	newInstance.archivistNotes = getFormParam(Const.ARCHIVIST_NOTES);
+//        	newInstance.archivistNotes = getFormParam(Const.ARCHIVIST_NOTES);
         } 
         if (getFormParam(Const.LEGACY_SITE_ID) != null 
         		&& getFormParam(Const.LEGACY_SITE_ID).length() > 0
@@ -657,19 +624,9 @@ public class InstanceController extends AbstractController {
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
 		List<User> authors = User.findAll();
-		List<Tag> tags = Tag.findAllTags();
-		List<Flag> flags = Flag.findAllFlags();
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-		TargetLanguage[] languages = Const.TargetLanguage.values();
-		SelectionType[] selectionTypes = Const.SelectionType.values();
-		ScopeType[] scopeTypes = Const.ScopeType.values();
-		DepthType[] depthTypes = Const.DepthType.values();
-		List<License> licenses = License.findAllLicenses();
-		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
-		List<Organisation> organisations = Organisation.findAll();
-		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-        return ok(edit.render(instanceFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, qaIssueCategories, organisations, crawlFrequencies));
+        return ok(edit.render(instanceFormNew, user, qaIssues, qaIssueCategories));
 	}
     
     /**
@@ -778,13 +735,13 @@ public class InstanceController extends AbstractController {
             	newInstance.language = getFormParam(Const.LANGUAGE);
             } 
             if (getFormParam(Const.SELECTION_TYPE) != null) {
-            	newInstance.selectionType = getFormParam(Const.SELECTION_TYPE);
+//            	newInstance.selectionType = getFormParam(Const.SELECTION_TYPE);
             } 
             if (getFormParam(Const.SELECTOR_NOTES) != null) {
-            	newInstance.selectorNotes = getFormParam(Const.SELECTOR_NOTES);
+//            	newInstance.selectorNotes = getFormParam(Const.SELECTOR_NOTES);
             } 
             if (getFormParam(Const.ARCHIVIST_NOTES) != null) {
-            	newInstance.archivistNotes = getFormParam(Const.ARCHIVIST_NOTES);
+//            	newInstance.archivistNotes = getFormParam(Const.ARCHIVIST_NOTES);
             } 
             if (getFormParam(Const.LEGACY_SITE_ID) != null && getFormParam(Const.LEGACY_SITE_ID).length() > 0) {
         		Logger.info("legacy site id: " + getFormParam(Const.LEGACY_SITE_ID) + ".");
@@ -877,7 +834,7 @@ public class InstanceController extends AbstractController {
 //            		newInstance.flags = Const.NONE;
             	}
             }
-            newInstance.justification = getFormParam(Const.JUSTIFICATION);
+//            newInstance.justification = getFormParam(Const.JUSTIFICATION);
             newInstance.summary = getFormParam(Const.SUMMARY);
             newInstance.revision = getFormParam(Const.REVISION);
 //            if (getFormParam(Const.FIELD_WCT_ID) != null  && getFormParam(Const.FIELD_WCT_ID).length() > 0) {
@@ -975,7 +932,7 @@ public class InstanceController extends AbstractController {
             	}
             }
             newInstance.qaNotes = getFormParam(Const.QA_NOTES);
-            newInstance.technicalNotes = getFormParam(Const.QUALITY_NOTES);
+//            newInstance.technicalNotes = getFormParam(Const.QUALITY_NOTES);
 
             long unixTime = System.currentTimeMillis() / 1000L;
             String changedTime = String.valueOf(unixTime);

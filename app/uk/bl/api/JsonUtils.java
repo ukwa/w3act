@@ -1045,7 +1045,7 @@ public enum JsonUtils {
 							String format = bodyMap.get("format");
 							String summary = bodyMap.get("summary");
 							if (StringUtils.isNotEmpty(value)) {
-								instance.technicalNotes = value;
+								instance.notes = value;
 							}
 							if (StringUtils.isNotEmpty(format)) {
 								instance.format = format;
@@ -1078,11 +1078,11 @@ public enum JsonUtils {
 						try {
 							if (qaIssueField != null) {
 								QaIssue qaIssue = this.getQaIssue(qaIssueField);
-//								if (instance.getField_description_of_qa_issues() instanceof LinkedHashMap) {
-//									Map<String, String> qaDesc = (LinkedHashMap<String,String>) instance.getField_description_of_qa_issues();
-//									Logger.info("qaDesc: " + qaDesc.get("value"));
-//									qaIssue.description = qaDesc.get("value");
-//								}
+								if (instance.getField_description_of_qa_issues() instanceof LinkedHashMap) {
+									Map<String, String> qaDesc = (LinkedHashMap<String,String>) instance.getField_description_of_qa_issues();
+									Logger.info("qaDesc: " + qaDesc.get("value"));
+									qaIssue.description = qaDesc.get("value");
+								}
 								instance.qaIssue = qaIssue;
 							}
 						} catch (TaxonomyNotFoundException tnfe) {
@@ -1103,7 +1103,6 @@ public enum JsonUtils {
 //						"field_to_be_published_":false,
 												
 						instance.revision = Const.INITIAL_REVISION;
-						instance.selectionType = Const.SelectionType.SELECTION.name();
 						if (StringUtils.isNotBlank(instance.language) && instance.language.equals(Const.UND)) {
 							instance.language = null;
 						}

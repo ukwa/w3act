@@ -10,13 +10,9 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.db.ebean.Model;
@@ -46,51 +42,16 @@ public class Instance extends UrlModel {
 	 */
 	private static final long serialVersionUID = 4285620218930401425L;
 
-	@JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "tag_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") }) 
-	public List<Tag> tags;
-	
-	@JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "flag_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
-    public List<Flag> flags;
-
-    @JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "subject_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
-	public List<Subject> subjects;
-
-    @JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "collection_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
-	public List<Collection> collections;
-
-	@JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "organisation_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "organisation_id", referencedColumnName="id") }) 
-	public List<Organisation> originatingOrganisations;
-	
-	@JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "license_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
-	public List<License> licenses;
-	
     public String qaIssueCategory;
     
 //  Description of QA Issues (Andy's ACT) > QA Notes (w3ACT)
     @Column(columnDefinition = "text")
     public String qaNotes;
     
-//  Body (Andy's ACT) > Quality Notes (currently in Wc3ACT) but which we should rename TEchnical Notes.
-    @Column(columnDefinition = "text")
-	public String technicalNotes;
+//  Body/Notes (Andy's ACT) > Quality Notes (currently in Wc3ACT) but which we should rename TEchnical Notes.
+//    use notes
+//    @Column(columnDefinition = "text")
+//	public String technicalNotes;
     
 	@JsonIgnore
 	@ManyToOne
@@ -974,70 +935,6 @@ public class Instance extends UrlModel {
 
 	public void setField_to_be_published_(Boolean field_to_be_published_) {
 		this.field_to_be_published_ = field_to_be_published_;
-	}
-	
-	public String subjectIdsAsString() {
-		return StringUtils.join(this.subjectIds(), ", ");
-	}
-
-	public List<Long> subjectIds() {
-		List<Long> ids = new ArrayList<Long>();
-		for (Subject subject : this.subjects) {
-			ids.add(subject.id);
-		}
-		return ids;
-	}
-	
-	public String subjectsAsString() {
-		List<String> names = new ArrayList<String>();
-		for (Subject subject : this.subjects) {
-			names.add(subject.name);
-		}
-		return StringUtils.join(names, ", ");
-	}
-	
-	public List<Long> collectionIds() {
-		List<Long> ids = new ArrayList<Long>();
-		for (Collection collection : this.collections) {
-			ids.add(collection.id);
-		}
-		return ids;
-	}
-	
-	public String collectionIdsAsString() {
-		return StringUtils.join(collectionIds(), ", ");
-	}
-	
-	public String collectionsAsString() {
-		List<String> names = new ArrayList<String>();
-		for (Collection collection : this.collections) {
-			names.add(collection.name);
-		}
-		return StringUtils.join(names, ", ");
-	}
-	
-	public String tagsAsString() {
-		List<String> names = new ArrayList<String>();
-		for (Tag tag : this.tags) {
-			names.add(tag.name);
-		}
-		return StringUtils.join(names, ", ");
-	}
-	
-	public String flagsAsString() {
-		List<String> names = new ArrayList<String>();
-		for (Flag flag : this.flags) {
-			names.add(flag.name);
-		}
-		return StringUtils.join(names, ", ");
-	}
-	
-	public String originatingOrganisationsAsString() {
-		List<String> names = new ArrayList<String>();
-		for (Organisation organisation : this.originatingOrganisations) {
-			names.add(organisation.title);
-		}
-		return StringUtils.join(names, ", ");
 	}
 }
 
