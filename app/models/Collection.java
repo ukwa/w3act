@@ -5,8 +5,6 @@ import java.util.*;
 
 import javax.persistence.*;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 

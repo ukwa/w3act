@@ -41,9 +41,9 @@ import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.Const.DepthType;
 import uk.bl.Const.ScopeType;
 import uk.bl.Const.SelectionType;
+import uk.bl.Const.SiteStatus;
 import uk.bl.Const.TargetLanguage;
 import uk.bl.api.Utils;
-import uk.bl.exception.WhoisException;
 import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
 import views.html.infomessage;
@@ -639,7 +639,8 @@ public class TargetController extends AbstractController {
 	  			List<License> licenses = License.findAllLicenses();
 	  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 	  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-	  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
+	  			SiteStatus[] siteStatuses = Const.SiteStatus.values();
+	  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -683,7 +684,8 @@ public class TargetController extends AbstractController {
 		List<License> licenses = License.findAllLicenses();
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
+		SiteStatus[] siteStatuses = Const.SiteStatus.values();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
 	}
     
     /**
@@ -956,7 +958,8 @@ public class TargetController extends AbstractController {
 		List<License> licenses = License.findAllLicenses();
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
+		SiteStatus[] siteStatuses = Const.SiteStatus.values();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
     }
     
     /**
@@ -1322,7 +1325,8 @@ public class TargetController extends AbstractController {
 		List<License> licenses = License.findAllLicenses();
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
+		SiteStatus[] siteStatuses = Const.SiteStatus.values();
+        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
     }
 
 	/**
@@ -1528,8 +1532,9 @@ public class TargetController extends AbstractController {
 		  			List<License> licenses = License.findAllLicenses();
 		  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+		  			SiteStatus[] siteStatuses = Const.SiteStatus.values();
 		  			flash("message", "Date of Publication (dd-mm-yy) - Incorrect Format");
-		  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies));
+		  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
 				}
         	}
             Logger.info("targetFromDB.dateOfPublication: " + targetFromDB.dateOfPublication);

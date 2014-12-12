@@ -936,5 +936,15 @@ public class Instance extends UrlModel {
 	public void setField_to_be_published_(Boolean field_to_be_published_) {
 		this.field_to_be_published_ = field_to_be_published_;
 	}
+
+	@Override
+	public String toString() {
+		return "Instance [qaIssueCategory=" + qaIssueCategory + ", qaNotes="
+				+ qaNotes + ", target=" + target + ", fieldTimestamp="
+				+ fieldTimestamp + ", value=" + value + ", summary=" + summary
+				+ ", fieldDate=" + fieldDate + "]";
+	}
+	
+	
 }
 

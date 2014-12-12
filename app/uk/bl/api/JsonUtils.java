@@ -47,7 +47,6 @@ import uk.bl.Const;
 import uk.bl.api.models.FieldModel;
 import uk.bl.exception.TaxonomyNotFoundException;
 import uk.bl.exception.UrlInvalidException;
-import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -978,6 +977,10 @@ public enum JsonUtils {
 							target.ignoreRobotsTxt = false;
 						}
 						
+						if (StringUtils.isNotEmpty(target.liveSiteStatus)) {
+							target.liveSiteStatus = target.liveSiteStatus.toUpperCase();
+						}
+						
 						target.createdAt = this.getDateFromSeconds(target.getCreated());
 
 			        	target.save();
@@ -1101,7 +1104,7 @@ public enum JsonUtils {
 						
 //						"field_published":false,
 //						"field_to_be_published_":false,
-												
+						
 						instance.revision = Const.INITIAL_REVISION;
 						if (StringUtils.isNotBlank(instance.language) && instance.language.equals(Const.UND)) {
 							instance.language = null;

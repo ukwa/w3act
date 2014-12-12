@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import play.Logger;
-import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
@@ -36,15 +35,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="ttype")
-//@DiscriminatorValue("taxonomy")
-public class Taxonomy extends ActModel {
+public class Taxonomy extends MappedSuperClass {
      
 	public final static String TAXONOMY_TERM = "taxonomy_term";
     public static final String TAXONOMY_PARENTS  	 = "taxonomy_parents"; 
     public static final String TAXONOMY_PARENTS_ALL  = "taxonomy_parents_all"; 
 
     /**
-	 * 
+	 * MappedSuperClass "superclass" is needed as "Properties from superclasses not mapped as @MappedSuperclass are ignored"
 	 */
 	private static final long serialVersionUID = -8987367110038045775L;
 
@@ -62,26 +60,6 @@ public class Taxonomy extends ActModel {
 	@Column(insertable=false, updatable=false)
 	public String ttype;
 	 
-    @Required
-    @JsonProperty
-    public String name; 
-    // additional field to make a difference between collection, subject, license and quality issue. 
-
-    @Column(columnDefinition = "text")
-    @JsonProperty
-    public String description;
-
-    @JsonProperty(value="field_publish")
-    public Boolean publish;
-    
-    @Column(columnDefinition = "text") 
-    @JsonIgnore
-    public String parentsAll;
-
-	@Column(columnDefinition = "text")
-	@JsonProperty
-	public String revision;
-
 	@JsonIgnore
     @ManyToOne(cascade={CascadeType.ALL})
 	@JoinColumn(name = "parent_id")

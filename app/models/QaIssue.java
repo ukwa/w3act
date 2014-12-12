@@ -2,8 +2,10 @@ package models;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -12,6 +14,12 @@ import uk.bl.Const;
 @DiscriminatorValue("quality_issues")
 public class QaIssue extends Taxonomy {
 
+	@OneToMany(mappedBy = "qaIssue", cascade = CascadeType.ALL)
+	public List<Target> targets;
+	
+	@OneToMany(mappedBy = "qaIssue", cascade = CascadeType.ALL)
+	public List<Instance> instances;
+	
 	/**
 	 * 
 	 */
@@ -19,12 +27,6 @@ public class QaIssue extends Taxonomy {
 
 	public static Model.Finder<Long,QaIssue> find = new Model.Finder<Long, QaIssue>(Long.class, QaIssue.class);
 
-	public QaIssue() {}
-	
-    public QaIssue(String name, String description) {
-    	super(name, description);
-    }
-    
     public static QaIssue findById(Long id) {
     	return find.byId(id);
     }
@@ -66,4 +68,8 @@ public class QaIssue extends Taxonomy {
 			return false;
 		return true;
 	}
+	
+    public String toString() {
+        return "QaIssue(" + name + ")" + ", id:" + id;
+    }
 }

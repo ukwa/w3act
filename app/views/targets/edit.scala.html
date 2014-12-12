@@ -1,4 +1,4 @@
-@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType], licenses: List[License], crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency])
+@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType], licenses: List[License], crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency], siteStatuses: Array[uk.bl.Const.SiteStatus])
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -246,7 +246,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="nid" value="@form.get.id" size="30" readonly>
+								<input class="form-control" name="id" value="@form.get.id" size="30" readonly>
 							</div>
 						</div>
 					</div>
@@ -341,34 +341,15 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If known, please add the current status of the site)</small></label>
 						    <div class="col-sm-6">
-								<label class="radio-inline">
-							  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals("N/A")) {
-							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio" checked="checked"> N/A
-							        } else {
-							        	<input name="livesitestatus" id="radio1" value="N/A" type="radio"> N/A
-							        }
-								</label>
-								<label class="radio-inline">
-							  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals("Still live")) {
-							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio" checked="checked"> Still live 
-							        } else {
-							        	<input name="livesitestatus" id="radio2" value="Still live" type="radio"> Still live 
-							        }
-								</label>
-								<label class="radio-inline">
-							  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals("No longer updated")) {
-							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio" checked="checked"> No longer updated 
-							        } else {
-							        	<input name="livesitestatus" id="radio3" value="No longer updated" type="radio"> No longer updated 
-							        }
-								</label>
-								<label class="radio-inline">
-							  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals("Vanished")) {
-							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio" checked="checked"> Vanished
-							        } else {
-							        	<input name="livesitestatus" id="radio4" value="Vanished" type="radio"> Vanished
-							        }
-								</label>
+						    	@for(siteStatus <- siteStatuses) {
+									<label class="radio-inline">
+								  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals(siteStatus.name)) {
+								        	<input name="livesitestatus" value="@siteStatus.name()" type="radio" checked="checked"> @siteStatus.getValue()
+								        } else {
+								        	<input name="livesitestatus" value="@siteStatus.name()" type="radio"> @siteStatus.getValue()
+								        }
+									</label>
+								}
 							</div>
 						</div>
 					</div>

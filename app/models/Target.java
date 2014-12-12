@@ -99,7 +99,7 @@ public class Target extends UrlModel {
 
 	@Column(columnDefinition = "text")
 	public String description;
-
+	
 	public Boolean isInScopeIp;
 	public Boolean isInScopeIpWithoutLicense;
 

@@ -257,12 +257,12 @@ create table taxonomy (
   id                        bigint not null,
   url                       varchar(255),
   created_at                timestamp,
-  taxonomyType_id           bigint,
   name                      varchar(255),
   description               text,
   publish                   boolean,
   parents_all               text,
   revision                  text,
+  taxonomyType_id           bigint,
   parent_id                 bigint,
   updated_at                timestamp not null,
   status                    varchar(255),
@@ -378,12 +378,6 @@ create table license_instance (
   constraint pk_license_instance primary key (instance_id, license_id))
 ;
 
-create table collection_instance (
-  collection_id                  bigint not null,
-  instance_id                    bigint not null,
-  constraint pk_collection_instance primary key (collection_id, instance_id))
-;
-
 create table subjects (
   parent_id                      bigint not null,
   id                             bigint not null,
@@ -394,6 +388,12 @@ create table subject_instance (
   subject_id                     bigint not null,
   instance_id                    bigint not null,
   constraint pk_subject_instance primary key (subject_id, instance_id))
+;
+
+create table collection_instance (
+  collection_id                  bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_collection_instance primary key (collection_id, instance_id))
 ;
 create sequence communication_log_seq;
 
@@ -518,10 +518,6 @@ alter table license_instance add constraint fk_license_instance_taxonomy_01 fore
 
 alter table license_instance add constraint fk_license_instance_instance_02 foreign key (license_id) references instance (id);
 
-alter table collection_instance add constraint fk_collection_instance_taxono_01 foreign key (collection_id) references taxonomy (id);
-
-alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (instance_id) references instance (id);
-
 alter table subjects add constraint fk_subjects_taxonomy_01 foreign key (parent_id) references taxonomy (id);
 
 alter table subjects add constraint fk_subjects_taxonomy_02 foreign key (id) references taxonomy (id);
@@ -529,6 +525,10 @@ alter table subjects add constraint fk_subjects_taxonomy_02 foreign key (id) ref
 alter table subject_instance add constraint fk_subject_instance_taxonomy_01 foreign key (subject_id) references taxonomy (id);
 
 alter table subject_instance add constraint fk_subject_instance_instance_02 foreign key (instance_id) references instance (id);
+
+alter table collection_instance add constraint fk_collection_instance_taxono_01 foreign key (collection_id) references taxonomy (id);
+
+alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (instance_id) references instance (id);
 
 # --- !Downs
 

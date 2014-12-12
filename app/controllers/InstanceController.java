@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import models.Collection;
 import models.ContactPerson;
@@ -354,9 +355,6 @@ public class InstanceController extends AbstractController {
 		Form<Instance> instanceForm = Form.form(Instance.class);
 		instanceForm = instanceForm.fill(instance);
 		User user = User.findByEmail(request().username());
-		JsonNode collectionData = getCollectionsData();
-		JsonNode subjectData = getSubjectsData();
-		List<User> authors = User.findAll();
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
 		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
         return ok(edit.render(instanceForm, user, qaIssues, qaIssueCategories));
@@ -365,32 +363,38 @@ public class InstanceController extends AbstractController {
     public static Result view(Long id) {
 		Instance instance = Instance.findById(id);
 		User user = User.findByEmail(request().username());
-		return ok(view.render(instance, user));
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
+		return ok(view.render(instance, user, qaIssues, qaIssueCategories));	
     }
     
     public static Result viewAct(String url) {
     	Instance instance = Instance.findByUrl(url);
     	User user = User.findByEmail(request().username());
-        return ok(view.render(instance, user));
-    }
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
+		return ok(view.render(instance, user, qaIssues, qaIssueCategories));	
+	}
 
     public static Result viewWct(String url) {
     	Instance instance = Instance.findByWct(url);
     	User user = User.findByEmail(request().username());
-        return ok(view.render(instance, user));
-    }
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
+		return ok(view.render(instance, user, qaIssues, qaIssueCategories));	
+	}
     
     /**
      * This method shows selected revision of a Instance by given ID.
      * @param nid
      * @return
      */
-    public static Result viewrevision(Long nid) {
-        return ok(
-                view.render(
-                        Instance.findById(nid), User.findByEmail(request().username())
-                )
-            );
+    public static Result viewrevision(Long id) {
+		Instance instance = Instance.findById(id);
+    	User user = User.findByEmail(request().username());
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
+		return ok(view.render(instance, user, qaIssues, qaIssueCategories));
     }
     	
 	/**
@@ -636,327 +640,99 @@ public class InstanceController extends AbstractController {
      * @return
      */
     public static Result save() {
-    	Result res = null;
         String save = getFormParam("save");
         String delete = getFormParam("delete");
-        Logger.info("save: " + save);
         Logger.info("delete: " + delete);
-        if (save != null) {
-        	Logger.info("input data for saving instance nid: " + getFormParam(Const.ID) + 
-        			", url: " + getFormParam(Const.URL) + 
-        			", field url: " + getFormParam(Const.FIELD_URL_NODE) + 
-        			", title: " + getFormParam(Const.TITLE) + 
-        			", keysite: " + getFormParam(Const.KEYSITE) +
-        			", description: " + getFormParam(Const.DESCRIPTION) + 
-        			", status: " + getFormParam(Const.STATUS) +
-        			", subject: " + getFormParams(Const.FIELD_SUBJECT) +
-        			", organisation: " + getFormParam(Const.ORGANISATION) +
-        			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
-        	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
+        
+        
+        
+//        if (save != null) {
+//        	Logger.info("input data for saving instance nid: " + getFormParam(Const.ID) + 
+//        			", url: " + getFormParam(Const.URL) + 
+//        			", field url: " + getFormParam(Const.FIELD_URL_NODE) + 
+//        			", title: " + getFormParam(Const.TITLE) + 
+//        			", keysite: " + getFormParam(Const.KEYSITE) +
+//        			", description: " + getFormParam(Const.DESCRIPTION) + 
+//        			", status: " + getFormParam(Const.STATUS) +
+//        			", subject: " + getFormParams(Const.FIELD_SUBJECT) +
+//        			", organisation: " + getFormParam(Const.ORGANISATION) +
+//        			", live site status: " + getFormParam(Const.LIVE_SITE_STATUS));
+//        	Logger.info("treeKeys: " + getFormParam(Const.TREE_KEYS));
         	Form<Instance> instanceForm = Form.form(Instance.class).bindFromRequest();
             if(instanceForm.hasErrors()) {
             	String missingFields = "";
             	for (String key : instanceForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
-            	    key = Utils.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
+//            	    key = Utils.showMissingField(key);
+//            	    if (missingFields.length() == 0) {
+//            	    	missingFields = key;
+//            	    } else {
+//            	    	missingFields = missingFields + Const.COMMA + " " + key;
+//            	    }
             	}
-            	Logger.info("form errors size: " + instanceForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
+//            	Logger.info("form errors size: " + instanceForm.errors().size() + ", " + missingFields);
+//	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
+//	  					" Missing fields are: " + missingFields);
+//	  			return info();
             }
         	
-        	if (getFormParam(Const.FIELD_WCT_ID) != null && !getFormParam(Const.FIELD_WCT_ID).equals("")
-        			&& !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
-                Logger.info("Only numeric values are valid identifiers. Please check field 'WCT ID'.");
-	  			flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
-	  			return info();
-        	}    	
-        	if (getFormParam(Const.FIELD_SPT_ID) != null && !getFormParam(Const.FIELD_SPT_ID).equals("")
-        			&& !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
-                Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-	  			flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-	  			return info();
-        	}    	
-        	if (getFormParam(Const.LEGACY_SITE_ID) != null && !getFormParam(Const.LEGACY_SITE_ID).equals("")
-        			&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
-                Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-	  			flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-	  			return info();
-        	}    	
-
-        	Instance newInstance = new Instance();
-            boolean isExisting = true;
-            try {
-        	    newInstance = Instance.findById(Long.valueOf(getFormParam(Const.ID)));
-            } catch (Exception e) {
-            	Logger.info("is not existing exception");
-            	isExisting = false;
-            	newInstance = new Instance();
-            	newInstance.id = Long.valueOf(getFormParam(Const.ID));
-//            	newInstance.url = getFormParam(Const.URL);            	
-        		newInstance.url = Const.ACT_URL + newInstance.id;
-        		newInstance.edit_url = Const.WCT_URL + newInstance.id;            	
-            }
-            if (newInstance == null) {
-            	newInstance = new Instance();
-            	newInstance.id = Long.valueOf(getFormParam(Const.ID));
-//            	newInstance.url = getFormParam(Const.URL);      
-        		newInstance.url = Const.ACT_URL + newInstance.id;
-        		newInstance.edit_url = Const.WCT_URL + newInstance.id;            	
-            	Logger.info("is not existing");
-            	isExisting = false;
-            }
-//        	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
-//        			|| StringUtils.isBlank(getFormParam(Const.FIELD_URL))
-//        			|| StringUtils.isBlank(getFormParam(Const.FIELD_SUBJECT))
-//        			|| StringUtils.isBlank(getFormParam(Const.AUTHOR))
-//        			|| StringUtils.isBlank(getFormParam(Const.SELECTION_TYPE))) {
-//            	Logger.info("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
-//        		return badRequest("Please fill out all the required fields, marked with a red star. There are required fields in more than one tab.");
+//        	if (getFormParam(Const.FIELD_WCT_ID) != null && !getFormParam(Const.FIELD_WCT_ID).equals("")
+//        			&& !Utils.isNumeric(getFormParam(Const.FIELD_WCT_ID))) {
+//                Logger.info("Only numeric values are valid identifiers. Please check field 'WCT ID'.");
+//	  			flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
+//	  			return info();
 //        	}    	
-            if (newInstance.authorUser == null) {
-            	newInstance.authorUser.url = getFormParam(Const.USER);
-            }
-//            Logger.info("new nid: " + newInstance.id);
-            newInstance.title = getFormParam(Const.TITLE);
-//            newInstance.fieldUrl = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
-//            newInstance.fieldKeySite = Utils.getNormalizeBooleanString(getFormParam(Const.KEYSITE));
-//            newInstance.fieldDescription = getFormParam(Const.DESCRIPTION);
-            if (getFormParam(Const.STATUS) != null) {
-            	newInstance.status = Long.valueOf(getFormParam(Const.STATUS));
-            } 
-            if (getFormParam(Const.LANGUAGE) != null) {
-            	newInstance.language = getFormParam(Const.LANGUAGE);
-            } 
-            if (getFormParam(Const.SELECTION_TYPE) != null) {
-//            	newInstance.selectionType = getFormParam(Const.SELECTION_TYPE);
-            } 
-            if (getFormParam(Const.SELECTOR_NOTES) != null) {
-//            	newInstance.selectorNotes = getFormParam(Const.SELECTOR_NOTES);
-            } 
-            if (getFormParam(Const.ARCHIVIST_NOTES) != null) {
-//            	newInstance.archivistNotes = getFormParam(Const.ARCHIVIST_NOTES);
-            } 
-            if (getFormParam(Const.LEGACY_SITE_ID) != null && getFormParam(Const.LEGACY_SITE_ID).length() > 0) {
-        		Logger.info("legacy site id: " + getFormParam(Const.LEGACY_SITE_ID) + ".");
-//            	newInstance.legacySite_id = Long.valueOf(getFormParam(Const.LEGACY_SITE_ID));
-            }
-
-    		Logger.info("authors: " + getFormParam(Const.AUTHORS) + ".");
-            if (getFormParam(Const.AUTHORS) != null) {
-            	if (!getFormParam(Const.AUTHORS).toLowerCase().contains(Const.NONE)) {
-	            	String[] contactPersons = getFormParams(Const.AUTHORS);
-	            	Logger.info("param: " + contactPersons.length + contactPersons.toString());
-	            	String resContactPersons = "";
-	            	for (String contactPerson : contactPersons)
-	                {
-                		Logger.info("contactPerson: " + contactPerson);
-                		if (contactPerson != null && contactPerson.length() > 0) {
-	                		resContactPersons = resContactPersons + ContactPerson.findByName(contactPerson).url + Const.LIST_DELIMITER;
-	            		}
-	                }
-	            	newInstance.authorUser.url = resContactPersons;
-            	} else {
-            		newInstance.authorUser.url = Const.NONE;
-            	}
-            }            
-//            if (getFormParam(Const.LIVE_SITE_STATUS) != null) {
-//            	newInstance.fieldLiveSiteStatus = getFormParam(Const.LIVE_SITE_STATUS);
-//            } 
-//            if (getFormParam(Const.FIELD_SUBJECT) != null) {
-//            	newInstance.fieldSubject = Utils.removeDuplicatesFromList(getFormParam(Const.FIELD_SUBJECT));
-//        		Logger.debug("newInstance.field_subject: " + newInstance.fieldSubject);
-//            } else {
-//            	newInstance.fieldSubject = Const.NONE;
-//            }            
-//            Utils.removeAssociationFromDb(Const.SUBJECT_INSTANCE, Const.ID + "_" + Const.INSTANCE, newInstance.id);
-////            newInstance.subjects = Taxonomy.convertUrlsToObjects(newInstance.fieldSubject);
-//            if (getFormParam(Const.TREE_KEYS) != null) {
-//            	newInstance.fieldCollectionCategories = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-////            	newInstance.collectionToInstance = Collection.convertUrlsToObjects(newInstance.fieldCollectionCategories);
-//	    		Logger.debug("newInstance.field_collection_categories: " + newInstance.fieldCollectionCategories);
-//            }
-//            if (getFormParam(Const.ORGANISATION) != null) {
-//            	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
-//            		newInstance.fieldNominatingOrganisation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
-////            		newInstance.updateOrganisation();
-//            	} else {
-//            		newInstance.fieldNominatingOrganisation = Const.NONE;
-//            	}
-//            }
-            if (getFormParam(Const.ORIGINATING_ORGANISATION) != null) {
-            	if (!getFormParam(Const.ORIGINATING_ORGANISATION).toLowerCase().contains(Const.NONE)) {
-            		newInstance.target.organisation.url = Organisation.findByTitle(getFormParam(Const.ORIGINATING_ORGANISATION)).url;
-            	} else {
-            		newInstance.target.organisation.url = Const.NONE;
-            	}
-            }
-            if (getFormParam(Const.AUTHOR) != null) {
-           		newInstance.authorUser.url = User.findByName(getFormParam(Const.AUTHOR)).url;
-            }
-//            if (getFormParam(Const.TAGS) != null) {
-//            	if (!getFormParam(Const.TAGS).toLowerCase().contains(Const.NONE)) {
-//	            	String[] tags = getFormParams(Const.TAGS);
-//	            	String resTags = "";
-//	            	for (String tag: tags)
-//	                {
-//	            		if (tag != null && tag.length() > 0) {
-//	                		Logger.info("add tag: " + tag);
-//	            			resTags = resTags + Tag.findByName(tag).url + Const.LIST_DELIMITER;
-//	            		}
-//	                }
-//	            	newInstance.tags = resTags;
-////	            	newInstance.tagToInstance = Tag.convertUrlsToObjects(newInstance.tags);
-//            	} else {
-//            		newInstance.tags = Const.NONE;
-//            	}
-//            }
-            if (getFormParam(Const.FLAGS) != null) {
-            	if (!getFormParam(Const.FLAGS).toLowerCase().contains(Const.NONE)) {
-	            	String[] flags = getFormParams(Const.FLAGS);
-	            	String resFlags = "";
-	            	for (String flag: flags)
-	                {
-	            		if (flag != null && flag.length() > 0) {
-	                		Logger.info("add flag: " + flag);
-	            			resFlags = resFlags + Flag.findByName(flag).url + Const.LIST_DELIMITER;
-	            		}
-	                }
-//	            	newInstance.flags = resFlags;
-//	            	newInstance.flagToInstance = Flag.convertUrlsToObjects(newInstance.flags);
-            	} else {
-//            		newInstance.flags = Const.NONE;
-            	}
-            }
-//            newInstance.justification = getFormParam(Const.JUSTIFICATION);
-            newInstance.summary = getFormParam(Const.SUMMARY);
-            newInstance.revision = getFormParam(Const.REVISION);
-//            if (getFormParam(Const.FIELD_WCT_ID) != null  && getFormParam(Const.FIELD_WCT_ID).length() > 0) {
-//            	newInstance.fieldWct_id = Long.valueOf(getFormParam(Const.FIELD_WCT_ID));
-//            }
-//            if (getFormParam(Const.FIELD_SPT_ID) != null && getFormParam(Const.FIELD_SPT_ID).length() > 0) {
-//            	newInstance.fieldSpt_id = Long.valueOf(getFormParam(Const.FIELD_SPT_ID));
-//            }
-//            newInstance.fieldLicense = getFormParam(Const.FIELD_LICENSE);
-////            newInstance.field_uk_hosting = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_HOSTING));
-//            newInstance.fieldUkHosting = Target.isInScopeIp(newInstance.target.fieldUrl(), newInstance.url);
-//        	Logger.debug("field_uk_hosting: " + newInstance.fieldUkHosting);
-//            newInstance.fieldUkPostalAddress = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_UK_POSTAL_ADDRESS));
-//            newInstance.fieldUkPostalAddressUrl = getFormParam(Const.FIELD_UK_POSTAL_ADDRESS_URL);
-//            Logger.debug("field_uk_postal_address: " + newInstance.fieldUkPostalAddress + 
-//            		", field_uk_postal_address_url: " + newInstance.fieldUkPostalAddressUrl);
-//            if (newInstance.fieldUkPostalAddress 
-//            		&& (newInstance.fieldUkPostalAddressUrl == null || newInstance.fieldUkPostalAddressUrl.length() == 0)) {
-//            	Logger.info("If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
-//	  			flash("message", "If UK Postal Address field has value 'Yes', the Postal Address URL is required.");
+//        	if (getFormParam(Const.FIELD_SPT_ID) != null && !getFormParam(Const.FIELD_SPT_ID).equals("")
+//        			&& !Utils.isNumeric(getFormParam(Const.FIELD_SPT_ID))) {
+//                Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+//	  			flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 //	  			return info();
-//            }
-//            newInstance.fieldViaCorrespondence = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_VIA_CORRESPONDENCE));
-//            newInstance.fieldNotes = getFormParam(Const.FIELD_NOTES);
-//            if (newInstance.fieldViaCorrespondence 
-//            		&& (newInstance.value == null || newInstance.value.length() == 0)) {
-//            	Logger.info("If Via Correspondence field has value 'Yes', the Notes field is required.");
-//	  			flash("message", "If Via Correspondence field has value 'Yes', the Notes field is required.");
+//        	}    	
+//        	if (getFormParam(Const.LEGACY_SITE_ID) != null && !getFormParam(Const.LEGACY_SITE_ID).equals("")
+//        			&& !Utils.isNumeric(getFormParam(Const.LEGACY_SITE_ID))) {
+//                Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+//	  			flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 //	  			return info();
-//            }
-//            newInstance.fieldProfessionalJudgement = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT));
-//            newInstance.fieldProfessionalJudgementExp = getFormParam(Const.FIELD_PROFESSIONAL_JUDGEMENT_EXP);
-//            if (newInstance.fieldProfessionalJudgement 
-//            		&& (newInstance.fieldProfessionalJudgementExp == null || newInstance.fieldProfessionalJudgementExp.length() == 0)) {
-//            	Logger.info("If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
-//	  			flash("message", "If Professional Judgement field has value 'Yes', the Professional Judgment Explanation field is required.");
-//	  			return info();
-//            }
-//            newInstance.fieldNoLdCriteriaMet = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_NO_LD_CRITERIA_MET));
-//            newInstance.fieldIgnoreRobotsTxt = Utils.getNormalizeBooleanString(getFormParam(Const.FIELD_IGNORE_ROBOTS_TXT));           
-//            if (getFormParam(Const.FIELD_CRAWL_START_DATE) != null) {
-//            	String startDateHumanView = getFormParam(Const.FIELD_CRAWL_START_DATE);
-//            	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
-//            	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
-//            	// TODO: UNIX DATES
-////            	newInstance.fieldCrawlStartDate = startDateUnix;
-//            }
-//            if (getFormParam(Const.FIELD_CRAWL_END_DATE) != null) {
-//            	String endDateHumanView = getFormParam(Const.FIELD_CRAWL_END_DATE);
-//            	String endDateUnix = Utils.getUnixDateStringFromDate(endDateHumanView);
-//            	Logger.info("endDateHumanView: " + endDateHumanView + ", endDateUnix: " + endDateUnix);
-//            	// TODO: UNIX DATES
-////            	newInstance.fieldcrawlEndDate = endDateUnix;
-//            }
-//            newInstance.dateOfPublication = getFormParam(Const.DATE_OF_PUBLICATION);
-//            newInstance.whiteList = getFormParam(Const.WHITE_LIST);
-//            newInstance.blackList = getFormParam(Const.BLACK_LIST);
-//            if (getFormParam(Const.FIELD_DEPTH) != null) {
-////            	newInstance.fieldDepth = TargetController.getDepthNameFromGuiName(getFormParam(Const.FIELD_DEPTH));
-//            }
-//            if (getFormParam(Const.FIELD_SCOPE) != null) {
-////            	newInstance.fieldScope = TargetController.getScopeNameFromGuiName(getFormParam(Const.FIELD_SCOPE));
-//            }
-//            newInstance.fieldCrawlFrequency = getFormParam(Const.FIELD_CRAWL_FREQUENCY);
-//            newInstance.keywords = getFormParam(Const.KEYWORDS);
-////            Logger.info("instance keywords: " + getFormParam(Const.KEYWORDS));
-//            newInstance.synonyms = getFormParam(Const.SYNONYMS);
-            if (getFormParam(Const.FIELD_QA_STATUS) != null) {
-            	// TODO: KL
-//            	newInstance.fieldQaStatus = Taxonomy.findByNameExt(getFormParam(Const.FIELD_QA_STATUS)).url;
-            }             
-            if (getFormParam(Const.QA_STATUS) != null) {
-            	if (!getFormParam(Const.QA_STATUS).toLowerCase().contains(Const.NONE)) {
-            		Logger.info("Instance qa status: " + getFormParam(Const.QA_STATUS));
-            		newInstance.qaIssue.name = getFormParam(Const.QA_STATUS);
-            	} else {
-            		newInstance.qaIssue.name = Const.NONE;
-            	}
-            }
-            if (getFormParam(Const.QA_ISSUE_CATEGORY) != null) {
-            	if (!getFormParam(Const.QA_ISSUE_CATEGORY).toLowerCase().contains(Const.NONE)) {
-            		Logger.info("Instance qa issue category: " + getFormParam(Const.QA_ISSUE_CATEGORY));
-	            	String[] issueCategories = getFormParams(Const.QA_ISSUE_CATEGORY);
-	            	String resIssueCategories = "";
-	            	for (String issueCategory: issueCategories)
-	                {
-	            		if (issueCategory != null && issueCategory.length() > 0) {
-	                		Logger.info("add issueCategory: " + issueCategory);
-	            			resIssueCategories = resIssueCategories + issueCategory + Const.LIST_DELIMITER;
-	            		}
-	                }
-	            	newInstance.qaIssueCategory = resIssueCategories;
-            	} else {
-            		newInstance.qaIssueCategory = Const.NONE;
-            	}
-            }
-            newInstance.qaNotes = getFormParam(Const.QA_NOTES);
-//            newInstance.technicalNotes = getFormParam(Const.QUALITY_NOTES);
+//        	}    	
 
-            long unixTime = System.currentTimeMillis() / 1000L;
-            String changedTime = String.valueOf(unixTime);
-            Logger.info("changed time: " + changedTime);
-            // TODO: UNIX DATE use updatedAt
-//            newInstance.updatedAt = changedTime;
+            Long id = Long.valueOf(instanceForm.field("id").value());
+    	    Instance instanceFromDB = Instance.findById(id);
+    	    Instance instanceFromForm  = instanceForm.get();
 
-        	if (!isExisting) {
-            	Ebean.save(newInstance);
-    	        Logger.info("save instance: " + newInstance.id);
-        	} else {
-        		Logger.info("update instance: " + newInstance.id);
-            	Ebean.update(newInstance);
-        	}
-	        return redirect(routes.InstanceController.edit(newInstance.id));
-        } 
-        if (delete != null) {
-        	Long id = Long.valueOf(getFormParam(Const.ID));
-        	Logger.info("deleting instance: " + id);
-        	Instance instance = Instance.findById(id);
-        	Ebean.delete(instance);
-	        res = redirect(routes.InstanceController.index()); 
-        }
-        return res;
+            DynamicForm requestData = Form.form().bindFromRequest();
+            
+            String qaIssueId = requestData.get("qaIssueId");
+            Logger.info("instanceFromForm: " + instanceFromForm);
+            if (StringUtils.isNotEmpty(qaIssueId)) {
+            	Long qaId = Long.valueOf(qaIssueId);
+            	QaIssue qaIssue = QaIssue.findById(qaId);
+            	instanceFromDB.qaIssue = qaIssue;
+            }
+            
+//        qaIssueCategory
+            instanceFromDB.qaIssueCategory = instanceFromForm.qaIssueCategory;
+            
+            instanceFromDB.qaNotes = instanceFromForm.qaNotes;
+            
+            instanceFromDB.notes = instanceFromForm.notes;
+            
+            instanceFromDB.revision = instanceFromForm.revision;
+
+            instanceFromDB.title = instanceFromForm.title;
+
+            Logger.info("instanceFromDB: " + instanceFromDB);
+
+            instanceFromDB.save();
+            
+	        return redirect(routes.InstanceController.view(instanceFromDB.id));
+
+//        } 
+//        if (delete != null) {
+//        	Logger.info("deleting instance: " + id);
+//        	Instance instance = Instance.findById(id);
+//        	Ebean.delete(instance);
+//	        res = redirect(routes.InstanceController.index()); 
+//        }
     }
 	
     /**
