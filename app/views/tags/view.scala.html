@@ -4,13 +4,13 @@
 @main("", user) {
     
 	<div class="page-header">
-	    <h1><a href="@routes.Tags.index()">Taxonomies > Tags > </a>Open tag @tag.name</h1>
+	    <h1><a href="@routes.TagController.index()">Taxonomies > Tags > </a>Open tag @tag.name</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.Tags.view(tag.url)">View</a></li>
+	   <li class="active"><a href="@routes.TagController.view(tag.url)">View</a></li>
 	   @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-	   	<li><a href="@routes.Tags.edit(tag.url)">Edit</a></li>
+	   	<li><a href="@routes.TagController.edit(tag.url)">Edit</a></li>
 	   }
 	</ul>
 

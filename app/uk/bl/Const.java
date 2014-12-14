@@ -484,39 +484,6 @@ public final class Const {
 		licensing;
     }
 		
-    /**
-     * Help mapping to present predefined Flag values in GUI.
-     */
-    public static final Map<String, String> guiFlagMap = new HashMap<String, String>();
-    	static {
-    	guiFlagMap.put("PRIORITY_PERMISSION",    "Priority Permission");
-    	guiFlagMap.put("PRIORITY_CRAWL_AND_QA",  "Priority Crawl & QA");
-    	guiFlagMap.put("PRIORITY_QA",            "Priority QA");
-    	guiFlagMap.put("QA_ISSUE_APPEARANCE",    "QA Issue - Appearance");
-    	guiFlagMap.put("QA_ISSUE_FUNCTIONALITY", "QA Issue - Functionality");
-    	guiFlagMap.put("QA_ISSUE_CONTENT",       "QA Issue - Content");
-    	guiFlagMap.put("FOLLOW_UP_PERMISSION",   "Follow Up Permission");
-    	guiFlagMap.put("GENERAL_CHANGE_REQUEST", "General Change Request");
-    }
-		
-    /**
-     * GUI fields in relation to domain field names.
-     */
-    public static final Map<String, String> guiMap = new HashMap<String, String>();
-    	static {
-    	guiMap.put(NAME,                     "Name");
-    	guiMap.put(TITLE,                    "Title");
-    	guiMap.put(ID,                       "ID");
-    	guiMap.put(FIELD_SUBJECT,            "Subject");
-    	guiMap.put(FIELD_URL_NODE,           "Seed URL(s)");
-    	guiMap.put(AUTHOR,                   "Selector");
-    	guiMap.put(SELECTION_TYPE,           "Selection Type");
-    	guiMap.put(TARGET,                   "Target");
-    	guiMap.put(EMAIL,                    "E-mail");
-    	guiMap.put(FIELD_ABBREVIATION,       "Abbreviation");
-    	guiMap.put(FROM_EMAIL,               "From E-mail");
-    }
-
 	/**
 	 * Records status of permission process.
 	 */
@@ -532,7 +499,7 @@ public final class Const {
         private String value;
 
         private CrawlPermissionStatus(String value) {
-                this.value = value;
+	        this.value = value;
         }
         
         public String getValue() {

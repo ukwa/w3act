@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
  * Manage tags.
  */
 @Security.Authenticated(Secured.class)
-public class Tags extends AbstractController {
+public class TagController extends AbstractController {
   
     /**
      * Display the role.
@@ -41,7 +41,7 @@ public class Tags extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.Tags.list(0, "name", "asc", "")
+            routes.TagController.list(0, "name", "asc", "")
         );
     
     /**
@@ -82,7 +82,7 @@ public class Tags extends AbstractController {
 			Logger.info("Tag name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Tags.list(0, "name", "asc", "")
+	        		routes.TagController.list(0, "name", "asc", "")
 	        );
     	}
 
@@ -106,7 +106,7 @@ public class Tags extends AbstractController {
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Tags.list(pageNo, sort, order, query));
+    	    	return redirect(routes.TagController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -246,14 +246,14 @@ public class Tags extends AbstractController {
            		Logger.info("update tag: " + tag.toString());
                	Ebean.update(tag);
         	}
-	        return redirect(routes.Tags.edit(tag.url));
+	        return redirect(routes.TagController.edit(tag.url));
         } 
         if (delete != null) {
         	Tag tag = Tag.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(tag);
-	        res = redirect(routes.Tags.index()); 
+	        res = redirect(routes.TagController.index()); 
         }
-    	res = redirect(routes.Tags.index()); 
+    	res = redirect(routes.TagController.index()); 
         return res;
     }	   
 

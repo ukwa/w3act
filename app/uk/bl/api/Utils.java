@@ -509,11 +509,11 @@ public class Utils {
      */
     public static String showMissingFields(String fields) {
     	if (fields != null && fields.length() > 0) {
-    		for (Map.Entry<String, String> entry : Const.guiMap.entrySet()) {
-				if (fields.contains(entry.getKey())) {
-					fields = fields.replace(entry.getKey(), entry.getValue());
-				}
-			}
+//    		for (Map.Entry<String, String> entry : Const.guiMap.entrySet()) {
+//				if (fields.contains(entry.getKey())) {
+//					fields = fields.replace(entry.getKey(), entry.getValue());
+//				}
+//			}
     	}
     	return fields;
     	
@@ -527,7 +527,7 @@ public class Utils {
     public static String showMissingField(String field) {
     	String res = field;
     	if (field != null && field.length() > 0) {
-    		res = Const.guiMap.get(field);
+//    		res = Const.guiMap.get(field);
     	}
     	return res;
     	

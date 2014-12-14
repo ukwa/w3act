@@ -480,8 +480,8 @@ public class TargetController extends AbstractController {
     	String inputFlag = form.get(Const.FLAGS);
     	String flag = "";
     	if (inputFlag != null && !inputFlag.toLowerCase().equals(Const.NONE)) {
-	    	String origFlag = Flags.getNameFromGuiName(inputFlag);
-	    	flag = Flag.findByName(origFlag).url;
+//	    	String origFlag = Flags.getNameFromGuiName(inputFlag);
+//	    	flag = Flag.findByName(origFlag).url;
     	}
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
@@ -640,7 +640,8 @@ public class TargetController extends AbstractController {
 	  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 	  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 	  			SiteStatus[] siteStatuses = Const.SiteStatus.values();
-	  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
+	  			List<Organisation> organisations = Organisation.findAll();
+	  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -685,7 +686,8 @@ public class TargetController extends AbstractController {
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 		SiteStatus[] siteStatuses = Const.SiteStatus.values();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
+		List<Organisation> organisations = Organisation.findAll();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
 	}
     
     /**
@@ -959,7 +961,8 @@ public class TargetController extends AbstractController {
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 		SiteStatus[] siteStatuses = Const.SiteStatus.values();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
+		List<Organisation> organisations = Organisation.findAll();
+        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     }
     
     /**
@@ -1326,7 +1329,8 @@ public class TargetController extends AbstractController {
 		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 		SiteStatus[] siteStatuses = Const.SiteStatus.values();
-        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
+		List<Organisation> organisations = Organisation.findAll();
+        return ok(edit.render(targetFormNew, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     }
 
 	/**
@@ -1391,6 +1395,7 @@ public class TargetController extends AbstractController {
 
             Long id = Long.valueOf(targetForm.field("id").value());
     	    Target targetFromDB = Target.findById(id);
+    	    Logger.info("targetForm: " + targetForm);
     	    Target targetFromForm  = targetForm.get();
 
             DynamicForm requestData = Form.form().bindFromRequest();
@@ -1492,7 +1497,7 @@ public class TargetController extends AbstractController {
             }
 
             targetFromDB.language = targetFromForm.language;
-            Logger.info(targetFromDB.language + "/" + targetFromForm.language);
+
             targetFromDB.authors = targetFromForm.authors;
 
             List<Flag> newFlags = new ArrayList<Flag>();
@@ -1510,7 +1515,7 @@ public class TargetController extends AbstractController {
             
             targetFromDB.flagNotes = targetFromForm.flagNotes;
             
-            String dateOfPublication = requestData.get("date_of_publication");
+            String dateOfPublication = requestData.get("dateOfPublication");
         	if (StringUtils.isNotEmpty(dateOfPublication)) {
     			DateFormat formatter = new SimpleDateFormat("dd-MM-yy");
     			try {
@@ -1533,8 +1538,9 @@ public class TargetController extends AbstractController {
 		  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 		  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 		  			SiteStatus[] siteStatuses = Const.SiteStatus.values();
+		  			List<Organisation> organisations = Organisation.findAll();
 		  			flash("message", "Date of Publication (dd-mm-yy) - Incorrect Format");
-		  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses));
+		  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
 				}
         	}
             Logger.info("targetFromDB.dateOfPublication: " + targetFromDB.dateOfPublication);
@@ -1562,6 +1568,7 @@ public class TargetController extends AbstractController {
 			//yes
 			//UK Registration
 			//no
+            
 			//UK Postal Address (The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))
 			//Postal Address URL (The URL on the site that contains the postal address used to determine that the site is in the UK)
 			//Via Correspondence (Previous correspondence with the web site owner by a Curator contains evidence of a UK address)

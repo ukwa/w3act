@@ -3,14 +3,14 @@
 @main("", admin) {
     
 	<div class="page-header">
-    	<h1><a href="@routes.Curators.index()">Users & Agencies > Curators > </a>User @user.name (@Target.findAllforUser(user.url).size() targets)</h1>
+    	<h1><a href="@routes.UserController.index()">Users & Agencies > Curators > </a>User @user.name (@Target.findAllforUser(user.url).size() targets)</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.Curators.view(user.id)">View</a></li>
-	   <li><a href="@routes.Curators.sites(user.url)">Targets</a></li> 
+	   <li class="active"><a href="@routes.UserController.view(user.id)">View</a></li>
+	   <li><a href="@routes.UserController.sites(user.url)">Targets</a></li> 
 	   @if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
-	   <li><a href="@routes.Curators.edit(user.id)">Edit</a></li>
+	   <li><a href="@routes.UserController.edit(user.id)">Edit</a></li>
 	   }
 	</ul>
 	

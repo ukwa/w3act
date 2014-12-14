@@ -84,14 +84,14 @@
 @main("", admin, scripts, styles){
     
    	<div class="page-header">
-    	<h1><a href="@routes.Curators.index()">Users & Agencies > Curators > </a>User @user.name (@currentPage.getTotalRowCount targets)</h1>
+    	<h1><a href="@routes.UserController.index()">Users & Agencies > Curators > </a>User @user.name (@currentPage.getTotalRowCount targets)</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li><a href="@routes.Curators.view(user.id)">View</a></li>
-		<li class="active"><a href="@routes.Curators.sites(user.url)">Targets</a></li> 
+		<li><a href="@routes.UserController.view(user.id)">View</a></li>
+		<li class="active"><a href="@routes.UserController.sites(user.url)">Targets</a></li> 
 	    @if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || user.url.equals(admin.url)) {
-			<li><a href="@routes.Curators.edit(user.id)">Edit</a></li>
+			<li><a href="@routes.UserController.edit(user.id)">Edit</a></li>
 		}
 	</ul>
     
@@ -193,7 +193,7 @@
                 		}
                 	}
 				</td>
-				<td><a href="@routes.Curators.edit(target.authorUser.id)">@User.findByUrl(target.authorUser.url).name</a></td>
+				<td><a href="@routes.UserController.edit(target.authorUser.id)">@User.findByUrl(target.authorUser.url).name</a></td>
 				<td><a class="brand" href="@routes.TargetController.view(target.id)">@Instance.findAllByTarget(target.url)</a></td>
             </tr>
             }

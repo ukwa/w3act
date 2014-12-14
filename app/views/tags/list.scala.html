@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.Tags.list(newPage, sortBy, order, searchstr)
+    routes.TagController.list(newPage, sortBy, order, searchstr)
     
 }
 
@@ -81,14 +81,14 @@
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.Tags.index()">Taxonomies > </a>Open Tags</h1>
+	    <h1><a href="@routes.TagController.index()">Taxonomies > </a>Open Tags</h1>
 	</div>
 		
     <article class="tags">
 
 		<div id="forms">
    			@warningmessage(flash)
-   			@helper.form(action=routes.Tags.search, 'class -> "form-inline") {
+   			@helper.form(action=routes.TagController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   				<input type="hidden" name="s" value="@currentSortBy">
@@ -116,7 +116,7 @@
 			<tbody>
 			@for(tag <- currentPage.getList) {
 				<tr>
-					<td><a href="@routes.Tags.view(tag.url)">@tag.name</a></td>
+					<td><a href="@routes.TagController.view(tag.url)">@tag.name</a></td>
 					<td>@tag.description</td>
 				</tr>
 			}

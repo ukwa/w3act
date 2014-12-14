@@ -4,13 +4,13 @@
 @main("", user) {
     
 	<div class="page-header">
-	    <h1><a href="@routes.Flags.index()">Taxonomies > Flags > </a>Flag @flag.name</h1>
+	    <h1><a href="@routes.FlagController.index()">Taxonomies > Flags > </a>Flag @flag.name</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.Flags.view(flag.url)">View</a></li>
+	   <li class="active"><a href="@routes.FlagController.view(flag.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   	<li><a href="@routes.Flags.edit(flag.url)">Edit</a></li>
+	   	<li><a href="@routes.FlagController.edit(flag.url)">Edit</a></li>
 	   }
 	</ul>
 
@@ -19,7 +19,7 @@
 			<div class="form-group">
 				<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 			    <div class="col-sm-6">
-              		<input class="form-control" name="name" id="inputName" value="@Flags.getGuiName(flag.name)" type="text" readonly>
+              		<input class="form-control" name="name" id="inputName" value="@flag.name" type="text" readonly>
 				</div>
 			</div>
 		</div>

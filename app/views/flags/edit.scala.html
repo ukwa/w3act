@@ -3,20 +3,20 @@
 @main("", user) {
 
    	<div class="page-header">
-    	<h1><a href="@routes.Flags.index()">Taxonomies > Flags > </a>Flag @form("name").value</h1>
+    	<h1><a href="@routes.FlagController.index()">Taxonomies > Flags > </a>Flag @form("name").value</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
 	   @if(Flag.findById(Long.valueOf(form("id").value)) != null) {
-	   <li><a href="@routes.Flags.view(form("url").value)">View</a></li>
+	   <li><a href="@routes.FlagController.view(form("url").value)">View</a></li>
 	   }
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.Flags.edit(form("url").value)">Edit</a></li>
+		   <li class="active"><a href="@routes.FlagController.edit(form("url").value)">Edit</a></li>
 	   }
 	</ul>
 
 	@warningmessage(flash)
-	@helper.form(action=routes.Flags.save) {
+	@helper.form(action=routes.FlagController.save) {
 		<input type="hidden" name="url" value="@form("url").value">
 		<input type="hidden" name="id" value="@form("id").value">
 
@@ -25,7 +25,7 @@
 				<div class="form-group">
 					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 				    <div class="col-sm-6">
-	              		<input class="form-control" name="name" id="inputName" value="@Flags.getGuiName(form("name").value)" type="text">
+	              		<input class="form-control" name="name" id="inputName" value="@form.get.name" type="text">
 					</div>
 				</div>
 			</div>

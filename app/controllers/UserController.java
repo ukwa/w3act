@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * Manage curators.
  */
 @Security.Authenticated(Secured.class)
-public class Curators extends AbstractController {
+public class UserController extends AbstractController {
   
     /**
      * Display the Curators.
@@ -45,7 +45,7 @@ public class Curators extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.Curators.list(0, "name", "asc", "")
+            routes.UserController.list(0, "name", "asc", "")
         );
     
     /**
@@ -84,7 +84,7 @@ public class Curators extends AbstractController {
 			Logger.info("Curator's name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Curators.list(0, "name", "asc", "")
+	        		routes.UserController.list(0, "name", "asc", "")
 	        );
     	}
 
@@ -106,7 +106,7 @@ public class Curators extends AbstractController {
     	        return ok(views.html.users.edit.render(userForm, User.findByEmail(request().username())));    			
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Curators.list(pageNo, sort, order, query));
+    	    	return redirect(routes.UserController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }

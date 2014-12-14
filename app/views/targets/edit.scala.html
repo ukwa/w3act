@@ -1,4 +1,4 @@
-@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType], licenses: List[License], crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency], siteStatuses: Array[uk.bl.Const.SiteStatus])
+@(form: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType], licenses: List[License], crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency], siteStatuses: Array[uk.bl.Const.SiteStatus], organisations: List[Organisation])
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -344,9 +344,9 @@
 						    	@for(siteStatus <- siteStatuses) {
 									<label class="radio-inline">
 								  		@if(form.get.liveSiteStatus != null && form.get.liveSiteStatus.equals(siteStatus.name)) {
-								        	<input name="livesitestatus" value="@siteStatus.name()" type="radio" checked="checked"> @siteStatus.getValue()
+								        	<input name="liveSiteStatus" value="@siteStatus.name()" type="radio" checked="checked"> @siteStatus.getValue()
 								        } else {
-								        	<input name="livesitestatus" value="@siteStatus.name()" type="radio"> @siteStatus.getValue()
+								        	<input name="liveSiteStatus" value="@siteStatus.name()" type="radio"> @siteStatus.getValue()
 								        }
 									</label>
 								}
@@ -361,9 +361,9 @@
 							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
 						    <div class="col-sm-6">
 				                @if(form.get.keySite != null && form.get.keySite) {             
-					                <input type="checkbox" name="keysite" value="true" checked />
+					                <input type="checkbox" name="keySite" value="true" checked />
 				                } else {
-					                <input type="checkbox" name="keysite" value="true"/>
+					                <input type="checkbox" name="keySite" value="true"/>
 				                }
 							</div>
 						</div>
@@ -376,9 +376,9 @@
 							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
 						    <div class="col-sm-6">
 	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
-			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" value="@form.get.wctId">
+			              		<input name="wctId" class="form-control" id="inputWCT" placeholder="0" type="text" value="@form.get.wctId">
 			              	} else {
-			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@form.get.wctId">
+			              		<input name="wctId" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@form.get.wctId">
 			              	}
 							</div>
 						</div>
@@ -391,9 +391,9 @@
 			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
 						    <div class="col-sm-6">
 	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
-			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" value="@form.get.sptId".value">
+			              		<input name="sptId" class="form-control" id="inputSPT" placeholder="0" type="text" value="@form.get.sptId".value">
 			              	} else {
-			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@form.get.sptId">
+			              		<input name="sptId" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@form.get.sptId">
 			                }
 							</div>
 						</div>
@@ -459,16 +459,16 @@
 						<div class="form-group">
 			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject. To select more than one, hold down the CTRL key.)</small></label>
 						    <div class="col-sm-6">
-			    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || (form.get.authorUser != null && user.id == form.get.authorUser.id)) {
-								  <div id="subjectTree"></div>
-								  <input type="hidden" id="subjectSelect" name="subjectSelect" value="@form.get.subjectIdsAsString()">
-							  } else {
-							        @if(form.get.subjects != null || !form.get.subjects.isEmpty()) {
-	  									@form.get.subjectsAsString()
-	  								} else {
-	  								    none
-	  								}
-		     	              }	   
+								@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || (form.get.authorUser != null && user.id == form.get.authorUser.id)) {
+									<div id="subjectTree"></div>
+									<input type="hidden" id="subjectSelect" name="subjectSelect" value="@form.get.subjectIdsAsString()">
+								} else {
+									@if(form.get.subjects != null || !form.get.subjects.isEmpty()) {
+										@form.get.subjectsAsString()
+									} else {
+										None
+									}
+								}	   
 							</div>
 						</div>
 					</div>
@@ -486,7 +486,7 @@
 							        @if(form.get.collections == null || !form.get.collections.isEmpty()) {
 							        	@form.get.collectionsAsString()
 	  								} else {
-	  								    none
+										None
 	  								}
 		     	              }	   
 							</div>
@@ -501,7 +501,7 @@
 						    <div class="col-sm-6">
 								<select name="organisationId" id="organisationId" class="form-control">
 					            	<option value="-1">None</option>
-					                @for(organisation <- Organisation.findAll()) {
+					                @for(organisation <- organisations) {
 						                @if(form.get.organisation != null && organisation.id == form.get.organisation.id) {
 							                <option value="@organisation.id" selected>@organisation.title</option>
 							            } else {
@@ -574,7 +574,7 @@
 			              	<label for="authors" class="col-sm-6 control-label">Author(s) <small class="text-center">(A named individual responsible for creating the content)</small></label>
 						    <div class="col-sm-6">
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="authors" id="authors" cols="100" rows="1" value="@form.get.authors">@form.get.authors</textarea>
+				            	<textarea class="form-control" name="authors" id="authors" cols="100" rows="1">@form.get.authors</textarea>
 							</div>
 							</div>
 						</div>
@@ -606,7 +606,7 @@
 						<div class="form-group">
 			              	<label for="inputFlagNotes" class="col-sm-6 control-label">Flag notes <small class="text-center">(More details about the flagged issue)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="flagNotes" id="flagNotes" cols="100" rows="1" value="@form.get.flagNotes">@form.get.flagNotes</textarea>
+				            	<textarea class="form-control" name="flagNotes" id="flagNotes" cols="100" rows="1">@form.get.flagNotes</textarea>
 							</div>
 						</div>
 					</div>
@@ -618,7 +618,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Date of publication</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="date_of_publication" value="@form.get.dateOfPublication" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
+		 						<input type="text" name="dateOfPublication" value="@form.get.dateOfPublication" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
 	                		</div>
 						</div>
 					</div>
@@ -630,7 +630,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Justification <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="justification" id="inputJustification" cols="100" rows="1" value="@form.get.justification">@form.get.justification</textarea>
+				            	<textarea class="form-control" name="justification" id="inputJustification" cols="100" rows="1">@form.get.justification</textarea>
 							</div>
 						</div>
 					</div>
@@ -661,7 +661,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(This field allows further notes to selection for WA team, not captured in Justification field.)</small></label>
 						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="selector_notes" id="input_selector_notes" cols="100" rows="1" value="@form.get.selectorNotes">@form.get.selectorNotes</textarea>
+				            	<textarea class="form-control" name="selectorNotes" id="input_selector_notes" cols="100" rows="1">@form.get.selectorNotes</textarea>
 							</div>
 						</div>
 					</div>
@@ -672,7 +672,7 @@
 						<div class="form-group">
 							<label for="legacy_cite_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
 						    <div class="col-sm-6">
-			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form.get.legacySiteId">
+			              		<input name="legacySiteId" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@form.get.legacySiteId">
 							</div>
 						</div>
 					</div>
@@ -762,9 +762,9 @@
 							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 						    <div class="col-sm-6">
 				                @if(form.get.ukPostalAddress != null && form.get.ukPostalAddress) {             
-					                <input type="checkbox" name="field_uk_postal_address" value="true" checked/>
+					                <input type="checkbox" name="ukPostalAddress" value="true" checked/>
 				                } else {
-					                <input type="checkbox" name="field_uk_postal_address" value="true" />
+					                <input type="checkbox" name="ukPostalAddress" value="true" />
 				                }
 							</div>
 						</div>
@@ -776,7 +776,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_uk_postal_address_url" value="@form.get.ukPostalAddressUrl" size="60" maxlength="2048" class="form-control" />
+		 						<input type="text" name="ukPostalAddressUrl" value="@form.get.ukPostalAddressUrl" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>
@@ -787,11 +787,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 						    <div class="col-sm-6">
-				                @if(form.get.viaCorrespondence != null && form.get.viaCorrespondence) {             
-					                <input type="checkbox" name="field_via_correspondence" value="true" checked/>
-				                } else {
-					                <input type="checkbox" name="field_via_correspondence" value="true" />
-				                }
+							    @helper.checkbox(field = form("viaCorrespondence"), '_label -> null)
 							</div>
 						</div>
 					</div>
@@ -802,38 +798,38 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Via Correspondence: Notes <small class="text-center">(Please record details of correspondence with site owner)</small></label>
 						    <div class="col-sm-6">
-		 						<textarea name="field_notes" cols="100" rows="1" class="form-control">@form.get.value</textarea>
+		 						<textarea name="value" cols="100" rows="1" class="form-control">@form.get.value</textarea>
 							</div>
 						</div>
 					</div>
 		     	</div>	
 
 				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
-				<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
-						    <div class="col-sm-6">
-				                @if(form.get.professionalJudgement != null && form.get.professionalJudgement) {             
-					                <input type="checkbox" name="field_professional_judgement" value="true" checked/>
-				                } else {
-					                <input type="checkbox" name="field_professional_judgement" value="true" />
-				                }
+					<div class="row padding-10">
+			     		<div class="col-md-12 col-xs-12 col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
+							    <div class="col-sm-6">
+					                @if(form.get.professionalJudgement != null && form.get.professionalJudgement) {             
+						                <input type="checkbox" name="professionalJudgement" value="true" checked/>
+					                } else {
+						                <input type="checkbox" name="professionalJudgement" value="true" />
+					                }
+								</div>
 							</div>
 						</div>
-					</div>
-		     	</div>	
+			     	</div>	
 		     	
-				<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
-						    <div class="col-sm-6">
-			 					<textarea name="field_professional_judgement_exp" cols="100" rows="1" class="form-control">@form.get.professionalJudgementExp</textarea>
+					<div class="row padding-10">
+			     		<div class="col-md-12 col-xs-12 col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
+							    <div class="col-sm-6">
+				 					<textarea name="professionalJudgementExp" cols="100" rows="1" class="form-control">@form.get.professionalJudgementExp</textarea>
+								</div>
 							</div>
 						</div>
-					</div>
-		     	</div>	
+			     	</div>	
 		     	}
 
 				<div class="row padding-10">
@@ -842,9 +838,9 @@
 							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
 				                @if(form.get.noLdCriteriaMet != null && form.get.noLdCriteriaMet) {             
-					                <input type="checkbox" name="field_no_ld_criteria_met" value="true" checked/>
+					                <input type="checkbox" name="noLdCriteriaMet" value="true" checked/>
 				                } else {
-				                	<input type="checkbox" name="field_no_ld_criteria_met" value="true" />
+				                	<input type="checkbox" name="noLdCriteriaMet" value="true" />
 				                }
 	                		</div>
 						</div>
@@ -860,7 +856,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
-								<select name="field_scope" id="field_scope" class="form-control">
+								<select name="scope" id="field_scope" class="form-control">
 					                @for(scopeType <- scopeTypes) {
 						                @if(form.get.scope != null && form.get.scope.equals(scopeType.name)) {
 						                	<option value="@scopeType.name" selected>@scopeType.getValue</option>
@@ -879,7 +875,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
-								<select name="field_depth" id="field_depth" class="form-control">
+								<select name="depth" id="field_depth" class="form-control">
 					                @for(depthType <- depthTypes) {
 						                @if(form.get.depth != null && form.get.depth.equals(depthType.name)) {
 						                	<option value="@depthType.name" selected>@depthType.getValue</option>
@@ -899,9 +895,9 @@
 							<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
 						    <div class="col-sm-6">
 				                @if(form.get.ignoreRobotsTxt != null && form.get.ignoreRobotsTxt) {             
-					                <input type="checkbox" name="field_ignore_robots_txt" value="true" checked />
+					                <input type="checkbox" name="ignoreRobotsTxt" value="true" checked />
 				                } else {
-					                <input type="checkbox" name="field_ignore_robots_txt" value="true"/>
+					                <input type="checkbox" name="ignoreRobotsTxt" value="true"/>
 				                }
 	                		</div>
 						</div>
@@ -913,7 +909,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
 						    <div class="col-sm-6">
-				 				<select id="edit-field-crawl-frequency-und" name="field_crawl_frequency" class="form-control">
+				 				<select id="edit-field-crawl-frequency-und" name="crawlFrequency" class="form-control">
 					                @for(crawlFrequency <- crawlFrequencies) {
 						                @if(form.get.crawlFrequency != null && form.get.crawlFrequency.equals(crawlFrequency.name)) {
 						                	<option value="@crawlFrequency.name" selected>@crawlFrequency.getValue</option>
@@ -932,7 +928,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Start date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_crawl_start_date" value="@form.get.crawlStartDate" size="30" maxlength="2048" class="form-control" id="start-date"/>
+		 						<input type="text" name="crawlStartDate" value="@form.get.crawlStartDate" size="30" maxlength="2048" class="form-control" id="start-date"/>
 	                		</div>
 						</div>
 					</div>
@@ -943,7 +939,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">End date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="field_crawl_end_date" value="@form.get.crawlEndDate" size="30" maxlength="2048" class="form-control" id="end-date"/>
+		 						<input type="text" name="crawlEndDate" value="@form.get.crawlEndDate" size="30" maxlength="2048" class="form-control" id="end-date"/>
 	                		</div>
 						</div>
 					</div>
@@ -954,7 +950,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">White list</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="white_list" value="@form.get.whiteList" size="30" maxlength="2048" class="form-control" />
+		 						<input type="text" name="whiteList" value="@form.get.whiteList" size="30" maxlength="2048" class="form-control" />
 	                		</div>
 						</div>
 					</div>
@@ -965,7 +961,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Black list</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="black_list" value="@form.get.blackList" size="30" maxlength="2048" class="form-control" />
+		 						<input type="text" name="blackList" value="@form.get.blackList" size="30" maxlength="2048" class="form-control" />
 	                		</div>
 						</div>
 					</div>
@@ -978,7 +974,7 @@
 						    <div class="col-sm-6">
 								@if(form.get != null) {
 									@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-								<button type="submit" name="archive" class="btn btn-success">Archive this now</button>
+										<button type="submit" name="archive" class="btn btn-success">Archive this now</button>
 									}
 								} else {
 								<button disabled type="submit" name="archive" class="btn btn-success">Archive this now</button>
@@ -1048,11 +1044,11 @@
 							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
 						    <div class="col-sm-6">
 						        @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-								<select name="qa_status" id="qa_status" class="form-control">
+									<select name="crawlPermissionStatus" id="crawlPermissionStatus" class="form-control">
 								} else {
-								<select disabled name="qa_status" id="qa_status" class="form-control">
+									<select disabled name="crawlPermissionStatus" id="crawlPermissionStatus" class="form-control">
 								}
-									<option>None</option>
+									<option value="-1">None</option>
 					                @for(status <- crawlPermissionStatuses) {
 						                @if(status.equals(form("qaStatus").value)) {
 						                	<option value="@status.name" selected>@status.getValue</option>
@@ -1101,7 +1097,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
 					    <div class="col-sm-6">
-			            	<textarea class="form-control" name="archivist_notes" id="input_archivist_notes" value="@form.get.archivistNotes">@form.get.archivistNotes</textarea>
+			            	<textarea class="form-control" name="archivistNotes" id="input_archivist_notes" value="@form.get.archivistNotes">@form.get.archivistNotes</textarea>
 						</div>
 					</div>
 				</div>

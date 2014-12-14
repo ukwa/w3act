@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * Manage passwords.
  */
 @Security.Authenticated(Secured.class)
-public class CheckWhoIs extends AbstractController {
+public class WhoIsController extends AbstractController {
    
     /**
      * Add new user entry.

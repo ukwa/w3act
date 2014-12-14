@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import models.Organisation;
-import models.Target;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,19 +32,18 @@ import com.fasterxml.jackson.databind.JsonNode;
  * Manage organisations.
  */
 @Security.Authenticated(Secured.class)
-public class Organisations extends AbstractController {
+public class OrganisationController extends AbstractController {
   
     /**
      * Display the organisations.
      */
 
     public static Result index() {
-    	Logger.info("DCollections.index()");
         return GO_HOME;
     }
     
     public static Result GO_HOME = redirect(
-            routes.Organisations.list(0, "title", "asc", "")
+            routes.OrganisationController.list(0, "title", "asc", "")
         );
 
     /**
@@ -62,7 +60,7 @@ public class Organisations extends AbstractController {
 			Logger.info("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Organisations.list(0, "title", "asc", "")
+	        		routes.OrganisationController.list(0, "title", "asc", "")
 	        );
     	}
 
@@ -82,7 +80,7 @@ public class Organisations extends AbstractController {
     	        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Organisations.list(pageNo, sort, order, query));
+    	    	return redirect(routes.OrganisationController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -319,18 +317,18 @@ public class Organisations extends AbstractController {
 	    	        Logger.info("save organisation: " + organisation.toString());
                 } else {
 	    	        Logger.info("Organisation title already exists in database: " + organisation.toString());
-        	        return redirect(routes.Organisations.index()); 
+        	        return redirect(routes.OrganisationController.index()); 
                 }
         	} else {
            		Logger.info("update organisation: " + organisation.toString());
                	Ebean.update(organisation);
         	}
-	        res = redirect(routes.Organisations.edit(organisation.url));
+	        res = redirect(routes.OrganisationController.edit(organisation.url));
         } 
         if (delete != null) {
         	Organisation organisation = Organisation.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(organisation);
-	        res = redirect(routes.Organisations.index()); 
+	        res = redirect(routes.OrganisationController.index()); 
         }
         return res;
     }
@@ -453,7 +451,7 @@ public class Organisations extends AbstractController {
             } catch (Exception e) {
             	Logger.info("User not existing exception");
             }
-	        res = redirect(routes.Organisations.admin(organisation.url));
+	        res = redirect(routes.OrganisationController.admin(organisation.url));
         } else {
         	res = ok();
         }

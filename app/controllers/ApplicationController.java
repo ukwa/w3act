@@ -13,7 +13,7 @@ import models.*;
 import uk.bl.api.PasswordHash;
 import views.html.*;
 
-public class Application extends Controller {
+public class ApplicationController extends Controller {
   
     // -- Authentication
     
@@ -77,7 +77,7 @@ public class Application extends Controller {
         } else {
             session("email", loginForm.get().email.toLowerCase());
             return redirect(
-                routes.About.index()
+                routes.AboutController.index()
             );
         }
     }
@@ -89,7 +89,7 @@ public class Application extends Controller {
         session().clear();
         flash("success", "You've been logged out");
         return redirect(
-            routes.Application.login()
+            routes.ApplicationController.login()
         );
     }
   
@@ -100,11 +100,11 @@ public class Application extends Controller {
         return ok(
             Routes.javascriptRouter("jsRoutes",
             
-				controllers.routes.javascript.About.index(),
+				controllers.routes.javascript.AboutController.index(),
                 controllers.routes.javascript.CollectionController.index(),
                 controllers.routes.javascript.TargetController.index(),
-                controllers.routes.javascript.Organisations.index(),
-                controllers.routes.javascript.Curators.index(),
+                controllers.routes.javascript.OrganisationController.index(),
+                controllers.routes.javascript.UserController.index(),
                 controllers.routes.javascript.Contact.index()
             )
         );

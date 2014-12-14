@@ -131,7 +131,7 @@
 	                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
 	                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
 					@if(instance.target.organisation != null && instance.target.organisation.title != null) {
-						<td><a href="@routes.Organisations.view(instance.target.organisation.id)">
+						<td><a href="@routes.OrganisationController.view(instance.target.organisation.id)">
 							@instance.target.organisation.title</a></td>
 					} else {
 						<td></td>
@@ -140,7 +140,7 @@
 					<td>@instance.target.crawlFrequency</td>
 					<td>
 						@if(instance.authorUser != null) {
-							<a class="brand" href="@routes.Curators.edit(instance.authorUser.id)">@instance.authorUser.name</a>
+							<a class="brand" href="@routes.UserController.edit(instance.authorUser.id)">@instance.authorUser.name</a>
 						}
 					</td>
 					<td>

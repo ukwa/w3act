@@ -2,8 +2,6 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.util.List;
-
 import models.Taxonomy;
 import models.Target;
 import models.User;
@@ -12,20 +10,17 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
-import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import views.html.taxonomies.taxonomyedit;
 import views.html.taxonomies.taxonomyview;
-import views.html.taxonomies.list;
 
 import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
 
 @Security.Authenticated(Secured.class)
-public class TaxonomiesController extends AbstractController {
+public class TaxonomyController extends AbstractController {
 
 	/**
 	 * Display the taxonomies.
@@ -35,7 +30,7 @@ public class TaxonomiesController extends AbstractController {
 		return GO_HOME;
 	}
 
-	public static Result GO_HOME = redirect(routes.TaxonomiesController.list(0, "name", "asc", ""));
+	public static Result GO_HOME = redirect(routes.TaxonomyController.list(0, "name", "asc", ""));
 
 	/**
 	 * Display the paginated list of taxonomies.
@@ -71,7 +66,7 @@ public class TaxonomiesController extends AbstractController {
 			Logger.info("Taxonomy name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.TaxonomiesController.list(0, Const.NAME, "asc", "")
+	        		routes.TaxonomyController.list(0, Const.NAME, "asc", "")
 	        );
     	}
 
@@ -83,10 +78,10 @@ public class TaxonomiesController extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-        		return redirect(routes.TaxonomiesController.create(query));
+        		return redirect(routes.TaxonomyController.create(query));
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.TaxonomiesController.list(pageNo, sort, order, query));
+    	    	return redirect(routes.TaxonomyController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -189,14 +184,14 @@ public class TaxonomiesController extends AbstractController {
            		Logger.info("update taxonomy: " + taxonomy.toString());
                	Ebean.update(taxonomy);
         	}
-	        res = redirect(routes.TaxonomiesController.view(taxonomy.url));
+	        res = redirect(routes.TaxonomyController.view(taxonomy.url));
         } 
         if (delete != null) {
         	String url = getFormParam(Const.URL);
         	Logger.info("deleting: " + url);
         	Taxonomy taxonomy = Taxonomy.findByUrl(url);
         	Ebean.delete(taxonomy);
-	        res = redirect(routes.TaxonomiesController.index()); 
+	        res = redirect(routes.TaxonomyController.index()); 
         }
         return res;
     }

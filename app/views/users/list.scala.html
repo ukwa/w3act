@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.Curators.list(newPage, sortBy, order, filter)
+    routes.UserController.list(newPage, sortBy, order, filter)
     
 }
 
@@ -81,13 +81,13 @@
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.Organisations.index()">Users & Agencies > </a>Curators</h1>	    
+	    <h1><a href="@routes.OrganisationController.index()">Users & Agencies > </a>Curators</h1>	    
 	</div>
 	
 	<article class="curators">
 		<div id="forms">
    			@warningmessage(flash)
-			@helper.form(action=routes.Curators.search, 'class -> "form-inline") {
+			@helper.form(action=routes.UserController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
    					<input type="hidden" name="s" value="@currentSortBy">
@@ -118,11 +118,11 @@
 			@for(curator <- currentPage.getList) {
 			    @if(curator.url != null && curator.url.length() > 0) {
 				<tr>		                  
-					<td><a href="@routes.Curators.view(curator.id)">@curator.name</a></td>
+					<td><a href="@routes.UserController.view(curator.id)">@curator.name</a></td>
 					<td>@curator.email</td>
-					<td>@Curators.showRoles(curator.id)</td>
+					<td>@UserController.showRoles(curator.id)</td>
 					@if(curator.organisation != null) {
-						<td><a href="@routes.Organisations.view(curator.organisation.id)">
+						<td><a href="@routes.OrganisationController.view(curator.organisation.id)">
 							@curator.organisation.title</a></td>
 					} else {
 					  <td></td>

@@ -140,7 +140,7 @@
 		                 }
 	                 </td>
 					@if(target.organisation != null) {
-						<td><a href="@routes.Organisations.view(target.organisation.id)">
+						<td><a href="@routes.OrganisationController.view(target.organisation.id)">
 							@target.organisation.title</a></td>
 					} else {
 						<td></td>
@@ -149,7 +149,7 @@
 					<td>@target.crawlFrequency</td>
 					<td>
 						@if(target.authorUser != null) {
-							<a class="brand" href="@routes.Curators.edit(target.authorUser.id)">@target.authorUser.name</a>
+							<a class="brand" href="@routes.UserController.edit(target.authorUser.id)">@target.authorUser.name</a>
 						}
 					</td>
 					<td>

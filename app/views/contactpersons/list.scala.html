@@ -34,7 +34,7 @@
 
 		<div id="forms">
    			@warningmessage(flash)
-   			@helper.form(action=routes.ContactPersons.search, 'class -> "form-inline") {
+   			@helper.form(action=routes.ContactPersonController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter contact person name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
@@ -57,7 +57,7 @@
 			<tbody>
 			@contactpersons.map { contactperson =>		              
 				<tr>
-					<td><a href="@routes.ContactPersons.view(contactperson.url)">@contactperson.name</a></td>
+					<td><a href="@routes.ContactPersonController.view(contactperson.url)">@contactperson.name</a></td>
 					<td>@contactperson.email</td>
 				</tr>
 			}

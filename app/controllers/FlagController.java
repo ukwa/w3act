@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
  * Manage flags.
  */
 @Security.Authenticated(Secured.class)
-public class Flags extends AbstractController {
+public class FlagController extends AbstractController {
   
     /**
      * Display the role.
@@ -42,7 +42,7 @@ public class Flags extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.Flags.list(0, "name", "asc", "")
+            routes.FlagController.list(0, "name", "asc", "")
         );
     
 
@@ -84,7 +84,7 @@ public class Flags extends AbstractController {
 			Logger.info("Flag name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Flags.list(0, "name", "asc", "")
+	        		routes.FlagController.list(0, "name", "asc", "")
 	        );
     	}
 
@@ -108,7 +108,7 @@ public class Flags extends AbstractController {
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Flags.list(pageNo, sort, order, query));
+    	    	return redirect(routes.FlagController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -196,7 +196,7 @@ public class Flags extends AbstractController {
             	String missingFields = "";
             	for (String key : flagForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
-            	    key = Utils.showMissingField(key);
+//            	    key = Utils.showMissingField(key);
             	    if (missingFields.length() == 0) {
             	    	missingFields = key;
             	    } else {
@@ -245,14 +245,14 @@ public class Flags extends AbstractController {
            		Logger.info("update flag: " + flag.toString());
                	Ebean.update(flag);
         	}
-	        return redirect(routes.Flags.edit(flag.url));
+	        return redirect(routes.FlagController.edit(flag.url));
         } 
         if (delete != null) {
         	Flag flag = Flag.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(flag);
-	        res = redirect(routes.Flags.index()); 
+	        res = redirect(routes.FlagController.index()); 
         }
-    	res = redirect(routes.Flags.index()); 
+    	res = redirect(routes.FlagController.index()); 
         return res;
     }	   
 
@@ -264,40 +264,6 @@ public class Flags extends AbstractController {
 	        jsonData = Json.toJson(flags);
         }
         return ok(jsonData);
-    }
-    
-    /**
-     * This method maps flag value to present predefined Flag values in GUI.
-     * @param name The predefined flag value.
-     * @return flag name that should be presented in GUI
-     */
-    public static String getGuiName(String name) {
-    	String res = name;
-    	if (name != null && name.length() > 0) {
-    		String guiName = Const.guiFlagMap.get(name);
-    		if (guiName != null && guiName.length() > 0) {
-    			res = guiName;
-    		}
-    	}
-    	return res;
-    }
-    
-    /**
-     * This method calculates flag value from the GUI flag name.
-     * @param name The GUI flag value.
-     * @return original flag name 
-     */
-    public static String getNameFromGuiName(String name) {
-    	String res = name;
-    	if (name != null && name.length() > 0) {
-			for (Map.Entry<String, String> entry : Const.guiFlagMap.entrySet()) {
-				if (entry.getValue().equals(name)) {
-					res = entry.getKey();
-					break;
-				}
-			}
-    	}
-    	return res;
     }
     
     /**

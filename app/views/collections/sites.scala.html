@@ -148,7 +148,7 @@
                 	}
                 </td>
                 @if(target.organisation != null) { 
-				<td><a href="@routes.Curators.edit(target.authorUser.id)">@target.authorUser.name</a></td>
+				<td><a href="@routes.UserController.edit(target.authorUser.id)">@target.authorUser.name</a></td>
                 } else {
 	            	<td></td>
 				}	

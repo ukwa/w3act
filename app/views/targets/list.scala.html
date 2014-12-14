@@ -256,9 +256,9 @@
 									        	<option>None</option>
 									            @for(curFlag <- Flag.findAllFlags()) {
 							                  		@if(flag != null && flag.equals(curFlag.url)) {
-									                	<option selected>@Flags.getGuiName(curFlag.name)</option>
+									                	<option selected>@curFlag.name</option>
 									                } else {
-									                	<option>@Flags.getGuiName(curFlag.name)</option>
+									                	<option>@curFlag.name</option>
 									                }
 												}
 											</select>

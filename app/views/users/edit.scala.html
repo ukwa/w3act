@@ -5,20 +5,20 @@
 @main("", admin){
     
    	<div class="page-header">
-	    <h1><a href="@routes.Curators.index()">Users & Agencies > Curators > </a>User @form("name").value</h1>
+	    <h1><a href="@routes.UserController.index()">Users & Agencies > Curators > </a>User @form("name").value</h1>
 	</div>
 	<ul class="nav nav-tabs">
 	   @if(User.findById(Long.valueOf(form("id").value)) != null) {
-	   <li><a href="@routes.Curators.view(form.get.id)">View</a></li>
-	   <li><a href="@routes.Curators.sites(form.get.url)">Targets</a></li> 
+	   <li><a href="@routes.UserController.view(form.get.id)">View</a></li>
+	   <li><a href="@routes.UserController.sites(form.get.url)">Targets</a></li> 
 	   }
 	   @if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.Curators.edit(form.get.id)">Edit</a></li>
+		   <li class="active"><a href="@routes.UserController.edit(form.get.id)">Edit</a></li>
 	   }
 	</ul>
     
 	    @warningmessage(flash)
-	    @helper.form(action=routes.Curators.save) {
+	    @helper.form(action=routes.UserController.save) {
 		<input type="hidden" name="url" value="@form("url").value">
 		<input type="hidden" name="id" value="@form("id").value">
 
@@ -153,5 +153,5 @@
 	}
 }
 } else {
-	@infomessage.render("Access Denied for URL @routes.Curators.index()/edit")
+	@infomessage.render("Access Denied for URL @routes.UserController.index()/edit")
 }

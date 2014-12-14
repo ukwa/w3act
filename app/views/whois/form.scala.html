@@ -1,7 +1,7 @@
 @(user: User, ukRegistrantCount: Integer, nonUKRegistrantCount: Integer, failedCount: Integer)
 
    @warningmessage(flash)
-   @helper.form(action=routes.CheckWhoIs.check(), 'id -> "check-form") {
+   @helper.form(action=routes.WhoIsController.check(), 'id -> "check-form") {
       	<div class="page-header">
     	<h1><a href="@routes.Passwords.edit()">Users & Agencies > Check WhoIs </a></h1>
 	</div>

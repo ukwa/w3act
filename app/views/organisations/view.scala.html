@@ -3,15 +3,15 @@
 @main("", user) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.Organisations.index()">Users & Agencies > Organisations > </a>Organisation @organisation.title</h1>
+	    <h1><a href="@routes.OrganisationController.index()">Users & Agencies > Organisations > </a>Organisation @organisation.title</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.Organisations.view(organisation.id)">View</a></li>
-	   <li><a href="@routes.Organisations.sites(organisation.url)">Sites</a></li> 
+	   <li class="active"><a href="@routes.OrganisationController.view(organisation.id)">View</a></li>
+	   <li><a href="@routes.OrganisationController.sites(organisation.url)">Sites</a></li> 
 	   @if(user.hasRole("sys_admin")) {
-	   <li><a href="@routes.Organisations.edit(organisation.url)">Edit</a></li>
-	   <li><a href="@routes.Organisations.admin(organisation.url)">User administration</a></li>
+	   <li><a href="@routes.OrganisationController.edit(organisation.url)">Edit</a></li>
+	   <li><a href="@routes.OrganisationController.admin(organisation.url)">User administration</a></li>
 	   }
 	</ul>
     

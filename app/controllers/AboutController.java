@@ -15,7 +15,7 @@ import views.html.about;
  * Describe W3ACT project.
  */
 @Security.Authenticated(Secured.class)
-public class About extends Controller {
+public class AboutController extends Controller {
   
     /**
      * Display the About tab.

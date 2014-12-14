@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
  * Manage persons.
  */
 @Security.Authenticated(Secured.class)
-public class ContactPersons extends AbstractController {
+public class ContactPersonController extends AbstractController {
   
     /**
      * Display the person.
@@ -84,7 +84,7 @@ public class ContactPersons extends AbstractController {
 			Logger.info("Contact Person name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.ContactPersons.index()
+	        		routes.ContactPersonController.index()
 	        );
     	}
 
@@ -323,7 +323,7 @@ public class ContactPersons extends AbstractController {
            		Logger.info("update crawl person: " + person.toString());
                	Ebean.update(person);
         	}
-	        return redirect(routes.ContactPersons.edit(person.url));
+	        return redirect(routes.ContactPersonController.edit(person.url));
         } 
         if (delete != null) {
         	ContactPerson person = ContactPerson.findByUrl(getFormParam(Const.URL));
@@ -346,10 +346,10 @@ public class ContactPersons extends AbstractController {
 	  			return info();
         	} else {
         		Ebean.delete(person);
-        		res = redirect(routes.ContactPersons.index());
+        		res = redirect(routes.ContactPersonController.index());
         	}
         }
-    	res = redirect(routes.ContactPersons.index()); 
+    	res = redirect(routes.ContactPersonController.index()); 
         return res;
     }	   
 

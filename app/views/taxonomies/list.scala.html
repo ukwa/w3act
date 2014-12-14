@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.TaxonomiesController.list(newPage, sortBy, order, searchstr)
+    routes.TaxonomyController.list(newPage, sortBy, order, searchstr)
     
 }
 
@@ -85,7 +85,7 @@
  	<article class="taxonomyClass">
 		<div id="forms">
    			@warningmessage(flash)
-   			@helper.form(action=routes.TaxonomiesController.search, 'class -> "form-inline") {
+   			@helper.form(action=routes.TaxonomyController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   				<input type="hidden" name="s" value="@currentSortBy">
@@ -113,7 +113,7 @@
 			<tbody>
 				@for(taxonomy <- currentPage.getList) {
 		        <tr>
-		           	<td><a href="@routes.TaxonomiesController.view(taxonomy.url)">@taxonomy.name</a></td>
+		           	<td><a href="@routes.TaxonomyController.view(taxonomy.url)">@taxonomy.name</a></td>
 		           	<td>@taxonomy.ttype</td>
 				</tr>
 		           }

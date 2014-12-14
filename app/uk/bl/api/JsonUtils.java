@@ -963,6 +963,8 @@ public enum JsonUtils {
 						target.selectionType = Const.SelectionType.SELECTION.name();
 						if (StringUtils.isNotBlank(target.language) && target.language.equals(Const.UND)) {
 							target.language = null;
+						} else {
+							target.language = target.language.toUpperCase();
 						}
 	
 						if (target.noLdCriteriaMet == null) {

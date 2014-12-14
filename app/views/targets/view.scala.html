@@ -251,7 +251,7 @@
 						<div class="form-group">
 			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
 						    <div class="col-sm-6">
-			              		target.sptId
+			              		@target.sptId
 							</div>
 						</div>
 					</div>
@@ -504,14 +504,14 @@
 					</div>
 				</div>		     	
 				@if(target.indicateNpldStatus()) {    	
-				<div class="padding-20">
-					<div class="alert alert-info">
-						NB. There are other records within this domain for which data has already been provided.
-						@for(t <- target.getNpldStatusList()) {
-							<p><a href="@routes.TargetController.view(t.id)">@t.title @t.fieldUrl()</a></p>
-						}
-					</div>
-				</div>	
+					<div class="padding-20">
+						<div class="alert alert-info">
+							NB. There are other records within this domain for which data has already been provided.
+							@for(t <- target.getNpldStatusList()) {
+								<p><a href="@routes.TargetController.view(t.id)">@t.title @t.fieldUrl()</a></p>
+							}
+						</div>
+					</div>	
 				}	     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -763,7 +763,7 @@
 					</div>
 		     	</div>	
 		     	
-				@if(target.url != null && Target.existInDb(target.url)) {
+				@if(target.url != null) {
 					@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 			    		<div class="row padding-10">
 				     		<div class="col-md-12 col-xs-12 col-sm-12">
