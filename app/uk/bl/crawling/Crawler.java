@@ -95,7 +95,8 @@ public class Crawler {
 						String contentDisposition = response.header("Content-Disposition");
 						if (contentDisposition != null && contentDisposition.endsWith(".pdf")) {
 							Document document = new Document();
-							document.landingPageUrl = urlFromWayback(link.source);
+							document.landingPageUrl = crawlWayback ?
+									urlFromWayback(link.source) : link.source;
 							document.documentUrl = pageUrl;
 							document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
 							document.title = document.filename.substring(0, document.filename.indexOf('.'));

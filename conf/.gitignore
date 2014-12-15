@@ -2,5 +2,4 @@ dependencies.yml
 users.yml
 templates.yml
 w3act.properties
-application.conf
 prod.conf
