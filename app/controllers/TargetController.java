@@ -113,6 +113,11 @@ public class TargetController extends AbstractController {
         	);
     }
     
+//    public static Result targets(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject, 
+//    		Long crawlFrequencyId, Long depthId, String collection, Long licenseId, int pageSize, Long flagId) {
+//    	
+//    }
+//    
     /**
      * Display the paginated list of targets.
      *
@@ -120,7 +125,7 @@ public class TargetController extends AbstractController {
      * @param sortBy Column to be sorted
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
-     * @param curator Author of the target
+     * @param curatorId Author of the target
      * @param organisation The author's organisation
      * @param subject Target subject
      * @param crawlFrequency The crawl frequency
@@ -130,19 +135,41 @@ public class TargetController extends AbstractController {
      * @param pageSize The number of Target entries on the page
      * @param flag The flag assigned by user
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter, String curator, String organisation, String subject, 
-    		String crawlFrequency, String depth, String collection, String license, int pageSize, String flag) {
+    public static Result list(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject, 
+    		String crawlFrequencyName, String depthName, String collection, Long licenseId, int pageSize, Long flagId) {
+    	
     	Logger.info("Pre Targets.list() subject: " + subject);
     	
-    	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curator, organisation, subject, crawlFrequency, depth, collection, license, flag);
+    	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curatorId, organisationId, subject, crawlFrequencyName, depthName, collection, licenseId, flagId);
     	
-    	List<License> licenses = License.findAllLicenses();
-    	Logger.info("Targets.list() licenses: " + licenses);
     	
 		User user = User.findByEmail(request().username());
+    	List<License> licenses = License.findAllLicenses();
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
-    	
+		List<User> users = User.findAllSorted();
+		List<Organisation> organisations = Organisation.findAllSorted();
+		DepthType[] depthTypes = Const.DepthType.values();
+		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+//		List<Flag> flags = Flag.findAllFlags();
+
+//		List<String> subjects = new ArrayList<String>();
+//		List<Target> allTargets = Target.find.all();
+//		Iterator<Target> itr = allTargets.iterator();
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target.depth != null && target.depth.length() > 0 && !subjects.contains(target.depth)) {
+//		        ExpressionList<Target> ll = Target.find.where().contains("depth", target.depth);
+//		        if (ll.findRowCount() > 0) {
+//		        	res.add(target);
+//		        	subjects.add(target.depth);
+//		        }
+//			}
+//		}
+
+		
+		
+		
         return ok(list.render(
 			"Targets", 
 			user, 
@@ -150,16 +177,22 @@ public class TargetController extends AbstractController {
 			pageTargets,
 			sortBy, 
 			order, 
-	    	curator, 
-	    	organisation, 
+	    	curatorId, 
+	    	organisationId, 
 	    	subject, 
-	    	crawlFrequency, 
-	    	depth, 
+	    	crawlFrequencyName, 
+	    	depthName, 
 	    	collection, 
-	    	license, 
+	    	licenseId, 
 	    	pageSize,
-	    	flag,
-	    	licenses, collectionData, subjectData)
+	    	flagId,
+	    	licenses, 
+	    	collectionData, 
+	    	subjectData,
+	    	users,
+	    	organisations,
+	    	depthTypes,
+	    	crawlFrequencies)
 		);
     }
     
@@ -180,172 +213,6 @@ public class TargetController extends AbstractController {
     	User user = User.findByEmail(request().username());
         return ok(view.render(target, user));
     }
-
-	/**
-	 * This method filters targets by given URLs.
-	 * @return duplicate count
-	 */
-	public static List<Target> getSubjects() {
-		List<Target> res = new ArrayList<Target>();
-//		List<String> subjects = new ArrayList<String>();
-		List<Target> allTargets = Target.find.all();
-		Iterator<Target> itr = allTargets.iterator();
-//		while (itr.hasNext()) {
-//			Target target = itr.next();
-//			if (target.fieldSubject != null && target.fieldSubject.length() > 0 && !res.contains(target)) {
-////				if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
-//		        ExpressionList<Target> ll = Target.find.where().contains("field_subject", target.fieldSubject);
-//		        if (ll.findRowCount() > 0) {
-////		        	subjects.add(target.field_subject);
-//		        	res.add(target);
-//		        }
-//			}
-//		}
-//    	return res;
-		throw new NotImplementedError();
-	}
-	
-	/**
-	 * This method filters targets by given scope.
-	 * @return scope list
-	 */
-	public static List<Target> getScope() {
-		List<Target> res = new ArrayList<Target>();
-		List<String> subjects = new ArrayList<String>();
-		List<Target> allTargets = Target.find.all();
-		Iterator<Target> itr = allTargets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			if (target.scope != null && target.scope.length() > 0 && !subjects.contains(target.scope)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("field_scope", target.scope);
-		        if (ll.findRowCount() > 0) {
-		        	res.add(target);
-		        	subjects.add(target.scope);
-		        }
-			}
-		}
-    	return res;
-	}
-	
-	/**
-	 * This method retrieves targets from database for given taxonomy URL.
-	 * @param url
-	 * @return
-	 */
-	public static List<Target> getTargetsForTaxonomy(String url) {
-		List<Target> res = new ArrayList<Target>();
-//		Logger.info("url: " + url);
-		if (url != null) {
-	        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, url);
-	        res = ll.findList();
-		}
-//		Logger.info("res size: " + res.size());
-		return res;
-	}
-	
-	/**
-	 * This method filters targets by given license.
-	 * @return license list
-	 */
-//	public static List<Taxonomy> getLicense() {
-//		List<Taxonomy> licenses = new ArrayList<Taxonomy>();
-//		List<String> subjects = new ArrayList<String>();
-//		
-//		List<Target> allTargets = Target.find.all();
-//		
-//		Iterator<Target> itr = allTargets.iterator();
-//		while (itr.hasNext()) {
-//			Target target = itr.next();
-//			if (target.fieldLicense != null) {
-//				String curLicense = target.fieldLicense.replace(Const.LIST_DELIMITER, "");
-//				if (curLicense.length() > 0 && !subjects.contains(curLicense)) {
-//			        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_LICENSE_NODE, curLicense);
-//			        if (ll.findRowCount() > 0) {
-//			        	Taxonomy taxonomy = Taxonomy.findByUrl(curLicense);
-//			        	Logger.info("curLicense: " + curLicense + ".");
-//	//		        	Logger.info("taxonomy url: " + taxonomy.url);
-//	//		        	Logger.info("license: " + taxonomy.name);
-//			        	licenses.add(taxonomy);
-//			        	subjects.add(curLicense);
-//			        }
-//				}
-//			}
-//		}
-////		Logger.info("getLicense res: " + res);
-//    	return licenses;
-////		throw new NotImplementedError();
-//	}
-	
-	/**
-	 * This method filters targets by crawl frequency.
-	 * @return crawl frequency list
-	 */
-	public static List<Target> getCrawlFrequency() {
-		List<Target> res = new ArrayList<Target>();
-		List<String> subjects = new ArrayList<String>();
-		List<Target> allTargets = Target.find.all();
-		Iterator<Target> itr = allTargets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			if (target.crawlFrequency != null && target.crawlFrequency.length() > 0 && !subjects.contains(target.crawlFrequency)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("crawlFrequency", target.crawlFrequency);
-		        if (ll.findRowCount() > 0) {
-		        	res.add(target);
-		        	subjects.add(target.crawlFrequency);
-		        }
-			}
-		}
-    	return res;
-	}
-	
-	/**
-	 * This method filters targets by depth.
-	 * @return depth list
-	 */
-	public static List<Target> getDepth() {
-		List<Target> res = new ArrayList<Target>();
-		List<String> subjects = new ArrayList<String>();
-		List<Target> allTargets = Target.find.all();
-		Iterator<Target> itr = allTargets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
-			if (target.depth != null && target.depth.length() > 0 && !subjects.contains(target.depth)) {
-		        ExpressionList<Target> ll = Target.find.where().contains("depth", target.depth);
-		        if (ll.findRowCount() > 0) {
-		        	res.add(target);
-		        	subjects.add(target.depth);
-		        }
-			}
-		}
-    	return res;
-	}
-	
-	/**
-	 * This method filters targets by collection categories.
-	 * @return collection categories list
-	 */
-	public static List<Taxonomy> getCollectionCategories() {
-//		List<Target> res = new ArrayList<Target>();
-//		List<String> subjects = new ArrayList<String>();
-//		List<Taxonomy> taxonomies = new ArrayList<Taxonomy>();
-//		List<Target> allTargets = Target.find.all();
-//		Iterator<Target> itr = allTargets.iterator();
-//		while (itr.hasNext()) {
-//			Target target = itr.next();
-//			if (target.collections != null && !subjects.contains(target.fieldCollectionCategories)) {
-//		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, target.fieldCollectionCategories);
-//		        if (ll.findRowCount() > 0) {
-//		        	res.add(target);
-//		        	subjects.add(target.fieldCollectionCategories);
-//		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.fieldCollectionCategories);
-//		        	taxonomies.add(taxonomy);
-//		        }
-//			}
-//		}
-//    	return taxonomies;
-		throw new NotImplementedError();
-	}
-	
 
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String url) {
@@ -495,26 +362,29 @@ public class TargetController extends AbstractController {
     			return GO_HOME;
     		} 
     		else if (Const.EXPORT.equals(action)) {
-    			List<Target> exportTargets = new ArrayList<Target>();
-    	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, 
-    					subject, crawlFrequency, depth, collection, license, flag); 
-    			int rowCount = page.getTotalRowCount();
-    	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, 
-    					subject, crawlFrequency, depth, collection, license, flag); 
-    			exportTargets.addAll(pageAll.getList());
-				Logger.info("export size: " + exportTargets.size());
-    			export(exportTargets);
-    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
-    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
+//    			List<Target> exportTargets = new ArrayList<Target>();
+//    	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, 
+//    					subject, crawlFrequency, depth, collection, license, flag); 
+//    			int rowCount = page.getTotalRowCount();
+//    	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, 
+//    					subject, crawlFrequency, depth, collection, license, flag); 
+//    			exportTargets.addAll(pageAll.getList());
+//				Logger.info("export size: " + exportTargets.size());
+//    			export(exportTargets);
+//    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
+//    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
     		} 
     		else if (Const.SEARCH.equals(action) || Const.APPLY.equals(action)) {
-    			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
-    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
+//    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+//                routes.TargetController.list(0, "title", "asc", "", 0, 0, "", "", "", "", 0, 10, 0)
+//
+//    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
+//    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
     	}
+    	return ok("");
     }
     
     /**
@@ -930,10 +800,7 @@ public class TargetController extends AbstractController {
     	}
     }
         
-    public static Result GO_HOME = redirect(
-            routes.TargetController.list(0, Const.TITLE, Const.ASC, "", "", "", Const.EMPTY, "", "", Const.NONE, "", Const.PAGINATION_OFFSET, "")
-        );
-    
+    public static Result GO_HOME = redirect(routes.TargetController.list(0, "title", "asc", "", 0, 0, "", "", "", "", 0, 10, 0));
        
     /**
      * Display the target edit panel for this URL.
@@ -2236,12 +2103,12 @@ public class TargetController extends AbstractController {
         return ok(jsonData);
     }        
     
-    /**
-     * This method calculates subject children - objects that have parents.
-     * @param url The identifier for parent 
-     * @param targetUrl This is an identifier for current target object
-     * @return child subject in JSON form
-     */
+//    /**
+//     * This method calculates subject children - objects that have parents.
+//     * @param url The identifier for parent 
+//     * @param targetUrl This is an identifier for current target object
+//     * @return child subject in JSON form
+//     */
 //    public static String getSubjectChildren(String url, String targetUrl) {
 ////    	Logger.info("getSubjectChildren() target URL: " + targetUrl);
 //    	String res = "";
@@ -2258,84 +2125,84 @@ public class TargetController extends AbstractController {
 //    	return res;
 //    }
     
-    /**
-     * Mark subjects that are stored in target object as selected
-     * @param subjectUrl The subject identifier
-     * @param targetUrl This is an identifier for current target object
-     * @return
-     */
-    public static String checkSubjectSelection(String subjectUrl, String targetUrl) {
+//    /**
+//     * Mark subjects that are stored in target object as selected
+//     * @param subjectUrl The subject identifier
+//     * @param targetUrl This is an identifier for current target object
+//     * @return
+//     */
+//    public static String checkSubjectSelection(String subjectUrl, String targetUrl) {
+////    	String res = "";
+////    	if (targetUrl != null && targetUrl.length() > 0) {
+//////    		if (subjectUrl != null && targetUrl.equals(subjectUrl)) {
+////    		Target target = Target.findByUrl(targetUrl);
+////    		if (target.fieldSubject != null && 
+////    				target.fieldSubject.contains(subjectUrl)) {
+////    			res = "\"select\": true ,";
+////    		}
+////    	}
+////    	return res;
+//		throw new NotImplementedError();
+//    }
+//    
+//    /**
+//     * Mark preselected subjects as selected in filter
+//     * @param subjectUrl The subject identifier
+//     * @param targetUrl This is an identifier for current target object
+//     * @return
+//     */
+//    public static String checkSubjectSelectionFilter(String subjectUrl, String targetUrl) {
 //    	String res = "";
 //    	if (targetUrl != null && targetUrl.length() > 0) {
-////    		if (subjectUrl != null && targetUrl.equals(subjectUrl)) {
-//    		Target target = Target.findByUrl(targetUrl);
-//    		if (target.fieldSubject != null && 
-//    				target.fieldSubject.contains(subjectUrl)) {
+//    		if (subjectUrl != null && targetUrl.equals(subjectUrl)) {
 //    			res = "\"select\": true ,";
 //    		}
 //    	}
 //    	return res;
-		throw new NotImplementedError();
-    }
-    
-    /**
-     * Mark preselected subjects as selected in filter
-     * @param subjectUrl The subject identifier
-     * @param targetUrl This is an identifier for current target object
-     * @return
-     */
-    public static String checkSubjectSelectionFilter(String subjectUrl, String targetUrl) {
-    	String res = "";
-    	if (targetUrl != null && targetUrl.length() > 0) {
-    		if (subjectUrl != null && targetUrl.equals(subjectUrl)) {
-    			res = "\"select\": true ,";
-    		}
-    	}
-    	return res;
-    }
-    
-    /**
-     * Check if none value is selected in filter
-     * @param subjectUrl The subject identifier
-     * @param targetUrl This is an identifier for current target object
-     * @return
-     */
-    public static String checkNoneFilter(String targetUrl) {
-    	String res = "";
-    	if (targetUrl != null && targetUrl.length() > 0) {
-    		if (targetUrl.toLowerCase().contains(Const.NONE.toLowerCase())) {
-    			res = "\"select\": true ,";
-    		}
-    	}
-    	return res;
-    }
-    
-    /**
-     * Check if none value is selected
-     * @param subjectUrl The subject identifier
-     * @param targetUrl This is an identifier for current target object
-     * @return
-     */
-    public static String checkNone(String targetUrl) {
+//    }
+//    
+//    /**
+//     * Check if none value is selected in filter
+//     * @param subjectUrl The subject identifier
+//     * @param targetUrl This is an identifier for current target object
+//     * @return
+//     */
+//    public static String checkNoneFilter(String targetUrl) {
 //    	String res = "";
 //    	if (targetUrl != null && targetUrl.length() > 0) {
-//    		Target target = Target.findByUrl(targetUrl);
-//    		if (target.fieldSubject != null 
-//    				&& (target.fieldSubject.toLowerCase().contains(Const.NONE.toLowerCase()))) {
+//    		if (targetUrl.toLowerCase().contains(Const.NONE.toLowerCase())) {
 //    			res = "\"select\": true ,";
 //    		}
 //    	}
 //    	return res;
-		throw new NotImplementedError();
-    }
+//    }
+//    
+//    /**
+//     * Check if none value is selected
+//     * @param subjectUrl The subject identifier
+//     * @param targetUrl This is an identifier for current target object
+//     * @return
+//     */
+//    public static String checkNone(String targetUrl) {
+////    	String res = "";
+////    	if (targetUrl != null && targetUrl.length() > 0) {
+////    		Target target = Target.findByUrl(targetUrl);
+////    		if (target.fieldSubject != null 
+////    				&& (target.fieldSubject.toLowerCase().contains(Const.NONE.toLowerCase()))) {
+////    			res = "\"select\": true ,";
+////    		}
+////    	}
+////    	return res;
+//		throw new NotImplementedError();
+//    }
     
-    /**
-   	 * This method calculates first order subjects.
-     * @param subjectList The list of all subjects
-     * @param targetUrl This is an identifier for current target object
-     * @param parent This parameter is used to differentiate between root and children nodes
-     * @return collection object in JSON form
-     */
+//    /**
+//   	 * This method calculates first order subjects.
+//     * @param subjectList The list of all subjects
+//     * @param targetUrl This is an identifier for current target object
+//     * @param parent This parameter is used to differentiate between root and children nodes
+//     * @return collection object in JSON form
+//     */
 //    public static String getSubjectTreeElements(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
 ////    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
 //    	String res = "";
@@ -2373,13 +2240,13 @@ public class TargetController extends AbstractController {
 //    	return res;
 //    }
         
-    /**
-   	 * This method calculates first order subjects for targets filtering.
-     * @param subjectList The list of all subjects
-     * @param targetUrl This is an identifier for current target object
-     * @param parent This parameter is used to differentiate between root and children nodes
-     * @return collection object in JSON form
-     */
+//    /**
+//   	 * This method calculates first order subjects for targets filtering.
+//     * @param subjectList The list of all subjects
+//     * @param targetUrl This is an identifier for current target object
+//     * @param parent This parameter is used to differentiate between root and children nodes
+//     * @return collection object in JSON form
+//     */
 //    public static String getSubjectTreeElementsFilter(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
 ////    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
 //    	String res = "";
@@ -2417,11 +2284,11 @@ public class TargetController extends AbstractController {
 //    	return res;
 //    }
         
-    /**
-     * This method computes a tree of subjects in JSON format. 
-     * @param targetUrl This is an identifier for current target object
-     * @return tree structure
-     */
+//    /**
+//     * This method computes a tree of subjects in JSON format. 
+//     * @param targetUrl This is an identifier for current target object
+//     * @return tree structure
+//     */
 //    @BodyParser.Of(BodyParser.Json.class)
 //    public static Result getSubjectTree(String targetUrl) {
 //    	Logger.info("getSubjectTree() target URL: " + targetUrl);
@@ -2437,11 +2304,11 @@ public class TargetController extends AbstractController {
 //        return ok(jsonData);
 //    }        
     
-    /**
-     * This method computes a tree of subjects in JSON format. 
-     * @param targetUrl This is an identifier for current target object
-     * @return tree structure
-     */
+//    /**
+//     * This method computes a tree of subjects in JSON format. 
+//     * @param targetUrl This is an identifier for current target object
+//     * @return tree structure
+//     */
 //    @BodyParser.Of(BodyParser.Json.class)
 //    public static Result getSubjectTreeFilter(String targetUrl) {
 //    	Logger.info("getSubjectTree() target URL: " + targetUrl);
@@ -2455,7 +2322,172 @@ public class TargetController extends AbstractController {
 //        jsonData = Json.toJson(Json.parse(sb.toString()));
 ////    	Logger.info("getSubjectTree() json: " + jsonData.toString());
 //        return ok(jsonData);
-//    }        
+//    }
+    
+//	/**
+//	 * This method filters targets by given URLs.
+//	 * @return duplicate count
+//	 */
+//	public static List<Target> getSubjects() {
+//		List<Target> res = new ArrayList<Target>();
+////		List<String> subjects = new ArrayList<String>();
+//		List<Target> allTargets = Target.find.all();
+//		Iterator<Target> itr = allTargets.iterator();
+////		while (itr.hasNext()) {
+////			Target target = itr.next();
+////			if (target.fieldSubject != null && target.fieldSubject.length() > 0 && !res.contains(target)) {
+//////				if (target.field_subject != null && target.field_subject.length() > 0 && !subjects.contains(target.field_subject)) {
+////		        ExpressionList<Target> ll = Target.find.where().contains("field_subject", target.fieldSubject);
+////		        if (ll.findRowCount() > 0) {
+//////		        	subjects.add(target.field_subject);
+////		        	res.add(target);
+////		        }
+////			}
+////		}
+////   	return res;
+//		throw new NotImplementedError();
+//	}
+	
+//	/**
+//	 * This method filters targets by given scope.
+//	 * @return scope list
+//	 */
+//	public static List<Target> getScope() {
+//		List<Target> res = new ArrayList<Target>();
+//		List<String> subjects = new ArrayList<String>();
+//		List<Target> allTargets = Target.find.all();
+//		Iterator<Target> itr = allTargets.iterator();
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target.scope != null && target.scope.length() > 0 && !subjects.contains(target.scope)) {
+//		        ExpressionList<Target> ll = Target.find.where().contains("field_scope", target.scope);
+//		        if (ll.findRowCount() > 0) {
+//		        	res.add(target);
+//		        	subjects.add(target.scope);
+//		        }
+//			}
+//		}
+//   	return res;
+//	}
+	
+//	/**
+//	 * This method retrieves targets from database for given taxonomy URL.
+//	 * @param url
+//	 * @return
+//	 */
+//	public static List<Target> getTargetsForTaxonomy(String url) {
+//		List<Target> res = new ArrayList<Target>();
+////		Logger.info("url: " + url);
+//		if (url != null) {
+//	        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, url);
+//	        res = ll.findList();
+//		}
+////		Logger.info("res size: " + res.size());
+//		return res;
+//	}
+	
+//	/**
+//	 * This method filters targets by given license.
+//	 * @return license list
+//	 */
+//	public static List<Taxonomy> getLicense() {
+//		List<Taxonomy> licenses = new ArrayList<Taxonomy>();
+//		List<String> subjects = new ArrayList<String>();
+//		
+//		List<Target> allTargets = Target.find.all();
+//		
+//		Iterator<Target> itr = allTargets.iterator();
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target.fieldLicense != null) {
+//				String curLicense = target.fieldLicense.replace(Const.LIST_DELIMITER, "");
+//				if (curLicense.length() > 0 && !subjects.contains(curLicense)) {
+//			        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_LICENSE_NODE, curLicense);
+//			        if (ll.findRowCount() > 0) {
+//			        	Taxonomy taxonomy = Taxonomy.findByUrl(curLicense);
+//			        	Logger.info("curLicense: " + curLicense + ".");
+//	//		        	Logger.info("taxonomy url: " + taxonomy.url);
+//	//		        	Logger.info("license: " + taxonomy.name);
+//			        	licenses.add(taxonomy);
+//			        	subjects.add(curLicense);
+//			        }
+//				}
+//			}
+//		}
+////		Logger.info("getLicense res: " + res);
+//   	return licenses;
+////		throw new NotImplementedError();
+//	}
+	
+//	/**
+//	 * This method filters targets by crawl frequency.
+//	 * @return crawl frequency list
+//	 */
+	public static List<Target> getCrawlFrequency() {
+		List<Target> res = new ArrayList<Target>();
+		List<String> subjects = new ArrayList<String>();
+		List<Target> allTargets = Target.find.all();
+		Iterator<Target> itr = allTargets.iterator();
+		while (itr.hasNext()) {
+			Target target = itr.next();
+			if (target.crawlFrequency != null && target.crawlFrequency.length() > 0 && !subjects.contains(target.crawlFrequency)) {
+		        ExpressionList<Target> ll = Target.find.where().contains("crawlFrequency", target.crawlFrequency);
+		        if (ll.findRowCount() > 0) {
+		        	res.add(target);
+		        	subjects.add(target.crawlFrequency);
+		        }
+			}
+		}
+   	return res;
+	}
+	
+//	/**
+//	 * This method filters targets by depth.
+//	 * @return depth list
+//	 */
+//	public static List<Target> getDepth() {
+//		List<Target> res = new ArrayList<Target>();
+//		List<String> subjects = new ArrayList<String>();
+//		List<Target> allTargets = Target.find.all();
+//		Iterator<Target> itr = allTargets.iterator();
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target.depth != null && target.depth.length() > 0 && !subjects.contains(target.depth)) {
+//		        ExpressionList<Target> ll = Target.find.where().contains("depth", target.depth);
+//		        if (ll.findRowCount() > 0) {
+//		        	res.add(target);
+//		        	subjects.add(target.depth);
+//		        }
+//			}
+//		}
+//   	return res;
+//	}
+	
+//	/**
+//	 * This method filters targets by collection categories.
+//	 * @return collection categories list
+//	 */
+//	public static List<Taxonomy> getCollectionCategories() {
+//		List<Target> res = new ArrayList<Target>();
+//		List<String> subjects = new ArrayList<String>();
+//		List<Taxonomy> taxonomies = new ArrayList<Taxonomy>();
+//		List<Target> allTargets = Target.find.all();
+//		Iterator<Target> itr = allTargets.iterator();
+//		while (itr.hasNext()) {
+//			Target target = itr.next();
+//			if (target.collections != null && !subjects.contains(target.fieldCollectionCategories)) {
+//		        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, target.fieldCollectionCategories);
+//		        if (ll.findRowCount() > 0) {
+//		        	res.add(target);
+//		        	subjects.add(target.fieldCollectionCategories);
+//		        	Taxonomy taxonomy = Taxonomy.findByUrl(target.fieldCollectionCategories);
+//		        	taxonomies.add(taxonomy);
+//		        }
+//			}
+//		}
+//   	return taxonomies;
+//		throw new NotImplementedError();
+//	}    
     
 }
 

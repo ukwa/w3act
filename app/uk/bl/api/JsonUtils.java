@@ -1085,7 +1085,7 @@ public enum JsonUtils {
 								QaIssue qaIssue = this.getQaIssue(qaIssueField);
 								if (instance.getField_description_of_qa_issues() instanceof LinkedHashMap) {
 									Map<String, String> qaDesc = (LinkedHashMap<String,String>) instance.getField_description_of_qa_issues();
-									Logger.info("qaDesc: " + qaDesc.get("value"));
+//									Logger.info("qaDesc: " + qaDesc.get("value"));
 									qaIssue.description = qaDesc.get("value");
 								}
 								instance.qaIssue = qaIssue;

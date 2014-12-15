@@ -1412,7 +1412,7 @@ public class Target extends UrlModel {
 	 *            Sort order (either asc or desc)
 	 * @param filterUrl
 	 *            Filter applied on target urls
-	 * @param curatorUrl
+	 * @param curatorId
 	 *            Author of the target
 	 * @param organisationUrl
 	 *            The author's organisation
@@ -1433,20 +1433,27 @@ public class Target extends UrlModel {
 	 * @return
 	 */
 	public static Page<Target> pageTargets(int page, int pageSize,
-			String sortBy, String order, String filterUrl, String curatorUrl,
-			String organisationUrl, String subjectUrl, String crawlFrequency,
-			String depth, String suggested_collections, String license,
-			String flag) {
-		ExpressionList<Target> exp = Target.find.where();
+			String sortBy, String order, String filterUrl, Long curatorId,
+			Long organisationId, String subjectUrl, String crawlFrequencyName,
+			String depthName, String suggested_collections, Long licenseId,
+			Long flagId) {
+		
+		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);
-//		exp = exp.add(Expr.or(Expr.icontains(Const.FIELD_URL, filterUrl), Expr.icontains(Const.TITLE, filterUrl)));
-//		if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
-////			exp = exp.icontains(Const.AUTHOR, curatorUrl);
-//		}
-//		if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
-////			exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
-//		}
+	
+		
+		exp = exp.add(Expr.or(
+				Expr.icontains("fieldUrls.url", filterUrl), 
+				Expr.icontains("title", filterUrl))
+			);
+		
+		if (curatorId != 0) {
+			exp = exp.eq("authorUser.id", curatorId);
+		}
+		if (organisationId != 0) {
+			exp = exp.eq("organisation.id", organisationId);
+		}
 //		Logger.debug("pageTargets() subject: " + subjectUrl);
 //		if (subjectUrl != null && !subjectUrl.equals(Const.EMPTY)) {
 //			if (subjectUrl.toLowerCase().equals(Const.NONE)) {

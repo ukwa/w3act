@@ -586,7 +586,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
 						    <div class="col-sm-6">
-						        @for((flag, index) <- flags.zipWithIndex) {
+						        @for(flag <- flags) {
 									<label class="checkbox-inline">
 						                @if(form.get.flags.contains(flag)) {
 						                	<input type="checkbox" name="flagList" value="@flag.id" checked />

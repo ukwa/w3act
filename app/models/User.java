@@ -237,10 +237,8 @@ public class User extends ActModel {
      * @return user list
      */
     public static List<User> findAllSorted() {
-    	List<User> res = new ArrayList<User>();
-    	Page<User> page = page(0, find.all().size(), Const.NAME, Const.ASC, "");
-    	res = page.getList();
-        return res;
+    	List<User> users = find.where().orderBy("name asc").findList();
+        return users;
     }
         
     /**
@@ -423,18 +421,45 @@ public class User extends ActModel {
         		.getPage(page);
     }
     
-    /**
-     * This method updates foreign key mapping between a user and an organisation.
-     */
-    // TODO: KL WHY THIS? to change organisation?
-//    public void updateOrganisation() {
-//		if (affiliation != null
-//				&& affiliation.length() > 0) {
-//			Organisation organisation = Organisation.findByUrl(affiliation);
-////            Logger.info("Add creator to organisation: " + organisation.toString());
-//            this.organisation = organisation;
-//		}    	
-//    }
+
+
+    	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (id == null) {
+			if (other.uid != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
 
 	@Override
 	public String toString() {

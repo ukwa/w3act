@@ -223,10 +223,8 @@ public class Organisation extends ActModel {
      * @return user list
      */
     public static List<Organisation> findAllSorted() {
-    	List<Organisation> res = new ArrayList<Organisation>();
-    	Page<Organisation> page = page(0, find.all().size(), Const.TITLE, Const.ASC, "");
-    	res = page.getList();
-        return res;
+    	List<Organisation> organisations = find.where().orderBy("title asc").findList();
+        return organisations;
     }
         
     /**
@@ -430,6 +428,7 @@ public class Organisation extends ActModel {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -446,6 +445,11 @@ public class Organisation extends ActModel {
 			if (other.title != null)
 				return false;
 		} else if (!title.equals(other.title))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

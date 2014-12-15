@@ -1,5 +1,7 @@
 package controllers;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -10,6 +12,7 @@ import play.mvc.*;
 import play.data.*;
 import static play.data.Form.*;
 import models.*;
+import uk.bl.Const;
 import uk.bl.api.PasswordHash;
 import views.html.*;
 
@@ -77,7 +80,7 @@ public class ApplicationController extends Controller {
         } else {
             session("email", loginForm.get().email.toLowerCase());
             return redirect(
-                routes.AboutController.index()
+                routes.ApplicationController.index()
             );
         }
     }
@@ -93,14 +96,62 @@ public class ApplicationController extends Controller {
         );
     }
   
+    /**
+     * Display the About tab.
+     */
+    public static Result index() {
+    	User user = User.findByEmail(request().username());
+    	Logger.info("user: " + user);
+    	if (user != null) {
+    		return ok(about.render("About", user));
+    	}
+    	return redirect(routes.ApplicationController.login());
+    }
+    
+    public static String getLastCommitHash() {
+    	String res = "";
+    	try {
+    		BufferedReader br = new BufferedReader(new FileReader(Const.LAST_VERSION_FILE));
+    		try {
+    			StringBuilder sb = new StringBuilder();
+    			String line = br.readLine();
+
+    			while (line != null) {
+    				sb.append(line);
+    				sb.append('\n');
+    				line = br.readLine();
+    			}
+    			res = sb.toString();
+    		} finally {
+    			br.close();
+    		}
+//    		row = Utils.buildWebRequestByUrl(Const.GITHUB, Const.LAST_COMMIT);
+//        	Logger.info("row: " + row);
+//	    	if (row != null && row.length() > 0) {
+//		    	int start = row.indexOf(Const.LAST_COMMIT) + Const.LAST_COMMIT.length();
+//		    	row = row.substring(start, start + 40);
+//	    	}
+    	} catch (Exception e) {
+    		Logger.debug("Error occured by last commit hash calculation: " + e);
+    	}
+    	Logger.info("last commit hash: " + res);
+
+    	return res;
+    }
+    
+    public static Result addContent() {
+		return ok(
+            addcontent.render("AddContent", User.findByEmail(request().username()))
+        );
+    }
+    
     // -- Javascript routing
     
     public static Result javascriptRoutes() {
         response().setContentType("text/javascript");
         return ok(
             Routes.javascriptRouter("jsRoutes",
-            
-				controllers.routes.javascript.AboutController.index(),
+            	controllers.routes.javascript.ApplicationController.index(),
                 controllers.routes.javascript.CollectionController.index(),
                 controllers.routes.javascript.TargetController.index(),
                 controllers.routes.javascript.OrganisationController.index(),

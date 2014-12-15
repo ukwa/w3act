@@ -1,4 +1,4 @@
-@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, curatorUrl: String, organisationUrl: String, subjectUrl: String, crawlFrequency: String, depth: String, collection: String, currentLicense: String, pageSize: Int, flag: String, licenses: List[License], collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode)
+@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, curatorId: Long, organisationId: Long, subjectUrl: String, crawlFrequencyName: String, depthName: String, collection: String, licenseId: Long, pageSize: Int, flagId: Long, licenses: List[License], collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, users: List[User], organisations: List[Organisation], depthTypes: Array[uk.bl.Const.DepthType], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency])
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -14,9 +14,9 @@
 			applySearchTargetsTab(context, searchContext);
 			scopeCheck(context);
 			
-			showTree("#collectionTree", "treeKeys", @getJson(collectionData));
-			showTree("#subjectTree", "field_subject", @getJson(subjectData));
-            
+			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect");
+			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect");            
+			
             function showTree(id, key, data) {
              	$(id).dynatree({
                 	checkbox: true,
@@ -73,7 +73,7 @@
     }
     
     // Generate the link
-    routes.TargetController.list(newPage, sortBy, order, searchurl, curatorUrl, organisationUrl, subjectUrl, crawlFrequency, depth, collection, currentLicense, pageSize)
+    routes.TargetController.list(newPage, sortBy, order, searchurl, curatorId, organisationId, subjectUrl, crawlFrequencyName, depthName, collection, licenseId, pageSize, flagId)
 }
 
 @**********************************
@@ -127,176 +127,175 @@
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	  					<input type="hidden" name="s" value="@currentSortBy">
 	  					<input type="hidden" name="o" value="@currentOrder">
-	  					<input type="hidden" name="query_curator" value="@curatorUrl">
-	  					<input type="hidden" name="query_organisation" value="organisationUrl">
+	  					<input type="hidden" name="query_curator" value="@curatorId">
+	  					<input type="hidden" name="query_organisation" value="organisationId">
 	  					<input type="hidden" name="query_subject" value="@subjectUrl">
-	  					<input type="hidden" name="query_crawl_frequency" value="@crawlFrequency">
-	  					<input type="hidden" name="query_depth" value="@depth">
+	  					<input type="hidden" name="query_crawl_frequency" value="@crawlFrequencyName">
+	  					<input type="hidden" name="query_depth" value="@depthName">
 	  					<input type="hidden" name="query_collection" value="@collection">
-	  					<input type="hidden" name="query_license" value="@currentLicense">
-	  					<input type="hidden" name="query_flag" value="@flag">
+	  					<input type="hidden" name="query_license" value="@licenseId">
+	  					<input type="hidden" name="query_flag" value="@flagId">
 						<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
-		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
-				        <button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear up search settings">Clear</button>
-						@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) && searchurl != null && searchurl.length() > 0) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Look up and add new target">Add Target</button>
-						}
-					</span>
-				</div>
-	    	
-				<div class="alert alert-info">
-					Search here for all or part of the name of the target, or its URL.
-				</div>
-				
-				<div class="row">
-					<div class="col-md-12 col-sm-12">
-						<div class="padding-20">
-						    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
-						</div>
+			   			<span class="input-group-btn">
+							<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
+					        <button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear up search settings">Clear</button>
+							@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) && searchurl != null && searchurl.length() > 0) {
+								<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Look up and add new target">Add Target</button>
+							}
+						</span>
 					</div>
-				</div>			
-				<div class="row">
-					<div class="col-md-12 col-sm-12">
-						<div id="accordion">
-							<div id="filter-panel" class="panel-collapse collapse in">
-								<div class="col-md-12 col-sm-12">
-									<div class="text-center">
-										<div class="form-group">
-							 				<span class="btn-group">
-												@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
-													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
-													<button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear filters">Clear</button>
-								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file in the root folder">Export</button>	
-							 					}								 			
-						            		</span>
-							            </div>
-							    	</div>
-								</div>
-								<div class="col-md-6 col-sm-6">
-									<div class="form-group">
-										<label for="curator" class="col-md-4 col-sm-4 control-label">Curator</label>
-						            	<div class="col-md-8 col-sm-8">
-											<select name="author" class="form-control target-form-control" id="curator">
-												<option>None</option>
-												@for(curator <- User.findAllSorted()) {
-													@if(curatorUrl != null && curatorUrl.equals(curator.url) && curatorUrl.length() > 0) {
-														<option selected>@curator.name</option>
-													} else {
-														<option>@curator.name</option>
-													}
-												}
-											</select>
-										</div>	
+					
+					<div class="alert alert-info">
+						Search here for all or part of the name of the target, or its URL.
+					</div>
+					
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="padding-20">
+							    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
+							</div>
+						</div>
+					</div>			
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div id="accordion">
+								<div id="filter-panel" class="panel-collapse collapse in">
+									<div class="col-md-12 col-sm-12">
+										<div class="text-center">
+											<div class="form-group">
+								 				<span class="btn-group">
+													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
+														<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
+														<button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear filters">Clear</button>
+									 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file in the root folder">Export</button>	
+								 					}								 			
+							            		</span>
+								            </div>
+								    	</div>
 									</div>
-									<div class="form-group">					
-						            	<label for="organisation" class="col-md-4 col-sm-4 control-label">Organisation</label>
-						            	<div class="col-md-8 col-sm-8">
-											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
-									        	<option>None</option>
-									            	@for(organisation <- Organisation.findAllSorted()) {
-							                 		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
-								                			<option selected>@organisation.title</option>
+									<div class="col-md-6 col-sm-6">
+										<div class="form-group">
+											<label for="curator" class="col-md-4 col-sm-4 control-label">Curator</label>
+							            	<div class="col-md-8 col-sm-8">
+												<select name="author" class="form-control target-form-control" id="curator">
+													<option>None</option>
+													@for(curator <- users) {
+														@if(curator.id == curatorId) {
+															<option value="@curator.id" selected>@curator.name</option>
+														} else {
+															<option value="@curator.id">@curator.name</option>
+														}
+													}
+												</select>
+											</div>	
+										</div>
+										<div class="form-group">					
+							            	<label for="organisation" class="col-md-4 col-sm-4 control-label">Organisation</label>
+							            	<div class="col-md-8 col-sm-8">
+												<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
+										        	<option>None</option>
+										            	@for(organisation <- organisations) {
+								                 		  		@if(organisation.id == organisation.id) {
+									                			<option value="@organisation.id" selected>@organisation.title</option>
+									                		} else {
+									                			<option value="@organisation.id">@organisation.title</option>
+									                		}
+										                }
+												</select>
+											</div>
+							         	</div>
+										<div class="form-group">					
+							            	<label for="frequency" class="col-md-4 col-sm-4 control-label">Crawl frequency</label>
+							            	<div class="col-md-8 col-sm-8">
+												<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
+									                <option>None</option>
+									                @for(crawlFrequency <- crawlFrequencies) {
+						                 		  		@if(crawlFrequency.name.equals(crawlFrequencyName)) {
+									                		<option value="@crawlFrequency.name" selected>@crawlFrequency.getValue</option>
 								                		} else {
-								                			<option>@organisation.title</option>
+									                		<option value="@crawlFrequency.name">@crawlFrequency.getValue</option>
 								                		}
 									                }
-											</select>
-										</div>
-						         	</div>
-									<div class="form-group">					
-						            	<label for="frequency" class="col-md-4 col-sm-4 control-label">Crawl frequency</label>
-						            	<div class="col-md-8 col-sm-8">
-											<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
-								                <option>None</option>
-								                @for(curCrawlFrequency <- TargetController.getCrawlFrequency()) {
-					                 		  		@if(crawlFrequency != null && crawlFrequency.equals(curCrawlFrequency.crawlFrequency)) {
-								                		<option selected>@curCrawlFrequency.crawlFrequency</option>
-							                		} else {
-								                		<option>@curCrawlFrequency.crawlFrequency</option>
-							                		}
-								                }
-											</select>
-										</div>
-						         	</div>
-									<div class="form-group">
-						            	<label for="field-depth" class="col-md-4 col-sm-4 control-label">Depth</label>
-						            	<div class="col-md-8 col-sm-8">
-											<select name="field_depth" class="form-control target-form-control" id="field-depth">
-									        	<option>None</option>
-									            @for(curDepth <- TargetController.getDepth()) {
-							                  		@if(depth != null && depth.equals(curDepth.depth)) {
-									                	<option selected>@curDepth.depth</option>
-									                } else {
-									                	<option>@curDepth.depth</option>
-									                }
-												}
-											</select>
-										</div>
-									</div>					         	
-									<div class="form-group">
-						            	<label for="license" class="col-md-4 col-sm-4 control-label">License</label>
-						            	<div class="col-md-8 col-sm-8">
-											<select name="field_license" class="form-control target-form-control" id="license">
-									        	<option>None</option>
-									            @for(license <- licenses) {
-							                 		@if(currentLicense != null && currentLicense.equals(license.url)) {
-								                		<option value="@license.id" selected>@license.name</option>
-								                	} else {
-								                		<option value="@license.id">@license.name</option>
-								                	}
-												}
-											</select>
-										</div>
-						         	</div>
-									<div class="form-group">
-						            	<label for="flags" class="col-md-4 col-sm-4 control-label">Flag</label>
-						            	<div class="col-md-8 col-sm-8">
-											<select name="flags" class="form-control target-form-control" id="flags">
-									        	<option>None</option>
-									            @for(curFlag <- Flag.findAllFlags()) {
-							                  		@if(flag != null && flag.equals(curFlag.url)) {
-									                	<option selected>@curFlag.name</option>
-									                } else {
-									                	<option>@curFlag.name</option>
-									                }
-												}
-											</select>
-										</div>
-									</div>					         	
-									<div class="form-group">
-										<label class="col-md-4 col-sm-4 control-label">Page size</label>
-						            	<div class="col-md-8 col-sm-8">
-							 				<input type="text" name="page_size" value="@pageSize" maxlength="200" class="form-control target-form-control" id="page_size" title="Number of targets on page" />
-							 			</div>
-								     </div>					         	
-							    </div>							
-								<div class="col-md-6 col-sm-6">
-									<div class="form-group">
-						            	<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
-									    <div id="subjectTree" class="col-md-8 col-sm-8" style="padding:5px;"></div>
-									    <input type="hidden" id="subject" name="subject" value="@subjectUrl">
-									</div>						         	
-									<div class="form-group">
-						            	<label for="suggested_collections" class="col-md-4 col-sm-4 control-label">Collection</label>
-						            	<div class="col-md-8 col-sm-8" style="padding:5px;">
-										  <div id="collectionTree"></div>
-										  <input type="hidden" id="treeKeys" name="treeKeys" value="@collection">
-										</div>
-									</div>
-								</div>							
-								<div class="col-md-12 col-sm-12">
-									<div class="text-center">
+												</select>
+											</div>
+							         	</div>
 										<div class="form-group">
-							 				<span class="btn-group">
-												@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
-													<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
-													<button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear filters">Clear</button>
-								 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file in the root folder">Export</button>	
-							 					}								 			
-						            		</span>
-							            </div>
-							    	</div>
+							            	<label for="field-depth" class="col-md-4 col-sm-4 control-label">Depth</label>
+							            	<div class="col-md-8 col-sm-8">
+												<select name="field_depth" class="form-control target-form-control" id="field-depth">
+									                @for(depthType <- depthTypes) {
+										                @if(depthType.name.equals(depthName)) {
+										                	<option value="@depthType.name" selected>@depthType.getValue</option>
+										                } else {
+										                	<option value="@depthType.name">@depthType.getValue</option>
+										                }
+									                }
+												</select>
+											</div>
+										</div>					         	
+										<div class="form-group">
+							            	<label for="license" class="col-md-4 col-sm-4 control-label">License</label>
+							            	<div class="col-md-8 col-sm-8">
+												<select name="field_license" class="form-control target-form-control" id="license">
+										        	<option value="0">None</option>
+										            @for(license <- licenses) {
+								                 		@if(license.id == licenseId) {
+									                		<option value="@license.id" selected>@license.name</option>
+									                	} else {
+									                		<option value="@license.id">@license.name</option>
+									                	}
+													}
+												</select>
+											</div>
+							         	</div>
+										<div class="form-group">
+							            	<label for="flags" class="col-md-4 col-sm-4 control-label">Flag</label>
+							            	<div class="col-md-8 col-sm-8">
+												<select name="flags" class="form-control target-form-control" id="flags">
+										        	<option>None</option>
+										            @for(flag <- Flag.findAllFlags()) {
+								                  		@if(flag.id == flagId) {
+										                	<option value="@flag.id" selected>@flag.name</option>
+										                } else {
+										                	<option value="@flag.id" >@flag.name</option>
+										                }
+													}
+												</select>
+											</div>
+										</div>					         	
+										<div class="form-group">
+											<label class="col-md-4 col-sm-4 control-label">Page size</label>
+							            	<div class="col-md-8 col-sm-8">
+								 				<input type="text" name="page_size" value="@pageSize" maxlength="200" class="form-control target-form-control" id="page_size" title="Number of targets on page" />
+								 			</div>
+									     </div>					         	
+								    </div>							
+									<div class="col-md-6 col-sm-6">
+										<div class="form-group">
+							            	<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
+										    <div id="subjectTree" class="col-md-8 col-sm-8" style="padding:5px;"></div>
+											<input type="hidden" id="subjectSelect" name="subjectSelect" value="@subjectUrl">
+										</div>						         	
+										<div class="form-group">
+							            	<label for="suggested_collections" class="col-md-4 col-sm-4 control-label">Collection</label>
+							            	<div class="col-md-8 col-sm-8" style="padding:5px;">
+											<div id="collectionTree"></div>
+							  				<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collection">
+										</div>
+									</div>							
+									<div class="col-md-12 col-sm-12">
+										<div class="text-center">
+											<div class="form-group">
+								 				<span class="btn-group">
+													@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
+														<button type="submit" class="btn btn-primary" id="apply" name="action" value="apply" title="Apply filters">Apply</button>
+														<button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear filters">Clear</button>
+									 					<button type="submit" class="btn btn-primary" id="export" name="action" value="export" title="Export results of filtered searches and reports to CSV file in the root folder">Export</button>	
+								 					}								 			
+							            		</span>
+								            </div>
+								    	</div>
+									</div>
 								</div>
 							</div>
 						</div>
