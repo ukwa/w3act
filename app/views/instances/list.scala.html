@@ -6,9 +6,7 @@
 	<script>
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")'
-			searchContext = '/instances';
-			urlTo = 'instance';
-			applySearch(context, searchContext, urlTo);
+			applySearch(context, '/instances'); 
 			scopeCheck(context);
 		});
 	</script>

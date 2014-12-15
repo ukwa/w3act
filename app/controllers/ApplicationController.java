@@ -160,6 +160,7 @@ public class ApplicationController extends Controller {
             Routes.javascriptRouter("jsRoutes",
             	controllers.routes.javascript.ApplicationController.index(),
                 controllers.routes.javascript.CollectionController.index(),
+                controllers.routes.javascript.InstanceController.index(),
                 controllers.routes.javascript.TargetController.index(),
                 controllers.routes.javascript.OrganisationController.index(),
                 controllers.routes.javascript.UserController.index(),

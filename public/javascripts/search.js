@@ -46,7 +46,7 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 
 function scopeCheck(context) {
     var idle_timeout,
-    SCOPE_URI = context + 'api/scope/',
+    SCOPE_URI = context + '/api/scope/',
     MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
     TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
     IDLE_THRESHOLD = 2000; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
@@ -258,33 +258,6 @@ function licencePromptHigherLevel(context) {
     });
 }
 
-function applySearchTargets(context, searchContext, urlTo) {
-	if (searchContext !== undefined) {
-	    var resultMap = {};
-		$('#search-query').typeahead({
-			remote: {
-				url: context + searchContext + '/filterbyjson/%QUERY',
-				filter: function(items) {
-					var searchResults = [];
-					for (var i = 0; i < items.length; i++) {
-						var item = items[i];
-						label = item.field_url;
-						searchResults[i] = {
-							value: label,
-							title: item.title
-						};
-					}				
-		          	return searchResults;
-				}
-			},
-			 template: '<p><strong>{{title}}</strong></p><p>{{value}}</p>',
-			 engine: Hogan
-		}).on('typeahead:selected', function(event, datum) {
-			window.location = datum.value;
-		});
-	}
-}
-
 function applySearch(context, searchContext, urlTo) {
 
 	if (searchContext !== undefined) {
@@ -300,10 +273,16 @@ function applySearch(context, searchContext, urlTo) {
 						if (label === undefined) {
 							label = item.title;
 						}
+						var urls = "";
+						var fieldUrls = item.target.fieldUrls;
+						for (var x = 0; x < fieldUrls.length; x++) {
+							urls += fieldUrls[x].url + " ";
+						}
 						searchResults[i] = {
 							value: label,
 							url: item.url,
-							field_url: item.field_url
+							field_url: urls,
+							id: item.id
 						};
 					}				
 		          	return searchResults;
@@ -317,9 +296,9 @@ function applySearch(context, searchContext, urlTo) {
 				$(this).val(datum.field_url);
 			}
 			if (urlTo !== undefined) {
-				window.location.replace(context + urlTo + "/" + datum.url);
+				window.location.replace(context + urlTo + "/" + datum.id);
 			} else {
-				window.location.replace(context + searchContext + "/" + datum.url); 
+				window.location.replace(context + searchContext + "/" + datum.id); 
 			}
 		});
 	}

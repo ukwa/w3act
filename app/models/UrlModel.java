@@ -78,6 +78,7 @@ abstract class UrlModel extends ActModel {
 	@JoinColumn(name = "author_id")
 	public User authorUser;
 	
+	@JsonIgnore
 	@Column(columnDefinition = "text")
 	public String notes;
 	

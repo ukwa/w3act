@@ -446,15 +446,6 @@ public final class Const {
     }
     	
 	/**
-	 * The predominant language of target.
-	 */
-	public enum RequestTypes {
-		ALL,
-		FIRST_REQUEST,
-		FOLLOW_UP;
-    }
-    
-	/**
 	 * The flag types of target.
 	 */
 	public enum TargetFlags {
@@ -772,6 +763,34 @@ public final class Const {
     		for (SiteStatus siteStatus : SiteStatus.values()) {
     			if (siteStatus.name().equals(name)) {
     				return siteStatus;
+    			}
+    		}
+    		return null;
+    	}
+    }
+	
+	/**
+	 * The predominant language of target.
+	 */
+	public enum RequestType {
+		ALL("All"),
+		FIRST_REQUEST("First Request"),
+		FOLLOW_UP("Follow Up");
+		
+        private String value;
+
+        private RequestType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static RequestType getRequestType(String name) {
+    		for (RequestType requestType : RequestType.values()) {
+    			if (requestType.name().equals(name)) {
+    				return requestType;
     			}
     		}
     		return null;

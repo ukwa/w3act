@@ -331,20 +331,7 @@ public class CrawlPermission extends ActModel {
     		}
     	}
     	return res;
-    }
-    
-    /**
-     * This method returns a list of all request filtering types for crawl permission record.
-     * @return
-     */
-    public static List<String> getAllRequestTypes() {
-    	List<String> res = new ArrayList<String>();
-	    Const.RequestTypes[] resArray = Const.RequestTypes.values();
-	    for (int i=0; i < resArray.length; i++) {
-		    res.add(resArray[i].name());
-	    }
-	    return res;
-    }         
+    }    
     
     /**
      * Return a page of crawl permission 

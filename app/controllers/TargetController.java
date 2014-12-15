@@ -112,11 +112,6 @@ public class TargetController extends AbstractController {
         	);
     }
     
-//    public static Result targets(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject, 
-//    		Long crawlFrequencyId, Long depthId, String collection, Long licenseId, int pageSize, Long flagId) {
-//    	
-//    }
-//    
     /**
      * Display the paginated list of targets.
      *
@@ -244,7 +239,6 @@ public class TargetController extends AbstractController {
 //	        return GO_HOME;
 //    	}    	
 
-    	Logger.info("" + requestData.get("organisation"));
     	int pageNo = Integer.parseInt(requestData.get("p"));
     	String sort = requestData.get("s");
     	String order = requestData.get("o");
@@ -261,70 +255,6 @@ public class TargetController extends AbstractController {
     	
     	Logger.info(filter + " " + pageNo + " " + sort + " " + order + " " + pageSize + " " + curatorId + " " + curatorId + " " + licenseId + " " + depthName + " " + crawlFrequencyName + " " + flagId + " " + collectionSelect + " " + subjectSelect);
     	
-//		String subject_name = Utils.removeDuplicatesFromList(requestData.get(Const.TREE_KEYS));
-//    	String subject = "";
-//		if (subject_name != null) {
-//			if (!subject_name.toLowerCase().equals(Const.NONE)) {
-//				subject = Taxonomy.findByUrlExt(subject_name).url;
-//			} else {
-//				subject = "";
-//			}
-//		}
-		
-//    	String subject = Const.EMPTY;
-//        if (requestData.get(Const.SUBJECT) != null) {
-//        	String subjectListStr = Utils.removeDuplicatesFromList(requestData.get(Const.SUBJECT));
-//        	if (subjectListStr != null && subjectListStr.length() > 0
-//        			&& subjectListStr.toLowerCase().contains(Const.NONE)
-//        			&& subjectListStr.contains(Const.COMMA)) {
-//        		if (subjectListStr.contains(Const.NONE_VALUE + Const.COMMA + " ")) {
-//        			subjectListStr = subjectListStr.replace(Const.NONE_VALUE + Const.COMMA + " ", "");
-//        		}
-//        		if (subjectListStr.contains(Const.COMMA + " " + Const.NONE_VALUE)) {
-//        			subjectListStr = subjectListStr.replace(Const.COMMA + " " + Const.NONE_VALUE, "");
-//        		}     		
-//        	}
-//        	subject = subjectListStr;
-//        	subject = Utils.cutFirstSelection(subject);
-//        	if (subject.length() == 0) {
-//        		subject = Const.EMPTY;
-//        	}
-//            if (subject.equals(Const.NONE_VALUE)) {
-//            	subject = Const.NONE;
-//            }
-//        }            	
-//		Logger.debug("subject: " + subject);
-		
-//    	String subject_name = requestData.get(Const.FIELD_SUBJECT);
-//    	String subject = "";
-//    	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
-//    		try {
-//    			Logger.info("find subject for title: " + subject_name + ". " + subject_name.length());
-//           		subject = Taxonomy.findByNameConf(subject_name).url;
-//    		} catch (Exception e) {
-//    			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
-//    		}
-//    	} 
-//    	String collection = Const.NONE;
-//        if (requestData.get(Const.TREE_KEYS) != null) {
-//    		collection = Utils.removeDuplicatesFromList(requestData.get(Const.TREE_KEYS));
-//    		collection = Utils.cutFirstSelection(collection);
-//        }
-//		Logger.debug("collection: " + collection);
-//    	String collection_name = requestData.get(Const.FIELD_SUGGESTED_COLLECTIONS);
-//    	String collection = "";
-//    	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
-//    		try {
-//    			collection = DCollection.findByTitleExt(collection_name).url;
-//    		} catch (Exception e) {
-//    			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
-//    		}
-//    	} 
-//    	String flag = "";
-//    	if (inputFlag != null && !inputFlag.toLowerCase().equals(Const.NONE)) {
-////	    	String origFlag = Flags.getNameFromGuiName(inputFlag);
-////	    	flag = Flag.findByName(origFlag).url;
-//    	}
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
@@ -351,9 +281,6 @@ public class TargetController extends AbstractController {
     		} 
     		else if (action.equals("search") || action.equals("apply")) {
     	        return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
-//
-//    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
-//    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
@@ -442,17 +369,17 @@ public class TargetController extends AbstractController {
     public static Result search() {
     	
     	DynamicForm form = DynamicForm.form().bindFromRequest();
+    	
     	String action = form.get("action");
-    	String query = form.get("url"); 	
-
-    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
-    	String sort = form.get(Const.SORT_BY);
-    	String order = form.get(Const.ORDER);
+    	String query = form.get("filter");
+    	int pageNo = Integer.parseInt(form.get("p"));
+    	String sort = form.get("s");
+    	String order = form.get("o");
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
+    		if (action.equals("addEntry")) {
     	        Logger.info("create()");
     	    	Target target = new Target();
     	    	// TODO: KL
@@ -460,13 +387,11 @@ public class TargetController extends AbstractController {
     	        target.revision = Const.INITIAL_REVISION;
     	        target.active = true;
     	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
-    	        	target.authorUser.url = User.findByEmail(request().username()).url;
-//    	        	target.fieldSubSubject = Const.NONE;
-//    	        	target.fieldSubject = Const.NONE;
+    	        	target.authorUser = User.findByEmail(request().username());
     	        }
-//	        	target.qa_status = Const.NONE_VALUE;
     			Logger.info("add target with url: " + target.url);
     			Logger.info("target title: " + target.title);
+    			
     			Form<Target> targetForm = Form.form(Target.class);
     			targetForm = targetForm.fill(target);
     			User user = User.findByEmail(request().username());

@@ -16,7 +16,6 @@ import javax.persistence.Transient;
 
 import play.Logger;
 import play.db.ebean.Model;
-import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
@@ -53,7 +52,6 @@ public class Instance extends UrlModel {
 //    @Column(columnDefinition = "text")
 //	public String technicalNotes;
     
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "target_id")
 	public Target target;
@@ -240,18 +238,18 @@ public class Instance extends UrlModel {
     	return res;
     }
     
-	/**
-	 * This method computes duplicates for target URLs.
-	 * @return duplicate count
-	 */
-	public int getDuplicateNumber() {
-//		int res = 0;
-//        ExpressionList<Instance> ll = find.where().eq("fieldUrl", this.fieldUrl);
-//        res = ll.findRowCount();
-//		return res;
-		throw new NotImplementedError();
-	}
-	
+//	/**
+//	 * This method computes duplicates for target URLs.
+//	 * @return duplicate count
+//	 */
+//	public int getDuplicateNumber() {
+////		int res = 0;
+////        ExpressionList<Instance> ll = find.where().eq("fieldUrl", this.fieldUrl);
+////        res = ll.findRowCount();
+////		return res;
+//		throw new NotImplementedError();
+//	}
+//	
 	/**
 	 * This method computes a number of targets per user for given user URL.
 	 * @return

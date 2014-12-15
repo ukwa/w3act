@@ -4,20 +4,15 @@ import static play.data.Form.form;
 
 import java.io.StringWriter;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import models.Collection;
 import models.ContactPerson;
-import models.Flag;
 import models.Instance;
-import models.License;
 import models.Organisation;
 import models.QaIssue;
 import models.Tag;
-import models.Target;
 import models.Taxonomy;
 import models.User;
 
@@ -31,22 +26,13 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.Const.CrawlFrequency;
-import uk.bl.Const.CrawlPermissionStatus;
-import uk.bl.Const.DepthType;
 import uk.bl.Const.QAIssueCategory;
-import uk.bl.Const.ScopeType;
-import uk.bl.Const.SelectionType;
-import uk.bl.Const.TargetLanguage;
 import uk.bl.api.Utils;
-import uk.bl.exception.WhoisException;
 import views.html.instances.edit;
 import views.html.instances.list;
 import views.html.instances.listByTarget;
 import views.html.instances.view;
 
-import com.avaje.ebean.Ebean;
-import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 

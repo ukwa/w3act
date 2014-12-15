@@ -83,14 +83,14 @@
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.Reports.index()">Targets > </a>Reports</h1>
+	    <h1><a href="@routes.ReportController.index()">Targets > </a>Reports</h1>
 	</div>
 	
     <ul class="nav nav-tabs">
-	   <!-- li><a href="@routes.Reports.summary()">Summary</a></li-->
-	   <li><a href="@routes.Reports.openLicences()">Open UKWA licences</a></li> 
-	   <li class="active"><a href="@routes.Reports.recordCreation()">Target creation</a></li> 
-	   <li><a href="@routes.Reports.qa()">QA</a></li> 
+	   <!-- li><a href="@routes.ReportController.summary()">Summary</a></li-->
+	   <li><a href="@routes.ReportController.openLicences()">Open UKWA licences</a></li> 
+	   <li class="active"><a href="@routes.ReportController.recordCreation()">Target creation</a></li> 
+	   <li><a href="@routes.ReportController.qa()">QA</a></li> 
 	</ul>
 		
     <article class="reports">
@@ -338,6 +338,6 @@
 	</article>
 }
 } else {
-	@infomessage.render("Access Denied for URL @routes.Reports.index()/list")
+	@infomessage.render("Access Denied for URL @routes.ReportController.index()/list")
 }
 
