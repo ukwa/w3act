@@ -70,30 +70,6 @@
 			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect");
 			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect");
             
-			function showTree(data, id, key) {
-	        	//console.log(data);
-	         	$(id).dynatree({
-					checkbox: true,
-	            	selectMode: 2,
-	            	children: data,
-	            	onSelect: function(select, node) {
-	              		// Get a list of all selected nodes, and convert to a key array:
-	              		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-	                		return node.data.key;
-	              		});
-	              		document.getElementById(key).value = selKeys.join(", ");
-	              		
-	              		console.log("test: " + document.getElementById(key).value);
-	              		// Get a list of all selected TOP nodes
-	              		var selRootNodes = node.tree.getSelectedNodes(true);
-	              		// ... and convert to a key array:
-	              		var selRootKeys = $.map(selRootNodes, function(node){
-	                		return node.data.key;
-	              		});
-	            	}
-	         	});
-	        }
-       
 			// This happens right after the document is loaded.
 			// Our nav pills won't do anything by themselves, so we need to make sure we
 			// check if the current URL has a #-component and if so, we activate the

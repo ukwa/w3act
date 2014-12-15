@@ -13,10 +13,16 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 						if (label === undefined) {
 							label = item.title;
 						}
+						var urls = "";
+						var fieldUrls = item.fieldUrls;
+						for (var x = 0; x < fieldUrls.length; x++) {
+							urls += fieldUrls[x].url + " ";
+						}
 						searchResults[i] = {
 							value: label,
 							url: item.url,
-							field_url: item.field_url
+							field_url: urls,
+							id: item.id
 						};
 					}				
 		          	return searchResults;
@@ -25,7 +31,7 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 			 template: '<p><strong>{{value}}</strong></p><p>{{field_url}}</p>',
 			 engine: Hogan
 		}).on('typeahead:selected', function(event, datum) {
-			console.log("contextTo: " + urlTo);
+			console.log("contextTo: " + urlTo + " " + datum.id);
 			if (datum.field_url !== undefined) {
 				$(this).val(datum.field_url);
 			}
@@ -360,3 +366,26 @@ function applySearchExt(context, searchContext, urlTo) {
 	}
 }
 
+function showTree(data, id, key) {
+	//console.log(data);
+ 	$(id).dynatree({
+		checkbox: true,
+    	selectMode: 3,
+    	children: data,
+    	onSelect: function(select, node) {
+      		// Get a list of all selected nodes, and convert to a key array:
+      		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+        		return node.data.key;
+      		});
+      		document.getElementById(key).value = selKeys.join(", ");
+      		
+      		console.log("test: " + document.getElementById(key).value);
+      		// Get a list of all selected TOP nodes
+      		var selRootNodes = node.tree.getSelectedNodes(true);
+      		// ... and convert to a key array:
+      		var selRootKeys = $.map(selRootNodes, function(node){
+        		return node.data.key;
+      		});
+    	}
+ 	});
+}

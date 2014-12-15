@@ -983,6 +983,9 @@ public enum JsonUtils {
 							target.liveSiteStatus = target.liveSiteStatus.toUpperCase();
 						}
 						
+						target.crawlFrequency = target.crawlFrequency.toUpperCase();
+						target.depth = target.depth.toUpperCase();
+						
 						target.createdAt = this.getDateFromSeconds(target.getCreated());
 
 			        	target.save();

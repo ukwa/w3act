@@ -175,7 +175,7 @@ GET    	/targets/search-targets-by-subject		controllers.TargetController.searchT
 
 GET    	/targets/filterbyjson/:url			controllers.TargetController.filterByJson(url)
 GET    	/targets/lookup                  	controllers.TargetController.lookup(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
-GET    	/targets/list                  		controllers.TargetController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_curator:Long ?= 0, query_organisation:Long ?= 0, query_subject ?= "", query_crawl_frequency ?= "", query_depth ?= "", query_collection ?= "", query_license:Long ?= 0, page_size:Int ?= 10, query_flag:Long ?= 0)
+GET    	/targets/list                  		controllers.TargetController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", curatorId:Long ?= -1, organisationId:Long ?= -1, subjects ?= "", crawlFrequency ?= "", depth ?= "", collections ?= "", licenseId:Long ?= -1, pageSize:Int ?= 10, flagId:Long ?= -1)
 
 GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", collection_url ?= "")
 GET    	/targets/organisationtargets/       controllers.TargetController.organisationTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", organisation_url ?= "")
@@ -221,7 +221,7 @@ GET    	/qa/filterbyjson/:name		            controllers.QAController.filterByJso
 
 # Navigation
 GET     /addcontent                             controllers.ApplicationController.addContent()
-GET     /findcontent                            controllers.FindContent.index()
+GET     /findcontent                            controllers.ApplicationController.findContent()
 
 GET     /exportlookup                           controllers.Export.index()
 GET     /exportlookup/csv                       controllers.Export.search()

@@ -1,7 +1,11 @@
-@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, curatorId: Long, organisationId: Long, subjectUrl: String, crawlFrequencyName: String, depthName: String, collection: String, licenseId: Long, pageSize: Int, flagId: Long, licenses: List[License], collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, users: List[User], organisations: List[Organisation], depthTypes: Array[uk.bl.Const.DepthType], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency])
+@(title: String, user: User, filter: String, currentPage: com.avaje.ebean.Page[Target], sortBy: String, orderBy: String, curatorId: Long, organisationId: Long, subjects: String, crawlFrequencyName: String, depthName: String, collections: String, licenseId: Long, pageSize: Int, flagId: Long, licenses: List[License], collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, users: List[User], organisations: List[Organisation], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency], flags: List[Flag])
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
-	Html(data.toString)
+	if(data != null) {
+		Html(data.toString)
+	} else {
+		""
+	}
 }
 
 @scripts = {
@@ -15,29 +19,7 @@
 			scopeCheck(context);
 			
 			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect");
-			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect");            
-			
-            function showTree(id, key, data) {
-             	$(id).dynatree({
-                	checkbox: true,
-                	selectMode: 2,
-                	children: data,
-                	onSelect: function(select, node) {
-                  		// Get a list of all selected nodes, and convert to a key array:
-                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                    		return node.data.key;
-                  		});
-                  		document.getElementById(key).value = selKeys.join(", ");
-                  		// Get a list of all selected TOP nodes
-                  		var selRootNodes = node.tree.getSelectedNodes(true);
-                  		// ... and convert to a key array:
-                  		var selRootKeys = $.map(selRootNodes, function(node){
-                    		return node.data.key;
-                  		});
-                	}
-             	});
-            }
-            
+			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect");
 		});
 	</script>
 }
@@ -45,9 +27,6 @@
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
 	<style>
-		ul.dynatree-container {
-			overflow-x: hidden;
-		}
 	</style>
 }
 
@@ -56,13 +35,13 @@
 ****************************************@
 @link(newPage:Int, newSortBy:String) = @{
     
-    var sortBy = currentSortBy
-    var order = currentOrder
+    var sort = sortBy
+    var order = orderBy
     
     if(newSortBy != null) {
-        sortBy = newSortBy
-        if(currentSortBy == newSortBy) {
-            if(currentOrder == "asc") {
+        sort = newSortBy
+        if(sortBy == newSortBy) {
+            if(orderBy == "asc") {
                 order = "desc"
             } else {
                 order = "asc"
@@ -73,14 +52,14 @@
     }
     
     // Generate the link
-    routes.TargetController.list(newPage, sortBy, order, searchurl, curatorId, organisationId, subjectUrl, crawlFrequencyName, depthName, collection, licenseId, pageSize, flagId)
+    routes.TargetController.list(newPage, sort, order, filter, curatorId, organisationId, subjects, crawlFrequencyName, depthName, collections, licenseId, pageSize, flagId)
 }
 
 @**********************************
 * Helper generating table headers *
 ***********************************@
 @header(key:String, title:String) = {
-    <th class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "headerSortDown" else "headerSortUp"}">
+    <th class="@key.replace(".","_") header @if(sortBy == key) @{if(orderBy == "asc") "headerSortDown" else "headerSortUp"}">
         <a href="@link(0, key)">@title</a>
     </th>
 }
@@ -123,30 +102,23 @@
 		
 		@helper.form(action=routes.TargetController.searchTargets) {
         	<div id="forms">
+
+				<div class="alert alert-info">
+					Search here for all or part of the name of the target, or its URL.
+				</div>
+
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
-	  					<input type="hidden" name="s" value="@currentSortBy">
-	  					<input type="hidden" name="o" value="@currentOrder">
-	  					<input type="hidden" name="query_curator" value="@curatorId">
-	  					<input type="hidden" name="query_organisation" value="organisationId">
-	  					<input type="hidden" name="query_subject" value="@subjectUrl">
-	  					<input type="hidden" name="query_crawl_frequency" value="@crawlFrequencyName">
-	  					<input type="hidden" name="query_depth" value="@depthName">
-	  					<input type="hidden" name="query_collection" value="@collection">
-	  					<input type="hidden" name="query_license" value="@licenseId">
-	  					<input type="hidden" name="query_flag" value="@flagId">
-						<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
+	  					<input type="hidden" name="s" value="@sortBy">
+	  					<input type="hidden" name="o" value="@orderBy">
+						<input type="text" class="form-control lookup-form-control" name="filter" placeholder="http://www.bbc.co.uk" value="@filter" id="search-query">
 			   			<span class="input-group-btn">
 							<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
 					        <button type="submit" class="btn btn-primary" id="clear" name="action" value="clear" title="Clear up search settings">Clear</button>
-							@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) && searchurl != null && searchurl.length() > 0) {
-								<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Look up and add new target">Add Target</button>
+							@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) && filter != null && filter.length() > 0) {
+								<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addEntry" title="Look up and add new target">Add Target</button>
 							}
 						</span>
-					</div>
-					
-					<div class="alert alert-info">
-						Search here for all or part of the name of the target, or its URL.
 					</div>
 					
 					<div class="row">
@@ -177,8 +149,8 @@
 										<div class="form-group">
 											<label for="curator" class="col-md-4 col-sm-4 control-label">Curator</label>
 							            	<div class="col-md-8 col-sm-8">
-												<select name="author" class="form-control target-form-control" id="curator">
-													<option>None</option>
+												<select name="curator" class="form-control target-form-control" id="curator">
+													<option value="-1">None</option>
 													@for(curator <- users) {
 														@if(curator.id == curatorId) {
 															<option value="@curator.id" selected>@curator.name</option>
@@ -192,10 +164,10 @@
 										<div class="form-group">					
 							            	<label for="organisation" class="col-md-4 col-sm-4 control-label">Organisation</label>
 							            	<div class="col-md-8 col-sm-8">
-												<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
-										        	<option>None</option>
+												<select name="organisation" class="form-control target-form-control" id="organisation">
+													<option value="-1">None</option>
 										            	@for(organisation <- organisations) {
-								                 		  		@if(organisation.id == organisation.id) {
+								                 		  		@if(organisation.id == organisationId) {
 									                			<option value="@organisation.id" selected>@organisation.title</option>
 									                		} else {
 									                			<option value="@organisation.id">@organisation.title</option>
@@ -207,8 +179,8 @@
 										<div class="form-group">					
 							            	<label for="frequency" class="col-md-4 col-sm-4 control-label">Crawl frequency</label>
 							            	<div class="col-md-8 col-sm-8">
-												<select name="field_crawl_frequency" class="form-control target-form-control" id="frequency">
-									                <option>None</option>
+												<select name="crawlFrequency" class="form-control target-form-control" id="frequency">
+													<option value="">None</option>
 									                @for(crawlFrequency <- crawlFrequencies) {
 						                 		  		@if(crawlFrequency.name.equals(crawlFrequencyName)) {
 									                		<option value="@crawlFrequency.name" selected>@crawlFrequency.getValue</option>
@@ -222,8 +194,9 @@
 										<div class="form-group">
 							            	<label for="field-depth" class="col-md-4 col-sm-4 control-label">Depth</label>
 							            	<div class="col-md-8 col-sm-8">
-												<select name="field_depth" class="form-control target-form-control" id="field-depth">
-									                @for(depthType <- depthTypes) {
+												<select name="depth" class="form-control target-form-control" id="field-depth">
+													<option value="">None</option>
+									                @for(depthType <- uk.bl.Const.DepthType.values()) {
 										                @if(depthType.name.equals(depthName)) {
 										                	<option value="@depthType.name" selected>@depthType.getValue</option>
 										                } else {
@@ -236,8 +209,8 @@
 										<div class="form-group">
 							            	<label for="license" class="col-md-4 col-sm-4 control-label">License</label>
 							            	<div class="col-md-8 col-sm-8">
-												<select name="field_license" class="form-control target-form-control" id="license">
-										        	<option value="0">None</option>
+												<select name="license" class="form-control target-form-control" id="license">
+													<option value="-1">None</option>
 										            @for(license <- licenses) {
 								                 		@if(license.id == licenseId) {
 									                		<option value="@license.id" selected>@license.name</option>
@@ -251,9 +224,9 @@
 										<div class="form-group">
 							            	<label for="flags" class="col-md-4 col-sm-4 control-label">Flag</label>
 							            	<div class="col-md-8 col-sm-8">
-												<select name="flags" class="form-control target-form-control" id="flags">
-										        	<option>None</option>
-										            @for(flag <- Flag.findAllFlags()) {
+												<select name="flag" class="form-control target-form-control" id="flags">
+													<option value="-1">None</option>
+										            @for(flag <- flags) {
 								                  		@if(flag.id == flagId) {
 										                	<option value="@flag.id" selected>@flag.name</option>
 										                } else {
@@ -266,21 +239,24 @@
 										<div class="form-group">
 											<label class="col-md-4 col-sm-4 control-label">Page size</label>
 							            	<div class="col-md-8 col-sm-8">
-								 				<input type="text" name="page_size" value="@pageSize" maxlength="200" class="form-control target-form-control" id="page_size" title="Number of targets on page" />
+								 				<input type="text" name="pageSize" value="@pageSize" maxlength="200" class="form-control target-form-control" id="page_size" title="Number of targets on page" />
 								 			</div>
-									     </div>					         	
-								    </div>							
+									     </div>
+									</div>
 									<div class="col-md-6 col-sm-6">
 										<div class="form-group">
 							            	<label for="subject" class="col-md-4 col-sm-4 control-label">Subject</label>
-										    <div id="subjectTree" class="col-md-8 col-sm-8" style="padding:5px;"></div>
-											<input type="hidden" id="subjectSelect" name="subjectSelect" value="@subjectUrl">
+							            	<div class="col-md-8 col-sm-8">
+												<div id="subjectTree" style="padding:5px;"></div>
+												<input type="hidden" id="subjectSelect" name="subjectSelect" value="@subjects">
+											</div>
 										</div>						         	
 										<div class="form-group">
-							            	<label for="suggested_collections" class="col-md-4 col-sm-4 control-label">Collection</label>
-							            	<div class="col-md-8 col-sm-8" style="padding:5px;">
-											<div id="collectionTree"></div>
-							  				<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collection">
+						            		<label for="suggested_collections" class="col-md-4 col-sm-4 control-label">Collection</label>
+						            		<div class="col-md-8 col-sm-8">
+									  			<div id="collectionTree" style="padding:5px;"></div>
+									  			<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collections">
+									  		</div>
 										</div>
 									</div>							
 									<div class="col-md-12 col-sm-12">
@@ -301,7 +277,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
 			} <!-- end of search form -->
 			
 			<div class="row">

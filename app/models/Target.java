@@ -93,7 +93,6 @@ public class Target extends UrlModel {
 		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
     public List<Flag> flags;
 
-	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<FieldUrl> fieldUrls;
 
@@ -1434,60 +1433,59 @@ public class Target extends UrlModel {
 	 */
 	public static Page<Target> pageTargets(int page, int pageSize,
 			String sortBy, String order, String filterUrl, Long curatorId,
-			Long organisationId, String subjectUrl, String crawlFrequencyName,
-			String depthName, String suggested_collections, Long licenseId,
+			Long organisationId, String subjectSelect, String crawlFrequencyName,
+			String depthName, String collectionSelect, Long licenseId,
 			Long flagId) {
 		
-		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").where();
+		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").fetch("flags").fetch("licenses").fetch("subjects").fetch("collections").where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);
 	
-		
 		exp = exp.add(Expr.or(
 				Expr.icontains("fieldUrls.url", filterUrl), 
 				Expr.icontains("title", filterUrl))
 			);
 		
-		if (curatorId != 0) {
+		if (curatorId != -1) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
-		if (organisationId != 0) {
+		if (organisationId != -1) {
 			exp = exp.eq("organisation.id", organisationId);
 		}
-//		Logger.debug("pageTargets() subject: " + subjectUrl);
-//		if (subjectUrl != null && !subjectUrl.equals(Const.EMPTY)) {
-//			if (subjectUrl.toLowerCase().equals(Const.NONE)) {
-//				exp = exp.add(Expr.or(
-//						Expr.eq(Const.FIELD_SUBJECT, ""),
-//						Expr.icontains(Const.FIELD_SUBJECT,
-//								subjectUrl.toLowerCase())));
-//			} else {
-//				exp = exp.icontains(Const.FIELD_SUBJECT, subjectUrl);
-//			}
-//		}
-//		Logger.debug("pageTargets() crawlFrequency: " + crawlFrequency
-//				+ ", depth: " + depth + ", license: " + license);
-//		if (crawlFrequency != null && !crawlFrequency.equals("")
-//				&& !crawlFrequency.toLowerCase().equals(Const.NONE)) {
-//			exp = exp.icontains(Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
-//		}
-//		if (depth != null && !depth.equals("")
-//				&& !depth.toLowerCase().equals(Const.NONE)) {
-//			exp = exp.icontains(Const.FIELD_DEPTH, depth);
-//		}
-//		Logger.debug("pageTargets() suggested_collections: " + suggested_collections);
-//		if (suggested_collections != null && !suggested_collections.equals(Const.NONE)) {
-//			exp = exp.icontains(Const.FIELD_COLLECTION_CATEGORIES, suggested_collections);
-//			// exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS,
-//			// suggested_collections);
-//		}
-//		if (license != null && !license.equals("") && !license.toLowerCase().equals(Const.NONE)) {
-//			exp = exp.icontains(Const.FIELD_LICENSE_NODE, license);
-//		}
-//		if (flag != null && !flag.equals("") && !flag.toLowerCase().equals(Const.NONE)) {
-//			exp = exp.icontains(Const.FLAGS, flag);
-//		}
-		res = exp.query().fetch("fieldUrls").orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
+		if (StringUtils.isNotEmpty(crawlFrequencyName)) {
+			exp = exp.eq("crawlFrequency", crawlFrequencyName);
+		}
+		if (StringUtils.isNotEmpty(depthName)) {
+			exp = exp.eq("depth", depthName);
+		}
+		if (licenseId != -1) {
+			exp = exp.eq("licenses.id", flagId);
+		}
+		if (flagId != -1) {
+			exp = exp.eq("flags.id", flagId);
+		}
+		
+        if (StringUtils.isNotEmpty(subjectSelect)) {
+        	List<Long> subjectIds = new ArrayList<Long>();
+            String[] subjects = subjectSelect.split(", ");
+            for (String sId : subjects) {
+            	Long subjectId = Long.valueOf(sId);
+            	subjectIds.add(subjectId);
+            }
+    		exp = exp.in("subjects.id", subjectIds);
+        }
+        
+        if (StringUtils.isNotEmpty(collectionSelect)) {
+        	List<Long> collectionIds = new ArrayList<Long>();
+            String[] collections = collectionSelect.split(", ");
+            for (String cId : collections) {
+            	Long collectionId = Long.valueOf(cId);
+            	collectionIds.add(collectionId);
+            }
+    		exp = exp.in("collections.id", collectionIds);
+        }
+
+		res = exp.query().orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
 		Logger.debug("Expression list size: " + res.getTotalRowCount());
 		return res;
 	}

@@ -1,4 +1,4 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[Subject], currentSortBy: String, currentOrder: String, data :com.fasterxml.jackson.databind.JsonNode)
+@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[Subject], currentSortBy: String, currentOrder: String, subjectData :com.fasterxml.jackson.databind.JsonNode)
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -12,34 +12,8 @@
 			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'subjects'); 
 
-            showTree(@getJson(data));
+			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect");
             
-            function showTree(data) {
-             	$("#tree3").dynatree({
-                	checkbox: false,
-                	selectMode: 1,
-                	children: data,
-    			    onActivate: function(node) { 
-    			        if( node.data.url ){
-    			            // use href to change the current frame:
-    			            window.location.href = node.data.url; 
-    			        }
-    			    },				    
-                	onSelect: function(select, node) {
-                  		// Get a list of all selected nodes, and convert to a key array:
-                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                    		return node.data.key;
-                  		});
-                  		document.getElementById('treeKeys').value = selKeys.join(", ");
-                  		// Get a list of all selected TOP nodes
-                  		var selRootNodes = node.tree.getSelectedNodes(true);
-                  		// ... and convert to a key array:
-                  		var selRootKeys = $.map(selRootNodes, function(node){
-                    		return node.data.key;
-                  		});
-                	}
-             	});
-            }
 		});
 	</script>
 }
@@ -74,8 +48,8 @@
 		<div class="row">		
 			<div class="form-group">									
 			    <div class="col-sm-12">
-					  <div id="tree3"></div>
-					  <input type="hidden" id="treeKeys" name="treeKeys">
+			  		<div id="subjectTree"></div>
+			  		<input type="hidden" id="subjectSelect" name="subjectSelect" value="">
 				</div>
 			</div>
 		</div>

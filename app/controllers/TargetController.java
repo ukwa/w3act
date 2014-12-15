@@ -34,7 +34,6 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
-import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.Const.CrawlPermissionStatus;
@@ -138,38 +137,39 @@ public class TargetController extends AbstractController {
     public static Result list(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject, 
     		String crawlFrequencyName, String depthName, String collection, Long licenseId, int pageSize, Long flagId) {
     	
-    	Logger.info("Pre Targets.list() subject: " + subject);
-    	
+    	Logger.info("Pre Targets.list() : " + pageNo + " - " + filter + " - " + curatorId + " - " + organisationId + " - " + subject + " - " + crawlFrequencyName + " - " + depthName + " - " + collection + " - " + licenseId + " - " + pageSize + " - " + flagId);
+
     	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curatorId, organisationId, subject, crawlFrequencyName, depthName, collection, licenseId, flagId);
     	
     	
 		User user = User.findByEmail(request().username());
     	List<License> licenses = License.findAllLicenses();
-		JsonNode collectionData = getCollectionsData();
-		JsonNode subjectData = getSubjectsData();
+    	
+    	List<Long> subjectIds = new ArrayList<Long>();
+        String[] subjects = subject.split(", ");
+        for (String sId : subjects) {
+        	if (StringUtils.isNotEmpty(sId)) {
+	        	Long subjectId = Long.valueOf(sId);
+	        	subjectIds.add(subjectId);
+        	}
+        }
+        JsonNode subjectData = getSubjectsDataByIds(subjectIds);
+    		
+    	List<Long> collectionIds = new ArrayList<Long>();
+        String[] collections = collection.split(", ");
+        for (String cId : collections) {
+        	if (StringUtils.isNotEmpty(cId)) {
+	        	Long collectionId = Long.valueOf(cId);
+	        	collectionIds.add(collectionId);
+        	}
+        }
+        JsonNode collectionData = getCollectionsDataByIds(collectionIds);
+
 		List<User> users = User.findAllSorted();
 		List<Organisation> organisations = Organisation.findAllSorted();
-		DepthType[] depthTypes = Const.DepthType.values();
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-//		List<Flag> flags = Flag.findAllFlags();
+		List<Flag> flags = Flag.findAllFlags();
 
-//		List<String> subjects = new ArrayList<String>();
-//		List<Target> allTargets = Target.find.all();
-//		Iterator<Target> itr = allTargets.iterator();
-//		while (itr.hasNext()) {
-//			Target target = itr.next();
-//			if (target.depth != null && target.depth.length() > 0 && !subjects.contains(target.depth)) {
-//		        ExpressionList<Target> ll = Target.find.where().contains("depth", target.depth);
-//		        if (ll.findRowCount() > 0) {
-//		        	res.add(target);
-//		        	subjects.add(target.depth);
-//		        }
-//			}
-//		}
-
-		
-		
-		
         return ok(list.render(
 			"Targets", 
 			user, 
@@ -191,8 +191,7 @@ public class TargetController extends AbstractController {
 	    	subjectData,
 	    	users,
 	    	organisations,
-	    	depthTypes,
-	    	crawlFrequencies)
+	    	crawlFrequencies, flags)
 		);
     }
     
@@ -230,19 +229,14 @@ public class TargetController extends AbstractController {
      * @return
      */
     public static Result searchTargets() {
-    	
-    	DynamicForm form = DynamicForm.form().bindFromRequest();
-    	Logger.debug("page size: " + getFormParam(Const.PAGE_SIZE));
-        if (form.get(Const.PAGE_SIZE) == null 
-        		|| (form.get(Const.PAGE_SIZE) != null 
-        		   && !Utils.isNumeric(form.get(Const.PAGE_SIZE)))) {
-            Logger.info("You may only enter a numeric page size.");
+        DynamicForm requestData = Form.form().bindFromRequest();
+        if (requestData.get("pageSize") == null || (requestData.get("pageSize") != null && !Utils.isNumeric(requestData.get("pageSize")))) {
   			flash("message", "You may only enter a numeric page size.");
 	        return GO_HOME;
     	}    	
     	
-    	String action = form.get("action");
-    	String query = form.get("url");
+    	String action = requestData.get("action");
+    	String filter = requestData.get("filter");
 
 //    	if (StringUtils.isBlank(query)) {
 //			Logger.info("Target name is empty. Please write name in search window.");
@@ -250,30 +244,24 @@ public class TargetController extends AbstractController {
 //	        return GO_HOME;
 //    	}    	
 
-    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
-    	String sort = form.get(Const.SORT_BY);
-    	String order = form.get(Const.ORDER);
-    	int pageSize = Integer.parseInt(form.get(Const.PAGE_SIZE));
-    	String curator_name = form.get(Const.AUTHOR);
-    	String curator = "";
-    	if (curator_name != null && !curator_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			curator = User.findByName(curator_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find curator for name: " + curator_name + ". " + e);
-    		}
-    	} 
-    	String organisation_name = form.get(Const.FIELD_NOMINATING_ORGANISATION);
-    	String organisation = "";
-    	if (organisation_name != null && !organisation_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			organisation = Organisation.findByTitle(organisation_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find organisation for title: " + organisation_name + ". " + e);
-    		}
-    	} 
+    	Logger.info("" + requestData.get("organisation"));
+    	int pageNo = Integer.parseInt(requestData.get("p"));
+    	String sort = requestData.get("s");
+    	String order = requestData.get("o");
+    	int pageSize = Integer.parseInt(requestData.get("pageSize"));
+    	Long curatorId = Long.parseLong(requestData.get("curator"));
+    	Long organisationId = Long.parseLong(requestData.get("organisation"));
+    	Long licenseId = Long.parseLong(requestData.get("license"));
+    	String depthName = requestData.get("depth");
+    	String crawlFrequencyName = requestData.get("crawlFrequency");
+    	Long flagId = Long.parseLong(requestData.get("flag"));
     	
-//		String subject_name = Utils.removeDuplicatesFromList(form.get(Const.TREE_KEYS));
+        String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
+        String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
+    	
+    	Logger.info(filter + " " + pageNo + " " + sort + " " + order + " " + pageSize + " " + curatorId + " " + curatorId + " " + licenseId + " " + depthName + " " + crawlFrequencyName + " " + flagId + " " + collectionSelect + " " + subjectSelect);
+    	
+//		String subject_name = Utils.removeDuplicatesFromList(requestData.get(Const.TREE_KEYS));
 //    	String subject = "";
 //		if (subject_name != null) {
 //			if (!subject_name.toLowerCase().equals(Const.NONE)) {
@@ -283,31 +271,31 @@ public class TargetController extends AbstractController {
 //			}
 //		}
 		
-    	String subject = Const.EMPTY;
-        if (form.get(Const.SUBJECT) != null) {
-        	String subjectListStr = Utils.removeDuplicatesFromList(form.get(Const.SUBJECT));
-        	if (subjectListStr != null && subjectListStr.length() > 0
-        			&& subjectListStr.toLowerCase().contains(Const.NONE)
-        			&& subjectListStr.contains(Const.COMMA)) {
-        		if (subjectListStr.contains(Const.NONE_VALUE + Const.COMMA + " ")) {
-        			subjectListStr = subjectListStr.replace(Const.NONE_VALUE + Const.COMMA + " ", "");
-        		}
-        		if (subjectListStr.contains(Const.COMMA + " " + Const.NONE_VALUE)) {
-        			subjectListStr = subjectListStr.replace(Const.COMMA + " " + Const.NONE_VALUE, "");
-        		}     		
-        	}
-        	subject = subjectListStr;
-        	subject = Utils.cutFirstSelection(subject);
-        	if (subject.length() == 0) {
-        		subject = Const.EMPTY;
-        	}
-            if (subject.equals(Const.NONE_VALUE)) {
-            	subject = Const.NONE;
-            }
-        }            	
-		Logger.debug("subject: " + subject);
+//    	String subject = Const.EMPTY;
+//        if (requestData.get(Const.SUBJECT) != null) {
+//        	String subjectListStr = Utils.removeDuplicatesFromList(requestData.get(Const.SUBJECT));
+//        	if (subjectListStr != null && subjectListStr.length() > 0
+//        			&& subjectListStr.toLowerCase().contains(Const.NONE)
+//        			&& subjectListStr.contains(Const.COMMA)) {
+//        		if (subjectListStr.contains(Const.NONE_VALUE + Const.COMMA + " ")) {
+//        			subjectListStr = subjectListStr.replace(Const.NONE_VALUE + Const.COMMA + " ", "");
+//        		}
+//        		if (subjectListStr.contains(Const.COMMA + " " + Const.NONE_VALUE)) {
+//        			subjectListStr = subjectListStr.replace(Const.COMMA + " " + Const.NONE_VALUE, "");
+//        		}     		
+//        	}
+//        	subject = subjectListStr;
+//        	subject = Utils.cutFirstSelection(subject);
+//        	if (subject.length() == 0) {
+//        		subject = Const.EMPTY;
+//        	}
+//            if (subject.equals(Const.NONE_VALUE)) {
+//            	subject = Const.NONE;
+//            }
+//        }            	
+//		Logger.debug("subject: " + subject);
 		
-//    	String subject_name = form.get(Const.FIELD_SUBJECT);
+//    	String subject_name = requestData.get(Const.FIELD_SUBJECT);
 //    	String subject = "";
 //    	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
 //    		try {
@@ -317,13 +305,13 @@ public class TargetController extends AbstractController {
 //    			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
 //    		}
 //    	} 
-    	String collection = Const.NONE;
-        if (form.get(Const.TREE_KEYS) != null) {
-    		collection = Utils.removeDuplicatesFromList(form.get(Const.TREE_KEYS));
-    		collection = Utils.cutFirstSelection(collection);
-        }
-		Logger.debug("collection: " + collection);
-//    	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
+//    	String collection = Const.NONE;
+//        if (requestData.get(Const.TREE_KEYS) != null) {
+//    		collection = Utils.removeDuplicatesFromList(requestData.get(Const.TREE_KEYS));
+//    		collection = Utils.cutFirstSelection(collection);
+//        }
+//		Logger.debug("collection: " + collection);
+//    	String collection_name = requestData.get(Const.FIELD_SUGGESTED_COLLECTIONS);
 //    	String collection = "";
 //    	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
 //    		try {
@@ -332,36 +320,23 @@ public class TargetController extends AbstractController {
 //    			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
 //    		}
 //    	} 
-    	String license_name = form.get(Const.FIELD_LICENSE_NODE);
-    	String license = "";
-    	if (license_name != null && !license_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			license = Taxonomy.findByName(license_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find license for name: " + license_name + ". " + e);
-    		}
-    	} 
-    	Logger.debug("license: " + license);
-    	String depth = form.get(Const.FIELD_DEPTH);
-    	String crawlFrequency = form.get(Const.FIELD_CRAWL_FREQUENCY);
-    	String inputFlag = form.get(Const.FLAGS);
-    	String flag = "";
-    	if (inputFlag != null && !inputFlag.toLowerCase().equals(Const.NONE)) {
-//	    	String origFlag = Flags.getNameFromGuiName(inputFlag);
-//	    	flag = Flag.findByName(origFlag).url;
-    	}
+//    	String flag = "";
+//    	if (inputFlag != null && !inputFlag.toLowerCase().equals(Const.NONE)) {
+////	    	String origFlag = Flags.getNameFromGuiName(inputFlag);
+////	    	flag = Flag.findByName(origFlag).url;
+//    	}
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
+    		if (action.equals("addEntry")) {
     			return redirect(
-    	        		routes.TargetController.lookup(0, Const.TITLE, Const.ASC, query)
+    	        		routes.TargetController.lookup(0, Const.TITLE, Const.ASC, filter)
     			        );
     		} 
-    		else if (Const.CLEAR.equals(action)) {
+    		else if (action.equals("clear")) {
     			return GO_HOME;
     		} 
-    		else if (Const.EXPORT.equals(action)) {
+    		else if (action.equals("export")) {
 //    			List<Target> exportTargets = new ArrayList<Target>();
 //    	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, 
 //    					subject, crawlFrequency, depth, collection, license, flag); 
@@ -374,9 +349,8 @@ public class TargetController extends AbstractController {
 //    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
 //    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
     		} 
-    		else if (Const.SEARCH.equals(action) || Const.APPLY.equals(action)) {
-//    			Logger.info("searching " + pageNo + " " + sort + " " + order);
-//                routes.TargetController.list(0, "title", "asc", "", 0, 0, "", "", "", "", 0, 10, 0)
+    		else if (action.equals("search") || action.equals("apply")) {
+    	        return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
 //
 //    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
 //    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
@@ -1322,8 +1296,8 @@ public class TargetController extends AbstractController {
             List<Subject> newSubjects = new ArrayList<Subject>();
             String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
             Logger.info("subjectSelect: " + subjectSelect);
-            String[] subjects = subjectSelect.split(", ");
             if (StringUtils.isNotEmpty(subjectSelect)) {
+                String[] subjects = subjectSelect.split(", ");
 	            for (String sId : subjects) {
 	//            	sId = sId.replace("\"", "");
 	            	Long subjectId = Long.valueOf(sId);
@@ -1336,8 +1310,8 @@ public class TargetController extends AbstractController {
             List<Collection> newCollections = new ArrayList<Collection>();
             String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
             Logger.info("collectionSelect: " + collectionSelect);
-            String[] collections = collectionSelect.split(", ");
             if (StringUtils.isNotEmpty(collectionSelect)) {
+                String[] collections = collectionSelect.split(", ");
 	            for (String cId : collections) {
 	//            	sId = sId.replace("\"", "");
 	            	Long collectionId = Long.valueOf(cId);

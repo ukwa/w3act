@@ -100,8 +100,9 @@ public class ApplicationController extends Controller {
      * Display the About tab.
      */
     public static Result index() {
-    	User user = User.findByEmail(request().username());
-    	Logger.info("user: " + user);
+    	String email = session().get("email");
+    	User user = User.findByEmail(email);
+    	Logger.info("user: " + user + " - " + email);
     	if (user != null) {
     		return ok(about.render("About", user));
     	}
@@ -142,6 +143,12 @@ public class ApplicationController extends Controller {
     public static Result addContent() {
 		return ok(
             addcontent.render("AddContent", User.findByEmail(request().username()))
+        );
+    }
+    
+    public static Result findContent() {
+		return ok(
+            findcontent.render("FindContent", User.findByEmail(request().username()))
         );
     }
     

@@ -594,9 +594,9 @@ public final class Const {
     }
     	
 	public enum DepthType {
-		capped("Capped (small - 500MB)"),
-		capped_large("Capped (large - 2GB)"),
-		deep("Uncapped");
+		CAPPED("Capped (small - 500MB)"),
+		CAPPED_LARGE("Capped (large - 2GB)"),
+		DEEP("Uncapped");
 		
         private String value;
 
@@ -713,15 +713,15 @@ public final class Const {
 	 * The CrawlFrequency.
 	 */
 	public enum CrawlFrequency { 
-		DOMAIN_CRAWL_ONLY("Domain Crawl Only"),
-		ANNUALLY("Annually"),
-		SIX_MONTHLY("Six-monthly"),
+		DOMAINCRAWL("Domain Crawl Only"),
+		ANNUAL("Annually"),
+		SIXMONTHLY("Six-monthly"),
 		QUARTERLY("Quarterly"),
 		MONTLY("Monthly"),
 		OLD_MONTHLY_DO_NOT_USE("Old-Monthly-DO-NOT-USE"),
 		WEEKLY("Weekly"),
 		DAILY("Daily"),
-		NEVER_CRAWL("Never Crawl");
+		NEVERCRAWL("Never Crawl");
 
         private String value;
 
