@@ -25,8 +25,8 @@ import views.html.permissions.*;
 /**
  * Manage permissions.
  */
-@Security.Authenticated(Secured.class)
-public class Permissions extends AbstractController {
+@Security.Authenticated(SecuredController.class)
+public class PermissionController extends AbstractController {
   
     /**
      * Display the permission.
@@ -37,7 +37,7 @@ public class Permissions extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.Permissions.list(0, "name", "asc", "")
+            routes.PermissionController.list(0, "name", "asc", "")
         );
     
     /**
@@ -79,7 +79,7 @@ public class Permissions extends AbstractController {
 			Logger.info("Permission name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Permissions.list(0, "name", "asc", "")
+	        		routes.PermissionController.list(0, "name", "asc", "")
 	        );
     	}
 
@@ -103,7 +103,7 @@ public class Permissions extends AbstractController {
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Permissions.list(pageNo, sort, order, query));
+    	    	return redirect(routes.PermissionController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -226,12 +226,12 @@ public class Permissions extends AbstractController {
            		Logger.info("update permission: " + permission.toString());
                	Ebean.update(permission);
         	}
-	        res = redirect(routes.Permissions.edit(permission.url));
+	        res = redirect(routes.PermissionController.edit(permission.url));
         } 
         if (delete != null) {
         	Permission permission = Permission.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(permission);
-	        res = redirect(routes.Permissions.index()); 
+	        res = redirect(routes.PermissionController.index()); 
         }
         return res;
     }	   

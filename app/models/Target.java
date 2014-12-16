@@ -1307,15 +1307,6 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * This method returns a list of all NPLD types for target object.
-	 * 
-	 * @return
-	 */
-	public static Const.NpldType[] getAllNpldTypes() {
-		return Const.NpldType.values();
-	}
-
-	/**
 	 * This method returns a list of all scope type values for target record.
 	 * 
 	 * @return
@@ -1513,31 +1504,27 @@ public class Target extends UrlModel {
 	 * @return
 	 */
 	public static Page<Target> pageReportsQa(int page, int pageSize,
-			String sortBy, String order, String status, String curatorUrl,
-			String organisationUrl, String startDate, String endDate,
-			String suggested_collections) {
-		List<Instance> instanceList = Instance.processReportsQa(status,
-				startDate, endDate);
-		ExpressionList<Target> exp = Target.find.where();
+			String sortBy, String order, String status, Long curatorId,
+			Long organisationId, String startDate, String endDate,
+			Long collectionId) {
+		
+//		List<Instance> instanceList = Instance.processReportsQa(status, startDate, endDate);
+		
+		ExpressionList<Target> exp = Target.find.fetch("collections").fetch("fieldUrls").where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);
-		if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
-			// Logger.info("curatorUrl: " + curatorUrl);
-			exp = exp.icontains(Const.AUTHOR, curatorUrl);
+	
+		if (curatorId != -1) {
+			exp = exp.eq("authorUser.id", curatorId);
 		}
-		if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
-			// Logger.info("organisationUrl: " + organisationUrl);
-			exp = exp.icontains(Const.FIELD_NOMINATING_ORGANISATION,
-					organisationUrl);
+		if (organisationId != -1) {
+			exp = exp.eq("organisation.id", organisationId);
 		}
-		if (suggested_collections != null
-				&& !suggested_collections.equals(Const.NONE)) {
-			// Logger.info("suggested_collections: " + suggested_collections);
-			exp = exp.icontains(Const.FIELD_SUGGESTED_COLLECTIONS,
-					suggested_collections);
+		if (collectionId != -1) {
+			exp = exp.eq("collections.id", collectionId);
 		}
-		List<String> targetUrlCollection = new ArrayList<String>();
-		Iterator<Instance> itr = instanceList.iterator();
+//		List<String> targetUrlCollection = new ArrayList<String>();
+//		Iterator<Instance> itr = instanceList.iterator();
 //		while (itr.hasNext()) {
 //			Instance instance = itr.next();
 //			if (instance.fieldTarget != null
@@ -1547,13 +1534,11 @@ public class Target extends UrlModel {
 //				targetUrlCollection.add(instance.fieldTarget);
 //			}
 //		}
-		if (targetUrlCollection.size() > 0) {
-			exp = exp.in(Const.URL, targetUrlCollection);
-		}
-		res = exp.query().orderBy(sortBy + " " + order).orderBy(Const.DOMAIN)
-				.findPagingList(pageSize).setFetchAhead(false).getPage(page);
-		Logger.info("Expression list for targets size: "
-				+ res.getTotalRowCount());
+//		if (targetUrlCollection.size() > 0) {
+//			exp = exp.in(Const.URL, targetUrlCollection);
+//		}
+		res = exp.query().orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
+//		Logger.info("Expression list for targets size: " + res.getTotalRowCount());
 		return res;
 	}
 
@@ -1583,67 +1568,50 @@ public class Target extends UrlModel {
 	 * @return
 	 */
 	public static Page<Target> pageReportsCreation(int page, int pageSize,
-			String sortBy, String order, String curatorUrl,
-			String organisationUrl, String startDate, String endDate,
-			String npld, String crawlFrequency, String tld) {
+			String sortBy, String order, Long curatorId,
+			Long organisationId, String startDate, String endDate,
+			String npld, String crawlFrequencyName, String tld) {
 
-		Logger.info("pageReportsCreation() npld: " + npld
-				+ ", crawlFrequency: " + crawlFrequency + ", tld: " + tld);
-		ExpressionList<Target> expressionList = Target.find.where();
-
+		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").fetch("flags").fetch("licenses").fetch("subjects").fetch("collections").where();
 		Page<Target> res = null;
+		exp = exp.eq(Const.ACTIVE, true);
+			
+		if (curatorId != -1) {
+			exp = exp.eq("authorUser.id", curatorId);
+		}
+		if (organisationId != -1) {
+			exp = exp.eq("organisation.id", organisationId);
+		}
+		if (StringUtils.isNotEmpty(crawlFrequencyName)) {
+			exp = exp.eq("crawlFrequency", crawlFrequencyName);
+		}
 
-		expressionList = expressionList.eq(Const.ACTIVE, true);
-
-		if (curatorUrl != null && !curatorUrl.equals(Const.NONE)) {
-			// Logger.info("curatorUrl: " + curatorUrl);
-			expressionList = expressionList.icontains(Const.AUTHOR, curatorUrl);
-		}
-		if (organisationUrl != null && !organisationUrl.equals(Const.NONE)) {
-			// Logger.info("organisationUrl: " + organisationUrl);
-			expressionList = expressionList.icontains(
-					Const.FIELD_NOMINATING_ORGANISATION, organisationUrl);
-		}
-		if (startDate != null && startDate.length() > 0) {
-			Logger.info("startDate: " + startDate);
-			String startDateUnix = Utils
-					.getUnixDateStringFromDateExt(startDate);
-			if (startDateUnix.length() == 9) {
-				startDateUnix = "0" + startDateUnix;
-			}
-			Logger.info("startDateUnix: " + startDateUnix);
-			// TODO: UNIX DATE
-			expressionList = expressionList.ge(Const.CREATED_AT, startDateUnix);
-		}
-		if (endDate != null && endDate.length() > 0) {
-			Logger.info("endDate: " + endDate);
-			String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
-			Logger.info("endDateUnix: " + endDateUnix);
-			// TODO: UNIX DATE
-			expressionList = expressionList.le(Const.CREATED_AT, endDateUnix);
-		}
-		if (crawlFrequency != null && !crawlFrequency.equals(Const.NONE)) {
-			expressionList = expressionList.icontains(
-					Const.FIELD_CRAWL_FREQUENCY, crawlFrequency);
-		}
+//		if (StringUtils.isNotEmpty(startDate)) {
+//			Logger.info("startDate: " + startDate);
+//			exp = exp.ge("createdAt", "");
+//		}
+//		if (StringUtils.isNotEmpty(endDate)) {
+//			Logger.info("endDate: " + endDate);
+//			exp = exp.le("createdAt", "");
+//		}
 
 		// new stuff
 		if (npld.equals(Const.NpldType.UK_POSTAL_ADDRESS.name())) {
-			expressionList.eq(Const.FIELD_UK_POSTAL_ADDRESS, true);
+			exp.eq(Const.FIELD_UK_POSTAL_ADDRESS, true);
 		} else if (npld.equals(Const.NpldType.VIA_CORRESPONDENCE.name())) {
-			expressionList.eq(Const.FIELD_VIA_CORRESPONDENCE, true);
+			exp.eq(Const.FIELD_VIA_CORRESPONDENCE, true);
 		} else if (npld.equals(Const.NpldType.NO_LD_CRITERIA_MET.name())) {
-			expressionList.eq(Const.FIELD_NO_LD_CRITERIA_MET, true);
+			exp.eq(Const.FIELD_NO_LD_CRITERIA_MET, true);
 		} else if (npld.equals(Const.NpldType.PROFESSIONAL_JUDGEMENT.name())) {
-			expressionList.eq(Const.FIELD_PROFESSIONAL_JUDGEMENT, true);
+			exp.eq(Const.FIELD_PROFESSIONAL_JUDGEMENT, true);
 		} else if (npld.equals(Const.NONE)) {
-			expressionList.eq(Const.FIELD_UK_POSTAL_ADDRESS, false);
-			expressionList.eq(Const.FIELD_VIA_CORRESPONDENCE, false);
-			expressionList.eq(Const.FIELD_NO_LD_CRITERIA_MET, false);
-			expressionList.eq("isUkHostingValue", false);
-			expressionList.eq("isInScopeUkRegistrationValue", false);
-			expressionList.eq(Const.FIELD_PROFESSIONAL_JUDGEMENT, false);
-			expressionList.add(Expr.raw("fieldUrl NOT like '%"
+			exp.eq(Const.FIELD_UK_POSTAL_ADDRESS, false);
+			exp.eq(Const.FIELD_VIA_CORRESPONDENCE, false);
+			exp.eq(Const.FIELD_NO_LD_CRITERIA_MET, false);
+			exp.eq("isUkHostingValue", false);
+			exp.eq("isInScopeUkRegistrationValue", false);
+			exp.eq(Const.FIELD_PROFESSIONAL_JUDGEMENT, false);
+			exp.add(Expr.raw("fieldUrl NOT like '%"
 					+ Scope.UK_DOMAIN + "%' or fieldUrl NOT like '%"
 					+ Scope.LONDON_DOMAIN + "%' or fieldUrl NOT like '%"
 					+ Scope.SCOT_DOMAIN + "%'"));
@@ -1653,25 +1621,24 @@ public class Target extends UrlModel {
 			// Scope.LONDON_DOMAIN));
 			// exp.add(Expr.or(ex, Expr.icontains("field_url",
 			// Scope.SCOT_DOMAIN)));
-			expressionList.add(Expr.raw("fieldUrl like '%" + Scope.UK_DOMAIN
-					+ "%' or fieldUrl like '%" + Scope.LONDON_DOMAIN
-					+ "%' or fieldUrl like '%" + Scope.SCOT_DOMAIN + "%'"));
+			exp.add(Expr.raw("fieldUrls.url like '%" + Scope.UK_DOMAIN
+					+ "%' or fieldUrls.url like '%" + Scope.LONDON_DOMAIN
+					+ "%' or fieldUrls.url like '%" + Scope.SCOT_DOMAIN + "%'"));
 		} else if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
 			// uk hosting
-			expressionList.eq("isUkHostingValue", true);
+			exp.eq("isUkHostingValue", true);
 		} else if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
 			// uk registration address
-			expressionList.eq("isInScopeUkRegistrationValue", true);
+			exp.eq("isInScopeUkRegistrationValue", true);
 		}
 
-		if (tld.equals(Const.NO)) {
+		if (tld.equals("no")) {
 			// not a UK top level domain
-			expressionList.eq("isInScopeDomainValue", false);
+			exp.eq("isInScopeDomainValue", false);
 		}
-		if (tld.equals(Const.YES)
-				|| npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
+		if (tld.equals("yes") || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
 			// UK top level domain
-			expressionList.eq("isInScopeDomainValue", true);
+			exp.eq("isInScopeDomainValue", true);
 		}
 		if (tld.equals(Const.EITHER)) {
 			// not a UK top level domain
@@ -1725,7 +1692,7 @@ public class Target extends UrlModel {
 		// expressionList = expressionList.in(Const.URL, targetUrlCollection);
 		// }
 
-		Query<Target> query = expressionList.query();
+		Query<Target> query = exp.query();
 
 		res = query.orderBy(sortBy + " " + order).findPagingList(pageSize)
 				.setFetchAhead(false).getPage(page);

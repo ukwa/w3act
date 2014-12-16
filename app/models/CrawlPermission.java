@@ -345,16 +345,10 @@ public class CrawlPermission extends ActModel {
      * @param target The field URL
      */
     public static Page<CrawlPermission> page(int page, int pageSize, String sortBy, String order, String filter, 
-    		String status, String target) {
+    		String status) {
 
         return find.where()
-        		.icontains(Const.NAME, filter)
-        		.eq(Const.STATUS, status)
-//        		.ne(Const.STATUS, Const.NONE)
-//        		.ne(Const.STATUS, Const.NONE_VALUE)
-        		.icontains(Const.TARGET, target)
-//        		.ne(Const.TARGET, Const.NONE)
-//        		.ne(Const.TARGET, Const.NONE_VALUE)
+        		.icontains("name", filter).eq("status", status)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

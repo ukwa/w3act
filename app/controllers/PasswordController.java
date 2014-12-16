@@ -23,8 +23,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage passwords.
  */
-@Security.Authenticated(Secured.class)
-public class Passwords extends AbstractController {
+@Security.Authenticated(SecuredController.class)
+public class PasswordController extends AbstractController {
    
     /**
      * Add new user entry.

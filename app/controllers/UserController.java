@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage curators.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class UserController extends AbstractController {
   
     /**

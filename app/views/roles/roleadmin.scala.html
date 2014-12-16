@@ -5,18 +5,18 @@
 @main("", user) {
     
    	<div class="page-header">
-	    <h1><a href="@routes.Roles.index()">Users & Agencies > Roles > </a>Role @role.name</h1>
+	    <h1><a href="@routes.RoleController.index()">Users & Agencies > Roles > </a>Role @role.name</h1>
     </div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.Roles.view(role.url)">View</a></li>
+	   <li><a href="@routes.RoleController.view(role.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li><a href="@routes.Roles.edit(role.url)">Edit</a></li>
-		   <li class="active"><a href="@routes.Roles.admin(role.url)">Role administration</a></li>
+		   <li><a href="@routes.RoleController.edit(role.url)">Edit</a></li>
+		   <li class="active"><a href="@routes.RoleController.admin(role.url)">Role administration</a></li>
 	   }
 	</ul>
 
-	@helper.form(action=routes.Roles.saveAdmin, 'class -> "form-inline") {
+	@helper.form(action=routes.RoleController.saveAdmin, 'class -> "form-inline") {
 		<input type="hidden" name="url" value="@role.url">
 		
 		<div class="row padding-10">
@@ -25,7 +25,7 @@
 				    <div class="col-sm-6">
 		                <label class="col-sm-6 control-label" style="color:green">ASSIGNED PERMISSIONS</label>
 						<div class="col-sm-6">
-		        			@for(permission <- role.getPermissions()) {
+		        			@for(permission <- role.permissions) {
 								<label class="checkbox-inline">
 					                <input type="checkbox" name="@permission.name" value="true" checked /> @permission.name 
 								</label>
@@ -75,7 +75,7 @@
 	}
 }
 } else {
-	@infomessage.render("Access Denied for URL @routes.Roles.index()/admin")
+	@infomessage.render("Access Denied for URL @routes.RoleController.index()/admin")
 }
 	            
 

@@ -5,14 +5,14 @@
 @main("", user) {
     
 	<div class="page-header">
-	    <h1><a href="@routes.Roles.index()">Users & Agencies > Roles > </a>Role @role.name</h1>
+	    <h1><a href="@routes.RoleController.index()">Users & Agencies > Roles > </a>Role @role.name</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.Roles.view(role.url)">View</a></li>
+	   <li class="active"><a href="@routes.RoleController.view(role.url)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   <li><a href="@routes.Roles.edit(role.url)">Edit</a></li>
-	   <li><a href="@routes.Roles.admin(role.url)">Role administration</a></li>
+	   <li><a href="@routes.RoleController.edit(role.url)">Edit</a></li>
+	   <li><a href="@routes.RoleController.admin(role.url)">Role administration</a></li>
 	   }
 	</ul>
     
@@ -22,7 +22,7 @@
 				<dt>Name: <font color="red">*</font></dt>
 				<dd>@role.name</dd>
 				<dt>Permissions:</dt>
-				<dd>@Roles.showPermissions(role.id)</dd>
+				<dd>@role.permissionsAsString()</dd>
 				<dt>Description:</dt>
 				<dd>@role.description</dd>
 				<dt>Revision log message:</dt>
@@ -34,7 +34,7 @@
 }
                    
 } else {
-	@infomessage.render("Access Denied for URL @routes.Roles.index()/view")
+	@infomessage.render("Access Denied for URL @routes.RoleController.index()/view")
 }
 	            
 

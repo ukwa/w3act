@@ -9,7 +9,7 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'roles'); 
 		});
 	</script>
@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.Roles.list(newPage, sortBy, order, searchstr)
+    routes.RoleController.list(newPage, sortBy, order, searchstr)
     
 }
 
@@ -83,13 +83,13 @@
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.Roles.index()">Users & Agencies > </a>Roles</h1>
+	    <h1><a href="@routes.RoleController.index()">Users & Agencies > </a>Roles</h1>
 	</div>
 	
     <article class="roles">
 		<div id="forms">
    			@warningmessage(flash)
-   			@helper.form(action=routes.Roles.search, 'class -> "form-inline") {
+   			@helper.form(action=routes.RoleController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   				<input type="hidden" name="s" value="@currentSortBy">
@@ -116,7 +116,7 @@
 			<tbody>
 				@for(role <- currentPage.getList) {
 	                <tr>
-						<td><a href="@routes.Roles.view(role.url)">@role.name</a></td>
+						<td><a href="@routes.RoleController.view(role.url)">@role.name</a></td>
 	                </tr>
                 }
 			</tbody>
@@ -127,7 +127,7 @@
 	</article>    
 } 
 } else {
-	@infomessage.render("Access Denied for URL @routes.Roles.index()/list")
+	@infomessage.render("Access Denied for URL @routes.RoleController.index()/list")
 }
 
 

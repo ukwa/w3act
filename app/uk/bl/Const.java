@@ -801,13 +801,32 @@ public final class Const {
 	 * The report QA status types.
 	 */
 	public enum ReportQaStatusType { 
-		QAED,
-		AWAITINGQA,
-		WITHQAISSUES,
-		WITHNOQAISSUES,
-		FAILEDINSTANCES,
-		PASSED,
-		WITHQAISSUESRESOLVED;
+		QAED("Instances QA'ed"),
+		AWAITINGQA("Awaiting QA"),
+		WITHQAISSUES("With QA issues"),
+		WITHNOQAISSUES("With no QA issues"),
+		FAILEDINSTANCES("Failed Instances"),
+		PASSED("Passed to Crawl Engineer"),
+		WITHQAISSUESRESOLVED("With QA issues resolved");
+		
+        private String value;
+
+        private ReportQaStatusType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static ReportQaStatusType getReportQaStatusType(String name) {
+    		for (ReportQaStatusType reportQaStatusType : ReportQaStatusType.values()) {
+    			if (reportQaStatusType.name().equals(name)) {
+    				return reportQaStatusType;
+    			}
+    		}
+    		return null;
+    	}
     }
     
     /**

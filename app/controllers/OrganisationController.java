@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage organisations.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class OrganisationController extends AbstractController {
   
     /**

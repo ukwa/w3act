@@ -31,8 +31,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage refusals.
  */
-@Security.Authenticated(Secured.class)
-public class PermissionRefusals extends AbstractController {
+@Security.Authenticated(SecuredController.class)
+public class PermissionRefusalController extends AbstractController {
   
     /**
      * Display the refusal.
@@ -265,14 +265,14 @@ public class PermissionRefusals extends AbstractController {
            		Logger.info("update refusal: " + refusal.toString());
                	Ebean.update(refusal);
         	}
-	        return redirect(routes.PermissionRefusals.edit(refusal.url));
+	        return redirect(routes.PermissionRefusalController.edit(refusal.url));
         } 
         if (delete != null) {
         	PermissionRefusal refusal = PermissionRefusal.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(refusal);
-	        res = redirect(routes.PermissionRefusals.index()); 
+	        res = redirect(routes.PermissionRefusalController.index()); 
         }
-    	res = redirect(routes.PermissionRefusals.index()); 
+    	res = redirect(routes.PermissionRefusalController.index()); 
         return res;
     }	   
 

@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage QA.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class QAController extends AbstractController {
   
     /**

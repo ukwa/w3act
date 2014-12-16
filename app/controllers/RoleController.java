@@ -33,8 +33,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage roles.
  */
-@Security.Authenticated(Secured.class)
-public class Roles extends AbstractController {
+@Security.Authenticated(SecuredController.class)
+public class RoleController extends AbstractController {
   
     /**
      * Display the role.
@@ -45,7 +45,7 @@ public class Roles extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.Roles.list(0, "name", "asc", "")
+            routes.RoleController.list(0, "name", "asc", "")
         );
     
     /**
@@ -99,7 +99,7 @@ public class Roles extends AbstractController {
 			Logger.info("Role name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Roles.list(0, "name", "asc", "")
+	        		routes.RoleController.list(0, "name", "asc", "")
 	        );
     	}
 
@@ -123,7 +123,7 @@ public class Roles extends AbstractController {
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Roles.list(pageNo, sort, order, query));
+    	    	return redirect(routes.RoleController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -148,56 +148,56 @@ public class Roles extends AbstractController {
 	            );
     }
       
-	/**
-	 * This method prepares Role form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-    	Role role = new Role();
-    	role.id = Long.valueOf(getFormParam(Const.ID));
-    	role.url = getFormParam(Const.URL);
-        role.name = getFormParam(Const.NAME);
-	    if (getFormParam(Const.DESCRIPTION) != null) {
-	    	role.description = getFormParam(Const.DESCRIPTION);
-	    }
-	    
-        String permissionStr = "";
-        List<Permission> permissionList = Permission.findAll();
-        Iterator<Permission> permissionItr = permissionList.iterator();
-        while (permissionItr.hasNext()) {
-        	Permission permission = permissionItr.next();
-            if (getFormParam(permission.name) != null) {
-                boolean permissionFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
-                if (permissionFlag) {
-                	if (permissionStr.length() == 0) {
-                		permissionStr = permission.name;
-                	} else {
-                		permissionStr = permissionStr + ", " + permission.name;
-                	}
-                }
-            }
-        }
-        if (permissionStr.length() == 0) {
-        	role.setPermissions(new ArrayList<Permission>());
-        } else {
-        	role.setPermissions(Permission.convertUrlsToObjects(permissionStr));
-        }
-        Logger.info("permissionStr: "+ permissionStr + ", role.permissions: " + role.getPermissionsMap().size());
-	    
-	    if (role.revision == null) {
-	    	role.revision = "";
-	    }
-        if (getFormParam(Const.REVISION) != null) {
-        	role.revision = getFormParam(Const.REVISION);
-        }
-		Form<Role> roleFormNew = Form.form(Role.class);
-		roleFormNew = roleFormNew.fill(role);
-      	return ok(
-	              roleedit.render(roleFormNew, User.findByEmail(request().username()))
-	            );
-    }
-    
+//	/**
+//	 * This method prepares Role form for sending info message
+//	 * about errors 
+//	 * @return edit page with form and info message
+//	 */
+//	public static Result info() {
+//    	Role role = new Role();
+//    	role.id = Long.valueOf(getFormParam(Const.ID));
+//    	role.url = getFormParam(Const.URL);
+//        role.name = getFormParam(Const.NAME);
+//	    if (getFormParam(Const.DESCRIPTION) != null) {
+//	    	role.description = getFormParam(Const.DESCRIPTION);
+//	    }
+//	    
+//        String permissionStr = "";
+//        List<Permission> permissionList = Permission.findAll();
+//        Iterator<Permission> permissionItr = permissionList.iterator();
+//        while (permissionItr.hasNext()) {
+//        	Permission permission = permissionItr.next();
+//            if (getFormParam(permission.name) != null) {
+//                boolean permissionFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+//                if (permissionFlag) {
+//                	if (permissionStr.length() == 0) {
+//                		permissionStr = permission.name;
+//                	} else {
+//                		permissionStr = permissionStr + ", " + permission.name;
+//                	}
+//                }
+//            }
+//        }
+//        if (permissionStr.length() == 0) {
+//        	role.setPermissions(new ArrayList<Permission>());
+//        } else {
+//        	role.permissions(Permission.convertUrlsToObjects(permissionStr));
+//        }
+//        Logger.info("permissionStr: "+ permissionStr + ", role.permissions: " + role.getPermissionsMap().size());
+//	    
+//	    if (role.revision == null) {
+//	    	role.revision = "";
+//	    }
+//        if (getFormParam(Const.REVISION) != null) {
+//        	role.revision = getFormParam(Const.REVISION);
+//        }
+//		Form<Role> roleFormNew = Form.form(Role.class);
+//		roleFormNew = roleFormNew.fill(role);
+//      	return ok(
+//	              roleedit.render(roleFormNew, User.findByEmail(request().username()))
+//	            );
+//    }
+//    
     /**
      * This method saves new object or changes on given Role in the same object
      * completed by revision comment. The "version" field in the Role object
@@ -209,6 +209,7 @@ public class Roles extends AbstractController {
         String save = getFormParam(Const.SAVE);
         String delete = getFormParam(Const.DELETE);
 //        Logger.debug("save role: " + save);
+        User user = User.findByEmail(request().username());
         if (save != null) {
         	Logger.debug("save role nid: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
@@ -226,7 +227,9 @@ public class Roles extends AbstractController {
             	Logger.info("form errors size: " + roleForm.errors().size() + ", " + missingFields);
 	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
 	  					" Missing fields are: " + missingFields);
-	  			return info();
+	  			
+	  			return ok(
+	  	              roleedit.render(roleForm, user));
             }
         	Role role = null;
             boolean isExisting = true;
@@ -269,12 +272,12 @@ public class Roles extends AbstractController {
 		                }
 	                }
 		        }
-		        if (permissionStr.length() == 0) {
-		        	role.setPermissions(new ArrayList<Permission>());
-		        } else {
-		        	role.setPermissions(Permission.convertUrlsToObjects(permissionStr));
-		        }
-		        Logger.info("permissionStr: "+ permissionStr + ", role.permissions: " + role.getPermissionsMap().size());
+//		        if (permissionStr.length() == 0) {
+//		        	role.setPermissions(new ArrayList<Permission>());
+//		        } else {
+//		        	role.setPermissions(Permission.convertUrlsToObjects(permissionStr));
+//		        }
+
         	    
         	    if (role.revision == null) {
         	    	role.revision = "";
@@ -309,12 +312,12 @@ public class Roles extends AbstractController {
 //                	Ebean.update(permission);
 //                }
 //	        }
-	        res = redirect(routes.Roles.edit(role.url));
+	        res = redirect(routes.RoleController.edit(role.url));
         } 
         if (delete != null) {
         	Role role = Role.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(role);
-	        res = redirect(routes.Roles.index()); 
+	        res = redirect(routes.RoleController.index()); 
         }
         return res;
     }	   
@@ -347,18 +350,18 @@ public class Roles extends AbstractController {
 		                }
 	                }
 		        }
-        		Logger.info("assignedPermissions: " + assignedPermissions);
-//		        role.permissions = assignedPermissions;
-		        if (assignedPermissions.length() == 0) {
-		        	role.setPermissions(new ArrayList<Permission>());
-		        } else {
-		        	role.setPermissions(Permission.convertUrlsToObjects(assignedPermissions));
-		        }
+//        		Logger.info("assignedPermissions: " + assignedPermissions);
+////		        role.permissions = assignedPermissions;
+//		        if (assignedPermissions.length() == 0) {
+//		        	role.setPermissions(new ArrayList<Permission>());
+//		        } else {
+//		        	role.setPermissions(Permission.convertUrlsToObjects(assignedPermissions));
+//		        }
                	Ebean.update(role);
             } catch (Exception e) {
             	Logger.info("User not existing exception");
             }
-	        res = redirect(routes.Roles.admin(role.url));
+	        res = redirect(routes.RoleController.admin(role.url));
         } else {
         	res = ok();
         }
@@ -396,26 +399,5 @@ public class Roles extends AbstractController {
         	);
     }    
     
-    /**
-     * This method presents permissions as a human readable string.
-     */
-	public static String showPermissions(Long roleId) {
-    	String res = "";
-    	Role role = Role.findById(roleId);
-    	Logger.info("showPermissions size: " + role.permissions.size());
-    	if (role.getPermissionsMap() != null && role.getPermissionsMap().size() > 0) {
-    		Iterator<Permission> itr = role.getPermissionsMap().iterator();
-    		while (itr.hasNext()) {
-    			Permission permission = itr.next();
-    			if (res.length() == 0) {
-    				res = permission.name;
-    			} else {
-    				res = res + Const.COMMA + " " + permission.name;
-    			}
-    		}
-    	}
-    	return res;
-	}
-	    
 }
 

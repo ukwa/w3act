@@ -19,17 +19,20 @@ import play.data.DynamicForm;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.Const.CrawlFrequency;
+import uk.bl.Const.NpldType;
 import uk.bl.Const.RequestType;
 import uk.bl.api.Utils;
 import views.html.reports.*;
 
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Page;
 
 /**
  * Manage reports.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class ReportController extends AbstractController {
   
     /**
@@ -224,7 +227,7 @@ public class ReportController extends AbstractController {
      */
     public static Result summary() {
     	return redirect(
-                routes.ReportsQa.index()
+                routes.ReportQaController.index()
     	        );
     }
 
@@ -236,14 +239,174 @@ public class ReportController extends AbstractController {
 
     public static Result recordCreation() {
     	return redirect(
-                routes.ReportsCreation.index()
+                routes.ReportController.indexCreation()
     	        );
     }
 
     public static Result qa() {
     	return redirect(
-                routes.ReportsQa.index()
+                routes.ReportQaController.index()
     	        );
+    }
+
+    /**
+     * Display the paginated list of targets.
+     *
+     * @param page Current page number (starts from 0)
+     * @param sortBy Column to be sorted
+     * @param order Sort order (either asc or desc)
+     * @param curator Author of the target
+     * @param organisation The author's organisation
+     * @param startDate The start date for filtering
+     * @param endDate The end date for filtering
+     * @param npld The selection of NPLD scope rule for filtering
+     * @param crawlFrequency The crawl frequency value for filtering
+     * @param tld The top level domain setting for filtering
+     */
+    public static Result targets(int pageNo, String sortBy, String order, Long curatorId,
+    		Long organisationId, String startDate, String endDate, String npld, String crawlFrequency, String tld) {
+    	Logger.info("ReportsCreation.targets()");
+    	
+    	User user = User.findByEmail(request().username());
+    	Page<Target> pages = Target.pageReportsCreation(pageNo, 10, sortBy, order, curatorId, organisationId, 
+				startDate, endDate, npld, crawlFrequency, tld);
+    	
+
+		List<User> users = User.findAll();
+		List<Organisation> organisations = Organisation.findAll();
+		CrawlFrequency[] crawlFrequencies = CrawlFrequency.values();
+        NpldType[] nplds = NpldType.values();
+
+        return ok(
+        	reportscreation.render(
+        			"ReportsCreation", 
+        			user, 
+        			pages, 
+        			sortBy, 
+        			order,
+        			curatorId, 
+                	organisationId, 
+                	startDate, 
+                	endDate,
+                	npld, 
+                	crawlFrequency, 
+                	tld,
+                	users,
+                	organisations,
+                	crawlFrequencies,
+                	nplds)
+        	);
+    }
+    
+    /**
+     * This method exports selected targets to CSV file.
+     * @param list of Target objects
+     * @param file name
+     * @return
+     */
+    public static void exportCreation(List<Target> targetList, String fileName) {
+    	Logger.info("export() targetList size: " + targetList.size());
+
+        StringWriter sw = new StringWriter();
+	    sw.append("Target title");
+		sw.append(Const.CSV_SEPARATOR);
+	    sw.append("Target URL");
+		sw.append(Const.CSV_SEPARATOR);
+	    sw.append("Date created");
+		sw.append(Const.CSV_SEPARATOR);
+        sw.append(Const.CSV_LINE_END);
+ 	    
+ 	    if (targetList != null && targetList.size() > 0) {
+ 	    	Iterator<Target> itr = targetList.iterator();
+ 	    	while (itr.hasNext()) {
+ 	    		Target target = itr.next();
+	    		sw.append(target.title);
+		 	    sw.append(Const.CSV_SEPARATOR);
+	    		sw.append(target.fieldUrl());
+		 	    sw.append(Const.CSV_SEPARATOR);
+	    		sw.append(target.createdAt + "");
+		 	    sw.append(Const.CSV_SEPARATOR);
+	 	 	    sw.append(Const.CSV_LINE_END);
+ 	    	}
+ 	    }
+    	Utils.generateCsvFile(fileName, sw.toString());
+    }
+    
+    /**
+     * This method enables searching for given URL and redirection in order to add new entry
+     * if required.
+     * @return
+     */
+    public static Result searchCreation() {
+    	DynamicForm requestData = form().bindFromRequest();
+
+    	String action = requestData.get("action");
+    	String filter = requestData.get("filter");
+
+    	
+    	int pageNo = Integer.parseInt(requestData.get("p"));
+    	String sort = requestData.get("s");
+    	String order = requestData.get("o");
+    	int pageSize = Integer.parseInt(requestData.get("pageSize"));
+    	Long curatorId = Long.parseLong(requestData.get("curator"));
+    	Long organisationId = Long.parseLong(requestData.get("organisation"));
+
+    	String crawlFrequencyName = requestData.get("crawlFrequency");
+    	
+    	
+    	
+    	
+        String startDate = requestData.get("startDate");
+        Logger.info("startDate: " + startDate);
+        String endDate = requestData.get("endDate");
+
+    	String npld = requestData.get("npld");
+
+    	String tld = "either";
+    	String tld_name = requestData.get("tld");
+    	Logger.info("tld: " + requestData.get(Const.FILTER_TLD));
+        if (tld_name != null && !tld_name.toLowerCase().equals(Const.NONE)) {
+        	long idx = Long.valueOf(tld_name);
+        	if (idx == 1) {
+        		tld = Const.YES;
+        	}
+        	if (idx == 2) {
+        		tld = Const.NO;
+        	}
+        }
+        
+    	if (StringUtils.isEmpty(action)) {
+    		return badRequest("You must provide a valid action");
+    	} else {
+    		if (Const.EXPORT.equals(action)) {
+    			List<Target> exportTargets = new ArrayList<Target>();
+    	    	Page<Target> page = Target.pageReportsCreation(pageNo, 10, sort, order, curatorId, organisationId, 
+    					startDate, endDate, npld, crawlFrequencyName, tld);    	    	
+    			int rowCount = page.getTotalRowCount();
+    	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, 
+    					startDate, endDate, npld, crawlFrequencyName, tld); 
+    			exportTargets.addAll(pageAll.getList());
+				Logger.info("export report creation size: " + exportTargets.size());
+    			export(exportTargets, Const.EXPORT_TARGETS_REPORT_CREATION);
+    	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 
+    	    			startDate, endDate, npld, crawlFrequencyName, tld));
+    		}
+    		else if (Const.SEARCH.equals(action)) {
+
+    	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 
+    	    			startDate, endDate, npld, crawlFrequencyName, tld));
+		    } else {
+		    	return badRequest("This action is not allowed");
+		    }
+    	}
+    }	
+    
+    /**
+     * Display the report.
+     */
+    public static Result indexCreation() {
+    	return redirect(routes.ReportController.targets(0, "createdAt", "desc", -1l, -1l, 
+    			Utils.getCurrentDate(), "", "", "", "either"));
     }
 
 }

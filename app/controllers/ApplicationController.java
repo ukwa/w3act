@@ -164,7 +164,7 @@ public class ApplicationController extends Controller {
                 controllers.routes.javascript.TargetController.index(),
                 controllers.routes.javascript.OrganisationController.index(),
                 controllers.routes.javascript.UserController.index(),
-                controllers.routes.javascript.Contact.index()
+                controllers.routes.javascript.ContactController.index()
             )
         );
     }

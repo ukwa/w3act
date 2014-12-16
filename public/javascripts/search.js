@@ -102,7 +102,7 @@ function scopeCheck(context) {
 
 function licenceCheck(context) {
     var idle_timeout,
-    LICENCE_URI = context + 'api/licence/',
+    LICENCE_URI = context + '/api/licence/',
     MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doLicence server
     TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
     IDLE_THRESHOLD = 2000; // doLicence is also done after IDLE_THRESHOLD milliseconds of key idleness
@@ -154,7 +154,7 @@ function licenceCheck(context) {
 
 function licenceHigherLevelCheck(context) {
     var idle_timeout,
-    LICENCE_URI = context + 'api/licencelevel/',
+    LICENCE_URI = context + '/api/licencelevel/',
     MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doLicence server
     TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
     IDLE_THRESHOLD = 2000; // doLicence is also done after IDLE_THRESHOLD milliseconds of key idleness
@@ -298,7 +298,7 @@ function applySearch(context, searchContext, urlTo) {
 			if (urlTo !== undefined) {
 				window.location.replace(context + urlTo + "/" + datum.id);
 			} else {
-				window.location.replace(context + searchContext + "/" + datum.id); 
+				window.location.replace(context + "/" + searchContext + "/" + datum.id); 
 			}
 		});
 	}
@@ -339,7 +339,7 @@ function applySearchExt(context, searchContext, urlTo) {
 			if (urlTo !== undefined) {
 				window.location.replace(context + urlTo + "/view?target=" + datum.url);
 			} else {
-				window.location.replace(context + searchContext + "/view?target=" + datum.url); 
+				window.location.replace(context + "/" + searchContext + "/view?target=" + datum.url); 
 			}
 		});
 	}

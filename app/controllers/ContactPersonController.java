@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Manage persons.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class ContactPersonController extends AbstractController {
   
     /**

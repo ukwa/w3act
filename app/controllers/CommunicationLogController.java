@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Manage logs.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class CommunicationLogController extends AbstractController {
   
     /**

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage passwords.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class WhoIsController extends AbstractController {
    
     /**

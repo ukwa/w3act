@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage instances.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class InstanceController extends AbstractController {
   
     /**

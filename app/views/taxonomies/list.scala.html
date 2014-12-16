@@ -5,7 +5,7 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'taxonomieslist'); 
 		});
 	</script>

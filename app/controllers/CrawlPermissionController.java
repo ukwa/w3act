@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage permissions.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class CrawlPermissionController extends AbstractController {
   
     /**
@@ -55,7 +55,7 @@ public class CrawlPermissionController extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-        routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "", Const.SELECT_ALL)
+        routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.SELECT_ALL)
     );
     
     /**
@@ -66,10 +66,10 @@ public class CrawlPermissionController extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter, String status, String target, String sel) {
+    public static Result list(int pageNo, String sortBy, String order, String filter, String status, String sel) {
     	Logger.info("CrawlPermissions.list() " + filter);
     	
-    	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status, target);
+    	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status);
 
     	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
 
@@ -82,7 +82,6 @@ public class CrawlPermissionController extends AbstractController {
         			sortBy, 
         			order,
         			status,
-        			target,
         			sel,
         			crawlPermissionStatuses)
         	);
@@ -128,7 +127,7 @@ public class CrawlPermissionController extends AbstractController {
     	Logger.info("showCrawlPermissions: " + targetUrl + ", target: " + target);
 //        List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);
 //    	Logger.info("showCrawlPermissions count: " + resList.size());
-    	res = redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", status, target, Const.SELECT_ALL));
+    	res = redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
 //        res = ok(
 //        		views.html.crawlpermissions.list.render(
 //                    "CrawlPermissions", User.findByEmail(request().username()), resList, "", status
@@ -157,7 +156,7 @@ public class CrawlPermissionController extends AbstractController {
         if (StringUtils.isBlank(name)) {
 			Logger.info("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
-	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, "", Const.SELECT_ALL));
+	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, Const.SELECT_ALL));
 //			return ok(
 //					views.html.crawlpermissions.list.render(
 //                        "CrawlPermissions", User.findByEmail(request().username()), resList, "", status
@@ -189,7 +188,7 @@ public class CrawlPermissionController extends AbstractController {
         	            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, "", Const.SELECT_ALL));
+    	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, Const.SELECT_ALL));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -911,12 +910,12 @@ public class CrawlPermissionController extends AbstractController {
         if (selectall != null) {
         	Logger.info("select all listed in page crawl permissions");
         	res = redirect(routes.CrawlPermissionController.list(
-        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "", Const.SELECT_ALL));
+        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.SELECT_ALL));
         }
         if (deselectall != null) {
         	Logger.info("deselect all listed in page crawl permissions");
         	res = redirect(routes.CrawlPermissionController.list(
-        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, "", Const.DESELECT_ALL));
+        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.DESELECT_ALL));
         }
         return res;
     }

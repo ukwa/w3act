@@ -31,8 +31,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * Manage nominations.
  */
-@Security.Authenticated(Secured.class)
-public class Nominations extends AbstractController {
+@Security.Authenticated(SecuredController.class)
+public class NominationController extends AbstractController {
   
     /**
      * Display the nomination.
@@ -43,7 +43,7 @@ public class Nominations extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.Nominations.list(0, "name", "asc", "")
+            routes.NominationController.list(0, "name", "asc", "")
         );
     
     /**
@@ -85,7 +85,7 @@ public class Nominations extends AbstractController {
 			Logger.info("Nomination name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.Nominations.list(0, "name", "asc", "")
+	        		routes.NominationController.list(0, "name", "asc", "")
 	        );
     	}
 
@@ -109,7 +109,7 @@ public class Nominations extends AbstractController {
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Nominations.list(pageNo, sort, order, query));
+    	    	return redirect(routes.NominationController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }
@@ -333,12 +333,12 @@ public class Nominations extends AbstractController {
            		Logger.info("update nomination: " + nomination.toString());
                	Ebean.update(nomination);
         	}
-	        res = redirect(routes.Nominations.edit(nomination.url));
+	        res = redirect(routes.NominationController.edit(nomination.url));
         } 
         if (delete != null) {
         	Nomination nomination = Nomination.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(nomination);
-	        res = redirect(routes.Nominations.index()); 
+	        res = redirect(routes.NominationController.index()); 
         }
         return res;
     }	   
@@ -442,7 +442,7 @@ public class Nominations extends AbstractController {
             	Ebean.save(nomination);
             } 
             // contact person
-	        res = redirect(routes.Nominations.result());
+	        res = redirect(routes.NominationController.result());
         } 
         return res;
     }	   

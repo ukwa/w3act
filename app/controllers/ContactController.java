@@ -11,8 +11,8 @@ import views.html.contact;
 /**
  * Describe W3ACT project contacts.
  */
-@Security.Authenticated(Secured.class)
-public class Contact extends AbstractController {
+@Security.Authenticated(SecuredController.class)
+public class ContactController extends AbstractController {
   
     /**
      * Display the About tab.
@@ -37,7 +37,7 @@ public class Contact extends AbstractController {
         Logger.info("subject: " + messageSubject + ", to: " + toMail + ", messageBody: " + messageBody);
         EmailHelper.sendMessage(toMail, messageSubject, messageBody);                	
 
-        Result res = redirect(routes.Contact.index()); 
+        Result res = redirect(routes.ContactController.index()); 
         return res;
     }
     

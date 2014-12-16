@@ -5,13 +5,13 @@
 @main("", user) {
     
 	<div class="page-header">
-	    <h1><a href="@routes.Nominations.index()">Archivist Tasks > Nominations > </a>Nomination @nomination.name</h1>
+	    <h1><a href="@routes.NominationController.index()">Archivist Tasks > Nominations > </a>Nomination @nomination.name</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.Nominations.view(nomination.url)">View</a></li>
+	   <li class="active"><a href="@routes.NominationController.view(nomination.url)">View</a></li>
 	   @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-	   	<li><a href="@routes.Nominations.edit(nomination.url)">Edit</a></li>
+	   	<li><a href="@routes.NominationController.edit(nomination.url)">Edit</a></li>
 	   }
 	</ul>
 
@@ -146,7 +146,7 @@
 		     	
 }
 } else {
-	@infomessage.render("Access Denied for URL @routes.Nominations.index()/view")
+	@infomessage.render("Access Denied for URL @routes.NominationController.index()/view")
 }                   
 	            
 

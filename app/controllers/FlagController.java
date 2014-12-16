@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Manage flags.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class FlagController extends AbstractController {
   
     /**

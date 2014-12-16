@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Manage tags.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class TagController extends AbstractController {
   
     /**

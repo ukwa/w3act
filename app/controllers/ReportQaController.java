@@ -19,6 +19,7 @@ import play.data.DynamicForm;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.Const.ReportQaStatusType;
 import uk.bl.api.Utils;
 import views.html.reports.reportsqa;
 
@@ -27,19 +28,19 @@ import com.avaje.ebean.Page;
 /**
  * Manage reports.
  */
-@Security.Authenticated(Secured.class)
-public class ReportsQa extends AbstractController {
+@Security.Authenticated(SecuredController.class)
+public class ReportQaController extends AbstractController {
   
     /**
      * Display the report.
      */
     public static Result index() {
-    	return redirect(routes.ReportsQa.targets(0, "title", "asc", "qaed", "", "", Utils.getCurrentDate(), "", ""));
+    	return redirect(routes.ReportQaController.targets(0, "title", "asc", "qaed", -1L, -1L, Utils.getCurrentDate(), "", -1L));
     }
 
     public static Result switchReportQaTab(String status) {
     	Logger.info("switchReportQaTab() status: " + status);
-    	return redirect(routes.ReportsQa.targets(0, "title", "asc", status, "", "", Utils.getCurrentDate(), "", ""));
+    	return redirect(routes.ReportQaController.targets(0, "title", "asc", status, -1L, -1L, Utils.getCurrentDate(), "", -1L));
     }
 
     /**
@@ -48,70 +49,44 @@ public class ReportsQa extends AbstractController {
      * @return
      */
     public static Result search() {
-    	DynamicForm form = form().bindFromRequest();
-    	String action = form.get(Const.ACTION);
-    	Logger.info("action: " + action);
-    	
-    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
-    	String sort = form.get(Const.SORT_BY);
-    	String order = form.get(Const.ORDER);
-    	String status = form.get(Const.STATUS);
-    	Logger.info("load status: " + status);
 
-    	String curator_name = form.get(Const.AUTHOR);
-    	String curator = "";
-    	if (curator_name != null && !curator_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			curator = User.findByName(curator_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find curator for name: " + curator_name + ". " + e);
-    		}
-    	} 
-    	String organisation_name = form.get(Const.FIELD_NOMINATING_ORGANISATION);
-    	String organisation = "";
-    	if (organisation_name != null && !organisation_name.toLowerCase().equals(Const.NONE) 
-    			&& !organisation_name.equals(Const.ALL_AGENCIES)) {
-    		try {
-    			organisation = Organisation.findByTitle(organisation_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find organisation for title: " + organisation_name + ". " + e);
-    		}
-    	} 
-    	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
-    	String collection = "";
-    	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			collection = Collection.findByTitle(collection_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
-    		}
-    	} 
-        String startDate = form.get(Const.FIELD_CRAWL_START_DATE);
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	int pageNo = Integer.parseInt(requestData.get("p"));
+    	String sort = requestData.get("s");
+    	String order = requestData.get("o");
+    	int pageSize = Integer.parseInt(requestData.get("pageSize"));
+    	Long curatorId = Long.parseLong(requestData.get("curator"));
+    	Long organisationId = Long.parseLong(requestData.get("organisation"));
+    	Long collectionId = Long.parseLong(requestData.get("collection"));
+
+    	String status = requestData.get("status");
+
+
+        String startDate = requestData.get("startDate");
         Logger.info("startDate: " + startDate);
-        String endDate = form.get(Const.FIELD_CRAWL_END_DATE);
+        String endDate = requestData.get("endDate");
         
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.EXPORT.equals(action)) {
     			List<Target> exportTargets = new ArrayList<Target>();
-    	    	Page<Target> page = Target.pageReportsQa(pageNo, 10, sort, order, status, curator, organisation, 
-    					startDate, endDate, collection);    	    	
+    	    	Page<Target> page = Target.pageReportsQa(pageNo, 10, sort, order, status, curatorId, organisationId, 
+    					startDate, endDate, collectionId);    	    	
     			int rowCount = page.getTotalRowCount();
-    	    	Page<Target> pageAll = Target.pageReportsQa(pageNo, rowCount, sort, order, status, curator, organisation, 
-    					startDate, endDate, collection); 
+    	    	Page<Target> pageAll = Target.pageReportsQa(pageNo, rowCount, sort, order, status, curatorId, organisationId, 
+    					startDate, endDate, collectionId); 
     			exportTargets.addAll(pageAll.getList());
 				Logger.info("export report QA size: " + exportTargets.size() + ", status: " + status);
     			export(exportTargets, Const.EXPORT_TARGETS_REPORTS_QA);
-    	    	return redirect(routes.ReportsQa.targets(pageNo, sort, order, status, curator, organisation, 
-    	    			startDate, endDate, collection));
+    	    	return redirect(routes.ReportQaController.targets(pageNo, sort, order, status, curatorId, organisationId, 
+    	    			startDate, endDate, collectionId));
     		}
     		else if (Const.SEARCH.equals(action)) {
-    			Logger.info("searching " + pageNo + " " + sort + " " + order + ", status: " + status +
-    					", curator: " + curator + ", organisation: " + organisation + ", startDate: " + startDate +
-    					", endDate: " + endDate + ", collection: " + collection);
-    	    	return redirect(routes.ReportsQa.targets(pageNo, sort, order, status, curator, organisation, 
-    	    			startDate, endDate, collection));
+    	    	return redirect(routes.ReportQaController.targets(pageNo, sort, order, status, curatorId, organisationId, 
+    	    			startDate, endDate, collectionId));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
@@ -166,24 +141,35 @@ public class ReportsQa extends AbstractController {
      * @param endDate The end date for filtering
      * @param collection The associated collection
      */
-    public static Result targets(int pageNo, String sortBy, String order, String status, String curator,
-    		String organisation, String startDate, String endDate, String collection) {
+    public static Result targets(int pageNo, String sortBy, String order, String status, Long curatorId,
+    		Long organisationId, String startDate, String endDate, Long collectionId) {
     	Logger.info("ReportsQa.targets()");
     	
+    	User user = User.findByEmail(request().username());
+    	Page<Target> pages = Target.pageReportsQa(pageNo, 10, sortBy, order, status, curatorId, organisationId, startDate, endDate, collectionId);
+    	
+        List<User> users = User.findAll();
+        List<Organisation> organisations = Organisation.findAllSorted();
+        List<Collection> collections = Collection.findAllCollections();
+        ReportQaStatusType[] reportQaStatusTypes = ReportQaStatusType.values();
+
         return ok(
         	reportsqa.render(
         			"ReportsQa", 
-        			User.findByEmail(request().username()), 
-        			Target.pageReportsQa(pageNo, 10, sortBy, order, status, curator, organisation, 
-        					startDate, endDate, collection), 
+        			user, 
+        			pages, 
         			sortBy, 
         			order,
         			status,
-                	curator, 
-                	organisation, 
+        			curatorId, 
+                	organisationId, 
                 	startDate, 
                 	endDate, 
-                	collection)
+                	collectionId,
+                	users,
+                	organisations,
+                	collections,
+                	reportQaStatusTypes)
         	);
     }
 	    

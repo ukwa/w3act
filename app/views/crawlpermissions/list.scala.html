@@ -1,4 +1,4 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[CrawlPermission], currentSortBy: String, currentOrder: String, cur_status: String, target: String, sel: String, crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus])
+@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[CrawlPermission], currentSortBy: String, currentOrder: String, cur_status: String, sel: String, crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -9,8 +9,8 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context") + 'permission';
-			applySearch(context); 
+			context = '@play.api.Play.current.configuration.getString("application.context")'
+			applySearch(context, 'permission'); 
 		});
 	</script>
 }
@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.CrawlPermissionController.list(newPage, sortBy, order, searchstr, cur_status, target)
+    routes.CrawlPermissionController.list(newPage, sortBy, order, searchstr, cur_status)
     
 }
 
@@ -122,7 +122,7 @@
 										<label for="curator" class="col-sm-6 control-label">Filter by status</label>
 									    <div class="col-sm-6">
 											<select name="status" id="status" class="form-control">
-												<option>None</option>
+												<option value="-1">None</option>
 								                @for(status <- crawlPermissionStatuses) {
 									                @if(status.name.equals(cur_status)) {
 									                	<option value="@status.name" selected>@status.getValue</option>
@@ -168,7 +168,9 @@
 							</label>
 						</td>
 						<td>
-							<a href="@permission.target">@permission.target</a>			                
+							@for(fieldUrl <- permission.target.fieldUrls) {
+								<a href="@fieldUrl.url">@fieldUrl.url</a>
+							}			                
 						</td>
 						<td>
 			                @permission.contactPerson.name

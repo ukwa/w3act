@@ -31,8 +31,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Manage templates.
  */
-@Security.Authenticated(Secured.class)
-public class MailTemplates extends AbstractController {
+@Security.Authenticated(SecuredController.class)
+public class MailTemplateController extends AbstractController {
   
     /**
      * Display the template.
@@ -97,7 +97,7 @@ public class MailTemplates extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.ADDENTRY.equals(action)) {
-//        		return redirect(routes.MailTemplates.create(query));
+//        		return redirect(routes.MailTemplateController.create(query));
             	MailTemplate template = new MailTemplate();
             	template.name = query;
                 template.id = Target.createId();
@@ -305,14 +305,14 @@ public class MailTemplates extends AbstractController {
         	}
         	Logger.info("Mail Template was saved.");
   			flash("message", "Mail Template was saved.");
-  			return redirect(routes.MailTemplates.view(template.url));
+  			return redirect(routes.MailTemplateController.view(template.url));
         } 
         if (delete != null) {
         	MailTemplate template = MailTemplate.findByUrl(getFormParam(Const.URL));
         	Ebean.delete(template);
-	        return redirect(routes.MailTemplates.index()); 
+	        return redirect(routes.MailTemplateController.index()); 
         }
-    	res = redirect(routes.MailTemplates.index()); 
+    	res = redirect(routes.MailTemplateController.index()); 
         return res;
     }	   
 

@@ -69,7 +69,7 @@ import views.html.users.usersites;
 /**
  * Describe W3ACT project.
  */
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class TargetController extends AbstractController {
   
     final static play.data.Form<Target> targetForm = play.data.Form.form(Target.class);

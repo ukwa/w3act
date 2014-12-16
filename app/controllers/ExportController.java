@@ -22,8 +22,8 @@ import views.html.settings.export;
 /**
  * Manage targets.
  */
-@Security.Authenticated(Secured.class)
-public class Export extends AbstractController {
+@Security.Authenticated(SecuredController.class)
+public class ExportController extends AbstractController {
   
     /**
      * Display the export.
@@ -93,7 +93,7 @@ public class Export extends AbstractController {
     }
             
     public static Result GO_EXPORT_HOME = redirect(
-            routes.Export.index()
+            routes.ExportController.index()
         );
     
 }

@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class SubjectController extends AbstractController {
 
 	/**

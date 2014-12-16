@@ -44,31 +44,19 @@ public class Role extends ActModel {
 	 */
 	private static final long serialVersionUID = 5670206529564297517L;
 
-	//bi-directional many-to-many association to Permission
-	@JoinTable(name = "permission_role", joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
-			inverseJoinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") }) 
 	@ManyToMany
-	public List<Permission> permissions = new ArrayList<Permission>();
+	@JoinTable(name = "permission_role", joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
+	inverseJoinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") }) 
+	public List<Permission> permissions = null;
 	
-//    //bi-directional many-to-one association to Role
-//    @OneToMany(mappedBy="role", cascade=CascadeType.PERSIST)
-////    @Column(name="permissionsMap")
-//    public List<Permission> permissionsMap = new ArrayList<Permission>();
-//
-        
-    //bi-directional many-to-many association to User
     @ManyToMany
 	@JoinTable(name = "role_user", joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
-    private List<User> users = new ArrayList<User>();
+    public List<User> users = null;
  
 	@Required
 	@Column(columnDefinition = "text")
     public String name;
-
-//    @JsonIgnore
-//    @Column(columnDefinition = "text")
-//    public String permissions;
 
     @JsonIgnore
     @Column(columnDefinition = "text")
@@ -80,27 +68,6 @@ public class Role extends ActModel {
 
     public static final Finder<Long, Role> find = new Finder<Long, Role>(Long.class, Role.class);
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public List<Permission> getPermissionsMap() {
-    	return this.permissions;
-    }
-    
-    public void setPermissions(List<Permission> permissionsMap) {
-    	this.permissions = permissionsMap;
-    }
-    
-    public List<User> getUsers() {
-    	return this.users;
-    }
-    
-    public void setUsers(List<User> users) {
-    	this.users = users;
-    }
-    
     /**
      * Retrieve an object by Id (id).
      * @param nid
@@ -142,7 +109,7 @@ public class Role extends ActModel {
 	 */
 	public static List<Role> filterByName(String name) {
 		List<Role> res = new ArrayList<Role>();
-        ExpressionList<Role> ll = find.where().icontains(Const.NAME, name);
+        ExpressionList<Role> ll = find.where().icontains("name", name);
     	res = ll.findList();
 		return res;
 	}
@@ -153,67 +120,29 @@ public class Role extends ActModel {
      * @return true if exists
      */
     public boolean hasPermission(String permissionName) {
-    	boolean res = false;
-    	if (permissionName != null && permissionName.length() > 0) {
+    	if (StringUtils.isNotEmpty(permissionName)) {
     		Permission permission = Permission.findByName(permissionName);
-//        	Logger.info("permission id: " + permission.id);
-    		res = hasPermission(permission.id);
+    		if (this.permissions.contains(permission)) {
+    			return true;
+    		}
     	}
-    	return res;
+    	return false;
     }
-//    public boolean hasPermission(String permissionName) {
-//    	boolean res = false;
-//    	if (permissionName != null && permissionName.length() > 0 
-//    			&& permissions.contains(permissionName)) {
-//    		res = true;
-//    	}
-//    	return res;
-//    }
-    
+
     /**
      * This method checks whether user has a permission by its id.
      * @param permissionName
      * @return true if exists
      */
-    public boolean hasPermission(long permissionId) {
-    	boolean res = false;
-//    	Logger.info("hasPermission() permission id: " + permissionId + ", permission_to_user.size(): " + permission_to_user.size());
-    	if (permissions != null && permissions.size() > 0) {
-    		Iterator<Permission> itr = permissions.iterator();
-    		while (itr.hasNext()) {
-    			Permission permission = itr.next();
-//    	    	Logger.info("hasPermission() permission id: " + permissionId + ", permissionMap id: " + permission.id);
-    			if (permission.id == permissionId) {
-    				res = true;
-    				break;
-    			}
+    public boolean hasPermission(Long permissionId) {
+    	if (permissionId != null) {
+    		Permission permission = Permission.findById(permissionId);
+    		if (this.permissions.contains(permission)) {
+    			return true;
     		}
     	}
-//    	Logger.info("hasPermission res: " + res);
-    	return res;
+    	return false;
     }
-    
-    /**
-     * This method returns permissions assigned to this role.
-     * @return list of Permission objects
-     */
-    public List<? extends Permission> getPermissions()
-    {
-    	return permissions;
-    }
-
-//    public List<Permission> getPermissions()
-//    {
-//    	List<Permission> res = new ArrayList<Permission>();
-//    	if (permissions != null && permissions.length() > 0) {
-//			List<String> resList = Arrays.asList(permissions.split(Const.COMMA + " "));
-//			Iterator<String> itr = resList.iterator();
-//			while (itr.hasNext()) {
-//				res.add(Permission.findByName(itr.next()));
-//			}
-//    	}
-//        return res;
-//    }
     
     /**
      * This method returns permissions that are not assigned to this role.
@@ -288,28 +217,28 @@ public class Role extends ActModel {
     	return res;
     }
     
-    /**
-     * This method checks if a given role is included in the list of passed user roles.
-     * Simple "contains" method of string does not help for roles since part of the role name
-     * like "exper_user" could be a name of the other role like "user".
-     * @param roleName The given role name
-     * @param roles The user roles as a string separated by comma
-     * @return true if role name is included
-     */
-    public static boolean isIncludedByUrl(Long roleId, String url) {
-    	boolean res = false;
-//    	Logger.info("isIncludedByUrl() roleId: " + roleId + ",url: " + url);
-    	try {
-	    	if (StringUtils.isNotEmpty(url)) {
-		    	List<Role> roles = User.findByUrl(url).roles;
-//		    	Logger.info("roles.size: "+ roles.size());
-		    	res = isIncluded(roleId, roles);
-	    	}
-    	} catch (Exception e) {
-    		Logger.debug("User is not yet stored in database.");
-    	}
-    	return res;
-    }
+//    /**
+//     * This method checks if a given role is included in the list of passed user roles.
+//     * Simple "contains" method of string does not help for roles since part of the role name
+//     * like "exper_user" could be a name of the other role like "user".
+//     * @param roleName The given role name
+//     * @param roles The user roles as a string separated by comma
+//     * @return true if role name is included
+//     */
+//    public static boolean isIncludedByUrl(Long roleId, String url) {
+//    	boolean res = false;
+////    	Logger.info("isIncludedByUrl() roleId: " + roleId + ",url: " + url);
+//    	try {
+//	    	if (StringUtils.isNotEmpty(url)) {
+//		    	List<Role> roles = User.findByUrl(url).roles;
+////		    	Logger.info("roles.size: "+ roles.size());
+//		    	res = isIncluded(roleId, roles);
+//	    	}
+//    	} catch (Exception e) {
+//    		Logger.debug("User is not yet stored in database.");
+//    	}
+//    	return res;
+//    }
     
     /**
      * This method evaluates index of the role in the role enumeration.
@@ -424,6 +353,48 @@ public class Role extends ActModel {
         		.getPage(page);
     }
 
+	public String permissionsAsString() {
+//		Logger.info("permissionsAsString");
+//		List<String> names = new ArrayList<String>();
+//		for (Permission permission : this.permissions) {
+//			names.add(permission.name);
+//		}
+//		Logger.info("" + names);
+//		return StringUtils.join(names, ", ");
+		return "";
+	}
+    
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Role other = (Role) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
 	@Override
 	public String toString() {
 		return "Role [permissions=" + permissions + ", users=" + users

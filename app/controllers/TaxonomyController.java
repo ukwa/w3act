@@ -19,7 +19,7 @@ import views.html.taxonomies.taxonomyview;
 
 import com.avaje.ebean.Ebean;
 
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class TaxonomyController extends AbstractController {
 
 	/**
