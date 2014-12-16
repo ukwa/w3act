@@ -8,10 +8,10 @@
 
 	<ul class="nav nav-tabs">
 	   @if(ContactPerson.findById(Long.valueOf(form("id").value)) != null) {
-	   <li><a href="@routes.ContactPersonController.view(form("url").value)">View</a></li>
+	   <li><a href="@routes.ContactPersonController.view(form.get.id)">View</a></li>
 	   }
 	   @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
-		   <li class="active"><a href="@routes.ContactPersonController.edit(form("url").value)">Edit</a></li>
+		   <li class="active"><a href="@routes.ContactPersonController.edit(form.get.id)">Edit</a></li>
 	   }
 	</ul>
     

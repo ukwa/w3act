@@ -56,7 +56,7 @@
 			<tbody>
 				@for(template <- templates) {
 				<tr>
-					<td><a href="@routes.MailTemplateController.view(template.url)">@template.name</a></td>
+					<td><a href="@routes.MailTemplateController.view(template.id)">@template.name</a></td>
 				</tr>
 			}
 			</tbody>

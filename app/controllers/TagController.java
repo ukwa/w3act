@@ -47,10 +47,8 @@ public class TagController extends AbstractController {
     /**
      * Display the tag edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("tag url: " + url);
-		Tag tag = Tag.findByUrl(url);
-		Logger.info("tag name: " + tag.name + ", url: " + url);
+    public static Result edit(Long id) {
+		Tag tag = Tag.findById(id);
 		Form<Tag> tagFormNew = Form.form(Tag.class);
 		tagFormNew = tagFormNew.fill(tag);
       	return ok(
@@ -58,10 +56,10 @@ public class TagController extends AbstractController {
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
         return ok(
                 view.render(
-                		models.Tag.findByUrl(url), User.findByEmail(request().username())
+                		models.Tag.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -246,7 +244,7 @@ public class TagController extends AbstractController {
            		Logger.info("update tag: " + tag.toString());
                	Ebean.update(tag);
         	}
-	        return redirect(routes.TagController.edit(tag.url));
+	        return redirect(routes.TagController.edit(tag.id));
         } 
         if (delete != null) {
         	Tag tag = Tag.findByUrl(getFormParam(Const.URL));

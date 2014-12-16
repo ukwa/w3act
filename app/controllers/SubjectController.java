@@ -126,10 +126,10 @@ public class SubjectController extends AbstractController {
     }
 	    
 	  
-    public static Result view(String url) {
+    public static Result view(Long id) {
         return ok(
                 view.render(
-                        Taxonomy.findByUrl(url), User.findByEmail(request().username())
+                        Subject.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -156,10 +156,8 @@ public class SubjectController extends AbstractController {
     /**
      * Display the subject edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("subject url: " + url);
-		Taxonomy subject = Taxonomy.findByUrl(url);
-		Logger.info("subject name: " + subject.name + ", url: " + url);
+    public static Result edit(Long id) {
+		Taxonomy subject = Taxonomy.findById(id);
 		JsonNode node = getSubjectsTree(subject.url);
 		Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
 		subjectForm = subjectForm.fill(subject);
@@ -313,7 +311,7 @@ public class SubjectController extends AbstractController {
            		Logger.info("update subject: " + subject.toString());
                	Ebean.update(subject);
         	}
-	        res = redirect(routes.SubjectController.edit(subject.url));
+	        res = redirect(routes.SubjectController.edit(subject.id));
         } 
         if (delete != null) {
         	String url = getFormParam(Const.URL);

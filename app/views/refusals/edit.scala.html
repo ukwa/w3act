@@ -7,11 +7,9 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   @if(PermissionRefusal.findById(Long.valueOf(form("id").value)) != null) {
-	   <li><a href="@routes.PermissionRefusalController.view(form("url").value)">View</a></li>
-	   }
+	   <li><a href="@routes.PermissionRefusalController.view(form.get.id)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.PermissionRefusalController.edit(form("url").value)">Edit</a></li>
+		   <li class="active"><a href="@routes.PermissionRefusalController.edit(form.get.id)">Edit</a></li>
 	   }
 	</ul>
     

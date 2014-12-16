@@ -114,7 +114,7 @@
 			<tbody>
 			@for(flag <- currentPage.getList) {
 				<tr>
-					<td><a href="@routes.FlagController.view(flag.url)">@flag.name</a></td>
+					<td><a href="@routes.FlagController.view(flag.id)">@flag.name</a></td>
 					<td>@flag.description</td>
 				</tr>
 			}

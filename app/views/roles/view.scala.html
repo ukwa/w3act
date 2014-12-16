@@ -9,10 +9,10 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.RoleController.view(role.url)">View</a></li>
+	   <li class="active"><a href="@routes.RoleController.view(role.id)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   <li><a href="@routes.RoleController.edit(role.url)">Edit</a></li>
-	   <li><a href="@routes.RoleController.admin(role.url)">Role administration</a></li>
+	   <li><a href="@routes.RoleController.edit(role.id)">Edit</a></li>
+	   <li><a href="@routes.RoleController.admin(role.id)">Role administration</a></li>
 	   }
 	</ul>
     
@@ -22,7 +22,7 @@
 				<dt>Name: <font color="red">*</font></dt>
 				<dd>@role.name</dd>
 				<dt>Permissions:</dt>
-				<dd>@role.permissionsAsString()</dd>
+				<dd>@role.permissions</dd>
 				<dt>Description:</dt>
 				<dd>@role.description</dd>
 				<dt>Revision log message:</dt>

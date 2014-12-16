@@ -13,9 +13,9 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.CrawlPermissionController.view(permission.url)">View</a></li>
+	   <li class="active"><a href="@routes.CrawlPermissionController.view(permission.id)">View</a></li>
 	   @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
-	   	<li><a href="@routes.CrawlPermissionController.edit(permission.url)">Edit</a></li>
+	   	<li><a href="@routes.CrawlPermissionController.edit(permission.id)">Edit</a></li>
 	   }
 	</ul>
 

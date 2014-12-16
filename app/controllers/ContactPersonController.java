@@ -48,10 +48,8 @@ public class ContactPersonController extends AbstractController {
     /**
      * Display the person edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("person url: " + url);
-		ContactPerson person = ContactPerson.findByUrl(url);
-		Logger.info("person name: " + person.name + ", url: " + url);
+    public static Result edit(Long id) {
+		ContactPerson person = ContactPerson.findById(id);
 		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
 		personFormNew = personFormNew.fill(person);
       	return ok(
@@ -59,11 +57,11 @@ public class ContactPersonController extends AbstractController {
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
     	Logger.info("view contact person");
         return ok(
                 view.render(
-                		models.ContactPerson.findByUrl(url), User.findByEmail(request().username())
+                		models.ContactPerson.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -323,7 +321,7 @@ public class ContactPersonController extends AbstractController {
            		Logger.info("update crawl person: " + person.toString());
                	Ebean.update(person);
         	}
-	        return redirect(routes.ContactPersonController.edit(person.url));
+	        return redirect(routes.ContactPersonController.edit(person.id));
         } 
         if (delete != null) {
         	ContactPerson person = ContactPerson.findByUrl(getFormParam(Const.URL));

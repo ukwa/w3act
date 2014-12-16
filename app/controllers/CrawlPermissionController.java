@@ -91,10 +91,8 @@ public class CrawlPermissionController extends AbstractController {
     /**
      * Display the permission edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("permission url: " + url);
-		CrawlPermission permission = CrawlPermission.findByUrl(url);
-		Logger.info("permission name: " + permission.name + ", url: " + url);
+    public static Result edit(Long id) {
+		CrawlPermission permission = CrawlPermission.findById(id);
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
     	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
@@ -103,9 +101,9 @@ public class CrawlPermissionController extends AbstractController {
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
     	User user = User.findByEmail(request().username());
-    	CrawlPermission crawlPermission = CrawlPermission.findByUrl(url);
+    	CrawlPermission crawlPermission = CrawlPermission.findById(id);
         return ok(view.render(crawlPermission, user));
     }
     
@@ -547,7 +545,7 @@ public class CrawlPermissionController extends AbstractController {
         	}
         	Logger.info("Crawl permission was saved with status " + permission.status);
   			flash("message", "Crawl permission was saved with status " + permission.status);
-	        return redirect(routes.CrawlPermissionController.view(permission.url));
+	        return redirect(routes.CrawlPermissionController.view(permission.id));
         } 
         if (delete != null) {
         	CrawlPermission permission = CrawlPermission.findByUrl(getFormParam(Const.URL));

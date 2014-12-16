@@ -49,10 +49,8 @@ public class NominationController extends AbstractController {
     /**
      * Display the nomination edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("nomination url: " + url);
-		Nomination nomination = Nomination.findByUrl(url);
-		Logger.info("nomination name: " + nomination.name + ", url: " + url);
+    public static Result edit(Long id) {
+		Nomination nomination = Nomination.findById(id);
 		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
 		nominationFormNew = nominationFormNew.fill(nomination);
       	return ok(
@@ -60,10 +58,10 @@ public class NominationController extends AbstractController {
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
         return ok(
                 view.render(
-                        Nomination.findByUrl(url), User.findByEmail(request().username())
+                        Nomination.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -333,7 +331,7 @@ public class NominationController extends AbstractController {
            		Logger.info("update nomination: " + nomination.toString());
                	Ebean.update(nomination);
         	}
-	        res = redirect(routes.NominationController.edit(nomination.url));
+	        res = redirect(routes.NominationController.edit(nomination.id));
         } 
         if (delete != null) {
         	Nomination nomination = Nomination.findByUrl(getFormParam(Const.URL));

@@ -19,7 +19,6 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.flags.edit;
 import views.html.flags.*;
 
@@ -49,10 +48,8 @@ public class FlagController extends AbstractController {
     /**
      * Display the flag edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("flag url: " + url);
-		Flag flag = Flag.findByUrl(url);
-		Logger.info("flag name: " + flag.name + ", url: " + url);
+    public static Result edit(Long id) {
+		Flag flag = Flag.findById(id);
 		Form<Flag> flagFormNew = Form.form(Flag.class);
 		flagFormNew = flagFormNew.fill(flag);
       	return ok(
@@ -60,10 +57,10 @@ public class FlagController extends AbstractController {
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
         return ok(
                 view.render(
-                		models.Flag.findByUrl(url), User.findByEmail(request().username())
+                		models.Flag.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -245,7 +242,7 @@ public class FlagController extends AbstractController {
            		Logger.info("update flag: " + flag.toString());
                	Ebean.update(flag);
         	}
-	        return redirect(routes.FlagController.edit(flag.url));
+	        return redirect(routes.FlagController.edit(flag.id));
         } 
         if (delete != null) {
         	Flag flag = Flag.findByUrl(getFormParam(Const.URL));

@@ -7,18 +7,15 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   @if(CommunicationLog.findById(Long.valueOf(form("id").value)) != null) {
-	   <li><a href="@routes.CommunicationLogController.view(form("url").value)">View</a></li>
-	   }
+	   <li><a href="@routes.CommunicationLogController.view(form.get.id)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.CommunicationLogController.edit(form("url").value)">Edit</a></li>
+		   <li class="active"><a href="@routes.CommunicationLogController.edit(form.get.id)">Edit</a></li>
 	   }
 	</ul>
     
     @warningmessage(flash)
 	@helper.form(action=routes.CommunicationLogController.save) {
-		<input type="hidden" name="url" value="@form("url").value">
-		<input type="hidden" name="id" value="@form("id").value">
+		<input type="hidden" name="id" value="@form.get.id">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">

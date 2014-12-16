@@ -9,14 +9,10 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   @if(Role.findById(Long.valueOf(form("id").value)) != null) {	
-	   <li><a href="@routes.RoleController.view(form("url").value)">View</a></li>
-	   }
+	   <li><a href="@routes.RoleController.view(form.get.id)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   <li class="active"><a href="@routes.RoleController.edit(form("url").value)">Edit</a></li>
-	      @if(Role.findById(Long.valueOf(form("id").value)) != null) {	   
-	      <li><a href="@routes.RoleController.admin(form("url").value)">Role administration</a></li>
-	      }
+	   <li class="active"><a href="@routes.RoleController.edit(form.get.id)">Edit</a></li>
+      	<li><a href="@routes.RoleController.admin(form.get.id)">Role administration</a></li>
 	   }
 	</ul>
     

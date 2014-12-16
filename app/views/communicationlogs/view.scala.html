@@ -8,9 +8,9 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.CommunicationLogController.view(log.url)">View</a></li>
+	   <li class="active"><a href="@routes.CommunicationLogController.view(log.id)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   	<li><a href="@routes.CommunicationLogController.edit(log.url)">Edit</a></li>
+	   	<li><a href="@routes.CommunicationLogController.edit(log.id)">Edit</a></li>
 	   }
 	</ul>
 

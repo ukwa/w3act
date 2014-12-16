@@ -16,7 +16,7 @@
 				    <div class="col-sm-6">
 	              		<input class="form-control" name="name" id="inputName" value="" type="text">
 						@permissions.map { permission =>		              
-				           	<a href="@routes.CrawlPermissionController.view(permission.url)">@permission.name </a>
+				           	<a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name </a>
 				        }	              		
 					</div>
 				</div>

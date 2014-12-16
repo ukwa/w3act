@@ -116,7 +116,7 @@
 			<tbody>
 				@for(role <- currentPage.getList) {
 	                <tr>
-						<td><a href="@routes.RoleController.view(role.url)">@role.name</a></td>
+						<td><a href="@routes.RoleController.view(role.id)">@role.name</a></td>
 	                </tr>
                 }
 			</tbody>

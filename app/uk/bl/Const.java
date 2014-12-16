@@ -460,12 +460,30 @@ public final class Const {
     }
     
 	public enum Roles {
-        sys_admin, 
-		archivist,
-		expert_user,
-		user,
-		viewer;
-    }
+        sys_admin("System Admin"), 
+		archivist("Archivist"),
+		expert_user("Expert User"),
+		user("User"),
+		viewer("Viewer");
+        
+        private String value;
+
+        private Roles(String value) {
+	        this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static Roles getRole(String name) {
+    		for (Roles role : Roles.values()) {
+    			if (role.name().equals(name)) {
+    				return role;
+    			}
+    		}
+    		return null;
+    	}}
 	
 	public enum TabStatus {
 		overview,

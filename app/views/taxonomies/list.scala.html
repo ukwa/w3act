@@ -113,7 +113,7 @@
 			<tbody>
 				@for(taxonomy <- currentPage.getList) {
 		        <tr>
-		           	<td><a href="@routes.TaxonomyController.view(taxonomy.url)">@taxonomy.name</a></td>
+		           	<td><a href="@routes.TaxonomyController.view(taxonomy.id)">@taxonomy.name</a></td>
 		           	<td>@taxonomy.ttype</td>
 				</tr>
 		           }

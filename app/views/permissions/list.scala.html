@@ -117,7 +117,7 @@
 			<tbody>
 				@for(permission <- currentPage.getList) {
 					<tr>
-						<td><a href="@routes.PermissionController.view(permission.url)">@permission.name</a></td>
+						<td><a href="@routes.PermissionController.view(permission.id)">@permission.name</a></td>
 					</tr>
 				}
 			</tbody>

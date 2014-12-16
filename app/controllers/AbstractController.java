@@ -214,7 +214,7 @@ public class AbstractController extends Controller {
 		for (Subject subject : subjects) {
 			ObjectNode child = nodeFactory.objectNode();
 			child.put("title", subject.name);
-			child.put("url", String.valueOf(routes.SubjectController.view(subject.url)));
+			child.put("url", String.valueOf(routes.SubjectController.view(subject.id)));
 			if (mySubjectIds != null && mySubjectIds.contains(subject.id)) {
 				child.put("select", true);
 			}
@@ -265,7 +265,7 @@ public class AbstractController extends Controller {
 		for (Subject subject : subjects) {
 			ObjectNode child = nodeFactory.objectNode();
 			child.put("title", subject.name);
-			child.put("url", String.valueOf(routes.SubjectController.view(subject.url)));
+			child.put("url", String.valueOf(routes.SubjectController.view(subject.id)));
 			if (mySubjects != null && mySubjects.contains(subject)) {
 				child.put("select", true);
 			}

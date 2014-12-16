@@ -14,8 +14,8 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import views.html.taxonomies.taxonomyedit;
-import views.html.taxonomies.taxonomyview;
+import views.html.taxonomies.edit;
+import views.html.taxonomies.view;
 
 import com.avaje.ebean.Ebean;
 
@@ -93,11 +93,18 @@ public class TaxonomyController extends AbstractController {
 		return null;
     }
 	    
-	  
-    public static Result view(String url) {
+	public static Result edit(Long id) {
         return ok(
-                taxonomyview.render(
-                        Taxonomy.findByUrl(url), User.findByEmail(request().username())
+                edit.render(
+                        Taxonomy.findById(id), User.findByEmail(request().username())
+                )
+            );
+	}
+	
+    public static Result view(Long id) {
+        return ok(
+                view.render(
+                        Taxonomy.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -115,17 +122,10 @@ public class TaxonomyController extends AbstractController {
         taxonomy.url = Const.ACT_URL + taxonomy.id;
 		Logger.info("add entry with url: " + taxonomy.url + ", and name: " + taxonomy.name);
         return ok(
-                taxonomyedit.render(
+                edit.render(
                       taxonomy, User.findByEmail(request().username())
                 )
             );
-    }
-    
-    /**
-     * Display the taxonomy edit panel for this URL.
-     */
-    public static Result edit(String url) {
-		return null;
     }
 
     /**
@@ -184,7 +184,7 @@ public class TaxonomyController extends AbstractController {
            		Logger.info("update taxonomy: " + taxonomy.toString());
                	Ebean.update(taxonomy);
         	}
-	        res = redirect(routes.TaxonomyController.view(taxonomy.url));
+	        res = redirect(routes.TaxonomyController.view(taxonomy.id));
         } 
         if (delete != null) {
         	String url = getFormParam(Const.URL);

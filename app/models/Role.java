@@ -16,6 +16,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import play.Logger;
 import play.data.validation.Constraints.Required;
 import uk.bl.Const;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -47,12 +49,12 @@ public class Role extends ActModel {
 	@ManyToMany
 	@JoinTable(name = "permission_role", joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
 	inverseJoinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") }) 
-	public List<Permission> permissions = null;
+	public List<Permission> permissions;
 	
     @ManyToMany
 	@JoinTable(name = "role_user", joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
-    public List<User> users = null;
+    public List<User> users;
  
 	@Required
 	@Column(columnDefinition = "text")
@@ -67,6 +69,13 @@ public class Role extends ActModel {
     public String revision; 
 
     public static final Finder<Long, Role> find = new Finder<Long, Role>(Long.class, Role.class);
+
+    /**
+     * Retrieve all roles.
+     */
+    public static List<Role> findAll() {
+        return find.all();
+    }
 
     /**
      * Retrieve an object by Id (id).
@@ -86,22 +95,6 @@ public class Role extends ActModel {
                    .findUnique();
     }
     
-    /**
-     * Retrieve a role by URL.
-     * @param url
-     * @return role name
-     */
-    public static Role findByUrl(String url) {
-//    	Logger.info("role findByUrl: " + url);
-    	Role res = new Role();
-    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
-    		res = find.where().eq(Const.URL, url).findUnique();
-    	} else {
-    		res.name = Const.NONE;
-    	}
-    	return res;
-    }
-
 	/**
 	 * This method filters roles by name and returns a list of filtered Role objects.
 	 * @param name
@@ -143,31 +136,34 @@ public class Role extends ActModel {
     	}
     	return false;
     }
-    
-    /**
-     * This method returns permissions that are not assigned to this role.
-     * @return list of Permission objects
-     */
-    public static List<Permission> getNotAssignedPermissions(List<Permission> assignedPermissions)
-    {
-    	List<Permission> allPermissionList = Permission.findAll();
-//    	Logger.info("Permissions count: " + allPermissionList.size());
-        List<Permission> res = new ArrayList<Permission>();
-    	if (assignedPermissions != null && assignedPermissions.size() > 0) {
-			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
-			while (itrAllPermissions.hasNext()) {
-				Permission curPermission = itrAllPermissions.next();
-//		    	Logger.info("curPermission: " + curPermission.name);
-				if (!assignedPermissions.contains(curPermission.name)) {
-					res.add(curPermission);
-				}
-			}
-    	}
-        return res;
+
+    public static List<Permission> getNotAssignedPermissions(List<Permission> assignedPermissions) {
+    	return Permission.find.where().not(Expr.in("permissions", assignedPermissions)).findList();
     }
     
-//    public static List<Permission> getNotAssignedPermissions(String permissionsStr)
-//    {
+
+//    /**
+//     * This method returns permissions that are not assigned to this role.
+//     * @return list of Permission objects
+//     */
+//    public static List<Permission> getNotAssignedPermissions(List<Permission> assignedPermissions) {
+//    	List<Permission> allPermissionList = Permission.findAll();
+////    	Logger.info("Permissions count: " + allPermissionList.size());
+//        List<Permission> res = new ArrayList<Permission>();
+//    	if (assignedPermissions != null && assignedPermissions.size() > 0) {
+//			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
+//			while (itrAllPermissions.hasNext()) {
+//				Permission curPermission = itrAllPermissions.next();
+////		    	Logger.info("curPermission: " + curPermission.name);
+//				if (!assignedPermissions.contains(curPermission)) {
+//					res.add(curPermission);
+//				}
+//			}
+//    	}
+//        return res;
+//    }
+//    
+//    public static List<Permission> getNotAssignedPermissions(String permissionsStr) {
 //    	List<Permission> allPermissionList = Permission.findAll();
 ////    	Logger.info("Permissions count: " + allPermissionList.size());
 //        List<Permission> res = new ArrayList<Permission>();
@@ -186,37 +182,8 @@ public class Role extends ActModel {
 //    	}
 //        return res;
 //    }
-//    
-    /**
-     * Retrieve all roles.
-     */
-    public static List<Role> findAll() {
-        return find.all();
-    }
-
-    /**
-     * This method checks if a given role is included in the list of passed user roles.
-     * Simple "contains" method of string does not help for roles since part of the role name
-     * like "exper_user" could be a name of the other role like "user".
-     * @param roleName The given role name
-     * @param roles The user roles as a string separated by comma
-     * @return true if role name is included
-     */
-    public static boolean isIncluded(long roleId, List<Role> roles) {
-    	boolean res = false;
-    	if (roles != null && roles.size() > 0 ) {
-   			Iterator<Role> itr = roles.iterator();
-    		while (itr.hasNext()) {
-        		Role currentRole = itr.next();
-       			if (currentRole.id == roleId) {
-       				res = true;
-       				break;
-    			}
-    		}
-    	}
-    	return res;
-    }
     
+
 //    /**
 //     * This method checks if a given role is included in the list of passed user roles.
 //     * Simple "contains" method of string does not help for roles since part of the role name
@@ -287,27 +254,6 @@ public class Role extends ActModel {
     }
     
 	/**
-	 * This method retrieves selected roles from user object.
-	 * @param userUrl
-	 * @return
-	 */
-	public static List<Role> convertUrlsToObjects(String urls) {
-		List<Role> res = new ArrayList<Role>();
-   		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
-	    	String[] parts = urls.split(Const.COMMA + " ");
-	    	for (String part: parts) {
-//		    	Logger.info("convertUrlsToObjects part: " + part);
-	    		Role role = findByName(part);
-	    		if (role != null && role.name != null && role.name.length() > 0) {
-//			    	Logger.info("add role to the list: " + role.name);
-	    			res.add(role);
-	    		}
-	    	}
-    	}
-		return res;
-	}       
-    	
-	/**
 	 * This method initializes User object by the default Role.
 	 * @param userUrl
 	 * @return
@@ -326,7 +272,7 @@ public class Role extends ActModel {
 	 * @param userUrl
 	 * @return
 	 */
-	public static List<Role> setDefaultRoleByName(String roleName) {
+	public static List<Role> setRoleByName(String roleName) {
 		List<Role> res = new ArrayList<Role>();
    		Role role = findByName(roleName);
 		if (role != null && role.name != null && role.name.length() > 0) {
@@ -355,12 +301,10 @@ public class Role extends ActModel {
 
 	public String permissionsAsString() {
 //		Logger.info("permissionsAsString");
-//		List<String> names = new ArrayList<String>();
-//		for (Permission permission : this.permissions) {
-//			names.add(permission.name);
-//		}
-//		Logger.info("" + names);
-//		return StringUtils.join(names, ", ");
+		List<String> names = new ArrayList<String>();
+		for (Permission permission : this.permissions) {
+			names.add(permission.name);
+		}
 		return "";
 	}
     

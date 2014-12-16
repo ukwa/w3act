@@ -102,10 +102,8 @@ public class OrganisationController extends AbstractController {
     /**
      * Display the organisation edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("organisation url: " + url);
-		Organisation organisation = Organisation.findByUrl(url);
-		Logger.info("organisation title: " + organisation.title + ", url: " + url);
+    public static Result edit(Long id) {
+		Organisation organisation = Organisation.findById(id);
 		Form<Organisation> organisationForm = Form.form(Organisation.class);
 		organisationForm = organisationForm.fill(organisation);
         return ok(edit.render(organisationForm, User.findByEmail(request().username())));
@@ -323,7 +321,7 @@ public class OrganisationController extends AbstractController {
            		Logger.info("update organisation: " + organisation.toString());
                	Ebean.update(organisation);
         	}
-	        res = redirect(routes.OrganisationController.edit(organisation.url));
+	        res = redirect(routes.OrganisationController.edit(organisation.id));
         } 
         if (delete != null) {
         	Organisation organisation = Organisation.findByUrl(getFormParam(Const.URL));

@@ -2,12 +2,9 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Iterator;
 import java.util.List;
 
-import models.Organisation;
 import models.Role;
 import models.Target;
 import models.User;
@@ -22,12 +19,9 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.PasswordHash;
-import uk.bl.api.Utils;
 import views.html.users.list;
 import views.html.users.view;
 
-import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -179,62 +173,6 @@ public class UserController extends AbstractController {
         return redirect(routes.TargetController.userTargets(0, "title", "asc", "", url, "", ""));
     }
     
-	/**
-	 * This method prepares Collection form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-   	    User user = new User();
-   	    user.id = Long.valueOf(getFormParam(Const.ID));
-   	    user.url = getFormParam(Const.URL);
-	    user.name = getFormParam(Const.NAME);
-    	user.email = user.name + "@";
-	    if (getFormParam(Const.EMAIL) != null) {
-	    	user.email = getFormParam(Const.EMAIL);
-	    }
-        if (getFormParam(Const.ORGANISATION) != null) {
-        	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
-//        		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
-        		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
-        		// TODO: KL WHY THIS?
-//        		user.updateOrganisation();
-        	} else {
-        		user.affiliation = Const.NONE;
-        	}
-        }
-        String roleStr = "";
-        List<Role> roleList = Role.findAll();
-        Iterator<Role> roleItr = roleList.iterator();
-        while (roleItr.hasNext()) {
-        	Role role = roleItr.next();
-            if (getFormParam(role.name) != null) {
-                boolean roleFlag = Utils.getNormalizeBooleanString(getFormParam(role.name));
-                if (roleFlag) {
-                	if (roleStr.length() == 0) {
-                		roleStr = role.name;
-                	} else {
-                		roleStr = roleStr + ", " + role.name;
-                	}
-                }
-            }
-        }
-        if (roleStr.length() == 0) {
-        	user.roles = null;
-        } else {
-        	user.roles = Role.convertUrlsToObjects(roleStr);
-        }
-        Logger.info("roleStr: "+ roleStr);
-        if (getFormParam(Const.REVISION) != null) {
-        	user.revision = getFormParam(Const.REVISION);
-        }
-		Form<User> userFormNew = Form.form(User.class);
-		userFormNew = userFormNew.fill(user);
-      	return ok(
-      			views.html.users.edit.render(userFormNew, User.findByEmail(request().username()))
-	            );
-    }
-        
     /**
      * This method saves changes on given curator in the same object
      * completed by revision comment. The "version" field in the User object

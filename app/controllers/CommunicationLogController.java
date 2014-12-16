@@ -45,10 +45,8 @@ public class CommunicationLogController extends AbstractController {
     /**
      * Display the log edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("log url: " + url);
-		CommunicationLog log = CommunicationLog.findByUrl(url);
-		Logger.info("log name: " + log.name + ", url: " + url);
+    public static Result edit(Long id) {
+		CommunicationLog log = CommunicationLog.findById(id);
 		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
 		logFormNew = logFormNew.fill(log);
       	return ok(
@@ -56,10 +54,10 @@ public class CommunicationLogController extends AbstractController {
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
         return ok(
                 view.render(
-                		models.CommunicationLog.findByUrl(url), User.findByEmail(request().username())
+                		models.CommunicationLog.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -288,7 +286,7 @@ public class CommunicationLogController extends AbstractController {
            		Logger.info("update log: " + log.toString());
                	Ebean.update(log);
         	}
-	        return redirect(routes.CommunicationLogController.edit(log.url));
+	        return redirect(routes.CommunicationLogController.edit(log.id));
         } 
         if (delete != null) {
         	CommunicationLog log = CommunicationLog.findByUrl(getFormParam(Const.URL));

@@ -91,7 +91,7 @@
 			<tbody>
 			@logs.map { log =>		              
 				<tr>
-					<td><a href="@routes.CommunicationLogController.view(log.url)">@log.name</a></td>
+					<td><a href="@routes.CommunicationLogController.view(log.id)">@log.name</a></td>
 					<td>@log.date</td>
 					<td>@log.ttype</td>
 					<td>@log.user.name</td>

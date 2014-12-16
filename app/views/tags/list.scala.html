@@ -116,7 +116,7 @@
 			<tbody>
 			@for(tag <- currentPage.getList) {
 				<tr>
-					<td><a href="@routes.TagController.view(tag.url)">@tag.name</a></td>
+					<td><a href="@routes.TagController.view(tag.id)">@tag.name</a></td>
 					<td>@tag.description</td>
 				</tr>
 			}

@@ -49,10 +49,8 @@ public class MailTemplateController extends AbstractController {
     /**
      * Display the template edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("template url: " + url);
-		MailTemplate template = MailTemplate.findByUrl(url);
-		Logger.info("template name: " + template.name + ", url: " + url);
+    public static Result edit(Long id) {
+		MailTemplate template = MailTemplate.findById(id);
 		Form<MailTemplate> templateForm = Form.form(MailTemplate.class);
 		templateForm = templateForm.fill(template);
       	return ok(
@@ -60,10 +58,10 @@ public class MailTemplateController extends AbstractController {
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
         return ok(
                 view.render(
-                		models.MailTemplate.findByUrl(url), User.findByEmail(request().username())
+                		models.MailTemplate.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -305,7 +303,7 @@ public class MailTemplateController extends AbstractController {
         	}
         	Logger.info("Mail Template was saved.");
   			flash("message", "Mail Template was saved.");
-  			return redirect(routes.MailTemplateController.view(template.url));
+  			return redirect(routes.MailTemplateController.view(template.id));
         } 
         if (delete != null) {
         	MailTemplate template = MailTemplate.findByUrl(getFormParam(Const.URL));

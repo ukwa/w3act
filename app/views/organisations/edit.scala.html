@@ -7,22 +7,17 @@
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   @if(Organisation.findById(Long.valueOf(form("nid").value)) != null) {
 	   <li><a href="@routes.OrganisationController.view(form.get.id)">View</a></li>
 	   <li><a href="@routes.OrganisationController.sites(form.get.url)">Sites</a></li> 
-	   }
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.OrganisationController.edit(form("url").value)">Edit</a></li>
-		   @if(Organisation.findById(Long.valueOf(form("nid").value)) != null) {
-		   <li><a href="@routes.OrganisationController.admin(form("url").value)">User administration</a></li>
-		   }
+		   <li class="active"><a href="@routes.OrganisationController.edit(form.get.id)">Edit</a></li>
+		   <li><a href="@routes.OrganisationController.admin(form.get.url)">User administration</a></li>
 	   }
 	</ul>
     
 	@warningmessage(flash)
 	@helper.form(action=routes.OrganisationController.save) {
-		<input type="hidden" name="url" value="@form("url").value">
-		<input type="hidden" name="nid" value="@form("nid").value">
+		<input type="hidden" name="nid" value="@form.get.id">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">

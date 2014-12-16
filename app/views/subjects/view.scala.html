@@ -8,9 +8,9 @@
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a
-			href="@routes.SubjectController.view(subject.url)">View</a></li>
+			href="@routes.SubjectController.view(subject.id)">View</a></li>
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		<li><a href="@routes.SubjectController.edit(subject.url)">Edit</a></li>
+		<li><a href="@routes.SubjectController.edit(subject.id)">Edit</a></li>
 		}
 		<li><a href="@routes.SubjectController.sites(subject.url)">Targets</a></li>
 	</ul>

@@ -57,7 +57,7 @@
 			<tbody>
 			@contactpersons.map { contactperson =>		              
 				<tr>
-					<td><a href="@routes.ContactPersonController.view(contactperson.url)">@contactperson.name</a></td>
+					<td><a href="@routes.ContactPersonController.view(contactperson.id)">@contactperson.name</a></td>
 					<td>@contactperson.email</td>
 				</tr>
 			}

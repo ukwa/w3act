@@ -49,10 +49,8 @@ public class PermissionRefusalController extends AbstractController {
     /**
      * Display the refusal edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("refusal url: " + url);
-		PermissionRefusal refusal = PermissionRefusal.findByUrl(url);
-		Logger.info("refusal name: " + refusal.name + ", url: " + url);
+    public static Result edit(Long id) {
+		PermissionRefusal refusal = PermissionRefusal.findById(id);
 		Form<PermissionRefusal> refusalFormNew = Form.form(PermissionRefusal.class);
 		refusalFormNew = refusalFormNew.fill(refusal);
       	return ok(
@@ -60,10 +58,10 @@ public class PermissionRefusalController extends AbstractController {
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
         return ok(
                 view.render(
-                		models.PermissionRefusal.findByUrl(url), User.findByEmail(request().username())
+                		models.PermissionRefusal.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -265,7 +263,7 @@ public class PermissionRefusalController extends AbstractController {
            		Logger.info("update refusal: " + refusal.toString());
                	Ebean.update(refusal);
         	}
-	        return redirect(routes.PermissionRefusalController.edit(refusal.url));
+	        return redirect(routes.PermissionRefusalController.edit(refusal.id));
         } 
         if (delete != null) {
         	PermissionRefusal refusal = PermissionRefusal.findByUrl(getFormParam(Const.URL));

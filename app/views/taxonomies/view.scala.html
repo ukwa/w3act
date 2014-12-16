@@ -5,9 +5,9 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="@routes.TaxonomyController.view(taxonomy.url)">View</a></li>
+		<li class="active"><a href="@routes.TaxonomyController.view(taxonomy.id)">View</a></li>
 		@if(user.hasRole("sys_admin")) {
-		<li><a href="@routes.TaxonomyController.edit(taxonomy.url)">Edit</a></li>
+		<li><a href="@routes.TaxonomyController.edit(taxonomy.id)">Edit</a></li>
 		}
 	</ul>
 

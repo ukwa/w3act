@@ -57,7 +57,7 @@
 			<tbody>
 			@refusals.map { refusal =>		              
 				<tr>
-					<td><a href="@routes.PermissionRefusalController.view(refusal.url)">@refusal.name</a></td>
+					<td><a href="@routes.PermissionRefusalController.view(refusal.id)">@refusal.name</a></td>
 					<td>@refusal.date</td>
 					<td>@refusal.ttype</td>
 				</tr>

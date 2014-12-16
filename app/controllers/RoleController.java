@@ -23,9 +23,9 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.roles.list;
-import views.html.roles.roleadmin;
-import views.html.roles.roleedit;
-import views.html.roles.roleview;
+import views.html.roles.admin;
+import views.html.roles.edit;
+import views.html.roles.view;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -51,21 +51,19 @@ public class RoleController extends AbstractController {
     /**
      * Display the role edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("role url: " + url);
-		Role role = Role.findByUrl(url);
-		Logger.info("role name: " + role.name + ", url: " + url);
+    public static Result edit(Long id) {
+		Role role = Role.findById(id);
 		Form<Role> roleFormNew = Form.form(Role.class);
 		roleFormNew = roleFormNew.fill(role);
       	return ok(
-	              roleedit.render(roleFormNew, User.findByEmail(request().username()))
+	              edit.render(roleFormNew, User.findByEmail(request().username()))
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
         return ok(
-                roleview.render(
-                        Role.findByUrl(url), User.findByEmail(request().username())
+                view.render(
+                        Role.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -75,10 +73,10 @@ public class RoleController extends AbstractController {
      * @param url
      * @return
      */
-    public static Result admin(String url) {
+    public static Result admin(Long id) {
         return ok(
-                roleadmin.render(
-                        Role.findByUrl(url), User.findByEmail(request().username())
+                admin.render(
+                        Role.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -119,7 +117,7 @@ public class RoleController extends AbstractController {
     			Form<Role> roleFormNew = Form.form(Role.class);
     			roleFormNew = roleFormNew.fill(role);
     	      	return ok(
-    		              roleedit.render(roleFormNew, User.findByEmail(request().username()))
+    		              edit.render(roleFormNew, User.findByEmail(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
@@ -144,7 +142,7 @@ public class RoleController extends AbstractController {
 		Form<Role> roleFormNew = Form.form(Role.class);
 		roleFormNew = roleFormNew.fill(role);
       	return ok(
-	              roleedit.render(roleFormNew, User.findByEmail(request().username()))
+	              edit.render(roleFormNew, User.findByEmail(request().username()))
 	            );
     }
       
@@ -229,13 +227,13 @@ public class RoleController extends AbstractController {
 	  					" Missing fields are: " + missingFields);
 	  			
 	  			return ok(
-	  	              roleedit.render(roleForm, user));
+	  	              edit.render(roleForm, user));
             }
         	Role role = null;
             boolean isExisting = true;
             try {
                 try {
-                	role = Role.findByUrl(getFormParam(Const.URL));
+                	role = Role.findById(Long.valueOf(getFormParam(Const.ID)));
                 } catch (Exception e) {
                 	Logger.debug("is not existing exception");
                 	isExisting = false;
@@ -312,10 +310,10 @@ public class RoleController extends AbstractController {
 //                	Ebean.update(permission);
 //                }
 //	        }
-	        res = redirect(routes.RoleController.edit(role.url));
+	        res = redirect(routes.RoleController.edit(role.id));
         } 
         if (delete != null) {
-        	Role role = Role.findByUrl(getFormParam(Const.URL));
+        	Role role = Role.findById(Long.valueOf(getFormParam(Const.ID)));
         	Ebean.delete(role);
 	        res = redirect(routes.RoleController.index()); 
         }
@@ -332,7 +330,7 @@ public class RoleController extends AbstractController {
         if (save != null) {
         	Role role = null;
             try {
-               	role = Role.findByUrl(getFormParam(Const.URL));
+               	role = Role.findById(Long.valueOf(getFormParam(Const.ID)));
                	String assignedPermissions = "";
 		        List<Permission> permissionList = Permission.findAll();
 		        Iterator<Permission> permissionItr = permissionList.iterator();
@@ -361,7 +359,7 @@ public class RoleController extends AbstractController {
             } catch (Exception e) {
             	Logger.info("User not existing exception");
             }
-	        res = redirect(routes.RoleController.admin(role.url));
+	        res = redirect(routes.RoleController.admin(role.id));
         } else {
         	res = ok();
         }

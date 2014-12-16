@@ -43,10 +43,8 @@ public class PermissionController extends AbstractController {
     /**
      * Display the permission edit panel for this URL.
      */
-    public static Result edit(String url) {
-		Logger.info("permission url: " + url);
-		Permission permission = Permission.findByUrl(url);
-		Logger.info("permission name: " + permission.name + ", url: " + url);
+    public static Result edit(Long id) {
+		Permission permission = Permission.findById(id);
 		Form<Permission> permissionFormNew = Form.form(Permission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
       	return ok(
@@ -54,10 +52,10 @@ public class PermissionController extends AbstractController {
 	            );
     }
     
-    public static Result view(String url) {
+    public static Result view(Long id) {
         return ok(
                 view.render(
-                        Permission.findByUrl(url), User.findByEmail(request().username())
+                        Permission.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -189,7 +187,7 @@ public class PermissionController extends AbstractController {
             boolean isExisting = true;
             try {
                 try {
-                	permission = Permission.findByUrl(getFormParam(Const.URL));
+//                	permission = Permission.findByUrl(getFormParam(Const.URL));
                 } catch (Exception e) {
                 	Logger.info("is not existing exception");
                 	isExisting = false;
@@ -226,11 +224,11 @@ public class PermissionController extends AbstractController {
            		Logger.info("update permission: " + permission.toString());
                	Ebean.update(permission);
         	}
-	        res = redirect(routes.PermissionController.edit(permission.url));
+	        res = redirect(routes.PermissionController.edit(permission.id));
         } 
         if (delete != null) {
-        	Permission permission = Permission.findByUrl(getFormParam(Const.URL));
-        	Ebean.delete(permission);
+//        	Permission permission = Permission.findByUrl(getFormParam(Const.URL));
+//        	Ebean.delete(permission);
 	        res = redirect(routes.PermissionController.index()); 
         }
         return res;
