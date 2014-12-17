@@ -5,6 +5,8 @@
 }
 
 @scripts = {
+	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+
 	<script>
 		// This is the code that switches to the other page.
 		// We do this via JavaScript, and not a normal hyperlink,
@@ -173,7 +175,6 @@
 	@warningmessage(flash)
 	@helper.form(action=routes.TargetController.save) {
 	
-	<input type="hidden" name="id" value="@form.get.id">
 	<input type="hidden" name="url" value="@form.get.url">
 	<input type="hidden" name="user_id" value="@user.id">	
 	<input type="hidden" id="tabstatus" name="tabstatus" value="@form.get.tabStatus">
@@ -187,14 +188,14 @@
 				    	&& !user.hasRole("archivist") 
 				    	&& !user.hasRole("sys_admin") 
 				    	&& user.id != form.get.authorUser.id) { 
-					<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
+					<button type="submit" class="btn btn-primary" name="action" id="edit-save" value="save" disabled>Save</button>
 				       @if(form.get != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
+					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
 					   }
 					} else {
-					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
+					<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
 				       @if(form.get != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
+					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
 					   }
 					}
 		       </div>
@@ -352,9 +353,9 @@
 							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
 						    <div class="col-sm-6">
 	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
-			              		<input name="wctId" class="form-control" id="inputWCT" placeholder="0" type="text" value="@form.get.wctId">
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" value="@form.get.wctId">
 			              	} else {
-			              		<input name="wctId" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@form.get.wctId">
+			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@form.get.wctId">
 			              	}
 							</div>
 						</div>
@@ -367,9 +368,9 @@
 			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
 						    <div class="col-sm-6">
 	   						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {						    
-			              		<input name="sptId" class="form-control" id="inputSPT" placeholder="0" type="text" value="@form.get.sptId".value">
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" value="@form.get.sptId".value">
 			              	} else {
-			              		<input name="sptId" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@form.get.sptId">
+			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@form.get.sptId">
 			                }
 							</div>
 						</div>
@@ -594,7 +595,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Date of publication</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="dateOfPublication" value="@form.get.dateOfPublication" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
+		 						<input type="text" name="date_of_publication" value="@form.get.getDateOfPublicationText()" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
 	                		</div>
 						</div>
 					</div>
@@ -904,7 +905,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Start date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="crawlStartDate" value="@form.get.crawlStartDate" size="30" maxlength="2048" class="form-control" id="start-date"/>
+		 						<input type="text" name="crawl_start_date" value="@form.get.getCrawlStartDateText()" size="30" maxlength="2048" class="form-control" id="start-date"/>
 	                		</div>
 						</div>
 					</div>
@@ -915,7 +916,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">End date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="crawlEndDate" value="@form.get.crawlEndDate" size="30" maxlength="2048" class="form-control" id="end-date"/>
+		 						<input type="text" name="crawl_end_date" value="@form.get.getCrawlEndDateText()" size="30" maxlength="2048" class="form-control" id="end-date"/>
 	                		</div>
 						</div>
 					</div>
@@ -1136,14 +1137,14 @@
 					    	&& !user.hasRole("archivist") 
 					    	&& !user.hasRole("sys_admin") 
 					    	&& user.id != form.get.authorUser.id) { 
-							<button type="submit" class="btn btn-primary" name="save" id="edit-save" disabled>Save</button>
+							<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save" disabled>Save</button>
 							@if(form.get != null) {
-								<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
+								<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
 							}
 						} else {
-							<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
+							<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
 					       	@if(form.get != null) {
-								<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
+								<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
 						   	}
 						}
 			       </div>

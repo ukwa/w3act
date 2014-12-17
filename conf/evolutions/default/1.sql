@@ -136,6 +136,7 @@ create table nomination (
   justification             text,
   notes                     text,
   nomination_checked        boolean,
+  nomination_date           timestamp,
   updated_at                timestamp not null,
   constraint uq_nomination_url unique (url),
   constraint pk_nomination primary key (id))

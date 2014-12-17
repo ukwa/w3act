@@ -9,24 +9,23 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li><a href="@routes.RoleController.view(form.get.id)">View</a></li>
-	   @if(user.hasRole("sys_admin")) {
-	   <li class="active"><a href="@routes.RoleController.edit(form.get.id)">Edit</a></li>
-      	<li><a href="@routes.RoleController.admin(form.get.id)">Role administration</a></li>
+		<li><a href="@routes.RoleController.view(form.get.id)">View</a></li>
+		@if(user.hasRole("sys_admin")) {
+			<li class="active"><a href="@routes.RoleController.edit(form.get.id)">Edit</a></li>
+		  	<li><a href="@routes.RoleController.admin(form.get.id)">Role administration</a></li>
 	   }
 	</ul>
     
 	    @warningmessage(flash)
 	    @helper.form(action=routes.RoleController.save) {
-		<input type="hidden" name="url" value="@form("url").value">
-	    <input type="hidden" name="nid" value="@form("id").value">
+	    <input type="hidden" name="id" value="@form.get.id">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
 					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 				    <div class="col-sm-6">
-	              		<input class="form-control" name="name" id="inputName" value="@form("name").value" type="text">
+	              		<input class="form-control" name="name" id="inputName" value="@form.get.name" type="text">
 					</div>
 				</div>
 			</div>
@@ -40,9 +39,9 @@
 				        @for(permission <- Permission.findAll()) {
 							<label class="checkbox-inline">
 								@if(form.get.permissions.contains(permission)) {
-				                	<input type="checkbox" name="@permission.name" value="true" checked />
+				                	<input type="checkbox" name="permissionsList" value="@permission.id" checked />
 				                } else {
-				                	<input type="checkbox" name="@permission.name" value="true" />
+				                	<input type="checkbox" name="permissionsList" value="@permission.id" />
 				                }
 				                 @permission.name
 			                </label>
@@ -57,7 +56,7 @@
 				<div class="form-group">
 	               <label class="col-sm-6 control-label" for="inputDescription">Description</label>
 				    <div class="col-sm-6">
-	               		<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1">@form("description").value</textarea>
+	               		<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1">@form.get.description</textarea>
 					</div>
 				</div>
 			</div>
@@ -69,7 +68,7 @@
 					<div class="form-group">
 		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
 					    <div class="col-sm-6">
-               				<textarea class="form-control" name="revision" id="inputRevision">@form("revision").value</textarea>
+               				<textarea class="form-control" name="revision" id="inputRevision">@form.get.revision</textarea>
 						</div>
 					</div>
 				</div>
@@ -83,10 +82,8 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
-				    @if(Role.findById(Long.valueOf(form("id").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
-					}
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>

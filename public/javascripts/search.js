@@ -264,7 +264,7 @@ function applySearch(context, searchContext, urlTo) {
 	    var resultMap = {};
 		$('#search-query').typeahead({
 			remote: {
-				url: context + searchContext + '/filterbyjson/%QUERY',
+				url: context + "/" + searchContext + '/filterbyjson/%QUERY',
 				filter: function(items) {
 					var searchResults = [];
 					for (var i = 0; i < items.length; i++) {
@@ -274,7 +274,10 @@ function applySearch(context, searchContext, urlTo) {
 							label = item.title;
 						}
 						var urls = "";
-						var fieldUrls = item.target.fieldUrls;
+						var fieldUrls = item.fieldUrls;
+						if (searchContext == 'instances') {
+							fieldUrls = item.target.fieldUrls;
+						}
 						for (var x = 0; x < fieldUrls.length; x++) {
 							urls += fieldUrls[x].url + " ";
 						}
@@ -296,7 +299,7 @@ function applySearch(context, searchContext, urlTo) {
 				$(this).val(datum.field_url);
 			}
 			if (urlTo !== undefined) {
-				window.location.replace(context + urlTo + "/" + datum.id);
+				window.location.replace(context + "/" + urlTo + "/" + datum.id);
 			} else {
 				window.location.replace(context + "/" + searchContext + "/" + datum.id); 
 			}

@@ -3,7 +3,6 @@ package controllers;
 import static play.data.Form.form;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import models.Collection;
@@ -41,7 +40,7 @@ public class QAController extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.QAController.list(0, "title", "asc", "", "act-", "", "")
+            routes.QAController.list(0, "title", "asc", "", "act-", "")
         );
     
     /**
@@ -52,7 +51,7 @@ public class QAController extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus, String keyQaStatus) {
+    public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus) {
     	
     	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
     	Logger.info("Calling QAController.list() collection: " + collection + " - " + qaStatus);
@@ -76,7 +75,7 @@ public class QAController extends AbstractController {
         			sortBy, 
         			order,
         			collection,
-        			qaStatus, keyQaStatus, collectionData, subjectData)
+        			qaStatus, collectionData, subjectData)
 //        			Taxonomy.findQaStatus(qaStatus))
         	);
     }
@@ -88,63 +87,41 @@ public class QAController extends AbstractController {
      */
     public static Result search() {
 //    	Logger.info("QAController.search");
-    	DynamicForm form = form().bindFromRequest();
-    	String action = form.get("action");
-    	String query = form.get("url");
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+    	String query = requestData.get("url");
     	Logger.info("QAController.search() query: " + query);
-//    	Logger.info("treeKeys: " + form.get(Const.TREE_KEYS));
     	
     	if (StringUtils.isBlank(query)) {
 			Logger.info("Target name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.QAController.list(0, "title", "asc", "", "act-", "", "")
+	        		routes.QAController.list(0, "title", "asc", "", "act-", "")
 	        );
     	}    	
 
-    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
-    	String sort = form.get(Const.SORT_BY);
-    	String order = form.get(Const.ORDER);
-    	String query_qa_status_name = form.get(Const.QA_STATUS);
-//    	String query_collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
-//    	Logger.info("QAController.search() query_collection_name: " + query_collection_name);
-    	Logger.info("query_qa_status_name: " + query_qa_status_name);
-    	String query_collection = "";
-//    	if (query_collection_name != null && !query_collection_name.toLowerCase().equals(Const.NONE)) {
-//    		try {
-//    			query_collection = DCollection.findByTitle(query_collection_name).url;
-//    		} catch (Exception e) {
-//    			Logger.info("Can't find collection for URL: " + query_collection_name + ". " + e);
-//    		}
-//    	} 
-        if (form.get(Const.TREE_KEYS) != null) {
-        	query_collection = Utils.removeDuplicatesFromList(form.get(Const.TREE_KEYS));
-    		Logger.debug("query_collection: " + query_collection);
-        }
-    	String query_qa_status = "";
-    	if (query_qa_status_name != null && !query_qa_status_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			query_qa_status = Taxonomy.findQaStatusUrl(query_qa_status_name);
-    		} catch (Exception e) {
-    			Logger.info("Can't find QA status for URL: " + query_qa_status_name + ". " + e);
-    		}
-    	} 
-
-    	Logger.info("query_qa_status: " + query_qa_status);
-    	
+    	int pageNo = Integer.parseInt(requestData.get(Const.PAGE_NO));
+    	String sort = requestData.get(Const.SORT_BY);
+    	String order = requestData.get(Const.ORDER);
+    	String qaStatus = requestData.get("qaStatus");
+    	if (StringUtils.isEmpty(qaStatus)) {
+    		qaStatus = "";
+    	}
+    	String collectionSelect = requestData.get("collectionSelect");
+    	if (StringUtils.isEmpty(collectionSelect)) {
+    		collectionSelect = "";
+    	}
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
-    	} else {
-    		if (Const.SEARCH.equals(action)) {
-    			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    			if (query_collection == null || query_collection.length() == 0) {
-				    query_collection = Const.ACT_URL;
-				}
-    			Logger.info("values: " + pageNo + " - " + sort + " - " + order + " - " + query + " - " + query_collection + " - " + query_qa_status);
-    	    	return redirect(routes.QAController.list(pageNo, sort, order, query, query_collection, query_qa_status, query_qa_status_name));
-		    } else {
+    	} else if (action.equals("search")) {
+			Logger.info("searching " + pageNo + " " + sort + " " + order);
+//			if (query_collection == null || query_collection.length() == 0) {
+//			    query_collection = Const.ACT_URL;
+//			}
+			Logger.info("values: " + pageNo + " - " + sort + " - " + order + " - " + query + " - " + collectionSelect + " - " + qaStatus);
+	    	return redirect(routes.QAController.list(pageNo, sort, order, query, collectionSelect, qaStatus));
+	    } else {
 		      return badRequest("This action is not allowed");
-		    }
     	}
     }
     

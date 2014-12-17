@@ -19,14 +19,14 @@
     
     @warningmessage(flash)
 	@helper.form(action=routes.NominationController.save) {
-		<input type="hidden" name="id" value="@form("id").value">
+		<input type="hidden" name="id" value="@form.get.id">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
 					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 				    <div class="col-sm-6">
-	              		<input class="form-control" name="name" id="inputName" value="@form("name").value" type="text">
+	              		<input class="form-control" name="name" id="inputName" value="@form.get.name" type="text">
 					</div>
 				</div>
 			</div>
@@ -37,7 +37,7 @@
 				<div class="form-group">
 					<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
 				    <div class="col-sm-6">
-		              <input class="form-control" name="title" id="title"  value="@form("title").value" placeholder="London Business Forum" type="text">
+		              <input class="form-control" name="title" id="title"  value="@form.get.title" placeholder="London Business Forum" type="text">
 					</div>
 				</div>
 			</div>
@@ -48,7 +48,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
 				    <div class="col-sm-6">
-						<input class="form-control" name="website_url" value="@form("website_url").value" placeholder="http://www.londonbusinessforum.com/" type="text">
+						<input class="form-control" name="websiteUrl" value="@form.get.websiteUrl" placeholder="http://www.londonbusinessforum.com/" type="text">
 					</div>
 				</div>
 			</div>
@@ -59,7 +59,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
 				    <div class="col-sm-6">
-						<input class="form-control" name="email" value="@form("email").value" placeholder="max.mustermann@@domain.com" type="text">
+						<input class="form-control" name="email" value="@form.get.email" placeholder="max.mustermann@@domain.com" type="text">
 					</div>
 				</div>
 			</div>
@@ -70,7 +70,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Phone:</label>
 				    <div class="col-sm-6">
-						<input class="form-control" value="@form("tel").value" name="phone" placeholder="0041889923456" type="text">
+						<input class="form-control" value="@form.get.tel" name="phone" placeholder="0041889923456" type="text">
 					</div>
 				</div>
 			</div>
@@ -81,7 +81,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Address:</label>
 				    <div class="col-sm-6">
-						<input class="form-control" value="@form("address").value" name="address" type="text">
+						<input class="form-control" value="@form.get.address" name="address" type="text">
 					</div>
 				</div>
 			</div>
@@ -92,10 +92,10 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Nominated Website Owner:</label>
 				    <div class="col-sm-6">
-				    @if(form("nominated_website_owner").value != null && form("nominated_websit_owner").value) {
-		                <input type="checkbox" name="nominated_website_owner" checked/>
+				    @if(form.get.nominatedWebsiteOwner != null && form.get.nominatedWebsiteOwner) {
+		                <input type="checkbox" name="nominatedWebsiteOwner" checked/>
 		            } else {
-		                <input type="checkbox" name="nominated_website_owner"/>
+		                <input type="checkbox" name="nominatedWebsiteOwner"/>
 		            }
 					</div>
 				</div>
@@ -107,7 +107,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Justification:</label>
 				    <div class="col-sm-6">
-						<input class="form-control" value="@form("justification").value" name="justification" type="text">
+						<input class="form-control" value="@form.get.justification" name="justification" type="text">
 					</div>
 				</div>
 			</div>
@@ -118,7 +118,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Nomination Checked:</label>
 				    <div class="col-sm-6">
-				    @if(form("nomination_checked").value != null && form("nomination_checked").value) {
+				    @if(form.get.nominationChecked != null && form.get.nominationChecked) {
 		                <input type="checkbox" name="nomination_checked" checked/>
 		            } else {
 		                <input type="checkbox" name="nomination_checked"/>
@@ -133,7 +133,7 @@
 				<div class="form-group">
 					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
 				    <div class="col-sm-6">
-						<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1">@form("notes").value</textarea>
+						<textarea class="form-control" name="notes" id="inputDescription" cols="100" rows="1">@form.get.notes"</textarea>
 					</div>
 				</div>
 			</div>
@@ -144,7 +144,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Date</label>
 				    <div class="col-sm-6">
- 						<input type="text" name="log-date" class="form-control" id="log-date" value="@form("nomination_date").value"/>
+ 						<input type="text" name="nomDate" class="form-control" id="log-date" value="@form.get.nominationDate"/>
                		</div>
 				</div>
 			</div>
@@ -153,9 +153,9 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
 				    @if(Nomination.findById(Long.valueOf(form("id").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
+					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 					}
 		       </div>
 			</div>

@@ -431,7 +431,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Date of publication</label>
 						    <div class="col-sm-6">
-	 							@target.dateOfPublication
+	 							@target.getDateOfPublicationText()
 	                		</div>
 						</div>
 					</div>
@@ -724,7 +724,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Start date</label>
 						    <div class="col-sm-6">
-		 						@target.crawlStartDate
+		 						@target.getCrawlStartDateText()
 	                		</div>
 						</div>
 					</div>
@@ -735,7 +735,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">End date</label>
 						    <div class="col-sm-6">
-		 						@target.crawlEndDate
+		 						@target.getCrawlEndDateText()
 	                		</div>
 						</div>
 					</div>

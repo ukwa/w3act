@@ -94,6 +94,8 @@ public class Nomination extends ActModel {
     @JsonIgnore
     public Boolean nominationChecked;
     
+    public Date nominationDate;
+    
     public static final Model.Finder<Long, Nomination> find = new Model.Finder<Long, Nomination>(Long.class, Nomination.class);
 
     public Nomination() {

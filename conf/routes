@@ -32,10 +32,9 @@ GET     /collections                        controllers.CollectionController.ind
 GET    	/collections/list                  	controllers.CollectionController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET    	/collections/search                 controllers.CollectionController.search()
 GET    	/collections/filterbyjson/:name		controllers.CollectionController.filterByJson(name)
-GET     /collections/new/:title      		controllers.CollectionController.create(title)
 GET     /collections/:id            		controllers.CollectionController.view(id:Long)
 GET     /collections/:url            		controllers.CollectionController.viewAct(url)
-GET     /collections/:collection/edit       controllers.CollectionController.edit(collection)
+GET     /collections/:id/edit       		controllers.CollectionController.edit(id:Long)
 GET     /collections/:sites/sites			controllers.CollectionController.sites(sites)
 POST    /collections             			controllers.CollectionController.save()
 
@@ -210,7 +209,7 @@ GET     /contact                                controllers.ContactController.in
 POST    /contact/send              	            controllers.ContactController.send()
 
 GET     /qa                                     controllers.QAController.index()
-GET     /qa/list                                controllers.QAController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_collection ?= "", query_qa_status ?= "", keyQaStatus ?= "")
+GET     /qa/list                                controllers.QAController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_collection ?= "", query_qa_status ?= "")
 GET     /qa/search               		        controllers.QAController.search()
 GET    	/qa/filterbyjson/:name		            controllers.QAController.filterByJson(name)
 

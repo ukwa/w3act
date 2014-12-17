@@ -17,7 +17,7 @@
 	</ul>
 
 	@helper.form(action=routes.RoleController.saveAdmin, 'class -> "form-inline") {
-		<input type="hidden" name="url" value="@role.url">
+		<input type="hidden" name="id" value="@role.id">
 		
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -27,7 +27,7 @@
 						<div class="col-sm-6">
 		        			@for(permission <- role.permissions) {
 								<label class="checkbox-inline">
-					                <input type="checkbox" name="@permission.name" value="true" checked /> @permission.name 
+					                <input type="checkbox" name="permissionsList" value="@permission.id" checked /> @permission.name 
 								</label>
 							}
 						</div>
@@ -50,7 +50,7 @@
 						<div class="col-sm-6">
 					        @for(notpermission <- Role.getNotAssignedPermissions(role.permissions)) {
 								<label class="checkbox-inline">
-					                <input type="checkbox" name="@notpermission.name + np" value="true" checked /> @notpermission.name 
+					                <input type="checkbox" name="notPermissionsList" value="notpermission.id" checked /> @notpermission.name 
 								</label>
 							}
 						</div>
@@ -68,7 +68,7 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
+					<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
 		       </div>
 			</div>
 		</div>

@@ -137,31 +137,31 @@ public class Role extends ActModel {
     	return false;
     }
 
-    public static List<Permission> getNotAssignedPermissions(List<Permission> assignedPermissions) {
-    	return Permission.find.where().not(Expr.in("permissions", assignedPermissions)).findList();
-    }
+//    public static List<Permission> getNotAssignedPermissions(List<Permission> assignedPermissions) {
+//    	return Permission.find.where().not(Expr.in("permissions", assignedPermissions)).findList();
+//    }
     
 
-//    /**
-//     * This method returns permissions that are not assigned to this role.
-//     * @return list of Permission objects
-//     */
-//    public static List<Permission> getNotAssignedPermissions(List<Permission> assignedPermissions) {
-//    	List<Permission> allPermissionList = Permission.findAll();
-////    	Logger.info("Permissions count: " + allPermissionList.size());
-//        List<Permission> res = new ArrayList<Permission>();
-//    	if (assignedPermissions != null && assignedPermissions.size() > 0) {
-//			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
-//			while (itrAllPermissions.hasNext()) {
-//				Permission curPermission = itrAllPermissions.next();
-////		    	Logger.info("curPermission: " + curPermission.name);
-//				if (!assignedPermissions.contains(curPermission)) {
-//					res.add(curPermission);
-//				}
-//			}
-//    	}
-//        return res;
-//    }
+    /**
+     * This method returns permissions that are not assigned to this role.
+     * @return list of Permission objects
+     */
+    public static List<Permission> getNotAssignedPermissions(List<Permission> assignedPermissions) {
+    	List<Permission> allPermissionList = Permission.findAll();
+//    	Logger.info("Permissions count: " + allPermissionList.size());
+        List<Permission> res = new ArrayList<Permission>();
+    	if (assignedPermissions != null && assignedPermissions.size() > 0) {
+			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
+			while (itrAllPermissions.hasNext()) {
+				Permission curPermission = itrAllPermissions.next();
+//		    	Logger.info("curPermission: " + curPermission.name);
+				if (!assignedPermissions.contains(curPermission)) {
+					res.add(curPermission);
+				}
+			}
+    	}
+        return res;
+    }
 //    
 //    public static List<Permission> getNotAssignedPermissions(String permissionsStr) {
 //    	List<Permission> allPermissionList = Permission.findAll();
@@ -305,7 +305,7 @@ public class Role extends ActModel {
 		for (Permission permission : this.permissions) {
 			names.add(permission.name);
 		}
-		return "";
+		return StringUtils.join(names, ", ");
 	}
     
 	@Override

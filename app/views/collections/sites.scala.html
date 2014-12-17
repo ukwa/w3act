@@ -91,7 +91,7 @@
 	<ul class="nav nav-tabs">
 		<li><a href="@routes.CollectionController.view(collection.id)">View</a></li>
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		<li><a href="@routes.CollectionController.edit(collection.url)">Edit</a></li>
+		<li><a href="@routes.CollectionController.edit(collection.id)">Edit</a></li>
 		}
 		<li class="active"><a href="@routes.CollectionController.sites(collection.url)">Targets</a></li>
 	</ul>

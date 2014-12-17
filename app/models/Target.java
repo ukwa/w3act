@@ -1,6 +1,8 @@
 package models;
 
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -288,6 +290,15 @@ public class Target extends UrlModel {
 	@Transient
 	public String formUrl;
 
+	@Transient
+	private String dateOfPublicationText;
+	
+	@Transient
+	private String crawlStartDateText;
+	
+	@Transient
+	private String crawlEndDateText;
+	
 //	public String title;
 //	
 //
@@ -2710,6 +2721,31 @@ public class Target extends UrlModel {
 		return StringUtils.join(names, ", ");
 	}
 	
+	
+	public String getDateOfPublicationText() {
+		if (dateOfPublication != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			dateOfPublicationText = dateFormat.format(dateOfPublication);
+		}
+		return dateOfPublicationText;
+	}
+
+	public String getCrawlStartDateText() {
+		if (crawlStartDate != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			crawlStartDateText = dateFormat.format(crawlStartDate);
+		}
+		return crawlStartDateText;
+	}
+	
+	public String getCrawlEndDateText() {
+		if (crawlEndDate != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			crawlEndDateText = dateFormat.format(crawlEndDate);
+		}
+		return crawlEndDateText;
+	}
+
 	@Override
 	public String toString() {
 		return "Target [qaIssue=" + qaIssue + ", authorUser=" + authorUser

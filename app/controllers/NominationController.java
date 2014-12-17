@@ -2,6 +2,10 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import models.Nomination;
@@ -51,11 +55,9 @@ public class NominationController extends AbstractController {
      */
     public static Result edit(Long id) {
 		Nomination nomination = Nomination.findById(id);
-		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
-		nominationFormNew = nominationFormNew.fill(nomination);
-      	return ok(
-	              edit.render(nominationFormNew, User.findByEmail(request().username()))
-	            );
+		Form<Nomination> nominationForm = Form.form(Nomination.class);
+		nominationForm = nominationForm.fill(nomination);
+      	return ok(edit.render(nominationForm, User.findByEmail(request().username())));
     }
     
     public static Result view(Long id) {
@@ -190,53 +192,6 @@ public class NominationController extends AbstractController {
             Logger.debug("new nominations count for given name: " + Nomination.filterByName(name).size());
             return ok(result);
         }
-    }	   
-
-	/**
-	 * This method prepares Nomination form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-    	Nomination nomination = new Nomination();
-    	nomination.id = Long.valueOf(getFormParam(Const.ID));
-    	nomination.url = getFormParam(Const.URL);
-        nomination.name = getFormParam(Const.NAME);
-	    if (getFormParam(Const.TITLE) != null) {
-	    	nomination.title = getFormParam(Const.TITLE);
-	    }
-	    if (getFormParam(Const.WEBSITE_URL) != null) {
-	    	nomination.websiteUrl = getFormParam(Const.WEBSITE_URL);
-	    }
-	    if (getFormParam(Const.EMAIL) != null) {
-	    	nomination.email = getFormParam(Const.EMAIL);
-	    }
-	    if (getFormParam(Const.PHONE) != null) {
-	    	nomination.tel = getFormParam(Const.PHONE);
-	    }
-	    if (getFormParam(Const.ADDRESS) != null) {
-	    	nomination.address = getFormParam(Const.ADDRESS);
-	    }
-	    if (getFormParam(Const.DESCRIPTION) != null) {
-	    	nomination.notes = getFormParam(Const.DESCRIPTION);
-	    }
-	    if (getFormParam(Const.JUSTIFICATION) != null) {
-	    	nomination.justification = getFormParam(Const.JUSTIFICATION);
-	    }
-        if (getFormParam(Const.NOMINATION_DATE) != null) {
-        	String startDateHumanView = getFormParam(Const.NOMINATION_DATE);
-        	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
-        	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
-        	// TODO: UNIX DATE
-//        	nomination.nominationDate = startDateUnix;
-        }        	    
-        nomination.nominatedWebsiteOwner = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATED_WEBSITE_OWNER));
-        nomination.nominationChecked = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATION_CHECKED));
-		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
-		nominationFormNew = nominationFormNew.fill(nomination);
-      	return ok(
-	              edit.render(nominationFormNew, User.findByEmail(request().username()))
-	            );
     }
     
     /**
@@ -247,97 +202,65 @@ public class NominationController extends AbstractController {
      */
     public static Result save() {
     	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save nomination id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+        if (StringUtils.isNotEmpty(action)) {
         	Form<Nomination> nominationForm = Form.form(Nomination.class).bindFromRequest();
-            if(nominationForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : nominationForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + nominationForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
-            }
-        	Nomination nomination = null;
-            boolean isExisting = true;
-            try {
-                try {
-                	nomination = Nomination.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	nomination = new Nomination();
-                	nomination.id = Long.valueOf(getFormParam(Const.ID));
-                	nomination.url = getFormParam(Const.URL);
-                }
-                if (nomination == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	nomination = new Nomination();
-                	nomination.id = Long.valueOf(getFormParam(Const.ID));
-                	nomination.url = getFormParam(Const.URL);
-                }
-                
-                nomination.name = getFormParam(Const.NAME);
-        	    if (getFormParam(Const.TITLE) != null) {
-        	    	nomination.title = getFormParam(Const.TITLE);
-        	    }
-        	    if (getFormParam(Const.WEBSITE_URL) != null) {
-        	    	nomination.websiteUrl = getFormParam(Const.WEBSITE_URL);
-        	    }
-        	    if (getFormParam(Const.EMAIL) != null) {
-        	    	nomination.email = getFormParam(Const.EMAIL);
-        	    }
-        	    if (getFormParam(Const.PHONE) != null) {
-        	    	nomination.tel = getFormParam(Const.PHONE);
-        	    }
-        	    if (getFormParam(Const.ADDRESS) != null) {
-        	    	nomination.address = getFormParam(Const.ADDRESS);
-        	    }
-        	    if (getFormParam(Const.DESCRIPTION) != null) {
-        	    	nomination.notes = getFormParam(Const.DESCRIPTION);
-        	    }
-        	    if (getFormParam(Const.JUSTIFICATION) != null) {
-        	    	nomination.justification = getFormParam(Const.JUSTIFICATION);
-        	    }
-                if (getFormParam(Const.NOMINATION_DATE) != null) {
-                	String startDateHumanView = getFormParam(Const.NOMINATION_DATE);
-                	String startDateUnix = Utils.getUnixDateStringFromDate(startDateHumanView);
-                	Logger.info("startDateHumanView: " + startDateHumanView + ", startDateUnix: " + startDateUnix);
-                	// TODO: UNIX DATE
-//                	nomination.nominationDate = startDateUnix;
-                }        	    
-                nomination.nominatedWebsiteOwner = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATED_WEBSITE_OWNER));
-                nomination.nominationChecked = Utils.getNormalizeBooleanString(getFormParam(Const.NOMINATION_CHECKED));
-            } catch (Exception e) {
-            	Logger.info("Nomination not existing exception");
-            }
+            Nomination nominationFromForm = nominationForm.get();
+            Long id = Long.valueOf(nominationFromForm.id);
             
-        	if (!isExisting) {
-               	Ebean.save(nomination);
-    	        Logger.info("save nomination: " + nomination.toString());
-        	} else {
-           		Logger.info("update nomination: " + nomination.toString());
-               	Ebean.update(nomination);
+        	if (action.equals("save")) {        	
+	            if(nominationForm.hasErrors()) {
+	            	String missingFields = "";
+	            	for (String key : nominationForm.errors().keySet()) {
+	            	    Logger.debug("key: " +  key);
+	            	    if (missingFields.length() == 0) {
+	            	    	missingFields = key;
+	            	    } else {
+	            	    	missingFields = missingFields + ", " + key;
+	            	    }
+	            	}
+	            	Logger.info("form errors size: " + nominationForm.errors().size() + ", " + missingFields);
+		  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+		  					" Missing fields are: " + missingFields);
+		  	      	return ok(
+		  	              edit.render(nominationForm, User.findByEmail(request().username()))
+		  	            );
+	            }
+	            
+	            Nomination nominationFromDB = Nomination.findById(id);
+	            
+	            nominationFromDB.name = nominationFromForm.name;
+	            nominationFromDB.title = nominationFromForm.title;
+	            nominationFromDB.websiteUrl = nominationFromForm.websiteUrl;
+	            nominationFromDB.email = nominationFromForm.email;
+	            nominationFromDB.tel = nominationFromForm.tel;
+	            nominationFromDB.address = nominationFromForm.address;
+	            nominationFromDB.notes = nominationFromForm.notes;
+    	    	nominationFromDB.justification = nominationFromForm.justification;
+	    	    
+                String nomDate = requestData.get("nomDate");
+            	if (StringUtils.isNotEmpty(nomDate)) {
+        			DateFormat formatter = new SimpleDateFormat("dd-MM-yy");
+        			try {
+    					Date date = formatter.parse(nomDate);
+    					nominationFromDB.nominationDate = date;
+    				} catch (ParseException e) {
+    		  			flash("message", "Nomination Date (dd-mm-yy) - Incorrect Format");
+    					return ok(edit.render(nominationForm, User.findByEmail(request().username()))); 
+    				}
+            	}
+    	    	nominationFromDB.nominatedWebsiteOwner = nominationFromForm.nominatedWebsiteOwner;
+    	    	nominationFromDB.nominationChecked = nominationFromForm.nominationChecked;
+    	    	nominationFromDB.save();
+    	    	res = redirect(routes.NominationController.edit(nominationFromDB.id));
+        	} else if(action.equals("delete")) {
+            	Nomination nomination = Nomination.findById(id);
+            	nomination.delete();
+    	        res = redirect(routes.NominationController.index()); 
         	}
-	        res = redirect(routes.NominationController.edit(nomination.id));
         } 
-        if (delete != null) {
-        	Nomination nomination = Nomination.findByUrl(getFormParam(Const.URL));
-        	Ebean.delete(nomination);
-	        res = redirect(routes.NominationController.index()); 
-        }
         return res;
     }	   
 

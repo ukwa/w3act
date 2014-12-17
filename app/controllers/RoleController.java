@@ -5,7 +5,9 @@ import static play.data.Form.form;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import models.Flag;
 import models.Permission;
 import models.Role;
 import models.Target;
@@ -204,118 +206,63 @@ public class RoleController extends AbstractController {
      */
     public static Result save() {
     	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.debug("save role: " + save);
+        
         User user = User.findByEmail(request().username());
-        if (save != null) {
-        	Logger.debug("save role nid: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
-        	Form<Role> roleForm = Form.form(Role.class).bindFromRequest();
-            if(roleForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : roleForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + roleForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			
-	  			return ok(
-	  	              edit.render(roleForm, user));
-            }
-        	Role role = null;
-            boolean isExisting = true;
-            try {
-                try {
-                	role = Role.findById(Long.valueOf(getFormParam(Const.ID)));
-                } catch (Exception e) {
-                	Logger.debug("is not existing exception");
-                	isExisting = false;
-                	role = new Role();
-                	role.id = Long.valueOf(getFormParam(Const.ID));
-                	role.url = getFormParam(Const.URL);
-                }
-                if (role == null) {
-                	Logger.debug("is not existing");
-                	isExisting = false;
-                	role = new Role();
-                	role.id = Long.valueOf(getFormParam(Const.ID));
-                	role.url = getFormParam(Const.URL);
-                }
-                
-                role.name = getFormParam(Const.NAME);
-        	    if (getFormParam(Const.DESCRIPTION) != null) {
-        	    	role.description = getFormParam(Const.DESCRIPTION);
-        	    }
-        	    
-                String permissionStr = "";
-		        List<Permission> permissionList = Permission.findAll();
-		        Iterator<Permission> permissionItr = permissionList.iterator();
-		        while (permissionItr.hasNext()) {
-		        	Permission permission = permissionItr.next();
-	                if (getFormParam(permission.name) != null) {
-		                boolean permissionFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
-		                if (permissionFlag) {
-		                	if (permissionStr.length() == 0) {
-		                		permissionStr = permission.name;
-		                	} else {
-		                		permissionStr = permissionStr + ", " + permission.name;
-		                	}
-		                }
-	                }
-		        }
-//		        if (permissionStr.length() == 0) {
-//		        	role.setPermissions(new ArrayList<Permission>());
-//		        } else {
-//		        	role.setPermissions(Permission.convertUrlsToObjects(permissionStr));
-//		        }
+    	Form<Role> roleForm = Form.form(Role.class).bindFromRequest();
+    	
+    	Logger.info("role data: " + roleForm.get());
+        DynamicForm requestData = Form.form().bindFromRequest();
+        
+        String action = requestData.get("action");
+        
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+	            if(roleForm.hasErrors()) {
+	            	String missingFields = "";
+	            	for (String key : roleForm.errors().keySet()) {
+	            	    Logger.debug("key: " +  key);
+	            	    if (missingFields.length() == 0) {
+	            	    	missingFields = key;
+	            	    } else {
+	            	    	missingFields = missingFields + Const.COMMA + " " + key;
+	            	    }
+	            	}
+	            	Logger.info("form errors size: " + roleForm.errors().size() + ", " + missingFields);
+		  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+		  					" Missing fields are: " + missingFields);
+		  			
+		  			return ok(
+		  	              edit.render(roleForm, user));
+	            }
+	            Role roleFromDB = Role.findById(roleForm.get().id);
+	            Role roleFromForm = roleForm.get();
 
-        	    
-        	    if (role.revision == null) {
-        	    	role.revision = "";
-        	    }
-                if (getFormParam(Const.REVISION) != null) {
-                	role.revision = getFormParam(Const.REVISION);
-                }
-            } catch (Exception e) {
-            	Logger.info("Role not existing exception");
-            }
-            
-        	if (!isExisting) {
-               	Ebean.save(role);
-    	        Logger.info("save role: " + role.toString());
-        	} else {
-//                Utils.removeAssociationFromDb(Const.PERMISSION_ROLE, Const.ID + "_" + Const.ROLE, role.id);
-                Logger.info("update role: " + role.toString());
-               	Ebean.update(role);
+	            Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+
+	            roleFromDB.name = roleFromForm.name;
+	            
+	            String[] permissionValues = formParams.get("permissionsList");
+
+	            List<Permission> newPermissions = new ArrayList<Permission>();
+	            if (permissionValues != null) {
+		            for(String permissionValue: permissionValues) {
+		            	Long permissionsId = Long.valueOf(permissionValue);
+		            	Permission permission = Permission.findById(permissionsId);
+		            	newPermissions.add(permission);
+		            }
+		            roleFromDB.permissions = newPermissions;
+	            }
+	            
+	            roleFromDB.description = roleFromForm.description;
+	            roleFromDB.revision = roleFromForm.revision;
+	            roleFromDB.save();
+		        res = redirect(routes.RoleController.edit(roleFromDB.id));
         	}
-        	// update association to permissions
-//	        List<Permission> permissionList = Permission.findAll();
-//	        Iterator<Permission> permissionItr = permissionList.iterator();
-//	        while (permissionItr.hasNext()) {
-//	        	Permission permission = permissionItr.next();
-//	        	Logger.debug("Update role - permission: " + permission.toString() + ", role.permissions: " + role.getPermissionsMap().size());
-//                if (permission.name != null
-//                		&& Permission.isIncluded(permission.id, role.getPermissionsMap())) {
-//                	permission.getRoles().add(role);
-//                	Ebean.update(permission);
-//                } else {
-//                	permission.setRoles(new ArrayList<Role>());
-//                	Ebean.update(permission);
-//                }
-//	        }
-	        res = redirect(routes.RoleController.edit(role.id));
-        } 
-        if (delete != null) {
-        	Role role = Role.findById(Long.valueOf(getFormParam(Const.ID)));
-        	Ebean.delete(role);
-	        res = redirect(routes.RoleController.index()); 
+        	else if (action.equals("delete")) {
+	        	Role role = Role.findById(roleForm.get().id);
+	        	role.delete();
+		        res = redirect(routes.RoleController.index());
+        	}
         }
         return res;
     }	   
@@ -326,28 +273,55 @@ public class RoleController extends AbstractController {
      */
     public static Result saveAdmin() {
     	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        if (save != null) {
-        	Role role = null;
-            try {
-               	role = Role.findById(Long.valueOf(getFormParam(Const.ID)));
-               	String assignedPermissions = "";
-		        List<Permission> permissionList = Permission.findAll();
-		        Iterator<Permission> permissionItr = permissionList.iterator();
-		        while (permissionItr.hasNext()) {
-		        	Permission permission = permissionItr.next();
-	                if (getFormParam(permission.name) != null) {
-                		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
-		                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
-		                if (userFlag) {
-		                	if (assignedPermissions.length() == 0) {
-		                		assignedPermissions = permission.name;
-		                	} else {
-		                		assignedPermissions = assignedPermissions + Const.COMMA + " " + permission.name;
-		                	}
-		                }
-	                }
-		        }
+
+        User user = User.findByEmail(request().username());
+    	
+        DynamicForm requestData = Form.form().bindFromRequest();
+        
+        String action = requestData.get("action");
+
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+        		
+                Long id = Long.valueOf(requestData.get("id"));
+        		
+	            Role roleFromDB = Role.findById(id);
+
+	            Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+	            String[] permissionsList = formParams.get("permissionsList");
+	            String[] notPermissionsList = formParams.get("notPermissionsList");
+
+//	            List<Permission> newPermissions = new ArrayList<Permission>();
+//	            if (permissionValues != null) {
+//		            for(String permissionValue: permissionValues) {
+//		            	Long permissionsId = Long.valueOf(permissionValue);
+//		            	Permission permission = Permission.findById(permissionsId);
+//		            	newPermissions.add(permission);
+//		            }
+//		            roleFromDB.permissions = newPermissions;
+//	            }
+		        res = redirect(routes.RoleController.admin(roleFromDB.id));
+        	}
+    	
+    	
+//    	
+//               	String assignedPermissions = "";
+//		        List<Permission> permissionList = Permission.findAll();
+//		        Iterator<Permission> permissionItr = permissionList.iterator();
+//		        while (permissionItr.hasNext()) {
+//		        	Permission permission = permissionItr.next();
+//	                if (getFormParam(permission.name) != null) {
+//                		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+//		                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+//		                if (userFlag) {
+//		                	if (assignedPermissions.length() == 0) {
+//		                		assignedPermissions = permission.name;
+//		                	} else {
+//		                		assignedPermissions = assignedPermissions + Const.COMMA + " " + permission.name;
+//		                	}
+//		                }
+//	                }
+//		        }
 //        		Logger.info("assignedPermissions: " + assignedPermissions);
 ////		        role.permissions = assignedPermissions;
 //		        if (assignedPermissions.length() == 0) {
@@ -355,13 +329,6 @@ public class RoleController extends AbstractController {
 //		        } else {
 //		        	role.setPermissions(Permission.convertUrlsToObjects(assignedPermissions));
 //		        }
-               	Ebean.update(role);
-            } catch (Exception e) {
-            	Logger.info("User not existing exception");
-            }
-	        res = redirect(routes.RoleController.admin(role.id));
-        } else {
-        	res = ok();
         }
         return res;
     }

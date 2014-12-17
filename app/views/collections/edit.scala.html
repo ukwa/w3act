@@ -14,163 +14,112 @@
 
 			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect");
             
-			function showTree(data, id, key) {
-	        	//console.log(data);
-	         	$(id).dynatree({
-					checkbox: true,
-	            	selectMode: 3,
-	            	children: data,
-	            	onSelect: function(select, node) {
-	              		// Get a list of all selected nodes, and convert to a key array:
-	              		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-	                		return node.data.key;
-	              		});
-	              		document.getElementById(key).value = selKeys.join(", ");
-	              		
-	              		console.log("test: " + document.getElementById(key).value);
-	              		// Get a list of all selected TOP nodes
-	              		var selRootNodes = node.tree.getSelectedNodes(true);
-	              		// ... and convert to a key array:
-	              		var selRootKeys = $.map(selRootNodes, function(node){
-	                		return node.data.key;
-	              		});
-	            	}
-	         	});
-	        }
 		});
 	</script>
 }
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 
-@main("", user, scripts) {
-    
-   	<div class="page-header">
-	    <h1><a href="@routes.CollectionController.index()">Taxonomies > Collections > </a>Collection @form("title").value</h1>
-    </div>
-    
-	<ul class="nav nav-tabs">
-	    @if(models.Collection.findById(Long.valueOf(form("id").value)) != null) {
-		<li><a href="@routes.CollectionController.view(form.get.id)">View</a></li>
-		}
-		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.CollectionController.edit(form.get.url)">Edit</a></li>
-		}
-	    @if(models.Collection.findById(Long.valueOf(form("id").value)) != null) {
-		<li><a href="@routes.CollectionController.sites(form("url").value)">Targets</a></li>
-		}
-	</ul>
-	
+	@main("", user, scripts) {
+	    
+	   	<div class="page-header">
+		    <h1><a href="@routes.CollectionController.index()">Taxonomies > Collections > </a>Collection @form("title").value</h1>
+	    </div>
+	    
+		<ul class="nav nav-tabs">
+			<li><a href="@routes.CollectionController.view(form.get.id)">View</a></li>
+			@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+			   <li class="active"><a href="@routes.CollectionController.edit(form.get.id)">Edit</a></li>
+			}
+			<li><a href="@routes.CollectionController.sites(form.get.url)">Targets</a></li>
+		</ul>
+		
 	    @warningmessage(flash)
 		@helper.form(action=routes.CollectionController.save) {
-   		<input type="hidden" name="url" value="@form("url").value">
-   	    <input type="hidden" name="id" value="@form("id").value">
+	   	    <input type="hidden" name="id" value="@form.get.id">
 
-		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Title <font color="red">*</font></label>
-				    <div class="col-sm-6">
-						<input class="form-control" name="title" id="title" value="@form("title").value" type="text">
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputName" class="col-sm-6 control-label">Title <font color="red">*</font></label>
+					    <div class="col-sm-6">
+							<input class="form-control" name="name" id="title" value="@form.get.name" type="text">
+						</div>
 					</div>
 				</div>
-			</div>
-     	</div>
-     	
-   		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-	              	<label for="suggestions-collections" class="col-sm-6 control-label">Parent</label>
-				    <div class="col-sm-6">
-						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
-							<div id="collectionTree"></div>
-					  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@form.get.parent")">
-						} else {
-							@if(form("url").value != null) {
-								@form.get.parent
+	     	</div>
+	     	
+	   		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		              	<label for="suggestions-collections" class="col-sm-6 control-label">Parent</label>
+					    <div class="col-sm-6">
+							@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+								<div id="collectionTree"></div>
+						  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@form.get.parent">
 							} else {
-							    None
-							}
-     	              }	   
+								@if(form.get.url != null) {
+									@form.get.parent
+								} else {
+								    None
+								}
+	     	              }	   
+						</div>
 					</div>
 				</div>
-			</div>
-     	</div>	   
+	     	</div>	   
 
-		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-   		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label class="col-sm-6 control-label">Publish</label>
-				    <div class="col-sm-6">
-		                @if(form("publish").value != null && form("publish").value == "true") {             
-			                <input type="checkbox" name="publish" value="true" checked/>
-		                } else {
-			                <input type="checkbox" name="publish" value="true"/>
-		                }
+			@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+		   		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Publish</label>
+						    <div class="col-sm-6">
+				                @if(form.get.publish != null && form.get.publish) {             
+					                <input type="checkbox" name="publish" value="true" checked/>
+				                } else {
+					                <input type="checkbox" name="publish" value="true"/>
+				                }
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-     	</div>		     				     	
-		}     	
+		     	</div>		     				     	
+			}     	
 		
-		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
-				    <div class="col-sm-6">
-		          		<textarea class="form-control" name="summary" id="inputDescription" value="@form("summary").value" cols="100" rows="1">@form("summary").value</textarea>
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputDescription" class="col-sm-6 control-label">Description</label>
+					    <div class="col-sm-6">
+			          		<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1">@form.get.description</textarea>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 		
-		<!-- div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-     			
-     			<div class="padding-10">
-	     			<a data-toggle="collapse" data-parent="#accordion" href="#parent-panel">
-						<span id="toggle">&#9660; Parent Terms &#9650;</span>
-					</a>
-				</div>
-								
-				<div id="accordion">
-					<div id="parent-panel" class="panel-collapse collapse">
-						<ul>
-		            		@for(curParent <- models.Collection.getParentsByUrl(form("url").value)) {
-		            			<li><a class="brand" href="@routes.CollectionController.view(curParent.id)">(@curParent.id) &nbsp; @curParent.name</a></li>
-				            }
-			            </ul>
-					</div>
-				</div>
-	    	</div>
-    	</div-->
-    	    	
-		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-     			<div class="form-group">
-					<label for="inputRevision" class="col-sm-6 control-label">Revision log message</label>
-				    <div class="col-sm-6">
-						<textarea class="form-control text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1">@form("revision").value</textarea>
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+	     			<div class="form-group">
+						<label for="inputRevision" class="col-sm-6 control-label">Revision log message</label>
+					    <div class="col-sm-6">
+							<textarea class="form-control text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1">@form.get.revision</textarea>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
     	
-    	@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		<div class="row padding-10 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
-				    @if(models.Collection.findById(Long.valueOf(form("id").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
-					}
-		       </div>
-			</div>
-		</div>
+	    	@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+				<div class="row padding-10 pull-right">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="btn-group">
+							<button type="submit" class="btn btn-primary" name="save">Save</button>
+							<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
+				       </div>
+					</div>
+				</div>
+			}
 		}
 	}
-}
 } else {
 	@infomessage.render("Access Denied for URL @routes.CollectionController.index()/edit")
 }
