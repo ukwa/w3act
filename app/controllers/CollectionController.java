@@ -3,7 +3,6 @@ package controllers;
 import static play.data.Form.form;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import models.Collection;
@@ -24,7 +23,6 @@ import views.html.collections.edit;
 import views.html.collections.list;
 import views.html.collections.view;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -90,7 +88,9 @@ public class CollectionController extends AbstractController {
     		if (action.equals("addentry")) {
     	    	Collection collection = new Collection();
     	    	collection.name = query;
-    			JsonNode node = getCollectionsTree(collection.url);
+    			List<Collection> thisCollection = new ArrayList<Collection>();
+    			thisCollection.add(collection);
+    			JsonNode node = getCollectionsData(thisCollection);
     			Form<Collection> collectionForm = Form.form(Collection.class);
     			collectionForm = collectionForm.fill(collection);
     	        return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));    			
@@ -116,6 +116,7 @@ public class CollectionController extends AbstractController {
 	public static Result view(Long id) {
 		User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
+		Logger.info("" + id+ " " + collection);
         return ok(view.render(collection, user));
 	}
 	
@@ -129,17 +130,25 @@ public class CollectionController extends AbstractController {
      * Display the collection edit panel for this URL.
      */
     public static Result edit(Long id) {
+    	User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
-		JsonNode node = getCollectionsTree(collection.url);
+		List<Collection> thisCollection = new ArrayList<Collection>();
+		thisCollection.add(collection);
+		JsonNode node = getCollectionsData(thisCollection);
 		Form<Collection> collectionForm = Form.form(Collection.class);
 		collectionForm = collectionForm.fill(collection);
-        return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));
+		Logger.info("id: " + collectionForm.get().id);
+        return ok(edit.render(collectionForm, user, node));
     }
 
     public static Result info(Form<Collection> form) {
+    	Logger.info("info");
     	User user = User.findByEmail(request().username());
-		JsonNode node = getCollectionsTree(form.get().url);
-      	return ok(edit.render(form, user, node));
+		List<Collection> thisCollection = new ArrayList<Collection>();
+		Collection collection = form.get();
+		thisCollection.add(collection);
+		JsonNode node = getCollectionsData(thisCollection);
+		return ok(edit.render(form, user, node));
     }
     
     /**
@@ -189,13 +198,14 @@ public class CollectionController extends AbstractController {
 	                String[] collections = collectionSelect.split(", ");
 	                if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
-	                	
-	                	if (collectionId == id) {         	  			
+	                	if (collectionId == id) {
+	                		Logger.info("same id");
 	        	  			flash("message", "It is not possible to assign a node to itself as a parent. Please select one parent.");
 	        	  			return info(collectionForm);
 	                	} else {
 			            	Collection collection = Collection.findById(collectionId);
 		                	collectionFromDB.parent = collection;
+		                	Logger.info("looking good");
 	                	}
 	                }
 	                else if (collections.length > 1) {
@@ -224,131 +234,7 @@ public class CollectionController extends AbstractController {
         return res;
     }
 	    
-    public static Result sites(String url) {
-        return redirect(routes.TargetController.collectionTargets(0, "title", "asc", "", url));
+    public static Result sites(Long id) {
+        return redirect(routes.TargetController.collectionTargets(0, "title", "asc", "", id));
     }    
-    
-    /**
-     * This method presents collections in a tree form.
-     * @param url
-     * @return
-     */
-    private static JsonNode getCollectionsTree(String url) {
-        JsonNode jsonData = null;
-        final StringBuffer sb = new StringBuffer();
-    	List<Collection> suggestedCollections = Collection.getFirstLevelCollections();
-    	if (StringUtils.isNotEmpty(url)) {
-    		try {
-	    		Collection collection = Collection.findByUrl(url);
-	    		if (collection.parent != null) {
-//	    			url = collection.parent;
-	    		}
-    		} catch (Exception e) {
-    			e.printStackTrace();
-    		}
-    	}    	
-    	sb.append(getTreeElements(suggestedCollections, url, true));
-        jsonData = Json.toJson(Json.parse(sb.toString()));
-        return jsonData;
-    }
-    
-    /**
-   	 * This method calculates first order collections.
-     * @param collectionList The list of all collections
-     * @param url This is an identifier for current collection object
-     * @param parent This parameter is used to differentiate between root and children nodes
-     * @return collection object in JSON form
-     */
-    public static String getTreeElements(List<Collection> collectionList, String url, boolean parent) { 
-//    	Logger.info("getTreeElements() target URL: " + targetUrl);
-    	String res = "";
-    	if (collectionList.size() > 0) {
-	        final StringBuffer sb = new StringBuffer();
-	        sb.append("[");
-	        if (parent) {
-	        	sb.append("{\"title\": \"" + "None" + "\"," + checkNone(url) + 
-	        			" \"key\": \"" + "None" + "\"" + "}, ");
-	        }
-	    	Iterator<Collection> itr = collectionList.iterator();
-	    	boolean firstTime = true;
-	    	while (itr.hasNext()) {
-	    		Collection collection = itr.next();
-//    			Logger.debug("getTreeElements() add collection: " + collection.title + ", with url: " + collection.url +
-//    					", parent:" + collection.parent + ", parent size: " + collection.parent.length());
-	    		if ((parent && collection.parent == null) || !parent || collection.parent == null) {
-		    		if (firstTime) {
-		    			firstTime = false;
-		    		} else {
-		    			sb.append(", ");
-		    		}
-//	    			Logger.debug("added");
-					sb.append("{\"title\": \"" + collection.name + "\"," + checkSelection(collection.url, url) + 
-							" \"key\": \"" + collection.url + "\"" + 
-							getChildren(collection.url, url) + "}");
-	    		}
-	    	}
-	    	Logger.info("collectionList level size: " + collectionList.size());
-	    	sb.append("]");
-	    	res = sb.toString();
-//	    	Logger.info("getTreeElements() res: " + res);
-    	}
-    	return res;
-    }
-        
-    /**
-     * Check if none value is selected
-     * @param url This is an identifier for current collection object
-     * @return
-     */
-    public static String checkNone(String url) {
-    	String res = "";
-//    	if (url != null && url.length() > 0) {
-//    		Logger.info("checkNone: " + url);
-//    		DCollection collection = DCollection.findByUrl(url);
-//    		Logger.info("checkNone parent: " + collection.parent);
-//    		if (collection.parent != null 
-//    				&& (collection.parent.toLowerCase().contains(Const.NONE.toLowerCase()))) {
-    		if (StringUtils.isNotEmpty(url) && url.toLowerCase().equals(Const.NONE.toLowerCase())) {
-    			res = "\"select\": true ,";
-    		}
-//    	}
-    	return res;
-    }
-    
-    /**
-     * Mark collections that are stored in target object as selected
-     * @param collectionUrl The collection identifier
-     * @param currentUrl This is an identifier for current collection object
-     * @return
-     */
-    public static String checkSelection(String collectionUrl, String currentUrl) {
-    	String res = "";
-    	if (currentUrl != null && currentUrl.length() > 0) {
-    		if (currentUrl.equals(collectionUrl)) {
-    			res = "\"select\": true ,";
-    		}
-    	}
-    	return res;
-    }
-    
-    /**
-     * This method calculates collection children - objects that have parents.
-     * @param url The identifier for parent 
-     * @param currentUrl This is an identifier for current collection object
-     * @return child collection in JSON form
-     */
-    public static String getChildren(String url, String currentUrl) {
-//    	Logger.info("getChildren() target URL: " + targetUrl);
-    	String res = "";
-        final StringBuffer sb = new StringBuffer();
-    	sb.append(", \"children\":");
-    	List<Collection> childSuggestedCollections = Collection.getChildLevelCollections(url);
-    	if (childSuggestedCollections.size() > 0) {
-	    	sb.append(getTreeElements(childSuggestedCollections, currentUrl, false));
-	    	res = sb.toString();
-//	    	Logger.info("getChildren() res: " + res);
-    	}
-    	return res;
-    }
-    
 }

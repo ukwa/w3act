@@ -1,32 +1,33 @@
-@(form: Form[Nomination], user: User)
+@(nominationForm: Form[Nomination], user: User)
+
+@import helper._
+@import helper.twitterBootstrap._
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 
 @main("", user) {
 
    	<div class="page-header">
-    	<h1><a href="@routes.NominationController.index()">Archivist Tasks > Nominations > </a>Nomination @form("name").value</h1>
+    	<h1><a href="@routes.NominationController.index()">Archivist Tasks > Nominations > </a>Nomination @nominationForm("name").value</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
-	   @if(Nomination.findById(form.get.id) != null) {
-	   <li><a href="@routes.NominationController.view(form.get.id)">View</a></li>
-	   }
+	   <li><a href="@routes.NominationController.view(Long.valueOf(nominationForm("id").value))">View</a></li>
 	   @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.NominationController.edit(form.get.id)">Edit</a></li>
+		   <li class="active"><a href="@routes.NominationController.edit(Long.valueOf(nominationForm("id").value))">Edit</a></li>
 	   }
 	</ul>
     
     @warningmessage(flash)
 	@helper.form(action=routes.NominationController.save) {
-		<input type="hidden" name="id" value="@form.get.id">
+		<input type="hidden" name="id" value="@nominationForm("id").value">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
+					<label class="col-sm-6 control-label">Name:</label>
 				    <div class="col-sm-6">
-	              		<input class="form-control" name="name" id="inputName" value="@form.get.name" type="text">
+				    	<input class="form-control" name="name" id="name"  value="@nominationForm("name").value" placeholder="Name" type="text">
 					</div>
 				</div>
 			</div>
@@ -37,7 +38,7 @@
 				<div class="form-group">
 					<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
 				    <div class="col-sm-6">
-		              <input class="form-control" name="title" id="title"  value="@form.get.title" placeholder="London Business Forum" type="text">
+		              <input class="form-control" name="title" id="title"  value="@nominationForm("title").value" placeholder="London Business Forum" type="text">
 					</div>
 				</div>
 			</div>
@@ -48,7 +49,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
 				    <div class="col-sm-6">
-						<input class="form-control" name="websiteUrl" value="@form.get.websiteUrl" placeholder="http://www.londonbusinessforum.com/" type="text">
+						<input class="form-control" name="websiteUrl" value="@nominationForm("websiteUrl").value" placeholder="http://www.londonbusinessforum.com/" type="text">
 					</div>
 				</div>
 			</div>
@@ -59,7 +60,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
 				    <div class="col-sm-6">
-						<input class="form-control" name="email" value="@form.get.email" placeholder="max.mustermann@@domain.com" type="text">
+						<input class="form-control" name="email" value="@nominationForm("email").value" placeholder="max.mustermann@@domain.com" type="text">
 					</div>
 				</div>
 			</div>
@@ -70,7 +71,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Phone:</label>
 				    <div class="col-sm-6">
-						<input class="form-control" value="@form.get.tel" name="phone" placeholder="0041889923456" type="text">
+						<input class="form-control" value="@nominationForm("tel").value" name="phone" placeholder="0041889923456" type="text">
 					</div>
 				</div>
 			</div>
@@ -81,7 +82,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Address:</label>
 				    <div class="col-sm-6">
-						<input class="form-control" value="@form.get.address" name="address" type="text">
+						<input class="form-control" value="@nominationForm("address").value" name="address" type="text">
 					</div>
 				</div>
 			</div>
@@ -92,7 +93,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Nominated Website Owner:</label>
 				    <div class="col-sm-6">
-				    @if(form.get.nominatedWebsiteOwner != null && form.get.nominatedWebsiteOwner) {
+				    @if(nominationForm("nominatedWebsiteOwner").value != null && nominationForm("nominatedWebsiteOwner").value) {
 		                <input type="checkbox" name="nominatedWebsiteOwner" checked/>
 		            } else {
 		                <input type="checkbox" name="nominatedWebsiteOwner"/>
@@ -107,7 +108,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Justification:</label>
 				    <div class="col-sm-6">
-						<input class="form-control" value="@form.get.justification" name="justification" type="text">
+						<input class="form-control" value="@nominationForm("justification").value" name="justification" type="text">
 					</div>
 				</div>
 			</div>
@@ -118,10 +119,10 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Nomination Checked:</label>
 				    <div class="col-sm-6">
-				    @if(form.get.nominationChecked != null && form.get.nominationChecked) {
-		                <input type="checkbox" name="nomination_checked" checked/>
+				    @if(nominationForm("nominationChecked").value != null && nominationForm("nominationChecked").value) {
+		                <input type="checkbox" name="nominationChecked" checked/>
 		            } else {
-		                <input type="checkbox" name="nomination_checked"/>
+		                <input type="checkbox" name="nominationChecked"/>
 		            }
 					</div>
 				</div>
@@ -133,7 +134,7 @@
 				<div class="form-group">
 					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
 				    <div class="col-sm-6">
-						<textarea class="form-control" name="notes" id="inputDescription" cols="100" rows="1">@form.get.notes"</textarea>
+						<textarea class="form-control" name="notes" id="inputDescription" cols="100" rows="1">@nominationForm("notes").value</textarea>
 					</div>
 				</div>
 			</div>
@@ -144,7 +145,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Date</label>
 				    <div class="col-sm-6">
- 						<input type="text" name="nomDate" class="form-control" id="log-date" value="@form.get.nominationDate"/>
+ 						<input type="text" name="nomDate" class="form-control" id="log-date" value="@nominationForm("getNominationDateText()").value" />
                		</div>
 				</div>
 			</div>
@@ -154,9 +155,7 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
 					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-				    @if(Nomination.findById(Long.valueOf(form("id").value)) != null) {
 					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
-					}
 		       </div>
 			</div>
 		</div>

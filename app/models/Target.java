@@ -290,15 +290,6 @@ public class Target extends UrlModel {
 	@Transient
 	public String formUrl;
 
-	@Transient
-	private String dateOfPublicationText;
-	
-	@Transient
-	private String crawlStartDateText;
-	
-	@Transient
-	private String crawlEndDateText;
-	
 //	public String title;
 //	
 //
@@ -427,6 +418,16 @@ public class Target extends UrlModel {
 		// this.field_nominating_organisation = Const.NONE;
 	}
 
+    public String validate() {
+        if (StringUtils.isEmpty(this.title)) {
+            return "Title is blank";
+        }
+        if (StringUtils.isEmpty(this.selectionType)) {
+        	return "Selection type is blank";
+        }
+        return null;
+    }
+    
 	/**
 	 * This method checks whether license for Target with given URL is granted
 	 * 
@@ -530,43 +531,19 @@ public class Target extends UrlModel {
 	public static int findWhoIsCount(boolean value) {
 		int count = 0;
 		if (value) {
-			ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true)
-					.eq(Const.IS_IN_SCOPE_UK_REGISTRATION_VALUE, true);
+			ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true).eq("isUkRegistration", true);
 			count = ll.findRowCount();
 		} else {
 			ExpressionList<Target> ll = find
 					.where()
 					.eq(Const.ACTIVE, true)
 					.add(Expr.or(
-							Expr.eq(Const.IS_IN_SCOPE_UK_REGISTRATION_VALUE,
+							Expr.eq("isUkRegistration",
 									false),
-							Expr.isNull(Const.IS_IN_SCOPE_UK_REGISTRATION_VALUE)));
+							Expr.isNull("isUkRegistration")));
 			count = ll.findRowCount();
 		}
 		return count;
-	}
-
-	/**
-	 * This method retrieves all targets for given collection.
-	 * 
-	 * @param url
-	 * @return
-	 */
-	public static List<Target> findAllforCollection(String url) {
-		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> ll = find
-				.where()
-				// .icontains(Const.FIELD_COLLECTION_CATEGORIES, url);
-				.eq(Const.ACTIVE, true)
-				.add(Expr.or(Expr.eq(Const.FIELD_COLLECTION_CATEGORIES, url),
-						Expr.or(Expr.icontains(
-								Const.FIELD_COLLECTION_CATEGORIES, url
-										+ Const.COMMA), Expr.icontains(
-								Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA
-										+ " " + url))));
-
-		res = ll.findList();
-		return res;
 	}
 
 	/**
@@ -1126,7 +1103,7 @@ public class Target extends UrlModel {
 				boolean isInScope = isInScopeIpWithoutLicense(fieldUrl.url);
 				if (!isInScope) {
 					// TODO: KL TO REFACTOR
-					isInScope = Scope.INSTANCE.isTopLevelDomain(this.fieldUrls);
+					isInScope = Scope.INSTANCE.isTopLevelDomain(this);
 				}
 				return isInScope;
 			}
@@ -1739,26 +1716,8 @@ public class Target extends UrlModel {
 	 * @return
 	 */
 	public static Page<Target> pageCollectionTargets(int page, int pageSize,
-			String sortBy, String order, String filter, String collection_url) {
-		Logger.debug("pageCollectionTargets() collection_url: "
-				+ collection_url);
-
-		return find
-				.where()
-				.add(Expr.or(Expr.icontains(Const.FIELD_URL, filter),
-						Expr.icontains(Const.TITLE, filter)))
-				.eq(Const.ACTIVE, true)
-				.add(Expr.or(Expr.eq(Const.FIELD_COLLECTION_CATEGORIES,
-						collection_url), Expr.or(Expr.or(Expr.contains(
-						Const.FIELD_COLLECTION_CATEGORIES, collection_url
-								+ Const.COMMA), Expr.startsWith(
-						Const.FIELD_COLLECTION_CATEGORIES, collection_url
-								+ Const.COMMA)), Expr.or(Expr.endsWith(
-						Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + " "
-								+ collection_url), Expr.endsWith(
-						Const.FIELD_COLLECTION_CATEGORIES, Const.COMMA + "  "
-								+ collection_url)))))
-				// .icontains(Const.FIELD_COLLECTION_CATEGORIES, collection_url)
+			String sortBy, String order, String filter, Long collectionId) {
+		return find.where().eq("collections.id", collectionId)
 				.orderBy(sortBy + " " + order).findPagingList(pageSize)
 				.setFetchAhead(false).getPage(page);
 	}
@@ -2701,8 +2660,16 @@ public class Target extends UrlModel {
 		return StringUtils.join(names, ", ");
 	}
 	
-	public boolean isUkRegistration() {
-		return Scope.INSTANCE.isUkHosting(this.fieldUrls);
+	public boolean isUkHosting() {
+		return Scope.INSTANCE.isUkHosting(this);
+	}
+	
+	public boolean isTopLevelDomain() throws WhoisException {
+		return Scope.INSTANCE.isTopLevelDomain(this);
+	}
+	
+	public boolean isUkRegistration() throws WhoisException {
+		return Scope.INSTANCE.isUkRegistration(this);
 	}
 	
 	public String tagsAsString() {
@@ -2725,25 +2692,25 @@ public class Target extends UrlModel {
 	public String getDateOfPublicationText() {
 		if (dateOfPublication != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			dateOfPublicationText = dateFormat.format(dateOfPublication);
+			return dateFormat.format(dateOfPublication);
 		}
-		return dateOfPublicationText;
+		return null;
 	}
 
 	public String getCrawlStartDateText() {
 		if (crawlStartDate != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			crawlStartDateText = dateFormat.format(crawlStartDate);
+			return dateFormat.format(crawlStartDate);
 		}
-		return crawlStartDateText;
+		return null;
 	}
 	
 	public String getCrawlEndDateText() {
 		if (crawlEndDate != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			crawlEndDateText = dateFormat.format(crawlEndDate);
+			return dateFormat.format(crawlEndDate);
 		}
-		return crawlEndDateText;
+		return null;
 	}
 
 	@Override

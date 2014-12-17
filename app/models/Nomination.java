@@ -1,5 +1,7 @@
 package models;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -102,12 +104,15 @@ public class Nomination extends ActModel {
     	super();
     }
     
-    public static Nomination findByName(String name)
-    {
-        return find.where()
-                   .eq("name",
-                       name)
-                   .findUnique();
+    /**
+     * Retrieve all nominations.
+     */
+    public static List<Nomination> findAll() {
+        return find.all();
+    }
+    
+    public static Nomination findByName(String name) {
+        return find.where().eq("name", name).findUnique();
     }
 
     /**
@@ -148,13 +153,14 @@ public class Nomination extends ActModel {
 		return res;
 	}
         
-    /**
-     * Retrieve all nominations.
-     */
-    public static List<Nomination> findAll() {
-        return find.all();
-    }
-    
+	public String getNominationDateText() {
+		if (nominationDate != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			return dateFormat.format(nominationDate);
+		}
+		return null;
+	}
+	
     public String toString() {
         return "Nomination(" + name + ")" + " id:" + id;
     }

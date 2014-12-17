@@ -101,6 +101,7 @@ create table lookup_entry (
   name                      text,
   ttype                     text,
   scopevalue                boolean,
+  target_id                 bigint,
   updated_at                timestamp not null,
   constraint uq_lookup_entry_url unique (url),
   constraint pk_lookup_entry primary key (id))
@@ -450,20 +451,22 @@ alter table instance add constraint fk_instance_authorUser_10 foreign key (autho
 create index ix_instance_authorUser_10 on instance (author_id);
 alter table instance add constraint fk_instance_target_11 foreign key (target_id) references target (id);
 create index ix_instance_target_11 on instance (target_id);
-alter table organisation add constraint fk_organisation_authorUser_12 foreign key (author_id) references creator (id);
-create index ix_organisation_authorUser_12 on organisation (author_id);
-alter table target add constraint fk_target_qaIssue_13 foreign key (qaissue_id) references taxonomy (id);
-create index ix_target_qaIssue_13 on target (qaissue_id);
-alter table target add constraint fk_target_authorUser_14 foreign key (author_id) references creator (id);
-create index ix_target_authorUser_14 on target (author_id);
-alter table target add constraint fk_target_organisation_15 foreign key (organisation_id) references organisation (id);
-create index ix_target_organisation_15 on target (organisation_id);
-alter table taxonomy add constraint fk_taxonomy_taxonomyType_16 foreign key (taxonomyType_id) references taxonomy_type (id);
-create index ix_taxonomy_taxonomyType_16 on taxonomy (taxonomyType_id);
-alter table taxonomy add constraint fk_taxonomy_parent_17 foreign key (parent_id) references taxonomy (id);
-create index ix_taxonomy_parent_17 on taxonomy (parent_id);
-alter table creator add constraint fk_creator_organisation_18 foreign key (organisation_id) references organisation (id);
-create index ix_creator_organisation_18 on creator (organisation_id);
+alter table lookup_entry add constraint fk_lookup_entry_target_12 foreign key (target_id) references target (id);
+create index ix_lookup_entry_target_12 on lookup_entry (target_id);
+alter table organisation add constraint fk_organisation_authorUser_13 foreign key (author_id) references creator (id);
+create index ix_organisation_authorUser_13 on organisation (author_id);
+alter table target add constraint fk_target_qaIssue_14 foreign key (qaissue_id) references taxonomy (id);
+create index ix_target_qaIssue_14 on target (qaissue_id);
+alter table target add constraint fk_target_authorUser_15 foreign key (author_id) references creator (id);
+create index ix_target_authorUser_15 on target (author_id);
+alter table target add constraint fk_target_organisation_16 foreign key (organisation_id) references organisation (id);
+create index ix_target_organisation_16 on target (organisation_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyType_17 foreign key (taxonomyType_id) references taxonomy_type (id);
+create index ix_taxonomy_taxonomyType_17 on taxonomy (taxonomyType_id);
+alter table taxonomy add constraint fk_taxonomy_parent_18 foreign key (parent_id) references taxonomy (id);
+create index ix_taxonomy_parent_18 on taxonomy (parent_id);
+alter table creator add constraint fk_creator_organisation_19 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_19 on creator (organisation_id);
 
 
 

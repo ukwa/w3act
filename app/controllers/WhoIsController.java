@@ -62,17 +62,15 @@ public class WhoIsController extends AbstractController {
         String check = getFormParam("check");
         if (check != null || total > 0) {
         	Logger.info("target number to check: " + getFormParam(Const.NUMBER));
-            if (getFormParam(Const.NUMBER) != null 
-            		&& getFormParam(Const.NUMBER).length() > 0
-            		&& Utils.isNumeric(getFormParam(Const.NUMBER))) {
+            if (getFormParam(Const.NUMBER) != null && getFormParam(Const.NUMBER).length() > 0 && Utils.isNumeric(getFormParam(Const.NUMBER))) {
             	total = Integer.valueOf(getFormParam(Const.NUMBER));
             }
 
 			WhoIsData whoIsData = Scope.INSTANCE.checkWhois(total);
-
+			User user = User.findByEmail(request().username());
 			// need to match up with lookupentry and get the last_update
         	return ok(
-        			results.render(User.findByEmail(request().username()), whoIsData)
+        			results.render(user, whoIsData)
         	);
         } 
         return index();

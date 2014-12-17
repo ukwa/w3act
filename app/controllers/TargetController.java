@@ -43,6 +43,7 @@ import uk.bl.Const.SelectionType;
 import uk.bl.Const.SiteStatus;
 import uk.bl.Const.TargetLanguage;
 import uk.bl.api.Utils;
+import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
@@ -73,7 +74,7 @@ import views.html.users.usersites;
 @Security.Authenticated(SecuredController.class)
 public class TargetController extends AbstractController {
   
-    final static Form<Target> targetForm = play.data.Form.form(Target.class);
+    final static Form<Target> targetForm = new Form<Target>(Target.class);
 
     /**
      * Display the targets.
@@ -411,7 +412,7 @@ public class TargetController extends AbstractController {
 	  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 	  			SiteStatus[] siteStatuses = Const.SiteStatus.values();
 	  			List<Organisation> organisations = Organisation.findAll();
-	  	        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+	  	        return ok(edit.render(targetForm, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -457,7 +458,7 @@ public class TargetController extends AbstractController {
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 		SiteStatus[] siteStatuses = Const.SiteStatus.values();
 		List<Organisation> organisations = Organisation.findAll();
-        return ok(edit.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+        return ok(edit.render(targetForm, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
 	}
     
     /**
@@ -470,15 +471,16 @@ public class TargetController extends AbstractController {
      * @param collection_url Collection where targets search occurs
      */
     public static Result collectionTargets(int pageNo, String sortBy, String order, String filter, 
-    		String collection_url) {
+    		Long collectionId) {
     	Logger.info("Targets.collectionTargets()");
-    	
+    	Collection collection = Collection.findById(collectionId);
+    	Page<Target> pages = Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection.id);
         return ok(
         		sites.render(
-        			Collection.findByUrl(collection_url),  
+        			collection,  
         			User.findByEmail(request().username()), 
         			filter, 
-        			Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection_url), 
+        			pages, 
         			sortBy, 
         			order) 
         	);
@@ -553,12 +555,13 @@ public class TargetController extends AbstractController {
     	String order = form.get(Const.ORDER);
     	String collection_url = form.get(Const.COLLECTION_URL);
 
+    	Collection collection = Collection.findByUrl(collection_url);
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.TargetController.collectionTargets(pageNo, sort, order, query, collection_url));
+    	    	return redirect(routes.TargetController.collectionTargets(pageNo, sort, order, query, collection.id));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
@@ -728,7 +731,7 @@ public class TargetController extends AbstractController {
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 		SiteStatus[] siteStatuses = Const.SiteStatus.values();
 		List<Organisation> organisations = Organisation.findAll();
-        return ok(edit.render(filledForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     }
     
     /**
@@ -788,11 +791,16 @@ public class TargetController extends AbstractController {
     }
     
     public static Result saveBlank() {
-    	play.data.Form<Target> filledForm = targetForm.bindFromRequest();
+    	Form<Target> filledForm = targetForm.bindFromRequest();
 	    if(filledForm.hasErrors()) {
+	    	Logger.info("hasErrors: " + filledForm.hasErrors());
+        	for (String key : filledForm.errors().keySet()) {
+        		Logger.info("" + key);
+        	}
 	        return badRequest(blank.render(filledForm, User.findByEmail(request().username())));
 	    } else {
 	        flash("success", "You've saved");
+	    	Logger.info("saved");
 	        return ok(blank.render(filledForm, User.findByEmail(request().username())));
 	    }
     }
@@ -867,6 +875,12 @@ public class TargetController extends AbstractController {
 	 * @return edit page with form and info message
 	 */
 	public static Result info(Form<Target> form) {
+//        DynamicForm requestData = Form.form().bindFromRequest();
+//		Long id = Long.valueOf(requestData.get("id"));
+//		Target target = Target.findById(id); 
+//
+//		Form<Target> targetFormNew = targetForm.fill(target);
+		
 		User user = User.findByEmail(request().username());
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
@@ -883,7 +897,7 @@ public class TargetController extends AbstractController {
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 		SiteStatus[] siteStatuses = Const.SiteStatus.values();
 		List<Organisation> organisations = Organisation.findAll();
-        return ok(edit.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+        return badRequest(edit.render(form, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     }
 
 	/**
@@ -898,38 +912,60 @@ public class TargetController extends AbstractController {
             	
         DynamicForm requestData = Form.form().bindFromRequest();
         
+		Long id = Long.valueOf(requestData.get("id"));
+
         String action = requestData.get("action");
         if (StringUtils.isNotEmpty(action)) {
 
-            Form<Target> filledForm = targetForm.bindFromRequest();
-
-            if(filledForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : filledForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    key = Utils.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + filledForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
-	  					"Missing fields are: " + missingFields);
-		        return info(targetForm);
-            }        	
-            
-            Map<String, String[]> formParams = request().body().asFormUrlEncoded();
-
-            Logger.info("passed");
-        	Long id = filledForm.get().id;
         	if (action.equals("save")) {
+        		Form<Target> filledForm = targetForm.bindFromRequest();
+                Logger.info("filledForm: before");
+                Logger.info("filledForm: " + filledForm.get());
+//                Form<Target> filledForm = new PatchedForm<Target>(Target.class).bindFromRequest();
+
+                if(filledForm.hasErrors()) {
+                	String missingFields = "";
+                	for (String key : filledForm.errors().keySet()) {
+                	    Logger.debug("key: " +  key);
+                	    key = Utils.showMissingField(key);
+                	    if (missingFields.length() == 0) {
+                	    	missingFields = key;
+                	    } else {
+                	    	missingFields = missingFields + Const.COMMA + " " + key;
+                	    }
+                	}
+                	Logger.info("form errors size: " + filledForm.errors().size() + ", " + missingFields);
+    	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
+    	  					"Missing fields are: " + missingFields);
+    		        return info(targetForm);
+                }        	
+                
+                Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+
+                Logger.info("passed");
         		Target targetFromDB = Target.findById(id);
+        		
 	    	    Logger.info("targetForm: " + targetForm);
 	    	    Target targetFromForm  = filledForm.get();
 	    	    
-
+	    	    targetFromDB.isUkHosting = targetFromForm.isUkHosting();
+	    	    try {
+		    	    targetFromDB.isTopLevelDomain = targetFromForm.isTopLevelDomain();
+		    	    targetFromDB.isUkRegistration = targetFromForm.isUkRegistration();
+		    	    
+		    	    // TODO: check hosting, top-level and uk reg on save
+		    	    if (!targetFromForm.isUkHosting()) {
+		    	    	
+		    	    }
+		    	    if (!targetFromForm.isTopLevelDomain()) {
+		    	    	
+		    	    }
+	            	if (!targetFromForm.isUkRegistration()) {
+	            		
+	            	}
+            	} catch(WhoisException e) {
+            		e.printStackTrace();
+            	}
 	            
 	            String wct = requestData.get("wct");
 	            
@@ -1167,7 +1203,8 @@ public class TargetController extends AbstractController {
 	            targetFromDB.save();
 				return redirect(routes.TargetController.view(targetFromDB.id));
 	        } else if (action.equals("delete")) {
-	        	Target target = Target.findById(id);
+	        	Form<Target> filledForm = targetForm.bindFromRequest();
+	        	Target target = Target.findById(filledForm.get().id);
 	        	target.delete();
 		        res = redirect(routes.TargetController.index()); 
 	        } else if (action.equals("request")) {

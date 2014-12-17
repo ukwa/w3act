@@ -38,6 +38,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Security.Authenticated(SecuredController.class)
 public class NominationController extends AbstractController {
   
+    final static Form<Nomination> nominationForm = play.data.Form.form(Nomination.class);
+
     /**
      * Display the nomination.
      */
@@ -206,31 +208,34 @@ public class NominationController extends AbstractController {
     	String action = requestData.get("action");
 
         if (StringUtils.isNotEmpty(action)) {
-        	Form<Nomination> nominationForm = Form.form(Nomination.class).bindFromRequest();
-            Nomination nominationFromForm = nominationForm.get();
-            Long id = Long.valueOf(nominationFromForm.id);
-            
         	if (action.equals("save")) {        	
-	            if(nominationForm.hasErrors()) {
+            	Form<Nomination> filledForm = nominationForm.bindFromRequest();
+            	User user = User.findByEmail(request().username());
+	            if(filledForm.hasErrors()) {
 	            	String missingFields = "";
-	            	for (String key : nominationForm.errors().keySet()) {
-	            	    Logger.debug("key: " +  key);
+	            	for (String key : filledForm.errors().keySet()) {
+	            	    Logger.info("key: " +  key);
 	            	    if (missingFields.length() == 0) {
 	            	    	missingFields = key;
 	            	    } else {
 	            	    	missingFields = missingFields + ", " + key;
 	            	    }
 	            	}
-	            	Logger.info("form errors size: " + nominationForm.errors().size() + ", " + missingFields);
+	            	Logger.info("form errors size: " + filledForm.errors().size() + ", " + missingFields);
 		  			flash("message", "Please fill out all the required fields, marked with a red star." + 
 		  					" Missing fields are: " + missingFields);
-		  	      	return ok(
-		  	              edit.render(nominationForm, User.findByEmail(request().username()))
-		  	            );
+		            return badRequest(edit.render(filledForm, user));
+
+//		  	      	return ok(edit.render(filledForm, user));
 	            }
 	            
+	            Nomination nominationFromForm = filledForm.get();
+	            Long id = Long.valueOf(nominationFromForm.id);
+
 	            Nomination nominationFromDB = Nomination.findById(id);
-	            
+	            if (nominationFromDB == null) {
+	            	nominationFromDB = new Nomination();
+	            }
 	            nominationFromDB.name = nominationFromForm.name;
 	            nominationFromDB.title = nominationFromForm.title;
 	            nominationFromDB.websiteUrl = nominationFromForm.websiteUrl;
@@ -248,15 +253,16 @@ public class NominationController extends AbstractController {
     					nominationFromDB.nominationDate = date;
     				} catch (ParseException e) {
     		  			flash("message", "Nomination Date (dd-mm-yy) - Incorrect Format");
-    					return ok(edit.render(nominationForm, User.findByEmail(request().username()))); 
+    					return ok(edit.render(filledForm, user)); 
     				}
             	}
     	    	nominationFromDB.nominatedWebsiteOwner = nominationFromForm.nominatedWebsiteOwner;
     	    	nominationFromDB.nominationChecked = nominationFromForm.nominationChecked;
     	    	nominationFromDB.save();
-    	    	res = redirect(routes.NominationController.edit(nominationFromDB.id));
+    	    	res = redirect(routes.NominationController.view(nominationFromDB.id));
         	} else if(action.equals("delete")) {
-            	Nomination nomination = Nomination.findById(id);
+            	Form<Nomination> filledForm = nominationForm.bindFromRequest();
+            	Nomination nomination = Nomination.findById(filledForm.get().id);
             	nomination.delete();
     	        res = redirect(routes.NominationController.index()); 
         	}

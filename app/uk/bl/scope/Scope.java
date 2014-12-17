@@ -234,7 +234,7 @@ public enum Scope {
         }
 
         if (!inProjectDb) {
-	        storeInProjectDb(url, newStatus);
+	        storeInProjectDb(url, newStatus, target);
 	    }
 	}
 	
@@ -319,10 +319,10 @@ public enum Scope {
 	        if (!res && url != null && url.length() > 0
 	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
 	    	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
-	        	res = checkWhois(url);
+	        	res = checkWhois(url, target);
 	        }
 	        // store in project DB
-	        storeInProjectDb(url, res);
+	        storeInProjectDb(url, res, target);
         }
 		Logger.info("lookup entry for '" + url + "' is in database with value: " + res);        
         return res;
@@ -374,7 +374,7 @@ public enum Scope {
         
         // Rule 3.3: check whois lookup service
         if (!res && url != null && url.length() > 0) {
-        	res = checkWhois(url);
+        	res = checkWhois(url, target);
     		Logger.debug("checkScopeIp() after whois check: " + res);
         }
         
@@ -392,7 +392,7 @@ public enum Scope {
             		Logger.info("updated lookup entry in database for '" + url + "' with value: " + res);
         		}
         	} else {
-        		storeInProjectDb(url, res);
+        		storeInProjectDb(url, res, target);
         	}
         }
         
@@ -443,7 +443,7 @@ public enum Scope {
         
         // Rule 3.3: check whois lookup service
         if (!res && url != null && url.length() > 0) {
-        	res = checkWhois(url);
+        	res = checkWhois(url, target);
     		Logger.debug("checkScopeIp() after whois check: " + res);
         }
         
@@ -461,7 +461,7 @@ public enum Scope {
             		Logger.info("updated lookup entry in database for '" + url + "' with value: " + res);
         		}
         	} else {
-        		storeInProjectDb(url, res);
+        		storeInProjectDb(url, res, target);
         	}
         }
         
@@ -513,7 +513,7 @@ public enum Scope {
 	 * @return true if in UK domain
 	 * @throws WhoisException 
 	 */
-	public boolean checkWhois(String url) throws WhoisException {
+	public boolean checkWhois(String url, Target target) throws WhoisException {
 		boolean res = false;
     	try {
         	JRubyWhois whoIs = new JRubyWhois();
@@ -526,7 +526,7 @@ public enum Scope {
     	} catch (Exception e) {
     		Logger.info("whois lookup message: " + e.getMessage());
 	        // store in project DB
-	        storeInProjectDb(url, false);
+	        storeInProjectDb(url, false, target);
 //    		throw new WhoisException(e);
     	}
     	Logger.info("whois res: " + res);        	
@@ -557,7 +557,7 @@ public enum Scope {
 		        	res = whoIsRes.isUKRegistrant();
 		        	Logger.info("isUKRegistrant?: " + res);
 		        	// STORE
-		        	storeInProjectDb(fieldUrl.url, res);
+		        	storeInProjectDb(fieldUrl.url, res, target);
 		        	// ASSIGN TO TARGET
 		        	target.isUkRegistration = res;
 
@@ -600,7 +600,7 @@ public enum Scope {
 	//	        	Logger.info("isUKRegistrant?: " + res);
 		        	// STORE
 		        	Logger.info("CHECK TO SAVE " + target.fieldUrl());
-		        	storeInProjectDb(fieldUrl.url, res);
+		        	storeInProjectDb(fieldUrl.url, res, target);
 		        	// ASSIGN TO TARGET
 		        	target.isUkRegistration = res;
 		        	ukRegistrantCount++;
@@ -608,7 +608,7 @@ public enum Scope {
 		    		Logger.info("whois lookup message: " + e.getMessage());
 			        // store in project DB
 		    		// FAILED - UNCHECKED
-			        storeInProjectDb(fieldUrl.url, false);
+			        storeInProjectDb(fieldUrl.url, false, target);
 			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
 			        target.isUkRegistration = false;
 		        	failedCount++;
@@ -621,12 +621,12 @@ public enum Scope {
     	
 //        List<Target> result = Target.find.select("title").where().eq(Const.ACTIVE, true).orderBy(Const.LAST_UPDATE + " " + Const.DESC).setMaxRows(number).findList();
 
-    	
-    	
-
-		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.title as title, t.updatedAt as target_date, l.updatedAt as lookup_date, (l.updatedAt::timestamp - t.updatedAt::timestamp) as diff from LookupEntry l, Target t "); 
-		lookupSql.append(" where l.name in (select tar.fieldUrl from target as tar where tar.active = true order by tar.updatedAt desc ");
-		lookupSql.append(" limit ").append(number).append(") and t.fieldUrl = l.name order by diff desc");
+//    	LookupEntry.find.fetch("target").where().select("name").select("target.title")
+//    	
+//
+		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.title as title, t.updated_at as target_date, l.updated_at as lookup_date, (l.updated_at::timestamp - t.updated_at::timestamp) as diff from Lookup_entry l, Target t "); 
+		lookupSql.append(" where l.name in (select f.url from field_url as f, target tar where tar.active = true and tar.id = f.target_id order by tar.updated_at desc ");
+		lookupSql.append(" limit ").append(number).append(") and l.target_id = t.id order by diff desc");
 
 		List<SqlRow> results = Ebean.createSqlQuery(lookupSql.toString()).findList();
     	
@@ -652,15 +652,16 @@ public enum Scope {
 	 * @param url The search URL
 	 * @param res The evaluated result after checking by expert rules
 	 */
-	public void storeInProjectDb(String url, boolean res) {
+	public void storeInProjectDb(String url, boolean res, Target target) {
 		boolean stored = isLookupExistsInDb(url);
 		Logger.info("STORED: " + stored + " - " + url);
 		if (!stored) {
 			LookupEntry lookupEntry = new LookupEntry();
 			lookupEntry.name = url;
 			lookupEntry.scopevalue = res;
+			lookupEntry.target = target;
 	        lookupEntry.save();
-	        Logger.info("Saveed lookup entry " + lookupEntry.toString());
+	        Logger.info("Saved lookup entry " + lookupEntry.toString());
 		}
     }
 	
@@ -723,21 +724,21 @@ public enum Scope {
 		return false;
 	}
 
-	public boolean isInScopeUkRegistration(String url) throws WhoisException {
-		return checkWhois(url);
+	public boolean isInScopeUkRegistration(String url, Target target) throws WhoisException {
+		return checkWhois(url, target);
 	}
 
 	//	UK GeoIP
-	public boolean isUkHosting(List<FieldUrl> fieldUrls) {
-		for (FieldUrl fieldUrl : fieldUrls) {
+	public boolean isUkHosting(Target target) {
+		for (FieldUrl fieldUrl : target.fieldUrls) {
 			if (!this.checkGeoIp(fieldUrl.url)) return false;
 		}
 		return true;
 	}
 	
 	//	UK Domain 
-	public boolean isTopLevelDomain(List<FieldUrl> fieldUrls) throws WhoisException {
-        for (FieldUrl fieldUrl : fieldUrls) {
+	public boolean isTopLevelDomain(Target target) throws WhoisException {
+        for (FieldUrl fieldUrl : target.fieldUrls) {
             URL uri = null;
 			try {
 				uri = new URI(fieldUrl.url).normalize().toURL();
@@ -753,9 +754,10 @@ public enum Scope {
         return true;
 	}
 	
-	public boolean isUkRegistration(List<FieldUrl> fieldUrls) throws WhoisException {
-        for (FieldUrl fieldUrl : fieldUrls) {
-        	if (!checkWhois(fieldUrl.url)) return false;
+	
+	public boolean isUkRegistration(Target target) throws WhoisException {
+        for (FieldUrl fieldUrl : target.fieldUrls) {
+        	if (!checkWhois(fieldUrl.url, target)) return false;
         }
 		return true;
 	}

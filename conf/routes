@@ -35,7 +35,7 @@ GET    	/collections/filterbyjson/:name		controllers.CollectionController.filter
 GET     /collections/:id            		controllers.CollectionController.view(id:Long)
 GET     /collections/:url            		controllers.CollectionController.viewAct(url)
 GET     /collections/:id/edit       		controllers.CollectionController.edit(id:Long)
-GET     /collections/:sites/sites			controllers.CollectionController.sites(sites)
+GET     /collections/:id/sites				controllers.CollectionController.sites(id:Long)
 POST    /collections             			controllers.CollectionController.save()
 
 GET     /subjects                           controllers.SubjectController.index()
@@ -171,7 +171,7 @@ GET    	/targets/filterbyjson/:url			controllers.TargetController.filterByJson(u
 GET    	/targets/lookup                  	controllers.TargetController.lookup(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 GET    	/targets/list                  		controllers.TargetController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", curatorId:Long ?= -1, organisationId:Long ?= -1, subjects ?= "", crawlFrequency ?= "", depth ?= "", collections ?= "", licenseId:Long ?= -1, pageSize:Int ?= 10, flagId:Long ?= -1)
 
-GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", collection_url ?= "")
+GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", collectionId:Long ?= -1)
 GET    	/targets/organisationtargets/       controllers.TargetController.organisationTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", organisation_url ?= "")
 GET    	/targets/usertargets/           	controllers.TargetController.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", user_url ?= "", query_subject ?= "", query_collection ?= "")
 GET    	/targets/subjecttargets/        	controllers.TargetController.subjectTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", subject_url ?= "")
