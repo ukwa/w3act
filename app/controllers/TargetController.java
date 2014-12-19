@@ -1,5 +1,7 @@
 package controllers;
 
+import static play.data.Form.form;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,6 +21,7 @@ import models.Collection;
 import models.FieldUrl;
 import models.Flag;
 import models.License;
+import models.Nomination;
 import models.Organisation;
 import models.QaIssue;
 import models.Subject;
@@ -54,13 +57,12 @@ import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 
 import views.html.targets.blank;
+import views.html.targets.newForm;
 import views.html.targets.edit;
 import views.html.targets.list;
 import views.html.targets.lookup;
@@ -381,7 +383,7 @@ public class TargetController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (action.equals("addEntry")) {
+    		if (action.equals("addentry")) {
     	        Logger.info("create()");
     	    	Target target = new Target();
     	    	// TODO: KL
@@ -412,7 +414,7 @@ public class TargetController extends AbstractController {
 	  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 	  			SiteStatus[] siteStatuses = Const.SiteStatus.values();
 	  			List<Organisation> organisations = Organisation.findAll();
-	  	        return ok(edit.render(targetForm, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+	  	        return ok(newForm.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -474,6 +476,7 @@ public class TargetController extends AbstractController {
     		Long collectionId) {
     	Logger.info("Targets.collectionTargets()");
     	Collection collection = Collection.findById(collectionId);
+    	Logger.info("Collection: " + collection);
     	Page<Target> pages = Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection.id);
         return ok(
         		sites.render(
@@ -486,30 +489,30 @@ public class TargetController extends AbstractController {
         	);
     }
 	    
+
     /**
-     * Display the paginated list of targets.
-     *
-     * @param page Current page number (starts from 0)
-     * @param sortBy Column to be sorted
-     * @param order Sort order (either asc or desc)
-     * @param filter Filter applied on target urls
-     * @param subject_url Subject where targets search occurs
-     */
-    public static Result subjectTargets(int pageNo, String sortBy, String order, String filter, 
-    		String subject_url) {
-    	Logger.info("Targets.subjectTargets()");
-    	
-        return ok(
-        		views.html.subjects.sites.render(
-        			Taxonomy.findByUrl(subject_url),  
-        			User.findByEmail(request().username()), 
-        			filter, 
-        			Target.pageSubjectTargets(pageNo, 10, sortBy, order, filter, subject_url), 
-        			sortBy, 
-        			order) 
-        	);
+    * Display the paginated list of targets.
+    *
+    * @param page Current page number (starts from 0)
+    * @param sortBy Column to be sorted
+    * @param order Sort order (either asc or desc)
+    * @param filter Filter applied on target urls
+    * @param subject_url Subject where targets search occurs
+    */
+    public static Result subjectTargets(int pageNo, String sortBy, String order, String filter,
+	    Long subjectId) {
+	    Logger.info("Targets.subjectTargets()");
+	    return ok(
+		    views.html.subjects.sites.render(
+		    Taxonomy.findById(subjectId),
+		    User.findByEmail(request().username()),
+		    filter,
+		    Target.pageSubjectTargets(pageNo, 10, sortBy, order, filter, subjectId),
+		    sortBy,
+		    order)
+	    );
     }
-	    
+    
     /**
      * Display the paginated list of targets for given organisation.
      *
@@ -581,14 +584,15 @@ public class TargetController extends AbstractController {
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
     	String order = form.get(Const.ORDER);
-    	String subject_url = form.get(Const.SUBJECT_URL);
+    	String subject_url = form.get("subject_url");
+    	Long subjectId = Long.valueOf(subject_url);
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.TargetController.subjectTargets(pageNo, sort, order, query, subject_url));
+    	    	return redirect(routes.TargetController.subjectTargets(pageNo, sort, order, query, subjectId));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
@@ -900,6 +904,194 @@ public class TargetController extends AbstractController {
         return badRequest(edit.render(form, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     }
 
+	public static Result newInfo(Form<Target> form) {
+//      DynamicForm requestData = Form.form().bindFromRequest();
+//		Long id = Long.valueOf(requestData.get("id"));
+//		Target target = Target.findById(id); 
+//
+//		Form<Target> targetFormNew = targetForm.fill(target);
+		
+		User user = User.findByEmail(request().username());
+		JsonNode collectionData = getCollectionsData();
+		JsonNode subjectData = getSubjectsData();
+		List<User> authors = User.findAll();
+		List<Tag> tags = Tag.findAllTags();
+		List<Flag> flags = Flag.findAllFlags();
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+		TargetLanguage[] languages = Const.TargetLanguage.values();
+		SelectionType[] selectionTypes = Const.SelectionType.values();
+		ScopeType[] scopeTypes = Const.ScopeType.values();
+		DepthType[] depthTypes = Const.DepthType.values();
+		List<License> licenses = License.findAllLicenses();
+		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
+		SiteStatus[] siteStatuses = Const.SiteStatus.values();
+		List<Organisation> organisations = Organisation.findAll();
+      return badRequest(newForm.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+  }
+	
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+        Form<Target> filledForm = form(Target.class).bindFromRequest();
+        if(filledForm.hasErrors()) {
+            return info(filledForm);
+        }
+        
+        String wct = requestData.get("wct");
+        
+        if (StringUtils.isNotBlank(wct) && !Utils.isNumeric(wct)) {
+        	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
+            return newInfo(filledForm);
+	  	}    	
+
+        String spt = requestData.get("spt");
+
+	  	if (StringUtils.isNotBlank(spt) && !Utils.isNumeric(spt)) {
+	          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+				flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+	            return newInfo(filledForm);
+	  	}    	
+	
+	  	String legacySiteId = requestData.get("legacySiteId");
+	  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.isNumeric(legacySiteId)) {
+	          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+				flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+	            return newInfo(filledForm);
+	  	}    	
+
+        String fieldUrl = requestData.get("formUrl");
+        
+        if (StringUtils.isNotEmpty(fieldUrl)) {
+            String[] urls = fieldUrl.split(",");
+            List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
+            
+            for (String url : urls) {
+            	FieldUrl fu = FieldUrl.findByUrl(url.trim());
+            	if (fu == null) {
+	            	fu = new FieldUrl(url.trim());
+	            	// get domain
+            	}
+            	fieldUrls.add(fu);
+            }
+            filledForm.get().fieldUrls = fieldUrls;
+        }		        
+        
+        String qaIssueId = requestData.get("qaIssueId");
+        if (StringUtils.isNotEmpty(qaIssueId)) {
+        	Long qaId = Long.valueOf(qaIssueId);
+        	QaIssue qaIssue = QaIssue.findById(qaId);
+        	filledForm.get().qaIssue = qaIssue;
+        }
+        	            
+        List<Tag> newTags = new ArrayList<Tag>();
+        String[] tagValues = formParams.get("tagList");
+
+        if (tagValues != null) {
+            for(String tagValue: tagValues) {
+            	Long tagId = Long.valueOf(tagValue);
+            	Tag tag = Tag.findById(tagId);
+            	newTags.add(tag);
+            }
+            filledForm.get().tags = newTags;
+        }
+        
+        List<Subject> newSubjects = new ArrayList<Subject>();
+        String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
+        Logger.info("subjectSelect: " + subjectSelect);
+        if (StringUtils.isNotEmpty(subjectSelect)) {
+            String[] subjects = subjectSelect.split(", ");
+            for (String sId : subjects) {
+//            	sId = sId.replace("\"", "");
+            	Long subjectId = Long.valueOf(sId);
+            	Subject subject = Subject.findById(subjectId);
+            	newSubjects.add(subject);
+            }
+            filledForm.get().subjects = newSubjects;
+        }
+        
+        List<Collection> newCollections = new ArrayList<Collection>();
+        String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
+        Logger.info("collectionSelect: " + collectionSelect);
+        if (StringUtils.isNotEmpty(collectionSelect)) {
+            String[] collections = collectionSelect.split(", ");
+            for (String cId : collections) {
+//            	sId = sId.replace("\"", "");
+            	Long collectionId = Long.valueOf(cId);
+            	Collection collection = Collection.findById(collectionId);
+            	newCollections.add(collection);
+            }
+            filledForm.get().collections = newCollections;
+        }
+        
+        String organisationId = requestData.get("organisationId");
+        if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("-1")) {
+        	Long oId = Long.valueOf(organisationId);
+        	Organisation organisation = Organisation.findById(oId);
+        	filledForm.get().organisation = organisation;
+        }
+        
+        String authorId = requestData.get("authorId");
+        if (StringUtils.isNotEmpty(authorId)) {
+        	Long aId = Long.valueOf(authorId);
+        	User author = User.findById(aId);
+        	filledForm.get().authorUser = author;
+        }
+
+        List<Flag> newFlags = new ArrayList<Flag>();
+        String[] flagValues = formParams.get("flagList");
+
+        if (flagValues != null) {
+            for(String flagValue: flagValues) {
+            	Logger.info("flagValue: " + flagValue);
+            	Long flagId = Long.valueOf(flagValue);
+            	Flag flag = Flag.findById(flagId);
+            	newFlags.add(flag);
+            }
+            filledForm.get().flags = newFlags;
+        }
+        
+        String dateOfPublication = requestData.get("date_of_publication");
+    	if (StringUtils.isNotEmpty(dateOfPublication)) {
+			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			try {
+				Date date = formatter.parse(dateOfPublication);
+				filledForm.get().dateOfPublication = date;
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return info(targetForm);
+			}
+    	}
+        
+        String crawlStartDate = requestData.get("crawl_start_date");
+    	if (StringUtils.isNotEmpty(crawlStartDate)) {
+			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			try {
+				Date date = formatter.parse(crawlStartDate);
+				filledForm.get().crawlStartDate = date;
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return info(targetForm);
+			}
+    	}
+        String crawlEndDate = requestData.get("crawl_end_date");
+    	if (StringUtils.isNotEmpty(crawlEndDate)) {
+			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			try {
+				Date date = formatter.parse(crawlEndDate);
+				filledForm.get().crawlEndDate = date;
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return info(targetForm);
+			}
+    	}        
+        
+        
+        filledForm.get().update(id);
+        flash("success", "Target " + filledForm.get().title + " has been updated");
+    	return redirect(routes.TargetController.view(filledForm.get().id));
+    }
+    
 	/**
      * This method saves changes on given target in a new target object
      * completed by revision comment. The "version" field in the Target object
@@ -908,70 +1100,24 @@ public class TargetController extends AbstractController {
      * @return
      */
     public static Result save() {
-    	Result res = null;
-            	
-        DynamicForm requestData = Form.form().bindFromRequest();
-        
-		Long id = Long.valueOf(requestData.get("id"));
 
-        String action = requestData.get("action");
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+    	User user = User.findByEmail(request().username());
+	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+
         if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        Form<Target> filledForm = form(Target.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+		            return newInfo(filledForm);
+		        }
 
-        	if (action.equals("save")) {
-        		Form<Target> filledForm = targetForm.bindFromRequest();
-                Logger.info("filledForm: before");
-                Logger.info("filledForm: " + filledForm.get());
-//                Form<Target> filledForm = new PatchedForm<Target>(Target.class).bindFromRequest();
-
-                if(filledForm.hasErrors()) {
-                	String missingFields = "";
-                	for (String key : filledForm.errors().keySet()) {
-                	    Logger.debug("key: " +  key);
-                	    key = Utils.showMissingField(key);
-                	    if (missingFields.length() == 0) {
-                	    	missingFields = key;
-                	    } else {
-                	    	missingFields = missingFields + Const.COMMA + " " + key;
-                	    }
-                	}
-                	Logger.info("form errors size: " + filledForm.errors().size() + ", " + missingFields);
-    	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
-    	  					"Missing fields are: " + missingFields);
-    		        return info(targetForm);
-                }        	
-                
-                Map<String, String[]> formParams = request().body().asFormUrlEncoded();
-
-                Logger.info("passed");
-        		Target targetFromDB = Target.findById(id);
-        		
-	    	    Logger.info("targetForm: " + targetForm);
-	    	    Target targetFromForm  = filledForm.get();
-	    	    
-	    	    targetFromDB.isUkHosting = targetFromForm.isUkHosting();
-	    	    try {
-		    	    targetFromDB.isTopLevelDomain = targetFromForm.isTopLevelDomain();
-		    	    targetFromDB.isUkRegistration = targetFromForm.isUkRegistration();
-		    	    
-		    	    // TODO: check hosting, top-level and uk reg on save
-		    	    if (!targetFromForm.isUkHosting()) {
-		    	    	
-		    	    }
-		    	    if (!targetFromForm.isTopLevelDomain()) {
-		    	    	
-		    	    }
-	            	if (!targetFromForm.isUkRegistration()) {
-	            		
-	            	}
-            	} catch(WhoisException e) {
-            		e.printStackTrace();
-            	}
-	            
 	            String wct = requestData.get("wct");
 	            
 	            if (StringUtils.isNotBlank(wct) && !Utils.isNumeric(wct)) {
 	            	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
-			        return info(targetForm);
+		            return newInfo(filledForm);
 			  	}    	
 	
 	            String spt = requestData.get("spt");
@@ -979,17 +1125,17 @@ public class TargetController extends AbstractController {
 			  	if (StringUtils.isNotBlank(spt) && !Utils.isNumeric(spt)) {
 			          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 						flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-						return info(targetForm);
+			            return newInfo(filledForm);
 			  	}    	
 			
 			  	String legacySiteId = requestData.get("legacySiteId");
 			  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.isNumeric(legacySiteId)) {
 			          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 						flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-						return info(targetForm);
+			            return newInfo(filledForm);
 			  	}    	
 	
-	            String fieldUrl = requestData.get("fieldUrls");
+	            String fieldUrl = requestData.get("formUrl");
 	            
 	            if (StringUtils.isNotEmpty(fieldUrl)) {
 		            String[] urls = fieldUrl.split(",");
@@ -1003,24 +1149,16 @@ public class TargetController extends AbstractController {
 		            	}
 		            	fieldUrls.add(fu);
 		            }
-		            targetFromDB.fieldUrls = fieldUrls;
-	            }
-	            
-	            targetFromDB.title = targetFromForm.title;
-	            targetFromDB.organisation = targetFromForm.organisation;
+		            filledForm.get().fieldUrls = fieldUrls;
+	            }		        
+		        
 	            String qaIssueId = requestData.get("qaIssueId");
 	            if (StringUtils.isNotEmpty(qaIssueId)) {
 	            	Long qaId = Long.valueOf(qaIssueId);
 	            	QaIssue qaIssue = QaIssue.findById(qaId);
-	            	targetFromDB.qaIssue = qaIssue;
+	            	filledForm.get().qaIssue = qaIssue;
 	            }
-	            
-	            targetFromDB.liveSiteStatus = targetFromForm.liveSiteStatus;
-	            targetFromDB.keySite = targetFromForm.keySite;
-	            targetFromDB.wctId = targetFromForm.wctId;
-	            targetFromDB.sptId = targetFromForm.sptId;
-	            targetFromDB.keywords = targetFromForm.keywords;
-	
+	            	            
 	            List<Tag> newTags = new ArrayList<Tag>();
 	            String[] tagValues = formParams.get("tagList");
 	
@@ -1030,14 +1168,8 @@ public class TargetController extends AbstractController {
 		            	Tag tag = Tag.findById(tagId);
 		            	newTags.add(tag);
 		            }
-		            targetFromDB.tags = newTags;
+		            filledForm.get().tags = newTags;
 	            }
-	            
-	            targetFromDB.synonyms = targetFromForm.synonyms;
-	            targetFromDB.archivistNotes = targetFromForm.archivistNotes;
-	            targetFromDB.revision = targetFromForm.revision;
-	
-	            targetFromDB.description = targetFromForm.description;
 	            
 	            List<Subject> newSubjects = new ArrayList<Subject>();
 	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
@@ -1050,7 +1182,7 @@ public class TargetController extends AbstractController {
 		            	Subject subject = Subject.findById(subjectId);
 		            	newSubjects.add(subject);
 		            }
-		            targetFromDB.subjects = newSubjects;
+		            filledForm.get().subjects = newSubjects;
 	            }
 	            
 	            List<Collection> newCollections = new ArrayList<Collection>();
@@ -1064,28 +1196,22 @@ public class TargetController extends AbstractController {
 		            	Collection collection = Collection.findById(collectionId);
 		            	newCollections.add(collection);
 		            }
-		            targetFromDB.collections = newCollections;
+		            filledForm.get().collections = newCollections;
 	            }
 	            
 	            String organisationId = requestData.get("organisationId");
 	            if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("-1")) {
 	            	Long oId = Long.valueOf(organisationId);
 	            	Organisation organisation = Organisation.findById(oId);
-	            	targetFromDB.organisation = organisation;
+	            	filledForm.get().organisation = organisation;
 	            }
-	
-	            targetFromDB.originatingOrganisation = targetFromForm.originatingOrganisation;
 	            
 	            String authorId = requestData.get("authorId");
 	            if (StringUtils.isNotEmpty(authorId)) {
 	            	Long aId = Long.valueOf(authorId);
 	            	User author = User.findById(aId);
-	            	targetFromDB.authorUser = author;
+	            	filledForm.get().authorUser = author;
 	            }
-	
-	            targetFromDB.language = targetFromForm.language;
-	
-	            targetFromDB.authors = targetFromForm.authors;
 	
 	            List<Flag> newFlags = new ArrayList<Flag>();
 	            String[] flagValues = formParams.get("flagList");
@@ -1097,46 +1223,27 @@ public class TargetController extends AbstractController {
 		            	Flag flag = Flag.findById(flagId);
 		            	newFlags.add(flag);
 		            }
-		            targetFromDB.flags = newFlags;
+		            filledForm.get().flags = newFlags;
 	            }
-	            
-	            targetFromDB.flagNotes = targetFromForm.flagNotes;
-	            
-	            targetFromDB.justification = targetFromForm.justification;
-	            
-	            targetFromDB.selectionType = targetFromForm.selectionType;
-	            
-	            targetFromDB.selectorNotes = targetFromForm.selectorNotes;
-	            
-	            targetFromDB.legacySiteId = targetFromForm.legacySiteId;
-	            
-	            targetFromDB.scope = targetFromForm.scope;
-	            
-	            targetFromDB.depth = targetFromForm.depth;
-	            
-	            targetFromDB.ignoreRobotsTxt = targetFromForm.ignoreRobotsTxt;
-	            
-	            targetFromDB.crawlFrequency = targetFromForm.crawlFrequency;
 	            
 	            String dateOfPublication = requestData.get("date_of_publication");
 	        	if (StringUtils.isNotEmpty(dateOfPublication)) {
 	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 	    			try {
 						Date date = formatter.parse(dateOfPublication);
-		    			targetFromDB.dateOfPublication = date;
+						filledForm.get().dateOfPublication = date;
 					} catch (ParseException e) {
 						e.printStackTrace();
 						return info(targetForm);
 					}
 	        	}
-	            Logger.info("targetFromDB.dateOfPublication: " + targetFromDB.dateOfPublication);
 	            
 	            String crawlStartDate = requestData.get("crawl_start_date");
 	        	if (StringUtils.isNotEmpty(crawlStartDate)) {
 	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 	    			try {
 						Date date = formatter.parse(crawlStartDate);
-		    			targetFromDB.crawlStartDate = date;
+						filledForm.get().crawlStartDate = date;
 					} catch (ParseException e) {
 						e.printStackTrace();
 						return info(targetForm);
@@ -1147,31 +1254,301 @@ public class TargetController extends AbstractController {
 	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 	    			try {
 						Date date = formatter.parse(crawlEndDate);
-		    			targetFromDB.crawlEndDate = date;
+						filledForm.get().crawlEndDate = date;
 					} catch (ParseException e) {
 						e.printStackTrace();
 						return info(targetForm);
 					}
 	        	}
-	            targetFromDB.whiteList = targetFromForm.whiteList;
+	        	filledForm.get().url = "act-" + Utils.createId();
+            	filledForm.get().save();
+		        flash("success", "Target " + filledForm.get().title + " has been created");
+		    	return redirect(routes.TargetController.view(filledForm.get().id));
+            	
+//    	    	nominationFromDB.nominatedWebsiteOwner = nominationFromForm.nominatedWebsiteOwner;
+//    	    	nominationFromDB.nominationChecked = nominationFromForm.nominationChecked;
+//    	    	nominationFromDB.save();
+//    	    	res = redirect(routes.NominationController.view(nominationFromDB.id));
+        	} else if (action.equals("delete")) {
+	        	Form<Target> filledForm = targetForm.bindFromRequest();
+	        	Target target = Target.findById(filledForm.get().id);
+	        	target.delete();
+		        return redirect(routes.TargetController.index()); 
+	        } else if (action.equals("request")) {
+	        	String title = requestData.get("title");
+	        	if (StringUtils.isNotEmpty(title)) {
+	        		String url = requestData.get("fieldUrl");
+	                String target = Scope.INSTANCE.normalizeUrl(url);
+	    	        return redirect(routes.CrawlPermissionController.licenceRequestForTarget(title, target)); 
+	        	}
+	        } else if (action.equals("archive")) {
+	    		String url = requestData.get("fieldUrl");
+	        	if (StringUtils.isNotEmpty(url)) {
+	                String target = Scope.INSTANCE.normalizeUrl(url);
+	    	        return redirect(routes.TargetController.archiveTarget(target)); 
+	        	}
+	        }        	
+        }
+        return null;
+            	
+//        if (StringUtils.isNotEmpty(action)) {
+//
+//        	if (action.equals("save")) {
+//        		Form<Target> filledForm = targetForm.bindFromRequest();
+//                Logger.info("filledForm: before");
+//                Logger.info("filledForm: " + filledForm.get());
+////                Form<Target> filledForm = new PatchedForm<Target>(Target.class).bindFromRequest();
+//
+//                if(filledForm.hasErrors()) {
+//                	String missingFields = "";
+//                	for (String key : filledForm.errors().keySet()) {
+//                	    Logger.debug("key: " +  key);
+//                	    key = Utils.showMissingField(key);
+//                	    if (missingFields.length() == 0) {
+//                	    	missingFields = key;
+//                	    } else {
+//                	    	missingFields = missingFields + Const.COMMA + " " + key;
+//                	    }
+//                	}
+//                	Logger.info("form errors size: " + filledForm.errors().size() + ", " + missingFields);
+//    	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
+//    	  					"Missing fields are: " + missingFields);
+//    		        return info(targetForm);
+//                }        	
+//                
+//                Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+//
+//                Logger.info("passed");
+//        		Target targetFromDB = Target.findById(id);
+//        		
+//	    	    Logger.info("targetForm: " + targetForm);
+//	    	    Target targetFromForm  = filledForm.get();
+	    	    
+//	    	    targetFromDB.isUkHosting = targetFromForm.isUkHosting();
+//	    	    try {
+//		    	    targetFromDB.isTopLevelDomain = targetFromForm.isTopLevelDomain();
+//		    	    targetFromDB.isUkRegistration = targetFromForm.isUkRegistration();
+//		    	    
+//		    	    // TODO: check hosting, top-level and uk reg on save
+//		    	    if (!targetFromForm.isUkHosting()) {
+//		    	    	
+//		    	    }
+//		    	    if (!targetFromForm.isTopLevelDomain()) {
+//		    	    	
+//		    	    }
+//	            	if (!targetFromForm.isUkRegistration()) {
+//	            		
+//	            	}
+//            	} catch(WhoisException e) {
+//            		e.printStackTrace();
+//            	}
 	            
-	            targetFromDB.blackList = targetFromForm.blackList;
+//	            String wct = requestData.get("wct");
+//	            
+//	            if (StringUtils.isNotBlank(wct) && !Utils.isNumeric(wct)) {
+//	            	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
+//			        return info(targetForm);
+//			  	}    	
+//	
+//	            String spt = requestData.get("spt");
+//	
+//			  	if (StringUtils.isNotBlank(spt) && !Utils.isNumeric(spt)) {
+//			          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+//						flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+//						return info(targetForm);
+//			  	}    	
+//			
+//			  	String legacySiteId = requestData.get("legacySiteId");
+//			  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.isNumeric(legacySiteId)) {
+//			          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+//						flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+//						return info(targetForm);
+//			  	}    	
+//	
+//	            String fieldUrl = requestData.get("fieldUrls");
+//	            
+//	            if (StringUtils.isNotEmpty(fieldUrl)) {
+//		            String[] urls = fieldUrl.split(",");
+//		            List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
+//		            
+//		            for (String url : urls) {
+//		            	FieldUrl fu = FieldUrl.findByUrl(url.trim());
+//		            	if (fu == null) {
+//			            	fu = new FieldUrl(url.trim());
+//			            	// get domain
+//		            	}
+//		            	fieldUrls.add(fu);
+//		            }
+//		            targetFromDB.fieldUrls = fieldUrls;
+//	            }
 	            
-	            targetFromDB.isUkHosting = targetFromForm.isUkHosting;
+//	            targetFromDB.title = targetFromForm.title;
+//	            targetFromDB.organisation = targetFromForm.organisation;
+
+//	            String qaIssueId = requestData.get("qaIssueId");
+//	            if (StringUtils.isNotEmpty(qaIssueId)) {
+//	            	Long qaId = Long.valueOf(qaIssueId);
+//	            	QaIssue qaIssue = QaIssue.findById(qaId);
+//	            	targetFromDB.qaIssue = qaIssue;
+//	            }
 	            
-	            targetFromDB.isTopLevelDomain = targetFromForm.isTopLevelDomain;
+//	            targetFromDB.liveSiteStatus = targetFromForm.liveSiteStatus;
+//	            targetFromDB.keySite = targetFromForm.keySite;
+//	            targetFromDB.wctId = targetFromForm.wctId;
+//	            targetFromDB.sptId = targetFromForm.sptId;
+//	            targetFromDB.keywords = targetFromForm.keywords;
+	
+//	            List<Tag> newTags = new ArrayList<Tag>();
+//	            String[] tagValues = formParams.get("tagList");
+//	
+//	            if (tagValues != null) {
+//		            for(String tagValue: tagValues) {
+//		            	Long tagId = Long.valueOf(tagValue);
+//		            	Tag tag = Tag.findById(tagId);
+//		            	newTags.add(tag);
+//		            }
+//		            targetFromDB.tags = newTags;
+//	            }
 	            
-	            targetFromDB.isUkRegistration = targetFromForm.isUkRegistration;
+//	            targetFromDB.synonyms = targetFromForm.synonyms;
+//	            targetFromDB.archivistNotes = targetFromForm.archivistNotes;
+//	            targetFromDB.revision = targetFromForm.revision;
+	
+//	            targetFromDB.description = targetFromForm.description;
 	            
-	            targetFromDB.ukPostalAddress = targetFromForm.ukPostalAddress;
+//	            List<Subject> newSubjects = new ArrayList<Subject>();
+//	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
+//	            Logger.info("subjectSelect: " + subjectSelect);
+//	            if (StringUtils.isNotEmpty(subjectSelect)) {
+//	                String[] subjects = subjectSelect.split(", ");
+//		            for (String sId : subjects) {
+//		//            	sId = sId.replace("\"", "");
+//		            	Long subjectId = Long.valueOf(sId);
+//		            	Subject subject = Subject.findById(subjectId);
+//		            	newSubjects.add(subject);
+//		            }
+//		            targetFromDB.subjects = newSubjects;
+//	            }
+//	            
+//	            List<Collection> newCollections = new ArrayList<Collection>();
+//	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
+//	            Logger.info("collectionSelect: " + collectionSelect);
+//	            if (StringUtils.isNotEmpty(collectionSelect)) {
+//	                String[] collections = collectionSelect.split(", ");
+//		            for (String cId : collections) {
+//		//            	sId = sId.replace("\"", "");
+//		            	Long collectionId = Long.valueOf(cId);
+//		            	Collection collection = Collection.findById(collectionId);
+//		            	newCollections.add(collection);
+//		            }
+//		            targetFromDB.collections = newCollections;
+//	            }
+//	            
+//	            String organisationId = requestData.get("organisationId");
+//	            if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("-1")) {
+//	            	Long oId = Long.valueOf(organisationId);
+//	            	Organisation organisation = Organisation.findById(oId);
+//	            	targetFromDB.organisation = organisation;
+//	            }
+	
+//	            targetFromDB.originatingOrganisation = targetFromForm.originatingOrganisation;
 	            
-	            targetFromDB.ukPostalAddressUrl = targetFromForm.ukPostalAddressUrl;
+//	            String authorId = requestData.get("authorId");
+//	            if (StringUtils.isNotEmpty(authorId)) {
+//	            	Long aId = Long.valueOf(authorId);
+//	            	User author = User.findById(aId);
+//	            	targetFromDB.authorUser = author;
+//	            }
+	
+//	            targetFromDB.language = targetFromForm.language;
+//	
+//	            targetFromDB.authors = targetFromForm.authors;
+	
+//	            List<Flag> newFlags = new ArrayList<Flag>();
+//	            String[] flagValues = formParams.get("flagList");
+//	
+//	            if (flagValues != null) {
+//		            for(String flagValue: flagValues) {
+//		            	Logger.info("flagValue: " + flagValue);
+//		            	Long flagId = Long.valueOf(flagValue);
+//		            	Flag flag = Flag.findById(flagId);
+//		            	newFlags.add(flag);
+//		            }
+//		            targetFromDB.flags = newFlags;
+//	            }
 	            
-	            targetFromDB.viaCorrespondence = targetFromForm.viaCorrespondence;
+//	            targetFromDB.flagNotes = targetFromForm.flagNotes;
+//	            
+//	            targetFromDB.justification = targetFromForm.justification;
+//	            
+//	            targetFromDB.selectionType = targetFromForm.selectionType;
+//	            
+//	            targetFromDB.selectorNotes = targetFromForm.selectorNotes;
+//	            
+//	            targetFromDB.legacySiteId = targetFromForm.legacySiteId;
+//	            
+//	            targetFromDB.scope = targetFromForm.scope;
+//	            
+//	            targetFromDB.depth = targetFromForm.depth;
+//	            
+//	            targetFromDB.ignoreRobotsTxt = targetFromForm.ignoreRobotsTxt;
+//	            
+//	            targetFromDB.crawlFrequency = targetFromForm.crawlFrequency;
 	            
-	            targetFromDB.professionalJudgement = targetFromForm.professionalJudgement;
-	            
-	            targetFromDB.professionalJudgementExp = targetFromForm.professionalJudgementExp;
+//	            String dateOfPublication = requestData.get("date_of_publication");
+//	        	if (StringUtils.isNotEmpty(dateOfPublication)) {
+//	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+//	    			try {
+//						Date date = formatter.parse(dateOfPublication);
+//		    			targetFromDB.dateOfPublication = date;
+//					} catch (ParseException e) {
+//						e.printStackTrace();
+//						return info(targetForm);
+//					}
+//	        	}
+//	            Logger.info("targetFromDB.dateOfPublication: " + targetFromDB.dateOfPublication);
+//	            
+//	            String crawlStartDate = requestData.get("crawl_start_date");
+//	        	if (StringUtils.isNotEmpty(crawlStartDate)) {
+//	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+//	    			try {
+//						Date date = formatter.parse(crawlStartDate);
+//		    			targetFromDB.crawlStartDate = date;
+//					} catch (ParseException e) {
+//						e.printStackTrace();
+//						return info(targetForm);
+//					}
+//	        	}
+//	            String crawlEndDate = requestData.get("crawl_end_date");
+//	        	if (StringUtils.isNotEmpty(crawlEndDate)) {
+//	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+//	    			try {
+//						Date date = formatter.parse(crawlEndDate);
+//		    			targetFromDB.crawlEndDate = date;
+//					} catch (ParseException e) {
+//						e.printStackTrace();
+//						return info(targetForm);
+//					}
+//	        	}
+//	            targetFromDB.whiteList = targetFromForm.whiteList;
+//	            
+//	            targetFromDB.blackList = targetFromForm.blackList;
+//	            
+//	            targetFromDB.isUkHosting = targetFromForm.isUkHosting;
+//	            
+//	            targetFromDB.isTopLevelDomain = targetFromForm.isTopLevelDomain;
+//	            
+//	            targetFromDB.isUkRegistration = targetFromForm.isUkRegistration;
+//	            
+//	            targetFromDB.ukPostalAddress = targetFromForm.ukPostalAddress;
+//	            
+//	            targetFromDB.ukPostalAddressUrl = targetFromForm.ukPostalAddressUrl;
+//	            
+//	            targetFromDB.viaCorrespondence = targetFromForm.viaCorrespondence;
+//	            
+//	            targetFromDB.professionalJudgement = targetFromForm.professionalJudgement;
+//	            
+//	            targetFromDB.professionalJudgementExp = targetFromForm.professionalJudgementExp;
 	
 	//				Scope (Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)
 	//				Depth (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)
@@ -1199,30 +1576,9 @@ public class TargetController extends AbstractController {
 	//			License (The license terms under which this site is archived and made available)
 	//			Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)
 	            
-	            Logger.info("targetFromDB: " + targetFromDB);
-	            targetFromDB.save();
-				return redirect(routes.TargetController.view(targetFromDB.id));
-	        } else if (action.equals("delete")) {
-	        	Form<Target> filledForm = targetForm.bindFromRequest();
-	        	Target target = Target.findById(filledForm.get().id);
-	        	target.delete();
-		        res = redirect(routes.TargetController.index()); 
-	        } else if (action.equals("request")) {
-	        	String title = requestData.get("title");
-	        	if (StringUtils.isNotEmpty(title)) {
-	        		String url = requestData.get("fieldUrl");
-	                String target = Scope.INSTANCE.normalizeUrl(url);
-	    	        res = redirect(routes.CrawlPermissionController.licenceRequestForTarget(title, target)); 
-	        	}
-	        } else if (action.equals("archive")) {
-	    		String url = requestData.get("fieldUrl");
-	        	if (StringUtils.isNotEmpty(url)) {
-	                String target = Scope.INSTANCE.normalizeUrl(url);
-	    	        res = redirect(routes.TargetController.archiveTarget(target)); 
-	        	}
-	        }
-        }
-        return res;
+//	            Logger.info("targetFromDB: " + targetFromDB);
+//	            targetFromDB.save();
+//				return redirect(routes.TargetController.view(targetFromDB.id));
     }
 	
     /**
@@ -1405,35 +1761,35 @@ public class TargetController extends AbstractController {
     	return res;
     }
     
-    /**
-   	 * This method calculates first order collections.
-     * @param collectionList The list of all collections
-     * @param filter This is an identifier for current selected object
-     * @param parent This parameter is used to differentiate between root and children nodes
-     * @return collection object in JSON form
-     */
-    protected static List<ObjectNode> getCollectionTreeElements(List<Collection> collectionList, String filter, boolean parent) {
-		List<ObjectNode> result = new ArrayList<ObjectNode>();
-		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
-
-    	for (Collection collection : collectionList) {
-			ObjectNode child = nodeFactory.objectNode();
-			child.put("title", collection.name);
-			if (StringUtils.isNotEmpty(collection.url) && collection.url.equalsIgnoreCase(filter)) {
-	    		child.put("select", true);
-	    	}
-			child.put("key", "\"" + collection.url + "\"");
-	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
-	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
-//    	    	Logger.info("children: " + children.size());
-	    	if (children.size() > 0) {
-	    		child.put("children", Json.toJson(getCollectionTreeElements(children, filter, false)));
-	    	}
-			result.add(child);
-    	}
-//        	Logger.info("getTreeElements() res: " + result);
-    	return result;
-    }
+//    /**
+//   	 * This method calculates first order collections.
+//     * @param collectionList The list of all collections
+//     * @param filter This is an identifier for current selected object
+//     * @param parent This parameter is used to differentiate between root and children nodes
+//     * @return collection object in JSON form
+//     */
+//    protected static List<ObjectNode> getCollectionTreeElements(List<Collection> collectionList, String filter, boolean parent) {
+//		List<ObjectNode> result = new ArrayList<ObjectNode>();
+//		JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
+//
+//    	for (Collection collection : collectionList) {
+//			ObjectNode child = nodeFactory.objectNode();
+//			child.put("title", collection.name);
+//			if (StringUtils.isNotEmpty(collection.url) && collection.url.equalsIgnoreCase(filter)) {
+//	    		child.put("select", true);
+//	    	}
+//			child.put("key", "\"" + collection.url + "\"");
+//	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
+//	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
+////    	    	Logger.info("children: " + children.size());
+//	    	if (children.size() > 0) {
+//	    		child.put("children", Json.toJson(getCollectionTreeElements(children, filter, false)));
+//	    	}
+//			result.add(child);
+//    	}
+////        	Logger.info("getTreeElements() res: " + result);
+//    	return result;
+//    }
     
 //    [{"title":"100 Best Sites (95)","url":"/actdev/collections/act-170","key":"\"act-170\""},
 //     {"title":"19th Century English Literature (0)","url":"/actdev/collections/act-153","key":"\"act-153\""},

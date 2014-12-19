@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import play.Logger;
@@ -65,12 +66,27 @@ public class Taxonomy extends MappedSuperClass {
 	@JoinColumn(name = "parent_id")
 	public Taxonomy parent;
 	
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="parent")
+	public List<Taxonomy> children;
+
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = TAXONOMY_PARENTS_ALL, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
 	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
 	public List<Taxonomy> parentsAllList;
-		
+
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "taxonomy_target", joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+			inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
+	public List<Target> targets;
+
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "taxonomy_instance", joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+	public List<Instance> instances;
+    
     @Transient
     @JsonProperty
     private String tid;

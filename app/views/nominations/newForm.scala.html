@@ -1,4 +1,4 @@
-@(nominationForm: Form[Nomination], user: User, id: Long)
+@(nominationForm: Form[Nomination], user: User)
 
 @import helper._
 @import bootstrap._
@@ -13,16 +13,9 @@
     	<h1><a href="@routes.NominationController.index()">Archivist Tasks > Nominations > </a>Nomination @nominationForm("name").value</h1>
 	</div>
 
-	<ul class="nav nav-tabs">
-	   <li><a href="@routes.NominationController.view(id)">View</a></li>
-	   @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.NominationController.edit(id)">Edit</a></li>
-	   }
-	</ul>
     <br/>
     @warningmessage(flash)
-	@helper.form(routes.NominationController.update(id)) {
-		<input type="hidden" name="id" value="@nominationForm("id").value">
+	@helper.form(routes.NominationController.save()) {
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -114,10 +107,7 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Justification:</label>
-				    <div class="col-sm-6">
-						<input class="form-control" value="@nominationForm("justification").value" name="justification" type="text">
-					</div>
+					@inputText(nominationForm("justification"), '_label -> "Justification:", 'class -> "form-control")
 				</div>
 			</div>
      	</div>
@@ -151,10 +141,7 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Date</label>
-				    <div class="col-sm-6">
- 						<input type="text" name="nomDate" class="form-control" id="log-date" value="@nominationForm("nominationDateText").value" />
-               		</div>
+					@inputText(nominationForm("nominationDateText"), '_label -> "Date:", 'class -> "form-control", 'id -> "log-date")
 				</div>
 			</div>
      	</div>	

@@ -222,38 +222,38 @@ public class QAController extends AbstractController {
 //    	return res;
 //    }
     
-    /**
-     * Mark collections that are stored in target object as selected
-     * @param collectionUrl The collection identifier
-     * @param checkedUrl This is an identifier for current target object
-     * @return
-     */
-    public static String checkCollectionSelection(String collectionUrl, String checkedUrl) {
-    	String res = "";
-    	if (checkedUrl != null && checkedUrl.length() > 0 && checkedUrl.equals(collectionUrl)) {
-    		res = "\"select\": true ,";
-    	}
-    	return res;
-    }
+//    /**
+//     * Mark collections that are stored in target object as selected
+//     * @param collectionUrl The collection identifier
+//     * @param checkedUrl This is an identifier for current target object
+//     * @return
+//     */
+//    public static String checkCollectionSelection(String collectionUrl, String checkedUrl) {
+//    	String res = "";
+//    	if (checkedUrl != null && checkedUrl.length() > 0 && checkedUrl.equals(collectionUrl)) {
+//    		res = "\"select\": true ,";
+//    	}
+//    	return res;
+//    }
         
-    /**
-     * This method calculates collection children - objects that have parents.
-     * @param url The identifier for parent 
-     * @param collectionUrl This is an identifier for current collection object
-     * @return child collection in JSON form
-     */
-    public static String getChildren(String url, String collectionUrl) {
-    	String res = "";
-        final StringBuffer sb = new StringBuffer();
-    	sb.append(", \"children\":");
-    	List<Collection> childCollections = Collection.getChildLevelCollections(url);
-    	if (childCollections.size() > 0) {
-	    	sb.append(getCollectionTreeElements(childCollections, collectionUrl, false));
-	    	res = sb.toString();
-//	    	Logger.info("getChildren() res: " + res);
-    	}
-    	return res;
-    }
+//    /**
+//     * This method calculates collection children - objects that have parents.
+//     * @param url The identifier for parent 
+//     * @param collectionUrl This is an identifier for current collection object
+//     * @return child collection in JSON form
+//     */
+//    public static String getChildren(String url, String collectionUrl) {
+//    	String res = "";
+//        final StringBuffer sb = new StringBuffer();
+//    	sb.append(", \"children\":");
+//    	List<Taxonomy> childCollections = Collection.getChildLevelCollections(url);
+//    	if (childCollections.size() > 0) {
+//	    	sb.append(getCollectionTreeElements(childCollections, collectionUrl, false));
+//	    	res = sb.toString();
+////	    	Logger.info("getChildren() res: " + res);
+//    	}
+//    	return res;
+//    }
     
 }
 

@@ -288,6 +288,7 @@ public class Target extends UrlModel {
 	private Object field_notes;
 
 	@Transient
+	@Required
 	public String formUrl;
 
 //	public String title;
@@ -417,16 +418,16 @@ public class Target extends UrlModel {
 		this.type = Const.URL;
 		// this.field_nominating_organisation = Const.NONE;
 	}
-
-    public String validate() {
-        if (StringUtils.isEmpty(this.title)) {
-            return "Title is blank";
-        }
-        if (StringUtils.isEmpty(this.selectionType)) {
-        	return "Selection type is blank";
-        }
-        return null;
-    }
+//
+//    public String validate() {
+//        if (StringUtils.isEmpty(this.title)) {
+//            return "Title is blank";
+//        }
+//        if (StringUtils.isEmpty(this.selectionType)) {
+//        	return "Selection type is blank";
+//        }
+//        return null;
+//    }
     
 	/**
 	 * This method checks whether license for Target with given URL is granted
@@ -1740,22 +1741,9 @@ public class Target extends UrlModel {
 	 * @return
 	 */
 	public static Page<Target> pageSubjectTargets(int page, int pageSize,
-			String sortBy, String order, String filter, String subject_url) {
-		Logger.debug("pageSubjectTargets() subject_url: " + subject_url);
+			String sortBy, String order, String filter, Long subjectId) {
 
-		return find
-				.where()
-				.add(Expr.or(Expr.icontains(Const.FIELD_URL, filter),
-						Expr.icontains(Const.TITLE, filter)))
-				.eq(Const.ACTIVE, true)
-				.add(Expr.or(
-						Expr.eq(Const.FIELD_SUBJECT, subject_url),
-						Expr.or(Expr.contains(Const.FIELD_SUBJECT, subject_url
-								+ Const.COMMA), Expr.or(
-								Expr.contains(Const.FIELD_SUBJECT, Const.COMMA
-										+ " " + subject_url),
-								Expr.contains(Const.FIELD_SUBJECT, Const.COMMA
-										+ "  " + subject_url)))))
+		return find.where().eq("subjects.id", subjectId)
 				.orderBy(sortBy + " " + order).findPagingList(pageSize)
 				.setFetchAhead(false).getPage(page);
 	}

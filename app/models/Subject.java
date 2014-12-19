@@ -2,16 +2,12 @@ package models;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 
 import com.avaje.ebean.Page;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -24,22 +20,6 @@ public class Subject extends Taxonomy {
 	 */
 	private static final long serialVersionUID = 3535758346565569620L;
 
-    @JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") },
-			inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
-	public List<Target> targets;
-
-	@ManyToMany
-	@JoinTable(name = "subjects", joinColumns = { @JoinColumn(name = "parent_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
-	public List<Subject> children;
-	
-    @JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "subject_instance", joinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
-	public List<Instance> instances;
-	
 	public static Model.Finder<Long,Subject> find = new Model.Finder<Long, Subject>(Long.class, Subject.class);
 
     public static Subject findById(Long id) {

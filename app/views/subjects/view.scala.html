@@ -1,4 +1,4 @@
-@(subject: Taxonomy, user: User) 
+@(subject: Subject, user: User) 
 
 @main("", user) {
 
@@ -12,7 +12,7 @@
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		<li><a href="@routes.SubjectController.edit(subject.id)">Edit</a></li>
 		}
-		<li><a href="@routes.SubjectController.sites(subject.url)">Targets</a></li>
+		<li><a href="@routes.SubjectController.sites(subject.id)">Targets</a></li>
 	</ul>
 
 		<div class="row padding-10">

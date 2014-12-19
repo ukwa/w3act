@@ -11,9 +11,7 @@
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'subjects'); 
-
-			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect");
-            
+			showTreeSelect(@getJson(subjectData), "#subjectTree", "subjectSelect");
 		});
 	</script>
 }

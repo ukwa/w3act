@@ -39,7 +39,7 @@
     }
     
     // Generate the link
-    routes.TargetController.subjectTargets(newPage, sortBy, order, searchurl, subject.url)
+    routes.TargetController.subjectTargets(newPage, sortBy, order, searchurl, subject.id)
     
 }
 
@@ -91,7 +91,7 @@
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		<li><a href="@routes.SubjectController.edit(subject.id)">Edit</a></li>
 		}
-		<li class="active"><a href="@routes.SubjectController.sites(subject.url)">Targets</a></li>
+		<li class="active"><a href="@routes.SubjectController.sites(subject.id)">Targets</a></li>
 	</ul>
     
 	<div id="forms">
@@ -101,7 +101,7 @@
    				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
   					<input type="hidden" name="s" value="@currentSortBy">
   					<input type="hidden" name="o" value="@currentOrder">
-  					<input type="hidden" name="subject_url" value="@subject.url">
+  					<input type="hidden" name="subject_id" value="@subject.id">
 				<input type="text" class="form-control lookup-form-control" name="url" value="@searchurl" id="search-query">
 	   			<span class="input-group-btn">
 					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>

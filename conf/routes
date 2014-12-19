@@ -45,7 +45,7 @@ GET    	/subjects/filterbyjson/:name		controllers.SubjectController.filterByJson
 GET     /subjects/new/:title        		controllers.SubjectController.create(title)
 GET     /subjects/:id                  		controllers.SubjectController.view(id:Long)
 GET     /subjects/:id/edit             		controllers.SubjectController.edit(id:Long)
-GET     /subjects/:sites/sites			    controllers.SubjectController.sites(sites)
+GET     /subjects/:id/targets			    controllers.SubjectController.sites(id:Long)
 POST    /subjects             			    controllers.SubjectController.save()
 
 GET     /taxonomy                           controllers.TaxonomyController.index()
@@ -174,7 +174,7 @@ GET    	/targets/list                  		controllers.TargetController.list(p:Int
 GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", collectionId:Long ?= -1)
 GET    	/targets/organisationtargets/       controllers.TargetController.organisationTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", organisation_url ?= "")
 GET    	/targets/usertargets/           	controllers.TargetController.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", user_url ?= "", query_subject ?= "", query_collection ?= "")
-GET    	/targets/subjecttargets/        	controllers.TargetController.subjectTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", subject_url ?= "")
+GET    	/targets/subjecttargets/        	controllers.TargetController.subjectTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", subjectId:Long ?= -1)
 #POST    /targets/new/create                 controllers.TargetController.create(title)
 GET    	/targets/export/ld/:frequency		controllers.TargetController.exportLdFrequencyJson(frequency)
 GET    	/targets/export/by/:frequency		controllers.TargetController.exportByFrequencyJson(frequency)
@@ -185,6 +185,8 @@ GET     /targets/wct/:id                    controllers.TargetController.viewWct
 GET     /targets/:revision/revision         controllers.TargetController.viewrevision(revision:Long)
 GET     /targets/edit/:id                   controllers.TargetController.edit(id:Long)
 POST    /targets                	 		controllers.TargetController.save()
+POST    /targets/:id              			controllers.TargetController.update(id:Long)
+
 
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissionController.showCrawlPermissions(target)
 GET     /target/licencerequest          	controllers.CrawlPermissionController.licenceRequestForTarget(name, target)
@@ -260,6 +262,8 @@ GET     /nominations/:id/edit       		controllers.NominationController.edit(id:L
 GET     /nominations/create/:nomination     controllers.NominationController.create(nomination)
 POST    /nominations/load/json         		controllers.NominationController.load()
 POST    /nominations                   		controllers.NominationController.save()
+POST    /nominations/:id              		controllers.NominationController.update(id:Long)
+
 
 POST    /user                     			controllers.UserController.save()
 

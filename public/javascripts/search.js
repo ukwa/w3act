@@ -372,3 +372,52 @@ function showTree(data, id, key) {
     	}
  	});
 }
+
+function showTreeSelect(data, id, key) {
+ 	$(id).dynatree({
+    	checkbox: false,
+    	selectMode: 3,
+    	children: data,
+	    onActivate: function(node) { 
+	        if( node.data.url ){
+	            // use href to change the current frame:
+	            window.location.href = node.data.url; 
+	        }
+	    },				    
+    	onSelect: function(select, node) {
+      		// Get a list of all selected nodes, and convert to a key array:
+      		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+        		return node.data.key;
+      		});
+      		document.getElementById(key).value = selKeys.join(", ");
+      		// Get a list of all selected TOP nodes
+      		var selRootNodes = node.tree.getSelectedNodes(true);
+      		// ... and convert to a key array:
+      		var selRootKeys = $.map(selRootNodes, function(node){
+        		return node.data.key;
+      		});
+    	}
+ 	});
+}
+
+function showTreeParent(data, id, key) {
+ 	
+    $(id).dynatree({
+        checkbox: true,
+        // Override class name for checkbox icon:
+        classNames: {checkbox: "dynatree-radio"},
+        selectMode: 1,
+        children: data,
+        onSelect: function(select, node) {
+      		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+        		return node.data.key;
+      		});
+      		document.getElementById(key).value = selKeys.join(", ");
+        },
+        // The following options are only required, if we have more than one tree on one page:
+//        initId: "treeData",
+/* 			        cookieId: "dynatree-Cb1",
+        idPrefix: "dynatree-Cb1-"
+*/
+    });
+}

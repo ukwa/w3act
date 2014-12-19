@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import models.Subject;
+import models.Target;
 import models.Taxonomy;
 import models.User;
 
@@ -26,11 +27,11 @@ import views.html.subjects.*;
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Security.Authenticated(SecuredController.class)
 public class SubjectController extends AbstractController {
+	
+    final static Form<Subject> subjectForm = new Form<Subject>(Subject.class);
 
 	/**
 	 * Display the subjects.
@@ -57,7 +58,7 @@ public class SubjectController extends AbstractController {
 	 */
 	public static Result list(int pageNo, String sortBy, String order,
 			String filter) {
-		JsonNode node = getSubjectsData(null);
+		JsonNode node = getSubjectsDataByFilter(filter);
 		
 		Page<Subject> pages = Subject.pager(pageNo, 10, sortBy, order, filter);
 		
@@ -97,13 +98,13 @@ public class SubjectController extends AbstractController {
     		if (Const.ADDENTRY.equals(action)) {
 //        		return redirect(routes.SubjectController.create(query));
     	        Logger.info("create subject()");
-    	    	Taxonomy subject = new Taxonomy();
+    	    	Subject subject = new Subject();
     	    	subject.name = query;
 //    	        subject.id = Target.createId();
 //    	        subject.url = Const.ACT_URL + subject.tid;
     			Logger.info("add subject with url: " + subject.url + ", and name: " + subject.name);
     			JsonNode node = getSubjectsTree(subject.url);
-    			Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
+    			Form<Subject> subjectForm = Form.form(Subject.class);
     			subjectForm = subjectForm.fill(subject);
     	        return ok(edit.render(subjectForm, User.findByEmail(request().username()), node));    			
     		} 
@@ -141,14 +142,14 @@ public class SubjectController extends AbstractController {
      */
     public static Result create(String name) {
         Logger.info("create subject()");
-    	Taxonomy subject = new Taxonomy();
+    	Subject subject = new Subject();
     	subject.name = name;
     	// TODO: createId
 //        subject.id = Target.createId();
 //        subject.url = Const.ACT_URL + subject.id;
 		Logger.info("add subject with url: " + subject.url + ", and name: " + subject.name);
 		JsonNode node = getSubjectsTree(subject.url);
-		Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
+		Form<Subject> subjectForm = Form.form(Subject.class);
 		subjectForm = subjectForm.fill(subject);
         return ok(edit.render(subjectForm, User.findByEmail(request().username()), node));
     }
@@ -157,11 +158,16 @@ public class SubjectController extends AbstractController {
      * Display the subject edit panel for this URL.
      */
     public static Result edit(Long id) {
-		Taxonomy subject = Taxonomy.findById(id);
-		JsonNode node = getSubjectsTree(subject.url);
-		Form<Taxonomy> subjectForm = Form.form(Taxonomy.class);
+    	User user = User.findByEmail(request().username());
+		Subject subject = Subject.findById(id);
+		List<Subject> thisSubject = new ArrayList<Subject>();
+		thisSubject.add((Subject)subject.parent);
+		JsonNode node = getSubjectsData(thisSubject);
+		Form<Subject> subjectForm = Form.form(Subject.class);
 		subjectForm = subjectForm.fill(subject);
-        return ok(edit.render(subjectForm, User.findByEmail(request().username()), node));
+		Logger.info("id: " + subjectForm.get().id);
+        return ok(edit.render(subjectForm, user, node));        
+        
     }
 
 	/**
@@ -170,7 +176,7 @@ public class SubjectController extends AbstractController {
 	 * @return edit page with form and info message
 	 */
 	public static Result info() {
-    	Taxonomy subject = new Taxonomy();
+    	Subject subject = new Subject();
     	// TODO: createId
 //    	subject.id = Long.valueOf(getFormParam(Const.TID));
 //    	subject.url = getFormParam(Const.URL);
@@ -197,7 +203,7 @@ public class SubjectController extends AbstractController {
         	subject.description = getFormParam(Const.DESCRIPTION);
         }
 		JsonNode node = getSubjectsTree(subject.url);
-		Form<Taxonomy> subjectFormNew = Form.form(Taxonomy.class);
+		Form<Subject> subjectFormNew = Form.form(Subject.class);
 		subjectFormNew = subjectFormNew.fill(subject);
       	return ok(
 	              edit.render(subjectFormNew, User.findByEmail(request().username()), node)
@@ -211,116 +217,84 @@ public class SubjectController extends AbstractController {
      * @return
      */
     public static Result save() {
+
     	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("input data for saving subject tid: " + getFormParam(Const.TID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME) + ", parent: " + getFormParam(Const.TREE_KEYS));
-        	
-        	Form<Taxonomy> subjectForm = Form.form(Taxonomy.class).bindFromRequest();
-            if(subjectForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : subjectForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    key = Utils.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + subjectForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
-            }
-        	
-        	Taxonomy subject = null;
-            boolean isExisting = true;
-            try {
-                try {
-                	subject = Taxonomy.findByUrlExt(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	subject = new Taxonomy();
-                	// TODO: createId
-//                	subject.id = Long.valueOf(getFormParam(Const.TID));
-//                	subject.url = getFormParam(Const.URL);
-                }
-                if (subject == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	subject = new Taxonomy();
-                	// TODO: createId
-//                	subject.id = Long.valueOf(getFormParam(Const.TID));
-//                	subject.url = getFormParam(Const.URL);
-                }
-                
-                subject.name = getFormParam(Const.NAME);
-                subject.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
-        	    if (getFormParam(Const.TTYPE) != null) {
-        	    	subject.ttype = getFormParam(Const.TTYPE);
-        	    }
-//        	    subject.ttype = Const.SUBJECT;
-//        	    if (getFormParam(Const.PARENT) != null) {
-//                	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
-//                		subject.parent = getFormParam(Const.PARENT);
-//                	    subject.ttype = Const.SUBSUBJECT;
-//                	}
-//        	    }
-                if (getFormParam(Const.TREE_KEYS) != null) {
-            		if (StringUtils.isNotEmpty(getFormParam(Const.TREE_KEYS)) && getFormParam(Const.TREE_KEYS).contains(Const.COMMA)) {
-                    	Logger.info("Please select only one parent.");
-        	  			flash("message", "Please select only one parent.");
-        	  			return info();
-                    }
-            		if (subject.parent != null) {
-                    	Logger.info("It is not possible to assign a node to itself as a parent. Please select one parent.");
-        	  			flash("message", "It is not possible to assign a node to itself as a parent. Please select one parent.");
-        	  			return info();
-                    }
-            		String parentUrl = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-            		if (parentUrl != null) {
-            			if (!parentUrl.toLowerCase().equals(Const.NONE)) {
-//            				subject.parent = Taxonomy.findByUrlExt(parentUrl).name;
-                        	if (!getFormParam(Const.TREE_KEYS).toLowerCase().contains(Const.NONE)) {
-        	            	    subject.ttype = Const.SUBSUBJECT;
-        	            	}
-            			} else {
-//            				subject.parent = Const.NONE;
-    	            	    subject.ttype = Const.SUBJECT;
-            			}
-            		}
-//            		subject.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-            		Logger.debug("subject parent: " + subject.parent);
-                }
-                if (getFormParam(Const.DESCRIPTION) != null) {
-                	subject.description = getFormParam(Const.DESCRIPTION);
-                }
-            } catch (Exception e) {
-            	Logger.info("Subject not exists exception: " + e.getMessage());
-            }
-            
-        	if (!isExisting) {
-               	Ebean.save(subject);
-    	        Logger.info("save subject: " + subject.toString());
-        	} else {
-           		Logger.info("update subject: " + subject.toString());
-               	Ebean.update(subject);
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+        if (StringUtils.isNotEmpty(action)) {
+    		Form<Subject> filledForm = subjectForm.bindFromRequest();
+
+        	Long id = filledForm.get().id;
+
+        	if (action.equals("save")) {
+	            if(filledForm.hasErrors()) {
+	            	String missingFields = "";
+	            	for (String key : subjectForm.errors().keySet()) {
+	            	    Logger.debug("key: " +  key);
+	            	    key = Utils.showMissingField(key);
+	            	    if (missingFields.length() == 0) {
+	            	    	missingFields = key;
+	            	    } else {
+	            	    	missingFields = missingFields + Const.COMMA + " " + key;
+	            	    }
+	            	}
+	            	Logger.info("form errors size: " + subjectForm.errors().size() + ", " + missingFields);
+		  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+		  					" Missing fields are: " + missingFields);
+		  			return info(filledForm);
+	            }
+	        	
+	            Subject subjectFromDB = Subject.findById(id);
+	            Subject subjectFromForm = filledForm.get();
+	            
+	            subjectFromDB.name = subjectFromForm.name;
+	            subjectFromDB.publish = subjectFromForm.publish;
+	            subjectFromDB.description = subjectFromForm.description;
+	            subjectFromDB.revision = subjectFromForm.revision;
+	            
+	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
+	            Logger.info("subjectSelect: " + subjectSelect);
+	            if (StringUtils.isNotEmpty(subjectSelect)) {
+	                String[] subjects = subjectSelect.split(", ");
+	                if (subjects.length == 1) {
+	                	Long subjectId = Long.valueOf(subjects[0]);
+	                	if (subjectId == id) {
+	                		Logger.info("same id");
+	        	  			flash("message", "It is not possible to assign a node to itself as a parent. Please select one parent.");
+	        	  			return info(filledForm);
+	                	} else {
+			            	Subject subject = Subject.findById(subjectId);
+		                	subjectFromDB.parent = subject;
+		                	Logger.info("looking good");
+	                	}
+	                }
+	                else if (subjects.length > 1) {
+	                	Logger.info("Please select only one parent.");
+	    	  			flash("message", "Please select only one parent.");
+	    	  			return info(filledForm);
+	                }
+	            }
+	            subjectFromDB.save();
+	            
+		        res = redirect(routes.SubjectController.view(subjectFromDB.id));
+        	} else if (action.equals("delete")) {
+	        	Subject subject = Subject.findById(id);
+	        	subject.delete();
+    	        res = redirect(routes.SubjectController.index()); 
         	}
-	        res = redirect(routes.SubjectController.edit(subject.id));
         } 
-        if (delete != null) {
-        	String url = getFormParam(Const.URL);
-        	Logger.info("deleting: " + url);
-        	Taxonomy subject = Taxonomy.findByUrl(url);
-        	Ebean.delete(subject);
-	        res = redirect(routes.SubjectController.index()); 
-        }
         return res;
+    }
+    
+    public static Result info(Form<Subject> form) {
+    	Logger.info("info");
+    	User user = User.findByEmail(request().username());
+		List<Subject> thisCollection = new ArrayList<Subject>();
+		Subject collection = form.get();
+		thisCollection.add(collection);
+		JsonNode node = getSubjectsData(thisCollection);
+		return ok(edit.render(form, user, node));
     }
 	        
     /**
@@ -328,9 +302,12 @@ public class SubjectController extends AbstractController {
      * @param url The URL identifier for subject
      * @return
      */
-    public static Result sites(String url) {
-        return redirect(routes.TargetController.subjectTargets(0, Const.TITLE, Const.ASC, "", url));
+    public static Result sites(Long id) {
+        return redirect(routes.TargetController.subjectTargets(0, Const.TITLE, Const.ASC, "", id));
     }  
+    
+
+    
 
     /**
      * This method presents subjects in a tree form.
@@ -344,7 +321,7 @@ public class SubjectController extends AbstractController {
     	if (url != null && url.length() > 0) {
     		try {
 	    		Taxonomy subject = Taxonomy.findByUrl(url);
-	    		if (subject.parent != null) {
+	    		if (subject != null) {
 //	    			url = subject.parent.id;
 	    		}
     		} catch (Exception e) {
@@ -381,17 +358,17 @@ public class SubjectController extends AbstractController {
 	    		Taxonomy subject = itr.next();
 //    			Logger.debug("add subject: " + subject.name + ", with url: " + subject.url +
 //    					", parent:" + subject.parent + ", parent size: " + subject.parent.length());
-	    		if ((parent && subject.parent == null) || !parent || subject.parent == null) {
-		    		if (firstTime) {
-		    			firstTime = false;
-		    		} else {
-		    			sb.append(", ");
-		    		}
-//	    			Logger.debug("added");
-					sb.append("{\"title\": \"" + subject.name + "\"," + checkSelection(subject.name, url) + 
-							" \"key\": \"" + subject.url + "\"" + 
-							getSubjectChildren(subject.url, url) + "}");
-	    		}
+//	    		if ((parent && subject.parent == null) || !parent || subject.parent == null) {
+//		    		if (firstTime) {
+//		    			firstTime = false;
+//		    		} else {
+//		    			sb.append(", ");
+//		    		}
+////	    			Logger.debug("added");
+//					sb.append("{\"title\": \"" + subject.name + "\"," + checkSelection(subject.name, url) + 
+//							" \"key\": \"" + subject.url + "\"" + 
+//							getSubjectChildren(subject.url, url) + "}");
+//	    		}
 	    	}
 //	    	Logger.info("subjectList level size: " + subjectList.size());
 	    	sb.append("]");

@@ -246,7 +246,18 @@ public class AbstractController extends Controller {
 		JsonNode jsonData = Json.toJson(result);
 	    return jsonData;
 	}
+	
+    protected static JsonNode getSubjectsDataByFilter(String filter) {
+		List<Subject> firstLevel = Subject.getFirstLevelSubjects();
+    	List<ObjectNode> result = getSubjectTreeElements(firstLevel, filter, true);
+    	JsonNode jsonData = Json.toJson(result);
+        return jsonData;
+    }
 
+    protected static List<ObjectNode> getSubjectTreeElements(List<Subject> subjects, String filter, boolean parent) {
+    	return getSubjectTreeElements(subjects, filter, parent, null);
+    }
+    
 	protected static List<ObjectNode> getSubjectTreeElements(List<Subject> firstLevel, boolean parent, List<Subject> mySubjects) { 
 		return getSubjectTreeElements(firstLevel, null, parent, mySubjects);
 	}

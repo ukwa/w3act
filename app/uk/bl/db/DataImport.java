@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import models.Collection;
 import models.ContactPerson;
 import models.Flag;
 import models.Instance;
@@ -15,6 +16,7 @@ import models.MailTemplate;
 import models.Organisation;
 import models.Permission;
 import models.Role;
+import models.Subject;
 import models.Tag;
 import models.Target;
 import models.Taxonomy;
@@ -249,7 +251,12 @@ public enum DataImport {
 					Taxonomy parent = Taxonomy.findByNameAndType(taxonomy.parentName, taxonomy.ttype);
 					Logger.info("Parent found: " + parent);
 					if (parent != null) {
-						taxonomy.parent = parent;
+						if (taxonomy instanceof Collection) {
+							((Collection)taxonomy).parent = (Collection)parent;
+						}
+						else if (taxonomy instanceof Subject) {
+							((Subject)taxonomy).parent = (Subject)parent;
+						}
 					}
 				}
 				taxonomy.save();

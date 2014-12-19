@@ -1,4 +1,4 @@
-@(form: Form[Taxonomy], user: User, data :com.fasterxml.jackson.databind.JsonNode)
+@(form: Form[models.Subject], user: User, subjectData :com.fasterxml.jackson.databind.JsonNode)
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -12,34 +12,9 @@
 			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'subjects'); 
 
-            showTree(@getJson(data));
-            
-            function showTree(data) {
-             	$("#tree3").dynatree({
-                	checkbox: true,
-                	selectMode: 2,
-                	children: data,
-    			    onActivate: function(node) { 
-    			        if( node.data.url ){
-    			            // use href to change the current frame:
-    			            window.location.href = node.data.url; 
-    			        }
-    			    },				    
-                	onSelect: function(select, node) {
-                  		// Get a list of all selected nodes, and convert to a key array:
-                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                    		return node.data.key;
-                  		});
-                  		document.getElementById('treeKeys').value = selKeys.join(", ");
-                  		// Get a list of all selected TOP nodes
-                  		var selRootNodes = node.tree.getSelectedNodes(true);
-                  		// ... and convert to a key array:
-                  		var selRootKeys = $.map(selRootNodes, function(node){
-                    		return node.data.key;
-                  		});
-                	}
-             	});
-            }
+			showTreeParent(@getJson(subjectData), "#subjectTree", "subjectSelect");
+
+
 		});
 	</script>
 }
@@ -57,7 +32,7 @@
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 		   <li class="active"><a href="@routes.SubjectController.edit(form.get.id)">Edit</a></li>
 		}
-		<li><a href="@routes.SubjectController.sites(form.get.url)">Targets</a></li>
+		<li><a href="@routes.SubjectController.sites(form.get.id)">Targets</a></li>
 	</ul>
 	
 	    @warningmessage(flash)
@@ -81,55 +56,28 @@
 				<div class="form-group">
 	              	<label for="subjects" class="col-sm-6 control-label">Parent</label>
 				    <div class="col-sm-6">
-					  <div id="tree3"></div>
-					  <input type="hidden" id="treeKeys" name="treeKeys" value="@form("parent").value">
+					  <div id="subjectTree"></div>
+					  <input type="hidden" id="subjectSelect" name="subjectSelect" value="@form.get.parent.id">
 					</div>
 				</div>
 			</div>
      	</div>	   
 
-     	
-   		<!-- div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
-				    <div class="col-sm-6">
-		                @if((form("parent").value == null || form("parent").value.length() == 0) 
-		                	&& Taxonomy.findById(Long.valueOf(form("tid").value)) != null) {
-		                	None
-		                } else {
-						<select name="parent" id="parent" class="form-control">
-			                @for(subject <- Taxonomy.findListByTypeAndParentSorted("subject","")) {
-				                @if(form("parent").value != null 
-				                	&& Taxonomy.findByName(form("parent").value) != null 
-				                	&& Taxonomy.findByName(form("parent").value).url.equals(subject.url)) {
-				                	<option selected>@subject.name</option>
-				                } else {
-				                	<option>@subject.name</option>
-				                }
-			                }
-						</select>
-		                }				    
-					</div>
-				</div>
-			</div>
-     	</div-->		   
-
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-   		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label class="col-sm-6 control-label">Publish</label>
-				    <div class="col-sm-6">
-		                @if(form("publish").value != null && form("publish").value == "true") {             
-			                <input type="checkbox" name="publish" value="true" checked/>
-		                } else {
-			                <input type="checkbox" name="publish" value="true"/>
-		                }
+	   		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Publish</label>
+					    <div class="col-sm-6">
+			                @if(form("publish").value != null && form("publish").value == "true") {             
+				                <input type="checkbox" name="publish" value="true" checked/>
+			                } else {
+				                <input type="checkbox" name="publish" value="true"/>
+			                }
+						</div>
 					</div>
 				</div>
-			</div>
-     	</div>		     				     	
+	     	</div>		     				     	
 		}     	
 		
 		<div class="row padding-10">
@@ -147,9 +95,9 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
-				    @if(Taxonomy.findById(Long.valueOf(form("tid").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+				    @if(Subject.findById(Long.valueOf(form("id").value)) != null) {
+						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Delete @form("id").value Are you sure?');">Delete</button>
 					}
 		       </div>
 			</div>

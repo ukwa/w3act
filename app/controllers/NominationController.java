@@ -21,8 +21,10 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.PatchedForm;
 import uk.bl.api.Utils;
 import views.html.licence.ukwalicenceresult;
+import views.html.nominations.newForm;
 import views.html.nominations.edit;
 import views.html.nominations.list;
 import views.html.nominations.nominationform;
@@ -38,8 +40,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Security.Authenticated(SecuredController.class)
 public class NominationController extends AbstractController {
   
-    final static Form<Nomination> nominationForm = play.data.Form.form(Nomination.class);
-
+    final static Form<Nomination> nominationForm = new PatchedForm<Nomination>(Nomination.class).bindFromRequest();
+    
     /**
      * Display the nomination.
      */
@@ -59,7 +61,7 @@ public class NominationController extends AbstractController {
 		Nomination nomination = Nomination.findById(id);
 		Form<Nomination> nominationForm = Form.form(Nomination.class);
 		nominationForm = nominationForm.fill(nomination);
-      	return ok(edit.render(nominationForm, User.findByEmail(request().username())));
+      	return ok(edit.render(nominationForm, User.findByEmail(request().username()), id));
     }
     
     public static Result view(Long id) {
@@ -101,13 +103,12 @@ public class NominationController extends AbstractController {
     		if (Const.ADDENTRY.equals(action)) {
     	    	Nomination nomination = new Nomination();
     	    	nomination.name = query;
-    	        nomination.id = Utils.createId();
-    	        nomination.url = Const.ACT_URL + nomination.id;
-    			Logger.info("add nomination with url: " + nomination.url + ", and name: " + nomination.name);
+    			Logger.info("add nomination name: " + nomination.name);
     			Form<Nomination> nominationFormNew = Form.form(Nomination.class);
     			nominationFormNew = nominationFormNew.fill(nomination);
+    			User user = User.findByEmail(request().username());
     	      	return ok(
-    		              edit.render(nominationFormNew, User.findByEmail(request().username()))
+    		              newForm.render(nominationFormNew, user)
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
@@ -127,13 +128,10 @@ public class NominationController extends AbstractController {
     public static Result create(String name) {
     	Nomination nomination = new Nomination();
     	nomination.name = name;
-        nomination.id = Utils.createId();
-        nomination.url = Const.ACT_URL + nomination.id;
-		Logger.info("add nomination with url: " + nomination.url + ", and name: " + nomination.name);
-		Form<Nomination> nominationFormNew = Form.form(Nomination.class);
-		nominationFormNew = nominationFormNew.fill(nomination);
+    	Form<Nomination> filledForm = nominationForm.fill(nomination);
+    	User user = User.findByEmail(request().username());
       	return ok(
-	              edit.render(nominationFormNew, User.findByEmail(request().username()))
+	              edit.render(filledForm, user, null)
 	            );
     }
     
@@ -196,6 +194,18 @@ public class NominationController extends AbstractController {
         }
     }
     
+    public static Result update(Long id) {
+        Form<Nomination> filledForm = form(Nomination.class).bindFromRequest();
+        User user = User.findByEmail(request().username());
+        if(filledForm.hasErrors()) {
+            return badRequest(edit.render(filledForm, user, id));
+
+        }
+        filledForm.get().update(id);
+        flash("success", "Nomination " + filledForm.get().name + " has been updated");
+    	return redirect(routes.NominationController.view(filledForm.get().id));
+    }
+    
     /**
      * This method saves new object or changes on given Nomination in the same object
      * completed by revision comment. The "version" field in the Nomination object
@@ -203,72 +213,92 @@ public class NominationController extends AbstractController {
      * @return
      */
     public static Result save() {
-    	Result res = null;
+	
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
-
+    	User user = User.findByEmail(request().username());
+    	
         if (StringUtils.isNotEmpty(action)) {
-        	if (action.equals("save")) {        	
-            	Form<Nomination> filledForm = nominationForm.bindFromRequest();
-            	User user = User.findByEmail(request().username());
-	            if(filledForm.hasErrors()) {
-	            	String missingFields = "";
-	            	for (String key : filledForm.errors().keySet()) {
-	            	    Logger.info("key: " +  key);
-	            	    if (missingFields.length() == 0) {
-	            	    	missingFields = key;
-	            	    } else {
-	            	    	missingFields = missingFields + ", " + key;
-	            	    }
-	            	}
-	            	Logger.info("form errors size: " + filledForm.errors().size() + ", " + missingFields);
-		  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-		  					" Missing fields are: " + missingFields);
-		            return badRequest(edit.render(filledForm, user));
-
-//		  	      	return ok(edit.render(filledForm, user));
-	            }
-	            
-	            Nomination nominationFromForm = filledForm.get();
-	            Long id = Long.valueOf(nominationFromForm.id);
-
-	            Nomination nominationFromDB = Nomination.findById(id);
-	            if (nominationFromDB == null) {
-	            	nominationFromDB = new Nomination();
-	            }
-	            nominationFromDB.name = nominationFromForm.name;
-	            nominationFromDB.title = nominationFromForm.title;
-	            nominationFromDB.websiteUrl = nominationFromForm.websiteUrl;
-	            nominationFromDB.email = nominationFromForm.email;
-	            nominationFromDB.tel = nominationFromForm.tel;
-	            nominationFromDB.address = nominationFromForm.address;
-	            nominationFromDB.notes = nominationFromForm.notes;
-    	    	nominationFromDB.justification = nominationFromForm.justification;
+        	if (action.equals("save")) {    
+		        Form<Nomination> nominationForm = form(Nomination.class).bindFromRequest();
+		        if(nominationForm.hasErrors()) {
+		            return badRequest(newForm.render(nominationForm, user));
+		        }
+//
+//    	String idForm = requestData.get("id");
+//    	Long id = null;
+//    	if (StringUtils.isNotEmpty(idForm)) {
+//    		id = Long.valueOf(idForm);
+//    	}
+//
+//        if (StringUtils.isNotEmpty(action)) {
+//        	if (action.equals("save")) {        	
+//            	Form<Nomination> filledForm = nominationForm.bindFromRequest();
+//            	User user = User.findByEmail(request().username());
+//	            if(filledForm.hasErrors()) {
+//	            	String missingFields = "";
+//	            	for (String key : filledForm.errors().keySet()) {
+//	            	    Logger.info("key: " +  key);
+//	            	    if (missingFields.length() == 0) {
+//	            	    	missingFields = key;
+//	            	    } else {
+//	            	    	missingFields = missingFields + ", " + key;
+//	            	    }
+//	            	}
+//	            	Logger.info("form errors size: " + filledForm.errors().size() + ", " + missingFields);
+//		  			flash("message", "Please fill out all the required fields, marked with a red star." + 
+//		  					" Missing fields are: " + missingFields);
+//		            return badRequest(edit.render(filledForm, user, id));
+//
+////		  	      	return ok(edit.render(filledForm, user));
+//	            }
+//	            
+//	            Nomination nominationFromForm = filledForm.get();
+//	            id = Long.valueOf(nominationFromForm.id);
+//
+//	            Nomination nominationFromDB = Nomination.findById(id);
+//	            if (nominationFromDB == null) {
+//	            	nominationFromDB = new Nomination();
+//	            }
+//	            nominationFromDB.name = nominationFromForm.name;
+//	            nominationFromDB.title = nominationFromForm.title;
+//	            nominationFromDB.websiteUrl = nominationFromForm.websiteUrl;
+//	            nominationFromDB.email = nominationFromForm.email;
+//	            nominationFromDB.tel = nominationFromForm.tel;
+//	            nominationFromDB.address = nominationFromForm.address;
+//	            nominationFromDB.notes = nominationFromForm.notes;
+//    	    	nominationFromDB.justification = nominationFromForm.justification;
 	    	    
                 String nomDate = requestData.get("nomDate");
             	if (StringUtils.isNotEmpty(nomDate)) {
         			DateFormat formatter = new SimpleDateFormat("dd-MM-yy");
         			try {
     					Date date = formatter.parse(nomDate);
-    					nominationFromDB.nominationDate = date;
+    					nominationForm.get().nominationDate = date;
     				} catch (ParseException e) {
     		  			flash("message", "Nomination Date (dd-mm-yy) - Incorrect Format");
-    					return ok(edit.render(filledForm, user)); 
+    		            return badRequest(newForm.render(nominationForm, user));
     				}
             	}
-    	    	nominationFromDB.nominatedWebsiteOwner = nominationFromForm.nominatedWebsiteOwner;
-    	    	nominationFromDB.nominationChecked = nominationFromForm.nominationChecked;
-    	    	nominationFromDB.save();
-    	    	res = redirect(routes.NominationController.view(nominationFromDB.id));
+		        nominationForm.get().save();
+		        flash("success", "Nomination " + nominationForm.get().name + " has been created");
+		    	return redirect(routes.NominationController.view(nominationForm.get().id));
+            	
+//    	    	nominationFromDB.nominatedWebsiteOwner = nominationFromForm.nominatedWebsiteOwner;
+//    	    	nominationFromDB.nominationChecked = nominationFromForm.nominationChecked;
+//    	    	nominationFromDB.save();
+//    	    	res = redirect(routes.NominationController.view(nominationFromDB.id));
         	} else if(action.equals("delete")) {
             	Form<Nomination> filledForm = nominationForm.bindFromRequest();
             	Nomination nomination = Nomination.findById(filledForm.get().id);
             	nomination.delete();
-    	        res = redirect(routes.NominationController.index()); 
+    	        return redirect(routes.NominationController.index()); 
         	}
-        } 
-        return res;
-    }	   
+        }
+        return null;
+    }
+
+
 
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {

@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -104,6 +106,22 @@ public class Nomination extends ActModel {
     	super();
     }
     
+//    public String validate() {
+//        if (StringUtils.isEmpty(this.title)) {
+//            return "Title is blank";
+//        }
+//        if (StringUtils.isEmpty(this.name)) {
+//        	return "Name is blank";
+//        }
+//        if (StringUtils.isEmpty(this.websiteUrl)) {
+//        	return "WebsiteUrl is blank";
+//        }
+//        if (StringUtils.isEmpty(this.email)) {
+//        	return "Email is blank";
+//        }
+//        return null;
+//    }
+
     /**
      * Retrieve all nominations.
      */

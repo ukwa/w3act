@@ -244,7 +244,7 @@ public class TagController extends AbstractController {
            		Logger.info("update tag: " + tag.toString());
                	Ebean.update(tag);
         	}
-	        return redirect(routes.TagController.edit(tag.id));
+	        return redirect(routes.TagController.view(tag.id));
         } 
         if (delete != null) {
         	Tag tag = Tag.findByUrl(getFormParam(Const.URL));

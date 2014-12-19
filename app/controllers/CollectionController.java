@@ -116,7 +116,7 @@ public class CollectionController extends AbstractController {
 	public static Result view(Long id) {
 		User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
-		Logger.info("" + id+ " " + collection);
+		Logger.info("" + id+ " " + collection.parent);
         return ok(view.render(collection, user));
 	}
 	
@@ -133,7 +133,7 @@ public class CollectionController extends AbstractController {
     	User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
 		List<Collection> thisCollection = new ArrayList<Collection>();
-		thisCollection.add(collection);
+		thisCollection.add((Collection)collection.parent);
 		JsonNode node = getCollectionsData(thisCollection);
 		Form<Collection> collectionForm = Form.form(Collection.class);
 		collectionForm = collectionForm.fill(collection);

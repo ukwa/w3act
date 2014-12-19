@@ -12,29 +12,8 @@
 			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'collections'); 
 
-			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect");
+			showTreeParent(@getJson(collectionData), "#collectionTree", "collectionSelect");
 			
-			function showTree(data, id, key) {
-			 	
-			    $(id).dynatree({
-			        checkbox: true,
-			        // Override class name for checkbox icon:
-			        classNames: {checkbox: "dynatree-radio"},
-			        selectMode: 1,
-			        children: data,
-			        onSelect: function(select, node) {
-			      		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-			        		return node.data.key;
-			      		});
-			      		document.getElementById(key).value = selKeys.join(", ");
-			        },
-			        // The following options are only required, if we have more than one tree on one page:
-//			        initId: "treeData",
-/* 			        cookieId: "dynatree-Cb1",
-			        idPrefix: "dynatree-Cb1-"
- */			      });
-			}
-            
 		});
 	</script>
 }
@@ -77,7 +56,7 @@
 					    <div class="col-sm-6">
 							@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 								<div id="collectionTree"></div>
-						  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@form("parentName").value)">
+						  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@form("parentName").value">
 							} else {
 								@if(form.get.url != null) {
 									@form.get.parent

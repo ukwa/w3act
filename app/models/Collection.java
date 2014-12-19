@@ -25,19 +25,6 @@ public class Collection extends Taxonomy {
 	 */
 	private static final long serialVersionUID = 3043585612371074777L;
 
-    @ManyToMany
-	@JoinTable(name = "collection_target", joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
-    public List<Target> targets;
- 
-    @ManyToMany
-	@JoinTable(name = "collection_instance", joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
-    public List<Instance> instances;
-    
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="parent")
-	public List<Collection> children;
-
 	public static Model.Finder<Long,Collection> find = new Model.Finder<Long, Collection>(Long.class, Collection.class);
     
     /**
