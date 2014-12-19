@@ -1,7 +1,10 @@
 package uk.bl;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import models.QaIssue;
 
 public final class Const {
   
@@ -523,6 +526,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(CrawlPermissionStatus s : CrawlPermissionStatus.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}
 	}
 
 	/**
@@ -550,6 +562,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(TargetLanguage s : TargetLanguage.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}    	
     }
     
 	public enum SelectionType {
@@ -574,6 +595,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(SelectionType s : SelectionType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}    
     }
 	
 	public enum ScopeType {
@@ -600,6 +630,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(ScopeType s : ScopeType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}        	
     }
     	
 	public enum DepthType {
@@ -625,6 +664,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(DepthType s : DepthType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}        	
     }
     	
 	/**
@@ -657,6 +705,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(QAStatusType s : QAStatusType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}        	    	
 	}
 	
 	public enum NpldType {
@@ -678,6 +735,14 @@ public final class Const {
         	return value;
         }
 
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(NpldType s : NpldType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}              
     }
 	
 	/**
@@ -716,6 +781,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(QAIssueCategory s : QAIssueCategory.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}             	
     }
 
 	/**
@@ -750,6 +824,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(CrawlFrequency s : CrawlFrequency.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}              	
     }
 	
 	/**
@@ -785,6 +868,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(SiteStatus siteStatus : SiteStatus.values()) {
+                options.put(siteStatus.name(), siteStatus.getValue());
+            }
+            return options;
+    		
+    	}
     }
 	
 	/**
@@ -813,6 +905,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(RequestType s : RequestType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}             	
     }
 	
 	/**
@@ -845,6 +946,15 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(ReportQaStatusType s : ReportQaStatusType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}                	
     }
     
     /**

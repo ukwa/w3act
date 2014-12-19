@@ -1,7 +1,9 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -109,6 +111,14 @@ public class Tag extends Taxonomy {
     	}
 		return res;
 	}       
+	
+	public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(Tag t: Tag.findAllTags()) {
+            options.put(t.id.toString(), t.name);
+        }
+        return options;		
+	}
 	
 	@Override
 	public int hashCode() {

@@ -1,6 +1,8 @@
 package models;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -38,6 +40,14 @@ public class License extends Taxonomy {
         public String getValue() {
         	return value;
         }
+        
+    	public static Map<String,String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(LicenseStatus t: LicenseStatus.values()) {
+                options.put(t.name(), t.getValue());
+            }
+            return options;		
+    	}
 	}
 	
 	public String status;

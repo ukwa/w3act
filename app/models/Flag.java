@@ -1,7 +1,9 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -113,7 +115,15 @@ public class Flag extends Taxonomy {
 	    	}
     	}
 		return res;
-	}       
+	}
+	
+	public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(Flag t: Flag.findAllFlags()) {
+            options.put(t.id.toString(), t.name);
+        }
+        return options;		
+	}
     	
    public String toString() {
         return "Flag(" + name + ")" + ", id:" + id;

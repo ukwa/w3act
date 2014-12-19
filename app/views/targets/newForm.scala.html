@@ -253,14 +253,13 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="qaIssueId" class="col-sm-6 control-label">QA Status</label>
-						    <div class="col-sm-6">
-								<select name="qaIssueId" id="qaIssueId" class="form-control">
-									@for(qaIssue <- qaIssues) {
-									 	<option value="@qaIssue.id">@qaIssue.name</option>
-								    }
-                                </select>
-							</div>
+							@select(
+               					targetForm("qaIssue.id"), 
+					                options(qaIssues),
+					                '_label -> "QA Status:", 
+					                '_default -> "-- Choose a QA Status --",
+					                '_showConstraints -> false
+				            )(FieldConstructor(genericInput.f), lang)
 						</div>
 					</div>
 		     	</div>	     
@@ -268,25 +267,22 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If known, please add the current status of the site)</small></label>
-						    <div class="col-sm-6">
-						    	@for(siteStatus <- siteStatuses) {
-									<label class="radio-inline">
-							        	<input name="liveSiteStatus" value="@siteStatus.name()" type="radio"> @siteStatus.getValue()
-									</label>
-								}
-							</div>
-						</div>
+					    	@inputRadioGroup(
+         							targetForm("liveSiteStatus"),
+         							options(siteStatuses),
+						          '_label -> "Live Site Status (If known, please add the current status of the site):"
+			            	)(FieldConstructor(genericInput.f), lang)
+			            </div>
 					</div>
 		     	</div>	     
 		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
-						    <div class="col-sm-6">
-				                <input type="checkbox" name="keySite" value="true"/>
-							</div>
+							@helper.checkbox(targetForm("keySite"), 
+								'_label -> "Key Site (Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management):", 
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)
 						</div>
 					</div>
 		     	</div>	     
@@ -322,14 +318,13 @@
 		   		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
-						    <div class="col-sm-6">
-								<select multiple name="tagList" id="tags" class="form-control">
-					                @for(tag <- tags) {
-					                	<option value="@tag.id">@tag.name</option>
-					                }
-								</select>
-							</div>
+							@select(
+               					targetForm("tag.id"), 
+					                options(tags), 
+					                '_label -> "Tag(s) (The multiple open keywords):",
+					                '_showConstraints -> false,
+					                'multiple->"multiple"
+				            )(FieldConstructor(genericInput.f), lang)
 						</div>
 					</div>
 		     	</div>		   
@@ -810,18 +805,14 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="edit-field-license-und" class="col-sm-6 control-label">License <small class="text-center">(The license terms under which this site is archived and made available)</small></label>
-						    <div class="col-sm-6">
-					    	    @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-									<select multiple name="license" id="edit-field-license" class="form-control" size="2" disabled>
-
-								}
-									<option value="-1">None</option>
-								    @for(license <- licenses) {
-									 	<option value="@license.id" >@license.name</option>
-								    }	
-								</select>
-							</div>
+							@select(
+	              					targetForm("licenses.id"), 
+					                options(licensesMap), 
+					                '_label -> "License (The license terms under which this site is archived and made available):",
+				                	'_default -> "-- None --",
+					                '_showConstraints -> false,
+					                'multiple->"multiple"
+				            )(FieldConstructor(genericInput.f), lang)						
 						</div>
 					</div>
 		     	</div>	

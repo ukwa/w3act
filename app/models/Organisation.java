@@ -1,7 +1,9 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,6 +19,7 @@ import javax.persistence.Transient;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.Const.SiteStatus;
 import uk.bl.api.models.FieldModel;
 
 import com.avaje.ebean.ExpressionList;
@@ -422,7 +425,14 @@ public class Organisation extends ActModel {
 		this.log = log;
 	}
 
-	
+	public static Map<String, String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(Organisation s : Organisation.findAll()) {
+            options.put(s.id.toString(), s.title);
+        }
+        return options;
+		
+	}	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

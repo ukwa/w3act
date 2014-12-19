@@ -3,7 +3,9 @@ package models;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -421,7 +423,13 @@ public class User extends ActModel {
         		.getPage(page);
     }
     
-
+    public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(User c: User.findAll()) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
+    }
 
     	
 	@Override

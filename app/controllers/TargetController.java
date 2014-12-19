@@ -21,7 +21,6 @@ import models.Collection;
 import models.FieldUrl;
 import models.Flag;
 import models.License;
-import models.Nomination;
 import models.Organisation;
 import models.QaIssue;
 import models.Subject;
@@ -46,7 +45,6 @@ import uk.bl.Const.SelectionType;
 import uk.bl.Const.SiteStatus;
 import uk.bl.Const.TargetLanguage;
 import uk.bl.api.Utils;
-import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
@@ -443,23 +441,29 @@ public class TargetController extends AbstractController {
 		Logger.info("add entry with target url: " + target.url);
 		Logger.info("target name: " + target.title);
 		Form<Target> targetForm = Form.form(Target.class);
+		target.subjectIdsText = target.subjectIdsAsString();
+		target.collectionIdsText = target.collectionIdsAsString();
+//		if (target.authorUser != null) {
+//			target.authorIdText = target.authorUser.id.toString();
+//		}
 		targetForm = targetForm.fill(target);
 		User user = User.findByEmail(request().username());
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
-		List<User> authors = User.findAll();
-		List<Tag> tags = Tag.findAllTags();
-		List<Flag> flags = Flag.findAllFlags();
-		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-		TargetLanguage[] languages = Const.TargetLanguage.values();
-		SelectionType[] selectionTypes = Const.SelectionType.values();
-		ScopeType[] scopeTypes = Const.ScopeType.values();
-		DepthType[] depthTypes = Const.DepthType.values();
-		List<License> licenses = License.findAllLicenses();
-		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-		SiteStatus[] siteStatuses = Const.SiteStatus.values();
-		List<Organisation> organisations = Organisation.findAll();
+		
+		Map<String,String> authors = User.options();
+		Map<String,String> tags = Tag.options();
+		Map<String,String> flags= Flag.options();
+		Map<String,String> qaIssues = QaIssue.options();
+		Map<String,String> languages = Const.TargetLanguage.options();
+		Map<String,String> selectionTypes = Const.SelectionType.options();
+		Map<String,String> scopeTypes = Const.ScopeType.options();
+		Map<String,String> depthTypes = Const.DepthType.options();
+		Map<String,String> licenses = License.LicenseStatus.options();
+		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
+		Map<String,String> siteStatuses = Const.SiteStatus.options();
+		Map<String,String> organisations = Organisation.options();
         return ok(edit.render(targetForm, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
 	}
     
@@ -720,21 +724,21 @@ public class TargetController extends AbstractController {
 		Form<Target> filledForm = targetForm.fill(target);
 		User user = User.findByEmail(request().username());
 		JsonNode collectionData = getCollectionsData(target.collections);
-//		Logger.info("subject ids: " + target.subjectIdsAsString());
 		JsonNode subjectData = getSubjectsData(target.subjects);
-		List<User> authors = User.findAll();
-		List<Tag> tags = Tag.findAllTags();
-		List<Flag> flags = Flag.findAllFlags();
-		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-		TargetLanguage[] languages = Const.TargetLanguage.values();
-		SelectionType[] selectionTypes = Const.SelectionType.values();
-		ScopeType[] scopeTypes = Const.ScopeType.values();
-		DepthType[] depthTypes = Const.DepthType.values();
-		List<License> licenses = License.findAllLicenses();
-		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-		SiteStatus[] siteStatuses = Const.SiteStatus.values();
-		List<Organisation> organisations = Organisation.findAll();
+
+		Map<String,String> authors = User.options();
+		Map<String,String> tags = Tag.options();
+		Map<String,String> flags= Flag.options();
+		Map<String,String> qaIssues = QaIssue.options();
+		Map<String,String> languages = Const.TargetLanguage.options();
+		Map<String,String> selectionTypes = Const.SelectionType.options();
+		Map<String,String> scopeTypes = Const.ScopeType.options();
+		Map<String,String> depthTypes = Const.DepthType.options();
+		Map<String,String> licenses = License.LicenseStatus.options();
+		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
+		Map<String,String> siteStatuses = Const.SiteStatus.options();
+		Map<String,String> organisations = Organisation.options();
         return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     }
     
@@ -888,19 +892,20 @@ public class TargetController extends AbstractController {
 		User user = User.findByEmail(request().username());
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
-		List<User> authors = User.findAll();
-		List<Tag> tags = Tag.findAllTags();
-		List<Flag> flags = Flag.findAllFlags();
-		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-		TargetLanguage[] languages = Const.TargetLanguage.values();
-		SelectionType[] selectionTypes = Const.SelectionType.values();
-		ScopeType[] scopeTypes = Const.ScopeType.values();
-		DepthType[] depthTypes = Const.DepthType.values();
-		List<License> licenses = License.findAllLicenses();
-		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-		SiteStatus[] siteStatuses = Const.SiteStatus.values();
-		List<Organisation> organisations = Organisation.findAll();
+
+		Map<String,String> authors = User.options();
+		Map<String,String> tags = Tag.options();
+		Map<String,String> flags= Flag.options();
+		Map<String,String> qaIssues = QaIssue.options();
+		Map<String,String> languages = Const.TargetLanguage.options();
+		Map<String,String> selectionTypes = Const.SelectionType.options();
+		Map<String,String> scopeTypes = Const.ScopeType.options();
+		Map<String,String> depthTypes = Const.DepthType.options();
+		Map<String,String> licenses = License.LicenseStatus.options();
+		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
+		Map<String,String> siteStatuses = Const.SiteStatus.options();
+		Map<String,String> organisations = Organisation.options();
         return badRequest(edit.render(form, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
     }
 

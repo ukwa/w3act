@@ -410,7 +410,7 @@ public enum Scope {
 	 */
 	public boolean checkScopeIpWithoutLicense(String url, Target target) throws WhoisException {
         boolean res = false;
-        Logger.info("check for scope IP url: " + url + ", nid: " + target.id);
+        Logger.info("check for scope IP url: " + url + ", id: " + target.id);
         url = normalizeUrl(url);
         Logger.info("normalizeUrl: " + url);
         
@@ -436,13 +436,13 @@ public enum Scope {
         }
 
         // Rule 3.2: check geo IP
-        if (!res && url != null && url.length() > 0) {
+        if (!res && StringUtils.isNotEmpty(url)) {
         	res = checkGeoIp(url);
     		Logger.debug("checkScopeIp() after geoIp check: " + res);
         }
         
         // Rule 3.3: check whois lookup service
-        if (!res && url != null && url.length() > 0) {
+        if (!res && StringUtils.isNotEmpty(url)) {
         	res = checkWhois(url, target);
     		Logger.debug("checkScopeIp() after whois check: " + res);
         }
@@ -450,7 +450,7 @@ public enum Scope {
         /**
          * if database entry exists and is different to the current value - replace it
          */
-        if (url != null && url.length() > 0) {
+        if (StringUtils.isNotEmpty(url)) {
         	List<LookupEntry> lookupEntries = LookupEntry.filterByName(url);
         	if (lookupEntries.size() > 0) {
         		boolean dbValue = LookupEntry.getValueByUrl(url);

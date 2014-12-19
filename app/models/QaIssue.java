@@ -1,6 +1,8 @@
 package models;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
@@ -42,6 +44,14 @@ public class QaIssue extends Taxonomy {
     public static QaIssue findByUrl(String url) {
     	QaIssue QualityIssue = find.where().eq(Const.URL, url).findUnique();
     	return QualityIssue;
+    }
+
+    public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(QaIssue c: find.all()) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
     }
     
 	@Override
