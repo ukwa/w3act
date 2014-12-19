@@ -90,6 +90,7 @@
 
 		<div id="forms">
    			@warningmessage(flash)
+   			
    			@helper.form(action=routes.NominationController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />

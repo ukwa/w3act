@@ -72,6 +72,7 @@ public class Target extends UrlModel {
 	public List<License> licenses;
 
     @JsonIgnore
+    @Required
     @ManyToMany
 	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 

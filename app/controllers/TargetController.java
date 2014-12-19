@@ -935,6 +935,7 @@ public class TargetController extends AbstractController {
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
         Form<Target> filledForm = form(Target.class).bindFromRequest();
         if(filledForm.hasErrors()) {
+        	Logger.info("hasErrors");
             return info(filledForm);
         }
         
@@ -959,8 +960,20 @@ public class TargetController extends AbstractController {
 				flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 	            return newInfo(filledForm);
 	  	}    	
+	  	String subjectString = requestData.get("subjectSelect");
+	  	if (StringUtils.isBlank(subjectString)) {
+			flash("message", "Please choose a subject(s).");
+            return newInfo(filledForm);
+        
+	  	}
 
-        String fieldUrl = requestData.get("formUrl");
+	  	String selectionType = requestData.get("selectionType");
+	  	if (StringUtils.isEmpty(selectionType)) {
+			flash("message", "Please choose a selection.");
+            return newInfo(filledForm);
+	  	}
+	  	
+	  	String fieldUrl = requestData.get("formUrl");
         
         if (StringUtils.isNotEmpty(fieldUrl)) {
             String[] urls = fieldUrl.split(",");
@@ -1135,6 +1148,18 @@ public class TargetController extends AbstractController {
 			            return newInfo(filledForm);
 			  	}    	
 	
+			  	String subjectString = requestData.get("subjectSelect");
+			  	if (StringUtils.isBlank(subjectString)) {
+					flash("message", "Please choose a subject(s).");
+		            return newInfo(filledForm);
+			  	}
+
+			  	String selectionType = requestData.get("selectionType");
+			  	if (StringUtils.isEmpty(selectionType)) {
+					flash("message", "Please choose a selection.");
+		            return newInfo(filledForm);
+			  	}
+			  	
 	            String fieldUrl = requestData.get("formUrl");
 	            
 	            if (StringUtils.isNotEmpty(fieldUrl)) {

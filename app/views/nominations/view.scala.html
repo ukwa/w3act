@@ -11,7 +11,7 @@
 	<ul class="nav nav-tabs">
 	   <li class="active"><a href="@routes.NominationController.view(nomination.id)">View</a></li>
 	   @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-	   	<li><a href="@routes.NominationController.edit(nomination.id)">Edit</a></li>
+		   	<li><a href="@routes.NominationController.edit(nomination.id)">Edit</a></li>
 	   }
 	</ul>
 
