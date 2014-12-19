@@ -1,6 +1,8 @@
 package uk.bl.crawling;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,13 +62,13 @@ public class CrawlActor extends UntypedActor {
  			"/bin/bash", "-c", "cd conf/converter && ./convertPdfToHtml.sh " + document.documentUrl + " '" + document.title + "'");
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
-		/*BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		String line;
 		while (true) {
 			line = r.readLine();
  			if (line == null) { break; }
-				System.out.println(line);
-		}*/
+			Logger.debug(line);
+		}
 	}
 	
 	public void onReceive(Object message) throws Exception {

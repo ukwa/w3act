@@ -32,7 +32,8 @@ public class WatchedTarget extends Model {
 	public List<Document> documents;
 	public String documentUrlScheme;
 	public String getUrl() { return ""+id; }
-	public String getName() { return target.title; }
+	public String getName() { return target.field_url; }
+	public static final String SEARCH_FIELD = "target.field_url";
 	//@Transient
 	//public int documentCount;
 	
@@ -73,7 +74,7 @@ public class WatchedTarget extends Model {
 		
         return find/*.setRawSql(rawSql)*/.where()
         		.eq("id_creator", user.uid)
-        		.icontains("target.field_url", filter)
+        		.icontains(SEARCH_FIELD, filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

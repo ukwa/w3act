@@ -11,6 +11,7 @@ rm "$BASE_FILE_NAME.pdf"
 rm *.woff
 
 sed -i s/@font-face{[^}]*}// "$BASE_FILE_NAME.html"
+sed -i "s/\(\.fs.*{font-size:\)\(.*px\)/\1calc(\2 * 0.9)/" "$BASE_FILE_NAME.html"
 
 mkdir -p ../../../html
 mv "$BASE_FILE_NAME.html" ../../../html/

@@ -111,7 +111,7 @@ public class WatchedTargets extends AbstractController {
         JsonNode jsonData = null;
         if (title != null) {
 	        List<WatchedTarget> watchedTargets = WatchedTarget.find.where().join("target")
-	        		.where().icontains("target.title", title).findList();
+	        		.where().icontains(WatchedTarget.SEARCH_FIELD, title).findList();
 	        jsonData = Json.toJson(watchedTargets);
         }
         return ok(jsonData);
