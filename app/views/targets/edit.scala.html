@@ -2,6 +2,7 @@
 
 @import helper._
 @import bootstrap._
+@import uk.bl.api.FormHelper
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -160,7 +161,7 @@
 		    <li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
 			<li>
 				<a href="#crawlpermission" data-toggle="tab">NPLD scope
-				@if(Target.isInScopeAllWithoutLicense(id)) {
+				@if(FormHelper.INSTANCE.isInScopeAllWithoutLicense(id)) {
 					<font color="green">(+)</font>
 				} else {
 					<font color="red">(-)</font>
@@ -168,7 +169,7 @@
 				</a>
 			</li>
 		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing
-		    	@if(Target.hasGrantedLicense(id)) {
+		    	@if(FormHelper.INSTANCE.hasGrantedLicense(id)) {
 					<font color="green">(+)</font>
 				} else {
 					<font color="red">(-)</font>
@@ -291,7 +292,7 @@
 								UK Registration
 							</label>
 						    <div class="col-sm-6">
-								@if(Target.isUkRegistration(id)) {
+								@if(FormHelper.INSTANCE.isUkRegistration(id)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -643,11 +644,11 @@
 					</div>
 				</div>			     	
 
-				@if(Target.indicateNpldStatus(id)) {    	
+				@if(FormHelper.INSTANCE.indicateNpldStatus(id)) {    	
 					<div class="padding-20">
 						<div class="alert alert-info">
 							NB. There are other records within this domain for which data has already been provided.
-							@for(targetObj <- Target.getNpldStatusList(id)) {
+							@for(targetObj <- FormHelper.INSTANCE.getNpldStatusList(id)) {
 								<p><a href="@routes.TargetController.view(targetObj.id)">@targetObj.title @targetObj.fieldUrl</a></p>
 							}
 						</div>
@@ -931,11 +932,11 @@
 					</div>
 		     	</div>	
 	
-				@if(Target.indicateUkwaLicenceStatus(id)) {    	
+				@if(FormHelper.INSTANCE.indicateUkwaLicenceStatus(id)) {    	
 					<div class="padding-20">
 						<div class="alert alert-info">
 							NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
-							@for(target <- Target.getUkwaLicenceStatusList(id)) { 
+							@for(target <- FormHelper.INSTANCE.getUkwaLicenceStatusList(id)) { 
 								<p><a href="@routes.TargetController.view(target.id)">@target.title @target.fieldUrl()</a></p>
 							}
 						</div>
@@ -973,7 +974,7 @@
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
 								@if(targetForm("qaIssue.id").value == null) {
-									@if(!Target.indicateLicenses(id)) {
+									@if(!FormHelper.INSTANCE.indicateLicenses(id)) {
 										<button type="submit" name="request" class="btn btn-success">Open License Request</button>
 									}
 									@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
@@ -1034,7 +1035,7 @@
 						</a>
 					</div>
 					<div id="collapseInstances" class="panel-collapse collapse">
-						@for(fieldUrl <- Target.fieldUrls(id)) {
+						@for(fieldUrl <- FormHelper.INSTANCE.fieldUrls(id)) {
 							<div class="panel-footer">
 								<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@fieldUrl.url">In QA Wayback</a>
 							</div>

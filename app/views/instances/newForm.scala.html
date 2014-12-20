@@ -1,4 +1,4 @@
-@(form: Form[Instance], user: User, id: Long, qaIssues: List[QaIssue], qaIssueCategories: Array[uk.bl.Const.QAIssueCategory])
+@(form: Form[Instance], user: User, qaIssues: List[QaIssue], qaIssueCategories: Array[uk.bl.Const.QAIssueCategory], targetId: Long)
 
 @import uk.bl.api.FormHelper
 
@@ -21,19 +21,12 @@
 
 @main("", user, script) {
     
-	<ul class="nav nav-tabs">
-		<li><a href="@routes.InstanceController.view(form.get.id)">View</a></li>
-		@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) {
-			<li class="active"><a href="#">Edit</a></li>
-		}
-	</ul>
-	
 	<div class="tab-content padding-20">
 	   	<ol class="breadcrumb">
 			<li><a href="@routes.TargetController.index()">Targets</a></li>
-			<li><a href="@routes.TargetController.view(form.get.target.id)">@form.get.target.title</a></li>
+			<li><a href="@routes.TargetController.view(targetId)">@form("target.title").value</a></li>
 			<li><a href="@routes.InstanceController.index()">Instances</a></li>
-			<li class="active"><span class="badge">@form.get.target.fieldUrl()</span></li>
+			<li class="active"><span class="badge">@form("target.fieldUrl").value</span></li>
 		</ol>
 	</div>
 
@@ -45,10 +38,9 @@
 	</div>
 	
     @warningmessage(flash)
-	@helper.form(routes.InstanceController.update(id)) {
+	@helper.form(action=routes.InstanceController.save()) {
 	
 		<div id="myTabContent" class="tab-content">
-			<input type="hidden" id="instanceId" name="id" value="@form.get.id">
 		
 			<div class="tab-pane padding-20 fade active in" id="qa">
 			
@@ -57,7 +49,7 @@
 						<div class="form-group">
 							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
 						    <div class="col-sm-6">
-				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@form.get.title">
+				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@form("title").value">
 							</div>
 						</div>
 					</div>
@@ -70,7 +62,7 @@
 						    <div class="col-sm-6">
 								<select name="qaIssueId" id="field_qa_status" class="form-control">
 									@for(qaIssue <- qaIssues) {
-						                @if(form.get.qaIssue != null && form.get.qaIssue.id == qaIssue.id) {             
+						                @if(form("qaIssue").value != null && Long.valueOf(form("qaIssue.id").value) == qaIssue.id) {             
 									 		<option value="@qaIssue.id" selected>@qaIssue.name</option>
 									 	} else {
 										 	<option value="@qaIssue.id">@qaIssue.name</option>
@@ -89,7 +81,7 @@
 			            	<div class="col-sm-6">
 								<select multiple name="qaIssueCategory" class="form-control target-form-control" id="qa_issue_category">
 									@for(qaIssueCategory <- qaIssueCategories) {
-						                @if(form.get.qaIssueCategory != null && form.get.qaIssueCategory.equals(qaIssueCategory.name)) {             
+						                @if(form("qaIssueCategory").value != null && form("qaIssueCategory").value.equals(qaIssueCategory.name)) {             
 									 		<option value="@qaIssueCategory.name" selected>@qaIssueCategory.getValue</option>
 									 	} else {
 										 	<option value="@qaIssueCategory.name">@qaIssueCategory.getValue</option>
@@ -106,7 +98,7 @@
 						<div class="form-group">
 			            	<label for="qa_notes" class="col-sm-6 control-label">QA Notes</label>
 			            	<div class="col-sm-6">
-				            	<textarea class="form-control" name="qaNotes" id="qa_notes" cols="100" rows="1" value="@form.get.qaNotes">@form.get.qaNotes</textarea>
+				            	<textarea class="form-control" name="qaNotes" id="qa_notes" cols="100" rows="1">@form("qaNotes").value</textarea>
 							</div>
 			         	</div>
 					</div>
@@ -117,7 +109,7 @@
 						<div class="form-group">
 			            	<label for="quality_notes" class="col-sm-6 control-label">Technical Notes</label>
 			            	<div class="col-sm-6">
-				            	<textarea class="form-control" name="notes" id="quality_notes" cols="100" rows="1" value="@form.get.notes">@form.get.notes</textarea>
+				            	<textarea class="form-control" name="notes" id="quality_notes" cols="100" rows="1">@form("notes").value</textarea>
 							</div>
 			         	</div>
 					</div>
@@ -128,7 +120,7 @@
 						<div class="form-group">
 			              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
 						    <div class="col-sm-6">
-	               				<textarea class="form-control" name="revision" id="inputRevision">@form.get.revision</textarea>
+	               				<textarea class="form-control" name="revision" id="inputRevision">@form("revision").value</textarea>
 							</div>
 						</div>
 					</div>
@@ -146,20 +138,6 @@
 						</a>
 					</div>
 					<div id="collapseInstances" class="panel-collapse collapse">
-						@for(fieldUrl <- FormHelper.INSTANCE.fieldUrls(id)) {
-							<div class="panel-footer">
-								<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@fieldUrl.url">In QA Wayback</a>
-							</div>
-						    <div class="panel-footer">
-					        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
-							</div>
-							<div class="panel-footer">
-								<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
-							</div>
-						    <div class="panel-footer">
-					        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
-							</div>
-						}
 					</div>
 				</div>
 			</div>
@@ -174,8 +152,8 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
-					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
+					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
+					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
 		       </div>
 			</div>
 		</div>

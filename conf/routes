@@ -198,6 +198,7 @@ GET     /instances/wct/:id                  controllers.InstanceController.viewW
 GET     /instances/:id/edit             	controllers.InstanceController.edit(id:Long)
 GET     /instances/:revision/revision       controllers.InstanceController.viewrevision(revision:Long)
 POST    /instances	             			controllers.InstanceController.save()
+POST    /instances/:id              		controllers.InstanceController.update(id:Long)
 
 GET     /instances                          controllers.InstanceController.index()
 POST    /instances/search          			controllers.InstanceController.search()

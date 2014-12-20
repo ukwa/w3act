@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import models.Collection;
 import models.ContactPerson;
@@ -13,6 +14,7 @@ import models.Instance;
 import models.Organisation;
 import models.QaIssue;
 import models.Tag;
+import models.Target;
 import models.Taxonomy;
 import models.User;
 
@@ -32,6 +34,7 @@ import views.html.instances.edit;
 import views.html.instances.list;
 import views.html.instances.listByTarget;
 import views.html.instances.view;
+import views.html.instances.newForm;
 
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -172,16 +175,16 @@ public class InstanceController extends AbstractController {
 				Logger.info("addEntry()");
 				Instance instance = new Instance();
 				instance.title = query;
-				instance.id = Utils.createId();
-				instance.url = Const.ACT_URL + instance.id;
+//				instance.id = Utils.createId();
+//				instance.url = Const.ACT_URL + instance.id;
 				instance.revision = Const.INITIAL_REVISION;
-				Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
+//				Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
     			Form<Instance> instanceForm = Form.form(Instance.class);
     			instanceForm = instanceForm.fill(instance);
     			User user = User.findByEmail(request().username());
     			List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
 	  			QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
-	  	        return ok(edit.render(instanceForm, user, qaIssues, qaIssueCategories));
+	  	        return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, 0L));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -201,8 +204,8 @@ public class InstanceController extends AbstractController {
         Logger.info("addEntry()");
     	Instance instance = new Instance();
     	instance.title = title;
-        instance.id = Utils.createId();
-        instance.url = Const.ACT_URL + instance.id;
+//        instance.id = Utils.createId();
+//        instance.url = Const.ACT_URL + instance.id;
         instance.revision = Const.INITIAL_REVISION;
 		Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
 		Form<Instance> instanceForm = Form.form(Instance.class);
@@ -213,7 +216,7 @@ public class InstanceController extends AbstractController {
 		List<User> authors = User.findAll();
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
 		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
-        return ok(edit.render(instanceForm, user, qaIssues, qaIssueCategories));
+        return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, 0L));
     }
     
     /**
@@ -343,7 +346,7 @@ public class InstanceController extends AbstractController {
 		User user = User.findByEmail(request().username());
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
 		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
-        return ok(edit.render(instanceForm, user, qaIssues, qaIssueCategories));
+        return ok(edit.render(instanceForm, user, id, qaIssues, qaIssueCategories));
     }
     
     public static Result view(Long id) {
@@ -616,9 +619,68 @@ public class InstanceController extends AbstractController {
 		List<User> authors = User.findAll();
 		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
 		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
-        return ok(edit.render(instanceFormNew, user, qaIssues, qaIssueCategories));
+        return ok(edit.render(instanceFormNew, user, null, qaIssues, qaIssueCategories));
+	}
+	
+	public static Result info(Form<Instance> form, Long id) {
+//      DynamicForm requestData = Form.form().bindFromRequest();
+//		Long id = Long.valueOf(requestData.get("id"));
+//		Target target = Target.findById(id); 
+//
+//		Form<Target> targetFormNew = targetForm.fill(target);
+		
+//		User user = User.findByEmail(request().username());
+//		Map<String,String> authors = User.options();
+//		Map<String,String> tags = Tag.options();
+//		Map<String,String> flags= Flag.options();
+//		Map<String,String> qaIssues = QaIssue.options();
+//		Map<String,String> languages = Const.TargetLanguage.options();
+//		Map<String,String> selectionTypes = Const.SelectionType.options();
+//		Map<String,String> scopeTypes = Const.ScopeType.options();
+//		Map<String,String> depthTypes = Const.DepthType.options();
+//		Map<String,String> licenses = License.LicenseStatus.options();
+//		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+//		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
+//		Map<String,String> siteStatuses = Const.SiteStatus.options();
+//		Map<String,String> organisations = Organisation.options();
+//		DynamicForm requestData = Form.form().bindFromRequest();
+//        String tabStatus = requestData.get("tabstatus");
+//		return badRequest(newForm.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus));
+		return null;
 	}
     
+	public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+        Form<Instance> filledForm = form(Instance.class).bindFromRequest();
+    	Logger.info("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.info("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+    	User user = User.findByEmail(request().username());
+
+    	Logger.info("action: " + action);
+    	
+//        if (StringUtils.isNotEmpty(action)) {
+//        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.info("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Instance " + filledForm.get().title + " has been updated");
+		        return redirect(routes.InstanceController.view(filledForm.get().id));
+//        	} else if (action.equals("delete")) {
+//            	Instance instance = Instance.findById(id);
+//		        flash("message", "Instance " + filledForm.get().title + " has been deleted");
+//            	instance.delete();
+//        		return redirect(routes.InstanceController.index()); 
+//        	}
+//        }
+//        return null;
+	}
+	
     /**
      * This method saves changes on given instance in a new instance object
      * completed by revision comment. The "version" field in the Instance object
@@ -680,12 +742,12 @@ public class InstanceController extends AbstractController {
 //	  			flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 //	  			return info();
 //        	}    	
-
-            Long id = Long.valueOf(instanceForm.field("id").value());
+            DynamicForm requestData = Form.form().bindFromRequest();
+            Logger.info("requestData: " + requestData);
+            Long id = Long.valueOf(requestData.get("id"));
     	    Instance instanceFromDB = Instance.findById(id);
     	    Instance instanceFromForm  = instanceForm.get();
 
-            DynamicForm requestData = Form.form().bindFromRequest();
             
             String qaIssueId = requestData.get("qaIssueId");
             Logger.info("instanceFromForm: " + instanceFromForm);

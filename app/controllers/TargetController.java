@@ -1114,7 +1114,7 @@ public class TargetController extends AbstractController {
         
         
         filledForm.get().update(id);
-        flash("success", "Target " + filledForm.get().title + " has been updated");
+        flash("message", "Target " + filledForm.get().title + " has been updated");
     	return redirect(routes.TargetController.view(filledForm.get().id));
     }
     
