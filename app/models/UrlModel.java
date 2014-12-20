@@ -10,6 +10,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 import play.Logger;
+import play.data.validation.Constraints;
 import play.data.validation.Constraints.Required;
 import uk.bl.api.models.FieldModel;
 
@@ -57,7 +58,7 @@ abstract class UrlModel extends ActModel {
 	@Transient
 	protected final String END_STR         = "/";
 	
-	@Required
+    @Constraints.Required
 	public String title;
 	
 	public String language;
@@ -76,6 +77,7 @@ abstract class UrlModel extends ActModel {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "author_id")
+	@Required
 	public User authorUser;
 	
 	@JsonIgnore

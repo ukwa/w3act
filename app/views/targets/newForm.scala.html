@@ -1,4 +1,5 @@
-@(targetForm: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: List[User], tags: List[Tag], flags: List[Flag], qaIssues: List[QaIssue], languages: Array[uk.bl.Const.TargetLanguage], selectionTypes: Array[uk.bl.Const.SelectionType], scopeTypes: Array[uk.bl.Const.ScopeType], depthTypes: Array[uk.bl.Const.DepthType], licenses: List[License], crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus], crawlFrequencies: Array[uk.bl.Const.CrawlFrequency], siteStatuses: Array[uk.bl.Const.SiteStatus], organisations: List[Organisation])
+@(targetForm: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: Map[String,String], tags: Map[String,String], flags: Map[String,String], qaIssues: Map[String,String], languages: Map[String,String], selectionTypes: Map[String,String], scopeTypes: Map[String,String], depthTypes: Map[String,String], licensesMap: Map[String,String], crawlPermissionStatuses: Map[String,String], crawlFrequencies: Map[String,String], siteStatuses: Map[String,String], organisations: Map[String,String], tabStatus: String)
+
 
 @import helper._
 @import bootstrap._
@@ -385,15 +386,14 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
-						    <div class="col-sm-6">
-								<select name="organisationId" id="organisationId" class="form-control">
-					            	<option value="-1">None</option>
-					                @for(organisation <- organisations) {
-					                    <option value="@organisation.id">@organisation.title</option>
-					                }
-								</select>
-							</div>
+							@select(
+               					targetForm("organisation.id"), 
+					                options(organisations), 
+					                '_label -> "Nominating Organisation (The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted):",
+				                	'_default -> "-- None --",
+					                '_showConstraints -> false,
+					                'multiple->"multiple"
+				            )(FieldConstructor(genericInput.f), lang)
 						</div>
 					</div>
 		     	</div>		   
@@ -412,18 +412,12 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="authorUser" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
-						    <div class="col-sm-6">
-								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-							  		<select name="authorId" id="userSel" class="form-control">
-							  	} else {
-							  		<select name="authorId" id="userSel" disabled class="form-control">
-							  	}
-					            @for(author <- authors) {
-					            	<option value="@author.id">@author.name</option>
-								}
-								</select>
-							</div>
+								@select(
+	               					targetForm("authorUser.id"), 
+						                options(authors), 
+						                '_label -> "Selector (The user that nominated this web site. A record can be created on behalf of other user by high-level roles):",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericMandatoryInput.f), lang)
 						</div>
 					</div>
 		     	</div>	
@@ -431,14 +425,12 @@
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="language" class="col-sm-6 control-label">Language <small class="text-center">(The predominant language in which the page is written)</small></label>
-						    <div class="col-sm-6">
-								<select name="language" id="language" class="form-control">
-					                @for(language <- languages) {
-					                	<option value="@language.name">@language.getValue</option>
-					                }
-								</select>
-							</div>
+								@select(
+	               					targetForm("language.id"), 
+						                options(languages), 
+						                '_label -> "Language (The predominant language in which the page is written):",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericInput.f), lang)	
 						</div>
 					</div>
 		     	</div>		   
@@ -447,10 +439,12 @@
 		    		<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-				              	<label for="authors" class="col-sm-6 control-label">Author(s) <small class="text-center">(A named individual responsible for creating the content)</small></label>
-							    <div class="col-sm-6">
-					            	<textarea class="form-control" name="authors" id="authors" cols="100" rows="1"></textarea>
-								</div>
+								@textarea(field = targetForm("authors"),
+								 				args = 'rows -> 1, 'cols -> 100,
+												'_label -> "Author(s) (A named individual responsible for creating the content):",
+												'id -> "authors",
+												'class -> "form-control"
+											)(FieldConstructor(genericInput.f), lang)
 							</div>
 						</div>
 			     	</div>		    		    
@@ -458,15 +452,11 @@
 			   		<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
-							    <div class="col-sm-6">
-							        @for(flag <- flags) {
-										<label class="checkbox-inline">
-						                	<input type="checkbox" name="flagList" value="@flag.id" />
-							                @flag.name
-						                </label>
-						            }
-								</div>
+								@repeat(targetForm("flags"), min = 1) { flag =>
+    								@checkbox(flag,
+    								'class -> "form-control"
+    								)(FieldConstructor(genericInput.f), lang)
+    							}
 							</div>
 						</div>
 			     	</div>	     		
@@ -474,10 +464,11 @@
 		    		<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-				              	<label for="inputFlagNotes" class="col-sm-6 control-label">Flag notes <small class="text-center">(More details about the flagged issue)</small></label>
-							    <div class="col-sm-6">
-					            	<textarea class="form-control" name="flagNotes" id="flagNotes" cols="100" rows="1"></textarea>
-								</div>
+							@textarea(field = targetForm("flagNotes"),
+							 				args = 'rows -> 1, 'cols -> 100,
+											'_label -> "Flag notes (More details about the flagged issue):",
+											'class -> "form-control"
+										)(FieldConstructor(genericInput.f), lang)	
 							</div>
 						</div>
 			     	</div>		    		    
@@ -486,10 +477,11 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Date of publication</label>
-						    <div class="col-sm-6">
-		 						<input type="text" name="date_of_publication" value="" size="30" maxlength="2048" class="form-control" id="date_of_publication"/>
-	                		</div>
+							@inputText(targetForm("dateOfPublicationText"),
+												'_label -> "Date of publication:",
+											    'class -> "form-control",
+											    'id -> "date_of_publication"
+											)(FieldConstructor(genericInput.f), lang)		
 						</div>
 					</div>
 		     	</div>	
@@ -498,10 +490,12 @@
 		    		<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Justification <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
-							    <div class="col-sm-6">
-					            	<textarea class="form-control" name="justification" id="inputJustification" cols="100" rows="1"></textarea>
-								</div>
+								@textarea(field = targetForm("justification"),
+								 				args = 'rows -> 1, 'cols -> 100,
+												'_label -> "Justification:",
+												'id -> "inputJustification",
+												'class -> "form-control"
+											)(FieldConstructor(genericInput.f), lang)	
 							</div>
 						</div>
 			     	</div>	
@@ -510,14 +504,12 @@
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
-						    <div class="col-sm-6">
-								<select name="selectionType" id="selectionType" class="form-control">
-					                @for(selectionType <- selectionTypes) {
-					                	<option value="@selectionType.name">@selectionType.getValue</option>
-					                }
-								</select>
-							</div>
+							@select(
+               					targetForm("selectionType.name"), 
+					                options(selectionTypes), 
+					                '_label -> "Selection Type (This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User)):",
+					                '_showConstraints -> false
+				            )(FieldConstructor(genericMandatoryInput.f), lang)					
 						</div>
 					</div>
 		     	</div>		   
@@ -525,10 +517,12 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(This field allows further notes to selection for WA team, not captured in Justification field.)</small></label>
-						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="selectorNotes" id="input_selector_notes" cols="100" rows="1"></textarea>
-							</div>
+							@textarea(field = targetForm("selectorNotes"),
+							 				args = 'rows -> 1, 'cols -> 100,
+											'_label -> "Selector Notes (This field allows further notes to selection for WA team, not captured in Justification field.):",
+											'id -> "input_selector_notes",
+											'class -> "form-control"
+										)(FieldConstructor(genericInput.f), lang)	
 						</div>
 					</div>
 		     	</div>	
@@ -536,10 +530,11 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="legacy_cite_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
-						    <div class="col-sm-6">
-			              		<input name="legacySiteId" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="">
-							</div>
+							@inputText(targetForm("legacySiteId"),
+												'_label -> "Legacy site ID (ID used to identify paper licences.):",
+											    'class -> "form-control",
+											    'id -> "legacy_site_id"
+											)(FieldConstructor(genericInput.f), lang)					
 						</div>
 					</div>
 		     	</div>
@@ -603,10 +598,10 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
-						    <div class="col-sm-6">
-				                <input type="checkbox" name="ukPostalAddress" value="true" />
-							</div>
+							@helper.checkbox(targetForm("ukPostalAddress"), 
+								'_label -> "UK Postal Address (The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box)):", 
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)
 						</div>
 					</div>
 		     	</div>		     				     	
@@ -614,10 +609,11 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
-						    <div class="col-sm-6">
-		 						<input type="text" name="ukPostalAddressUrl" value="" size="60" maxlength="2048" class="form-control" />
-							</div>
+							@inputText(targetForm("ukPostalAddressUrl"),
+									'_label -> "Postal Address URL (The URL on the site that contains the postal address used to determine that the site is in the UK):",
+								    'class -> "form-control",
+								    'id -> "legacy_site_id"
+								)(FieldConstructor(genericInput.f), lang)	
 						</div>
 					</div>
 		     	</div>
@@ -625,10 +621,10 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
-						    <div class="col-sm-6">
-				                <input type="checkbox" name="viaCorrespondence" value="true" />
-							</div>
+							@helper.checkbox(targetForm("viaCorrespondence"), 
+								'_label -> "Via Correspondence (Previous correspondence with the web site owner by a Curator contains evidence of a UK address):", 
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)		
 						</div>
 					</div>
 		     	</div>		
@@ -636,10 +632,11 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Via Correspondence: Notes <small class="text-center">(Please record details of correspondence with site owner)</small></label>
-						    <div class="col-sm-6">
-		 						<textarea name="value" cols="100" rows="1" class="form-control"></textarea>
-							</div>
+							@textarea(field = targetForm("value"),
+					 				args = 'rows -> 1, 'cols -> 100,
+									'_label -> "Via Correspondence: Notes (Please record details of correspondence with site owner):",
+									'class -> "form-control"
+								)(FieldConstructor(genericInput.f), lang)	
 						</div>
 					</div>
 		     	</div>	
@@ -648,10 +645,10 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
-							    <div class="col-sm-6">
-					                <input type="checkbox" name="professionalJudgement" value="true" />
-								</div>
+								@helper.checkbox(targetForm("professionalJudgement"), 
+									'_label -> "Professional Judgement (In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below):", 
+									'class -> "form-control"
+								)(FieldConstructor(genericInput.f), lang)			
 							</div>
 						</div>
 			     	</div>	
@@ -659,10 +656,11 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
-							    <div class="col-sm-6">
-				 					<textarea name="professionalJudgementExp" cols="100" rows="1" class="form-control"></textarea>
-								</div>
+								@textarea(field = targetForm("professionalJudgementExp"),
+						 				args = 'rows -> 1, 'cols -> 100,
+										'_label -> "Professional Judgement Explanation (Please describe the rational behind this decision, indicating any evidence used):",
+										'class -> "form-control"
+									)(FieldConstructor(genericInput.f), lang)			
 							</div>
 						</div>
 			     	</div>	
@@ -671,10 +669,10 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
-						    <div class="col-sm-6">
-			                	<input type="checkbox" name="noLdCriteriaMet" value="true" />
-	                		</div>
+							@helper.checkbox(targetForm("noLdCriteriaMet"), 
+								'_label -> "No LD Criteria Met (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit):", 
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)		
 						</div>
 					</div>
 		     	</div>	
@@ -685,14 +683,12 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
-							    <div class="col-sm-6">
-									<select name="scope" id="field_scope" class="form-control">
-						                @for(scopeType <- scopeTypes) {
-						                	<option value="@scopeType.name">@scopeType.getValue</option>
-						                }
-									</select>
-								</div>
+								@select(
+	               					targetForm("scope"), 
+						                options(scopeTypes), 
+						                '_label -> "Scope (Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option):",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericMandatoryInput.f), lang)		
 							</div>
 						</div>
 			     	</div>
@@ -700,14 +696,12 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
-							    <div class="col-sm-6">
-									<select name="depth" id="field_depth" class="form-control">
-						                @for(depthType <- depthTypes) {
-						                	<option value="@depthType.name">@depthType.getValue</option>
-						                }
-									</select>
-		                		</div>
+								@select(
+	               					targetForm("depth"), 
+						                options(depthTypes), 
+						                '_label -> "Depth (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit):",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericMandatoryInput.f), lang)	
 							</div>
 						</div>
 			     	</div>	
@@ -715,10 +709,10 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
-							    <div class="col-sm-6">
-					                <input type="checkbox" name="ignoreRobotsTxt" value="true"/>
-		                		</div>
+								@inputText(targetForm("ignoreRobotsTxt"),
+													'_label -> "Ignore Robots.txt (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems):",
+												    'class -> "form-control"
+												)(FieldConstructor(genericInput.f), lang)	
 							</div>
 						</div>
 			     	</div>	
@@ -726,14 +720,12 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Crawl Frequency<span class="form-required" title="This field is required."></span> <small class="text-center">(How often should this site be archived?)</small></label>
-							    <div class="col-sm-6">
-					 				<select id="edit-field-crawl-frequency-und" name="crawlFrequency" class="form-control">
-						                @for(crawlFrequency <- crawlFrequencies) {
-						                	<option value="@crawlFrequency.name">@crawlFrequency.getValue</option>
-										}
-					 				</select>
-					 			</div>
+								@select(
+	               					targetForm("crawlFrequency"), 
+						                options(crawlFrequencies), 
+						                '_label -> "Crawl Frequency (How often should this site be archived?):",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericMandatoryInput.f), lang)	
 							</div>
 						</div>
 			     	</div>	
@@ -741,10 +733,11 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Start date</label>
-							    <div class="col-sm-6">
-			 						<input type="text" name="crawl_start_date" value="" size="30" maxlength="2048" class="form-control" id="start-date"/>
-		                		</div>
+								@inputText(targetForm("crawlStartDateText"),
+													'_label -> "Start date:",
+												    'class -> "form-control",
+												    'id -> "start-date"
+												)(FieldConstructor(genericInput.f), lang)			
 							</div>
 						</div>
 			     	</div>	
@@ -752,10 +745,11 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">End date</label>
-							    <div class="col-sm-6">
-			 						<input type="text" name="crawl_end_date" value="" size="30" maxlength="2048" class="form-control" id="end-date"/>
-		                		</div>
+								@inputText(targetForm("endStartDateText"),
+													'_label -> "End date:",
+												    'class -> "form-control",
+												    'id -> "end-date"
+												)(FieldConstructor(genericInput.f), lang)				
 							</div>
 						</div>
 			     	</div>	
@@ -763,10 +757,11 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">White list</label>
-							    <div class="col-sm-6">
-			 						<input type="text" name="whiteList" value="" size="30" maxlength="2048" class="form-control" />
-		                		</div>
+								@inputText(targetForm("whiteList"),
+													'_label -> "White list:",
+												    'class -> "form-control"
+												)(FieldConstructor(genericInput.f), lang)			
+
 							</div>
 						</div>
 			     	</div>	
@@ -774,10 +769,11 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Black list</label>
-							    <div class="col-sm-6">
-			 						<input type="text" name="blackList" value="" size="30" maxlength="2048" class="form-control" />
-		                		</div>
+								@inputText(targetForm("blackList"),
+													'_label -> "Black list:",
+												    'class -> "form-control"
+												)(FieldConstructor(genericInput.f), lang)	
+
 							</div>
 						</div>
 			     	</div>	
@@ -820,19 +816,25 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
-						    <div class="col-sm-6">
-						        @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-									<select name="crawlPermissionStatus" id="crawlPermissionStatus" class="form-control">
-								} else {
-									<select disabled name="crawlPermissionStatus" id="crawlPermissionStatus" class="form-control">
-								}
-									<option value="-1">None</option>
-					                @for(status <- crawlPermissionStatuses) {
-					                	<option value="@status.name" >@status.getValue</option>
-					                }
-								</select>
-							</div>
+					        @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+								@select(
+		              					targetForm("qaStatus"), 
+						                options(crawlPermissionStatuses), 
+						                '_label -> "Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):",
+					                	'_default -> "-- None --",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericInput.f), lang)
+					        } else {
+								@select(
+		              					targetForm("qaStatus"), 
+						                options(crawlPermissionStatuses), 
+						                '_label -> "Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):",
+					                	'_default -> "-- None --",
+						                '_showConstraints -> false,
+						                '_disabled -> None
+					            )(FieldConstructor(genericInput.f), lang)
+					        }		
+
 						</div>
 					</div>
 		     	</div>
@@ -860,10 +862,12 @@
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
-					    <div class="col-sm-6">
-			            	<textarea class="form-control" name="archivistNotes" id="input_archivist_notes"></textarea>
-						</div>
+						@textarea(field = targetForm("archivistNotes"),
+			 				args = 'rows -> 1, 'cols -> 100,
+							'_label -> "Archivist Notes (This field should include any information provided by curators justifying the creation of the record. This field is NOT public.):",
+							'_id -> "input_archivist_notes",
+							'class -> "form-control"
+						)(FieldConstructor(genericInput.f), lang)		
 					</div>
 				</div>
 	     	</div>	
@@ -873,10 +877,11 @@
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-		              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
-					    <div class="col-sm-6">
-               				<textarea class="form-control" name="revision" id="inputRevision"></textarea>
-						</div>
+						@textarea(field = targetForm("archivistNotes"),
+							'_label -> "Revision log message:",
+							'_id -> "inputRevision",
+							'class -> "form-control"
+						)(FieldConstructor(genericInput.f), lang)			
 					</div>
 				</div>
 	     	</div>

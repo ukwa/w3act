@@ -386,68 +386,32 @@ public class Target extends UrlModel {
 	
 	
 	//
-	/**
-	 * Constructor
-	 * 
-	 * @param title
-	 * @param url
-	 */
-	public Target(String title, String url) {
-		this.title = title;
-		this.url = url;
-	}
+//	/**
+//	 * Constructor
+//	 * 
+//	 * @param title
+//	 * @param url
+//	 */
+//	public Target(String title, String url) {
+//		this.title = title;
+//		this.url = url;
+//	}
 
 	public Target() {
-		this.viaCorrespondence = false;
-		this.ukPostalAddress = false;
-		this.crawlFrequency = "domaincrawl";
-//		this.field_uk_domain = "yes";
-//		this.field_crawl_permission = "";
-		this.specialDispensation = false;
-//		this.field_uk_geoip = "yes";
-		this.professionalJudgement = false;
-		// this.isNew = false;
-//		this.language = "en";
-		// this.status = 1L;
-//		this.promote = 0L;
-//		this.sticky = 0L;
-//		this.log = "";
-//		this.comment = 0L;
-//		this.feed_nid = 0L;
-//		this.field_live_site_status = "";
-//		this.field_spt_id = 0L;
-//		this.field_wct_id = 0L;
-		this.noLdCriteriaMet = false;
-		this.keySite = false;
-//		this.field_professional_judgement_exp = "";
-		this.ignoreRobotsTxt = false;
-//		this.fieldUkPostalAddressUrl = "";
-//		this.fieldSuggestedCollections = "";
-//		this.fieldCollections = "";
-//		this.fieldCollectionCategories = "";
-//		this.fieldLicense = "";
-//		this.fieldNotes = "";
-//		this.fieldInstances = "";
-//		this.fieldSubject = "";
-//		this.value = "";
-//		this.summary = "";
-//		this.format = "";
-		this.scope = "root";
-		this.depth = "capped";
-		this.type = Const.URL;
-		// this.field_nominating_organisation = Const.NONE;
+		//
 	}
 //
-//    public String validate() {
-//        if (StringUtils.isEmpty(this.title)) {
-//            return "Title is blank";
-//        }
-//        if (StringUtils.isEmpty(this.selectionType)) {
-//        	return "Selection type is blank";
-//        }
-//        return null;
-//    }
-    
+    public String validate() {
+    	Logger.info("VALIDATE.....");
+        if (title == null) {
+            return "Title is blank";
+        }
+        if (subjects == null || subjects.isEmpty()) {
+        	return "Subjects is empty";
+        }
+        return null;
+    }
+
 	/**
 	 * This method checks whether license for Target with given URL is granted
 	 * 
@@ -570,7 +534,9 @@ public class Target extends UrlModel {
 	 * Create a new target.
 	 */
 	public static Target create(String title, String url) {
-		Target target = new Target(title, url);
+		Target target = new Target();
+		target.title = title;
+		target.url = url;
 		target.save();
 		return target;
 	}
@@ -2718,7 +2684,7 @@ public class Target extends UrlModel {
 	}
 
 	public static boolean isInScopeAllWithoutLicense(Long targetId) {
-		Logger.info("isInScopeAllWithoutLicense()");
+		Logger.info("isInScopeAllWithoutLicense(): " + targetId);
 		try {
 			Target target = Target.findById(targetId);
 			for (FieldUrl fieldUrl : target.fieldUrls) {
@@ -2856,23 +2822,23 @@ public class Target extends UrlModel {
 			// for all my field urls get me all that are shorter than me
 			List<Target> shorterFieldUrls = Target.findHigherLevelTargets(thisFieldUrl.domain, thisFieldUrl.url);
 			
-			for (Target target : shorterFieldUrls) {
-				// Then for each target from selected list look if ‘qa_status’
-				// field is not empty. If it is not empty then we know a crawl
-				// permission request has already been sent.
-				// also check if this target has a valid license too
-				// Then look if it is a target of a higher level domain
-				// analyzing given URL.
-				
-				// license field checked as required in issue 176.
-				// higher level domain and has a license or higher level domain
-				// and has pending qa status
-				
-//				if (((shorterFieldUrl.target.licenses != null && shorterFieldUrl.target.licenses.size() > 0))
-//						|| (shorterFieldUrl.target.qaIssue != null)) {
-					results.add(target);
-//				}
-			}
+//			for (Target target : shorterFieldUrls) {
+//				// Then for each target from selected list look if ‘qa_status’
+//				// field is not empty. If it is not empty then we know a crawl
+//				// permission request has already been sent.
+//				// also check if this target has a valid license too
+//				// Then look if it is a target of a higher level domain
+//				// analyzing given URL.
+//				
+//				// license field checked as required in issue 176.
+//				// higher level domain and has a license or higher level domain
+//				// and has pending qa status
+//				
+////				if (((shorterFieldUrl.target.licenses != null && shorterFieldUrl.target.licenses.size() > 0))
+////						|| (shorterFieldUrl.target.qaIssue != null)) {
+//					results.add(target);
+////				}
+//			}
 		}
 
 			// get me Targets that contain the same domain so I can check the
@@ -2915,6 +2881,11 @@ public class Target extends UrlModel {
 		return target.fieldUrls;
 	}
 	
+	public static boolean indicateLicenses(Long targetId) {
+		Target target = Target.findById(targetId);
+		return (target.indicateUkwaLicenceStatus() || target.hasLicenses() || target.hasHigherLicense());
+	}
+
 	@Override
 	public String toString() {
 		return "Target [qaIssue=" + qaIssue + ", authorUser=" + authorUser

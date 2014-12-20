@@ -399,20 +399,21 @@ public class TargetController extends AbstractController {
     			User user = User.findByEmail(request().username());
     			JsonNode collectionData = getCollectionsData();
     			JsonNode subjectData = getSubjectsData();
-    			List<User> authors = User.findAll();
-    			List<Tag> tags = Tag.findAllTags();
-    			List<Flag> flags = Flag.findAllFlags();
-    			List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-    			TargetLanguage[] languages = Const.TargetLanguage.values();
-    			SelectionType[] selectionTypes = Const.SelectionType.values();
-    			ScopeType[] scopeTypes = Const.ScopeType.values();
-    			DepthType[] depthTypes = Const.DepthType.values();
-	  			List<License> licenses = License.findAllLicenses();
-	  			CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-	  			CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-	  			SiteStatus[] siteStatuses = Const.SiteStatus.values();
-	  			List<Organisation> organisations = Organisation.findAll();
-	  	        return ok(newForm.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+    			
+    			Map<String,String> authors = User.options();
+    			Map<String,String> tags = Tag.options();
+    			Map<String,String> flags= Flag.options();
+    			Map<String,String> qaIssues = QaIssue.options();
+    			Map<String,String> languages = Const.TargetLanguage.options();
+    			Map<String,String> selectionTypes = Const.SelectionType.options();
+    			Map<String,String> scopeTypes = Const.ScopeType.options();
+    			Map<String,String> depthTypes = Const.DepthType.options();
+    			Map<String,String> licenses = License.LicenseStatus.options();
+    			Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+    			Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
+    			Map<String,String> siteStatuses = Const.SiteStatus.options();
+    			Map<String,String> organisations = Organisation.options();
+	  	        return ok(newForm.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null));
     		} 
     		else if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
@@ -464,7 +465,7 @@ public class TargetController extends AbstractController {
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
-        return ok(edit.render(targetForm, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+        return ok(edit.render(targetForm, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null));
 	}
     
     /**
@@ -739,7 +740,7 @@ public class TargetController extends AbstractController {
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
-        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null));
     }
     
     /**
@@ -882,8 +883,7 @@ public class TargetController extends AbstractController {
 	 * about errors 
 	 * @return edit page with form and info message
 	 */
-	public static Result info(Form<Target> form) {
-//        DynamicForm requestData = Form.form().bindFromRequest();
+	public static Result info(Form<Target> form, Long id) {
 //		Long id = Long.valueOf(requestData.get("id"));
 //		Target target = Target.findById(id); 
 //
@@ -906,7 +906,10 @@ public class TargetController extends AbstractController {
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
-        return badRequest(edit.render(form, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+
+		DynamicForm requestData = Form.form().bindFromRequest();
+        String tabStatus = requestData.get("tabstatus");
+        return badRequest(edit.render(form, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus));
     }
 
 	public static Result newInfo(Form<Target> form) {
@@ -919,64 +922,69 @@ public class TargetController extends AbstractController {
 		User user = User.findByEmail(request().username());
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
-		List<User> authors = User.findAll();
-		List<Tag> tags = Tag.findAllTags();
-		List<Flag> flags = Flag.findAllFlags();
-		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
-		TargetLanguage[] languages = Const.TargetLanguage.values();
-		SelectionType[] selectionTypes = Const.SelectionType.values();
-		ScopeType[] scopeTypes = Const.ScopeType.values();
-		DepthType[] depthTypes = Const.DepthType.values();
-		List<License> licenses = License.findAllLicenses();
-		CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
-		SiteStatus[] siteStatuses = Const.SiteStatus.values();
-		List<Organisation> organisations = Organisation.findAll();
-      return badRequest(newForm.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations));
+		Map<String,String> authors = User.options();
+		Map<String,String> tags = Tag.options();
+		Map<String,String> flags= Flag.options();
+		Map<String,String> qaIssues = QaIssue.options();
+		Map<String,String> languages = Const.TargetLanguage.options();
+		Map<String,String> selectionTypes = Const.SelectionType.options();
+		Map<String,String> scopeTypes = Const.ScopeType.options();
+		Map<String,String> depthTypes = Const.DepthType.options();
+		Map<String,String> licenses = License.LicenseStatus.options();
+		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
+		Map<String,String> siteStatuses = Const.SiteStatus.options();
+		Map<String,String> organisations = Organisation.options();
+		DynamicForm requestData = Form.form().bindFromRequest();
+        String tabStatus = requestData.get("tabstatus");
+		return badRequest(newForm.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus));
   }
 	
     public static Result update(Long id) {
     	DynamicForm requestData = form().bindFromRequest();
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
         Form<Target> filledForm = form(Target.class).bindFromRequest();
-        if(filledForm.hasErrors()) {
-        	Logger.info("hasErrors");
-            return info(filledForm);
+
+    	Logger.info("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+
+        if (filledForm.hasErrors()) {
+        	Logger.info("hasErrors: " + filledForm.errors());
+            return info(filledForm, id);
         }
         
-        String wct = requestData.get("wct");
-        
-        if (StringUtils.isNotBlank(wct) && !Utils.isNumeric(wct)) {
-        	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
-            return newInfo(filledForm);
-	  	}    	
+//        String wct = requestData.get("wct");
+//        
+//        if (StringUtils.isNotBlank(wct) && !Utils.isNumeric(wct)) {
+//        	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
+//            return info(filledForm, id);
+//	  	}    	
+//
+//        String spt = requestData.get("spt");
+//
+//	  	if (StringUtils.isNotBlank(spt) && !Utils.isNumeric(spt)) {
+//	          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+//				flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+//	            return info(filledForm, id);
+//	  	}    	
+//	
+//	  	String legacySiteId = requestData.get("legacySiteId");
+//	  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.isNumeric(legacySiteId)) {
+//	          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+//				flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+//	            return info(filledForm, id);
+//	  	}    	
+//	  	String subjectString = requestData.get("subjectSelect");
+//	  	if (StringUtils.isBlank(subjectString)) {
+//			flash("message", "Please choose a subject(s).");
+//            return info(filledForm, id);
+//        
+//	  	}
 
-        String spt = requestData.get("spt");
-
-	  	if (StringUtils.isNotBlank(spt) && !Utils.isNumeric(spt)) {
-	          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-				flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-	            return newInfo(filledForm);
-	  	}    	
-	
-	  	String legacySiteId = requestData.get("legacySiteId");
-	  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.isNumeric(legacySiteId)) {
-	          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-				flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-	            return newInfo(filledForm);
-	  	}    	
-	  	String subjectString = requestData.get("subjectSelect");
-	  	if (StringUtils.isBlank(subjectString)) {
-			flash("message", "Please choose a subject(s).");
-            return newInfo(filledForm);
-        
-	  	}
-
-	  	String selectionType = requestData.get("selectionType");
-	  	if (StringUtils.isEmpty(selectionType)) {
-			flash("message", "Please choose a selection.");
-            return newInfo(filledForm);
-	  	}
+//	  	String selectionType = requestData.get("selectionType");
+//	  	if (StringUtils.isEmpty(selectionType)) {
+//			flash("message", "Please choose a selection.");
+//            return info(filledForm, id);
+//	  	}
 	  	
 	  	String fieldUrl = requestData.get("formUrl");
         
@@ -1077,7 +1085,7 @@ public class TargetController extends AbstractController {
 				filledForm.get().dateOfPublication = date;
 			} catch (ParseException e) {
 				e.printStackTrace();
-				return info(targetForm);
+	            return info(filledForm, id);
 			}
     	}
         
@@ -1089,7 +1097,7 @@ public class TargetController extends AbstractController {
 				filledForm.get().crawlStartDate = date;
 			} catch (ParseException e) {
 				e.printStackTrace();
-				return info(targetForm);
+	            return info(filledForm, id);
 			}
     	}
         String crawlEndDate = requestData.get("crawl_end_date");
@@ -1100,7 +1108,7 @@ public class TargetController extends AbstractController {
 				filledForm.get().crawlEndDate = date;
 			} catch (ParseException e) {
 				e.printStackTrace();
-				return info(targetForm);
+	            return info(filledForm, id);
 			}
     	}        
         
@@ -1264,7 +1272,7 @@ public class TargetController extends AbstractController {
 						filledForm.get().dateOfPublication = date;
 					} catch (ParseException e) {
 						e.printStackTrace();
-						return info(targetForm);
+			            return newInfo(filledForm);
 					}
 	        	}
 	            
@@ -1276,7 +1284,7 @@ public class TargetController extends AbstractController {
 						filledForm.get().crawlStartDate = date;
 					} catch (ParseException e) {
 						e.printStackTrace();
-						return info(targetForm);
+			            return newInfo(filledForm);
 					}
 	        	}
 	            String crawlEndDate = requestData.get("crawl_end_date");
@@ -1287,7 +1295,7 @@ public class TargetController extends AbstractController {
 						filledForm.get().crawlEndDate = date;
 					} catch (ParseException e) {
 						e.printStackTrace();
-						return info(targetForm);
+			            return newInfo(filledForm);
 					}
 	        	}
 	        	filledForm.get().url = "act-" + Utils.createId();

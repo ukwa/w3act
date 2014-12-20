@@ -184,12 +184,13 @@ public class Organisation extends ActModel {
     @JsonProperty
     public String format;
 
-
-    public Organisation() {}
-
-    public Organisation(String title) {
-        this.title = title;
+    public Organisation() {
+    	//    	
     }
+
+//    public Organisation(String title) {
+//        this.title = title;
+//    }
     
     // -- Queries
     
@@ -234,7 +235,8 @@ public class Organisation extends ActModel {
      * Create a new Organisation.
      */
     public static Organisation create(String title) {
-        Organisation organisation = new Organisation(title);
+        Organisation organisation = new Organisation();
+        organisation.title = title;
         organisation.save();
         return organisation;
     }
