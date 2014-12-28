@@ -45,6 +45,7 @@ public class ApplicationController extends Controller {
 					return "Invalid email";
 				}
 				String userPassword = User.findByEmail(email.toLowerCase()).password;
+				Logger.debug("userPassword: " + userPassword + " - " + inputPassword);
         		res = PasswordHash.validatePassword(inputPassword, userPassword);
 			} catch (NoSuchAlgorithmException e) {
 				Logger.info("validate() no algorithm error: " + e);

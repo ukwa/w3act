@@ -5,9 +5,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
-import models.User;
+import org.apache.commons.lang3.StringUtils;
 
+import models.User;
 import play.Logger;
+import play.data.DynamicForm;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -45,7 +47,9 @@ public class PasswordController extends AbstractController {
      * Display the user edit panel for this URL.
      */
     public static Result edit() {
-        return ok(edit.render(User.findByEmail(request().username()))); 
+    	Logger.info("edit");
+    	User user = User.findByEmail(request().username());
+        return ok(edit.render(user)); 
     }
     
 	/**
@@ -66,79 +70,61 @@ public class PasswordController extends AbstractController {
      */
     public static Result save() {
     	Result res = null;
-        String save = getFormParam("save");
-        if (save != null) {
-        	Logger.info("input data for changed password for user uid: " + 
-        			getFormParam(Const.UID) + ", url: " + getFormParam(Const.URL));
-//        	Form<User> userForm = Form.form(User.class).bindFromRequest();
-        	User user = null;
-            boolean isExisting = true;
-            try {
-                try {
-            	    user = User.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("User is not existing in database exception: " + e.getMessage());
-                	isExisting = false;
-                	return ok(infomessage.render("User is not existing in database exception: " + e.getMessage()));
-                }
-                if (user == null) {
-                	Logger.info("User is not existing in database - resulting oject for given URL '" + 
-                			getFormParam(Const.URL) + "' is null.");
-                	isExisting = false;
-                	return ok(infomessage.render("User is not existing in database - resulting oject for given URL '" + 
-                			getFormParam(Const.URL) + "' is null."));
-                }                
-            } catch (Exception e) {
-            	Logger.info("User not existing exception");
-            	return ok(infomessage.render("User is not existing in database exception: " + e.getMessage()));
+    	Logger.info("saving");
+    	
+    	DynamicForm request = DynamicForm.form().bindFromRequest();
+
+    	String oldPassword = request.get("oldpassword");
+    	String password = request.get("password");
+    	String passwordValidation = request.get("password_validation");
+
+    	Long id = Long.valueOf(request.get("id"));
+
+    	Logger.info(oldPassword + " " + password + " " + passwordValidation);
+    	
+    	User user = User.findById(id);
+
+    	if (user != null) {
+            if (StringUtils.isEmpty(password)) {
+            	Logger.info("The password field is empty.");
+	  			flash("message", "The password field is empty.");
+	  			return info();
+            } 
+            if (StringUtils.isEmpty(passwordValidation)) {
+            	Logger.info("The password validation field is empty.");
+	  			flash("message", "The password validation field is empty.");
+	  			return info();
+            } 
+            if (!password.equals(passwordValidation)) {
+            	Logger.info("The value of the password field does not match to the value of the password validation field.");
+	  			flash("message", "The value of the password field does not match to the value of the password validation field.");
+	  			return info();
             }
-            
-        	if (isExisting) {
-                if (getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0) {
-                	Logger.info("The password field is empty.");
-    	  			flash("message", "The password field is empty.");
-    	  			return info();
-                } 
-                if (getFormParam(Const.PASSWORD_VALIDATION) == null || getFormParam(Const.PASSWORD_VALIDATION).length() == 0) {
-                	Logger.info("The password validation field is empty.");
-    	  			flash("message", "The password validation field is empty.");
-    	  			return info();
-                } 
-                if (!getFormParam(Const.PASSWORD).equals(getFormParam(Const.PASSWORD_VALIDATION))) {
-                	Logger.info("The value of the password field does not match to the value of the password validation field.");
-    	  			flash("message", "The value of the password field does not match to the value of the password validation field.");
-    	  			return info();
-                }
-                
-                /**
-                 * Change password
-                 */                
-                if (!(getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0
-                		|| getFormParam(Const.PASSWORD_VALIDATION) == null || getFormParam(Const.PASSWORD_VALIDATION).length() == 0
-                		|| getFormParam(Const.OLD_PASSWORD) == null || getFormParam(Const.OLD_PASSWORD).length() == 0)) {
-            		String oldInputPassword = getFormParam(Const.OLD_PASSWORD);
-            		user.password = getFormParam(Const.PASSWORD);
-			    	try {
-	                	String userDbPassword = User.findByUid(user.id).password;
-	            		boolean isValidOldPassword = PasswordHash.validatePassword(oldInputPassword, userDbPassword);
-	            		if (!isValidOldPassword) {
-	                    	Logger.info("The old password is not correct.");
-	        	  			flash("message", "The old password is not correct.");
-	        	  			return info();	            		
-	        	  		} else {
-	        	  			user.password = PasswordHash.createHash(user.password);
-	        	  		}
-					} catch (NoSuchAlgorithmException e) {
-						Logger.info("change password - no algorithm error: " + e);
-					} catch (InvalidKeySpecException e) {
-						Logger.info("change password - key specification error: " + e);
-					}
-        	    }
-           		Logger.info("update user: " + user.toString());
-               	Ebean.update(user);
-        	}
-        	res = ok(infomessage.render("You have successfully updated your password."));
-        } 
+
+            /**
+             * Change password
+             */                
+            if (StringUtils.isNotBlank(password) || StringUtils.isNotBlank(passwordValidation) || StringUtils.isNotBlank(oldPassword)) {
+		    	try {
+                	String userDbPassword = user.password;
+            		boolean isValidOldPassword = PasswordHash.validatePassword(oldPassword, userDbPassword);
+            		if (!isValidOldPassword) {
+                    	Logger.info("The old password is not correct.");
+        	  			flash("message", "The old password is not correct.");
+        	  			return info();	            		
+        	  		} else {
+        	  			user.password = PasswordHash.createHash(password);
+        	  		}
+				} catch (NoSuchAlgorithmException e) {
+					Logger.info("change password - no algorithm error: " + e);
+				} catch (InvalidKeySpecException e) {
+					Logger.info("change password - key specification error: " + e);
+				}
+    	    }
+       		Logger.info("update user: " + user.toString());
+           	user.save();
+    	}
+    	res = ok(infomessage.render("You have successfully updated your password."));
         return res;
     }
 }

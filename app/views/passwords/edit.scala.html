@@ -7,11 +7,10 @@
 	</div>
     
     @warningmessage(flash)
-    @helper.form(action=routes.PasswordController.save) {
-		<input type="hidden" name="url" value="@user.url">
-		<input type="hidden" name="uid" value="@user.id">
+    
+    @helper.form(action=routes.PasswordController.save()) {
+		<input type="hidden" name="id" value="@user.id">
 	
-	    @if(User.findById(Long.valueOf(user.id)) != null) {
 		<div class="row padding-10">
 	   		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
@@ -22,7 +21,6 @@
 				</div>
 			</div>
 	   	</div>
-		}
 		
 		<div class="row padding-10">
 	   		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -53,7 +51,7 @@
 		<div class="row padding-10 pull-right">
 	   		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
+		            <input type="submit" class="btn primary" value="Save">
 		       </div>
 			</div>
 		</div>

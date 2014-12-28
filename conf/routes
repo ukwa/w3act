@@ -284,7 +284,7 @@ GET     /api/suggested_collections_instance/:url      controllers.InstanceContro
 
 # Password management
 GET     /passwords                           controllers.PasswordController.edit()
-POST    /passwords/save            			 controllers.PasswordController.save()
+POST    /passwords            			 	 controllers.PasswordController.save()
 
 # WhoIs check
 GET     /whois                               controllers.WhoIsController.index()
