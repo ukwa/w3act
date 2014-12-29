@@ -58,7 +58,7 @@ abstract class UrlModel extends ActModel {
 	@Transient
 	protected final String END_STR         = "/";
 	
-    @Constraints.Required
+    @Constraints.Required(message="Title Required")
 	public String title;
 	
 	public String language;

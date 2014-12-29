@@ -1,5 +1,7 @@
 package uk.bl.api;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public enum FormHelper {
 
 	INSTANCE;
 
-	public boolean isInScopeAllWithoutLicense(Long targetId) {
+	public boolean isInScopeAllWithoutLicense(Long targetId) throws MalformedURLException, URISyntaxException {
 		Target target = Target.findById(targetId);
 		boolean isInScope = false;
 		try {

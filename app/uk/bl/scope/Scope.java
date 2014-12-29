@@ -737,14 +737,9 @@ public enum Scope {
 	}
 	
 	//	UK Domain 
-	public boolean isTopLevelDomain(Target target) throws WhoisException {
+	public boolean isTopLevelDomain(Target target) throws WhoisException, MalformedURLException, URISyntaxException {
         for (FieldUrl fieldUrl : target.fieldUrls) {
-            URL uri = null;
-			try {
-				uri = new URI(fieldUrl.url).normalize().toURL();
-			} catch (MalformedURLException | URISyntaxException e) {
-				e.printStackTrace();
-			}
+            URL uri = new URI(fieldUrl.url).normalize().toURL();
 			String url = uri.toExternalForm();
             Logger.info("Normalised " + url);
             // Rule 3.1: check domain name

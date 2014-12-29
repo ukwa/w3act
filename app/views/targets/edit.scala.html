@@ -180,9 +180,18 @@
 	
 	@warningmessage(flash)
 	
-	@if(targetForm.hasGlobalErrors) {
-		<div class="alert alert-danger">@targetForm.globalError.message</div>
-	} 
+    @if(targetForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- targetForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
 	
 	@helper.form(routes.TargetController.update(id)) {
 	
@@ -305,9 +314,9 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@select(
-               					targetForm("qaIssue.id"), 
-					                options(qaIssues), 
+							@select(field = targetForm("qaIssue.id"), options = options(qaIssues), 
+					                args = 
+					                'class -> "form-control",
 					                '_label -> "QA Status:", 
 					                '_default -> "-- Choose a QA Status --",
 					                '_showConstraints -> false
@@ -320,9 +329,10 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 					    	@inputRadioGroup(
-	 							targetForm("liveSiteStatus"),
-	 							options(siteStatuses),
-								'_label -> "Live Site Status (If known, please add the current status of the site):"
+	 							field = targetForm("liveSiteStatus"),
+	 							options = options(siteStatuses),
+					            args = 
+					            '_label -> "Live Site Status (If known, please add the current status of the site):"
 			            	)(FieldConstructor(genericInput.f), lang)
 						</div>
 					</div>
@@ -332,8 +342,8 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							@helper.checkbox(targetForm("keySite"), 
-								'_label -> "Key Site (Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management):", 
-								'class -> "form-control"
+								args = 
+								'_label -> "Key Site (Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management):" 
 							)(FieldConstructor(genericInput.f), lang)
 						</div>
 					</div>
@@ -383,7 +393,9 @@
 						<div class="form-group">
 							@select(
                					targetForm("tag.id"), 
-					                options(tags), 
+					                options(tags),
+					                args =
+					                'class -> "form-control", 
 					                '_label -> "Tag(s) (The multiple open keywords):",
 					                '_showConstraints -> false,
 					                'multiple->"multiple"
@@ -425,7 +437,7 @@
 						    <div class="col-sm-6">
 								@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || (targetForm("authorUser.id").value != null && user.id == Long.valueOf(targetForm("authorUser.id").value))) {
 								  	<div id="subjectTree"></div>
-							  		<input type="hidden" id="collectionSelect" name="subjectSelect" value="@targetForm("subjectIdsText").value">
+							  		<input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
 							  	} else {
 									@if(targetForm("subjectIdsText").value != null && targetForm("subjectIdsText").value.length > 0) {
 										@targetForm("subjectIdsText").value
@@ -445,7 +457,7 @@
 						    <div class="col-sm-6">
 			    				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 							  		<div id="collectionTree"></div>
-							  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionIdsText").value">
+							  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionSelect").value">
 							  	} else {
 									@if(targetForm("collectionIdsText").value != null && targetForm("collectionIdsText").value.length > 0) {
 										@targetForm("collectionIdsText").value
@@ -463,7 +475,9 @@
 						<div class="form-group">
 							@select(
                					targetForm("organisation.id"), 
-					                options(organisations), 
+					                options(organisations),
+					                args = 
+					                'class -> "form-control",
 					                '_label -> "Nominating Organisation (The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted):",
 				                	'_default -> "-- None --",
 					                '_showConstraints -> false
@@ -492,6 +506,8 @@
 								@select(
 	               					targetForm("authorUser.id"), 
 						                options(authors), 
+						                args = 
+						                'class -> "form-control",
 						                '_label -> "Selector (The user that nominated this web site. A record can be created on behalf of other user by high-level roles):",
 					                	'_default -> "-- None --",
 						                '_showConstraints -> true
@@ -500,6 +516,8 @@
 								@select(
 	               					targetForm("authorUser.id"), 
 						                options(authors), 
+						                args = 
+						                'class -> "form-control",
 						                '_label -> "Selector (The user that nominated this web site. A record can be created on behalf of other user by high-level roles):",
 					                	'_default -> "-- None --",
 						                '_showConstraints -> false,
@@ -514,8 +532,10 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							@select(
-               					targetForm("language.id"), 
+               					targetForm("language"), 
 					                options(languages), 
+					                args = 
+					                'class -> "form-control",
 					                '_label -> "Language (The predominant language in which the page is written):",
 					                '_showConstraints -> false
 				            )(FieldConstructor(genericInput.f), lang)	
@@ -540,11 +560,15 @@
 			   		<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								@repeat(targetForm("flags"), min = 1) { flag =>
-    								@checkbox(flag,
-    								'class -> "form-control"
-    								)(FieldConstructor(genericInput.f), lang)
-    							}
+								@select(
+		              					targetForm("flag.id"), 
+						                options(flags),
+						                args =
+						                'class -> "form-control", 
+						                '_label -> "Flag(s) (Allows users to flag record for attention, using a pre-defined list of flag names):",
+						                '_showConstraints -> false,
+						                'multiple->"multiple"
+					            )(FieldConstructor(genericInput.f), lang)						
     						</div>							
 						</div>
 			     	</div>	     		
@@ -593,8 +617,10 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							@select(
-               					targetForm("selectionType.name"), 
+               					targetForm("selectionType"), 
 					                options(selectionTypes), 
+					                args = 
+					                'class -> "form-control",					                
 					                '_label -> "Selection Type (This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User)):",
 					                '_showConstraints -> false
 				            )(FieldConstructor(genericMandatoryInput.f), lang)							
@@ -710,8 +736,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							@helper.checkbox(targetForm("ukPostalAddress"), 
-								'_label -> "UK Postal Address (The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box)):", 
-								'class -> "form-control"
+								'_label -> "UK Postal Address (The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box)):" 
 							)(FieldConstructor(genericInput.f), lang)
 						</div>
 					</div>
@@ -733,8 +758,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							@helper.checkbox(targetForm("viaCorrespondence"), 
-								'_label -> "Via Correspondence (Previous correspondence with the web site owner by a Curator contains evidence of a UK address):", 
-								'class -> "form-control"
+								'_label -> "Via Correspondence (Previous correspondence with the web site owner by a Curator contains evidence of a UK address):"
 							)(FieldConstructor(genericInput.f), lang)						
 						</div>
 					</div>
@@ -759,8 +783,7 @@
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
 								@helper.checkbox(targetForm("professionalJudgement"), 
-									'_label -> "Professional Judgement (In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below):", 
-									'class -> "form-control"
+									'_label -> "Professional Judgement (In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below):"
 								)(FieldConstructor(genericInput.f), lang)			
 							</div>
 						</div>
@@ -783,8 +806,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							@helper.checkbox(targetForm("noLdCriteriaMet"), 
-								'_label -> "No LD Criteria Met (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit):", 
-								'class -> "form-control"
+								'_label -> "No LD Criteria Met (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit):"
 							)(FieldConstructor(genericInput.f), lang)								
 						</div>
 					</div>
@@ -801,6 +823,8 @@
 								@select(
 	               					targetForm("scope"), 
 						                options(scopeTypes), 
+						                args = 
+						                'class -> "form-control",
 						                '_label -> "Scope (Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option):",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)		
@@ -814,6 +838,8 @@
 								@select(
 	               					targetForm("depth"), 
 						                options(depthTypes), 
+						                args = 
+						                'class -> "form-control",
 						                '_label -> "Depth (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit):",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	
@@ -838,6 +864,8 @@
 								@select(
 	               					targetForm("crawlFrequency"), 
 						                options(crawlFrequencies), 
+						                args = 
+						                'class -> "form-control",
 						                '_label -> "Crawl Frequency (How often should this site be archived?):",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)							
@@ -923,8 +951,9 @@
 							@select(
               					targetForm("licenses.id"), 
 				                options(licensesMap), 
+				                args = 
+				                'class -> "form-control",
 				                '_label -> "License (The license terms under which this site is archived and made available):",
-			                	'_default -> "-- None --",
 				                '_showConstraints -> false,
 				                'multiple->"multiple"
 				            )(FieldConstructor(genericInput.f), lang)						
@@ -950,6 +979,8 @@
 								@select(
 		              					targetForm("qaStatus"), 
 						                options(crawlPermissionStatuses), 
+						                args = 
+						                'class -> "form-control",
 						                '_label -> "Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):",
 					                	'_default -> "-- None --",
 						                '_showConstraints -> false
@@ -958,6 +989,8 @@
 								@select(
 		              					targetForm("qaStatus"), 
 						                options(crawlPermissionStatuses), 
+						                args = 
+						                'class -> "form-control",
 						                '_label -> "Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):",
 					                	'_default -> "-- None --",
 						                '_showConstraints -> false,
@@ -1016,7 +1049,7 @@
 	  		<div class="row padding-10">
 	    		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						@textarea(field = targetForm("archivistNotes"),
+						@textarea(field = targetForm("revision"),
 							'_label -> "Revision log message:",
 							'_id -> "inputRevision",
 							'class -> "form-control"

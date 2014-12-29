@@ -183,7 +183,7 @@ GET     /targets/:id                      	controllers.TargetController.view(id:
 GET     /targets/act/:id                    controllers.TargetController.viewAct(id)
 GET     /targets/wct/:id                    controllers.TargetController.viewWct(id)
 GET     /targets/:revision/revision         controllers.TargetController.viewrevision(revision:Long)
-GET     /targets/edit/:id                   controllers.TargetController.edit(id:Long)
+GET     /targets/:id/edit                   controllers.TargetController.edit(id:Long)
 POST    /targets                	 		controllers.TargetController.save()
 POST    /targets/:id              			controllers.TargetController.update(id:Long)
 

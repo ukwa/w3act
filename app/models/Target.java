@@ -1,6 +1,8 @@
 package models;
 
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
@@ -74,7 +77,6 @@ public class Target extends UrlModel {
 	public List<License> licenses;
 
     @JsonIgnore
-    @Required
     @ManyToMany
 	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
@@ -104,7 +106,10 @@ public class Target extends UrlModel {
 	@Column(columnDefinition = "text")
 	public String description;
 	
+	@JsonIgnore
 	public Boolean isInScopeIp;
+	
+	@JsonIgnore
 	public Boolean isInScopeIpWithoutLicense;
 
 	public Boolean active; // flag for the latest version of the target among
@@ -169,7 +174,7 @@ public class Target extends UrlModel {
 	@Column(columnDefinition = "text")
 	public String justification;
 
-	@Required
+	@Required(message="Selection Type Required")
 	public String selectionType;
 
 	@Column(columnDefinition = "text")
@@ -181,16 +186,16 @@ public class Target extends UrlModel {
 	public Long legacySiteId;
 	
 	@JsonProperty("field_uk_postal_address")
-	public Boolean ukPostalAddress;
+	public Boolean ukPostalAddress = Boolean.FALSE;
 
 	@Column(columnDefinition = "text")
 	public String ukPostalAddressUrl;
 	
 	@JsonProperty("field_via_correspondence")
-	public Boolean viaCorrespondence;
+	public Boolean viaCorrespondence = Boolean.FALSE;
 	
 	@JsonProperty("field_professional_judgement")
-	public Boolean professionalJudgement;
+	public Boolean professionalJudgement = Boolean.FALSE;
 
 	@Column(columnDefinition = "text")
 	@JsonProperty("field_professional_judgement_exp")
@@ -291,7 +296,7 @@ public class Target extends UrlModel {
 	private Object field_notes;
 
 	@Transient
-	@Required
+	@Required(message="Url(s) Required")
 	public String formUrl;
 
 	@Transient
@@ -303,11 +308,12 @@ public class Target extends UrlModel {
 	@Transient
 	public String crawlEndDateText;
 	
+	@Required(message="Subjects Required")
 	@Transient
-	public String subjectIdsText;
+	public String subjectSelect;
 
 	@Transient
-	public String collectionIdsText;
+	public String collectionSelect;
 
 	@Transient
 	public String authorIdText;
@@ -408,9 +414,9 @@ public class Target extends UrlModel {
         if (title == null) {
             return "Title is blank";
         }
-        if (subjects == null || subjects.isEmpty()) {
-        	return "Subjects is empty";
-        }
+//        if (subjects == null || subjects.isEmpty()) {
+//        	return "Subjects is empty";
+//        }
         return null;
     }
 
@@ -1001,11 +1007,11 @@ public class Target extends UrlModel {
 	 */
 	public boolean checkManualScope() {
 		boolean res = false;
-		if (this.ukPostalAddress || this.viaCorrespondence || this.professionalJudgement) {
+		if (BooleanUtils.isTrue(this.ukPostalAddress) || BooleanUtils.isTrue(this.viaCorrespondence) || BooleanUtils.isTrue(this.professionalJudgement)) {
 			Logger.debug("checkManualScope(): " + this.ukPostalAddress + ", " + this.viaCorrespondence + ", "+ this.professionalJudgement);
 			res = true;
 		}
-		if (this.noLdCriteriaMet) {
+		if (BooleanUtils.isTrue(this.noLdCriteriaMet)) {
 			res = false;
 		}
 		return res;
@@ -2280,6 +2286,7 @@ public class Target extends UrlModel {
 	}
 
 	
+	@JsonIgnore
 	public String fieldUrl() {
 		List<String> urls = new ArrayList<String>();
 		for (FieldUrl fieldUrl : this.fieldUrls) {
@@ -2288,10 +2295,12 @@ public class Target extends UrlModel {
 		return StringUtils.join(urls, ", ");
 	}
 	
+	@JsonIgnore
 	public String subjectIdsAsString() {
 		return StringUtils.join(this.subjectIds(), ", ");
 	}
 
+	@JsonIgnore
 	public List<Long> subjectIds() {
 		List<Long> ids = new ArrayList<Long>();
 		for (Subject subject : this.subjects) {
@@ -2300,6 +2309,7 @@ public class Target extends UrlModel {
 		return ids;
 	}
 	
+	@JsonIgnore
 	public String subjectsAsString() {
 		List<String> names = new ArrayList<String>();
 		for (Subject subject : this.subjects) {
@@ -2308,6 +2318,7 @@ public class Target extends UrlModel {
 		return StringUtils.join(names, ", ");
 	}
 	
+	@JsonIgnore
 	public List<Long> collectionIds() {
 		List<Long> ids = new ArrayList<Long>();
 		for (Collection collection : this.collections) {
@@ -2316,10 +2327,12 @@ public class Target extends UrlModel {
 		return ids;
 	}
 	
+	@JsonIgnore
 	public String collectionIdsAsString() {
 		return StringUtils.join(collectionIds(), ", ");
 	}
 	
+	@JsonIgnore
 	public String collectionsAsString() {
 		List<String> names = new ArrayList<String>();
 		for (Collection collection : this.collections) {
@@ -2328,6 +2341,7 @@ public class Target extends UrlModel {
 		return StringUtils.join(names, ", ");
 	}
 	
+	@JsonIgnore
 	public String licensesAsString() {
 		Logger.info("licensesAsString");
 		List<String> names = new ArrayList<String>();
@@ -2338,18 +2352,22 @@ public class Target extends UrlModel {
 		return StringUtils.join(names, ", ");
 	}
 	
+	@JsonIgnore
 	public boolean isUkHosting() {
 		return Scope.INSTANCE.isUkHosting(this);
 	}
 	
-	public boolean isTopLevelDomain() throws WhoisException {
+	@JsonIgnore
+	public boolean isTopLevelDomain() throws WhoisException, MalformedURLException, URISyntaxException {
 		return Scope.INSTANCE.isTopLevelDomain(this);
 	}
 	
+	@JsonIgnore
 	public boolean isUkRegistration() throws WhoisException {
 		return Scope.INSTANCE.isUkRegistration(this);
 	}
 	
+	@JsonIgnore
 	public String tagsAsString() {
 		List<String> names = new ArrayList<String>();
 		for (Tag tag : this.tags) {
@@ -2358,6 +2376,7 @@ public class Target extends UrlModel {
 		return StringUtils.join(names, ", ");
 	}
 
+	@JsonIgnore
 	public String flagsAsString() {
 		List<String> names = new ArrayList<String>();
 		for (Flag flag : this.flags) {
@@ -2401,6 +2420,7 @@ public class Target extends UrlModel {
 	 *            The identifier URL in the project domain model
 	 * @return result as a flag
 	 */
+	@JsonIgnore
 	public boolean isInScopeAllWithoutLicense() {
 		boolean isInScope = false;
 		try {
@@ -2409,14 +2429,14 @@ public class Target extends UrlModel {
 			if (!isInScope) {
 				isInScope = Scope.INSTANCE.isTopLevelDomain(this);
 			}
-		} catch (WhoisException e) {
-			// TODO Auto-generated catch block
+		} catch (WhoisException | MalformedURLException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 		return isInScope;
 
 	}
 
+	@JsonIgnore
 	public static boolean checkScopeIpWithoutLicense(Target target) throws WhoisException {
 		for (FieldUrl fieldUrl : target.fieldUrls) {
 			if (!Scope.INSTANCE.checkScopeIpWithoutLicense(fieldUrl.url, target)) return false;
@@ -2424,6 +2444,7 @@ public class Target extends UrlModel {
 		return true;
 	}
 
+	@JsonIgnore
     public boolean indicateNpldStatus() {
     	return (getNpldStatusList().size() > 0);
     }
@@ -2438,6 +2459,7 @@ public class Target extends UrlModel {
 	 * @return target list
 	 */
     // TODO: KLI
+	@JsonIgnore
 	public List<Target> getNpldStatusList() {
 		
 		List<Target> res = new ArrayList<Target>();
@@ -2645,6 +2667,7 @@ public class Target extends UrlModel {
 	}
 	
 	// to helper
+	@JsonIgnore
 	public boolean hasGrantedLicense() {
 		Logger.info("hasGrantedLicense");
 //		if QAStatus is granted 
