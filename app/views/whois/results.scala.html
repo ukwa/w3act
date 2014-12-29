@@ -66,9 +66,9 @@
 				<td>@(index+1))</td>
 				<td>@row.getString("lookup_name")</td>
 				<td>@row.getString("title")</td>
-				<td>@Utils.formatSqlTimestamp(row.getTimestamp("target_date"))</td>
-				<td>@Utils.formatSqlTimestamp(row.getTimestamp("lookup_date"))</td>
-				<td>@Utils.convertPGIntervalToDate(row.get("diff"))</td>
+				<td>@Utils.INSTANCE.formatSqlTimestamp(row.getTimestamp("target_date"))</td>
+				<td>@Utils.INSTANCE.formatSqlTimestamp(row.getTimestamp("lookup_date"))</td>
+				<td>@Utils.INSTANCE.convertPGIntervalToDate(row.get("diff"))</td>
 			</tr>
 		}
 		</table>

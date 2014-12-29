@@ -181,7 +181,7 @@ public class SubjectController extends AbstractController {
 //    	subject.id = Long.valueOf(getFormParam(Const.TID));
 //    	subject.url = getFormParam(Const.URL);
     	subject.name = getFormParam(Const.NAME);
-        subject.publish = Utils.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
+        subject.publish = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
 	    if (getFormParam(Const.TTYPE) != null) {
 	    	subject.ttype = getFormParam(Const.TTYPE);
 	    }
@@ -232,7 +232,7 @@ public class SubjectController extends AbstractController {
 	            	String missingFields = "";
 	            	for (String key : subjectForm.errors().keySet()) {
 	            	    Logger.debug("key: " +  key);
-	            	    key = Utils.showMissingField(key);
+	            	    key = Utils.INSTANCE.showMissingField(key);
 	            	    if (missingFields.length() == 0) {
 	            	    	missingFields = key;
 	            	    } else {

@@ -592,8 +592,8 @@ public class Instance extends UrlModel {
 	public static String showTimestamp(String curDate) {
 		String res = "";
 		if (curDate != null && curDate.length() > 0) {
-			Logger.info("showTimestamp() curDate: " + curDate + ", Utils.getDateFromUnixDate(curDate): " + Utils.getDateFromUnixDate(curDate));
-	        res = Utils.getDateFromUnixDate(curDate);
+			Logger.info("showTimestamp() curDate: " + curDate + ", Utils.INSTANCE.getDateFromUnixDate(curDate): " + Utils.INSTANCE.getDateFromUnixDate(curDate));
+	        res = Utils.INSTANCE.getDateFromUnixDate(curDate);
 		}
 		return res;		
 	}
@@ -658,7 +658,7 @@ public class Instance extends UrlModel {
 
 		Page<Instance> results = find.where().query().fetch("target").fetch("target.fieldUrls").where().icontains("target.fieldUrls.url", filter).orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);
 
-		Logger.info("results: " + results.getList());
+//		Logger.debug("results: " + results.getList());
 //		find.where().icontains(Const.FIELD_URL_NODE, filter)
 //		.orderBy(sortBy + " " + order)
 //		.findPagingList(pageSize)
@@ -754,13 +754,13 @@ public class Instance extends UrlModel {
 //    	}
     	if (startDate != null && startDate.length() > 0) {
     		Logger.info("start_date: " + startDate);
-    		String startDateStr = Utils.getUnixDateStringFromDate(startDate);
+    		String startDateStr = Utils.INSTANCE.getUnixDateStringFromDate(startDate);
     		Logger.info("start_date string: " + startDateStr);
     		exp = exp.ge(Const.CHANGED, startDateStr);
     	} 
     	if (endDate != null && endDate.length() > 0) {
     		Logger.info("end_date: " + endDate);
-    		String endDateStr = Utils.getUnixDateStringFromDate(endDate);
+    		String endDateStr = Utils.INSTANCE.getUnixDateStringFromDate(endDate);
     		exp = exp.le(Const.CHANGED, endDateStr);
     	} 
     	res = exp.query()
@@ -815,7 +815,7 @@ public class Instance extends UrlModel {
     	
     	if (startDate != null && startDate.length() > 0) {
     		Logger.info("start_date: " + startDate);
-    		String startDateStr = Utils.getUnixDateStringFromDate(startDate);
+    		String startDateStr = Utils.INSTANCE.getUnixDateStringFromDate(startDate);
     		Logger.info("start_date string: " + startDateStr);
     		if (status != null && (status.length() > 0 || status.length() ==  0) 
     				&& (status.equals(Const.ReportQaStatusType.QAED.name().toLowerCase())
@@ -835,7 +835,7 @@ public class Instance extends UrlModel {
     	} 
     	if (endDate != null && endDate.length() > 0) {
     		Logger.info("end_date: " + endDate);
-    		String endDateStr = Utils.getUnixDateStringFromDate(endDate);
+    		String endDateStr = Utils.INSTANCE.getUnixDateStringFromDate(endDate);
     		if (status != null && (status.length() > 0 || status.length() ==  0) 
     				&& (status.equals(Const.ReportQaStatusType.QAED.name().toLowerCase())
     					|| status.equals(Const.ReportQaStatusType.WITHQAISSUES.name().toLowerCase())	

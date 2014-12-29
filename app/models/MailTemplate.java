@@ -160,7 +160,7 @@ public class MailTemplate extends ActModel {
      * @return
      */
     public String readTemplate() {
-    	return Utils.readTextFile(Const.TEMPLATES_PATH + text);
+    	return Utils.INSTANCE.readTextFile(Const.TEMPLATES_PATH + text);
     }
     
     /**
@@ -168,7 +168,7 @@ public class MailTemplate extends ActModel {
      * @return
      */
     public String readInitialTemplate() {
-    	text = Utils.readTextFile(Const.TEMPLATES_PATH + text);
+    	text = Utils.INSTANCE.readTextFile(Const.TEMPLATES_PATH + text);
     	return text;
     }
     

@@ -85,10 +85,10 @@
     </div>
     
     <article class="lookup">
+		@warningmessage(flash)
     
-		<div id="forms">
-			@warningmessage(flash)
-			@helper.form(action=routes.InstanceController.search, 'class -> "form-inline") {
+		@helper.form(action=routes.InstanceController.search()) {
+			<div id="forms">				
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
    					<input type="hidden" name="s" value="@currentSortBy">
@@ -101,59 +101,60 @@
 						}
 					</span>
 				</div>
-			}
-		</div>
+			</div>
+		}
 		
 		@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
-		@pagination
+		
+			@pagination
     
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					@header("title", "Title")
-					@header("url", "URL(s)")
-					@header("fieldNominatingOrganisation", "Organisation")
-					<th>Crawled URL(s)</th>
-					<th>Crawl Frequency</th>
-					<th>User</th>
-					<th>QA Status</th>
-					<th>In Scope</th>
-					<th>Other Archives</th>
-				</tr>
-			</thead>
-			<tbody>
-				@for(instance <- currentPage.getList) {
-				<tr>
-					<td><a class="brand" href="@routes.InstanceController.edit(instance.id)">@instance.title</a><br><a class="brand" href="@instance.getFieldUrlAsStr">@instance.getFieldUrlAsStr</a></td>
-					<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.getFieldUrlAsStr">(mid-crawl),</a>
-	                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
-	                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
-					@if(instance.target.organisation != null && instance.target.organisation.title != null) {
-						<td><a href="@routes.OrganisationController.view(instance.target.organisation.id)">
-							@instance.target.organisation.title</a></td>
-					} else {
-						<td></td>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						@header("title", "Title")
+						@header("url", "URL(s)")
+						@header("fieldNominatingOrganisation", "Organisation")
+						<th>Crawled URL(s)</th>
+						<th>Crawl Frequency</th>
+						<th>User</th>
+						<th>QA Status</th>
+						<th>In Scope</th>
+						<th>Other Archives</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(instance <- currentPage.getList) {
+					<tr>
+						<td><a class="brand" href="@routes.InstanceController.edit(instance.id)">@instance.title</a><br><a class="brand" href="@instance.getFieldUrlAsStr">@instance.getFieldUrlAsStr</a></td>
+						<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.getFieldUrlAsStr">(mid-crawl),</a>
+		                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
+		                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
+						@if(instance.target.organisation != null && instance.target.organisation.title != null) {
+							<td><a href="@routes.OrganisationController.view(instance.target.organisation.id)">
+								@instance.target.organisation.title</a></td>
+						} else {
+							<td></td>
+						}
+						<td>0</td>
+						<td>@instance.target.crawlFrequency</td>
+						<td>
+							@if(instance.authorUser != null) {
+								<a class="brand" href="@routes.UserController.edit(instance.authorUser.id)">@instance.authorUser.name</a>
+							}
+						</td>
+						<td>
+							@if(instance.qaIssue != null) {
+								@instance.qaIssue.name
+							}
+						</td>
+						<td>@instance.checkScope(instance.getFieldListAsStr("fieldUrl"))</td>
+						<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.getFieldUrlAsStr">(mementos)</a></td>
+					</tr>
 					}
-					<td>0</td>
-					<td>@instance.target.crawlFrequency</td>
-					<td>
-						@if(instance.authorUser != null) {
-							<a class="brand" href="@routes.UserController.edit(instance.authorUser.id)">@instance.authorUser.name</a>
-						}
-					</td>
-					<td>
-						@if(instance.qaIssue != null) {
-							@instance.qaIssue.name
-						}
-					</td>
-					<td>@instance.checkScope(instance.getFieldListAsStr("fieldUrl"))</td>
-					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.getFieldUrlAsStr">(mementos)</a></td>
-				</tr>
-				}
-			</tbody>
-		</table>
+				</tbody>
+			</table>
 		 
-		@pagination
+			@pagination
 		}
 
    </article>

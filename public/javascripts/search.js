@@ -278,15 +278,23 @@ function applySearch(context, searchContext, urlTo) {
 						if (searchContext == 'instances') {
 							fieldUrls = item.target.fieldUrls;
 						}
-						for (var x = 0; x < fieldUrls.length; x++) {
-							urls += fieldUrls[x].url + " ";
+						if (fieldUrls != null && (searchContext == 'instances' || searchContext == 'targets')) {
+	 						for (var x = 0; x < fieldUrls.length; x++) {
+								urls += fieldUrls[x].url + " ";
+							}
+							searchResults[i] = {
+									value: label,
+									url: item.url,
+									field_url: urls,
+									id: item.id
+							};
+						} else {
+							searchResults[i] = {
+									value: label,
+									url: item.url,
+									id: item.id
+							};
 						}
-						searchResults[i] = {
-							value: label,
-							url: item.url,
-							field_url: urls,
-							id: item.id
-						};
 					}				
 		          	return searchResults;
 				}

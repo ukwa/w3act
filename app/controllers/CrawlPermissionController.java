@@ -96,9 +96,7 @@ public class CrawlPermissionController extends AbstractController {
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
     	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-      	return ok(
-	              edit.render(permissionFormNew, User.findByEmail(request().username()), crawlPermissionStatuses)
-	            );
+      	return ok(edit.render(permissionFormNew, User.findByEmail(request().username()), crawlPermissionStatuses));
     }
     
     public static Result view(Long id) {
@@ -263,7 +261,7 @@ public class CrawlPermissionController extends AbstractController {
     public static Result licenceRequestForTarget(String name, String target) {
     	CrawlPermission permission = new CrawlPermission();
     	permission.name = name;
-        permission.id = Utils.createId();
+        permission.id = Utils.INSTANCE.createId();
         permission.url = Const.ACT_URL + permission.id;
         Logger.debug("licenceRequestForTarget url: " + permission.url);
         permission.user = User.findByEmail(request().username());
@@ -330,7 +328,7 @@ public class CrawlPermissionController extends AbstractController {
 	    	permission.status = getFormParam(Const.STATUS);
 	    }
 	    if (getFormParam(Const.REQUEST_FOLLOW_UP) != null) {
-	    	permission.requestFollowup = Utils.getNormalizeBooleanString(getFormParam(Const.REQUEST_FOLLOW_UP));
+	    	permission.requestFollowup = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.REQUEST_FOLLOW_UP));
 	    }
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
@@ -373,7 +371,7 @@ public class CrawlPermissionController extends AbstractController {
                 	String missingFields = "";
                 	for (String key : permissionForm.errors().keySet()) {
                 	    Logger.debug("key: " +  key);
-                	    key = Utils.showMissingField(key);
+                	    key = Utils.INSTANCE.showMissingField(key);
                 	    if (missingFields.length() == 0) {
                 	    	missingFields = key;
                 	    } else {
@@ -457,13 +455,13 @@ public class CrawlPermissionController extends AbstractController {
                             } catch (Exception e) {
                             	Logger.info("contact person is not existing exception 1 " + person);
                             	isContactPersonExisting = false;
-                            	Long id = Utils.createId();
+                            	Long id = Utils.INSTANCE.createId();
                             	person = ContactPerson.create(id, Const.ACT_URL + id);
                             }
                             if (person == null) {
                             	Logger.info("contact person is not existing");
                             	isContactPersonExisting = false;
-                            	Long id = Utils.createId();
+                            	Long id = Utils.INSTANCE.createId();
                             	person = ContactPerson.create(id, Const.ACT_URL + id);
                             }
                             
@@ -516,7 +514,7 @@ public class CrawlPermissionController extends AbstractController {
         	    	permission.status = getFormParam(Const.STATUS);
         	    }
         	    if (getFormParam(Const.REQUEST_FOLLOW_UP) != null) {
-        	    	permission.requestFollowup = Utils.getNormalizeBooleanString(getFormParam(Const.REQUEST_FOLLOW_UP));
+        	    	permission.requestFollowup = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.REQUEST_FOLLOW_UP));
         	    }
 
             } catch (Exception e) {
@@ -611,7 +609,7 @@ public class CrawlPermissionController extends AbstractController {
 		    	CrawlPermission permission = permissionItr.next();
 		        if (getFormParam(permission.name) != null) {
 		    		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
-		            boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+		            boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
 		            if (userFlag) {
 		            	if (assignedPermissions.length() == 0) {
 		            		assignedPermissions = permission.name;
@@ -642,7 +640,7 @@ public class CrawlPermissionController extends AbstractController {
 		    	CrawlPermission permission = permissionItr.next();
 		        if (getFormParam(permission.name) != null) {
 		    		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
-		            boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+		            boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
 		            if (userFlag) {
 	            		assignedPermissionsList.add(CrawlPermission.findByName(permission.name));
 		            }
@@ -667,7 +665,7 @@ public class CrawlPermissionController extends AbstractController {
         	CrawlPermission permission = permissionItr.next();
             if (getFormParam(permission.name) != null) {
 //        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
-                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+                boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag) {
                 	if (assignedPermissions.length() == 0) {
                 		assignedPermissions = ContactPerson.findEmailsByUrls(permission.contactPerson.url, assignedPermissions);
@@ -694,7 +692,7 @@ public class CrawlPermissionController extends AbstractController {
         	CrawlPermission permission = permissionItr.next();
             if (getFormParam(permission.name) != null) {
 //        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
-                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+                boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag) {
                 	permission.status = Const.CrawlPermissionStatus.EMAIL_REJECTED.name();
                 	Logger.info("new permission staus: " + permission.status);
@@ -803,7 +801,7 @@ public class CrawlPermissionController extends AbstractController {
         	CrawlPermission permission = permissionItr.next();
             if (getFormParam(permission.name) != null) {
 //        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
-                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(permission.name));
+                boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag || all) {
                 	Logger.debug("mail to contact person: " + permission.contactPerson.name.replace(Const.LIST_DELIMITER,"") + ".");
                 	Logger.debug("mail template: " + template);
@@ -816,7 +814,7 @@ public class CrawlPermissionController extends AbstractController {
 	                	messageSubject = mailTemplate.subject;
 	                	messageBody = mailTemplate.text;
 	//                	String messageBody = mailTemplate.readTemplate();
-	                	String[] placeHolderArray = Utils.getMailArray(mailTemplate.placeHolders);
+	                	String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
 	            		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.target.title);
 	            		Logger.info("setPendingSelectedCrawlPermissions current: " + routes.LicenseController.form(permission.url).absoluteURL(request()).toString());
 	            		String licenseUrl = routes.LicenseController.form(permission.url).absoluteURL(request()).toString();

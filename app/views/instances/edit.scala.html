@@ -1,6 +1,10 @@
-@(form: Form[Instance], user: User, id: Long, qaIssues: List[QaIssue], qaIssueCategories: Array[uk.bl.Const.QAIssueCategory])
+@(instanceForm: Form[Instance], user: User, id: Long, qaIssues: Map[String,String], qaIssueCategories: Map[String,String], authors: Map[String,String])
 
 @import uk.bl.api.FormHelper
+@import helper._
+@import bootstrap._
+
+@implicitFieldConstructor = @{ FieldConstructor(genericInput.f) }
 
 @script = {
 	<script>
@@ -22,18 +26,18 @@
 @main("", user, script) {
     
 	<ul class="nav nav-tabs">
-		<li><a href="@routes.InstanceController.view(form.get.id)">View</a></li>
+		<li><a href="@routes.InstanceController.view(id)">View</a></li>
 		@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) {
 			<li class="active"><a href="#">Edit</a></li>
 		}
 	</ul>
 	
 	<div class="tab-content padding-20">
-	   	<ol class="breadcrumb">
-			<li><a href="@routes.TargetController.index()">Targets</a></li>
-			<li><a href="@routes.TargetController.view(form.get.target.id)">@form.get.target.title</a></li>
+	   	<ol class="breadcrumb">	   	
+			<li><a href="@routes.TargetController.index()">Targets @instanceForm("target").value</a></li>
+			<li><a href="@routes.TargetController.view(1)">@instanceForm("target.title").value</a></li>
 			<li><a href="@routes.InstanceController.index()">Instances</a></li>
-			<li class="active"><span class="badge">@form.get.target.fieldUrl()</span></li>
+			<li class="active"><span class="badge">@instanceForm("target.fieldUrl").value</span></li>
 		</ol>
 	</div>
 
@@ -45,10 +49,24 @@
 	</div>
 	
     @warningmessage(flash)
-	@helper.form(action = routes.InstanceController.update(id)) {
+    
+   	@if(instanceForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- instanceForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+	
+	@helper.form(routes.InstanceController.update(id)) {
 	
 		<div id="myTabContent" class="tab-content">
-			<input type="hidden" id="instanceId" name="id" value="@form.get.id">
+			<input type="hidden" id="instanceId" name="id" value="@id">
 		
 			<div class="tab-pane padding-20 fade active in" id="qa">
 			
@@ -57,27 +75,22 @@
 						<div class="form-group">
 							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
 						    <div class="col-sm-6">
-				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@form.get.title">
+				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@instanceForm("title").value">
 							</div>
 						</div>
 					</div>
 		     	</div>
-			
+		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			            	<label for="qa_status" class="col-sm-6 control-label">QA Status</label>
-						    <div class="col-sm-6">
-								<select name="qaIssueId" id="field_qa_status" class="form-control">
-									@for(qaIssue <- qaIssues) {
-						                @if(form.get.qaIssue != null && form.get.qaIssue.id == qaIssue.id) {             
-									 		<option value="@qaIssue.id" selected>@qaIssue.name</option>
-									 	} else {
-										 	<option value="@qaIssue.id">@qaIssue.name</option>
-									 	}									 	
-								    }
-								</select>						    
-							</div>
+							@select(field = instanceForm("qaIssue.id"), options = options(qaIssues), 
+					                args = 
+					                'class -> "form-control",
+					                '_label -> "QA Status:", 
+					                '_default -> "-- Choose a QA Status --",
+					                '_showConstraints -> false
+				            )(FieldConstructor(genericInput.f), lang)
 			         	</div>
 					</div>
 				</div>
@@ -85,40 +98,13 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			            	<label for="qa_issue_category" class="col-sm-6 control-label">QA Issue Category</label>
-			            	<div class="col-sm-6">
-								<select multiple name="qaIssueCategory" class="form-control target-form-control" id="qa_issue_category">
-									@for(qaIssueCategory <- qaIssueCategories) {
-						                @if(form.get.qaIssueCategory != null && form.get.qaIssueCategory.equals(qaIssueCategory.name)) {             
-									 		<option value="@qaIssueCategory.name" selected>@qaIssueCategory.getValue</option>
-									 	} else {
-										 	<option value="@qaIssueCategory.name">@qaIssueCategory.getValue</option>
-									 	}									 	
-									}
-								</select>
-							</div>
-			         	</div>
-					</div>
-				</div>
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			            	<label for="qa_notes" class="col-sm-6 control-label">QA Notes</label>
-			            	<div class="col-sm-6">
-				            	<textarea class="form-control" name="qaNotes" id="qa_notes" cols="100" rows="1" value="@form.get.qaNotes">@form.get.qaNotes</textarea>
-							</div>
-			         	</div>
-					</div>
-				</div>
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			            	<label for="quality_notes" class="col-sm-6 control-label">Technical Notes</label>
-			            	<div class="col-sm-6">
-				            	<textarea class="form-control" name="notes" id="quality_notes" cols="100" rows="1" value="@form.get.notes">@form.get.notes</textarea>
-							</div>
+							@select(field = instanceForm("qaIssueCategory"), options = options(qaIssueCategories), 
+					                args = 
+					                'class -> "form-control",
+					                '_label -> "QA Issue Category", 
+					                '_default -> "-- Choose a QA Category --",
+					                '_showConstraints -> false
+				            )(FieldConstructor(genericInput.f), lang)
 			         	</div>
 					</div>
 				</div>
@@ -126,10 +112,54 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="inputBody" class="col-sm-6 control-label">Revision log message</label>
-						    <div class="col-sm-6">
-	               				<textarea class="form-control" name="revision" id="inputRevision">@form.get.revision</textarea>
-							</div>
+							@select(
+               					instanceForm("authorUser.id"), 
+					                options(authors), 
+					                args = 
+					                'class -> "form-control",
+					                '_label -> "Author:",
+				                	'_default -> "-- None --",
+					                '_showConstraints -> true
+				            )(FieldConstructor(genericMandatoryInput.f), lang)						
+			         	</div>
+					</div>
+				</div>				
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(field = instanceForm("qaNotes"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "QA Notes",
+								'id -> "qa_notes",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)		
+			         	</div>
+					</div>
+				</div>
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(field = instanceForm("notes"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Technical Notes",
+								'id -> "quality_notes",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)								
+			         	</div>
+					</div>
+				</div>
+				
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(field = instanceForm("revision"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Revision log message",
+								'id -> "inputRevision",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
 						</div>
 					</div>
 		     	</div>
@@ -174,7 +204,7 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<input type="submit" class="btn btn-primary" name="action" id="edit-save" value="Save">
+					<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
 					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
 		       </div>
 			</div>

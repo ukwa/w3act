@@ -77,7 +77,7 @@ abstract class UrlModel extends ActModel {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "author_id")
-	@Required
+	@Required(message="Author Required")
 	public User authorUser;
 	
 	@JsonIgnore

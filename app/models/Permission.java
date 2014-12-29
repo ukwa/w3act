@@ -13,7 +13,6 @@ import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
-import com.avaje.ebean.Expr;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,9 +27,10 @@ public class Permission extends ActModel {
 	@JoinTable(name = "permission_role", joinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
 	@ManyToMany
+	@JsonIgnore
     public List<Role> roles;
  
-    @Required
+    @Required(message="Name is required")
     @Column(columnDefinition = "text")
     public String name;
 

@@ -192,8 +192,8 @@ public class ContactPersonController extends AbstractController {
 	    if (getFormParam(Const.WEB_FORM) != null) {
 	    	person.webForm = getFormParam(Const.WEB_FORM);
 	    }
-    	person.defaultContact = Utils.getNormalizeBooleanString(getFormParam(Const.DEFAULT_CONTACT));
-    	person.permissionChecked = Utils.getNormalizeBooleanString(getFormParam(Const.PERMISSION_CHECKED));
+    	person.defaultContact = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.DEFAULT_CONTACT));
+    	person.permissionChecked = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.PERMISSION_CHECKED));
 		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
 		personFormNew = personFormNew.fill(person);
       	return ok(
@@ -220,7 +220,7 @@ public class ContactPersonController extends AbstractController {
             	String missingFields = "";
             	for (String key : personForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
-            	    key = Utils.showMissingField(key);
+            	    key = Utils.INSTANCE.showMissingField(key);
             	    if (missingFields.length() == 0) {
             	    	missingFields = key;
             	    } else {
@@ -308,8 +308,8 @@ public class ContactPersonController extends AbstractController {
         	    if (getFormParam(Const.WEB_FORM) != null) {
         	    	person.webForm = getFormParam(Const.WEB_FORM);
         	    }
-       	    	person.defaultContact = Utils.getNormalizeBooleanString(getFormParam(Const.DEFAULT_CONTACT));
-       	    	person.permissionChecked = Utils.getNormalizeBooleanString(getFormParam(Const.PERMISSION_CHECKED));
+       	    	person.defaultContact = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.DEFAULT_CONTACT));
+       	    	person.permissionChecked = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.PERMISSION_CHECKED));
             } catch (Exception e) {
             	Logger.info("ContactPerson not existing exception");
             }

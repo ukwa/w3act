@@ -35,12 +35,12 @@ public class ReportQaController extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-    	return redirect(routes.ReportQaController.targets(0, "title", "asc", "qaed", -1L, -1L, Utils.getCurrentDate(), "", -1L));
+    	return redirect(routes.ReportQaController.targets(0, "title", "asc", "qaed", -1L, -1L, Utils.INSTANCE.getCurrentDate(), "", -1L));
     }
 
     public static Result switchReportQaTab(String status) {
     	Logger.info("switchReportQaTab() status: " + status);
-    	return redirect(routes.ReportQaController.targets(0, "title", "asc", status, -1L, -1L, Utils.getCurrentDate(), "", -1L));
+    	return redirect(routes.ReportQaController.targets(0, "title", "asc", status, -1L, -1L, Utils.INSTANCE.getCurrentDate(), "", -1L));
     }
 
     /**
@@ -125,7 +125,7 @@ public class ReportQaController extends AbstractController {
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
  	    }
-    	Utils.generateCsvFile(fileName, sw.toString());
+    	Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
     }
            
     /**

@@ -211,7 +211,7 @@ public class MailTemplateController extends AbstractController {
 	    if (getFormParam(Const.TTYPE) != null) {
 	    	template.ttype = getFormParam(Const.TTYPE);
 	    }
-    	template.defaultEmail = Utils.getNormalizeBooleanString(getFormParam(Const.DEFAULT_EMAIL_FLAG));
+    	template.defaultEmail = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.DEFAULT_EMAIL_FLAG));
 		Form<MailTemplate> templateFormNew = Form.form(MailTemplate.class);
 		templateFormNew = templateFormNew.fill(template);
       	return ok(
@@ -238,7 +238,7 @@ public class MailTemplateController extends AbstractController {
             	String missingFields = "";
             	for (String key : templateForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
-            	    key = Utils.showMissingField(key);
+            	    key = Utils.INSTANCE.showMissingField(key);
             	    if (missingFields.length() == 0) {
             	    	missingFields = key;
             	    } else {
@@ -289,7 +289,7 @@ public class MailTemplateController extends AbstractController {
         	    	template.ttype = getFormParam(Const.TTYPE);
         	    }
             	Logger.info("template type: " + template.ttype);
-       	    	template.defaultEmail = Utils.getNormalizeBooleanString(getFormParam(Const.DEFAULT_EMAIL_FLAG));
+       	    	template.defaultEmail = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.DEFAULT_EMAIL_FLAG));
             } catch (Exception e) {
             	Logger.info("MailTemplate not existing exception");
             }

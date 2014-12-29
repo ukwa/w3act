@@ -226,7 +226,7 @@ public class TargetController extends AbstractController {
      */
     public static Result searchTargets() {
         DynamicForm requestData = Form.form().bindFromRequest();
-        if (requestData.get("pageSize") == null || (requestData.get("pageSize") != null && !Utils.isNumeric(requestData.get("pageSize")))) {
+        if (requestData.get("pageSize") == null || (requestData.get("pageSize") != null && !Utils.INSTANCE.isNumeric(requestData.get("pageSize")))) {
   			flash("message", "You may only enter a numeric page size.");
 	        return GO_HOME;
     	}    	
@@ -334,7 +334,7 @@ public class TargetController extends AbstractController {
 				 	                    // TODO: CREATED_AT
 				 	                    if (field.getName().equals(Const.CREATED_AT)) {
 				 	                    	if (value != null) {
-				 	                    		value = Utils.showTimestampInTable((String) value);
+				 	                    		value = Utils.INSTANCE.showTimestampInTable((String) value);
 				 	                    	}
 				 	                    }
 										if (field.getType().equals(String.class)) {
@@ -359,7 +359,7 @@ public class TargetController extends AbstractController {
  	    	}
  	    }
 
-    	Utils.generateCsvFile(Const.EXPORT_FILE, sw.toString());
+    	Utils.INSTANCE.generateCsvFile(Const.EXPORT_FILE, sw.toString());
     }
     
     /**
@@ -960,21 +960,21 @@ public class TargetController extends AbstractController {
         
         String wctId = requestData.get("wctId");
         
-        if (StringUtils.isNotBlank(wctId) && !Utils.isNumeric(wctId)) {
+        if (StringUtils.isNotBlank(wctId) && !Utils.INSTANCE.isNumeric(wctId)) {
         	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
             return info(filledForm, id);
 	  	}    	
 
         String sptId = requestData.get("sptId");
 
-	  	if (StringUtils.isNotBlank(sptId) && !Utils.isNumeric(sptId)) {
+	  	if (StringUtils.isNotBlank(sptId) && !Utils.INSTANCE.isNumeric(sptId)) {
 	          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 				flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 	            return info(filledForm, id);
 	  	}    	
 	
 	  	String legacySiteId = requestData.get("legacySiteId");
-	  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.isNumeric(legacySiteId)) {
+	  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.INSTANCE.isNumeric(legacySiteId)) {
 	          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 				flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 	            return info(filledForm, id);
@@ -1141,21 +1141,21 @@ public class TargetController extends AbstractController {
 
 	            String wctId = requestData.get("wctId");
 	            
-	            if (StringUtils.isNotBlank(wctId) && !Utils.isNumeric(wctId)) {
+	            if (StringUtils.isNotBlank(wctId) && !Utils.INSTANCE.isNumeric(wctId)) {
 	            	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
 		            return newInfo(filledForm);
 			  	}    	
 	
 	            String sptId = requestData.get("sptId");
 	
-			  	if (StringUtils.isNotBlank(sptId) && !Utils.isNumeric(sptId)) {
+			  	if (StringUtils.isNotBlank(sptId) && !Utils.INSTANCE.isNumeric(sptId)) {
 			          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 						flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 			            return newInfo(filledForm);
 			  	}    	
 			
 			  	String legacySiteId = requestData.get("legacySiteId");
-			  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.isNumeric(legacySiteId)) {
+			  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.INSTANCE.isNumeric(legacySiteId)) {
 			          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 						flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 			            return newInfo(filledForm);
@@ -1310,7 +1310,7 @@ public class TargetController extends AbstractController {
 			            return newInfo(filledForm);
 					}
 	        	}
-	        	filledForm.get().url = "act-" + Utils.createId();
+	        	filledForm.get().url = "act-" + Utils.INSTANCE.createId();
             	filledForm.get().save();
 		        flash("success", "Target " + filledForm.get().title + " has been created");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));
@@ -1332,303 +1332,11 @@ public class TargetController extends AbstractController {
 	    	        return redirect(routes.CrawlPermissionController.licenceRequestForTarget(title, target)); 
 	        	}
 	        } else if (action.equals("archive")) {
-	    		String url = requestData.get("fieldUrl");
-	        	if (StringUtils.isNotEmpty(url)) {
-	                String target = Scope.INSTANCE.normalizeUrl(url);
-	    	        return redirect(routes.TargetController.archiveTarget(target)); 
-	        	}
+	    		Long id = Long.valueOf(requestData.get("id"));
+    	        return redirect(routes.TargetController.archive(id)); 
 	        }        	
         }
         return null;
-            	
-//        if (StringUtils.isNotEmpty(action)) {
-//
-//        	if (action.equals("save")) {
-//        		Form<Target> filledForm = targetForm.bindFromRequest();
-//                Logger.info("filledForm: before");
-//                Logger.info("filledForm: " + filledForm.get());
-////                Form<Target> filledForm = new PatchedForm<Target>(Target.class).bindFromRequest();
-//
-//                if(filledForm.hasErrors()) {
-//                	String missingFields = "";
-//                	for (String key : filledForm.errors().keySet()) {
-//                	    Logger.debug("key: " +  key);
-//                	    key = Utils.showMissingField(key);
-//                	    if (missingFields.length() == 0) {
-//                	    	missingFields = key;
-//                	    } else {
-//                	    	missingFields = missingFields + Const.COMMA + " " + key;
-//                	    }
-//                	}
-//                	Logger.info("form errors size: " + filledForm.errors().size() + ", " + missingFields);
-//    	  			flash("message", "Please fill out all the required fields, marked with a red star. There are required fields in more than one tab. " + 
-//    	  					"Missing fields are: " + missingFields);
-//    		        return info(targetForm);
-//                }        	
-//                
-//                Map<String, String[]> formParams = request().body().asFormUrlEncoded();
-//
-//                Logger.info("passed");
-//        		Target targetFromDB = Target.findById(id);
-//        		
-//	    	    Logger.info("targetForm: " + targetForm);
-//	    	    Target targetFromForm  = filledForm.get();
-	    	    
-//	    	    targetFromDB.isUkHosting = targetFromForm.isUkHosting();
-//	    	    try {
-//		    	    targetFromDB.isTopLevelDomain = targetFromForm.isTopLevelDomain();
-//		    	    targetFromDB.isUkRegistration = targetFromForm.isUkRegistration();
-//		    	    
-//		    	    // TODO: check hosting, top-level and uk reg on save
-//		    	    if (!targetFromForm.isUkHosting()) {
-//		    	    	
-//		    	    }
-//		    	    if (!targetFromForm.isTopLevelDomain()) {
-//		    	    	
-//		    	    }
-//	            	if (!targetFromForm.isUkRegistration()) {
-//	            		
-//	            	}
-//            	} catch(WhoisException e) {
-//            		e.printStackTrace();
-//            	}
-	            
-//	            String wct = requestData.get("wct");
-//	            
-//	            if (StringUtils.isNotBlank(wct) && !Utils.isNumeric(wct)) {
-//	            	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
-//			        return info(targetForm);
-//			  	}    	
-//	
-//	            String spt = requestData.get("spt");
-//	
-//			  	if (StringUtils.isNotBlank(spt) && !Utils.isNumeric(spt)) {
-//			          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-//						flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-//						return info(targetForm);
-//			  	}    	
-//			
-//			  	String legacySiteId = requestData.get("legacySiteId");
-//			  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.isNumeric(legacySiteId)) {
-//			          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-//						flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-//						return info(targetForm);
-//			  	}    	
-//	
-//	            String fieldUrl = requestData.get("fieldUrls");
-//	            
-//	            if (StringUtils.isNotEmpty(fieldUrl)) {
-//		            String[] urls = fieldUrl.split(",");
-//		            List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
-//		            
-//		            for (String url : urls) {
-//		            	FieldUrl fu = FieldUrl.findByUrl(url.trim());
-//		            	if (fu == null) {
-//			            	fu = new FieldUrl(url.trim());
-//			            	// get domain
-//		            	}
-//		            	fieldUrls.add(fu);
-//		            }
-//		            targetFromDB.fieldUrls = fieldUrls;
-//	            }
-	            
-//	            targetFromDB.title = targetFromForm.title;
-//	            targetFromDB.organisation = targetFromForm.organisation;
-
-//	            String qaIssueId = requestData.get("qaIssueId");
-//	            if (StringUtils.isNotEmpty(qaIssueId)) {
-//	            	Long qaId = Long.valueOf(qaIssueId);
-//	            	QaIssue qaIssue = QaIssue.findById(qaId);
-//	            	targetFromDB.qaIssue = qaIssue;
-//	            }
-	            
-//	            targetFromDB.liveSiteStatus = targetFromForm.liveSiteStatus;
-//	            targetFromDB.keySite = targetFromForm.keySite;
-//	            targetFromDB.wctId = targetFromForm.wctId;
-//	            targetFromDB.sptId = targetFromForm.sptId;
-//	            targetFromDB.keywords = targetFromForm.keywords;
-	
-//	            List<Tag> newTags = new ArrayList<Tag>();
-//	            String[] tagValues = formParams.get("tagList");
-//	
-//	            if (tagValues != null) {
-//		            for(String tagValue: tagValues) {
-//		            	Long tagId = Long.valueOf(tagValue);
-//		            	Tag tag = Tag.findById(tagId);
-//		            	newTags.add(tag);
-//		            }
-//		            targetFromDB.tags = newTags;
-//	            }
-	            
-//	            targetFromDB.synonyms = targetFromForm.synonyms;
-//	            targetFromDB.archivistNotes = targetFromForm.archivistNotes;
-//	            targetFromDB.revision = targetFromForm.revision;
-	
-//	            targetFromDB.description = targetFromForm.description;
-	            
-//	            List<Subject> newSubjects = new ArrayList<Subject>();
-//	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
-//	            Logger.info("subjectSelect: " + subjectSelect);
-//	            if (StringUtils.isNotEmpty(subjectSelect)) {
-//	                String[] subjects = subjectSelect.split(", ");
-//		            for (String sId : subjects) {
-//		//            	sId = sId.replace("\"", "");
-//		            	Long subjectId = Long.valueOf(sId);
-//		            	Subject subject = Subject.findById(subjectId);
-//		            	newSubjects.add(subject);
-//		            }
-//		            targetFromDB.subjects = newSubjects;
-//	            }
-//	            
-//	            List<Collection> newCollections = new ArrayList<Collection>();
-//	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
-//	            Logger.info("collectionSelect: " + collectionSelect);
-//	            if (StringUtils.isNotEmpty(collectionSelect)) {
-//	                String[] collections = collectionSelect.split(", ");
-//		            for (String cId : collections) {
-//		//            	sId = sId.replace("\"", "");
-//		            	Long collectionId = Long.valueOf(cId);
-//		            	Collection collection = Collection.findById(collectionId);
-//		            	newCollections.add(collection);
-//		            }
-//		            targetFromDB.collections = newCollections;
-//	            }
-//	            
-//	            String organisationId = requestData.get("organisationId");
-//	            if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("-1")) {
-//	            	Long oId = Long.valueOf(organisationId);
-//	            	Organisation organisation = Organisation.findById(oId);
-//	            	targetFromDB.organisation = organisation;
-//	            }
-	
-//	            targetFromDB.originatingOrganisation = targetFromForm.originatingOrganisation;
-	            
-//	            String authorId = requestData.get("authorId");
-//	            if (StringUtils.isNotEmpty(authorId)) {
-//	            	Long aId = Long.valueOf(authorId);
-//	            	User author = User.findById(aId);
-//	            	targetFromDB.authorUser = author;
-//	            }
-	
-//	            targetFromDB.language = targetFromForm.language;
-//	
-//	            targetFromDB.authors = targetFromForm.authors;
-	
-//	            List<Flag> newFlags = new ArrayList<Flag>();
-//	            String[] flagValues = formParams.get("flagList");
-//	
-//	            if (flagValues != null) {
-//		            for(String flagValue: flagValues) {
-//		            	Logger.info("flagValue: " + flagValue);
-//		            	Long flagId = Long.valueOf(flagValue);
-//		            	Flag flag = Flag.findById(flagId);
-//		            	newFlags.add(flag);
-//		            }
-//		            targetFromDB.flags = newFlags;
-//	            }
-	            
-//	            targetFromDB.flagNotes = targetFromForm.flagNotes;
-//	            
-//	            targetFromDB.justification = targetFromForm.justification;
-//	            
-//	            targetFromDB.selectionType = targetFromForm.selectionType;
-//	            
-//	            targetFromDB.selectorNotes = targetFromForm.selectorNotes;
-//	            
-//	            targetFromDB.legacySiteId = targetFromForm.legacySiteId;
-//	            
-//	            targetFromDB.scope = targetFromForm.scope;
-//	            
-//	            targetFromDB.depth = targetFromForm.depth;
-//	            
-//	            targetFromDB.ignoreRobotsTxt = targetFromForm.ignoreRobotsTxt;
-//	            
-//	            targetFromDB.crawlFrequency = targetFromForm.crawlFrequency;
-	            
-//	            String dateOfPublication = requestData.get("date_of_publication");
-//	        	if (StringUtils.isNotEmpty(dateOfPublication)) {
-//	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-//	    			try {
-//						Date date = formatter.parse(dateOfPublication);
-//		    			targetFromDB.dateOfPublication = date;
-//					} catch (ParseException e) {
-//						e.printStackTrace();
-//						return info(targetForm);
-//					}
-//	        	}
-//	            Logger.info("targetFromDB.dateOfPublication: " + targetFromDB.dateOfPublication);
-//	            
-//	            String crawlStartDate = requestData.get("crawl_start_date");
-//	        	if (StringUtils.isNotEmpty(crawlStartDate)) {
-//	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-//	    			try {
-//						Date date = formatter.parse(crawlStartDate);
-//		    			targetFromDB.crawlStartDate = date;
-//					} catch (ParseException e) {
-//						e.printStackTrace();
-//						return info(targetForm);
-//					}
-//	        	}
-//	            String crawlEndDate = requestData.get("crawl_end_date");
-//	        	if (StringUtils.isNotEmpty(crawlEndDate)) {
-//	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-//	    			try {
-//						Date date = formatter.parse(crawlEndDate);
-//		    			targetFromDB.crawlEndDate = date;
-//					} catch (ParseException e) {
-//						e.printStackTrace();
-//						return info(targetForm);
-//					}
-//	        	}
-//	            targetFromDB.whiteList = targetFromForm.whiteList;
-//	            
-//	            targetFromDB.blackList = targetFromForm.blackList;
-//	            
-//	            targetFromDB.isUkHosting = targetFromForm.isUkHosting;
-//	            
-//	            targetFromDB.isTopLevelDomain = targetFromForm.isTopLevelDomain;
-//	            
-//	            targetFromDB.isUkRegistration = targetFromForm.isUkRegistration;
-//	            
-//	            targetFromDB.ukPostalAddress = targetFromForm.ukPostalAddress;
-//	            
-//	            targetFromDB.ukPostalAddressUrl = targetFromForm.ukPostalAddressUrl;
-//	            
-//	            targetFromDB.viaCorrespondence = targetFromForm.viaCorrespondence;
-//	            
-//	            targetFromDB.professionalJudgement = targetFromForm.professionalJudgement;
-//	            
-//	            targetFromDB.professionalJudgementExp = targetFromForm.professionalJudgementExp;
-	
-	//				Scope (Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)
-	//				Depth (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)
-	//				Ignore Robots.txt (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)
-	//				Crawl Frequency (How often should this site be archived?)
-	//				Start date
-	//				End date
-	//				White list
-	//				Black list
-				//UK Hosting
-				//no
-				//UK top-level domain (Includes .uk, .london and .scot domains)
-				//yes
-				//UK Registration
-				//no
-	            
-				//UK Postal Address (The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))
-				//Postal Address URL (The URL on the site that contains the postal address used to determine that the site is in the UK)
-				//Via Correspondence (Previous correspondence with the web site owner by a Curator contains evidence of a UK address)
-				//Via Correspondence: Notes (Please record details of correspondence with site owner)
-				//Professional Judgement (In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)
-				//Professional Judgement Explanation (Please describe the rational behind this decision, indicating any evidence used)
-				//No LD Criteria Met            
-	
-	//			License (The license terms under which this site is archived and made available)
-	//			Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)
-	            
-//	            Logger.info("targetFromDB: " + targetFromDB);
-//	            targetFromDB.save();
-//				return redirect(routes.TargetController.view(targetFromDB.id));
     }
 	
     /**
@@ -1637,10 +1345,13 @@ public class TargetController extends AbstractController {
      * @param target The field URL of the target
      * @return
      */
-    public static Result archiveTarget(String target) {    	
+    public static Result archive(Long id) {
+
+    	Target target = Target.findById(id);
     	Logger.debug("archiveTarget() " + target);
-    	if (target != null && target.length() > 0) {
+    	if (target != null) {
     		try {
+//    	        String target = Scope.INSTANCE.normalizeUrl(url);
 		    	String queueHost = Play.application().configuration().getString(Const.QUEUE_HOST);
 		    	String queuePort = Play.application().configuration().getString(Const.QUEUE_PORT);
 		    	String queueName = Play.application().configuration().getString(Const.QUEUE_NAME);
@@ -1666,7 +1377,7 @@ public class TargetController extends AbstractController {
 		    	channel.exchangeDeclare(exchangeName, "direct", true);
 		    	channel.queueDeclare(queueName, true, false, false, null);
 		    	channel.queueBind(queueName, exchangeName, routingKey);
-		    	String message = target;
+		    	String message = target.fieldUrl();
 		    	channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
 		    	Logger.debug(" ### sent target '" + message + "' to queue");    	    
 		    	channel.close();

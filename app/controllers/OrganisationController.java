@@ -248,7 +248,7 @@ public class OrganisationController extends AbstractController {
             	String missingFields = "";
             	for (String key : organisationForm.errors().keySet()) {
             	    Logger.debug("key: " +  key);
-            	    key = Utils.showMissingField(key);
+            	    key = Utils.INSTANCE.showMissingField(key);
             	    if (missingFields.length() == 0) {
             	    	missingFields = key;
             	    } else {
@@ -436,7 +436,7 @@ public class OrganisationController extends AbstractController {
 		        	User user = userItr.next();
 	                if (getFormParam(user.name) != null) {
 //                		Logger.info("getFormParam(user.name): " + getFormParam(user.name) + " " + user.name);
-		                boolean userFlag = Utils.getNormalizeBooleanString(getFormParam(user.name));
+		                boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(user.name));
 		                if (userFlag) {
 		                	addLink(user, organisation); 
 		                } else {

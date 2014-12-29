@@ -600,7 +600,7 @@ public class Target extends UrlModel {
 	 * @return new Target ID
 	 */
 	public static Long createId() {
-		Long res = Utils.createId();
+		Long res = Utils.INSTANCE.createId();
 		if (Target.isTargetId(res)) {
 			Logger.info("Target with nid " + res + " already exists.");
 			res = createId();
@@ -928,6 +928,7 @@ public class Target extends UrlModel {
 	 *            The identification URL
 	 * @return result as a String
 	 */
+	@JsonIgnore
 	public String checkScopeStr(String fieldUrl, String url) {
 		String res = "false";
 		if (fieldUrl != null && fieldUrl.length() > 0 && url != null
@@ -947,6 +948,7 @@ public class Target extends UrlModel {
 	 *            The identifier URL in the project domain model
 	 * @return result as a flag
 	 */
+	@JsonIgnore
 	public boolean isInScopeAll() {
 		try {
 			boolean isInScope = false;
@@ -974,6 +976,7 @@ public class Target extends UrlModel {
 	 *            The identifier URL in the project domain model
 	 * @return result as a flag
 	 */
+	@JsonIgnore
 	public boolean isInScopeIp(String url) {
 		try {
 			for (FieldUrl fieldUrl : this.fieldUrls) {
@@ -1204,7 +1207,7 @@ public class Target extends UrlModel {
 	 */
 	public static boolean hasSubSubject(String subsubject, String subject) {
 		boolean res = false;
-		res = Utils.hasElementInList(subject, subsubject);
+		res = Utils.INSTANCE.hasElementInList(subject, subsubject);
 		return res;
 	}
 
@@ -1231,7 +1234,7 @@ public class Target extends UrlModel {
 	 */
 	public boolean hasContactPerson(String curContactPerson) {
 		boolean res = false;
-		res = Utils.hasElementInList(curContactPerson, this.authorUser.url);
+		res = Utils.INSTANCE.hasElementInList(curContactPerson, this.authorUser.url);
 		return res;
 	}
 
@@ -1515,6 +1518,7 @@ public class Target extends UrlModel {
 			exp = exp.eq("crawlFrequency", crawlFrequencyName);
 		}
 
+		
 //		if (StringUtils.isNotEmpty(startDate)) {
 //			Logger.info("startDate: " + startDate);
 //			exp = exp.ge("createdAt", "");
@@ -1961,7 +1965,7 @@ public class Target extends UrlModel {
 	public static String getDateAsString(String date) {
 		String res = "";
 		if (date != null && date.length() > 0) {
-			res = Utils.showTimestampInTable((String) date);
+			res = Utils.INSTANCE.showTimestampInTable((String) date);
 		}
 		return res;
 	}

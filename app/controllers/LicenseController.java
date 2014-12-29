@@ -70,7 +70,7 @@ public class LicenseController extends AbstractController {
     }
     
     public static String getCurrentDate() {
-    	return Utils.getCurrentDate();
+    	return Utils.INSTANCE.getCurrentDate();
     }
     
     /**
@@ -107,13 +107,13 @@ public class LicenseController extends AbstractController {
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.DESCRIPTION_ACK + Const.TWO_POINTS + permission.anyOtherInformation + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.THIRD_PARTY_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.thirdPartyContent) + Const.CSV_LINE_END);
+		sb.append(Const.THIRD_PARTY_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.thirdPartyContent) + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.AGREE_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.agree) + Const.CSV_LINE_END);
+		sb.append(Const.AGREE_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.agree) + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.DATE_ACK + Const.TWO_POINTS + permission.createdAt + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.PUBLICITY_ACK + Const.TWO_POINTS + Utils.showBooleanAsString(permission.publish) + Const.CSV_LINE_END);
+		sb.append(Const.PUBLICITY_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.publish) + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
     	messageBody = CrawlPermission.
             	replaceStringInText(
@@ -151,7 +151,7 @@ public class LicenseController extends AbstractController {
         	}  
         	Logger.info("save UKWA licence - name: " + getFormParam(Const.NAME));
     		Logger.info("agree: " + getFormParam(Const.AGREE));
-            boolean isAgreed = Utils.getNormalizeBooleanString(getFormParam(Const.AGREE));
+            boolean isAgreed = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.AGREE));
     		if (!isAgreed || StringUtils.isBlank(getFormParam(Const.CONTENT)) 
         			|| StringUtils.isBlank(getFormParam(Const.PUBLISH))) {
     			Logger.info("The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");

@@ -226,7 +226,7 @@
 					@for(target <- currentPage.getList) {
 	                <tr>
 						<td>
-			                <a class="brand" href="@routes.TargetController.viewAct(target.url)">@target.title</a>
+			                <a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
 						</td>
 						<td>
 							<a href="@routes.QAController.list(0,"title", "asc", target.title, "","")">@target.instances.size()</a>

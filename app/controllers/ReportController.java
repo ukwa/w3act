@@ -3,11 +3,14 @@ package controllers;
 import static play.data.Form.form;
 
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import models.CrawlPermission;
 import models.Organisation;
 import models.Target;
 import models.User;
@@ -25,7 +28,6 @@ import uk.bl.Const.RequestType;
 import uk.bl.api.Utils;
 import views.html.reports.*;
 
-import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
@@ -39,9 +41,9 @@ public class ReportController extends AbstractController {
      * Display the report.
      */
     public static Result index() {
-        List<Target> resList = processFilterReports(-1l, -1l, Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
-        List<Target> resListGranted = processFilterReports(-1l, -1l, Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
-        List<Target> resListRefused = processFilterReports(-1l, -1l, Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
+        List<Target> resList = processFilterReports(null, null, Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
+        List<Target> resListGranted = processFilterReports(null, null, Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
+        List<Target> resListRefused = processFilterReports(null, null, Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
         User user = User.findByEmail(request().username());
         List<User> users = User.findAll();
         List<Organisation> organisations = Organisation.findAllSorted();
@@ -49,7 +51,7 @@ public class ReportController extends AbstractController {
         
         return ok(
                 reports.render(
-                    "Reports", user, resList, resListGranted, resListRefused, -1l, -1l, "", "", "", users, organisations, requestTypes
+                    "Reports", user, resList, resListGranted, resListRefused, null, null, "", "", "", users, organisations, requestTypes
                 )
             );
     }
@@ -63,8 +65,17 @@ public class ReportController extends AbstractController {
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
 
-    	Long curatorId = Long.parseLong(requestData.get("curator"));
-    	Long organisationId = Long.parseLong(requestData.get("organisation"));
+    	Logger.debug("action: " + action);
+    	String curator = requestData.get("curator");
+    	String organisation = requestData.get("organisation");
+    	Long curatorId = null;
+    	if (StringUtils.isNotBlank(curator)) {
+    		curatorId = Long.parseLong(curator);
+    	}
+    	Long organisationId = null;
+    	if (StringUtils.isNotBlank(organisation)) {
+    		organisationId = Long.parseLong(organisation);
+    	}
     	
     	String request = requestData.get("request");
 //    	if (request_name != null && !request_name.toLowerCase().equals(Const.NONE) 
@@ -73,11 +84,17 @@ public class ReportController extends AbstractController {
 //    	} 
         String startDate = requestData.get("startDate");
         String endDate = requestData.get("endDate");
-        
+
+    	Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate);
+
         List<Target> resList = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, startDate, endDate);
         List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, startDate, endDate);
         List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, startDate, endDate);
 
+        Logger.debug("resList: " + resList);
+        Logger.debug("resListGranted: " + resListGranted);
+        Logger.debug("resListRefused: " + resListRefused);
+        
         List<User> users = User.findAll();
         List<Organisation> organisations = Organisation.findAllSorted();
         RequestType[] requestTypes = Const.RequestType.values();
@@ -147,7 +164,7 @@ public class ReportController extends AbstractController {
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
  	    }
-    	Utils.generateCsvFile(fileName, sw.toString());
+    	Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
     }
             	
     /**
@@ -164,31 +181,34 @@ public class ReportController extends AbstractController {
 		ExpressionList<Target> exp = Target.find.fetch("crawlPermissions").where();
 		exp = exp.eq("active", true);
 		
-		if (curatorId != -1) {
+		if (curatorId != null) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
-		if (organisationId != -1) {
+		if (organisationId != null) {
 			exp = exp.eq("organisation.id", organisationId);
 		}
 		if (StringUtils.isNotEmpty(crawlPermissionsStatus)) {
 			exp = exp.eq("crawlPermissions.status", crawlPermissionsStatus);
 		}
 
-//    	if (startDate != null && startDate.length() > 0) {
-//    		Logger.info("startDate: " + startDate);
-//        	String startDateUnix = Utils.getUnixDateStringFromDateExt(startDate);
-//        	Logger.info("startDateUnix: " + startDateUnix);
-//        	// TODO: UNIX DATE
-//    		exp = exp.ge(Const.CREATED_AT, startDateUnix);
-//    	} 
-//    	if (endDate != null && endDate.length() > 0) {
-//    		Logger.info("endDate: " + endDate);
-//        	String endDateUnix = Utils.getUnixDateStringFromDate(endDate);
-//        	Logger.info("endDateUnix: " + endDateUnix);
-//        	// TODO: UNIX DATE
-//    		exp = exp.le(Const.CREATED_AT, endDateUnix);
-//    	} 
-//
+    	if (StringUtils.isNotEmpty(startDate)) {
+    		try {
+	    		Date date = Utils.INSTANCE.convertDate(startDate);
+	    		exp = exp.ge(Const.CREATED_AT, date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+    	}
+
+    	if (StringUtils.isNotEmpty(endDate)) {
+			try {
+	    		Date date = Utils.INSTANCE.convertDate(endDate);
+	    		exp = exp.le(Const.CREATED_AT, date);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+    	}
+
     	List<Target> res = exp.query().findList();
     	
 //    	Logger.info("processFilterReports() Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
@@ -329,7 +349,7 @@ public class ReportController extends AbstractController {
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
  	    }
-    	Utils.generateCsvFile(fileName, sw.toString());
+    	Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
     }
     
     /**
@@ -406,7 +426,7 @@ public class ReportController extends AbstractController {
      */
     public static Result indexCreation() {
     	return redirect(routes.ReportController.targets(0, "createdAt", "desc", -1l, -1l, 
-    			Utils.getCurrentDate(), "", "", "", "either"));
+    			Utils.INSTANCE.getCurrentDate(), "", "", "", "either"));
     }
 
 }

@@ -57,7 +57,7 @@ public class ExportController extends AbstractController {
  	    			sw.append(Const.CSV_SEPARATOR);
  	    			Logger.info("add entry: " + lookupEntry.name + ", obj: "+ lookupEntry);
  	    			Logger.info("add entry: " + lookupEntry.name + ", value: "+ lookupEntry.scopevalue.toString() + ", " + 
- 	    					Utils.getNormalizeBooleanString(String.valueOf(lookupEntry.scopevalue.booleanValue())));
+ 	    					Utils.INSTANCE.getNormalizeBooleanString(String.valueOf(lookupEntry.scopevalue.booleanValue())));
  	    			if (lookupEntry.scopevalue) {
 // 	 	    			if (lookupEntry.scopevalue.booleanValue()) {
  	    				sw.append(Const.YES);
@@ -69,7 +69,7 @@ public class ExportController extends AbstractController {
  	    	}
  	    }
 
-    	Utils.generateCsvFile(Const.EXPORT_LOOKUP_FILE, sw.toString());
+    	Utils.INSTANCE.generateCsvFile(Const.EXPORT_LOOKUP_FILE, sw.toString());
     }
     
     /**

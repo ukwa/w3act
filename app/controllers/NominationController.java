@@ -344,7 +344,7 @@ public class NominationController extends AbstractController {
     }
     
     public static String getCurrentDate() {
-    	return Utils.getCurrentDate();
+    	return Utils.INSTANCE.getCurrentDate();
     }
     
     /**
@@ -359,12 +359,12 @@ public class NominationController extends AbstractController {
         if (submit != null) {
         	Logger.info("save UKWA licence - name: " + getFormParam(Const.NAME));
     		Logger.info("agree: " + getFormParam(Const.AGREE));
-            boolean isAgreed = Utils.getNormalizeBooleanString(getFormParam(Const.AGREE));
+            boolean isAgreed = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.AGREE));
         	Logger.info("flags isAgreed: " + isAgreed );
             if (getFormParam(Const.WEBSITE_URL) != null) {
         	    String target = getFormParam(Const.WEBSITE_URL);
         	    Nomination nomination = new Nomination();
-                nomination.id = Utils.createId();
+                nomination.id = Utils.INSTANCE.createId();
                 nomination.url = Const.ACT_URL + nomination.id;
         		Logger.info("add nomination with url: " + nomination.url + ", and name: " + nomination.name);
             	nomination.websiteUrl = target;

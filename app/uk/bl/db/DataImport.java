@@ -246,7 +246,7 @@ public enum DataImport {
 				tv = TaxonomyType.findByMachineName(taxonomy.ttype);
 				Logger.info("ttype: " + taxonomy.ttype + " - " + tv);
 				taxonomy.setTaxonomyType(tv);
-				taxonomy.url = Const.ACT_URL + Utils.createId();
+				taxonomy.url = Const.ACT_URL + Utils.INSTANCE.createId();
 				if (StringUtils.isNotEmpty(taxonomy.parentName)) {
 					Taxonomy parent = Taxonomy.findByNameAndType(taxonomy.parentName, taxonomy.ttype);
 					Logger.info("Parent found: " + parent);
@@ -270,7 +270,7 @@ public enum DataImport {
 		Map<String,List<Tag>> allTags = (Map<String,List<Tag>>)Yaml.load("tags.yml");
 		List<Tag> tags = allTags.get(Const.TAGS);
 		for (Tag tag : tags) {
-			tag.url = Const.ACT_URL + Utils.createId();
+			tag.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			tag.save();
 		}
         Logger.info("Loaded Tags");
@@ -281,7 +281,7 @@ public enum DataImport {
 		Map<String,List<Flag>> allFlags = (Map<String,List<Flag>>)Yaml.load("flags.yml");
 		List<Flag> flags = allFlags.get(Const.FLAGS);
 		for (Flag flag : flags) {
-			flag.url = Const.ACT_URL + Utils.createId();
+			flag.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			flag.save();
 		}
         Logger.info("Loaded Flags");
@@ -292,7 +292,7 @@ public enum DataImport {
 		Map<String,List<MailTemplate>> allTemplates = (Map<String,List<MailTemplate>>)Yaml.load("mail-templates.yml");
 		List<MailTemplate> mailTemplates = allTemplates.get(Const.MAILTEMPLATES);
 		for (MailTemplate mailTemplate : mailTemplates) {
-			mailTemplate.url = Const.ACT_URL + Utils.createId();
+			mailTemplate.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			mailTemplate.save();
 		}
         Logger.info("Loaded MailTemplates");
@@ -303,7 +303,7 @@ public enum DataImport {
 		Map<String,List<ContactPerson>> allContactPersons = (Map<String,List<ContactPerson>>)Yaml.load("contact-persons.yml");
 		List<ContactPerson> contactPersons = allContactPersons.get(Const.CONTACTPERSONS);
 		for (ContactPerson contactPerson : contactPersons) {
-			contactPerson.url = Const.ACT_URL + Utils.createId();
+			contactPerson.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			contactPerson.save();
 		}
         Logger.info("Loaded ContactPersons");
@@ -314,7 +314,7 @@ public enum DataImport {
 		Map<String,List<Organisation>> allOrganisations = (Map<String,List<Organisation>>)Yaml.load("organisations.yml");
 		List<Organisation> organisations = allOrganisations.get(Const.ORGANISATIONS);
 		for (Organisation organisation : organisations) {
-			organisation.url = Const.ACT_URL + Utils.createId();
+			organisation.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			organisation.save();
 		}
         Logger.info("Loaded Organisations");

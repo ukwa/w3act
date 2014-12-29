@@ -1,4 +1,4 @@
-@(permissionForm: Form[Permission], user: User, id: Long)
+@(permissionForm: Form[Permission], user: User)
 
 @import helper._
 @import bootstrap._
@@ -11,30 +11,23 @@
 	    	<h1><a href="@routes.PermissionController.index()">Access Control > Permissions > </a>Permission @permissionForm("name").value</h1>
 		</div>
 	
-		<ul class="nav nav-tabs">
-		   <li><a href="@routes.PermissionController.view(id)">View</a></li>
-		   @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-			   <li class="active"><a href="@routes.PermissionController.edit(id)">Edit</a></li>
-		   }
-		</ul>
+    
+	    @warningmessage(flash)
 	    
-		    @warningmessage(flash)
-		    
-	        @if(permissionForm.hasErrors) {
-				<div class="padding-20">
-					<div class="alert alert-warning alert-dismissable">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						@for(entry <- permissionForm.errors.entrySet){
-							@for(error <- entry.getValue){
-								@error.message<br />
-							}
+        @if(permissionForm.hasErrors) {
+			<div class="padding-20">
+				<div class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					@for(entry <- permissionForm.errors.entrySet){
+						@for(error <- entry.getValue){
+							@error.message<br />
 						}
-					</div>
+					}
 				</div>
-			}
+			</div>
+		}
 			
-		    @helper.form(action=routes.PermissionController.update(id)) {
-			<input type="hidden" name="id" value="@id">
+	    @helper.form(action=routes.PermissionController.save()) {
 	
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -85,7 +78,6 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="btn-group">
 						<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 			       </div>
 				</div>
 			</div>

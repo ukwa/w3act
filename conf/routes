@@ -102,6 +102,7 @@ GET     /permissions/:id            		controllers.PermissionController.view(id:L
 GET     /permissions/:id/edit       		controllers.PermissionController.edit(id:Long)
 GET     /permissions/create/:permission     controllers.PermissionController.create(permission)
 POST    /permissions                   		controllers.PermissionController.save()
+POST    /permissions/:id                   	controllers.PermissionController.update(id:Long)
 
 GET     /tags                               controllers.TagController.index()
 GET     /tags/list							controllers.TagController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
@@ -190,7 +191,15 @@ POST    /targets/:id              			controllers.TargetController.update(id:Long
 
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissionController.showCrawlPermissions(target)
 GET     /target/licencerequest          	controllers.CrawlPermissionController.licenceRequestForTarget(name, target)
-GET     /target/archive                 	controllers.TargetController.archiveTarget(target)
+GET     /target/archive/:id                 controllers.TargetController.archive(id:Long)
+
+GET     /instances                          controllers.InstanceController.index()
+GET    	/instances/search          			controllers.InstanceController.search()
+GET    	/instances/filterbyjson/:url		controllers.InstanceController.filterByJson(url)
+GET    	/instances/list/                  	controllers.InstanceController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET     /instances/new/:title      			controllers.InstanceController.create(title)
+GET    	/instances/listbytarget/           	controllers.InstanceController.listByTarget(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", t ?= "")
+GET     /instances/showbytarget/:url		controllers.InstanceController.showByTarget(url)
 
 GET     /instances/:id                		controllers.InstanceController.view(id:Long)
 GET     /instances/act/:id                  controllers.InstanceController.viewAct(id)
@@ -199,14 +208,6 @@ GET     /instances/:id/edit             	controllers.InstanceController.edit(id:
 GET     /instances/:revision/revision       controllers.InstanceController.viewrevision(revision:Long)
 POST    /instances	             			controllers.InstanceController.save()
 POST    /instances/:id              		controllers.InstanceController.update(id:Long)
-
-GET     /instances                          controllers.InstanceController.index()
-POST    /instances/search          			controllers.InstanceController.search()
-GET    	/instances/filterbyjson/:url		controllers.InstanceController.filterByJson(url)
-GET    	/instances/list/                  	controllers.InstanceController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
-GET     /instances/new/:title      			controllers.InstanceController.create(title)
-GET    	/instances/listbytarget/           	controllers.InstanceController.listByTarget(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", t ?= "")
-GET     /instances/showbytarget/:url		controllers.InstanceController.showByTarget(url)
 
 GET     /contact                                controllers.ContactController.index()
 POST    /contact/send              	            controllers.ContactController.send()

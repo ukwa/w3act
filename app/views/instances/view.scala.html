@@ -91,8 +91,10 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 						<label for="inputUrls" class="col-sm-6 control-label">
-							@for(fieldUrl <- instance.target.fieldUrls) {
-								<br><a href="@routes.InstanceController.index()/list/?s=title&f=@fieldUrl.url">all instances for the target</a>
+							@if(instance.target != null) {
+								@for(fieldUrl <- instance.target.fieldUrls) {
+									<br><a href="@routes.InstanceController.index()/list/?s=title&f=@fieldUrl.url">all instances for the target</a>
+								}
 							}
 						</label>
 					</div>
@@ -119,19 +121,21 @@
 					</a>
 				</div>
 				<div id="collapseInstances" class="panel-collapse collapse">
-					@for(fieldUrl <- instance.target.fieldUrls) {
-						<div class="panel-footer">
-							<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@fieldUrl.url">In QA Wayback</a>
-						</div>
-					    <div class="panel-footer">
-				        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
-						</div>
-						<div class="panel-footer">
-							<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
-						</div>
-					    <div class="panel-footer">
-				        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
-						</div>
+					@if(instance.target != null) {
+						@for(fieldUrl <- instance.target.fieldUrls) {
+							<div class="panel-footer">
+								<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@fieldUrl.url">In QA Wayback</a>
+							</div>
+						    <div class="panel-footer">
+					        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
+							</div>
+							<div class="panel-footer">
+								<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
+							</div>
+						    <div class="panel-footer">
+					        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
+							</div>
+						}
 					}
 				</div>
 			</div>

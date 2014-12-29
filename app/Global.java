@@ -13,7 +13,7 @@ public class Global extends GlobalSettings {
     public void onStart(Application app) {
     	// should run in background and return view
     	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
-    	Logger.info("dataImport: " + dataImport);
+    	Logger.debug("dataImport: " + dataImport);
 //        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 
     	if (dataImport) {
@@ -34,6 +34,7 @@ public class Global extends GlobalSettings {
     }
     
     public Promise<SimpleResult> onBadRequest(RequestHeader request, String error) {
+    	Logger.debug("error: " + error);
         return Promise.<SimpleResult>pure(badRequest("Please don't try to hack the URI!"));
     }
 }

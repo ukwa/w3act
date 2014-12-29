@@ -3,6 +3,7 @@ package controllers;
 import static play.data.Form.form;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,6 +11,7 @@ import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.Permission;
+import models.QaIssue;
 import models.Target;
 import models.User;
 import play.Logger;
@@ -20,6 +22,8 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.Const.QAIssueCategory;
+import uk.bl.api.Utils;
 import views.html.permissions.*;
 
 /**
@@ -45,11 +49,9 @@ public class PermissionController extends AbstractController {
      */
     public static Result edit(Long id) {
 		Permission permission = Permission.findById(id);
-		Form<Permission> permissionFormNew = Form.form(Permission.class);
-		permissionFormNew = permissionFormNew.fill(permission);
-      	return ok(
-	              edit.render(permissionFormNew, User.findByEmail(request().username()))
-	            );
+		Form<Permission> permissionsForm = Form.form(Permission.class);
+		permissionsForm = permissionsForm.fill(permission);
+      	return ok(edit.render(permissionsForm, User.findByEmail(request().username()), id));
     }
     
     public static Result view(Long id) {
@@ -67,9 +69,9 @@ public class PermissionController extends AbstractController {
      */
     public static Result search() {
         
-    	DynamicForm form = form().bindFromRequest();
-    	String action = form.get("action");
-    	String query = form.get(Const.QUERY);
+    	DynamicForm request = form().bindFromRequest();
+    	String action = request.get("action");
+    	String query = request.get(Const.QUERY);
 		Logger.info("query: " + query);
 		Logger.info("action: " + action);
     	
@@ -88,16 +90,16 @@ public class PermissionController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
+    		if (action.equals("addentry")) {
     	    	Permission permission = new Permission();
     	    	permission.name = query;
-    	        permission.id = Target.createId();
-    	        permission.url = Const.ACT_URL + permission.id;
+//    	        permission.id = Utils.INSTANCE.createId();
+//    	        permission.url = Const.ACT_URL + permission.id;
     			Logger.info("add permission entry with url: " + permission.url + ", and name: " + permission.name);
-    			Form<Permission> permissionFormNew = Form.form(Permission.class);
-    			permissionFormNew = permissionFormNew.fill(permission);
+    			Form<Permission> permissionForm = Form.form(Permission.class);
+    			permissionForm = permissionForm.fill(permission);
     	      	return ok(
-    		              edit.render(permissionFormNew, User.findByEmail(request().username()))
+    		              newForm.render(permissionForm, User.findByEmail(request().username()))
     		            );
     		} 
     		else if (Const.SEARCH.equals(action)) {
@@ -117,13 +119,13 @@ public class PermissionController extends AbstractController {
     public static Result create(String name) {
     	Permission permission = new Permission();
     	permission.name = name;
-        permission.id = Target.createId();
-        permission.url = Const.ACT_URL + permission.id;
+//        permission.id = Target.createId();
+//        permission.url = Const.ACT_URL + permission.id;
 		Logger.info("add permission entry with url: " + permission.url + ", and name: " + permission.name);
-		Form<Permission> permissionFormNew = Form.form(Permission.class);
-		permissionFormNew = permissionFormNew.fill(permission);
+		Form<Permission> permissionForm = Form.form(Permission.class);
+		permissionForm = permissionForm.fill(permission);
       	return ok(
-	              edit.render(permissionFormNew, User.findByEmail(request().username()))
+	              newForm.render(permissionForm, User.findByEmail(request().username()))
 	            );
     }
       
@@ -132,108 +134,71 @@ public class PermissionController extends AbstractController {
 	 * about errors 
 	 * @return edit page with form and info message
 	 */
-	public static Result info() {
-    	Permission permission = new Permission();
-    	permission.id = Long.valueOf(getFormParam(Const.ID));
-    	permission.url = getFormParam(Const.URL);
-        permission.name = getFormParam(Const.NAME);
-	    if (getFormParam(Const.DESCRIPTION) != null) {
-	    	permission.description = getFormParam(Const.DESCRIPTION);
-	    }
-	    if (permission.revision == null) {
-	    	permission.revision = "";
-	    }
-        if (getFormParam(Const.REVISION) != null) {
-        	permission.revision = getFormParam(Const.REVISION);
-        }
-		Form<Permission> permissionFormNew = Form.form(Permission.class);
-		permissionFormNew = permissionFormNew.fill(permission);
-      	return ok(
-	              edit.render(permissionFormNew, User.findByEmail(request().username()))
-	            );
-    }
-    
+	public static Result info(Form<Permission> form, Long id) {
+		User user = User.findByEmail(request().username());
+        return badRequest(edit.render(form, user, id));
+	}
+
+	public static Result newInfo(Form<Permission> form) {
+		User user = User.findByEmail(request().username());
+		return badRequest(newForm.render(form, user));
+	}
     /**
      * This method saves new object or changes on given Permission in the same object
      * completed by revision comment. The "version" field in the Permission object
      * contains the timestamp of the change. 
      * @return
      */
-    public static Result save() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save permission id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME) + ", revision: " + getFormParam(Const.REVISION));
-        	Form<Permission> permissionForm = Form.form(Permission.class).bindFromRequest();
-            if(permissionForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : permissionForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + permissionForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					"Missing fields are " + missingFields);
-	  			return info();
-            }
-        	Permission permission = null;
-            boolean isExisting = true;
-            try {
-                try {
-//                	permission = Permission.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	permission = new Permission();
-                	permission.id = Long.valueOf(getFormParam(Const.ID));
-                	permission.url = getFormParam(Const.URL);
-                }
-                if (permission == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	permission = new Permission();
-                	permission.id = Long.valueOf(getFormParam(Const.ID));
-                	permission.url = getFormParam(Const.URL);
-                }
-                
-                permission.name = getFormParam(Const.NAME);
-        	    if (getFormParam(Const.DESCRIPTION) != null) {
-        	    	permission.description = getFormParam(Const.DESCRIPTION);
-        	    }
-        	    if (permission.revision == null) {
-        	    	permission.revision = "";
-        	    }
-                if (getFormParam(Const.REVISION) != null) {
-                	permission.revision = getFormParam(Const.REVISION);
-                }
-            } catch (Exception e) {
-            	Logger.info("Permission not existing exception");
-            }
-            
-        	if (!isExisting) {
-               	Ebean.save(permission);
-    	        Logger.info("save permission: " + permission.toString());
-        	} else {
-           		Logger.info("update permission: " + permission.toString());
-               	Ebean.update(permission);
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<Permission> filledForm = form(Permission.class).bindFromRequest();
+    	Logger.info("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.info("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.info("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.info("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }		        
+		        filledForm.get().update(id);
+		        flash("message", "Permission " + filledForm.get().name + " has been updated");
+		        return redirect(routes.PermissionController.view(filledForm.get().id));
+        	} else if (action.equals("delete")) {
+        		Permission permission = Permission.findById(id);
+		        flash("message", "Permission " + filledForm.get().name + " has been deleted");
+            	permission.delete();
+        		return redirect(routes.PermissionController.index()); 
         	}
-	        res = redirect(routes.PermissionController.edit(permission.id));
-        } 
-        if (delete != null) {
-//        	Permission permission = Permission.findByUrl(getFormParam(Const.URL));
-//        	Ebean.delete(permission);
-	        res = redirect(routes.PermissionController.index()); 
         }
-        return res;
+        return null;
     }	   
 
+    public static Result save() {
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Form<Permission> filledForm = form(Permission.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        filledForm.get().save();
+		        flash("message", "Permission " + filledForm.get().name + " has been created");
+		        return redirect(routes.PermissionController.view(filledForm.get().id));
+        	}
+        }
+        return null;
+    }
+    
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;
