@@ -1,4 +1,4 @@
-@(organisation: Organisation, user: User)
+@(organisation: Organisation, user: User, nonOrganisations: List[User])
 
 @main("", user) {
     
@@ -16,7 +16,7 @@
 	</ul>
 
 	@helper.form(action=routes.OrganisationController.saveAdmin) {
-		<input type="hidden" name="url" value="@organisation.url">
+		<input type="hidden" name="id" value="@organisation.id">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -24,7 +24,7 @@
 				    <div class="col-sm-6">
 		                <label class="col-sm-6 control-label" style="color:green">ASSIGNED USERS</label><br><br>
 						<div>
-				        	@for(user <- User.findByOrganisation(organisation.url)) {
+				        	@for(user <- organisation.users) {
 				                <input type="checkbox" name="@user.name" value="true" checked/> @user.name<br>
 				            }
 						</div>
@@ -48,8 +48,8 @@
 							To assign users to this organisation, select the checkboxes below.			  
 						</div>
 						<div>
-           			        @for(user <- User.findByNotEqualOrganisation(organisation.url)) {
-				                <input type="checkbox" name="@user.name" value="true"/> @user.name<br>
+           			        @for(user <- nonOrganisations) {
+				                <input type="checkbox" name="nonOrganisationUser" value="@user.id"/> @user.name<br>
 				            }
 						</div>
 					</div>
@@ -60,7 +60,7 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save" id="edit-save">Save</button>
+					<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
 		       </div>
 			</div>
 		</div>		

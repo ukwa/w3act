@@ -5,10 +5,12 @@ import static play.data.Form.form;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import models.Organisation;
 import models.User;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
@@ -142,11 +144,10 @@ public class OrganisationController extends AbstractController {
      * @return
      */
     public static Result admin(Long id) {
-        return ok(
-                admin.render(
-                        Organisation.findById(id), User.findByEmail(request().username())
-                )
-            );
+    	Organisation organisation = Organisation.findById(id);
+    	User user = User.findByEmail(request().username());
+    	List<User> nonUsers = User.findByNotEqualOrganisation(organisation.id);
+        return ok(admin.render(organisation, user, nonUsers));
     }
 
     /**
@@ -342,36 +343,37 @@ public class OrganisationController extends AbstractController {
      * @return
      */
     public static Result saveAdmin() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        if (save != null) {
-        	Organisation organisation = null;
-            try {
-               	organisation = Organisation.findByUrl(getFormParam(Const.URL));
-               	
-		        List<User> userList = User.findAll();
-		        Iterator<User> userItr = userList.iterator();
-		        while (userItr.hasNext()) {
-		        	User user = userItr.next();
-	                if (getFormParam(user.name) != null) {
-//                		Logger.info("getFormParam(user.name): " + getFormParam(user.name) + " " + user.name);
-		                boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(user.name));
-		                if (userFlag) {
+    	
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Long organisationId = Long.valueOf(requestData.get("id"));
+		        Organisation organisation = Organisation.findById(organisationId);
+		        
+		        Map<String, String[]> map = request().body().asFormUrlEncoded();
+		        String[] checkedVal = map.get("nonOrganisationUser");
+		        for (String check : checkedVal) {
+			        Logger.debug("check: " + check);
+		        	Long userId = Long.valueOf(check);
+		        	User user = User.findById(userId);
+		        	if (map.get(user.name) != null) {
+		        		boolean userFlag = BooleanUtils.toBoolean(map.get(user.name)[0]);
+		        		if (userFlag) {
 		                	addLink(user, organisation); 
-		                } else {
+		        		} else {
 		                	removeLink(user, organisation); 
-		                }
-	                } else {
+		        		}
+		        	} else {
 	                	removeLink(user, organisation); 	                	
-	                }
+		        	}
 		        }
-            } catch (Exception e) {
-            	Logger.info("User not existing exception");
-            }
-	        res = redirect(routes.OrganisationController.admin(organisation.id));
-        } else {
-        	res = ok();
+		        return redirect(routes.OrganisationController.admin(organisationId));
+        	}
         }
-        return res;
+        return null;
     }
 }

@@ -304,9 +304,9 @@ public class User extends ActModel {
      * @param organisation The organisation URL
      * @return user list
      */
-    public static List<User> findByNotEqualOrganisation(String organisation) {
+    public static List<User> findByNotEqualOrganisation(Long organisationId) {
     	List<User> res = new ArrayList<User>();
-        ExpressionList<User> ll = find.where().ne(Const.FIELD_AFFILIATION, organisation);
+        ExpressionList<User> ll = find.where().ne("organisation.id", organisationId);
         res = ll.findList();
         return res;
     }
@@ -431,8 +431,7 @@ public class User extends ActModel {
         return options;
     }
 
-    	
-	@Override
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
