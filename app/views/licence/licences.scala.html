@@ -1,4 +1,4 @@
-@(title: String, user: User, licences: List[Taxonomy], searchstr: String)
+@(title: String, user: User, licenceList: List[License], searchstr: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -10,7 +10,7 @@
 	<script>
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")'
-			applySearch(context, 'permissions'); 
+			applySearch(context, 'licenses'); 
 		});
 	</script>
 }
@@ -23,11 +23,10 @@
 	
     <ul class="nav nav-tabs">
 	   <li><a href="@routes.CrawlPermissionController.index()">Permissions Queue</a></li>
-	   <li><a href="@routes.CrawlPermissionController.templates()">Mail Templates</a></li> 
-	   <li><a href="@routes.CrawlPermissionController.contactpersons()">Contact Persons</a></li> 
-	   <li class="active"><a href="@routes.CrawlPermissionController.licences()">License Templates</a></li> 
-	   <!-- li><a href="@routes.CrawlPermissionController.refusals()">Refusals</a></li--> 
-	   <li><a href="@routes.CrawlPermissionController.communicationLogs()">Communication Logging</a></li> 
+	   <li><a href="@routes.MailTemplateController.index()">Mail Templates</a></li> 
+	   <li><a href="@routes.ContactPersonController.index()">Contact Persons</a></li> 
+	   <li class="active"><a href="@routes.LicenseController.indexFilter()">License Templates</a></li> 
+	   <li><a href="@routes.CommunicationLogController.index()">Communication Logging</a></li> 
 	</ul>
 		
     <article class="permissions">
@@ -51,11 +50,13 @@
 				</tr>
 			</thead>
 			<tbody>
-			@licences.map { licence =>		              
-				<tr>
-					<td><a href="@routes.LicenseController.index()">@licence.name</a></td>
-					<td>@licence.description</td>
-				</tr>
+			@if(licenceList != null) {
+				@for(license <- licenceList) {		              
+					<tr>
+						<td><a href="@routes.LicenseController.index()">@license.name</a></td>
+						<td>@license.description</td>
+					</tr>
+				}
 			}
 			</tbody>
 		</table>

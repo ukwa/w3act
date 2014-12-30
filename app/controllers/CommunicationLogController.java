@@ -1,8 +1,10 @@
 package controllers;
 
+import static play.data.Form.form;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -11,13 +13,13 @@ import models.Target;
 import models.User;
 import models.CrawlPermission;
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.communicationlogs.*;
 
 import java.util.*;
@@ -34,7 +36,7 @@ public class CommunicationLogController extends AbstractController {
      * Display the log.
      */
     public static Result index() {
-        List<CommunicationLog> resList = processFilterCommunicationLogs("", "");
+        List<CommunicationLog> resList = CommunicationLog.findAll();
         return ok(
         		logs.render(
                     "CommunicationLogs", User.findByEmail(request().username()), resList, "", ""
@@ -47,10 +49,13 @@ public class CommunicationLogController extends AbstractController {
      */
     public static Result edit(Long id) {
 		CommunicationLog log = CommunicationLog.findById(id);
-		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
-		logFormNew = logFormNew.fill(log);
+		Form<CommunicationLog> communicationLogForm = Form.form(CommunicationLog.class);
+		communicationLogForm = communicationLogForm.fill(log);
+		
+		Map<String,String> communicationLogTypes = CommunicationLog.options();
+		Map<String,String> crawlPermissions = CrawlPermission.options();
       	return ok(
-	              edit.render(logFormNew, User.findByEmail(request().username()))
+	              newForm.render(communicationLogForm, User.findByEmail(request().username()), communicationLogTypes, crawlPermissions)
 	            );
     }
     
@@ -95,8 +100,10 @@ public class CommunicationLogController extends AbstractController {
         				log.name + ", curator: " + log.user);
         		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
         		logFormNew = logFormNew.fill(log);
+        		Map<String,String> communicationLogTypes = CommunicationLog.options();
+        		Map<String,String> crawlPermissions = CrawlPermission.options();
               	return ok(
-        	              edit.render(logFormNew, User.findByEmail(request().username()))
+        	              newForm.render(logFormNew, User.findByEmail(request().username()), communicationLogTypes, crawlPermissions)
         	            );
         	} else {
         		Logger.info("CommunicationLog name is empty. Please write name in search window.");
@@ -162,47 +169,43 @@ public class CommunicationLogController extends AbstractController {
 				log.name + ", curator: " + log.user);
 		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
 		logFormNew = logFormNew.fill(log);
+		Map<String,String> communicationLogTypes = CommunicationLog.options();
+		Map<String,String> crawlPermissions = CrawlPermission.options();
       	return ok(
-	              edit.render(logFormNew, User.findByEmail(request().username()))
-	            );
-    }
-      
-	/**
-	 * This method prepares CommunicationLog form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-		CommunicationLog log = new CommunicationLog();
-    	log.id = Long.valueOf(getFormParam(Const.ID));
-    	log.url = getFormParam(Const.URL);
-	    if (getFormParam(Const.NAME) != null) {
-	    	log.name = getFormParam(Const.NAME);
-	    }
-	    if (getFormParam(Const.LOG_DATE) != null) {
-	    	log.date = getFormParam(Const.LOG_DATE);
-	    }
-	    if (getFormParam(Const.TYPE) != null) {
-	    	log.ttype = getFormParam(Const.TYPE);
-	    }
-	    Logger.info("permission: " + getFormParam(Const.PERMISSIONS));
-	    if (getFormParam(Const.PERMISSIONS) != null) {
-	    	log.crawlPermission = CrawlPermission.findByName(getFormParam(Const.PERMISSIONS));
-    	    Logger.info("log.permission: " + log.crawlPermission);
-	    }
-	    if (getFormParam(Const.NOTES) != null) {
-	    	log.notes = getFormParam(Const.NOTES);
-	    }
-	    if (getFormParam(Const.CURATOR) != null) {
-	    	log.user = User.findByName(getFormParam(Const.CURATOR));
-	    }    	
-		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
-		logFormNew = logFormNew.fill(log);
-      	return ok(
-	              edit.render(logFormNew, User.findByEmail(request().username()))
+	              newForm.render(logFormNew, User.findByEmail(request().username()), communicationLogTypes, crawlPermissions)
 	            );
     }
     
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		Form<CommunicationLog> communicationLogForm = Form.form(CommunicationLog.class);
+		CommunicationLog communicationLog = new CommunicationLog();
+		communicationLogForm = communicationLogForm.fill(communicationLog);
+		Map<String,String> communicationLogTypes = CommunicationLog.options();
+		Map<String,String> crawlPermissions = CrawlPermission.options();
+
+		return ok(
+              newForm.render(communicationLogForm, user, communicationLogTypes, crawlPermissions)
+				);
+    	
+    }
+
+      
+    public static Result info(Form<CommunicationLog> form, Long id) {
+    	Logger.debug("info");
+    	User user = User.findByEmail(request().username());
+		Map<String,String> communicationLogTypes = CommunicationLog.options();
+		Map<String,String> crawlPermissions = CrawlPermission.options();
+		return badRequest(edit.render(form, user, id, communicationLogTypes, crawlPermissions));
+    }
+    
+	public static Result newInfo(Form<CommunicationLog> form) {
+		User user = User.findByEmail(request().username());
+		Map<String,String> communicationLogTypes = CommunicationLog.options();
+		Map<String,String> crawlPermissions = CrawlPermission.options();
+        return badRequest(newForm.render(form, user, communicationLogTypes, crawlPermissions));
+	}
+	
     /**
      * This method saves new object or changes on given log in the same object
      * completed by revision comment. The "version" field in the log object
@@ -210,93 +213,55 @@ public class CommunicationLogController extends AbstractController {
      * @return
      */
     public static Result save() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save log id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME));
-        	Form<CommunicationLog> logForm = Form.form(CommunicationLog.class).bindFromRequest();
-            if(logForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : logForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    key = Utils.INSTANCE.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + logForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
-            }
-        	
-        	CommunicationLog log = null;
-            boolean isExisting = true;
-            try {
-                try {
-                	log = CommunicationLog.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	log = new CommunicationLog();
-                	log.id = Long.valueOf(getFormParam(Const.ID));
-                	log.url = getFormParam(Const.URL);
-                }
-                if (log == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	log = new CommunicationLog();
-                	log.id = Long.valueOf(getFormParam(Const.ID));
-                	log.url = getFormParam(Const.URL);
-                }
-                
-        	    if (getFormParam(Const.NAME) != null) {
-        	    	log.name = getFormParam(Const.NAME);
-        	    }
-        	    if (getFormParam(Const.LOG_DATE) != null) {
-        	    	log.date = getFormParam(Const.LOG_DATE);
-        	    }
-        	    if (getFormParam(Const.TYPE) != null) {
-        	    	log.ttype = getFormParam(Const.TYPE);
-        	    }
-        	    Logger.info("permission: " + getFormParam(Const.PERMISSIONS));
-        	    if (getFormParam(Const.PERMISSIONS) != null) {
-        	    	log.crawlPermission = CrawlPermission.findByName(getFormParam(Const.PERMISSIONS));
-            	    Logger.info("log.permission: " + log.crawlPermission);
-        	    }
-        	    if (getFormParam(Const.NOTES) != null) {
-        	    	log.notes = getFormParam(Const.NOTES);
-        	    }
-        	    if (getFormParam(Const.CURATOR) != null) {
-        	    	log.user = User.findByName(getFormParam(Const.CURATOR));
-        	    }
-            } catch (Exception e) {
-            	Logger.info("CommunicationLog not existing exception");
-            }
-            
-        	if (!isExisting) {
-               	Ebean.save(log);
-    	        Logger.info("save log: " + log.toString());
-        	} else {
-           		Logger.info("update log: " + log.toString());
-               	Ebean.update(log);
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Form<CommunicationLog> filledForm = form(CommunicationLog.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        filledForm.get().save();
+		        flash("message", "Communication Log " + filledForm.get().name + " has been created");
+		        return redirect(routes.CommunicationLogController.view(filledForm.get().id));
         	}
-	        return redirect(routes.CommunicationLogController.edit(log.id));
-        } 
-        if (delete != null) {
-        	CommunicationLog log = CommunicationLog.findByUrl(getFormParam(Const.URL));
-        	Ebean.delete(log);
-	        res = redirect(routes.CommunicationLogController.index()); 
         }
-    	res = redirect(routes.CommunicationLogController.index()); 
-        return res;
+        return null;    	
     }	   
 
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<CommunicationLog> filledForm = form(CommunicationLog.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        filledForm.get().update(id);
+		        flash("message", "Communication Log " + filledForm.get().name + " has been updated");
+		        return redirect(routes.CommunicationLogController.view(filledForm.get().id));
+        	} else if (action.equals("delete")) {
+        		CommunicationLog communicationLog = CommunicationLog.findById(id);
+		        flash("message", "Communication Log " + filledForm.get().name + " has been deleted");
+            	communicationLog.delete();
+            	
+        		return redirect(routes.CommunicationLogController.index()); 
+        	}
+        }
+        return null;
+    }
     /**
      * This method supports link in crawl permissions view.
      * @param permission

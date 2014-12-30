@@ -38,13 +38,15 @@ public class MailTemplateController extends AbstractController {
      * Display the template.
      */
     public static Result index() {
-        List<MailTemplate> resList = processFilterMailTemplates("");
+    	User user = User.findByEmail(request().username());
+    	List<MailTemplate> mailTemplates = MailTemplate.findAll();
         return ok(
                 mailtemplates.render(
-                    "MailTemplates", User.findByEmail(request().username()), resList, "", ""
+                    "MailTemplates", user, mailTemplates, "", ""
                 )
             );
     }
+    
 
     /**
      * Display the template edit panel for this URL.

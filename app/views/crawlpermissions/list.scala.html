@@ -88,11 +88,10 @@
 	
     <ul class="nav nav-tabs">
 	   <li class="active"><a href="@routes.CrawlPermissionController.index()">Permissions Queue</a></li>
-	   <li><a href="@routes.CrawlPermissionController.templates()">Mail Templates</a></li> 
-	   <li><a href="@routes.CrawlPermissionController.contactpersons()">Contact Persons</a></li> 
-	   <li><a href="@routes.CrawlPermissionController.licences()">License Templates</a></li> 
-	   <!-- li><a href="@routes.CrawlPermissionController.refusals()">Refusals</a></li--> 
-	   <li><a href="@routes.CrawlPermissionController.communicationLogs()">Communication Logging</a></li> 
+	   <li><a href="@routes.MailTemplateController.index()">Mail Templates</a></li> 
+	   <li><a href="@routes.ContactPersonController.index()">Contact Persons</a></li> 
+	   <li><a href="@routes.LicenseController.indexFilter()">License Templates</a></li> 
+	   <li><a href="@routes.CommunicationLogController.index()">Communication Logging</a></li> 
 	</ul>
 		
     <article class="permissions">
@@ -104,7 +103,7 @@
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for crawl permission by name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new crawl permission">Add</button>
+							<a class="btn btn-primary" href="@routes.CrawlPermissionController.newForm()">Add</a>
 						}
 					</span>
 				</div>

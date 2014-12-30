@@ -867,26 +867,11 @@ public class Target extends UrlModel {
 	 * @return target object
 	 */
 	public static Target findByTarget(String target) {
-		Target res = new Target();
 		Logger.info("findByTarget() target url: " + target);
-		try {
-			if (!target.contains(Const.COMMA)) {
-				Target res2 = find.where().eq(Const.FIELD_URL_NODE, target)
-						.eq(Const.ACTIVE, true).findUnique();
-				if (res2 == null) {
-					res.title = Const.NONE;
-					res.url = Const.NONE;
-				} else {
-					res = res2;
-				}
-				// Logger.info("target title: " + res.title);
-			}
-		} catch (Exception e) {
-			Logger.info("Target was not found in database.");
-			res.title = Const.NONE;
-			res.url = Const.NONE;
-		}
-		return res;
+		if (!target.contains(Const.COMMA)) {
+			return find.fetch("fieldUrls").where().eq("active", true).eq("fieldUrls.url", target).findUnique();
+		} 
+		return null;
 	}
 
 	/**

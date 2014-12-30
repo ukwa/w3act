@@ -16,7 +16,7 @@ abstract class MappedSuperClass extends ActModel {
 	 */
 	private static final long serialVersionUID = 8159795832730112892L;
 
-	@Required
+	@Required(message="Name is required")
     @JsonProperty
     public String name; 
     // additional field to make a difference between collection, subject, license and quality issue. 

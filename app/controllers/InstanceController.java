@@ -9,13 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import models.Collection;
-import models.ContactPerson;
-import models.Flag;
 import models.Instance;
-import models.License;
-import models.Organisation;
 import models.QaIssue;
-import models.Tag;
 import models.Taxonomy;
 import models.User;
 

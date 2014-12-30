@@ -1,4 +1,7 @@
-@(form: Form[models.Subject], user: User, subjectData :com.fasterxml.jackson.databind.JsonNode)
+@(subjectForm: Form[models.Subject], user: User, id: Long, subjectData :com.fasterxml.jackson.databind.JsonNode)
+
+@import helper._
+@import bootstrap._
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -24,29 +27,45 @@
 @main("", user, scripts) {
     
    	<div class="page-header">
-	    <h1><a href="@routes.SubjectController.index()">Taxonomies > Subjects > </a>Subject @form("name").value</h1>
+	    <h1><a href="@routes.SubjectController.index()">Taxonomies > Subjects > </a>Subject @subjectForm("name").value</h1>
     </div>
     
 	<ul class="nav nav-tabs">
-		<li><a href="@routes.SubjectController.view(form.get.id)">View</a></li>
+		<li><a href="@routes.SubjectController.view(id)">View</a></li>
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.SubjectController.edit(form.get.id)">Edit</a></li>
+		   <li class="active"><a href="@routes.SubjectController.edit(id)">Edit</a></li>
 		}
-		<li><a href="@routes.SubjectController.sites(form.get.id)">Targets</a></li>
+		<li><a href="@routes.SubjectController.sites(id)">Targets</a></li>
 	</ul>
 	
-	    @warningmessage(flash)
-		@helper.form(action=routes.SubjectController.save) {
-   	    <input type="hidden" name="id" value="@form.get.id">
-        <input type="hidden" name="ttype" value="@form("ttype").value">
+    @warningmessage(flash)
+
+       @if(subjectForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- subjectForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+		    
+	@helper.form(action=routes.SubjectController.update(id)) {
+		
+   	    <input type="hidden" name="id" value="@id">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
-				    <div class="col-sm-6">
-						<input class="form-control" name="name" id="name" value="@form("name").value" type="text">
-					</div>
+					@inputText(subjectForm("name"),
+						'_label -> "Name",
+					    'id -> "title",
+					    'class -> "form-control",
+					    'placeholder -> "Name"
+					)(FieldConstructor(genericMandatoryInput.f), lang)
 				</div>
 			</div>
      	</div>
@@ -57,7 +76,7 @@
 	              	<label for="subjects" class="col-sm-6 control-label">Parent</label>
 				    <div class="col-sm-6">
 					  <div id="subjectTree"></div>
-					  <input type="hidden" id="subjectSelect" name="subjectSelect" value="@form.get.parent.id">
+					  <input type="hidden" id="subjectSelect" name="subjectSelect" value="@subjectForm("parentName").value">
 					</div>
 				</div>
 			</div>
@@ -67,14 +86,10 @@
 	   		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						<label class="col-sm-6 control-label">Publish</label>
-					    <div class="col-sm-6">
-			                @if(form("publish").value != null && form("publish").value == "true") {             
-				                <input type="checkbox" name="publish" value="true" checked/>
-			                } else {
-				                <input type="checkbox" name="publish" value="true"/>
-			                }
-						</div>
+						@helper.checkbox(subjectForm("publish"), 
+							args = 
+							'_label -> "Publish" 
+						)(FieldConstructor(genericInput.f), lang)
 					</div>
 				</div>
 	     	</div>		     				     	
@@ -83,10 +98,12 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
-				    <div class="col-sm-6">
-		          		<textarea class="form-control" name="description" id="description" value="@form("description").value" cols="100" rows="1">@form("description").value</textarea>
-					</div>
+					@textarea(field = subjectForm("description"),
+		 				args = 'rows -> 1, 'cols -> 100,
+						'_label -> "Description",
+						'id -> "inputDescription",
+						'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)		
 				</div>
 			</div>
 		</div>
@@ -96,9 +113,7 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
 					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-				    @if(Subject.findById(Long.valueOf(form("id").value)) != null) {
-						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Delete @form("id").value Are you sure?');">Delete</button>
-					}
+					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Delete @id Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>

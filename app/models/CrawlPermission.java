@@ -1,7 +1,9 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,6 +39,7 @@ public class CrawlPermission extends ActModel {
 //	permission was sent and then cancelled for whatever reason, and then another one sent to supersede it.
 	@ManyToOne
 	@JoinColumn(name="target_id")
+    @Required(message="Target is required")
 	public Target target;
     
 	//bi-directional many-to-one association to MailTemplate
@@ -47,10 +50,11 @@ public class CrawlPermission extends ActModel {
 	//bi-directional many-to-one association to ContactPerson
 	@ManyToOne
 	@JoinColumn(name="contactPerson_id")
+    @Required(message="Contact Person is required")
 	public ContactPerson contactPerson;
 	
     @Column(columnDefinition = "text")
-    @Required
+    @Required(message="Name is required")
     public String name;
     
     @JsonIgnore
@@ -397,4 +401,12 @@ public class CrawlPermission extends ActModel {
 			return false;
 		return true;
 	}
+	
+    public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(CrawlPermission c: find.all()) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
+    }
 }

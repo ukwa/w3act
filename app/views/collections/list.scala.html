@@ -36,7 +36,7 @@
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for collection by name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new collection">Add</button>
+							<a class="btn btn-primary" href="@routes.CollectionController.newForm()">Add</a>
 						}
 					</span>
 				</div>

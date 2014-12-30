@@ -1,4 +1,4 @@
-@(communicationForm: Form[CommunicationLog], user: User, id: Long, communicationLogTypes: Map[String,String], crawlPermissions: Map[String,String])
+@(communicationForm: Form[CommunicationLog], user: User, communicationLogTypes: Map[String,String], crawlPermissions: Map[String,String])
 
 @import helper._
 @import bootstrap._
@@ -6,16 +6,9 @@
 @main("", user) {
 
    	<div class="page-header">
-	    <h1><a href="@routes.CommunicationLogController.index()">Archivist Tasks > Communication Logs ></a>Edit communication log @communicationForm("name").value</h1>
+	    <h1><a href="@routes.CommunicationLogController.index()">Archivist Tasks > Communication Logs ></a>New communication log</h1>
 	</div>
 
-	<ul class="nav nav-tabs">
-	   <li><a href="@routes.CommunicationLogController.view(id)">View</a></li>
-	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.CommunicationLogController.edit(id)">Edit</a></li>
-	   }
-	</ul>
-    
     @warningmessage(flash)
     
 	@if(communicationForm.hasErrors) {
@@ -30,9 +23,8 @@
 			</div>
 		</div>
 	}
-	    
-	@helper.form(action=routes.CommunicationLogController.save) {
-		<input type="hidden" name="id" value="@id">
+		
+	@helper.form(action=routes.CommunicationLogController.save()) {
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -55,7 +47,7 @@
 					    'id -> "curator",
 					    'class -> "form-control",
 					    'placeholder -> "Name"
-					)(FieldConstructor(genericInput.f), lang)		
+					)(FieldConstructor(genericInput.f), lang)				
 				</div>
 			</div>
      	</div>	     	
@@ -80,12 +72,12 @@
 			                'class -> "form-control",
 			                '_label -> "Type", 
 			                '_showConstraints -> false
-		            )(FieldConstructor(genericInput.f), lang)	
+		            )(FieldConstructor(genericInput.f), lang)				
 				</div>
 			</div>
      	</div>		   
      	
-		<div class="row padding-10">
+   		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
 					@select(field = communicationForm("permission"), options = options(crawlPermissions), 
@@ -93,11 +85,11 @@
 			                'class -> "form-control",
 			                '_label -> "Crawl Permission", 
 			                '_showConstraints -> false
-		            )(FieldConstructor(genericInput.f), lang)
+		            )(FieldConstructor(genericInput.f), lang)				
 				</div>
 			</div>
-     	</div>
-
+     	</div>		   	               
+	          
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
@@ -110,7 +102,7 @@
 				</div>
 			</div>
      	</div>
-     				          
+			          
 		<div class="alert alert-info">
 			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
 		</div>
@@ -119,7 +111,6 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>

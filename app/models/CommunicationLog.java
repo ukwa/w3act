@@ -1,7 +1,9 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +35,7 @@ public class CommunicationLog extends ActModel {
 	/**
      * The name of the communication.
      */
-    @Required
+    @Required(message="Name is required")
     @Column(columnDefinition = "text")
     public String name;
 
@@ -157,6 +159,15 @@ public class CommunicationLog extends ActModel {
     
     public String toString() {
         return "CommunicationLog(" + name + ")" + ", id:" + id;
-    }    
+    }
+    
+    public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(CommunicationLog c: find.all()) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
+    }
+
 
 }

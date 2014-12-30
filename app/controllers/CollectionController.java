@@ -13,15 +13,16 @@ import org.apache.commons.lang3.StringUtils;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.collections.edit;
 import views.html.collections.list;
 import views.html.collections.view;
+import views.html.collections.newForm;
 
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -72,7 +73,7 @@ public class CollectionController extends AbstractController {
     	String query = requestData.get(Const.URL);
 
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Collection name is empty. Please write name in search window.");
+			Logger.debug("Collection name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(routes.CollectionController.list(0, "title", "asc", ""));
     	}
@@ -85,17 +86,7 @@ public class CollectionController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (action.equals("addentry")) {
-    	    	Collection collection = new Collection();
-    	    	collection.name = query;
-    			List<Collection> thisCollection = new ArrayList<Collection>();
-    			thisCollection.add(collection);
-    			JsonNode node = getCollectionsData(thisCollection);
-    			Form<Collection> collectionForm = Form.form(Collection.class);
-    			collectionForm = collectionForm.fill(collection);
-    	        return ok(edit.render(collectionForm, User.findByEmail(request().username()), node));    			
-    		} 
-    		else if (action.equals("search")) {
+    		if (action.equals("search")) {
     	    	return redirect(routes.CollectionController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -116,7 +107,7 @@ public class CollectionController extends AbstractController {
 	public static Result view(Long id) {
 		User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
-		Logger.info("" + id+ " " + collection.parent);
+		Logger.debug("" + id+ " " + collection.parent);
         return ok(view.render(collection, user));
 	}
 	
@@ -126,9 +117,16 @@ public class CollectionController extends AbstractController {
         return ok(view.render(collection, user));
     }
     
-    /**
-     * Display the collection edit panel for this URL.
-     */
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		JsonNode node = getCollectionsData();
+		Form<Collection> collectionForm = Form.form(Collection.class);
+		Collection collection = new Collection();
+		collectionForm = collectionForm.fill(collection);
+        return ok(newForm.render(collectionForm, user, node));
+    	
+    }
+
     public static Result edit(Long id) {
     	User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
@@ -137,101 +135,128 @@ public class CollectionController extends AbstractController {
 		JsonNode node = getCollectionsData(thisCollection);
 		Form<Collection> collectionForm = Form.form(Collection.class);
 		collectionForm = collectionForm.fill(collection);
-		Logger.info("id: " + collectionForm.get().id);
-        return ok(edit.render(collectionForm, user, node));
+		Logger.debug("id: " + collectionForm.get().id);
+        return ok(edit.render(collectionForm, user, id, node));
     }
 
-    public static Result info(Form<Collection> form) {
-    	Logger.info("info");
+    public static Result info(Form<Collection> form, Long id) {
+    	Logger.debug("info");
     	User user = User.findByEmail(request().username());
 		List<Collection> thisCollection = new ArrayList<Collection>();
 		Collection collection = form.get();
 		thisCollection.add(collection);
 		JsonNode node = getCollectionsData(thisCollection);
-		return ok(edit.render(form, user, node));
+		return badRequest(edit.render(form, user, id, node));
     }
     
-    /**
-     * This method saves new object or changes on given Collection in the same object
-     * completed by revision comment. The "version" field in the Collection object
-     * contains the timestamp of the change. 
-     * @return
-     */
+	public static Result newInfo(Form<Collection> form) {
+		User user = User.findByEmail(request().username());
+		JsonNode node = getCollectionsData();
+        return badRequest(newForm.render(form, user, node));
+	}
+	
     public static Result save() {
-    	Result res = null;
+    	
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
 
+    	Logger.debug("action: " + action);
+    	
         if (StringUtils.isNotEmpty(action)) {
-        	Form<Collection> collectionForm = Form.form(Collection.class).bindFromRequest();
-        	Long id = collectionForm.get().id;
-
         	if (action.equals("save")) {
-	            if(collectionForm.hasErrors()) {
-	            	String missingFields = "";
-	            	for (String key : collectionForm.errors().keySet()) {
-	            	    Logger.debug("key: " +  key);
-	            	    key = Utils.INSTANCE.showMissingFields(key);
-	            	    if (missingFields.length() == 0) {
-	            	    	missingFields = key;
-	            	    } else {
-	            	    	missingFields = missingFields + Const.COMMA + " " + key;
-	            	    }
-	            	}
-	            	Logger.info("form errors size: " + collectionForm.errors().size() + ", " + missingFields);
-		  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-		  					" Missing fields are: " + missingFields);
-		  			return info(collectionForm);
-	            }
-	        	
-	            Collection collectionFromDB = Collection.findById(id);
-	            Collection collectionFromForm = collectionForm.get();
-	            
-	            collectionFromDB.name = collectionFromForm.name;
-	            collectionFromDB.publish = collectionFromForm.publish;
-	            collectionFromDB.description = collectionFromForm.description;
-	            collectionFromDB.revision = collectionFromForm.revision;
-	            
+		        Form<Collection> filledForm = form(Collection.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
 	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
-	            Logger.info("collectionSelect: " + collectionSelect);
+	            Logger.debug("collectionSelect: " + collectionSelect);
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
 	                String[] collections = collectionSelect.split(", ");
 	                if (collections.length == 1) {
 	                	Long collectionId = Long.valueOf(collections[0]);
-	                	if (collectionId == id) {
-	                		Logger.info("same id");
-	        	  			flash("message", "It is not possible to assign a node to itself as a parent. Please select one parent.");
-	        	  			return info(collectionForm);
+		            	Collection collection = Collection.findById(collectionId);
+	                	filledForm.get().parent = collection;
+	                	Logger.debug("looking good");
+	                }
+	                else if (collections.length > 1) {
+	                	Logger.debug("Please select only one parent.");
+	    	  			flash("message", "Please select only one parent.");
+	    	  			return newInfo(filledForm);
+	                }
+	            }		        
+		        
+		        filledForm.get().save();
+		        flash("message", "Collection " + filledForm.get().name + " has been created");
+		        return redirect(routes.CollectionController.view(filledForm.get().id));
+        	}
+        }
+        return null;    	
+    }
+    
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<Collection> filledForm = form(Collection.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
+	            Logger.debug("collectionSelect: " + collectionSelect);
+	            if (StringUtils.isNotEmpty(collectionSelect)) {
+	                String[] collections = collectionSelect.split(", ");
+	                if (collections.length == 1) {
+	                	Long collectionId = Long.valueOf(collections[0]);
+	                	if (collectionId.longValue() == id.longValue()) {
+	                		Logger.debug("same id");
+	        	            ValidationError e = new ValidationError("collectionSelect", "It is not possible to assign a node to itself as a parent. Please select one parent.");
+	        	            filledForm.reject(e);
+	        	  			return info(filledForm, id);
 	                	} else {
 			            	Collection collection = Collection.findById(collectionId);
-		                	collectionFromDB.parent = collection;
-		                	Logger.info("looking good");
+		                	filledForm.get().parent = collection;
+		                	Logger.debug("looking good");
 	                	}
 	                }
 	                else if (collections.length > 1) {
-	                	Logger.info("Please select only one parent.");
+	                	Logger.debug("Please select only one parent.");
 	    	  			flash("message", "Please select only one parent.");
-	    	  			return info(collectionForm);
+	    	  			return info(filledForm, id);
 	                }
-	            }
-	            collectionFromDB.save();
-	            
-		        res = redirect(routes.CollectionController.view(collectionFromDB.id));
+	            }		        
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Collection " + filledForm.get().name + " has been updated");
+		        return redirect(routes.CollectionController.view(filledForm.get().id));
         	} else if (action.equals("delete")) {
-	        	Collection collection = Collection.findById(id);
+        		Collection collection = Collection.findById(id);
+		        flash("message", "Collection " + filledForm.get().name + " has been deleted");
+            	collection.delete();
+            	
             	/**
             	 * Check whether children exist
             	 */
-                if (Collection.hasChildren(collection.url)) {
-                	Logger.info("This collection has children nodes. Please re-assign children to other nodes first.");
-    	  			flash("message", "This collection has children nodes. Please re-assign children to other nodes first.");
-    	  			return info(collectionForm);
-                } 
-	        	collection.delete();
-    	        res = redirect(routes.CollectionController.index()); 
+//                if (Collection.hasChildren(collection.url)) {
+//                	Logger.debug("This collection has children nodes. Please re-assign children to other nodes first.");
+//    	  			flash("message", "This collection has children nodes. Please re-assign children to other nodes first.");
+//    	  			return info(collectionForm);
+//                } 
+
+        		return redirect(routes.CollectionController.index()); 
         	}
-        } 
-        return res;
+        }
+        return null;
     }
 	    
     public static Result sites(Long id) {

@@ -2,19 +2,18 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.ContactPerson;
-import models.CrawlPermission;
-import models.Target;
 import models.User;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -22,8 +21,6 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import views.html.contactpersons.*;
-
-import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,31 +34,21 @@ public class ContactPersonController extends AbstractController {
      * Display the person.
      */
     public static Result index() {
-        List<ContactPerson> resList = processFilterContactPersons("");
+    	User user = User.findByEmail(request().username());
+        List<ContactPerson> resList = ContactPerson.findAll();
         return ok(
                 list.render(
-                    "ContactPersons", User.findByEmail(request().username()), resList, ""
+                    "ContactPersons", user, resList, ""
                 )
-            );
+            );        
     }
 
-    /**
-     * Display the person edit panel for this URL.
-     */
-    public static Result edit(Long id) {
-		ContactPerson person = ContactPerson.findById(id);
-		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
-		personFormNew = personFormNew.fill(person);
-      	return ok(
-	              edit.render(personFormNew, User.findByEmail(request().username()))
-	            );
-    }
-    
     public static Result view(Long id) {
+    	User user = User.findByEmail(request().username());
     	Logger.info("view contact person");
         return ok(
                 view.render(
-                		models.ContactPerson.findById(id), User.findByEmail(request().username())
+                		models.ContactPerson.findById(id), user
                 )
             );
     }
@@ -91,19 +78,7 @@ public class ContactPersonController extends AbstractController {
         if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
-    	    	ContactPerson person = new ContactPerson();
-    	    	person.name = name;
-    	        person.id = Target.createId();
-    	        person.url = Const.ACT_URL + person.id;
-    			Logger.info("add contact person with url: " + person.url + ", and name: " + person.name);
-    			Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
-    			personFormNew = personFormNew.fill(person);
-    	      	return ok(
-    		              edit.render(personFormNew, User.findByEmail(request().username()))
-    		            );
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (action.equals("search")) {
     			return ok(
                 		list.render(
                                 "ContactPersons", User.findByEmail(request().username()), resList, name
@@ -139,217 +114,125 @@ public class ContactPersonController extends AbstractController {
     	}
         return res;
     }
-        
-    /**
-     * Add new person entry.
-     * @param person title
-     * @return
-     */
-    public static Result create(String name) {
-    	Logger.info("create contact person");
-    	ContactPerson person = new ContactPerson();
-    	person.name = name;
-        person.id = Target.createId();
-        person.url = Const.ACT_URL + person.id;
-		Logger.info("add contact person with url: " + person.url + ", and name: " + person.name);
-		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
-		personFormNew = personFormNew.fill(person);
-      	return ok(
-	              edit.render(personFormNew, User.findByEmail(request().username()))
-	            );
-    }
-      
-	/**
-	 * This method prepares ContactPerson form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-    	ContactPerson person = new ContactPerson();
-    	person.id = Long.valueOf(getFormParam(Const.ID));
-    	person.url = getFormParam(Const.URL);
-	    if (getFormParam(Const.NAME) != null) {
-	    	person.name = getFormParam(Const.NAME);
-	    }
-	    if (getFormParam(Const.DESCRIPTION) != null) {
-	    	person.description = getFormParam(Const.DESCRIPTION);
-	    }
-	    if (getFormParam(Const.POSITION) != null) {
-	    	person.position = getFormParam(Const.POSITION);
-	    }
-	    if (getFormParam(Const.EMAIL) != null) {
-	    	person.email = getFormParam(Const.EMAIL);
-	    }
-	    if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
-	    	person.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
-	    }
-	    if (getFormParam(Const.PHONE) != null) {
-	    	person.phone = getFormParam(Const.PHONE);
-	    }
-	    if (getFormParam(Const.POSTAL_ADDRESS) != null) {
-	    	person.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
-	    }
-	    if (getFormParam(Const.WEB_FORM) != null) {
-	    	person.webForm = getFormParam(Const.WEB_FORM);
-	    }
-    	person.defaultContact = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.DEFAULT_CONTACT));
-    	person.permissionChecked = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.PERMISSION_CHECKED));
-		Form<ContactPerson> personFormNew = Form.form(ContactPerson.class);
-		personFormNew = personFormNew.fill(person);
-      	return ok(
-	              edit.render(personFormNew, User.findByEmail(request().username()))
-	            );
+
+    
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		Form<ContactPerson> contactPersonForm = Form.form(ContactPerson.class);
+		ContactPerson contactPerson = new ContactPerson();
+		contactPersonForm = contactPersonForm.fill(contactPerson);
+        return ok(newForm.render(contactPersonForm, user));
+    	
     }
     
-    /**
-     * This method saves new object or changes on given person in the same object
-     * completed by revision comment. The "version" field in the person object
-     * contains the timestamp of the change. 
-     * @return
-     */
+    public static Result edit(Long id) {
+    	User user = User.findByEmail(request().username());
+		ContactPerson person = ContactPerson.findById(id);
+		Form<ContactPerson> contactPersonForm = Form.form(ContactPerson.class);
+		contactPersonForm = contactPersonForm.fill(person);
+      	return ok(
+	              edit.render(contactPersonForm, user, id)
+	            );
+    }
+
+
+    public static Result info(Form<ContactPerson> form, Long id) {
+    	Logger.debug("info");
+    	User user = User.findByEmail(request().username());
+		return badRequest(edit.render(form, user, id));
+    }
+    
+	public static Result newInfo(Form<ContactPerson> form) {
+		User user = User.findByEmail(request().username());
+        return badRequest(newForm.render(form, user));
+	}
+	
     public static Result save() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save person id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME));
-        	Form<ContactPerson> personForm = Form.form(ContactPerson.class).bindFromRequest();
-            if(personForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : personForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    key = Utils.INSTANCE.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
+    	
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Form<ContactPerson> filledForm = form(ContactPerson.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
+            	ContactPerson existingContact = ContactPerson.findByEmail(requestData.get("email"));
+            	if (StringUtils.isNotEmpty(existingContact.name) && StringUtils.isNotEmpty(existingContact.email)
+            			&& StringUtils.isNotBlank(filledForm.get().name) 
+            			&& existingContact.email.equals(filledForm.get().email)
+            			&& !existingContact.name.equals(filledForm.get().name)) {
+            		String msg = "A contact person with email '" + getFormParam(Const.EMAIL) + 
+    	  					"' is already in the Contact Persons list, but with the Name '" + existingContact.name + 
+    	  					"' which is different from the given name '" + filledForm.get().name + 
+    	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
+            		
+    	            ValidationError e = new ValidationError("email", msg);
+    	            filledForm.reject(e);
+    	  			return newInfo(filledForm);
             	}
-            	Logger.info("form errors size: " + personForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
-            }
-        	ContactPerson person = null;
-            boolean isExisting = true;
-        	if (getFormParam(Const.EMAIL) != null && getFormParam(Const.EMAIL).length() > 0) {         
-                try {
-                	List<ContactPerson> personByEmailList = ContactPerson.filterByEmail(getFormParam(Const.EMAIL));
-                	if (personByEmailList.size() > 0) {
-                		ContactPerson personByEmail = personByEmailList.get(0); 
-    	            	if (StringUtils.isNotEmpty(personByEmail.name) 
-    	            			&& StringUtils.isNotEmpty(personByEmail.email)
-    	            			&& getFormParam(Const.NAME) != null 
-    	            			&& getFormParam(Const.EMAIL) != null 
-    	            			&& personByEmail.email.equals(getFormParam(Const.EMAIL))
-    	            			&& !personByEmail.name.equals(getFormParam(Const.NAME))) {
-    	            		String msg = "A contact person with email '" + getFormParam(Const.EMAIL) + 
-    	    	  					"' is already in the Contact Persons list, but with the Name '" + personByEmail.name + 
-    	    	  					"' which is different from the given name '" + getFormParam(Const.NAME) + 
-    	    	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
-    	                	Logger.info(msg);
-    	    	  			flash("message", msg);
-    	    	  			return info();
-    	            	}
-                	}
-                } catch (Exception e) {
-                	Logger.info("ContactPerson with given email is not existing in database. ");
-                }        		
-        	}
-            try {
-                try {
-                	person = ContactPerson.findByUrl(getFormParam(Const.URL));
-                	if (StringUtils.isNotEmpty(person.name) 
-                			&& person.name.equals(Const.NONE)
-                			&& person.email == null) {
-                    	Logger.info("is not existing person");
-                    	isExisting = false;
-                    	person = new ContactPerson();
-                    	person.id = Long.valueOf(getFormParam(Const.ID));
-                    	person.url = getFormParam(Const.URL);
-                	}
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	person = new ContactPerson();
-                	person.id = Long.valueOf(getFormParam(Const.ID));
-                	person.url = getFormParam(Const.URL);
-                }
-                if (person == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	person = new ContactPerson();
-                	person.id = Long.valueOf(getFormParam(Const.ID));
-                	person.url = getFormParam(Const.URL);
-                }
-        	    if (getFormParam(Const.NAME) != null) {
-        	    	person.name = getFormParam(Const.NAME);
-        	    }
-        	    if (getFormParam(Const.DESCRIPTION) != null) {
-        	    	person.description = getFormParam(Const.DESCRIPTION);
-        	    }
-        	    if (getFormParam(Const.POSITION) != null) {
-        	    	person.position = getFormParam(Const.POSITION);
-        	    }
-        	    if (getFormParam(Const.EMAIL) != null) {
-        	    	person.email = getFormParam(Const.EMAIL);
-        	    }
-        	    if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
-        	    	person.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
-        	    }
-        	    if (getFormParam(Const.PHONE) != null) {
-        	    	person.phone = getFormParam(Const.PHONE);
-        	    }
-        	    if (getFormParam(Const.POSTAL_ADDRESS) != null) {
-        	    	person.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
-        	    }
-        	    if (getFormParam(Const.WEB_FORM) != null) {
-        	    	person.webForm = getFormParam(Const.WEB_FORM);
-        	    }
-       	    	person.defaultContact = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.DEFAULT_CONTACT));
-       	    	person.permissionChecked = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.PERMISSION_CHECKED));
-            } catch (Exception e) {
-            	Logger.info("ContactPerson not existing exception");
-            }
-            
-        	if (!isExisting) {
-               	Ebean.save(person);
-    	        Logger.info("save crawl person: " + person.toString());
-        	} else {
-           		Logger.info("update crawl person: " + person.toString());
-               	Ebean.update(person);
-        	}
-	        return redirect(routes.ContactPersonController.edit(person.id));
-        } 
-        if (delete != null) {
-        	ContactPerson person = ContactPerson.findByUrl(getFormParam(Const.URL));
-        	List<CrawlPermission> assignedCrawlPermissionList = CrawlPermission.filterByContactPerson(person.url);
-        	if (assignedCrawlPermissionList.size() > 0) {
-	        	Iterator<CrawlPermission> itr = assignedCrawlPermissionList.iterator();
-            	String missingFields = "";
-	        	while (itr.hasNext()) {
-	        		CrawlPermission permission = itr.next();
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = permission.name;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + permission.name;
-            	    }
-            	}
-            	Logger.info("A contact person can't be deleted since it is used in following crawl permissions: " 
-            			+ missingFields + ". Please remove it from crawl permission objects first and then delete.");
-	  			flash("message", "A contact person can't be deleted since it is used in following crawl permissions: " 
-            			+ missingFields + ". Please remove it from crawl permission objects first and then delete.");
-	  			return info();
-        	} else {
-        		Ebean.delete(person);
-        		res = redirect(routes.ContactPersonController.index());
+            	
+            	filledForm.get().defaultContact = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.DEFAULT_CONTACT));
+            	filledForm.get().permissionChecked = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.PERMISSION_CHECKED));
+
+		        filledForm.get().save();
+		        flash("message", "Contact Person " + filledForm.get().name + " has been created");
+		        return redirect(routes.ContactPersonController.view(filledForm.get().id));
         	}
         }
-    	res = redirect(routes.ContactPersonController.index()); 
-        return res;
-    }	   
+        return null;    	
+    }
+    
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<ContactPerson> filledForm = form(ContactPerson.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+            	ContactPerson existingContact = ContactPerson.findByEmail(requestData.get("email"));
+            	if (StringUtils.isNotEmpty(existingContact.name) && StringUtils.isNotEmpty(existingContact.email)
+            			&& StringUtils.isNotBlank(filledForm.get().name) 
+            			&& existingContact.email.equals(filledForm.get().email)
+            			&& !existingContact.name.equals(filledForm.get().name)) {
+            		String msg = "A contact person with email '" + getFormParam(Const.EMAIL) + 
+    	  					"' is already in the Contact Persons list, but with the Name '" + existingContact.name + 
+    	  					"' which is different from the given name '" + filledForm.get().name + 
+    	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
+            		
+    	            ValidationError e = new ValidationError("email", msg);
+    	            filledForm.reject(e);
+    	  			return info(filledForm, id);
+            	}
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Contact Person " + filledForm.get().name + " has been updated");
+		        return redirect(routes.ContactPersonController.view(filledForm.get().id));
+        	} else if (action.equals("delete")) {
+        		ContactPerson contactPerson = ContactPerson.findById(id);
+		        flash("message", "Contact Person " + filledForm.get().name + " has been deleted");
+            	contactPerson.delete();
+            	
+        		return redirect(routes.ContactPersonController.index()); 
+        	}
+        }
+        return null;
+    }
 
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {

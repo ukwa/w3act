@@ -5,6 +5,7 @@ import static play.data.Form.form;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import models.CommunicationLog;
 import models.ContactPerson;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -26,12 +28,10 @@ import uk.bl.Const;
 import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.api.Utils;
 import uk.bl.scope.EmailHelper;
+import views.html.crawlpermissions.newForm;
 import views.html.crawlpermissions.edit;
 import views.html.crawlpermissions.view;
-import views.html.communicationlogs.logs;
 import views.html.crawlpermissions.crawlpermissionpreview;
-import views.html.licence.licences;
-import views.html.mailtemplates.mailtemplates;
 import views.html.refusals.refusals;
 import views.html.crawlpermissions.list;
 
@@ -88,15 +88,23 @@ public class CrawlPermissionController extends AbstractController {
     }
     
     
-    /**
-     * Display the permission edit panel for this URL.
-     */
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+    	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
+		Form<CrawlPermission> crawlPermissionForm = Form.form(CrawlPermission.class);
+		CrawlPermission crawlPermission = new CrawlPermission();
+		crawlPermissionForm = crawlPermissionForm.fill(crawlPermission);
+        return ok(newForm.render(crawlPermissionForm, user, crawlPermissionStatuses));
+    	
+    }
+
     public static Result edit(Long id) {
+    	User user = User.findByEmail(request().username());
 		CrawlPermission permission = CrawlPermission.findById(id);
-		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
-		permissionFormNew = permissionFormNew.fill(permission);
-    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-      	return ok(edit.render(permissionFormNew, User.findByEmail(request().username()), crawlPermissionStatuses));
+		Form<CrawlPermission> crawlPermissionForm = Form.form(CrawlPermission.class);
+		crawlPermissionForm = crawlPermissionForm.fill(permission);
+    	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
+      	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses));
     }
     
     public static Result view(Long id) {
@@ -163,27 +171,7 @@ public class CrawlPermissionController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
-//        		return redirect(routes.CrawlPermissions.create(name));
-            	CrawlPermission permission = new CrawlPermission();
-            	permission.name = name;
-                permission.id = Target.createId();
-                permission.url = Const.ACT_URL + permission.id;
-                permission.user = User.findByEmail(request().username());
-                permission.status = Const.CrawlPermissionStatus.QUEUED.name();
-                permission.mailTemplate.name = Const.MailTemplateType.PERMISSION_REQUEST.name();
-                permission.thirdPartyContent = false;
-                permission.agree = false;
-                permission.publish = true;
-        		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
-        		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
-        		permissionFormNew = permissionFormNew.fill(permission);
-            	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-              	return ok(
-        	              edit.render(permissionFormNew, User.findByEmail(request().username()), crawlPermissionStatuses)
-        	            );
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (action.equals("search")) {
     	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, Const.SELECT_ALL));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -228,31 +216,6 @@ public class CrawlPermissionController extends AbstractController {
     }
         
     /**
-     * Add new permission entry.
-     * @param permission title
-     * @return
-     */
-    public static Result create(String name) {
-    	CrawlPermission permission = new CrawlPermission();
-    	permission.name = name;
-        permission.id = Target.createId();
-        permission.url = Const.ACT_URL + permission.id;
-        permission.user = User.findByEmail(request().username());
-        permission.status = Const.CrawlPermissionStatus.QUEUED.name();
-        permission.mailTemplate.name = Const.MailTemplateType.PERMISSION_REQUEST.name();
-        permission.thirdPartyContent = false;
-        permission.agree = false;
-        permission.publish = true;
-		Logger.info("add entry with url: " + permission.url + ", and name: " + permission.name);
-		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
-		permissionFormNew = permissionFormNew.fill(permission);
-    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-      	return ok(
-	              edit.render(permissionFormNew, User.findByEmail(request().username()), crawlPermissionStatuses)
-	            );
-    }
-      
-    /**
      * Create new crawl permission request for particular target.
      * @param permission title
      * @param target
@@ -273,9 +236,9 @@ public class CrawlPermissionController extends AbstractController {
 		Logger.info("add entry with url: " + permission.url + ", name: " + permission.name + ", and target: " + permission.target.title + ", " + user.email);
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
-    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+    	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
       	return ok(
-	              edit.render(permissionFormNew, user, crawlPermissionStatuses)
+	              newForm.render(permissionFormNew, user, crawlPermissionStatuses)
 	            );
     }
 
@@ -341,256 +304,114 @@ public class CrawlPermissionController extends AbstractController {
 	 * about errors 
 	 * @return edit page with form and info message
 	 */
-	public static Result info() {
-    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-      	return ok(
-	              edit.render(processForm(), User.findByEmail(request().username()), crawlPermissionStatuses)
-	            );
+    public static Result info(Form<CrawlPermission> form, Long id) {
+    	User user = User.findByEmail(request().username());
+    	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
+		return badRequest(edit.render(form, user, id, crawlPermissionStatuses));
     }
     
-    /**
-     * This method saves new object or changes on given Permission in the same object
-     * completed by revision comment. The "version" field in the Permission object
-     * contains the timestamp of the change. 
-     * @return
-     */
-    public static Result save() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("input data for saving of the crawl permission id: " + getFormParam(Const.ID) + 
-        			", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME));
-        	CrawlPermission permission = null;
-            boolean isExisting = true;
-            try {
-            	Form<CrawlPermission> permissionForm = Form.form(CrawlPermission.class).bindFromRequest();
-                if(permissionForm.hasErrors()) {
-                	String missingFields = "";
-                	for (String key : permissionForm.errors().keySet()) {
-                	    Logger.debug("key: " +  key);
-                	    key = Utils.INSTANCE.showMissingField(key);
-                	    if (missingFields.length() == 0) {
-                	    	missingFields = key;
-                	    } else {
-                	    	missingFields = missingFields + Const.COMMA + " " + key;
-                	    }
-                	}
-                	Logger.info("form errors size: " + permissionForm.errors().size() + ", " + missingFields);
-    	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-    	  					" Missing fields are: " + missingFields);
-    	  			return info();
-                }
-            	
-            	if (StringUtils.isBlank(getFormParam(Const.EMAIL))) {
-            		Logger.info("email: " + getFormParam(Const.EMAIL));
-            		Logger.info("Please fill out all the required fields, marked with a red star.");
-    	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-    	  					"Missing field is email");
-    	  			return info();
-            	} 
-            	if (getFormParam(Const.EMAIL) != null && getFormParam(Const.EMAIL).length() > 0
-            			&& getFormParam(Const.CONTACT_PERSON) != null) {
-	                try {
-	                	List<ContactPerson> personByEmailList = ContactPerson.filterByEmail(getFormParam(Const.EMAIL));
-	                	Logger.info("personByEmailList: " + personByEmailList);
-	                	if (personByEmailList.size() > 0) {
-	                		ContactPerson personByEmail = personByEmailList.get(0); 
-	    	            	if (StringUtils.isNotEmpty(personByEmail.name) 
-	    	            			&& StringUtils.isNotEmpty(personByEmail.email)
-	    	            			&& getFormParam(Const.CONTACT_PERSON) != null 
-	    	            			&& getFormParam(Const.EMAIL) != null 
-	    	            			&& personByEmail.email.equals(getFormParam(Const.EMAIL))
-	    	            			&& !personByEmail.name.equals(getFormParam(Const.CONTACT_PERSON))) {
-	    	            		String msg = "A contact person with email '" + getFormParam(Const.EMAIL) + 
-	    	    	  					"' is already in the Contact Persons list, but with the Name '" + personByEmail.name + 
-	    	    	  					"' which is different from the given name '" + getFormParam(Const.CONTACT_PERSON) + 
-	    	    	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
-	    	                	Logger.info(msg + " - " + getFormParam(Const.EMAIL));
-	    	    	  			flash("message", msg);
-	    	    	  	    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
-	    	    	  	      	return ok(
-	    	    	  	              edit.render(processForm(true), User.findByEmail(request().username()), crawlPermissionStatuses)
-	    	    	  	            );
-	    	            	}
-	                	}
-	                } catch (Exception e) {
-	                	Logger.info("ContactPerson with given email is not existing in database. ");
-	                }
-            	}
-            	
-                try {
-                	permission = CrawlPermission.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	permission = CrawlPermission.create(Long.valueOf(getFormParam(Const.ID)), getFormParam(Const.URL));
-                }
-                if (permission == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	permission = CrawlPermission.create(Long.valueOf(getFormParam(Const.ID)), getFormParam(Const.URL));
-                }
-                
-                permission.name = getFormParam(Const.NAME);
-        	    if (getFormParam(Const.DESCRIPTION) != null) {
-        	    	permission.description = getFormParam(Const.DESCRIPTION);
-        	    }
-        	    if (getFormParam(Const.TARGET) != null) {
-        	    	permission.target.title = getFormParam(Const.TARGET);
-        	    }
-        		permission.contactPerson.url = Const.NONE;
-                if (getFormParam(Const.CONTACT_PERSON) != null) {
-//                	if (!getFormParam(Const.CONTACT_PERSON).toLowerCase().contains(Const.NONE)) {
-                		/**
-                		 * Save or update contact person
-                		 */
-                    	ContactPerson person = null;
-                        boolean isContactPersonExisting = true;
-                        try {
-                            try {
-                            	person = ContactPerson.findByName(getFormParam(Const.CONTACT_PERSON));
-                            } catch (Exception e) {
-                            	Logger.info("contact person is not existing exception 1 " + person);
-                            	isContactPersonExisting = false;
-                            	Long id = Utils.INSTANCE.createId();
-                            	person = ContactPerson.create(id, Const.ACT_URL + id);
-                            }
-                            if (person == null) {
-                            	Logger.info("contact person is not existing");
-                            	isContactPersonExisting = false;
-                            	Long id = Utils.INSTANCE.createId();
-                            	person = ContactPerson.create(id, Const.ACT_URL + id);
-                            }
-                            
-                        	Logger.info("contact person stuff");
-                            
-                    	    if (getFormParam(Const.CONTACT_PERSON) != null) {
-                    	    	person.name = getFormParam(Const.CONTACT_PERSON);
-                    	    }
-                    	    if (getFormParam(Const.POSITION) != null) {
-                    	    	person.position = getFormParam(Const.POSITION);
-                    	    }
-                    	    if (getFormParam(Const.EMAIL) != null) {
-                    	    	person.email = getFormParam(Const.EMAIL);
-                    	    }
-                    	    if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
-                    	    	person.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
-                    	    }
-                    	    if (getFormParam(Const.PHONE) != null) {
-                    	    	person.phone = getFormParam(Const.PHONE);
-                    	    }
-                    	    if (getFormParam(Const.POSTAL_ADDRESS) != null) {
-                    	    	person.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
-                    	    }
-                        } catch (Exception e) {
-                        	Logger.info("ContactPerson not existing exception 2");
-                        }
-                        
-                        permission.contactPerson = person;
-                    	if (!isContactPersonExisting) {
-                           	Ebean.save(person);
-                	        Logger.info("save contact person: " + person.toString());
-                    	} else {
-                       		Logger.info("update contact person: " + person.toString());
-                           	Ebean.update(person);
-                    	}
-//                	}
-                }
-        	    
-        	    Logger.info("creator user: " + getFormParam(Const.CREATOR_USER));
-//        	    Logger.info("creator user url: " + User.findByName(getFormParam(Const.CREATOR_USER)).url);
-        	    if (getFormParam(Const.CREATOR_USER) != null) {
-        	    	permission.user = User.findByName(getFormParam(Const.CREATOR_USER));
-        	    }
-        	    if (getFormParam(Const.TEMPLATE) != null) {
-        	    	permission.mailTemplate.name = getFormParam(Const.TEMPLATE);
-//        	    	permission.updateMailTemplate();
-        	    }
-                Logger.info("Status: " + permission.status + ", " + getFormParam(Const.STATUS));
-        	    if (getFormParam(Const.STATUS) != null) {
-        	    	permission.status = getFormParam(Const.STATUS);
-        	    }
-        	    if (getFormParam(Const.REQUEST_FOLLOW_UP) != null) {
-        	    	permission.requestFollowup = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.REQUEST_FOLLOW_UP));
-        	    }
+	public static Result newInfo(Form<CrawlPermission> form) {
+    	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
+		User user = User.findByEmail(request().username());
+        return badRequest(newForm.render(form, user, crawlPermissionStatuses));
+	}
+	
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<CrawlPermission> filledForm = form(CrawlPermission.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
 
-            } catch (Exception e) {
-            	Logger.info("CrawlPermission not existing exception");
-            }
-            
-            
-        	if (!isExisting) {
-                permission.thirdPartyContent = false;
-                permission.agree = false;
-                permission.publish = true;
-               	Ebean.save(permission);
-    	        Logger.info("save crawl permission: " + permission.toString());
-    	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.SAVE);
-    	        Ebean.save(log);
-    	        updateAllByTarget(permission.url, permission.target.title, permission.status);
-    	        TargetController.updateQaStatus(permission.target.title, permission.status);
-        	} else {
-           		Logger.info("update crawl permission: " + permission.toString());
-               	Ebean.update(permission);
-               	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
-    	        Ebean.save(log);
-           		Logger.info("update: " + permission.url + ", " + permission.target.title + ", " + permission.status);
-    	        updateAllByTarget(permission.url, permission.target.title, permission.status);
-    	        TargetController.updateQaStatus(permission.target.title, permission.status);
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+
+               	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + filledForm.get().status, filledForm.get(), filledForm.get().user, Const.UPDATE);
+               	log.save();
+
+    	        updateAllByTarget(filledForm.get().url, filledForm.get().target.title, filledForm.get().status);
+    	        
+    	        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
+    	        
+		        String targetUrl = filledForm.get().target.formUrl;
+		        filledForm.get().target = Target.findByTarget(targetUrl);
+
+		        filledForm.get().update(id);
+		        flash("message", "Crawl Permission " + filledForm.get().name + " has been updated");
+		        return redirect(routes.CrawlPermissionController.view(filledForm.get().id));
+        	} else if (action.equals("delete")) {
+        		CrawlPermission crawlPermission = CrawlPermission.findById(id);
+		        flash("message", "Crawl Permission " + filledForm.get().name + " has been deleted");
+            	crawlPermission.delete();
+            	
+        		return redirect(routes.CrawlPermissionController.index()); 
         	}
-        	Logger.info("Crawl permission was saved with status " + permission.status);
-  			flash("message", "Crawl permission was saved with status " + permission.status);
-	        return redirect(routes.CrawlPermissionController.view(permission.id));
-        } 
-        if (delete != null) {
-        	CrawlPermission permission = CrawlPermission.findByUrl(getFormParam(Const.URL));
-        	Ebean.delete(permission);
-	        res = redirect(routes.CrawlPermissionController.index()); 
         }
-    	res = redirect(routes.CrawlPermissionController.index()); 
-        return res;
-    }	   
+        return null;
+    }
+    public static Result save() {
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
 
-    public static Result templates() {
-    	// test
-        return ok(
-                mailtemplates.render(
-                    "MailTemplates", User.findByEmail(request().username()), models.MailTemplate.findAll(), "", ""
-                )
-            );
-    }
-    
-    public static Result contactpersons() {
-        return ok(
-                views.html.contactpersons.list.render(
-                    "ContactPersons", User.findByEmail(request().username()), models.ContactPerson.findAll(), ""
-                )
-            );
-    }
-    
-    public static Result licences() {
-        return ok(
-                licences.render(
-                	"Licences", User.findByEmail(request().username()), models.Taxonomy.findListByType("license"), ""
-                )
-            );
-    }
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Form<CrawlPermission> filledForm = form(CrawlPermission.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
+            	ContactPerson existingContact = ContactPerson.findByEmail(requestData.get("email"));
+            	
+            	if (existingContact != null && StringUtils.isNotEmpty(existingContact.name) && StringUtils.isNotEmpty(existingContact.email)
+            			&& StringUtils.isNotBlank(filledForm.get().contactPerson.name) 
+            			&& StringUtils.isNotBlank(filledForm.get().contactPerson.email) 
+            			&& existingContact.email.equals(filledForm.get().contactPerson.email)
+            			&& !existingContact.name.equals(filledForm.get().contactPerson.name)) {
+            		String msg = "A contact person with email '" + getFormParam(Const.EMAIL) + 
+    	  					"' is already in the Contact Persons list, but with the Name '" + existingContact.name + 
+    	  					"' which is different from the given name '" + filledForm.get().name + 
+    	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
+            		
+    	            ValidationError e = new ValidationError("email", msg);
+    	            filledForm.reject(e);
+    	  			return newInfo(filledForm);
+            	}
+		        filledForm.get().thirdPartyContent = Boolean.FALSE;
+		        filledForm.get().agree = Boolean.FALSE;
+		        filledForm.get().publish = Boolean.TRUE;
+		        
+		        String targetUrl = filledForm.get().target.formUrl;
+		        filledForm.get().target = Target.findByTarget(targetUrl);
+		        filledForm.get().save();
+		        
+    	        CommunicationLog log = CommunicationLog.logHistory("permissions" + " " + filledForm.get().status, filledForm.get(), filledForm.get().user, Const.SAVE);
+    	        log.save();
+		        
+    	        updateAllByTarget(filledForm.get().url, filledForm.get().target.title, filledForm.get().status);
+
+    	        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
+
+		        flash("message", "Crawl Permission " + filledForm.get().name + " has been created");
+		        return redirect(routes.CrawlPermissionController.view(filledForm.get().id));
+        	}
+        }
+        return null;
+    }	   
 
     public static Result refusals() {
         return ok(
                 refusals.render(
                 	"Refusals", User.findByEmail(request().username()), models.PermissionRefusal.findAll(), ""
-                )
-            );
-    }
-
-    public static Result communicationLogs() {
-        return ok(
-                logs.render(
-                	"CommunicationLogs", User.findByEmail(request().username()), models.CommunicationLog.findAll(), "", ""
                 )
             );
     }

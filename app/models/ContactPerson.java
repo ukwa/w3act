@@ -53,7 +53,7 @@ public class ContactPerson extends ActModel {
     /**
      * E-mail address of the contact person.
      */
-    @Required
+    @Required(message="Email is required")
     @Column(columnDefinition = "text")
     public String email;
     
@@ -178,6 +178,10 @@ public class ContactPerson extends ActModel {
         ExpressionList<ContactPerson> ll = find.where().icontains(Const.EMAIL, email);
     	res = ll.findList();
 		return res;
+	}
+	
+	public static ContactPerson findByEmail(String email) {
+		return find.where().eq("email", email).findUnique();
 	}
         
     /**

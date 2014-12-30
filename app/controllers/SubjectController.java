@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import models.Collection;
 import models.Subject;
 import models.Target;
 import models.Taxonomy;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -95,20 +97,7 @@ public class SubjectController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
-//        		return redirect(routes.SubjectController.create(query));
-    	        Logger.info("create subject()");
-    	    	Subject subject = new Subject();
-    	    	subject.name = query;
-//    	        subject.id = Target.createId();
-//    	        subject.url = Const.ACT_URL + subject.tid;
-    			Logger.info("add subject with url: " + subject.url + ", and name: " + subject.name);
-    			JsonNode node = getSubjectsTree(subject.url);
-    			Form<Subject> subjectForm = Form.form(Subject.class);
-    			subjectForm = subjectForm.fill(subject);
-    	        return ok(edit.render(subjectForm, User.findByEmail(request().username()), node));    			
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (Const.SEARCH.equals(action)) {
     	    	return redirect(routes.SubjectController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -128,35 +117,20 @@ public class SubjectController extends AbstractController {
 	    
 	  
     public static Result view(Long id) {
-        return ok(
-                view.render(
-                        Subject.findById(id), User.findByEmail(request().username())
-                )
-            );
+    	User user = User.findByEmail(request().username());
+        return ok(view.render(Subject.findById(id), user));
     }
     
-    /**
-     * Add new subject entry.
-     * @param subject name
-     * @return
-     */
-    public static Result create(String name) {
-        Logger.info("create subject()");
-    	Subject subject = new Subject();
-    	subject.name = name;
-    	// TODO: createId
-//        subject.id = Target.createId();
-//        subject.url = Const.ACT_URL + subject.id;
-		Logger.info("add subject with url: " + subject.url + ", and name: " + subject.name);
-		JsonNode node = getSubjectsTree(subject.url);
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		JsonNode node = getSubjectsData();
 		Form<Subject> subjectForm = Form.form(Subject.class);
+		Subject subject = new Subject();
 		subjectForm = subjectForm.fill(subject);
-        return ok(edit.render(subjectForm, User.findByEmail(request().username()), node));
+        return ok(newForm.render(subjectForm, user, node));
+    	
     }
-    
-    /**
-     * Display the subject edit panel for this URL.
-     */
+
     public static Result edit(Long id) {
     	User user = User.findByEmail(request().username());
 		Subject subject = Subject.findById(id);
@@ -166,137 +140,121 @@ public class SubjectController extends AbstractController {
 		Form<Subject> subjectForm = Form.form(Subject.class);
 		subjectForm = subjectForm.fill(subject);
 		Logger.info("id: " + subjectForm.get().id);
-        return ok(edit.render(subjectForm, user, node));        
+        return ok(edit.render(subjectForm, user, id, node));        
         
     }
 
-	/**
-	 * This method prepares Subject form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-    	Subject subject = new Subject();
-    	// TODO: createId
-//    	subject.id = Long.valueOf(getFormParam(Const.TID));
-//    	subject.url = getFormParam(Const.URL);
-    	subject.name = getFormParam(Const.NAME);
-        subject.publish = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.PUBLISH));
-	    if (getFormParam(Const.TTYPE) != null) {
-	    	subject.ttype = getFormParam(Const.TTYPE);
-	    }
-//	    subject.ttype = Const.SUBJECT;
-//	    if (getFormParam(Const.PARENT) != null) {
-//        	if (!getFormParam(Const.PARENT).toLowerCase().contains(Const.NONE)) {
-//        		subject.parent = getFormParam(Const.PARENT);
-//        	    subject.ttype = Const.SUBSUBJECT;
-//        	}
-//	    }
-        if (getFormParam(Const.TREE_KEYS) != null) {
-//    		subject.parent = Utils.removeDuplicatesFromList(getFormParam(Const.TREE_KEYS));
-    		Logger.debug("subject parent: " + subject.parent);
-        	if (!getFormParam(Const.TREE_KEYS).toLowerCase().contains(Const.NONE)) {
-        	    subject.ttype = Const.SUBSUBJECT;
-        	}
-        }
-        if (getFormParam(Const.DESCRIPTION) != null) {
-        	subject.description = getFormParam(Const.DESCRIPTION);
-        }
-		JsonNode node = getSubjectsTree(subject.url);
-		Form<Subject> subjectFormNew = Form.form(Subject.class);
-		subjectFormNew = subjectFormNew.fill(subject);
-      	return ok(
-	              edit.render(subjectFormNew, User.findByEmail(request().username()), node)
-	            );
+    public static Result info(Form<Subject> form, Long id) {
+    	Logger.debug("info");
+    	User user = User.findByEmail(request().username());
+		List<Subject> thisSubject = new ArrayList<Subject>();
+		Subject subject = form.get();
+		thisSubject.add(subject);
+		JsonNode node = getSubjectsData(thisSubject);
+		return badRequest(edit.render(form, user, id, node));
     }
     
-    /**
-     * This method saves new object or changes on given Subject in the same object
-     * completed by revision comment. The "version" field in the Subject object
-     * contains the timestamp of the change. 
-     * @return
-     */
-    public static Result save() {
+	public static Result newInfo(Form<Subject> form) {
+		User user = User.findByEmail(request().username());
+		JsonNode node = getSubjectsData();
+        return badRequest(newForm.render(form, user, node));
+	}
 
-    	Result res = null;
+
+    public static Result save() {
+    	
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
 
+    	Logger.debug("action: " + action);
+    	
         if (StringUtils.isNotEmpty(action)) {
-    		Form<Subject> filledForm = subjectForm.bindFromRequest();
-
-        	Long id = filledForm.get().id;
-
         	if (action.equals("save")) {
-	            if(filledForm.hasErrors()) {
-	            	String missingFields = "";
-	            	for (String key : subjectForm.errors().keySet()) {
-	            	    Logger.debug("key: " +  key);
-	            	    key = Utils.INSTANCE.showMissingField(key);
-	            	    if (missingFields.length() == 0) {
-	            	    	missingFields = key;
-	            	    } else {
-	            	    	missingFields = missingFields + Const.COMMA + " " + key;
-	            	    }
-	            	}
-	            	Logger.info("form errors size: " + subjectForm.errors().size() + ", " + missingFields);
-		  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-		  					" Missing fields are: " + missingFields);
-		  			return info(filledForm);
-	            }
-	        	
-	            Subject subjectFromDB = Subject.findById(id);
-	            Subject subjectFromForm = filledForm.get();
-	            
-	            subjectFromDB.name = subjectFromForm.name;
-	            subjectFromDB.publish = subjectFromForm.publish;
-	            subjectFromDB.description = subjectFromForm.description;
-	            subjectFromDB.revision = subjectFromForm.revision;
-	            
+		        Form<Subject> filledForm = form(Subject.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
 	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
-	            Logger.info("subjectSelect: " + subjectSelect);
+	            Logger.debug("subjectSelect: " + subjectSelect);
 	            if (StringUtils.isNotEmpty(subjectSelect)) {
 	                String[] subjects = subjectSelect.split(", ");
 	                if (subjects.length == 1) {
 	                	Long subjectId = Long.valueOf(subjects[0]);
-	                	if (subjectId == id) {
-	                		Logger.info("same id");
-	        	  			flash("message", "It is not possible to assign a node to itself as a parent. Please select one parent.");
-	        	  			return info(filledForm);
+		            	Subject subject = Subject.findById(subjectId);
+	                	filledForm.get().parent = subject;
+	                	Logger.debug("looking good");
+	                }
+	                else if (subjects.length > 1) {
+	                	Logger.debug("Please select only one parent.");
+	    	  			flash("message", "Please select only one parent.");
+	    	  			return newInfo(filledForm);
+	                }
+	            }		        
+		        
+		        filledForm.get().save();
+		        flash("message", "Subject " + filledForm.get().name + " has been created");
+		        return redirect(routes.SubjectController.view(filledForm.get().id));
+        	}
+        }
+        return null;    	
+    }
+    
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<Subject> filledForm = form(Subject.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
+	            Logger.debug("subjectSelect: " + subjectSelect);
+	            if (StringUtils.isNotEmpty(subjectSelect)) {
+	                String[] subjects = subjectSelect.split(", ");
+	                if (subjects.length == 1) {
+	                	Long subjectId = Long.valueOf(subjects[0]);
+	                	if (subjectId.longValue() == id.longValue()) {
+	                		Logger.debug("same id");
+	        	            ValidationError e = new ValidationError("subjectSelect", "It is not possible to assign a node to itself as a parent. Please select one parent.");
+	        	            filledForm.reject(e);
+	        	  			return info(filledForm, id);
 	                	} else {
 			            	Subject subject = Subject.findById(subjectId);
-		                	subjectFromDB.parent = subject;
-		                	Logger.info("looking good");
+		                	filledForm.get().parent = subject;
+		                	Logger.debug("looking good");
 	                	}
 	                }
 	                else if (subjects.length > 1) {
-	                	Logger.info("Please select only one parent.");
+	                	Logger.debug("Please select only one parent.");
 	    	  			flash("message", "Please select only one parent.");
-	    	  			return info(filledForm);
+	    	  			return info(filledForm, id);
 	                }
-	            }
-	            subjectFromDB.save();
-	            
-		        res = redirect(routes.SubjectController.view(subjectFromDB.id));
+	            }		        
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Collection " + filledForm.get().name + " has been updated");
+		        return redirect(routes.SubjectController.view(filledForm.get().id));
         	} else if (action.equals("delete")) {
-	        	Subject subject = Subject.findById(id);
-	        	subject.delete();
-    	        res = redirect(routes.SubjectController.index()); 
+        		Subject subject = Subject.findById(id);
+		        flash("message", "Subject " + filledForm.get().name + " has been deleted");
+            	subject.delete();
+        		return redirect(routes.SubjectController.index()); 
         	}
-        } 
-        return res;
+        }
+        return null;
     }
     
-    public static Result info(Form<Subject> form) {
-    	Logger.info("info");
-    	User user = User.findByEmail(request().username());
-		List<Subject> thisCollection = new ArrayList<Subject>();
-		Subject collection = form.get();
-		thisCollection.add(collection);
-		JsonNode node = getSubjectsData(thisCollection);
-		return ok(edit.render(form, user, node));
-    }
-	        
     /**
      * This method demonstrates targets associated with given subject.
      * @param url The URL identifier for subject
