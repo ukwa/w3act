@@ -10,12 +10,26 @@
 @main("", user) {
 
    	<div class="page-header">
-    	<h1><a href="@routes.NominationController.index()">Archivist Tasks > Nominations > </a>Nomination @nominationForm("name").value</h1>
+    	<h1><a href="@routes.NominationController.index()">Archivist Tasks > Nominations > </a>New Nomination</h1>
 	</div>
 
-    <br/>
     @warningmessage(flash)
+    
+    @if(nominationForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- nominationForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+	    
 	@helper.form(routes.NominationController.save()) {
+		<input type="hidden" name="id" value="@nominationForm("id").value">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -53,6 +67,7 @@
 									    'id -> "websiteUrl",
 									    'class -> "form-control",
 									    'placeholder -> "http://www.londonbusinessforum.com/",
+									    'type -> "url",
 									    '_error -> nominationForm("websiteUrl").error.map(_.withMessage("Enter Website URL"))
 									)(FieldConstructor(genericMandatoryInput.f), lang)
 				</div>
@@ -65,6 +80,7 @@
 					@inputText(nominationForm("email"),
 										'_label -> "E-mail:",
 									    'id -> "max.mustermann@@domain.commax.mustermann@@domain.com",
+									    'type -> "email",
 									    'class -> "form-control",
 									    'placeholder -> "max.mustermann@domain.com",
 									    '_error -> nominationForm("email").error.map(_.withMessage("Enter Email"))
@@ -76,7 +92,7 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					@inputText(nominationForm("tel"), '_label -> "Phone:", 'class -> "form-control", 'placeholder -> "0041889923456")
+					@inputText(nominationForm("tel"), '_label -> "Phone:", 'class -> "form-control", 'placeholder -> "0041889923456", 'type -> "tel")
 				</div>
 			</div>
      	</div>
@@ -92,14 +108,10 @@
      	<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Nominated Website Owner:</label>
-				    <div class="col-sm-6">
-				    @if(nominationForm("nominatedWebsiteOwner").value != null && nominationForm("nominatedWebsiteOwner").value) {
-		                <input type="checkbox" name="nominatedWebsiteOwner" checked/>
-		            } else {
-		                <input type="checkbox" name="nominatedWebsiteOwner"/>
-		            }
-					</div>
+					@helper.checkbox(nominationForm("nominatedWebsiteOwner"), 
+						args = 
+						'_label -> "Nominated Website Owner:" 
+					)(FieldConstructor(genericInput.f), lang)	
 				</div>
 			</div>
      	</div>	     
@@ -115,14 +127,10 @@
      	<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Nomination Checked:</label>
-				    <div class="col-sm-6">
-				    @if(nominationForm("nominationChecked").value != null && nominationForm("nominationChecked").value) {
-		                <input type="checkbox" name="nominationChecked" checked/>
-		            } else {
-		                <input type="checkbox" name="nominationChecked"/>
-		            }
-					</div>
+					@helper.checkbox(nominationForm("nominationChecked"), 
+						args = 
+						'_label -> "Nomination Checked:" 
+					)(FieldConstructor(genericInput.f), lang)	
 				</div>
 			</div>
      	</div>	     
@@ -130,10 +138,12 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
-				    <div class="col-sm-6">
-						<textarea class="form-control" name="notes" id="inputDescription" cols="100" rows="1">@nominationForm("notes").value</textarea>
-					</div>
+					@textarea(field = nominationForm("notes"),
+		 				args = 'rows -> 1, 'cols -> 100,
+						'_label -> "Description",
+						'id -> "inputDescription",
+						'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)					
 				</div>
 			</div>
      	</div>
@@ -141,7 +151,7 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					@inputText(nominationForm("nominationDateText"), '_label -> "Date:", 'class -> "form-control", 'id -> "log-date")
+					@inputText(nominationForm("nominationDateText"), '_label -> "Date:", 'class -> "form-control", 'type ->"date", 'id -> "log-date")
 				</div>
 			</div>
      	</div>	
@@ -150,7 +160,6 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
 					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>

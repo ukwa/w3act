@@ -54,16 +54,6 @@ public class NominationController extends AbstractController {
             routes.NominationController.list(0, "name", "asc", "")
         );
     
-    /**
-     * Display the nomination edit panel for this URL.
-     */
-    public static Result edit(Long id) {
-		Nomination nomination = Nomination.findById(id);
-		Form<Nomination> nominationForm = Form.form(Nomination.class);
-		nominationForm = nominationForm.fill(nomination);
-      	return ok(edit.render(nominationForm, User.findByEmail(request().username()), id));
-    }
-    
     public static Result view(Long id) {
         return ok(
                 view.render(
@@ -119,21 +109,6 @@ public class NominationController extends AbstractController {
     	}               
         
     }	   
-    
-    /**
-     * Add new nomination entry.
-     * @param nomination title
-     * @return
-     */
-    public static Result create(String name) {
-    	Nomination nomination = new Nomination();
-    	nomination.name = name;
-    	Form<Nomination> filledForm = nominationForm.fill(nomination);
-    	User user = User.findByEmail(request().username());
-      	return ok(
-	              edit.render(filledForm, user, null)
-	            );
-    }
     
     /**
      * This method loads new Nomination object using POST RESTful interface.
@@ -194,13 +169,37 @@ public class NominationController extends AbstractController {
         }
     }
     
+    public static Result newForm() {
+		Nomination nomination = new Nomination();
+		Form<Nomination> nominationForm = Form.form(Nomination.class);
+		nominationForm = nominationForm.fill(nomination);
+      	return ok(newForm.render(nominationForm, User.findByEmail(request().username())));
+    }
+    
+    public static Result edit(Long id) {
+		Nomination nomination = Nomination.findById(id);
+		Form<Nomination> nominationForm = Form.form(Nomination.class);
+		nominationForm = nominationForm.fill(nomination);
+      	return ok(edit.render(nominationForm, User.findByEmail(request().username()), id));
+    }
+
+    
     public static Result update(Long id) {
         Form<Nomination> filledForm = form(Nomination.class).bindFromRequest();
         User user = User.findByEmail(request().username());
-        if(filledForm.hasErrors()) {
+        if (filledForm.hasErrors()) {
             return badRequest(edit.render(filledForm, user, id));
-
         }
+        String nomDate = filledForm.get().nominationDateText;
+    	if (StringUtils.isNotEmpty(nomDate)) {
+			try {
+				Date date = Utils.INSTANCE.convertDate(nomDate);
+				filledForm.get().nominationDate = date;
+			} catch (ParseException e) {
+	  			flash("message", "Nomination Date (dd-mm-yy) - Incorrect Format");
+	            return badRequest(newForm.render(filledForm, user));
+			}
+    	}
         filledForm.get().update(id);
         flash("success", "Nomination " + filledForm.get().name + " has been updated");
     	return redirect(routes.NominationController.view(filledForm.get().id));
@@ -220,74 +219,25 @@ public class NominationController extends AbstractController {
     	
         if (StringUtils.isNotEmpty(action)) {
         	if (action.equals("save")) {    
-		        Form<Nomination> nominationForm = form(Nomination.class).bindFromRequest();
-		        if(nominationForm.hasErrors()) {
-		            return badRequest(newForm.render(nominationForm, user));
+		        Form<Nomination> filledForm = form(Nomination.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+		            return badRequest(newForm.render(filledForm, user));
 		        }
-//
-//    	String idForm = requestData.get("id");
-//    	Long id = null;
-//    	if (StringUtils.isNotEmpty(idForm)) {
-//    		id = Long.valueOf(idForm);
-//    	}
-//
-//        if (StringUtils.isNotEmpty(action)) {
-//        	if (action.equals("save")) {        	
-//            	Form<Nomination> filledForm = nominationForm.bindFromRequest();
-//            	User user = User.findByEmail(request().username());
-//	            if(filledForm.hasErrors()) {
-//	            	String missingFields = "";
-//	            	for (String key : filledForm.errors().keySet()) {
-//	            	    Logger.info("key: " +  key);
-//	            	    if (missingFields.length() == 0) {
-//	            	    	missingFields = key;
-//	            	    } else {
-//	            	    	missingFields = missingFields + ", " + key;
-//	            	    }
-//	            	}
-//	            	Logger.info("form errors size: " + filledForm.errors().size() + ", " + missingFields);
-//		  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-//		  					" Missing fields are: " + missingFields);
-//		            return badRequest(edit.render(filledForm, user, id));
-//
-////		  	      	return ok(edit.render(filledForm, user));
-//	            }
-//	            
-//	            Nomination nominationFromForm = filledForm.get();
-//	            id = Long.valueOf(nominationFromForm.id);
-//
-//	            Nomination nominationFromDB = Nomination.findById(id);
-//	            if (nominationFromDB == null) {
-//	            	nominationFromDB = new Nomination();
-//	            }
-//	            nominationFromDB.name = nominationFromForm.name;
-//	            nominationFromDB.title = nominationFromForm.title;
-//	            nominationFromDB.websiteUrl = nominationFromForm.websiteUrl;
-//	            nominationFromDB.email = nominationFromForm.email;
-//	            nominationFromDB.tel = nominationFromForm.tel;
-//	            nominationFromDB.address = nominationFromForm.address;
-//	            nominationFromDB.notes = nominationFromForm.notes;
-//    	    	nominationFromDB.justification = nominationFromForm.justification;
-	    	    
-                String nomDate = requestData.get("nomDate");
+
+                String nomDate = filledForm.get().nominationDateText;
             	if (StringUtils.isNotEmpty(nomDate)) {
-        			DateFormat formatter = new SimpleDateFormat("dd-MM-yy");
         			try {
-    					Date date = formatter.parse(nomDate);
-    					nominationForm.get().nominationDate = date;
+    					Date date = Utils.INSTANCE.convertDate(nomDate);
+    					filledForm.get().nominationDate = date;
     				} catch (ParseException e) {
     		  			flash("message", "Nomination Date (dd-mm-yy) - Incorrect Format");
-    		            return badRequest(newForm.render(nominationForm, user));
+    		            return badRequest(newForm.render(filledForm, user));
     				}
             	}
-		        nominationForm.get().save();
-		        flash("success", "Nomination " + nominationForm.get().name + " has been created");
-		    	return redirect(routes.NominationController.view(nominationForm.get().id));
+		        filledForm.get().save();
+		        flash("success", "Nomination " + filledForm.get().name + " has been created");
+		    	return redirect(routes.NominationController.view(filledForm.get().id));
             	
-//    	    	nominationFromDB.nominatedWebsiteOwner = nominationFromForm.nominatedWebsiteOwner;
-//    	    	nominationFromDB.nominationChecked = nominationFromForm.nominationChecked;
-//    	    	nominationFromDB.save();
-//    	    	res = redirect(routes.NominationController.view(nominationFromDB.id));
         	} else if(action.equals("delete")) {
             	Form<Nomination> filledForm = nominationForm.bindFromRequest();
             	Nomination nomination = Nomination.findById(filledForm.get().id);

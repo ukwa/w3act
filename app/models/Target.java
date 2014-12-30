@@ -1695,19 +1695,11 @@ public class Target extends UrlModel {
 	 * @return
 	 */
 	public static Page<Target> pageOrganisationTargets(int page, int pageSize,
-			String sortBy, String order, String filter, String organisation_url) {
-		Logger.debug("pageOrganisationTargets() organisation_url: "
-				+ organisation_url);
+			String sortBy, String order, String filter, Long organisationId) {
 
-		return find
-				.where()
-				.add(Expr.or(Expr.icontains(Const.FIELD_URL, filter),
-						Expr.icontains(Const.TITLE, filter)))
-				.eq(Const.ACTIVE, true)
-				.add(Expr.eq(Const.FIELD_NOMINATING_ORGANISATION,
-						organisation_url))
-				// .icontains(Const.FIELD_NOMINATING_ORGANISATION,
-				// organisation_url)
+		return find.fetch("fieldUrls").where().eq("active", true)
+				.add(Expr.or(Expr.icontains("fieldUrls.url", filter),Expr.icontains("title", filter)))
+				.add(Expr.eq("organisation.id", organisationId))
 				.orderBy(sortBy + " " + order).findPagingList(pageSize)
 				.setFetchAhead(false).getPage(page);
 	}

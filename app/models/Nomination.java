@@ -9,8 +9,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.apache.commons.lang3.StringUtils;
+import javax.persistence.Transient;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -35,28 +34,28 @@ public class Nomination extends ActModel {
     /**
      * The name of the nomination. Derived from UKWA Nomination Form > Full name
      */
-    @Required
+    @Required(message="Name is required")
     @Column(columnDefinition = "text")
     public String name;
     
     /**
      * The title of the nomination. Derived from UKWA Nomination Form > Title of website
      */
-    @Required
+    @Required(message="Website title is required")
     @Column(columnDefinition = "text")
     public String title;
     
     /**
      * The URL of the nomination. Derived from UKWA Nomination Form > URL of website
      */
-    @Required
+    @Required(message="Web address is required")
     @Column(columnDefinition = "text")
     public String websiteUrl;
     
     /**
      * The email of the nomination. Derived from UKWA Nomination Form > Email address
      */
-    @Required
+    @Required(message="Email is required")
     @Column(columnDefinition = "text")
     public String email;
     
@@ -99,6 +98,9 @@ public class Nomination extends ActModel {
     public Boolean nominationChecked;
     
     public Date nominationDate;
+    
+    @Transient
+    public String nominationDateText;
     
     public static final Model.Finder<Long, Nomination> find = new Model.Finder<Long, Nomination>(Long.class, Nomination.class);
 

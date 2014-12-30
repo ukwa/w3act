@@ -1,4 +1,4 @@
-@(organistionForm: Form[Organisation], user: User, id: Long)
+@(organistionForm: Form[Organisation], user: User)
 
 @import helper._
 @import bootstrap._
@@ -6,18 +6,9 @@
 @main("", user) {
     
    	<div class="page-header">
-	    <h1><a href="@routes.OrganisationController.index()">Users & Agencies > Organisations > </a>Organisation @organistionForm("title").value</h1>
+	    <h1><a href="@routes.OrganisationController.index()">Users & Agencies > Organisations > </a>New Organisation</h1>
 	</div>
 	
-	<ul class="nav nav-tabs">
-	   <li><a href="@routes.OrganisationController.view(id)">View</a></li>
-	   <li><a href="@routes.OrganisationController.sites(id)">Sites</a></li> 
-	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.OrganisationController.edit(id)">Edit</a></li>
-		   <li><a href="@routes.OrganisationController.admin(id)">User administration</a></li>
-	   }
-	</ul>
-    
 	@warningmessage(flash)
 	
     @if(organistionForm.hasErrors) {
@@ -33,8 +24,7 @@
 		</div>
 	}
 		
-	@helper.form(action=routes.OrganisationController.update(id)) {
-		<input type="hidden" name="id" value="@id">
+	@helper.form(action=routes.OrganisationController.save()) {
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -96,7 +86,6 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
 					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>

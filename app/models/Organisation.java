@@ -56,8 +56,8 @@ public class Organisation extends ActModel {
 		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
 	public List<Instance> instances;
 	
-    @Required
     @JsonProperty
+    @Required(message="Title is required")
     public String title;
 
     @JsonIgnore
@@ -75,7 +75,7 @@ public class Organisation extends ActModel {
 
     @JsonIgnore
     @JsonProperty
-    @Required
+    @Required(message="Abbreviation is required")
     @Column(name="affiliation")
     public String field_abbreviation;
 

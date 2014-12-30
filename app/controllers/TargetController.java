@@ -527,15 +527,21 @@ public class TargetController extends AbstractController {
      * @param collection_url Collection where targets search occurs
      */
     public static Result organisationTargets(int pageNo, String sortBy, String order, String filter, 
-    		String organisation_url) {
+    		Long organisationId) {
     	Logger.info("Targets.organisationTargets()");
     	
+    	User user = User.findByEmail(request().username());
+    	
+		Organisation organisation = Organisation.findById(organisationId);  
+    	
+		Page<Target> pageTargets = Target.pageOrganisationTargets(pageNo, 10, sortBy, order, filter, organisation.id);
+		
         return ok(
         		views.html.organisations.sites.render(
-        			Organisation.findByUrl(organisation_url),  
-        			User.findByEmail(request().username()), 
+        			organisation,
+        			user, 
         			filter, 
-        			Target.pageOrganisationTargets(pageNo, 10, sortBy, order, filter, organisation_url), 
+        			pageTargets, 
         			sortBy, 
         			order) 
         	);
@@ -616,14 +622,15 @@ public class TargetController extends AbstractController {
     	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
     	String sort = form.get(Const.SORT_BY);
     	String order = form.get(Const.ORDER);
-    	String organisation_url = form.get(Const.ORGANISATION_URL);
+    	String organisation_id = form.get("organisation_id");
+    	Long organisationId = Long.valueOf(organisation_id);
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
     			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.TargetController.organisationTargets(pageNo, sort, order, query, organisation_url));
+    	    	return redirect(routes.TargetController.organisationTargets(pageNo, sort, order, query, organisationId));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }

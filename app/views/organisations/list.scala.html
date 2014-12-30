@@ -95,7 +95,7 @@
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for organisation by name">Search</button>
 						@if(user.hasRole("sys_admin")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new organisation">Add</button>
+							<a class="btn btn-primary" href="@routes.OrganisationController.newForm()">Add</a>
 						}
 					</span>
 				</div>

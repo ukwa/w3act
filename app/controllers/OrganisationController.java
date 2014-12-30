@@ -20,6 +20,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import views.html.organisations.newForm;
 import views.html.organisations.admin;
 import views.html.organisations.edit;
 import views.html.organisations.list;
@@ -71,15 +72,7 @@ public class OrganisationController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
-    	    	Organisation organisation = new Organisation();
-    	    	organisation.title = query;
-    			Logger.info("add with url: " + organisation.url + ", and title: " + organisation.title);
-    			Form<Organisation> organisationForm = Form.form(Organisation.class);
-    			organisationForm = organisationForm.fill(organisation);
-    	        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (action.equals("search")) {
     	    	return redirect(routes.OrganisationController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -87,29 +80,6 @@ public class OrganisationController extends AbstractController {
     	}
     }
 
-    /**
-     * Add an organisation.
-     */
-    public static Result create(String title) {
-    	Organisation organisation = new Organisation();
-    	organisation.title = title;
-		Logger.info("add organisation with url: " + organisation.url + ", and title: " + organisation.title);
-		Form<Organisation> organisationForm = Form.form(Organisation.class);
-		organisationForm = organisationForm.fill(organisation);
-        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
-    }
-    
-    /**
-     * Display the organisation edit panel for this URL.
-     */
-    public static Result edit(Long id) {
-		Organisation organisation = Organisation.findById(id);
-		Form<Organisation> organisationForm = Form.form(Organisation.class);
-		organisationForm = organisationForm.fill(organisation);
-        return ok(edit.render(organisationForm, User.findByEmail(request().username())));
-
-    }
-    
     /**
      * filter for typeahead lookup
      */
@@ -162,8 +132,8 @@ public class OrganisationController extends AbstractController {
         return ok(view.render(organisation, user));
     }
 
-    public static Result sites(String url) {
-        return redirect(routes.TargetController.organisationTargets(0, Const.TITLE, Const.ASC, "", url));
+    public static Result sites(Long id) {
+        return redirect(routes.TargetController.organisationTargets(0, Const.TITLE, Const.ASC, "", id));
     }
     
     /**
@@ -171,10 +141,10 @@ public class OrganisationController extends AbstractController {
      * @param url
      * @return
      */
-    public static Result admin(String url) {
+    public static Result admin(Long id) {
         return ok(
                 admin.render(
-                        Organisation.findByUrl(url), User.findByEmail(request().username())
+                        Organisation.findById(id), User.findByEmail(request().username())
                 )
             );
     }
@@ -199,136 +169,85 @@ public class OrganisationController extends AbstractController {
         return ok();
     }
 
-	/**
-	 * This method prepares Organisation form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-    	Organisation organisation = new Organisation();
-    	organisation.id = Long.valueOf(getFormParam(Const.ID));
-    	organisation.url = getFormParam(Const.URL);
-    	organisation.title = getFormParam(Const.TITLE);
-	    if (getFormParam(Const.FIELD_ABBREVIATION) != null) {
-	    	organisation.field_abbreviation = getFormParam(Const.FIELD_ABBREVIATION);
-	    }
-	    if (getFormParam(Const.SUMMARY) != null) {
-	    	organisation.summary = getFormParam(Const.SUMMARY);
-	    }
-	    if (organisation.revision == null) {
-	    	organisation.revision = "";
-	    }
-	    if (getFormParam(Const.REVISION) != null) {
-	    	organisation.revision = getFormParam(Const.REVISION);
-	    }
-		Form<Organisation> organisationFormNew = Form.form(Organisation.class);
-		organisationFormNew = organisationFormNew.fill(organisation);
-      	return ok(
-	              edit.render(organisationFormNew, User.findByEmail(request().username()))
-	            );
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		Form<Organisation> organisationForm = Form.form(Organisation.class);
+		Organisation organisation = new Organisation();
+		organisationForm = organisationForm.fill(organisation);
+        return ok(newForm.render(organisationForm, user));
+    	
+    }
+
+    public static Result edit(Long id) {
+    	User user = User.findByEmail(request().username());
+    	Organisation organisation = Organisation.findById(id);
+		Form<Organisation> organisationForm = Form.form(Organisation.class);
+		organisationForm = organisationForm.fill(organisation);
+        return ok(edit.render(organisationForm, user, id));
+    }
+
+    public static Result info(Form<Organisation> form, Long id) {
+    	User user = User.findByEmail(request().username());
+		return badRequest(edit.render(form, user, id));
     }
     
-    /**
-     * This method saves new object or changes on given Organisation in the same object
-     * completed by revision comment. The "version" field in the Organisation object
-     * contains the timestamp of the change. 
-     * @return
-     */
+	public static Result newInfo(Form<Organisation> form) {
+		User user = User.findByEmail(request().username());
+        return badRequest(newForm.render(form, user));
+	}
+	
     public static Result save() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save organisation nid: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", title: " + getFormParam(Const.TITLE) + ", revision: " + getFormParam(Const.REVISION) + 
-        			", abbreviation: " + getFormParam(Const.FIELD_ABBREVIATION));
-        	Form<Organisation> organisationForm = Form.form(Organisation.class).bindFromRequest();
-            if(organisationForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : organisationForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    key = Utils.INSTANCE.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + organisationForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
-            }
-        	
-        	Organisation organisation = null;
-            boolean isExisting = true;
-            try {
-                try {
-                	if (Organisation.existsByUrl(getFormParam(Const.URL))) {
-                		organisation = Organisation.findByUrl(getFormParam(Const.URL));
-                	}
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	organisation = new Organisation();
-                	organisation.id = Long.valueOf(getFormParam(Const.ID));
-                	organisation.url = getFormParam(Const.URL);
-                }
-                if (organisation == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	organisation = new Organisation();
-                	organisation.id = Long.valueOf(getFormParam(Const.ID));
-                	organisation.url = getFormParam(Const.URL);
-                }
-                
-//            	if (StringUtils.isBlank(getFormParam(Const.TITLE)) 
-//            			|| StringUtils.isBlank(getFormParam(Const.FIELD_ABBREVIATION))) {
-//                	Logger.info("title: " + getFormParam(Const.TITLE) + ", abbreviation: " + getFormParam(Const.FIELD_ABBREVIATION));
-//                	Logger.info("Please fill out all the required fields, marked with a red star.");
-//                    return ok(infomessage.render("Please fill out all the required fields, marked with a red star."));
-//            	}    	
-        	    if (getFormParam(Const.TITLE) != null) {
-        	    	organisation.title = getFormParam(Const.TITLE);
-        	    }
-        	    if (getFormParam(Const.FIELD_ABBREVIATION) != null) {
-        	    	organisation.field_abbreviation = getFormParam(Const.FIELD_ABBREVIATION);
-        	    }
-        	    if (getFormParam(Const.SUMMARY) != null) {
-        	    	organisation.summary = getFormParam(Const.SUMMARY);
-        	    }
-        	    if (organisation.revision == null) {
-        	    	organisation.revision = "";
-        	    }
-                if (getFormParam(Const.REVISION) != null) {
-                	organisation.revision = getFormParam(Const.REVISION);
-                }
-            } catch (Exception e) {
-            	Logger.info("User not existing exception");
-            }
-            
-        	if (!isExisting) {
-            	boolean inDb = isInDb(organisation);
-                if (!inDb) {
-	               	Ebean.save(organisation);
-	    	        Logger.info("save organisation: " + organisation.toString());
-                } else {
-	    	        Logger.info("Organisation title already exists in database: " + organisation.toString());
-        	        return redirect(routes.OrganisationController.index()); 
-                }
-        	} else {
-           		Logger.info("update organisation: " + organisation.toString());
-               	Ebean.update(organisation);
+    	
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Form<Organisation> filledForm = form(Organisation.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
+		        filledForm.get().save();
+		        flash("message", "Organisation " + filledForm.get().title + " has been created");
+		        return redirect(routes.OrganisationController.view(filledForm.get().id));
         	}
-	        res = redirect(routes.OrganisationController.edit(organisation.id));
-        } 
-        if (delete != null) {
-        	Organisation organisation = Organisation.findByUrl(getFormParam(Const.URL));
-        	Ebean.delete(organisation);
-	        res = redirect(routes.OrganisationController.index()); 
         }
-        return res;
+        return null;    	
+    }
+    
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<Organisation> filledForm = form(Organisation.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Organisation " + filledForm.get().title + " has been updated");
+		        return redirect(routes.OrganisationController.view(filledForm.get().id));
+        	} else if (action.equals("delete")) {
+        		Organisation organisation = Organisation.findById(id);
+		        flash("message", "Organisation " + filledForm.get().title + " has been deleted");
+            	organisation.delete();
+            	
+        		return redirect(routes.OrganisationController.index()); 
+        	}
+        }
+        return null;
     }
 	
     /**
@@ -449,7 +368,7 @@ public class OrganisationController extends AbstractController {
             } catch (Exception e) {
             	Logger.info("User not existing exception");
             }
-	        res = redirect(routes.OrganisationController.admin(organisation.url));
+	        res = redirect(routes.OrganisationController.admin(organisation.id));
         } else {
         	res = ok();
         }

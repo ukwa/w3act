@@ -39,7 +39,7 @@
     }
     
     // Generate the link
-    routes.TargetController.organisationTargets(newPage, sortBy, order, searchurl, organisation.url)
+    routes.TargetController.organisationTargets(newPage, sortBy, order, searchurl, organisation.id)
     
 }
 
@@ -88,10 +88,10 @@
     
 	<ul class="nav nav-tabs">
 	   <li><a href="@routes.OrganisationController.view(organisation.id)">View</a></li>
-	   <li class="active"><a href="@routes.OrganisationController.sites(organisation.url)">Sites</a></li> 
+	   <li class="active"><a href="@routes.OrganisationController.sites(organisation.id)">Sites</a></li> 
 	   @if(user.hasRole("sys_admin")) {
 	   <li><a href="@routes.OrganisationController.edit(organisation.id)">Edit</a></li>
-	   <li><a href="@routes.OrganisationController.admin(organisation.url)">User administration</a></li>
+	   <li><a href="@routes.OrganisationController.admin(organisation.id)">User administration</a></li>
 	   }
 	</ul>
     
@@ -102,7 +102,7 @@
    				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
   					<input type="hidden" name="s" value="@currentSortBy">
   					<input type="hidden" name="o" value="@currentOrder">
-  					<input type="hidden" name="organisation_url" value="@organisation.url">
+  					<input type="hidden" name="organisation_id" value="@organisation.id">
 				<input type="text" class="form-control lookup-form-control" name="url" value="@searchurl" id="search-query">
 	   			<span class="input-group-btn">
 					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>

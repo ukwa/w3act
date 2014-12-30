@@ -8,10 +8,10 @@
 	
 	<ul class="nav nav-tabs">
 		<li><a href="@routes.OrganisationController.view(organisation.id)">View</a></li>
-		<li><a href="@routes.OrganisationController.sites(organisation.url)">Sites</a></li> 
+		<li><a href="@routes.OrganisationController.sites(organisation.id)">Sites</a></li> 
 		@if(user.hasRole("sys_admin")) {
 			<li><a href="@routes.OrganisationController.edit(organisation.id)">Edit</a></li>
-			<li class="active"><a href="@routes.OrganisationController.admin(organisation.url)">User administration</a></li>
+			<li class="active"><a href="@routes.OrganisationController.admin(organisation.id)">User administration</a></li>
 		}
 	</ul>
 
