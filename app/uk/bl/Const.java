@@ -413,16 +413,6 @@ public final class Const {
 		QUALITY_ISSUE;
     }
 	
-    /**
-     * E-mail type
-     */
-	public enum MailTemplateType {
-		PERMISSION_REQUEST,
-		THANK_YOU_ONLINE_PERMISSION_FORM,
-		THANK_YOU_ONLINE_NOMINATION_BY_OWNER,
-		THANK_YOU_ONLINE_NOMINATION_BY_NOMINATOR;
-    }
-	    
 	/**
 	 * Types of permission refusal.
 	 */
@@ -956,6 +946,42 @@ public final class Const {
     		
     	}                	
     }
+	
+	public enum MailTemplateType {
+		PERMISSION_REQUEST("Permission Request"),
+		THANK_YOU_ONLINE_PERMISSION_FORM("Permission Acknowledgement"),
+		THANK_YOU_ONLINE_NOMINATION_BY_OWNER("Thank you nomination by Owner"),
+		THANK_YOU_ONLINE_NOMINATION_BY_NOMINATOR("Thank you nomination by Nominator");
+		
+        private String value;
+        
+        private MailTemplateType(String value) {
+            this.value = value;
+    }
+    
+    public String getValue() {
+    	return value;
+    }
+
+	public static MailTemplateType getMailTemplateType(String name) {
+		for (MailTemplateType mailTemplate : MailTemplateType.values()) {
+			if (mailTemplate.name().equals(name)) {
+				return mailTemplate;
+			}
+		}
+		return null;
+	}
+	
+	public static Map<String, String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(MailTemplateType s : MailTemplateType.values()) {
+            options.put(s.name(), s.getValue());
+        }
+        return options;
+		
+	}                	
+    }
+
     
     /**
      * Help collections to read JSON lists like

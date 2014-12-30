@@ -1,7 +1,9 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,7 +38,7 @@ public class MailTemplate extends ActModel {
      * The name of the e-mail.
      */
     @Column(columnDefinition = "text")
-    @Required
+    @Required(message="Name is required")
     public String name;
        
     /**
@@ -56,7 +58,7 @@ public class MailTemplate extends ActModel {
      * E-mail from field.
      */
     @Column(columnDefinition = "text")
-    @Required
+    @Required(message="From email is required")
     public String fromEmail;
 
     /**
@@ -175,4 +177,12 @@ public class MailTemplate extends ActModel {
     public String toString() {
         return "MailTemplate(" + name + ")" + ", id:" + id;
     }
+    
+    public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(MailTemplate c: find.all()) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
+    }   
 }

@@ -1,4 +1,4 @@
-@(templateForm: Form[MailTemplate], user: User, id: Long, mailTemplates: Map[String,String])
+@(templateForm: Form[MailTemplate], user: User, mailTemplates: Map[String,String])
 
 @import helper._
 @import bootstrap._
@@ -6,16 +6,9 @@
 @main("", user) {
 
    	<div class="page-header">
-	    <h1><a href="@routes.MailTemplateController.index()">Archivist Tasks > Mail Templates ></a>Edit mail template @templateForm("name").value</h1>
+	    <h1><a href="@routes.MailTemplateController.index()">Archivist Tasks > Mail Templates ></a>New mail template</h1>
 	</div>
 
-	<ul class="nav nav-tabs">
-	   <li><a href="@routes.MailTemplateController.view(id)">View</a></li>
-	   @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.MailTemplateController.edit(id)">Edit</a></li>
-	   }
-	</ul>
-    
     @warningmessage(flash)
 
     @if(templateForm.hasErrors) {
@@ -31,8 +24,7 @@
 		</div>
 	}
 		    
-   	@helper.form(action=routes.MailTemplateController.update(id)) {
-		<input type="hidden" name="id" value="@id">
+   	@helper.form(action=routes.MailTemplateController.save()) {
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -136,7 +128,6 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>

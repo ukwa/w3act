@@ -2,6 +2,7 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
@@ -14,12 +15,12 @@ import models.User;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import views.html.flags.edit;
 import views.html.flags.*;
 
 import java.util.*;
@@ -45,18 +46,6 @@ public class FlagController extends AbstractController {
         );
     
 
-    /**
-     * Display the flag edit panel for this URL.
-     */
-    public static Result edit(Long id) {
-		Flag flag = Flag.findById(id);
-		Form<Flag> flagFormNew = Form.form(Flag.class);
-		flagFormNew = flagFormNew.fill(flag);
-      	return ok(
-	              edit.render(flagFormNew, User.findByEmail(request().username()))
-	            );
-    }
-    
     public static Result view(Long id) {
         return ok(
                 view.render(
@@ -64,7 +53,7 @@ public class FlagController extends AbstractController {
                 )
             );
     }
-    
+
     /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
@@ -92,19 +81,7 @@ public class FlagController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
-    	    	Flag flag = new Flag();
-    	    	flag.name = query;
-    	        flag.id = Target.createId();
-    	        flag.url = Const.ACT_URL + flag.id;
-    			Logger.info("add flag with url: " + flag.url + ", and name: " + flag.name);
-    			Form<Flag> flagFormNew = Form.form(Flag.class);
-    			flagFormNew = flagFormNew.fill(flag);
-    	      	return ok(
-    		              edit.render(flagFormNew, User.findByEmail(request().username()))
-    		            );
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (action.equals("search")) {
     	    	return redirect(routes.FlagController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -137,121 +114,88 @@ public class FlagController extends AbstractController {
         return res;
     }
         
-    /**
-     * Add new flag entry.
-     * @param flag title
-     * @return
-     */
-    public static Result create(String name) {
-    	Flag flag = new Flag();
-    	flag.name = name;
-        flag.id = Target.createId();
-        flag.url = Const.ACT_URL + flag.id;
-		Logger.info("add flag with url: " + flag.url + ", and name: " + flag.name);
-		Form<Flag> flagFormNew = Form.form(Flag.class);
-		flagFormNew = flagFormNew.fill(flag);
-      	return ok(
-	              edit.render(flagFormNew, User.findByEmail(request().username()))
-	            );
+
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		Form<Flag> flagForm = Form.form(Flag.class);
+		Flag flag = new Flag();
+		flagForm = flagForm.fill(flag);
+        return ok(newForm.render(flagForm, user));
+    	
     }
-      
-	/**
-	 * This method prepares Flag form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-    	Flag flag = new Flag();
-    	flag.id = Long.valueOf(getFormParam(Const.ID));
-    	flag.url = getFormParam(Const.URL);
-	    if (getFormParam(Const.DESCRIPTION) != null) {
-	    	flag.description = getFormParam(Const.DESCRIPTION);
-	    }
-		Form<Flag> flagFormNew = Form.form(Flag.class);
-		flagFormNew = flagFormNew.fill(flag);
-      	return ok(
-	              edit.render(flagFormNew, User.findByEmail(request().username()))
-	            );
+
+    public static Result edit(Long id) {
+    	User user = User.findByEmail(request().username());
+    	Flag flag = Flag.findById(id);
+		Form<Flag> flagForm = Form.form(Flag.class);
+		flagForm = flagForm.fill(flag);
+        return ok(edit.render(flagForm, user, id));
+    }
+
+    public static Result info(Form<Flag> form, Long id) {
+    	User user = User.findByEmail(request().username());
+		return badRequest(edit.render(form, user, id));
     }
     
-    /**
-     * This method saves new object or changes on given flag in the same object
-     * completed by revision comment. The "version" field in the flag object
-     * contains the timestamp of the change. 
-     * @return
-     */
+	public static Result newInfo(Form<Flag> form) {
+		User user = User.findByEmail(request().username());
+        return badRequest(newForm.render(form, user));
+	}
+	
     public static Result save() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save flag id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME));
-        	Form<Flag> flagForm = Form.form(Flag.class).bindFromRequest();
-            if(flagForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : flagForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-//            	    key = Utils.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + flagForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
-            }
-        	Flag flag = null;
-            boolean isExisting = true;
-            try {
-                try {
-                	flag = Flag.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	flag = new Flag();
-                	flag.id = Long.valueOf(getFormParam(Const.ID));
-                	flag.url = getFormParam(Const.URL);
-                }
-                if (flag == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	flag = new Flag();
-                	flag.id = Long.valueOf(getFormParam(Const.ID));
-                	flag.url = getFormParam(Const.URL);
-                }
-                
-        	    if (getFormParam(Const.NAME) != null) {
-        	    	flag.name = getFormParam(Const.NAME);
-        	    }
-        	    if (getFormParam(Const.DESCRIPTION) != null) {
-        	    	flag.description = getFormParam(Const.DESCRIPTION);
-        	    }
-            } catch (Exception e) {
-            	Logger.info("Flag not existing exception");
-            }
-            
-        	if (!isExisting) {
-               	Ebean.save(flag);
-    	        Logger.info("save flag: " + flag.toString());
-        	} else {
-           		Logger.info("update flag: " + flag.toString());
-               	Ebean.update(flag);
+    	
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Form<Flag> filledForm = form(Flag.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
+		        filledForm.get().save();
+		        flash("message", "Flag " + filledForm.get().name + " has been created");
+		        return redirect(routes.FlagController.view(filledForm.get().id));
         	}
-	        return redirect(routes.FlagController.edit(flag.id));
-        } 
-        if (delete != null) {
-        	Flag flag = Flag.findByUrl(getFormParam(Const.URL));
-        	Ebean.delete(flag);
-	        res = redirect(routes.FlagController.index()); 
         }
-    	res = redirect(routes.FlagController.index()); 
-        return res;
-    }	   
+        return null;    	
+    }
+    
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<Flag> filledForm = form(Flag.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Flag " + filledForm.get().name + " has been updated");
+		        return redirect(routes.FlagController.view(filledForm.get().id));
+        	} else if (action.equals("delete")) {
+        		Flag flag = Flag.findById(id);
+		        flash("message", "Flag " + filledForm.get().name + " has been deleted");
+            	flag.delete();
+            	
+        		return redirect(routes.FlagController.index()); 
+        	}
+        }
+        return null;
+    }
+
 
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {

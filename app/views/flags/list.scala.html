@@ -97,7 +97,7 @@
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for flag by name">Search</button>
 						@if(user.hasRole("sys_admin")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new flag">Add</button>
+							<a class="btn btn-primary" href="@routes.FlagController.newForm()">Add</a>
 						}						
 					</span>
 				</div>

@@ -1,4 +1,4 @@
-@(flagForm: Form[Flag], user: User, id: Long)
+@(flagForm: Form[Flag], user: User)
 
 @import helper._
 @import bootstrap._
@@ -6,15 +6,8 @@
 @main("", user) {
 
    	<div class="page-header">
-    	<h1><a href="@routes.FlagController.index()">Taxonomies > Flags > </a>Flag @flagForm("name").value</h1>
+    	<h1><a href="@routes.FlagController.index()">Taxonomies > Flags > </a>New Flag</h1>
 	</div>
-
-	<ul class="nav nav-tabs">
-	   <li><a href="@routes.FlagController.view(id)">View</a></li>
-	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.FlagController.edit(id)">Edit</a></li>
-	   }
-	</ul>
 
 	@warningmessage(flash)
 	
@@ -31,8 +24,7 @@
 		</div>
 	}
 			
-	@helper.form(action=routes.FlagController.update(id)) {
-		<input type="hidden" name="id" value="@id">
+	@helper.form(action=routes.FlagController.save()) {
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -65,7 +57,6 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="btn-group">		
 						<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 			       </div>
 				</div>
 			</div>

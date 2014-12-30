@@ -4,7 +4,7 @@ mailtemplates:
 
     - !!models.MailTemplate
         name:         General
-        ttype:        Permission Request
+        ttype:        PERMISSION_REQUEST
         subject:      UK Web Archive
         placeHolders: URL, LINK
         fromEmail:    web-archivist@bl.uk
@@ -12,7 +12,7 @@ mailtemplates:
     
     - !!models.MailTemplate
         name:         Acknowledgement
-        ttype:        Permission Acknowledgement
+        ttype:        THANK_YOU_ONLINE_PERMISSION_FORM
         subject:      British Library UKWA Licence Received
         placeHolders: LICENCE
         fromEmail:    web-archivist@bl.uk
