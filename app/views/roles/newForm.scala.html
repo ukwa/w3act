@@ -1,4 +1,4 @@
-@(roleForm: Form[Role], user: User, id: Long, permissions: List[Permission])
+@(roleForm: Form[Role], user: User, permissions: List[Permission])
 
 @import helper._
 @import bootstrap._
@@ -8,25 +8,17 @@
 	@main("", user) {
 	
 	   	<div class="page-header">
-		    <h1><a href="@routes.RoleController.index()">Users & Agencies > Roles > </a>Role @roleForm("name").value</h1>
+		    <h1><a href="@routes.RoleController.index()">Users & Agencies > Roles > </a>New Role</h1>
 		</div>
 	
-		<ul class="nav nav-tabs">
-			<li><a href="@routes.RoleController.view(id)">View</a></li>
-			@if(user.hasRole("sys_admin")) {
-				<li class="active"><a href="@routes.RoleController.edit(id)">Edit</a></li>
-			  	<li><a href="@routes.RoleController.admin(id)">Role administration</a></li>
-		   	}
-		</ul>
-	    
 	    @warningmessage(flash)
 	    
-   	    @if(roleForm.hasErrors) {
+	    @if(roleForm.hasErrors) {
 			<div class="padding-20">
 				<div class="alert alert-warning alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 					@for(entry <- roleForm.errors.entrySet){
-						@for(error <- entry.getValue) {
+						@for(error <- entry.getValue){
 							@error.message<br />
 						}
 					}
@@ -34,10 +26,8 @@
 			</div>
 		}
 		
-	    @helper.form(action=routes.RoleController.update(id)) {
+	    @helper.form(action=routes.RoleController.save()) {
 		    
-		    <input type="hidden" name="id" value="@id">
-	
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -58,11 +48,7 @@
 						<div class="col-sm-6">
 				        	@for(permission <- permissions) {
 								<label class="checkbox-inline">
-									@if(roleForm.get.permissions.contains(permission)) {
-					                	<input type="checkbox" name="permissionsList" value="@permission.id" checked />
-					                } else {
-					                	<input type="checkbox" name="permissionsList" value="@permission.id" />
-					                }
+				                	<input type="checkbox" name="permissionsList" value="@permission.id" />
 					                 @permission.name
 				                </label>
 				            }
@@ -107,7 +93,6 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="btn-group">
 						<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 			       </div>
 				</div>
 			</div>

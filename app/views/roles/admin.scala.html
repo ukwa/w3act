@@ -27,7 +27,7 @@
 						<div class="col-sm-6">
 		        			@for(permission <- role.permissions) {
 								<label class="checkbox-inline">
-					                <input type="checkbox" name="permissionsList" value="@permission.id" checked /> @permission.name 
+				                	<input type="checkbox" name="assigned" value="@permission.id" /> @permission.name<br>
 								</label>
 							}
 						</div>
@@ -48,9 +48,9 @@
 				    <div class="col-sm-6">
 		                <label class="col-sm-6 control-label" style="color:green">NOT ASSIGNED PERMISSIONS</label>
 						<div class="col-sm-6">
-					        @for(notpermission <- Role.getNotAssignedPermissions(role.permissions)) {
+					        @for(permission <- Role.getNotAssignedPermissions(role.permissions)) {
 								<label class="checkbox-inline">
-					                <input type="checkbox" name="notPermissionsList" value="notpermission.id" checked /> @notpermission.name 
+				                	<input type="checkbox" name="unassigned" value="@permission.id" /> @permission.name<br>
 								</label>
 							}
 						</div>

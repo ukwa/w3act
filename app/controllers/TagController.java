@@ -4,12 +4,10 @@ import static play.data.Form.form;
 
 import java.util.List;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.Tag;
-import models.Target;
 import models.User;
 import play.Logger;
 import play.data.DynamicForm;
@@ -19,7 +17,6 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.tags.*;
 
 import java.util.*;
@@ -44,18 +41,6 @@ public class TagController extends AbstractController {
             routes.TagController.list(0, "name", "asc", "")
         );
     
-    /**
-     * Display the tag edit panel for this URL.
-     */
-    public static Result edit(Long id) {
-		Tag tag = Tag.findById(id);
-		Form<Tag> tagFormNew = Form.form(Tag.class);
-		tagFormNew = tagFormNew.fill(tag);
-      	return ok(
-	              edit.render(tagFormNew, User.findByEmail(request().username()))
-	            );
-    }
-    
     public static Result view(Long id) {
         return ok(
                 view.render(
@@ -63,7 +48,86 @@ public class TagController extends AbstractController {
                 )
             );
     }
+
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		Form<Tag> tagForm = Form.form(Tag.class);
+		Tag tag = new Tag();
+		tagForm = tagForm.fill(tag);
+        return ok(newForm.render(tagForm, user));
+    }
+
+    public static Result edit(Long id) {
+    	User user = User.findByEmail(request().username());
+    	Tag tag = Tag.findById(id);
+		Form<Tag> tagForm = Form.form(Tag.class);
+		tagForm = tagForm.fill(tag);
+        return ok(edit.render(tagForm, user, id));
+    }
+
+    public static Result info(Form<Tag> form, Long id) {
+    	User user = User.findByEmail(request().username());
+		return badRequest(edit.render(form, user, id));
+    }
     
+	public static Result newInfo(Form<Tag> form) {
+		User user = User.findByEmail(request().username());
+        return badRequest(newForm.render(form, user));
+	}
+	
+    public static Result save() {
+    	
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Form<Tag> filledForm = form(Tag.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
+		        filledForm.get().save();
+		        flash("message", "Tag " + filledForm.get().name + " has been created");
+		        return redirect(routes.TagController.view(filledForm.get().id));
+        	}
+        }
+        return null;    	
+    }
+    
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<Tag> filledForm = form(Tag.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Tag " + filledForm.get().name + " has been updated");
+		        return redirect(routes.TagController.view(filledForm.get().id));
+        	} else if (action.equals("delete")) {
+        		Tag tag = Tag.findById(id);
+		        flash("message", "Tag " + filledForm.get().name + " has been deleted");
+            	tag.delete();
+            	
+        		return redirect(routes.TagController.index()); 
+        	}
+        }
+        return null;
+    }    
     /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
@@ -91,19 +155,7 @@ public class TagController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
-    	    	Tag tag = new Tag();
-    	    	tag.name = query;
-    	        tag.id = Target.createId();
-    	        tag.url = Const.ACT_URL + tag.id;
-    			Logger.info("add tag with url: " + tag.url + ", and name: " + tag.name);
-    			Form<Tag> tagFormNew = Form.form(Tag.class);
-    			tagFormNew = tagFormNew.fill(tag);
-    	      	return ok(
-    		              edit.render(tagFormNew, User.findByEmail(request().username()))
-    		            );
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (action.equals("search")) {
     	    	return redirect(routes.TagController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -135,126 +187,7 @@ public class TagController extends AbstractController {
     	}
         return res;
     }
-        
-    /**
-     * Add new tag entry.
-     * @param tag title
-     * @return
-     */
-    public static Result create(String name) {
-    	Tag tag = new Tag();
-    	tag.name = name;
-        tag.id = Target.createId();
-        tag.url = Const.ACT_URL + tag.id;
-		Logger.info("add tag with url: " + tag.url + ", and name: " + tag.name);
-		Form<Tag> tagFormNew = Form.form(Tag.class);
-		tagFormNew = tagFormNew.fill(tag);
-      	return ok(
-	              edit.render(tagFormNew, User.findByEmail(request().username()))
-	            );
-    }
-      
-	/**
-	 * This method prepares Collection form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-    	Tag tag = new Tag();
-    	tag.id = Long.valueOf(getFormParam(Const.ID));
-    	tag.url = getFormParam(Const.URL);
-	    if (getFormParam(Const.NAME) != null) {
-	    	tag.name = getFormParam(Const.NAME);
-	    }
-	    if (getFormParam(Const.DESCRIPTION) != null) {
-	    	tag.description = getFormParam(Const.DESCRIPTION);
-	    }
-		Form<Tag> tagFormNew = Form.form(Tag.class);
-		tagFormNew = tagFormNew.fill(tag);
-      	return ok(
-	              edit.render(tagFormNew, User.findByEmail(request().username()))
-	            );
-    }
     
-    /**
-     * This method saves new object or changes on given tag in the same object
-     * completed by revision comment. The "version" field in the tag object
-     * contains the timestamp of the change. 
-     * @return
-     */
-    public static Result save() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save tag id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME));
-        	Form<Tag> tagForm = Form.form(Tag.class).bindFromRequest();
-            if(tagForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : tagForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    key = Utils.INSTANCE.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + tagForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
-            }
-        	Tag tag = null;
-            boolean isExisting = true;
-            try {
-                try {
-                	tag = Tag.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	tag = new Tag();
-                	tag.id = Long.valueOf(getFormParam(Const.ID));
-                	tag.url = getFormParam(Const.URL);
-                }
-                if (tag == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	tag = new Tag();
-                	tag.id = Long.valueOf(getFormParam(Const.ID));
-                	tag.url = getFormParam(Const.URL);
-                }
-                
-        	    if (getFormParam(Const.NAME) != null) {
-        	    	tag.name = getFormParam(Const.NAME);
-        	    }
-        	    if (getFormParam(Const.DESCRIPTION) != null) {
-        	    	tag.description = getFormParam(Const.DESCRIPTION);
-        	    }
-            } catch (Exception e) {
-            	Logger.info("Tag not existing exception");
-            }
-            
-        	if (!isExisting) {
-               	Ebean.save(tag);
-    	        Logger.info("save tag: " + tag.toString());
-        	} else {
-           		Logger.info("update tag: " + tag.toString());
-               	Ebean.update(tag);
-        	}
-	        return redirect(routes.TagController.view(tag.id));
-        } 
-        if (delete != null) {
-        	Tag tag = Tag.findByUrl(getFormParam(Const.URL));
-        	Ebean.delete(tag);
-	        res = redirect(routes.TagController.index()); 
-        }
-    	res = redirect(routes.TagController.index()); 
-        return res;
-    }	   
-
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;

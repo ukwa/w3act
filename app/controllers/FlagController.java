@@ -114,7 +114,6 @@ public class FlagController extends AbstractController {
         return res;
     }
         
-
     public static Result newForm() {
     	User user = User.findByEmail(request().username());
 		Form<Flag> flagForm = Form.form(Flag.class);
@@ -195,7 +194,6 @@ public class FlagController extends AbstractController {
         }
         return null;
     }
-
 
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {

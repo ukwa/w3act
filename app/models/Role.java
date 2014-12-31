@@ -16,7 +16,6 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,7 +34,6 @@ import play.Logger;
 import play.data.validation.Constraints.Required;
 import uk.bl.Const;
 
-import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -58,7 +56,7 @@ public class Role extends ActModel {
 		inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
     public List<User> users;
  
-	@Required
+    @Required(message="Name is required")
 	@Column(columnDefinition = "text")
     public String name;
 
