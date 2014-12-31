@@ -534,17 +534,6 @@ public class Instance extends UrlModel {
 	}
 	
 	/**
-	 * This method returns a list of instances for given target url.
-	 * @return
-	 */
-	public static int findAllByTarget(String url) {
-		int res = 0;
-        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
-        res = ll.findRowCount();
-		return res;
-	}
-	
-	/**
 	 * This method evaluates the latest timestamp for given target.
 	 * @param url
 	 * @return timestamp value

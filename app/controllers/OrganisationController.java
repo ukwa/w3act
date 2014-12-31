@@ -21,7 +21,6 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.organisations.newForm;
 import views.html.organisations.admin;
 import views.html.organisations.edit;
@@ -150,26 +149,6 @@ public class OrganisationController extends AbstractController {
         return ok(admin.render(organisation, user, nonUsers));
     }
 
-    /**
-     * Rename a organisation.
-     */
-    public static Result rename(Long organisation) {
-        return ok(
-            Organisation.rename(
-                organisation, 
-                form().bindFromRequest().get("title")
-            )
-        );
-    }
-    
-    /**
-     * Delete a organisation.
-     */
-    public static Result delete(Long organisation) {
-        Organisation.find.ref(organisation).delete();
-        return ok();
-    }
-
     public static Result newForm() {
     	User user = User.findByEmail(request().username());
 		Form<Organisation> organisationForm = Form.form(Organisation.class);
@@ -252,93 +231,6 @@ public class OrganisationController extends AbstractController {
     }
 	
     /**
-     * This method checks if organisation object with given title already
-     * exists in database.
-     * @param newOrganisation
-     * @return true if exists
-     */
-    public static boolean isInDb(Organisation newOrganisation) {
-    	boolean res = true;
-    	if (newOrganisation.title != null && newOrganisation.title.length() > 0) {
-    		/**
-    		 * Check if this organisation title already exists in database
-    		 */
-    		res = Organisation.existsByTitle(newOrganisation.title);
-    	}
-		Logger.info("isInDb() res: " + res);
-        return res;
-    }
-    
-    /**
-     * This method ensures that no multiple organisations with the same name can be stored in 
-     * database during the data import from the Drupal.
-     * @return
-     */
-    public static List<Object> skipExistingObjects(List<Object> newOrganisations) {
-    	List<Object> res = new ArrayList<Object>();
-    	
-    	/**
-    	 * Iterate over all new organisations that supposed to be stored in database
-    	 */
-    	Iterator<Object> newItr = newOrganisations.iterator();
-        while (newItr.hasNext()) {
-        	Organisation newOrganisation = (Organisation) newItr.next();
-        	boolean inDb = isInDb(newOrganisation);
-       		if (!inDb) {
-    			res.add(newOrganisation);
-    		}
-        }
-        return res;
-    }	   
-    
-    /**
-     * This method checks if given user belongs to given organisation. This objects 
-     * are linked by organisation URL.
-     * @param user
-     * @param organisation
-     * @return
-     */
-    private static boolean isOrganisationLink(User user, Organisation organisation) {
-    	boolean res = false;
-		if (user.affiliation != null && organisation.url != null 
-				&& user.affiliation.equals(organisation.url)) {
-			res = true;
-		} 
-		return res;
-	}
-    
-    /**
-     * This method adds link to passed organisation in given User object if 
-     * link does not already exists.
-     * @param user
-     * @param organisation
-     */
-    private static void addLink(User user, Organisation organisation) {
-//		Logger.info("flag true add link: " + user.name);
-    	if (!isOrganisationLink(user, organisation)) {
-    		user.affiliation = organisation.url;
-//    		user.updateOrganisation();
-        	Ebean.update(user);
-    	}
-	}
-    
-    /**
-     * This method removes link to passed organisation from given User object if 
-     * link exists.
-     * @param user
-     * @param organisation
-     */
-    private static void removeLink(User user, Organisation organisation) {
-//		Logger.info("flag false remove link: " + user.name);
-    	if (isOrganisationLink(user, organisation)) {
-    		Logger.info("remove link: " + user.name);
-    		user.affiliation = "";
-    		user.organisation = null;
-        	Ebean.update(user);
-    	}
-	}
-    
-    /**
      * This method implements administration for users associated with particular organisation.
      * @return
      */
@@ -351,29 +243,43 @@ public class OrganisationController extends AbstractController {
     	
         if (StringUtils.isNotEmpty(action)) {
         	if (action.equals("save")) {
+        		
 		        Long organisationId = Long.valueOf(requestData.get("id"));
 		        Organisation organisation = Organisation.findById(organisationId);
 		        
 		        Map<String, String[]> map = request().body().asFormUrlEncoded();
-		        String[] checkedVal = map.get("nonOrganisationUser");
-		        for (String check : checkedVal) {
-			        Logger.debug("check: " + check);
-		        	Long userId = Long.valueOf(check);
-		        	User user = User.findById(userId);
-		        	if (map.get(user.name) != null) {
-		        		boolean userFlag = BooleanUtils.toBoolean(map.get(user.name)[0]);
-		        		if (userFlag) {
-		                	addLink(user, organisation); 
-		        		} else {
-		                	removeLink(user, organisation); 
-		        		}
-		        	} else {
-	                	removeLink(user, organisation); 	                	
-		        	}
+		        
+		        // for adding
+		        String[] unassignedUsers = map.get("unassignedUsers");
+		        if (unassignedUsers != null) {
+			        for (String assign : unassignedUsers) {
+				        Logger.debug("assign" + assign);
+			        	Long userId = Long.valueOf(assign);
+			        	User user = User.findById(userId);
+			        	if (user != null) {
+			        		user.organisation = organisation;
+			        		user.affiliation = organisation.url;
+			        		user.save();
+			        	}
+			        }
+		        }
+		        // for removing
+		        String[] assignedUsers = map.get("assignedUsers");
+		        if (assignedUsers != null) {
+			        for (String unassign : assignedUsers) {
+				        Logger.debug("unassign: " + unassign);
+			        	Long userId = Long.valueOf(unassign);
+			        	User user = User.findById(userId);
+			        	if (user != null) {
+			        		user.organisation = null;
+			        		user.affiliation = null;
+			        		user.save();
+			        	}
+			        }
 		        }
 		        return redirect(routes.OrganisationController.admin(organisationId));
-        	}
-        }
-        return null;
+    		}
+		}
+    	return null;
     }
 }

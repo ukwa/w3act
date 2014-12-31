@@ -1,17 +1,17 @@
-@(user: User, admin: User)
+@(user: User, admin: User, roles: List[Role], organisations: List[Organisation])
 
 @main("", admin) {
     
 	<div class="page-header">
-    	<h1><a href="@routes.UserController.index()">Users & Agencies > Curators > </a>User @user.name (@Target.findAllforUser(user.url).size() targets)</h1>
+    	<h1><a href="@routes.UserController.index()">Users & Agencies > Curators > </a>User @user.name (@user.targets.size() targets)</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.UserController.view(user.id)">View</a></li>
-	   <li><a href="@routes.UserController.sites(user.url)">Targets</a></li> 
-	   @if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
-	   <li><a href="@routes.UserController.edit(user.id)">Edit</a></li>
-	   }
+		<li class="active"><a href="@routes.UserController.view(user.id)">View</a></li>
+		<li><a href="@routes.UserController.sites(user.id)">Targets</a></li> 
+		@if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
+			<li><a href="@routes.UserController.edit(user.id)">Edit</a></li>
+		}
 	</ul>
 	
 	<div class="padding-20">
@@ -54,12 +54,12 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Roles</label>
 					    <div class="col-sm-6">
-					        @for(role <- Role.findAll()) {
+					        @for(role <- roles) {
 								<label class="checkbox-inline">
-									@if(user.roles.contains(role)) {
-					                	<input type="checkbox" name="@role.name" value="true" checked disabled/>
+									@if(user.hasRole(role)) {
+				                		<input type="checkbox" name="role" value="@role.id" checked disabled />
 					                } else {
-					                	<input type="checkbox" name="@role.name" value="true" disabled/>
+				                		<input type="checkbox" name="role" value="@role.id" disabled />
 					                }
 					                 @role.name
 				                </label>
@@ -76,11 +76,11 @@
 					    <div class="col-sm-6">
 							<select name="organisation" id="nom-org" class="form-control">
 				            <option>None</option>
-								@for(organisation <- Organisation.findAll()) {
-									@if(organisation.title.equals(Organisation.findByUrl(user.affiliation).title)) {
-	             						<option selected disabled>@organisation.title</option>
+								@for(organisation <- organisations) {
+									@if(user.organisation.equals(organisation)) {
+	             						<option value="@organisation.id" selected disabled>@organisation.title</option>
 	         						} else {
-	                					<option disabled>@organisation.title</option>
+	                					<option value="@organisation.id" disabled>@organisation.title</option>
 									}					            
 				            	}
 							</select>
@@ -107,7 +107,7 @@
 					<div class="form-group">
 						<label for="targetCount" class="col-sm-6 control-label">Count of targets</label>
 					    <div class="col-sm-6">
-							<input class="form-control" name="targetCount" id="targetCount" type="text" value="@Target.findAllforUser(user.url).size()" readonly>
+							<input class="form-control" name="targetCount" id="targetCount" type="text" value="@user.targets.size()" readonly>
 						</div>
 					</div>
 				</div>

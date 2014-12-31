@@ -2,7 +2,6 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -30,6 +30,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.models.FieldModel;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -190,29 +191,6 @@ public class User extends ActModel {
         return find.all();
     }
 
-	/**
-     * This method checks whether user has a role by its id.
-     * @param roleName
-     * @return true if exists
-     */
-    public boolean hasRole(long roleId) {
-    	boolean res = false;
-//    	Logger.info("hasRole() role id: " + roleId + ", role_to_user.size(): " + role_to_user.size());
-    	if (roles != null && roles.size() > 0) {
-    		Iterator<Role> itr = roles.iterator();
-    		while (itr.hasNext()) {
-    			Role role = itr.next();
-//    	    	Logger.info("hasRole() role id: " + roleId + ", role_to_user id: " + role.id);
-    			if (role.id == roleId) {
-    				res = true;
-    				break;
-    			}
-    		}
-    	}
-//    	Logger.info("hasRole res: " + res);
-    	return res;
-    }
-    
     /**
      * This method checks whether user has a role by its name.
      * @param roleName
@@ -220,18 +198,15 @@ public class User extends ActModel {
      */
     public boolean hasRole(String roleName) {
     	boolean res = false;
-//    	Logger.info("hasRole: " + roleName);
-    	if (roleName != null && roleName.length() > 0) {
+    	if (StringUtils.isNotBlank(roleName)) {
     		Role role = Role.findByName(roleName);
-//        	Logger.info("role id: " + role.id);
-    		res = hasRole(role.id);
+    		res = this.hasRole(role);
     	}
     	return res;
     }
     
-    public List<? extends Role> getRoles()
-    {
-    	return roles;
+    public boolean hasRole(Role role) {
+    	return (this.roles != null && this.roles.contains(role));
     }
 
     /**
@@ -306,7 +281,7 @@ public class User extends ActModel {
      */
     public static List<User> findByNotEqualOrganisation(Long organisationId) {
     	List<User> res = new ArrayList<User>();
-        ExpressionList<User> ll = find.where().ne("organisation.id", organisationId);
+        ExpressionList<User> ll = find.where().add(Expr.or(Expr.isNull("organisation.id"), Expr.ne("organisation.id", organisationId)));
         res = ll.findList();
         return res;
     }
@@ -344,7 +319,7 @@ public class User extends ActModel {
      */
     public String calculate_membership() {
     	String res = "";
-//    	Logger.info("created: " + created + ", last_access: " + last_access + ", last_login: " + last_login);
+    	Logger.info("createdAt: " + createdAt + ", last_access: " + last_access + ", last_login: " + last_login);
     	try {
     		long timestampCreated = createdAt.getTime();
     		Date dateCreated = new Date(timestampCreated * 1000);

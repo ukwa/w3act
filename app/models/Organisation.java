@@ -19,7 +19,6 @@ import javax.persistence.Transient;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
-import uk.bl.Const.SiteStatus;
 import uk.bl.api.models.FieldModel;
 
 import com.avaje.ebean.ExpressionList;
@@ -434,7 +433,8 @@ public class Organisation extends ActModel {
         }
         return options;
 		
-	}	
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -127,7 +127,13 @@
 		<tbody>
         	@for(target <- currentPage.getList) {		              
 				<tr>
-					<td><a class="brand" href="@routes.TargetController.viewAct(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("fieldUrl")">@target.get_field_list_as_str("fieldUrl")</a></td>
+					<td>
+						<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a><br>
+						@for(fieldUrl <- target.fieldUrls) {
+							<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
+						}						
+					</td>
+					
 	   				@if(target.collections != null) { 
 		  				<td>
 						  	@for(taxonomy <- target.collections) {

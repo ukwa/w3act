@@ -36,7 +36,6 @@ import play.Logger;
 import play.Play;
 import play.data.DynamicForm;
 import play.data.Form;
-import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
@@ -649,19 +648,29 @@ public class TargetController extends AbstractController {
      * @param collection Taxonomy of type collection
      */
     public static Result userTargets(int pageNo, String sortBy, String order, String filter, 
-    		String user_url, String subject, String collection) {
-    	Logger.info("Targets.collectionTargets()");
+    		Long userId, Long subjectId, Long collectionId) {
+    	User curator = User.findById(userId);
+    	User user = User.findByEmail(request().username());
+    	
+    	Page<Target> pageTargets = Target.pageUserTargets(pageNo, 10, sortBy, order, filter, userId, subjectId, collectionId);
+    	
+    	List<Subject> subjects = Subject.findAllSubjects();
+    	List<Collection> collections = Collection.findAllCollections();
+    	
+    	Logger.debug("Targets.collectionTargets() " + userId + ", " + subjectId + ", " + collectionId);
     	
         return ok(
         		usersites.render(
-        			User.findByUrl(user_url),  
-        			User.findByEmail(request().username()), 
+        			curator,  
+        			user, 
         			filter, 
-        			Target.pageUserTargets(pageNo, 10, sortBy, order, filter, user_url, subject, collection), 
+        			pageTargets, 
         			sortBy, 
         			order,
-        			subject,
-        			collection)
+        			subjectId,
+        			collectionId,
+        			subjects,
+        			collections)
         	);
     }	        
         
@@ -675,30 +684,24 @@ public class TargetController extends AbstractController {
     	String action = form.get("action");
     	String query = form.get("url");
 
-    	String user_url = form.get(Const.USER_URL);
-    	int pageNo = Integer.parseInt(form.get(Const.PAGE_NO));
-    	String sort = form.get(Const.SORT_BY);
-    	String order = form.get(Const.ORDER);
+    	String user_id = form.get("userId");
+    	Long userId = Long.valueOf(user_id);
+    	
+    	int pageNo = Integer.parseInt(form.get("p"));
+    	String sort = form.get("s");
+    	String order = form.get("o");
 
-    	String subject_name = form.get(Const.FIELD_SUBJECT);
-    	String subject = "";
-    	if (subject_name != null && !subject_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			Logger.info("find subject for title: " + subject_name + ". " + subject_name.length());
-           		subject = Taxonomy.findByName(subject_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find subject for name: " + subject_name + ". " + e);
-    		}
-    	} 
-    	String collection_name = form.get(Const.FIELD_SUGGESTED_COLLECTIONS);
-    	String collection = "";
-    	if (collection_name != null && !collection_name.toLowerCase().equals(Const.NONE)) {
-    		try {
-    			collection = Collection.findByTitle(collection_name).url;
-    		} catch (Exception e) {
-    			Logger.info("Can't find collection for title: " + collection_name + ". " + e);
-    		}
-    	} 
+    	String subject = form.get("subjectId");
+    	Long subjectId = null;
+    	if (StringUtils.isNotBlank(subject)) {
+    		subjectId = Long.valueOf(subject);
+    	}
+    	
+    	String collection = form.get("collectionId");
+    	Long collectionId = null;
+    	if (StringUtils.isNotBlank(collection)) {
+    		collectionId = Long.valueOf(collection);
+    	}
     	
 //    	if (StringUtils.isBlank(query)) {
 //			Logger.info("Target name is empty. Please write name in search window.");
@@ -709,9 +712,9 @@ public class TargetController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.SEARCH.equals(action)) {
-    			Logger.info("searching " + pageNo + " " + sort + " " + order);
-    	    	return redirect(routes.TargetController.userTargets(pageNo, sort, order, query, user_url, subject, collection));
+    		if (action.equals("search")) {
+    			Logger.debug("searching " + pageNo + " " + sort + " " + order + " " + userId + ", " + subjectId + ", " + collectionId);
+    	    	return redirect(routes.TargetController.userTargets(pageNo, sort, order, query, userId, subjectId, collectionId));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }

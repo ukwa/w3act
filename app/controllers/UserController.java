@@ -2,9 +2,13 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import models.Organisation;
 import models.Role;
 import models.Target;
 import models.User;
@@ -14,11 +18,15 @@ import org.apache.commons.lang3.StringUtils;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.PasswordHash;
+import views.html.users.edit;
+import views.html.users.newForm;
 import views.html.users.list;
 import views.html.users.view;
 
@@ -34,7 +42,7 @@ public class UserController extends AbstractController {
      * Display the Curators.
      */
     public static Result index() {
-    	Logger.info("Curators.index()");
+    	Logger.debug("Curators.index()");
         return GO_HOME;
     }
     
@@ -51,7 +59,7 @@ public class UserController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("Curators.list() " + filter);
+    	Logger.debug("Curators.list() " + filter);
         return ok(
         	list.render(
         			"Curators", 
@@ -71,11 +79,11 @@ public class UserController extends AbstractController {
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get(Const.NAME);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
+		Logger.debug("query: " + query);
+		Logger.debug("action: " + action);
 		
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Curator's name is empty. Please write name in search window.");
+			Logger.debug("Curator's name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.UserController.list(0, "name", "asc", "")
@@ -89,17 +97,7 @@ public class UserController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
-    	    	User user = new User();
-    	    	user.name = query;
-    	    	user.roles = Role.setDefaultRole();
-    	        user.email = user.name + "@bl.uk";
-    	        Logger.info("add curator entry with url: " + user.url + ", and name: " + user.name);
-    			Form<User> userForm = Form.form(User.class);
-    			userForm = userForm.fill(user);
-    	        return ok(views.html.users.edit.render(userForm, User.findByEmail(request().username())));    			
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (action.equals("search")) {
     	    	return redirect(routes.UserController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -107,30 +105,6 @@ public class UserController extends AbstractController {
     	}
     }
     
-    /**
-     * Add an organisation.
-     */
-    public static Result create(String title) {
-
-    	User user = new User();
-    	user.name = title;
-        user.id = Target.createId();
-        user.url = Const.ACT_URL + user.id;
-    	user.roles = Role.setDefaultRole();
-        user.email = user.name + "@bl.uk";
-        Logger.info("add curator with url: " + user.url + ", and name: " + user.name);
-		Form<User> userForm = Form.form(User.class);
-		userForm = userForm.fill(user);
-        return ok(views.html.users.edit.render(userForm, User.findByEmail(request().username())));    			
-    }
-    
-    /**
-     * Add new user entry.
-     * @param user
-     * @return
-     */
-
-
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;
@@ -144,195 +118,269 @@ public class UserController extends AbstractController {
     public static Result view(Long id) {
     	User curator = User.findById(id);
     	User user = User.findByEmail(request().username());
-        return ok(view.render(curator, user));
+    	List<Role> roles = Role.findAll();
+    	List<Organisation> organisations = Organisation.findAll();
+        return ok(view.render(curator, user, roles, organisations));
     }
     
     public static Result viewAct(String url) {
     	User curator = User.findByUrl(url);
     	User user = User.findByEmail(request().username());
-        return ok(view.render(curator, user));
+    	List<Role> roles = Role.findAll();
+    	List<Organisation> organisations = Organisation.findAll();
+        return ok(view.render(curator, user, roles, organisations));
     }
 
     public static Result viewWct(String url) {
     	User curator = User.findByWct(url);
     	User user = User.findByEmail(request().username());
-        return ok(view.render(curator, user));
+    	List<Role> roles = Role.findAll();
+    	List<Organisation> organisations = Organisation.findAll();
+        return ok(view.render(curator, user, roles, organisations));
     }
     
-    /**
-     * Display the user edit panel for this URL.
-     */
-    public static Result edit(Long id) {
-		User user = User.findById(id);
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
 		Form<User> userForm = Form.form(User.class);
-		userForm = userForm.fill(user);
-        return ok(views.html.users.edit.render(userForm, User.findByEmail(request().username()))); 
+		User curator = new User();
+		userForm = userForm.fill(curator);
+		Map<String,String> roles = Role.options();
+		Map<String,String> organisations = Organisation.options();
+        return ok(newForm.render(userForm, user, roles, organisations));
+    }
+
+    public static Result edit(Long id) {
+    	User user = User.findByEmail(request().username());
+		User curator = User.findById(id);
+		Form<User> userForm = Form.form(User.class);
+		userForm = userForm.fill(curator);
+		Map<String,String> roles = Role.options();
+		Map<String,String> organisations = Organisation.options();
+        return ok(edit.render(userForm, user, id, roles, organisations)); 
+    }
+
+    public static Result info(Form<User> form, Long id) {
+    	User user = User.findByEmail(request().username());
+		Map<String,String> roles = Role.options();
+		Map<String,String> organisations = Organisation.options();
+		return badRequest(edit.render(form, user, id, roles, organisations));
     }
     
-    public static Result sites(String url) {
-        return redirect(routes.TargetController.userTargets(0, "title", "asc", "", url, "", ""));
-    }
-    
-    /**
-     * This method saves changes on given curator in the same object
-     * completed by revision comment. The "version" field in the User object
-     * contains the timestamp of the change. 
-     * @return
-     */
+	public static Result newInfo(Form<User> form) {
+		User user = User.findByEmail(request().username());
+		Map<String,String> roles = Role.options();
+		Map<String,String> organisations = Organisation.options();		
+
+		return badRequest(newForm.render(form, user, roles, organisations));
+	}
+	
     public static Result save() {
-    	Result res = null;
-    	// TODO: KL TO FIX
-//        String save = getFormParam("save");
-//        String delete = getFormParam("delete");
-////        Logger.info("save: " + save);
-//        if (save != null) {
-//        	Logger.info("save updated user id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-//        			", name: " + getFormParam(Const.NAME) + ", roles: " + getFormParam(Const.ROLES) +
-//        			", revision: " + getFormParam(Const.REVISION) + ", email: " + getFormParam(Const.EMAIL) +
-//        			", organisation: " + getFormParam(Const.ORGANISATION));
-//        	Form<User> userForm = Form.form(User.class).bindFromRequest();
-//            if(userForm.hasErrors()) {
-//            	String missingFields = "";
-//            	for (String key : userForm.errors().keySet()) {
-//            	    Logger.debug("key: " +  key);
-//            	    key = Utils.showMissingField(key);
-//            	    if (missingFields.length() == 0) {
-//            	    	missingFields = key;
-//            	    } else {
-//            	    	missingFields = missingFields + Const.COMMA + " " + key;
-//            	    }
-//            	}
-//            	Logger.info("form errors size: " + userForm.errors().size() + ", " + missingFields);
-//	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-//	  					" Missing fields are: " + missingFields);
-//	  			return info();
-//            }
-//        	User user = null;
-//            boolean isExisting = true;
-//            try {
-//                try {
-//            	    user = User.findByUrl(getFormParam(Const.URL));
-//                } catch (Exception e) {
-//                	Logger.info("is not existing exception");
-//                	isExisting = false;
-//                	user = new User();
-//            	    user.id = Long.valueOf(getFormParam(Const.UID));
-//            	    user.url = getFormParam(Const.URL);
-//                }
-//                if (user == null) {
-//                	Logger.info("is not existing");
-//                	isExisting = false;
-//                	user = new User();
-//            	    user.id = Long.valueOf(getFormParam(Const.UID));
-//            	    user.url = getFormParam(Const.URL);
-//                }
-//                
-//        	    user.name = getFormParam(Const.NAME);
-//        	    if (getFormParam(Const.EMAIL) != null) {
-//        	    	try {
-//	        	    	if (getFormParam(Const.EMAIL).length() > 0 
-//	        	    			&& User.findByEmail(getFormParam(Const.EMAIL)) != null
-//	        	    			&& !getFormParam(Const.EMAIL).equals(user.email)) {
-//	        	    		String msg = "The given email '" + getFormParam(Const.EMAIL) + 
-//	                    			"' already exists in database. Please give another email or use existing user.";
-//	                    	Logger.info(msg);
-//	        	  			flash("message", msg);
-//	        	  			return info();
-//	        	    	}
-//        	    	} catch (Exception e) {
-//        	    		Logger.info("Given email is not yet in database");
-//        	    	}
-//        	    	user.email = getFormParam(Const.EMAIL);
-//        	    }
-//                if (getFormParam(Const.ORGANISATION) != null) {
-//                	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
-////                		Logger.info("organisation: " + getFormParam(Const.ORGANISATION));
-//                		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
-//                		user.updateOrganisation();
-//                	} else {
-//                		user.affiliation = Const.NONE;
-//                	}
-//                }
-//                String roleStr = "";
-//		        List<Role> roleList = Role.findAll();
-//		        Iterator<Role> roleItr = roleList.iterator();
-//		        while (roleItr.hasNext()) {
-//		        	Role role = roleItr.next();
-//	                if (getFormParam(role.name) != null) {
-//		                boolean roleFlag = Utils.getNormalizeBooleanString(getFormParam(role.name));
-//		                if (roleFlag) {
-//		                	if (roleStr.length() == 0) {
-//		                		roleStr = role.name;
-//		                	} else {
-//		                		roleStr = roleStr + ", " + role.name;
-//		                	}
-//		                }
-//	                }
-//		        }
-//                Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.id);
-//		        if (roleStr.length() == 0) {
-//		        	user.roles = null;
-//		        } else {
-//		        	user.roles = Role.convertUrlsToObjects(roleStr);
-//		        }
-////		        Logger.info("roleStr: "+ roleStr + ", user.role_to_user size: " + user.role_to_user.size());
-//                if (getFormParam(Const.REVISION) != null) {
-//                	user.revision = getFormParam(Const.REVISION);
-//                }
-//            } catch (Exception e) {
-//            	Logger.info("User not existing exception");
-//            }
-//            
-//        	if (!isExisting) {
-//                if (getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0) {
-//                	Logger.info("The password field is empty.");
-//    	  			flash("message", "The password field is empty.");
-//    	  			return info();
-//                } else {
-//        	    	user.password = getFormParam(Const.PASSWORD);
-//			    	try {
-//						user.password = PasswordHash.createHash(user.password);
-//					} catch (NoSuchAlgorithmException e) {
-//						Logger.info("change password - no algorithm error: " + e);
-//					} catch (InvalidKeySpecException e) {
-//						Logger.info("change password - key specification error: " + e);
-//					}
-//        	    }
-//               	Ebean.save(user);
-//    	        Logger.info("save user: " + user.toString());
-//        	} else {
-//                if (!(getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0
-//                		|| getFormParam(Const.OLD_PASSWORD) == null || getFormParam(Const.OLD_PASSWORD).length() == 0)) {
-//            		String oldInputPassword = getFormParam(Const.OLD_PASSWORD);
-//            		user.password = getFormParam(Const.PASSWORD);
-//			    	try {
-//	                	String userDbPassword = User.findByUid(user.id).password;
-//	            		boolean isValidOldPassword = PasswordHash.validatePassword(oldInputPassword, userDbPassword);
-//	            		if (!isValidOldPassword) {
-//	                    	Logger.info("The old password is not correct.");
-//	        	  			flash("message", "The old password is not correct.");
-//	        	  			return info();	            		
-//	        	  		} else {
-//	        	  			user.password = PasswordHash.createHash(user.password);
-//	        	  		}
-//					} catch (NoSuchAlgorithmException e) {
-//						Logger.info("change password - no algorithm error: " + e);
-//					} catch (InvalidKeySpecException e) {
-//						Logger.info("change password - key specification error: " + e);
-//					}
-//        	    }
-//           		Logger.info("update user: " + user.toString());
-//                Ebean.update(user);
-//        	}
-//	        res = redirect(routes.Curators.edit(user.id));
-//        } 
-//        if (delete != null) {
-//        	User user = User.findByUrl(getFormParam(Const.URL));
-//        	Ebean.delete(user);
-//	        res = redirect(routes.Curators.index()); 
-//        }
-        return res;
+    	
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Form<User> filledForm = form(User.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
+		        filledForm.get().save();
+		        flash("message", "Curator " + filledForm.get().name + " has been created");
+		        return redirect(routes.UserController.view(filledForm.get().id));
+        	}
+        }
+        return null;    	
     }
+    
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<User> filledForm = form(User.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+		    	String oldPassword = requestData.get("oldpassword");
+		    	String password = requestData.get("password");
+
+		    	Logger.debug(oldPassword + " " + password);
+		    	
+	            if (StringUtils.isEmpty(password) != StringUtils.isEmpty(oldPassword)) {
+	            	Logger.debug("To change password, both password fields need to be filled in.");
+//		  			flash("message", "The password field is empty.");
+    	            ValidationError e = new ValidationError("password", "To change password, both password fields need to be filled in.");
+    	            filledForm.reject(e);
+		  			return info(filledForm, id);
+	            } 
+
+	            /**
+	             * Change password only if both filled in
+	             */                
+	            if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(oldPassword)) {
+			    	try {
+			    		User dbUser = User.findById(id);
+	                	String userDbPassword = dbUser.password;
+	            		boolean isValidOldPassword = PasswordHash.validatePassword(oldPassword, userDbPassword);
+	            		if (!isValidOldPassword) {
+	                    	Logger.debug("The old password is not correct.");
+	        	  			flash("message", "The old password is not correct.");
+				  			return info(filledForm, id);
+	        	  		} else {
+	        	  			filledForm.get().password = PasswordHash.createHash(password);
+	        	  		}
+					} catch (NoSuchAlgorithmException e) {
+						Logger.debug("change password - no algorithm error: " + e);
+					} catch (InvalidKeySpecException e) {
+						Logger.debug("change password - key specification error: " + e);
+					}
+	    	    }		        
+		        
+//    	    	if (getFormParam(Const.EMAIL).length() > 0 
+//    			&& User.findByEmail(getFormParam(Const.EMAIL)) != null
+//    			&& !getFormParam(Const.EMAIL).equals(user.email)) {
+//    		String msg = "The given email '" + getFormParam(Const.EMAIL) + 
+//        			"' already exists in database. Please give another email or use existing user.";
+//        	Logger.debug(msg);
+//  			flash("message", msg);
+		        
+//              if (getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0) {
+//            	Logger.debug("The password field is empty.");
+//	  			flash("message", "The password field is empty.");
+//	  			return info();
+//            } else {
+//    	    	user.password = getFormParam(Const.PASSWORD);
+//		    	try {
+//					user.password = PasswordHash.createHash(user.password);
+//				} catch (NoSuchAlgorithmException e) {
+//					Logger.debug("change password - no algorithm error: " + e);
+//				} catch (InvalidKeySpecException e) {
+//					Logger.debug("change password - key specification error: " + e);
+//				}
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Curator " + filledForm.get().name + " has been updated");
+		        return redirect(routes.MailTemplateController.view(filledForm.get().id));
+        	} else if (action.equals("delete")) {
+        		User curator = User.findById(id);
+		        flash("message", "Curator " + filledForm.get().name + " has been deleted");
+		        curator.delete();
+            	
+        		return redirect(routes.MailTemplateController.index()); 
+        	}
+        }
+        return null;
+    }
+    
+    public static Result sites(Long id) {
+    	// user.targets?? or have to get again for paging
+        return redirect(routes.TargetController.userTargets(0, "title", "asc", "", id, 0L, 0L));
+    }
+    
+//    public static Result save() {
+//    	Result res = null;
+//
+////        	    user.name = getFormParam(Const.NAME);
+////        	    if (getFormParam(Const.EMAIL) != null) {
+////        	    	try {
+//
+////	        	  			return info();
+////	        	    	}
+////        	    	} catch (Exception e) {
+////        	    		Logger.debug("Given email is not yet in database");
+////        	    	}
+////        	    	user.email = getFormParam(Const.EMAIL);
+////        	    }
+////                if (getFormParam(Const.ORGANISATION) != null) {
+////                	if (!getFormParam(Const.ORGANISATION).toLowerCase().contains(Const.NONE)) {
+//////                		Logger.debug("organisation: " + getFormParam(Const.ORGANISATION));
+////                		user.affiliation = Organisation.findByTitle(getFormParam(Const.ORGANISATION)).url;
+////                		user.updateOrganisation();
+////                	} else {
+////                		user.affiliation = Const.NONE;
+////                	}
+////                }
+////                String roleStr = "";
+////		        List<Role> roleList = Role.findAll();
+////		        Iterator<Role> roleItr = roleList.iterator();
+////		        while (roleItr.hasNext()) {
+////		        	Role role = roleItr.next();
+////	                if (getFormParam(role.name) != null) {
+////		                boolean roleFlag = Utils.getNormalizeBooleanString(getFormParam(role.name));
+////		                if (roleFlag) {
+////		                	if (roleStr.length() == 0) {
+////		                		roleStr = role.name;
+////		                	} else {
+////		                		roleStr = roleStr + ", " + role.name;
+////		                	}
+////		                }
+////	                }
+////		        }
+////                Utils.removeAssociationFromDb(Const.ROLE_USER, Const.ID + "_" + Const.USER, user.id);
+////		        if (roleStr.length() == 0) {
+////		        	user.roles = null;
+////		        } else {
+////		        	user.roles = Role.convertUrlsToObjects(roleStr);
+////		        }
+//////		        Logger.debug("roleStr: "+ roleStr + ", user.role_to_user size: " + user.role_to_user.size());
+////                if (getFormParam(Const.REVISION) != null) {
+////                	user.revision = getFormParam(Const.REVISION);
+////                }
+////            } catch (Exception e) {
+////            	Logger.debug("User not existing exception");
+////            }
+////            
+////        	if (!isExisting) {
+//
+////        	    }
+////               	Ebean.save(user);
+////    	        Logger.debug("save user: " + user.toString());
+////        	} else {
+////                if (!(getFormParam(Const.PASSWORD) == null || getFormParam(Const.PASSWORD).length() == 0
+////                		|| getFormParam(Const.OLD_PASSWORD) == null || getFormParam(Const.OLD_PASSWORD).length() == 0)) {
+////            		String oldInputPassword = getFormParam(Const.OLD_PASSWORD);
+////            		user.password = getFormParam(Const.PASSWORD);
+////			    	try {
+////	                	String userDbPassword = User.findByUid(user.id).password;
+////	            		boolean isValidOldPassword = PasswordHash.validatePassword(oldInputPassword, userDbPassword);
+////	            		if (!isValidOldPassword) {
+////	                    	Logger.debug("The old password is not correct.");
+////	        	  			flash("message", "The old password is not correct.");
+////	        	  			return info();	            		
+////	        	  		} else {
+////	        	  			user.password = PasswordHash.createHash(user.password);
+////	        	  		}
+////					} catch (NoSuchAlgorithmException e) {
+////						Logger.debug("change password - no algorithm error: " + e);
+////					} catch (InvalidKeySpecException e) {
+////						Logger.debug("change password - key specification error: " + e);
+////					}
+////        	    }
+////           		Logger.debug("update user: " + user.toString());
+////                Ebean.update(user);
+////        	}
+////	        res = redirect(routes.Curators.edit(user.id));
+////        } 
+////        if (delete != null) {
+////        	User user = User.findByUrl(getFormParam(Const.URL));
+////        	Ebean.delete(user);
+////	        res = redirect(routes.Curators.index()); 
+////        }
+//        return res;
+//    }
     
     /**
      * This method checks if this User has a role passed by its id.

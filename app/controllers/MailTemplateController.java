@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import models.MailTemplate;
-import models.Target;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,13 +20,11 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.Const.MailTemplateType;
-import uk.bl.api.Utils;
 import views.html.mailtemplates.edit;
 import views.html.mailtemplates.list;
 import views.html.mailtemplates.view;
 import views.html.mailtemplates.newForm;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 

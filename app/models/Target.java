@@ -439,21 +439,6 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * This method retrieves all targets for given user.
-	 * 
-	 * @param url
-	 * @return
-	 */
-	public static List<Target> findAllforUser(String url) {
-		Logger.info("findAllforUser() url: " + url);
-		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> ll = find.where().eq(Const.AUTHOR, url);
-		res = ll.findList();
-		Logger.info("findAllforUser() number: " + res.size());
-		return res;
-	}
-
-	/**
 	 * This method retrieves all targets for given organisation.
 	 * 
 	 * @param url
@@ -789,41 +774,6 @@ public class Target extends UrlModel {
 ////		return subjects;
 //		throw new NotImplementedError();
 //	}
-
-	/**
-	 * This method retrieves value of the list field.
-	 * 
-	 * @param fieldName
-	 * @return list of strings as a String
-	 */
-	public String get_field_list_as_str(String fieldName) {
-		List<String> res = new ArrayList<String>();
-		try {
-			res.add(Const.EMPTY);
-			Field field = this.getClass().getField(fieldName);
-			String content = (String) field.get(this);
-			res = Arrays.asList(content.split("\\s*,\\s*"));
-		} catch (IllegalArgumentException e) {
-			Logger.info(e.getMessage());
-		} catch (IllegalAccessException e) {
-			Logger.info(e.getMessage());
-		} catch (SecurityException e) {
-			Logger.info(e.getMessage());
-		} catch (NoSuchFieldException e) {
-			Logger.info(e.getMessage());
-		} catch (Exception e) {
-			Logger.info(e.getMessage());
-		}
-		String res_str = res.toString().substring(1,
-				res.toString().length() - 1);
-		if (res_str.length() > Const.STRING_LIMIT) {
-			res_str = res_str.toString().substring(0, Const.STRING_LIMIT);
-		}
-		// System.out.println(res_str.length());
-		// String res_str = "test";
-		Logger.info("" + res_str);
-		return res_str;
-	}
 
 	/**
 	 * This method retrieves user name for the passed author URL.
@@ -1726,18 +1676,30 @@ public class Target extends UrlModel {
 	 * @return
 	 */
 	public static Page<Target> pageUserTargets(int page, int pageSize,
-			String sortBy, String order, String filter, String user_url,
-			String subject, String collection) {
+			String sortBy, String order, String filter, Long userId,
+			Long subjectId, Long collectionId) {
+		
+		Logger.debug("pageUserTargets " + userId + ", " + subjectId + ", " + collectionId);
+		
+		ExpressionList<Target> exp = find.fetch("fieldUrls").fetch("collections").fetch("subjects").fetch("authorUser").where();
+		
+		exp = exp.eq(Const.ACTIVE, true);
+			
+		if (userId != null) {
+			exp = exp.eq("authorUser.id", userId);
+		}
+		if (subjectId.longValue() != 0L) {
+			exp = exp.eq("subjects.id", subjectId);
+		}
+		if (collectionId.longValue() != 0L) {
+			exp = exp.eq("collections.id", collectionId);
+		}
+		
+		exp = exp.add(Expr.or(Expr.icontains("fieldUrls.url", filter), Expr.icontains("title", filter)));
 
-		return find
-				.where()
-				.add(Expr.or(Expr.icontains(Const.FIELD_URL, filter),
-						Expr.icontains(Const.TITLE, filter)))
-				.eq(Const.ACTIVE, true).eq(Const.AUTHOR, user_url)
-				.icontains(Const.FIELD_SUBJECT, subject)
-				.icontains(Const.FIELD_SUGGESTED_COLLECTIONS, collection)
-				.orderBy(sortBy + " " + order).findPagingList(pageSize)
-				.setFetchAhead(false).getPage(page);
+		Page<Target> pages = exp.query().orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
+
+		return pages;
 	}
 
 	/**

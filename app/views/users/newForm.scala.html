@@ -1,4 +1,4 @@
-@(userForm: Form[User], admin: User, id: Long, roles: Map[String,String], organisations: Map[String,String])
+@(userForm: Form[User], admin: User, roles: Map[String,String], organisations: Map[String,String])
 
 @import helper._
 @import bootstrap._
@@ -8,16 +8,9 @@
 	@main("", admin){
 	    
 	   	<div class="page-header">
-		    <h1><a href="@routes.UserController.index()">Users & Agencies > Curators > </a>User @userForm("name").value</h1>
+		    <h1><a href="@routes.UserController.index()">Users & Agencies > Curators > </a>New Curator</h1>
 		</div>
-		<ul class="nav nav-tabs">
-		   <li><a href="@routes.UserController.view(id)">View</a></li>
-		   <li><a href="@routes.UserController.sites(id)">Targets</a></li> 
-		   @if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
-			   <li class="active"><a href="@routes.UserController.edit(id)">Edit</a></li>
-		   }
-		</ul>
-	    
+
 	    @warningmessage(flash)
 	    
 	    @if(userForm.hasErrors) {
@@ -33,11 +26,8 @@
 			</div>
 		}
 		    
-	    @helper.form(action=routes.UserController.update(id)) {
+	    @helper.form(action=routes.UserController.save()) {
 	    
-			<input type="hidden" name="url" value="@userForm("url").value">
-			<input type="hidden" name="id" value="@id">
-	
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -51,17 +41,6 @@
 				</div>
 	     	</div>
 	     	
-			<!-- div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputName" class="col-sm-6 control-label">ID</label>
-					    <div class="col-sm-6">
-					          <input class="form-control" name="id" value="@userForm("id").value" size="30" readonly>
-						</div>
-					</div>
-				</div>
-	     	</div-->
-	
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -79,10 +58,12 @@
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						<label for="password" class="col-sm-6 control-label">Old Password</label>
-					    <div class="col-sm-6">
-							<input class="form-control" name="oldpassword" id="oldpassword" type="password" >
-						</div>					
+						@inputText(userForm("oldpassword"),
+							'_label -> "Old Password",
+						    'id -> "oldpassword",
+						    'type -> "password",
+						    'class -> "form-control"
+						)(FieldConstructor(genericMandatoryInput.f), lang)						
 					</div>
 				</div>
 	     	</div>
@@ -90,10 +71,12 @@
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						<label for="password" class="col-sm-6 control-label">New Password</label>
-					    <div class="col-sm-6">
-							<input class="form-control" name="password" id="password" type="password">
-						</div>
+						@inputText(userForm("password"),
+							'_label -> "New Password",
+						    'id -> "password",
+						    'type -> "password",
+						    'class -> "form-control"
+						)(FieldConstructor(genericMandatoryInput.f), lang)		
 					</div>
 				</div>
 	     	</div>
@@ -154,7 +137,6 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="btn-group">
 							<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 				       </div>
 					</div>
 				</div>

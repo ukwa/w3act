@@ -25,7 +25,7 @@
 		                <label class="col-sm-6 control-label" style="color:green">ASSIGNED USERS</label><br><br>
 						<div>
 				        	@for(user <- organisation.users) {
-				                <input type="checkbox" name="@user.name" value="true" checked/> @user.name<br>
+				                <input type="checkbox" name="assignedUsers" value="@user.id" /> @user.name<br>
 				            }
 						</div>
 					</div>
@@ -49,7 +49,7 @@
 						</div>
 						<div>
            			        @for(user <- nonOrganisations) {
-				                <input type="checkbox" name="nonOrganisationUser" value="@user.id"/> @user.name<br>
+				                <input type="checkbox" name="unassignedUsers" value="@user.id" /> @user.name<br>
 				            }
 						</div>
 					</div>

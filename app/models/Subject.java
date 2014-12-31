@@ -2,7 +2,6 @@ package models;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -15,12 +14,16 @@ import uk.bl.Const;
 @DiscriminatorValue("subject")
 public class Subject extends Taxonomy {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3535758346565569620L;
 
 	public static Model.Finder<Long,Subject> find = new Model.Finder<Long, Subject>(Long.class, Subject.class);
+
+    /**
+     * Retrieve all collections.
+     */
+    public static List<Subject> findAllSubjects() {
+        return find.orderBy("name asc").findList();
+    }
 
     public static Subject findById(Long id) {
     	Subject subject = find.byId(id);

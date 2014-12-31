@@ -18,7 +18,9 @@ package models;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -308,6 +310,15 @@ public class Role extends ActModel {
 		return StringUtils.join(names, ", ");
 	}
     
+	public static Map<String, String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(Role s : Role.findAll()) {
+            options.put(s.id.toString(), s.name);
+        }
+        return options;
+		
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

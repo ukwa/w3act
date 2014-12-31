@@ -31,7 +31,7 @@ public class Collection extends Taxonomy {
      * Retrieve all collections.
      */
     public static List<Collection> findAllCollections() {
-        return find.all();
+        return find.orderBy("name asc").findList();
     }
     
     /**

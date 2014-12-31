@@ -14,12 +14,10 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
-import uk.bl.Const;
 import uk.bl.api.PasswordHash;
 import views.html.passwords.edit;
 import views.html.infomessage;
 
-import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
