@@ -5,9 +5,8 @@ import static play.data.Form.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.Collection;
+import models.QaIssue;
 import models.Target;
-import models.Taxonomy;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +18,6 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.qa.list;
 
 import com.avaje.ebean.Page;
@@ -35,12 +33,12 @@ public class QAController extends AbstractController {
      * Display the QA dashboard.
      */
     public static Result index() {
-    	Logger.info("QA.index()");
+    	Logger.debug("QA.index()");
         return GO_HOME;
     }
     
     public static Result GO_HOME = redirect(
-            routes.QAController.list(0, "title", "asc", "", "act-", "")
+            routes.QAController.list(0, "title", "asc", "", "act-", 0)
         );
     
     /**
@@ -51,20 +49,32 @@ public class QAController extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter, String collection, String qaStatus) {
+    public static Result list(int pageNo, String sortBy, String order, String filter, String collection, Long qaIssueId) {
     	
-    	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
-    	Logger.info("Calling QAController.list() collection: " + collection + " - " + qaStatus);
+    	Page<Target> page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaIssueId);
+    	Logger.debug("Calling QAController.list() collection: " + collection + " - " + qaIssueId);
 //    	if (page.getTotalRowCount() == 0) {
 //    		pageNo = 0;
 //        	page = Target.pageQa(pageNo, 10, sortBy, order, filter, collection, qaStatus);
 //    	}
-    	Logger.info("Called QAController.list() collection: " + collection + " - " + qaStatus);
+    	Logger.debug("Called QAController.list() collection: " + collection + " - " + qaIssueId + " - " + page);
     	
 		User user = User.findByEmail(request().username());
-		JsonNode collectionData = getCollectionsData();
-		JsonNode subjectData = getSubjectsData();
-    	
+		
+        String collectionSelect = collection.replace("\"", "");
+    	List<Long> collectionIds = new ArrayList<Long>();
+        String[] collections = collectionSelect.split(", ");
+        for (String cId : collections) {
+        	if (StringUtils.isNotEmpty(cId)) {
+	        	Long collectionId = Long.valueOf(cId);
+	        	collectionIds.add(collectionId);
+        	}
+        }
+        JsonNode collectionData = getCollectionsDataByIds(collectionIds);
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+		
+		Logger.debug("qaIssue: " + qaIssueId);
+		
         return ok(
         	list.render(
         			"QA", 
@@ -75,7 +85,7 @@ public class QAController extends AbstractController {
         			sortBy, 
         			order,
         			collection,
-        			qaStatus, collectionData, subjectData)
+        			qaIssueId, collectionData, qaIssues)
 //        			Taxonomy.findQaStatus(qaStatus))
         	);
     }
@@ -86,24 +96,30 @@ public class QAController extends AbstractController {
      * @return
      */
     public static Result search() {
-//    	Logger.info("QAController.search");
+//    	Logger.debug("QAController.search");
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
     	String query = requestData.get("url");
-    	Logger.info("QAController.search() query: " + query);
+    	
+    	Logger.debug("QAController.search() query: " + query);
     	
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Target name is empty. Please write name in search window.");
+			Logger.debug("Target name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
-	        		routes.QAController.list(0, "title", "asc", "", "act-", "")
+	        		routes.QAController.list(0, "title", "asc", "", "", 0)
 	        );
     	}    	
 
-    	int pageNo = Integer.parseInt(requestData.get(Const.PAGE_NO));
-    	String sort = requestData.get(Const.SORT_BY);
-    	String order = requestData.get(Const.ORDER);
-    	String qaStatus = requestData.get("qaStatus");
+    	int pageNo = Integer.parseInt(requestData.get("p"));
+    	String sort = requestData.get("s");
+    	String order = requestData.get("o");
+    	String qaStatus = requestData.get("qaIssueId");
+    	Long qaStatusId = 0L;
+    	if (StringUtils.isNotBlank(qaStatus)) {
+    		qaStatusId = Long.valueOf(qaStatus);
+    	}
+    			
     	if (StringUtils.isEmpty(qaStatus)) {
     		qaStatus = "";
     	}
@@ -114,12 +130,8 @@ public class QAController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else if (action.equals("search")) {
-			Logger.info("searching " + pageNo + " " + sort + " " + order);
-//			if (query_collection == null || query_collection.length() == 0) {
-//			    query_collection = Const.ACT_URL;
-//			}
-			Logger.info("values: " + pageNo + " - " + sort + " - " + order + " - " + query + " - " + collectionSelect + " - " + qaStatus);
-	    	return redirect(routes.QAController.list(pageNo, sort, order, query, collectionSelect, qaStatus));
+			Logger.debug("searching: " + pageNo + " - " + sort + " - " + order + " - " + query + " - " + collectionSelect + " - " + qaStatusId);
+	    	return redirect(routes.QAController.list(pageNo, sort, order, query, collectionSelect, qaStatusId));
 	    } else {
 		      return badRequest("This action is not allowed");
     	}
@@ -157,7 +169,7 @@ public class QAController extends AbstractController {
 	    Const.QAIssueCategory[] resArray = Const.QAIssueCategory.values();
 	    for (int i=0; i < resArray.length; i++) {
 		    res.add(resArray[i].name());
-//		    Logger.info("add category: " + resArray[i].name());
+//		    Logger.debug("add category: " + resArray[i].name());
 	    }
 	    return res;
     }    
@@ -169,7 +181,7 @@ public class QAController extends AbstractController {
      */
 //    @BodyParser.Of(BodyParser.Json.class)
 //    public static Result getCollections(String collectionUrl) {
-//    	Logger.info("QA dashboard getCollections()");
+//    	Logger.debug("QA dashboard getCollections()");
 //    	if (collectionUrl == null || collectionUrl.length() == 0) {
 //    		collectionUrl = Const.ACT_URL;
 //    	}
@@ -177,9 +189,9 @@ public class QAController extends AbstractController {
 //        final StringBuffer sb = new StringBuffer();
 //    	List<Collection> collections = Collection.getFirstLevelCollections();
 //    	sb.append(getCollectionTreeElements(collections, collectionUrl, true));
-//    	Logger.info("collections main level size: " + collections.size());
+//    	Logger.debug("collections main level size: " + collections.size());
 //        jsonData = Json.toJson(Json.parse(sb.toString()));
-////    	Logger.info("getCollections() json: " + jsonData.toString());
+////    	Logger.debug("getCollections() json: " + jsonData.toString());
 //        return ok(jsonData);
 //    }
         
@@ -214,10 +226,10 @@ public class QAController extends AbstractController {
 //							getChildren(collection.url, collectionUrl) + "}");
 //	    		}
 //	    	}
-////	    	Logger.info("collectionList level size: " + collectionList.size());
+////	    	Logger.debug("collectionList level size: " + collectionList.size());
 //	    	sb.append("]");
 //	    	res = sb.toString();
-////	    	Logger.info("getTreeElements() res: " + res);
+////	    	Logger.debug("getTreeElements() res: " + res);
 //    	}
 //    	return res;
 //    }
@@ -250,7 +262,7 @@ public class QAController extends AbstractController {
 //    	if (childCollections.size() > 0) {
 //	    	sb.append(getCollectionTreeElements(childCollections, collectionUrl, false));
 //	    	res = sb.toString();
-////	    	Logger.info("getChildren() res: " + res);
+////	    	Logger.debug("getChildren() res: " + res);
 //    	}
 //    	return res;
 //    }

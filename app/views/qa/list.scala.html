@@ -1,4 +1,4 @@
-@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, currentCollection: String, currentQaStatus: String, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode)
+@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, currentCollection: String, qaIssueId: Long, collectionData :com.fasterxml.jackson.databind.JsonNode, qaIssues: List[QaIssue])
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -17,7 +17,7 @@
 			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect");
 
 			
-         	$('#qa_status').change(function(event) {
+/*          	$('#qa_status').change(function(event) {
         		console.log('qa_status');
         		event.preventDefault();
         		
@@ -28,7 +28,7 @@
 		    	$('#forms').append($(action));
        			$('#forms').submit();
         	});
-             
+ */             
              
 		});
 	</script>
@@ -60,7 +60,7 @@
     }
     
     // Generate the link
-    routes.QAController.list(newPage, sortBy, order, searchurl, currentCollection, currentQaStatus)
+    routes.QAController.list(newPage, sortBy, order, searchurl, currentCollection, qaIssueId)
     
 }
 
@@ -111,6 +111,7 @@
     <article class="targets">
     
 		@warningmessage(flash)
+		
 		@helper.form(action=routes.QAController.search, 'id -> "forms") {
 
 			<div class="alert alert-info">
@@ -129,65 +130,60 @@
 		
 		@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
 		
-				<div class="padding-20">
-				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filter Targets &#9650;</span></a>
-				</div>
-						
-				<div id="accordion">
-					<div id="filter-panel" class="panel-collapse collapse in">
-						<div class="panel-body">
-						
-							<div class="row">
-							
-								<div class="col-md-6">
-									<div class="form-group">									
-						              	<label for="collections" class="col-sm-6 control-label">By Collection</label>
-									    <div class="col-sm-12">
-											<div id="collectionTree"></div>
-					  							@if(currentCollection != null) {
-						  							<input type="hidden" id="collectionSelect" name="collectionSelect" value="@currentCollection">
-							                } else {
-					  							<input type="hidden" id="collectionSelect" name="collectionSelect" >
-							                }
-										</div>
+			<div class="padding-20">
+			    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filter Targets &#9650;</span></a>
+			</div>
+					
+			<div id="accordion">
+				<div id="filter-panel" class="panel-collapse collapse in">
+					<div class="panel-body">
+					
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">									
+					              	<label for="collections" class="col-sm-6 control-label">By Collection</label>
+								    <div class="col-sm-12">
+							  			<div id="collectionTree" style="padding:10px;"></div>
+			  							<input type="hidden" id="collectionSelect" name="collectionSelect" value="@currentCollection">
 									</div>
 								</div>
 							</div>
-							
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-						            	<label for="qa_status" class="col-sm-6 control-label">By QA Status</label>
-						            	<div class="col-sm-6">
-											<select name="qaStatus" class="form-control target-form-control" id="qa_status">
-									        	<option value="-1">None</option>
-									    		@for(qaStatusType <- uk.bl.Const.QAStatusType.values()) {
-						                 			@if(currentQaStatus != null && currentQaStatus.equals(qaStatusType.name)) {
-						                				<option value="@qaStatusType.name" selected>@qaStatusType.getValue</option>
-						                			} else {
-						                				<option value="@qaStatusType.name">@qaStatusType.getValue</option>
-						                			}
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+					            	<label for="qa_status" class="col-sm-6 control-label">By QA Status</label>
+					            	<div class="col-sm-6">
+										<select name="qaIssueId" class="form-control target-form-control" id="qa_status">
+								        	<option value="0">None</option>
+								    		@for(qaIssue <- qaIssues) {
+					                 			@if(qaIssueId != null && qaIssueId.longValue == qaIssue.id.longValue) {
+					                				<option value="@qaIssue.id" selected>@qaIssue.name</option>
+					                			} else {
+					                				<option value="@qaIssue.id">@qaIssue.name</option>
 					                			}
-											</select>
-										</div>
-						         	</div>
-								</div>
+				                			}
+										</select>
+									</div>
+					         	</div>
 							</div>
 						</div>
 					</div>
-				</div>		
-				} <!-- end of role check -->	
-		} <!-- end of search form -->
+				</div>
+			</div>		
+		} <!-- end of role check -->	
+	} <!-- end of search form -->
 		
-		@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
-		
+	@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
+	
 		@pagination
-    
+	   
 		<table class="table table-hover">
 			<thead>
 				<tr>
 					@header("title", "Target Name")
-					@header("url", "URL")
+					@header("fieldUrls.url", "URL")
 					<th>Instances to date</th>
 					<th>Most Recent</th>
 					<th>QA Status</th>
@@ -195,25 +191,25 @@
 			</thead>
 			<tbody>
 				@for(target <- currentPage.getList) {
-				<tr>
-					<td>
-						<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a><br>
-					</td>
-					<td>
-						@for(fieldUrl <- target.fieldUrls) {
-							<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
-						}						
-					</td>
-					<td><a class="brand" href="@routes.InstanceController.showByTarget(target.url)">@target.instances.size</a></td>
-					<td><a class="brand" href="@routes.InstanceController.edit(Instance.getLatestInstance(target.url).id)?tab=qa">@Instance.showLatestTimestamp(target.url)</a></td>
-					<td>@uk.bl.Const.QAStatusType.getQaStatus(Taxonomy.findQaStatus(target.qaIssue.url)).getValue()</td>
-				</tr>
+					<tr>
+						<td>
+							<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a><br>
+						</td>
+						<td>
+							@for(fieldUrl <- target.fieldUrls) {
+								<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
+							}						
+						</td>
+						<td><a class="brand" href="@routes.InstanceController.showByTarget(target.url)">@target.instances.size</a></td>
+						<td><a class="brand" href="@routes.InstanceController.edit(Instance.getLatestInstance(target.url).id)?tab=qa">@Instance.showLatestTimestamp(target.url)</a></td>
+						<td>@uk.bl.Const.QAStatusType.getQaStatus(Taxonomy.findQaStatus(target.qaIssue.url)).getValue()</td>
+					</tr>
 				}
 			</tbody>
 		</table>
 		 
 		@pagination
-		}
+	}
 
    </article>
     

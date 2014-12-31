@@ -104,9 +104,9 @@ GET     /permissions                        controllers.PermissionController.ind
 GET     /permissions/list					controllers.PermissionController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET		/permissions/search                 controllers.PermissionController.search()
 GET    	/permissions/filterbyjson/:name		controllers.PermissionController.filterByJson(name)
+GET     /permissions/new					controllers.PermissionController.newForm()
 GET     /permissions/:id            		controllers.PermissionController.view(id:Long)
 GET     /permissions/:id/edit       		controllers.PermissionController.edit(id:Long)
-GET     /permissions/create/:permission     controllers.PermissionController.create(permission)
 POST    /permissions                   		controllers.PermissionController.save()
 POST    /permissions/:id                   	controllers.PermissionController.update(id:Long)
 
@@ -218,7 +218,7 @@ GET     /contact                                controllers.ContactController.in
 POST    /contact/send              	            controllers.ContactController.send()
 
 GET     /qa                                     controllers.QAController.index()
-GET     /qa/list                                controllers.QAController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", query_collection ?= "", query_qa_status ?= "")
+GET     /qa/list                                controllers.QAController.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "", collection ?= "", qaIssueId:Long ?= 0)
 GET     /qa/search               		        controllers.QAController.search()
 GET    	/qa/filterbyjson/:name		            controllers.QAController.filterByJson(name)
 
@@ -240,13 +240,14 @@ GET     /contactpersons/:id             	controllers.ContactPersonController.vie
 POST    /contactpersons                 	controllers.ContactPersonController.save()
 POST    /contactpersons/:id                 controllers.ContactPersonController.update(id:Long)
 
-GET     /refusal                            controllers.PermissionRefusalController.index()
-GET     /refusal/search                    	controllers.PermissionRefusalController.search()
-GET    	/refusal/filterbyjson/:name	        controllers.PermissionRefusalController.filterByJson(name)
-GET     /refusal/:id                   		controllers.PermissionRefusalController.view(id:Long)
-GET     /refusal/:id/edit              		controllers.PermissionRefusalController.edit(id:Long)
-GET     /refusal/new/:refusal               controllers.PermissionRefusalController.create(refusal)
-POST    /refusal	                       	controllers.PermissionRefusalController.save()
+GET     /refusals                          	controllers.PermissionRefusalController.index()
+GET     /refusals/search                    controllers.PermissionRefusalController.search()
+GET    	/refusals/filterbyjson/:name	    controllers.PermissionRefusalController.filterByJson(name)
+GET     /refusals/new              			controllers.PermissionRefusalController.newForm()
+GET     /refusals/:id                   	controllers.PermissionRefusalController.view(id:Long)
+GET     /refusals/:id/edit              	controllers.PermissionRefusalController.edit(id:Long)
+POST    /refusals	                       	controllers.PermissionRefusalController.save()
+POST    /refusals/:id	                    controllers.PermissionRefusalController.update(id:Long)
 
 GET     /communicationlogs					controllers.CommunicationLogController.index()
 GET     /communicationlogs/new         		controllers.CommunicationLogController.newForm()

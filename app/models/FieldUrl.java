@@ -14,12 +14,9 @@ import javax.persistence.Version;
 
 import play.Logger;
 import play.db.ebean.Model;
-import play.db.ebean.Model.Finder;
-import uk.bl.Const;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
-import com.avaje.ebean.Expression;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity

@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import models.QaIssue;
-
 public final class Const {
   
     private Const() {}
@@ -413,19 +411,6 @@ public final class Const {
 		QUALITY_ISSUE;
     }
 	
-	/**
-	 * Types of permission refusal.
-	 */
-	public enum RefusalType {
-		THIRD_PARTY_CONTENT,
-		IMPRACTICALITY,
-		INTERNAL_REASONS,
-		LEGALISTIC_FORM,
-		NO_REASON,
-		PRIVACY,
-		OTHER;
-    }
-    	
 	/**
 	 * Types of communication logs.
 	 */
@@ -957,32 +942,72 @@ public final class Const {
         
         private MailTemplateType(String value) {
             this.value = value;
-    }
-    
-    public String getValue() {
-    	return value;
-    }
-
-	public static MailTemplateType getMailTemplateType(String name) {
-		for (MailTemplateType mailTemplate : MailTemplateType.values()) {
-			if (mailTemplate.name().equals(name)) {
-				return mailTemplate;
-			}
-		}
-		return null;
-	}
-	
-	public static Map<String, String> options() {
-        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        for(MailTemplateType s : MailTemplateType.values()) {
-            options.put(s.name(), s.getValue());
         }
-        return options;
-		
-	}                	
-    }
-
     
+	    public String getValue() {
+	    	return value;
+	    }
+	
+		public static MailTemplateType getMailTemplateType(String name) {
+			for (MailTemplateType mailTemplate : MailTemplateType.values()) {
+				if (mailTemplate.name().equals(name)) {
+					return mailTemplate;
+				}
+			}
+			return null;
+		}
+		
+		public static Map<String, String> options() {
+	        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+	        for(MailTemplateType s : MailTemplateType.values()) {
+	            options.put(s.name(), s.getValue());
+	        }
+	        return options;
+			
+		}                	
+	}
+
+	/**
+	 * Types of permission refusal.
+	 */
+	public enum RefusalType {
+		THIRD_PARTY_CONTENT("Third Party Content"),
+		IMPRACTICALITY("Impracticality"),
+		INTERNAL_REASONS("Internal Reasons"),
+		LEGALISTIC_FORM("Legalistic Form"),
+		NO_REASON("No Reason"),
+		PRIVACY("Privacy"),
+		OTHER("Other");
+		
+        private String value;
+        
+        private RefusalType(String value) {
+            this.value = value;
+        }
+    
+	    public String getValue() {
+	    	return value;
+	    }
+	
+		public static RefusalType getRefusalType(String name) {
+			for (RefusalType refusalType : RefusalType.values()) {
+				if (refusalType.name().equals(name)) {
+					return refusalType;
+				}
+			}
+			return null;
+		}
+		
+		public static Map<String, String> options() {
+	        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+	        for(RefusalType s : RefusalType.values()) {
+	            options.put(s.name(), s.getValue());
+	        }
+	        return options;
+			
+		}    		
+    }
+	
     /**
      * Help collections to read JSON lists like
      * "field_url":[{"url":"http:\/\/www.adoptionuk.org\/"}]

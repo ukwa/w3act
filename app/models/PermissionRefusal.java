@@ -29,7 +29,7 @@ public class PermissionRefusal extends ActModel {
     /**
      * The name of the refusal.
      */
-    @Required
+    @Required(message="Name is required")
     @Column(columnDefinition = "text")
     public String name;
     
@@ -53,11 +53,6 @@ public class PermissionRefusal extends ActModel {
     public String reason;
 
     public static final Model.Finder<Long, PermissionRefusal> find = new Model.Finder<Long, PermissionRefusal>(Long.class, PermissionRefusal.class);
-
-    public String getName()
-    {
-        return name;
-    }
 
     public static PermissionRefusal findByName(String name)
     {
@@ -111,19 +106,6 @@ public class PermissionRefusal extends ActModel {
     public static List<PermissionRefusal> findAll() {
         return find.all();
     }
-    
-    /**
-     * This method returns a list of all refusal type values for crawl permission record.
-     * @return
-     */
-    public static List<String> getAllTypes() {
-    	List<String> res = new ArrayList<String>();
-	    Const.RefusalType[] resArray = Const.RefusalType.values();
-	    for (int i=0; i < resArray.length; i++) {
-		    res.add(resArray[i].name());
-	    }
-	    return res;
-    }         
     
     public String toString() {
         return "PermissionRefusal(" + name + ")" + ", id:" + id;

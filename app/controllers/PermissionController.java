@@ -7,12 +7,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import models.MailTemplate;
 import models.Permission;
-import models.QaIssue;
-import models.Target;
 import models.User;
 import play.Logger;
 import play.data.DynamicForm;
@@ -22,8 +20,6 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.Const.QAIssueCategory;
-import uk.bl.api.Utils;
 import views.html.permissions.*;
 
 /**
@@ -36,7 +32,7 @@ public class PermissionController extends AbstractController {
      * Display the permission.
      */
     public static Result index() {
-    	Logger.info("Permissions.index()");
+    	Logger.debug("Permissions.index()");
         return GO_HOME;
     }
     
@@ -44,9 +40,14 @@ public class PermissionController extends AbstractController {
             routes.PermissionController.list(0, "name", "asc", "")
         );
     
-    /**
-     * Display the permission edit panel for this URL.
-     */
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		Form<Permission> permissionForm = Form.form(Permission.class);
+		Permission permissions = new Permission();
+		permissionForm = permissionForm.fill(permissions);
+        return ok(newForm.render(permissionForm, user));
+    }
+    
     public static Result edit(Long id) {
 		Permission permission = Permission.findById(id);
 		Form<Permission> permissionsForm = Form.form(Permission.class);
@@ -69,40 +70,32 @@ public class PermissionController extends AbstractController {
      */
     public static Result search() {
         
-    	DynamicForm request = form().bindFromRequest();
-    	String action = request.get("action");
-    	String query = request.get(Const.QUERY);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+    	String query = requestData.get(Const.QUERY);
+		Logger.debug("query: " + query);
+		Logger.debug("action: " + action);
     	
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Permission name is empty. Please write name in search window.");
+			Logger.debug("Permission name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.PermissionController.list(0, "name", "asc", "")
 	        );
     	}
 
-    	int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
-    	String sort = getQueryParam(Const.SORT_BY);
-    	String order = getQueryParam(Const.ORDER);
+    	int pageNo = 0;
+    	String page = requestData.get("p");
+    	if (StringUtils.isNotBlank(page)) {
+    		pageNo = Integer.valueOf(page);
+    	}
+    	String sort = requestData.get("s");
+    	String order = requestData.get("o");
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (action.equals("addentry")) {
-    	    	Permission permission = new Permission();
-    	    	permission.name = query;
-//    	        permission.id = Utils.INSTANCE.createId();
-//    	        permission.url = Const.ACT_URL + permission.id;
-    			Logger.info("add permission entry with url: " + permission.url + ", and name: " + permission.name);
-    			Form<Permission> permissionForm = Form.form(Permission.class);
-    			permissionForm = permissionForm.fill(permission);
-    	      	return ok(
-    		              newForm.render(permissionForm, User.findByEmail(request().username()))
-    		            );
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (action.equals("search")) {
     	    	return redirect(routes.PermissionController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -111,24 +104,6 @@ public class PermissionController extends AbstractController {
         
     }	   
     
-    /**
-     * Add new permission entry.
-     * @param permission title
-     * @return
-     */
-    public static Result create(String name) {
-    	Permission permission = new Permission();
-    	permission.name = name;
-//        permission.id = Target.createId();
-//        permission.url = Const.ACT_URL + permission.id;
-		Logger.info("add permission entry with url: " + permission.url + ", and name: " + permission.name);
-		Form<Permission> permissionForm = Form.form(Permission.class);
-		permissionForm = permissionForm.fill(permission);
-      	return ok(
-	              newForm.render(permissionForm, User.findByEmail(request().username()))
-	            );
-    }
-      
 	/**
 	 * This method prepares Permission form for sending info message
 	 * about errors 
@@ -152,17 +127,17 @@ public class PermissionController extends AbstractController {
     public static Result update(Long id) {
     	DynamicForm requestData = form().bindFromRequest();
         Form<Permission> filledForm = form(Permission.class).bindFromRequest();
-    	Logger.info("hasGlobalErrors: " + filledForm.hasGlobalErrors());
-    	Logger.info("hasErrors: " + filledForm.hasErrors());
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
 
     	String action = requestData.get("action");
 
-    	Logger.info("action: " + action);
+    	Logger.debug("action: " + action);
     	
         if (StringUtils.isNotEmpty(action)) {
         	if (action.equals("save")) {    
 		        if (filledForm.hasErrors()) {
-		        	Logger.info("hasErrors: " + filledForm.errors());
+		        	Logger.debug("hasErrors: " + filledForm.errors());
 		            return info(filledForm, id);
 		        }		        
 		        filledForm.get().update(id);
@@ -218,7 +193,7 @@ public class PermissionController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("Permissions.list()");
+    	Logger.debug("Permissions.list()");
         return ok(
         	list.render(
         			"Permissions", 

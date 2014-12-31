@@ -4,6 +4,7 @@ import static play.data.Form.form;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import models.PermissionRefusal;
 import models.Target;
@@ -20,8 +21,9 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import views.html.refusals.newForm;
 import views.html.refusals.edit;
-import views.html.refusals.refusals;
+import views.html.refusals.list;
 import views.html.refusals.view;
 
 import com.avaje.ebean.Ebean;
@@ -40,7 +42,7 @@ public class PermissionRefusalController extends AbstractController {
     public static Result index() {
         List<PermissionRefusal> resList = processFilterPermissionRefusals("");
         return ok(
-                refusals.render(
+                list.render(
                     "PermissionRefusals", User.findByEmail(request().username()), resList, ""
                 )
             );
@@ -51,12 +53,89 @@ public class PermissionRefusalController extends AbstractController {
      */
     public static Result edit(Long id) {
 		PermissionRefusal refusal = PermissionRefusal.findById(id);
-		Form<PermissionRefusal> refusalFormNew = Form.form(PermissionRefusal.class);
-		refusalFormNew = refusalFormNew.fill(refusal);
+		User user = User.findByEmail(request().username());
+		Form<PermissionRefusal> refusalForm = Form.form(PermissionRefusal.class);
+		refusalForm = refusalForm.fill(refusal);
+		Map<String,String> refusalTypes = Const.RefusalType.options();
       	return ok(
-	              edit.render(refusalFormNew, User.findByEmail(request().username()))
+	              edit.render(refusalForm, user, id, refusalTypes)
 	            );
     }
+    
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		Form<PermissionRefusal> refusalForm = Form.form(PermissionRefusal.class);
+		PermissionRefusal template = new PermissionRefusal();
+		refusalForm = refusalForm.fill(template);
+		Map<String,String> refusalTypes = Const.RefusalType.options();
+        return ok(newForm.render(refusalForm, user, refusalTypes));
+    }
+
+    public static Result info(Form<PermissionRefusal> form, Long id) {
+    	User user = User.findByEmail(request().username());
+		Map<String,String> refusalTypes = Const.RefusalType.options();
+		return badRequest(edit.render(form, user, id, refusalTypes));
+    }
+    
+	public static Result newInfo(Form<PermissionRefusal> form) {
+		User user = User.findByEmail(request().username());
+		Map<String,String> refusalTypes = Const.RefusalType.options();
+        return badRequest(newForm.render(form, user, refusalTypes));
+	}
+	
+    public static Result save() {
+    	
+    	DynamicForm requestData = form().bindFromRequest();
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		        Form<PermissionRefusal> filledForm = form(PermissionRefusal.class).bindFromRequest();
+		        if(filledForm.hasErrors()) {
+	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
+		        filledForm.get().save();
+		        flash("message", "Permission Refusal " + filledForm.get().name + " has been created");
+		        return redirect(routes.PermissionRefusalController.view(filledForm.get().id));
+        	}
+        }
+        return null;    	
+    }
+    
+    public static Result update(Long id) {
+    	DynamicForm requestData = form().bindFromRequest();
+        Form<PermissionRefusal> filledForm = form(PermissionRefusal.class).bindFromRequest();
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+
+    	String action = requestData.get("action");
+
+    	Logger.debug("action: " + action);
+    	
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {    
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Permission Refusal " + filledForm.get().name + " has been updated");
+		        return redirect(routes.PermissionRefusalController.view(filledForm.get().id));
+        	} else if (action.equals("delete")) {
+        		PermissionRefusal refusal = PermissionRefusal.findById(id);
+		        flash("message", "Permission Refusal " + filledForm.get().name + " has been deleted");
+		        refusal.delete();
+            	
+        		return redirect(routes.PermissionRefusalController.index()); 
+        	}
+        }
+        return null;
+    }    
     
     public static Result view(Long id) {
         return ok(
@@ -76,15 +155,16 @@ public class PermissionRefusalController extends AbstractController {
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get(Const.URL);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
+		Logger.debug("query: " + query);
+		Logger.debug("action: " + action);
     	
         List<PermissionRefusal> resList = processFilterPermissionRefusals(query);
+        
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Flag name is empty. Please write name in search window.");
+			Logger.debug("Refusal name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
             res = ok(
-            		refusals.render(
+            		list.render(
                         "PermissionRefusals", User.findByEmail(request().username()), resList, ""
                     )
                 );
@@ -93,21 +173,9 @@ public class PermissionRefusalController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.ADDENTRY.equals(action)) {
-    	    	PermissionRefusal refusal = new PermissionRefusal();
-    	    	refusal.name = query;
-    	        refusal.id = Target.createId();
-    	        refusal.url = Const.ACT_URL + refusal.id;
-    			Logger.info("add entry with url: " + refusal.url + ", and name: " + refusal.name);
-    			Form<PermissionRefusal> refusalFormNew = Form.form(PermissionRefusal.class);
-    			refusalFormNew = refusalFormNew.fill(refusal);
-    	      	return ok(
-    		              edit.render(refusalFormNew, User.findByEmail(request().username()))
-    		            );
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (action.equals("search")) {
                 res = ok(
-                		refusals.render(
+                		list.render(
                             "PermissionRefusals", User.findByEmail(request().username()), resList, query
                         )
                     );
@@ -125,154 +193,23 @@ public class PermissionRefusalController extends AbstractController {
      * @return
      */
     public static List<PermissionRefusal> processFilterPermissionRefusals(String filterUrl) {
-//    	Logger.info("process filter filterUrl: " + filterUrl);
+//    	Logger.debug("process filter filterUrl: " + filterUrl);
     	boolean isProcessed = false;
     	ExpressionList<PermissionRefusal> exp = PermissionRefusal.find.where();
     	List<PermissionRefusal> res = new ArrayList<PermissionRefusal>();
     	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
-    		Logger.info("name: " + filterUrl);
+    		Logger.debug("name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);
     		isProcessed = true;
     	}
     	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+    	Logger.debug("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
     		res = models.PermissionRefusal.findAll();
     	}
         return res;
-    }
-        
-    /**
-     * Add new refusal entry.
-     * @param refusal title
-     * @return
-     */
-    public static Result create(String name) {
-    	PermissionRefusal refusal = new PermissionRefusal();
-    	refusal.name = name;
-        refusal.id = Target.createId();
-        refusal.url = Const.ACT_URL + refusal.id;
-		Logger.info("add permission refusal with url: " + refusal.url + ", and name: " + refusal.name);
-		Form<PermissionRefusal> refusalFormNew = Form.form(PermissionRefusal.class);
-		refusalFormNew = refusalFormNew.fill(refusal);
-      	return ok(
-	              edit.render(refusalFormNew, User.findByEmail(request().username()))
-	            );
-    }
-      
-	/**
-	 * This method prepares Collection form for sending info message
-	 * about errors 
-	 * @return edit page with form and info message
-	 */
-	public static Result info() {
-    	PermissionRefusal refusal = new PermissionRefusal();
-    	refusal.id = Long.valueOf(getFormParam(Const.ID));
-    	refusal.url = getFormParam(Const.URL);
-	    if (getFormParam(Const.NAME) != null) {
-	    	refusal.name = getFormParam(Const.NAME);
-	    }
-	    if (getFormParam(Const.REFUSAL_DATE) != null) {
-	    	refusal.date = getFormParam(Const.REFUSAL_DATE);
-	    }
-	    if (getFormParam(Const.TYPE) != null) {
-	    	refusal.ttype = getFormParam(Const.TYPE);
-	    }
-	    if (getFormParam(Const.REASON) != null) {
-	    	refusal.reason = getFormParam(Const.REASON);
-	    }    	
-		Form<PermissionRefusal> refusalFormNew = Form.form(PermissionRefusal.class);
-		refusalFormNew = refusalFormNew.fill(refusal);
-      	return ok(
-	              edit.render(refusalFormNew, User.findByEmail(request().username()))
-	            );
-    }
-    
-    /**
-     * This method saves new object or changes on given refusal in the same object
-     * completed by revision comment. The "version" field in the refusal object
-     * contains the timestamp of the change. 
-     * @return
-     */
-    public static Result save() {
-    	Result res = null;
-        String save = getFormParam(Const.SAVE);
-        String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
-        if (save != null) {
-        	Logger.info("save refusal id: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
-        			", name: " + getFormParam(Const.NAME));
-        	Form<PermissionRefusal> refusalForm = Form.form(PermissionRefusal.class).bindFromRequest();
-            if(refusalForm.hasErrors()) {
-            	String missingFields = "";
-            	for (String key : refusalForm.errors().keySet()) {
-            	    Logger.debug("key: " +  key);
-            	    key = Utils.INSTANCE.showMissingField(key);
-            	    if (missingFields.length() == 0) {
-            	    	missingFields = key;
-            	    } else {
-            	    	missingFields = missingFields + Const.COMMA + " " + key;
-            	    }
-            	}
-            	Logger.info("form errors size: " + refusalForm.errors().size() + ", " + missingFields);
-	  			flash("message", "Please fill out all the required fields, marked with a red star." + 
-	  					" Missing fields are: " + missingFields);
-	  			return info();
-            }
-        	PermissionRefusal refusal = null;
-            boolean isExisting = true;
-            try {
-                try {
-                	refusal = PermissionRefusal.findByUrl(getFormParam(Const.URL));
-                } catch (Exception e) {
-                	Logger.info("is not existing exception");
-                	isExisting = false;
-                	refusal = new PermissionRefusal();
-                	refusal.id = Long.valueOf(getFormParam(Const.ID));
-                	refusal.url = getFormParam(Const.URL);
-                }
-                if (refusal == null) {
-                	Logger.info("is not existing");
-                	isExisting = false;
-                	refusal = new PermissionRefusal();
-                	refusal.id = Long.valueOf(getFormParam(Const.ID));
-                	refusal.url = getFormParam(Const.URL);
-                }
-                
-        	    if (getFormParam(Const.NAME) != null) {
-        	    	refusal.name = getFormParam(Const.NAME);
-        	    }
-        	    if (getFormParam(Const.REFUSAL_DATE) != null) {
-        	    	refusal.date = getFormParam(Const.REFUSAL_DATE);
-        	    }
-        	    if (getFormParam(Const.TYPE) != null) {
-        	    	refusal.ttype = getFormParam(Const.TYPE);
-        	    }
-        	    if (getFormParam(Const.REASON) != null) {
-        	    	refusal.reason = getFormParam(Const.REASON);
-        	    }
-            } catch (Exception e) {
-            	Logger.info("PermissionRefusal not existing exception");
-            }
-            
-        	if (!isExisting) {
-               	Ebean.save(refusal);
-    	        Logger.info("save refusal: " + refusal.toString());
-        	} else {
-           		Logger.info("update refusal: " + refusal.toString());
-               	Ebean.update(refusal);
-        	}
-	        return redirect(routes.PermissionRefusalController.edit(refusal.id));
-        } 
-        if (delete != null) {
-        	PermissionRefusal refusal = PermissionRefusal.findByUrl(getFormParam(Const.URL));
-        	Ebean.delete(refusal);
-	        res = redirect(routes.PermissionRefusalController.index()); 
-        }
-    	res = redirect(routes.PermissionRefusalController.index()); 
-        return res;
-    }	   
+    }  
 
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {

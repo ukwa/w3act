@@ -10,7 +10,7 @@
 	<script>
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")'
-			applySearch(context, 'permissions'); 
+			applySearch(context, 'refusals'); 
 		});
 	</script>
 }
@@ -33,13 +33,13 @@
     <article class="permissions">
 
 		<div id="forms">
-   			@helper.form(action=routes.PermissionRefusalController.search, 'class -> "form-inline") {
+   			@helper.form(routes.PermissionRefusalController.search()) {
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="url" placeholder="Enter Permission Refusal Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="search" title="Search for permission refusal by name">Search</button>
+						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for permission refusal by name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new permission refusal">Add</button>
+							<a class="btn btn-primary" href="@routes.PermissionRefusalController.newForm()">Add</a>
 						}
 					</span>
 				</div>

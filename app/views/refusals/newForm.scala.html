@@ -1,4 +1,4 @@
-@(refusalForm: Form[PermissionRefusal], user: User, id: Long, refusalTypes: Map[String,String])
+@(refusalForm: Form[PermissionRefusal], user: User, refusalTypes: Map[String,String])
 
 @import helper._
 @import bootstrap._
@@ -6,16 +6,9 @@
 @main("", user) {
 
    	<div class="page-header">
-	    <h1><a href="@routes.PermissionRefusalController.index()">Archivist Tasks > Permission Refusals ></a>Edit refusal @refusalForm("name").value</h1>
+	    <h1><a href="@routes.PermissionRefusalController.index()">Archivist Tasks > Permission Refusals ></a>New Refusal</h1>
 	</div>
 
-	<ul class="nav nav-tabs">
-	   <li><a href="@routes.PermissionRefusalController.view(id)">View</a></li>
-	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.PermissionRefusalController.edit(id)">Edit</a></li>
-	   }
-	</ul>
-    
     @warningmessage(flash)
     
        @if(refusalForm.hasErrors) {
@@ -30,8 +23,7 @@
 			</div>
 		</div>
 	}
-	@helper.form(action=routes.PermissionRefusalController.update(id)) {
-		<input type="hidden" name="id" value="@id">
+	@helper.form(action=routes.PermissionRefusalController.save()) {
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -93,7 +85,6 @@
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">		
 					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>

@@ -1230,32 +1230,44 @@ public class Target extends UrlModel {
 	 *            Filter applied on the name column
 	 */
 	public static Page<Target> pageQa(int page, int pageSize, String sortBy,
-			String order, String filter, String collection, String qaStatus) {
+			String order, String filter, String collections, Long qaIssueId) {
 
-		Logger.info("pageQa() collection: " + collection + ", qaStatus: "
-				+ qaStatus + ", filter: " + filter);
+		Logger.info("pageQa() collection: " + collections + ", qaStatus: "
+				+ qaIssueId + ", filter: " + filter);
 
-		return find
-				.where(Expr.and(Expr.or(
-						Expr.and(Expr.icontains(Const.FIELD_URL, filter),
-								Expr.eq(Const.ACTIVE, true)),
-						Expr.and(Expr.icontains(Const.TITLE, filter),
-								Expr.eq(Const.ACTIVE, true))),
-						Expr.and(
-								Expr.or(Expr
-										.eq("field_qa_status", qaStatus), // equals
-																				// 'act-1'
-										// like 'act-1,' like ', act-1'
-										Expr.or(Expr.startsWith(
-												Const.FIELD_QA_STATUS, qaStatus
-														+ ","), Expr.endsWith(
-												Const.FIELD_QA_STATUS, ",%"
-														+ qaStatus))),
-								Expr.icontains(
-										Const.FIELD_COLLECTION_CATEGORIES,
-										collection))))
-				.orderBy(sortBy + " " + order).findPagingList(pageSize)
-				.setFetchAhead(false).getPage(page);
+        String collectionSelect = collections.replace("\"", "");
+        Logger.debug("collectionSelect: " + collectionSelect);
+        List<Long> collectionIds = new ArrayList<Long>();
+        if (StringUtils.isNotEmpty(collectionSelect)) {
+            String[] collectionArray = collectionSelect.split(", ");
+            for (String c : collectionArray) {
+            	Long collectionId = Long.valueOf(c);
+            	collectionIds.add(collectionId);
+            }
+        }		     
+		
+		ExpressionList<Target> results = Target.find.fetch("fieldUrls").fetch("collections").where();
+		Page<Target> res = null;
+		results = results.eq(Const.ACTIVE, true);
+	
+		results = results.add(Expr.or(
+				Expr.icontains("fieldUrls.url", filter), 
+				Expr.icontains("title", filter))
+			);
+		
+		Logger.debug("qaIssueId: " + qaIssueId);
+		if (qaIssueId != 0) {
+			results = results.eq("qaIssue.id", qaIssueId);
+		}
+
+		results = results.in("collections.id", collectionIds);
+
+		results = results.eq("active", true);
+
+
+		res = results.query().orderBy(sortBy + " " + order).orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);        
+        
+		return res;
 	}
 
 	/**

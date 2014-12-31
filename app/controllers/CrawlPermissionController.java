@@ -32,7 +32,6 @@ import views.html.crawlpermissions.newForm;
 import views.html.crawlpermissions.edit;
 import views.html.crawlpermissions.view;
 import views.html.crawlpermissions.crawlpermissionpreview;
-import views.html.refusals.refusals;
 import views.html.crawlpermissions.list;
 
 import com.avaje.ebean.Ebean;
@@ -410,7 +409,7 @@ public class CrawlPermissionController extends AbstractController {
 
     public static Result refusals() {
         return ok(
-                refusals.render(
+        		views.html.refusals.list.render(
                 	"Refusals", User.findByEmail(request().username()), models.PermissionRefusal.findAll(), ""
                 )
             );

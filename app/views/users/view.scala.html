@@ -1,6 +1,15 @@
 @(user: User, admin: User, roles: List[Role], organisations: List[Organisation])
 
-@main("", admin) {
+@scripts = {
+	<script>
+		$(document).ready(function() {
+			$('#orgSelect').prop('disabled', true);
+		});
+	</script>
+	
+}
+
+@main("", admin, scripts) {
     
 	<div class="page-header">
     	<h1><a href="@routes.UserController.index()">Users & Agencies > Curators > </a>User @user.name (@user.targets.size() targets)</h1>
@@ -74,8 +83,8 @@
 					<div class="form-group">
 						<label for="nom-org" class="col-sm-6 control-label">Organisation</label>
 					    <div class="col-sm-6">
-							<select name="organisation" id="nom-org" class="form-control">
-				            <option>None</option>
+							<select name="organisation" id="orgSelect" class="form-control">
+				            	<option>None</option>
 								@for(organisation <- organisations) {
 									@if(user.organisation.equals(organisation)) {
 	             						<option value="@organisation.id" selected disabled>@organisation.title</option>

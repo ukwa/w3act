@@ -156,6 +156,7 @@ public class UserController extends AbstractController {
 		userForm = userForm.fill(curator);
 		Map<String,String> roles = Role.options();
 		Map<String,String> organisations = Organisation.options();
+		Logger.debug("roles: " + curator.roles.size());
         return ok(edit.render(userForm, user, id, roles, organisations)); 
     }
 
@@ -273,13 +274,13 @@ public class UserController extends AbstractController {
 		        
 		        filledForm.get().update(id);
 		        flash("message", "Curator " + filledForm.get().name + " has been updated");
-		        return redirect(routes.MailTemplateController.view(filledForm.get().id));
+		        return redirect(routes.UserController.view(filledForm.get().id));
         	} else if (action.equals("delete")) {
         		User curator = User.findById(id);
 		        flash("message", "Curator " + filledForm.get().name + " has been deleted");
 		        curator.delete();
             	
-        		return redirect(routes.MailTemplateController.index()); 
+        		return redirect(routes.UserController.index()); 
         	}
         }
         return null;
