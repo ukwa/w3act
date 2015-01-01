@@ -33,7 +33,7 @@ public class TagController extends AbstractController {
      * Display the role.
      */
     public static Result index() {
-    	Logger.info("Tags.index()");
+    	Logger.debug("Tags.index()");
         return GO_HOME;
     }
     
@@ -137,11 +137,11 @@ public class TagController extends AbstractController {
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get(Const.QUERY);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
+		Logger.debug("query: " + query);
+		Logger.debug("action: " + action);
     	
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Tag name is empty. Please write name in search window.");
+			Logger.debug("Tag name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.TagController.list(0, "name", "asc", "")
@@ -170,17 +170,17 @@ public class TagController extends AbstractController {
      * @return
      */
     public static List<Tag> processFilterTags(String filterUrl) {
-//    	Logger.info("process filter filterUrl: " + filterUrl);
+//    	Logger.debug("process filter filterUrl: " + filterUrl);
     	boolean isProcessed = false;
     	ExpressionList<Tag> exp = Tag.find.where();
     	List<Tag> res = new ArrayList<Tag>();
     	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
-    		Logger.info("name: " + filterUrl);
+    		Logger.debug("name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);
     		isProcessed = true;
     	}
     	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+    	Logger.debug("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
     		res = models.Tag.findAllTags();
@@ -207,7 +207,7 @@ public class TagController extends AbstractController {
      * @param filter Filter applied on Tags
      */
     public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("Tags.list()");
+    	Logger.debug("Tags.list()");
         return ok(
         	list.render(
         			"Tags", 

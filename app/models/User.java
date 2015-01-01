@@ -293,7 +293,7 @@ public class User extends ActModel {
      */
     public static List<User> findFilteredByUrl(String url) {
     	List<User> ll = new ArrayList<User>();
-//    	Logger.info("user findFilteredByUrl(): " + url);
+//    	Logger.debug("user findFilteredByUrl(): " + url);
     	if (url != null && url.length() > 0  && !url.equals(Const.NONE)) { 
             User user = find.where().eq(Const.URL, url).findUnique();
             ll.add(user);            
@@ -319,14 +319,14 @@ public class User extends ActModel {
      */
     public String calculate_membership() {
     	String res = "";
-    	Logger.info("createdAt: " + createdAt + ", last_access: " + last_access + ", last_login: " + last_login);
+    	Logger.debug("createdAt: " + createdAt + ", last_access: " + last_access + ", last_login: " + last_login);
     	try {
     		long timestampCreated = createdAt.getTime();
     		Date dateCreated = new Date(timestampCreated * 1000);
     		long timestampLastAccess = Long.valueOf(last_access);
     		Date dateLastAccess = new Date(timestampLastAccess * 1000);
-			Logger.info("date created: " + dateCreated);
-			Logger.info("date last access: " + dateLastAccess);
+			Logger.debug("date created: " + dateCreated);
+			Logger.debug("date last access: " + dateLastAccess);
 			 
 			DateTime dt1 = new DateTime(dateCreated);
 			DateTime dt2 = new DateTime(dateLastAccess);
@@ -336,10 +336,10 @@ public class User extends ActModel {
 		        .appendMonths().appendSuffix(" months ")
 		        .appendWeeks().appendSuffix(" weeks");
 			PeriodFormatter pf = formaterBuilder.toFormatter();
-//	        Logger.info(pf.print(period));
+//	        Logger.debug(pf.print(period));
 	        res = pf.print(period);
 		} catch (Exception e) {
-			Logger.info("date difference calculation error: " + e);
+			Logger.debug("date difference calculation error: " + e);
 		}
     	return res;
     }

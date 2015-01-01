@@ -26,7 +26,7 @@ public class TaxonomyController extends AbstractController {
 	 * Display the taxonomies.
 	 */
 	public static Result index() {
-		Logger.info("Taxonomies.index()");
+		Logger.debug("Taxonomies.index()");
 		return GO_HOME;
 	}
 
@@ -59,11 +59,11 @@ public class TaxonomyController extends AbstractController {
     	String action = form.get("action");
     	String query = form.get(Const.URL);
 
-		Logger.info("action: " + action);
-    	Logger.info("taxonomy search() query: " + query);
+		Logger.debug("action: " + action);
+    	Logger.debug("taxonomy search() query: " + query);
     	   	
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Taxonomy name is empty. Please write name in search window.");
+			Logger.debug("Taxonomy name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.TaxonomyController.list(0, Const.NAME, "asc", "")
@@ -120,7 +120,7 @@ public class TaxonomyController extends AbstractController {
     	// TODO: createId
         taxonomy.id = Target.createId();
         taxonomy.url = Const.ACT_URL + taxonomy.id;
-		Logger.info("add entry with url: " + taxonomy.url + ", and name: " + taxonomy.name);
+		Logger.debug("add entry with url: " + taxonomy.url + ", and name: " + taxonomy.name);
         return ok(
                 edit.render(
                       taxonomy, User.findByEmail(request().username())
@@ -138,9 +138,9 @@ public class TaxonomyController extends AbstractController {
     	Result res = null;
         String save = getFormParam(Const.SAVE);
         String delete = getFormParam(Const.DELETE);
-//        Logger.info("save: " + save);
+//        Logger.debug("save: " + save);
         if (save != null) {
-        	Logger.info("save taxonomy nid: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
+        	Logger.debug("save taxonomy nid: " + getFormParam(Const.ID) + ", url: " + getFormParam(Const.URL) + 
         			", title: " + getFormParam(Const.TITLE) + ", revision: " + getFormParam(Const.REVISION));
         	Taxonomy taxonomy = null;
             boolean isExisting = true;
@@ -148,7 +148,7 @@ public class TaxonomyController extends AbstractController {
                 try {
                 	taxonomy = Taxonomy.getByUrl(getFormParam(Const.URL));
                 } catch (Exception e) {
-                	Logger.info("is not existing exception");
+                	Logger.debug("is not existing exception");
                 	isExisting = false;
                 	taxonomy = new Taxonomy();
                 	// TODO: createId
@@ -156,7 +156,7 @@ public class TaxonomyController extends AbstractController {
                 	taxonomy.url = getFormParam(Const.URL);
                 }
                 if (taxonomy == null) {
-                	Logger.info("is not existing");
+                	Logger.debug("is not existing");
                 	isExisting = false;
                 	taxonomy = new Taxonomy();
                 	// TODO: createId
@@ -174,21 +174,21 @@ public class TaxonomyController extends AbstractController {
         	    	taxonomy.description = getFormParam(Const.SUMMARY);
         	    }
             } catch (Exception e) {
-            	Logger.info("User not existing exception");
+            	Logger.debug("User not existing exception");
             }
             
         	if (!isExisting) {
                	Ebean.save(taxonomy);
-    	        Logger.info("save taxonomy: " + taxonomy.toString());
+    	        Logger.debug("save taxonomy: " + taxonomy.toString());
         	} else {
-           		Logger.info("update taxonomy: " + taxonomy.toString());
+           		Logger.debug("update taxonomy: " + taxonomy.toString());
                	Ebean.update(taxonomy);
         	}
 	        res = redirect(routes.TaxonomyController.view(taxonomy.id));
         } 
         if (delete != null) {
         	String url = getFormParam(Const.URL);
-        	Logger.info("deleting: " + url);
+        	Logger.debug("deleting: " + url);
         	Taxonomy taxonomy = Taxonomy.findByUrl(url);
         	Ebean.delete(taxonomy);
 	        res = redirect(routes.TaxonomyController.index()); 

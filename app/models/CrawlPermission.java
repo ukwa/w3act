@@ -160,7 +160,7 @@ public class CrawlPermission extends ActModel {
      * @return crawl permission name
      */
     public static CrawlPermission findByUrl(String url) {
-//    	Logger.info("permission findByUrl: " + url);
+//    	Logger.debug("permission findByUrl: " + url);
     	CrawlPermission res = new CrawlPermission();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
@@ -191,7 +191,7 @@ public class CrawlPermission extends ActModel {
      * @return
      */
     public static CrawlPermission showByUrl(String url) {
-//    	Logger.info("permission findByUrl: " + url);
+//    	Logger.debug("permission findByUrl: " + url);
     	CrawlPermission res = new CrawlPermission();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		try {
@@ -200,12 +200,12 @@ public class CrawlPermission extends ActModel {
                 	res = new CrawlPermission();
                 	res.name = Const.NONE;            	}
     		} catch (Exception e) {
-    			Logger.info("crawl permission could not be find in database: " + e);
+    			Logger.debug("crawl permission could not be find in database: " + e);
     		}
     	} else {
         	res.name = Const.NONE;
     	}
-//    	Logger.info("permission res: " + res);
+//    	Logger.debug("permission res: " + res);
     	return res;
     }
     
@@ -329,7 +329,7 @@ public class CrawlPermission extends ActModel {
     			&& placeHolders.size() == values.size()) {
     		int counter = placeHolders.size();
     		for (int i = 0; i < counter; i++) {
-    			Logger.info("replacePlaceholdersInText placeholder: " + placeHolders.get(i) +
+    			Logger.debug("replacePlaceholdersInText placeholder: " + placeHolders.get(i) +
     					", value: " + values.get(i));
     	    	res = res.replace(placeHolders.get(i), values.get(i));
     		}

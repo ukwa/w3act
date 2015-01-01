@@ -45,7 +45,7 @@ public class PasswordController extends AbstractController {
      * Display the user edit panel for this URL.
      */
     public static Result edit() {
-    	Logger.info("edit");
+    	Logger.debug("edit");
     	User user = User.findByEmail(request().username());
         return ok(edit.render(user)); 
     }
@@ -68,7 +68,7 @@ public class PasswordController extends AbstractController {
      */
     public static Result save() {
     	Result res = null;
-    	Logger.info("saving");
+    	Logger.debug("saving");
     	
     	DynamicForm request = DynamicForm.form().bindFromRequest();
 
@@ -78,23 +78,23 @@ public class PasswordController extends AbstractController {
 
     	Long id = Long.valueOf(request.get("id"));
 
-    	Logger.info(oldPassword + " " + password + " " + passwordValidation);
+    	Logger.debug(oldPassword + " " + password + " " + passwordValidation);
     	
     	User user = User.findById(id);
 
     	if (user != null) {
             if (StringUtils.isEmpty(password)) {
-            	Logger.info("The password field is empty.");
+            	Logger.debug("The password field is empty.");
 	  			flash("message", "The password field is empty.");
 	  			return info();
             } 
             if (StringUtils.isEmpty(passwordValidation)) {
-            	Logger.info("The password validation field is empty.");
+            	Logger.debug("The password validation field is empty.");
 	  			flash("message", "The password validation field is empty.");
 	  			return info();
             } 
             if (!password.equals(passwordValidation)) {
-            	Logger.info("The value of the password field does not match to the value of the password validation field.");
+            	Logger.debug("The value of the password field does not match to the value of the password validation field.");
 	  			flash("message", "The value of the password field does not match to the value of the password validation field.");
 	  			return info();
             }
@@ -107,19 +107,19 @@ public class PasswordController extends AbstractController {
                 	String userDbPassword = user.password;
             		boolean isValidOldPassword = PasswordHash.validatePassword(oldPassword, userDbPassword);
             		if (!isValidOldPassword) {
-                    	Logger.info("The old password is not correct.");
+                    	Logger.debug("The old password is not correct.");
         	  			flash("message", "The old password is not correct.");
         	  			return info();	            		
         	  		} else {
         	  			user.password = PasswordHash.createHash(password);
         	  		}
 				} catch (NoSuchAlgorithmException e) {
-					Logger.info("change password - no algorithm error: " + e);
+					Logger.debug("change password - no algorithm error: " + e);
 				} catch (InvalidKeySpecException e) {
-					Logger.info("change password - key specification error: " + e);
+					Logger.debug("change password - key specification error: " + e);
 				}
     	    }
-       		Logger.info("update user: " + user.toString());
+       		Logger.debug("update user: " + user.toString());
            	user.save();
     	}
     	res = ok(infomessage.render("You have successfully updated your password."));

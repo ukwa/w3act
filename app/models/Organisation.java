@@ -288,11 +288,11 @@ public class Organisation extends ActModel {
      * @return organisation object
      */
     public static Organisation findByTitle(String title) {
-//    	Logger.info("organisation title: " + title);
+//    	Logger.debug("organisation title: " + title);
     	Organisation res = new Organisation();
     	if (title != null && title.length() > 0) {
     		res = find.where().eq(Const.TITLE, title).findUnique();
-//        	Logger.info("res: " + res);
+//        	Logger.debug("res: " + res);
     		if (res == null) {
     			res = new Organisation();
         		res.title = Const.NONE;
@@ -302,7 +302,7 @@ public class Organisation extends ActModel {
     		res.title = Const.NONE;
     		res.url = Const.NONE;
     	}
-//    	Logger.info("final organisation res: " + res);
+//    	Logger.debug("final organisation res: " + res);
     	return res;
     }
 
@@ -326,7 +326,7 @@ public class Organisation extends ActModel {
      */
     public static List<Organisation> findFilteredByUrl(String url) {
     	List<Organisation> ll = new ArrayList<Organisation>();
-//    	Logger.info("organisation findFilteredByUrl(): " + url);
+//    	Logger.debug("organisation findFilteredByUrl(): " + url);
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) { 
             Organisation organisation = find.where().eq(Const.URL, url).findUnique();
             ll.add(organisation);            

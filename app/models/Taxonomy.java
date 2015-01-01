@@ -209,7 +209,7 @@ public class Taxonomy extends MappedSuperClass {
      * @return taxonomy object
      */
     public static Taxonomy findByUrlExt(String url) {
-//    	Logger.info("taxonomy findByUrl: " + url);
+//    	Logger.debug("taxonomy findByUrl: " + url);
     	Taxonomy res = new Taxonomy();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
@@ -275,7 +275,7 @@ public class Taxonomy extends MappedSuperClass {
 	        } else {
 	        	res = res2;
 	        }
-//	        Logger.info("taxonomy name: " + res.name);
+//	        Logger.debug("taxonomy name: " + res.name);
         } else {
         	res.name = Const.NONE;
         }
@@ -288,10 +288,10 @@ public class Taxonomy extends MappedSuperClass {
      * @return QA status string
      */
     public static String findQaStatus(String url) {
-//    	Logger.info("findQaStatus url: " + url);
+//    	Logger.debug("findQaStatus url: " + url);
     	Taxonomy taxonomy = findByUrl(url);
     	String res = taxonomy.name;
-//    	Logger.info("findQaStatus taxonomy: " + taxonomy);
+//    	Logger.debug("findQaStatus taxonomy: " + taxonomy);
     	if (taxonomy.name.equals("No QA issues found (OK to publish)")) {
     		res = Const.QAStatusType.PASSED_PUBLISH_NO_ACTION_REQUIRED.name();
     	}
@@ -307,10 +307,10 @@ public class Taxonomy extends MappedSuperClass {
      * @return QA status string
      */
     public static String findQaStatusByName(String name) {
-//    	Logger.info("findQaStatus name: " + name);
+//    	Logger.debug("findQaStatus name: " + name);
     	Taxonomy taxonomy = findQaIssueByName(name);
     	String res = taxonomy.name;
-//    	Logger.info("findQaStatus taxonomy: " + taxonomy);
+//    	Logger.debug("findQaStatus taxonomy: " + taxonomy);
 		// No QA issues found (OK to publish), QA issues found, Unknown
 		// PASSED_PUBLISH_NO_ACTION_REQUIRED, ISSUE_NOTED, None
     	if (taxonomy.name.equals("No QA issues found (OK to publish)")) {
@@ -391,7 +391,7 @@ public class Taxonomy extends MappedSuperClass {
      */
     public static List<Taxonomy> findListByUrl(String url) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
-//        Logger.info("taxonomy url: " + url);
+//        Logger.debug("taxonomy url: " + url);
     	if (url != null && url.length() > 0) {
     		if (url.contains(Const.COMMA)) {
     			List<String> resList = Arrays.asList(url.split(Const.COMMA));
@@ -416,7 +416,7 @@ public class Taxonomy extends MappedSuperClass {
     public static Taxonomy findByNameConf(String name) {
     	Taxonomy res = new Taxonomy();
     	if (name != null && name.length() > 0) {
-//    		Logger.info("p1: " + name);
+//    		Logger.debug("p1: " + name);
     		if (name.contains(Const.COMMA)) {
     			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
     		}
@@ -431,7 +431,7 @@ public class Taxonomy extends MappedSuperClass {
     	} else {
     		res.name = Const.NONE;
     	}
-//		Logger.info("res: " + res);
+//		Logger.debug("res: " + res);
     	return res;
     }
 
@@ -445,7 +445,7 @@ public class Taxonomy extends MappedSuperClass {
     public static Taxonomy findByNameExt(String name) {
     	Taxonomy res = new Taxonomy();
     	if (name != null && name.length() > 0) {
-//    		Logger.info("p1: " + name);
+//    		Logger.debug("p1: " + name);
     		if (name.contains(Const.COMMA)) {
     			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
     		}
@@ -459,7 +459,7 @@ public class Taxonomy extends MappedSuperClass {
     	} else {
     		res.name = Const.NONE;
     	}
-//		Logger.info("res: " + res);
+//		Logger.debug("res: " + res);
     	return res;
     }
 
@@ -502,13 +502,13 @@ public class Taxonomy extends MappedSuperClass {
      */
     public static Taxonomy findByFullName(String name) {
     	Taxonomy res = new Taxonomy();
-    	Logger.info("findByFullName: " + name);
+    	Logger.debug("findByFullName: " + name);
     	if (name != null && name.length() > 0) {
     		res = find.where().eq(Const.NAME, name).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
-//		Logger.info("res: " + res);
+//		Logger.debug("res: " + res);
     	return res;
     }
     
@@ -519,13 +519,13 @@ public class Taxonomy extends MappedSuperClass {
      */
     public static Taxonomy findByFullNameExt(String name, String ttype) {
     	Taxonomy res = new Taxonomy();
-//    	Logger.info("findByFullNameExt: " + name);
+//    	Logger.debug("findByFullNameExt: " + name);
     	if (name != null && name.length() > 0) {
     		res = find.where().eq(Const.NAME, name).eq(Const.TTYPE, ttype).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
-//		Logger.info("res: " + res);
+//		Logger.debug("res: " + res);
     	return res;
     }
     
@@ -585,7 +585,7 @@ public class Taxonomy extends MappedSuperClass {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	Page<Taxonomy> page = pageByTypeAll(0, find.all().size(), Const.NAME, Const.ASC, "");
     	res = page.getList();
-    	Logger.info("findListByTypeSortedAll() subjects list size: " + res.size());
+    	Logger.debug("findListByTypeSortedAll() subjects list size: " + res.size());
         return res;
     }
         	
@@ -619,13 +619,13 @@ public class Taxonomy extends MappedSuperClass {
 	public static List<Taxonomy> findSubSubjectsList(String parent) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (parent != null && parent.length() > 0) {
-//    		Logger.info("findSubSubjectsList() parent: " + parent);
+//    		Logger.debug("findSubSubjectsList() parent: " + parent);
     		parent = formatDbComma(parent);
 	        ExpressionList<Taxonomy> ll = find.where()
 	        		.eq(Const.TTYPE, Const.TaxonomyType.SUBSUBJECT.name().toLowerCase())
 	        		.eq(Const.PARENT, parent);
 	    	res = ll.findList(); 
-//	    	Logger.info("size: " + res.size());
+//	    	Logger.debug("size: " + res.size());
         }
     	return res;
     }
@@ -1001,18 +1001,18 @@ public class Taxonomy extends MappedSuperClass {
 	 * @return
 	 */
 	public static List<Taxonomy> getSelectedSubjects(String targetUrl) {
-//		Logger.info("getSelectedSubjects() targetUrl: " + targetUrl);
+//		Logger.debug("getSelectedSubjects() targetUrl: " + targetUrl);
 //		List<Taxonomy> res = new ArrayList<Taxonomy>();
 //    	if (targetUrl != null && targetUrl.length() > 0) {
 //    		Target target = Target.findByUrl(targetUrl);
 //    		if (target.fieldSubject != null) {
-////    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
+////    			Logger.debug("getSelectedSubjects() field_subject: " + target.field_subject);
 //		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
 //		    	for (String part: parts) {
-////		    		Logger.info("part: " + part);
+////		    		Logger.debug("part: " + part);
 //		    		Taxonomy subject = findByUrl(part);
 //		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-////			    		Logger.info("subject name: " + subject.name);
+////			    		Logger.debug("subject name: " + subject.name);
 //		    			res.add(subject);
 //		    		}
 //		    	}
@@ -1028,18 +1028,18 @@ public class Taxonomy extends MappedSuperClass {
 	 * @return
 	 */
 	public static List<Taxonomy> getSelectedSubjectsForInstance(String targetUrl) {
-//		Logger.info("getSelectedSubjects() targetUrl: " + targetUrl);
+//		Logger.debug("getSelectedSubjects() targetUrl: " + targetUrl);
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
 //    		if (target.fieldSubject != null) {
-////    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
+////    			Logger.debug("getSelectedSubjects() field_subject: " + target.field_subject);
 //		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
 //		    	for (String part: parts) {
-////		    		Logger.info("part: " + part);
+////		    		Logger.debug("part: " + part);
 //		    		Taxonomy subject = findByUrl(part);
 //		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-////			    		Logger.info("subject name: " + subject.name);
+////			    		Logger.debug("subject name: " + subject.name);
 //		    			res.add(subject);
 //		    		}
 //		    	}
@@ -1054,18 +1054,18 @@ public class Taxonomy extends MappedSuperClass {
 	 * @return
 	 */
 	public static List<Taxonomy> getSelectedLicenses(String targetUrl) {
-//		Logger.info("getSelectedLicenses() targetUrl: " + targetUrl);
+//		Logger.debug("getSelectedLicenses() targetUrl: " + targetUrl);
 //		List<Taxonomy> res = new ArrayList<Taxonomy>();
 //    	if (targetUrl != null && targetUrl.length() > 0) {
 //    		Target target = Target.findByUrl(targetUrl);
 //    		if (target.fieldLicense != null) {
-////    			Logger.info("getSelectedLicenses() field_license: " + target.field_license);
+////    			Logger.debug("getSelectedLicenses() field_license: " + target.field_license);
 //		    	String[] parts = target.fieldLicense.split(Const.COMMA + " ");
 //		    	for (String part: parts) {
-////		    		Logger.info("part: " + part);
+////		    		Logger.debug("part: " + part);
 //		    		Taxonomy license = findByUrl(part);
 //		    		if (license != null && license.name != null && license.name.length() > 0) {
-////			    		Logger.info("license name: " + license.name);
+////			    		Logger.debug("license name: " + license.name);
 //		    			res.add(license);
 //		    		}
 //		    	}
@@ -1081,18 +1081,18 @@ public class Taxonomy extends MappedSuperClass {
 	 * @return
 	 */
 	public static List<Taxonomy> getSelectedSubjectsByInstance(String targetUrl) {
-//		Logger.info("getSelectedSubjectsByInstance() targetUrl: " + targetUrl);
+//		Logger.debug("getSelectedSubjectsByInstance() targetUrl: " + targetUrl);
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
 //    		if (target.fieldSubject != null) {
-////    			Logger.info("getSelectedSubjectsByInstance() field_subject: " + target.field_subject);
+////    			Logger.debug("getSelectedSubjectsByInstance() field_subject: " + target.field_subject);
 //		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
 //		    	for (String part: parts) {
-////		    		Logger.info("part: " + part);
+////		    		Logger.debug("part: " + part);
 //		    		Taxonomy subject = findByUrl(part);
 //		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-////			    		Logger.info("subject name: " + subject.name);
+////			    		Logger.debug("subject name: " + subject.name);
 //		    			res.add(subject);
 //		    		}
 //		    	}
@@ -1108,17 +1108,17 @@ public class Taxonomy extends MappedSuperClass {
 	 */
 	public static String getSubjectsAsString(List<Taxonomy> list) {
     	String res = "";
-//		Logger.info("getSubjectsAsString() list size: " + list.size());
+//		Logger.debug("getSubjectsAsString() list size: " + list.size());
 		Iterator<Taxonomy> itr = list.iterator();
 		boolean firstTime = true;
 		while (itr.hasNext()) {
 			Taxonomy subject = itr.next();
 			if (firstTime) {
-//				Logger.info("add first subject.name: " + subject.name);
+//				Logger.debug("add first subject.name: " + subject.name);
 				res = subject.name;
 				firstTime = false;
 			} else {
-//				Logger.info("add subject.name: " + subject.name);
+//				Logger.debug("add subject.name: " + subject.name);
 				res = res + Const.COMMA + " " + subject.name;
 			}
 		}
@@ -1138,10 +1138,10 @@ public class Taxonomy extends MappedSuperClass {
    		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
 	    	String[] parts = urls.split(Const.COMMA + " ");
 	    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
+//		    		Logger.debug("part: " + part);
 	    		Taxonomy subject = findByUrl(part);
 	    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-//			    	Logger.info("subject name: " + subject.name);
+//			    	Logger.debug("subject name: " + subject.name);
 	    			res.add(subject);
 	    		}
 	    	}

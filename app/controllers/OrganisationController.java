@@ -55,11 +55,11 @@ public class OrganisationController extends AbstractController {
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get(Const.QUERY);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
+		Logger.debug("query: " + query);
+		Logger.debug("action: " + action);
     	
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Organisation name is empty. Please write name in search window.");
+			Logger.debug("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.OrganisationController.list(0, "title", "asc", "")
@@ -103,7 +103,7 @@ public class OrganisationController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String query) {
-    	Logger.info("Organisations.list() " + query);
+    	Logger.debug("Organisations.list() " + query);
         return ok(
         	list.render(
         			"Organisations", 

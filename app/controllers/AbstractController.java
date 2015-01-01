@@ -59,13 +59,13 @@ public class AbstractController extends Controller {
         }
         
         protected static String getFormParam(String name) {
-//    		Logger.info("getFormParam: " + request().body().asFormUrlEncoded());
+//    		Logger.debug("getFormParam: " + request().body().asFormUrlEncoded());
             Map<String, String[]> formParams = request().body().asFormUrlEncoded();
             if (formParams == null)
                     return null;
-//            Logger.info("form params: " + formParams);
+//            Logger.debug("form params: " + formParams);
             String[] values = formParams.get(name);
-//            Logger.info("values: " + values);
+//            Logger.debug("values: " + values);
             if (values == null)
                     return null;
             
@@ -76,13 +76,13 @@ public class AbstractController extends Controller {
     }
     
         protected static String[] getFormParams(String name) {
-//    		Logger.info("getFormParam: " + request().body().asFormUrlEncoded());
+//    		Logger.debug("getFormParam: " + request().body().asFormUrlEncoded());
             Map<String, String[]> formParams = request().body().asFormUrlEncoded();
             if (formParams == null)
                     return null;
-//            Logger.info("form params: " + formParams);
+//            Logger.debug("form params: " + formParams);
             String[] values = formParams.get(name);
-//            Logger.info("values: " + values);
+//            Logger.debug("values: " + values);
             if (values == null)
                     return null;
             
@@ -113,14 +113,14 @@ public class AbstractController extends Controller {
 
 			child.put("key", "\"" + collection.id + "\"");
 	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
-//	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
-//    	    	Logger.info("children: " + children.size());
+//	    	Logger.debug("collection: " + collection.name + " - " + collection.children.size());
+//    	    	Logger.debug("children: " + children.size());
 	    	if (children.size() > 0) {
 	    		child.put("children", Json.toJson(getCollectionTreeElementsByIds(children, filter, false, myCollectionIds)));
 	    	}
 			result.add(child);
     	}
-//        	Logger.info("getTreeElements() res: " + result);
+//        	Logger.debug("getTreeElements() res: " + result);
     	return result;
     }
 
@@ -172,14 +172,14 @@ public class AbstractController extends Controller {
 
 			child.put("key", "\"" + collection.id + "\"");
 	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
-//	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
-//    	    	Logger.info("children: " + children.size());
+//	    	Logger.debug("collection: " + collection.name + " - " + collection.children.size());
+//    	    	Logger.debug("children: " + children.size());
 	    	if (children.size() > 0) {
 	    		child.put("children", Json.toJson(getCollectionTreeElements(children, filter, false, myCollections)));
 	    	}
 			result.add(child);
     	}
-//        	Logger.info("getTreeElements() res: " + result);
+//        	Logger.debug("getTreeElements() res: " + result);
     	return result;
     }
     
@@ -202,7 +202,7 @@ public class AbstractController extends Controller {
 	protected static JsonNode getSubjectsDataByIds(List<Long> mySubjectIds) {    	
 		List<Subject> firstLevel = Subject.getFirstLevelSubjects();
 		List<ObjectNode> result = getSubjectTreeElementsByIds(firstLevel, null, true, mySubjectIds);
-		Logger.info("subjects main level size: " + firstLevel.size());
+		Logger.debug("subjects main level size: " + firstLevel.size());
 		JsonNode jsonData = Json.toJson(result);
 	    return jsonData;
 	}
@@ -225,7 +225,7 @@ public class AbstractController extends Controller {
 	    	}
 			result.add(child);
 		}
-	//        	Logger.info("getSubjectTreeElements() res: " + result);
+	//        	Logger.debug("getSubjectTreeElements() res: " + result);
 		return result;
 	}
     
@@ -242,7 +242,7 @@ public class AbstractController extends Controller {
 	protected static JsonNode getSubjectsData(List<Subject> mySubjects) {    	
 		List<Subject> firstLevel = Subject.getFirstLevelSubjects();
 		List<ObjectNode> result = getSubjectTreeElements(firstLevel, true, mySubjects);
-		Logger.info("subjects main level size: " + firstLevel.size());
+		Logger.debug("subjects main level size: " + firstLevel.size());
 		JsonNode jsonData = Json.toJson(result);
 	    return jsonData;
 	}
@@ -287,7 +287,7 @@ public class AbstractController extends Controller {
 	    	}
 			result.add(child);
 		}
-	//        	Logger.info("getSubjectTreeElements() res: " + result);
+	//        	Logger.debug("getSubjectTreeElements() res: " + result);
 		return result;
 	}
     

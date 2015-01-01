@@ -60,7 +60,7 @@ public class LicenseController extends AbstractController {
      * @return
      */
     public static Result formview(String permissionUrl) {
-    	Logger.info("formview: " + permissionUrl);
+    	Logger.debug("formview: " + permissionUrl);
 		return ok(
             ukwalicenceview.render(permissionUrl)
         );
@@ -127,16 +127,16 @@ public class LicenseController extends AbstractController {
      */
     public static Result submit() {
     	Result res = null;
-//        Logger.info("Licence controller submit()");
+//        Logger.debug("Licence controller submit()");
 //        String submit = getFormParam(Const.SUBMIT);
-//        Logger.info("submit: " + submit);
+//        Logger.debug("submit: " + submit);
 //        if (submit != null) {
 //        	if (StringUtils.isBlank(getFormParam(Const.TARGET)) 
 //        			|| StringUtils.isBlank(getFormParam(Const.NAME))
 //        			|| StringUtils.isBlank(getFormParam(Const.POSITION))
 //        			|| StringUtils.isBlank(getFormParam(Const.CONTACT_PERSON))
 //        			|| StringUtils.isBlank(getFormParam(Const.EMAIL))) {
-//    			Logger.info("One of the required fields is empty. Please fill out all required fields marked by red star in the form.");
+//    			Logger.debug("One of the required fields is empty. Please fill out all required fields marked by red star in the form.");
 //    			flash("message", "Please fill out all required fields marked by red star in the form");
 //    			return ok(
 //    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
@@ -146,12 +146,12 @@ public class LicenseController extends AbstractController {
 //    	   						getFormParam(Const.DESCRIPTION))
 //    		        );
 //        	}  
-//        	Logger.info("save UKWA licence - name: " + getFormParam(Const.NAME));
-//    		Logger.info("agree: " + getFormParam(Const.AGREE));
+//        	Logger.debug("save UKWA licence - name: " + getFormParam(Const.NAME));
+//    		Logger.debug("agree: " + getFormParam(Const.AGREE));
 //            boolean isAgreed = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.AGREE));
 //    		if (!isAgreed || StringUtils.isBlank(getFormParam(Const.CONTENT)) 
 //        			|| StringUtils.isBlank(getFormParam(Const.PUBLISH))) {
-//    			Logger.info("The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
+//    			Logger.debug("The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
 //    			flash("message", "The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
 //    			return ok(
 //    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
@@ -163,7 +163,7 @@ public class LicenseController extends AbstractController {
 //    		}
 //            boolean noThirdPartyContent = false;
 //            if (getFormParam(Const.CONTENT) != null) {
-//        		Logger.info("content: " + getFormParam(Const.CONTENT));
+//        		Logger.debug("content: " + getFormParam(Const.CONTENT));
 //            	Long noThirdPartyContentValue = Long.valueOf(getFormParam(Const.CONTENT));
 //                if (noThirdPartyContentValue == 1L) {
 //                	noThirdPartyContent = true;
@@ -171,19 +171,19 @@ public class LicenseController extends AbstractController {
 //            } 
 //            boolean mayPublish = false;
 //            if (getFormParam(Const.PUBLISH) != null) {
-//        		Logger.info("mayPublish: " + getFormParam(Const.PUBLISH));
+//        		Logger.debug("mayPublish: " + getFormParam(Const.PUBLISH));
 //            	Long mayPublishValue = Long.valueOf(getFormParam(Const.PUBLISH));
 //                if (mayPublishValue == 1L) {
 //                	mayPublish = true;
 //            	}
 //            } 
-//        	Logger.info("flags isAgreed: " + isAgreed + ", noThirdPartyContent: " + noThirdPartyContent + ", mayPublish: " + mayPublish);
+//        	Logger.debug("flags isAgreed: " + isAgreed + ", noThirdPartyContent: " + noThirdPartyContent + ", mayPublish: " + mayPublish);
 //            if (getFormParam(Const.TARGET) != null) {
 //        	    String target = getFormParam(Const.TARGET);        	    
 //        	    List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target);
 //        	    if (permissionList != null && permissionList.size() > 0) {
 //        	    	CrawlPermission permission = permissionList.get(0);
-//                	Logger.info("found crawl permission: " + permission);
+//                	Logger.debug("found crawl permission: " + permission);
 //            	    permission.target.title = target;
 //                    if (getFormParam(Const.NAME) != null) {
 //                        permission.name = getFormParam(Const.NAME);
@@ -199,7 +199,7 @@ public class LicenseController extends AbstractController {
 //                        ContactPerson contactPerson = null;
 //                        try {
 //                        	contactPerson = ContactPerson.findByName(ownerName);
-//                        	Logger.info("found contact person: " + contactPerson);
+//                        	Logger.debug("found contact person: " + contactPerson);
 //                            if (getFormParam(Const.POSITION) != null) {
 //                                contactPerson.position = getFormParam(Const.POSITION);
 //                            }
@@ -217,7 +217,7 @@ public class LicenseController extends AbstractController {
 //                            }
 //                        	// update existing contact person
 //                        	Ebean.update(contactPerson);
-//                	        Logger.info("update contact person: " + contactPerson.toString());
+//                	        Logger.debug("update contact person: " + contactPerson.toString());
 //                            permission.contactPerson = contactPerson;
 //                        } catch (Exception e) {
 //                        	Logger.error("Owner not found: " + ownerName);
@@ -244,7 +244,7 @@ public class LicenseController extends AbstractController {
 //                                person.phone = getFormParam(Const.PHONE);
 //                            }
 //                        	Ebean.save(person);
-//                	        Logger.info("save contact person: " + person.toString());
+//                	        Logger.debug("save contact person: " + person.toString());
 //                            permission.contactPerson = person;
 //                        }
 //                    }
@@ -274,9 +274,9 @@ public class LicenseController extends AbstractController {
 //	                    if (getFormParam(Const.LICENCE) != null) {
 //	                    	String licenceName = getFormParam(Const.LICENCE);
 //	                    	Taxonomy licenceTaxonomy = Taxonomy.findByName(licenceName);
-//	                    	Logger.info("Permission target: " + permission.target.title);
+//	                    	Logger.debug("Permission target: " + permission.target.title);
 //	                    	Target targetObj = Target.findByTarget(permission.target.title);
-//	                    	Logger.info("Target object: " + targetObj);
+//	                    	Logger.debug("Target object: " + targetObj);
 //	                    	if (targetObj != null) {
 ////	                    		targetObj.fieldLicense = licenceTaxonomy.url;
 //	                    		Ebean.update(targetObj);
@@ -298,9 +298,9 @@ public class LicenseController extends AbstractController {
 //	                    	}
 //	                    }
 //        	        } catch (Exception e) {
-//        	        	Logger.info("Update target for licence failed. " + e);
+//        	        	Logger.debug("Update target for licence failed. " + e);
 //        	        }
-//        	        Logger.info("update crawl permission: " + permission.toString());                    
+//        	        Logger.debug("update crawl permission: " + permission.toString());                    
 //        	    }
 //            } 
 //	        res = redirect(routes.LicenseController.result());
@@ -337,13 +337,13 @@ public class LicenseController extends AbstractController {
      */
     public static Result filter() {
     	Result res = null;
-    	Logger.info("LicenseController.filter()");
+    	Logger.debug("LicenseController.filter()");
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
 
         List<License> licenses = processFilterLicences(name);
 
-        Logger.info("search: " + search + ", name: " + name);
+        Logger.debug("search: " + search + ", name: " + name);
         if (search != null) {
             res = ok(
             		licences.render(
@@ -361,7 +361,7 @@ public class LicenseController extends AbstractController {
      * @return
      */
     public static List<License> processFilterLicences(String filterUrl) {
-//    	Logger.info("process filter filterUrl: " + filterUrl);
+//    	Logger.debug("process filter filterUrl: " + filterUrl);
     	ExpressionList<License> exp = License.find.where();
     	if (StringUtils.isNotBlank(filterUrl)) {
     		exp = exp.contains("name", filterUrl);    		

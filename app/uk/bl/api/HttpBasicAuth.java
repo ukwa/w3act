@@ -33,7 +33,7 @@ public static void downloadFileWithAuth(String urlStr, String user, String pass,
         in.close();
     }
     catch (Exception e) {
-		Logger.info("downloadFileWithAuth() error: " + e);
+		Logger.debug("downloadFileWithAuth() error: " + e);
         e.printStackTrace();
     }
 }

@@ -93,7 +93,7 @@ public class InstanceController extends AbstractController {
      * @param targetUrl Filter by target url
      */
     public static Result listByTarget(int pageNo, String sortBy, String order, String filter, String targetUrl) {
-    	Logger.info("Instances.listByTarget()");
+    	Logger.debug("Instances.listByTarget()");
         return ok(
         	listByTarget.render(
         			"Lookup", 
@@ -112,12 +112,12 @@ public class InstanceController extends AbstractController {
      * @return
      */
     public static void export(List<Instance> instanceList) {
-    	Logger.info("export() instanceList size: " + instanceList.size());
+    	Logger.debug("export() instanceList size: " + instanceList.size());
 
         StringWriter sw = new StringWriter();
 		Field[] fields = Instance.class.getFields();
 		for (Field f : fields) {
-//			Logger.info("Instance fields: " + f.getName());
+//			Logger.debug("Instance fields: " + f.getName());
     		sw.append(f.getName());
 	 	    sw.append(Const.CSV_SEPARATOR);
 		}
@@ -134,7 +134,7 @@ public class InstanceController extends AbstractController {
         if (csv != null) {
 	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
 	        sw.append(content);
-//        Logger.info("content: " + content);
+//        Logger.debug("content: " + content);
         }
 
     	Utils.INSTANCE.generateCsvFile(Const.EXPORT_INSTANCE_FILE, sw.toString());
@@ -176,7 +176,7 @@ public class InstanceController extends AbstractController {
 //				instance.id = Utils.createId();
 //				instance.url = Const.ACT_URL + instance.id;
 				instance.revision = Const.INITIAL_REVISION;
-//				Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
+//				Logger.debug("add instance with url: " + instance.url + " and name: " + instance.title);
     			Form<Instance> instanceForm = Form.form(Instance.class);
     			instanceForm = instanceForm.fill(instance);
     			User user = User.findByEmail(request().username());
@@ -201,13 +201,13 @@ public class InstanceController extends AbstractController {
      * @return
      */
     public static Result create(String title) {
-        Logger.info("addEntry()");
+        Logger.debug("addEntry()");
     	Instance instance = new Instance();
     	instance.title = title;
 //        instance.id = Utils.createId();
 //        instance.url = Const.ACT_URL + instance.id;
         instance.revision = Const.INITIAL_REVISION;
-		Logger.info("add instance with url: " + instance.url + " and name: " + instance.title);
+		Logger.debug("add instance with url: " + instance.url + " and name: " + instance.title);
 		Form<Instance> instanceForm = Form.form(Instance.class);
 		instanceForm = instanceForm.fill(instance);
 		User user = User.findByEmail(request().username());
@@ -224,7 +224,7 @@ public class InstanceController extends AbstractController {
      */
     public static Result showByTarget(String url) {    	
     	if (url != null && url.length() > 0) {
-			Logger.info("Show instances filtered by target.");
+			Logger.debug("Show instances filtered by target.");
 	        return redirect(
 	        		routes.InstanceController.listByTarget(0, "title", "asc", "", url)
 	        );
@@ -249,15 +249,15 @@ public class InstanceController extends AbstractController {
 //		        ExpressionList<Instance> ll = Instance.find.where().contains("field_license", instance.fieldLicense);
 //		        if (ll.findRowCount() > 0) {
 //		        	Taxonomy taxonomy = Taxonomy.findByUrl(instance.fieldLicense);
-//		        	Logger.info("instance.field_license: " + instance.fieldLicense + ".");
-////		        	Logger.info("taxonomy url: " + taxonomy.url);
-////		        	Logger.info("license: " + taxonomy.title);
+//		        	Logger.debug("instance.field_license: " + instance.fieldLicense + ".");
+////		        	Logger.debug("taxonomy url: " + taxonomy.url);
+////		        	Logger.debug("license: " + taxonomy.title);
 //		        	res.add(taxonomy);
 //		        	subjects.add(instance.fieldLicense);
 //		        }
 //			}
 //		}
-//		Logger.info("getLicense res: " + res);
+//		Logger.debug("getLicense res: " + res);
 //    	return res;
 //	}
 	
@@ -406,17 +406,17 @@ public class InstanceController extends AbstractController {
 	public static Result update(Long id) {
     	DynamicForm requestData = form().bindFromRequest();
         Form<Instance> filledForm = form(Instance.class).bindFromRequest();
-    	Logger.info("hasGlobalErrors: " + filledForm.hasGlobalErrors());
-    	Logger.info("hasErrors: " + filledForm.hasErrors());
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasErrors: " + filledForm.hasErrors());
 
     	String action = requestData.get("action");
 
-    	Logger.info("action: " + action);
+    	Logger.debug("action: " + action);
     	
         if (StringUtils.isNotEmpty(action)) {
         	if (action.equals("save")) {    
 		        if (filledForm.hasErrors()) {
-		        	Logger.info("hasErrors: " + filledForm.errors());
+		        	Logger.debug("hasErrors: " + filledForm.errors());
 		            return info(filledForm, id);
 		        }		        
 		        filledForm.get().update(id);
@@ -466,9 +466,9 @@ public class InstanceController extends AbstractController {
      * @throws WhoisException 
      */
 //    public static Result isInScope(String url) throws WhoisException {
-////    	Logger.info("isInScope controller: " + url);
+////    	Logger.debug("isInScope controller: " + url);
 //    	boolean res = Instance.isInScope(url, null);
-////    	Logger.info("isInScope res: " + res);
+////    	Logger.debug("isInScope res: " + res);
 //    	return ok(Json.toJson(res));
 //    }
     
@@ -485,7 +485,7 @@ public class InstanceController extends AbstractController {
 //    	if (childSuggestedCollections.size() > 0) {
 //	    	sb.append(getTreeElements(childSuggestedCollections, targetUrl, false));
 //	    	res = sb.toString();
-////	    	Logger.info("getChildren() res: " + res);
+////	    	Logger.debug("getChildren() res: " + res);
 //    	}
 //    	return res;
 //    }
@@ -538,10 +538,10 @@ public class InstanceController extends AbstractController {
 //							getChildren(collection.url, targetUrl) + "}");
 //	    		}
 //	    	}
-////	    	Logger.info("collectionList level size: " + collectionList.size());
+////	    	Logger.debug("collectionList level size: " + collectionList.size());
 //	    	sb.append("]");
 //	    	res = sb.toString();
-////	    	Logger.info("getTreeElements() res: " + res);
+////	    	Logger.debug("getTreeElements() res: " + res);
 //    	}
 //    	return res;
 //    }
@@ -552,14 +552,14 @@ public class InstanceController extends AbstractController {
      */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getSuggestedCollections(String targetUrl) {
-//    	Logger.info("getSuggestedCollections()");
+//    	Logger.debug("getSuggestedCollections()");
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<Collection> suggestedCollections = Collection.getFirstLevelCollections();
 //    	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
-//    	Logger.info("suggestedCollections main level size: " + suggestedCollections.size());
+//    	Logger.debug("suggestedCollections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-//    	Logger.info("getSuggestedCollections() json: " + jsonData.toString());
+//    	Logger.debug("getSuggestedCollections() json: " + jsonData.toString());
         return ok(jsonData);
     }
             
@@ -570,7 +570,7 @@ public class InstanceController extends AbstractController {
      * @return child subject in JSON form
      */
 //    public static String getSubjectChildren(String url, String targetUrl) {
-////    	Logger.info("getSubjectChildren() target URL: " + targetUrl);
+////    	Logger.debug("getSubjectChildren() target URL: " + targetUrl);
 //    	String res = "";
 //        final StringBuffer sb = new StringBuffer();
 //    	sb.append(", \"children\":");
@@ -580,7 +580,7 @@ public class InstanceController extends AbstractController {
 //    	if (childSubject.size() > 0) {
 //	    	sb.append(getSubjectTreeElements2(childSubject, targetUrl, false));
 //	    	res = sb.toString();
-////	    	Logger.info("getSubjectChildren() res: " + res);
+////	    	Logger.debug("getSubjectChildren() res: " + res);
 //    	}
 //    	return res;
 //    }
@@ -629,7 +629,7 @@ public class InstanceController extends AbstractController {
      * @return collection object in JSON form
      */
 //    public static String getSubjectTreeElements2(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
-////    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
+////    	Logger.debug("getSubjectTreeElements() target URL: " + targetUrl);
 //    	String res = "";
 //    	if (subjectList.size() > 0) {
 //	        final StringBuffer sb = new StringBuffer();
@@ -656,10 +656,10 @@ public class InstanceController extends AbstractController {
 //							getSubjectChildren(subject.url, targetUrl) + "}");
 //	    		}
 //	    	}
-////	    	Logger.info("subjectList level size: " + subjectList.size());
+////	    	Logger.debug("subjectList level size: " + subjectList.size());
 //	    	sb.append("]");
 //	    	res = sb.toString();
-////	    	Logger.info("getSubjectTreeElements() res: " + res);
+////	    	Logger.debug("getSubjectTreeElements() res: " + res);
 //    	}
 //    	return res;
 //    }
@@ -671,15 +671,15 @@ public class InstanceController extends AbstractController {
      */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getSubjectTree(String targetUrl) {
-    	Logger.info("getSubjectTree() target URL: " + targetUrl);
+    	Logger.debug("getSubjectTree() target URL: " + targetUrl);
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
-//    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
+//    	Logger.debug("getSubjectTree() parentSubjects: " + parentSubjects.size());
 //    	sb.append(getSubjectTreeElements2(parentSubjects, targetUrl, true));
-//    	Logger.info("subjects main level size: " + parentSubjects.size());
+//    	Logger.debug("subjects main level size: " + parentSubjects.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-//    	Logger.info("getSubjectTree() json: " + jsonData.toString());
+//    	Logger.debug("getSubjectTree() json: " + jsonData.toString());
         return ok(jsonData);
     }  
 }

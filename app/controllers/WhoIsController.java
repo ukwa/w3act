@@ -58,10 +58,10 @@ public class WhoIsController extends AbstractController {
      * @throws WhoisException 
      */
     public static Result check(int total) throws WhoisException {
-    	Logger.info("CheckWhoIs controller check() " + total);
+    	Logger.debug("CheckWhoIs controller check() " + total);
         String check = getFormParam("check");
         if (check != null || total > 0) {
-        	Logger.info("target number to check: " + getFormParam(Const.NUMBER));
+        	Logger.debug("target number to check: " + getFormParam(Const.NUMBER));
             if (getFormParam(Const.NUMBER) != null && getFormParam(Const.NUMBER).length() > 0 && Utils.INSTANCE.isNumeric(getFormParam(Const.NUMBER))) {
             	total = Integer.valueOf(getFormParam(Const.NUMBER));
             }

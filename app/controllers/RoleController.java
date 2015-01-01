@@ -44,7 +44,7 @@ public class RoleController extends AbstractController {
      * Display the role.
      */
     public static Result index() {
-    	Logger.info("Roles.index()");
+    	Logger.debug("Roles.index()");
         return GO_HOME;
     }
     
@@ -96,11 +96,11 @@ public class RoleController extends AbstractController {
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get(Const.QUERY);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
+		Logger.debug("query: " + query);
+		Logger.debug("action: " + action);
     	
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Role name is empty. Please write name in search window.");
+			Logger.debug("Role name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.RoleController.list(0, "name", "asc", "")
@@ -217,7 +217,7 @@ public class RoleController extends AbstractController {
         	}
         	else if (action.equals("delete")) {
         		Role role = Role.findById(id);
-		        flash("message", "Role " + filledForm.get().name + " has been deleted");
+		        flash("message", "Role " + role.name + " has been deleted");
 		        role.delete();
 		        return redirect(routes.RoleController.index());
         	}
@@ -289,7 +289,7 @@ public class RoleController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("Roles.list()");
+    	Logger.debug("Roles.list()");
         return ok(
         	list.render(
         			"Roles", 

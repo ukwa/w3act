@@ -143,7 +143,7 @@ public class ContactPerson extends ActModel {
     				res.name = Const.NONE;
     			}
     		} catch (Exception e) {
-    			Logger.info("Contact person: findByUrl error: " + e);
+    			Logger.debug("Contact person: findByUrl error: " + e);
     			res.name = Const.NONE;
     			return res;
     		}    			
@@ -191,7 +191,7 @@ public class ContactPerson extends ActModel {
      * @return
      */
     public static ContactPerson showByUrl(String url) {
-    	Logger.info("person findByUrl: " + url);
+    	Logger.debug("person findByUrl: " + url);
     	ContactPerson res = new ContactPerson();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		try {
@@ -200,12 +200,12 @@ public class ContactPerson extends ActModel {
                 	res = new ContactPerson();
                 	res.name = Const.NONE;            	}
     		} catch (Exception e) {
-    			Logger.info("contact person could not be find in database: " + e);
+    			Logger.debug("contact person could not be find in database: " + e);
     		}
     	} else {
         	res.name = Const.NONE;
     	}
-    	Logger.info("contact person res: " + res);
+    	Logger.debug("contact person res: " + res);
     	return res;
     }
     	
@@ -223,7 +223,7 @@ public class ContactPerson extends ActModel {
      */
     public static String findNamesByUrls(String urls) {
     	String res = "";
-		Logger.info("findNamesByUrls urls: " + urls);
+		Logger.debug("findNamesByUrls urls: " + urls);
     	if (urls != null) {
     		if (urls.contains(Const.LIST_DELIMITER)) {
 		    	String[] parts = urls.split(Const.LIST_DELIMITER);
@@ -233,7 +233,7 @@ public class ContactPerson extends ActModel {
 			    		String name = findByUrl(part).name;
 			    		res = res + name + Const.LIST_DELIMITER;
 		    		} catch (Exception e) {
-		    			Logger.info("findNamesByUrls error: " + e);
+		    			Logger.debug("findNamesByUrls error: " + e);
 		    		}
 		        }
 	    	} else {
@@ -242,7 +242,7 @@ public class ContactPerson extends ActModel {
 	    		}
 	    	}
     	}
-		Logger.info("findNamesByUrls res: " + res);
+		Logger.debug("findNamesByUrls res: " + res);
     	return res;
     }          
 	    

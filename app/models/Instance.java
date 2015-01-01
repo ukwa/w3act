@@ -224,15 +224,15 @@ public class Instance extends UrlModel {
 			String content = (String) field.get(this);
 			res = Arrays.asList(content.split("\\s*,\\s*"));
 		} catch (IllegalArgumentException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (IllegalAccessException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (SecurityException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (NoSuchFieldException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (Exception e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		}
     	return res;
     }
@@ -425,15 +425,15 @@ public class Instance extends UrlModel {
 			String content = (String) field.get(this);
 			res = Arrays.asList(content.split("\\s*,\\s*"));
 		} catch (IllegalArgumentException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (IllegalAccessException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (SecurityException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (NoSuchFieldException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (Exception e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		}
     	String res_str = res.toString().substring(1,res.toString().length()-1);
     	if (res_str.length() > Const.STRING_LIMIT) {
@@ -474,7 +474,7 @@ public class Instance extends UrlModel {
      */
     public static Instance findByTimestamp(String timestamp) {
     	Instance res = new Instance();
-//        Logger.info("instance timestamp: " + timestamp);
+//        Logger.debug("instance timestamp: " + timestamp);
         
 		List<Instance> list = new ArrayList<Instance>();
 		if (timestamp != null && timestamp.length() > 0) {
@@ -502,7 +502,7 @@ public class Instance extends UrlModel {
      */
     public static Instance findByTimestampAndUrl(Date timestamp, String url) {
     	Instance res = new Instance();
-//        Logger.info("instance timestamp: " + timestamp);
+//        Logger.debug("instance timestamp: " + timestamp);
         
 		List<Instance> list = new ArrayList<Instance>();
 		if (timestamp != null && url != null && url.length() > 0) {
@@ -581,7 +581,7 @@ public class Instance extends UrlModel {
 	public static String showTimestamp(String curDate) {
 		String res = "";
 		if (curDate != null && curDate.length() > 0) {
-			Logger.info("showTimestamp() curDate: " + curDate + ", Utils.INSTANCE.getDateFromUnixDate(curDate): " + Utils.INSTANCE.getDateFromUnixDate(curDate));
+			Logger.debug("showTimestamp() curDate: " + curDate + ", Utils.INSTANCE.getDateFromUnixDate(curDate): " + Utils.INSTANCE.getDateFromUnixDate(curDate));
 	        res = Utils.INSTANCE.getDateFromUnixDate(curDate);
 		}
 		return res;		
@@ -629,7 +629,7 @@ public class Instance extends UrlModel {
     	try {
     		return Scope.INSTANCE.check(url, this.target);
     	} catch (WhoisException ex) {
-    		Logger.info("Exception: " + ex);
+    		Logger.debug("Exception: " + ex);
     		return false;
     	}
     }
@@ -670,7 +670,7 @@ public class Instance extends UrlModel {
     public static Page<Instance> pageByTarget(int page, int pageSize, String sortBy, String order, 
     		String filter, String targetUrl) {
 
-//    	Logger.info("Instnce.pageByTarget() filter: " + filter);
+//    	Logger.debug("Instnce.pageByTarget() filter: " + filter);
         return find.where().icontains(Const.FIELD_URL_NODE, filter)
         		.eq(Const.FIELD_TARGET, targetUrl)
         		.orderBy(sortBy + " " + order)
@@ -698,7 +698,7 @@ public class Instance extends UrlModel {
      * @return list of associated Instances
      */
     public static List<Instance> findRevisions(String url) {
-        Logger.info("findRevisions() target url: " + url);
+        Logger.debug("findRevisions() target url: " + url);
 		List<Instance> res = new ArrayList<Instance>();
 		if (url != null && url.length() > 0) {
 	        ExpressionList<Instance> ll = find.where().eq(Const.URL, url);
@@ -742,13 +742,13 @@ public class Instance extends UrlModel {
 //    		exp = exp.icontains(Const.AUTHOR, curatorUrl);
 //    	}
     	if (startDate != null && startDate.length() > 0) {
-    		Logger.info("start_date: " + startDate);
+    		Logger.debug("start_date: " + startDate);
     		String startDateStr = Utils.INSTANCE.getUnixDateStringFromDate(startDate);
-    		Logger.info("start_date string: " + startDateStr);
+    		Logger.debug("start_date string: " + startDateStr);
     		exp = exp.ge(Const.CHANGED, startDateStr);
     	} 
     	if (endDate != null && endDate.length() > 0) {
-    		Logger.info("end_date: " + endDate);
+    		Logger.debug("end_date: " + endDate);
     		String endDateStr = Utils.INSTANCE.getUnixDateStringFromDate(endDate);
     		exp = exp.le(Const.CHANGED, endDateStr);
     	} 
@@ -757,7 +757,7 @@ public class Instance extends UrlModel {
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
-    	Logger.info("Expression list size: " + res.getTotalRowCount());
+    	Logger.debug("Expression list size: " + res.getTotalRowCount());
         return res;
     }
         	
@@ -773,7 +773,7 @@ public class Instance extends UrlModel {
     	ExpressionList<Instance> exp = Instance.find.where();
     	List<Instance> res = new ArrayList<Instance>();
 //    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
-//    		Logger.info("status: " + status);
+//    		Logger.debug("status: " + status);
 //    		exp = exp.eq(Const.STATUS, status);
 //    		isProcessed = true;
 //    	} 
@@ -803,9 +803,9 @@ public class Instance extends UrlModel {
     	} 
     	
     	if (startDate != null && startDate.length() > 0) {
-    		Logger.info("start_date: " + startDate);
+    		Logger.debug("start_date: " + startDate);
     		String startDateStr = Utils.INSTANCE.getUnixDateStringFromDate(startDate);
-    		Logger.info("start_date string: " + startDateStr);
+    		Logger.debug("start_date string: " + startDateStr);
     		if (status != null && (status.length() > 0 || status.length() ==  0) 
     				&& (status.equals(Const.ReportQaStatusType.QAED.name().toLowerCase())
         				|| status.equals(Const.ReportQaStatusType.WITHQAISSUES.name().toLowerCase())	
@@ -823,7 +823,7 @@ public class Instance extends UrlModel {
     		isProcessed = true;
     	} 
     	if (endDate != null && endDate.length() > 0) {
-    		Logger.info("end_date: " + endDate);
+    		Logger.debug("end_date: " + endDate);
     		String endDateStr = Utils.INSTANCE.getUnixDateStringFromDate(endDate);
     		if (status != null && (status.length() > 0 || status.length() ==  0) 
     				&& (status.equals(Const.ReportQaStatusType.QAED.name().toLowerCase())
@@ -846,7 +846,7 @@ public class Instance extends UrlModel {
 //    	} 
     	res = exp.query().findList();
 
-    	Logger.info("Expression list for instances size: " + res.size() + ", isProcessed: " + isProcessed);
+    	Logger.debug("Expression list for instances size: " + res.size() + ", isProcessed: " + isProcessed);
         return res;
     }
     
@@ -868,7 +868,7 @@ public class Instance extends UrlModel {
 //		if (fieldNominatingOrganisation != null
 //				&& fieldNominatingOrganisation.length() > 0) {
 //			Organisation organisation = Organisation.findByUrl(fieldNominatingOrganisation);
-////            Logger.info("Add instance to organisation: " + organisation.toString());
+////            Logger.debug("Add instance to organisation: " + organisation.toString());
 //            this.organisation = organisation;
 //		}
 //    	

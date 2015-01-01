@@ -106,10 +106,10 @@ public class Flag extends Taxonomy {
    		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
 	    	String[] parts = urls.split(Const.COMMA + " ");
 	    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
+//		    		Logger.debug("part: " + part);
 	    		Flag flag = findByName(part);
 	    		if (flag != null && flag.name != null && flag.name.length() > 0) {
-//			    	Logger.info("flag name: " + flag.name);
+//			    	Logger.debug("flag name: " + flag.name);
 	    			res.add(flag);
 	    		}
 	    	}

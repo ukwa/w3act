@@ -38,9 +38,9 @@ public class ApplicationController extends Controller {
         		if (StringUtils.isBlank(password)) {
         			return "Please enter a password";
         		}
-//				Logger.info("validate() inserted password: " + password);
+//				Logger.debug("validate() inserted password: " + password);
 				String inputPassword = password;
-//				Logger.info("validate() db hash for email: " + email.toLowerCase());
+//				Logger.debug("validate() db hash for email: " + email.toLowerCase());
 				if (User.findByEmail(email.toLowerCase()) == null) {
 					return "Invalid email";
 				}
@@ -48,11 +48,11 @@ public class ApplicationController extends Controller {
 				Logger.debug("userPassword: " + userPassword + " - " + inputPassword);
         		res = PasswordHash.validatePassword(inputPassword, userPassword);
 			} catch (NoSuchAlgorithmException e) {
-				Logger.info("validate() no algorithm error: " + e);
+				Logger.debug("validate() no algorithm error: " + e);
 			} catch (InvalidKeySpecException e) {
-				Logger.info("validate() key specification error: " + e);
+				Logger.debug("validate() key specification error: " + e);
 			}
-        	Logger.info("res: " + res);
+        	Logger.debug("res: " + res);
             if(!res || User.authenticate(email.toLowerCase(), User.findByEmail(email.toLowerCase()).password) == null) {
                 return "Password not recognised";
             }
@@ -103,7 +103,7 @@ public class ApplicationController extends Controller {
     public static Result index() {
     	String email = session().get("email");
     	User user = User.findByEmail(email);
-    	Logger.info("user: " + user + " - " + email);
+    	Logger.debug("user: " + user + " - " + email);
     	if (user != null) {
     		return ok(about.render("About", user));
     	}
@@ -128,7 +128,7 @@ public class ApplicationController extends Controller {
     			br.close();
     		}
 //    		row = Utils.buildWebRequestByUrl(Const.GITHUB, Const.LAST_COMMIT);
-//        	Logger.info("row: " + row);
+//        	Logger.debug("row: " + row);
 //	    	if (row != null && row.length() > 0) {
 //		    	int start = row.indexOf(Const.LAST_COMMIT) + Const.LAST_COMMIT.length();
 //		    	row = row.substring(start, start + 40);
@@ -136,7 +136,7 @@ public class ApplicationController extends Controller {
     	} catch (Exception e) {
     		Logger.debug("Error occured by last commit hash calculation: " + e);
     	}
-    	Logger.info("last commit hash: " + res);
+    	Logger.debug("last commit hash: " + res);
 
     	return res;
     }

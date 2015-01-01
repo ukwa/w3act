@@ -45,7 +45,7 @@ public class ContactPersonController extends AbstractController {
 
     public static Result view(Long id) {
     	User user = User.findByEmail(request().username());
-    	Logger.info("view contact person");
+    	Logger.debug("view contact person");
         return ok(
                 view.render(
                 		models.ContactPerson.findById(id), user
@@ -60,13 +60,13 @@ public class ContactPersonController extends AbstractController {
      */
     public static Result search() {
 
-    	Logger.info("ContactPersons.search()");
+    	Logger.debug("ContactPersons.search()");
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String name = form.get(Const.NAME);
 
         if (StringUtils.isBlank(name)) {
-			Logger.info("Contact Person name is empty. Please write name in search window.");
+			Logger.debug("Contact Person name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.ContactPersonController.index()
@@ -97,17 +97,17 @@ public class ContactPersonController extends AbstractController {
      * @return
      */
     public static List<ContactPerson> processFilterContactPersons(String filterUrl) {
-//    	Logger.info("process filter filterUrl: " + filterUrl);
+//    	Logger.debug("process filter filterUrl: " + filterUrl);
     	boolean isProcessed = false;
     	ExpressionList<ContactPerson> exp = ContactPerson.find.where();
     	List<ContactPerson> res = new ArrayList<ContactPerson>();
     	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
-    		Logger.info("name: " + filterUrl);
+    		Logger.debug("name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);
     		isProcessed = true;
     	}
     	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+    	Logger.debug("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
     		res = models.ContactPerson.findAll();

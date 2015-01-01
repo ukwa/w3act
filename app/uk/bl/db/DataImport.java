@@ -73,7 +73,7 @@ public enum DataImport {
 //		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
 //				// store urls in DB
 //                Ebean.save(allUrls);
-//                Logger.info("targets successfully loaded");
+//                Logger.debug("targets successfully loaded");
 
                 
                 
@@ -81,57 +81,57 @@ public enum DataImport {
 ////                Iterator<Target> targetItr = targetList.iterator();
 ////                while (targetItr.hasNext()) {
 ////                	Target target = targetItr.next();
-//////                    Logger.info("Target test object: " + target.toString());
+//////                    Logger.debug("Target test object: " + target.toString());
 ////					if (target.field_subject == null
 ////							|| target.field_subject.length() == 0) {
 ////						target.field_subject = Const.NONE;
 ////						Ebean.update(target);
 ////					}
 ////                }
-//                Logger.info("load organisations ...");
+//                Logger.debug("load organisations ...");
 //				// aggregate organisations data from drupal and store JSON content in a file
 //		        List<Object> allOrganisations = JsonUtils.getDrupalData(Const.NodeType.ORGANISATION);
 //		        List<Object> allSingleOrganisations = Organisations.skipExistingObjects(allOrganisations);
 //				// store organisations in DB
 //                Ebean.save(allSingleOrganisations);
 //                JsonUtils.normalizeOrganisationUrlInUser();
-//                Logger.info("organisations successfully loaded");
-//                Logger.info("load taxonomies ...");
+//                Logger.debug("organisations successfully loaded");
+//                Logger.debug("load taxonomies ...");
 //                // aggregate original taxonomies from drupal extracting information from aggregated data
 //		        List<Object> allTaxonomies = JsonUtils.INSTANCE.extractDrupalData(Const.NodeType.TAXONOMY);
 ////		        List<Taxonomy> cleanedTaxonomies = cleanUpTaxonomies(allTaxonomies);
 //				// store taxonomies in DB
 //                Ebean.save(allTaxonomies);
 ////                Ebean.save(cleanedTaxonomies);
-//                Logger.info("taxonomies successfully loaded");
+//                Logger.debug("taxonomies successfully loaded");
 //                // due to merging of different original object models the resulting 
 //                // collection set is evaluated from particular taxonomy type
-//                Logger.info("load collections ..."); 
+//                Logger.debug("load collections ..."); 
 //		        List<Object> allCollections = JsonUtils.readCollectionsFromTaxonomies();
 //				// store collections in DB
 //                Ebean.save(allCollections);
-//                Logger.info("collections successfully loaded");
+//                Logger.debug("collections successfully loaded");
 			
-//                Logger.info("load instances");
+//                Logger.debug("load instances");
 //				// aggregate instances data from drupal and store JSON content in a file
 			
 			
 //		        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
-//		        Logger.info("Number of instances: " + allInstances.size());
+//		        Logger.debug("Number of instances: " + allInstances.size());
 //				// store instances in DB
 //                Ebean.save(allInstances);
-//                Logger.info("instances successfully loaded");
+//                Logger.debug("instances successfully loaded");
 //                JsonUtils.mapInstancesToTargets();
-//                Logger.info("map instances to targets");
+//                Logger.debug("map instances to targets");
 			//JsonUtils.getDomainForTargets();
-//                Logger.info("Target domains extracted");
+//                Logger.debug("Target domains extracted");
 //          normalizeUrls();
 //                // Create association between Creator and Organisation
 //	            List<User> creatorList = (List<User>) User.find.all();
 //	            Iterator<User> creatorItr = creatorList.iterator();
 //	            while (creatorItr.hasNext()) {
 //	              	User creator = creatorItr.next();
-////                    Logger.info("Test creator test object: " + creator.toString());
+////                    Logger.debug("Test creator test object: " + creator.toString());
 //                    creator.updateOrganisation(); // NO NEED AS WE ARE USING ORM AND ALREADY IMPORTED
 //                    // Create association between User and Role
 ////                	creator.role_to_user = Role.convertUrlsToObjects(creator.roles);
@@ -142,7 +142,7 @@ public enum DataImport {
 //	            Iterator<Target> targetItr = targetList.iterator();
 //	            while (targetItr.hasNext()) {
 //	            	Target target = targetItr.next();
-////                    Logger.info("Test target object: " + target.toString());
+////                    Logger.debug("Test target object: " + target.toString());
 //	            	// Create association between Target and Organisation
 //	            	target.updateOrganisation();
 //                    // Create association between Target and DCollection
@@ -180,11 +180,11 @@ public enum DataImport {
 //	            Iterator<Permission> permissionItr = permissionList.iterator();
 //	            while (permissionItr.hasNext()) {
 //	            	Permission permission = permissionItr.next();
-////                    Logger.info("Test permission test object: " + permission.toString());
+////                    Logger.debug("Test permission test object: " + permission.toString());
 //                    permission.updateRole();
 //        			Ebean.update(permission);
 //	            }
-                Logger.info("+++ Data import completed +++");
+                Logger.debug("+++ Data import completed +++");
 	        } catch (Exception e) {
             	e.printStackTrace();
             }
@@ -194,14 +194,20 @@ public enum DataImport {
 		@SuppressWarnings("unchecked")
 		Map<String,List<Permission>> allPermissions = (Map<String,List<Permission>>)Yaml.load("Accounts.yml");
 		List<Permission> permissions = allPermissions.get(Const.PERMISSIONS);
-		Ebean.save(permissions);
+		for (Permission permission : permissions) {
+			permission.save();
+		}
+//		Ebean.save(permissions);
 	}
 	
 	private void importRoles() {
 		@SuppressWarnings("unchecked")
 		Map<String,List<Role>> allRoles = (Map<String,List<Role>>)Yaml.load("Accounts.yml");
 		List<Role> roles = allRoles.get(Const.ROLES);
-		Ebean.save(roles);
+		for (Role role : roles) {
+			role.save();
+		}
+//		Ebean.save(roles);
 	}
 	
 	private void importAccounts() {
@@ -214,23 +220,23 @@ public enum DataImport {
 				user.createdAt = new Date();
 			}
 			Ebean.save(users);
-//			Logger.info("hash password: " + user.password);
+//			Logger.debug("hash password: " + user.password);
 		} catch (NoSuchAlgorithmException e) {
-			Logger.info("initial password creation - no algorithm error: " + e);
+			Logger.debug("initial password creation - no algorithm error: " + e);
 		} catch (InvalidKeySpecException e) {
-			Logger.info("initial password creation - key specification error: " + e);
+			Logger.debug("initial password creation - key specification error: " + e);
 		}
-        Logger.info("Loaded Permissions, Roles and Users");
+        Logger.debug("Loaded Permissions, Roles and Users");
 	}
 	
 	private void importJsonTaxonomyVocabularies() {
 		JsonUtils.INSTANCE.convertTaxonomyVocabulary();
-        Logger.info("Loaded Json Taxonomies Vocabularies");
+        Logger.debug("Loaded Json Taxonomies Vocabularies");
 	}
 
 	private void importJsonTaxonomies() {
 		JsonUtils.INSTANCE.convertTaxonomies();
-        Logger.info("Loaded Json Taxonomies");
+        Logger.debug("Loaded Json Taxonomies");
 	}
 	
 	private void importTaxonomies() {
@@ -244,12 +250,12 @@ public enum DataImport {
 			Taxonomy lookup = Taxonomy.findByNameAndType(taxonomy.name, taxonomy.ttype);
 			if (lookup == null) {
 				tv = TaxonomyType.findByMachineName(taxonomy.ttype);
-				Logger.info("ttype: " + taxonomy.ttype + " - " + tv);
+				Logger.debug("ttype: " + taxonomy.ttype + " - " + tv);
 				taxonomy.setTaxonomyType(tv);
 				taxonomy.url = Const.ACT_URL + Utils.INSTANCE.createId();
 				if (StringUtils.isNotEmpty(taxonomy.parentName)) {
 					Taxonomy parent = Taxonomy.findByNameAndType(taxonomy.parentName, taxonomy.ttype);
-					Logger.info("Parent found: " + parent);
+					Logger.debug("Parent found: " + parent);
 					if (parent != null) {
 						if (taxonomy instanceof Collection) {
 							((Collection)taxonomy).parent = (Collection)parent;
@@ -262,7 +268,7 @@ public enum DataImport {
 				taxonomy.save();
 			}
 		}
-        Logger.info("Loaded Taxonomies");
+        Logger.debug("Loaded Taxonomies");
 	}
 	
 	private void importTags() { 
@@ -273,7 +279,7 @@ public enum DataImport {
 			tag.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			tag.save();
 		}
-        Logger.info("Loaded Tags");
+        Logger.debug("Loaded Tags");
 	}
 	
 	private void importFlags() {
@@ -284,7 +290,7 @@ public enum DataImport {
 			flag.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			flag.save();
 		}
-        Logger.info("Loaded Flags");
+        Logger.debug("Loaded Flags");
 	}
 
 	private void importMailTemplates() {
@@ -295,7 +301,7 @@ public enum DataImport {
 			mailTemplate.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			mailTemplate.save();
 		}
-        Logger.info("Loaded MailTemplates");
+        Logger.debug("Loaded MailTemplates");
 	}
 	
 	private void importContactPersons() {
@@ -306,7 +312,7 @@ public enum DataImport {
 			contactPerson.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			contactPerson.save();
 		}
-        Logger.info("Loaded ContactPersons");
+        Logger.debug("Loaded ContactPersons");
 	}
 	
 	private void importOrganisations() {
@@ -317,28 +323,28 @@ public enum DataImport {
 			organisation.url = Const.ACT_URL + Utils.INSTANCE.createId();
 			organisation.save();
 		}
-        Logger.info("Loaded Organisations");
+        Logger.debug("Loaded Organisations");
 	}
 
 	private void importJsonOrganisations() {
 		JsonUtils.INSTANCE.convertOrganisations();
-        Logger.info("Loaded Json Organisations");
+        Logger.debug("Loaded Json Organisations");
 	}
 	
 	private void importCurators() {
 		JsonUtils.INSTANCE.convertCurators();
-        Logger.info("Loaded Curators");
+        Logger.debug("Loaded Curators");
 	}
 	
 	private void importTargets() {
 		// store urls in DB
         JsonUtils.INSTANCE.convertTargets();
-        Logger.info("Loaded URLs");
+        Logger.debug("Loaded URLs");
 	}
 	
 	private void importInstances() {
         JsonUtils.INSTANCE.convertInstances();;
-        Logger.info("Loaded Instances");
+        Logger.debug("Loaded Instances");
 	}
 
 //    /**
@@ -378,9 +384,9 @@ public enum DataImport {
 //    }
     
 	public static void main(String[] args) {
-		Logger.info("start");
+		Logger.debug("start");
 		new play.core.StaticApplication(new java.io.File("."));
 		DataImport.INSTANCE.insert();
-		Logger.info("finished");
+		Logger.debug("finished");
 	}
 }

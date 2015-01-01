@@ -90,7 +90,7 @@ public class TargetController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result lookup(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("TargetController.lookup()");
+    	Logger.debug("TargetController.lookup()");
     	
     	Page<Target> pages = Target.find.fetch("fieldUrls").where()
 			.eq(Const.ACTIVE, true)
@@ -99,7 +99,7 @@ public class TargetController extends AbstractController {
 			.findPagingList(10)
 			.setFetchAhead(false).getPage(pageNo);
     	
-    	Logger.info("Total: " + pages.getTotalRowCount());
+    	Logger.debug("Total: " + pages.getTotalRowCount());
     	
         return ok(
         	lookup.render(
@@ -132,7 +132,7 @@ public class TargetController extends AbstractController {
     public static Result list(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject, 
     		String crawlFrequencyName, String depthName, String collection, Long licenseId, int pageSize, Long flagId) {
     	
-    	Logger.info("Pre Targets.list() : " + pageNo + " - " + filter + " - " + curatorId + " - " + organisationId + " - " + subject + " - " + crawlFrequencyName + " - " + depthName + " - " + collection + " - " + licenseId + " - " + pageSize + " - " + flagId);
+    	Logger.debug("Pre Targets.list() : " + pageNo + " - " + filter + " - " + curatorId + " - " + organisationId + " - " + subject + " - " + crawlFrequencyName + " - " + depthName + " - " + collection + " - " + licenseId + " - " + pageSize + " - " + flagId);
 
     	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curatorId, organisationId, subject, crawlFrequencyName, depthName, collection, licenseId, flagId);
     	
@@ -234,7 +234,7 @@ public class TargetController extends AbstractController {
     	String filter = requestData.get("filter");
 
 //    	if (StringUtils.isBlank(query)) {
-//			Logger.info("Target name is empty. Please write name in search window.");
+//			Logger.debug("Target name is empty. Please write name in search window.");
 //			flash("message", "Please enter a name in the search window");
 //	        return GO_HOME;
 //    	}    	
@@ -253,7 +253,7 @@ public class TargetController extends AbstractController {
         String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
         String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
     	
-    	Logger.info(filter + " " + pageNo + " " + sort + " " + order + " " + pageSize + " " + curatorId + " " + curatorId + " " + licenseId + " " + depthName + " " + crawlFrequencyName + " " + flagId + " " + collectionSelect + " " + subjectSelect);
+    	Logger.debug(filter + " " + pageNo + " " + sort + " " + order + " " + pageSize + " " + curatorId + " " + curatorId + " " + licenseId + " " + depthName + " " + crawlFrequencyName + " " + flagId + " " + collectionSelect + " " + subjectSelect);
     	
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
@@ -274,7 +274,7 @@ public class TargetController extends AbstractController {
 //    	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, 
 //    					subject, crawlFrequency, depth, collection, license, flag); 
 //    			exportTargets.addAll(pageAll.getList());
-//				Logger.info("export size: " + exportTargets.size());
+//				Logger.debug("export size: " + exportTargets.size());
 //    			export(exportTargets);
 //    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
 //    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
@@ -294,13 +294,13 @@ public class TargetController extends AbstractController {
      * @return
      */
     public static void export(List<Target> targetList) {
-    	Logger.info("export() targetList size: " + targetList.size());
+    	Logger.debug("export() targetList size: " + targetList.size());
 
         StringWriter sw = new StringWriter();
         for (int i = 0; i < Const.targetExportMap.size(); i++) {
         {
             for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet())
-//        	Logger.info("export key: " + entry.getKey());
+//        	Logger.debug("export key: " + entry.getKey());
             	if (entry.getValue() == i) {
 	            	sw.append(entry.getKey());
 		 	    	sw.append(Const.CSV_SEPARATOR);
@@ -314,17 +314,17 @@ public class TargetController extends AbstractController {
  	    	Iterator<Target> itr = targetList.iterator();
  	    	while (itr.hasNext()) {
  	    		Target target = itr.next();
-// 	        	Logger.info("export target: " + target); 	    		
+// 	        	Logger.debug("export target: " + target); 	    		
  	            for (int i = 0; i < Const.targetExportMap.size(); i++) {
 		 	        for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet()) {
 			 	   		Field[] fields = Target.class.getFields();
 			 			for (Field field : fields) {
 		 	               if (entry.getValue() == i) {
-//		 	                   Logger.info("field.name: " + field.getName() + ", entry.getkey: " + entry.getKey());
+//		 	                   Logger.debug("field.name: " + field.getName() + ", entry.getkey: " + entry.getKey());
 		 	                   if (field.getName().equals(entry.getKey())) {
 		 	                	   try {
 										Object value = field.get(target);
-//				 	                    Logger.info("value: " + value);
+//				 	                    Logger.debug("value: " + value);
 				 	                    if (field.getName().equals(Const.AUTHOR)) {
 				 	                    	if (value != null) {
 				 	                    		value = User.findByUrl((String) value).name;
@@ -380,7 +380,7 @@ public class TargetController extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (action.equals("addentry")) {
-    	        Logger.info("create()");
+    	        Logger.debug("create()");
     	    	Target target = new Target();
     	    	// TODO: KL
 //    	    	target.fieldUrl = query;
@@ -389,8 +389,8 @@ public class TargetController extends AbstractController {
     	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
     	        	target.authorUser = User.findByEmail(request().username());
     	        }
-    			Logger.info("add target with url: " + target.url);
-    			Logger.info("target title: " + target.title);
+    			Logger.debug("add target with url: " + target.url);
+    			Logger.debug("target title: " + target.title);
     			
     			Form<Target> targetForm = Form.form(Target.class);
     			targetForm = targetForm.fill(target);
@@ -414,7 +414,7 @@ public class TargetController extends AbstractController {
 	  	        return ok(newForm.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null));
     		} 
     		else if (Const.SEARCH.equals(action)) {
-    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    			Logger.debug("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.TargetController.lookup(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -428,7 +428,7 @@ public class TargetController extends AbstractController {
      * @return
      */
     public static Result create(String title) {
-        Logger.info("create()");
+        Logger.debug("create()");
     	Target target = new Target();
     	// TODO: KL
 //    	target.fieldUrl = title;
@@ -437,8 +437,8 @@ public class TargetController extends AbstractController {
 //        target.url = Const.ACT_URL + target.id;
         target.revision = Const.INITIAL_REVISION;
         target.active = true;
-		Logger.info("add entry with target url: " + target.url);
-		Logger.info("target name: " + target.title);
+		Logger.debug("add entry with target url: " + target.url);
+		Logger.debug("target name: " + target.title);
 		Form<Target> targetForm = Form.form(Target.class);
 		target.subjectSelect = target.subjectIdsAsString();
 		target.collectionSelect = target.collectionIdsAsString();
@@ -477,9 +477,9 @@ public class TargetController extends AbstractController {
      */
     public static Result collectionTargets(int pageNo, String sortBy, String order, String filter, 
     		Long collectionId) {
-    	Logger.info("Targets.collectionTargets()");
+    	Logger.debug("Targets.collectionTargets()");
     	Collection collection = Collection.findById(collectionId);
-    	Logger.info("Collection: " + collection);
+    	Logger.debug("Collection: " + collection);
     	Page<Target> pages = Target.pageCollectionTargets(pageNo, 10, sortBy, order, filter, collection.id);
         return ok(
         		sites.render(
@@ -504,7 +504,7 @@ public class TargetController extends AbstractController {
     */
     public static Result subjectTargets(int pageNo, String sortBy, String order, String filter,
 	    Long subjectId) {
-	    Logger.info("Targets.subjectTargets()");
+	    Logger.debug("Targets.subjectTargets()");
 	    return ok(
 		    views.html.subjects.sites.render(
 		    Taxonomy.findById(subjectId),
@@ -527,7 +527,7 @@ public class TargetController extends AbstractController {
      */
     public static Result organisationTargets(int pageNo, String sortBy, String order, String filter, 
     		Long organisationId) {
-    	Logger.info("Targets.organisationTargets()");
+    	Logger.debug("Targets.organisationTargets()");
     	
     	User user = User.findByEmail(request().username());
     	
@@ -557,7 +557,7 @@ public class TargetController extends AbstractController {
     	String query = form.get("url");
 
 //    	if (StringUtils.isBlank(query)) {
-//			Logger.info("Target name is empty. Please write name in search window.");
+//			Logger.debug("Target name is empty. Please write name in search window.");
 //			flash("message", "Please enter a name in the search window");
 //	        return redirect(routes.CollectionController.list(0, "title", "asc", ""));
 //    	}    	
@@ -572,7 +572,7 @@ public class TargetController extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
-    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    			Logger.debug("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.TargetController.collectionTargets(pageNo, sort, order, query, collection.id));
 		    } else {
 		    	return badRequest("This action is not allowed");
@@ -600,7 +600,7 @@ public class TargetController extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
-    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    			Logger.debug("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.TargetController.subjectTargets(pageNo, sort, order, query, subjectId));
 		    } else {
 		    	return badRequest("This action is not allowed");
@@ -628,7 +628,7 @@ public class TargetController extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.SEARCH.equals(action)) {
-    			Logger.info("searching " + pageNo + " " + sort + " " + order);
+    			Logger.debug("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.TargetController.organisationTargets(pageNo, sort, order, query, organisationId));
 		    } else {
 		    	return badRequest("This action is not allowed");
@@ -704,7 +704,7 @@ public class TargetController extends AbstractController {
     	}
     	
 //    	if (StringUtils.isBlank(query)) {
-//			Logger.info("Target name is empty. Please write name in search window.");
+//			Logger.debug("Target name is empty. Please write name in search window.");
 //			flash("message", "Please enter a name in the search window");
 //	        return redirect(routes.Targets.userTargets(pageNo, sort, order, query, user_url, subject, collection));
 //    	}    	
@@ -728,7 +728,7 @@ public class TargetController extends AbstractController {
      * @param url The target identifier URL
      */
     public static Result edit(Long id) {
-		Logger.info("Targets.edit() id: " + id);
+		Logger.debug("Targets.edit() id: " + id);
 		Target target = Target.findById(id);
 		target.formUrl = target.fieldUrl();
 		target.subjectSelect = target.subjectIdsAsString();
@@ -806,21 +806,21 @@ public class TargetController extends AbstractController {
      * @return blank form for data entry
      */
     public static Result blank() {
-        Logger.info("blank()");
+        Logger.debug("blank()");
         return ok(blank.render(targetForm, User.findByEmail(request().username())));
     }
     
     public static Result saveBlank() {
     	Form<Target> filledForm = targetForm.bindFromRequest();
 	    if(filledForm.hasErrors()) {
-	    	Logger.info("hasErrors: " + filledForm.hasErrors());
+	    	Logger.debug("hasErrors: " + filledForm.hasErrors());
         	for (String key : filledForm.errors().keySet()) {
-        		Logger.info("" + key);
+        		Logger.debug("" + key);
         	}
 	        return badRequest(blank.render(filledForm, User.findByEmail(request().username())));
 	    } else {
 	        flash("success", "You've saved");
-	    	Logger.info("saved");
+	    	Logger.debug("saved");
 	        return ok(blank.render(filledForm, User.findByEmail(request().username())));
 	    }
     }
@@ -861,7 +861,7 @@ public class TargetController extends AbstractController {
 //    	if (Target.getNpldStatusList(fieldUrl).size() > 0) {
 //    		res = true;
 //    	}
-//    	Logger.info("indicateNpldStatus() res: " + res);
+//    	Logger.debug("indicateNpldStatus() res: " + res);
 //    	return res;
 //    }
     
@@ -957,7 +957,7 @@ public class TargetController extends AbstractController {
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
         Form<Target> filledForm = form(Target.class).bindFromRequest();
 
-    	Logger.info("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
 
 //        if(!filledForm.field("subjectSelect").valueOr("").isEmpty()){
 //            ValidationError e = new ValidationError("subjectSelect", "Subjects Required");
@@ -965,7 +965,7 @@ public class TargetController extends AbstractController {
 //        }
     	
         if (filledForm.hasErrors()) {
-        	Logger.info("hasErrors: " + filledForm.errors());
+        	Logger.debug("hasErrors: " + filledForm.errors());
             return info(filledForm, id);
         }
         
@@ -979,14 +979,14 @@ public class TargetController extends AbstractController {
         String sptId = requestData.get("sptId");
 
 	  	if (StringUtils.isNotBlank(sptId) && !Utils.INSTANCE.isNumeric(sptId)) {
-	          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+	          Logger.debug("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 				flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 	            return info(filledForm, id);
 	  	}    	
 	
 	  	String legacySiteId = requestData.get("legacySiteId");
 	  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.INSTANCE.isNumeric(legacySiteId)) {
-	          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+	          Logger.debug("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 				flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 	            return info(filledForm, id);
 	  	}    	
@@ -1035,7 +1035,7 @@ public class TargetController extends AbstractController {
         
         List<Subject> newSubjects = new ArrayList<Subject>();
         String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
-        Logger.info("subjectSelect: " + subjectSelect);
+        Logger.debug("subjectSelect: " + subjectSelect);
         if (StringUtils.isNotEmpty(subjectSelect)) {
             String[] subjects = subjectSelect.split(", ");
             for (String sId : subjects) {
@@ -1049,7 +1049,7 @@ public class TargetController extends AbstractController {
         
         List<Collection> newCollections = new ArrayList<Collection>();
         String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
-        Logger.info("collectionSelect: " + collectionSelect);
+        Logger.debug("collectionSelect: " + collectionSelect);
         if (StringUtils.isNotEmpty(collectionSelect)) {
             String[] collections = collectionSelect.split(", ");
             for (String cId : collections) {
@@ -1080,7 +1080,7 @@ public class TargetController extends AbstractController {
 
         if (flagValues != null) {
             for(String flagValue: flagValues) {
-            	Logger.info("flagValue: " + flagValue);
+            	Logger.debug("flagValue: " + flagValue);
             	Long flagId = Long.valueOf(flagValue);
             	Flag flag = Flag.findById(flagId);
             	newFlags.add(flag);
@@ -1160,14 +1160,14 @@ public class TargetController extends AbstractController {
 	            String sptId = requestData.get("sptId");
 	
 			  	if (StringUtils.isNotBlank(sptId) && !Utils.INSTANCE.isNumeric(sptId)) {
-			          Logger.info("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+			          Logger.debug("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 						flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 			            return newInfo(filledForm);
 			  	}    	
 			
 			  	String legacySiteId = requestData.get("legacySiteId");
 			  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.INSTANCE.isNumeric(legacySiteId)) {
-			          Logger.info("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+			          Logger.debug("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 						flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 			            return newInfo(filledForm);
 			  	}    	
@@ -1195,11 +1195,11 @@ public class TargetController extends AbstractController {
 		            	if (fu == null) {
 		                    URL uri;
 							try {
-				            	Logger.info("url: " + url.trim());
+				            	Logger.debug("url: " + url.trim());
 								uri = new URI(url.trim()).normalize().toURL();
 			        			String extFormUrl = uri.toExternalForm();
 				            	fu = new FieldUrl(extFormUrl.trim());
-				            	Logger.info("extFormUrl: " + extFormUrl);
+				            	Logger.debug("extFormUrl: " + extFormUrl);
 							} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
 								flash("message", e.getMessage());
 								e.printStackTrace();
@@ -1234,7 +1234,7 @@ public class TargetController extends AbstractController {
 	            
 	            List<Subject> newSubjects = new ArrayList<Subject>();
 	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
-	            Logger.info("subjectSelect: " + subjectSelect);
+	            Logger.debug("subjectSelect: " + subjectSelect);
 	            if (StringUtils.isNotEmpty(subjectSelect)) {
 	                String[] subjects = subjectSelect.split(", ");
 		            for (String sId : subjects) {
@@ -1248,7 +1248,7 @@ public class TargetController extends AbstractController {
 	            
 	            List<Collection> newCollections = new ArrayList<Collection>();
 	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
-	            Logger.info("collectionSelect: " + collectionSelect);
+	            Logger.debug("collectionSelect: " + collectionSelect);
 	            if (StringUtils.isNotEmpty(collectionSelect)) {
 	                String[] collections = collectionSelect.split(", ");
 		            for (String cId : collections) {
@@ -1279,7 +1279,7 @@ public class TargetController extends AbstractController {
 	
 	            if (flagValues != null) {
 		            for(String flagValue: flagValues) {
-		            	Logger.info("flagValue: " + flagValue);
+		            	Logger.debug("flagValue: " + flagValue);
 		            	Long flagId = Long.valueOf(flagValue);
 		            	Flag flag = Flag.findById(flagId);
 		            	newFlags.add(flag);
@@ -1433,9 +1433,9 @@ public class TargetController extends AbstractController {
      * @throws WhoisException 
      */
 //    public static Result isInScope(String url) throws WhoisException {
-////    	Logger.info("isInScope controller: " + url);
+////    	Logger.debug("isInScope controller: " + url);
 //    	boolean res = Target.isInScope(url, null);
-////    	Logger.info("isInScope res: " + res);
+////    	Logger.debug("isInScope res: " + res);
 //    	return ok(Json.toJson(res));
 //    }
     
@@ -1446,7 +1446,7 @@ public class TargetController extends AbstractController {
      * @return child collection in JSON form
      */
     public static String getChildren(String url, String targetUrl) {
-//    	Logger.info("getChildren() target URL: " + targetUrl);
+//    	Logger.debug("getChildren() target URL: " + targetUrl);
     	String res = "";
         final StringBuffer sb = new StringBuffer();
     	sb.append(", \"children\":");
@@ -1454,7 +1454,7 @@ public class TargetController extends AbstractController {
     	if (childSuggestedCollections.size() > 0) {
 	    	sb.append(getTreeElements(childSuggestedCollections, targetUrl, false));
 	    	res = sb.toString();
-//	    	Logger.info("getChildren() res: " + res);
+//	    	Logger.debug("getChildren() res: " + res);
     	}
     	return res;
     }
@@ -1501,7 +1501,7 @@ public class TargetController extends AbstractController {
      * @return collection object in JSON form
      */
     public static String getTreeElementsFilter(List<Collection> collectionList, String targetUrl, boolean parent) { 
-//    	Logger.info("getTreeElements() target URL: " + targetUrl);
+//    	Logger.debug("getTreeElements() target URL: " + targetUrl);
     	String res = "";
     	if (collectionList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
@@ -1525,10 +1525,10 @@ public class TargetController extends AbstractController {
 							"}");
 	    		}
 	    	}
-//	    	Logger.info("collectionList level size: " + collectionList.size());
+//	    	Logger.debug("collectionList level size: " + collectionList.size());
 	    	sb.append("]");
 	    	res = sb.toString();
-//	    	Logger.info("getTreeElements() res: " + res);
+//	    	Logger.debug("getTreeElements() res: " + res);
     	}
     	return res;
     }
@@ -1552,14 +1552,14 @@ public class TargetController extends AbstractController {
 //	    	}
 //			child.put("key", "\"" + collection.url + "\"");
 //	    	List<Collection> children = Collection.findChildrenByParentId(collection.id);
-//	    	Logger.info("collection: " + collection.name + " - " + collection.children.size());
-////    	    	Logger.info("children: " + children.size());
+//	    	Logger.debug("collection: " + collection.name + " - " + collection.children.size());
+////    	    	Logger.debug("children: " + children.size());
 //	    	if (children.size() > 0) {
 //	    		child.put("children", Json.toJson(getCollectionTreeElements(children, filter, false)));
 //	    	}
 //			result.add(child);
 //    	}
-////        	Logger.info("getTreeElements() res: " + result);
+////        	Logger.debug("getTreeElements() res: " + result);
 //    	return result;
 //    }
     
@@ -1592,14 +1592,14 @@ public class TargetController extends AbstractController {
      */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getSuggestedCollections(String targetUrl) {
-//    	Logger.info("getSuggestedCollections() target URL: " + targetUrl);
+//    	Logger.debug("getSuggestedCollections() target URL: " + targetUrl);
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<Collection> suggestedCollections = Collection.getFirstLevelCollections();
     	sb.append(getTreeElements(suggestedCollections, targetUrl, true));
-//    	Logger.info("collections main level size: " + suggestedCollections.size());
+//    	Logger.debug("collections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-//    	Logger.info("getCollections() json: " + jsonData.toString());
+//    	Logger.debug("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
     }        
     
@@ -1611,7 +1611,7 @@ public class TargetController extends AbstractController {
      * @return collection object in JSON form
      */
     public static String getTreeElements(List<Collection> collectionList, String targetUrl, boolean parent) { 
-//    	Logger.info("getTreeElements() target URL: " + targetUrl);
+//    	Logger.debug("getTreeElements() target URL: " + targetUrl);
     	String res = "";
     	if (collectionList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
@@ -1635,10 +1635,10 @@ public class TargetController extends AbstractController {
 							"}");
 	    		}
 	    	}
-//	    	Logger.info("collectionList level size: " + collectionList.size());
+//	    	Logger.debug("collectionList level size: " + collectionList.size());
 	    	sb.append("]");
 	    	res = sb.toString();
-//	    	Logger.info("getTreeElements() res: " + res);
+//	    	Logger.debug("getTreeElements() res: " + res);
     	}
     	return res;
     }
@@ -1649,14 +1649,14 @@ public class TargetController extends AbstractController {
      */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getSuggestedCollectionsFilter(String targetUrl) {
-//    	Logger.info("getSuggestedCollectionsFilter() target URL: " + targetUrl);
+//    	Logger.debug("getSuggestedCollectionsFilter() target URL: " + targetUrl);
         JsonNode jsonData = null;
         final StringBuffer sb = new StringBuffer();
     	List<Collection> suggestedCollections = Collection.getFirstLevelCollections();
     	sb.append(getTreeElementsFilter(suggestedCollections, targetUrl, true));
-//    	Logger.info("collections main level size: " + suggestedCollections.size());
+//    	Logger.debug("collections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-//    	Logger.info("getCollections() json: " + jsonData.toString());
+//    	Logger.debug("getCollections() json: " + jsonData.toString());
         return ok(jsonData);
     }        
     
@@ -1667,7 +1667,7 @@ public class TargetController extends AbstractController {
 //     * @return child subject in JSON form
 //     */
 //    public static String getSubjectChildren(String url, String targetUrl) {
-////    	Logger.info("getSubjectChildren() target URL: " + targetUrl);
+////    	Logger.debug("getSubjectChildren() target URL: " + targetUrl);
 //    	String res = "";
 //        final StringBuffer sb = new StringBuffer();
 //    	sb.append(", \"children\":");
@@ -1677,7 +1677,7 @@ public class TargetController extends AbstractController {
 //    	if (childSubject.size() > 0) {
 //	    	sb.append(getSubjectTreeElements(childSubject, targetUrl, false));
 //	    	res = sb.toString();
-////	    	Logger.info("getSubjectChildren() res: " + res);
+////	    	Logger.debug("getSubjectChildren() res: " + res);
 //    	}
 //    	return res;
 //    }
@@ -1761,7 +1761,7 @@ public class TargetController extends AbstractController {
 //     * @return collection object in JSON form
 //     */
 //    public static String getSubjectTreeElements(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
-////    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
+////    	Logger.debug("getSubjectTreeElements() target URL: " + targetUrl);
 //    	String res = "";
 //    	if (subjectList.size() > 0) {
 //	        final StringBuffer sb = new StringBuffer();
@@ -1789,10 +1789,10 @@ public class TargetController extends AbstractController {
 //							"}");
 //	    		}
 //	    	}
-////	    	Logger.info("subjectList level size: " + subjectList.size());
+////	    	Logger.debug("subjectList level size: " + subjectList.size());
 //	    	sb.append("]");
 //	    	res = sb.toString();
-////	    	Logger.info("getSubjectTreeElements() res: " + res);
+////	    	Logger.debug("getSubjectTreeElements() res: " + res);
 //    	}
 //    	return res;
 //    }
@@ -1805,7 +1805,7 @@ public class TargetController extends AbstractController {
 //     * @return collection object in JSON form
 //     */
 //    public static String getSubjectTreeElementsFilter(List<Taxonomy> subjectList, String targetUrl, boolean parent) { 
-////    	Logger.info("getSubjectTreeElements() target URL: " + targetUrl);
+////    	Logger.debug("getSubjectTreeElements() target URL: " + targetUrl);
 //    	String res = "";
 //    	if (subjectList.size() > 0) {
 //	        final StringBuffer sb = new StringBuffer();
@@ -1833,10 +1833,10 @@ public class TargetController extends AbstractController {
 //							"}");
 //	    		}
 //	    	}
-////	    	Logger.info("subjectList level size: " + subjectList.size());
+////	    	Logger.debug("subjectList level size: " + subjectList.size());
 //	    	sb.append("]");
 //	    	res = sb.toString();
-////	    	Logger.info("getSubjectTreeElements() res: " + res);
+////	    	Logger.debug("getSubjectTreeElements() res: " + res);
 //    	}
 //    	return res;
 //    }
@@ -1848,16 +1848,16 @@ public class TargetController extends AbstractController {
 //     */
 //    @BodyParser.Of(BodyParser.Json.class)
 //    public static Result getSubjectTree(String targetUrl) {
-//    	Logger.info("getSubjectTree() target URL: " + targetUrl);
+//    	Logger.debug("getSubjectTree() target URL: " + targetUrl);
 //        JsonNode jsonData = null;
 //        final StringBuffer sb = new StringBuffer();
 //    	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
-////    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
+////    	Logger.debug("getSubjectTree() parentSubjects: " + parentSubjects.size());
 //    	sb.append(getSubjectTreeElements(parentSubjects, targetUrl, true));
-//    	Logger.info("subjects main level size: " + parentSubjects.size());
-////    	Logger.info("sb.toString(): " + sb.toString());
+//    	Logger.debug("subjects main level size: " + parentSubjects.size());
+////    	Logger.debug("sb.toString(): " + sb.toString());
 //        jsonData = Json.toJson(Json.parse(sb.toString()));
-////    	Logger.info("getSubjectTree() json: " + jsonData.toString());
+////    	Logger.debug("getSubjectTree() json: " + jsonData.toString());
 //        return ok(jsonData);
 //    }        
     
@@ -1868,16 +1868,16 @@ public class TargetController extends AbstractController {
 //     */
 //    @BodyParser.Of(BodyParser.Json.class)
 //    public static Result getSubjectTreeFilter(String targetUrl) {
-//    	Logger.info("getSubjectTree() target URL: " + targetUrl);
+//    	Logger.debug("getSubjectTree() target URL: " + targetUrl);
 //        JsonNode jsonData = null;
 //        final StringBuffer sb = new StringBuffer();
 //    	List<Taxonomy> parentSubjects = Taxonomy.findListByTypeSorted(Const.SUBJECT);
-////    	Logger.info("getSubjectTree() parentSubjects: " + parentSubjects.size());
+////    	Logger.debug("getSubjectTree() parentSubjects: " + parentSubjects.size());
 //    	sb.append(getSubjectTreeElementsFilter(parentSubjects, targetUrl, true));
-//    	Logger.info("subjects main level size: " + parentSubjects.size());
-////    	Logger.info("sb.toString(): " + sb.toString());
+//    	Logger.debug("subjects main level size: " + parentSubjects.size());
+////    	Logger.debug("sb.toString(): " + sb.toString());
 //        jsonData = Json.toJson(Json.parse(sb.toString()));
-////    	Logger.info("getSubjectTree() json: " + jsonData.toString());
+////    	Logger.debug("getSubjectTree() json: " + jsonData.toString());
 //        return ok(jsonData);
 //    }
     
@@ -1934,12 +1934,12 @@ public class TargetController extends AbstractController {
 //	 */
 //	public static List<Target> getTargetsForTaxonomy(String url) {
 //		List<Target> res = new ArrayList<Target>();
-////		Logger.info("url: " + url);
+////		Logger.debug("url: " + url);
 //		if (url != null) {
 //	        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_COLLECTION_CATEGORIES, url);
 //	        res = ll.findList();
 //		}
-////		Logger.info("res size: " + res.size());
+////		Logger.debug("res size: " + res.size());
 //		return res;
 //	}
 	
@@ -1962,16 +1962,16 @@ public class TargetController extends AbstractController {
 //			        ExpressionList<Target> ll = Target.find.where().contains(Const.FIELD_LICENSE_NODE, curLicense);
 //			        if (ll.findRowCount() > 0) {
 //			        	Taxonomy taxonomy = Taxonomy.findByUrl(curLicense);
-//			        	Logger.info("curLicense: " + curLicense + ".");
-//	//		        	Logger.info("taxonomy url: " + taxonomy.url);
-//	//		        	Logger.info("license: " + taxonomy.name);
+//			        	Logger.debug("curLicense: " + curLicense + ".");
+//	//		        	Logger.debug("taxonomy url: " + taxonomy.url);
+//	//		        	Logger.debug("license: " + taxonomy.name);
 //			        	licenses.add(taxonomy);
 //			        	subjects.add(curLicense);
 //			        }
 //				}
 //			}
 //		}
-////		Logger.info("getLicense res: " + res);
+////		Logger.debug("getLicense res: " + res);
 //   	return licenses;
 ////		throw new NotImplementedError();
 //	}

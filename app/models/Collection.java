@@ -92,15 +92,15 @@ public class Collection extends Taxonomy {
 			String content = (String) field.get(this);
 			res = Arrays.asList(content.split("\\s*,\\s*"));
 		} catch (IllegalArgumentException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (IllegalAccessException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (SecurityException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (NoSuchFieldException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (Exception e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		}
     	return res;
     }
@@ -191,7 +191,7 @@ public class Collection extends Taxonomy {
     public static Collection findByTitleExt(String name) {
     	Collection res = new Collection();
     	if (name != null && name.length() > 0) {
-//    		Logger.info("p1: " + name);
+//    		Logger.debug("p1: " + name);
     		if (name.contains(Const.COMMA)) {
     			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
     		}
@@ -243,17 +243,17 @@ public class Collection extends Taxonomy {
 	 */
 	public static String getCollectionsAsString(List<Collection> list) {
     	String res = "";
-//		Logger.info("getCollectionsAsString() list size: " + list.size());
+//		Logger.debug("getCollectionsAsString() list size: " + list.size());
 		Iterator<Collection> itr = list.iterator();
 		boolean firstTime = true;
 		while (itr.hasNext()) {
 			Collection collection = itr.next();
 			if (firstTime) {
-//				Logger.info("add first collection.name: " + collection.name);
+//				Logger.debug("add first collection.name: " + collection.name);
 				res = collection.name;
 				firstTime = false;
 			} else {
-//				Logger.info("add collection.name: " + collection.name);
+//				Logger.debug("add collection.name: " + collection.name);
 				res = res + Const.COMMA + " " + collection.name;
 			}
 		}
@@ -269,18 +269,18 @@ public class Collection extends Taxonomy {
 	 * @return
 	 */
 	public static List<Collection> getSelectedCollections(String targetUrl) {
-//		Logger.info("getSelectedCollections() targetUrl: " + targetUrl);
+//		Logger.debug("getSelectedCollections() targetUrl: " + targetUrl);
 //		List<Collection> res = new ArrayList<Collection>();
 //    	if (targetUrl != null && targetUrl.length() > 0) {
 //    		Target target = Target.findByUrl(targetUrl);
 //    		if (target.fieldCollectionCategories != null) {
-////    			Logger.info("getSelectedCollections() field_collection_categories: " + target.field_collection_categories);
+////    			Logger.debug("getSelectedCollections() field_collection_categories: " + target.field_collection_categories);
 //		    	String[] parts = target.fieldCollectionCategories.split(Const.COMMA + " ");
 //		    	for (String part: parts) {
-////		    		Logger.info("part: " + part);
+////		    		Logger.debug("part: " + part);
 //		    		Collection collection = findByUrl(part);
 //		    		if (collection != null && StringUtils.isNotEmpty(collection.name)) {
-////			    		Logger.info("collection title: " + collection.name);
+////			    		Logger.debug("collection title: " + collection.name);
 //		    			res.add(collection);
 //		    		}
 //		    	}
@@ -292,7 +292,7 @@ public class Collection extends Taxonomy {
     
 	public static List<Collection> getFirstLevelCollections() {
 	       List<Collection> rootCollections = find.where().isNull("parent").order().asc("name").findList();
-	       Logger.info("getFirstLevelCollections list size: " + rootCollections.size());
+	       Logger.debug("getFirstLevelCollections list size: " + rootCollections.size());
 	       return rootCollections;
 	} 
 	

@@ -43,7 +43,7 @@ public enum Utils {
 	 */
 	public Long createId() {
         UUID id = UUID.randomUUID();
-        Logger.info("id: " + id.toString());
+        Logger.debug("id: " + id.toString());
         Long res = id.getMostSignificantBits();
         if (res < 0) {
         	res = res*(-1);
@@ -97,7 +97,7 @@ public enum Utils {
 	 	    FileWriter writer = new FileWriter(sFileName);
 
 	  	    String decodedData = replacer(data); //URLDecoder.decode(data, Const.STR_FORMAT);
-//	  	    Logger.info("generateCsvFile: " + decodedData);
+//	  	    Logger.debug("generateCsvFile: " + decodedData);
 	 	    writer.append(decodedData);
 	 	    writer.flush();
 	 	    writer.close();
@@ -162,9 +162,9 @@ public enum Utils {
 			 * creates timestamp for one day older than the current day.
 			 */
 			Long longTime = new Long(resDate.getTime()/1000 + 86400);
-			Logger.info("long time: " + longTime);
+			Logger.debug("long time: " + longTime);
 			res = String.valueOf(longTime);
-			Logger.info("res date: " + res);
+			Logger.debug("res date: " + res);
 			Logger.debug("check stored date - convert back to human date: " + getDateFromUnixDate(res));
 		} catch (ParseException e) {
 			Logger.debug("Conversion of date in string format dd-MM-yyyy to unix date: " + e);
@@ -184,9 +184,9 @@ public enum Utils {
 	    	Logger.debug("getUnixDateStringFromDate curDate: " + curDate);
 			Date resDate = new SimpleDateFormat(Const.DATE_FORMAT).parse(curDate);
 			Long longTime = new Long(resDate.getTime()/1000);
-			Logger.info("long time: " + longTime);
+			Logger.debug("long time: " + longTime);
 			res = String.valueOf(longTime);
-			Logger.info("res date: " + res);
+			Logger.debug("res date: " + res);
 			Logger.debug("check stored date - convert back to human date: " + getDateFromUnixDate(res));
 		} catch (ParseException e) {
 			Logger.debug("Conversion of date in string format dd-MM-yyyy to unix date: " + e);
@@ -230,7 +230,7 @@ public enum Utils {
 							Integer.toString(mydate.get(Calendar.YEAR));
 				}
 			} catch (ParseException e) {
-				Logger.info("QA timestamp conversion error: " + e);
+				Logger.debug("QA timestamp conversion error: " + e);
 			}
     	}
     	return res;
@@ -243,7 +243,7 @@ public enum Utils {
      */
     public String showTimestampInHtml(String timestamp) {
     	String res = "";
-		Logger.info("showTimestampInHtml timestamp: " + timestamp);
+		Logger.debug("showTimestampInHtml timestamp: " + timestamp);
     	if (timestamp.length() > 0) {
 			try {
 				Date resDate = new SimpleDateFormat("yyyyMMddHHMMss").parse(timestamp);
@@ -255,7 +255,7 @@ public enum Utils {
 							Integer.toString(mydate.get(Calendar.YEAR));
 				}
 			} catch (ParseException e) {
-				Logger.info("QA timestamp conversion error: " + e);
+				Logger.debug("QA timestamp conversion error: " + e);
 			}
     	}
     	return res;
@@ -273,9 +273,9 @@ public enum Utils {
 				Date resDate = new Date(Long.parseLong(timestamp)*1000L);
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // the format of date
 				res = sdf.format(resDate);
-//				Logger.info("res date: " + res);
+//				Logger.debug("res date: " + res);
 			} catch (Exception e) {
-				Logger.info("Long timestamp conversion error: " + e);
+				Logger.debug("Long timestamp conversion error: " + e);
 			}
     	}
     	return res;
@@ -449,9 +449,9 @@ public enum Utils {
 	        }
 	        in.close();
 		} catch (MalformedURLException e) {
-			Logger.info("Reading last github hash: " + e);
+			Logger.debug("Reading last github hash: " + e);
 		} catch (Exception e) {
-			Logger.info("Reading last github hash: " + e);
+			Logger.debug("Reading last github hash: " + e);
 		}
 		return res;
 	}

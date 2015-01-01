@@ -50,7 +50,7 @@ public class Permission extends ActModel {
      * Retrieve all permissions.
      */
     public static List<Permission> findAll() {
-        return find.all();
+        return find.where().orderBy("name asc").findList();
     }
     
     /**

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,7 @@ import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
+import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
@@ -410,7 +412,7 @@ public class Target extends UrlModel {
 	}
 //
     public String validate() {
-    	Logger.info("VALIDATE.....");
+    	Logger.debug("VALIDATE.....");
         if (title == null) {
             return "Title is blank";
         }
@@ -427,7 +429,7 @@ public class Target extends UrlModel {
 	 * Retrieve targets
 	 */
 	public static List<Target> findInvolving() {
-		Logger.info("Target.findInvolving()");
+		Logger.debug("Target.findInvolving()");
 		return find.all();
 	}
 
@@ -526,15 +528,15 @@ public class Target extends UrlModel {
 			String content = (String) field.get(this);
 			res = Arrays.asList(content.split("\\s*,\\s*"));
 		} catch (IllegalArgumentException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (IllegalAccessException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (SecurityException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (NoSuchFieldException e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		} catch (Exception e) {
-			Logger.info(e.getMessage());
+			Logger.debug(e.getMessage());
 		}
 		return res;
 	}
@@ -587,7 +589,7 @@ public class Target extends UrlModel {
 	public static Long createId() {
 		Long res = Utils.INSTANCE.createId();
 		if (Target.isTargetId(res)) {
-			Logger.info("Target with nid " + res + " already exists.");
+			Logger.debug("Target with nid " + res + " already exists.");
 			res = createId();
 		}
 		return res;
@@ -786,7 +788,7 @@ public class Target extends UrlModel {
 			// TODO: KL
 			// res = User.findByUrl(author).name;
 		} catch (Exception e) {
-			Logger.info("no user found for url: " + this.getAuthor() + ". " + e);
+			Logger.debug("no user found for url: " + this.getAuthor() + ". " + e);
 		}
 		return res;
 	}
@@ -817,7 +819,7 @@ public class Target extends UrlModel {
 	 * @return target object
 	 */
 	public static Target findByTarget(String target) {
-		Logger.info("findByTarget() target url: " + target);
+		Logger.debug("findByTarget() target url: " + target);
 		if (!target.contains(Const.COMMA)) {
 			return find.fetch("fieldUrls").where().eq("active", true).eq("fieldUrls.url", target).findUnique();
 		} 
@@ -832,7 +834,7 @@ public class Target extends UrlModel {
 	 * @return list of associated Targets
 	 */
 	public static List<Target> findRevisions(String url) {
-		Logger.info("findRevisions() target url: " + url);
+		Logger.debug("findRevisions() target url: " + url);
 		List<Target> res = new ArrayList<Target>();
 		if (url != null && url.length() > 0) {
 			ExpressionList<Target> ll = find.where().eq(Const.URL, url);
@@ -896,7 +898,7 @@ public class Target extends UrlModel {
 			}
 			return isInScope;
 		} catch (Exception ex) {
-			Logger.info("isInScopeAll() Exception: " + ex);
+			Logger.debug("isInScopeAll() Exception: " + ex);
 			return false;
 		}
 	}
@@ -918,7 +920,7 @@ public class Target extends UrlModel {
 				return Scope.INSTANCE.checkScopeIp(fieldUrl.url, this);
 			}
 		} catch (WhoisException ex) {
-			Logger.info("Exception: " + ex);
+			Logger.debug("Exception: " + ex);
 		}
 		return false;
 	}
@@ -982,7 +984,7 @@ public class Target extends UrlModel {
 		try {
 			return Scope.INSTANCE.check(url, this);
 		} catch (WhoisException ex) {
-			Logger.info("Exception: " + ex);
+			Logger.debug("Exception: " + ex);
 			return false;
 		}
 	}
@@ -1008,7 +1010,7 @@ public class Target extends UrlModel {
 //		try {
 //			return Scope.INSTANCE.checkScopeIpWithoutLicense(url, this);
 //		} catch (WhoisException ex) {
-//			Logger.info("Exception: " + ex);
+//			Logger.debug("Exception: " + ex);
 //			return false;
 //		}
 //	}
@@ -1029,7 +1031,7 @@ public class Target extends UrlModel {
 		try {
 			return Scope.INSTANCE.checkExt(url, target, mode);
 		} catch (WhoisException ex) {
-			Logger.info("Exception: " + ex);
+			Logger.debug("Exception: " + ex);
 			return false;
 		}
 	}
@@ -1090,9 +1092,9 @@ public class Target extends UrlModel {
 //				sw.append(col);
 //				sw.append(Const.CSV_SEPARATOR);
 //			} catch (IllegalArgumentException e) {
-//				Logger.info("reflection illegal argument. " + e);
+//				Logger.debug("reflection illegal argument. " + e);
 //			} catch (IllegalAccessException e) {
-//				Logger.info("reflection illegal access. " + e);
+//				Logger.debug("reflection illegal access. " + e);
 //			}
 //		}
 //		sw.append(Const.CSV_LINE_END);
@@ -1232,7 +1234,7 @@ public class Target extends UrlModel {
 	public static Page<Target> pageQa(int page, int pageSize, String sortBy,
 			String order, String filter, String collections, Long qaIssueId) {
 
-		Logger.info("pageQa() collection: " + collections + ", qaStatus: "
+		Logger.debug("pageQa() collection: " + collections + ", qaStatus: "
 				+ qaIssueId + ", filter: " + filter);
 
         String collectionSelect = collections.replace("\"", "");
@@ -1408,7 +1410,7 @@ public class Target extends UrlModel {
 //			Instance instance = itr.next();
 //			if (instance.fieldTarget != null
 //					&& instance.fieldTarget.length() > 0) {
-//				// Logger.info("Target.pageReportsQa() instance.field_target: "
+//				// Logger.debug("Target.pageReportsQa() instance.field_target: "
 //				// + instance.field_target);
 //				targetUrlCollection.add(instance.fieldTarget);
 //			}
@@ -1417,7 +1419,7 @@ public class Target extends UrlModel {
 //			exp = exp.in(Const.URL, targetUrlCollection);
 //		}
 		res = exp.query().orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
-//		Logger.info("Expression list for targets size: " + res.getTotalRowCount());
+//		Logger.debug("Expression list for targets size: " + res.getTotalRowCount());
 		return res;
 	}
 
@@ -1445,16 +1447,18 @@ public class Target extends UrlModel {
 	 * @param tld
 	 *            The top level domain setting for filtering
 	 * @return
+	 * @throws ParseException 
 	 */
 	public static Page<Target> pageReportsCreation(int page, int pageSize,
 			String sortBy, String order, Long curatorId,
 			Long organisationId, String startDate, String endDate,
-			String npld, String crawlFrequencyName, String tld) {
+			String npld, String crawlFrequencyName, String tld) throws ActException {
 
 		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").fetch("flags").fetch("licenses").fetch("subjects").fetch("collections").where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);
-			
+		
+		Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + npld + ", " + crawlFrequencyName + ", " + tld);
 		if (curatorId != -1) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
@@ -1464,34 +1468,37 @@ public class Target extends UrlModel {
 		if (StringUtils.isNotEmpty(crawlFrequencyName)) {
 			exp = exp.eq("crawlFrequency", crawlFrequencyName);
 		}
-
-		
-//		if (StringUtils.isNotEmpty(startDate)) {
-//			Logger.info("startDate: " + startDate);
-//			exp = exp.ge("createdAt", "");
-//		}
-//		if (StringUtils.isNotEmpty(endDate)) {
-//			Logger.info("endDate: " + endDate);
-//			exp = exp.le("createdAt", "");
-//		}
+		try {
+			if (StringUtils.isNotBlank(startDate)) {
+				Date date = Utils.INSTANCE.convertDate(startDate);
+				exp = exp.ge("createdAt", date);
+	        }
+			
+			if (StringUtils.isNotEmpty(endDate)) {
+				Date date = Utils.INSTANCE.convertDate(endDate);
+				exp = exp.le("createdAt", date);
+			}
+		} catch (ParseException e) {
+			throw new ActException(e);
+		}
 
 		// new stuff
 		if (npld.equals(Const.NpldType.UK_POSTAL_ADDRESS.name())) {
-			exp.eq(Const.FIELD_UK_POSTAL_ADDRESS, true);
+			exp = exp.eq("ukPostalAddress", true);
 		} else if (npld.equals(Const.NpldType.VIA_CORRESPONDENCE.name())) {
-			exp.eq(Const.FIELD_VIA_CORRESPONDENCE, true);
+			exp = exp.eq("viaCorrespondence", true);
 		} else if (npld.equals(Const.NpldType.NO_LD_CRITERIA_MET.name())) {
-			exp.eq(Const.FIELD_NO_LD_CRITERIA_MET, true);
+			exp = exp.eq("noLdCriteriaMet", true);
 		} else if (npld.equals(Const.NpldType.PROFESSIONAL_JUDGEMENT.name())) {
-			exp.eq(Const.FIELD_PROFESSIONAL_JUDGEMENT, true);
+			exp = exp.eq("professionalJudgement", true);
 		} else if (npld.equals(Const.NONE)) {
-			exp.eq(Const.FIELD_UK_POSTAL_ADDRESS, false);
-			exp.eq(Const.FIELD_VIA_CORRESPONDENCE, false);
-			exp.eq(Const.FIELD_NO_LD_CRITERIA_MET, false);
-			exp.eq("isUkHostingValue", false);
-			exp.eq("isInScopeUkRegistrationValue", false);
-			exp.eq(Const.FIELD_PROFESSIONAL_JUDGEMENT, false);
-			exp.add(Expr.raw("fieldUrl NOT like '%"
+			exp = exp.eq("ukPostalAddress", false);
+			exp = exp.eq("viaCorrespondence", false);
+			exp = exp.eq("noLdCriteriaMet", false);
+			exp = exp.eq("isUkHosting", false);
+			exp = exp.eq("isUkRegistration", false);
+			exp = exp.eq("viaCorrespondence", false);
+			exp = exp.add(Expr.raw("fieldUrls.url NOT like '%"
 					+ Scope.UK_DOMAIN + "%' or fieldUrl NOT like '%"
 					+ Scope.LONDON_DOMAIN + "%' or fieldUrl NOT like '%"
 					+ Scope.SCOT_DOMAIN + "%'"));
@@ -1501,24 +1508,24 @@ public class Target extends UrlModel {
 			// Scope.LONDON_DOMAIN));
 			// exp.add(Expr.or(ex, Expr.icontains("field_url",
 			// Scope.SCOT_DOMAIN)));
-			exp.add(Expr.raw("fieldUrls.url like '%" + Scope.UK_DOMAIN
+			exp = exp.add(Expr.raw("fieldUrls.url like '%" + Scope.UK_DOMAIN
 					+ "%' or fieldUrls.url like '%" + Scope.LONDON_DOMAIN
 					+ "%' or fieldUrls.url like '%" + Scope.SCOT_DOMAIN + "%'"));
 		} else if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
 			// uk hosting
-			exp.eq("isUkHostingValue", true);
+			exp = exp.eq("isUkHosting", true);
 		} else if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
 			// uk registration address
-			exp.eq("isInScopeUkRegistrationValue", true);
+			exp = exp.eq("isUkRegistration", true);
 		}
 
 		if (tld.equals("no")) {
 			// not a UK top level domain
-			exp.eq("isInScopeDomainValue", false);
+			exp = exp.eq("isTopLevelDomain", false);
 		}
 		if (tld.equals("yes") || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
 			// UK top level domain
-			exp.eq("isInScopeDomainValue", true);
+			exp = exp.eq("isTopLevelDomain", true);
 		}
 		if (tld.equals(Const.EITHER)) {
 			// not a UK top level domain
@@ -1528,13 +1535,13 @@ public class Target extends UrlModel {
 
 		// TODO: NONE SELECTED???
 
-		Logger.info("pageReportsCreation() NPLD: " + npld);
+		Logger.debug("pageReportsCreation() NPLD: " + npld);
 
 		/**
 		 * Apply NPLD filters
 		 */
 		// if (!tld.equals(Const.EITHER)) {
-		// Logger.info("pageReportsCreation() Apply NPLD filters");
+		// Logger.debug("pageReportsCreation() Apply NPLD filters");
 		// List<String> targetUrlCollection = new ArrayList<String>();
 		// Page<Target> tmp = exp.query()
 		// .orderBy(sortBy + " " + order)
@@ -1548,7 +1555,7 @@ public class Target extends UrlModel {
 		// .findList();
 		//
 		//
-		// Logger.info("pageReportsCreation() tmp list size: " + tmp.size());
+		// Logger.debug("pageReportsCreation() tmp list size: " + tmp.size());
 		// Iterator<Target> itr = tmp.iterator();
 		// while (itr.hasNext()) {
 		// Target target = itr.next();
@@ -1567,7 +1574,7 @@ public class Target extends UrlModel {
 		// Target.isInScopeUkRegistration(target.field_url);
 		// }
 		//
-		// Logger.info("pageReportsCreation() targetUrlCollection size: " +
+		// Logger.debug("pageReportsCreation() targetUrlCollection size: " +
 		// targetUrlCollection.size());
 		// expressionList = expressionList.in(Const.URL, targetUrlCollection);
 		// }
@@ -1577,14 +1584,8 @@ public class Target extends UrlModel {
 		res = query.orderBy(sortBy + " " + order).findPagingList(pageSize)
 				.setFetchAhead(false).getPage(page);
 
-		Logger.info("Expression list for targets created size: "
+		Logger.debug("Expression list for targets created size: "
 				+ res.getTotalRowCount());
-		Logger.info("RAW SQL: " + query.getGeneratedSql());
-
-		// Target target = query.findUnique();
-		// Logger.debug(query.getGeneratedSql());
-
-		// Logger.info("pageReportsCreation() tmp list size: " + res.);
 
 		return res;
 
@@ -1743,7 +1744,7 @@ public class Target extends UrlModel {
 //				res.add(target);
 //			}
 //		}
-//		Logger.info("exportByFrequency() resulting list size: " + res.size());
+//		Logger.debug("exportByFrequency() resulting list size: " + res.size());
 //		return res;
 		throw new NotImplementedError();
 	}
@@ -1781,7 +1782,7 @@ public class Target extends UrlModel {
 //				res.add(target);
 //			}
 //		}
-		Logger.info("exportLdFrequency() resulting list size: " + res.size());
+		Logger.debug("exportLdFrequency() resulting list size: " + res.size());
 		return res;
 	}
 
@@ -1794,7 +1795,7 @@ public class Target extends UrlModel {
 	 */
 	public static Target findByFieldUrl(String url) {
 		Target res = new Target();
-		Logger.info("findByFieldUrl() target url: " + url);
+		Logger.debug("findByFieldUrl() target url: " + url);
 		if (url != null) {
 			res = find.where().eq(Const.FIELD_URL, url).eq(Const.ACTIVE, true)
 					.findUnique();
@@ -1903,7 +1904,7 @@ public class Target extends UrlModel {
 				res = target;
 			}
 		}
-		Logger.info("getLatestCreatedTarget() res: " + res);
+		Logger.debug("getLatestCreatedTarget() res: " + res);
 		return res;
 	}
 
@@ -1944,7 +1945,7 @@ public class Target extends UrlModel {
 //	}
 //
 //	public static List<Target> findUkwaTargets(String domain, String url) {
-//		Logger.info("Parameters: " + domain + " - " + url.length());
+//		Logger.debug("Parameters: " + domain + " - " + url.length());
 //		String query = "find target fetch fieldUrls fetch licenses where fieldUrls.url like :domain and LENGTH(fieldUrls.url) < :length";
 //        List<Target> targets = Ebean.createQuery(Target.class, query)
 //        		.setParameter("domain", "%" + domain + "%")
@@ -2298,12 +2299,12 @@ public class Target extends UrlModel {
 	
 	@JsonIgnore
 	public String licensesAsString() {
-		Logger.info("licensesAsString");
+		Logger.debug("licensesAsString");
 		List<String> names = new ArrayList<String>();
 		for (License license : this.licenses) {
 			names.add(license.name);
 		}
-		Logger.info("" + names);
+		Logger.debug("" + names);
 		return StringUtils.join(names, ", ");
 	}
 	
@@ -2379,7 +2380,7 @@ public class Target extends UrlModel {
 	public boolean isInScopeAllWithoutLicense() {
 		boolean isInScope = false;
 		try {
-			Logger.info("isInScopeAllWithoutLicense()");
+			Logger.debug("isInScopeAllWithoutLicense()");
 			isInScope = checkScopeIpWithoutLicense(this);
 			if (!isInScope) {
 				isInScope = Scope.INSTANCE.isTopLevelDomain(this);
@@ -2497,7 +2498,7 @@ public class Target extends UrlModel {
 			boolean highLevel = (thisFieldUrl.url.contains(otherUrl) 
 					&& thisFieldUrl.url.indexOf(otherUrl) == 0 
 					&& thisFieldUrl.url.length() > otherUrl.length());
-			// Logger.info("iterUrl: " + iterUrl + " " + highLevel);
+			// Logger.debug("iterUrl: " + iterUrl + " " + highLevel);
 			return highLevel;
 		}
 		return false;
@@ -2624,13 +2625,13 @@ public class Target extends UrlModel {
 	// to helper
 	@JsonIgnore
 	public boolean hasGrantedLicense() {
-		Logger.info("hasGrantedLicense");
+		Logger.debug("hasGrantedLicense");
 //		if QAStatus is granted 
 //		this.crawlPermissions;
 //		this.qaIssue;
 		for (License license : this.licenses) {
 			if (license.equals(License.LicenseStatus.GRANTED)) {
-				Logger.info(License.LicenseStatus.GRANTED.getValue());
+				Logger.debug(License.LicenseStatus.GRANTED.getValue());
 				return true;
 			}
 		}

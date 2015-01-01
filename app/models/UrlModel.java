@@ -326,7 +326,7 @@ abstract class UrlModel extends ActModel {
 	        	url = url + END_STR;
 	        }
 		}
-        Logger.info("normalized URL: " + url);
+        Logger.debug("normalized URL: " + url);
 		return url;
 	}
 

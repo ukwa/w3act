@@ -39,7 +39,7 @@ public class ReportQaController extends AbstractController {
     }
 
     public static Result switchReportQaTab(String status) {
-    	Logger.info("switchReportQaTab() status: " + status);
+    	Logger.debug("switchReportQaTab() status: " + status);
     	return redirect(routes.ReportQaController.targets(0, "title", "asc", status, -1L, -1L, Utils.INSTANCE.getCurrentDate(), "", -1L));
     }
 
@@ -65,7 +65,7 @@ public class ReportQaController extends AbstractController {
 
 
         String startDate = requestData.get("startDate");
-        Logger.info("startDate: " + startDate);
+        Logger.debug("startDate: " + startDate);
         String endDate = requestData.get("endDate");
         
     	if (StringUtils.isEmpty(action)) {
@@ -79,7 +79,7 @@ public class ReportQaController extends AbstractController {
     	    	Page<Target> pageAll = Target.pageReportsQa(pageNo, rowCount, sort, order, status, curatorId, organisationId, 
     					startDate, endDate, collectionId); 
     			exportTargets.addAll(pageAll.getList());
-				Logger.info("export report QA size: " + exportTargets.size() + ", status: " + status);
+				Logger.debug("export report QA size: " + exportTargets.size() + ", status: " + status);
     			export(exportTargets, Const.EXPORT_TARGETS_REPORTS_QA);
     	    	return redirect(routes.ReportQaController.targets(pageNo, sort, order, status, curatorId, organisationId, 
     	    			startDate, endDate, collectionId));
@@ -101,7 +101,7 @@ public class ReportQaController extends AbstractController {
      * @return
      */
     public static void export(List<Target> targetList, String fileName) {
-    	Logger.info("export() targetList size: " + targetList.size());
+    	Logger.debug("export() targetList size: " + targetList.size());
 
         StringWriter sw = new StringWriter();
 	    sw.append("Target title");
@@ -143,7 +143,7 @@ public class ReportQaController extends AbstractController {
      */
     public static Result targets(int pageNo, String sortBy, String order, String status, Long curatorId,
     		Long organisationId, String startDate, String endDate, Long collectionId) {
-    	Logger.info("ReportsQa.targets()");
+    	Logger.debug("ReportsQa.targets()");
     	
     	User user = User.findByEmail(request().username());
     	Page<Target> pages = Target.pageReportsQa(pageNo, 10, sortBy, order, status, curatorId, organisationId, startDate, endDate, collectionId);

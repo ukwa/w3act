@@ -39,7 +39,7 @@ public class SubjectController extends AbstractController {
 	 * Display the subjects.
 	 */
 	public static Result index() {
-		Logger.info("Subjects.index()");
+		Logger.debug("Subjects.index()");
 		return GO_HOME;
 	}
 
@@ -78,11 +78,11 @@ public class SubjectController extends AbstractController {
     	String action = form.get("action");
     	String query = form.get(Const.URL);
 
-		Logger.info("action: " + action);
-    	Logger.info("subjects search() query: " + query);
+		Logger.debug("action: " + action);
+    	Logger.debug("subjects search() query: " + query);
     	
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Subject name is empty. Please write name in search window.");
+			Logger.debug("Subject name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.SubjectController.list(0, "name", "asc", "")
@@ -139,7 +139,7 @@ public class SubjectController extends AbstractController {
 		JsonNode node = getSubjectsData(thisSubject);
 		Form<Subject> subjectForm = Form.form(Subject.class);
 		subjectForm = subjectForm.fill(subject);
-		Logger.info("id: " + subjectForm.get().id);
+		Logger.debug("id: " + subjectForm.get().id);
         return ok(edit.render(subjectForm, user, id, node));        
         
     }
@@ -283,13 +283,13 @@ public class SubjectController extends AbstractController {
 //	    			url = subject.parent.id;
 	    		}
     		} catch (Exception e) {
-    			Logger.info("New subject has no parent yet.");
+    			Logger.debug("New subject has no parent yet.");
     		}
     	}    	
     	sb.append(getSubjectTreeElementsExt(parentSubjects, url, true));
-//    	Logger.info("collections main level size: " + suggestedCollections.size());
+//    	Logger.debug("collections main level size: " + suggestedCollections.size());
         jsonData = Json.toJson(Json.parse(sb.toString()));
-//    	Logger.info("getCollections() json: " + jsonData.toString());
+//    	Logger.debug("getCollections() json: " + jsonData.toString());
         return jsonData;
     }
     
@@ -301,7 +301,7 @@ public class SubjectController extends AbstractController {
      * @return collection object in JSON form
      */
     public static String getSubjectTreeElementsExt(List<Taxonomy> subjectList, String url, boolean parent) { 
-//    	Logger.info("getSubjectTreeElements() URL: " + url);
+//    	Logger.debug("getSubjectTreeElements() URL: " + url);
     	String res = "";
     	if (subjectList.size() > 0) {
 	        final StringBuffer sb = new StringBuffer();
@@ -328,10 +328,10 @@ public class SubjectController extends AbstractController {
 //							getSubjectChildren(subject.url, url) + "}");
 //	    		}
 	    	}
-//	    	Logger.info("subjectList level size: " + subjectList.size());
+//	    	Logger.debug("subjectList level size: " + subjectList.size());
 	    	sb.append("]");
 	    	res = sb.toString();
-//	    	Logger.info("getSubjectTreeElements() res: " + res);
+//	    	Logger.debug("getSubjectTreeElements() res: " + res);
     	}
     	return res;
     }
@@ -360,7 +360,7 @@ public class SubjectController extends AbstractController {
 		if (currentUrl.contains(Const.COMMA)) {
 			currentUrl = currentUrl.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
 		}
-//    	Logger.info("checkSelection() 1: " + subjectUrl + ", 2: " + currentUrl);
+//    	Logger.debug("checkSelection() 1: " + subjectUrl + ", 2: " + currentUrl);
     	if (currentUrl != null && currentUrl.length() > 0) {
     		if (currentUrl.equals(subjectUrl) || currentUrl.equals(subjectUrl)) {
     			res = "\"select\": true ,";
@@ -376,7 +376,7 @@ public class SubjectController extends AbstractController {
      * @return child subject in JSON form
      */
     public static String getSubjectChildren(String url, String currentUrl) {
-//    	Logger.info("getChildren() target URL: " + targetUrl);
+//    	Logger.debug("getChildren() target URL: " + targetUrl);
     	String res = "";
         final StringBuffer sb = new StringBuffer();
     	sb.append(", \"children\":");
@@ -388,7 +388,7 @@ public class SubjectController extends AbstractController {
     	if (childSubjectList.size() > 0) {
 	    	sb.append(getSubjectTreeElementsExt(childSubjectList, currentUrl, false));
 	    	res = sb.toString();
-//	    	Logger.info("getChildren() res: " + res);
+//	    	Logger.debug("getChildren() res: " + res);
     	}
     	return res;
     }

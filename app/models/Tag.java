@@ -102,10 +102,10 @@ public class Tag extends Taxonomy {
    		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
 	    	String[] parts = urls.split(Const.COMMA + " ");
 	    	for (String part: parts) {
-		    	Logger.info("+++ Tag convertUrlsToObjects() part: " + part);
+		    	Logger.debug("+++ Tag convertUrlsToObjects() part: " + part);
 	    		Tag tag = findByUrl(part);
 	    		if (tag != null && tag.name != null && tag.name.length() > 0) {
-			    	Logger.info("tag name: " + tag.name);
+			    	Logger.debug("tag name: " + tag.name);
 	    			res.add(tag);
 	    		}
 	    	}
@@ -178,7 +178,7 @@ public class Tag extends Taxonomy {
     	if (myTags == null) myTags = new ArrayList<Tag>();
         Map<String, Boolean> tagsMap = new HashMap<String, Boolean>();
         for (Tag tag : Tag.findAllTags()) {
-          tagsMap.put(tag.name, (myTags != null && myTags.contains(tag)));
+        	tagsMap.put(tag.name, (myTags != null && myTags.contains(tag)));
         }
         return tagsMap;
     }

@@ -37,7 +37,7 @@ public class Subject extends Taxonomy {
     
 	public static List<Subject> getFirstLevelSubjects() {
 	       List<Subject> rootSubjects = find.where().isNull("parent").order().asc("name").findList();
-//	       Logger.info("getFirstLevelSubjects list size: " + rootSubjects.size());
+//	       Logger.debug("getFirstLevelSubjects list size: " + rootSubjects.size());
 	       return rootSubjects;
 	}
 	

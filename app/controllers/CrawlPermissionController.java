@@ -49,7 +49,7 @@ public class CrawlPermissionController extends AbstractController {
      * Display the crawl permissions.
      */
     public static Result index() {
-    	Logger.info("CrawlPermissions.index()");
+    	Logger.debug("CrawlPermissions.index()");
         return GO_HOME;
     }
     
@@ -66,7 +66,7 @@ public class CrawlPermissionController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter, String status, String sel) {
-    	Logger.info("CrawlPermissions.list() " + filter);
+    	Logger.debug("CrawlPermissions.list() " + filter);
     	
     	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status);
 
@@ -127,9 +127,9 @@ public class CrawlPermissionController extends AbstractController {
     		target = targObj.fieldUrl();
     		status = targObj.qaIssue.url;
     	}
-    	Logger.info("showCrawlPermissions: " + targetUrl + ", target: " + target);
+    	Logger.debug("showCrawlPermissions: " + targetUrl + ", target: " + target);
 //        List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);
-//    	Logger.info("showCrawlPermissions count: " + resList.size());
+//    	Logger.debug("showCrawlPermissions count: " + resList.size());
     	res = redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
 //        res = ok(
 //        		views.html.crawlpermissions.list.render(
@@ -157,7 +157,7 @@ public class CrawlPermissionController extends AbstractController {
 //        List<CrawlPermission> resList = processFilterCrawlPermissions(name, status, "");
 
         if (StringUtils.isBlank(name)) {
-			Logger.info("Organisation name is empty. Please write name in search window.");
+			Logger.debug("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, Const.SELECT_ALL));
 //			return ok(
@@ -186,27 +186,27 @@ public class CrawlPermissionController extends AbstractController {
      * @return
      */
     public static List<CrawlPermission> processFilterCrawlPermissions(String filterUrl, String status, String target) {
-//    	Logger.info("process filter filterUrl: " + filterUrl + ", status: " + status);
+//    	Logger.debug("process filter filterUrl: " + filterUrl + ", status: " + status);
     	boolean isProcessed = false;
     	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
     	List<CrawlPermission> res = new ArrayList<CrawlPermission>();
     	if (filterUrl != null && !filterUrl.equals(Const.NONE) && filterUrl.length() > 0) {
-    		Logger.info("name: " + filterUrl);
+    		Logger.debug("name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);
     		isProcessed = true;
     	}
     	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
-    		Logger.info("status: " + status);
+    		Logger.debug("status: " + status);
     		exp = exp.eq(Const.STATUS, status);
     		isProcessed = true;
     	} 
     	if (target != null && !target.toLowerCase().equals(Const.NONE) && target.length() > 0) {
-    		Logger.info("target: " + target);
+    		Logger.debug("target: " + target);
     		exp = exp.eq(Const.TARGET, target);
     		isProcessed = true;
     	} 
     	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+    	Logger.debug("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
     		res = models.CrawlPermission.findAll();
@@ -232,7 +232,7 @@ public class CrawlPermissionController extends AbstractController {
         permission.mailTemplate.name = Const.MailTemplateType.PERMISSION_REQUEST.name();
         permission.target.title = target;
         User user = User.findByEmail(request().username());
-		Logger.info("add entry with url: " + permission.url + ", name: " + permission.name + ", and target: " + permission.target.title + ", " + user.email);
+		Logger.debug("add entry with url: " + permission.url + ", name: " + permission.name + ", and target: " + permission.target.title + ", " + user.email);
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
@@ -257,15 +257,15 @@ public class CrawlPermissionController extends AbstractController {
         if (getFormParam(Const.CONTACT_PERSON) != null) {
             permission.contactPerson.name = getFormParam(Const.CONTACT_PERSON);
             
-            Logger.info("contactPerson: " + permission.contactPerson + ", " + permission.description + ", " + permission.target.title);
+            Logger.debug("contactPerson: " + permission.contactPerson + ", " + permission.description + ", " + permission.target.title);
             
             if (requireContactPerson) {
 	            try {
 	            	ContactPerson person = ContactPerson.findByName(getFormParam(Const.CONTACT_PERSON));
 	            	setContactPerson(permission, person.url);
-	            	Logger.info("contact person: " + getFormParam(Const.CONTACT_PERSON) + ", " + person.url);
+	            	Logger.debug("contact person: " + getFormParam(Const.CONTACT_PERSON) + ", " + person.url);
 	            } catch (Exception e) {
-	            	Logger.info("contact person is not existing.");
+	            	Logger.debug("contact person is not existing.");
 	                if (getFormParam(Const.EMAIL) != null) {
 	                    try {
 	                    	List<ContactPerson> personList = ContactPerson.filterByEmail(getFormParam(Const.EMAIL));
@@ -273,13 +273,13 @@ public class CrawlPermissionController extends AbstractController {
 	                        	setContactPerson(permission, personList.get(0).url);
 	                    	}
 	                    } catch (Exception e2) {
-	                    	Logger.info("contact person is not found by email.");
+	                    	Logger.debug("contact person is not found by email.");
 	                    }
 	                }	    
 	            }
             }
         }	    
-//	    Logger.info("creator user: " + getFormParam(Const.CREATOR_USER) + " - " + ContactPerson.findByUrl(getFormParam(Const.CONTACT_PERSON)).email);
+//	    Logger.debug("creator user: " + getFormParam(Const.CREATOR_USER) + " - " + ContactPerson.findByUrl(getFormParam(Const.CONTACT_PERSON)).email);
 	    if (getFormParam(Const.CREATOR_USER) != null) {
 	    	permission.user = User.findByName(getFormParam(Const.CREATOR_USER));
 	    }
@@ -294,7 +294,7 @@ public class CrawlPermissionController extends AbstractController {
 	    }
 		Form<CrawlPermission> permissionFormNew = Form.form(CrawlPermission.class);
 		permissionFormNew = permissionFormNew.fill(permission);
-		Logger.info("email: " + getFormParam(Const.EMAIL));
+		Logger.debug("email: " + getFormParam(Const.EMAIL));
 		return permissionFormNew;
     }
     
@@ -420,7 +420,7 @@ public class CrawlPermissionController extends AbstractController {
 		    while (permissionItr.hasNext()) {
 		    	CrawlPermission permission = permissionItr.next();
 		        if (getFormParam(permission.name) != null) {
-		    		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+		    		Logger.debug("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
 		            boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
 		            if (userFlag) {
 		            	if (assignedPermissions.length() == 0) {
@@ -431,9 +431,9 @@ public class CrawlPermissionController extends AbstractController {
 		            }
 		        }
 		    }
-			Logger.info("assignedPermissions: " + assignedPermissions);
+			Logger.debug("assignedPermissions: " + assignedPermissions);
 		} catch (Exception e) {
-			Logger.info("send some exception" + e);
+			Logger.debug("send some exception" + e);
 		}    
 		return assignedPermissions;
     }
@@ -451,16 +451,16 @@ public class CrawlPermissionController extends AbstractController {
 		    while (permissionItr.hasNext()) {
 		    	CrawlPermission permission = permissionItr.next();
 		        if (getFormParam(permission.name) != null) {
-		    		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+		    		Logger.debug("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
 		            boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
 		            if (userFlag) {
 	            		assignedPermissionsList.add(CrawlPermission.findByName(permission.name));
 		            }
 		        }
 		    }
-			Logger.info("assignedPermissions: " + assignedPermissionsList);
+			Logger.debug("assignedPermissions: " + assignedPermissionsList);
 		} catch (Exception e) {
-			Logger.info("send some exception" + e);
+			Logger.debug("send some exception" + e);
 		}    
 		return assignedPermissionsList;
     }
@@ -476,7 +476,7 @@ public class CrawlPermissionController extends AbstractController {
         while (permissionItr.hasNext()) {
         	CrawlPermission permission = permissionItr.next();
             if (getFormParam(permission.name) != null) {
-//        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+//        		Logger.debug("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
                 boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag) {
                 	if (assignedPermissions.length() == 0) {
@@ -489,7 +489,7 @@ public class CrawlPermissionController extends AbstractController {
             }
         }
         assignedPermissions = assignedPermissions.replace(" ,", "");
-		Logger.info("assignedPermissions: " + assignedPermissions);
+		Logger.debug("assignedPermissions: " + assignedPermissions);
         return assignedPermissions;
     }
     
@@ -503,15 +503,15 @@ public class CrawlPermissionController extends AbstractController {
         while (permissionItr.hasNext()) {
         	CrawlPermission permission = permissionItr.next();
             if (getFormParam(permission.name) != null) {
-//        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+//        		Logger.debug("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
                 boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag) {
                 	permission.status = Const.CrawlPermissionStatus.EMAIL_REJECTED.name();
-                	Logger.info("new permission staus: " + permission.status);
+                	Logger.debug("new permission staus: " + permission.status);
                    	Ebean.update(permission);                	
         	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
         	        Ebean.save(log);
-                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+                	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
         	        updateAllByTarget(permission.url, permission.target.title, permission.status);
         	        TargetController.updateQaStatus(permission.target.title, permission.status);
                 }
@@ -527,26 +527,26 @@ public class CrawlPermissionController extends AbstractController {
      * @param status The status of the permission workflow
      */
     public static void updateAllByTarget(String url, String target, String status) {
-    	Logger.info("updateAllByTarget: "+ url + ", " + target + ", " + status);
+    	Logger.debug("updateAllByTarget: "+ url + ", " + target + ", " + status);
     	if (status.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
 	    	ExpressionList<CrawlPermission> exp = CrawlPermission.find.where();
 	    	List<CrawlPermission> permissionList = new ArrayList<CrawlPermission>();
 //	    	if (status != null && !status.toLowerCase().equals(Const.NONE) && status.length() > 0) {
-//	    		Logger.info("updateAllByTarget() status: " + status);
+//	    		Logger.debug("updateAllByTarget() status: " + status);
 //	    		exp = exp.eq(Const.STATUS, status);
 //	    	} 
 	    	if (target != null && !target.toLowerCase().equals(Const.NONE) && target.length() > 0) {
-	    		Logger.info("updateAllByTarget() target: " + target);
+	    		Logger.debug("updateAllByTarget() target: " + target);
 	    		exp = exp.eq(Const.TARGET, target);
 	    	} 
 	    	permissionList = exp.query().findList();
-	    	Logger.info("updateAllByTarget() Expression list size: " + permissionList.size());
+	    	Logger.debug("updateAllByTarget() Expression list size: " + permissionList.size());
 		    Iterator<CrawlPermission> permissionItr = permissionList.iterator();
 		    while (permissionItr.hasNext()) {
 		    	CrawlPermission permission = permissionItr.next();
 		    	if (!url.equals(permission.url)) {
 			    	permission.status = Const.CrawlPermissionStatus.SUPERSEDED.name();
-			    	Logger.info("updateAllByTarget() permission: " + permission.name + " to SUPERSEDED");
+			    	Logger.debug("updateAllByTarget() permission: " + permission.name + " to SUPERSEDED");
 	               	Ebean.update(permission);  
 		    	}
 		    }
@@ -567,7 +567,7 @@ public class CrawlPermissionController extends AbstractController {
     		exp = exp.eq(Const.TARGET, target);
     	} 
     	permissionList = exp.query().findList();
-    	Logger.info("Expression list size: " + permissionList.size());
+    	Logger.debug("Expression list size: " + permissionList.size());
 	    Iterator<CrawlPermission> permissionItr = permissionList.iterator();
 	    while (permissionItr.hasNext()) {
 	    	CrawlPermission permission = permissionItr.next();
@@ -612,7 +612,7 @@ public class CrawlPermissionController extends AbstractController {
         while (permissionItr.hasNext()) {
         	CrawlPermission permission = permissionItr.next();
             if (getFormParam(permission.name) != null) {
-//        		Logger.info("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
+//        		Logger.debug("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
                 boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag || all) {
                 	Logger.debug("mail to contact person: " + permission.contactPerson.name.replace(Const.LIST_DELIMITER,"") + ".");
@@ -627,11 +627,11 @@ public class CrawlPermissionController extends AbstractController {
 	                	messageBody = mailTemplate.text;
 	//                	String messageBody = mailTemplate.readTemplate();
 	                	String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
-	            		Logger.info("setPendingSelectedCrawlPermissions permission.target: " + permission.target.title);
-	            		Logger.info("setPendingSelectedCrawlPermissions current: " + routes.LicenseController.form(permission.url).absoluteURL(request()).toString());
+	            		Logger.debug("setPendingSelectedCrawlPermissions permission.target: " + permission.target.title);
+	            		Logger.debug("setPendingSelectedCrawlPermissions current: " + routes.LicenseController.form(permission.url).absoluteURL(request()).toString());
 	            		String licenseUrl = routes.LicenseController.form(permission.url).absoluteURL(request()).toString();
 	            		licenseUrl = injectServerName(licenseUrl);
-	            		Logger.info("setPendingSelectedCrawlPermissions new: " + licenseUrl);
+	            		Logger.debug("setPendingSelectedCrawlPermissions new: " + licenseUrl);
 	                	messageBody = CrawlPermission.
 		                	replaceTwoStringsInText(
 		                			messageBody
@@ -646,15 +646,15 @@ public class CrawlPermissionController extends AbstractController {
 	                    EmailHelper.sendMessage(email, messageSubject, messageBody);                	
 	//                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
 	                	permission.status = Const.CrawlPermissionStatus.PENDING.name();
-	                	Logger.info("new permission staus: " + permission.status);
+	                	Logger.debug("new permission staus: " + permission.status);
 	                   	Ebean.update(permission);   
 	        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
 	        	        Ebean.save(log);
-	                	Logger.info("updated permission name: " + permission.name + ", staus: " + permission.status);
+	                	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
 	        	        updateAllByTarget(permission.url, permission.target.title, permission.status);
 	        	        TargetController.updateQaStatus(permission.target.title, permission.status);
                 	} else {
-	                	Logger.info("Missing contact email. Please check contact person");
+	                	Logger.debug("Missing contact email. Please check contact person");
 	        	        res = false;
 	        	        break;
                 	}
@@ -668,7 +668,7 @@ public class CrawlPermissionController extends AbstractController {
      * This method handles queued crawl permissions.
      */
     public static Result send() {
-		Logger.info("send crawl permission");
+		Logger.debug("send crawl permission");
     	Result res = ok();
         String send = getFormParam(Const.SEND);
         String sendall = getFormParam(Const.SEND_ALL);
@@ -677,17 +677,17 @@ public class CrawlPermissionController extends AbstractController {
         String reject = getFormParam(Const.REJECT);
         String selectall = getFormParam(Const.SELECT_ALL);
         String deselectall = getFormParam(Const.DESELECT_ALL);
-        Logger.info("send: " + send + ", sendall: " + sendall + ", sendsome: " + sendsome + ", preview: " + preview + 
+        Logger.debug("send: " + send + ", sendall: " + sendall + ", sendsome: " + sendsome + ", preview: " + preview + 
         		", reject: " + reject + ", selectall: " + selectall + ", deselectall: " + deselectall);
 	    String template = Const.DEFAULT_TEMPLATE;
         if (getFormParam(Const.TEMPLATE) != null) {
 	    	template = getFormParam(Const.TEMPLATE);
 	    }
     	String toMails = evaluateToEmails();
-    	Logger.info("toMails: " + toMails);
+    	Logger.debug("toMails: " + toMails);
 
     	if (sendall != null) {
-        	Logger.info("send all crawl permission requests");
+        	Logger.debug("send all crawl permission requests");
             boolean sendingRes = setPendingSelectedCrawlPermissions(true, template);
             if (!sendingRes) {
     			flash("message", "Missing contact email. Please check contact person");
@@ -695,7 +695,7 @@ public class CrawlPermissionController extends AbstractController {
         	res = redirect(routes.CrawlPermissionController.index()); 
         }
         if (sendsome != null) {
-        	Logger.info("send some crawl permission requests");
+        	Logger.debug("send some crawl permission requests");
         	boolean sendingRes = setPendingSelectedCrawlPermissions(false, template);//messageBody, messageSubject); 
             if (!sendingRes) {
     			flash("message", "Missing contact email. Please check contact person");
@@ -703,7 +703,7 @@ public class CrawlPermissionController extends AbstractController {
 	        res = redirect(routes.CrawlPermissionController.index()); 
         }
         if (preview != null) {
-        	Logger.info("preview crawl permission requests");        	
+        	Logger.debug("preview crawl permission requests");        	
 	        res = ok(
 	            crawlpermissionpreview.render(
 		            	getAssignedPermissionsList().get(0), User.findByEmail(request().username()), toMails, template
@@ -711,17 +711,17 @@ public class CrawlPermissionController extends AbstractController {
 	        );
         }
         if (reject != null) {
-        	Logger.info("reject crawl permission requests");
+        	Logger.debug("reject crawl permission requests");
         	rejectSelectedCrawlPermissions();        	
 	        res = redirect(routes.CrawlPermissionController.index()); 
         }
         if (selectall != null) {
-        	Logger.info("select all listed in page crawl permissions");
+        	Logger.debug("select all listed in page crawl permissions");
         	res = redirect(routes.CrawlPermissionController.list(
         			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.SELECT_ALL));
         }
         if (deselectall != null) {
-        	Logger.info("deselect all listed in page crawl permissions");
+        	Logger.debug("deselect all listed in page crawl permissions");
         	res = redirect(routes.CrawlPermissionController.list(
         			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.DESELECT_ALL));
         }
@@ -732,19 +732,19 @@ public class CrawlPermissionController extends AbstractController {
      * This method sends email preview to the user.
      */
     public static Result sendPreview() {
-		Logger.info("send preview");
+		Logger.debug("send preview");
     	Result res = ok();
         String preview = getFormParam(Const.PREVIEW);
         if (preview != null) {
         	boolean sendingRes = true;
-        	Logger.info("mail to contact person:" + getFormParam(Const.EMAIL) + ".");
+        	Logger.debug("mail to contact person:" + getFormParam(Const.EMAIL) + ".");
     		String email = request().username(); //getFormParam(Const.EMAIL);
         	String messageSubject = getFormParam(Const.SUBJECT);
         	String messageBody = getFormParam(Const.BODY);
         	if (email != null) {
                 EmailHelper.sendMessage(email, messageSubject, messageBody);                	
         	} else {
-            	Logger.info("Missing contact email. Please check contact person");
+            	Logger.debug("Missing contact email. Please check contact person");
             	sendingRes = false;
         	}
             if (!sendingRes) {
@@ -761,7 +761,7 @@ public class CrawlPermissionController extends AbstractController {
      * @return true if exists false otherwise
      */
     public static boolean checkCrawlPermissionTarget(String target) {
-    	Logger.info("checkCrawlPermissionTarget target: " + target);
+    	Logger.debug("checkCrawlPermissionTarget target: " + target);
     	boolean res = false;
     	List<CrawlPermission> list = CrawlPermission.filterByTarget(target);
         if (list != null && list.size() > 0) {
@@ -776,9 +776,9 @@ public class CrawlPermissionController extends AbstractController {
      * @return JSON result
      */
     public static Result crawlPermissionExist(String target) {
-    	Logger.info("crawlPermissionExist target: " + target);
+    	Logger.debug("crawlPermissionExist target: " + target);
     	boolean res = checkCrawlPermissionTarget(target);
-    	Logger.info("crawl permission exists res: " + res + ", target: " + target);
+    	Logger.debug("crawl permission exists res: " + res + ", target: " + target);
     	return ok(Json.toJson(res));
     }
     
@@ -788,7 +788,7 @@ public class CrawlPermissionController extends AbstractController {
      * @return JSON result
      */
     public static Result crawlPermissionExistAtHigherLevel(String target) {
-    	Logger.info("crawlPermissionExistAtHigherLevel target: " + target);
+    	Logger.debug("crawlPermissionExistAtHigherLevel target: " + target);
     	boolean res = false;
     	String path = "";
     	if (target != null) {
@@ -804,12 +804,12 @@ public class CrawlPermissionController extends AbstractController {
 		    				path = path + part + Const.SLASH_DELIMITER;
 		    			}
 		    		} catch (Exception e) {
-		    			Logger.info("crawlPermissionExistAtHigherLevel error: " + e);
+		    			Logger.debug("crawlPermissionExistAtHigherLevel error: " + e);
 		    		}
 		        }
 	    	}
     	}
-    	Logger.info("crawl permission in higher level exists res: " + res + ", target: " + target);
+    	Logger.debug("crawl permission in higher level exists res: " + res + ", target: " + target);
     	return ok(Json.toJson(res));
     }
     
@@ -820,7 +820,7 @@ public class CrawlPermissionController extends AbstractController {
      * @return JSON result
      */
     public static Result checkForHigherLevelPrompt(String target) {
-    	Logger.info("checkForHigherLevelPrompt target: " + target);
+    	Logger.debug("checkForHigherLevelPrompt target: " + target);
     	boolean res = false;
     	if (target != null) {
     		if (target.contains(Const.SLASH_DELIMITER)) {
@@ -830,7 +830,7 @@ public class CrawlPermissionController extends AbstractController {
 		    	}
 	    	}
     	}
-    	Logger.info("crawl permission in higher level exists res: " + res + ", target: " + target);
+    	Logger.debug("crawl permission in higher level exists res: " + res + ", target: " + target);
     	return ok(Json.toJson(res));
     }
     

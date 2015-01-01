@@ -46,7 +46,7 @@ public class NominationController extends AbstractController {
      * Display the nomination.
      */
     public static Result index() {
-    	Logger.info("Nominations.index()");
+    	Logger.debug("Nominations.index()");
         return GO_HOME;
     }
     
@@ -72,11 +72,11 @@ public class NominationController extends AbstractController {
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get(Const.QUERY);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
+		Logger.debug("query: " + query);
+		Logger.debug("action: " + action);
     	
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Nomination name is empty. Please write name in search window.");
+			Logger.debug("Nomination name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.NominationController.list(0, "name", "asc", "")
@@ -93,7 +93,7 @@ public class NominationController extends AbstractController {
     		if (Const.ADDENTRY.equals(action)) {
     	    	Nomination nomination = new Nomination();
     	    	nomination.name = query;
-    			Logger.info("add nomination name: " + nomination.name);
+    			Logger.debug("add nomination name: " + nomination.name);
     			Form<Nomination> nominationFormNew = Form.form(Nomination.class);
     			nominationFormNew = nominationFormNew.fill(nomination);
     			User user = User.findByEmail(request().username());
@@ -116,13 +116,13 @@ public class NominationController extends AbstractController {
      */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result load() {
-    	Logger.info("nomination load()");
+    	Logger.debug("nomination load()");
         JsonNode json = request().body().asJson();
-    	Logger.info("nomination load() json: " + json);
+    	Logger.debug("nomination load() json: " + json);
         ObjectNode result = Json.newObject();
-    	Logger.info("nomination load() result: " + result);
+    	Logger.debug("nomination load() result: " + result);
         String name = json.findPath(Const.NAME).textValue();
-    	Logger.info("load nomination name: " + name);
+    	Logger.debug("load nomination name: " + name);
         if(name == null) {
             result.put("status", "Not OK");
             result.put("message", "Missing parameter [name]");
@@ -133,23 +133,23 @@ public class NominationController extends AbstractController {
             Logger.debug("load nomination: " + name);
             Logger.debug("current nominations count for given name: " + Nomination.filterByName(name).size());
             String title = json.findPath(Const.TITLE).textValue();
-            Logger.info("load nomination title: " + title);
+            Logger.debug("load nomination title: " + title);
             String websiteUrl = json.findPath(Const.WEBSITE_URL).textValue();
-            Logger.info("load nomination website_url: " + websiteUrl);
+            Logger.debug("load nomination website_url: " + websiteUrl);
             String email = json.findPath(Const.EMAIL).textValue();
-            Logger.info("load nomination email: " + email);
+            Logger.debug("load nomination email: " + email);
             String tel = json.findPath(Const.TEL).textValue();
-            Logger.info("load nomination tel: " + tel);
+            Logger.debug("load nomination tel: " + tel);
             String address = json.findPath(Const.ADDRESS).textValue();
-            Logger.info("load nomination address: " + address);
+            Logger.debug("load nomination address: " + address);
             boolean nominatedWebsiteOwner = json.findPath(Const.NOMINATED_WEBSITE_OWNER).booleanValue();
-            Logger.info("load nomination nominated_website_owner: " + nominatedWebsiteOwner);
+            Logger.debug("load nomination nominated_website_owner: " + nominatedWebsiteOwner);
             String justification = json.findPath(Const.JUSTIFICATION).textValue();
-            Logger.info("load nomination justification: " + justification);
+            Logger.debug("load nomination justification: " + justification);
             String notes = json.findPath(Const.NOTES).textValue();
-            Logger.info("load nomination notes: " + notes);
+            Logger.debug("load nomination notes: " + notes);
             String nominationDate = json.findPath(Const.NOMINATION_DATE).textValue();
-            Logger.info("load nomination nomination_date: " + nominationDate);
+            Logger.debug("load nomination nomination_date: " + nominationDate);
             Nomination nomination = new Nomination();
             nomination.name = name;
             nomination.title = title;
@@ -163,7 +163,7 @@ public class NominationController extends AbstractController {
             // TODO: UNIX DATE
 //            nomination.nominationDate = nominationDate;
             nomination.save();
-	        Logger.info("saved nomination: " + nomination.toString());
+	        Logger.debug("saved nomination: " + nomination.toString());
             Logger.debug("new nominations count for given name: " + Nomination.filterByName(name).size());
             return ok(result);
         }
@@ -269,7 +269,7 @@ public class NominationController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("Nominations.list()");
+    	Logger.debug("Nominations.list()");
         return ok(
         	list.render(
         			"Nominations", 
@@ -303,20 +303,20 @@ public class NominationController extends AbstractController {
      */
     public static Result submit() {
     	Result res = null;
-        Logger.info("Nomination submit()");
+        Logger.debug("Nomination submit()");
         String submit = getFormParam(Const.SUBMIT);
-        Logger.info("submit: " + submit);
+        Logger.debug("submit: " + submit);
         if (submit != null) {
-        	Logger.info("save UKWA licence - name: " + getFormParam(Const.NAME));
-    		Logger.info("agree: " + getFormParam(Const.AGREE));
+        	Logger.debug("save UKWA licence - name: " + getFormParam(Const.NAME));
+    		Logger.debug("agree: " + getFormParam(Const.AGREE));
             boolean isAgreed = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.AGREE));
-        	Logger.info("flags isAgreed: " + isAgreed );
+        	Logger.debug("flags isAgreed: " + isAgreed );
             if (getFormParam(Const.WEBSITE_URL) != null) {
         	    String target = getFormParam(Const.WEBSITE_URL);
         	    Nomination nomination = new Nomination();
                 nomination.id = Utils.INSTANCE.createId();
                 nomination.url = Const.ACT_URL + nomination.id;
-        		Logger.info("add nomination with url: " + nomination.url + ", and name: " + nomination.name);
+        		Logger.debug("add nomination with url: " + nomination.url + ", and name: " + nomination.name);
             	nomination.websiteUrl = target;
                 if (getFormParam(Const.NAME) != null) {
                 	nomination.name = getFormParam(Const.NAME);

@@ -147,13 +147,13 @@ public class Role extends ActModel {
      */
     public static List<Permission> getNotAssignedPermissions(List<Permission> assignedPermissions) {
     	List<Permission> allPermissionList = Permission.findAll();
-//    	Logger.info("Permissions count: " + allPermissionList.size());
+//    	Logger.debug("Permissions count: " + allPermissionList.size());
         List<Permission> res = new ArrayList<Permission>();
     	if (assignedPermissions != null && assignedPermissions.size() > 0) {
 			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
 			while (itrAllPermissions.hasNext()) {
 				Permission curPermission = itrAllPermissions.next();
-//		    	Logger.info("curPermission: " + curPermission.name);
+//		    	Logger.debug("curPermission: " + curPermission.name);
 				if (!assignedPermissions.contains(curPermission)) {
 					res.add(curPermission);
 				}
@@ -164,16 +164,16 @@ public class Role extends ActModel {
 //    
 //    public static List<Permission> getNotAssignedPermissions(String permissionsStr) {
 //    	List<Permission> allPermissionList = Permission.findAll();
-////    	Logger.info("Permissions count: " + allPermissionList.size());
+////    	Logger.debug("Permissions count: " + allPermissionList.size());
 //        List<Permission> res = new ArrayList<Permission>();
 //    	if (permissionsStr != null && permissionsStr.length() > 0) {
 //			List<String> assignedList = Arrays.asList(permissionsStr.split(Const.COMMA + " "));
-////			Logger.info("original permissions: " + permissionsStr);
-////			Logger.info("assignedList: " + assignedList);
+////			Logger.debug("original permissions: " + permissionsStr);
+////			Logger.debug("assignedList: " + assignedList);
 //			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
 //			while (itrAllPermissions.hasNext()) {
 //				Permission curPermission = itrAllPermissions.next();
-////		    	Logger.info("curPermission: " + curPermission.name);
+////		    	Logger.debug("curPermission: " + curPermission.name);
 //				if (!assignedList.contains(curPermission.name)) {
 //					res.add(curPermission);
 //				}
@@ -193,11 +193,11 @@ public class Role extends ActModel {
 //     */
 //    public static boolean isIncludedByUrl(Long roleId, String url) {
 //    	boolean res = false;
-////    	Logger.info("isIncludedByUrl() roleId: " + roleId + ",url: " + url);
+////    	Logger.debug("isIncludedByUrl() roleId: " + roleId + ",url: " + url);
 //    	try {
 //	    	if (StringUtils.isNotEmpty(url)) {
 //		    	List<Role> roles = User.findByUrl(url).roles;
-////		    	Logger.info("roles.size: "+ roles.size());
+////		    	Logger.debug("roles.size: "+ roles.size());
 //		    	res = isIncluded(roleId, roles);
 //	    	}
 //    	} catch (Exception e) {
@@ -244,7 +244,7 @@ public class Role extends ActModel {
 	    			res = true;
 	    		}  
     		} catch (Exception e) {
-    			Logger.info("New created role is allowed.");
+    			Logger.debug("New created role is allowed.");
     			res = true;
     		}
     	}
@@ -299,7 +299,7 @@ public class Role extends ActModel {
     }
 
 	public String permissionsAsString() {
-//		Logger.info("permissionsAsString");
+//		Logger.debug("permissionsAsString");
 		List<String> names = new ArrayList<String>();
 		for (Permission permission : this.permissions) {
 			names.add(permission.name);

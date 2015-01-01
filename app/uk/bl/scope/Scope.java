@@ -95,8 +95,8 @@ public enum Scope {
 		
 			// Find city by given IP
 			CityResponse response = reader.city(InetAddress.getByName(ip));
-			Logger.info(response.getCountry().getIsoCode()); 
-			Logger.info(response.getCountry().getName()); 
+			Logger.debug(response.getCountry().getIsoCode()); 
+			Logger.debug(response.getCountry().getName()); 
 			// Check country code in city response
 			if (response.getCountry().getIsoCode().equals(UK_COUNTRY_CODE)) {
 				res = true;
@@ -128,7 +128,7 @@ public enum Scope {
 	        	res = res + END_STR;
 	        }
 		}
-//        Logger.info("normalized URL: " + res);
+//        Logger.debug("normalized URL: " + res);
 		return res;
 	}
 
@@ -165,13 +165,13 @@ public enum Scope {
         boolean res = false;
         url = normalizeUrlNoSlash(url);        
         if (url != null && url.length() > 0) {
-        	Logger.info("normalizeUrl: " + url);
+        	Logger.debug("normalizeUrl: " + url);
         	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
         	if (lookupEntryCount.size() > 0) {
         		res = true;
         	}
         }
-        Logger.info("isLookupExistsInDb() url: " + url + ", res: " + res);
+        Logger.debug("isLookupExistsInDb() url: " + url + ", res: " + res);
         return res;
 	}
 	
@@ -183,7 +183,7 @@ public enum Scope {
 	 */
 	public void updateLookupEntry(Target target, boolean newStatus) {
         boolean res = false;
-        Logger.info("updateLookupEntry() field URL: " + target.fieldUrl() + ", new QA status: " + newStatus);
+        Logger.debug("updateLookupEntry() field URL: " + target.fieldUrl() + ", new QA status: " + newStatus);
         String url = normalizeUrl(target.fieldUrl());
         
         /**
@@ -224,10 +224,10 @@ public enum Scope {
         	if (resLookupEntry != null && !resLookupEntry.name.toLowerCase().equals(Const.NONE)) {
         		inProjectDb = true;
         		res = LookupEntry.getValueByUrl(url);
-        		Logger.info("updateLookupEntry lookup entry for '" + url + "' is in database with value: " + res);
+        		Logger.debug("updateLookupEntry lookup entry for '" + url + "' is in database with value: " + res);
         		if (newStatus != res) {
         			resLookupEntry.scopevalue = newStatus;
-            		Logger.info("updateLookupEntry lookup entry for '" + url + "' changed to value: " + newStatus);
+            		Logger.debug("updateLookupEntry lookup entry for '" + url + "' changed to value: " + newStatus);
         			Ebean.update(resLookupEntry);
         		}
         	}
@@ -249,7 +249,7 @@ public enum Scope {
 	 */
 	public boolean checkExt(String url, Target target, String mode) throws WhoisException {
         boolean res = false;
-        Logger.info("check url: " + url + ", nid: " + target.id);
+        Logger.debug("check url: " + url + ", nid: " + target.id);
         url = normalizeUrl(url);
         
         /**
@@ -264,12 +264,12 @@ public enum Scope {
 //        	if (lookupEntryCount.size() > 0) {
         		inProjectDb = true;
         		res = LookupEntry.getValueByUrl(url);
-        		Logger.info("check lookup entry for '" + url + "' is in database with value: " + res);
+        		Logger.debug("check lookup entry for '" + url + "' is in database with value: " + res);
         	}
         }
         
         if (!inProjectDb) {
-        	Logger.info("URL not in database - calculate scope");
+        	Logger.debug("URL not in database - calculate scope");
 	        /**
 	         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
 	         *
@@ -324,7 +324,7 @@ public enum Scope {
 	        // store in project DB
 	        storeInProjectDb(url, res, target);
         }
-		Logger.info("lookup entry for '" + url + "' is in database with value: " + res);        
+		Logger.debug("lookup entry for '" + url + "' is in database with value: " + res);        
         return res;
 	}
 	
@@ -338,7 +338,7 @@ public enum Scope {
 	 */
 	public boolean checkScopeIp(String url, Target target) throws WhoisException {
         boolean res = false;
-        Logger.info("check for scope IP url: " + url + ", nid: " + target.id);
+        Logger.debug("check for scope IP url: " + url + ", nid: " + target.id);
         url = normalizeUrl(url);
         
         /**
@@ -389,14 +389,14 @@ public enum Scope {
        		        LookupEntry lookupEntry = lookupEntries.get(0);
        		        lookupEntry.scopevalue = res;
        		        Ebean.update(lookupEntry);
-            		Logger.info("updated lookup entry in database for '" + url + "' with value: " + res);
+            		Logger.debug("updated lookup entry in database for '" + url + "' with value: " + res);
         		}
         	} else {
         		storeInProjectDb(url, res, target);
         	}
         }
         
-		Logger.info("resulting lookup entry for '" + url + "' is: " + res);        
+		Logger.debug("resulting lookup entry for '" + url + "' is: " + res);        
         return res;
 	}
 	
@@ -410,9 +410,9 @@ public enum Scope {
 	 */
 	public boolean checkScopeIpWithoutLicense(String url, Target target) throws WhoisException {
         boolean res = false;
-        Logger.info("check for scope IP url: " + url + ", id: " + target.id);
+        Logger.debug("check for scope IP url: " + url + ", id: " + target.id);
         url = normalizeUrl(url);
-        Logger.info("normalizeUrl: " + url);
+        Logger.debug("normalizeUrl: " + url);
         
         /**
          *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
@@ -458,14 +458,14 @@ public enum Scope {
        		        LookupEntry lookupEntry = lookupEntries.get(0);
        		        lookupEntry.scopevalue = res;
        		        Ebean.update(lookupEntry);
-            		Logger.info("updated lookup entry in database for '" + url + "' with value: " + res);
+            		Logger.debug("updated lookup entry in database for '" + url + "' with value: " + res);
         		}
         	} else {
         		storeInProjectDb(url, res, target);
         	}
         }
         
-		Logger.info("resulting lookup entry for '" + url + "' is: " + res);        
+		Logger.debug("resulting lookup entry for '" + url + "' is: " + res);        
         return res;
 	}
 	
@@ -479,7 +479,7 @@ public enum Scope {
 	 */
 	public boolean checkScopeDomain(String url) throws WhoisException {
         boolean res = false;
-//        Logger.info("check for scope Domain url: " + url + ", nid: " + nidUrl);
+//        Logger.debug("check for scope Domain url: " + url + ", nid: " + nidUrl);
         // full domain with protocol
         url = normalizeUrl(url);
         
@@ -489,7 +489,7 @@ public enum Scope {
 	        	res = true;
 	        }
         }
-//		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
+//		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);        
         return res;
 	}
 
@@ -501,7 +501,7 @@ public enum Scope {
 	public boolean checkGeoIp(String url) {
 		boolean res = false;
 		String ip = getIpFromUrl(url);
-		Logger.info("ip: " + ip);
+		Logger.debug("ip: " + ip);
 		res = queryDb(ip);
 		return res;
 	}
@@ -517,19 +517,19 @@ public enum Scope {
 		boolean res = false;
     	try {
         	JRubyWhois whoIs = new JRubyWhois();
-        	Logger.info("checkWhois: " + whoIs + " " + url);
+        	Logger.debug("checkWhois: " + whoIs + " " + url);
         	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
-        	Logger.info("whoIsRes: " + whoIsRes);
+        	Logger.debug("whoIsRes: " + whoIsRes);
 //        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl("marksandspencer.com"));
         	res = whoIsRes.isUKRegistrant();
-        	Logger.info("isUKRegistrant?: " + res);
+        	Logger.debug("isUKRegistrant?: " + res);
     	} catch (Exception e) {
-    		Logger.info("whois lookup message: " + e.getMessage());
+    		Logger.debug("whois lookup message: " + e.getMessage());
 	        // store in project DB
 	        storeInProjectDb(url, false, target);
 //    		throw new WhoisException(e);
     	}
-    	Logger.info("whois res: " + res);        	
+    	Logger.debug("whois res: " + res);        	
 		return res;
 	}
 	
@@ -541,27 +541,27 @@ public enum Scope {
 	 * @throws WhoisException 
 	 */
 	public boolean checkWhoisThread(int number) throws WhoisException {
-    	Logger.info("checkWhoisThread: " + number);
+    	Logger.debug("checkWhoisThread: " + number);
 		boolean res = false;
     	JRubyWhois whoIs = new JRubyWhois();
     	List<Target> targetList = Target.findLastActive(number);
-    	Logger.info("targetList: " + targetList.size());
+    	Logger.debug("targetList: " + targetList.size());
     	Iterator<Target> itr = targetList.iterator();
     	while (itr.hasNext()) {
     		Target target = itr.next();
     		for (FieldUrl fieldUrl : target.fieldUrls) {
-		        	Logger.info("checkWhoisThread URL: " + target.fieldUrl() + ", last update: " + String.valueOf(target.updatedAt));
+		        	Logger.debug("checkWhoisThread URL: " + target.fieldUrl() + ", last update: " + String.valueOf(target.updatedAt));
 		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
-		        	Logger.info("whoIsRes: " + whoIsRes);
+		        	Logger.debug("whoIsRes: " + whoIsRes);
 		        	// DOMAIN A UK REGISTRANT?
 		        	res = whoIsRes.isUKRegistrant();
-		        	Logger.info("isUKRegistrant?: " + res);
+		        	Logger.debug("isUKRegistrant?: " + res);
 		        	// STORE
 		        	storeInProjectDb(fieldUrl.url, res, target);
 		        	// ASSIGN TO TARGET
 		        	target.isUkRegistration = res;
 
-//		        	Logger.info("whois lookup message: " + e.getMessage());
+//		        	Logger.debug("whois lookup message: " + e.getMessage());
 //			        // store in project DB
 //		    		// FAILED - UNCHECKED
 //			        storeInProjectDb(fieldUrl.url, false);
@@ -571,12 +571,12 @@ public enum Scope {
     		}
         	Ebean.update(target);
     	}
-//    	Logger.info("whois res: " + res);        	
+//    	Logger.debug("whois res: " + res);        	
 		return res;
 	}
 	
 	public WhoIsData checkWhois(int number) throws WhoisException {
-    	Logger.info("checkWhoisThread: " + number);
+    	Logger.debug("checkWhoisThread: " + number);
 		boolean res = false;
 		List<Target> targets = new ArrayList<Target>();
 		int ukRegistrantCount = 0;
@@ -584,28 +584,28 @@ public enum Scope {
 		int failedCount = 0;
     	JRubyWhois whoIs = new JRubyWhois();
     	List<Target> targetList = Target.findLastActive(number);
-    	Logger.info("targetList: " + targetList.size());
+    	Logger.debug("targetList: " + targetList.size());
     	Iterator<Target> itr = targetList.iterator();
     	while (itr.hasNext()) {
     		Target target = itr.next();
     		for (FieldUrl fieldUrl : target.fieldUrls) {
 	        	try {
-	//	        	Logger.info("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
+	//	        	Logger.debug("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
 		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
-	//	        	Logger.info("whoIsRes: " + whoIsRes);
+	//	        	Logger.debug("whoIsRes: " + whoIsRes);
 		        	// DOMAIN A UK REGISTRANT?
 		        	res = whoIsRes.isUKRegistrant();
 		        	if (res) ukRegistrantCount++;
 		        	else nonUKRegistrantCount++;
-	//	        	Logger.info("isUKRegistrant?: " + res);
+	//	        	Logger.debug("isUKRegistrant?: " + res);
 		        	// STORE
-		        	Logger.info("CHECK TO SAVE " + target.fieldUrl());
+		        	Logger.debug("CHECK TO SAVE " + target.fieldUrl());
 		        	storeInProjectDb(fieldUrl.url, res, target);
 		        	// ASSIGN TO TARGET
 		        	target.isUkRegistration = res;
 		        	ukRegistrantCount++;
 		    	} catch (Exception e) {
-		    		Logger.info("whois lookup message: " + e.getMessage());
+		    		Logger.debug("whois lookup message: " + e.getMessage());
 			        // store in project DB
 		    		// FAILED - UNCHECKED
 			        storeInProjectDb(fieldUrl.url, false, target);
@@ -632,17 +632,17 @@ public enum Scope {
     	
 		
 //		for (SqlRow row : results) {
-//			Logger.info("row: " + row.getString("name") + " - " + row.get("diff"));
+//			Logger.debug("row: " + row.getString("name") + " - " + row.get("diff"));
 //		}
 //    	List<LookupEntry> lookupEntries = LookupEntry.find.where().in("name", result).findList();
 //    	StringBuilder builder = new StringBuilder("name in (select tar.field_url from target tar where tar.active = true order by tar.last_update desc)");
 //    	List<LookupEntry> lookupEntries = LookupEntry.find.where().raw(builder.toString()).findList();
 
 
-//    	Logger.info("lookupEntries: " + lookupEntries.size());
+//    	Logger.debug("lookupEntries: " + lookupEntries.size());
     	WhoIsData whoIsData = new WhoIsData(targets, results, ukRegistrantCount, nonUKRegistrantCount, failedCount);
 
-//    	Logger.info("whois res: " + res);        	
+//    	Logger.debug("whois res: " + res);        	
 		return whoIsData;
 	}
 	
@@ -654,14 +654,14 @@ public enum Scope {
 	 */
 	public void storeInProjectDb(String url, boolean res, Target target) {
 		boolean stored = isLookupExistsInDb(url);
-		Logger.info("STORED: " + stored + " - " + url);
+		Logger.debug("STORED: " + stored + " - " + url);
 		if (!stored) {
 			LookupEntry lookupEntry = new LookupEntry();
 			lookupEntry.name = url;
 			lookupEntry.scopevalue = res;
 			lookupEntry.target = target;
 	        lookupEntry.save();
-	        Logger.info("Saved lookup entry " + lookupEntry.toString());
+	        Logger.debug("Saved lookup entry " + lookupEntry.toString());
 		}
     }
 	
@@ -677,9 +677,9 @@ public enum Scope {
 			address = InetAddress.getByName(new URL(url).getHost());
 			ip = address.getHostAddress();
 		} catch (UnknownHostException e) {
-			Logger.info("ip calculation unknown host error for url=" + url + ". " + e.getMessage());
+			Logger.debug("ip calculation unknown host error for url=" + url + ". " + e.getMessage());
 		} catch (MalformedURLException e) {
-			Logger.info("ip calculation error for url=" + url + ". " + e.getMessage());
+			Logger.debug("ip calculation error for url=" + url + ". " + e.getMessage());
 		}
         return ip;
 	}
@@ -692,9 +692,9 @@ public enum Scope {
 //	public String getDomainFromUrl(String url) {
 //		String domain = "";
 //		try {
-////			Logger.info("get host: " + new URL(url).getHost());
+////			Logger.debug("get host: " + new URL(url).getHost());
 //			domain = new URL(url).getHost().replace(WWW, "");
-////			Logger.info("extracted domain: " + domain);
+////			Logger.debug("extracted domain: " + domain);
 //		} catch (Exception e) {
 //			Logger.error("domain calculation error for url=" + url + ". " + e.getMessage());
 //			domain = url;
@@ -741,11 +741,11 @@ public enum Scope {
         for (FieldUrl fieldUrl : target.fieldUrls) {
             URL uri = new URI(fieldUrl.url).normalize().toURL();
 			String url = uri.toExternalForm();
-            Logger.info("Normalised " + url);
+            Logger.debug("Normalised " + url);
             // Rule 3.1: check domain name
 	        if (!url.contains(UK_DOMAIN) && !url.contains(LONDON_DOMAIN) && !url.contains(SCOT_DOMAIN)) return false;
         }
-//		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
+//		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);        
         return true;
 	}
 	

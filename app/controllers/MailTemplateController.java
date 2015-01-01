@@ -61,17 +61,17 @@ public class MailTemplateController extends AbstractController {
      * @return
      */
     public static Result search() {
-    	Logger.info("MailTemplates.search()");
+    	Logger.debug("MailTemplates.search()");
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get(Const.NAME);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
+		Logger.debug("query: " + query);
+		Logger.debug("action: " + action);
     	
         List<MailTemplate> resList = processFilterMailTemplates(query);
 
         if (StringUtils.isBlank(query)) {
-			Logger.info("Role name is empty. Please write name in search window.");
+			Logger.debug("Role name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return ok(
 	        		list.render(
@@ -101,17 +101,17 @@ public class MailTemplateController extends AbstractController {
      * @return
      */
     public static List<MailTemplate> processFilterMailTemplates(String filterUrl) {
-//    	Logger.info("process filter filterUrl: " + filterUrl);
+//    	Logger.debug("process filter filterUrl: " + filterUrl);
     	boolean isProcessed = false;
     	ExpressionList<MailTemplate> exp = MailTemplate.find.where();
     	List<MailTemplate> res = new ArrayList<MailTemplate>();
     	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
-    		Logger.info("name: " + filterUrl);
+    		Logger.debug("name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);
     		isProcessed = true;
     	}
     	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+    	Logger.debug("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
     		res = models.MailTemplate.findAll();
@@ -129,12 +129,12 @@ public class MailTemplateController extends AbstractController {
     	ExpressionList<MailTemplate> exp = MailTemplate.find.where();
     	List<MailTemplate> res = new ArrayList<MailTemplate>();
     	if (templateType != null && templateType.length() > 0) {
-    		Logger.info("getMailTemplatesByType() type: " + templateType);
+    		Logger.debug("getMailTemplatesByType() type: " + templateType);
     		exp = exp.contains(Const.TTYPE, templateType);
     		isProcessed = true;
     	}
     	res = exp.query().findList();
-    	Logger.info("getMailTemplatesByType() resulting list size: " + res.size());
+    	Logger.debug("getMailTemplatesByType() resulting list size: " + res.size());
 
         if (!isProcessed) {
     		res = models.MailTemplate.findAll();

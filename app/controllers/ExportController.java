@@ -40,7 +40,7 @@ public class ExportController extends AbstractController {
      * @return
      */
     public static void exportLookup(List<LookupEntry> lookupList) {
-    	Logger.info("export lookups size: " + lookupList.size());
+    	Logger.debug("export lookups size: " + lookupList.size());
 
         StringWriter sw = new StringWriter();
 	    
@@ -55,8 +55,8 @@ public class ExportController extends AbstractController {
  	    		if (lookupEntry.name != null) {
  	    			sw.append(lookupEntry.name);
  	    			sw.append(Const.CSV_SEPARATOR);
- 	    			Logger.info("add entry: " + lookupEntry.name + ", obj: "+ lookupEntry);
- 	    			Logger.info("add entry: " + lookupEntry.name + ", value: "+ lookupEntry.scopevalue.toString() + ", " + 
+ 	    			Logger.debug("add entry: " + lookupEntry.name + ", obj: "+ lookupEntry);
+ 	    			Logger.debug("add entry: " + lookupEntry.name + ", value: "+ lookupEntry.scopevalue.toString() + ", " + 
  	    					Utils.INSTANCE.getNormalizeBooleanString(String.valueOf(lookupEntry.scopevalue.booleanValue())));
  	    			if (lookupEntry.scopevalue) {
 // 	 	    			if (lookupEntry.scopevalue.booleanValue()) {
@@ -81,7 +81,7 @@ public class ExportController extends AbstractController {
     	
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get(Const.ACTION);
-    	Logger.info("action: " + action);
+    	Logger.debug("action: " + action);
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {

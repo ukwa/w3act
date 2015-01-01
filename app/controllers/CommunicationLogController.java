@@ -74,7 +74,7 @@ public class CommunicationLogController extends AbstractController {
      */
     public static Result search() {
     	Result res = null;
-    	Logger.info("Edit.filter()");
+    	Logger.debug("Edit.filter()");
         String addentry = getFormParam(Const.ADDENTRY);
         String search = getFormParam(Const.SEARCH);
         String name = getFormParam(Const.NAME);
@@ -82,13 +82,13 @@ public class CommunicationLogController extends AbstractController {
         if (StringUtils.isNotEmpty(permissions) && !permissions.toLowerCase().equals(Const.NONE)) {
         	permissions = CrawlPermission.findByName(permissions).url;
         }
-        Logger.info("filter permission: " + permissions);
+        Logger.debug("filter permission: " + permissions);
         if (permissions == null) {
         	permissions = Const.NONE;
         }
 
         List<CommunicationLog> resList = processFilterCommunicationLogs(name, permissions);
-        Logger.info("addentry: " + addentry + ", search: " + search + ", name: " + name + ", permissions: " + permissions);
+        Logger.debug("addentry: " + addentry + ", search: " + search + ", name: " + name + ", permissions: " + permissions);
         if (addentry != null) {
         	if (name != null && name.length() > 0) {
             	CommunicationLog log = new CommunicationLog();
@@ -96,7 +96,7 @@ public class CommunicationLogController extends AbstractController {
                 log.id = Target.createId();
                 log.url = Const.ACT_URL + log.id;
                 log.user = User.findByEmail(request().username());        
-        		Logger.info("add communication log entry with url: " + log.url + ", and name: " + 
+        		Logger.debug("add communication log entry with url: " + log.url + ", and name: " + 
         				log.name + ", curator: " + log.user);
         		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
         		logFormNew = logFormNew.fill(log);
@@ -106,7 +106,7 @@ public class CommunicationLogController extends AbstractController {
         	              newForm.render(logFormNew, User.findByEmail(request().username()), communicationLogTypes, crawlPermissions)
         	            );
         	} else {
-        		Logger.info("CommunicationLog name is empty. Please write name in search window.");
+        		Logger.debug("CommunicationLog name is empty. Please write name in search window.");
                 res = ok(
                         logs.render(
                             "CommunicationLogs", User.findByEmail(request().username()), resList, "", permissions
@@ -130,23 +130,23 @@ public class CommunicationLogController extends AbstractController {
      * @return
      */
     public static List<CommunicationLog> processFilterCommunicationLogs(String filterUrl, String permission) {
-//    	Logger.info("process filter filterUrl: " + filterUrl);
+//    	Logger.debug("process filter filterUrl: " + filterUrl);
     	boolean isProcessed = false;
     	ExpressionList<CommunicationLog> exp = CommunicationLog.find.where();
     	List<CommunicationLog> res = new ArrayList<CommunicationLog>();
     	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
-    		Logger.info("process name: " + filterUrl);
+    		Logger.debug("process name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);
     		isProcessed = true;
     	}
     	if (permission != null && !permission.toLowerCase().equals(Const.NONE)) {
-    		Logger.info("process permission: " + permission);
+    		Logger.debug("process permission: " + permission);
     		exp = exp.eq(Const.PERMISSION, permission);
 //    		exp = exp.eq(Const.PERMISSION, CrawlPermission.findByName(permission).url);
     		isProcessed = true;
     	} 
     	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+    	Logger.debug("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
     		res = models.CommunicationLog.findAll();
@@ -165,7 +165,7 @@ public class CommunicationLogController extends AbstractController {
         log.id = Target.createId();
         log.url = Const.ACT_URL + log.id;
         log.user = User.findByEmail(request().username());        
-		Logger.info("add communication log entry with url: " + log.url + ", and name: " + 
+		Logger.debug("add communication log entry with url: " + log.url + ", and name: " + 
 				log.name + ", curator: " + log.user);
 		Form<CommunicationLog> logFormNew = Form.form(CommunicationLog.class);
 		logFormNew = logFormNew.fill(log);

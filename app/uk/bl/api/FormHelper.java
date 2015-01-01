@@ -22,7 +22,7 @@ public enum FormHelper {
 		Target target = Target.findById(targetId);
 		boolean isInScope = false;
 		try {
-			Logger.info("isInScopeAllWithoutLicense()");
+			Logger.debug("isInScopeAllWithoutLicense()");
 			isInScope = Target.checkScopeIpWithoutLicense(target);
 			if (!isInScope) {
 				isInScope = Scope.INSTANCE.isTopLevelDomain(target);
@@ -35,7 +35,7 @@ public enum FormHelper {
 	}
 	
 	public boolean hasGrantedLicense(Long targetId) {
-		Logger.info("hasGrantedLicense");
+		Logger.debug("hasGrantedLicense");
 //		if QAStatus is granted 
 //		this.crawlPermissions;
 //		this.qaIssue;
@@ -43,7 +43,7 @@ public enum FormHelper {
 
 		for (License license : target.licenses) {
 			if (license.equals(License.LicenseStatus.GRANTED)) {
-				Logger.info(License.LicenseStatus.GRANTED.getValue());
+				Logger.debug(License.LicenseStatus.GRANTED.getValue());
 				return true;
 			}
 		}

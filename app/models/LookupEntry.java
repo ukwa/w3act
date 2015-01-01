@@ -86,7 +86,7 @@ public class LookupEntry extends ActModel {
      * @return lookup entry name
      */
     public static LookupEntry findBySiteName(String name) {
-    	Logger.info("findBySiteName() name: " + name);
+    	Logger.debug("findBySiteName() name: " + name);
     	LookupEntry res = new LookupEntry();
     	
 		List<LookupEntry> list = new ArrayList<LookupEntry>();
@@ -114,11 +114,11 @@ public class LookupEntry extends ActModel {
      */
     public static boolean getValueByUrl(String url) {
     	boolean res = false;
-    	Logger.info("getValueByUrl() url: " + url);
+    	Logger.debug("getValueByUrl() url: " + url);
     	LookupEntry resLookupEntry = findBySiteName(url);    	
 //    	Logger.debug("getValueByUrl() resLookupEntry: " + resLookupEntry);
     	if (resLookupEntry != null && resLookupEntry.scopevalue != null) {
-        	Logger.info("getValueByUrl() resLookupEntry.scopevalue: " + resLookupEntry.scopevalue);
+        	Logger.debug("getValueByUrl() resLookupEntry.scopevalue: " + resLookupEntry.scopevalue);
     		res = resLookupEntry.scopevalue;
     	}
     	return res;
@@ -134,7 +134,7 @@ public class LookupEntry extends ActModel {
 		List<LookupEntry> res = new ArrayList<LookupEntry>();
         ExpressionList<LookupEntry> ll = find.where().icontains(Const.NAME, name);
     	res = ll.findList();
-    	Logger.info("LookupEntry filterByName res size: " + res.size());
+    	Logger.debug("LookupEntry filterByName res size: " + res.size());
 		return res;
 	}
  

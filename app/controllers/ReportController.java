@@ -3,9 +3,7 @@ package controllers;
 import static play.data.Form.form;
 
 import java.io.StringWriter;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -26,6 +24,7 @@ import uk.bl.Const.CrawlFrequency;
 import uk.bl.Const.NpldType;
 import uk.bl.Const.RequestType;
 import uk.bl.api.Utils;
+import uk.bl.exception.ActException;
 import views.html.reports.*;
 
 import com.avaje.ebean.ExpressionList;
@@ -103,11 +102,11 @@ public class ReportController extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.EXPORT.equals(action)) {
-				Logger.info("export requested size: " + resList.size());
+				Logger.debug("export requested size: " + resList.size());
     			export(resList, Const.EXPORT_REQUESTED_LICENCE_FILE);
-				Logger.info("export granted size: " + resListGranted.size());
+				Logger.debug("export granted size: " + resListGranted.size());
     			export(resListGranted, Const.EXPORT_GRANTED_LICENCE_FILE);
-				Logger.info("export refused size: " + resListRefused.size());
+				Logger.debug("export refused size: " + resListRefused.size());
     			export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
     			return ok(
                 		reports.render(
@@ -116,7 +115,7 @@ public class ReportController extends AbstractController {
                         )
                     );
     		}
-    		else if (Const.SEARCH.equals(action)) {
+    		else if (action.equals("search")) {
     			return ok(
                 		reports.render(
                             "Reports", User.findByEmail(request().username()), resList, resListGranted,
@@ -138,7 +137,7 @@ public class ReportController extends AbstractController {
      */
     public static void export(List<Target> permissionList, String fileName) {
 //        public static void export(List<CrawlPermission> permissionList, String fileName) {
-    	Logger.info("export() permissionList size: " + permissionList.size());
+    	Logger.debug("export() permissionList size: " + permissionList.size());
 
         StringWriter sw = new StringWriter();
 	    sw.append("Target title");
@@ -211,9 +210,9 @@ public class ReportController extends AbstractController {
 
     	List<Target> res = exp.query().findList();
     	
-//    	Logger.info("processFilterReports() Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+//    	Logger.debug("processFilterReports() Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 //    	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
-//    		Logger.info("request: " + request);
+//    		Logger.debug("request: " + request);
 //	        List<Target> resByRequest = new ArrayList<Target>();
 //	        Iterator<Target> resIter = res.iterator();
 //	        while (resIter.hasNext()) {
@@ -222,8 +221,8 @@ public class ReportController extends AbstractController {
 //	        		List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target.fieldUrl());
 //	            	if (permissionList != null && permissionList.size() > 0) {
 //	            		CrawlPermission permission = permissionList.get(0);
-//	            		Logger.info("permission: " + permission);
-//	            		Logger.info("permission requestFollowup: " + permission.requestFollowup + ", request: " + request);
+//	            		Logger.debug("permission: " + permission);
+//	            		Logger.debug("permission requestFollowup: " + permission.requestFollowup + ", request: " + request);
 //	            		try {
 //		            		if (permission.requestFollowup && request.equals(Const.RequestTypes.FOLLOW_UP.name())
 //		            				|| !permission.requestFollowup && request.equals(Const.RequestTypes.FIRST_REQUEST.name())) {
@@ -284,8 +283,8 @@ public class ReportController extends AbstractController {
      * @param tld The top level domain setting for filtering
      */
     public static Result targets(int pageNo, String sortBy, String order, Long curatorId,
-    		Long organisationId, String startDate, String endDate, String npld, String crawlFrequency, String tld) {
-    	Logger.info("ReportsCreation.targets()");
+    		Long organisationId, String startDate, String endDate, String npld, String crawlFrequency, String tld) throws ActException {
+    	Logger.debug("ReportsCreation.targets()");
     	
     	User user = User.findByEmail(request().username());
     	Page<Target> pages = Target.pageReportsCreation(pageNo, 10, sortBy, order, curatorId, organisationId, 
@@ -325,7 +324,7 @@ public class ReportController extends AbstractController {
      * @return
      */
     public static void exportCreation(List<Target> targetList, String fileName) {
-    	Logger.info("export() targetList size: " + targetList.size());
+    	Logger.debug("export() targetList size: " + targetList.size());
 
         StringWriter sw = new StringWriter();
 	    sw.append("Target title");
@@ -357,34 +356,29 @@ public class ReportController extends AbstractController {
      * if required.
      * @return
      */
-    public static Result searchCreation() {
+    public static Result searchCreation() throws ActException {
     	DynamicForm requestData = form().bindFromRequest();
 
     	String action = requestData.get("action");
-    	String filter = requestData.get("filter");
-
     	
     	int pageNo = Integer.parseInt(requestData.get("p"));
     	String sort = requestData.get("s");
     	String order = requestData.get("o");
-    	int pageSize = Integer.parseInt(requestData.get("pageSize"));
     	Long curatorId = Long.parseLong(requestData.get("curator"));
     	Long organisationId = Long.parseLong(requestData.get("organisation"));
 
     	String crawlFrequencyName = requestData.get("crawlFrequency");
     	
-    	
-    	
-    	
         String startDate = requestData.get("startDate");
-        Logger.info("startDate: " + startDate);
+        Logger.debug("startDate: " + startDate);
+
         String endDate = requestData.get("endDate");
 
     	String npld = requestData.get("npld");
 
     	String tld = "either";
     	String tld_name = requestData.get("tld");
-    	Logger.info("tld: " + requestData.get(Const.FILTER_TLD));
+    	Logger.debug("tld: " + requestData.get(Const.FILTER_TLD));
         if (tld_name != null && !tld_name.toLowerCase().equals(Const.NONE)) {
         	long idx = Long.valueOf(tld_name);
         	if (idx == 1) {
@@ -406,12 +400,12 @@ public class ReportController extends AbstractController {
     	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, 
     					startDate, endDate, npld, crawlFrequencyName, tld); 
     			exportTargets.addAll(pageAll.getList());
-				Logger.info("export report creation size: " + exportTargets.size());
+				Logger.debug("export report creation size: " + exportTargets.size());
     			export(exportTargets, Const.EXPORT_TARGETS_REPORT_CREATION);
     	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 
     	    			startDate, endDate, npld, crawlFrequencyName, tld));
     		}
-    		else if (Const.SEARCH.equals(action)) {
+    		else if (action.equals("search")) {
 
     	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 
     	    			startDate, endDate, npld, crawlFrequencyName, tld));

@@ -27,14 +27,14 @@ public class ContactController extends AbstractController {
      * This method extracts form values and sends an email.
      */
     public static Result send() {
-		Logger.info("send contact request");
+		Logger.debug("send contact request");
         String name = getFormParam(Const.NAME);
         String messageSubject = getFormParam(Const.SUBJECT);
         String addMail = getFormParam(Const.FROM);
         String toMail = Const.BL_MAIL_ADDRESS;
         String content = getFormParam(Const.CONTENT);
         String messageBody = "User name is " + name + "\n" + "User email is " + addMail + "\n" + content;
-        Logger.info("subject: " + messageSubject + ", to: " + toMail + ", messageBody: " + messageBody);
+        Logger.debug("subject: " + messageSubject + ", to: " + toMail + ", messageBody: " + messageBody);
         EmailHelper.sendMessage(toMail, messageSubject, messageBody);                	
 
         Result res = redirect(routes.ContactController.index()); 

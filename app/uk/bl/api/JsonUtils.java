@@ -122,7 +122,7 @@ public enum JsonUtils {
 		} finally {
 			if (in != null) {
 				in.close();
-//				Logger.info("inputstream closed");
+//				Logger.debug("inputstream closed");
 			}
 		}
 	}
@@ -161,14 +161,14 @@ public enum JsonUtils {
 		Date date = null;
 		if (seconds != null) {
 			date = new Date(seconds*1000L);
-//			Logger.info("converted date: " + date);
+//			Logger.debug("converted date: " + date);
 		}
 		return date;
 	}
 
 	private int getPageNumber(JsonNode node, String field) {
 		String page = node.get(field).textValue();
-		Logger.info("page url: " + page);
+		Logger.debug("page url: " + page);
 		int idxPage = page.indexOf(Const.PAGE_IN_URL)
 				+ Const.PAGE_IN_URL.length();
 		return Integer.parseInt(page.substring(idxPage));
@@ -187,7 +187,7 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
-				Logger.info("Pages: " + firstPage + "/" + lastPage);
+				Logger.debug("Pages: " + firstPage + "/" + lastPage);
 				
 				for (int i=firstPage; i<=lastPage; i++) {
 					
@@ -201,7 +201,7 @@ public enum JsonUtils {
 					Iterator<JsonNode> iterator = rootNode.iterator();
 					while (iterator.hasNext()) {
 						JsonNode node = iterator.next();
-//						Logger.info("json: " + node);
+//						Logger.debug("json: " + node);
 						Organisation organisation = objectMapper.readValue(node.toString(), Organisation.class);
 						organisation.url = this.getActUrl(organisation.getNid());
 						organisation.edit_url = this.getWctUrl(organisation.vid);
@@ -247,7 +247,7 @@ public enum JsonUtils {
 	//					7404;"''";"''";"''";"TCD";12953;FALSE;"organisation";"Trinity College Dublin";"en";"act-7404";"wct-12953";1;0;0;"1383558808";"1383558808";"act-1";"''";1;0;0;"''";0;"2014-11-12 09:35:28.449"
 						
 						
-						Logger.info("organisation: " + organisation);
+						Logger.debug("organisation: " + organisation);
 					}
 				}
 			}
@@ -272,7 +272,7 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
-				Logger.info("Pages: " + firstPage + "/" + lastPage);
+				Logger.debug("Pages: " + firstPage + "/" + lastPage);
 
 				for (int i=firstPage; i<=lastPage; i++) {
 					
@@ -285,7 +285,7 @@ public enum JsonUtils {
 					JsonNode rootNode = mainNode.path(Const.LIST_NODE);
 					Iterator<JsonNode> iterator = rootNode.iterator();
 					while (iterator.hasNext()) {
-						Logger.info(count + ") ");
+						Logger.debug(count + ") ");
 						JsonNode node = iterator.next();
 						
 	//					"field_affiliation":
@@ -301,7 +301,7 @@ public enum JsonUtils {
 	//					      field_affiliation=null, uid=279, created=1409663132, mail=null, revision=, id=null, url=http://www.webarchive.org.uk/act/user/279, createdAt=null, updatedAt=null
 	//					]
 								
-//						Logger.info("json: " + node);
+//						Logger.debug("json: " + node);
 						User user = objectMapper.readValue(node.toString(), User.class);
 						
 						// TODO: KL ANONYMOUS USER?
@@ -340,12 +340,12 @@ public enum JsonUtils {
 							}
 						}
 						user.save();
-						Logger.info("user: " + user);
+						Logger.debug("user: " + user);
 						count++;
 					}
 				}
 			}
-			Logger.info("No of Curators: " + count);
+			Logger.debug("No of Curators: " + count);
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -377,7 +377,7 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
-				Logger.info("Pages: " + firstPage + "/" + lastPage);
+				Logger.debug("Pages: " + firstPage + "/" + lastPage);
 
 				for (int i=firstPage; i<=lastPage; i++) {
 					
@@ -390,7 +390,7 @@ public enum JsonUtils {
 					JsonNode rootNode = mainNode.path(Const.LIST_NODE);
 					Iterator<JsonNode> iterator = rootNode.iterator();
 					while (iterator.hasNext()) {
-						Logger.info(count + ") ");
+						Logger.debug(count + ") ");
 						JsonNode node = iterator.next();
 
 //						{"vid":"5","name":"Web Archive Collections","machine_name":"collections","description":"Taxonomy for structuring collections.","term_count":"160"},
@@ -400,30 +400,30 @@ public enum JsonUtils {
 //						{"vid":"2","name":"Subject","machine_name":"subject","description":"Subject tags","term_count":"76"},
 //						{"vid":"1","name":"Tags","machine_name":"tags","description":"Use tags to group articles on similar topics into categories.","term_count":"0"}
 
-//						Logger.info("json: " + node);
+//						Logger.debug("json: " + node);
 						TaxonomyType taxonomyType = objectMapper.readValue(node.toString(), TaxonomyType.class);
 
 						ObjectMapper mapper = new ObjectMapper();
 						mapper.setSerializationInclusion(Include.NON_NULL);
 
-						Logger.info("taxonomy: " + taxonomyType);
+						Logger.debug("taxonomy: " + taxonomyType);
 						
 						// find to see if it's stored already
 						
 						TaxonomyType lookup = TaxonomyType.findByVid(taxonomyType.getVid());
 						
-						Logger.info("lookup: " + lookup + " using " + taxonomyType.getVid());
+						Logger.debug("lookup: " + lookup + " using " + taxonomyType.getVid());
 
 						if (lookup == null) {
 							taxonomyType.save();
 						}
 						
-						Logger.info("taxonomyType: " + taxonomyType);
+						Logger.debug("taxonomyType: " + taxonomyType);
 						count++;
 					}
 				}
 			}
-			Logger.info("No of Taxonomies: " + count);
+			Logger.debug("No of Taxonomies: " + count);
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -435,7 +435,7 @@ public enum JsonUtils {
 
 	private TaxonomyType getTaxonomyType(Taxonomy taxonomy) throws IOException {
 		FieldModel fmTaxVocab = taxonomy.getVocabularyValue();
-//		Logger.info("TaxonomyType: " + fmTaxVocab.getId());
+//		Logger.debug("TaxonomyType: " + fmTaxVocab.getId());
 		Long vid = Long.valueOf(fmTaxVocab.getId());
 		TaxonomyType taxonomyType = TaxonomyType.findByVid(vid);
 		return taxonomyType;
@@ -458,7 +458,7 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
-				Logger.info("Pages: " + firstPage + "/" + lastPage);
+				Logger.debug("Pages: " + firstPage + "/" + lastPage);
 
 				for (int i=firstPage; i<=lastPage; i++) {
 					
@@ -471,7 +471,7 @@ public enum JsonUtils {
 					JsonNode rootNode = mainNode.path(Const.LIST_NODE);
 					Iterator<JsonNode> iterator = rootNode.iterator();
 					while (iterator.hasNext()) {
-						Logger.info(count + ") ");
+						Logger.debug(count + ") ");
 						JsonNode node = iterator.next();
 						// TODO: KL WHICH IS COLLECTION, SUBJECT, ETC?
 //						"field_owner":[],
@@ -490,7 +490,7 @@ public enum JsonUtils {
 //						"parents_all":[{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/170","id":"170","resource":"taxonomy_term"}],
 //						"feed_nid":null
 						
-//						Logger.info("json: " + node);
+//						Logger.debug("json: " + node);
 						
 						String row = node.toString();
 						// just read in the Taxonomy Vocabulary???
@@ -500,7 +500,7 @@ public enum JsonUtils {
 						String actUrl = this.getActUrl(taxonomy.getTid());
 						Taxonomy lookup = Taxonomy.findByUrl(actUrl);
 						
-						Logger.info("lookup: " + lookup + " using " + taxonomy.url);
+						Logger.debug("lookup: " + lookup + " using " + taxonomy.url);
 
 						if (lookup == null) {
 							
@@ -521,12 +521,12 @@ public enum JsonUtils {
 //						"parent":[],
 //						"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
 
-						Logger.info("taxonomy: " + taxonomy);
+						Logger.debug("taxonomy: " + taxonomy);
 						count++;
 					}
 				}
 			}
-			Logger.info("No of Taxonomies: " + count);
+			Logger.debug("No of Taxonomies: " + count);
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -539,7 +539,7 @@ public enum JsonUtils {
 	private Taxonomy getTaxonomyClassSubType(TaxonomyType taxonomyType, ObjectMapper objectMapper, String row) throws JsonParseException, JsonMappingException, IOException {
 		Taxonomy taxonomy = null;
 		String machineName = taxonomyType.getMachine_name();
-		Logger.info("machineName: " + machineName);
+		Logger.debug("machineName: " + machineName);
 		switch (machineName.toLowerCase()) {
 			case TaxonomyType.COLLECTION:
 				taxonomy = objectMapper.readValue(row, Collection.class);
@@ -560,10 +560,10 @@ public enum JsonUtils {
 				taxonomy = objectMapper.readValue(row, Tag.class);
 				break;
 			default: 
-				Logger.info("Default hit");
+				Logger.debug("Default hit");
 				break;
 		}
-		Logger.info("Taxonomy Type: " + taxonomy.getClass());
+		Logger.debug("Taxonomy Type: " + taxonomy.getClass());
 		return taxonomy;
 	}
 	
@@ -576,7 +576,7 @@ public enum JsonUtils {
 	}
 
 	private Taxonomy convertParents(List<FieldModel> fieldParents, Taxonomy taxonomy, ObjectMapper objectMapper) throws IOException {
-		Logger.info("fieldParents: " + fieldParents);
+		Logger.debug("fieldParents: " + fieldParents);
 		if (fieldParents != null && !fieldParents.isEmpty()) {
 			if (fieldParents.size() > 1) {
 				try {
@@ -591,10 +591,10 @@ public enum JsonUtils {
 			Taxonomy parentTaxonomy = Taxonomy.findByUrl(actUrl);
 			if (parentTaxonomy == null) {
 				parentTaxonomy = this.convertFieldTaxonomy(parentFieldModel, objectMapper);
-				Logger.info("parentTaxonomy TYPE: " + parentTaxonomy.getClass());
+				Logger.debug("parentTaxonomy TYPE: " + parentTaxonomy.getClass());
 				parentTaxonomy.save();
 			}
-			Logger.info("parentFieldModel: " + parentFieldModel + " - " + parentTaxonomy);
+			Logger.debug("parentFieldModel: " + parentFieldModel + " - " + parentTaxonomy);
 			taxonomy.parent = parentTaxonomy;
 		}
 		return taxonomy;
@@ -609,7 +609,7 @@ public enum JsonUtils {
 			// pass node?
 			if (parentAllTaxonomy == null) {
 				parentAllTaxonomy = this.convertFieldTaxonomy(parentAllFieldModel, objectMapper);
-				Logger.info("parentAllTaxonomy TYPE: " + parentAllTaxonomy.getClass());
+				Logger.debug("parentAllTaxonomy TYPE: " + parentAllTaxonomy.getClass());
 				parentAllTaxonomy.save();
 			}
 			taxonomy.parentsAllList.add(parentAllTaxonomy);
@@ -650,8 +650,8 @@ public enum JsonUtils {
 		
 		Taxonomy taxonomy = objectMapper.readValue(content, Taxonomy.class);
 		
-		Logger.info("taxonomy url: " + url);
-//		Logger.info("taxonomy content: " + content);
+		Logger.debug("taxonomy url: " + url);
+//		Logger.debug("taxonomy content: " + content);
 
 		taxonomy = this.convertTaxonomy(taxonomy, content, objectMapper);
 		
@@ -706,7 +706,7 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
-				Logger.info("Pages: " + firstPage + "/" + lastPage);
+				Logger.debug("Pages: " + firstPage + "/" + lastPage);
 
 				int count = 0;
 				
@@ -714,7 +714,7 @@ public enum JsonUtils {
 					
 					StringBuilder targetsUrl = new StringBuilder(jsonUrl).append("&").append(Const.PAGE_IN_URL).append(String.valueOf(i));
 					
-//					Logger.info("targets url: " + targetsUrl);
+//					Logger.debug("targets url: " + targetsUrl);
 
 					String pageContent = this.getAuthenticatedContent(targetsUrl.toString());
 					
@@ -724,7 +724,7 @@ public enum JsonUtils {
 					Iterator<JsonNode> iterator = rootNode.iterator();
 					while (iterator.hasNext()) {
 						JsonNode node = iterator.next();
-//						Logger.info("json: " + node.toString());
+//						Logger.debug("json: " + node.toString());
 						
 						Target target = objectMapper.readValue(node.toString(), Target.class);
 	
@@ -765,7 +765,7 @@ public enum JsonUtils {
 							String url = map.get("url");
 							try {
 								url = validateUrl(url);
-								Logger.info("Checked Url: " + url);
+								Logger.debug("Checked Url: " + url);
 								FieldUrl fieldUrl = new FieldUrl(url);
 								fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(fieldUrl.url);
 								fieldUrls.add(fieldUrl);
@@ -789,7 +789,7 @@ public enum JsonUtils {
 //							target.isTopLevelDomain = Scope.INSTANCE.isTopLevelDomain(fieldUrls);
 //							field_uk_geoip
 //							target.isUkRegistration = Scope.INSTANCE.isUkRegistration(fieldUrls);
-//							Logger.info(target.isUkHosting + ", " + target.isTopLevelDomain + ", " + target.isUkRegistration);
+//							Logger.debug(target.isUkHosting + ", " + target.isTopLevelDomain + ", " + target.isUkRegistration);
 							// .uk .london .scot
 						}
 
@@ -1017,7 +1017,7 @@ public enum JsonUtils {
 				int firstPage = getPageNumber(parentNode, Const.FIRST_PAGE);
 				int lastPage = getPageNumber(parentNode, Const.LAST_PAGE);
 				
-				Logger.info("Pages: " + firstPage + "/" + lastPage);
+				Logger.debug("Pages: " + firstPage + "/" + lastPage);
 
 				int count = 0;
 				
@@ -1042,7 +1042,7 @@ public enum JsonUtils {
 						FieldModel author = instance.getAuthor();
 						if (author != null) {
 							User authorUser = User.findByUrl(this.getActUrl(author.getId()));
-//							Logger.info("Author found: " + authorUser.name);
+//							Logger.debug("Author found: " + authorUser.name);
 							instance.authorUser = authorUser;
 						}
 
@@ -1088,7 +1088,7 @@ public enum JsonUtils {
 								QaIssue qaIssue = this.getQaIssue(qaIssueField);
 								if (instance.getField_description_of_qa_issues() instanceof LinkedHashMap) {
 									Map<String, String> qaDesc = (LinkedHashMap<String,String>) instance.getField_description_of_qa_issues();
-//									Logger.info("qaDesc: " + qaDesc.get("value"));
+//									Logger.debug("qaDesc: " + qaDesc.get("value"));
 									qaIssue.description = qaDesc.get("value");
 								}
 								instance.qaIssue = qaIssue;
@@ -1187,7 +1187,7 @@ public enum JsonUtils {
 //			if (mainNode != null) {
 //				int firstPage = getPageNumber(mainNode, Const.FIRST_PAGE);
 //				int lastPage = getPageNumber(mainNode, Const.LAST_PAGE);
-//				Logger.info("pages: " + firstPage + ", " + lastPage);
+//				Logger.debug("pages: " + firstPage + ", " + lastPage);
 //				// aggregate data from drupal for all pages
 //				for (int i = firstPage; i <= lastPage; i++) {
 //					// if (i == 1) {
@@ -1202,19 +1202,19 @@ public enum JsonUtils {
 //				}
 //			}
 //		} catch (Exception e) {
-//			Logger.info("data aggregation error: " + e);
+//			Logger.debug("data aggregation error: " + e);
 //		}
-////		Logger.info("list size: " + res.size());
+////		Logger.debug("list size: " + res.size());
 //		// int idx = 0;
 //		// Iterator<Object> itr = res.iterator();
 //		// while (itr.hasNext()) {
 //		// Object obj = itr.next();
-//		// Logger.info("res getDrupalData: " + obj.toString() + ", idx: " +
+//		// Logger.debug("res getDrupalData: " + obj.toString() + ", idx: " +
 //		// idx);
 //		// idx++;
 //		// }
 //		// int idx = 0;
-////		Logger.info("res list size: " + res.size());
+////		Logger.debug("res list size: " + res.size());
 //		if (!type.equals(NodeType.INSTANCE)) {
 //			Iterator<Object> itr = res.iterator();
 //			while (itr.hasNext()) {
@@ -1251,7 +1251,7 @@ public enum JsonUtils {
 ////					}
 //					// } else {
 //					// Object obj = itr.next();
-//					// Logger.info("itr.next: " + obj + ", idx: " + idx);
+//					// Logger.debug("itr.next: " + obj + ", idx: " + idx);
 //				}
 //				// idx++;
 //			}
@@ -1281,7 +1281,7 @@ public enum JsonUtils {
 //			if (mainNode != null) {
 //				int firstPage = getPageNumber(mainNode, Const.FIRST_PAGE);
 //				int lastPage = getPageNumber(mainNode, Const.LAST_PAGE);
-//				Logger.info("pages: " + firstPage + ", " + lastPage);
+//				Logger.debug("pages: " + firstPage + ", " + lastPage);
 //				// aggregate data from drupal for all pages
 //				for (int i = firstPage; i <= lastPage; i++) {
 //					// if (i == 1) {
@@ -1292,16 +1292,16 @@ public enum JsonUtils {
 //					// Const.PAGE_IN_URL + String.valueOf(i), type);
 //					// TODO: WHY DO THIS? already downloaded?
 //					String pageContent = downloadData(urlStr, type);
-//					Logger.info("users content: " + pageContent);
+//					Logger.debug("users content: " + pageContent);
 //					List<Object> pageList = parseJson(pageContent,
 //							type);
 //					res.addAll(pageList);
 //				}
 //			}
 //		} catch (Exception e) {
-//			Logger.info("data aggregation error: " + e);
+//			Logger.debug("data aggregation error: " + e);
 //		}
-//		Logger.info("list size: " + res.size());
+//		Logger.debug("list size: " + res.size());
 //
 //		int idx = 0;
 //		Iterator<Object> itr = res.iterator();
@@ -1316,17 +1316,17 @@ public enum JsonUtils {
 //				if (newUser.password == null || newUser.password.length() == 0) {
 //					newUser.password = Const.DEFAULT_PASSWORD;
 //				}
-//				// Logger.info("initial password: " + newUser.password);
+//				// Logger.debug("initial password: " + newUser.password);
 //				if (newUser.password.length() > 0) {
 //					try {
 //						newUser.password = PasswordHash
 //								.createHash(newUser.password);
-//						// Logger.info("hash password: " + newUser.password);
+//						// Logger.debug("hash password: " + newUser.password);
 //					} catch (NoSuchAlgorithmException e) {
-//						Logger.info("initial password creation - no algorithm error: "
+//						Logger.debug("initial password creation - no algorithm error: "
 //								+ e);
 //					} catch (InvalidKeySpecException e) {
-//						Logger.info("initial password creation - key specification error: "
+//						Logger.debug("initial password creation - key specification error: "
 //								+ e);
 //					}
 //				}
@@ -1337,16 +1337,16 @@ public enum JsonUtils {
 //					newUser.roles = Role.setDefaultRoleByName(Const.DEFAULT_BL_ROLE);
 //				}
 //				newUser.id = null;
-//				// Logger.info("id: " + newUser.uid + ", url: " + newUser.url +
+//				// Logger.debug("id: " + newUser.uid + ", url: " + newUser.url +
 //				// ", email: " + newUser.email +
 //				// ", name: " + newUser.name + ", password: " +
 //				// newUser.password);
 //			}
-//			Logger.info("res getDrupalData: " + obj.toString() + ", idx: "
+//			Logger.debug("res getDrupalData: " + obj.toString() + ", idx: "
 //					+ idx);
 //			idx++;
 //		}
-//		Logger.info("res list size: " + res.size());
+//		Logger.debug("res list size: " + res.size());
 //		return res;
 //	}
 //
@@ -1364,7 +1364,7 @@ public enum JsonUtils {
 //		String user = Play.application().configuration().getString(Const.DRUPAL_USER);
 //		String password = Play.application().configuration().getString(Const.DRUPAL_PASSWORD);
 //
-//		Logger.info("authenticateAndLoadDrupal() url: " + urlStr);
+//		Logger.debug("authenticateAndLoadDrupal() url: " + urlStr);
 //		HttpBasicAuth.downloadFileWithAuth(urlStr, user, password, type
 //				.toString().toLowerCase() + Const.OUT_FILE_PATH);
 //		res = urlStr;
@@ -1496,7 +1496,7 @@ public enum JsonUtils {
 //	private void aggregateObjectList(String urlStr,
 //			List<String> urlList, NodeType type, TaxonomyType taxonomy_type,
 //			List<Object> res) {
-//		Logger.info("extract data for: " + urlStr + " type: " + type);
+//		Logger.debug("extract data for: " + urlStr + " type: " + type);
 //		String content = downloadData(urlStr, type);
 //		JsonNode mainNode = Json.parse(content);
 //		if (mainNode != null) {
@@ -1522,9 +1522,9 @@ public enum JsonUtils {
 //	 */
 //	public void executeUrlRequest(String url, List<String> urlList,
 //			NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
-//		Logger.info("exc 1" + url);
+//		Logger.debug("exc 1" + url);
 //		url = getWebarchiveCreatorUrl(url, type);
-//		Logger.info("exc 2" + url);
+//		Logger.debug("exc 2" + url);
 //		String urlStr = url + Const.JSON;
 //		if (!urlList.contains(urlStr)) {
 //			urlList.add(urlStr);
@@ -1547,7 +1547,7 @@ public enum JsonUtils {
 //	 *            Resulting list
 //	 */
 //	public void readListFromString(String fieldName, List<String> urlList, NodeType type, TaxonomyType taxonomy_type, List<Object> res) {
-////		Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
+////		Logger.debug("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
 ////		readListFromString(target.fieldCollectionCategories, urlList, type, TaxonomyType.COLLECTION, res);
 //		if (fieldName != null && fieldName.length() > 0) {
 //			if (fieldName.contains(Const.COMMA)) {
@@ -1556,7 +1556,7 @@ public enum JsonUtils {
 //				Iterator<String> itr = resList.iterator();
 //				while (itr.hasNext()) {
 //					String next = itr.next();
-//					Logger.info("next: " + next);
+//					Logger.debug("next: " + next);
 //					executeUrlRequest(next, urlList, type, taxonomy_type,
 //							res);
 //				}
@@ -1593,7 +1593,7 @@ public enum JsonUtils {
 ////					readListFromString(target.fieldSuggestedCollections, urlList, type, TaxonomyType.COLLECTION, res);
 ////					readListFromString(target.fieldLicense, urlList, type, TaxonomyType.LICENSE, res);
 ////					readListFromString(target.fieldSubject, urlList, type, TaxonomyType.SUBJECT, res);
-////					Logger.info("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
+////					Logger.debug("extractDrupalData: " + target.field_qa_status + " - " + urlList + " - " + type + " - " + TaxonomyType.QUALITY_ISSUE);
 ////					readListFromString(target.fieldQaStatus, urlList, type, TaxonomyType.QUALITY_ISSUE, res);
 //				}
 //				if (type.equals(NodeType.TAXONOMY_VOCABULARY)) {
@@ -1611,14 +1611,14 @@ public enum JsonUtils {
 //				// }
 //			}
 //		} catch (Exception e) {
-//			Logger.info("data aggregation error: " + e);
+//			Logger.debug("data aggregation error: " + e);
 //		}
-//		Logger.info("list size: " + res.size());
+//		Logger.debug("list size: " + res.size());
 //		int idx = 0;
 //		Iterator<Object> itr = res.iterator();
 //		while (itr.hasNext()) {
 //			Object obj = itr.next();
-//			Logger.info("res getDrupalData: " + obj.toString() + ", idx: "
+//			Logger.debug("res getDrupalData: " + obj.toString() + ", idx: "
 //					+ idx);
 //			idx++;
 //		}
@@ -1635,7 +1635,7 @@ public enum JsonUtils {
 //	public static List<String> getStringItems(JsonNode node, String path) {
 //		List<String> res = new ArrayList<String>();
 //		JsonNode resNode = getElement(node, path);
-//		// Logger.info("getStringItems path: " + path + ", resNode: " +
+//		// Logger.debug("getStringItems path: " + path + ", resNode: " +
 //		// resNode);
 //		if (resNode != null) {
 //			Iterator<JsonNode> it = resNode.iterator();
@@ -1652,12 +1652,12 @@ public enum JsonUtils {
 //				if (item != null) {
 //					res.add(item);
 //				}
-//				// Logger.info("subNode: " + subNode + ", path: " + path +
+//				// Logger.debug("subNode: " + subNode + ", path: " + path +
 //				// ", fieldName: " + fieldName + ", item: " + item + ", res: " +
 //				// res.size());
 //			}
 //		}
-//		// Logger.info("getStringItems res: " + res);
+//		// Logger.debug("getStringItems res: " + res);
 //		return res;
 //	}
 //
@@ -1671,13 +1671,13 @@ public enum JsonUtils {
 //	public String getStringList(JsonNode resNode, String path,
 //			boolean isArchived) {
 //		String res = "";
-//		// Logger.info("getStringList path: " + path + ", resNode: " + resNode);
+//		// Logger.debug("getStringList path: " + path + ", resNode: " + resNode);
 //		if (resNode != null) {
 //			Iterator<JsonNode> it = resNode.iterator();
 //			while (it.hasNext()) {
 //				String fieldName = "";
 //				JsonNode subNode = it.next();
-//				// Logger.info("subNode: " + subNode);
+//				// Logger.debug("subNode: " + subNode);
 //				if (subNode.has(Const.URI)) {
 //					fieldName = Const.URI;
 //				}
@@ -1695,12 +1695,12 @@ public enum JsonUtils {
 //						res = item;
 //					}
 //				}
-//				// Logger.info("list subNode: " + subNode + ", path: " + path +
+//				// Logger.debug("list subNode: " + subNode + ", path: " + path +
 //				// ", fieldName: " + fieldName + ", item: " + item + ", res: " +
 //				// res);
 //			}
 //		}
-//		// Logger.info("getStringList res: " + res);
+//		// Logger.debug("getStringList res: " + res);
 //		return res;
 //	}
 //
@@ -1714,7 +1714,7 @@ public enum JsonUtils {
 //	 * @return identifier URL
 //	 */
 //	public String checkArchiveUrl(String url) {
-//		// Logger.info("checkArchiveUrl() url: " + url);
+//		// Logger.debug("checkArchiveUrl() url: " + url);
 //		String res = url;
 //		if (url != null) {
 //			if (url.contains(Const.WEBARCHIVE_LINK)) {
@@ -1729,7 +1729,7 @@ public enum JsonUtils {
 //			}
 //		}
 //		// if (!url.equals(res)) {
-//		// Logger.info("checkArchiveUrl() res: " + res);
+//		// Logger.debug("checkArchiveUrl() res: " + res);
 //		// }
 //		return res;
 //	}
@@ -1777,12 +1777,12 @@ public enum JsonUtils {
 //	 */
 //	public String getStringFromSubNode(JsonNode resNode, String path) {
 //		String res = "";
-//		// Logger.info("getStringList path: " + path + ", resNode: " + resNode);
+//		// Logger.debug("getStringList path: " + path + ", resNode: " + resNode);
 //		if (resNode != null) {
 //			String item = resNode.findPath(path).textValue();
 //			res = normalizeArchiveUrl(item);
 //		}
-//		// Logger.info("getStringFromSubNode res: " + res);
+//		// Logger.debug("getStringFromSubNode res: " + res);
 //		return res;
 //	}
 //
@@ -1803,7 +1803,7 @@ public enum JsonUtils {
 //				res = resNode.textValue();
 //			}
 //		}
-//		// Logger.info("getStringItem field name: " + fieldName + ", res: " +
+//		// Logger.debug("getStringItem field name: " + fieldName + ", res: " +
 //		// res);
 //		return res;
 //	}
@@ -1842,7 +1842,7 @@ public enum JsonUtils {
 //		if (json != null) {
 //			JsonNode rootNode = json.path(Const.LIST_NODE);
 //			Iterator<JsonNode> ite = rootNode.iterator();
-////			Logger.info("rootNode elements count is: " + rootNode.size());
+////			Logger.debug("rootNode elements count is: " + rootNode.size());
 //
 //			while (ite.hasNext()) {
 //				JsonNode node = ite.next();
@@ -1866,7 +1866,7 @@ public enum JsonUtils {
 //				res.add(obj);
 //			}
 //		} else {
-//			Logger.info("json is null");
+//			Logger.debug("json is null");
 //		}
 //		return res;
 //	}
@@ -1914,7 +1914,7 @@ public enum JsonUtils {
 ////					}
 ////				}
 ////				((Taxonomy) obj).tid = Utils.createId();
-//				// Logger.info("taxonomy type: " +
+//				// Logger.debug("taxonomy type: " +
 //				// taxonomy_type.toString().toLowerCase());
 //			}
 //			boolean isNew = true;
@@ -1943,11 +1943,11 @@ public enum JsonUtils {
 //				}
 //			}
 //			if (isNew && !hasEmptyName) {
-//				Logger.info("parseJsonExt()" + obj.toString());
+//				Logger.debug("parseJsonExt()" + obj.toString());
 //				res.add(obj);
 //			}
 //		} else {
-//			Logger.info("json is null");
+//			Logger.debug("json is null");
 //		}
 //		return res;
 //	}
@@ -1984,13 +1984,13 @@ public enum JsonUtils {
 //				f.set(obj, jsonFieldBoolean);
 //			}
 //		} catch (IllegalArgumentException e) {
-//			Logger.info("parseJsonString IllegalArgument error: " + e + ", f: "
+//			Logger.debug("parseJsonString IllegalArgument error: " + e + ", f: "
 //					+ f);
 //		} catch (IllegalAccessException e) {
-//			Logger.info("parseJsonString IllegalAccess error: " + e + ", f: "
+//			Logger.debug("parseJsonString IllegalAccess error: " + e + ", f: "
 //					+ f);
 //		} catch (Exception e) {
-//			Logger.info("parseJsonString error: " + e + ", f: " + f);
+//			Logger.debug("parseJsonString error: " + e + ", f: " + f);
 //		}
 //	}
 //
@@ -2019,7 +2019,7 @@ public enum JsonUtils {
 //			if (f.getName().equals(Const.PARENTS_ALL)) {
 //				jsonField = getStringList(resNode, f.getName(), true);
 //			}
-//			// Logger.info("resNode: " + resNode + ", jsonField: " + jsonField);
+//			// Logger.debug("resNode: " + resNode + ", jsonField: " + jsonField);
 //			if (urlList != null && type != null
 //					&& type.equals(NodeType.TAXONOMY)) {
 //				readListFromString(jsonField, urlList, type, taxonomy_type,
@@ -2032,7 +2032,7 @@ public enum JsonUtils {
 //				try {
 //					f.set(obj, jsonField);
 //				} catch (Exception e) {
-//					Logger.info("checkSubNode: " + e);
+//					Logger.debug("checkSubNode: " + e);
 //				}
 //			}
 //		}
@@ -2090,7 +2090,7 @@ public enum JsonUtils {
 //			List<Object> resList) {
 //		Field[] fields = obj.getClass().getFields();
 //		// if (obj.getClass().toString().contains("Taxonomy")) {
-////		Logger.info("Taxonomy node: " + urlList + " " + type + " " + taxonomy_type);
+////		Logger.debug("Taxonomy node: " + urlList + " " + type + " " + taxonomy_type);
 //		// }
 //		for (Field f : fields) {
 //			try {
@@ -2106,7 +2106,7 @@ public enum JsonUtils {
 //							Const.targetMap.get(Const.FIELD_URL_NODE))) {
 //						jsonField = normalizeArchiveUrl(jsonField);
 //					}
-//					// Logger.info("resNode: " + resNode + ", jsonField: " +
+//					// Logger.debug("resNode: " + resNode + ", jsonField: " +
 //					// jsonField);
 //					if (f.getName().contains(Const.FIELD_UK_POSTAL_ADDRESS_URL)) {
 //						if (resNode != null) {
@@ -2136,12 +2136,12 @@ public enum JsonUtils {
 //	//								String jsonField = getStringItem(resNode, f.getName());
 //									String jsonField = getStringFromSubNode(resNode, "uri");
 //									Taxonomy taxonomy = Ebean.find(models.Taxonomy.class).where().eq("url", jsonField).findUnique();
-//									Logger.info("!checkSubNode: " + f.getName() + "-----" + resNode + " " + f.getType() + " " + jsonField + " ---- " + taxonomy.name);
+//									Logger.debug("!checkSubNode: " + f.getName() + "-----" + resNode + " " + f.getType() + " " + jsonField + " ---- " + taxonomy.name);
 //									
 //	//								{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/164","id":"164","resource":"taxonomy_term"} 
 //	//								class java.lang.String act-164 
 //	//								No QA issues found (OK to publish)
-//									Logger.info("setting " + obj.getClass() + " to " + taxonomy.name + " on field " + f.getName());
+//									Logger.debug("setting " + obj.getClass() + " to " + taxonomy.name + " on field " + f.getName());
 //									f.set(obj, taxonomy.name);
 //////								((Instance)obj).field_qa_issues = taxonomy.name;
 //								} else if (f.getName().equals("qa_status")) {
@@ -2156,7 +2156,7 @@ public enum JsonUtils {
 ////									Description of QA Issues > QA Notes
 //									JsonNode resNode = getElement(node, "field_description_of_qa_issues");
 //									String jsonField = getStringFromSubNode(resNode, "value");
-////									Logger.info("Mapping " + obj.getClass() + " field_description_of_qa_issues: " + jsonField + " to " + f.getName());
+////									Logger.debug("Mapping " + obj.getClass() + " field_description_of_qa_issues: " + jsonField + " to " + f.getName());
 //									if (StringUtils.isEmpty(jsonField)) {
 //										jsonField = "N/A";
 //									}
@@ -2166,7 +2166,7 @@ public enum JsonUtils {
 ////									Notes > Quality Notes
 //									JsonNode resNode = getElement(node, "body");
 //									String jsonField = getStringFromSubNode(resNode, "value");
-//									Logger.info("Mapping " + obj.getClass() + " body: " + jsonField + " to " + f.getName());
+//									Logger.debug("Mapping " + obj.getClass() + " body: " + jsonField + " to " + f.getName());
 //									if (StringUtils.isEmpty(jsonField)) {
 //										jsonField = "N/A";
 //									}
@@ -2181,10 +2181,10 @@ public enum JsonUtils {
 //						} else {
 //							if (obj instanceof Instance) {
 //								if (f.getName().equals(Const.FIELD_QA_STATUS)) {
-//									Logger.info("checkSubNode - FIELD_QA_STATUS >>>>>>>>>>>> " + f.getName());
+//									Logger.debug("checkSubNode - FIELD_QA_STATUS >>>>>>>>>>>> " + f.getName());
 //									// TODO: KL
 ////									String convertedValue = Taxonomy.findQaStatusByName(fieldQaIssues);
-////									Logger.info("checkSubNode Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
+////									Logger.debug("checkSubNode Mapping " + obj.getClass() + " " + fieldQaIssues + " to " + f.getName() + " " + convertedValue);
 ////									f.set(obj, convertedValue);
 //								}
 //							}
@@ -2192,13 +2192,13 @@ public enum JsonUtils {
 //					}
 //				}
 //			} catch (IllegalArgumentException e) {
-//				Logger.info("parseJsonNode IllegalArgument error: " + e
+//				Logger.debug("parseJsonNode IllegalArgument error: " + e
 //						+ ", f: " + f);
 //			} catch (IllegalAccessException e) {
-//				Logger.info("parseJsonNode IllegalAccess error: " + e + ", f: "
+//				Logger.debug("parseJsonNode IllegalAccess error: " + e + ", f: "
 //						+ f);
 //			} catch (Exception e) {
-//				Logger.info("parseJsonNode error: " + e + ", f: " + f);
+//				Logger.debug("parseJsonNode error: " + e + ", f: " + f);
 //			}
 //		}
 //	}
@@ -2227,11 +2227,11 @@ public enum JsonUtils {
 //				br.close();
 //			}
 //		} catch (FileNotFoundException e) {
-//			Logger.info("JSON content file not found: " + e.getMessage());
+//			Logger.debug("JSON content file not found: " + e.getMessage());
 //		} catch (IOException e) {
-//			Logger.info("document path error: " + e.getMessage());
+//			Logger.debug("document path error: " + e.getMessage());
 //		} catch (Exception e) {
-//			Logger.info("error: " + e);
+//			Logger.debug("error: " + e);
 //		}
 //		return res;
 //	}
@@ -2241,22 +2241,22 @@ public enum JsonUtils {
 //	 * mapping to target object.
 //	 */
 //	public static void mapInstancesToTargets() {
-//		Logger.info("mapInstancesToTargets");
+//		Logger.debug("mapInstancesToTargets");
 //		// List<Instance> instanceList = Instance.findAll();
 //		QueryIterator<Instance> iter = Instance.getIterator();
-//		// Logger.info("Instance list size: " + instanceList.size());
+//		// Logger.debug("Instance list size: " + instanceList.size());
 //		// Iterator<Instance> instanceItr = instanceList.iterator();
 //		while (iter.hasNext()) {
 //			// while (instanceItr.hasNext()) {
 //			// Instance instance = instanceItr.next();
 //			Instance instance = iter.next();
-//			// Logger.info("map instance: " + instance.toString());
+//			// Logger.debug("map instance: " + instance.toString());
 //			if (instance.fieldTarget != null) {
-//				Logger.info("map instance.field_target: "
+//				Logger.debug("map instance.field_target: "
 //						+ instance.fieldTarget);
 //				Target target = Target.findByUrl(instance.fieldTarget);
 ////				instance.fieldUrl = target.fieldUrl();
-//				// Logger.info("Instance mapped to Target object: " +
+//				// Logger.debug("Instance mapped to Target object: " +
 //				// instance.field_url);
 //				Ebean.update(instance);
 //			}
@@ -2273,7 +2273,7 @@ public enum JsonUtils {
 //			Target target = targetItr.next();
 //			if (target.fieldUrl() != null) {
 //				target.domain = Scope.getDomainFromUrl(target.fieldUrl());
-//				Logger.info("Target domain: " + target.domain
+//				Logger.debug("Target domain: " + target.domain
 //						+ " mapped to Target field URL: " + target.fieldUrl());
 //				Ebean.update(target);
 //			}

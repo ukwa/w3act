@@ -37,7 +37,7 @@ public class FlagController extends AbstractController {
      * Display the role.
      */
     public static Result index() {
-    	Logger.info("Flags.index()");
+    	Logger.debug("Flags.index()");
         return GO_HOME;
     }
     
@@ -63,11 +63,11 @@ public class FlagController extends AbstractController {
     	DynamicForm form = form().bindFromRequest();
     	String action = form.get("action");
     	String query = form.get(Const.QUERY);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
+		Logger.debug("query: " + query);
+		Logger.debug("action: " + action);
     	
     	if (StringUtils.isBlank(query)) {
-			Logger.info("Flag name is empty. Please write name in search window.");
+			Logger.debug("Flag name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	        return redirect(
 	        		routes.FlagController.list(0, "name", "asc", "")
@@ -96,17 +96,17 @@ public class FlagController extends AbstractController {
      * @return
      */
     public static List<Flag> processFilterFlags(String filterUrl) {
-//    	Logger.info("process filter filterUrl: " + filterUrl);
+//    	Logger.debug("process filter filterUrl: " + filterUrl);
     	boolean isProcessed = false;
     	ExpressionList<Flag> exp = Flag.find.where();
     	List<Flag> res = new ArrayList<Flag>();
     	if (filterUrl != null && !filterUrl.equals(Const.NONE)) {
-    		Logger.info("name: " + filterUrl);
+    		Logger.debug("name: " + filterUrl);
     		exp = exp.contains(Const.NAME, filterUrl);
     		isProcessed = true;
     	}
     	res = exp.query().findList();
-    	Logger.info("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
+    	Logger.debug("Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 
         if (!isProcessed) {
     		res = models.Flag.findAllFlags();
@@ -214,7 +214,7 @@ public class FlagController extends AbstractController {
      * @param filter Filter applied on Flags
      */
     public static Result list(int pageNo, String sortBy, String order, String filter) {
-    	Logger.info("Flags.list()");
+    	Logger.debug("Flags.list()");
         return ok(
         	list.render(
         			"Flags", 
