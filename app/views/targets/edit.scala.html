@@ -1,4 +1,4 @@
-@(targetForm: Form[Target], user: User, id: Long, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: Map[String,String], tags: Map[String,String], flags: Map[String,String], qaIssues: Map[String,String], languages: Map[String,String], selectionTypes: Map[String,String], scopeTypes: Map[String,String], depthTypes: Map[String,String], licensesMap: Map[String,String], crawlPermissionStatuses: Map[String,String], crawlFrequencies: Map[String,String], siteStatuses: Map[String,String], organisations: Map[String,String], tabStatus: String)
+@(targetForm: Form[Target], user: User, id: Long, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: Map[String,String], tags: Map[String,Boolean], flags: Map[String,String], qaIssues: Map[String,String], languages: Map[String,String], selectionTypes: Map[String,String], scopeTypes: Map[String,String], depthTypes: Map[String,String], licensesMap: Map[String,String], crawlPermissionStatuses: Map[String,String], crawlFrequencies: Map[String,String], siteStatuses: Map[String,String], organisations: Map[String,String], tabStatus: String)
 
 @import helper._
 @import bootstrap._
@@ -392,15 +392,10 @@
 		   		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@select(
-               					targetForm("tag.id"), 
-					                options(tags),
-					                args =
-					                'class -> "form-control", 
-					                '_label -> "Tag(s) (The multiple open keywords):",
-					                '_showConstraints -> false,
-					                'multiple->"multiple"
-				            )(FieldConstructor(genericInput.f), lang)						
+							@checkboxes(targetForm("tags"),
+	           					label = "Tag(s) (The multiple open keywords)",
+	           					checkboxMap = tags,
+	           					help = "Check zero or more tags")
 						</div>
 					</div>
 		     	</div>		   

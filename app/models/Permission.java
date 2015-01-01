@@ -1,6 +1,8 @@
 package models;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -92,6 +94,14 @@ public class Permission extends ActModel {
         		.getPage(page);
     }
 
+    public static Map<String, Boolean> options(List<Permission> myPermissions) {
+        Map<String, Boolean> permissionsMap = new HashMap<String, Boolean>();
+        for (Permission permission : Permission.findAll()) {
+          permissionsMap.put(permission.name, (myPermissions != null && myPermissions.contains(permission)));
+        }
+        return permissionsMap;
+    }
+    
 	@Override
 	public int hashCode() {
 		final int prime = 31;

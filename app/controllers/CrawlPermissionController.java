@@ -407,14 +407,6 @@ public class CrawlPermissionController extends AbstractController {
         return null;
     }	   
 
-    public static Result refusals() {
-        return ok(
-        		views.html.refusals.list.render(
-                	"Refusals", User.findByEmail(request().username()), models.PermissionRefusal.findAll(), ""
-                )
-            );
-    }
-
     /**
      * This method selects crawl permissions selected using checkboxes 
      * on the crawl permission overview page.

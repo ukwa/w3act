@@ -138,7 +138,6 @@ GET    	/crawlpermissions/filterbyjson/:name	controllers.CrawlPermissionControll
 GET     /crawlpermissions/new     				controllers.CrawlPermissionController.newForm()
 POST    /crawlpermissions/send              	controllers.CrawlPermissionController.send()
 POST    /crawlpermissions/sendPreview          	controllers.CrawlPermissionController.sendPreview()
-GET    	/crawlpermissions/refusals        		controllers.CrawlPermissionController.refusals()
 GET     /crawlpermissions/:id        			controllers.CrawlPermissionController.view(id:Long)
 GET     /crawlpermissions/:id/edit    			controllers.CrawlPermissionController.edit(id:Long)
 POST    /crawlpermissions/save               	controllers.CrawlPermissionController.save()
@@ -242,7 +241,8 @@ GET     /contactpersons/:id             	controllers.ContactPersonController.vie
 POST    /contactpersons                 	controllers.ContactPersonController.save()
 POST    /contactpersons/:id                 controllers.ContactPersonController.update(id:Long)
 
-GET     /refusals                          	controllers.PermissionRefusalController.index()
+GET     /refusals/filter                    controllers.PermissionRefusalController.indexFilter()
+GET    	/refusals        					controllers.PermissionRefusalController.index()
 GET     /refusals/search                    controllers.PermissionRefusalController.search()
 GET    	/refusals/filterbyjson/:name	    controllers.PermissionRefusalController.filterByJson(name)
 GET     /refusals/new              			controllers.PermissionRefusalController.newForm()

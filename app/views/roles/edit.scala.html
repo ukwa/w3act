@@ -1,4 +1,4 @@
-@(roleForm: Form[Role], user: User, id: Long, permissions: List[Permission])
+@(roleForm: Form[Role], user: User, id: Long, permissions: Map[String,Boolean])
 
 @import helper._
 @import bootstrap._
@@ -54,19 +54,10 @@
 	   		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						<label class="col-sm-6 control-label">Permissions</label>
-						<div class="col-sm-6">
-				        	@for(permission <- permissions) {
-								<label class="checkbox-inline">
-									@if(roleForm.get.permissions.contains(permission)) {
-					                	<input type="checkbox" name="permissionsList" value="@permission.id" checked />
-					                } else {
-					                	<input type="checkbox" name="permissionsList" value="@permission.id" />
-					                }
-					                 @permission.name
-				                </label>
-				            }
-						</div>
+						@checkboxes(roleForm("permissions"),
+           					label = "Permissions",
+           					checkboxMap = permissions,
+           					help = "Check zero or more permissions")
 					</div>
 				</div>
 	     	</div>	     		     	

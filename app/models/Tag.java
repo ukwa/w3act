@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,4 +174,12 @@ public class Tag extends Taxonomy {
         		.getPage(page);
     }    
 
+    public static Map<String, Boolean> options(List<Tag> myTags) {
+    	if (myTags == null) myTags = new ArrayList<Tag>();
+        Map<String, Boolean> tagsMap = new HashMap<String, Boolean>();
+        for (Tag tag : Tag.findAllTags()) {
+          tagsMap.put(tag.name, (myTags != null && myTags.contains(tag)));
+        }
+        return tagsMap;
+    }
 }

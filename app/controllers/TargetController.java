@@ -451,7 +451,7 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData();
 		
 		Map<String,String> authors = User.options();
-		Map<String,String> tags = Tag.options();
+		Map<String,Boolean> tags = Tag.options(null);
 		Map<String,String> flags= Flag.options();
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();
@@ -739,7 +739,7 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData(target.subjects);
 
 		Map<String,String> authors = User.options();
-		Map<String,String> tags = Tag.options();
+		Map<String,Boolean> tags = Tag.options(target.tags);
 		Map<String,String> flags= Flag.options();
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();
@@ -904,8 +904,9 @@ public class TargetController extends AbstractController {
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
 
+		Target target = Target.findById(id);
 		Map<String,String> authors = User.options();
-		Map<String,String> tags = Tag.options();
+		Map<String,Boolean> tags = Tag.options(target.tags);
 		Map<String,String> flags= Flag.options();
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();

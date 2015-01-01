@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import models.PermissionRefusal;
-import models.Target;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,13 +19,11 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.refusals.newForm;
 import views.html.refusals.edit;
 import views.html.refusals.list;
 import views.html.refusals.view;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -36,10 +33,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 @Security.Authenticated(SecuredController.class)
 public class PermissionRefusalController extends AbstractController {
   
+    public static Result index() {
+        return ok(
+        		views.html.refusals.list.render(
+                	"Refusals", User.findByEmail(request().username()), models.PermissionRefusal.findAll(), ""
+                )
+            );
+    }
+
     /**
      * Display the refusal.
      */
-    public static Result index() {
+    public static Result indexFilter() {
         List<PermissionRefusal> resList = processFilterPermissionRefusals("");
         return ok(
                 list.render(
@@ -131,7 +136,7 @@ public class PermissionRefusalController extends AbstractController {
 		        flash("message", "Permission Refusal " + filledForm.get().name + " has been deleted");
 		        refusal.delete();
             	
-        		return redirect(routes.PermissionRefusalController.index()); 
+        		return redirect(routes.PermissionRefusalController.indexFilter()); 
         	}
         }
         return null;
