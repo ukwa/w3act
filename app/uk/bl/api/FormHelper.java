@@ -2,12 +2,15 @@ package uk.bl.api;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Expr;
 
 import play.Logger;
+import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import models.FieldUrl;
@@ -53,7 +56,7 @@ public enum FormHelper {
 		return false;
 	}
 
-    public boolean indicateNpldStatus(Long targetId) {
+    public boolean indicateNpldStatus(Long targetId) throws ActException {
     	Target target = Target.findById(targetId);
     	return (target.getNpldStatusList().size() > 0);
     }
@@ -65,13 +68,17 @@ public enum FormHelper {
 	}
 	
 	// to helper
-	public List<Target> getUkwaLicenceStatusList(Long targetId) {
+	public Set<Target> getUkwaLicenceStatusList(Long targetId) {
 		
 		Target target = Target.findById(targetId);
 
 		// Open UKWA Licence at higher level - disabled
 		// Open UKWA licence for target being edited - disabled
-		List<Target> results = new ArrayList<Target>();
+		
+		// url is similar but less in characters
+		// has a license
+		// has a qaIssue
+		Set<Target> results = new LinkedHashSet<Target>();
 		// first aggregate a list of active targets for associated URL
 			// TODO: KL REDO THIS
 //			this.fieldUrl = Scope.normalizeUrl(this.fieldUrl());
@@ -91,24 +98,58 @@ public enum FormHelper {
 			// higher level domain and has a license or higher level domain
 			// and has pending qa status
 
-			String query = "find target fetch fieldUrls fetch licenses where active = true and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length";
-			
-			List<Target> higherTargets = Ebean.createQuery(Target.class, query)
-	        		.setParameter("domain", thisFieldUrl.domain)
-	        		.setParameter("length", thisFieldUrl.url.length())
-//	        		.where().or(Expr.isNotNull("licenses"), Expr.isNotNull("qaIssue"))
-	        		.findList();
+			Set<Target> higherTargets = FormHelper.getHigherTargetsWithLicenseAndQaIssue(thisFieldUrl);
 			
 			Logger.debug("higherTargets: " + higherTargets.size());
 			
-			// for debug
-//			for (Target higherTarget : higherTargets) {
-//				Logger.debug("higherTarget: " + higherTarget.fieldUrl());
-//			}
 			results.addAll(higherTargets);
 		}
 
 		return results;
+	}
+
+	public static Set<Target> getHigherTargetsWithLicenseAndQaIssue(FieldUrl fieldUrl) {
+		String query = "find target fetch fieldUrls fetch licenses where active = :active and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length";
+		
+		Set<Target> higherTargets = Ebean.createQuery(Target.class, query)
+        		.setParameter("active", true)
+        		.setParameter("domain", fieldUrl.domain)
+        		.setParameter("length", fieldUrl.url.length())
+        		.where().or(Expr.isNotNull("licenses"), Expr.isNotNull("qaIssue"))
+        		.findSet();
+		
+		return higherTargets;
+	}
+	
+	public static Target getHigherLevelTargetLicense(FieldUrl fieldUrl) {
+		String query = "find target fetch fieldUrls fetch licenses where active = :active and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length";
+		
+		Target higherTarget = Ebean.createQuery(Target.class, query)
+        		.setParameter("active", true)
+        		.setParameter("domain", fieldUrl.domain)
+        		.setParameter("length", fieldUrl.url.length())
+        		.where().isNotNull("licenses")     
+        		.findUnique();
+		
+		return higherTarget;
+	}
+	
+	public static Set<Target> getHigherTargetsForNpld(FieldUrl fieldUrl) {
+		StringBuilder query = new StringBuilder("find target fetch fieldUrls where active = :active and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length and isUkHosting = :isUkHosting ");
+			query.append("and (ukPostalAddress = :ukPostalAddress or viaCorrespondence = :viaCorrespondence or professionalJudgement = :professionalJudgement or noLdCriteriaMet = :noLdCriteriaMet)");
+
+			Set<Target> higherTargets = Ebean.createQuery(Target.class, query.toString())
+        		.setParameter("active", true)
+        		.setParameter("domain", fieldUrl.domain)
+        		.setParameter("length", fieldUrl.url.length())
+        		.setParameter("isUkHosting", false)
+        		.setParameter("ukPostalAddress", true)
+        		.setParameter("viaCorrespondence", true)
+        		.setParameter("professionalJudgement", true)
+        		.setParameter("noLdCriteriaMet", true)
+        		.findSet();
+		
+		return higherTargets;
 	}
 	
 	// to helper
@@ -122,9 +163,9 @@ public enum FormHelper {
 		return Scope.INSTANCE.isUkRegistration(target);
 	}
 
-	public List<Target> getNpldStatusList(Long targetId) {
+	public List<Target> getNpldStatusList(Long targetId) throws ActException {
 		Target target = Target.findById(targetId);
-		return null;
+		return target.getNpldStatusList();
 	}
 	
 	// to helper

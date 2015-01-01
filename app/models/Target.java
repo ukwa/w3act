@@ -34,13 +34,13 @@ import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
+import uk.bl.api.FormHelper;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -1459,10 +1459,10 @@ public class Target extends UrlModel {
 		exp = exp.eq(Const.ACTIVE, true);
 		
 		Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + npld + ", " + crawlFrequencyName + ", " + tld);
-		if (curatorId != -1) {
+		if (curatorId != 0) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
-		if (organisationId != -1) {
+		if (organisationId != 0) {
 			exp = exp.eq("organisation.id", organisationId);
 		}
 		if (StringUtils.isNotEmpty(crawlFrequencyName)) {
@@ -1529,8 +1529,8 @@ public class Target extends UrlModel {
 		}
 		if (tld.equals(Const.EITHER)) {
 			// not a UK top level domain
-			// expressionList.eq("isInScopeDomainValue", false);
-			// expressionList.eq("isInScopeDomainValue", true);
+			// expressionList.eq("isTopLevelDomain", false);
+			// expressionList.eq("isTopLevelDomain", true);
 		}
 
 		// TODO: NONE SELECTED???
@@ -2401,7 +2401,7 @@ public class Target extends UrlModel {
 	}
 
 	@JsonIgnore
-    public boolean indicateNpldStatus() {
+    public boolean indicateNpldStatus() throws ActException {
     	return (getNpldStatusList().size() > 0);
     }
 
@@ -2413,13 +2413,14 @@ public class Target extends UrlModel {
 	 * and 'UK top-level domain' = No.
 	 * 
 	 * @return target list
+	 * @throws ActException 
 	 */
-    // TODO: KLI
 	@JsonIgnore
-	public List<Target> getNpldStatusList() {
+	public List<Target> getNpldStatusList() throws ActException {
 		
 		List<Target> res = new ArrayList<Target>();
 		List<Target> unsorted = new ArrayList<Target>();
+		
 		List<Target> targets = new ArrayList<Target>();
 		
 		for (FieldUrl fieldUrl : this.fieldUrls) {
@@ -2427,11 +2428,9 @@ public class Target extends UrlModel {
 			String domain = fieldUrl.domain;
 			Logger.debug("getNpldStatusList() domain: " + domain);
 		
-			// higher level again
-			ExpressionList<Target> ll = find.fetch("fieldUrls").where().eq("fieldUrls.domain", domain).eq("isUkHosting", false).eq(Const.ACTIVE, true);
-			targets = ll.findList();
 			
-			Set<Target> higherTargets = getHigherTargets(fieldUrl);
+			// higher level again
+			Set<Target> higherTargets = FormHelper.getHigherTargetsForNpld(fieldUrl);
 			targets.addAll(higherTargets);
 		}
 
@@ -2441,19 +2440,21 @@ public class Target extends UrlModel {
 		 * Check that UK top level domain is false, one of mentioned flags is
 		 * true and the domain is of higher level.
 		 */
-		Iterator<Target> itr = targets.iterator();
-		while (itr.hasNext()) {
-			Target target = itr.next();
+		for (Target target : targets) {
 			
-//			if ((target.ukPostalAddress || target.viaCorrespondence || target.professionalJudgement || target.noLdCriteriaMet) && isHigherLevel(target.fieldUrl(), fieldUrl.) && (!checkUkHosting(target.fieldUrl()) && !isInScopeDomain(target.fieldUrl(), target.url))) {
-//				unsorted.add(target);
-////				 if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
-////					 break;
-////				 }
-//			}
+			try {
+				if (!target.isUkHosting() && !target.isTopLevelDomain()) {
+					unsorted.add(target);
+					 if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
+						 break;
+					 }
+				}
+			} catch (MalformedURLException | WhoisException | URISyntaxException e) {
+				throw new ActException(e);
+			}
 		}
-		Logger.debug("getNpldStatusList() targets unsorted result list size: "
-				+ unsorted.size());
+		
+		Logger.debug("getNpldStatusList() targets unsorted result list size: " + unsorted.size());
 
 		/**
 		 * Check that UK top level domain is false, one of mentioned flags is
@@ -2468,41 +2469,41 @@ public class Target extends UrlModel {
 				}
 			}
 		}
-		Logger.debug("getNpldStatusList() targets result list size: "
-				+ res.size());
+		Logger.debug("getNpldStatusList() targets result list size: " + res.size());
 		return res;
 	}
-	/**
-	 * This method evaluates if given current URL has lower level then URL from
-	 * the list.
-	 * 
-	 * @param iterUrl
-	 *            The URL from the list
-	 * @param currentUrl
-	 *            The current URL
-	 * @return
-	 */
-	@JsonIgnore
-	public static boolean isHigherLevel(String iterUrl, String currentUrl) {
-		boolean res = false;
-		if (currentUrl.contains(iterUrl) && currentUrl.indexOf(iterUrl) == 0
-				&& currentUrl.length() > iterUrl.length()) {
-			res = true;
-		}
-		return res;
-	}
-
-	@JsonIgnore
-	public boolean isHigherLevel(String otherUrl) {
-		for (FieldUrl thisFieldUrl : this.fieldUrls) {
-			boolean highLevel = (thisFieldUrl.url.contains(otherUrl) 
-					&& thisFieldUrl.url.indexOf(otherUrl) == 0 
-					&& thisFieldUrl.url.length() > otherUrl.length());
-			// Logger.debug("iterUrl: " + iterUrl + " " + highLevel);
-			return highLevel;
-		}
-		return false;
-	}
+		
+//	/**
+//	 * This method evaluates if given current URL has lower level then URL from
+//	 * the list.
+//	 * 
+//	 * @param iterUrl
+//	 *            The URL from the list
+//	 * @param currentUrl
+//	 *            The current URL
+//	 * @return
+//	 */
+//	@JsonIgnore
+//	public static boolean isHigherLevel(String iterUrl, String currentUrl) {
+//		boolean res = false;
+//		if (currentUrl.contains(iterUrl) && currentUrl.indexOf(iterUrl) == 0
+//				&& currentUrl.length() > iterUrl.length()) {
+//			res = true;
+//		}
+//		return res;
+//	}
+//
+//	@JsonIgnore
+//	public boolean isHigherLevel(String otherUrl) {
+//		for (FieldUrl thisFieldUrl : this.fieldUrls) {
+//			boolean highLevel = (thisFieldUrl.url.contains(otherUrl) 
+//					&& thisFieldUrl.url.indexOf(otherUrl) == 0 
+//					&& thisFieldUrl.url.length() > otherUrl.length());
+//			// Logger.debug("iterUrl: " + iterUrl + " " + highLevel);
+//			return highLevel;
+//		}
+//		return false;
+//	}
 
 	@JsonIgnore
 	public boolean hasLicenses() {
@@ -2518,7 +2519,7 @@ public class Target extends UrlModel {
 //			return (indicateLicenses(higherTarget.fieldLicense));
 //		}
 		for (FieldUrl fieldUrl : this.fieldUrls) {
-			if (getHigherLevelTargetLicense(fieldUrl) != null) {
+			if (FormHelper.getHigherLevelTargetLicense(fieldUrl) != null) {
 				return true;
 			}
 		} 
@@ -2570,56 +2571,15 @@ public class Target extends UrlModel {
 			// higher level domain and has a license or higher level domain
 			// and has pending qa status
 
-			Set<Target> higherTargets = getHigherTargetsWithLicenseAndQaIssue(thisFieldUrl);
+			Set<Target> higherTargets = FormHelper.getHigherTargetsWithLicenseAndQaIssue(thisFieldUrl);
 			
 			Logger.debug("higherTargets: " + higherTargets.size());
 			
-			// for debug
-//			for (Target higherTarget : higherTargets) {
-//				Logger.debug("higherTarget: " + higherTarget.fieldUrl());
-//			}
 			results.addAll(higherTargets);
 		}
 
 		return results;
 		
-	}
-	
-	private Set<Target> getHigherTargetsWithLicenseAndQaIssue(FieldUrl fieldUrl) {
-		String query = "find target fetch fieldUrls fetch licenses where active = true and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length";
-		
-		Set<Target> higherTargets = Ebean.createQuery(Target.class, query)
-        		.setParameter("domain", fieldUrl.domain)
-        		.setParameter("length", fieldUrl.url.length())
-        		.where().or(Expr.isNotNull("licenses"), Expr.isNotNull("qaIssue"))
-        		.findSet();
-		
-		return higherTargets;
-	}
-	
-	private Set<Target> getHigherTargets(FieldUrl fieldUrl) {
-		String query = "find target fetch fieldUrls fetch licenses where active = true and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length and isUkHosting = :ukHosting";
-		
-		Set<Target> higherTargets = Ebean.createQuery(Target.class, query)
-        		.setParameter("domain", fieldUrl.domain)
-        		.setParameter("length", fieldUrl.url.length())
-        		.setParameter("ukHosting", false)
-        		.findSet();
-		
-		return higherTargets;
-
-	}
-	
-	public Target getHigherLevelTargetLicense(FieldUrl fieldUrl) {
-		String query = "find target fetch fieldUrls fetch licenses where active = true and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length";
-		
-		Target higherTarget = Ebean.createQuery(Target.class, query)
-        		.setParameter("domain", fieldUrl.domain)
-        		.setParameter("length", fieldUrl.url.length())
-        		.where().isNotNull("licenses")     
-        		.findUnique();
-		
-		return higherTarget;
 	}
 	
 	// to helper
