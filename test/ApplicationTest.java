@@ -36,130 +36,130 @@ public class ApplicationTest {
      * This is a test for whois service (UK domain) that requires Internet connection.
      */
 //    @Test 
-    public void testWhoisUk() {
-        running(fakeApplication(), new Runnable() {
-        	boolean result;
-            public void run() {
-            	try {
-        			result = Scope.checkWhois(URL1);
-        	    	Logger.info("test whois res: " + result);
-        	        assertThat(result).isEqualTo(true);
-        		} catch (WhoisException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}
-            }
-          });
-    }
-    
-    /**
-     * This is a test for whois service (UK COM domain) that requires Internet connection.
-     */
-//    @Test 
-    public void testWhoisUkCom() {
-        running(fakeApplication(), new Runnable() {
-        	boolean result;
-            public void run() {
-            	try {
-            		result = Scope.checkWhois(URL2);
-        	        assertThat(result).isEqualTo(true);
-        		} catch (WhoisException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}
-            }
-          });
-    }
-    
-//    @Test 
-    public void testLondon() {
-        running(fakeApplication(), new Runnable() {
-        	boolean result;
-            public void run() {
-            	try {
-        			result = Scope.checkExt("buydomains.london", "buydomains.london", Const.ScopeCheckType.ALL.name());
-        			assertThat(result).isEqualTo(true);
-        		} catch (WhoisException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}
-            }
-          });
-
-//    	boolean result = "buydomains.london".contains(".london");
-//      assertThat(result).isEqualTo(true);
-    }
-
-//    @Test 
-    public void testScopeIPLondon() {
-        running(fakeApplication(), new Runnable() {
-        	boolean result;
-            public void run() {
-            	try {
-        			result = Scope.checkScopeIp("buydomains.london", "buydomains.london");
-        	        assertThat(result).isEqualTo(true);
-        		} catch (WhoisException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}
-            }
-          });
-    }
-    
-//  @Test 
-  public void testScot() {
-      running(fakeApplication(), new Runnable() {
-      	boolean result;
-          public void run() {
-          	try {
-      			result = Scope.checkExt("bbc.scot", "bbc.scot", Const.ScopeCheckType.ALL.name());
-      			assertThat(result).isEqualTo(true);
-      		} catch (WhoisException e) {
-      			// TODO Auto-generated catch block
-      			e.printStackTrace();
-      		}
-          }
-        });
-
-//  	boolean result = "buydomains.london".contains(".london");
-//    assertThat(result).isEqualTo(true);
-  }
-
-//  @Test 
-  public void testScopeDomainScot() {
-      running(fakeApplication(), new Runnable() {
-      	boolean result;
-          public void run() {
-          	try {
-      			//result = Scope.checkScopeDomain("https://www.gov.scot", "act-1");
-    			result = Scope.checkScopeIp("bbc.scot", "bbc.scot");
-      	        assertThat(result).isEqualTo(true);
-      		} catch (WhoisException e) {
-      			// TODO Auto-generated catch block
-      			e.printStackTrace();
-      		}
-          }
-        });
-  }
-  
-    /**
-     * This is a test for whois service (not UK domain) that requires Internet connection.
-     */
-//    @Test 
-    public void testWhoisNotUk() {
-        running(fakeApplication(), new Runnable() {
-        	boolean result;
-            public void run() {
-            	try {
-            		result = Scope.checkWhois(URL3);
-        	        assertThat(result).isEqualTo(false);
-            	} catch (WhoisException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}
-            }
-          });    	
-    }
+//    public void testWhoisUk() {
+//        running(fakeApplication(), new Runnable() {
+//        	boolean result;
+//            public void run() {
+//            	try {
+//        			result = Scope.checkWhois(URL1);
+//        	    	Logger.info("test whois res: " + result);
+//        	        assertThat(result).isEqualTo(true);
+//        		} catch (WhoisException e) {
+//        			// TODO Auto-generated catch block
+//        			e.printStackTrace();
+//        		}
+//            }
+//          });
+//    }
+//    
+//    /**
+//     * This is a test for whois service (UK COM domain) that requires Internet connection.
+//     */
+////    @Test 
+//    public void testWhoisUkCom() {
+//        running(fakeApplication(), new Runnable() {
+//        	boolean result;
+//            public void run() {
+//            	try {
+//            		result = Scope.checkWhois(URL2);
+//        	        assertThat(result).isEqualTo(true);
+//        		} catch (WhoisException e) {
+//        			// TODO Auto-generated catch block
+//        			e.printStackTrace();
+//        		}
+//            }
+//          });
+//    }
+//    
+////    @Test 
+//    public void testLondon() {
+//        running(fakeApplication(), new Runnable() {
+//        	boolean result;
+//            public void run() {
+//            	try {
+//        			result = Scope.checkExt("buydomains.london", "buydomains.london", Const.ScopeCheckType.ALL.name());
+//        			assertThat(result).isEqualTo(true);
+//        		} catch (WhoisException e) {
+//        			// TODO Auto-generated catch block
+//        			e.printStackTrace();
+//        		}
+//            }
+//          });
+//
+////    	boolean result = "buydomains.london".contains(".london");
+////      assertThat(result).isEqualTo(true);
+//    }
+//
+////    @Test 
+//    public void testScopeIPLondon() {
+//        running(fakeApplication(), new Runnable() {
+//        	boolean result;
+//            public void run() {
+//            	try {
+//        			result = Scope.checkScopeIp("buydomains.london", "buydomains.london");
+//        	        assertThat(result).isEqualTo(true);
+//        		} catch (WhoisException e) {
+//        			// TODO Auto-generated catch block
+//        			e.printStackTrace();
+//        		}
+//            }
+//          });
+//    }
+//    
+////  @Test 
+//  public void testScot() {
+//      running(fakeApplication(), new Runnable() {
+//      	boolean result;
+//          public void run() {
+//          	try {
+//      			result = Scope.checkExt("bbc.scot", "bbc.scot", Const.ScopeCheckType.ALL.name());
+//      			assertThat(result).isEqualTo(true);
+//      		} catch (WhoisException e) {
+//      			// TODO Auto-generated catch block
+//      			e.printStackTrace();
+//      		}
+//          }
+//        });
+//
+////  	boolean result = "buydomains.london".contains(".london");
+////    assertThat(result).isEqualTo(true);
+//  }
+//
+////  @Test 
+//  public void testScopeDomainScot() {
+//      running(fakeApplication(), new Runnable() {
+//      	boolean result;
+//          public void run() {
+//          	try {
+//      			//result = Scope.checkScopeDomain("https://www.gov.scot", "act-1");
+//    			result = Scope.checkScopeIp("bbc.scot", "bbc.scot");
+//      	        assertThat(result).isEqualTo(true);
+//      		} catch (WhoisException e) {
+//      			// TODO Auto-generated catch block
+//      			e.printStackTrace();
+//      		}
+//          }
+//        });
+//  }
+//  
+//    /**
+//     * This is a test for whois service (not UK domain) that requires Internet connection.
+//     */
+////    @Test 
+//    public void testWhoisNotUk() {
+//        running(fakeApplication(), new Runnable() {
+//        	boolean result;
+//            public void run() {
+//            	try {
+//            		result = Scope.checkWhois(URL3);
+//        	        assertThat(result).isEqualTo(false);
+//            	} catch (WhoisException e) {
+//        			// TODO Auto-generated catch block
+//        			e.printStackTrace();
+//        		}
+//            }
+//          });    	
+//    }
     
 //    @Test
     public void renderTemplate() {

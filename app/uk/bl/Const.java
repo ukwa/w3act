@@ -1060,24 +1060,6 @@ public final class Const {
     	statusStrMap.put(2L, "No QA issues found");
     	statusStrMap.put(3L, "QA issue");
     }
-		
-    /**
-     * Help collection to read JSON sub nodes like 
-     * "field_affiliation":{"uri":"http:\/\/www.webarchive.org.uk\/act\/node\/101","id":"101","resource":"node"}
-     */
-    public static final Map<String, String> subNodeMap = new HashMap<String, String>();
-    	static {
-    	subNodeMap.put(AUTHOR, URI);
-    	subNodeMap.put(FIELD_AFFILIATION, URI);
-    	subNodeMap.put(FIELD_NOMINATING_ORGANISATION, URI);
-    	subNodeMap.put(FIELD_SUBJECT, URI);
-//    	subNodeMap.put(FIELD_QA_STATUS, URI);
-    	subNodeMap.put(FIELD_OWNER, URI);
-    	subNodeMap.put(PARENT, URI);
-    	subNodeMap.put(PARENTS_ALL, URI);
-    	subNodeMap.put(FIELD_TARGET, URI);
-    	subNodeMap.put(FIELD_QA_ISSUE, URI);
-    }
 
 	public enum ScopeCheckType {
 		ALL,

@@ -25,7 +25,6 @@ import models.Collection;
 import models.FieldUrl;
 import models.Flag;
 import models.License;
-import models.MailTemplate;
 import models.Organisation;
 import models.QaIssue;
 import models.Subject;
@@ -261,9 +260,9 @@ public class TargetController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (action.equals("addEntry")) {
+    		if (action.equals("add")) {
     			return redirect(
-    	        		routes.TargetController.lookup(0, Const.TITLE, Const.ASC, filter)
+    	        		routes.TargetController.newForm(filter)
     			        );
     		} 
     		else if (action.equals("clear")) {
@@ -283,6 +282,9 @@ public class TargetController extends AbstractController {
 //    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
     		} 
     		else if (action.equals("search") || action.equals("apply")) {
+    			if (StringUtils.isBlank(filter)) {
+    	  			flash("message", "Please enter in the search field.");
+    			}
     	        return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
 		    } else {
 		    	return badRequest("This action is not allowed");
@@ -605,24 +607,24 @@ public class TargetController extends AbstractController {
      */
     public static Result searchTargetsByUser() {
     	
-    	DynamicForm form = DynamicForm.form().bindFromRequest();
-    	String action = form.get("action");
-    	String query = form.get("url");
+    	DynamicForm requestData = DynamicForm.form().bindFromRequest();
+    	String action = requestData.get("action");
+    	String query = requestData.get("url");
 
-    	String user_id = form.get("userId");
+    	String user_id = requestData.get("userId");
     	Long userId = Long.valueOf(user_id);
     	
-    	int pageNo = Integer.parseInt(form.get("p"));
-    	String sort = form.get("s");
-    	String order = form.get("o");
+    	int pageNo = Integer.parseInt(requestData.get("p"));
+    	String sort = requestData.get("s");
+    	String order = requestData.get("o");
 
-    	String subject = form.get("subjectId");
+    	String subject = requestData.get("subjectId");
     	Long subjectId = null;
     	if (StringUtils.isNotBlank(subject)) {
     		subjectId = Long.valueOf(subject);
     	}
     	
-    	String collection = form.get("collectionId");
+    	String collection = requestData.get("collectionId");
     	Long collectionId = null;
     	if (StringUtils.isNotBlank(collection)) {
     		collectionId = Long.valueOf(collection);
@@ -637,6 +639,10 @@ public class TargetController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
+    		if (action.equals("add")) {
+    			String title = requestData.get("filter");
+    	    	return redirect(routes.TargetController.newForm(title));
+    		}
     		if (action.equals("search")) {
     			Logger.debug("searching " + pageNo + " " + sort + " " + order + " " + userId + ", " + subjectId + ", " + collectionId);
     	    	return redirect(routes.TargetController.userTargets(pageNo, sort, order, query, userId, subjectId, collectionId));
@@ -648,10 +654,13 @@ public class TargetController extends AbstractController {
         
     public static Result GO_HOME = redirect(routes.TargetController.list(0, "title", "asc", "", 0, 0, "", "", "", "", 0, 10, 0));
        
-    public static Result newForm() {
+    public static Result newForm(String title) {
     	User user = User.findByEmail(request().username());
 		Form<Target> filledForm = Form.form(Target.class);
 		Target target = new Target();
+		if (StringUtils.isNotBlank(title)) {
+			target.title = title;
+		}
         target.revision = Const.INITIAL_REVISION;
         target.active = true;
         if (User.findByEmail(request().username()).hasRole(Const.USER)) {
@@ -711,6 +720,12 @@ public class TargetController extends AbstractController {
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
         return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags));
+    }
+    
+    public static Result delete(Long id) {
+    	Target target = Target.findById(id);
+    	target.delete();
+    	return redirect(routes.TargetController.index());
     }
     
     /**
@@ -917,18 +932,228 @@ public class TargetController extends AbstractController {
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
         Form<Target> filledForm = form(Target.class).bindFromRequest();
 
-    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+        String action = requestData.get("action");
 
-        if (filledForm.hasErrors()) {
-        	Logger.debug("hasErrors: " + filledForm.errors());
-            return info(filledForm, id);
+        if (StringUtils.isNotEmpty(action)) {
+        	if (action.equals("save")) {
+		    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+
+		        if (filledForm.hasErrors()) {
+		        	Logger.debug("hasErrors: " + filledForm.errors());
+		            return info(filledForm, id);
+		        }
+		        
+		        String wctId = requestData.get("wctId");
+		        
+		        if (StringUtils.isNotBlank(wctId) && !Utils.INSTANCE.isNumeric(wctId)) {
+		        	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
+		            return info(filledForm, id);
+			  	}    	
+		
+		        String sptId = requestData.get("sptId");
+		
+			  	if (StringUtils.isNotBlank(sptId) && !Utils.INSTANCE.isNumeric(sptId)) {
+			          Logger.debug("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+						flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
+			            return info(filledForm, id);
+			  	}    	
+			
+			  	String legacySiteId = requestData.get("legacySiteId");
+			  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.INSTANCE.isNumeric(legacySiteId)) {
+			          Logger.debug("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+						flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
+			            return info(filledForm, id);
+			  	}    	
+		
+			  	String subjectString = requestData.get("subjectSelect");
+			  	if (StringUtils.isBlank(subjectString)) {
+					flash("message", "Please choose a subject(s).");
+		            return info(filledForm, id);
+			  	}
+		
+		        String fieldUrl = requestData.get("formUrl");
+		        
+		        if (StringUtils.isNotEmpty(fieldUrl)) {
+		            String[] urls = fieldUrl.split(",");
+		            List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
+		            
+		            for (String url : urls) {
+		            	FieldUrl fu = FieldUrl.findByUrl(url.trim());
+		            	if (fu == null) {
+		                    URL uri;
+							try {
+				            	Logger.debug("url: " + url.trim());
+								uri = new URI(url.trim()).normalize().toURL();
+			        			String extFormUrl = uri.toExternalForm();
+				            	fu = new FieldUrl(extFormUrl.trim());
+				            	Logger.debug("extFormUrl: " + extFormUrl);
+							} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
+		//						flash("message", e.getMessage());
+		//						e.printStackTrace();
+					            ValidationError ve = new ValidationError("formUrl", e.getMessage());
+					            filledForm.reject(ve);
+					            return newInfo(filledForm);
+					        }
+		            	}
+		            	fieldUrls.add(fu);
+		            }
+		            filledForm.get().fieldUrls = fieldUrls;
+		            Logger.debug("fieldUrls: " + fieldUrls);
+		        }        
+		        
+		//        String qaIssueId = requestData.get("qaIssueId");
+		//        if (StringUtils.isNotEmpty(qaIssueId)) {
+		//        	Long qaId = Long.valueOf(qaIssueId);
+		//        	QaIssue qaIssue = QaIssue.findById(qaId);
+		//        	filledForm.get().qaIssue = qaIssue;
+		//        }
+		        	            
+		        List<Tag> newTags = new ArrayList<Tag>();
+		        String[] tagValues = formParams.get("tagsList");
+		
+		        if (tagValues != null) {
+		            for(String tagValue: tagValues) {
+		            	Long tagId = Long.valueOf(tagValue);
+		            	Tag tag = Tag.findById(tagId);
+		            	newTags.add(tag);
+		            }
+		            filledForm.get().tags = newTags;
+		        }
+		        
+		        List<Subject> newSubjects = new ArrayList<Subject>();
+		        String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
+		        Logger.debug("subjectSelect: " + subjectSelect);
+		        if (StringUtils.isNotEmpty(subjectSelect)) {
+		            String[] subjects = subjectSelect.split(", ");
+		            for (String sId : subjects) {
+		//            	sId = sId.replace("\"", "");
+		            	Long subjectId = Long.valueOf(sId);
+		            	Subject subject = Subject.findById(subjectId);
+		            	newSubjects.add(subject);
+		            }
+		            filledForm.get().subjects = newSubjects;
+		        }
+		        
+		        List<Collection> newCollections = new ArrayList<Collection>();
+		        String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
+		        Logger.debug("collectionSelect: " + collectionSelect);
+		        if (StringUtils.isNotEmpty(collectionSelect)) {
+		            String[] collections = collectionSelect.split(", ");
+		            for (String cId : collections) {
+		//            	sId = sId.replace("\"", "");
+		            	Long collectionId = Long.valueOf(cId);
+		            	Collection collection = Collection.findById(collectionId);
+		            	newCollections.add(collection);
+		            }
+		            filledForm.get().collections = newCollections;
+		        }
+		        
+		//        String organisationId = requestData.get("organisationId");
+		//        if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("")) {
+		//        	Long oId = Long.valueOf(organisationId);
+		//        	Organisation organisation = Organisation.findById(oId);
+		//        	filledForm.get().organisation = organisation;
+		//        }
+		//        
+		//        String authorId = requestData.get("authorId");
+		//        if (StringUtils.isNotEmpty(authorId)) {
+		//        	Long aId = Long.valueOf(authorId);
+		//        	User author = User.findById(aId);
+		//        	filledForm.get().authorUser = author;
+		//        }
+		
+		        List<Flag> newFlags = new ArrayList<Flag>();
+		        String[] flagValues = formParams.get("flagList");
+		
+		        if (flagValues != null) {
+		            for(String flagValue: flagValues) {
+		            	Logger.debug("flagValue: " + flagValue);
+		            	Long flagId = Long.valueOf(flagValue);
+		            	Flag flag = Flag.findById(flagId);
+		            	newFlags.add(flag);
+		            }
+		            filledForm.get().flags = newFlags;
+		        }
+		        
+		        String dateOfPublication = requestData.get("dateOfPublicationText");
+		    	if (StringUtils.isNotEmpty(dateOfPublication)) {
+					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					try {
+						Date date = formatter.parse(dateOfPublication);
+						filledForm.get().dateOfPublication = date;
+					} catch (ParseException e) {
+						e.printStackTrace();
+			            return info(filledForm, id);
+					}
+		    	}
+		        
+		        String crawlStartDate = requestData.get("crawlStartDateText");
+		    	if (StringUtils.isNotEmpty(crawlStartDate)) {
+					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					try {
+						Date date = formatter.parse(crawlStartDate);
+						filledForm.get().crawlStartDate = date;
+					} catch (ParseException e) {
+						e.printStackTrace();
+			            return info(filledForm, id);
+					}
+		    	}
+		        String crawlEndDate = requestData.get("endStartDateText");
+		    	if (StringUtils.isNotEmpty(crawlEndDate)) {
+					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					try {
+						Date date = formatter.parse(crawlEndDate);
+						filledForm.get().crawlEndDate = date;
+					} catch (ParseException e) {
+						e.printStackTrace();
+			            return info(filledForm, id);
+					}
+		    	}
+		        
+		        
+		        filledForm.get().update(id);
+		        flash("message", "Target " + filledForm.get().title + " has been updated");
+		    	return redirect(routes.TargetController.view(filledForm.get().id));
+        	}
+	    	else if (action.equals("request")) {
+	        	String title = requestData.get("title");
+	        	if (StringUtils.isNotEmpty(title)) {
+	        		String url = requestData.get("fieldUrl");
+	                String target = Scope.INSTANCE.normalizeUrl(url);
+	    	        return redirect(routes.CrawlPermissionController.licenceRequestForTarget(title, target)); 
+	        	}
+	        } else if (action.equals("archive")) {
+		        return redirect(routes.TargetController.archive(id)); 
+	        } else if (action.equals("delete")) {
+		        return redirect(routes.TargetController.delete(id)); 
+	        }
         }
-        
+    	return null;
+    }
+    
+	/**
+     * This method saves changes on given target in a new target object
+     * completed by revision comment. The "version" field in the Target object
+     * contains the timestamp of the change and the last version is marked by
+     * flag "active". Remaining Target objects with the same URL are not active.
+     * @return
+     */
+    public static Result save() {
+
+    	DynamicForm requestData = form().bindFromRequest();
+	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+
+        Form<Target> filledForm = form(Target.class).bindFromRequest();
+        if(filledForm.hasErrors()) {
+    		Logger.debug("errors: " + filledForm.errors());
+            return newInfo(filledForm);
+        }
+
         String wctId = requestData.get("wctId");
         
         if (StringUtils.isNotBlank(wctId) && !Utils.INSTANCE.isNumeric(wctId)) {
         	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
-            return info(filledForm, id);
+            return newInfo(filledForm);
 	  	}    	
 
         String sptId = requestData.get("sptId");
@@ -936,22 +1161,28 @@ public class TargetController extends AbstractController {
 	  	if (StringUtils.isNotBlank(sptId) && !Utils.INSTANCE.isNumeric(sptId)) {
 	          Logger.debug("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
 				flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-	            return info(filledForm, id);
+	            return newInfo(filledForm);
 	  	}    	
 	
 	  	String legacySiteId = requestData.get("legacySiteId");
 	  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.INSTANCE.isNumeric(legacySiteId)) {
 	          Logger.debug("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 				flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-	            return info(filledForm, id);
+	            return newInfo(filledForm);
 	  	}    	
 
 	  	String subjectString = requestData.get("subjectSelect");
 	  	if (StringUtils.isBlank(subjectString)) {
 			flash("message", "Please choose a subject(s).");
-            return info(filledForm, id);
+            return newInfo(filledForm);
 	  	}
 
+//			  	String selectionType = requestData.get("selectionType");
+//			  	if (StringUtils.isEmpty(selectionType)) {
+//					flash("message", "Please choose a selection.");
+//		            return newInfo(filledForm);
+//			  	}
+	  	
         String fieldUrl = requestData.get("formUrl");
         
         if (StringUtils.isNotEmpty(fieldUrl)) {
@@ -969,8 +1200,8 @@ public class TargetController extends AbstractController {
 		            	fu = new FieldUrl(extFormUrl.trim());
 		            	Logger.debug("extFormUrl: " + extFormUrl);
 					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
-//						flash("message", e.getMessage());
-//						e.printStackTrace();
+//								flash("message", e.getMessage());
+//								e.printStackTrace();
 			            ValidationError ve = new ValidationError("formUrl", e.getMessage());
 			            filledForm.reject(ve);
 			            return newInfo(filledForm);
@@ -980,14 +1211,14 @@ public class TargetController extends AbstractController {
             }
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + fieldUrls);
-        }        
+        }		        
         
-//        String qaIssueId = requestData.get("qaIssueId");
-//        if (StringUtils.isNotEmpty(qaIssueId)) {
-//        	Long qaId = Long.valueOf(qaIssueId);
-//        	QaIssue qaIssue = QaIssue.findById(qaId);
-//        	filledForm.get().qaIssue = qaIssue;
-//        }
+//	            String qaIssueId = requestData.get("qaIssueId");
+//	            if (StringUtils.isNotEmpty(qaIssueId)) {
+//	            	Long qaId = Long.valueOf(qaIssueId);
+//	            	QaIssue qaIssue = QaIssue.findById(qaId);
+//	            	filledForm.get().qaIssue = qaIssue;
+//	            }
         	            
         List<Tag> newTags = new ArrayList<Tag>();
         String[] tagValues = formParams.get("tagsList");
@@ -1029,20 +1260,20 @@ public class TargetController extends AbstractController {
             filledForm.get().collections = newCollections;
         }
         
-//        String organisationId = requestData.get("organisationId");
-//        if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("")) {
-//        	Long oId = Long.valueOf(organisationId);
-//        	Organisation organisation = Organisation.findById(oId);
-//        	filledForm.get().organisation = organisation;
-//        }
-//        
-//        String authorId = requestData.get("authorId");
-//        if (StringUtils.isNotEmpty(authorId)) {
-//        	Long aId = Long.valueOf(authorId);
-//        	User author = User.findById(aId);
-//        	filledForm.get().authorUser = author;
-//        }
-
+//	            String organisationId = requestData.get("organisationId");
+//	            if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("-1")) {
+//	            	Long oId = Long.valueOf(organisationId);
+//	            	Organisation organisation = Organisation.findById(oId);
+//	            	filledForm.get().organisation = organisation;
+//	            }
+//	            
+//	            String authorId = requestData.get("authorId");
+//	            if (StringUtils.isNotEmpty(authorId)) {
+//	            	Long aId = Long.valueOf(authorId);
+//	            	User author = User.findById(aId);
+//	            	filledForm.get().authorUser = author;
+//	            }
+//	
         List<Flag> newFlags = new ArrayList<Flag>();
         String[] flagValues = formParams.get("flagList");
 
@@ -1064,7 +1295,7 @@ public class TargetController extends AbstractController {
 				filledForm.get().dateOfPublication = date;
 			} catch (ParseException e) {
 				e.printStackTrace();
-	            return info(filledForm, id);
+	            return newInfo(filledForm);
 			}
     	}
         
@@ -1076,7 +1307,7 @@ public class TargetController extends AbstractController {
 				filledForm.get().crawlStartDate = date;
 			} catch (ParseException e) {
 				e.printStackTrace();
-	            return info(filledForm, id);
+	            return newInfo(filledForm);
 			}
     	}
         String crawlEndDate = requestData.get("endStartDateText");
@@ -1087,236 +1318,13 @@ public class TargetController extends AbstractController {
 				filledForm.get().crawlEndDate = date;
 			} catch (ParseException e) {
 				e.printStackTrace();
-	            return info(filledForm, id);
+	            return newInfo(filledForm);
 			}
     	}
-        
-        
-        filledForm.get().update(id);
-        flash("message", "Target " + filledForm.get().title + " has been updated");
+    	filledForm.get().url = "act-" + Utils.INSTANCE.createId();
+    	filledForm.get().save();
+        flash("success", "Target " + filledForm.get().title + " has been created");
     	return redirect(routes.TargetController.view(filledForm.get().id));
-    }
-    
-	/**
-     * This method saves changes on given target in a new target object
-     * completed by revision comment. The "version" field in the Target object
-     * contains the timestamp of the change and the last version is marked by
-     * flag "active". Remaining Target objects with the same URL are not active.
-     * @return
-     */
-    public static Result save() {
-
-    	DynamicForm requestData = form().bindFromRequest();
-    	String action = requestData.get("action");
-	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
-
-        if (StringUtils.isNotEmpty(action)) {
-        	if (action.equals("save")) {
-		        Form<Target> filledForm = form(Target.class).bindFromRequest();
-		        if(filledForm.hasErrors()) {
-	        		Logger.debug("errors: " + filledForm.errors());
-		            return newInfo(filledForm);
-		        }
-
-	            String wctId = requestData.get("wctId");
-	            
-	            if (StringUtils.isNotBlank(wctId) && !Utils.INSTANCE.isNumeric(wctId)) {
-	            	flash("message", "Only numeric values are valid identifiers. Please check field 'WCT ID'.");
-		            return newInfo(filledForm);
-			  	}    	
-	
-	            String sptId = requestData.get("sptId");
-	
-			  	if (StringUtils.isNotBlank(sptId) && !Utils.INSTANCE.isNumeric(sptId)) {
-			          Logger.debug("Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-						flash("message", "Only numeric values are valid identifiers. Please check field 'SPT ID'.");
-			            return newInfo(filledForm);
-			  	}    	
-			
-			  	String legacySiteId = requestData.get("legacySiteId");
-			  	if (StringUtils.isNotBlank(legacySiteId) && !Utils.INSTANCE.isNumeric(legacySiteId)) {
-			          Logger.debug("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-						flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
-			            return newInfo(filledForm);
-			  	}    	
-	
-			  	String subjectString = requestData.get("subjectSelect");
-			  	if (StringUtils.isBlank(subjectString)) {
-					flash("message", "Please choose a subject(s).");
-		            return newInfo(filledForm);
-			  	}
-
-//			  	String selectionType = requestData.get("selectionType");
-//			  	if (StringUtils.isEmpty(selectionType)) {
-//					flash("message", "Please choose a selection.");
-//		            return newInfo(filledForm);
-//			  	}
-			  	
-	            String fieldUrl = requestData.get("formUrl");
-	            
-	            if (StringUtils.isNotEmpty(fieldUrl)) {
-		            String[] urls = fieldUrl.split(",");
-		            List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
-		            
-		            for (String url : urls) {
-		            	FieldUrl fu = FieldUrl.findByUrl(url.trim());
-		            	if (fu == null) {
-		                    URL uri;
-							try {
-				            	Logger.debug("url: " + url.trim());
-								uri = new URI(url.trim()).normalize().toURL();
-			        			String extFormUrl = uri.toExternalForm();
-				            	fu = new FieldUrl(extFormUrl.trim());
-				            	Logger.debug("extFormUrl: " + extFormUrl);
-							} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
-//								flash("message", e.getMessage());
-//								e.printStackTrace();
-					            ValidationError ve = new ValidationError("formUrl", e.getMessage());
-					            filledForm.reject(ve);
-					            return newInfo(filledForm);
-					        }
-		            	}
-		            	fieldUrls.add(fu);
-		            }
-		            filledForm.get().fieldUrls = fieldUrls;
-		            Logger.debug("fieldUrls: " + fieldUrls);
-	            }		        
-		        
-//	            String qaIssueId = requestData.get("qaIssueId");
-//	            if (StringUtils.isNotEmpty(qaIssueId)) {
-//	            	Long qaId = Long.valueOf(qaIssueId);
-//	            	QaIssue qaIssue = QaIssue.findById(qaId);
-//	            	filledForm.get().qaIssue = qaIssue;
-//	            }
-	            	            
-	            List<Tag> newTags = new ArrayList<Tag>();
-	            String[] tagValues = formParams.get("tagsList");
-	
-	            if (tagValues != null) {
-		            for(String tagValue: tagValues) {
-		            	Long tagId = Long.valueOf(tagValue);
-		            	Tag tag = Tag.findById(tagId);
-		            	newTags.add(tag);
-		            }
-		            filledForm.get().tags = newTags;
-	            }
-	            
-	            List<Subject> newSubjects = new ArrayList<Subject>();
-	            String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
-	            Logger.debug("subjectSelect: " + subjectSelect);
-	            if (StringUtils.isNotEmpty(subjectSelect)) {
-	                String[] subjects = subjectSelect.split(", ");
-		            for (String sId : subjects) {
-		//            	sId = sId.replace("\"", "");
-		            	Long subjectId = Long.valueOf(sId);
-		            	Subject subject = Subject.findById(subjectId);
-		            	newSubjects.add(subject);
-		            }
-		            filledForm.get().subjects = newSubjects;
-	            }
-	            
-	            List<Collection> newCollections = new ArrayList<Collection>();
-	            String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
-	            Logger.debug("collectionSelect: " + collectionSelect);
-	            if (StringUtils.isNotEmpty(collectionSelect)) {
-	                String[] collections = collectionSelect.split(", ");
-		            for (String cId : collections) {
-		//            	sId = sId.replace("\"", "");
-		            	Long collectionId = Long.valueOf(cId);
-		            	Collection collection = Collection.findById(collectionId);
-		            	newCollections.add(collection);
-		            }
-		            filledForm.get().collections = newCollections;
-	            }
-	            
-//	            String organisationId = requestData.get("organisationId");
-//	            if (StringUtils.isNotEmpty(organisationId) || !organisationId.equals("-1")) {
-//	            	Long oId = Long.valueOf(organisationId);
-//	            	Organisation organisation = Organisation.findById(oId);
-//	            	filledForm.get().organisation = organisation;
-//	            }
-//	            
-//	            String authorId = requestData.get("authorId");
-//	            if (StringUtils.isNotEmpty(authorId)) {
-//	            	Long aId = Long.valueOf(authorId);
-//	            	User author = User.findById(aId);
-//	            	filledForm.get().authorUser = author;
-//	            }
-//	
-	            List<Flag> newFlags = new ArrayList<Flag>();
-	            String[] flagValues = formParams.get("flagList");
-	
-	            if (flagValues != null) {
-		            for(String flagValue: flagValues) {
-		            	Logger.debug("flagValue: " + flagValue);
-		            	Long flagId = Long.valueOf(flagValue);
-		            	Flag flag = Flag.findById(flagId);
-		            	newFlags.add(flag);
-		            }
-		            filledForm.get().flags = newFlags;
-	            }
-	            
-	            String dateOfPublication = requestData.get("dateOfPublicationText");
-	        	if (StringUtils.isNotEmpty(dateOfPublication)) {
-	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-	    			try {
-						Date date = formatter.parse(dateOfPublication);
-						filledForm.get().dateOfPublication = date;
-					} catch (ParseException e) {
-						e.printStackTrace();
-			            return newInfo(filledForm);
-					}
-	        	}
-	            
-	            String crawlStartDate = requestData.get("crawlStartDateText");
-	        	if (StringUtils.isNotEmpty(crawlStartDate)) {
-	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-	    			try {
-						Date date = formatter.parse(crawlStartDate);
-						filledForm.get().crawlStartDate = date;
-					} catch (ParseException e) {
-						e.printStackTrace();
-			            return newInfo(filledForm);
-					}
-	        	}
-	            String crawlEndDate = requestData.get("endStartDateText");
-	        	if (StringUtils.isNotEmpty(crawlEndDate)) {
-	    			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-	    			try {
-						Date date = formatter.parse(crawlEndDate);
-						filledForm.get().crawlEndDate = date;
-					} catch (ParseException e) {
-						e.printStackTrace();
-			            return newInfo(filledForm);
-					}
-	        	}
-	        	filledForm.get().url = "act-" + Utils.INSTANCE.createId();
-            	filledForm.get().save();
-		        flash("success", "Target " + filledForm.get().title + " has been created");
-		    	return redirect(routes.TargetController.view(filledForm.get().id));
-            	
-//    	    	nominationFromDB.nominatedWebsiteOwner = nominationFromForm.nominatedWebsiteOwner;
-//    	    	nominationFromDB.nominationChecked = nominationFromForm.nominationChecked;
-//    	    	nominationFromDB.save();
-//    	    	res = redirect(routes.NominationController.view(nominationFromDB.id));
-        	} else if (action.equals("delete")) {
-	        	Form<Target> filledForm = targetForm.bindFromRequest();
-	        	Target target = Target.findById(filledForm.get().id);
-	        	target.delete();
-		        return redirect(routes.TargetController.index()); 
-	        } else if (action.equals("request")) {
-	        	String title = requestData.get("title");
-	        	if (StringUtils.isNotEmpty(title)) {
-	        		String url = requestData.get("fieldUrl");
-	                String target = Scope.INSTANCE.normalizeUrl(url);
-	    	        return redirect(routes.CrawlPermissionController.licenceRequestForTarget(title, target)); 
-	        	}
-	        } else if (action.equals("archive")) {
-	    		Long id = Long.valueOf(requestData.get("id"));
-    	        return redirect(routes.TargetController.archive(id)); 
-	        }        	
-        }
-        return null;
     }
 	
     /**
