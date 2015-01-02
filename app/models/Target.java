@@ -826,7 +826,7 @@ public class Target extends UrlModel {
 		Logger.debug("findRevisions() target url: " + url);
 		List<Target> res = new ArrayList<Target>();
 		if (url != null && url.length() > 0) {
-			ExpressionList<Target> ll = find.where().eq(Const.URL, url);
+			ExpressionList<Target> ll = find.fetch("fieldUrls").where().eq("fieldUrls.url", url);
 			res = ll.findList();
 		}
 		return res;

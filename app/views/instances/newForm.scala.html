@@ -58,6 +58,8 @@
 	
 	@helper.form(action=routes.InstanceController.save()) {
 	
+		<input type="hidden" id="targetId" name="targetId" value="@targetId">
+	
 		<div id="myTabContent" class="tab-content">
 		
 			<div class="tab-pane padding-20 fade active in" id="qa">

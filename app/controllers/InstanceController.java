@@ -11,6 +11,7 @@ import java.util.Map;
 import models.Collection;
 import models.Instance;
 import models.QaIssue;
+import models.Target;
 import models.Taxonomy;
 import models.User;
 
@@ -31,6 +32,7 @@ import views.html.instances.list;
 import views.html.instances.listByTarget;
 import views.html.instances.view;
 import views.html.instances.newForm;
+import views.html.instances.results;
 
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -168,23 +170,8 @@ public class InstanceController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (action.equals("addentry")) {
-        		//return redirect(routes.Instances.create(query));
-				Logger.debug("addEntry()");
-				Instance instance = new Instance();
-				instance.title = query;
-//				instance.id = Utils.createId();
-//				instance.url = Const.ACT_URL + instance.id;
-				instance.revision = Const.INITIAL_REVISION;
-//				Logger.debug("add instance with url: " + instance.url + " and name: " + instance.title);
-    			Form<Instance> instanceForm = Form.form(Instance.class);
-    			instanceForm = instanceForm.fill(instance);
-    			User user = User.findByEmail(request().username());
-	  			Map<String,String> qaIssues = QaIssue.options();
-	  			Map<String,String> qaIssueCategories = Const.QAIssueCategory.options();
-	  			Map<String,String> authors = User.options();
-				Logger.debug("newForm");
-	  	        return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors, 0L));
+    		if (action.equals("add")) {
+    	    	return redirect(routes.InstanceController.newForm(query));				
     		} 
     		else if (action.equals("search")) {
     			Logger.debug("searching " + pageNo + " " + sort + " " + order);
@@ -193,28 +180,6 @@ public class InstanceController extends AbstractController {
 		      return badRequest("This action is not allowed");
 		    }
     	}
-    }
-    
-    /**
-     * Add new entry.
-     * @param instance
-     * @return
-     */
-    public static Result create(String title) {
-        Logger.debug("addEntry()");
-    	Instance instance = new Instance();
-    	instance.title = title;
-//        instance.id = Utils.createId();
-//        instance.url = Const.ACT_URL + instance.id;
-        instance.revision = Const.INITIAL_REVISION;
-		Logger.debug("add instance with url: " + instance.url + " and name: " + instance.title);
-		Form<Instance> instanceForm = Form.form(Instance.class);
-		instanceForm = instanceForm.fill(instance);
-		User user = User.findByEmail(request().username());
-		Map<String,String> qaIssues = QaIssue.options();
-		Map<String,String> qaIssueCategories = QAIssueCategory.options();
-		Map<String,String> authors = User.options();
-        return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors, null));
     }
     
     /**
@@ -333,10 +298,35 @@ public class InstanceController extends AbstractController {
     public static Result GO_HOME = redirect(
             routes.InstanceController.list(0, "title", "asc", "")
         );
+    
+    public static Result newForm(String title) {
+		User user = User.findByEmail(request().username());
+    	Instance instance = new Instance();
+		instance.revision = Const.INITIAL_REVISION;
 
-    /**
-     * Display the instance edit panel for this URL.
-     */
+		Form<Instance> instanceForm = Form.form(Instance.class);
+		instanceForm = instanceForm.fill(instance);    	
+		Map<String,String> qaIssues = QaIssue.options();
+		Map<String,String> qaIssueCategories = QAIssueCategory.options();
+		Map<String,String> authors = User.options();
+		return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors, null));
+    }
+
+    public static Result newWithTarget(Long targetId, String title) {
+		User user = User.findByEmail(request().username());
+		Target target = Target.findById(targetId);
+    	Instance instance = new Instance();
+    	instance.target = target;
+		instance.revision = Const.INITIAL_REVISION;
+
+		Form<Instance> instanceForm = Form.form(Instance.class);
+		instanceForm = instanceForm.fill(instance);    	
+		Map<String,String> qaIssues = QaIssue.options();
+		Map<String,String> qaIssueCategories = QAIssueCategory.options();
+		Map<String,String> authors = User.options();
+		return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors, targetId));
+    }
+    
     public static Result edit(Long id) {
 		Instance instance = Instance.findById(id);
 		Form<Instance> instanceForm = Form.form(Instance.class);
@@ -371,7 +361,21 @@ public class InstanceController extends AbstractController {
 		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
 		return ok(view.render(instance, user, qaIssues, qaIssueCategories));	
 	}
-    
+
+    public static Result results(Long targetId) {
+    	Target target = Target.findById(targetId);
+    	User user = User.findByEmail(request().username());
+		return ok(results.render(target, user));	
+    }
+
+    public static Result viewInstance(Long targetId, Long instanceId) {
+		Instance instance = Instance.findByTargetAndInstance(targetId, instanceId);
+		User user = User.findByEmail(request().username());
+		List<QaIssue> qaIssues = QaIssue.findAllQaIssue();
+		QAIssueCategory[] qaIssueCategories = Const.QAIssueCategory.values();
+		return ok(view.render(instance, user, qaIssues, qaIssueCategories));	
+    }
+
     /**
      * This method shows selected revision of a Instance by given ID.
      * @param nid
@@ -395,12 +399,12 @@ public class InstanceController extends AbstractController {
         return badRequest(edit.render(form, user, id, qaIssues, qaIssueCategories, authors));
 	}
 
-	public static Result newInfo(Form<Instance> form) {
+	public static Result newInfo(Form<Instance> form, Long targetId) {
 		User user = User.findByEmail(request().username());
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> qaIssueCategories = QAIssueCategory.options();
 		Map<String,String> authors = User.options();
-		return badRequest(newForm.render(form, user, qaIssues, qaIssueCategories, authors, null));
+		return badRequest(newForm.render(form, user, qaIssues, qaIssueCategories, authors, targetId));
 	}
 	
 	public static Result update(Long id) {
@@ -446,10 +450,15 @@ public class InstanceController extends AbstractController {
     	
         if (StringUtils.isNotEmpty(action)) {
         	if (action.equals("save")) {
+        		String target = requestData.get("targetId");
+        		Long targetId = null;
+        		if (StringUtils.isNotBlank(target)) {
+        			targetId = Long.valueOf(target);
+        		}
 		        Form<Instance> filledForm = form(Instance.class).bindFromRequest();
 		        if(filledForm.hasErrors()) {
 	        		Logger.debug("errors: " + filledForm.errors());
-		            return newInfo(filledForm);
+		            return newInfo(filledForm, targetId);
 		        }
 		        filledForm.get().save();
 		        flash("message", "Instance " + filledForm.get().title + " has been created");

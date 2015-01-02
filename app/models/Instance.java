@@ -459,6 +459,10 @@ public class Instance extends UrlModel {
 		return find.where().eq("id", id).findUnique();
 	}
 
+	public static Instance findByTargetAndInstance(Long targetId, Long instanceId) {
+		return find.where().eq("target.id", targetId).eq("id", instanceId).findUnique();
+	}
+	
 	public static Instance findByUrl(String url) {
 		return find.where().eq(Const.URL, url).findUnique();
 	}

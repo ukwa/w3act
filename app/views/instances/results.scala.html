@@ -1,0 +1,77 @@
+@(target: Target, user: User)
+
+@scripts = {
+	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+	<script>
+		$(document).ready(function() {
+
+		});
+	</script>
+}
+
+@styles = {
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+}
+
+@main("", user, scripts, styles) {
+	<div class="page-header">    
+    	<h1><a href="@routes.TargetController.view(target.id)">Target (@target.title)</a> > Look up an Instance</h1>
+    </div>
+    
+    <article class="lookup">
+		@warningmessage(flash)
+    
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>URL(s)</th>
+						<th>Organisation</th>
+						<th>Crawled URL(s)</th>
+						<th>Crawl Frequency</th>
+						<th>User</th>
+						<th>QA Status</th>
+						<th>In Scope</th>
+						<th>Other Archives</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(instance <- target.instances) {
+					<tr>
+						<td>
+							<a class="brand" href="@routes.InstanceController.viewInstance(target.id, instance.id)">@instance.title</a><br>
+							<a class="brand" href="@instance.getFieldUrlAsStr">@instance.getFieldUrlAsStr</a></td>
+						<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.getFieldUrlAsStr">(mid-crawl),</a>
+		                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
+		                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
+						@if(instance.target.organisation != null && instance.target.organisation.title != null) {
+							<td><a href="@routes.OrganisationController.view(instance.target.organisation.id)">
+								@instance.target.organisation.title</a></td>
+						} else {
+							<td></td>
+						}
+						<td>0</td>
+						<td>@instance.target.crawlFrequency</td>
+						<td>
+							@if(instance.authorUser != null) {
+								<a class="brand" href="@routes.UserController.edit(instance.authorUser.id)">@instance.authorUser.name</a>
+							}
+						</td>
+						<td>
+							@if(instance.qaIssue != null) {
+								@instance.qaIssue.name
+							}
+						</td>
+						<td>@instance.checkScope(instance.getFieldListAsStr("fieldUrl"))</td>
+						<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.getFieldUrlAsStr">(mementos)</a></td>
+					</tr>
+					}
+				</tbody>
+			</table>    
+    
+
+   </article>
+    
+}
+

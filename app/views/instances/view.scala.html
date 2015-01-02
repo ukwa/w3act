@@ -16,7 +16,7 @@
 	   	<ol class="breadcrumb">
 			<li><a href="@routes.TargetController.index()">Targets</a></li>
 			<li><a href="@routes.TargetController.view(instance.target.id)">@instance.target.title</a></li>
-			<li><a href="@routes.InstanceController.index()">Instances</a></li>
+			<li><a href="@routes.InstanceController.results(instance.target.id)">Instances</a></li>
 			<li class="active"><span class="badge">@instance.target.fieldUrl()</span></li>
 		</ol>
 	</div>
