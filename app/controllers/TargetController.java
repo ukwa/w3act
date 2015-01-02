@@ -25,6 +25,7 @@ import models.Collection;
 import models.FieldUrl;
 import models.Flag;
 import models.License;
+import models.MailTemplate;
 import models.Organisation;
 import models.QaIssue;
 import models.Subject;
@@ -36,12 +37,14 @@ import play.Logger;
 import play.Play;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
+import uk.bl.Const.MailTemplateType;
 import uk.bl.api.Utils;
 import uk.bl.scope.Scope;
 import views.html.collections.sites;
@@ -379,41 +382,7 @@ public class TargetController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (action.equals("addentry")) {
-    	        Logger.debug("create()");
-    	    	Target target = new Target();
-    	    	// TODO: KL
-//    	    	target.fieldUrl = query;
-    	        target.revision = Const.INITIAL_REVISION;
-    	        target.active = true;
-    	        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
-    	        	target.authorUser = User.findByEmail(request().username());
-    	        }
-    			Logger.debug("add target with url: " + target.url);
-    			Logger.debug("target title: " + target.title);
-    			
-    			Form<Target> targetForm = Form.form(Target.class);
-    			targetForm = targetForm.fill(target);
-    			User user = User.findByEmail(request().username());
-    			JsonNode collectionData = getCollectionsData();
-    			JsonNode subjectData = getSubjectsData();
-    			
-    			Map<String,String> authors = User.options();
-    			Map<String,String> tags = Tag.options();
-    			Map<String,String> flags= Flag.options();
-    			Map<String,String> qaIssues = QaIssue.options();
-    			Map<String,String> languages = Const.TargetLanguage.options();
-    			Map<String,String> selectionTypes = Const.SelectionType.options();
-    			Map<String,String> scopeTypes = Const.ScopeType.options();
-    			Map<String,String> depthTypes = Const.DepthType.options();
-    			Map<String,String> licenses = License.LicenseStatus.options();
-    			Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
-    			Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
-    			Map<String,String> siteStatuses = Const.SiteStatus.options();
-    			Map<String,String> organisations = Organisation.options();
-	  	        return ok(newForm.render(targetForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null));
-    		} 
-    		else if (Const.SEARCH.equals(action)) {
+    		if (action.equals("search")) {
     			Logger.debug("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.TargetController.lookup(pageNo, sort, order, query));
 		    } else {
@@ -421,50 +390,6 @@ public class TargetController extends AbstractController {
 		    }
     	}
     }
-    
-    /**
-     * Add new entry.
-     * @param targetName
-     * @return
-     */
-    public static Result create(String title) {
-        Logger.debug("create()");
-    	Target target = new Target();
-    	// TODO: KL
-//    	target.fieldUrl = title;
-    	// TODO: createId
-//        target.id = Target.createId();
-//        target.url = Const.ACT_URL + target.id;
-        target.revision = Const.INITIAL_REVISION;
-        target.active = true;
-		Logger.debug("add entry with target url: " + target.url);
-		Logger.debug("target name: " + target.title);
-		Form<Target> targetForm = Form.form(Target.class);
-		target.subjectSelect = target.subjectIdsAsString();
-		target.collectionSelect = target.collectionIdsAsString();
-//		if (target.authorUser != null) {
-//			target.authorIdText = target.authorUser.id.toString();
-//		}
-		targetForm = targetForm.fill(target);
-		User user = User.findByEmail(request().username());
-		JsonNode collectionData = getCollectionsData();
-		JsonNode subjectData = getSubjectsData();
-		
-		Map<String,String> authors = User.options();
-		Map<String,Boolean> tags = Tag.options(null);
-		Map<String,String> flags= Flag.options();
-		Map<String,String> qaIssues = QaIssue.options();
-		Map<String,String> languages = Const.TargetLanguage.options();
-		Map<String,String> selectionTypes = Const.SelectionType.options();
-		Map<String,String> scopeTypes = Const.ScopeType.options();
-		Map<String,String> depthTypes = Const.DepthType.options();
-		Map<String,String> licenses = License.LicenseStatus.options();
-		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
-		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
-		Map<String,String> siteStatuses = Const.SiteStatus.options();
-		Map<String,String> organisations = Organisation.options();
-        return ok(edit.render(targetForm, user, null, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null));
-	}
     
     /**
      * Display the paginated list of targets.
@@ -723,6 +648,39 @@ public class TargetController extends AbstractController {
         
     public static Result GO_HOME = redirect(routes.TargetController.list(0, "title", "asc", "", 0, 0, "", "", "", "", 0, 10, 0));
        
+    public static Result newForm() {
+    	User user = User.findByEmail(request().username());
+		Form<Target> filledForm = Form.form(Target.class);
+		Target target = new Target();
+        target.revision = Const.INITIAL_REVISION;
+        target.active = true;
+        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
+        	target.authorUser = User.findByEmail(request().username());
+        }
+		Logger.debug("add target with url: " + target.url);
+		Logger.debug("target title: " + target.title);
+		
+		filledForm = filledForm.fill(target);
+
+		JsonNode collectionData = getCollectionsData();
+		JsonNode subjectData = getSubjectsData();
+		
+		Map<String,String> authors = User.options();
+		List<Tag> tags = Tag.findAllTags();
+		Map<String,String> flags= Flag.options();
+		Map<String,String> qaIssues = QaIssue.options();
+		Map<String,String> languages = Const.TargetLanguage.options();
+		Map<String,String> selectionTypes = Const.SelectionType.options();
+		Map<String,String> scopeTypes = Const.ScopeType.options();
+		Map<String,String> depthTypes = Const.DepthType.options();
+		Map<String,String> licenses = License.LicenseStatus.options();
+		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
+		Map<String,String> siteStatuses = Const.SiteStatus.options();
+		Map<String,String> organisations = Organisation.options();
+	    return ok(newForm.render(filledForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null));
+    }
+    
     /**
      * Display the target edit panel for this URL.
      * @param url The target identifier URL
@@ -739,7 +697,8 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData(target.subjects);
 
 		Map<String,String> authors = User.options();
-		Map<String,Boolean> tags = Tag.options(target.tags);
+		List<Tag> tags = Tag.findAllTags();
+		List<Tag> targetTags = target.tags;
 		Map<String,String> flags= Flag.options();
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();
@@ -751,7 +710,7 @@ public class TargetController extends AbstractController {
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
-        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null));
+        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags));
     }
     
     /**
@@ -906,7 +865,8 @@ public class TargetController extends AbstractController {
 
 		Target target = Target.findById(id);
 		Map<String,String> authors = User.options();
-		Map<String,Boolean> tags = Tag.options(target.tags);
+		List<Tag> tags = Tag.findAllTags();
+		List<Tag> targetTags = target.tags;
 		Map<String,String> flags= Flag.options();
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();
@@ -921,7 +881,7 @@ public class TargetController extends AbstractController {
 
 		DynamicForm requestData = Form.form().bindFromRequest();
         String tabStatus = requestData.get("tabstatus");
-        return badRequest(edit.render(form, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus));
+        return badRequest(edit.render(form, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus, targetTags));
     }
 
 	public static Result newInfo(Form<Target> form) {
@@ -935,7 +895,7 @@ public class TargetController extends AbstractController {
 		JsonNode collectionData = getCollectionsData();
 		JsonNode subjectData = getSubjectsData();
 		Map<String,String> authors = User.options();
-		Map<String,String> tags = Tag.options();
+		List<Tag> tags = Tag.findAllTags();
 		Map<String,String> flags= Flag.options();
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();
@@ -950,7 +910,7 @@ public class TargetController extends AbstractController {
 		DynamicForm requestData = Form.form().bindFromRequest();
         String tabStatus = requestData.get("tabstatus");
 		return badRequest(newForm.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus));
-  }
+	}
 	
     public static Result update(Long id) {
     	DynamicForm requestData = form().bindFromRequest();
@@ -959,11 +919,6 @@ public class TargetController extends AbstractController {
 
     	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
 
-//        if(!filledForm.field("subjectSelect").valueOr("").isEmpty()){
-//            ValidationError e = new ValidationError("subjectSelect", "Subjects Required");
-//            filledForm.reject(e);
-//        }
-    	
         if (filledForm.hasErrors()) {
         	Logger.debug("hasErrors: " + filledForm.errors());
             return info(filledForm, id);
@@ -997,7 +952,7 @@ public class TargetController extends AbstractController {
             return info(filledForm, id);
 	  	}
 
-	  	String fieldUrl = requestData.get("formUrl");
+        String fieldUrl = requestData.get("formUrl");
         
         if (StringUtils.isNotEmpty(fieldUrl)) {
             String[] urls = fieldUrl.split(",");
@@ -1006,13 +961,26 @@ public class TargetController extends AbstractController {
             for (String url : urls) {
             	FieldUrl fu = FieldUrl.findByUrl(url.trim());
             	if (fu == null) {
-	            	fu = new FieldUrl(url.trim());
-	            	// get domain
+                    URL uri;
+					try {
+		            	Logger.debug("url: " + url.trim());
+						uri = new URI(url.trim()).normalize().toURL();
+	        			String extFormUrl = uri.toExternalForm();
+		            	fu = new FieldUrl(extFormUrl.trim());
+		            	Logger.debug("extFormUrl: " + extFormUrl);
+					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
+//						flash("message", e.getMessage());
+//						e.printStackTrace();
+			            ValidationError ve = new ValidationError("formUrl", e.getMessage());
+			            filledForm.reject(ve);
+			            return newInfo(filledForm);
+			        }
             	}
             	fieldUrls.add(fu);
             }
             filledForm.get().fieldUrls = fieldUrls;
-        }		        
+            Logger.debug("fieldUrls: " + fieldUrls);
+        }        
         
 //        String qaIssueId = requestData.get("qaIssueId");
 //        if (StringUtils.isNotEmpty(qaIssueId)) {
@@ -1022,7 +990,7 @@ public class TargetController extends AbstractController {
 //        }
         	            
         List<Tag> newTags = new ArrayList<Tag>();
-        String[] tagValues = formParams.get("tagList");
+        String[] tagValues = formParams.get("tagsList");
 
         if (tagValues != null) {
             for(String tagValue: tagValues) {
@@ -1201,16 +1169,17 @@ public class TargetController extends AbstractController {
 				            	fu = new FieldUrl(extFormUrl.trim());
 				            	Logger.debug("extFormUrl: " + extFormUrl);
 							} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
-								flash("message", e.getMessage());
-								e.printStackTrace();
-//					            ValidationError ve = new ValidationError("formUrl", e.getMessage());
-//					            filledForm.reject(ve);
+//								flash("message", e.getMessage());
+//								e.printStackTrace();
+					            ValidationError ve = new ValidationError("formUrl", e.getMessage());
+					            filledForm.reject(ve);
 					            return newInfo(filledForm);
 					        }
 		            	}
 		            	fieldUrls.add(fu);
 		            }
 		            filledForm.get().fieldUrls = fieldUrls;
+		            Logger.debug("fieldUrls: " + fieldUrls);
 	            }		        
 		        
 //	            String qaIssueId = requestData.get("qaIssueId");
@@ -1221,7 +1190,7 @@ public class TargetController extends AbstractController {
 //	            }
 	            	            
 	            List<Tag> newTags = new ArrayList<Tag>();
-	            String[] tagValues = formParams.get("tagList");
+	            String[] tagValues = formParams.get("tagsList");
 	
 	            if (tagValues != null) {
 		            for(String tagValue: tagValues) {

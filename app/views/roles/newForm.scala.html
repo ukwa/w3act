@@ -1,4 +1,4 @@
-@(roleForm: Form[Role], user: User, permissions: List[Permission])
+@(roleForm: Form[Role], user: User, permissions: List[models.Permission])
 
 @import helper._
 @import bootstrap._
@@ -46,8 +46,8 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Permissions</label>
 						<div class="col-sm-6">
-				        	@for(permission <- permissions) {
-								<label class="checkbox-inline">
+  							@for((permission, index) <- permissions.zipWithIndex) {
+  								<label class="checkbox-inline">
 				                	<input type="checkbox" name="permissionsList" value="@permission.id" />
 					                 @permission.name
 				                </label>

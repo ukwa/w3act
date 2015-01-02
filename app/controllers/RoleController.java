@@ -60,9 +60,10 @@ public class RoleController extends AbstractController {
 		Role role = Role.findById(id);
 		Form<Role> roleForm = Form.form(Role.class);
 		roleForm = roleForm.fill(role);
-		Map<String, Boolean> permissions = Permission.options(role.permissions);
+		List<Permission> permissions = Permission.findAll();
+		List<Permission> rolePermissions = role.permissions;
       	return ok(
-	              edit.render(roleForm, user, id, permissions)
+	              edit.render(roleForm, user, id, permissions, rolePermissions)
 	            );
     }
     
@@ -134,8 +135,9 @@ public class RoleController extends AbstractController {
     public static Result info(Form<Role> form, Long id) {
     	User user = User.findByEmail(request().username());
     	Role role = Role.findById(id);
-		Map<String, Boolean> permissions = Permission.options(role.permissions);
-		return badRequest(edit.render(form, user, id, permissions));
+		List<Permission> permissions = Permission.findAll();
+		List<Permission> rolePermissions = role.permissions;
+		return badRequest(edit.render(form, user, id, permissions, rolePermissions));
     }
     
 	public static Result newInfo(Form<Role> form) {

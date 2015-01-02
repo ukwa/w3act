@@ -411,17 +411,6 @@ public class Target extends UrlModel {
 		//
 	}
 //
-    public String validate() {
-    	Logger.debug("VALIDATE.....");
-        if (title == null) {
-            return "Title is blank";
-        }
-//        if (subjects == null || subjects.isEmpty()) {
-//        	return "Subjects is empty";
-//        }
-        return null;
-    }
-
 	public static Model.Finder<Long, Target> find = new Model.Finder<Long, Target>(
 			Long.class, Target.class);
 
