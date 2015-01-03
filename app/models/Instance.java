@@ -170,18 +170,6 @@ public class Instance extends UrlModel {
 	}
 
     /**
-     * This method retrieves all targets for given user.
-     * @param url
-     * @return
-     */
-    public static List<Instance> findAllforUser(String url) {
-    	List<Instance> res = new ArrayList<Instance>();
-        ExpressionList<Instance> ll = find.where().eq("author", url);
-        res = ll.findList();
-        return res;
-	}
-
-    /**
      * This method retrieves all targets for given organisation.
      * @param url
      * @return

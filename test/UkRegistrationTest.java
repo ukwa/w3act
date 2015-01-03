@@ -24,14 +24,14 @@ public class UkRegistrationTest {
 		fieldUrls.add( new FieldUrl("https://www.gov.uk/government/publications"));
 	}
 
-	@Test
-	public void test() {
-		try {
-			assertTrue(isUkRegistration(fieldUrls));
-		} catch (WhoisException e) {
-			e.printStackTrace();
-		}
-	}
+//	@Test
+//	public void test() {
+//		try {
+//			assertTrue(isUkRegistration(fieldUrls));
+//		} catch (WhoisException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public boolean checkWhois(String domain) {
 		boolean res = false;
