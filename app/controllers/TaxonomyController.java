@@ -118,8 +118,6 @@ public class TaxonomyController extends AbstractController {
     	Taxonomy taxonomy = new Taxonomy();
     	taxonomy.name = name;
     	// TODO: createId
-        taxonomy.id = Target.createId();
-        taxonomy.url = Const.ACT_URL + taxonomy.id;
 		Logger.debug("add entry with url: " + taxonomy.url + ", and name: " + taxonomy.name);
         return ok(
                 edit.render(

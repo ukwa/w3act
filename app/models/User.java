@@ -344,16 +344,6 @@ public class User extends ActModel {
     	return res;
     }
     
-    /**
-     * This method calculates target number for given user URL.
-     * @return
-     */
-    public int getTargetNumberByCuratorUrl() {
-    	int res = 0;
-    	res = Target.getTargetNumberByCuratorUrl(this.url);
-    	return res;
-    }
-    
 	/**
 	 * This method filters users by name and returns a list of filtered User objects.
 	 * @param name

@@ -336,16 +336,6 @@ public class Organisation extends ActModel {
     	return ll;
     }
 
-	/**
-	 * This method computes a number of targets per organisation for given organisation URL.
-	 * @return
-	 */
-    public int getTargetNumberByOrganisationUrl() {
-    	int res = 0;
-    	res = Target.getTargetNumberByOrganisationUrl(this.url);
-    	return res;
-    }	
-
     /**
      * Retrieve all organisations.
      */

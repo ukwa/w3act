@@ -122,8 +122,7 @@ public class Target extends UrlModel {
 	/**
 	 * This field comprises the current tab name for view and edit pages.
 	 */
-	public String tabStatus;
-
+	
 	@Column(columnDefinition = "text")
 	@JsonProperty
 	public String value;
@@ -225,6 +224,9 @@ public class Target extends UrlModel {
 	public String blackList; // regex for black list URLs
 
 	@Transient
+	public String tabStatus;
+
+	@Transient
 	@JsonProperty
 	private String field_uk_domain;
 	
@@ -320,12 +322,6 @@ public class Target extends UrlModel {
 	@Transient
 	public String authorIdText;
 	
-//	public String title;
-//	
-//
-//	@Column(columnDefinition = "text")
-//	public String revision;
-	
 //		"body":[],
 //		"field_scope":"root",
 //		"field_url":[
@@ -394,68 +390,13 @@ public class Target extends UrlModel {
 //				},"log":"",
 //		"revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null
 	
-	
-	//
-//	/**
-//	 * Constructor
-//	 * 
-//	 * @param title
-//	 * @param url
-//	 */
-//	public Target(String title, String url) {
-//		this.title = title;
-//		this.url = url;
-//	}
+	public Target() {}
 
-	public Target() {
-		//
-	}
-//
 	public static Model.Finder<Long, Target> find = new Model.Finder<Long, Target>(
 			Long.class, Target.class);
 
-	/**
-	 * Retrieve targets
-	 */
-	public static List<Target> findInvolving() {
-		Logger.debug("Target.findInvolving()");
-		return find.all();
-	}
-
-	/**
-	 * Retrieve targets
-	 */
 	public static List<Target> findAll() {
 		return find.all();
-	}
-
-	/**
-	 * This method retrieves all targets for given organisation.
-	 * 
-	 * @param url
-	 * @return
-	 */
-	public static List<Target> findAllforOrganisation(String url) {
-		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true)
-				.eq(Const.FIELD_NOMINATING_ORGANISATION, url);
-		res = ll.findList();
-		return res;
-	}
-
-	/**
-	 * This method returns all Targets that comprise link to given collection
-	 * 
-	 * @param collectionUrl
-	 *            - The collection identifier
-	 * @return Targets list
-	 */
-	public static List<Target> findAllByCollectionUrl(String collectionUrl) {
-		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> ll = find.where().contains(
-				Const.FIELD_SUGGESTED_COLLECTIONS, collectionUrl);
-		res = ll.findList();
-		return res;
 	}
 
 	/**
@@ -484,196 +425,6 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * Create a new target.
-	 */
-	public static Target create(String title, String url) {
-		Target target = new Target();
-		target.title = title;
-		target.url = url;
-		target.save();
-		return target;
-	}
-
-	/**
-	 * Rename a target
-	 */
-	public static String rename(Long targetId, String newName) {
-		Target target = find.ref(targetId);
-		target.title = newName;
-		target.update();
-		return newName;
-	}
-
-	/**
-	 * This method translates database view to the HTML view.
-	 * 
-	 * @return list of Strings
-	 */
-	public List<String> get_field_list(String fieldName) {
-		List<String> res = new ArrayList<String>();
-		try {
-			res.add(Const.EMPTY);
-			Field field = this.getClass().getField(fieldName);
-			String content = (String) field.get(this);
-			res = Arrays.asList(content.split("\\s*,\\s*"));
-		} catch (IllegalArgumentException e) {
-			Logger.debug(e.getMessage());
-		} catch (IllegalAccessException e) {
-			Logger.debug(e.getMessage());
-		} catch (SecurityException e) {
-			Logger.debug(e.getMessage());
-		} catch (NoSuchFieldException e) {
-			Logger.debug(e.getMessage());
-		} catch (Exception e) {
-			Logger.debug(e.getMessage());
-		}
-		return res;
-	}
-
-	/**
-	 * This method computes duplicates for target URLs.
-	 * 
-	 * @return duplicate count
-	 */
-//	public int getDuplicateNumber() {
-//		int res = 0;
-//		ExpressionList<Target> ll = find.fetch("fieldUrls").where().eq("fieldUrls.url", this.fieldUrl());
-//		res = ll.findRowCount();
-//		return res;
-//	}
-
-	/**
-	 * This method computes a number of targets per user for given user URL.
-	 * 
-	 * @return
-	 */
-	public static int getTargetNumberByCuratorUrl(String url) {
-		int res = 0;
-		ExpressionList<Target> ll = find.where().eq("author", url);
-		res = ll.findRowCount();
-		return res;
-	}
-
-	/**
-	 * This method is checking whether target id already exists.
-	 * 
-	 * @param id
-	 * @return checking result
-	 */
-	public static boolean isTargetId(Long id) {
-		boolean res = false;
-		Target target = find.where().eq(Const.ID, id).findUnique();
-		if (target != null) {
-			res = true;
-		}
-		return res;
-	}
-
-	/**
-	 * This method creates ID for new Target and proves that generated ID does
-	 * not exists.
-	 * 
-	 * @return new Target ID
-	 */
-	public static Long createId() {
-		Long res = Utils.INSTANCE.createId();
-		if (Target.isTargetId(res)) {
-			Logger.debug("Target with nid " + res + " already exists.");
-			res = createId();
-		}
-		return res;
-	}
-
-	/**
-	 * This method computes a number of targets per taxonomy for given taxonomy
-	 * URL.
-	 * 
-	 * @return
-	 */
-	public static int getTargetNumberByTaxonomyUrl(String url) {
-		int res = 0;
-		ExpressionList<Target> ll = find.where().eq(
-				Const.FIELD_COLLECTION_CATEGORIES, url);
-		res = ll.findRowCount();
-		return res;
-	}
-
-	/**
-	 * This method computes a number of targets per user for given subject URL.
-	 * 
-	 * @return
-	 */
-	public static int getTargetNumberBySubjectUrl(String url) {
-		int res = 0;
-		ExpressionList<Target> ll = find.where().eq("field_subject", url);
-		res = ll.findRowCount();
-		return res;
-	}
-
-	/**
-	 * This method computes a number of targets per organisation for given
-	 * organisation URL.
-	 * 
-	 * @return
-	 */
-	public static int getTargetNumberByOrganisationUrl(String url) {
-		int res = 0;
-		ExpressionList<Target> ll = find.where().eq(
-				"field_nominating_organisation", url);
-		res = ll.findRowCount();
-		return res;
-	}
-
-	/**
-	 * This method computes a number of targets for given crawl frequency.
-	 * 
-	 * @return
-	 */
-	public static int getTargetNumberByCrawlFrequency(String url) {
-		int res = 0;
-		ExpressionList<Target> ll = find.where().eq("field_crawl_frequency",
-				url);
-		res = ll.findRowCount();
-		return res;
-	}
-
-	/**
-	 * This method computes a number of targets for given depth.
-	 * 
-	 * @return
-	 */
-	public static int getTargetNumberByDepth(String url) {
-		int res = 0;
-		ExpressionList<Target> ll = find.where().eq("field_depth", url);
-		res = ll.findRowCount();
-		return res;
-	}
-
-	/**
-	 * This method computes a number of targets for given license.
-	 * 
-	 * @return
-	 */
-	public static int getTargetNumberByLicense(String url) {
-		int res = 0;
-		ExpressionList<Target> ll = find.where().eq("field_license", url);
-		res = ll.findRowCount();
-		return res;
-	}
-
-	/**
-	 * This method computes a number of targets for given scope.
-	 * 
-	 * @return
-	 */
-	public static int getTargetNumberByScope(String url) {
-		int res = 0;
-		ExpressionList<Target> ll = find.where().eq("field_scope", url);
-		res = ll.findRowCount();
-		return res;
-	}
-
-	/**
 	 * This method filters targets by given URLs.
 	 * 
 	 * @return duplicate count
@@ -689,114 +440,6 @@ public class Target extends UrlModel {
 		List<Target> res = new ArrayList<Target>();
 		ExpressionList<Target> ll = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true).contains("fieldUrls.url", url);
 		res = ll.findList();
-		return res;
-	}
-
-	/**
-	 * This method filters targets by given User URLs.
-	 * 
-	 * @return duplicate count
-	 */
-	public static List<Target> filterUserUrl(String url) {
-		List<Target> res = new ArrayList<Target>();
-		if (url == null || url.equals(Const.NONE)) {
-			res = find.all();
-		} else {
-			ExpressionList<Target> ll = find.where()
-					.contains(Const.AUTHOR, url);
-			res = ll.findList();
-		}
-		return res;
-	}
-
-	/**
-	 * This method filters targets by given Organisation URLs.
-	 * 
-	 * @return duplicate count
-	 */
-	public static List<Target> filterOrganisationUrl(String url) {
-		List<Target> res = new ArrayList<Target>();
-		if (url == null || url.equals(Const.NONE)) {
-			res = find.all();
-		} else {
-			ExpressionList<Target> ll = find.where().contains(
-					Const.FIELD_NOMINATING_ORGANISATION, url);
-			res = ll.findList();
-		}
-		return res;
-	}
-
-	/**
-	 * This method filters targets by given Curator and Organisation URLs.
-	 * 
-	 * @return duplicate count
-	 */
-	public static List<Target> filterCuratorAndOrganisationUrl(
-			String curatorUrl, String organisationUrl) {
-		List<Target> res = new ArrayList<Target>();
-		if (curatorUrl != null && organisationUrl != null) {
-			ExpressionList<Target> ll = find.where().contains(
-					"field_nominating_organisation", organisationUrl);
-			res = ll.findList();
-		}
-		return res;
-	}
-
-	/**
-	 * This method filters targets by given URLs.
-	 * 
-	 * @return duplicate count
-	 */
-//	public static List<String> getSubjects() {
-//		List<String> subjects = new ArrayList<String>();
-//		List<Target> allTargets = find.all();
-//		Iterator<Target> itr = allTargets.iterator();
-////		while (itr.hasNext()) {
-////			Target target = itr.next();
-////			if (target.fieldSubject != null && target.fieldSubject.length() > 0
-////					&& !subjects.contains(target.fieldSubject)) {
-////				ExpressionList<Target> ll = find.where().contains(
-////						"field_subject", target.fieldSubject);
-////				if (ll.findRowCount() > 0) {
-////					subjects.add(target.fieldSubject);
-////				}
-////			}
-////		}
-////		return subjects;
-//		throw new NotImplementedError();
-//	}
-
-	/**
-	 * This method retrieves user name for the passed author URL.
-	 * 
-	 * @return
-	 */
-	public String get_user_by_id() {
-		String res = "";
-		try {
-			// TODO: KL
-			// res = User.findByUrl(author).name;
-		} catch (Exception e) {
-			Logger.debug("no user found for url: " + this.getAuthor() + ". " + e);
-		}
-		return res;
-	}
-
-	/**
-	 * Check by URL if target object exists in database.
-	 * 
-	 * @param url
-	 * @return true if exists
-	 */
-	public static boolean existInDb(String url) {
-		boolean res = false;
-		if (url != null) {
-			Target resObj = find.where().eq(Const.URL, url)
-					.eq(Const.ACTIVE, true).findUnique();
-			if (resObj != null) {
-				res = true;
-			}
-		}
 		return res;
 	}
 
@@ -882,8 +525,7 @@ public class Target extends UrlModel {
 				isInScope = isInScopeIp(fieldUrl.url);
 			}
 			if (!isInScope) {
-				// TODO: KL TO REFACTOR
-//				isInScope = isInScopeDomain(url, nidUrl);
+				isInScope = this.isTopLevelDomain();
 			}
 			return isInScope;
 		} catch (Exception ex) {
@@ -978,32 +620,6 @@ public class Target extends UrlModel {
 		}
 	}
 
-//	public boolean isUkHosting(Target target) {
-//		for (FieldUrl fieldUrl : target.fieldUrls) {
-//			if (!this.checkGeoIp(fieldUrl.url)) return false;
-//		}
-//		return true;
-//	}
-
-//	/**
-//	 * This method checks whether the passed URL is in scope for rules
-//	 * associated with scope IP. This check is without license field.
-//	 * 
-//	 * @param url
-//	 *            The search URL
-//	 * @param nidUrl
-//	 *            The identifier URL in the project domain model
-//	 * @return result as a flag
-//	 */
-//	public boolean isInScopeIpWithoutLicense(String url) {
-//		try {
-//			return Scope.INSTANCE.checkScopeIpWithoutLicense(url, this);
-//		} catch (WhoisException ex) {
-//			Logger.debug("Exception: " + ex);
-//			return false;
-//		}
-//	}
-
 	/**
 	 * This method checks whether the passed URL is in scope for particular mode
 	 * e.g. IP or DOMAIN.
@@ -1065,36 +681,6 @@ public class Target extends UrlModel {
 		res = ll.findList();
 		return res;
 	}
-
-//	public String toString() {
-//		StringWriter sw = new StringWriter();
-//		sw.append(Const.TARGET_DEF);
-//		Field[] fields = this.getClass().getFields();
-//		for (Field f : fields) {
-//			Object value;
-//			try {
-//				value = f.get(this);
-//				String col = "";
-//				if (value != null && value.toString() != null) {
-//					col = value.toString().replace("\n", "");
-//				}
-//				sw.append(col);
-//				sw.append(Const.CSV_SEPARATOR);
-//			} catch (IllegalArgumentException e) {
-//				Logger.debug("reflection illegal argument. " + e);
-//			} catch (IllegalAccessException e) {
-//				Logger.debug("reflection illegal access. " + e);
-//			}
-//		}
-//		sw.append(Const.CSV_LINE_END);
-//		return sw.toString();
-//	}
-
-	// Could really do with many_to_one relationship
-	// TODO: KL
-//	public Organisation getOrganisation() {
-//		return Organisation.findByUrl(field_no);
-//	}
 
 	/**
 	 * This method evaluates if element is in a list separated by list delimiter
@@ -1163,48 +749,6 @@ public class Target extends UrlModel {
 		res = Utils.INSTANCE.hasElementInList(curContactPerson, this.authorUser.url);
 		return res;
 	}
-
-//	/**
-//	 * This method returns a list of all scope type values for target record.
-//	 * 
-//	 * @return
-//	 */
-//	public static List<String> getAllScopeTypes() {
-//		List<String> res = new ArrayList<String>();
-//		Const.ScopeType[] resArray = Const.ScopeType.values();
-//		for (int i = 0; i < resArray.length; i++) {
-//			res.add(resArray[i].name());
-//		}
-//		return res;
-//	}
-//
-//	/**
-//	 * This method returns a list of all depth type values for target record.
-//	 * 
-//	 * @return
-//	 */
-//	public static List<String> getAllDepthTypes() {
-//		List<String> res = new ArrayList<String>();
-//		Const.DepthType[] resArray = Const.DepthType.values();
-//		for (int i = 0; i < resArray.length; i++) {
-//			res.add(resArray[i].name());
-//		}
-//		return res;
-//	}
-//
-//	/**
-//	 * This method returns a list of all flag values for target record.
-//	 * 
-//	 * @return
-//	 */
-//	public static List<String> getAllFlags() {
-//		List<String> res = new ArrayList<String>();
-//		Const.TargetFlags[] resArray = Const.TargetFlags.values();
-//		for (int i = 0; i < resArray.length; i++) {
-//			res.add(resArray[i].name());
-//		}
-//		return res;
-//	}
 
 	/**
 	 * Return a page of Target
@@ -1793,73 +1337,6 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * This method calculates selected flags for presentation in view page.
-	 * 
-	 * @return flag list as a string
-	 */
-//	public String getSelectedFlags() {
-////		String res = "";
-////		boolean firstTime = true;
-////		if (this.flags != null) {
-////			if (this.flags.contains(Const.LIST_DELIMITER)) {
-////				String[] parts = this.flags.split(Const.LIST_DELIMITER);
-////				for (String part : parts) {
-////					try {
-////						if (firstTime) {
-////							res = Flags.getGuiName(Flag.findByUrl(part).name);
-////							firstTime = false;
-////						} else {
-////							res = res
-////									+ Const.LIST_DELIMITER
-////									+ Flags.getGuiName(Flag.findByUrl(part).name);
-////						}
-////					} catch (Exception e) {
-////						Logger.error("getSelectedFlags error: " + e);
-////					}
-////				}
-////			}
-////		}
-////		if (res.length() == 0) {
-////			res = Const.NONE;
-////		}
-////		return res;
-//		throw new NotImplementedError();
-//	}
-
-	/**
-	 * This method calculates selected tags for presentation in view page.
-	 * 
-	 * @return tag list as a string
-	 */
-//	public String getSelectedTags() {
-////		String res = "";
-////		boolean firstTime = true;
-////		if (this.tags != null) {
-////			if (this.tags.contains(Const.LIST_DELIMITER)) {
-////				String[] parts = this.tags.split(Const.LIST_DELIMITER);
-////				for (String part : parts) {
-////					try {
-////						if (firstTime) {
-////							res = Tag.findByUrl(part).name;
-////							firstTime = false;
-////						} else {
-////							res = res + Const.LIST_DELIMITER
-////									+ Tag.findByUrl(part).name;
-////						}
-////					} catch (Exception e) {
-////						Logger.error("getSelectedTags error: " + e);
-////					}
-////				}
-////			}
-////		}
-////		if (res.length() == 0) {
-////			res = Const.NONE;
-////		}
-////		return res;
-//		throw new NotImplementedError();
-//	}
-
-	/**
 	 * This method returns status value as a String
 	 * 
 	 * @return
@@ -1896,52 +1373,6 @@ public class Target extends UrlModel {
 		Logger.debug("getLatestCreatedTarget() res: " + res);
 		return res;
 	}
-
-	/**
-	 * This method returns GUI representation of the date.
-	 * 
-	 * @param date
-	 * @return GUI string
-	 */
-	public static String getDateAsString(String date) {
-		String res = "";
-		if (date != null && date.length() > 0) {
-			res = Utils.INSTANCE.showTimestampInTable((String) date);
-		}
-		return res;
-	}
-	
-
-
-//	@JsonIgnore
-//	public Target getHigherLevelTarget() {
-//		// field_url - the domain name
-//		// field_license - act-168
-//		if (StringUtils.isNotEmpty(this.fieldUrl())) {
-//			String normalisedUrl = Scope.INSTANCE.normalizeUrl(this.fieldUrl());
-//			String domain = Scope.INSTANCE.getDomainFromUrl(normalisedUrl);
-//			ExpressionList<Target> ll = find.where()
-//					.icontains(Const.FIELD_URL, domain).eq(Const.ACTIVE, true);
-//			List<Target> targets = ll.findList();
-//			for (Target target : targets) {
-//				if (isHigherLevel(target.fieldUrl())) {
-//					return target;
-//				}
-//			}
-//
-//		}
-//		return null;
-//	}
-//
-//	public static List<Target> findUkwaTargets(String domain, String url) {
-//		Logger.debug("Parameters: " + domain + " - " + url.length());
-//		String query = "find target fetch fieldUrls fetch licenses where fieldUrls.url like :domain and LENGTH(fieldUrls.url) < :length";
-//        List<Target> targets = Ebean.createQuery(Target.class, query)
-//        		.setParameter("domain", "%" + domain + "%")
-//        		.setParameter("length", url.length()).where().or(Expr.isNotNull("licenses"), Expr.isNotNull("qaIssue")).findList();
-//		return targets;
-//	}
-//	
 
 	public Boolean getIsUkHosting() {
 		return isUkHosting;
@@ -2461,38 +1892,6 @@ public class Target extends UrlModel {
 		Logger.debug("getNpldStatusList() targets result list size: " + res.size());
 		return res;
 	}
-		
-//	/**
-//	 * This method evaluates if given current URL has lower level then URL from
-//	 * the list.
-//	 * 
-//	 * @param iterUrl
-//	 *            The URL from the list
-//	 * @param currentUrl
-//	 *            The current URL
-//	 * @return
-//	 */
-//	@JsonIgnore
-//	public static boolean isHigherLevel(String iterUrl, String currentUrl) {
-//		boolean res = false;
-//		if (currentUrl.contains(iterUrl) && currentUrl.indexOf(iterUrl) == 0
-//				&& currentUrl.length() > iterUrl.length()) {
-//			res = true;
-//		}
-//		return res;
-//	}
-//
-//	@JsonIgnore
-//	public boolean isHigherLevel(String otherUrl) {
-//		for (FieldUrl thisFieldUrl : this.fieldUrls) {
-//			boolean highLevel = (thisFieldUrl.url.contains(otherUrl) 
-//					&& thisFieldUrl.url.indexOf(otherUrl) == 0 
-//					&& thisFieldUrl.url.length() > otherUrl.length());
-//			// Logger.debug("iterUrl: " + iterUrl + " " + highLevel);
-//			return highLevel;
-//		}
-//		return false;
-//	}
 
 	@JsonIgnore
 	public boolean hasLicenses() {
@@ -2598,7 +1997,6 @@ public class Target extends UrlModel {
 		Target target = Target.findById(targetId);
 		return (target.qaIssue != null);
 	}
-
 
 	@Override
 	public String toString() {

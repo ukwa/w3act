@@ -37,6 +37,7 @@ public enum DataImport {
 	INSTANCE;
 
 	public void insert() {
+		
         try {
 
 			if (Ebean.find(User.class).findRowCount() == 0) {
@@ -68,126 +69,11 @@ public enum DataImport {
 			if (Ebean.find(Instance.class).findRowCount() == 0) {
 				this.importInstances();
 			}
-	        	
-//				// aggregate url data from drupal and store JSON content in a file
-//		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
-//				// store urls in DB
-//                Ebean.save(allUrls);
-//                Logger.debug("targets successfully loaded");
-
-                
-                
-                ////                List<Target> targetList = (List<Target>) Target.find.all();
-////                Iterator<Target> targetItr = targetList.iterator();
-////                while (targetItr.hasNext()) {
-////                	Target target = targetItr.next();
-//////                    Logger.debug("Target test object: " + target.toString());
-////					if (target.field_subject == null
-////							|| target.field_subject.length() == 0) {
-////						target.field_subject = Const.NONE;
-////						Ebean.update(target);
-////					}
-////                }
-//                Logger.debug("load organisations ...");
-//				// aggregate organisations data from drupal and store JSON content in a file
-//		        List<Object> allOrganisations = JsonUtils.getDrupalData(Const.NodeType.ORGANISATION);
-//		        List<Object> allSingleOrganisations = Organisations.skipExistingObjects(allOrganisations);
-//				// store organisations in DB
-//                Ebean.save(allSingleOrganisations);
-//                JsonUtils.normalizeOrganisationUrlInUser();
-//                Logger.debug("organisations successfully loaded");
-//                Logger.debug("load taxonomies ...");
-//                // aggregate original taxonomies from drupal extracting information from aggregated data
-//		        List<Object> allTaxonomies = JsonUtils.INSTANCE.extractDrupalData(Const.NodeType.TAXONOMY);
-////		        List<Taxonomy> cleanedTaxonomies = cleanUpTaxonomies(allTaxonomies);
-//				// store taxonomies in DB
-//                Ebean.save(allTaxonomies);
-////                Ebean.save(cleanedTaxonomies);
-//                Logger.debug("taxonomies successfully loaded");
-//                // due to merging of different original object models the resulting 
-//                // collection set is evaluated from particular taxonomy type
-//                Logger.debug("load collections ..."); 
-//		        List<Object> allCollections = JsonUtils.readCollectionsFromTaxonomies();
-//				// store collections in DB
-//                Ebean.save(allCollections);
-//                Logger.debug("collections successfully loaded");
-			
-//                Logger.debug("load instances");
-//				// aggregate instances data from drupal and store JSON content in a file
-			
-			
-//		        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
-//		        Logger.debug("Number of instances: " + allInstances.size());
-//				// store instances in DB
-//                Ebean.save(allInstances);
-//                Logger.debug("instances successfully loaded");
-//                JsonUtils.mapInstancesToTargets();
-//                Logger.debug("map instances to targets");
-			//JsonUtils.getDomainForTargets();
-//                Logger.debug("Target domains extracted");
-//          normalizeUrls();
-//                // Create association between Creator and Organisation
-//	            List<User> creatorList = (List<User>) User.find.all();
-//	            Iterator<User> creatorItr = creatorList.iterator();
-//	            while (creatorItr.hasNext()) {
-//	              	User creator = creatorItr.next();
-////                    Logger.debug("Test creator test object: " + creator.toString());
-//                    creator.updateOrganisation(); // NO NEED AS WE ARE USING ORM AND ALREADY IMPORTED
-//                    // Create association between User and Role
-////                	creator.role_to_user = Role.convertUrlsToObjects(creator.roles);
-//        			Ebean.update(creator);
-//	            }                
-//                // Create associations for Target
-//	            List<Target> targetList = (List<Target>) Target.find.all();
-//	            Iterator<Target> targetItr = targetList.iterator();
-//	            while (targetItr.hasNext()) {
-//	            	Target target = targetItr.next();
-////                    Logger.debug("Test target object: " + target.toString());
-//	            	// Create association between Target and Organisation
-//	            	target.updateOrganisation();
-//                    // Create association between Target and DCollection
-//                	target.collectionToTarget = Collection.convertUrlsToObjects(target.fieldCollectionCategories);
-//                    // Create association between Target and Subject (Taxonomy)
-//                	target.subject = Taxonomy.convertUrlsToObjects(target.fieldSubject);
-//                    // Create association between Target and License (Taxonomy)
-//                	target.licenseToTarget = Taxonomy.convertUrlsToObjects(target.fieldLicense);
-//                    // Create association between Target and Flag
-//                	target.flagToTarget = Flag.convertUrlsToObjects(target.flags);
-//                    // Create association between Target and Tag
-//                	target.tagToTarget = Tag.convertUrlsToObjects(target.tags);
-//        			Ebean.update(target);
-//	            }
-//                // Create associations for Instance
-//	            List<Instance> instanceList = (List<Instance>) Instance.find.all();
-//	            Iterator<Instance> instanceItr = instanceList.iterator();
-//	            while (instanceItr.hasNext()) {
-//	            	Instance instance = instanceItr.next();
-//	                // Create association between Instance and Organisation
-//                    instance.updateOrganisation();
-//                    // Create association between Instance and DCollection
-//                	instance.collectionToInstance = Collection.convertUrlsToObjects(instance.fieldCollectionCategories);
-//                    // Create association between Instance and Subject (Taxonomy)
-//                	instance.subjectToInstance = Taxonomy.convertUrlsToObjects(instance.fieldSubject); 		
-//                    // Create association between Instance and Flag
-//         instance.flagToInstance = Flag.convertUrlsToObjects(instance.flags);
-//                    // Create association between Instance and Tag
-//         instance.tagToInstance = Tag.convertUrlsToObjects(instance.tags);
-//        			Ebean.update(instance);
-//	            }
-//                // Create association between Permission and Role			
-			// TODO: KL WHY WE NEED TO DO THIS?
-//	            List<Permission> permissionList = (List<Permission>) Permission.find.all();
-//	            Iterator<Permission> permissionItr = permissionList.iterator();
-//	            while (permissionItr.hasNext()) {
-//	            	Permission permission = permissionItr.next();
-////                    Logger.debug("Test permission test object: " + permission.toString());
-//                    permission.updateRole();
-//        			Ebean.update(permission);
-//	            }
-                Logger.debug("+++ Data import completed +++");
-	        } catch (Exception e) {
-            	e.printStackTrace();
-            }
+            Logger.debug("+++ Data import completed +++");
+            
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
 	}
 	
 	private void importPermissions() {
@@ -197,7 +83,6 @@ public enum DataImport {
 		for (Permission permission : permissions) {
 			permission.save();
 		}
-//		Ebean.save(permissions);
 	}
 	
 	private void importRoles() {
@@ -207,7 +92,6 @@ public enum DataImport {
 		for (Role role : roles) {
 			role.save();
 		}
-//		Ebean.save(roles);
 	}
 	
 	private void importAccounts() {
@@ -218,9 +102,8 @@ public enum DataImport {
 			for (User user : users) {
 				user.password = PasswordHash.createHash(user.password);
 				user.createdAt = new Date();
+				user.save();
 			}
-			Ebean.save(users);
-//			Logger.debug("hash password: " + user.password);
 		} catch (NoSuchAlgorithmException e) {
 			Logger.debug("initial password creation - no algorithm error: " + e);
 		} catch (InvalidKeySpecException e) {
@@ -347,42 +230,6 @@ public enum DataImport {
         Logger.debug("Loaded Instances");
 	}
 
-//    /**
-//	 * normalize URL if there is "_" e.g. in taxonomy_term
-//	 */
-//	public void normalizeUrls() {
-//        List<Target> targets = Target.findAll();
-//        Iterator<Target> itr = targets.iterator();
-//        while (itr.hasNext()) {
-//        	Target target = itr.next();
-////			if (target.fieldCollectionCategories != null && target.fieldCollectionCategories.contains("_")) {
-////				target.fieldCollectionCategories = target.fieldCollectionCategories.replace("_", "/");
-////			}
-////			if (target.fieldLicense != null && target.fieldLicense.contains("_")) {
-////				target.fieldLicense = target.fieldLicense.replace("_", "/");
-////			}
-//            Ebean.update(target);
-//		}
-//	}
-
-//    /**
-//     * This method removes from taxonomy list old subject taxonomies.
-//     * @param taxonomyList
-//     * @return
-//     */
-//    public List<Taxonomy> cleanUpTaxonomies(List<Object> taxonomyList) {
-//    	List<Taxonomy> res = new ArrayList<Taxonomy>();
-//        Iterator<Object> taxonomyItr = taxonomyList.iterator();
-//        while (taxonomyItr.hasNext()) {
-//        	Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
-//        	if (!(taxonomy.ttype.equals(Const.SUBJECT) && (taxonomy.parent == null || taxonomy.parent.length() == 0)) 
-//        			&& !(taxonomy.ttype.equals(Const.SUBSUBJECT) && taxonomy.parent.contains(Const.ACT_URL))) {
-//        		res.add(taxonomy);
-//        	}
-//        }
-//        return res;
-//    }
-    
 	public static void main(String[] args) {
 		Logger.debug("start");
 		new play.core.StaticApplication(new java.io.File("."));

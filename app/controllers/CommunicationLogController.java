@@ -93,8 +93,6 @@ public class CommunicationLogController extends AbstractController {
         	if (name != null && name.length() > 0) {
             	CommunicationLog log = new CommunicationLog();
             	log.name = name;
-                log.id = Target.createId();
-                log.url = Const.ACT_URL + log.id;
                 log.user = User.findByEmail(request().username());        
         		Logger.debug("add communication log entry with url: " + log.url + ", and name: " + 
         				log.name + ", curator: " + log.user);
@@ -162,8 +160,6 @@ public class CommunicationLogController extends AbstractController {
     public static Result create(String name) {
     	CommunicationLog log = new CommunicationLog();
     	log.name = name;
-        log.id = Target.createId();
-        log.url = Const.ACT_URL + log.id;
         log.user = User.findByEmail(request().username());        
 		Logger.debug("add communication log entry with url: " + log.url + ", and name: " + 
 				log.name + ", curator: " + log.user);

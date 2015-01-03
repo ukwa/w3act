@@ -213,7 +213,6 @@ create table target (
   is_in_scope_ip_without_license boolean,
   active                    boolean,
   flag_notes                text,
-  tab_status                varchar(255),
   value                     text,
   summary                   text,
   special_dispensation      boolean,
