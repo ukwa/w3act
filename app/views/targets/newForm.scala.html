@@ -1,4 +1,4 @@
-@(targetForm: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: Map[String,String], tags: List[Tag], flags: Map[String,String], qaIssues: Map[String,String], languages: Map[String,String], selectionTypes: Map[String,String], scopeTypes: Map[String,String], depthTypes: Map[String,String], licensesMap: Map[String,String], crawlPermissionStatuses: Map[String,String], crawlFrequencies: Map[String,String], siteStatuses: Map[String,String], organisations: Map[String,String], tabStatus: String)
+@(targetForm: Form[Target], user: User, collectionData :com.fasterxml.jackson.databind.JsonNode, subjectData :com.fasterxml.jackson.databind.JsonNode, authors: Map[String,String], tags: List[Tag], flags: List[Flag], qaIssues: Map[String,String], languages: Map[String,String], selectionTypes: Map[String,String], scopeTypes: Map[String,String], depthTypes: Map[String,String], licenses: List[License], licenseStatuses: Map[String,String], crawlFrequencies: Map[String,String], siteStatuses: Map[String,String], organisations: Map[String,String], tabStatus: String)
 
 @import helper._
 @import bootstrap._
@@ -495,15 +495,15 @@
 			   		<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								@select(
-		              					targetForm("flag.id"), 
-						                options(flags),
-						                args =
-						                'class -> "form-control", 
-						                '_label -> "Flag(s) (Allows users to flag record for attention, using a pre-defined list of flag names):",
-						                '_showConstraints -> false,
-						                'multiple->"multiple"
-					            )(FieldConstructor(genericInput.f), lang)	
+								<label class="col-sm-6 control-label">Flag(s) (Allows users to flag record for attention, using a pre-defined list of flag names)</label>
+								<div class="col-sm-6">
+		  							@for((flag, index) <- flags.zipWithIndex) {
+		  								<label class="checkbox-inline">
+						                	<input type="checkbox" name="flagsList" value="@flag.id" />
+								                 @flag.name
+						                </label>
+						            }
+								</div>
 							</div>
 						</div>
 			     	</div>	     		
@@ -852,15 +852,16 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@select(
-              					targetForm("licenses.id"), 
-				                options(licensesMap), 
-				                args = 
-				                'class -> "form-control",
-				                '_label -> "License (The license terms under which this site is archived and made available):",
-				                '_showConstraints -> false,
-				                'multiple->"multiple"
-				            )(FieldConstructor(genericInput.f), lang)						
+							<label class="col-sm-6 control-label" for="license">
+								License (The license terms under which this site is archived and made available)
+							</label>
+							<div class="col-sm-6">
+								<select name="licensesList" id="license" class="form-control">
+									@for(license <- licenses) {
+										<option value="@license.id">@license.name</option>
+									}
+								</select>
+							</div>
 						</div>
 					</div>
 		     	</div>	
@@ -871,7 +872,7 @@
 					        @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 								@select(
 		              					targetForm("qaStatus"), 
-						                options(crawlPermissionStatuses), 
+						                options(licenseStatuses), 
 						                args = 
 						                'class -> "form-control",
 						                '_label -> "Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):",
@@ -881,7 +882,7 @@
 					        } else {
 								@select(
 		              					targetForm("qaStatus"), 
-						                options(crawlPermissionStatuses), 
+						                options(licenseStatuses), 
 						                args = 
 						                'class -> "form-control",
 						                '_label -> "Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):",

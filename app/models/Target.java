@@ -1,13 +1,11 @@
 package models;
 
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -223,6 +221,8 @@ public class Target extends UrlModel {
 	public String whiteList; // regex for white list URLs
 	public String blackList; // regex for black list URLs
 
+	public String licenseStatus;
+	
 	@Transient
 	public String tabStatus;
 
@@ -1316,23 +1316,6 @@ public class Target extends UrlModel {
 //			}
 //		}
 		Logger.debug("exportLdFrequency() resulting list size: " + res.size());
-		return res;
-	}
-
-	/**
-	 * Retrieve a Target by crawl URL.
-	 * 
-	 * @param url
-	 *            The crawl URL
-	 * @return target The target object
-	 */
-	public static Target findByFieldUrl(String url) {
-		Target res = new Target();
-		Logger.debug("findByFieldUrl() target url: " + url);
-		if (url != null) {
-			res = find.where().eq(Const.FIELD_URL, url).eq(Const.ACTIVE, true)
-					.findUnique();
-		}
 		return res;
 	}
 

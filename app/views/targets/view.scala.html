@@ -815,8 +815,8 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Open UKWA license requests <small class="text-center">(This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button)</small></label>
 						    <div class="col-sm-6">
-						    	@if(target.qaIssue != null) {
-		 							@target.qaIssue.name
+						    	@if(target.licenseStatus != null) {
+						    		@License.LicenseStatus.getLicenseStatus(target.licenseStatus).getValue
 		 						}
 							</div>
 						</div>

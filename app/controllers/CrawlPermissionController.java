@@ -337,7 +337,7 @@ public class CrawlPermissionController extends AbstractController {
 
     	        updateAllByTarget(filledForm.get().url, filledForm.get().target.title, filledForm.get().status);
     	        
-    	        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
+//    	        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
     	        
 		        String targetUrl = filledForm.get().target.formUrl;
 		        filledForm.get().target = Target.findByTarget(targetUrl);
@@ -398,7 +398,7 @@ public class CrawlPermissionController extends AbstractController {
 		        
     	        updateAllByTarget(filledForm.get().url, filledForm.get().target.title, filledForm.get().status);
 
-    	        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
+//    	        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
 
 		        flash("message", "Crawl Permission " + filledForm.get().name + " has been created");
 		        return redirect(routes.CrawlPermissionController.view(filledForm.get().id));
@@ -513,7 +513,7 @@ public class CrawlPermissionController extends AbstractController {
         	        Ebean.save(log);
                 	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
         	        updateAllByTarget(permission.url, permission.target.title, permission.status);
-        	        TargetController.updateQaStatus(permission.target.title, permission.status);
+//        	        TargetController.updateQaStatus(permission.target.title, permission.status);
                 }
             }
         }
@@ -652,7 +652,7 @@ public class CrawlPermissionController extends AbstractController {
 	        	        Ebean.save(log);
 	                	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
 	        	        updateAllByTarget(permission.url, permission.target.title, permission.status);
-	        	        TargetController.updateQaStatus(permission.target.title, permission.status);
+//	        	        TargetController.updateQaStatus(permission.target.title, permission.status);
                 	} else {
 	                	Logger.debug("Missing contact email. Please check contact person");
 	        	        res = false;

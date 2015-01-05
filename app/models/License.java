@@ -41,6 +41,14 @@ public class License extends Taxonomy {
         	return value;
         }
         
+    	public static LicenseStatus getLicenseStatus(String name) {
+    		for (LicenseStatus licenseStatus : LicenseStatus.values()) {
+    			if (licenseStatus.name().equals(name)) {
+    				return licenseStatus;
+    			}
+    		}
+    		return null;
+    	}
     	public static Map<String,String> options() {
             LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
             for(LicenseStatus t: LicenseStatus.values()) {
@@ -70,6 +78,11 @@ public class License extends Taxonomy {
 	
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,License> find = new Model.Finder(Long.class, License.class);
+    
+    public static License findById(Long id) {
+    	License license = find.byId(id);
+    	return license;
+    }
     
     public static License findByUrl(String url) {
     	License license = find.where().eq(Const.URL, url).findUnique();
@@ -112,6 +125,13 @@ public class License extends Taxonomy {
     	return this.hasStatus(LicenseStatus.SUPERSEDED.name());
     }
     
+	public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(License t: License.findAllLicenses()) {
+            options.put(t.id.toString(), t.name);
+        }
+        return options;		
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

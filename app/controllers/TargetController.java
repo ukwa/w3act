@@ -43,7 +43,6 @@ import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
-import uk.bl.Const.MailTemplateType;
 import uk.bl.api.Utils;
 import uk.bl.scope.Scope;
 import views.html.collections.sites;
@@ -676,18 +675,18 @@ public class TargetController extends AbstractController {
 		
 		Map<String,String> authors = User.options();
 		List<Tag> tags = Tag.findAllTags();
-		Map<String,String> flags= Flag.options();
+		List<Flag> flags= Flag.findAllFlags();
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();
 		Map<String,String> selectionTypes = Const.SelectionType.options();
 		Map<String,String> scopeTypes = Const.ScopeType.options();
 		Map<String,String> depthTypes = Const.DepthType.options();
-		Map<String,String> licenses = License.LicenseStatus.options();
-		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+		List<License> licenses = License.findAllLicenses();
+		Map<String,String> licenseStatuses = License.LicenseStatus.options();
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
-	    return ok(newForm.render(filledForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null));
+	    return ok(newForm.render(filledForm, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null));
     }
     
     /**
@@ -708,18 +707,20 @@ public class TargetController extends AbstractController {
 		Map<String,String> authors = User.options();
 		List<Tag> tags = Tag.findAllTags();
 		List<Tag> targetTags = target.tags;
-		Map<String,String> flags= Flag.options();
+		List<Flag> flags= Flag.findAllFlags();
+		List<Flag> targetFlags = target.flags;
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();
 		Map<String,String> selectionTypes = Const.SelectionType.options();
 		Map<String,String> scopeTypes = Const.ScopeType.options();
 		Map<String,String> depthTypes = Const.DepthType.options();
-		Map<String,String> licenses = License.LicenseStatus.options();
-		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+		List<License> licenses = License.findAllLicenses();
+		List<License> targetLicenses = target.licenses;
+		Map<String,String> licenseStatuses = License.LicenseStatus.options();
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
-        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags));
+        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
     }
     
     public static Result delete(Long id) {
@@ -799,23 +800,6 @@ public class TargetController extends AbstractController {
 	    }
     }
     
-    /**
-     * This method updates QA status for target if it is changed for e.g. 
-     * associated crawl permission.
-     * @param fieldUrl The target crawl URL
-     * @param qaStatus The current QA status
-     */
-    public static void updateQaStatus(String fieldUrl, String qaStatus) {
-        if (fieldUrl != null) {
-        	Target targetObj = Target.findByFieldUrl(fieldUrl);
-        	if (targetObj != null && targetObj.url != null) {
-	        	targetObj.qaIssue.url = qaStatus;
-	        	Logger.debug("update Qa Status for target object: " + qaStatus);
-    	        Ebean.update(targetObj);
-        	}
-        }
-    }
-    
 	/**
 	 * This method indicates to the user in a target record if data has been entered 
 	 * by other users relating to NPLD status in another target record at a higher 
@@ -882,21 +866,23 @@ public class TargetController extends AbstractController {
 		Map<String,String> authors = User.options();
 		List<Tag> tags = Tag.findAllTags();
 		List<Tag> targetTags = target.tags;
-		Map<String,String> flags= Flag.options();
+		List<Flag> flags= Flag.findAllFlags();
+		List<Flag> targetFlags = target.flags;
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();
 		Map<String,String> selectionTypes = Const.SelectionType.options();
 		Map<String,String> scopeTypes = Const.ScopeType.options();
 		Map<String,String> depthTypes = Const.DepthType.options();
-		Map<String,String> licenses = License.LicenseStatus.options();
-		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+		List<License> licenses = License.findAllLicenses();
+		List<License> targetLicenses = target.licenses;
+		Map<String,String> licenseStatuses = License.LicenseStatus.options();
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
 
 		DynamicForm requestData = Form.form().bindFromRequest();
         String tabStatus = requestData.get("tabstatus");
-        return badRequest(edit.render(form, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus, targetTags));
+        return badRequest(edit.render(form, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus, targetTags, targetFlags, targetLicenses));
     }
 
 	public static Result newInfo(Form<Target> form) {
@@ -911,20 +897,20 @@ public class TargetController extends AbstractController {
 		JsonNode subjectData = getSubjectsData();
 		Map<String,String> authors = User.options();
 		List<Tag> tags = Tag.findAllTags();
-		Map<String,String> flags= Flag.options();
+		List<Flag> flags= Flag.findAllFlags();
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> languages = Const.TargetLanguage.options();
 		Map<String,String> selectionTypes = Const.SelectionType.options();
 		Map<String,String> scopeTypes = Const.ScopeType.options();
 		Map<String,String> depthTypes = Const.DepthType.options();
-		Map<String,String> licenses = License.LicenseStatus.options();
-		Map<String,String> crawlPermissionStatuses = Const.CrawlPermissionStatus.options();
+		List<License> licenses = License.findAllLicenses();
+		Map<String,String> licenseStatuses = License.LicenseStatus.options();
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
 		DynamicForm requestData = Form.form().bindFromRequest();
         String tabStatus = requestData.get("tabstatus");
-		return badRequest(newForm.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, crawlPermissionStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus));
+		return badRequest(newForm.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus));
 	}
 	
     public static Result update(Long id) {
@@ -1020,6 +1006,18 @@ public class TargetController extends AbstractController {
 		            filledForm.get().tags = newTags;
 		        }
 		        
+		        List<Flag> newFlags = new ArrayList<Flag>();
+		        String[] flagValues = formParams.get("flagsList");
+		
+		        if (flagValues != null) {
+		            for(String flagValue: flagValues) {
+		            	Long flagId = Long.valueOf(flagValue);
+		            	Flag flag =  Flag.findById(flagId);
+		            	newFlags.add(flag);
+		            }
+		            filledForm.get().flags = newFlags;
+		        }
+		        
 		        List<Subject> newSubjects = new ArrayList<Subject>();
 		        String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
 		        Logger.debug("subjectSelect: " + subjectSelect);
@@ -1062,19 +1060,6 @@ public class TargetController extends AbstractController {
 		//        	filledForm.get().authorUser = author;
 		//        }
 		
-		        List<Flag> newFlags = new ArrayList<Flag>();
-		        String[] flagValues = formParams.get("flagList");
-		
-		        if (flagValues != null) {
-		            for(String flagValue: flagValues) {
-		            	Logger.debug("flagValue: " + flagValue);
-		            	Long flagId = Long.valueOf(flagValue);
-		            	Flag flag = Flag.findById(flagId);
-		            	newFlags.add(flag);
-		            }
-		            filledForm.get().flags = newFlags;
-		        }
-		        
 		        String dateOfPublication = requestData.get("dateOfPublicationText");
 		    	if (StringUtils.isNotEmpty(dateOfPublication)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -1109,8 +1094,20 @@ public class TargetController extends AbstractController {
 			            return info(filledForm, id);
 					}
 		    	}
-		        
-		        
+		    	
+		    	
+		        List<License> newLicenses = new ArrayList<License>();
+		        String[] licenseValues = formParams.get("licensesList[]");
+		
+		        if (licenseValues != null) {
+		            for(String licenseValue: licenseValues) {
+		            	Long licenseId = Long.valueOf(licenseValue);
+		            	License license =  License.findById(licenseId);
+		            	newLicenses.add(license);
+		            }
+		            filledForm.get().licenses = newLicenses;
+		        }
+		    	
 		        filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));
@@ -1232,6 +1229,18 @@ public class TargetController extends AbstractController {
             filledForm.get().tags = newTags;
         }
         
+        List<Flag> newFlags = new ArrayList<Flag>();
+        String[] flagValues = formParams.get("flagsList");
+
+        if (flagValues != null) {
+            for(String flagValue: flagValues) {
+            	Long flagId = Long.valueOf(flagValue);
+            	Flag flag =  Flag.findById(flagId);
+            	newFlags.add(flag);
+            }
+            filledForm.get().flags = newFlags;
+        }
+        
         List<Subject> newSubjects = new ArrayList<Subject>();
         String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
         Logger.debug("subjectSelect: " + subjectSelect);
@@ -1274,18 +1283,6 @@ public class TargetController extends AbstractController {
 //	            	filledForm.get().authorUser = author;
 //	            }
 //	
-        List<Flag> newFlags = new ArrayList<Flag>();
-        String[] flagValues = formParams.get("flagList");
-
-        if (flagValues != null) {
-            for(String flagValue: flagValues) {
-            	Logger.debug("flagValue: " + flagValue);
-            	Long flagId = Long.valueOf(flagValue);
-            	Flag flag = Flag.findById(flagId);
-            	newFlags.add(flag);
-            }
-            filledForm.get().flags = newFlags;
-        }
         
         String dateOfPublication = requestData.get("dateOfPublicationText");
     	if (StringUtils.isNotEmpty(dateOfPublication)) {
@@ -1321,6 +1318,19 @@ public class TargetController extends AbstractController {
 	            return newInfo(filledForm);
 			}
     	}
+    	
+        List<License> newLicenses = new ArrayList<License>();
+        String[] licenseValues = formParams.get("licensesList[]");
+
+        if (licenseValues != null) {
+            for(String licenseValue: licenseValues) {
+            	Long licenseId = Long.valueOf(licenseValue);
+            	License license =  License.findById(licenseId);
+            	newLicenses.add(license);
+            }
+            filledForm.get().licenses = newLicenses;
+        }
+        
     	filledForm.get().url = "act-" + Utils.INSTANCE.createId();
     	filledForm.get().save();
         flash("success", "Target " + filledForm.get().title + " has been created");

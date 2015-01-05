@@ -248,6 +248,7 @@ create table target (
   crawl_end_date            timestamp,
   white_list                varchar(255),
   black_list                varchar(255),
+  license_status            varchar(255),
   updated_at                timestamp not null,
   constraint uq_target_url unique (url),
   constraint pk_target primary key (id))
