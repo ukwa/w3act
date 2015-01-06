@@ -840,8 +840,8 @@ public class Target extends UrlModel {
 			String depthName, String collectionSelect, Long licenseId,
 			Long flagId) {
 		
-		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").fetch("flags").fetch("licenses").fetch("subjects").fetch("collections").where();
-		Page<Target> res = null;
+		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").where();
+		
 		exp = exp.eq(Const.ACTIVE, true);
 	
 		exp = exp.add(Expr.or(
@@ -849,10 +849,10 @@ public class Target extends UrlModel {
 				Expr.icontains("title", filterUrl))
 			);
 		
-		if (curatorId != -1) {
+		if (curatorId != 0) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
-		if (organisationId != -1) {
+		if (organisationId != 0) {
 			exp = exp.eq("organisation.id", organisationId);
 		}
 		if (StringUtils.isNotEmpty(crawlFrequencyName)) {
@@ -861,10 +861,10 @@ public class Target extends UrlModel {
 		if (StringUtils.isNotEmpty(depthName)) {
 			exp = exp.eq("depth", depthName);
 		}
-		if (licenseId != -1) {
-			exp = exp.eq("licenses.id", flagId);
+		if (licenseId != 0) {
+			exp = exp.eq("licenses.id", licenseId);
 		}
-		if (flagId != -1) {
+		if (flagId != 0) {
 			exp = exp.eq("flags.id", flagId);
 		}
 		
@@ -879,16 +879,17 @@ public class Target extends UrlModel {
         }
         
         if (StringUtils.isNotEmpty(collectionSelect)) {
-        	List<Long> collectionIds = new ArrayList<Long>();
+        	List<Collection> collectionIds = new ArrayList<Collection>();
             String[] collections = collectionSelect.split(", ");
             for (String cId : collections) {
             	Long collectionId = Long.valueOf(cId);
-            	collectionIds.add(collectionId);
+            	Collection collection = Collection.findById(collectionId);
+            	collectionIds.add(collection);
             }
-    		exp = exp.in("collections.id", collectionIds);
+    		exp = exp.in("collections", collectionIds);
         }
 
-		res = exp.query().orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
+        Page<Target> res = exp.query().orderBy(sortBy + " " + order).orderBy("fieldUrls.domain").findPagingList(pageSize).setFetchAhead(false).getPage(page);
 		Logger.debug("Expression list size: " + res.getTotalRowCount());
 		return res;
 	}

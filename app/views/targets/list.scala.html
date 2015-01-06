@@ -65,6 +65,7 @@
 }
 
 @pagination = {
+	@if(currentPage.getTotalPageCount() > 0) {
 		<div class="text-center">
 			<ul class="pagination">
 	        	@if(currentPage.hasPrev) {
@@ -90,6 +91,7 @@
 				}
 			</ul>
 		</div>
+	}
 }
 
 @main(title, user, scripts, styles) {
@@ -150,7 +152,7 @@
 											<label for="curator" class="col-md-4 col-sm-4 control-label">Curator</label>
 							            	<div class="col-md-8 col-sm-8">
 												<select name="curator" class="form-control target-form-control" id="curator">
-													<option value="-1">None</option>
+													<option value="0">None</option>
 													@for(curator <- users) {
 														@if(curator.id == curatorId) {
 															<option value="@curator.id" selected>@curator.name</option>
@@ -165,7 +167,7 @@
 							            	<label for="organisation" class="col-md-4 col-sm-4 control-label">Organisation</label>
 							            	<div class="col-md-8 col-sm-8">
 												<select name="organisation" class="form-control target-form-control" id="organisation">
-													<option value="-1">None</option>
+													<option value="0">None</option>
 										            	@for(organisation <- organisations) {
 								                 		  		@if(organisation.id == organisationId) {
 									                			<option value="@organisation.id" selected>@organisation.title</option>
@@ -210,7 +212,7 @@
 							            	<label for="license" class="col-md-4 col-sm-4 control-label">License</label>
 							            	<div class="col-md-8 col-sm-8">
 												<select name="license" class="form-control target-form-control" id="license">
-													<option value="-1">None</option>
+													<option value="0">None</option>
 										            @for(license <- licenses) {
 								                 		@if(license.id == licenseId) {
 									                		<option value="@license.id" selected>@license.name</option>
@@ -225,7 +227,7 @@
 							            	<label for="flags" class="col-md-4 col-sm-4 control-label">Flag</label>
 							            	<div class="col-md-8 col-sm-8">
 												<select name="flag" class="form-control target-form-control" id="flags">
-													<option value="-1">None</option>
+													<option value="0">None</option>
 										            @for(flag <- flags) {
 								                  		@if(flag.id == flagId) {
 										                	<option value="@flag.id" selected>@flag.name</option>
@@ -284,6 +286,7 @@
 					<div id="data-column">
 					
 				    	@pagination
+				    	
 						<table class="table table-hover">
 							<thead>
 				                <tr>

@@ -49,7 +49,6 @@ import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
 import views.html.infomessage;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -133,7 +132,7 @@ public class TargetController extends AbstractController {
     public static Result list(int pageNo, String sortBy, String order, String filter, Long curatorId, Long organisationId, String subject, 
     		String crawlFrequencyName, String depthName, String collection, Long licenseId, int pageSize, Long flagId) {
     	
-    	Logger.debug("Pre Targets.list() : " + pageNo + " - " + filter + " - " + curatorId + " - " + organisationId + " - " + subject + " - " + crawlFrequencyName + " - " + depthName + " - " + collection + " - " + licenseId + " - " + pageSize + " - " + flagId);
+    	Logger.debug("Pre Targets.list(): " + pageNo + " - " + filter + " - " + curatorId + " - " + organisationId + " - " + subject + " - " + crawlFrequencyName + " - " + depthName + " - " + collection + " - " + licenseId + " - " + pageSize + " - " + flagId);
 
     	Page<Target> pageTargets = Target.pageTargets(pageNo, pageSize, sortBy, order, filter, curatorId, organisationId, subject, crawlFrequencyName, depthName, collection, licenseId, flagId);
     	
@@ -166,6 +165,8 @@ public class TargetController extends AbstractController {
 		CrawlFrequency[] crawlFrequencies = Const.CrawlFrequency.values();
 		List<Flag> flags = Flag.findAllFlags();
 
+		Logger.debug("getTotalRowCount: " + pageTargets.getTotalRowCount());
+		
         return ok(list.render(
 			"Targets", 
 			user, 
@@ -1097,7 +1098,7 @@ public class TargetController extends AbstractController {
 		    	
 		    	
 		        List<License> newLicenses = new ArrayList<License>();
-		        String[] licenseValues = formParams.get("licensesList[]");
+		        String[] licenseValues = formParams.get("licensesList");
 		
 		        if (licenseValues != null) {
 		            for(String licenseValue: licenseValues) {
@@ -1320,7 +1321,7 @@ public class TargetController extends AbstractController {
     	}
     	
         List<License> newLicenses = new ArrayList<License>();
-        String[] licenseValues = formParams.get("licensesList[]");
+        String[] licenseValues = formParams.get("licensesList");
 
         if (licenseValues != null) {
             for(String licenseValue: licenseValues) {
