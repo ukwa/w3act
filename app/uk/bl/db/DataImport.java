@@ -78,7 +78,7 @@ public enum DataImport {
 	
 	private void importPermissions() {
 		@SuppressWarnings("unchecked")
-		Map<String,List<Permission>> allPermissions = (Map<String,List<Permission>>)Yaml.load("Accounts.yml");
+		Map<String,List<Permission>> allPermissions = (Map<String,List<Permission>>)Yaml.load("accounts.yml");
 		List<Permission> permissions = allPermissions.get(Const.PERMISSIONS);
 		for (Permission permission : permissions) {
 			permission.save();
@@ -87,7 +87,7 @@ public enum DataImport {
 	
 	private void importRoles() {
 		@SuppressWarnings("unchecked")
-		Map<String,List<Role>> allRoles = (Map<String,List<Role>>)Yaml.load("Accounts.yml");
+		Map<String,List<Role>> allRoles = (Map<String,List<Role>>)Yaml.load("accounts.yml");
 		List<Role> roles = allRoles.get(Const.ROLES);
 		for (Role role : roles) {
 			role.save();
@@ -96,7 +96,7 @@ public enum DataImport {
 	
 	private void importAccounts() {
 		@SuppressWarnings("unchecked")
-		Map<String,List<User>> accounts = (Map<String,List<User>>)Yaml.load("Accounts.yml");
+		Map<String,List<User>> accounts = (Map<String,List<User>>)Yaml.load("accounts.yml");
 		List<User> users = accounts.get(Const.USERS);
 		try {
 			for (User user : users) {

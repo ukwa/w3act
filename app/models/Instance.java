@@ -498,7 +498,7 @@ public class Instance extends UrlModel {
         
 		List<Instance> list = new ArrayList<Instance>();
 		if (timestamp != null && url != null && url.length() > 0) {
-	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TIMESTAMP, timestamp).eq(Const.FIELD_TARGET, url);
+	        ExpressionList<Instance> ll = find.fetch("target").fetch("target.fieldUrls").where().eq(Const.FIELD_TIMESTAMP, timestamp).eq("target.fieldUrls.url", url);
 	    	list = ll.findList(); 
 		}
 
@@ -520,7 +520,7 @@ public class Instance extends UrlModel {
 	 */
 	public static List<Instance> findAllInstancesByTarget(String url) {
 		List<Instance> list = new ArrayList<Instance>();
-        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
+        ExpressionList<Instance> ll = find.fetch("target").fetch("target.fieldUrls").where().eq("target.fieldUrls.url", url);
     	list = ll.findList(); 
 		return list;
 	}
@@ -535,7 +535,7 @@ public class Instance extends UrlModel {
         Date lastDate = null;
 		if (url != null && url.length() > 0) {
 			List<Instance> instanceList = new ArrayList<Instance>();
-	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
+	        ExpressionList<Instance> ll = find.fetch("target").fetch("target.fieldUrls").where().eq("target.fieldUrls.url", url);
 	        instanceList = ll.findList(); 
 	        Iterator<Instance> itr = instanceList.iterator();
 //	        Date lastDate = new Date();
@@ -589,7 +589,7 @@ public class Instance extends UrlModel {
 		Date lastDate = null;
 		if (url != null && url.length() > 0) {
 			List<Instance> instanceList = new ArrayList<Instance>();
-	        ExpressionList<Instance> ll = find.where().eq(Const.FIELD_TARGET, url);
+	        ExpressionList<Instance> ll = find.fetch("target").fetch("target.fieldUrls").where().eq("target.fieldUrls.url", url);
 	        instanceList = ll.findList(); 
 	        Iterator<Instance> itr = instanceList.iterator();
 	        while (itr.hasNext()) {
@@ -662,9 +662,8 @@ public class Instance extends UrlModel {
     public static Page<Instance> pageByTarget(int page, int pageSize, String sortBy, String order, 
     		String filter, String targetUrl) {
 
-//    	Logger.debug("Instnce.pageByTarget() filter: " + filter);
-        return find.where().icontains(Const.FIELD_URL_NODE, filter)
-        		.eq(Const.FIELD_TARGET, targetUrl)
+        return find.fetch("target").fetch("target.fieldUrls").where().icontains(Const.FIELD_URL_NODE, filter)
+        		.eq("fieldUrls.url", targetUrl)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

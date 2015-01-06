@@ -767,24 +767,12 @@ public class Target extends UrlModel {
 	public static Page<Target> pageQa(int page, int pageSize, String sortBy,
 			String order, String filter, String collections, Long qaIssueId) {
 
-		Logger.debug("pageQa() collection: " + collections + ", qaStatus: "
-				+ qaIssueId + ", filter: " + filter);
+		Logger.debug("pageQa() collection: " + collections + ", qaStatus: " + qaIssueId + ", filter: " + filter);
 
-        String collectionSelect = collections.replace("\"", "");
-        Logger.debug("collectionSelect: " + collectionSelect);
-        List<Long> collectionIds = new ArrayList<Long>();
-        if (StringUtils.isNotEmpty(collectionSelect)) {
-            String[] collectionArray = collectionSelect.split(", ");
-            for (String c : collectionArray) {
-            	Long collectionId = Long.valueOf(c);
-            	collectionIds.add(collectionId);
-            }
-        }		     
-		
 		ExpressionList<Target> results = Target.find.fetch("fieldUrls").fetch("collections").where();
+		
 		Page<Target> res = null;
-		results = results.eq(Const.ACTIVE, true);
-	
+
 		results = results.add(Expr.or(
 				Expr.icontains("fieldUrls.url", filter), 
 				Expr.icontains("title", filter))
@@ -795,12 +783,23 @@ public class Target extends UrlModel {
 			results = results.eq("qaIssue.id", qaIssueId);
 		}
 
-		results = results.in("collections.id", collectionIds);
+        String collectionSelect = collections.replace("\"", "");
+        Logger.debug("collectionSelect: " + collectionSelect);
+        List<Long> collectionIds = new ArrayList<Long>();
+        if (StringUtils.isNotEmpty(collectionSelect)) {
+            String[] collectionArray = collectionSelect.split(", ");
+            for (String c : collectionArray) {
+            	Long collectionId = Long.valueOf(c);
+            	collectionIds.add(collectionId);
+            }
+    		results = results.in("collections.id", collectionIds);
+        }		     
+        
 
 		results = results.eq("active", true);
 
 
-		res = results.query().orderBy(sortBy + " " + order).orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);        
+		res = results.query().orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);        
         
 		return res;
 	}

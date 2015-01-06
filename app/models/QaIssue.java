@@ -4,10 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 
 import play.db.ebean.Model;
 import uk.bl.Const;
@@ -16,12 +14,6 @@ import uk.bl.Const;
 @DiscriminatorValue("quality_issues")
 public class QaIssue extends Taxonomy {
 
-	@OneToMany(mappedBy = "qaIssue", cascade = CascadeType.ALL)
-	public List<Target> targets;
-	
-	@OneToMany(mappedBy = "qaIssue", cascade = CascadeType.ALL)
-	public List<Instance> instances;
-	
 	/**
 	 * 
 	 */
