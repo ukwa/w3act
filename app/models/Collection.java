@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import play.Logger;
 import play.db.ebean.*;
@@ -25,6 +26,19 @@ public class Collection extends Taxonomy {
 	 */
 	private static final long serialVersionUID = 3043585612371074777L;
 
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "collection_target", joinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") },
+			inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
+	public List<Target> targets;
+
+    @JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+	public List<Instance> instances;
+
+    
 	public static Model.Finder<Long,Collection> find = new Model.Finder<Long, Collection>(Long.class, Collection.class);
     
     /**
@@ -291,7 +305,7 @@ public class Collection extends Taxonomy {
 	}       
     
 	public static List<Collection> getFirstLevelCollections() {
-	       List<Collection> rootCollections = find.where().isNull("parent").order().asc("name").findList();
+	       List<Collection> rootCollections = find.fetch("targets").where().isNull("parent").order().asc("name").findList();
 	       Logger.debug("getFirstLevelCollections list size: " + rootCollections.size());
 	       return rootCollections;
 	} 
@@ -365,6 +379,5 @@ public class Collection extends Taxonomy {
 		return children;
 	}
 	
-
 }
 

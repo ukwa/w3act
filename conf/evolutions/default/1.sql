@@ -362,16 +362,22 @@ create table taxonomy_parents_all (
   constraint pk_taxonomy_parents_all primary key (taxonomy_id, parent_id))
 ;
 
-create table taxonomy_target (
-  taxonomy_id                    bigint not null,
-  target_id                      bigint not null,
-  constraint pk_taxonomy_target primary key (taxonomy_id, target_id))
+create table flag_instance (
+  flag_id                        bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_flag_instance primary key (flag_id, instance_id))
 ;
 
-create table taxonomy_instance (
-  taxonomy_id                    bigint not null,
+create table tag_instance (
+  tag_id                         bigint not null,
   instance_id                    bigint not null,
-  constraint pk_taxonomy_instance primary key (taxonomy_id, instance_id))
+  constraint pk_tag_instance primary key (tag_id, instance_id))
+;
+
+create table license_instance (
+  instance_id                    bigint not null,
+  license_id                     bigint not null,
+  constraint pk_license_instance primary key (instance_id, license_id))
 ;
 create sequence communication_log_seq;
 
@@ -486,13 +492,17 @@ alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_01
 
 alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_02 foreign key (parent_id) references taxonomy (id);
 
-alter table taxonomy_target add constraint fk_taxonomy_target_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
+alter table flag_instance add constraint fk_flag_instance_taxonomy_01 foreign key (flag_id) references taxonomy (id);
 
-alter table taxonomy_target add constraint fk_taxonomy_target_target_02 foreign key (target_id) references target (id);
+alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (instance_id) references instance (id);
 
-alter table taxonomy_instance add constraint fk_taxonomy_instance_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
+alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key (tag_id) references taxonomy (id);
 
-alter table taxonomy_instance add constraint fk_taxonomy_instance_instance_02 foreign key (instance_id) references instance (id);
+alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
+
+alter table license_instance add constraint fk_license_instance_taxonomy_01 foreign key (instance_id) references taxonomy (id);
+
+alter table license_instance add constraint fk_license_instance_instance_02 foreign key (license_id) references instance (id);
 
 # --- !Downs
 
@@ -543,10 +553,6 @@ drop table if exists taxonomy cascade;
 drop table if exists taxonomy_user cascade;
 
 drop table if exists taxonomy_parents_all cascade;
-
-drop table if exists taxonomy_target cascade;
-
-drop table if exists taxonomy_instance cascade;
 
 drop table if exists taxonomy_type cascade;
 

@@ -75,18 +75,6 @@ public class Taxonomy extends MappedSuperClass {
 	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
 	public List<Taxonomy> parentsAllList;
 
-    @JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "taxonomy_target", joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
-			inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
-	public List<Target> targets;
-
-    @JsonIgnore
-    @ManyToMany
-	@JoinTable(name = "taxonomy_instance", joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
-	public List<Instance> instances;
-    
     @Transient
     @JsonProperty
     private String tid;
