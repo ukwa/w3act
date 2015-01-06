@@ -774,7 +774,7 @@ public final class Const {
 		ANNUAL("Annually"),
 		SIXMONTHLY("Six-monthly"),
 		QUARTERLY("Quarterly"),
-		MONTLY("Monthly"),
+		MONTHLY("Monthly"),
 		OLD_MONTHLY_DO_NOT_USE("Old-Monthly-DO-NOT-USE"),
 		WEEKLY("Weekly"),
 		DAILY("Daily"),
