@@ -792,9 +792,9 @@ public class Target extends UrlModel {
             	Long collectionId = Long.valueOf(c);
             	collectionIds.add(collectionId);
             }
-    		results = results.in("collections.id", collectionIds);
         }		     
         
+		results = results.in("collections.id", collectionIds);
 
 		results = results.eq("active", true);
 
