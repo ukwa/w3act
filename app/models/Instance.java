@@ -579,37 +579,44 @@ public class Instance extends UrlModel {
 		return res;		
 	}
 	
-	/**
-	 * This method evaluates the latest Instance object for given target.
-	 * @param url
-	 * @return link to the instance
-	 */
-	public static Instance getLatestInstance(String url) {
-		Instance res = null;
-		Date lastDate = null;
-		if (url != null && url.length() > 0) {
-			List<Instance> instanceList = new ArrayList<Instance>();
-	        ExpressionList<Instance> ll = find.fetch("target").fetch("target.fieldUrls").where().eq("target.fieldUrls.url", url);
-	        instanceList = ll.findList(); 
-	        Iterator<Instance> itr = instanceList.iterator();
-	        while (itr.hasNext()) {
-	        	Instance instance = itr.next();
-	        	Date curDate = instance.fieldTimestamp;
-	        	if (lastDate == null) {
-	        		lastDate = curDate;
-	        	}
-//	        	long lastDateTime = Long.parseLong(lastDate);
-//	        	long curDateTime = Long.parseLong(curDate);
-	            if(curDate.after(lastDate)){
-//	        	if (curDateTime > lastDateTime) {
-	        		lastDate = curDate;
-	        	}
-	        }
+	public static Instance findLastInstanceByTarget(Long targetId) {
+		Instance instance = null;
+		List<Instance> instances = find.setMaxRows(1).where().eq("target.id", targetId).order("createdAt desc").findList();
+		if (instances != null && !instances.isEmpty()) {
+			instance = instances.get(0);
 		}
-		Instance instance = Instance.findByTimestampAndUrl(lastDate, url);
-		res = instance;	
-		return res;
+		return instance;
 	}
+	
+//	/**
+//	 * This method evaluates the latest Instance object for given target.
+//	 * @param url
+//	 * @return link to the instance
+//	 */
+//	public static Instance getLatestInstance(Long id) {
+//		Instance res = null;
+//		Date lastDate = null;
+//			List<Instance> instanceList = new ArrayList<Instance>();
+//	        ExpressionList<Instance> ll = find.fetch("target").fetch("target.fieldUrls").where().eq("target.fieldUrls.url", id);
+//	        instanceList = ll.findList(); 
+//	        Iterator<Instance> itr = instanceList.iterator();
+//	        while (itr.hasNext()) {
+//	        	Instance instance = itr.next();
+//	        	Date curDate = instance.fieldTimestamp;
+//	        	if (lastDate == null) {
+//	        		lastDate = curDate;
+//	        	}
+////	        	long lastDateTime = Long.parseLong(lastDate);
+////	        	long curDateTime = Long.parseLong(curDate);
+//	            if(curDate.after(lastDate)){
+////	        	if (curDateTime > lastDateTime) {
+//	        		lastDate = curDate;
+//	        	}
+//	        }
+//		Instance instance = Instance.findByTimestampAndUrl(lastDate, id);
+//		res = instance;	
+//		return res;
+//	}
 	
 
 	/**
@@ -659,11 +666,10 @@ public class Instance extends UrlModel {
      * @param filter Filter applied on the name column
      * @param targetUrl Filter by target url
      */
-    public static Page<Instance> pageByTarget(int page, int pageSize, String sortBy, String order, 
-    		String filter, String targetUrl) {
+    public static Page<Instance> pageByTarget(int page, int pageSize, String sortBy, String order, String filter, Long targetId) {
 
-        return find.fetch("target").fetch("target.fieldUrls").where().icontains(Const.FIELD_URL_NODE, filter)
-        		.eq("fieldUrls.url", targetUrl)
+        return find.fetch("target").where()
+        		.eq("target.id", targetId)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

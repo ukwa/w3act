@@ -1,4 +1,4 @@
-@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Instance], currentSortBy: String, currentOrder: String, targetUrl: String)
+@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Instance], currentSortBy: String, currentOrder: String, targetId: Long)
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
@@ -40,7 +40,7 @@
     }
     
     // Generate the link
-    routes.InstanceController.listByTarget(newPage, sortBy, order, searchurl, targetUrl)
+    routes.InstanceController.listByTarget(newPage, sortBy, order, searchurl, targetId)
     
 }
 
@@ -128,7 +128,7 @@
 					<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.getFieldUrlAsStr">(mid-crawl),</a>
 	                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
 	                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
-					<td>@uk.bl.Const.QAStatusType.getQaStatus(instance.qaIssue.name).getValue()</td>
+					<td>@instance.qaIssue.name</td>
 					<td>@instance.updatedAt</td>
 					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.getFieldUrlAsStr">(mementos)</a></td>
 				</tr>

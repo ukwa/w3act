@@ -94,17 +94,18 @@ public class InstanceController extends AbstractController {
      * @param filter Filter applied on instance urls
      * @param targetUrl Filter by target url
      */
-    public static Result listByTarget(int pageNo, String sortBy, String order, String filter, String targetUrl) {
+    public static Result listByTarget(int pageNo, String sortBy, String order, String filter, Long targetId) {
     	Logger.debug("Instances.listByTarget()");
+    	Page<Instance> pages = Instance.pageByTarget(pageNo, 10, sortBy, order, filter, targetId);
         return ok(
         	listByTarget.render(
         			"Lookup", 
         			User.findByEmail(request().username()), 
         			filter, 
-        			Instance.pageByTarget(pageNo, 10, sortBy, order, filter, targetUrl), 
+        			pages, 
         			sortBy, 
         			order,
-        			targetUrl)
+        			targetId)
         	);
     }
 	
@@ -187,11 +188,11 @@ public class InstanceController extends AbstractController {
      * @param url The target URL
      * @return instances view
      */
-    public static Result showByTarget(String url) {    	
-    	if (url != null && url.length() > 0) {
+    public static Result showByTarget(Long targetId) {    	
+    	if (targetId != null) {
 			Logger.debug("Show instances filtered by target.");
 	        return redirect(
-	        		routes.InstanceController.listByTarget(0, "title", "asc", "", url)
+	        		routes.InstanceController.listByTarget(0, "title", "asc", "", targetId)
 	        );
     	}    	
         return redirect(

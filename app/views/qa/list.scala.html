@@ -200,9 +200,14 @@
 								<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
 							}						
 						</td>
-						<td><a class="brand" href="@routes.InstanceController.showByTarget(target.url)">@target.instances.size</a></td>
-						<td><a class="brand" href="@routes.InstanceController.edit(Instance.getLatestInstance(target.url).id)?tab=qa">@Instance.showLatestTimestamp(target.url)</a></td>
-						<td>@uk.bl.Const.QAStatusType.getQaStatus(Taxonomy.findQaStatus(target.qaIssue.url)).getValue()</td>
+						<td><a class="brand" href="@routes.InstanceController.showByTarget(target.id)">@target.instances.size</a></td>
+						<td>
+							@if(target.getLastInstance != null) {
+								<a class="brand" href="@routes.InstanceController.edit(target.getLastInstance.id)?tab=qa">@Instance.showLatestTimestamp(target.url)</a>
+							}
+						</td>
+						<td>@if(target.qaIssue != null) { @target.qaIssue.name }</td>
+						
 					</tr>
 				}
 			</tbody>

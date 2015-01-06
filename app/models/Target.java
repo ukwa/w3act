@@ -771,35 +771,34 @@ public class Target extends UrlModel {
 
 		ExpressionList<Target> results = Target.find.fetch("fieldUrls").fetch("collections").where();
 		
-		Page<Target> res = null;
-
 		results = results.add(Expr.or(
 				Expr.icontains("fieldUrls.url", filter), 
 				Expr.icontains("title", filter))
 			);
 		
 		Logger.debug("qaIssueId: " + qaIssueId);
+		
 		if (qaIssueId != 0) {
 			results = results.eq("qaIssue.id", qaIssueId);
 		}
 
         String collectionSelect = collections.replace("\"", "");
         Logger.debug("collectionSelect: " + collectionSelect);
-        List<Long> collectionIds = new ArrayList<Long>();
+        List<Collection> collectionIds = new ArrayList<Collection>();
         if (StringUtils.isNotEmpty(collectionSelect)) {
             String[] collectionArray = collectionSelect.split(", ");
             for (String c : collectionArray) {
             	Long collectionId = Long.valueOf(c);
-            	collectionIds.add(collectionId);
+            	Collection collection = Collection.findById(collectionId);
+            	collectionIds.add(collection);
             }
+    		results = results.in("collections", collectionIds);
         }		     
         
-		results = results.in("collections.id", collectionIds);
 
 		results = results.eq("active", true);
 
-
-		res = results.query().orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);        
+		Page<Target> res = results.query().orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);        
         
 		return res;
 	}
@@ -1979,7 +1978,13 @@ public class Target extends UrlModel {
 		Target target = Target.findById(targetId);
 		return (target.qaIssue != null);
 	}
-
+	
+	public Instance getLastInstance() {
+		Instance instance = Instance.findLastInstanceByTarget(this.id);
+		Logger.debug("Last instance: " + instance);
+		return instance;
+	}
+	
 	@Override
 	public String toString() {
 		return "Target [qaIssue=" + qaIssue + ", authorUser=" + authorUser
