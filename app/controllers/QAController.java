@@ -38,7 +38,7 @@ public class QAController extends AbstractController {
     }
     
     public static Result GO_HOME = redirect(
-            routes.QAController.list(0, "title", "asc", "", "act-", 0)
+            routes.QAController.list(0, "title", "asc", "", "", 0)
         );
     
     /**
