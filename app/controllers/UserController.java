@@ -4,13 +4,14 @@ import static play.data.Form.form;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import models.Organisation;
 import models.Role;
-import models.Target;
+import models.Tag;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -144,7 +145,7 @@ public class UserController extends AbstractController {
 		Form<User> userForm = Form.form(User.class);
 		User curator = new User();
 		userForm = userForm.fill(curator);
-		Map<String,String> roles = Role.options();
+		List<Role> roles = Role.findAll();
 		Map<String,String> organisations = Organisation.options();
         return ok(newForm.render(userForm, user, roles, organisations));
     }
@@ -154,22 +155,25 @@ public class UserController extends AbstractController {
 		User curator = User.findById(id);
 		Form<User> userForm = Form.form(User.class);
 		userForm = userForm.fill(curator);
-		Map<String,String> roles = Role.options();
+		List<Role> roles = Role.findAll();
+		List<Role> curatorRoles = curator.roles;
 		Map<String,String> organisations = Organisation.options();
 		Logger.debug("roles: " + curator.roles.size());
-        return ok(edit.render(userForm, user, id, roles, organisations)); 
+        return ok(edit.render(userForm, user, id, roles, organisations, curatorRoles)); 
     }
 
     public static Result info(Form<User> form, Long id) {
     	User user = User.findByEmail(request().username());
-		Map<String,String> roles = Role.options();
+		User curator = User.findById(id);
+		List<Role> roles = Role.findAll();
+		List<Role> curatorRoles = curator.roles;
 		Map<String,String> organisations = Organisation.options();
-		return badRequest(edit.render(form, user, id, roles, organisations));
+		return badRequest(edit.render(form, user, id, roles, organisations, curatorRoles));
     }
     
 	public static Result newInfo(Form<User> form) {
 		User user = User.findByEmail(request().username());
-		Map<String,String> roles = Role.options();
+		List<Role> roles = Role.findAll();
 		Map<String,String> organisations = Organisation.options();		
 
 		return badRequest(newForm.render(form, user, roles, organisations));
@@ -189,6 +193,21 @@ public class UserController extends AbstractController {
 	        		Logger.debug("errors: " + filledForm.errors());
 		            return newInfo(filledForm);
 		        }
+		        
+			    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+
+		        List<Role> newRoles = new ArrayList<Role>();
+		        
+		        String[] roleValues = formParams.get("rolesList");
+
+		        if (roleValues != null) {
+		            for(String roleValue: roleValues) {
+		            	Long roleId = Long.valueOf(roleValue);
+		            	Role tag = Role.findById(roleId);
+		            	newRoles.add(tag);
+		            }
+		            filledForm.get().roles = newRoles;
+		        }		        
 		        
 		        filledForm.get().save();
 		        flash("message", "Curator " + filledForm.get().name + " has been created");
@@ -250,6 +269,21 @@ public class UserController extends AbstractController {
 					}
 	    	    }		        
 		        
+			    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+
+		        List<Role> newRoles = new ArrayList<Role>();
+		        
+		        String[] roleValues = formParams.get("rolesList");
+
+		        if (roleValues != null) {
+		            for(String roleValue: roleValues) {
+		            	Long roleId = Long.valueOf(roleValue);
+		            	Role tag = Role.findById(roleId);
+		            	newRoles.add(tag);
+		            }
+		            filledForm.get().roles = newRoles;
+		        }		        
+	            
 //    	    	if (getFormParam(Const.EMAIL).length() > 0 
 //    			&& User.findByEmail(getFormParam(Const.EMAIL)) != null
 //    			&& !getFormParam(Const.EMAIL).equals(user.email)) {

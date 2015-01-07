@@ -1,4 +1,4 @@
-@(userForm: Form[User], admin: User, id: Long, roles: Map[String,String], organisations: Map[String,String])
+@(userForm: Form[User], admin: User, id: Long, roles: List[Role], organisations: Map[String,String], curatorRoles: List[Role])
 
 @import helper._
 @import bootstrap._
@@ -101,15 +101,15 @@
 	   		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						@select(
-	      					userForm("role.id"), 
-			                options(roles),
-			                args =
-			                'class -> "form-control", 
-			                '_label -> "Roles",
-			                '_showConstraints -> false,
-			                'multiple->"multiple"
-			            )(FieldConstructor(genericInput.f), lang)						
+						<label class="col-sm-6 control-label">Roles</label>
+						<div class="col-sm-6">
+  							@for((role, index) <- roles.zipWithIndex) {
+  								<label class="checkbox-inline">
+			                	<input type="checkbox" name="rolesList" value="@role.id" @if(curatorRoles.contains(role)) {checked} />
+					                 @role.name
+				                </label>
+				            }
+						</div>
 					</div>
 				</div>
 	     	</div>	     		
