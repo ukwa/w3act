@@ -384,7 +384,12 @@ public class TargetController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (action.equals("search")) {
+    		if (action.equals("add")) {
+    			return redirect(
+	        		routes.TargetController.newForm(query)
+			        );
+    		} 
+    		else if (action.equals("search")) {
     			Logger.debug("searching " + pageNo + " " + sort + " " + order);
     	    	return redirect(routes.TargetController.lookup(pageNo, sort, order, query));
 		    } else {
