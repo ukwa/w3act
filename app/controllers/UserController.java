@@ -98,7 +98,11 @@ public class UserController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (action.equals("search")) {
+    		if (action.equals("add")) {
+    			return redirect(
+    	        		routes.UserController.newForm(query)
+    			        );
+    		} else if (action.equals("search")) {
     	    	return redirect(routes.UserController.list(pageNo, sort, order, query));
 		    } else {
 		      return badRequest("This action is not allowed");
@@ -140,10 +144,13 @@ public class UserController extends AbstractController {
         return ok(view.render(curator, user, roles, organisations));
     }
     
-    public static Result newForm() {
+    public static Result newForm(String name) {
     	User user = User.findByEmail(request().username());
 		Form<User> userForm = Form.form(User.class);
 		User curator = new User();
+		if (StringUtils.isNotBlank(name)) {
+			curator.name = name;
+		}
 		userForm = userForm.fill(curator);
 		List<Role> roles = Role.findAll();
 		Map<String,String> organisations = Organisation.options();

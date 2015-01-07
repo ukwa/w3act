@@ -3,15 +3,11 @@ package controllers;
 import static play.data.Form.form;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import models.Flag;
-import models.Organisation;
 import models.Permission;
 import models.Role;
-import models.Target;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,14 +20,12 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import views.html.roles.newForm;
 import views.html.roles.list;
 import views.html.roles.admin;
 import views.html.roles.edit;
 import views.html.roles.view;
 
-import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**

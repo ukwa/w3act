@@ -64,7 +64,7 @@ public class User extends ActModel {
 	public List<Role> roles = new ArrayList<Role>();
     	
     @JsonIgnore
-    @Constraints.Required
+    @Constraints.Required(message="Email is required")
     @Formats.NonEmpty
     public String email;
     
