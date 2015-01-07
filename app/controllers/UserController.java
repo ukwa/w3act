@@ -215,6 +215,25 @@ public class UserController extends AbstractController {
 		            }
 		            filledForm.get().roles = newRoles;
 		        }		        
+
+		        String password = requestData.get("password");
+		    	
+		        if (StringUtils.isEmpty(password)) {
+		        	Logger.debug("The password field is empty.");
+//		        	flash("message", "The password field is empty.");
+		            ValidationError ve = new ValidationError("password", "The password field is empty.");
+		            filledForm.reject(ve);
+		            return newInfo(filledForm);
+		        }
+		        
+	        	try {
+	        		filledForm.get().password = PasswordHash.createHash(password);
+	        	} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+		        	Logger.error("change password - no algorithm error: " + e);
+		            ValidationError ve = new ValidationError("password", e.getMessage());
+		            filledForm.reject(ve);
+		            return newInfo(filledForm);
+	        	}
 		        
 		        filledForm.get().save();
 		        flash("message", "Curator " + filledForm.get().name + " has been created");
@@ -242,11 +261,11 @@ public class UserController extends AbstractController {
 		        }
 		        
 		    	String oldPassword = requestData.get("oldpassword");
-		    	String password = requestData.get("password");
+		    	String newPassword = requestData.get("newpassword");
 
-		    	Logger.debug(oldPassword + " " + password);
+		    	Logger.debug(oldPassword + " " + newPassword);
 		    	
-	            if (StringUtils.isEmpty(password) != StringUtils.isEmpty(oldPassword)) {
+	            if (StringUtils.isEmpty(newPassword) != StringUtils.isEmpty(oldPassword)) {
 	            	Logger.debug("To change password, both password fields need to be filled in.");
 //		  			flash("message", "The password field is empty.");
     	            ValidationError e = new ValidationError("password", "To change password, both password fields need to be filled in.");
@@ -257,7 +276,7 @@ public class UserController extends AbstractController {
 	            /**
 	             * Change password only if both filled in
 	             */                
-	            if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(oldPassword)) {
+	            if (StringUtils.isNotBlank(newPassword) && StringUtils.isNotBlank(oldPassword)) {
 			    	try {
 			    		User dbUser = User.findById(id);
 	                	String userDbPassword = dbUser.password;
@@ -267,7 +286,7 @@ public class UserController extends AbstractController {
 	        	  			flash("message", "The old password is not correct.");
 				  			return info(filledForm, id);
 	        	  		} else {
-	        	  			filledForm.get().password = PasswordHash.createHash(password);
+	        	  			filledForm.get().password = PasswordHash.createHash(newPassword);
 	        	  		}
 					} catch (NoSuchAlgorithmException e) {
 						Logger.debug("change password - no algorithm error: " + e);
