@@ -667,7 +667,7 @@ public class TargetController extends AbstractController {
 			target.title = title;
 		}
         target.revision = Const.INITIAL_REVISION;
-        target.active = true;
+        target.active = Boolean.TRUE;
         if (User.findByEmail(request().username()).hasRole(Const.USER)) {
         	target.authorUser = User.findByEmail(request().username());
         }
@@ -1338,6 +1338,10 @@ public class TargetController extends AbstractController {
         }
         
     	filledForm.get().url = "act-" + Utils.INSTANCE.createId();
+    	filledForm.get().active = Boolean.TRUE;
+    	
+    	Logger.debug("active: " + filledForm.get().active);
+    	
     	filledForm.get().save();
         flash("success", "Target " + filledForm.get().title + " has been created");
     	return redirect(routes.TargetController.view(filledForm.get().id));

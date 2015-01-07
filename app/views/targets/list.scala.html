@@ -305,12 +305,15 @@
 									} else {
 										<td>N/A</td>
 									}
-									@if(target.url != null && target.fieldUrl().length > 0) { 		                  
-										<td><a class="brand" href="@target.fieldUrl()" target="_blank">@target.fieldUrl()</a></td>
+									<td>
+									@if(target.fieldUrls != null && target.url != null) {
+										@for(fieldUrl <- target.fieldUrls) {
+											<a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a> 
+										}
 									} else {
-										<td>N/A</td>
+										N/A
 									}
-                 
+									</td>
 				                </tr>
 				                }
 							</tbody>

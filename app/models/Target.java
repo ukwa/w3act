@@ -1980,6 +1980,7 @@ public class Target extends UrlModel {
 		return (target.qaIssue != null);
 	}
 	
+	@JsonIgnore
 	public Instance getLastInstance() {
 		Instance instance = Instance.findLastInstanceByTarget(this.id);
 		Logger.debug("Last instance: " + instance);
