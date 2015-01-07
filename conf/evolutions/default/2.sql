@@ -9,7 +9,7 @@ create table watched_target (
 
 create table journal_title (
   id			bigint primary key,
-  id_target		bigint references target (id),
+  id_watched_target	bigint references watched_target (id),
   title			varchar(255) not null,
   issn			varchar(255),
   frequency		varchar(255),

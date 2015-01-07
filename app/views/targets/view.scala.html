@@ -862,14 +862,16 @@
 						</div>
 					</div>
 		     	</div>
-		     <table>
-				@for(journalTitle <- target.journalTitles) {
-					<tr>
-						<td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
-					</tr>
-				}
-			</table>
-	       	<a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.nid, false)">New Journal Title</a>
+		     @if(target.watchedTarget != null) {
+			     <table>
+					@for(journalTitle <- target.watchedTarget.journalTitles) {
+						<tr>
+							<td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
+						</tr>
+					}
+				</table>
+				<a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">New Journal Title</a>
+			}
 		</div>
 	</div>
 

@@ -1,4 +1,4 @@
-@(title: String, form: Form[Document], user: User, journalTitles: java.util.Map[String, String], editable: Boolean)
+@(title: String, form: Form[Document], user: User, editable: Boolean)
 
 @import helper.options
 @import scala.List
@@ -243,7 +243,7 @@
 				@inputText(form("book.edition"), editable, '_label -> "Edition")
 			</div>
 			<div id="journal_general">
-				@select(form("journal.journalTitleId"), options(journalTitles), editable, '_label -> "Journal Title")
+				@select(form("journal.journalTitleId"), options(Documents.getJournalTitles(form)), editable, '_label -> "Journal Title")
 				@if(editable) {
 					<input type="submit" name="journalTitle" class="btn btn-success" value="New Journal Title">
 				}

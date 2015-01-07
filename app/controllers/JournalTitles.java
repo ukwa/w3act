@@ -9,6 +9,7 @@ import models.JournalTitle;
 import models.Target;
 import models.Taxonomy;
 import models.User;
+import models.WatchedTarget;
 import play.Logger;
 import play.data.Form;
 import play.mvc.Result;
@@ -19,15 +20,15 @@ import views.html.journaltitles.edit;
 @Security.Authenticated(Secured.class)
 public class JournalTitles extends AbstractController {
 
-	public static Result addJournalTitle(Long targetId, boolean toDocument) {
+	public static Result addJournalTitle(Long watchedTargetId, boolean toDocument) {
 		Logger.info("JournalTitles.addJournalTitle()");
 		
-		Target target = Ebean.find(Target.class, targetId);
+		WatchedTarget watchedTarget = Ebean.find(WatchedTarget.class, watchedTargetId);
 		
 		JournalTitle journalTitle = new JournalTitle();
-		journalTitle.target = target;
+		journalTitle.watchedTarget = watchedTarget;
 		journalTitle.language = Const.JOURNAL_TITLE_LANGUAGE;
-		journalTitle.subject = target.field_subject;
+		journalTitle.subject = watchedTarget.target.field_subject;
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
@@ -63,7 +64,7 @@ public class JournalTitles extends AbstractController {
 		if (delete != null) {
 			JournalTitle journalTitle = Ebean.find(JournalTitle.class, journalTitleForm.apply("id").value());
 			Ebean.delete(journalTitle);
-			return redirect(routes.Targets.view(journalTitle.target.url));
+			return redirect(routes.Targets.view(journalTitle.watchedTarget.target.url));
 		}
 		
 		if (journalTitleForm.hasErrors()) {

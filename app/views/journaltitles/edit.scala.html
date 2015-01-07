@@ -61,12 +61,12 @@
     		@if(toDocument) {
     			<a href="@routes.WatchedTargets.list()">Watched Targets</a> >
 				<a href="@routes.Documents.list(new Long(play.mvc.Controller.session("watchedTarget.id")))">
-					@form("target.title").value
+					@form("watchedTarget.target.title").value
 				</a> >
 				<a href="@routes.Documents.continueEdit()">@play.mvc.Controller.session("filename")</a> >
 			} else {
 				<a href="@routes.Targets.index()">Targets</a> >
-				<a href="@routes.Targets.view(form("target.url").value)">@form("target.title").value</a> >
+				<a href="@routes.Targets.view(form("watchedTarget.target.url").value)">@form("watchedTarget.target.title").value</a> >
 			}
 			@if(form("id").value != null) {
 				@form("title").value
@@ -80,12 +80,13 @@
 	@helper.form(action = routes.JournalTitles.save(toDocument)) {
 		<div>
 			<input type="hidden" name="id" value="@form("id").value">
-			<input type="hidden" name="target.nid" value="@form("target.nid").value">
-			<input type="hidden" name="target.url" value="@form("target.url").value">
+			<input type="hidden" name="watchedTarget.id" value="@form("watchedTarget.id").value">
+			<input type="hidden" name="watchedTarget.target.nid" value="@form("watchedTarget.target.nid").value">
+			<input type="hidden" name="watchedTarget.target.url" value="@form("watchedTarget.target.url").value">
 			
 			@defining('class -> "form-control") { textualElement =>
 				@inputText(form("title"), '_label -> "Journal Title", textualElement)
-				@input(form("target.title"), '_label -> "Target") { (id, name, value, args) =>
+				@input(form("watchedTarget.target.title"), '_label -> "Target") { (id, name, value, args) =>
 					@value
 					<input type="hidden" name="@name" id="@id" value="@value">
 				}

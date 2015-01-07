@@ -1,7 +1,9 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -27,9 +29,10 @@ public class WatchedTarget extends Model {
 	@ManyToOne @JsonIgnore
 	@JoinColumn(name="id_creator")
 	public User user;
-	@OneToMany(mappedBy="watchedTarget") @JsonIgnore
-	@JoinColumn(name="id_watched_target")
+	@OneToMany(mappedBy="watchedTarget", cascade=CascadeType.REMOVE) @JsonIgnore
 	public List<Document> documents;
+    @OneToMany(mappedBy="watchedTarget", cascade=CascadeType.REMOVE) @JsonIgnore
+    public List<JournalTitle> journalTitles = new ArrayList<>();
 	public String documentUrlScheme;
 	public String getUrl() { return ""+id; }
 	public String getName() { return target.field_url; }

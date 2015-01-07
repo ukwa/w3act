@@ -71,9 +71,6 @@ public class Target extends Model {
     @OneToMany(mappedBy="target_to_crawl_permission", cascade=CascadeType.PERSIST) @JsonIgnore
     private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
     
-    @OneToMany(mappedBy="target") @JsonIgnore
-    public List<JournalTitle> journalTitles = new ArrayList<>();
-    
     public List<CrawlPermission> getCrawlPermissions() {
     	return this.crawlPermissions;
     }
@@ -224,7 +221,7 @@ public class Target extends Model {
     @Column(columnDefinition = "TEXT")
     public String quality_notes; 
     
-	@OneToOne(mappedBy="target") @JsonIgnore
+	@OneToOne(mappedBy="target", cascade=CascadeType.REMOVE) @JsonIgnore
 	public WatchedTarget watchedTarget;
     
     public boolean isWatched() {

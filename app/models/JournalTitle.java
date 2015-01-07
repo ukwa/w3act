@@ -3,6 +3,7 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -21,9 +22,9 @@ public class JournalTitle extends Model {
     @Id
     public Long id;
 	@ManyToOne
-	@JoinColumn(name="id_target")
-	public Target target;
-	@ManyToMany
+	@JoinColumn(name="id_watched_target")
+	public WatchedTarget watchedTarget;
+	@ManyToMany(cascade=CascadeType.REMOVE)
 	@JoinTable(name = Const.SUBJECT_JOURNAL_TITLE,
 		joinColumns = { @JoinColumn(name = "id_journal_title", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="id") })

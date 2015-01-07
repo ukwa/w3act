@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -34,9 +35,9 @@ public class Document extends Model {
 	@JoinColumn(name="id_watched_target")
 	public WatchedTarget watchedTarget;
 	public boolean submitted;
-	@OneToOne(mappedBy="document") @JsonIgnore
+	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
 	public Book book;
-	@OneToOne(mappedBy="document") @JsonIgnore
+	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
 	public Journal journal;
     public String landingPageUrl;
     public String documentUrl;

@@ -117,7 +117,6 @@ GET		/documents/:document/submit			controllers.Documents.submit(document: Long)
 GET     /documents/html/*file				controllers.Documents.html(file)
 POST	/documents							controllers.Documents.save()
 
-GET		/targets/:target/journaltitles		controllers.JournalTitles.addJournalTitle(target: Long, toDocument: Boolean ?= false)
 GET		/journaltitles/:journaltitle		controllers.JournalTitles.edit(journaltitle: Long)
 POST	/journaltitles						controllers.JournalTitles.save(toDocument: Boolean ?= false)
 
@@ -125,6 +124,7 @@ GET    	/watchedtargets/search				controllers.WatchedTargets.search()
 GET    	/watchedtargets/filterbyjson/:url	controllers.WatchedTargets.filterByJson(url)
 GET		/watchedtargets/list				controllers.WatchedTargets.list(p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 GET     /watchedtargets/:watchedtarget		controllers.Documents.list(watchedtarget: Long, submitted: Boolean ?= false, p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET		/watchedtargets/:watchedtarget/journaltitles		controllers.JournalTitles.addJournalTitle(watchedtarget: Long, toDocument: Boolean ?= false)
 POST	/watchedtargets/crawl				controllers.WatchedTargets.crawl(watchedtarget: Long)
 
 GET     /flags                              controllers.Flags.index()

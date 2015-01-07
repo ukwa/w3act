@@ -56,7 +56,7 @@ public class Documents extends AbstractController {
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
 		
 		return ok(edit.render("Document" + id, documentForm,
-				User.findByEmail(request().username()), getJournalTitles(), editable));
+				User.findByEmail(request().username()), editable));
 	}
 	
 	public static Result continueEdit() {
@@ -68,8 +68,10 @@ public class Documents extends AbstractController {
 		Form<Document> documentForm = Form.form(Document.class).bind(session());
 		documentForm.discardErrors();
 		
+		WatchedTarget watchedTarget = WatchedTarget.find.byId(new Long(documentForm.apply("watchedTarget.id").value()));
+		
 		return ok(edit.render("Document", documentForm,
-				User.findByEmail(request().username()), getJournalTitles(), true));
+				User.findByEmail(request().username()), true));
 	}
 
 	public static Result save() {
@@ -82,7 +84,7 @@ public class Documents extends AbstractController {
 		if (journalTitle != null) {
 			session().putAll(documentForm.data());
 			return redirect(routes.JournalTitles.addJournalTitle(
-					new Long(documentForm.apply("watchedTarget.target.nid").value()), true));
+					new Long(documentForm.apply("watchedTarget.id").value()), true));
 		}
 		
 		Logger.info("Errors: " + documentForm.hasErrors());
@@ -98,7 +100,7 @@ public class Documents extends AbstractController {
 			Logger.info("Show errors in html");
 			FlashMessage.validationWarning.send();
 			return status(303, edit.render("Document", documentForm,
-					User.findByEmail(request().username()), getJournalTitles(), true));
+					User.findByEmail(request().username()), true));
 		}
 		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
 		Document document = documentForm.get();
@@ -162,11 +164,11 @@ public class Documents extends AbstractController {
 		return document;
 	}
 	
-	public static Map<String, String> getJournalTitles() {
-		List<JournalTitle> journalTitles = Ebean.find(JournalTitle.class).findList();
+	public static Map<String, String> getJournalTitles(Form<Document> form) {
+		WatchedTarget watchedTarget = WatchedTarget.find.byId(new Long(form.apply("watchedTarget.id").value()));
 		Map<String, String> titles = new LinkedHashMap<>();
 		titles.put("","");
-		for (JournalTitle journalTitle : journalTitles)
+		for (JournalTitle journalTitle : watchedTarget.journalTitles)
 			titles.put(""+journalTitle.id, journalTitle.title);
 		return titles;
 	}
