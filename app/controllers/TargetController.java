@@ -9,6 +9,7 @@ import java.util.List;
 import models.CrawlPermission;
 import models.DCollection;
 import models.Flag;
+import models.FlashMessage;
 import models.Organisation;
 import models.Tag;
 import models.Target;
@@ -278,6 +279,7 @@ public class TargetController extends AbstractController {
         String request = getFormParam(Const.REQUEST);
         String archive = getFormParam(Const.ARCHIVE);
         String journalTitle = getFormParam("journalTitle");
+        boolean watched = getFormParam("watched") != null;
         Logger.info("save: " + save);
         Logger.info("delete: " + delete);
         if (save != null) {
@@ -595,6 +597,14 @@ public class TargetController extends AbstractController {
             long unixTime = System.currentTimeMillis() / 1000L;
             String changedTime = String.valueOf(unixTime);
             Logger.info("changed time: " + changedTime);
+            boolean urlExists = Target.find.where()
+            		.eq(Const.FIELD_URL_NODE, newTarget.field_url)
+            		.eq(Const.ACTIVE, true)
+            		.findRowCount() > 0;
+            if (watched && urlExists) {
+            	new FlashMessage(FlashMessage.Type.ERROR, "Can't create a watched target with an URL that is not unique.").send();
+            	return info();
+            }
         	if (!isExisting) {
         		newTarget.url = Const.ACT_URL + newTarget.nid;
         		newTarget.edit_url = Const.WCT_URL + newTarget.nid;
@@ -624,7 +634,7 @@ public class TargetController extends AbstractController {
                 target.tag_to_target = null;
                 Logger.info("+++ subject_to_target object before target nid: " + target.nid + ", update: " + target.subject_to_target);
             	Ebean.update(target);
-            	if (getFormParam("watched") == null && target.watchedTarget != null) {
+            	if (!watched && target.watchedTarget != null) {
             		WatchedTarget watchedTarget = WatchedTarget.find.byId(target.watchedTarget.id);
             		Ebean.delete(watchedTarget);
             	}
@@ -661,7 +671,7 @@ public class TargetController extends AbstractController {
         		Logger.info("+++ subject_to_target before target save: " + itrSubjects.next().toString());
         	}
         	Ebean.save(newTarget);
-        	if (getFormParam("watched") != null && getFormParam("watched").equals("true")) {
+        	if (watched) {
         		if (target.watchedTarget != null) {
         			target.watchedTarget.target = newTarget;
         			target.watchedTarget.documentUrlScheme = getFormParam("watchedTarget.documentUrlScheme");
@@ -682,7 +692,7 @@ public class TargetController extends AbstractController {
         		Logger.info("No crawl permission to update for URL: " + newTarget.field_url);
         	}
 	        Logger.info("Your changes have been saved: " + newTarget.toString());
-  			flash("message", "Your changes have been saved.");
+	        FlashMessage.updateSuccess.send();
 	        res = redirect(routes.Targets.view(newTarget.url) + getFormParam(Const.TAB_STATUS));
         } // end of save
         else if (delete != null) {

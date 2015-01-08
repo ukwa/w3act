@@ -41,7 +41,7 @@ public class FlashMessage {
 	public static FlashMessage validationWarning = new FlashMessage(FlashMessage.Type.WARNING, "Please fill out all the required fields.");
 	
 	public enum Type {
-		SUCCESS("success"), INFO("info"), WARNING("warning"), DANGER("danger");
+		SUCCESS("success"), INFO("info"), WARNING("warning"), ERROR("danger");
 	
 		private String value;
 	

@@ -292,8 +292,7 @@ public class Target extends Model {
 
     // -- Queries
     
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Model.Finder<Long,Target> find = new Model.Finder(Long.class, Target.class);
+	public static Model.Finder<Long,Target> find = new Model.Finder<>(Long.class, Target.class);
     
     /**
      * Retrieve targets
