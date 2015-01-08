@@ -1,8 +1,5 @@
 #!/bin/bash
 
-rm -rf target/ project/target/ project/project/target/
-echo Project generated folders clean up completed. 
-
 # postgres setup:
 # su - postgres -c "createuser --superuser --password training"
 #su - postgres -c "createdb --owner=training --username=training w3act"

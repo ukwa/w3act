@@ -32,6 +32,7 @@ import views.html.licence.ukwalicenceresult;
 import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -600,14 +601,18 @@ public class TargetController extends AbstractController {
             long unixTime = System.currentTimeMillis() / 1000L;
             String changedTime = String.valueOf(unixTime);
             Logger.info("changed time: " + changedTime);
-            boolean urlExists = Target.find.where()
+            
+            ExpressionList<Target> expressionList = Target.find.where()
             		.eq(Const.FIELD_URL_NODE, newTarget.field_url)
-            		.eq(Const.ACTIVE, true)
-            		.findRowCount() > 0;
+            		.eq(Const.ACTIVE, true);
+            if (isExisting)
+            	expressionList = expressionList.ne("id", target.nid);
+            boolean urlExists = expressionList.findRowCount() > 0;
             if (watched && urlExists) {
             	new FlashMessage(FlashMessage.Type.ERROR, "Can't create a watched target with an URL that is not unique.").send();
             	return info();
             }
+            
         	if (!isExisting) {
         		newTarget.url = Const.ACT_URL + newTarget.nid;
         		newTarget.edit_url = Const.WCT_URL + newTarget.nid;
