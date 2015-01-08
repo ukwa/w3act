@@ -9,6 +9,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -39,6 +41,11 @@ public class Document extends Model {
 	public Book book;
 	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
 	public Journal journal;
+	@ManyToMany(cascade=CascadeType.ALL) @JsonIgnore
+	@JoinTable(name = Const.PORTAL_DOCUMENT,
+			joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
+			inverseJoinColumns = { @JoinColumn(name = "id_portal", referencedColumnName="id") })
+	public List<Portal> portals = new ArrayList<>();
     public String landingPageUrl;
     public String documentUrl;
     @Transient
@@ -54,9 +61,6 @@ public class Document extends Model {
     @Required
 	public String filename;
     public boolean priorityCataloguing;
-    public boolean mbsPortal;
-    public boolean enviaPortal;
-    public boolean otherPortal;
     public String type;
 	public String author1Fn;
 	public String author1Ln;

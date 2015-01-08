@@ -6,7 +6,7 @@
 	@helper.checkbox(field, (args :+ 'class -> "checkbox"): _*)
 } else {
 	@helper.input(field, args: _*) { (id, name, value, args) =>
-		@if(value.get == "true") {
+		@if(value.isDefined && value.get == "true") {
 			yes
 		} else {
 			no

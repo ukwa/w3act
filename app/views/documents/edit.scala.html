@@ -102,19 +102,7 @@
 		function hide(element) {
 			element.css({display: "none"});
 		}
-
-		function toggleVisibilityServices() {
-			var priorityCataloguing = document.getElementById("priorityCataloguing").checked;
-			var services = $("#services");
-			var checkboxes = $("#mbsPortal, #enviaPortal, #otherPortal");
-			if (priorityCataloguing) {
-				show(services);
-			} else {
-				hide(services);
-				checkboxes.prop('checked', false);
-			}
-		}
-		
+	
 		function toggleVisibility() {
 			var select = document.getElementById("type");
 			var type = select.selectedIndex;
@@ -150,7 +138,6 @@
 		
 		$(function() {
 			toggleVisibility();
-			toggleVisibilityServices();
 			@if(editable) {
 				document.getElementById("document_view").contentWindow.onmouseup =
 					function showOptions(event) {
@@ -216,19 +203,14 @@
 			@inputText(form("filename"), editable, '_label -> "Filename")
 			@checkbox(form("priorityCataloguing"),
 				editable,
-				'_label -> "Priority Cataloguing",
-				'onchange -> "toggleVisibilityServices()")
-			<div id="services">
-			@if(Target.find.byId(new Long(form("watchedTarget.target.nid").value)).indicateUkwaLicenceStatus) {
-				@checkbox(form("mbsPortal"), editable, '_label -> "MBS Portal")
-				@checkbox(form("enviaPortal"), editable, '_label -> "Envia Portal")
-				@checkbox(form("otherPortal"), editable, '_label -> "Other")
-			} else {
-				@checkbox(form("mbsPortal"), editable, '_label -> "MBS Portal", 'disabled -> "disabled")
-				@checkbox(form("enviaPortal"), editable, '_label -> "Envia Portal", 'disabled -> "disabled")
-				@checkbox(form("otherPortal"), editable, '_label -> "Other", 'disabled -> "disabled")
+				'_label -> "Priority Cataloguing")
+			@for(portal <- Documents.getPortals()) {
+				@if(Target.find.byId(new Long(form("watchedTarget.target.nid").value)).indicateUkwaLicenceStatus) {
+					@checkbox(form("portal_" + portal.id), editable, '_label -> portal.title)
+				} else {
+					@checkbox(form("portal_" + portal.id), editable, '_label -> portal.title, 'disabled -> "disabled")
+				}
 			}
-			</div>
 			@select(form("type"),
 				options(List("","Book", "Journal Article", "Journal Issue")),
 				editable,

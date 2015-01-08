@@ -16,6 +16,7 @@ import models.Document;
 import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
+import models.Portal;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -54,6 +55,7 @@ public class Documents extends AbstractController {
 		document.htmlFilename = document.filename.split("\\.")[0] + ".html";
 		if (document.submitted) editable = false;
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
+		setPortalsOfView(documentForm, document);
 		
 		return ok(edit.render("Document" + id, documentForm,
 				User.findByEmail(request().username()), editable));
@@ -105,6 +107,7 @@ public class Documents extends AbstractController {
 		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
 		Document document = documentForm.get();
 		document.clearImproperFields();
+		setPortalsOfModel(document, documentForm);
 		Ebean.update(document);
 		
 		if (!document.isBookOrBookChapter() && document.book.id != null) {
@@ -171,6 +174,27 @@ public class Documents extends AbstractController {
 		for (JournalTitle journalTitle : watchedTarget.journalTitles)
 			titles.put(""+journalTitle.id, journalTitle.title);
 		return titles;
+	}
+	
+	private static void setPortalsOfModel(Document document, Form<Document> documentForm) {
+		for (Portal portal : getPortals())
+			if (documentForm.apply("portal_" + portal.id).value() != null)
+				document.portals.add(portal);
+	}
+	
+	private static void setPortalsOfView(Form<Document> documentForm, Document document) {
+		for (Portal portal : document.portals)
+			documentForm.data().put("portal_" + portal.id, "true");
+	}
+	
+	public static List<Portal> getPortals() {
+		if (Portal.find.findRowCount() == 0) {
+			Ebean.save(new Portal("Business"));
+			Ebean.save(new Portal("SWP"));
+			Ebean.save(new Portal("STM"));
+			Ebean.save(new Portal("Other"));
+		}
+		return Portal.find.all();
 	}
 	
     /**

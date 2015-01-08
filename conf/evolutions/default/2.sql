@@ -37,9 +37,6 @@ create table document (
   publication_year	integer,
   filename		varchar(255) not null,
   priority_cataloguing	boolean not null,
-  mbs_portal		boolean not null,
-  envia_portal		boolean not null,
-  other_portal		boolean not null,
   type			varchar(255),
   author1fn		varchar(255),
   author1ln		varchar(255),
@@ -47,6 +44,17 @@ create table document (
   author2ln		varchar(255),
   author3fn		varchar(255),
   author3ln		varchar(255)
+);
+
+create table portal (
+  id			bigint primary key,
+  title			varchar(255) unique not null
+);
+
+create table portal_document (
+  id_portal		bigint references portal (id),
+  id_document		bigint references document (id),
+  primary key (id_portal, id_document)
 );
 
 create table book (
@@ -70,6 +78,7 @@ create table journal (
 create sequence watched_target_seq;
 create sequence journal_title_seq;
 create sequence document_seq;
+create sequence portal_seq;
 create sequence book_seq;
 create sequence journal_seq;
 
@@ -79,11 +88,14 @@ drop table if exists watched_target cascade;
 drop table if exists journal_title cascade;
 drop table if exists subject_journal_title cascade;
 drop table if exists document cascade;
+drop table if exists portal cascade;
+drop table if exists portal_document cascade;
 drop table if exists book cascade;
 drop table if exists journal cascade;
 
 drop sequence if exists watched_target_seq;
 drop sequence if exists journal_title_seq;
 drop sequence if exists document_seq;
+drop sequence if exists portal_seq;
 drop sequence if exists book_seq;
 drop sequence if exists journal_seq;

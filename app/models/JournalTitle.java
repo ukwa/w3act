@@ -28,7 +28,7 @@ public class JournalTitle extends Model {
 	@JoinTable(name = Const.SUBJECT_JOURNAL_TITLE,
 		joinColumns = { @JoinColumn(name = "id_journal_title", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="id") })
-	public List<Taxonomy> taxonomies = new ArrayList<Taxonomy>();;
+	public List<Taxonomy> taxonomies = new ArrayList<>();
 	@Required
     public String title;
 	public String issn;
