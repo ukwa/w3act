@@ -1,6 +1,7 @@
 package uk.bl.api;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -90,22 +91,21 @@ public enum Utils {
      * This method creates CSV file for passed data.
      * @param sFileName
      */
-    public void generateCsvFile(String sFileName, String data)
-    {
-	 	try
-	 	{
-	 	    FileWriter writer = new FileWriter(sFileName);
+    public File generateCsvFile(String sFileName, String data) {
+ 		File file = new File(sFileName);
+    	
+	 	try {
+	 	    FileWriter writer = new FileWriter(file);
 
 	  	    String decodedData = replacer(data); //URLDecoder.decode(data, Const.STR_FORMAT);
 //	  	    Logger.debug("generateCsvFile: " + decodedData);
 	 	    writer.append(decodedData);
 	 	    writer.flush();
 	 	    writer.close();
+	 	} catch(IOException e) {
+	 		e.printStackTrace();
 	 	}
-	 	catch(IOException e)
-	 	{
-	 	     e.printStackTrace();
-	 	} 
+	 	return file;
     }    
     
     /**

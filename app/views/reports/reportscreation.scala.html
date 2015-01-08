@@ -101,6 +101,7 @@
    				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
  				<input type="hidden" name="s" value="@currentSortBy">
  				<input type="hidden" name="o" value="@currentOrder">
+ 				<input type="hidden" name="exportType" value="" id="exportType">
    			</div>				
 				<div class="padding-20">
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
@@ -246,6 +247,7 @@
 					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Apply filters">Apply</button>
 					@if(currentPage.getTotalRowCount() > 0) {
 						<button type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
+
 					} else {
 						<button disabled type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
 					}

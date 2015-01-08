@@ -2,6 +2,7 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.io.File;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -98,27 +99,36 @@ public class ReportController extends AbstractController {
         List<Organisation> organisations = Organisation.findAllSorted();
         RequestType[] requestTypes = Const.RequestType.values();
 
+        User user = User.findByEmail(request().username());
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.EXPORT.equals(action)) {
-				Logger.debug("export requested size: " + resList.size());
-    			export(resList, Const.EXPORT_REQUESTED_LICENCE_FILE);
-				Logger.debug("export granted size: " + resListGranted.size());
-    			export(resListGranted, Const.EXPORT_GRANTED_LICENCE_FILE);
-				Logger.debug("export refused size: " + resListRefused.size());
-    			export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
+    		if (action.equals("search")) {
+    			
+    	    	String exportType = requestData.get("exportType");
+
+				Logger.debug("exportType: " + exportType);
+
+        		if (StringUtils.isNotEmpty(exportType)) {
+        			if (exportType.equals("exportGranted")) {
+	    				Logger.debug("export resList size: " + resList.size());
+	        			File file = export(resListGranted, Const.EXPORT_GRANTED_LICENCE_FILE);
+	        	        return ok(file);
+
+        			} else if (exportType.equals("exportRefused")) {
+	    				Logger.debug("export refused size: " + resListGranted.size());
+	    				File file = export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
+	        	        return ok(file);
+        			} else if (exportType.equals("exportRequested")) {
+	    				Logger.debug("export requested size: " + resList.size());
+	    				File file = export(resListRefused, Const.EXPORT_REQUESTED_LICENCE_FILE);
+	        	        return ok(file);
+        			}
+        		}
+    			
     			return ok(
                 		reports.render(
-                            "Reports", User.findByEmail(request().username()), resList, resListGranted,
-                            resListRefused, curatorId, organisationId, startDate, endDate, request, users, organisations, requestTypes
-                        )
-                    );
-    		}
-    		else if (action.equals("search")) {
-    			return ok(
-                		reports.render(
-                            "Reports", User.findByEmail(request().username()), resList, resListGranted,
+                            "Reports", user, resList, resListGranted,
                             resListRefused, curatorId, organisationId, startDate, endDate, request, users, organisations, requestTypes
                         )
                     );
@@ -128,6 +138,14 @@ public class ReportController extends AbstractController {
     	}
     }	   
     
+//    public static void exportLicenses(String name) {
+//		return ok(
+//        		reports.render(
+//                    "Reports", User.findByEmail(request().username()), resList, resListGranted,
+//                    resListRefused, curatorId, organisationId, startDate, endDate, request, users, organisations, requestTypes
+//                )
+//            );
+//    }
         
     /**
      * This method exports selected crawl permissions to CSV file.
@@ -135,7 +153,7 @@ public class ReportController extends AbstractController {
      * @param file name
      * @return
      */
-    public static void export(List<Target> permissionList, String fileName) {
+    public static File export(List<Target> permissionList, String fileName) {
 //        public static void export(List<CrawlPermission> permissionList, String fileName) {
     	Logger.debug("export() permissionList size: " + permissionList.size());
 
@@ -163,7 +181,8 @@ public class ReportController extends AbstractController {
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
  	    }
-    	Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
+    	File file = Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
+    	return file;
     }
             	
     /**
@@ -392,21 +411,19 @@ public class ReportController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
-    		if (Const.EXPORT.equals(action)) {
+    		if (action.equals("export")) {
     			List<Target> exportTargets = new ArrayList<Target>();
-    	    	Page<Target> page = Target.pageReportsCreation(pageNo, 10, sort, order, curatorId, organisationId, 
-    					startDate, endDate, npld, crawlFrequencyName, tld);    	    	
+    	    	Page<Target> page = Target.pageReportsCreation(pageNo, 10, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
+    	    	
     			int rowCount = page.getTotalRowCount();
-    	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, 
-    					startDate, endDate, npld, crawlFrequencyName, tld); 
+    			
+    	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
     			exportTargets.addAll(pageAll.getList());
 				Logger.debug("export report creation size: " + exportTargets.size());
-    			export(exportTargets, Const.EXPORT_TARGETS_REPORT_CREATION);
-    	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 
-    	    			startDate, endDate, npld, crawlFrequencyName, tld));
-    		}
-    		else if (action.equals("search")) {
 
+    			File file = export(exportTargets, Const.EXPORT_TARGETS_REPORT_CREATION);
+    	        return ok(file);
+    		} else if (action.equals("search")) {
     	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 
     	    			startDate, endDate, npld, crawlFrequencyName, tld));
 		    } else {
