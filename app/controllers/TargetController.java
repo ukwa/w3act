@@ -258,6 +258,9 @@ public class TargetController extends AbstractController {
         	targetObj.tabstatus = getFormParam(Const.TAB_STATUS);
         }
 	    targetObj.active = true;
+	    if (getFormParam("watched") != null) {
+	    	targetObj.watchedTarget = new WatchedTarget(targetObj, getFormParam("watchedTarget.documentUrlScheme"));
+	    }
 		Form<Target> targetFormNew = Form.form(Target.class);
 		targetFormNew = targetFormNew.fill(targetObj);
       	return ok(
