@@ -11,6 +11,13 @@
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'permissions'); 
+			
+			$(document).on( 'shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
+				var id = $(this).attr('id');
+				console.log(id); // activated tab
+ 				$('#tabStatus').val(id);
+			})
+			
 		});
 	</script>
 }
@@ -31,10 +38,10 @@
 	</ul>
 		
 	<div class="tab-content padding-20">          
-		<ul class="nav nav-pills">
-	        <li class="active"><a href="#requested" data-toggle="tab">Requested</a></li>
-	        <li><a href="#granted" data-toggle="tab">Granted</a></li>
-		    <li><a href="#refused" data-toggle="tab">Refused</a></li>
+		<ul class="nav nav-pills" id="crawlTabs">
+	        <li class="active"><a href="#requested" data-toggle="tab" id="tabRequested">Requested</a></li>
+	        <li><a href="#granted" data-toggle="tab" id="tabGranted">Granted</a></li>
+		    <li><a href="#refused" data-toggle="tab" id="tabRefused">Refused</a></li>
 	  	</ul>
 	</div>
 	
@@ -42,6 +49,7 @@
 
 		@helper.form(action=routes.ReportController.search) {
 		<div id="forms">
+			<input type="hidden" name="status" value="requested" id="tabStatus">
 				<div class="padding-20">
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
@@ -176,7 +184,7 @@
 				                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl()</a>					                
 								</td>
 								@if(target.url != null && target.createdAt != null) {
-									<td>target.createdAt</td>
+									<td>@target.createdAt</td>
 								} else {
 									<td></td>
 								}		                  
@@ -188,7 +196,6 @@
 			</div>
 			
 			<div class="tab-pane padding-20 fade" id="granted">
-				<input type="hidden" name="status" value="granted">
 			   	<div class="row padding-20">
 					<table class="table table-hover">
 						<thead>

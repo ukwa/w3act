@@ -87,11 +87,11 @@ public class ReportController extends AbstractController {
 
     	Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate);
 
-        List<Target> resList = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, startDate, endDate);
+        List<Target> resListRequest = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, startDate, endDate);
         List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, startDate, endDate);
         List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, startDate, endDate);
 
-        Logger.debug("resList: " + resList);
+        Logger.debug("resList: " + resListRequest);
         Logger.debug("resListGranted: " + resListGranted);
         Logger.debug("resListRefused: " + resListRefused);
         
@@ -104,37 +104,36 @@ public class ReportController extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (action.equals("search")) {
-    			
-    	    	String exportType = requestData.get("exportType");
-
-				Logger.debug("exportType: " + exportType);
-
-        		if (StringUtils.isNotEmpty(exportType)) {
-        			if (exportType.equals("exportGranted")) {
-	    				Logger.debug("export resList size: " + resList.size());
-	        			File file = export(resListGranted, Const.EXPORT_GRANTED_LICENCE_FILE);
-	        	        return ok(file);
-
-        			} else if (exportType.equals("exportRefused")) {
-	    				Logger.debug("export refused size: " + resListGranted.size());
-	    				File file = export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
-	        	        return ok(file);
-        			} else if (exportType.equals("exportRequested")) {
-	    				Logger.debug("export requested size: " + resList.size());
-	    				File file = export(resListRefused, Const.EXPORT_REQUESTED_LICENCE_FILE);
-	        	        return ok(file);
-        			}
-        		}
-    			
     			return ok(
                 		reports.render(
-                            "Reports", user, resList, resListGranted,
+                            "Reports", user, resListRequest, resListGranted,
                             resListRefused, curatorId, organisationId, startDate, endDate, request, users, organisations, requestTypes
                         )
                     );
-		    } else {
-		    	return badRequest("This action is not allowed");
+		    } else if (action.equals("export")) {
+    	    	String status = requestData.get("status");
+
+
+        		if (StringUtils.isNotEmpty(status)) {
+    				Logger.debug("status: " + status);
+    				if (status.equals("tabRequested")) {
+	    				Logger.debug("export requested size: " + resListRequest.size());
+	    				File file = export(resListRequest, Const.EXPORT_REQUESTED_LICENCE_FILE);
+	        	        return ok(file);
+    				} else if (status.equals("tabGranted")) {
+	    				Logger.debug("export refused size: " + resListGranted.size());
+	        			File file = export(resListGranted, Const.EXPORT_GRANTED_LICENCE_FILE);
+	        	        return ok(file);
+
+        			} else if (status.equals("tabRefused")) {
+	    				Logger.debug("export refused size: " + resListRefused.size());
+	    				File file = export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
+	        	        return ok(file);
+        			}
+    				return null;
+        		}
 		    }
+	    	return badRequest("This action is not allowed");
     	}
     }	   
     
@@ -199,6 +198,13 @@ public class ReportController extends AbstractController {
 		ExpressionList<Target> exp = Target.find.fetch("crawlPermissions").where();
 		exp = exp.eq("active", true);
 		
+		Logger.debug("curatorId: " + curatorId);
+		Logger.debug("organisationId: " + organisationId);
+		Logger.debug("crawlPermissionsStatus: " + crawlPermissionsStatus);
+		Logger.debug("request: " + request);
+		Logger.debug("startDate: " + startDate);
+		Logger.debug("endDate: " + endDate);
+		
 		if (curatorId != null) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
@@ -229,6 +235,7 @@ public class ReportController extends AbstractController {
 
     	List<Target> res = exp.query().findList();
     	
+    	Logger.debug("res size: " + res.size());
 //    	Logger.debug("processFilterReports() Expression list size: " + res.size() + ", isProcessed: " + isProcessed);
 //    	if (request != null && !request.toLowerCase().equals(Const.ALL) && request.length() > 0) {
 //    		Logger.debug("request: " + request);
