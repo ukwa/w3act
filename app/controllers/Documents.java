@@ -52,7 +52,6 @@ public class Documents extends AbstractController {
 		Logger.info("Documents.render()");
 		
 		Document document = getDocumentFromDB(id);
-		document.htmlFilename = document.filename.split("\\.")[0] + ".html";
 		if (document.submitted) editable = false;
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
 		setPortalsOfView(documentForm, document);
@@ -143,7 +142,7 @@ public class Documents extends AbstractController {
 		Document document = Document.find.byId(id);
 		document.submitted = true;
 		Ebean.save(document);
-		deleteHtml(document.htmlFilename);
+		deleteHtml(document.getHtmlFilename());
 		return redirect(routes.Documents.view(id));
 	}
 	

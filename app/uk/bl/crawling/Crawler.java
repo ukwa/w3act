@@ -2,6 +2,7 @@ package uk.bl.crawling;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -65,7 +66,7 @@ public class Crawler {
 							org.jsoup.nodes.Document doc = response.parse();
 							
 							for(Element element : doc.select("a[href]")) {
-								String waybackHrefUrl = element.absUrl("href");
+								String waybackHrefUrl = URLEncoder.encode(element.absUrl("href"), "UTF-8");
 								String hrefUrl = crawlWayback ?
 										urlFromWayback(waybackHrefUrl) : waybackHrefUrl;
 								if (hrefUrl != null && !knownSites.contains(hrefUrl)) {
