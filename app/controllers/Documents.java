@@ -70,8 +70,6 @@ public class Documents extends AbstractController {
 		Form<Document> documentForm = Form.form(Document.class).bind(session());
 		documentForm.discardErrors();
 		
-		WatchedTarget watchedTarget = WatchedTarget.find.byId(new Long(documentForm.apply("watchedTarget.id").value()));
-		
 		return ok(edit.render("Document", documentForm,
 				User.findByEmail(request().username()), true));
 	}
@@ -145,6 +143,7 @@ public class Documents extends AbstractController {
 		Document document = Document.find.byId(id);
 		document.submitted = true;
 		Ebean.save(document);
+		deleteHtml(document.htmlFilename);
 		return redirect(routes.Documents.view(id));
 	}
 	
@@ -192,7 +191,6 @@ public class Documents extends AbstractController {
 			Ebean.save(new Portal("Business"));
 			Ebean.save(new Portal("SWP"));
 			Ebean.save(new Portal("STM"));
-			Ebean.save(new Portal("Other"));
 		}
 		return Portal.find.all();
 	}
@@ -266,10 +264,14 @@ public class Documents extends AbstractController {
 			File file = Play.application().getFile("../html/" + filename);
 			return ok(file, filename);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	return ok();
+	}
+    
+    public static void deleteHtml(String filename) {
+		File file = Play.application().getFile("../html/" + filename);
+		file.delete();
 	}
 
 }
