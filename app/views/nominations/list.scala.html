@@ -51,6 +51,7 @@
 }
 
 @pagination = {
+	@if(currentPage.getTotalPageCount() > 0) {
 		<div class="text-center">
 			<ul class="pagination">
 	        	@if(currentPage.hasPrev) {
@@ -76,6 +77,7 @@
 				}
 			</ul>
 		</div>
+	}
 }
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {

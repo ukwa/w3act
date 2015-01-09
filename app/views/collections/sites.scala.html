@@ -55,6 +55,7 @@
 }
 
 @pagination = {
+	@if(currentPage.getTotalPageCount() > 0) {
 		<div class="text-center">
 			<ul class="pagination">
 	        	@if(currentPage.hasPrev) {
@@ -80,6 +81,7 @@
 				}
 			</ul>
 		</div>
+	}
 }
 
 @main("", user, scripts, styles) {
