@@ -142,7 +142,7 @@ public class Documents extends AbstractController {
 		Document document = Document.find.byId(id);
 		document.submitted = true;
 		Ebean.save(document);
-		deleteHtml(document.getHtmlFilename());
+		deleteHtmlFile(document.getHtmlFilename());
 		return redirect(routes.Documents.view(id));
 	}
 	
@@ -268,7 +268,12 @@ public class Documents extends AbstractController {
     	return ok();
 	}
     
-    public static void deleteHtml(String filename) {
+	public static void deleteHtmlFiles(WatchedTarget watchedTarget) {
+		for (Document document : watchedTarget.documents)
+			deleteHtmlFile(document.getHtmlFilename());
+	}
+    
+	public static void deleteHtmlFile(String filename) {
 		File file = Play.application().getFile("../html/" + filename);
 		file.delete();
 	}

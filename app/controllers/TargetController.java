@@ -644,6 +644,7 @@ public class TargetController extends AbstractController {
             	Ebean.update(target);
             	if (!watched && target.watchedTarget != null) {
             		WatchedTarget watchedTarget = WatchedTarget.find.byId(target.watchedTarget.id);
+            		Documents.deleteHtmlFiles(watchedTarget);
             		Ebean.delete(watchedTarget);
             	}
         	}
@@ -707,6 +708,7 @@ public class TargetController extends AbstractController {
         	Long id = Long.valueOf(getFormParam(Const.NID));
         	Logger.info("deleting: " + id);
         	Target target = Target.findById(id);
+        	if (target.watchedTarget != null) Documents.deleteHtmlFiles(target.watchedTarget);
         	Ebean.delete(target);
 	        res = redirect(routes.Targets.index()); 
         }
