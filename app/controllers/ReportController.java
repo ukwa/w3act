@@ -14,6 +14,7 @@ import models.Organisation;
 import models.Target;
 import models.User;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
@@ -166,16 +167,14 @@ public class ReportController extends AbstractController {
         sw.append(Const.CSV_LINE_END);
  	    
  	    if (permissionList != null && permissionList.size() > 0) {
-// 	    	Iterator<CrawlPermission> itr = permissionList.iterator();
  	    	Iterator<Target> itr = permissionList.iterator();
  	    	while (itr.hasNext()) {
  	    		Target target = itr.next();
-// 	    		CrawlPermission permission = itr.next();
-	    		sw.append(target.title);
+	    		sw.append(StringEscapeUtils.escapeCsv(target.title));
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.fieldUrl());
+	    		sw.append(StringEscapeUtils.escapeCsv(target.fieldUrl()));
 		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.createdAt + "");
+	    		sw.append(StringEscapeUtils.escapeCsv(target.createdAt.toString()));
 		 	    sw.append(Const.CSV_SEPARATOR);
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
