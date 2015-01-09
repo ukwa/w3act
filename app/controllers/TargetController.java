@@ -668,9 +668,10 @@ public class TargetController extends AbstractController {
 		}
         target.revision = Const.INITIAL_REVISION;
         target.active = Boolean.TRUE;
-        if (User.findByEmail(request().username()).hasRole(Const.USER)) {
-        	target.authorUser = User.findByEmail(request().username());
-        }
+        
+    	target.authorUser = user;
+    	target.organisation = user.organisation;
+    	
 		Logger.debug("add target with url: " + target.url);
 		Logger.debug("target title: " + target.title);
 		

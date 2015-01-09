@@ -74,8 +74,8 @@
 				}
 			});
 			  
-			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect");
-			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect");
+			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 2);
+			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect", 2);
             
 			// This happens right after the document is loaded.
 			// Our nav pills won't do anything by themselves, so we need to make sure we
@@ -122,6 +122,8 @@
 				//alert(document.getElementById('tabstatus').value);
 				window.scrollTo(0, 0);
 			})
+			
+			$('#selectionType option[value="SELECTION"]').prop('selected', true);
 		});		
 	</script>
 }
@@ -389,7 +391,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject. To select more than one, hold down the CTRL key.)</small></label>
+			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject.)</small></label>
 						    <div class="col-sm-6">
 								@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 								  	<div id="subjectTree"></div>
@@ -472,6 +474,7 @@
 					                args = 
 					                'class -> "form-control",
 					                '_label -> "Language (The predominant language in which the page is written):",
+				                	'_default -> "-- None --",
 					                '_showConstraints -> false
 				            )(FieldConstructor(genericInput.f), lang)	
 						</div>

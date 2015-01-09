@@ -358,10 +358,14 @@ function applySearchExt(context, searchContext, urlTo) {
 }
 
 function showTree(data, id, key) {
+	showTree(data, id, key, 3);
+}
+
+function showTree(data, id, key, selectMode) {
 	//console.log(data);
  	$(id).dynatree({
 		checkbox: true,
-    	selectMode: 3,
+    	selectMode: selectMode,
     	children: data,
     	onSelect: function(select, node) {
       		// Get a list of all selected nodes, and convert to a key array:
@@ -377,7 +381,13 @@ function showTree(data, id, key) {
       		var selRootKeys = $.map(selRootNodes, function(node){
         		return node.data.key;
       		});
-    	}
+    	},
+    	onPostInit: function(isReloading, isError) {
+            var tree = $(id).dynatree('getTree');
+            var selKeys = $.map(tree.getSelectedNodes(), function(node){
+                node.makeVisible();
+            });
+         }
  	});
 }
 
