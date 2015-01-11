@@ -44,7 +44,6 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.api.Utils;
-import uk.bl.scope.Scope;
 import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
 import views.html.infomessage;
@@ -928,7 +927,9 @@ public class TargetController extends AbstractController {
         String action = requestData.get("action");
 
         if (StringUtils.isNotEmpty(action)) {
-        	if (action.equals("save")) {
+	    	if (action.equals("request")) {
+    	        return redirect(routes.CrawlPermissionController.licenceRequestForTarget(id)); 
+	    	} else if (action.equals("save")) {
 		    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
 
 		        if (filledForm.hasErrors()) {
@@ -1118,14 +1119,6 @@ public class TargetController extends AbstractController {
 		        filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));
-        	}
-	    	else if (action.equals("request")) {
-	        	String title = requestData.get("title");
-	        	if (StringUtils.isNotEmpty(title)) {
-	        		String url = requestData.get("fieldUrl");
-	                String target = Scope.INSTANCE.normalizeUrl(url);
-	    	        return redirect(routes.CrawlPermissionController.licenceRequestForTarget(title, target)); 
-	        	}
 	        } else if (action.equals("archive")) {
 		        return redirect(routes.TargetController.archive(id)); 
 	        } else if (action.equals("delete")) {

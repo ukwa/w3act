@@ -63,7 +63,7 @@ public class Target extends UrlModel {
 	public String originatingOrganisation;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<CrawlPermission> crawlPermissions;
 
 	@JsonIgnore
@@ -475,8 +475,10 @@ public class Target extends UrlModel {
 		return res;
 	}
 
-	public static Target findById(Long id) {	
-		return find.where().eq("id", id).findUnique();
+	public static Target findById(Long id) {
+		Target target = find.where().eq("id", id).findUnique();
+		target.formUrl = target.fieldUrl();
+		return target;
 	}
 
 	public static Target findByUrl(String url) {

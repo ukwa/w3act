@@ -131,13 +131,7 @@ public class CrawlPermission extends ActModel {
 		this.name = name;
 	}
 
-	public String getName()
-    {
-        return name;
-    }
-
-    public static CrawlPermission findByName(String name)
-    {
+    public static CrawlPermission findByName(String name) {
         return find.where()
                    .eq("name",
                        name)
@@ -359,10 +353,6 @@ public class CrawlPermission extends ActModel {
         		.getPage(page);
     }
     
-    public String toString() {
-        return "CrawlPermission(" + name + ")" + ", id:" + id;
-    }    
-
     public static CrawlPermission create(Long id, String url) {
     	return new CrawlPermission(id, url);
     }
@@ -409,4 +399,16 @@ public class CrawlPermission extends ActModel {
         }
         return options;
     }
+
+	@Override
+	public String toString() {
+		return "CrawlPermission [target=" + target + ", mailTemplate="
+				+ mailTemplate + ", contactPerson=" + contactPerson + ", name="
+				+ name + ", description=" + description
+				+ ", anyOtherInformation=" + anyOtherInformation + ", user="
+				+ user + ", status=" + status + ", license=" + license
+				+ ", requestFollowup=" + requestFollowup + ", numberRequests="
+				+ numberRequests + ", thirdPartyContent=" + thirdPartyContent
+				+ ", publish=" + publish + ", agree=" + agree + "]";
+	}  
 }

@@ -11,7 +11,6 @@ import java.util.Map;
 
 import models.Organisation;
 import models.Role;
-import models.Tag;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;

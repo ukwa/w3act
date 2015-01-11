@@ -135,7 +135,7 @@ GET     /crawlpermissions                   	controllers.CrawlPermissionControll
 GET     /crawlpermissions/list                  controllers.CrawlPermissionController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", status ?= "QUEUED", sel ?= "selectall")
 GET    	/crawlpermissions/search            	controllers.CrawlPermissionController.search()
 GET    	/crawlpermissions/filterbyjson/:name	controllers.CrawlPermissionController.filterByJson(name)
-GET     /crawlpermissions/new     				controllers.CrawlPermissionController.newForm()
+GET     /crawlpermissions/new					controllers.CrawlPermissionController.newForm(targetId:Long ?= -1)
 POST    /crawlpermissions/send              	controllers.CrawlPermissionController.send()
 POST    /crawlpermissions/sendPreview          	controllers.CrawlPermissionController.sendPreview()
 GET     /crawlpermissions/:id        			controllers.CrawlPermissionController.view(id:Long)
@@ -199,7 +199,7 @@ GET		/targets/:targetId/instances				controllers.InstanceController.results(targ
 GET		/targets/:targetId/instances/:instanceId	controllers.InstanceController.viewInstance(targetId:Long, instanceId:Long)
 
 GET     /target/crawlpermissions/:target    controllers.CrawlPermissionController.showCrawlPermissions(target)
-GET     /target/licencerequest          	controllers.CrawlPermissionController.licenceRequestForTarget(name, target)
+GET     /target/licencerequest/:targetId    controllers.CrawlPermissionController.licenceRequestForTarget(targetId:Long)
 GET     /target/archive/:id                 controllers.TargetController.archive(id:Long)
 
 GET     /instances                          controllers.InstanceController.index()

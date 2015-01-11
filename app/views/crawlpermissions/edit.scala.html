@@ -50,7 +50,9 @@
 		
 		@helper.form(action=routes.CrawlPermissionController.update(id)) {
 			<input type="hidden" name="id" value="@id">
-	
+			<input type="hidden" id="target_id" name="target.id" value="@crawlPermissionForm("target.id").value">
+			<input type="hidden" id="user_id" name="user.id" value="@crawlPermissionForm("user.id").value">
+
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -69,7 +71,7 @@
 					<div class="form-group">
 						@inputText(crawlPermissionForm("target.formUrl"),
 							'_label -> "Target",
-						    'id -> "target",
+						    'id -> "",
 						    'class -> "form-control",
 						    'placeholder -> "Target"
 						)(FieldConstructor(genericMandatoryInput.f), lang)
@@ -81,7 +83,7 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@inputText(crawlPermissionForm("name"),
+							@inputText(crawlPermissionForm("contactPerson.name"),
 								'_label -> "Contact Person Name",
 							    'id -> "contactPerson",
 							    'class -> "form-control"
@@ -93,7 +95,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@inputText(crawlPermissionForm("position"),
+							@inputText(crawlPermissionForm("contactPerson.position"),
 								'_label -> "Position",
 							    'class -> "form-control"
 							)(FieldConstructor(genericInput.f), lang)
@@ -117,7 +119,7 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@inputText(crawlPermissionForm("contactOrganisation"),
+							@inputText(crawlPermissionForm("contactPerson.contactOrganisation"),
 								'_label -> "Contact Organisation",
 								'id -> "contactOrganisation",
 							    'class -> "form-control"
@@ -129,7 +131,7 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@inputText(crawlPermissionForm("phone"),
+							@inputText(crawlPermissionForm("contactPerson.phone"),
 								'_label -> "Phone",
 								'type -> "number",
 								'id -> "phone",
@@ -142,7 +144,7 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@inputText(crawlPermissionForm("postalAddress"),
+							@inputText(crawlPermissionForm("contactPerson.postalAddress"),
 								'_label -> "Postal Address",
 								'id -> "postalAddress",
 							    'class -> "form-control"
@@ -155,9 +157,10 @@
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-						@inputText(crawlPermissionForm("user.id"),
+						@inputText(crawlPermissionForm("user.name"),
 							'_label -> "Creator User",
 							'id -> "creatorUser",
+							'readonly -> "",
 						    'class -> "form-control"
 						)(FieldConstructor(genericInput.f), lang)				
 					</div>

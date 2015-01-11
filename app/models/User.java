@@ -50,7 +50,11 @@ public class User extends ActModel {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "authorUser", cascade = CascadeType.PERSIST)
-	public List<Target> targets = new ArrayList<Target>();
+	public List<Target> targets;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	public List<CrawlPermission> crawlPermissions;
 
 	@JsonIgnore
 	@ManyToOne

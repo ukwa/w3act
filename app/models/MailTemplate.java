@@ -31,7 +31,7 @@ public class MailTemplate extends ActModel {
 	private static final long serialVersionUID = -2157694575463302989L;
 
     //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="mailTemplate", cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy="mailTemplate", cascade=CascadeType.ALL)
     public List<CrawlPermission> crawlPermissions;
      
     /**
