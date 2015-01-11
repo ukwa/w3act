@@ -663,7 +663,12 @@ public class TargetController extends AbstractController {
 		Form<Target> filledForm = Form.form(Target.class);
 		Target target = new Target();
 		if (StringUtils.isNotBlank(title)) {
-			target.title = title;
+			try {
+			  new URL(title);
+			  target.formUrl = title;
+			} catch (MalformedURLException e) {
+				target.title = title;
+			}
 		}
         target.revision = Const.INITIAL_REVISION;
         target.active = Boolean.TRUE;
