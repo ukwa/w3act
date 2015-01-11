@@ -738,6 +738,7 @@
 						                options(scopeTypes), 
 						                args = 
 						                'class -> "form-control",
+					                	'_default -> "-- None --",
 						                '_label -> "Scope (Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option):",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	
@@ -753,6 +754,7 @@
 						                options(depthTypes), 
 						                args = 
 						                'class -> "form-control",
+					                	'_default -> "-- None --",					                
 						                '_label -> "Depth (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit):",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	
@@ -860,6 +862,7 @@
 							</label>
 							<div class="col-sm-6">
 								<select name="licensesList" id="license" class="form-control">
+									<option value="">-- None --</option>
 									@for(license <- licenses) {
 										<option value="@license.id">@license.name</option>
 									}

@@ -60,20 +60,6 @@ create table crawl_permission (
   constraint pk_crawl_permission primary key (id))
 ;
 
-create table crawl_permission_copy (
-  id                        bigint not null,
-  url                       varchar(255),
-  created_at                timestamp,
-  name                      text,
-  description               text,
-  any_other_information     text,
-  status                    text,
-  archivist_id              bigint,
-  updated_at                timestamp not null,
-  constraint uq_crawl_permission_copy_url unique (url),
-  constraint pk_crawl_permission_copy primary key (id))
-;
-
 create table field_url (
   id                        bigint not null,
   url                       text,
@@ -399,8 +385,6 @@ create sequence contact_person_seq;
 
 create sequence crawl_permission_seq;
 
-create sequence crawl_permission_copy_seq;
-
 create sequence field_url_seq;
 
 create sequence instance_seq;
@@ -441,32 +425,30 @@ alter table crawl_permission add constraint fk_crawl_permission_user_6 foreign k
 create index ix_crawl_permission_user_6 on crawl_permission (archivist_id);
 alter table crawl_permission add constraint fk_crawl_permission_license_7 foreign key (license_id) references taxonomy (id);
 create index ix_crawl_permission_license_7 on crawl_permission (license_id);
-alter table crawl_permission_copy add constraint fk_crawl_permission_copy_user_8 foreign key (archivist_id) references creator (id);
-create index ix_crawl_permission_copy_user_8 on crawl_permission_copy (archivist_id);
-alter table field_url add constraint fk_field_url_target_9 foreign key (target_id) references target (id);
-create index ix_field_url_target_9 on field_url (target_id);
-alter table instance add constraint fk_instance_qaIssue_10 foreign key (qaissue_id) references taxonomy (id);
-create index ix_instance_qaIssue_10 on instance (qaissue_id);
-alter table instance add constraint fk_instance_authorUser_11 foreign key (author_id) references creator (id);
-create index ix_instance_authorUser_11 on instance (author_id);
-alter table instance add constraint fk_instance_target_12 foreign key (target_id) references target (id);
-create index ix_instance_target_12 on instance (target_id);
-alter table lookup_entry add constraint fk_lookup_entry_target_13 foreign key (target_id) references target (id);
-create index ix_lookup_entry_target_13 on lookup_entry (target_id);
-alter table organisation add constraint fk_organisation_authorUser_14 foreign key (author_id) references creator (id);
-create index ix_organisation_authorUser_14 on organisation (author_id);
-alter table target add constraint fk_target_qaIssue_15 foreign key (qaissue_id) references taxonomy (id);
-create index ix_target_qaIssue_15 on target (qaissue_id);
-alter table target add constraint fk_target_authorUser_16 foreign key (author_id) references creator (id);
-create index ix_target_authorUser_16 on target (author_id);
-alter table target add constraint fk_target_organisation_17 foreign key (organisation_id) references organisation (id);
-create index ix_target_organisation_17 on target (organisation_id);
-alter table taxonomy add constraint fk_taxonomy_taxonomyType_18 foreign key (taxonomyType_id) references taxonomy_type (id);
-create index ix_taxonomy_taxonomyType_18 on taxonomy (taxonomyType_id);
-alter table taxonomy add constraint fk_taxonomy_parent_19 foreign key (parent_id) references taxonomy (id);
-create index ix_taxonomy_parent_19 on taxonomy (parent_id);
-alter table creator add constraint fk_creator_organisation_20 foreign key (organisation_id) references organisation (id);
-create index ix_creator_organisation_20 on creator (organisation_id);
+alter table field_url add constraint fk_field_url_target_8 foreign key (target_id) references target (id);
+create index ix_field_url_target_8 on field_url (target_id);
+alter table instance add constraint fk_instance_qaIssue_9 foreign key (qaissue_id) references taxonomy (id);
+create index ix_instance_qaIssue_9 on instance (qaissue_id);
+alter table instance add constraint fk_instance_authorUser_10 foreign key (author_id) references creator (id);
+create index ix_instance_authorUser_10 on instance (author_id);
+alter table instance add constraint fk_instance_target_11 foreign key (target_id) references target (id);
+create index ix_instance_target_11 on instance (target_id);
+alter table lookup_entry add constraint fk_lookup_entry_target_12 foreign key (target_id) references target (id);
+create index ix_lookup_entry_target_12 on lookup_entry (target_id);
+alter table organisation add constraint fk_organisation_authorUser_13 foreign key (author_id) references creator (id);
+create index ix_organisation_authorUser_13 on organisation (author_id);
+alter table target add constraint fk_target_qaIssue_14 foreign key (qaissue_id) references taxonomy (id);
+create index ix_target_qaIssue_14 on target (qaissue_id);
+alter table target add constraint fk_target_authorUser_15 foreign key (author_id) references creator (id);
+create index ix_target_authorUser_15 on target (author_id);
+alter table target add constraint fk_target_organisation_16 foreign key (organisation_id) references organisation (id);
+create index ix_target_organisation_16 on target (organisation_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyType_17 foreign key (taxonomyType_id) references taxonomy_type (id);
+create index ix_taxonomy_taxonomyType_17 on taxonomy (taxonomyType_id);
+alter table taxonomy add constraint fk_taxonomy_parent_18 foreign key (parent_id) references taxonomy (id);
+create index ix_taxonomy_parent_18 on taxonomy (parent_id);
+alter table creator add constraint fk_creator_organisation_19 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_19 on creator (organisation_id);
 
 
 
@@ -530,8 +512,6 @@ drop table if exists contact_person cascade;
 
 drop table if exists crawl_permission cascade;
 
-drop table if exists crawl_permission_copy cascade;
-
 drop table if exists field_url cascade;
 
 drop table if exists instance cascade;
@@ -583,8 +563,6 @@ drop sequence if exists communication_log_seq;
 drop sequence if exists contact_person_seq;
 
 drop sequence if exists crawl_permission_seq;
-
-drop sequence if exists crawl_permission_copy_seq;
 
 drop sequence if exists field_url_seq;
 
