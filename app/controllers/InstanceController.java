@@ -422,6 +422,7 @@ public class InstanceController extends AbstractController {
         	if (action.equals("save")) {    
 		        if (filledForm.hasErrors()) {
 		        	Logger.debug("hasErrors: " + filledForm.errors());
+		        	Logger.debug("errors: " + filledForm.errors());
 		            return info(filledForm, id);
 		        }		        
 		        filledForm.get().update(id);
