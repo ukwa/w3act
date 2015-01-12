@@ -90,7 +90,7 @@ public class Crawler {
 							}
 						}
 					} else if (urlMatchesScheme(pageUrl, watchedTarget.documentUrlScheme)) {
-						String contentDisposition = response.header("Content-Disposition");
+						String contentDisposition = response.header("Content-Disposition").replace("\"", "");
 						if (contentDisposition != null && contentDisposition.endsWith(".pdf")) {
 							Document document = new Document();
 							document.landingPageUrl = crawlWayback ?

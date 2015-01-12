@@ -21,15 +21,15 @@ ebean.default="models.*"
 
 # Evolutions
 # ~~~~~
-evolutionplugin=disabled
-applyEvolutions.default=false
-applyDownEvolutions.default=false
+evolutionplugin=enabled
+applyEvolutions.default=true
+applyDownEvolutions.default=true
 
 # Logger
 # ~~~~~
 logger=WARN
 logger.play=WARN
-logger.application=WARN
+logger.application=DEBUG
 
 # Data import
 # ~~~~~

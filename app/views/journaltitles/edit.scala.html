@@ -66,7 +66,7 @@
 				<a href="@routes.Documents.continueEdit()">@play.mvc.Controller.session("filename")</a> >
 			} else {
 				<a href="@routes.Targets.index()">Targets</a> >
-				<a href="@routes.Targets.view(form("watchedTarget.target.url").value)">@form("watchedTarget.target.title").value</a> >
+				<a href="@routes.Targets.view(form("watchedTarget.target.url").value)#watchedTarget">@form("watchedTarget.target.title").value</a> >
 			}
 			@if(form("id").value != null) {
 				@form("title").value
