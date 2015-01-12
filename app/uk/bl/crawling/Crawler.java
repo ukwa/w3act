@@ -90,18 +90,21 @@ public class Crawler {
 							}
 						}
 					} else if (urlMatchesScheme(pageUrl, watchedTarget.documentUrlScheme)) {
-						String contentDisposition = response.header("Content-Disposition").replace("\"", "");
-						if (contentDisposition != null && contentDisposition.endsWith(".pdf")) {
-							Document document = new Document();
-							document.landingPageUrl = crawlWayback ?
-									urlFromWayback(link.source) : link.source;
-							document.documentUrl = pageUrl;
-							document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
-							document.title = document.filename.substring(0, document.filename.indexOf('.'));
-							document.watchedTarget = watchedTarget;
-							foundDocuments.add(document);
-							if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
-							Logger.debug("hidden pdf found: " + document.filename + " (url: " + pageUrl + ")");
+						String contentDisposition = response.header("Content-Disposition");
+						if (contentDisposition != null) {
+							contentDisposition = contentDisposition.replace("\"", "");
+							if (contentDisposition.endsWith(".pdf")) {
+								Document document = new Document();
+								document.landingPageUrl = crawlWayback ?
+										urlFromWayback(link.source) : link.source;
+								document.documentUrl = pageUrl;
+								document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
+								document.title = document.filename.substring(0, document.filename.indexOf('.'));
+								document.watchedTarget = watchedTarget;
+								foundDocuments.add(document);
+								if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
+								Logger.debug("hidden pdf found: " + document.filename + " (url: " + pageUrl + ")");
+							}
 						}
 					}
 				}
