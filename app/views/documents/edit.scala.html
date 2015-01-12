@@ -300,7 +300,10 @@
 					</div>
 				</div>
 			</div>
-			<iframe id="document_view" src="@{if(editable) routes.Documents.html(form("htmlFilename").value) else form("documentUrl").value}"
+			<iframe id="document_view" src="@{
+					if(form("submitted").value == "false") routes.Documents.html(form("htmlFilename").value)
+					else routes.Helper.passthrough(form("documentUrl").value,"")
+				}"
 				width="100%" height="600"></iframe>
 		</div>
 	}

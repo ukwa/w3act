@@ -127,6 +127,8 @@ GET     /watchedtargets/:watchedtarget		controllers.Documents.list(watchedtarget
 GET		/watchedtargets/:watchedtarget/journaltitles		controllers.JournalTitles.addJournalTitle(watchedtarget: Long, toDocument: Boolean ?= false)
 POST	/watchedtargets/crawl				controllers.WatchedTargets.crawl(watchedtarget: Long)
 
+GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)
+
 GET     /flags                              controllers.Flags.index()
 GET     /flags/list							controllers.Flags.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET    	/flags/search                       controllers.Flags.search()
