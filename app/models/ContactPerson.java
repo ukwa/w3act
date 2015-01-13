@@ -97,11 +97,6 @@ public class ContactPerson extends ActModel {
 		this.url = url;
 	}
 
-	public String getName()
-    {
-        return name;
-    }
-	
     public List<CrawlPermission> getCrawlPermissions() {
     	return this.crawlPermissions;
     }

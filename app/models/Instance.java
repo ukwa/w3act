@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import play.Logger;
+import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.Utils;
@@ -25,6 +26,7 @@ import uk.bl.scope.Scope;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.avaje.ebean.QueryIterator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
@@ -54,6 +56,11 @@ public class Instance extends UrlModel {
 	@ManyToOne
 	@JoinColumn(name = "target_id")
 	public Target target;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	public User authorUser;
 	
     public Date fieldTimestamp;
 	

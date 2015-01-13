@@ -107,7 +107,7 @@ public class CrawlPermissionController extends AbstractController {
 		Form<CrawlPermission> filledForm = Form.form(CrawlPermission.class);
 		filledForm = filledForm.fill(crawlPermission);
 		
-        return ok(newForm.render(filledForm, user, crawlPermissionStatuses, targetId));
+        return ok(newForm.render(filledForm, user, crawlPermissionStatuses, targetId, null));
         
         
     }
@@ -119,7 +119,7 @@ public class CrawlPermissionController extends AbstractController {
 		Form<CrawlPermission> crawlPermissionForm = Form.form(CrawlPermission.class);
 		crawlPermissionForm = crawlPermissionForm.fill(crawlPermission);
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
-      	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses));
+      	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null));
     }
     
     public static Result view(Long id) {
@@ -332,16 +332,17 @@ public class CrawlPermissionController extends AbstractController {
 	 * about errors 
 	 * @return edit page with form and info message
 	 */
-    public static Result info(Form<CrawlPermission> form, Long id) {
+    public static Result info(Form<CrawlPermission> form, Long id, String contactName) {
     	User user = User.findByEmail(request().username());
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
-		return badRequest(edit.render(form, user, id, crawlPermissionStatuses));
+		Logger.debug("Info contactPerson: " + form.get().contactPerson.name);
+		return badRequest(edit.render(form, user, id, crawlPermissionStatuses, contactName));
     }
     
-	public static Result newInfo(Form<CrawlPermission> form, Long targetId) {
+	public static Result newInfo(Form<CrawlPermission> form, Long targetId, String contactName) {
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
 		User user = User.findByEmail(request().username());
-        return badRequest(newForm.render(form, user, crawlPermissionStatuses, targetId));
+        return badRequest(newForm.render(form, user, crawlPermissionStatuses, targetId, contactName));
 	}
 	
     public static Result update(Long id) {
@@ -360,48 +361,48 @@ public class CrawlPermissionController extends AbstractController {
 
 		        if (filledForm.hasErrors()) {
 		        	Logger.debug("hasErrors: " + filledForm.errors());
-		            return info(filledForm, id);
+		            return info(filledForm, id, null);
 		        }
-		        
-		        Long targetId = filledForm.get().target.id;
 		        
 		        String formUrl = requestData.get("target.formUrl");
 
+		    	String contactPersonName = filledForm.get().contactPerson.name;
 		    	String contactPersonEmail = filledForm.get().contactPerson.email;
 	
 		        if (StringUtils.isBlank(formUrl)) {
 		            ValidationError ve = new ValidationError("target.formUrl", "URL is required");
 		            filledForm.reject(ve);
-		            return newInfo(filledForm, targetId);
+		            return info(filledForm, id, null);
 		        }
 		        
 		        if (StringUtils.isBlank(contactPersonEmail)) {
 		            ValidationError ve = new ValidationError("contactPerson.email", "Email is required");
 		            filledForm.reject(ve);
-		            return newInfo(filledForm, targetId);
+		            return info(filledForm, id, null);
 		        }
 		        
-		    	ContactPerson contactPerson = ContactPerson.findByEmail(contactPersonEmail);
-		    	String contactPersonName = filledForm.get().contactPerson.name;
+		    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail);
 		    	
-		    	if (contactPerson != null) {
-			    	Logger.debug("validateForm contactPersonName: " + contactPersonName + "/" + contactPerson.name);
-			    	Logger.debug("validateForm contactPersonEmail: " + contactPersonEmail + "/" + contactPerson.email);
-		    		if (StringUtils.isNotEmpty(contactPerson.name) && StringUtils.isNotEmpty(contactPerson.email) && 
+		    	if (existingContact != null) {
+			    	Logger.debug("validateForm contactPersonName: " + contactPersonName + "/" + existingContact.name);
+			    	Logger.debug("validateForm contactPersonEmail: " + contactPersonEmail + "/" + existingContact.email);
+		    		if (StringUtils.isNotEmpty(existingContact.name) && StringUtils.isNotEmpty(existingContact.email) && 
 		    			StringUtils.isNotBlank(contactPersonName) && StringUtils.isNotBlank(contactPersonEmail) 
-		    			&& contactPerson.email.equals(contactPersonEmail) && !contactPerson.name.equals(contactPersonName)) {
+		    			&& existingContact.email.equals(contactPersonEmail) && !existingContact.name.equals(contactPersonName)) {
 		    			// matching emails but names don't match
 		    	    	Logger.debug("validateForm validation error");
 
 			    		String msg = "A contact person with email '" + contactPersonEmail + 
-			  					"' is already in the Contact Persons list, but with the Name '" + contactPerson.name + 
-			  					"' which is different from the given name '" + filledForm.get().name + 
+			  					"' is already in the Contact Persons list, but with the Name '" + existingContact.name + 
+			  					"' which is different from the given name '" + contactPersonName + 
 			  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
+			            filledForm.get().contactPerson = existingContact;
+			            Logger.debug("refill: " + filledForm.get().contactPerson.name);
 			            ValidationError e = new ValidationError("email", msg);
 			            filledForm.reject(e);
-			            return newInfo(filledForm, targetId);
+			            return info(filledForm, id, filledForm.get().contactPerson.name);
 		    		}
-		        	filledForm.get().contactPerson = contactPerson;
+		        	filledForm.get().contactPerson = existingContact;
 		    	} else {
 		        	filledForm.get().contactPerson.save();
 		    	}
@@ -439,46 +440,48 @@ public class CrawlPermissionController extends AbstractController {
     	
         if(filledForm.hasErrors()) {
     		Logger.debug("errors: " + filledForm.errors());
-            return newInfo(filledForm, targetId);
+            return newInfo(filledForm, targetId, null);
         }
         
         String formUrl = requestData.get("target.formUrl");
 
+    	String contactPersonName = filledForm.get().contactPerson.name;
     	String contactPersonEmail = filledForm.get().contactPerson.email;
     	
         if (StringUtils.isBlank(formUrl)) {
             ValidationError ve = new ValidationError("target.formUrl", "URL is required");
             filledForm.reject(ve);
-            return newInfo(filledForm, targetId);
+            return newInfo(filledForm, targetId, null);
         }
         
         if (StringUtils.isBlank(contactPersonEmail)) {
             ValidationError ve = new ValidationError("contactPerson.email", "Email is required");
             filledForm.reject(ve);
-            return newInfo(filledForm, targetId);
+            return newInfo(filledForm, targetId, null);
         }
         
-    	ContactPerson contactPerson = ContactPerson.findByEmail(contactPersonEmail);
-    	String contactPersonName = filledForm.get().contactPerson.name;
+    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail);
     	
-    	if (contactPerson != null) {
-	    	Logger.debug("validateForm contactPersonName: " + contactPersonName + "/" + contactPerson.name);
-	    	Logger.debug("validateForm contactPersonEmail: " + contactPersonEmail + "/" + contactPerson.email);
-    		if (StringUtils.isNotEmpty(contactPerson.name) && StringUtils.isNotEmpty(contactPerson.email) && 
+    	if (existingContact != null) {
+	    	Logger.debug("validateForm contactPersonName: " + contactPersonName + "/" + existingContact.name);
+	    	Logger.debug("validateForm contactPersonEmail: " + contactPersonEmail + "/" + existingContact.email);
+    		if (StringUtils.isNotEmpty(existingContact.name) && StringUtils.isNotEmpty(existingContact.email) && 
     			StringUtils.isNotBlank(contactPersonName) && StringUtils.isNotBlank(contactPersonEmail) 
-    			&& contactPerson.email.equals(contactPersonEmail) && !contactPerson.name.equals(contactPersonName)) {
+    			&& existingContact.email.equals(contactPersonEmail) && !existingContact.name.equals(contactPersonName)) {
     			// matching emails but names don't match
     	    	Logger.debug("validateForm validation error");
 
 	    		String msg = "A contact person with email '" + contactPersonEmail + 
-	  					"' is already in the Contact Persons list, but with the Name '" + contactPerson.name + 
-	  					"' which is different from the given name '" + filledForm.get().name + 
+	  					"' is already in the Contact Persons list, but with the Name '" + existingContact.name + 
+	  					"' which is different from the given name '" + contactPersonName + 
 	  					"'. Please review the revised details below and click Save, or enter an alternative contact email address.";
+	            filledForm.get().contactPerson = existingContact;
+	            Logger.debug("refill: " + filledForm.get().contactPerson.name);
 	            ValidationError e = new ValidationError("email", msg);
 	            filledForm.reject(e);
-	            return newInfo(filledForm, targetId);
+	            return newInfo(filledForm, targetId, filledForm.get().contactPerson.name);
     		}
-        	filledForm.get().contactPerson = contactPerson;
+        	filledForm.get().contactPerson = existingContact;
     	} else {
         	filledForm.get().contactPerson.save();
     	}
@@ -490,7 +493,7 @@ public class CrawlPermissionController extends AbstractController {
         filledForm.get().agree = Boolean.FALSE;
         filledForm.get().publish = Boolean.TRUE;
         
-       	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + filledForm.get().status, filledForm.get(), filledForm.get().user, Const.UPDATE);
+       	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + filledForm.get().status, filledForm.get(), filledForm.get().user, Const.SAVE);
        	log.save();
 //
         updateAllByTarget(filledForm.get().id, filledForm.get().target.id, filledForm.get().status);

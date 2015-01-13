@@ -73,10 +73,12 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
-						    <div class="col-sm-6">
-				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@instanceForm("title").value">
-							</div>
+							@inputText(instanceForm("title"),
+								'_label -> "Title",
+							    'id -> "inputTitle",
+							    'class -> "form-control",
+							    'placeholder -> "Title"
+							)(FieldConstructor(genericMandatoryInput.f), lang)	
 						</div>
 					</div>
 		     	</div>
@@ -120,7 +122,7 @@
 					                '_label -> "Author:",
 				                	'_default -> "-- None --",
 					                '_showConstraints -> true
-				            )(FieldConstructor(genericMandatoryInput.f), lang)						
+				            )(FieldConstructor(genericInput.f), lang)						
 			         	</div>
 					</div>
 				</div>				
@@ -141,12 +143,12 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@textarea(field = instanceForm("notes"),
+							@textarea(instanceForm("notes"),
 				 				args = 'rows -> 1, 'cols -> 100,
 								'_label -> "Technical Notes",
-								'id -> "quality_notes",
-								'class -> "form-control"
-							)(FieldConstructor(genericInput.f), lang)								
+							    'id -> "quality_notes",
+							    'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
 			         	</div>
 					</div>
 				</div>

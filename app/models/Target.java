@@ -115,6 +115,12 @@ public class Target extends UrlModel {
 	public Boolean active; // flag for the latest version of the target among
 							// targets with the same URL
 	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	@Required(message="Author Required")
+	public User authorUser;
+
 	@Column(columnDefinition = "text")
 	public String flagNotes;
 	/**

@@ -22,6 +22,7 @@ import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
+import play.mvc.Http.RequestBody;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -330,6 +331,9 @@ public class InstanceController extends AbstractController {
     
     public static Result edit(Long id) {
 		Instance instance = Instance.findById(id);
+//		instance.notes = StringEscapeUtils.escapeJava(instance.notes);
+		Logger.debug("title: " + instance.title);
+		Logger.debug("authorUser: " + instance.authorUser);
 		Form<Instance> instanceForm = Form.form(Instance.class);
 		instanceForm = instanceForm.fill(instance);
 		User user = User.findByEmail(request().username());
@@ -409,22 +413,25 @@ public class InstanceController extends AbstractController {
 	}
 	
 	public static Result update(Long id) {
+		RequestBody body = request().body();
+//		Map<String,String[]> map = body.asFormUrlEncoded();
+		Logger.debug("body: " + body);
     	DynamicForm requestData = form().bindFromRequest();
+		Logger.debug("requestData: " + requestData);
         Form<Instance> filledForm = form(Instance.class).bindFromRequest();
     	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
-    	Logger.debug("hasErrors: " + filledForm.hasErrors());
+    	Logger.debug("errors: " + filledForm.errors());
 
     	String action = requestData.get("action");
 
     	Logger.debug("action: " + action);
     	
         if (StringUtils.isNotEmpty(action)) {
-        	if (action.equals("save")) {    
-		        if (filledForm.hasErrors()) {
-		        	Logger.debug("hasErrors: " + filledForm.errors());
-		        	Logger.debug("errors: " + filledForm.errors());
-		            return info(filledForm, id);
-		        }		        
+        	if (action.equals("save")) {
+                if (filledForm.hasErrors()) {
+                	Logger.debug("hasErrors: " + filledForm.errors());
+                    return info(filledForm, id);
+                }		                		
 		        filledForm.get().update(id);
 		        flash("message", "Instance " + filledForm.get().title + " has been updated");
 		        return redirect(routes.InstanceController.view(filledForm.get().id));

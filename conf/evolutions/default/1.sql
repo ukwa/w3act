@@ -79,12 +79,12 @@ create table instance (
   revision                  text,
   edit_url                  varchar(255),
   qaissue_id                bigint,
-  author_id                 bigint,
   notes                     text,
   format                    varchar(255),
   qa_issue_category         varchar(255),
   qa_notes                  text,
   target_id                 bigint,
+  author_id                 bigint,
   field_timestamp           timestamp,
   value                     text,
   summary                   text,
@@ -204,7 +204,6 @@ create table target (
   revision                  text,
   edit_url                  varchar(255),
   qaissue_id                bigint,
-  author_id                 bigint,
   notes                     text,
   format                    varchar(255),
   originating_organisation  text,
@@ -212,6 +211,7 @@ create table target (
   is_in_scope_ip            boolean,
   is_in_scope_ip_without_license boolean,
   active                    boolean,
+  author_id                 bigint,
   flag_notes                text,
   value                     text,
   summary                   text,
@@ -429,10 +429,10 @@ alter table field_url add constraint fk_field_url_target_8 foreign key (target_i
 create index ix_field_url_target_8 on field_url (target_id);
 alter table instance add constraint fk_instance_qaIssue_9 foreign key (qaissue_id) references taxonomy (id);
 create index ix_instance_qaIssue_9 on instance (qaissue_id);
-alter table instance add constraint fk_instance_authorUser_10 foreign key (author_id) references creator (id);
-create index ix_instance_authorUser_10 on instance (author_id);
-alter table instance add constraint fk_instance_target_11 foreign key (target_id) references target (id);
-create index ix_instance_target_11 on instance (target_id);
+alter table instance add constraint fk_instance_target_10 foreign key (target_id) references target (id);
+create index ix_instance_target_10 on instance (target_id);
+alter table instance add constraint fk_instance_authorUser_11 foreign key (author_id) references creator (id);
+create index ix_instance_authorUser_11 on instance (author_id);
 alter table lookup_entry add constraint fk_lookup_entry_target_12 foreign key (target_id) references target (id);
 create index ix_lookup_entry_target_12 on lookup_entry (target_id);
 alter table organisation add constraint fk_organisation_authorUser_13 foreign key (author_id) references creator (id);

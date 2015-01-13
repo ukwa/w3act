@@ -1,4 +1,4 @@
-@(crawlPermissionForm: Form[CrawlPermission], user: User, id: Long, crawlPermissionStatuses: Map[String,String])
+@(crawlPermissionForm: Form[CrawlPermission], user: User, id: Long, crawlPermissionStatuses: Map[String,String], contactName: String)
 
 @import helper._
 @import bootstrap._
@@ -83,11 +83,18 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							@inputText(crawlPermissionForm("contactPerson.name"),
-								'_label -> "Contact Person Name",
-							    'id -> "contactPerson",
-							    'class -> "form-control"
-							)(FieldConstructor(genericInput.f), lang)
+							@if(contactName != null) {
+								<label class="col-sm-6 control-label" for="contactPerson_name">Contact Person Name</label>
+								<div class="col-sm-6">
+									<input id="contactPerson" class="form-control" type="text" value="@contactName" name="contactPerson.name">
+								</div>
+							} else {	
+								@inputText(crawlPermissionForm("contactPerson.name"),
+									'_label -> "Contact Person Name",
+								    'id -> "contactPerson",
+								    'class -> "form-control"
+								)(FieldConstructor(genericInput.f), lang)
+							}
 						</div>
 					</div>
 		     	</div>

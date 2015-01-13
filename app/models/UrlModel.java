@@ -11,7 +11,6 @@ import javax.persistence.Transient;
 
 import play.Logger;
 import play.data.validation.Constraints;
-import play.data.validation.Constraints.Required;
 import uk.bl.api.models.FieldModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -74,12 +73,6 @@ abstract class UrlModel extends ActModel {
 	@JoinColumn(name = "qaissue_id")
 	public QaIssue qaIssue;
 
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "author_id")
-	@Required(message="Author Required")
-	public User authorUser;
-	
 	@JsonIgnore
 	@Column(columnDefinition = "text")
 	public String notes;
