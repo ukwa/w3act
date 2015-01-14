@@ -41,18 +41,33 @@
 					<tr>
 						<td>
 							<a class="brand" href="@routes.InstanceController.viewInstance(target.id, instance.id)">@instance.title</a><br>
-							<a class="brand" href="@instance.getFieldUrlAsStr">@instance.getFieldUrlAsStr</a></td>
-						<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.getFieldUrlAsStr">(mid-crawl),</a>
-		                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
-		                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
-						@if(instance.target.organisation != null && instance.target.organisation.title != null) {
-							<td><a href="@routes.OrganisationController.view(instance.target.organisation.id)">
-								@instance.target.organisation.title</a></td>
-						} else {
-							<td></td>
-						}
+							@if(instance.target.fieldUrls != null) {
+								@for(fieldUrl <- instance.target.fieldUrls) {							
+									<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a><br />
+								}
+							}
+						</td>
+						<td>
+							@if(instance.target.fieldUrls != null) {
+								@for(fieldUrl <- instance.target.fieldUrls) {	
+									<a class="brand" href="opera.bl.uk:8080/wayback/*/@fieldUrl.url">(mid-crawl),</a>
+				                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">(archival),</a>
+				                 	<a class="brand" href="@fieldUrl.url">(live)</a><br />
+				                }
+				         	}				                 
+		                </td>
+		                <td>
+							@if(instance.target.organisation != null && instance.target.organisation.title != null) {
+								<a href="@routes.OrganisationController.view(instance.target.organisation.id)">
+									@instance.target.organisation.title</a>
+							}
+						</td>
 						<td>0</td>
-						<td>@instance.target.crawlFrequency</td>
+						<td>
+					    	@if(instance.target.crawlFrequency != null && instance.target.crawlFrequency.length > 0) {
+	 							@uk.bl.Const.CrawlFrequency.getCrawlFrequency(instance.target.crawlFrequency).getValue
+							}						
+						</td>
 						<td>
 							@if(instance.authorUser != null) {
 								<a class="brand" href="@routes.UserController.edit(instance.authorUser.id)">@instance.authorUser.name</a>
@@ -63,8 +78,20 @@
 								@instance.qaIssue.name
 							}
 						</td>
-						<td>@instance.checkScope(instance.getFieldListAsStr("fieldUrl"))</td>
-						<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.getFieldUrlAsStr">(mementos)</a></td>
+						<td>
+							@if(instance.target.fieldUrls != null) {
+								@for(fieldUrl <- instance.target.fieldUrls) {
+									@instance.checkScope(fieldUrl.url) 
+								}
+							}
+						</td>
+						<td>
+							@if(instance.target.fieldUrls != null) {
+								@for(fieldUrl <- instance.target.fieldUrls) {
+									<a class="brand" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">(mementos)</a><br />
+								}
+							}
+						</td>
 					</tr>
 					}
 				</tbody>

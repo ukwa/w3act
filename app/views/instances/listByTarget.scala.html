@@ -124,13 +124,32 @@
 			<tbody>
 				@for(instance <- currentPage.getList) {
 				<tr>
-					<td><a class="brand" href="@routes.InstanceController.edit(instance.id)">@instance.title</a><br><a class="brand" href="@instance.getFieldUrlAsStr">@instance.getFieldUrlAsStr</a></td>
-					<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.getFieldUrlAsStr">(mid-crawl),</a>
-	                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.getFieldUrlAsStr">(archival),</a>
-	                 	<a class="brand" href="@instance.getFieldUrlAsStr">(live)</a></td>
+					<td>
+						<a class="brand" href="@routes.InstanceController.edit(instance.id)">@instance.title</a><br>					
+						@if(instance.target.fieldUrls != null) {
+							@for(fieldUrl <- instance.target.fieldUrls) {						
+								<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a><br />
+							}
+						}
+					</td>
+					<td>
+						@if(instance.target.fieldUrls != null) {
+							@for(fieldUrl <- instance.target.fieldUrls) {	
+								<a class="brand" href="opera.bl.uk:8080/wayback/*/@fieldUrl.url">(mid-crawl),</a>
+			                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">(archival),</a>
+			                 	<a class="brand" href="@fieldUrl.url">(live)</a><br />
+							}
+						}
+					</td>
 					<td>@instance.qaIssue.name</td>
 					<td>@instance.updatedAt</td>
-					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.getFieldUrlAsStr">(mementos)</a></td>
+					<td>
+						@if(instance.target.fieldUrls != null) {
+							@for(fieldUrl <- instance.target.fieldUrls) {
+								<a class="brand" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">(mementos)</a><br />
+							}
+						}
+					</td>
 				</tr>
 				}
 			</tbody>

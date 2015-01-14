@@ -15,7 +15,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import play.Logger;
-import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.Utils;
@@ -403,41 +402,41 @@ public class Instance extends UrlModel {
 //    	return subjects;
 //	}
 	
-	public String getFieldUrlAsStr() {
-		return getFieldListAsStr("fieldUrl");
-	}
-	
-	/**
-	 * This method retrieves value of the list field.
-	 * @param fieldName
-	 * @return list of strings as a String
-	 */
-	public String getFieldListAsStr(String fieldName) {
-    	List<String> res = new ArrayList<String>();
-    	try {
-    		res.add(Const.EMPTY);
-			Field field = this.getClass().getField(fieldName); 
-			String content = (String) field.get(this);
-			res = Arrays.asList(content.split("\\s*,\\s*"));
-		} catch (IllegalArgumentException e) {
-			Logger.debug(e.getMessage());
-		} catch (IllegalAccessException e) {
-			Logger.debug(e.getMessage());
-		} catch (SecurityException e) {
-			Logger.debug(e.getMessage());
-		} catch (NoSuchFieldException e) {
-			Logger.debug(e.getMessage());
-		} catch (Exception e) {
-			Logger.debug(e.getMessage());
-		}
-    	String res_str = res.toString().substring(1,res.toString().length()-1);
-    	if (res_str.length() > Const.STRING_LIMIT) {
-    		res_str = res_str.toString().substring(0,Const.STRING_LIMIT);
-    	}
-//    	System.out.println(res_str.length());
-//		String res_str = "test";
-    	return res_str;
-    }
+//	public String getFieldUrlAsStr() {
+//		return getFieldListAsStr("fieldUrl");
+//	}
+//	
+//	/**
+//	 * This method retrieves value of the list field.
+//	 * @param fieldName
+//	 * @return list of strings as a String
+//	 */
+//	public String getFieldListAsStr(String fieldName) {
+//    	List<String> res = new ArrayList<String>();
+//    	try {
+//    		res.add(Const.EMPTY);
+//			Field field = this.getClass().getField(fieldName); 
+//			String content = (String) field.get(this);
+//			res = Arrays.asList(content.split("\\s*,\\s*"));
+//		} catch (IllegalArgumentException e) {
+//			Logger.debug(e.getMessage());
+//		} catch (IllegalAccessException e) {
+//			Logger.debug(e.getMessage());
+//		} catch (SecurityException e) {
+//			Logger.debug(e.getMessage());
+//		} catch (NoSuchFieldException e) {
+//			Logger.debug(e.getMessage());
+//		} catch (Exception e) {
+//			Logger.debug(e.getMessage());
+//		}
+//    	String res_str = res.toString().substring(1,res.toString().length()-1);
+//    	if (res_str.length() > Const.STRING_LIMIT) {
+//    		res_str = res_str.toString().substring(0,Const.STRING_LIMIT);
+//    	}
+////    	System.out.println(res_str.length());
+////		String res_str = "test";
+//    	return res_str;
+//    }
 
 	/**
 	 * This method retrieves user name for the passed author URL.

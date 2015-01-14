@@ -76,6 +76,6 @@ public class FieldUrl extends Model {
 
 	@Override
 	public String toString() {
-		return "FieldUrl [url=" + url + "]";
+		return this.url;
 	}
 }

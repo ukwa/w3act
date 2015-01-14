@@ -306,13 +306,13 @@
 										<td>N/A</td>
 									}
 									<td>
-									@if(target.fieldUrls != null && target.url != null) {
-										@for(fieldUrl <- target.fieldUrls) {
-											<a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a> 
+										@if(target.fieldUrls != null) {
+											@for(fieldUrl <- target.fieldUrls) {
+												<a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a><br />
+											}
+										} else {
+											N/A
 										}
-									} else {
-										N/A
-									}
 									</td>
 				                </tr>
 				                }
