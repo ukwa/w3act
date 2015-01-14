@@ -49,14 +49,8 @@ public class Crawler {
 		for (Link link : fringe) {
 			try {
 				if (linkDepth >= 0 || urlMatchesScheme(link.target, watchedTarget.documentUrlScheme)) {
-					Connection connection = Jsoup.connect(link.target);
-					
-					connection.request().method(Method.GET);
-					connection.ignoreContentType(true);
-					connection.execute();
-					
-					Response response = connection.response();
-					
+									
+					Response response = getResponse(link.target);
 					String pageUrl = crawlWayback ?
 							urlFromWayback(link.target) : link.target;
 					
@@ -116,6 +110,16 @@ public class Crawler {
 		breathFirstSearch(watchedTarget, children, linkDepth - 1);
 	}
 	
+	public Response getResponse(String url) throws IOException {
+		Connection connection = Jsoup.connect(url);
+		
+		connection.request().method(Method.GET);
+		connection.ignoreContentType(true);
+		connection.execute();
+		
+		return connection.response();
+	}
+
 	private String waybackReplayUrl(String url, String timestamp) {
 		return waybackUrl + "replay?url=" + url + "&date=" + timestamp;
 	}

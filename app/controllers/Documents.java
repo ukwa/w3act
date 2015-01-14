@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -7,6 +8,7 @@ import java.net.URLDecoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -146,6 +148,15 @@ public class Documents extends AbstractController {
 		return redirect(routes.Documents.view(id));
 	}
 	
+	public static void addHash(Document document) throws FileNotFoundException {
+		File file = Play.application().getFile("conf/converter/" + document.id + ".sha1");
+		Scanner scanner = new Scanner(file);
+		String sha1Hash = scanner.next();
+		scanner.close();
+		document.sha1Hash = sha1Hash;
+		Ebean.save(document);
+	}
+	
 	public static Document getDocumentFromDB(long id) {
 		Document document = Ebean.find(Document.class, id);
 		if (document.type == null) document.type = "";
@@ -264,8 +275,10 @@ public class Documents extends AbstractController {
 			return ok(file, filename);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+			return ok("There is a problem with the encoding.");
+		} catch (Exception e) {
+			return ok("This file was not found on the system.");
 		}
-    	return ok();
 	}
     
 	public static void deleteHtmlFiles(WatchedTarget watchedTarget) {

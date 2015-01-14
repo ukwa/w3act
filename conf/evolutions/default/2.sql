@@ -31,6 +31,7 @@ create table document (
   submitted		boolean not null,
   landing_page_url	varchar(255),
   document_url		varchar(255),
+  sha1hash		varchar(255),
   title			TEXT not null,
   doi			varchar(255),
   publication_date	date,

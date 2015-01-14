@@ -48,6 +48,7 @@ public class Document extends Model {
 	public List<Portal> portals = new ArrayList<>();
     public String landingPageUrl;
     public String documentUrl;
+    public String sha1Hash;
     @Required
     @Column(columnDefinition = "TEXT")
 	public String title;
@@ -71,7 +72,7 @@ public class Document extends Model {
     public static final Model.Finder<Long, Document> find = new Model.Finder<>(Long.class, Document.class);
     
     public String getHtmlFilename() {
-    	return filename.split("\\.")[0] + ".html";
+    	return id + ".html";
     }
     
     public List<ValidationError> validate() {

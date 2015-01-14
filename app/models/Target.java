@@ -64,7 +64,7 @@ public class Target extends Model {
 	public List<Flag> flag_to_target = new ArrayList<Flag>();
     
 	//bi-directional many-to-many association to Tag
-	@ManyToMany(mappedBy="targets") @JsonIgnore
+	@ManyToMany(mappedBy="targets", cascade=CascadeType.REMOVE) @JsonIgnore
 	public List<Tag> tag_to_target = new ArrayList<Tag>();
 	
     //bi-directional one-to-many association to CrawlPermission

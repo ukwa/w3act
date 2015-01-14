@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.avaje.ebean.Ebean;
 
+import controllers.Documents;
 import models.Document;
 import models.WatchedTarget;
 import akka.actor.UntypedActor;
@@ -49,6 +50,7 @@ public class CrawlActor extends UntypedActor {
 		for (Document document : newDocumentList) {
 			try {
 				convertPdfToHtml(document);
+				Documents.addHash(document);
 			} catch (IOException e) {
 				Logger.error(e.getMessage());
 			}
@@ -56,10 +58,10 @@ public class CrawlActor extends UntypedActor {
 		
 		return newDocumentList;
 	}
-	
+
 	private static void convertPdfToHtml(Document document) throws IOException {
 		ProcessBuilder builder = new ProcessBuilder(
- 			"/bin/bash", "-c", "cd conf/converter && ./convertPdfToHtml.sh '" + document.documentUrl + "' '" + document.title + "'");
+ 			"/bin/bash", "-c", "cd conf/converter && ./convertPdfToHtml.sh '" + document.documentUrl + "' '" + document.id + "'");
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
 		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
