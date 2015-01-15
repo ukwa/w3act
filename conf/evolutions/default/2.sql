@@ -49,7 +49,8 @@ create table document (
 
 create table portal (
   id			bigint primary key,
-  title			varchar(255) unique not null
+  title			varchar(255) unique not null,
+  active		boolean
 );
 
 create table portal_document (

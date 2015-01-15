@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Scanner;
 
 import com.avaje.ebean.Ebean;
@@ -41,6 +43,8 @@ import views.html.documents.list;
 
 @Security.Authenticated(Secured.class)
 public class Documents extends AbstractController {
+	
+	public static long lastUpdatePortals;
 	
 	public static Result view(Long id) {
 		return render(id, false);
@@ -197,12 +201,38 @@ public class Documents extends AbstractController {
 	}
 	
 	public static List<Portal> getPortals() {
-		if (Portal.find.findRowCount() == 0) {
-			Ebean.save(new Portal("Business"));
-			Ebean.save(new Portal("SWP"));
-			Ebean.save(new Portal("STM"));
+		long quiteRecent = System.currentTimeMillis() - 60 * 1000;
+		if (lastUpdatePortals < quiteRecent)
+			updatePortals();
+		return Portal.find.where().eq("active", true).findList();
+	}
+	
+	private static void updatePortals() {
+		Logger.info("update services");
+		List<Portal> oldPortals = Portal.find.all();
+		Set<Portal> newPortals = new HashSet<>();
+		File file = Play.application().getFile("conf/services.txt");
+		try {
+			Scanner scanner = new Scanner(file);
+			scanner.useDelimiter("[\r\n]+");
+			while (scanner.hasNext())
+				newPortals.add(new Portal(scanner.next().trim()));
+			scanner.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return Portal.find.all();
+		
+		for (Portal oldPortal : oldPortals) {
+			if (oldPortal.active != newPortals.contains(oldPortal)) {
+				oldPortal.active = newPortals.contains(oldPortal);
+				Ebean.update(oldPortal);
+			}
+			if (newPortals.contains(oldPortal))
+				newPortals.remove(oldPortal);
+		}
+		
+		Ebean.save(newPortals);
+		lastUpdatePortals = System.currentTimeMillis();
 	}
 	
     /**
