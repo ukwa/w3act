@@ -27,6 +27,7 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.Const.CrawlPermissionStatus;
 import uk.bl.api.Utils;
+import uk.bl.exception.ActException;
 import uk.bl.scope.EmailHelper;
 import views.html.crawlpermissions.newForm;
 import views.html.crawlpermissions.edit;
@@ -694,19 +695,22 @@ public class CrawlPermissionController extends AbstractController {
      * @param template The email template
      * @return true if sending successful, false otherwise
      */
-    public static boolean setPendingSelectedCrawlPermissions(boolean all, String template) {
+    public static boolean setPendingSelectedCrawlPermissions(boolean all, String template) throws ActException {
+    	
     	boolean res = true;
         List<CrawlPermission> permissionList = CrawlPermission.findAll();
-        Iterator<CrawlPermission> permissionItr = permissionList.iterator();
-        while (permissionItr.hasNext()) {
-        	CrawlPermission permission = permissionItr.next();
+        
+        Logger.debug("template: " + template);
+        for (CrawlPermission permission : permissionList) {
+
             if (getFormParam(permission.name) != null) {
 //        		Logger.debug("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
                 boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
                 if (userFlag || all) {
                 	Logger.debug("mail to contact person: " + permission.contactPerson.name.replace(Const.LIST_DELIMITER,"") + ".");
                 	Logger.debug("mail template: " + template);
-            		String email = ContactPerson.findByUrl(permission.contactPerson.name.replace(Const.LIST_DELIMITER,"")).email;
+                	ContactPerson contactPerson = permission.contactPerson;
+            		String email = contactPerson.email;
 //                	String[] toMailAddresses = Utils.getMailArray(email);
             		String messageBody = Const.NONE_VALUE;
                 	String messageSubject = Const.NONE_VALUE;
@@ -731,7 +735,8 @@ public class CrawlPermissionController extends AbstractController {
             		} else {
             			Logger.debug("selected 'None' template type");
             		}
-                	if (email != null) {
+            		Logger.debug("email: " + email + ", " + messageSubject + ", " + messageBody);
+                	if (StringUtils.isNotBlank(email)) {
 	                    EmailHelper.sendMessage(email, messageSubject, messageBody);                	
 	//                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
 	                	permission.status = Const.CrawlPermissionStatus.PENDING.name();
@@ -743,9 +748,10 @@ public class CrawlPermissionController extends AbstractController {
 	        	        updateAllByTarget(permission.id, permission.target.id, permission.status);
 //	        	        TargetController.updateQaStatus(permission.target.title, permission.status);
                 	} else {
-	                	Logger.debug("Missing contact email. Please check contact person");
-	        	        res = false;
-	        	        break;
+                		throw new ActException("Missing contact email. Please check contact person");
+//	                	Logger.debug("Missing contact email. Please check contact person");
+//	        	        res = false;
+//	        	        break;
                 	}
                 }
             }
@@ -756,26 +762,21 @@ public class CrawlPermissionController extends AbstractController {
     /**
      * This method handles queued crawl permissions.
      */
-    public static Result send() {
+    public static Result send() throws ActException {
 		Logger.debug("send crawl permission");
     	Result res = ok();
-        String send = getFormParam(Const.SEND);
-        String sendall = getFormParam(Const.SEND_ALL);
-        String sendsome = getFormParam(Const.SEND_SOME);
-        String preview = getFormParam(Const.PREVIEW);
-        String reject = getFormParam(Const.REJECT);
-        String selectall = getFormParam(Const.SELECT_ALL);
-        String deselectall = getFormParam(Const.DESELECT_ALL);
-        Logger.debug("send: " + send + ", sendall: " + sendall + ", sendsome: " + sendsome + ", preview: " + preview + 
-        		", reject: " + reject + ", selectall: " + selectall + ", deselectall: " + deselectall);
+        DynamicForm requestData = Form.form().bindFromRequest();
+    	String action = requestData.get("action");
+
 	    String template = Const.DEFAULT_TEMPLATE;
-        if (getFormParam(Const.TEMPLATE) != null) {
-	    	template = getFormParam(Const.TEMPLATE);
+	    String temp = requestData.get("template");
+        if (StringUtils.isNotBlank(temp)) {
+	    	template = temp;
 	    }
     	String toMails = evaluateToEmails();
     	Logger.debug("toMails: " + toMails);
 
-    	if (sendall != null) {
+    	if (action.equals("sendall")) {
         	Logger.debug("send all crawl permission requests");
             boolean sendingRes = setPendingSelectedCrawlPermissions(true, template);
             if (!sendingRes) {
@@ -783,7 +784,7 @@ public class CrawlPermissionController extends AbstractController {
             }
         	res = redirect(routes.CrawlPermissionController.index()); 
         }
-        if (sendsome != null) {
+        if (action.equals("sendsome")) {
         	Logger.debug("send some crawl permission requests");
         	boolean sendingRes = setPendingSelectedCrawlPermissions(false, template);//messageBody, messageSubject); 
             if (!sendingRes) {
@@ -791,7 +792,7 @@ public class CrawlPermissionController extends AbstractController {
             }
 	        res = redirect(routes.CrawlPermissionController.index()); 
         }
-        if (preview != null) {
+        if (action.equals("preview")) {
         	Logger.debug("preview crawl permission requests");        	
 	        res = ok(
 	            crawlpermissionpreview.render(
@@ -799,17 +800,17 @@ public class CrawlPermissionController extends AbstractController {
 	            )
 	        );
         }
-        if (reject != null) {
+        if (action.equals("reject")) {
         	Logger.debug("reject crawl permission requests");
         	rejectSelectedCrawlPermissions();        	
 	        res = redirect(routes.CrawlPermissionController.index()); 
         }
-        if (selectall != null) {
+        if (action.equals("selectall")) {
         	Logger.debug("select all listed in page crawl permissions");
         	res = redirect(routes.CrawlPermissionController.list(
         			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.SELECT_ALL));
         }
-        if (deselectall != null) {
+        if (action.equals("deselectall")) {
         	Logger.debug("deselect all listed in page crawl permissions");
         	res = redirect(routes.CrawlPermissionController.list(
         			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.DESELECT_ALL));

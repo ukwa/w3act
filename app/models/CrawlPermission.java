@@ -7,6 +7,9 @@ import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -33,6 +36,10 @@ public class CrawlPermission extends ActModel {
 	 * file id
 	 */
 	private static final long serialVersionUID = -2250099575463302989L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "crawl_permission_seq")
+	public Long id;
 
 //	the permission can be inherited from a 'parent' target. 
 //	Targets could in theory have multiple crawl permissions. This is most likely in the case where a 

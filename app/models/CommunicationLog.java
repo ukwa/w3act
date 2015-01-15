@@ -145,8 +145,8 @@ public class CommunicationLog extends ActModel {
      */
     public static CommunicationLog logHistory(String name, CrawlPermission crawlPermission, User user, String notes) {
         CommunicationLog log = new CommunicationLog();
-        log.id = Utils.INSTANCE.createId();
-        log.url = Const.ACT_URL + log.id;
+//        log.id = Utils.INSTANCE.createId();
+//        log.url = Const.ACT_URL + log.id;
 //        log.curator = User.findByEmail(request().username()).url; 
         log.user = user;
         log.ttype = Const.CommunicationLogTypes.OTHER.name();
