@@ -1328,10 +1328,14 @@ public class TargetController extends AbstractController {
         String[] licenseValues = formParams.get("licensesList");
 
         if (licenseValues != null) {
-            for(String licenseValue: licenseValues) {
-            	Long licenseId = Long.valueOf(licenseValue);
-            	License license =  License.findById(licenseId);
-            	newLicenses.add(license);
+            for(String licenseValue : licenseValues) {
+            	if (StringUtils.isNotBlank(licenseValue)) {
+	            	Long licenseId = Long.valueOf(licenseValue);
+	            	License license =  License.findById(licenseId);
+	            	if (license != null) {
+	            		newLicenses.add(license);
+	            	}
+            	}
             }
             filledForm.get().licenses = newLicenses;
         }
