@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import play.Logger;
 import uk.bl.exception.ActException;
@@ -157,10 +158,21 @@ public enum FormHelper {
 		Target target = Target.findById(targetId);
 		return (target.hasLicenses() || target.hasHigherLicense() || target.indicateUkwaLicenceStatus());
 	}
-
+	@JsonIgnore
+	public boolean isUkHosting(Long targetId) {
+		Target target = Target.findById(targetId);
+		return target.isUkHosting();
+	}
+	
+	@JsonIgnore
+	public boolean isTopLevelDomain(Long targetId) throws WhoisException, MalformedURLException, URISyntaxException {
+		Target target = Target.findById(targetId);
+		return target.isTopLevelDomain();
+	}
+	
 	public boolean isUkRegistration(Long targetId) throws WhoisException {
 		Target target = Target.findById(targetId);
-		return Scope.INSTANCE.isUkRegistration(target);
+		return target.isUkRegistration();
 	}
 
 	public List<Target> getNpldStatusList(Long targetId) throws ActException {

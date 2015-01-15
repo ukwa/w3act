@@ -521,7 +521,7 @@
 							UK Hosting
 						</label>
 					    <div class="col-sm-6">
-							@if(target.isUkHosting) {
+							@if(target.isUkHosting()) {
 				            	<font id="isInScope" style="color: green">yes</font>
 							} else {
 								<font id="isInScope" style="color: red">no</font>
@@ -538,7 +538,7 @@
 							UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
 						</label>
 					    <div class="col-sm-6">
-							@if(target.isTopLevelDomain) {
+							@if(target.isTopLevelDomain()) {
 				            	<font id="isInScope" style="color: green">yes</font>
 							} else {
 								<font id="isInScope" style="color: red">no</font>
@@ -555,7 +555,7 @@
 							UK Registration
 						</label>
 					    <div class="col-sm-6">
-							@if(target.isUkRegistration) {
+							@if(target.isUkRegistration()) {
 				            	<font id="isInScope" style="color: green">yes</font>
 							} else {
 								<font id="isInScope" style="color: red">no</font>
@@ -669,7 +669,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Scope<font color="red">*</font> <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
-				                @if(target.scope != null) {             
+				                @if(target.scope != null && target.scope.length > 0) {             
 									@uk.bl.Const.ScopeType.getScopeType(target.scope).getValue
 				                } else {
 					                None
@@ -684,7 +684,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Depth<font color="red">*</font> <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 						    <div class="col-sm-6">
-				                @if(target.depth != null) {             
+				                @if(target.depth != null && target.depth.length > 0) {             
 					                @uk.bl.Const.DepthType.getDepthType(target.depth).getValue
 				                } else {
 					                None
