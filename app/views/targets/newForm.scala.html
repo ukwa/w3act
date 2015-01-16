@@ -216,7 +216,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							@inputText(targetForm("formUrl"),
-								'_label -> "Seed URL(s) (One or more URLs, separated by comma) :",
+								'_label -> "Seed URLs: 'One or more URLs, separated by commas, including the http://",
 							    'id -> "fieldUrls",
 							    'class -> "form-control",
 							    'placeholder -> "url1, url2",
@@ -230,10 +230,10 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Hosting
+								UK Hosting (automated check)
 							</label>
 						    <div class="col-sm-6">
-								<font id="isInScope" style="color: red">no</font>
+								<font id="isInScope" style="color: red"></font>
 							</div>
 						</div>
 					</div>
@@ -243,10 +243,10 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
+								UK top-level domain (Includes .uk, .london and .scot domains) (automated check)
 							</label>
 						    <div class="col-sm-6">
-								<font id="isInScope" style="color: red">no</font>
+								<font id="isInScope" style="color: red"></font>
 							</div>
 						</div>
 					</div>
@@ -256,10 +256,10 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Registration
+								UK Registration (automated check)
 							</label>
 						    <div class="col-sm-6">
-								<font id="isInScope" style="color: red">no</font>
+								<font id="isInScope" style="color: red"></font>
 							</div>
 						</div>
 					</div>
@@ -337,10 +337,9 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							@inputText(targetForm("keywords"),
-								'_label -> "Keyword(s) (The multiple private uncontrolled keywords):",
+								'_label -> "Keywords: Free text keywords, private to you",
 							    'id -> "keywords",
-							    'class -> "form-control",
-							    'placeholder -> "0"
+							    'class -> "form-control"
 							)(FieldConstructor(genericInput.f), lang)		
 						</div>
 					</div>
@@ -349,7 +348,7 @@
 		   		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Tag(s) (The multiple open keywords)</label>
+							<label class="col-sm-6 control-label">Tag(s): keywords common to all users, controlled centrally and visible to other users</label>
 							<div class="col-sm-6">
 	  							@for((tag, index) <- tags.zipWithIndex) {
 	  								<label class="checkbox-inline">
@@ -366,7 +365,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							@inputText(targetForm("synonyms"),
-								'_label -> "Synonyms (The synonyms support manual logging of identical content hosted on multiple domains):",
+								'_label -> "Synonyms: If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com",
 							    'class -> "form-control"
 							)(FieldConstructor(genericInput.f), lang)									
 						</div>
@@ -391,7 +390,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font> <small class="text-center">(Please select at least one subject.)</small></label>
+			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font></label>
 						    <div class="col-sm-6">
 								@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 								  	<div id="subjectTree"></div>
@@ -428,7 +427,7 @@
 					                options(organisations),
 					                args = 
 					                'class -> "form-control",
-					                '_label -> "Nominating Organisation (The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted):",
+					                '_label -> "Nominating Organisation (The organisation that nominated this web site):",
 				                	'_default -> "-- None --",
 					                '_showConstraints -> false
 				            )(FieldConstructor(genericInput.f), lang)
@@ -457,7 +456,7 @@
 						                options(authors), 
 						                args = 
 						                'class -> "form-control",
-						                '_label -> "Selector (The user that nominated this web site. A record can be created on behalf of other user by high-level roles):",
+						                '_label -> "Selector (The user that nominated this web site):",
 					                	'_default -> "-- None --",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)							            
@@ -498,7 +497,7 @@
 			   		<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								<label class="col-sm-6 control-label">Flag(s) (Allows users to flag record for attention, using a pre-defined list of flag names)</label>
+								<label class="col-sm-6 control-label">Flag(s): To flag record for attention by a web archivist.</label>
 								<div class="col-sm-6">
 		  							@for((flag, index) <- flags.zipWithIndex) {
 		  								<label class="checkbox-inline">
@@ -536,6 +535,21 @@
 					</div>
 		     	</div>	
 
+		        <div id="archivistArea" class="revision">
+		    		<div class="row padding-10">
+			     		<div class="col-md-12 col-xs-12 col-sm-12">
+							<div class="form-group">
+								@textarea(field = targetForm("archivistNotes"),
+					 				args = 'rows -> 1, 'cols -> 100,
+									'_label -> "Archivist Notes (This field should include any information provided by curators justifying the creation of the record. This field is NOT public.):",
+									'_id -> "input_archivist_notes",
+									'class -> "form-control"
+								)(FieldConstructor(genericInput.f), lang)	
+							</div>
+						</div>
+			     	</div>	
+				</div>
+		
 				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {		     	
 		    		<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -571,7 +585,7 @@
 						<div class="form-group">
 							@textarea(field = targetForm("selectorNotes"),
 							 				args = 'rows -> 1, 'cols -> 100,
-											'_label -> "Selector Notes (This field allows further notes to selection for WA team, not captured in Justification field.):",
+											'_label -> "Selector Notes (Any further notes on the record for the use of the web archive team, not already captured under Justification):",
 											'id -> "input_selector_notes",
 											'class -> "form-control"
 										)(FieldConstructor(genericInput.f), lang)	
@@ -612,7 +626,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Hosting
+								UK Hosting (automated check)
 							</label>
 						    <div class="col-sm-6">
 								<font id="isInScope" style="color: red">no</font>
@@ -625,7 +639,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
+								UK top-level domain (Includes .uk, .london and .scot domains) (automated check)
 							</label>
 						    <div class="col-sm-6">
 								<font id="isInScope" style="color: red">no</font>
@@ -638,7 +652,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Registration
+								UK Registration (automated check)
 							</label>
 						    <div class="col-sm-6">
 								<font id="isInScope" style="color: red">no</font>
@@ -739,7 +753,7 @@
 						                args = 
 						                'class -> "form-control",
 					                	'_default -> "-- None --",
-						                '_label -> "Scope (Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option):",
+						                '_label -> "Scope: Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	
 							</div>
@@ -755,7 +769,7 @@
 						                args = 
 						                'class -> "form-control",
 					                	'_default -> "-- None --",					                
-						                '_label -> "Depth (Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit):",
+						                '_label -> "Depth: (Determines the depth of the crawl. Most crawls will be capped at 500MB)",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	
 							</div>
@@ -816,7 +830,7 @@
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
 								@inputText(targetForm("whiteList"),
-									'_label -> "White list:",
+									'_label -> "White list: (Archivist use only)",
 								    'class -> "form-control"
 								)(FieldConstructor(genericInput.f), lang)									
 							</div>
@@ -827,7 +841,7 @@
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
 								@inputText(targetForm("blackList"),
-									'_label -> "Black list:",
+									'_label -> "Black list: (Archivist use only)",
 								    'class -> "form-control"
 								)(FieldConstructor(genericInput.f), lang)	
 							</div>
@@ -921,21 +935,6 @@
 	                    
 		</div>
 		
-        <div id="archivistArea" class="revision">
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						@textarea(field = targetForm("archivistNotes"),
-			 				args = 'rows -> 1, 'cols -> 100,
-							'_label -> "Archivist Notes (This field should include any information provided by curators justifying the creation of the record. This field is NOT public.):",
-							'_id -> "input_archivist_notes",
-							'class -> "form-control"
-						)(FieldConstructor(genericInput.f), lang)	
-					</div>
-				</div>
-	     	</div>	
-		</div>
-
         <div id="revisionArea" class="revision">
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">

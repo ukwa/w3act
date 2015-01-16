@@ -144,7 +144,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Hosting
+								UK Hosting (automated check)
 							</label>
 						    <div class="col-sm-6">
 								@if(target.isUkHosting) {
@@ -161,7 +161,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
+								UK top-level domain (Includes .uk, .london and .scot domains) (automated check)
 							</label>
 						    <div class="col-sm-6">
 								@if(target.isTopLevelDomain) {
@@ -178,7 +178,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Registration
+								UK Registration (automated check)
 							</label>
 						    <div class="col-sm-6">
 								@if(target.isUkRegistration) {
@@ -261,7 +261,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="keywords" class="col-sm-6 control-label">Keyword(s) <small class="text-center">(The multiple private uncontrolled keywords)</small></label>
+			              	<label for="keywords" class="col-sm-6 control-label">Keywords: Free text keywords, private to you</label>
 						    <div class="col-sm-6">
 		 				  		@target.keywords
 							</div>
@@ -272,7 +272,7 @@
 		   		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
+			              	<label for="tags" class="col-sm-6 control-label">Tag(s): keywords common to all users, controlled centrally and visible to other users</label>
 						    <div class="col-sm-6">
 								@target.tagsAsString()						    
 							</div>
@@ -283,7 +283,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="Synonyms" class="col-sm-6 control-label">Synonyms <small class="text-center">(The synonyms support manual logging of identical content hosted on multiple domains)</small></label>
+			              	<label for="Synonyms" class="col-sm-6 control-label">Synonyms: If this content is also hosted at another URL, record it here. For example, if www.company.co.uk is the same as www.company.com</label>
 						    <div class="col-sm-6">
 		 				  		@target.synonyms
 							</div>
@@ -337,7 +337,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
+			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site)</small></label>
 						    <div class="col-sm-6">
 						        @if(target.organisation != null) {
   									@target.organisation.title
@@ -363,7 +363,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
+			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site)</small></label>
 						    <div class="col-sm-6">
 						        @if(target.authorUser != null) {
   									@target.authorUser.name
@@ -408,7 +408,7 @@
 		   		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
+							<label class="col-sm-6 control-label">Flag(s): To flag record for attention by a web archivist.</label>
 						    <div class="col-sm-6">
 						    	@target.flagsAsString()
 							</div>
@@ -438,17 +438,30 @@
 					</div>
 		     	</div>			     	
 
-				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Justification <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
-						    <div class="col-sm-6">
-				            	@target.justification
+			    <div id="archivistArea" class="revision">
+			   		<div class="row padding-10">
+			     		<div class="col-md-12 col-xs-12 col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Archivist Notes</label>
+							    <div class="col-sm-6">
+					            	@target.archivistNotes
+								</div>
 							</div>
 						</div>
-					</div>
-		     	</div>	
+			     	</div>	
+				</div>
+				
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {		     	
+		    		<div class="row padding-10">
+			     		<div class="col-md-12 col-xs-12 col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-6 control-label">Justification <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
+							    <div class="col-sm-6">
+					            	@target.justification
+								</div>
+							</div>
+						</div>
+			     	</div>	
 		     	}	     			     
 		     	
 		     	<div class="row padding-10">
@@ -470,7 +483,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(This field allows further notes to selection for WA team, not captured in Justification field.)</small></label>
+							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(Any further notes on the record for the use of the web archive team, not already captured under Justification.)</small></label>
 						    <div class="col-sm-6">
 				            	@target.selectorNotes
 							</div>
@@ -518,7 +531,7 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 						<label for="inputUrls" class="col-sm-6 control-label">
-							UK Hosting
+							UK Hosting (automated check)
 						</label>
 					    <div class="col-sm-6">
 							@if(target.isUkHosting()) {
@@ -535,7 +548,7 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 						<label for="inputUrls" class="col-sm-6 control-label">
-							UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
+							UK top-level domain (Includes .uk, .london and .scot domains) (automated check)
 						</label>
 					    <div class="col-sm-6">
 							@if(target.isTopLevelDomain()) {
@@ -552,7 +565,7 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 						<label for="inputUrls" class="col-sm-6 control-label">
-							UK Registration
+							UK Registration (automated check)
 						</label>
 					    <div class="col-sm-6">
 							@if(target.isUkRegistration()) {
@@ -667,7 +680,7 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Scope<font color="red">*</font> <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
+							<label class="col-sm-6 control-label">Scope:<font color="red">*</font> <small class="text-center">Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
 						    <div class="col-sm-6">
 				                @if(target.scope != null && target.scope.length > 0) {             
 									@uk.bl.Const.ScopeType.getScopeType(target.scope).getValue
@@ -682,7 +695,7 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Depth<font color="red">*</font> <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
+							<label class="col-sm-6 control-label">Depth:<font color="red">*</font> <small class="text-center">Determines the depth of the crawl. Most crawls will be capped at 500MB</small></label>
 						    <div class="col-sm-6">
 				                @if(target.depth != null && target.depth.length > 0) {             
 					                @uk.bl.Const.DepthType.getDepthType(target.depth).getValue
@@ -749,7 +762,7 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">White list</label>
+							<label class="col-sm-6 control-label">White list: (Archivist use only)</label>
 						    <div class="col-sm-6">
 		 						@target.whiteList
 	                		</div>
@@ -760,7 +773,7 @@
 				<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-							<label class="col-sm-6 control-label">Black list</label>
+							<label class="col-sm-6 control-label">Black list: (Archivist use only)</label>
 						    <div class="col-sm-6">
 		 						@target.blackList
 	                		</div>
@@ -827,19 +840,6 @@
 
 	<hr>
 	
-    <div id="archivistArea" class="revision">
-   		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label class="col-sm-6 control-label">Archivist Notes</label>
-				    <div class="col-sm-6">
-		            	@target.archivistNotes
-					</div>
-				</div>
-			</div>
-     	</div>	
-	</div>
-
     <div id="revisionArea" class="revision">
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
