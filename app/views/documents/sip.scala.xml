@@ -1,0 +1,166 @@
+@(document: Document)
+
+<?xml version="1.0" encoding="utf-8"?>
+<mets:mets TYPE="eBooks"
+    xmlns:mets="http://www.loc.gov/METS/"
+    xmlns:premis="info:lc/xmlns/premis-v2"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:mods="http://www.loc.gov/mods/v3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd
+        info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/premis.xsd
+        http://www.loc.gov/mods/v3 http://www.loc.gov/mods/v3/mods-3-4.xsd">
+  <mets:dmdSec ID="dmd0001">
+  @if(document.isWholeBook) {
+    <mets:mdWrap MDTYPE="MARC">
+      <mets:xmlData>
+        <collection xmlns="http://www.loc.gov/MARC21/slim">
+          <record>
+            <datafield tag="245" ind2=" " ind1="0">
+              <subfield code="a">@document.title</subfield>
+            </datafield>
+            <datafield tag="020" ind2=" " ind1=" ">
+              <subfield code="a">@document.book.isbn</subfield>
+            </datafield>
+            <datafield tag="024" ind2=" " ind1="7">
+              <subfield code="a">@document.doi</subfield>
+              <subfield code="2">doi</subfield>
+            </datafield>
+            <datafield tag="250" ind2=" " ind1=" ">
+              <subfield code="a">@document.book.edition</subfield>
+            </datafield>
+            <datafield tag="264" ind2="1" ind1=" ">
+              <subfield code="b">@document.book.publisher</subfield>
+              <subfield code="c">@document.publicationYear</subfield>
+            </datafield>
+            <datafield tag="490" ind2=" " ind1=" ">
+              <subfield code="a">@document.book.series</subfield>
+            </datafield>
+            <datafield tag="710" ind2=" " ind1="1">
+              <subfield code="a">@document.book.corporateAuthor</subfield>
+            </datafield>
+            <datafield tag="100" ind2=" " ind1="1">
+              <subfield code="a">@document.author1Ln, @document.author1Fn</subfield>
+            </datafield>
+            <datafield tag="720" ind2=" " ind1="1">
+              <subfield code="a">@document.author2Ln, @document.author2Fn</subfield>
+            </datafield>
+            <datafield tag="720" ind2=" " ind1="1">
+              <subfield code="a">@document.author3Ln, @document.author3Fn</subfield>
+            </datafield>
+          @for(portal <- document.portals) {
+            <datafield tag="690" ind2=" " ind1="7">
+              <subfield code="a">@portal.title</subfield>
+              <subfield code="2">blcoll</subfield>
+            </datafield>
+          }
+            <datafield tag="985" ind2=" " ind1=" ">
+              <subfield code="a">@document.priorityCataloguing</subfield>
+            </datafield>             
+          </record>
+        </collection>
+      </mets:xmlData>
+    </mets:mdWrap>
+  }
+  @if(document.isJournalArticleOrIssue) {
+    <mets:mdWrap MDTYPE="MODS">
+      <mets:xmlData>
+        <mods:mods>
+          <mods:titleInfo>
+            <mods:title>@document.title</mods:title>
+          </mods:titleInfo>
+          <mods:identifier type="DOI">@document.doi</mods:identifier>
+          <mods:originInfo>
+            <mods:dateIssued encoding="w3cdtf">@document.publicationDate</mods:dateIssued>
+            @*<mods:issuance>@document.journal.journalTitle.frequency</mods:issuance>*@
+          </mods:originInfo>
+          <mods:part>
+            <mods:detail type="volume">
+              <mods:number>@document.journal.volume</mods:number>
+              <mods:caption>vol.</mods:caption>
+            </mods:detail>
+            <mods:detail type="issue">
+              <mods:number>@document.journal.issue</mods:number>
+              <mods:caption>no.</mods:caption>
+            </mods:detail>
+          </mods:part>
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:namePart type="given">@document.author1Fn</mods:namePart>
+            <mods:namePart type="family">@document.author1Fn</mods:namePart>
+          </mods:name>
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:namePart type="given">@document.author2Fn</mods:namePart>
+            <mods:namePart type="family">@document.author2Fn</mods:namePart>
+          </mods:name>
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
+            </mods:role>
+            <mods:namePart type="given">@document.author3Fn</mods:namePart>
+            <mods:namePart type="family">@document.author3Fn</mods:namePart>
+          </mods:name>
+        @for(portal <- document.portals) {
+          <mods:note type="admin" displayLabel="Service">@portal.title</mods:note>
+        }
+        @if(document.priorityCataloguing) {
+          <mods:note type="admin" displayLabel="Priority Cataloguing">Aleph</mods:note>
+        }
+          <mods:relatedItem type="host" displayLabel="Journal">
+            <mods:titleInfo>
+              <mods:title>@document.journal.journalTitle.title</mods:title>
+            </mods:titleInfo>
+            <mods:originInfo>
+              <mods:publisher>@document.journal.journalTitle.publisherName</mods:publisher>
+            </mods:originInfo>
+            <mods:identifier type="pub-id e-issn">
+              @document.journal.journalTitle.issn
+            </mods:identifier>
+          </mods:relatedItem>
+          @*<mods:languageOfCataloging>
+            <mods:languageTerm type="code" authority="iso639-2b">
+              @document.journal.journalTitle.language
+            </mods:languageTerm>
+          </mods:languageOfCataloging>*@
+        </mods:mods>
+      </mets:xmlData>
+    </mets:mdWrap>
+  }
+  </mets:dmdSec>
+  <mets:amdSec ID="amd0002">
+    <mets:digiprovMD ID="amd0002-object">
+      <mets:mdWrap MDTYPE="PREMIS:OBJECT">
+        <mets:xmlData>
+          <premis:object xsi:type="premis:file">
+            <premis:objectIdentifier>
+              <premis:objectIdentifierType>ARK</premis:objectIdentifierType>
+              <premis:objectIdentifierValue>@document.ark</premis:objectIdentifierValue>
+            </premis:objectIdentifier>
+            <premis:objectCharacteristics>
+              <premis:compositionLevel>0</premis:compositionLevel>
+              <premis:fixity>
+                <premis:messageDigestAlgorithm>SHA-256</premis:messageDigestAlgorithm>
+                <premis:messageDigest>@document.sha256Hash</premis:messageDigest>
+              </premis:fixity>
+              <premis:format>
+                <premis:formatDesignation>
+                  <premis:formatName>application/pdf</premis:formatName>
+                </premis:formatDesignation>
+              </premis:format>
+            </premis:objectCharacteristics>
+            <premis:originalName>@document.documentUrl</premis:originalName>
+          </premis:object>
+        </mets:xmlData>
+      </mets:mdWrap>
+    </mets:digiprovMD>
+  </mets:amdSec>
+  <mets:structMap>
+    <mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

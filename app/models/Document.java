@@ -48,11 +48,12 @@ public class Document extends Model {
 	public List<Portal> portals = new ArrayList<>();
     public String landingPageUrl;
     public String documentUrl;
-    public String sha1Hash;
+    public String sha256Hash;
     @Required
     @Column(columnDefinition = "TEXT")
 	public String title;
 	public String doi;
+	public String ark;
 	@DateTime(pattern="dd-MM-yyyy")
 	public Date publicationDate;
 	@Required

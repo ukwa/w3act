@@ -5,7 +5,7 @@ BASE_FILE_NAME=$2
 
 wget -O "$BASE_FILE_NAME.pdf" "$PDF_URL"
 
-openssl sha1 "$BASE_FILE_NAME.pdf" | awk '{print $2}' > "$BASE_FILE_NAME.sha1"
+openssl sha256 "$BASE_FILE_NAME.pdf" | awk '{print $2}' > "$BASE_FILE_NAME.sha256"
 
 pdf2htmlEX --embed-font 0 --process-outline 0 "$BASE_FILE_NAME.pdf"
 

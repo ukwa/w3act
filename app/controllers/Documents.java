@@ -40,6 +40,7 @@ import org.jsoup.select.Elements;
 import uk.bl.Const;
 import views.html.documents.edit;
 import views.html.documents.list;
+import views.xml.documents.sip;
 
 @Security.Authenticated(Secured.class)
 public class Documents extends AbstractController {
@@ -152,12 +153,17 @@ public class Documents extends AbstractController {
 		return redirect(routes.Documents.view(id));
 	}
 	
+	public static Result sip(Long id) {
+		Document document = Document.find.byId(id);
+		return ok(sip.render(document));
+	}
+	
 	public static void addHash(Document document) throws FileNotFoundException {
-		File file = Play.application().getFile("conf/converter/" + document.id + ".sha1");
+		File file = Play.application().getFile("conf/converter/" + document.id + ".sha256");
 		Scanner scanner = new Scanner(file);
 		String sha1Hash = scanner.next();
 		scanner.close();
-		document.sha1Hash = sha1Hash;
+		document.sha256Hash = sha1Hash;
 		Ebean.save(document);
 	}
 	
