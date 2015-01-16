@@ -68,7 +68,7 @@ public class CrawlPermissionController extends AbstractController {
      * @param filter Filter applied on target urls
      */
     public static Result list(int pageNo, String sortBy, String order, String filter, String status, String sel) {
-    	Logger.debug("CrawlPermissions.list() " + filter);
+    	Logger.debug("CrawlPermissions.list() " + filter + " - " + sel);
     	
     	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status);
 
@@ -152,11 +152,6 @@ public class CrawlPermissionController extends AbstractController {
 //        List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);
 //    	Logger.debug("showCrawlPermissions count: " + resList.size());
     	res = redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
-//        res = ok(
-//        		views.html.crawlpermissions.list.render(
-//                    "CrawlPermissions", User.findByEmail(request().username()), resList, "", status
-//                )
-//            );
         return res;    	
     }
     
@@ -181,11 +176,6 @@ public class CrawlPermissionController extends AbstractController {
 			Logger.debug("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
 	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, Const.SELECT_ALL));
-//			return ok(
-//					views.html.crawlpermissions.list.render(
-//                        "CrawlPermissions", User.findByEmail(request().username()), resList, "", status
-//                    )
-//                );
 		}
 
     	if (StringUtils.isEmpty(action)) {
@@ -770,9 +760,11 @@ public class CrawlPermissionController extends AbstractController {
 
 	    String template = Const.DEFAULT_TEMPLATE;
 	    String temp = requestData.get("template");
+	    
         if (StringUtils.isNotBlank(temp)) {
 	    	template = temp;
 	    }
+        
     	String toMails = evaluateToEmails();
     	Logger.debug("toMails: " + toMails);
 

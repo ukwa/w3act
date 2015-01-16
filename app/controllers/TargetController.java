@@ -44,6 +44,8 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.api.Utils;
+import uk.bl.exception.ActException;
+import uk.bl.exception.WhoisException;
 import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
 import views.html.infomessage;
@@ -924,7 +926,7 @@ public class TargetController extends AbstractController {
 		return badRequest(newForm.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus));
 	}
 	
-    public static Result update(Long id) {
+    public static Result update(Long id) throws ActException {
     	DynamicForm requestData = form().bindFromRequest();
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
         Form<Target> filledForm = form(Target.class).bindFromRequest();
@@ -1121,7 +1123,18 @@ public class TargetController extends AbstractController {
 		            filledForm.get().licenses = newLicenses;
 		        }
 		    	
-		        filledForm.get().update(id);
+		        try {
+			        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
+					filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
+			        filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
+					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
+					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
+					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
+				} catch (MalformedURLException | WhoisException | URISyntaxException e) {
+					throw new ActException(e);
+				}
+
+				filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));
 	        } else if (action.equals("archive")) {
@@ -1139,8 +1152,9 @@ public class TargetController extends AbstractController {
      * contains the timestamp of the change and the last version is marked by
      * flag "active". Remaining Target objects with the same URL are not active.
      * @return
+	 * @throws ActException 
      */
-    public static Result save() {
+    public static Result save() throws ActException {
 
     	DynamicForm requestData = form().bindFromRequest();
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
@@ -1345,6 +1359,17 @@ public class TargetController extends AbstractController {
     	
     	Logger.debug("active: " + filledForm.get().active);
     	
+        try {
+	        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
+			filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
+	        filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
+			Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
+			Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
+			Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
+		} catch (MalformedURLException | WhoisException | URISyntaxException e) {
+			throw new ActException(e);
+		}
+        
     	filledForm.get().save();
         flash("success", "Target " + filledForm.get().title + " has been created");
     	return redirect(routes.TargetController.view(filledForm.get().id));

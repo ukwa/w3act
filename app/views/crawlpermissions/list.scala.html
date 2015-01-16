@@ -161,11 +161,11 @@
 					<tr>
 						<td>
 							<label class="checkbox-inline">
-							@if(sel.equals("selectall")) {
-				                <input type="checkbox" name="@permission.name" value="true" checked /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
-				            } else { 
-				                <input type="checkbox" name="@permission.name" value="true" /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
-				            } 
+								@if(sel.equals("selectall")) {
+					                <input type="checkbox" name="@permission.name" value="true" checked /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
+					            } else { 
+					                <input type="checkbox" name="@permission.name" value="true" /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
+					            } 
 							</label>
 						</td>
 						<td>
@@ -181,9 +181,9 @@
 						</td>
 						<td>
 						    @if(permission.status.equals("GRANTED")) {
-			                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Granted License</a>
+				                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Granted License</a>
 			                } else {
-			                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Preview License</a>
+				                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Preview License</a>
 			                }
 						</td>
 					</tr>
@@ -205,7 +205,7 @@
 	              	<label for="selectTemplate" class="col-sm-4 control-label">Template</label>
 				    <div class="col-sm-6">
 						<select name="template" value="General" class="form-control">
-							<option>None</option>
+							<option value="">None</option>
 							@for(template <- MailTemplate.findAll()) {
 								@if(template.name.equals("General")) {
   										<option value="@template.name" selected>@template.name</option>
@@ -217,21 +217,21 @@
 					</div>
 				</div>
 				<div class="btn-group">		
-				@if(currentPage.getTotalRowCount() > 0 && CrawlPermissionController.haveContactPerson(currentPage.getList())) {
-					<button type="submit" class="btn btn-primary" name="action" value="selectall">Select all</button>
-					<button type="submit" class="btn btn-primary" name="action" value="deselectall">Deselect all</button>
-					<!-- button type="submit" class="btn btn-primary" name="sendall">Send all</button-->
-					<button type="submit" class="btn btn-primary" name="action" value="sendsome">Send</button>
-					<button type="submit" class="btn btn-primary" name="action" value="preview">Preview</button>
-					<button type="submit" class="btn btn-primary" name="action" value="reject">Reject</button>
-				} else {
-					<button type="submit" class="btn btn-primary" name="action" value="selectall" disabled>Select all</button>
-					<button type="submit" class="btn btn-primary" name="action" value="deselectall" disabled>Deselect all</button>
-					<!-- button type="submit" class="btn btn-primary" name="sendall" disabled>Send all</button-->
-					<button type="submit" class="btn btn-primary" name="action" value="sendsome" disabled>Send</button>
-					<button type="submit" class="btn btn-primary" name="action" value="preview" disabled>Preview</button>
-					<button type="submit" class="btn btn-primary" name="action" value="reject" disabled>Reject</button>
-				}
+					@if(currentPage.getTotalRowCount() > 0 && CrawlPermissionController.haveContactPerson(currentPage.getList())) {
+						<button type="submit" class="btn btn-primary" name="action" value="selectall">Select all</button>
+						<button type="submit" class="btn btn-primary" name="action" value="deselectall">Deselect all</button>
+						<!-- button type="submit" class="btn btn-primary" name="sendall">Send all</button-->
+						<button type="submit" class="btn btn-primary" name="action" value="sendsome">Send</button>
+						<button type="submit" class="btn btn-primary" name="action" value="preview">Preview</button>
+						<button type="submit" class="btn btn-primary" name="action" value="reject">Reject</button>
+					} else {
+						<button type="submit" class="btn btn-primary" name="action" value="selectall" disabled>Select all</button>
+						<button type="submit" class="btn btn-primary" name="action" value="deselectall" disabled>Deselect all</button>
+						<!-- button type="submit" class="btn btn-primary" name="sendall" disabled>Send all</button-->
+						<button type="submit" class="btn btn-primary" name="action" value="sendsome" disabled>Send</button>
+						<button type="submit" class="btn btn-primary" name="action" value="preview" disabled>Preview</button>
+						<button type="submit" class="btn btn-primary" name="action" value="reject" disabled>Reject</button>
+					}
 		       </div>
 			</div>
 		</div>
