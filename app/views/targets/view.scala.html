@@ -212,7 +212,11 @@
 							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If known, please add the current status of the site)</small></label>
 						    <div class="col-sm-6">
 						    	@if(target.liveSiteStatus != null && uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus) != null) {
-    								@uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus).getValue
+						    		@if(uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus) != null) {
+	    								@uk.bl.Const.SiteStatus.getSiteStatus(target.liveSiteStatus).getValue
+	    							} else {
+	    								None
+	    							}
 								} else {
 							     	None
 						        }

@@ -813,15 +813,15 @@ public final class Const {
 	 * The SiteStatus.
 	 */
 	public enum SiteStatus { 
-		NA("N/A"),
+//		NA("N/A"),
 		LIVE("Still live"),
 		NO_LONGER_UPDATED("No longer updated"),
 		VANISHED("Vanished"),
-		MONTLY("Monthly"),
-		OLD_MONTHLY_DO_NOT_USE("Old-Monthly-DO-NOT-USE"),
-		WEEKLY("Weekly"),
-		DAILY("Daily"),
-		NEVER_CRAWL("Never Crawl"),
+//		MONTLY("Monthly"),
+//		OLD_MONTHLY_DO_NOT_USE("Old-Monthly-DO-NOT-USE"),
+//		WEEKLY("Weekly"),
+//		DAILY("Daily"),
+//		NEVER_CRAWL("Never Crawl"),
 		DEAD("Dead");
 
         private String value;
