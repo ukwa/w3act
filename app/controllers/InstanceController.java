@@ -4,11 +4,13 @@ import static play.data.Form.form;
 
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import models.Collection;
+import models.FieldUrl;
 import models.Instance;
 import models.QaIssue;
 import models.Target;
@@ -28,6 +30,10 @@ import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.Const.QAIssueCategory;
 import uk.bl.api.Utils;
+import uk.bl.api.models.Results;
+import uk.bl.api.models.Wayback;
+import uk.bl.exception.ActException;
+import uk.bl.export.WaybackExport;
 import views.html.instances.edit;
 import views.html.instances.list;
 import views.html.instances.listByTarget;
@@ -313,20 +319,52 @@ public class InstanceController extends AbstractController {
 		Map<String,String> authors = User.options();
 		return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors, null));
     }
+    
+    public static Result newWithTarget(Long targetId, String title) throws ActException {
 
-    public static Result newWithTarget(Long targetId, String title) {
-		User user = User.findByEmail(request().username());
-		Target target = Target.findById(targetId);
-    	Instance instance = new Instance();
-    	instance.target = target;
-		instance.revision = Const.INITIAL_REVISION;
+    	String webArchiveUrl = "http://www.webarchive.org.uk/wayback/archive/xmlquery.jsp?url=";
+    	
+    	Target target = Target.findById(targetId);
+    	
+    	for (FieldUrl fieldUrl : target.fieldUrls) {
+//    		http://www.bl.uk/bibliographic/ukmarc.html";
+    		String urlValue = webArchiveUrl + fieldUrl.url;
+    		
+			Wayback wayback = WaybackExport.INSTANCE.export(urlValue);
+			
+			Results results = wayback.getResults();
+			if (results != null && results.getResults() != null) {
+				for (uk.bl.api.models.Result result : results.getResults()) {
+					Instance instance = new Instance();
+					instance.title = result.getCapturedate().toString();
+					instance.createdAt = Utils.INSTANCE.getDateFromSeconds(result.getCapturedate());
+					Logger.debug("instance.createdAt: " + instance.createdAt);
+					instance.format = result.getMimetype();
+					instance.revision = "initial revision";
+					instance.fieldDate = Utils.INSTANCE.getDateFromSeconds(result.getCapturedate());
+					instance.target = target;
+					instance.save();
+				}
+			}
+    	}
 
-		Form<Instance> instanceForm = Form.form(Instance.class);
-		instanceForm = instanceForm.fill(instance);    	
-		Map<String,String> qaIssues = QaIssue.options();
-		Map<String,String> qaIssueCategories = QAIssueCategory.options();
-		Map<String,String> authors = User.options();
-		return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors, targetId));
+		flash("message", "Import from Wayback Complete");
+		return redirect(
+			routes.TargetController.index()
+	        );
+
+		
+		
+//    	Instance instance = new Instance();
+//    	instance.target = target;
+//		instance.revision = Const.INITIAL_REVISION;
+//
+//		Form<Instance> instanceForm = Form.form(Instance.class);
+//		instanceForm = instanceForm.fill(instance);    	
+//		Map<String,String> qaIssues = QaIssue.options();
+//		Map<String,String> qaIssueCategories = QAIssueCategory.options();
+//		Map<String,String> authors = User.options();
+//		return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors, targetId));
     }
     
     public static Result edit(Long id) {

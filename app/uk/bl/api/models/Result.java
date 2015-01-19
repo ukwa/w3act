@@ -13,7 +13,7 @@ public class Result {
 	private String digest;
 	private String httpresponsecode;
 	private String robotflags;
-	private String capturedate;
+	private Long capturedate;
 	
 	public Long getCompressedoffset() {
 		return compressedoffset;
@@ -79,11 +79,11 @@ public class Result {
 		this.robotflags = robotflags;
 	}
 
-	public String getCapturedate() {
+	public Long getCapturedate() {
 		return capturedate;
 	}
 
-	public void setCapturedate(String capturedate) {
+	public void setCapturedate(Long capturedate) {
 		this.capturedate = capturedate;
 	}
 

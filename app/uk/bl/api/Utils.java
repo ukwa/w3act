@@ -596,5 +596,14 @@ public enum Utils {
     	}
     	return date;
     }
+    
+	public Date getDateFromSeconds(Long seconds) {
+		Date date = null;
+		if (seconds != null) {
+			date = new Date(seconds*1000L);
+//			Logger.debug("converted date: " + date);
+		}
+		return date;
+	}
 }
 

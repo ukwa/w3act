@@ -1,7 +1,5 @@
 package uk.bl.api.models;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="wayback")
