@@ -165,8 +165,7 @@
 	
 	<div class="page-header">
     	<h1>
-    		<a href="@routes.WatchedTargets.list()">Watched Targets</a> >
-    		<a href="@routes.Documents.list(new Long(form("watchedTarget.id").value))">@form("watchedTarget.target.title").value</a> >
+    		<a href="@routes.Documents.list("",form("watchedTarget.id").value)">Documents</a> >
     		@form("filename").value
     	</h1>
 	</div>

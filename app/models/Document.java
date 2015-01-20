@@ -19,6 +19,7 @@ import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import controllers.Users;
 import play.data.format.Formats.DateTime;
 import play.data.validation.Constraints.Required;
 import play.data.validation.ValidationError;
@@ -109,10 +110,17 @@ public class Document extends Model {
     	}
     }
     
-    public static Page<Document> page(Long watchedTargetId, boolean submitted, int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Document> page(Long userId, Long watchedTargetId, boolean submitted, int page, int pageSize, String sortBy, String order, String filter) {
 
-        return find.where().eq("id_watched_target", watchedTargetId)
-        		.eq("submitted", submitted)
+    	ExpressionList<Document> el = find.where();
+    	if (watchedTargetId != null) {
+    		el = el.eq("id_watched_target", watchedTargetId);
+    	} else if (userId != null) {
+    		//el = el.eq("watched_target.id_creator", userId);
+    		el = el.in("id_watched_target", Users.getWatchedTargetIds(userId));
+    	}
+    	
+    	return el.eq("submitted", submitted)
         		.icontains("title", filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)

@@ -94,8 +94,7 @@ public class User extends Model {
 
     // -- Queries
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Model.Finder<String,User> find = new Model.Finder(String.class, User.class);
+	public static Model.Finder<Long,User> find = new Model.Finder<>(Long.class, User.class);
     
     public User() {
     	this.revision = "";

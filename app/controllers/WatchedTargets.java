@@ -1,7 +1,9 @@
 package controllers;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,78 +34,41 @@ public class WatchedTargets extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on Documents
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter) {
+    public static Result list(String userString, int pageNo, String sortBy, String order, String filter) {
+        return renderList(userString, pageNo, sortBy, order, filter, true);
+    }
+    
+    public static Result overview(int pageNo, String sortBy, String order) {
+    	return renderList("" + User.findByEmail(request().username()).uid, pageNo, sortBy, order, "", false);
+    }
+    
+    public static Result renderList(String userString, int pageNo, String sortBy, String order, String filter, boolean filters) {
     	Logger.info("WatchedTargets.list()");
     	
-    	User user = User.findByEmail(request().username());
+    	Long userId = userString.isEmpty() || userString.equals("null") ?
+				null : new Long(userString);
     	
-    	/*if (WatchedTarget.find.findRowCount() == 0) {
-	    	List<WatchedTarget> watchedTargetsTestData = Arrays.asList(
-	    			new WatchedTarget(user, "ifs", "act-ifs",
-	    					"http://www.ifs.org.uk/publications/re", "www.ifs.org.uk/uploads/publications"),
-	    			new WatchedTarget(user, "thinknpc", "act-thinknpc",
-	    					"http://www.thinknpc.org/publications/", "www.thinknpc.org"),
-	    			new WatchedTarget(user, "ofsted", "act-ofsted",
-	    					"http://www.ofsted.gov.uk/resources/surveys", "www.ofsted.gov.uk/sites/default/files/documents"),
-	    			new WatchedTarget(user, "parliament", "act-parliament",
-	    					"http://www.parliament.uk/business/committees/committees-a-z/commons-select/home-affairs-committee/publications/", "www.publications.parliament.uk"),
-	    			new WatchedTarget(user, "gov", "act-gov",
-	    					"https://www.gov.uk/government/publications", "www.gov.uk/government/uploads")
-	    			);
-	    	try {
-		    	for (WatchedTarget watchedTarget : watchedTargetsTestData) {
-		    		Ebean.save(watchedTarget.target);
-		    	}
-		    	Ebean.save(watchedTargetsTestData);
-	    	} catch (Exception e) {
-				Logger.error(e.getMessage());
-			}
-    	}*/
-    	    	
         return ok(
         	list.render(
-        			user,
+        			User.findByEmail(request().username()),
+        			filterForm(userId),
         			filter,
-        			WatchedTarget.page(user, pageNo, 10, sortBy, order, filter),
+        			WatchedTarget.page(userId, pageNo, 10, sortBy, order, filter),
         			sortBy,
-        			order)
+        			order,
+        			filters)
         	);
     }
     
-    public static Result search() {
-    	DynamicForm form = Form.form().bindFromRequest();
-    	String action = form.get("action");
-    	String query = form.get(Const.QUERY);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
-    	
-    	if (StringUtils.isBlank(query)) {
-			Logger.info("Document name is empty. Please write name in search window.");
-			flash("message", "Please enter a name in the search window");
-	        return redirect(
-	        		routes.WatchedTargets.list(0, "title", "asc", "")
-	        );
-    	}
-
-    	int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
-    	String sort = getQueryParam(Const.SORT_BY);
-    	String order = getQueryParam(Const.ORDER);
-
-    	if (StringUtils.isEmpty(action)) {
-    		return badRequest("You must provide a valid action");
-    	} else {
-    		if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.WatchedTargets.list(pageNo, sort, order, query));
-		    } else {
-		      return badRequest("This action is not allowed");
-		    }
-    	}
-    }
+    public static Result view(Long id) {
+    	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
+		return redirect(routes.WatchedTargets.list("" + watchedTarget.user.uid, 0, "title", "asc", watchedTarget.target.title));
+	}
     
     public static Result crawl(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
     	CrawlActor.crawlAndConvertDocuments(watchedTarget, 3);
-    	return redirect(routes.Documents.list(id, false, 0, "title", "asc", ""));
+    	return redirect(routes.Documents.list("" + watchedTarget.user.uid, "" + id, false, 0, "title", "asc", ""));
     }
     
     @BodyParser.Of(BodyParser.Json.class)
@@ -115,5 +80,11 @@ public class WatchedTargets extends AbstractController {
 	        jsonData = Json.toJson(watchedTargets);
         }
         return ok(jsonData);
+    }
+    
+    public static DynamicForm filterForm(Long userId) {
+    	Map<String,String> filterData = new HashMap<>();
+    	filterData.put("curator", "" + userId);
+    	return Form.form().bind(filterData);
     }
 }

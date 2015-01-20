@@ -132,8 +132,8 @@
     </mets:mdWrap>
   }
   </mets:dmdSec>
-  <mets:amdSec ID="amd0002">
-    <mets:digiprovMD ID="amd0002-object">
+  <mets:amdSec ID="amd0001">
+    <mets:digiprovMD ID="amd0001-object">
       <mets:mdWrap MDTYPE="PREMIS:OBJECT">
         <mets:xmlData>
           <premis:object xsi:type="premis:file">
@@ -158,6 +158,27 @@
         </mets:xmlData>
       </mets:mdWrap>
     </mets:digiprovMD>
+  </mets:amdSec>
+  <mets:amdSec ID="amd0002">
+    <mets:rightsMD ID="amd0002-rights01">
+      <mets:mdWrap MDTYPE="METSRIGHTS">
+        <mets:xmlData>
+          <rts:RightsDeclarationMD RIGHTSCATEGORY="COPYRIGHTED"
+            xmlns:rts="http://cosimo.stanford.edu/sdr/metsrights/"
+            xsi:schemaLocation="http://cosimo.stanford.edu/sdr/metsrights/
+                http://cosimo.stanford.edu/sdr/metsrights.xsd">
+            <rts:RightsDeclaration>TBC</rts:RightsDeclaration>
+            <rts:RightsHolder>
+              <rts:RightsHolderName>TBC</rts:RightsHolderName>
+            </rts:RightsHolder>
+            <rts:Context CONTEXTCLASS="OTHER">
+              <rts:Permissions OTHERPERMITTYPE="NON_PRINT_LEGAL_DEPOSIT"/>
+              <rts:Constraints CONSTRAINTTYPE="RE-USE" OTHERCONSTRAINTTYPE="TBC"/>
+            </rts:Context>
+          </rts:RightsDeclarationMD>
+        </mets:xmlData>
+      </mets:mdWrap>
+    </mets:rightsMD>
   </mets:amdSec>
   <mets:structMap>
     <mets:div>

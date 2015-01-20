@@ -77,7 +77,7 @@ public class Application extends Controller {
         } else {
             session("email", loginForm.get().email.toLowerCase());
             return redirect(
-                routes.About.index()
+                routes.Application.home()
             );
         }
     }
@@ -91,6 +91,10 @@ public class Application extends Controller {
         return redirect(
             routes.Application.login()
         );
+    }
+    
+    public static Result home() {
+    	return redirect(routes.WatchedTargets.overview(0, "title", "asc"));
     }
   
     // -- Javascript routing

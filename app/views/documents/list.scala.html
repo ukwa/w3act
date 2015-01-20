@@ -1,4 +1,7 @@
-@(watchedTarget: WatchedTarget, user: User, submitted: Boolean, searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String)
+@(user: User, filterForm: DynamicForm, submitted: Boolean, searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String, filters: Boolean)
+
+@import helper.options
+@import templates.select
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -37,45 +40,67 @@
     }
     
     // Generate the link
-    routes.Documents.list(watchedTarget.id, submitted, newPage, sortBy, order, searchstr)
+    routes.Documents.list(filterForm("curator").value, filterForm("watchedtarget").value, submitted, newPage, sortBy, order, searchstr)
     
 }
 
 @main("", user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1>
-	    	<a href="@routes.WatchedTargets.list()">Watched Targets</a> > @watchedTarget.target.title
-	    </h1>
+	    <h1>@{if (filters) "Documents" else "Document Harvesting"}</h1>
 	</div>
 	
+	@if(filters) {
+		<div class="col-md-6" @if(filterForm("curator").value == "null") {style="float:none"}>
+			@select(filterForm("curator"), options(Users.getUsers), true, '_label -> "Curator",
+				'onchange -> "document.location.href='list?user=' + this.value;"
+			)
+		</div>
+		@if(filterForm("curator").value != "null") {
+			<div class="col-md-6">
+				@select(filterForm("watchedtarget"), options(Users.getWatchedTargets(new Long(filterForm("curator").value))), true, '_label -> "Watched Target",
+					'onchange -> "document.location.href='list?user=' + getElementById('curator').value + '&watchedtarget=' + this.value;"
+				)
+			</div>
+		}
+	}
+	
 	<ul class="nav nav-tabs">
-		@if(!submitted) {
-			<li class="active"><a href="#">New</a></li>
-			<li><a href="@routes.Documents.list(watchedTarget.id, true)">Submitted</a></li>
+		@if(filters) {
+			@if(!submitted) {
+				<li class="active"><a href="#">New</a></li>
+				<li><a href="@routes.Documents.list(filterForm.get("curator"), filterForm.get("watchedtarget"), true)">Submitted</a></li>
+			} else {
+				<li><a href="@routes.Documents.list(filterForm.get("curator"), filterForm.get("watchedtarget"), false)">New</a></li>
+				<li class="active"><a href="#">Submitted</a></li>
+			}
 		} else {
-			<li><a href="@routes.Documents.list(watchedTarget.id, false)">New</a></li>
-			<li class="active"><a href="#">Submitted</a></li>
+			<li><a href="@routes.WatchedTargets.overview()">My Watched Targets</a></li>
+			<li class="active"><a href="#">My New Documents</a></li>
 		}
 	</ul>
 	
     <article class="documents">
-    
-		<div id="forms">
-   			@warningmessage(flash)
-   			@helper.form(action=routes.Documents.search, 'class -> "form-inline") {
-	   			<div class="input-group">
-					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
-	   				<input type="hidden" name="s" value="@currentSortBy">
-	   				<input type="hidden" name="o" value="@currentOrder">
-	   				<input type="hidden" name="watchedTarget.id" value="@watchedTarget.id" />
-					<input type="text" class="form-control lookup-form-control" name="q" placeholder="Enter Document Name" value="@searchstr" id="search-query">
-		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="action" value="search">Search</button>						
-					</span>
-				</div>
-			}
-		</div>	
+    	
+    	@if(filters) {
+			<div id="forms">
+	   			@warningmessage(flash)
+	   			<form>
+		   			<div class="input-group">
+						<input type="text" class="form-control lookup-form-control" name="q" placeholder="Enter Document Name" value="@searchstr" id="search-query">
+			   			<span class="input-group-btn">
+							<input type="button" class="btn btn-primary" id="search" name="action" value="Search"
+								onclick="document.location.href='list?user=@filterForm("curator").value' +
+									'&watchedtarget=@filterForm("watchedtarget").value' +
+									'&submitted=@submitted' +
+									'&p=@currentPage.getPageIndex&s=@currentSortBy&o=@currentOrder' +
+									'&f=' + form.q.value;">
+						</span>
+					</div>
+				</form>
+	
+			</div>
+		}
     
     	@pagination(currentPage, link)
     	
@@ -100,10 +125,10 @@
 		
 		@pagination(currentPage, link)
 		
-		@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
+		@*helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
 			<input type="submit" class="btn btn-success" value="Live Crawl" onclick=
 				"return confirm('You will start a crawl with the seed:\n@{watchedTarget.target.field_url}\n\nDo you want to proceed?');">
-		}
+		}*@
 		
 	</article>
 }

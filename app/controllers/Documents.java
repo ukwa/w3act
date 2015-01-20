@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -249,49 +250,41 @@ public class Documents extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on Documents
      */
-    public static Result list(Long watchedTargetId, boolean submitted, int pageNo, String sortBy, String order, String filter) {
+	public static Result list(String userString, String watchedTargetString, boolean submitted,
+			int pageNo, String sortBy, String order, String filter) {
+		return renderList(userString, watchedTargetString, submitted, pageNo, sortBy, order, filter, true);
+	}
+	
+    public static Result overview(int pageNo, String sortBy, String order) {
+    	return renderList("" + User.findByEmail(request().username()).uid, "", false, pageNo, sortBy, order, "", false);
+    }
+    
+    public static Result renderList(String userString, String watchedTargetString, boolean submitted,
+    		int pageNo, String sortBy, String order, String filter, boolean filters) {
     	Logger.info("Documents.list()");
+
+    	Long watchedTargetId = watchedTargetString.isEmpty() || watchedTargetString.equals("null") ?
+    			null : new Long(watchedTargetString);
+    	
+    	Long userId;
+    	if (watchedTargetId == null) {
+    		userId = userString.isEmpty() || userString.equals("null") ?
+    				null : new Long(userString);
+    	} else {
+    		userId = WatchedTarget.find.byId(watchedTargetId).user.uid;
+    	}
     	
         return ok(
         	list.render(
-        			WatchedTarget.find.byId(watchedTargetId),
         			User.findByEmail(request().username()),
+        			filterForm(userId, watchedTargetId),
         			submitted,
         			filter,
-        			Document.page(watchedTargetId, submitted, pageNo, 10, sortBy, order, filter),
+        			Document.page(userId, watchedTargetId, submitted, pageNo, 10, sortBy, order, filter),
         			sortBy,
-        			order)
+        			order,
+        			filters)
         	);
-    }
-
-    public static Result search() {
-    	DynamicForm form = Form.form().bindFromRequest();
-    	String action = form.get("action");
-    	String query = form.get(Const.QUERY);
-		Logger.info("query: " + query);
-		Logger.info("action: " + action);
-    	
-    	if (StringUtils.isBlank(query)) {
-			Logger.info("Document name is empty. Please write name in search window.");
-			flash("message", "Please enter a name in the search window");
-	        return redirect(
-	        		routes.Documents.list(new Long(form.get("watchedTarget.id")), true, 0, "title", "asc", "")
-	        );
-    	}
-
-    	int pageNo = getQueryParamAsInt(Const.PAGE_NO, 0);
-    	String sort = getQueryParam(Const.SORT_BY);
-    	String order = getQueryParam(Const.ORDER);
-
-    	if (StringUtils.isEmpty(action)) {
-    		return badRequest("You must provide a valid action");
-    	} else {
-    		if (Const.SEARCH.equals(action)) {
-    	    	return redirect(routes.Documents.list(new Long(form.get("watchedTarget.id")), true, pageNo, sort, order, query));
-		    } else {
-		      return badRequest("This action is not allowed");
-		    }
-    	}
     }
     
     @BodyParser.Of(BodyParser.Json.class)
@@ -326,5 +319,12 @@ public class Documents extends AbstractController {
 		File file = Play.application().getFile("../html/" + filename);
 		file.delete();
 	}
+	
+	public static DynamicForm filterForm(Long userId, Long targetId) {
+    	Map<String,String> filterData = new HashMap<>();
+    	filterData.put("curator", "" + userId);
+    	filterData.put("watchedtarget", "" + targetId);
+    	return Form.form().bind(filterData);
+    }
 
 }

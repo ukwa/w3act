@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.avaje.ebean.RawSql;
 import com.avaje.ebean.RawSqlBuilder;
@@ -56,28 +57,14 @@ public class WatchedTarget extends Model {
 		user = User.findByUrl(target.author);
 		this.documentUrlScheme = documentUrlScheme;
 	}
-	public static Page<WatchedTarget> page(User user, int page, int pageSize, String sortBy, String order, String filter) {
-    	
-		// This part is a bit problematic with ebean (3.3.4),
-		// because then it isn't possible to get the row count with Page.getTotalRowCount()
+	public static Page<WatchedTarget> page(Long userId, int page, int pageSize, String sortBy, String order, String filter) {
 		
-		/*String sql = "select wt.id, wt.id_creator, t.id, t.url, t.title, t.field_url, count(d.id) as documentCount"
-				+ " from watched_target wt"
-				+ " left outer join target t on t.id = wt.id_target"
-				+ " left outer join document d on id_watched_target = wt.id"
-				+ " group by wt.id, wt.id_creator, t.id, t.url, t.title, t.field_url";
+		ExpressionList<WatchedTarget> el = find.where();
 		
-		RawSql rawSql = RawSqlBuilder.parse(sql)
-				.columnMapping("wt.id_creator",  "user.uid")
-				.columnMapping("t.id",  "target.nid")
-				.columnMapping("t.url",  "target.url")
-				.columnMapping("t.title",  "target.title")
-				.columnMapping("t.field_url",  "target.field_url")
-				.create();*/
+		if (userId != null)
+    		el = el.eq("id_creator", userId);
 		
-        return find/*.setRawSql(rawSql)*/.where()
-        		.eq("id_creator", user.uid)
-        		.icontains(SEARCH_FIELD, filter)
+        return el.icontains(SEARCH_FIELD, filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

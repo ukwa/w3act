@@ -1,4 +1,7 @@
-@(user: User, searchstr: String, currentPage: com.avaje.ebean.Page[WatchedTarget], currentSortBy: String, currentOrder: String)
+@(user: User, filterForm: DynamicForm, searchstr: String, currentPage: com.avaje.ebean.Page[WatchedTarget], currentSortBy: String, currentOrder: String, filters: Boolean)
+
+@import helper.options
+@import templates.select
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -33,33 +36,50 @@
         }
     }
     
-    routes.WatchedTargets.list(newPage, sortBy, order, searchstr)
+    routes.WatchedTargets.list(filterForm("curator").value, newPage, sortBy, order, searchstr)
     
 }
 
 @main("", user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1>Watched Targets</h1>
+	    <h1>@{if (filters) "Watched Targets" else "Document Harvesting"}</h1>
 	</div>
-		
-	<article class="watchedTargets">
 	
-		<div id="forms">
-   			@warningmessage(flash)
-   			@helper.form(action=routes.WatchedTargets.search, 'class -> "form-inline") {
-	   			<div class="input-group">
-					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
-	   				<input type="hidden" name="s" value="@currentSortBy">
-	   				<input type="hidden" name="o" value="@currentOrder">
-					<input type="text" class="form-control lookup-form-control" name="q" placeholder="Enter Target Name" value="@searchstr" id="search-query">
-		   			<span class="input-group-btn">
-						<button type="submit" class="btn btn-primary" id="search" name="action" value="search">Search</button>						
-					</span>
-				</div>
-			}
+	@if(filters) {
+		<div class="col-md-6" style="float:none">
+			@select(filterForm("curator"), options(Users.getUsers), true, '_label -> "Curator",
+				'onchange -> "document.location.href='list?user=' + this.value;"
+			)
 		</div>
+	}
 	
+	@if(!filters) {
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#">My Watched Targets</a></li>
+			<li><a href="@routes.Documents.overview()">My New Documents</a></li>
+		</ul>
+	}
+	
+	<article class="watchedTargets">
+		
+		@if(filters) {
+			<div id="forms">
+	   			@warningmessage(flash)
+	   			<form>
+		   			<div class="input-group">
+						<input type="text" class="form-control lookup-form-control" name="q" placeholder="Enter Target Name" value="@searchstr" id="search-query">
+			   			<span class="input-group-btn">
+							<input type="button" class="btn btn-primary" id="search" name="action" value="Search"
+								onclick="document.location.href='list?user=@filterForm("curator").value' +
+									'&p=@currentPage.getPageIndex&s=@currentSortBy&o=@currentOrder' +
+									'&f=' + form.q.value;">
+						</span>
+					</div>
+				</form>
+			</div>
+		}
+		
 		@pagination(currentPage, link)
 		
 		<table class="table table-hover">
@@ -75,13 +95,18 @@
 				<tr>
 					<td><a href="@routes.Targets.view(watchedTarget.target.url)">@watchedTarget.target.title</a></td>
 					<td><a href="@watchedTarget.target.field_url" target="_blank">@watchedTarget.target.field_url</a></td>
-					<td><a href="@routes.Documents.list(watchedTarget.id)">@watchedTarget.documents.size</a></td>
+					<td><a href="@routes.Documents.list("", "" + watchedTarget.id)">@watchedTarget.documents.size</a></td>
 				</tr>
 			}
 			</tbody>
 		</table>
 		
 		@pagination(currentPage, link)
+		
+		@if(!filters) {
+			<h3>New Target</h3>
+			Target Url: <input type="text"><button>Add Target URL</button>
+		}
 		
 	</article>
 }
