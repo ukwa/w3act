@@ -588,25 +588,16 @@ public class CrawlPermissionController extends AbstractController {
      * This method rejects selected crawl permissions and changes their status to 'EMAIL_REJECTED'.
      * @return
      */
-    public static void rejectSelectedCrawlPermissions() {
-        List<CrawlPermission> permissionList = CrawlPermission.findAll();
-        Iterator<CrawlPermission> permissionItr = permissionList.iterator();
-        while (permissionItr.hasNext()) {
-        	CrawlPermission permission = permissionItr.next();
-            if (getFormParam(permission.name) != null) {
-//        		Logger.debug("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
-                boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
-                if (userFlag) {
-                	permission.status = Const.CrawlPermissionStatus.EMAIL_REJECTED.name();
-                	Logger.debug("new permission staus: " + permission.status);
-                   	Ebean.update(permission);                	
-        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
-        	        Ebean.save(log);
-                	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
-        	        updateAllByTarget(permission.id, permission.target.id, permission.status);
+    public static void rejectSelectedCrawlPermissions(List<CrawlPermission> permissionList) {
+    	for (CrawlPermission permission : permissionList) {
+        	permission.status = Const.CrawlPermissionStatus.EMAIL_REJECTED.name();
+        	Logger.debug("new permission staus: " + permission.status);
+           	Ebean.update(permission);                	
+	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
+	        Ebean.save(log);
+        	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
+	        updateAllByTarget(permission.id, permission.target.id, permission.status);
 //        	        TargetController.updateQaStatus(permission.target.title, permission.status);
-                }
-            }
         }
     }
     
@@ -685,66 +676,58 @@ public class CrawlPermissionController extends AbstractController {
      * @param template The email template
      * @return true if sending successful, false otherwise
      */
-    public static boolean setPendingSelectedCrawlPermissions(boolean all, String template) throws ActException {
+    public static boolean setPendingSelectedCrawlPermissions(String template, List<CrawlPermission> permissionList) throws ActException {
     	
     	boolean res = true;
-        List<CrawlPermission> permissionList = CrawlPermission.findAll();
         
         Logger.debug("template: " + template);
         for (CrawlPermission permission : permissionList) {
-
-            if (getFormParam(permission.name) != null) {
-//        		Logger.debug("getFormParam(permission.name): " + getFormParam(permission.name) + " " + permission.name);
-                boolean userFlag = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(permission.name));
-                if (userFlag || all) {
-                	Logger.debug("mail to contact person: " + permission.contactPerson.name.replace(Const.LIST_DELIMITER,"") + ".");
-                	Logger.debug("mail template: " + template);
-                	ContactPerson contactPerson = permission.contactPerson;
-            		String email = contactPerson.email;
+        	Logger.debug("mail to contact person: " + permission.contactPerson.name.replace(Const.LIST_DELIMITER,"") + ".");
+        	Logger.debug("mail template: " + template);
+        	ContactPerson contactPerson = permission.contactPerson;
+    		String email = contactPerson.email;
 //                	String[] toMailAddresses = Utils.getMailArray(email);
-            		String messageBody = Const.NONE_VALUE;
-                	String messageSubject = Const.NONE_VALUE;
-            		if (!template.equals(Const.NONE_VALUE)) {
-	                	MailTemplate mailTemplate = MailTemplate.findByName(template);
-	                	messageSubject = mailTemplate.subject;
+    		String messageBody = Const.NONE_VALUE;
+        	String messageSubject = Const.NONE_VALUE;
+    		if (!template.equals(Const.NONE_VALUE)) {
+            	MailTemplate mailTemplate = MailTemplate.findByName(template);
+            	messageSubject = mailTemplate.subject;
 //	                	messageBody = mailTemplate.text;
-	                	messageBody = mailTemplate.readTemplate();
-	                	String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
-	            		Logger.debug("setPendingSelectedCrawlPermissions permission.target: " + permission.target.title);
-	            		Logger.debug("setPendingSelectedCrawlPermissions current: " + routes.LicenseController.form(permission.url).absoluteURL(request()).toString());
-	            		String licenseUrl = routes.LicenseController.form(permission.url).absoluteURL(request()).toString();
-	            		licenseUrl = injectServerName(licenseUrl);
-	            		Logger.debug("setPendingSelectedCrawlPermissions new: " + licenseUrl);
-	                	messageBody = CrawlPermission.
-		                	replaceTwoStringsInText(
-		                			messageBody
-		    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
-		    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
-		    						, permission.target.title
-		    						, licenseUrl);
-            		} else {
-            			Logger.debug("selected 'None' template type");
-            		}
-            		Logger.debug("email: " + email + ", " + messageSubject + ", " + messageBody);
-                	if (StringUtils.isNotBlank(email)) {
-	                    EmailHelper.sendMessage(email, messageSubject, messageBody);                	
-	//                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
-	                	permission.status = Const.CrawlPermissionStatus.PENDING.name();
-	                	Logger.debug("new permission staus: " + permission.status);
-	                   	Ebean.update(permission);   
-	        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
-	        	        Ebean.save(log);
-	                	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
-	        	        updateAllByTarget(permission.id, permission.target.id, permission.status);
+            	messageBody = mailTemplate.readTemplate();
+            	String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
+        		Logger.debug("setPendingSelectedCrawlPermissions permission.target: " + permission.target.title);
+        		Logger.debug("setPendingSelectedCrawlPermissions current: " + routes.LicenseController.form(permission.url).absoluteURL(request()).toString());
+        		String licenseUrl = routes.LicenseController.form(permission.url).absoluteURL(request()).toString();
+        		licenseUrl = injectServerName(licenseUrl);
+        		Logger.debug("setPendingSelectedCrawlPermissions new: " + licenseUrl);
+            	messageBody = CrawlPermission.
+                	replaceTwoStringsInText(
+                			messageBody
+    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
+    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
+    						, permission.target.title
+    						, licenseUrl);
+    		} else {
+    			Logger.debug("selected 'None' template type");
+    		}
+    		Logger.debug("email: " + email + ", " + messageSubject + ", " + messageBody);
+        	if (StringUtils.isNotBlank(email)) {
+                EmailHelper.sendMessage(email, messageSubject, messageBody);                	
+//                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
+            	permission.status = Const.CrawlPermissionStatus.PENDING.name();
+            	Logger.debug("new permission staus: " + permission.status);
+               	Ebean.update(permission);   
+    	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
+    	        Ebean.save(log);
+            	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
+    	        updateAllByTarget(permission.id, permission.target.id, permission.status);
 //	        	        TargetController.updateQaStatus(permission.target.title, permission.status);
-                	} else {
-                		throw new ActException("Missing contact email. Please check contact person");
+        	} else {
+        		throw new ActException("Missing contact email. Please check contact person");
 //	                	Logger.debug("Missing contact email. Please check contact person");
 //	        	        res = false;
 //	        	        break;
-                	}
-                }
-            }
+        	}
         }
         return res;
     }
@@ -758,55 +741,81 @@ public class CrawlPermissionController extends AbstractController {
         DynamicForm requestData = Form.form().bindFromRequest();
     	String action = requestData.get("action");
 
-	    String template = Const.DEFAULT_TEMPLATE;
-	    String temp = requestData.get("template");
-	    
-        if (StringUtils.isNotBlank(temp)) {
-	    	template = temp;
-	    }
-        
-    	String toMails = evaluateToEmails();
-    	Logger.debug("toMails: " + toMails);
-
-    	if (action.equals("sendall")) {
-        	Logger.debug("send all crawl permission requests");
-            boolean sendingRes = setPendingSelectedCrawlPermissions(true, template);
-            if (!sendingRes) {
-    			flash("message", "Missing contact email. Please check contact person");
-            }
-        	res = redirect(routes.CrawlPermissionController.index()); 
-        }
-        if (action.equals("sendsome")) {
-        	Logger.debug("send some crawl permission requests");
-        	boolean sendingRes = setPendingSelectedCrawlPermissions(false, template);//messageBody, messageSubject); 
-            if (!sendingRes) {
-    			flash("message", "Missing contact email. Please check contact person");
-            }
-	        res = redirect(routes.CrawlPermissionController.index()); 
-        }
-        if (action.equals("preview")) {
-        	Logger.debug("preview crawl permission requests");        	
-	        res = ok(
-	            crawlpermissionpreview.render(
-		            	getAssignedPermissionsList().get(0), User.findByEmail(request().username()), toMails, template
-	            )
-	        );
-        }
-        if (action.equals("reject")) {
-        	Logger.debug("reject crawl permission requests");
-        	rejectSelectedCrawlPermissions();        	
-	        res = redirect(routes.CrawlPermissionController.index()); 
-        }
-        if (action.equals("selectall")) {
-        	Logger.debug("select all listed in page crawl permissions");
-        	res = redirect(routes.CrawlPermissionController.list(
-        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.SELECT_ALL));
-        }
-        if (action.equals("deselectall")) {
-        	Logger.debug("deselect all listed in page crawl permissions");
-        	res = redirect(routes.CrawlPermissionController.list(
-        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.DESELECT_ALL));
-        }
+    	
+    	if (StringUtils.isNotBlank(action)) {
+		    String template = Const.DEFAULT_TEMPLATE;
+		    String temp = requestData.get("template");
+		    
+	        if (StringUtils.isNotBlank(temp)) {
+		    	template = temp;
+		    }
+	        
+//	    	String toMails = evaluateToEmails();
+//	    	Logger.debug("toMails: " + toMails);
+	
+		    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
+	        String[] permissionValues = formParams.get("permissionsList");
+	
+	        List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
+	        
+	        if (permissionValues != null && permissionValues.length > 0) {
+		        for (String permissionValue : permissionValues) {
+		        	if (StringUtils.isNotBlank(permissionValue)) {
+		        		Long permissionId = Long.valueOf(permissionValue);
+		        		CrawlPermission crawlPermission = CrawlPermission.findById(permissionId);
+		        		crawlPermissions.add(crawlPermission);
+		        	}
+		        }
+	        }
+	    	Logger.debug("crawlPermissions: " + crawlPermissions);
+	    	
+//	    	if (action.equals("sendall")) {
+//	        	Logger.debug("send all crawl permission requests");
+//	            boolean sendingRes = setPendingSelectedCrawlPermissions(template, crawlPermissions);
+//	            if (!sendingRes) {
+//	    			flash("message", "Missing contact email. Please check contact person");
+//	            }
+//	        	res = redirect(routes.CrawlPermissionController.index()); 
+//	        }
+	        if (action.equals("sendsome")) {
+	        	Logger.debug("send some crawl permission requests");
+	        	boolean sendingRes = setPendingSelectedCrawlPermissions(template, crawlPermissions);//messageBody, messageSubject); 
+	            if (!sendingRes) {
+	    			flash("message", "Missing contact email. Please check contact person");
+	            }
+		        res = redirect(routes.CrawlPermissionController.index()); 
+	        }
+	        
+	        if (action.equals("preview")) {
+	        	Logger.debug("preview crawl permission requests");
+	        	CrawlPermission crawlPermission = crawlPermissions.get(0);
+            	MailTemplate mailTemplate = MailTemplate.findByName(template);
+            	String toMails = crawlPermission.contactPerson.email;
+            	String messageSubject = mailTemplate.subject;
+            	String messageBody = mailTemplate.readTemplate();
+		        res = ok(
+		            crawlpermissionpreview.render(
+			            	crawlPermission, User.findByEmail(request().username()), toMails, template, messageSubject, messageBody
+		            )
+		        );
+	        }
+	        if (action.equals("reject")) {
+	        	Logger.debug("reject crawl permission requests");
+	        	rejectSelectedCrawlPermissions(crawlPermissions);        	
+		        res = redirect(routes.CrawlPermissionController.index()); 
+	        }
+	        
+	        if (action.equals("selectall")) {
+	        	Logger.debug("select all listed in page crawl permissions");
+	        	res = redirect(routes.CrawlPermissionController.list(
+	        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.SELECT_ALL));
+	        }
+	        if (action.equals("deselectall")) {
+	        	Logger.debug("deselect all listed in page crawl permissions");
+	        	res = redirect(routes.CrawlPermissionController.list(
+	        			0, Const.NAME, Const.ASC, "", Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.DESELECT_ALL));
+	        }
+    	}
         return res;
     }
     

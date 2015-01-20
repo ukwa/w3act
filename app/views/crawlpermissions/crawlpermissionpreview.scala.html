@@ -1,4 +1,4 @@
-@(permission: CrawlPermission, user: User, emails: String, template: String)
+@(permission: CrawlPermission, user: User, emails: String, template: String, messageSubject: String, messageBody: String)
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 
@@ -35,7 +35,7 @@
 			<div class="form-group">
 				<label for="templateSubject" class="col-sm-6 control-label">Subject</label>
 			    <div class="col-sm-6">
-					<label for="subject" class="col-sm-6 control-label">@MailTemplate.findByName(template).subject</label>
+					<label for="subject" class="col-sm-6 control-label">@messageSubject</label>
 				</div>
 			</div>
 		</div>
@@ -47,12 +47,7 @@
 				<label for="inputText" class="col-sm-6 control-label">Text</label>
 			    <div class="col-sm-6">
 					<textarea class="form-control" name="text" id="text" cols="100" rows="10" readonly>
-					@CrawlPermission.replaceTwoStringsInText(
-						MailTemplate.findByName(template).text
-						, "||URL||"
-						, "||LINK||"
-						, permission.target.title
-						, CrawlPermissionController.injectServerName(routes.LicenseController.form(permission.url).absoluteURL(request()).toString()))
+						@messageBody
 					</textarea>
 				</div>
 			</div>

@@ -162,9 +162,9 @@
 						<td>
 							<label class="checkbox-inline">
 								@if(sel.equals("selectall")) {
-					                <input type="checkbox" name="@permission.name" value="true" checked /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
+				                	<input type="checkbox" name="permissionsList" value="@permission.id" checked /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
 					            } else { 
-					                <input type="checkbox" name="@permission.name" value="true" /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
+					            	<input type="checkbox" name="permissionsList" value="@permission.id" /> <a href="@routes.CrawlPermissionController.view(permission.id)">@permission.name</a>
 					            } 
 							</label>
 						</td>
