@@ -4,6 +4,7 @@ import static play.data.Form.form;
 
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -322,28 +323,41 @@ public class InstanceController extends AbstractController {
     
     public static Result newWithTarget(Long targetId, String title) throws ActException {
 
-    	String webArchiveUrl = "http://www.webarchive.org.uk/wayback/archive/xmlquery.jsp?url=";
-    	
+    	String webArchiveUrl = play.Play.application().configuration().getString("application.wayback.url");
+
+    	Logger.debug("webArchiveUrl: " + webArchiveUrl);
     	Target target = Target.findById(targetId);
     	
     	for (FieldUrl fieldUrl : target.fieldUrls) {
 //    		http://www.bl.uk/bibliographic/ukmarc.html";
     		String urlValue = webArchiveUrl + fieldUrl.url;
     		
+        	Logger.debug("urlValue: " + urlValue);
+
 			Wayback wayback = WaybackExport.INSTANCE.export(urlValue);
 			
 			Results results = wayback.getResults();
 			if (results != null && results.getResults() != null) {
-				for (uk.bl.api.models.Result result : results.getResults()) {
-					Instance instance = new Instance();
-					instance.title = result.getCapturedate().toString();
-					instance.createdAt = Utils.INSTANCE.getDateFromSeconds(result.getCapturedate());
-					Logger.debug("instance.createdAt: " + instance.createdAt);
-					instance.format = result.getMimetype();
-					instance.revision = "initial revision";
-					instance.fieldDate = Utils.INSTANCE.getDateFromSeconds(result.getCapturedate());
-					instance.target = target;
-					instance.save();
+				try {
+					for (uk.bl.api.models.Result result : results.getResults()) {
+						// check instance first
+						String captureDatetitle = result.getCapturedate().toString();
+						
+						Instance instance = Instance.findbyTitleAndTargetId(captureDatetitle, target.id);
+						if (instance == null) {
+							instance = new Instance();
+							instance.title = captureDatetitle;
+							instance.createdAt = Utils.INSTANCE.getDateFromLongValue(result.getCapturedate());
+							Logger.debug("instance.createdAt: " + instance.createdAt);
+							instance.format = result.getMimetype();
+							instance.revision = "initial revision";
+							instance.fieldDate = Utils.INSTANCE.getDateFromLongValue(result.getCapturedate());
+							instance.target = target;
+							instance.save();
+						}
+					}
+				} catch (ParseException e) {
+					throw new ActException(e);
 				}
 			}
     	}

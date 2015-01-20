@@ -187,6 +187,11 @@ public class Instance extends UrlModel {
         return res;
 	}
 
+    public static Instance findbyTitleAndTargetId(String title, Long targetId) {
+        Instance instance = find.where().eq("title", title).eq("target.id", targetId).findUnique();
+    	return instance;
+    }
+    
     /**
      * Create a new target.
      */

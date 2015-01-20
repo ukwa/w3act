@@ -605,5 +605,15 @@ public enum Utils {
 		}
 		return date;
 	}
+	
+	public Date getDateFromLongValue(String dateValue) throws ParseException {
+		Date date = null;
+    	if (StringUtils.isNotEmpty(dateValue)) {
+//			20090617 083042
+			DateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+			date = formatter.parse(dateValue);
+		}
+		return date;
+	}
 }
 

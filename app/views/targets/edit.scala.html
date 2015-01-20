@@ -149,8 +149,8 @@
 			<li><a onclick="switchPage(); return false;" href="@routes.TargetController.view(id)">View</a></li>
 	   	}
 	   	@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) || (user.hasRole("user") && targetForm("authorUser.id").value != null && user.id == Long.valueOf(targetForm("authorUser.id").value))) {
-		   	<li class="active"><a href="#">Edit</a></li> 
-			<li><a href="@routes.InstanceController.newWithTarget(id)">New Instance</a></li>
+			<li class="active"><a href="#">Edit</a></li> 
+			<li><a href="@routes.InstanceController.newWithTarget(id)">Get New Instance(s)</a></li>
 	   	}
 	</ul>
 	<div class="tab-content padding-20">
