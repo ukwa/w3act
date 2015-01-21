@@ -1,5 +1,7 @@
 package models;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -17,8 +19,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import models.utils.Hash;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -30,6 +30,7 @@ import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.PasswordHash;
 import uk.bl.api.models.FieldModel;
 import uk.bl.exception.ActException;
 
@@ -432,8 +433,13 @@ public class User extends ActModel {
     }
 
     public void changePassword(String password) throws ActException {
-        this.password = Hash.createPassword(password);
-        this.save();
+		try {
+			this.password = PasswordHash.createHash(password);
+//	        this.password = Hash.createPassword(password);
+	        this.save();
+	    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			throw new ActException(e);
+		}
     }
     
     @Override

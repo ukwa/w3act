@@ -1,18 +1,19 @@
 package models;
 
-import models.utils.Mail;
 import play.Configuration;
 import play.Logger;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import play.i18n.Messages;
+import uk.bl.scope.EmailHelper;
 
 import javax.annotation.Nullable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
@@ -62,8 +63,7 @@ public class Token extends Model {
     public String email;
 
     // -- Queries
-    @SuppressWarnings("unchecked")
-    public static Model.Finder<String, Token> find = new Finder(String.class, Token.class);
+    public static Model.Finder<String, Token> find = new Finder<String, Token>(String.class, Token.class);
 
     /**
      * Retrieve a token by id and type.
@@ -143,16 +143,16 @@ public class Token extends Model {
 
         Token token = getNewToken(user, type, email);
         
-        String context = "/" + Configuration.root().getString("application.context");
+        String context = Configuration.root().getString("application.context");
 
-        String externalServer = Configuration.root().getString("server.hostname") + context;
+        String externalServer = Configuration.root().getString("server_name") + context;
 
         String subject = null;
         String message = null;
         String toMail = null;
 
         // Should use reverse routing here.
-        String urlString = urlString = "http://" + externalServer + "/" + type.urlPath + "/" + token.token;
+        String urlString = "http://" + externalServer + "/" + type.urlPath + "/" + token.token;
         URL url = new URL(urlString); // validate the URL
 
         switch (type) {
@@ -172,8 +172,9 @@ public class Token extends Model {
         }
 
         Logger.debug("sendMailResetLink: url = " + url);
-        Mail.Envelop envelop = new Mail.Envelop(subject, message, toMail);
-        Mail.sendMail(envelop);
+        EmailHelper.sendMessage(toMail, subject, message);
+//        Mail.Envelop envelop = new Mail.Envelop(subject, message, toMail);
+//        Mail.sendMail(envelop);
     }
 
 }

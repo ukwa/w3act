@@ -308,9 +308,9 @@ GET     /whois/check            			 controllers.WhoIsController.check(total:Int 
 GET     /targets/blank/						controllers.TargetController.blank()
 POST    /targets/save						controllers.TargetController.saveBlank()
 
-GET     /reset/ask                  		controllers.ResetController.ask()
-POST    /reset/ask                  		controllers.ResetController.runAsk()
+GET     /resetpassword                  	controllers.ResetController.showEmailForm()
+POST    /resetpassword                  	controllers.ResetController.confirmEmail()
 
 # Resets the password using the password.
-GET     /reset/:token               		controllers.ResetController.reset(token:String)
-POST    /reset/:token               		controllers.ResetController.runReset(token:String)
+GET     /reset/:token               		controllers.ResetController.resetPassword(token:String)
+POST    /reset/:token               		controllers.ResetController.confirmPassword(token:String)

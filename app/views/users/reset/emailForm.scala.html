@@ -2,7 +2,6 @@
 
 @import helper._
 @import bootstrap._
-@import uk.bl.api.FormHelper
 
 @script = {
 }
@@ -18,7 +17,7 @@
 
 	@warningmessage(flash)
 
-    @form(routes.ResetController.runAsk()) {
+    @form(routes.ResetController.confirmEmail()) {
 
 		<div class="row">
 			<div class="col-md-8 col-xs-8 col-sm-8">

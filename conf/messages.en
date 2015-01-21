@@ -10,3 +10,10 @@ mail.reset.fail.message=You (or someone else) entered this email address when tr
 
 mail.reset.confirm.subject=W3Act - New password
 mail.reset.confirm.message=Hello, <br><br> Your password has been reset.
+
+signup.reset.password=Reset your password
+resetpassword.new.password=New password :
+
+error.technical=Technical Error, please Retry
+error.expiredresetlink=This password reset has expired.
+resetpassword.success=Your password has been reset.

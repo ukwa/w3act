@@ -2,7 +2,6 @@ package controllers;
 
 import models.Token;
 import models.User;
-import models.utils.Mail;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.EmailException;
@@ -15,9 +14,11 @@ import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
 import uk.bl.exception.ActException;
-import views.html.users.reset.ask;
-import views.html.users.reset.reset;
-import views.html.users.reset.runAsk;
+import uk.bl.scope.EmailHelper;
+import views.html.users.reset.emailForm;
+import views.html.users.reset.resetPassword;
+import views.html.users.reset.emailRequestLink;
+import views.html.users.reset.resetConfirmation;
 
 import java.net.MalformedURLException;
 
@@ -50,9 +51,9 @@ public class ResetController extends Controller {
      *
      * @return reset password form
      */
-    public static Result ask() {
+    public static Result showEmailForm() {
         Form<AskForm> askForm = form(AskForm.class);
-        return ok(ask.render(askForm));
+        return ok(emailForm.render(askForm));
     }
 
     /**
@@ -60,7 +61,7 @@ public class ResetController extends Controller {
      *
      * @return reset password form if error, runAsk render otherwise
      */
-    public static Result runAsk() {
+    public static Result confirmEmail() {
     	
         Form<AskForm> askForm = form(AskForm.class).bindFromRequest();
 
@@ -70,7 +71,7 @@ public class ResetController extends Controller {
     	
         if (StringUtils.isBlank(email)) {
             flash("message", "Email is required");
-            return badRequest(ask.render(askForm));
+            return badRequest(emailForm.render(askForm));
         }
 
 //        final String email = askForm.get().email;
@@ -86,82 +87,90 @@ public class ResetController extends Controller {
             Logger.debug("No user found with email " + email);
             flash("message", "No user with that email");
 //            sendFailedPasswordResetAttempt(email);
-            return badRequest(ask.render(askForm));
+            return badRequest(emailForm.render(askForm));
         }
 
         Logger.debug("Sending password reset link to user " + user);
 
         try {
             Token.sendMailResetPassword(user);
-            return ok(runAsk.render(email));
+            return ok(emailRequestLink.render(email));
         } catch (MalformedURLException e) {
             Logger.error("Cannot validate URL", e);
             flash("message", Messages.get("error.technical"));
         }
-        return badRequest(ask.render(askForm));
+        return badRequest(emailForm.render(askForm));
     }
 
-    /**
-     * Sends an email to say that the password reset was to an invalid email.
-     *
-     * @param email the email address to send to.
-     */
-    private static void sendFailedPasswordResetAttempt(String email) {
-        String subject = Messages.get("mail.reset.fail.subject");
-        String message = Messages.get("mail.reset.fail.message", email);
-
-        Mail.Envelop envelop = new Mail.Envelop(subject, message, email);
-        Mail.sendMail(envelop);
-    }
-
-    public static Result reset(String token) {
+    public static Result resetPassword(String token) {
 
         if (token == null) {
             flash("error", Messages.get("error.technical"));
             Form<AskForm> askForm = form(AskForm.class);
-            return badRequest(ask.render(askForm));
+            return badRequest(emailForm.render(askForm));
         }
 
         Token resetToken = Token.findByTokenAndType(token, Token.TypeToken.password);
         if (resetToken == null) {
             flash("error", Messages.get("error.technical"));
             Form<AskForm> askForm = form(AskForm.class);
-            return badRequest(ask.render(askForm));
+            return badRequest(emailForm.render(askForm));
         }
 
         if (resetToken.isExpired()) {
             resetToken.delete();
             flash("error", Messages.get("error.expiredresetlink"));
             Form<AskForm> askForm = form(AskForm.class);
-            return badRequest(ask.render(askForm));
+            return badRequest(emailForm.render(askForm));
         }
 
         Form<ResetForm> resetForm = form(ResetForm.class);
-        return ok(reset.render(resetForm, token));
+        return ok(resetPassword.render(resetForm, token));
     }
 
     /**
      * @return reset password form
      */
-    public static Result runReset(String token) {
+    public static Result confirmPassword(String token) {
         Form<ResetForm> resetForm = form(ResetForm.class).bindFromRequest();
 
-        if (resetForm.hasErrors()) {
-            flash("error", Messages.get("signup.valid.password"));
-            return badRequest(reset.render(resetForm, token));
-        }
+        Logger.debug("runReset: " + token);
+        
+        Logger.debug("errors: " + resetForm.errors());
+        
+    	DynamicForm requestData = form().bindFromRequest();
+        
+//        if (resetForm.hasErrors()) {
+//            flash("message", Messages.get("signup.valid.password"));
+//            return badRequest(reset.render(resetForm, token));
+//        }
 
         try {
+        	
+        	String password = requestData.get("inputPassword");
+        	
+        	String confirmPassword = requestData.get("confirmPassword");
+
+            if (StringUtils.isBlank(password) && StringUtils.isBlank(confirmPassword)) {
+                flash("message", "Both Password and Confirm is required");
+                return badRequest(resetPassword.render(resetForm, token));
+            }
+
+            if (!password.equals(confirmPassword)) {
+                flash("message", "Passwords do not match");
+                return badRequest(resetPassword.render(resetForm, token));
+            }
+        	
             Token resetToken = Token.findByTokenAndType(token, Token.TypeToken.password);
             if (resetToken == null) {
-                flash("error", Messages.get("error.technical"));
-                return badRequest(reset.render(resetForm, token));
+                flash("message", Messages.get("error.technical"));
+                return badRequest(resetPassword.render(resetForm, token));
             }
 
             if (resetToken.isExpired()) {
                 resetToken.delete();
-                flash("error", Messages.get("error.expiredresetlink"));
-                return badRequest(reset.render(resetForm, token));
+                flash("message", Messages.get("error.expiredresetlink"));
+                return badRequest(resetPassword.render(resetForm, token));
             }
 
             // check email
@@ -169,23 +178,22 @@ public class ResetController extends Controller {
             if (user == null) {
                 // display no detail (email unknown for example) to
                 // avoir check email by foreigner
-                flash("error", Messages.get("error.technical"));
-                return badRequest(reset.render(resetForm, token));
+                flash("message", Messages.get("error.technical"));
+                return badRequest(resetPassword.render(resetForm, token));
             }
 
-            String password = resetForm.get().inputPassword;
             user.changePassword(password);
 
             // Send email saying that the password has just been changed.
             sendPasswordChanged(user);
-            flash("success", Messages.get("resetpassword.success"));
-            return ok(reset.render(resetForm, token));
+            flash("message", Messages.get("resetpassword.success"));
+            return ok(resetConfirmation.render(user.email));
         } catch (ActException e) {
-            flash("error", Messages.get("error.technical"));
-            return badRequest(reset.render(resetForm, token));
+            flash("message", Messages.get("error.technical"));
+            return badRequest(resetPassword.render(resetForm, token));
         } catch (EmailException e) {
-            flash("error", Messages.get("error.technical"));
-            return badRequest(reset.render(resetForm, token));
+            flash("message", Messages.get("error.technical"));
+            return badRequest(resetPassword.render(resetForm, token));
         }
 
     }
@@ -199,7 +207,6 @@ public class ResetController extends Controller {
     private static void sendPasswordChanged(User user) throws EmailException {
         String subject = Messages.get("mail.reset.confirm.subject");
         String message = Messages.get("mail.reset.confirm.message");
-        Mail.Envelop envelop = new Mail.Envelop(subject, message, user.email);
-        Mail.sendMail(envelop);
+        EmailHelper.sendMessage(user.email, subject, message);
     }
 }
