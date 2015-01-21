@@ -350,6 +350,11 @@ public class UserController extends AbstractController {
         return redirect(routes.TargetController.userTargets(0, "title", "asc", "", id, 0L, 0L));
     }
     
+//    public static Result resetPassword(String email) {
+//    	
+//        return redirect(routes.UserController.resetPassword(String email, String password);
+//    }
+    
 //    public static Result save() {
 //    	Result res = null;
 //

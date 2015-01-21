@@ -17,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import models.utils.Hash;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -29,6 +31,7 @@ import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import uk.bl.Const;
 import uk.bl.api.models.FieldModel;
+import uk.bl.exception.ActException;
 
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
@@ -400,6 +403,11 @@ public class User extends ActModel {
         return options;
     }
 
+    public void changePassword(String password) throws ActException {
+        this.password = Hash.createPassword(password);
+        this.save();
+    }
+    
     @Override
 	public int hashCode() {
 		final int prime = 31;

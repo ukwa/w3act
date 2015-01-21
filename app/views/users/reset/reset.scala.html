@@ -1,0 +1,36 @@
+@(resetForm: Form[controllers.ResetController.ResetForm], token:String)
+
+@import helper._
+
+@script = {
+    <script src="@routes.Assets.at("javascripts/password.js")" type="text/javascript"></script>
+}
+
+@style = {
+}
+    
+@main("", null, script, style) {
+
+    <h3>@Messages("signup.reset.password")</h3>
+
+    @Messages("resetpassword.new.password")
+    
+    @form(routes.ResetController.runReset(token)) {
+
+        <fieldset>
+            @inputPassword(
+                resetForm("inputPassword"),
+                'placeholder -> Messages("password"),
+                '_label -> null
+            )
+            <h6>@Messages("signup.generate.password")</h6>
+            <input type="text" name="passwordGenerated">
+
+        </fieldset>
+
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="@Messages("validate")">
+            <a href="@routes.ApplicationController.index" class="btn">@Messages("goback")</a>
+        </div>
+    }
+}

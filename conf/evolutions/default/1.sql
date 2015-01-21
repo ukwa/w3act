@@ -285,6 +285,16 @@ create table taxonomy_type (
   constraint pk_taxonomy_type primary key (id))
 ;
 
+create table token (
+  token                     varchar(255) not null,
+  user_id                   bigint,
+  type                      varchar(8),
+  date_creation             timestamp,
+  email                     varchar(255),
+  constraint ck_token_type check (type in ('password','email')),
+  constraint pk_token primary key (token))
+;
+
 create table creator (
   id                        bigint not null,
   url                       varchar(255),
@@ -408,6 +418,8 @@ create sequence target_seq;
 create sequence taxonomy_seq;
 
 create sequence taxonomy_type_seq;
+
+create sequence token_seq;
 
 create sequence creator_seq;
 
@@ -556,6 +568,8 @@ drop table if exists taxonomy_parents_all cascade;
 
 drop table if exists taxonomy_type cascade;
 
+drop table if exists token cascade;
+
 drop table if exists creator cascade;
 
 drop sequence if exists communication_log_seq;
@@ -587,6 +601,8 @@ drop sequence if exists target_seq;
 drop sequence if exists taxonomy_seq;
 
 drop sequence if exists taxonomy_type_seq;
+
+drop sequence if exists token_seq;
 
 drop sequence if exists creator_seq;
 

@@ -1,0 +1,44 @@
+@(askForm: Form[controllers.ResetController.AskForm])
+
+@import helper._
+@import bootstrap._
+@import uk.bl.api.FormHelper
+
+@script = {
+}
+
+@style = {
+}
+
+@main("", null, script, style) {
+
+   	<div class="page-header">
+	    <h1>Password Reset</h1>
+	</div>  
+
+	@warningmessage(flash)
+
+    @form(routes.ResetController.runAsk()) {
+
+		<div class="row">
+			<div class="col-md-8 col-xs-8 col-sm-8">
+				<div class="form-group">
+					@inputText(askForm("email"),
+						'_label -> "Email:",
+					    'id -> "email",
+					    'class -> "form-control",
+					    'type -> "email",
+					    'placeholder -> "Enter Email"
+					)(FieldConstructor(genericMandatoryInput.f), lang)
+				</div>
+			</div>
+	
+			<div class="col-md-4 col-xs-4 col-sm-4">
+		        <div class="form-actions">
+		            <input type="submit" class="btn btn-primary" value="Reset">
+		        </div>
+			</div>
+		</div>		
+    }
+
+}

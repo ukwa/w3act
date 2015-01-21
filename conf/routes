@@ -307,3 +307,10 @@ GET     /whois/check            			 controllers.WhoIsController.check(total:Int 
 # Sample forms with validation
 GET     /targets/blank/						controllers.TargetController.blank()
 POST    /targets/save						controllers.TargetController.saveBlank()
+
+GET     /reset/ask                  		controllers.ResetController.ask()
+POST    /reset/ask                  		controllers.ResetController.runAsk()
+
+# Resets the password using the password.
+GET     /reset/:token               		controllers.ResetController.reset(token:String)
+POST    /reset/:token               		controllers.ResetController.runReset(token:String)

@@ -35,71 +35,73 @@
         @styles
     </head>
     <body>
-		<nav class="navbar navbar-default" role="navigation">
-  			<div class="navbar-header">				
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span> <span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="@routes.ApplicationController.index" style="font-family:'Righteous';">
-					<image src="@routes.Assets.at("images/ukwa-icon-nobg-16.png")" />
-						W3ACT
-				</a>
-			</div>
-			<div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav">
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Targets<b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="@routes.TargetController.lookup()">Look Up URL</a></li>
-							<li><a href="@routes.TargetController.index()">List Targets</a></li>
-							<li><a href="@routes.InstanceController.index()">List Instances</a></li>
-							<li><a href="@routes.ReportController.index()">Reports</a></li>
-						</ul>
-					</li>
-					@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Archivist Tasks<b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="@routes.CrawlPermissionController.index()">Crawl Permissions</a></li>
-							<li><a href="@routes.QAController.index()">QA</a></li>
-							<li><a href="@routes.NominationController.index()">Nominations</a></li>
-							<li><a href="@routes.WhoIsController.index()">Check WhoIs</a></li>
-						</ul>
-					</li>
-					}					
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Taxonomies<b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="@routes.CollectionController.index()">Collections</a></li>
-							<li><a href="@routes.SubjectController.index()">Subjects</a></li>
-							<li><a href="@routes.TagController.index()">Tags</a></li>
-							<li><a href="@routes.FlagController.index()">Flags</a></li>
-							@if(user.hasRole("sys_admin")) {
-							<li><a href="@routes.ExportController.index()">Export</a></li>
-							}
-						</ul>
-					</li>					
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Users & Agencies<b class="caret"></b></a>
-						<ul class="dropdown-menu">
-							<li><a href="@routes.OrganisationController.index()">Organisations</a></li>
-							<li><a href="@routes.UserController.index()">Curators</a></li>
-							@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-							<li><a href="@routes.RoleController.index()">Roles</a></li>
-							}
-							<li><a href="@routes.PasswordController.edit()">Change Password</a></li>
-						</ul>
-					</li>
-					<li><a href="@routes.ContactController.index">Contact</a></li>
-				</ul>
-				<div class="navbar-right">
-					<span class="navbar-text white-text">@user.name (@user.email)&nbsp;&nbsp;</span> 
-					<a class="btn btn-success navbar-btn" href="@routes.ApplicationController.logout()">Logout</a>
+    	@if(user != null) {
+			<nav class="navbar navbar-default" role="navigation">
+	  			<div class="navbar-header">				
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span> <span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="@routes.ApplicationController.index" style="font-family:'Righteous';">
+						<image src="@routes.Assets.at("images/ukwa-icon-nobg-16.png")" />
+							W3ACT
+					</a>
 				</div>
-			</div><!-- /.nav-collapse -->
-		</nav>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Targets<b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="@routes.TargetController.lookup()">Look Up URL</a></li>
+								<li><a href="@routes.TargetController.index()">List Targets</a></li>
+								<li><a href="@routes.InstanceController.index()">List Instances</a></li>
+								<li><a href="@routes.ReportController.index()">Reports</a></li>
+							</ul>
+						</li>
+						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Archivist Tasks<b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="@routes.CrawlPermissionController.index()">Crawl Permissions</a></li>
+								<li><a href="@routes.QAController.index()">QA</a></li>
+								<li><a href="@routes.NominationController.index()">Nominations</a></li>
+								<li><a href="@routes.WhoIsController.index()">Check WhoIs</a></li>
+							</ul>
+						</li>
+						}					
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Taxonomies<b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="@routes.CollectionController.index()">Collections</a></li>
+								<li><a href="@routes.SubjectController.index()">Subjects</a></li>
+								<li><a href="@routes.TagController.index()">Tags</a></li>
+								<li><a href="@routes.FlagController.index()">Flags</a></li>
+								@if(user.hasRole("sys_admin")) {
+								<li><a href="@routes.ExportController.index()">Export</a></li>
+								}
+							</ul>
+						</li>					
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Users & Agencies<b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="@routes.OrganisationController.index()">Organisations</a></li>
+								<li><a href="@routes.UserController.index()">Curators</a></li>
+								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+								<li><a href="@routes.RoleController.index()">Roles</a></li>
+								}
+								<li><a href="@routes.PasswordController.edit()">Change Password</a></li>
+							</ul>
+						</li>
+						<li><a href="@routes.ContactController.index">Contact</a></li>
+					</ul>
+					<div class="navbar-right">
+						<span class="navbar-text white-text">@user.name (@user.email)&nbsp;&nbsp;</span> 
+						<a class="btn btn-success navbar-btn" href="@routes.ApplicationController.logout()">Logout</a>
+					</div>
+				</div><!-- /.nav-collapse -->
+			</nav>
+		}
 		<div class="container">      
 			@body
 		</div>

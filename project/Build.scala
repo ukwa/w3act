@@ -17,10 +17,13 @@ object ApplicationBuild extends Build {
       "org.apache.commons" % "commons-email" % "1.3.2",
       "org.apache.commons" % "commons-lang3" % "3.3.2",
 //      "org.apache.commons" % "commons-validator" % "1.4.0",
+      "com.typesafe" %% "play-plugins-mailer" % "2.1.0",
+      "org.mindrot" % "jbcrypt" % "0.3m",
       "commons-io" % "commons-io" % "2.3",
 	  "com.rabbitmq" % "amqp-client" % "3.3.1",
 	  "org.avaje" % "ebean" % "2.7.1"  
     )
+    
     val main = play.Project(appName, appVersion, appDependencies).settings(
         // Add your own project settings here      
 	    testOptions in Test ~= { args =>

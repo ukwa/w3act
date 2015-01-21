@@ -28,3 +28,5 @@ server.pid
 /urlres.txt
 /userres.txt
 /bin
+/.target
+/bin
