@@ -122,6 +122,8 @@
 				//alert(document.getElementById('tabstatus').value);
 				window.scrollTo(0, 0);
 			})
+			
+			wayBackLoader();
 		});		
 	</script>
 }
@@ -150,7 +152,7 @@
 	   	}
 	   	@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) || (user.hasRole("user") && targetForm("authorUser.id").value != null && user.id == Long.valueOf(targetForm("authorUser.id").value))) {
 			<li class="active"><a href="#">Edit</a></li> 
-			<li><a href="@routes.InstanceController.newWithTarget(id)">Get New Instance(s)</a></li>
+			<li><a href="@routes.InstanceController.importFromWayback(id, "edit")" id="importWayback">Get New Instance(s)</a></li>
 	   	}
 	</ul>
 	<div class="tab-content padding-20">

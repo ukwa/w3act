@@ -38,6 +38,9 @@
         window.location.hash = ($(e.target).attr('href'));
         window.scrollTo(0, 0);
       })
+      
+		wayBackLoader();
+      
     });	
 	</script>
 }
@@ -73,7 +76,7 @@
 	   @if(((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user"))) 
 	   		|| (user.hasRole("user") && target.authorUser != null && user.url.equals(target.authorUser.url))) {
 	   <li><a onclick="switchPage(); return false;" href="id">Edit</a></li>
-	   <li><a href="@routes.InstanceController.newWithTarget(target.id)">Get New Instance(s)</a></li>
+	   <li><a href="@routes.InstanceController.importFromWayback(target.id, "view")" id="importWayback">Get New Instance(s)</a></li>
 	   }
 	</ul>
 	      

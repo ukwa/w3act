@@ -16,3 +16,16 @@ function getURLParameter(param) {
 		}
 	}				
 }
+
+function modalLoader() {
+	$('#modalLoader').modal({
+	    backdrop: true,
+	    keyboard: true
+	});
+}
+
+function wayBackLoader() {
+	$('#importWayback').on('click', function(event) {
+		modalLoader();
+	});
+}

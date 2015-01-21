@@ -322,6 +322,20 @@ public class InstanceController extends AbstractController {
     }
     
     public static Result newWithTarget(Long targetId, String title) throws ActException {
+    	User user = User.findByEmail(request().username());
+    	Target target = Target.findById(targetId);
+    	Instance instance = new Instance();
+    	instance.target = target;
+    	instance.revision = Const.INITIAL_REVISION;
+    	Form<Instance> instanceForm = Form.form(Instance.class);
+    	instanceForm = instanceForm.fill(instance);
+    	Map<String,String> qaIssues = QaIssue.options();
+    	Map<String,String> qaIssueCategories = QAIssueCategory.options();
+    	Map<String,String> authors = User.options();
+    	return ok(newForm.render(instanceForm, user, qaIssues, qaIssueCategories, authors, targetId));
+    }
+    
+    public static Result importFromWayback(Long targetId, String view) throws ActException {
 
     	String webArchiveUrl = play.Play.application().configuration().getString("application.wayback.url");
 
@@ -363,9 +377,17 @@ public class InstanceController extends AbstractController {
     	}
 
 		flash("message", "Import from Wayback Complete");
-		return redirect(
-			routes.TargetController.index()
-	        );
+		if (StringUtils.isNotBlank(view)) {
+			if (view.equals("view")) {
+				return redirect(routes.TargetController.view(targetId));
+			} else if (view.equals("edit")) {
+				return redirect(routes.TargetController.edit(targetId));
+			}
+		}
+    	return redirect(routes.TargetController.index());
+		
+//        flash("message", "Target " + filledForm.get().title + " has been updated");
+//    	return redirect(routes.TargetController.view(filledForm.get().id));
 
 		
 		

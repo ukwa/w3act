@@ -194,6 +194,7 @@ GET     /targets/:id/edit		                   	controllers.TargetController.edit
 POST    /targets                	 				controllers.TargetController.save()
 POST    /targets/:id              					controllers.TargetController.update(id:Long)
 DELETE 	/targets/:id             					controllers.TargetController.delete(id:Long)
+GET     /targets/:id/instances/import      			controllers.InstanceController.importFromWayback(id:Long, view ?= "")
 GET     /targets/:id/instances/new      			controllers.InstanceController.newWithTarget(id:Long, title ?= "")
 GET		/targets/:targetId/instances				controllers.InstanceController.results(targetId:Long)
 GET		/targets/:targetId/instances/:instanceId	controllers.InstanceController.viewInstance(targetId:Long, instanceId:Long)
