@@ -70,9 +70,9 @@ public class User extends ActModel {
 		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
 	public List<Role> roles = new ArrayList<Role>();
     	
-    @JsonIgnore
     @Constraints.Required(message="Email is required")
     @Formats.NonEmpty
+	@JsonProperty("mail")
     public String email;
     
     @JsonIgnore
@@ -129,10 +129,30 @@ public class User extends ActModel {
     @JsonProperty
     private Long created;
     
-    @Transient
+    
+	@Transient
+	@JsonProperty("roles")
     @JsonIgnore
-    @JsonProperty
-    private String mail;
+    private Object rolesAct;
+    
+	@Transient
+    private String theme;
+    
+//    {
+//    	"uid":"1",
+//    	"name":"admin",
+//    	"mail":"wa-sysadmin@bl.uk",
+//    	"url":"http:\/\/webarchive.org.uk\/act\/user\/1",
+//    	"edit_url":"http:\/\/webarchive.org.uk\/act\/user\/1\/edit",
+//    	"last_access":"1421857188",
+//    	"last_login":"1421840203",
+//    	"created":"1355148005",
+//    	"roles":[2,3],
+//    	"status":"1",
+//    	"theme":"ukwa_basic",
+//    	"language":"en",
+//    	"feed_nid":null
+//    }
     
     public FieldModel getField_affiliation() {
 		return field_affiliation;
@@ -158,12 +178,20 @@ public class User extends ActModel {
 		this.created = created;
 	}
 
-	public String getMail() {
-		return mail;
+	public Object getRolesAct() {
+		return rolesAct;
 	}
 
-	public void setMail(String mail) {
-		this.mail = mail;
+	public void setRolesAct(Object rolesAct) {
+		this.rolesAct = rolesAct;
+	}
+
+	public String getTheme() {
+		return theme;
+	}
+
+	public void setTheme(String theme) {
+		this.theme = theme;
 	}
 
 	@JsonIgnore
@@ -454,7 +482,7 @@ public class User extends ActModel {
 				+ ", last_login=" + last_login + ", status=" + status
 				+ ", language=" + language + ", feed_nid=" + feed_nid
 				+ ", field_affiliation=" + field_affiliation + ", uid=" + uid
-				+ ", created=" + created + ", mail=" + mail + ", revision="
+				+ ", created=" + created + ", revision="
 				+ revision + ", id=" + id + ", url=" + url + ", createdAt="
 				+ createdAt + ", updatedAt=" + updatedAt + "]";
 	}
