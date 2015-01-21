@@ -49,6 +49,10 @@ create table document (
   author3ln		varchar(255)
 );
 
+create table assignable_ark (
+  ark			varchar(255) primary key
+);
+
 create table portal (
   id			bigint primary key,
   title			varchar(255) unique not null,
@@ -92,6 +96,7 @@ drop table if exists watched_target cascade;
 drop table if exists journal_title cascade;
 drop table if exists subject_journal_title cascade;
 drop table if exists document cascade;
+drop table if exists assignable_ark cascade;
 drop table if exists portal cascade;
 drop table if exists portal_document cascade;
 drop table if exists book cascade;

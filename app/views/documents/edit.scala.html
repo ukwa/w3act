@@ -176,7 +176,7 @@
 			<li class="active"><a href="#">Edit</a></li>
 		} else {
 			<li class="active"><a href="#">View</a></li>
-			@if(form("status").value != Document.Status.SUBMITTED) {
+			@if(form("status").value != Document.Status.SUBMITTED.toString) {
 				<li><a href="@routes.Documents.edit(new Long(form("id").value))">Edit</a></li>
 			}
 		}
@@ -246,7 +246,7 @@
 			@if(editable) {
 				<input type="submit" class="btn primary" value="Save">
 			} else {
-				@if(form("status").value != Document.Status.SUBMITTED && !form("type").value.isEmpty) {
+				@if(form("status").value != Document.Status.SUBMITTED.toString && !form("type").value.isEmpty) {
 					<input type="submit" name="submit" class="btn primary" value="Submit" onclick="return confirm('Are you sure?');">
 				}
 			}
@@ -301,8 +301,8 @@
 				</div>
 			</div>
 			<iframe id="document_view" src="@{
-					if(form("status").value == Document.Status.SUBMITTED) routes.Documents.html(form("htmlFilename").value)
-					else routes.Helper.passthrough(form("documentUrl").value,"")
+					if(form("status").value == Document.Status.SUBMITTED.toString) routes.Helper.passthrough(form("documentUrl").value,"")
+					else routes.Documents.html(form("htmlFilename").value)
 				}"
 				width="100%" height="600"></iframe>
 		</div>

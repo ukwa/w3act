@@ -16,6 +16,7 @@ import java.util.Scanner;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import models.AssignableArk;
 import models.Book;
 import models.Document;
 import models.FlashMessage;
@@ -148,6 +149,12 @@ public class Documents extends AbstractController {
 	
 	public static Result submit(Long id) {
 		Document document = Document.find.byId(id);
+		List<AssignableArk> assignableArks = AssignableArk.find.all();
+		if (assignableArks.isEmpty()) {
+			throw new RuntimeException("Not implemented yet!");
+		}
+		document.ark = assignableArks.get(0).ark;
+		Ebean.delete(assignableArks.get(0));
 		document.status = Document.Status.SUBMITTED;
 		Ebean.save(document);
 		deleteHtmlFile(document.getHtmlFilename());
@@ -268,7 +275,7 @@ public class Documents extends AbstractController {
      */
 	public static Result list(String userString, String watchedTargetString, String statusString,
 			int pageNo, String sortBy, String order, String filter) {
-		Document.Status status = Document.Status.getStatus(statusString);
+		Document.Status status = Document.Status.valueOf(statusString);
 		return renderList(userString, watchedTargetString, status, pageNo, sortBy, order, filter, true);
 	}
 	

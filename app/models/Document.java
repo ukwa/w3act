@@ -129,11 +129,11 @@ public class Document extends Model {
     }
     
 	public enum Status {
-		NEW("new"),
-		SUBMITTED("submitted"),
-		IGNORED("ignored");
+		NEW,
+		SUBMITTED,
+		IGNORED;
 		
-        private String value;
+        /*private String value;
 
         private Status(String value) {
                 this.value = value;
@@ -149,7 +149,7 @@ public class Document extends Model {
 				if (status.toString().equals(value))
 					return status;
 			return null;
-        }
+        }*/
     }
     
 }
