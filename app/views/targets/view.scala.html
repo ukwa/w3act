@@ -847,7 +847,11 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">watched</label>
 						    <div class="col-sm-6">
-		 						<input disabled type="checkbox" @if(target.isWatched) { checked } class="checkbox" />
+		 						@if(target.isWatched) {             
+					                yes
+				                } else {
+					                no
+				                }
 							</div>
 						</div>
 					</div>

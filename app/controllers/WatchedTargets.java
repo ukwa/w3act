@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import models.Document;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -68,7 +69,8 @@ public class WatchedTargets extends AbstractController {
     public static Result crawl(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
     	CrawlActor.crawlAndConvertDocuments(watchedTarget, 3);
-    	return redirect(routes.Documents.list("" + watchedTarget.user.uid, "" + id, false, 0, "title", "asc", ""));
+    	return redirect(routes.Documents.list("" + watchedTarget.user.uid, "" + id,
+    			Document.Status.NEW.toString(), 0, "title", "asc", ""));
     }
     
     @BodyParser.Of(BodyParser.Json.class)

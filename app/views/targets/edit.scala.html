@@ -1187,7 +1187,11 @@
 			</div>		     		        		     
 	        
 			<div class="tab-pane fade" id="watchedTarget">
-				@checkbox(form("watched"), true, '_label -> "watched")
+				@if(user.url.equals(form("author").value)) {
+					@checkbox(form("watched"), true, '_label -> "watched")
+				} else {
+					@checkbox(form("watched"), false, '_label -> "watched (only the author can modify this)")
+				}
 				@inputText(form("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")
 	        </div>
 	        

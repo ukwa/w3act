@@ -2,6 +2,7 @@
 
 @import helper.options
 @import templates.select
+@import templates.inputText
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -66,17 +67,18 @@
 		@if(filters) {
 			<div id="forms">
 	   			@warningmessage(flash)
-	   			<form>
+	   			@helper.form(action=routes.WatchedTargets.list(), 'class -> "form-inline") {
 		   			<div class="input-group">
-						<input type="text" class="form-control lookup-form-control" name="q" placeholder="Enter Target Name" value="@searchstr" id="search-query">
+		   				<input type="hidden" name="user" value="@filterForm("curator").value">
+		   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
+	   					<input type="hidden" name="s" value="@currentSortBy">
+	   					<input type="hidden" name="o" value="@currentOrder">
+						<input type="text" class="form-control lookup-form-control" name="f" placeholder="Enter Target Name" value="@searchstr" id="search-query">
 			   			<span class="input-group-btn">
-							<input type="button" class="btn btn-primary" id="search" name="action" value="Search"
-								onclick="document.location.href='list?user=@filterForm("curator").value' +
-									'&p=@currentPage.getPageIndex&s=@currentSortBy&o=@currentOrder' +
-									'&f=' + form.q.value;">
+							<input type="submit" class="btn btn-primary" id="search" name="action" value="Search">
 						</span>
 					</div>
-				</form>
+				}
 			</div>
 		}
 		
@@ -88,6 +90,7 @@
 					@header("target.title", "Title", currentSortBy, currentOrder, link)
 					@header("target.field_url", "URL", currentSortBy, currentOrder, link)
 					<th>Documents</th>
+					<th>Live Crawl</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -96,6 +99,12 @@
 					<td><a href="@routes.Targets.view(watchedTarget.target.url)">@watchedTarget.target.title</a></td>
 					<td><a href="@watchedTarget.target.field_url" target="_blank">@watchedTarget.target.field_url</a></td>
 					<td><a href="@routes.Documents.list("", "" + watchedTarget.id)">@watchedTarget.documents.size</a></td>
+					<td>
+						@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
+							<input type="submit" class="btn btn-success" value="Live Crawl" onclick=
+								"return confirm('You will start a crawl with the seed:\n@{watchedTarget.target.field_url}\n\nDo you want to proceed?');">
+						}
+					</td>
 				</tr>
 			}
 			</tbody>
@@ -104,8 +113,14 @@
 		@pagination(currentPage, link)
 		
 		@if(!filters) {
-			<h3>New Target</h3>
-			Target Url: <input type="text"><button>Add Target URL</button>
+			<div class="col-md-6">
+				@helper.form(routes.Targets.list()) {
+					<h3>New Target</h3>
+					<input type="hidden" name="s" value="title">
+					@inputText(filterForm("f"), true, '_label -> "Target Url")
+					<input type="submit" class="btn btn-success" value="Add Target URL">
+				}
+			</div>
 		}
 		
 	</article>

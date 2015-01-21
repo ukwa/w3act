@@ -70,6 +70,7 @@ public class Crawler {
 											Document document = new Document();
 											document.landingPageUrl = pageUrl;
 											document.documentUrl = hrefUrl;
+											document.status = Document.Status.NEW;
 											document.filename = URLDecoder.decode(hrefUrl.substring(hrefUrl.lastIndexOf('/')+1), "UTF-8");
 											document.title = document.filename.substring(0, document.filename.indexOf('.'));
 											document.watchedTarget = watchedTarget;
@@ -92,6 +93,7 @@ public class Crawler {
 								document.landingPageUrl = crawlWayback ?
 										urlFromWayback(link.source) : link.source;
 								document.documentUrl = pageUrl;
+								document.status = Document.Status.NEW;
 								document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
 								document.title = document.filename.substring(0, document.filename.indexOf('.'));
 								document.watchedTarget = watchedTarget;

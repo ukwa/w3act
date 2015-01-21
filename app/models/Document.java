@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -37,7 +37,7 @@ public class Document extends Model {
 	@ManyToOne @JsonIgnore
 	@JoinColumn(name="id_watched_target")
 	public WatchedTarget watchedTarget;
-	public boolean submitted;
+	public Status status;
 	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
 	public Book book;
 	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
@@ -110,7 +110,7 @@ public class Document extends Model {
     	}
     }
     
-    public static Page<Document> page(Long userId, Long watchedTargetId, boolean submitted, int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Document> page(Long userId, Long watchedTargetId, Status status, int page, int pageSize, String sortBy, String order, String filter) {
 
     	ExpressionList<Document> el = find.where();
     	if (watchedTargetId != null) {
@@ -120,12 +120,36 @@ public class Document extends Model {
     		el = el.in("id_watched_target", Users.getWatchedTargetIds(userId));
     	}
     	
-    	return el.eq("submitted", submitted)
+    	return el.eq("status", status.ordinal())
         		.icontains("title", filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
+    }
+    
+	public enum Status {
+		NEW("new"),
+		SUBMITTED("submitted"),
+		IGNORED("ignored");
+		
+        private String value;
+
+        private Status(String value) {
+                this.value = value;
+        }
+        
+        public String toString() {
+        	return value;
+        }
+        
+        public static Status getStatus(String value) {
+        	List<Status> statuses = Arrays.<Status>asList(Status.values());
+			for (Status status : statuses)
+				if (status.toString().equals(value))
+					return status;
+			return null;
+        }
     }
     
 }

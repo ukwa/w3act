@@ -60,7 +60,7 @@ public class Documents extends AbstractController {
 		Logger.info("Documents.render()");
 		
 		Document document = getDocumentFromDB(id);
-		if (document.submitted) editable = false;
+		if (document.status == Document.Status.SUBMITTED) editable = false;
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
 		setPortalsOfView(documentForm, document);
 		
@@ -148,10 +148,26 @@ public class Documents extends AbstractController {
 	
 	public static Result submit(Long id) {
 		Document document = Document.find.byId(id);
-		document.submitted = true;
+		document.status = Document.Status.SUBMITTED;
 		Ebean.save(document);
 		deleteHtmlFile(document.getHtmlFilename());
 		return redirect(routes.Documents.view(id));
+	}
+	
+	public static Result ignore(Long id, String userString, String watchedTargetString, String statusString,
+    		int pageNo, String sortBy, String order, String filter, boolean filters) {
+		Document document = Document.find.byId(id);
+		if (statusString.equals(Document.Status.NEW.toString()))
+			document.status = Document.Status.IGNORED;
+		else
+			document.status = Document.Status.NEW;
+		Ebean.save(document);
+		if (filters)
+			return redirect(routes.Documents.list(userString, watchedTargetString,
+					statusString, pageNo, sortBy, order, filter));
+		else
+			return redirect(routes.Documents.overview(pageNo, sortBy, "asc"));
+			
 	}
 	
 	public static Result sip(Long id) {
@@ -250,16 +266,17 @@ public class Documents extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on Documents
      */
-	public static Result list(String userString, String watchedTargetString, boolean submitted,
+	public static Result list(String userString, String watchedTargetString, String statusString,
 			int pageNo, String sortBy, String order, String filter) {
-		return renderList(userString, watchedTargetString, submitted, pageNo, sortBy, order, filter, true);
+		Document.Status status = Document.Status.getStatus(statusString);
+		return renderList(userString, watchedTargetString, status, pageNo, sortBy, order, filter, true);
 	}
 	
     public static Result overview(int pageNo, String sortBy, String order) {
-    	return renderList("" + User.findByEmail(request().username()).uid, "", false, pageNo, sortBy, order, "", false);
+    	return renderList("" + User.findByEmail(request().username()).uid, "", Document.Status.NEW, pageNo, sortBy, order, "", false);
     }
     
-    public static Result renderList(String userString, String watchedTargetString, boolean submitted,
+    public static Result renderList(String userString, String watchedTargetString, Document.Status status,
     		int pageNo, String sortBy, String order, String filter, boolean filters) {
     	Logger.info("Documents.list()");
 
@@ -278,9 +295,9 @@ public class Documents extends AbstractController {
         	list.render(
         			User.findByEmail(request().username()),
         			filterForm(userId, watchedTargetId),
-        			submitted,
+        			status,
         			filter,
-        			Document.page(userId, watchedTargetId, submitted, pageNo, 10, sortBy, order, filter),
+        			Document.page(userId, watchedTargetId, status, pageNo, 10, sortBy, order, filter),
         			sortBy,
         			order,
         			filters)
