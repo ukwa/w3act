@@ -121,6 +121,8 @@
 					@header("documentUrl", "Document", currentSortBy, currentOrder, link)
 					@if(status != Document.Status.SUBMITTED) {
 						<th>@{if(status == Document.Status.NEW) "Ignore" else "Restore"}</th>
+					} else {
+						<th>SIP</th>
 					}
 				</tr>
 			</thead>
@@ -138,14 +140,19 @@
 					<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
 					@if(status != Document.Status.SUBMITTED) {
 						<td><a href="@routes.Documents.ignore(document.id,
-							filterForm("curator").value,
-							filterForm("watchedtarget").value,
-							status.toString,
-							currentPage.getPageIndex,
-							currentSortBy,
-							currentOrder,
-							searchstr,
-							filters)" class="btn btn-success">@{if(status == Document.Status.NEW) "Ignore" else "Restore"}</a>
+								filterForm("curator").value,
+								filterForm("watchedtarget").value,
+								status.toString,
+								currentPage.getPageIndex,
+								currentSortBy,
+								currentOrder,
+								searchstr,
+								filters)" class="btn btn-success">
+							@{if(status == Document.Status.NEW) "Ignore" else "Restore"}
+						</a></td>
+					} else {
+						<td>
+							<a href="@routes.Documents.sip(document.id)"  target="_blank">SIP</a>
 						</td>
 					}
 				</tr>

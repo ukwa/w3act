@@ -19,44 +19,64 @@
             <datafield tag="245" ind2=" " ind1="0">
               <subfield code="a">@document.title</subfield>
             </datafield>
+          @if(!document.book.isbn.isEmpty) {
             <datafield tag="020" ind2=" " ind1=" ">
               <subfield code="a">@document.book.isbn</subfield>
             </datafield>
+          }
+          @if(!document.doi.isEmpty) {
             <datafield tag="024" ind2=" " ind1="7">
               <subfield code="a">@document.doi</subfield>
               <subfield code="2">doi</subfield>
             </datafield>
+          }
+          @if(!document.book.edition.isEmpty) {
             <datafield tag="250" ind2=" " ind1=" ">
               <subfield code="a">@document.book.edition</subfield>
             </datafield>
+          }
             <datafield tag="264" ind2="1" ind1=" ">
+            @if(!document.book.publisher.isEmpty) {
               <subfield code="b">@document.book.publisher</subfield>
+            }
               <subfield code="c">@document.publicationYear</subfield>
             </datafield>
+          @if(!document.book.series.isEmpty) {
             <datafield tag="490" ind2=" " ind1=" ">
               <subfield code="a">@document.book.series</subfield>
             </datafield>
+          }
+          @if(!document.book.corporateAuthor.isEmpty) {
             <datafield tag="710" ind2=" " ind1="1">
               <subfield code="a">@document.book.corporateAuthor</subfield>
             </datafield>
+          }
+          @if(!document.author1Ln.isEmpty) {
             <datafield tag="100" ind2=" " ind1="1">
               <subfield code="a">@document.author1Ln, @document.author1Fn</subfield>
             </datafield>
+          }
+          @if(!document.author2Ln.isEmpty) {
             <datafield tag="720" ind2=" " ind1="1">
               <subfield code="a">@document.author2Ln, @document.author2Fn</subfield>
             </datafield>
+          }
+          @if(!document.author3Ln.isEmpty) {
             <datafield tag="720" ind2=" " ind1="1">
               <subfield code="a">@document.author3Ln, @document.author3Fn</subfield>
             </datafield>
+          }
           @for(portal <- document.portals) {
             <datafield tag="690" ind2=" " ind1="7">
               <subfield code="a">@portal.title</subfield>
               <subfield code="2">blcoll</subfield>
             </datafield>
           }
+          @if(document.priorityCataloguing) {
             <datafield tag="985" ind2=" " ind1=" ">
-              <subfield code="a">@document.priorityCataloguing</subfield>
-            </datafield>             
+              <subfield code="a">Priority Cataloguing</subfield>
+            </datafield>
+          }
           </record>
         </collection>
       </mets:xmlData>
@@ -69,42 +89,56 @@
           <mods:titleInfo>
             <mods:title>@document.title</mods:title>
           </mods:titleInfo>
+        @if(!document.doi.isEmpty) {
           <mods:identifier type="DOI">@document.doi</mods:identifier>
+        }
+        @if(document.publicationDate != null) {
           <mods:originInfo>
             <mods:dateIssued encoding="w3cdtf">@document.publicationDate</mods:dateIssued>
             @*<mods:issuance>@document.journal.journalTitle.frequency</mods:issuance>*@
           </mods:originInfo>
+        }
           <mods:part>
+          @if(!document.journal.volume.isEmpty) {
             <mods:detail type="volume">
               <mods:number>@document.journal.volume</mods:number>
               <mods:caption>vol.</mods:caption>
             </mods:detail>
+          }
+          @if(!document.journal.issue.isEmpty) {
             <mods:detail type="issue">
               <mods:number>@document.journal.issue</mods:number>
               <mods:caption>no.</mods:caption>
             </mods:detail>
+          }
           </mods:part>
+        @if(!document.author1Ln.isEmpty) {
           <mods:name>
             <mods:role>
               <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
             </mods:role>
             <mods:namePart type="given">@document.author1Fn</mods:namePart>
-            <mods:namePart type="family">@document.author1Fn</mods:namePart>
+            <mods:namePart type="family">@document.author1Ln</mods:namePart>
           </mods:name>
+        }
+        @if(!document.author2Ln.isEmpty) {
           <mods:name>
             <mods:role>
               <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
             </mods:role>
             <mods:namePart type="given">@document.author2Fn</mods:namePart>
-            <mods:namePart type="family">@document.author2Fn</mods:namePart>
+            <mods:namePart type="family">@document.author2Ln</mods:namePart>
           </mods:name>
+        }
+        @if(!document.author3Ln.isEmpty) {
           <mods:name>
             <mods:role>
               <mods:roleTerm type="code" authority="marcrelator">aut</mods:roleTerm>
             </mods:role>
             <mods:namePart type="given">@document.author3Fn</mods:namePart>
-            <mods:namePart type="family">@document.author3Fn</mods:namePart>
+            <mods:namePart type="family">@document.author3Ln</mods:namePart>
           </mods:name>
+        }
         @for(portal <- document.portals) {
           <mods:note type="admin" displayLabel="Service">@portal.title</mods:note>
         }
@@ -118,9 +152,11 @@
             <mods:originInfo>
               <mods:publisher>@document.journal.journalTitle.publisherName</mods:publisher>
             </mods:originInfo>
+          @if(!document.journal.journalTitle.issn.isEmpty) {
             <mods:identifier type="pub-id e-issn">
               @document.journal.journalTitle.issn
             </mods:identifier>
+          }
           </mods:relatedItem>
           @*<mods:languageOfCataloging>
             <mods:languageTerm type="code" authority="iso639-2b">
@@ -164,9 +200,9 @@
       <mets:mdWrap MDTYPE="METSRIGHTS">
         <mets:xmlData>
           <rts:RightsDeclarationMD RIGHTSCATEGORY="COPYRIGHTED"
-            xmlns:rts="http://cosimo.stanford.edu/sdr/metsrights/"
-            xsi:schemaLocation="http://cosimo.stanford.edu/sdr/metsrights/
-                http://cosimo.stanford.edu/sdr/metsrights.xsd">
+              xmlns:rts="http://cosimo.stanford.edu/sdr/metsrights/"
+              xsi:schemaLocation="http://cosimo.stanford.edu/sdr/metsrights/
+                  http://cosimo.stanford.edu/sdr/metsrights.xsd">
             <rts:RightsDeclaration>TBC</rts:RightsDeclaration>
             <rts:RightsHolder>
               <rts:RightsHolderName>TBC</rts:RightsHolderName>
@@ -180,8 +216,18 @@
       </mets:mdWrap>
     </mets:rightsMD>
   </mets:amdSec>
-  <mets:structMap>
-    <mets:div>
+  <mets:fileSec>
+    <mets:fileGrp USE="Original">
+      <mets:file ADMID="amd0001-object" ID="file0001">
+        <mets:FLocat LOCTYPE="ARK" xlink:href="@document.ark"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="LOGICAL">
+    <mets:div ADMID="amd0002-rights01" CONTENTIDS="@document.ark"
+        DMDID="dmd0001" ID="log0001"
+        TYPE="@if(document.isWholeBook) {Monograph} else {Article}">
+      <mets:fptr FILEID="file0001"/>
     </mets:div>
   </mets:structMap>
 </mets:mets>
