@@ -58,3 +58,6 @@ queue_port=5762
 queue_name=w3actqueue
 routing_key=w3actroutingkey
 exchange_name=w3actexchange
+
+#Pii endpoint
+pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc?arks=3"

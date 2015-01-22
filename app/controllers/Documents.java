@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -29,7 +30,13 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.validation.ValidationError;
+import play.libs.F.Function;
+import play.libs.F.Promise;
 import play.libs.Json;
+import play.libs.ws.WS;
+import play.libs.ws.WSRequestHolder;
+import play.libs.ws.WSResponse;
+import play.libs.XPath;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -38,6 +45,8 @@ import play.Play;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import uk.bl.Const;
 import views.html.documents.edit;
@@ -151,7 +160,14 @@ public class Documents extends AbstractController {
 		Document document = Document.find.byId(id);
 		List<AssignableArk> assignableArks = AssignableArk.find.all();
 		if (assignableArks.isEmpty()) {
-			throw new RuntimeException("Not implemented yet!");
+			requestNewArks();
+			assignableArks = AssignableArk.find.all();
+			if (assignableArks.isEmpty()) {
+				FlashMessage arkError = new FlashMessage(FlashMessage.Type.ERROR,
+						"Submission failed! It was not possible to get an ARK identifier.");
+				arkError.send();
+				return redirect(routes.Documents.view(id));
+			}
 		}
 		document.ark = assignableArks.get(0).ark;
 		Ebean.delete(assignableArks.get(0));
@@ -161,6 +177,32 @@ public class Documents extends AbstractController {
 		return redirect(routes.Documents.view(id));
 	}
 	
+	private static void requestNewArks() {
+		String piiUrl = Play.application().configuration().getString("pii_url");
+		WSRequestHolder holder = WS.url(piiUrl);
+
+		Promise<List<AssignableArk>> arksPromise = holder.get().map(
+				new Function<WSResponse, List<AssignableArk>>() {
+					public List<AssignableArk> apply(WSResponse response) {
+						System.out.println("xml: " + response.getBody());
+						org.w3c.dom.Document xml = response.asXml();
+						List<AssignableArk> arks = new ArrayList<>();
+						if (xml != null) {
+							NodeList nodes = XPath.selectNodes("/pii/results/arkList/ark", xml);
+							for (int i=0; i < nodes.getLength(); i++) {
+								Node node = nodes.item(i);
+								arks.add(new AssignableArk(node.getTextContent()));
+							}
+						}
+						return arks;
+					}
+				}
+		);
+		
+		List<AssignableArk> arks = arksPromise.get(5000);
+		Ebean.save(arks);
+	}
+
 	public static Result ignore(Long id, String userString, String watchedTargetString, String statusString,
     		int pageNo, String sortBy, String order, String filter, boolean filters) {
 		Document document = Document.find.byId(id);

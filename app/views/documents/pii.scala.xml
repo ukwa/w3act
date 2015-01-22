@@ -1,0 +1,12 @@
+@()
+
+<?xml version="1.0" encoding="utf-8"?>
+<pii>
+    <results>
+        <arkList>
+            <ark>ark:/81055/vdc_100000000710.0x000001</ark>
+            <ark>ark:/81055/vdc_100000000710.0x000002</ark>
+            <ark>ark:/81055/vdc_100000000710.0x000003</ark>
+        </arkList>
+    </results>
+</pii>

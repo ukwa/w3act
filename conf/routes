@@ -125,6 +125,8 @@ GET		/documents/:document/sip			controllers.Documents.sip(document: Long)
 GET     /documents/html/*file				controllers.Documents.html(file)
 POST	/documents							controllers.Documents.save()
 
+GET		/pii/vdc							controllers.Pii.pii(arks: Integer)
+
 GET		/journaltitles/:journaltitle		controllers.JournalTitles.edit(journaltitle: Long)
 POST	/journaltitles						controllers.JournalTitles.save(toDocument: Boolean ?= false)
 
