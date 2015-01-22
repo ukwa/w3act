@@ -1264,31 +1264,39 @@ public class Target extends UrlModel {
 	 * @return list of Target objects
 	 */
 	public static List<Target> exportByFrequency(String frequency) {
-		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> targets = find.where().eq(Const.ACTIVE, true)
-				.icontains(Const.FIELD_CRAWL_FREQUENCY, frequency);
-		if (frequency.equals(Const.ALL)) {
-			targets = find.where().eq(Const.ACTIVE, true);
-		}
+		ExpressionList<Target> targets = find.fetch("licenses").where().eq(Const.ACTIVE, true).isNotNull("licenses");
+		if (!frequency.equalsIgnoreCase("all")) {
+			targets = targets.ieq("crawlFrequency", frequency);
+		}		
 
 		/**
 		 * The resulting list should only include those records where there is
 		 * specific 'UKWA Licensing' (i.e. where field_license is not empty).
 		 */
-		Iterator<Target> itr = targets.findList().iterator();
+//		Iterator<Target> itr = targets.findList().iterator();
 //		while (itr.hasNext()) {
 //			Target target = itr.next();
-//			if (target != null && target.fieldLicense != null
-//					&& target.fieldLicense.length() > 0
+//			if (target != null && target.fieldLicense != null && target.fieldLicense.length() > 0
 //					&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
 //				res.add(target);
 //			}
 //		}
-//		Logger.debug("exportByFrequency() resulting list size: " + res.size());
-//		return res;
-		throw new NotImplementedError();
+		Logger.debug("exportByFrequency() resulting list size: " + targets.findRowCount());
+		return targets.findList();
+	}
+	
+	
+	public static boolean isInScope(Target target) throws WhoisException {
+		for (FieldUrl fieldUrl : target.fieldUrls) {
+			if(!Scope.INSTANCE.checkScopeIp(fieldUrl.url, target)) return false;
+		}
+		return true;
 	}
 
+	public static boolean isInScopeDomain(Target target) throws MalformedURLException, WhoisException, URISyntaxException {
+		 return Scope.INSTANCE.isTopLevelDomain(target);
+	}
+	
 	/**
 	 * This method provides data exports for given crawl-frequency. Method
 	 * returns a list of Targets and associated crawl metadata.
@@ -1296,33 +1304,51 @@ public class Target extends UrlModel {
 	 * @param frequency
 	 *            The crawl frequency e.g. 'daily'
 	 * @return list of Target objects
+	 * @throws WhoisException 
+	 * @throws URISyntaxException 
+	 * @throws MalformedURLException 
 	 */
-	public static List<Target> exportLdFrequency(String frequency) {
+	public static List<Target> exportLdFrequency(String frequency) throws WhoisException, MalformedURLException, URISyntaxException {
 		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> targets = find.where().eq(Const.ACTIVE, true)
-				.icontains(Const.FIELD_CRAWL_FREQUENCY, frequency);
-		if (frequency.equals(Const.ALL)) {
-			targets = find.where().eq(Const.ACTIVE, true);
+		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true);
+		if (!frequency.equalsIgnoreCase("all")) {
+			targets = targets.ieq("crawlFrequency", frequency);
 		}
-
+		
+//		exp = exp.eq("isUkHosting", true);
+//	} else if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
+//		// uk registration address
+//		exp = exp.eq("isUkRegistration", true);
+//	}
+//
+//	if (tld.equals("no")) {
+//		// not a UK top level domain
+//		exp = exp.eq("isTopLevelDomain", false);
+//	}
+//	if (tld.equals("yes") || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
+//		// UK top level domain
+//		exp = exp.eq("isTopLevelDomain", true);
+//
 		/**
 		 * The resulting list should only include those records that are in
 		 * scope according to InScopeIp and InScopeDomain rules.
 		 */
-		// TODO: KL TO REFACTOR
-//		Iterator<Target> itr = targets.findList().iterator();
-//		while (itr.hasNext()) {
-//			Target target = itr.next();
-//			boolean isInScope = isInScopeIp(target.fieldUrl(), target.url);
-//			if (!isInScope) {
-//				isInScope = isInScopeDomain(target.fieldUrl(), target.url);
-//			}
-//			if (isInScope) {
-//				Logger.debug("add to export ld: " + target);
-//				res.add(target);
-//			}
-//		}
-		Logger.debug("exportLdFrequency() resulting list size: " + res.size());
+		
+		for (Target target : targets.findList()) {
+			boolean isInScope = isInScope(target);
+			
+			
+			if (!isInScope) {
+				isInScope = isInScopeDomain(target);
+			}
+			
+			if (isInScope) {
+				Logger.debug("add to export ld: " + target);
+				res.add(target);
+			}
+			
+		}
+		Logger.debug("exportLdFrequency() resulting list size: " + targets.findRowCount());
 		return res;
 	}
 

@@ -777,13 +777,19 @@ public class TargetController extends AbstractController {
      * crawl metadata.
      * @param frequency The crawl frequency e.g. 'daily'
      * @return list of Target objects
+     * @throws ActException 
      */
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result exportLdFrequencyJson(String frequency) {
+    public static Result exportLdFrequencyJson(String frequency) throws ActException {
         JsonNode jsonData = null;
         if (frequency != null) {
 	        List<Target> targets = new ArrayList<Target>();
-        	targets = Target.exportLdFrequency(frequency);
+        	try {
+				targets = Target.exportLdFrequency(frequency);
+			} catch (MalformedURLException | WhoisException
+					| URISyntaxException e) {
+				throw new ActException(e);
+			}
 	        jsonData = Json.toJson(targets);
         }
         return ok(jsonData);
