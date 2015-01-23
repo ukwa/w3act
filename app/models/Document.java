@@ -92,13 +92,13 @@ public class Document extends Model {
         return errors.isEmpty() ? null : errors;
     }
     
-    public boolean isWholeBook() { return type != null && type.equals(DocumentType.BOOK.toString()); }
+    public boolean isWholeBook() { return type != null && type.equals(Type.BOOK.toString()); }
     
-    public boolean isBookChapter() { return type != null && type.equals(DocumentType.BOOK_CHAPTER.toString()); }
+    public boolean isBookChapter() { return type != null && type.equals(Type.BOOK_CHAPTER.toString()); }
     
-    public boolean isJournalArticle() { return type != null && type.equals(DocumentType.JOURNAL_ARTICLE.toString()); }
+    public boolean isJournalArticle() { return type != null && type.equals(Type.JOURNAL_ARTICLE.toString()); }
     
-    public boolean isJournalIssue() { return type != null && type.equals(DocumentType.JOURNAL_ISSUE.toString()); }
+    public boolean isJournalIssue() { return type != null && type.equals(Type.JOURNAL_ISSUE.toString()); }
 	
 	public boolean isBookOrBookChapter() { return isWholeBook() || isBookChapter(); }
 	
@@ -126,6 +126,23 @@ public class Document extends Model {
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
+    }
+    
+    public enum Type {
+    	BOOK ("Book"),
+    	BOOK_CHAPTER ("Book Chapter"),
+    	JOURNAL_ARTICLE ("Journal Article"),
+    	JOURNAL_ISSUE ("Journal Issue");
+    	
+    	private final String name;
+    	
+    	Type(String name) {
+    		this.name = name;
+    	}
+    	
+    	public String toString() {
+    		return name;
+    	}
     }
     
 	public enum Status {

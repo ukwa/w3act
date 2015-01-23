@@ -1,10 +1,14 @@
 package uk.bl.crawling;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +30,16 @@ public class Crawler {
 	
 	private static boolean crawlWayback = false;
 	private static String waybackUrl = "http://www.webarchive.org.uk/wayback/archive/";
+	
+	private Map<String, MetadataExtractor> metadataExtractors;
+	
+	public Crawler() {
+		metadataExtractors = new HashMap<>();
+		metadataExtractors.put("www.ifs.org.uk", new MetadataExtractor("*[itemtype=http://schema.org/CreativeWork] *[itemprop=name]",
+				"*[itemtype=http://schema.org/CreativeWork] *[itemprop=datePublished]",
+				"*[itemtype=http://schema.org/CreativeWork] *[itemprop=author]"));
+		metadataExtractors.put("www.gov.uk", new MetadataExtractor("h1", null, null));
+	}
 	
 	public List<Document> crawlForDocuments(WatchedTarget watchedTarget, Integer maxDocuments) {
 		knownSites = new HashSet<>();
@@ -74,6 +88,7 @@ public class Crawler {
 											document.filename = URLDecoder.decode(hrefUrl.substring(hrefUrl.lastIndexOf('/')+1), "UTF-8");
 											document.title = document.filename.substring(0, document.filename.indexOf('.'));
 											document.watchedTarget = watchedTarget;
+											extractMetadata(document);
 											foundDocuments.add(document);
 											if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
 										}
@@ -112,6 +127,21 @@ public class Crawler {
 		breathFirstSearch(watchedTarget, children, linkDepth - 1);
 	}
 	
+	private void extractMetadata(Document document) {
+		
+		try {
+			String domain = new URI(document.landingPageUrl).getHost();
+			if (metadataExtractors.containsKey(domain)) {
+				MetadataExtractor metadataExtractor = metadataExtractors.get(domain);
+				org.jsoup.nodes.Document doc = Jsoup.connect(document.landingPageUrl).get();
+				metadataExtractor.extract(document, doc);
+			}
+		} catch (IOException | URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public Response getResponse(String url) throws IOException {
 		Connection connection = Jsoup.connect(url);
 		

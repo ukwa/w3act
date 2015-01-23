@@ -237,18 +237,7 @@ public class Documents extends AbstractController {
 		Document document = Ebean.find(Document.class, id);
 		if (document.type == null) document.type = "";
 		if (document.journal != null)
-			document.journal.journalTitleId = document.journal.journalTitle.id;
-			
-		try {
-			org.jsoup.nodes.Document doc = Jsoup.connect(document.landingPageUrl).get();
-			Elements title = doc.select("div#stdPageMeat header.show_header h1");
-			if (!title.isEmpty())
-				document.title = title.get(0).text();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+			document.journal.journalTitleId = document.journal.journalTitle.id;		
 		return document;
 	}
 	

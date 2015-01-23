@@ -215,7 +215,9 @@
 				}
 			}
 			@select(form("type"),
-				options(List("","Book", "Journal Article", "Journal Issue")),
+				options(List("", Document.Type.BOOK.toString,
+					Document.Type.JOURNAL_ARTICLE.toString,
+					Document.Type.JOURNAL_ISSUE.toString)),
 				editable,
 				'_label -> "Submission Type", 'onchange -> "toggleVisibility()")
 			<div id="book_general">
