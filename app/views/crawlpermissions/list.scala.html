@@ -1,4 +1,4 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[CrawlPermission], currentSortBy: String, currentOrder: String, cur_status: String, sel: String, crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus])
+@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[CrawlPermission], currentSortBy: String, currentOrder: String, cur_status: String, sel: String, crawlPermissionStatuses: Array[uk.bl.Const.CrawlPermissionStatus], templates: List[models.MailTemplate])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -206,12 +206,8 @@
 				    <div class="col-sm-6">
 						<select name="template" value="General" class="form-control">
 							<option value="">None</option>
-							@for(template <- MailTemplate.findAll()) {
-								@if(template.name.equals("General")) {
-  										<option value="@template.name" selected>@template.name</option>
-								} else {						                
-									<option value="@template.name">@template.name</option>
-								}
+							@for(template <- templates) {
+								<option value="@template.name" selected>@template.name</option>
 							}
 					  	</select>
 					</div>

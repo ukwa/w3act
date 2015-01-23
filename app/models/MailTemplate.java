@@ -30,6 +30,23 @@ public class MailTemplate extends ActModel {
 	 */
 	private static final long serialVersionUID = -2157694575463302989L;
 
+	
+	public enum TemplateType {
+
+		PERMISSION_REQUEST("General"),
+		THANK_YOU_ONLINE_PERMISSION_FORM("Acknowledgement");
+		
+        private String value;
+
+        private TemplateType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+	}
+	
     //bi-directional one-to-many association to CrawlPermission
     @OneToMany(mappedBy="mailTemplate", cascade=CascadeType.ALL)
     public List<CrawlPermission> crawlPermissions;
@@ -91,8 +108,11 @@ public class MailTemplate extends ActModel {
         return name;
     }
 
-    public static MailTemplate findByName(String name)
-    {
+    public static List<MailTemplate> findByType(String type) {
+        return find.where().eq("ttype", type).findList();
+    }
+    
+    public static MailTemplate findByName(String name) {
         return find.where()
                    .eq("name",
                        name)

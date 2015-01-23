@@ -73,6 +73,10 @@ public class CrawlPermissionController extends AbstractController {
     	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status);
 
     	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+    	
+    	List<MailTemplate> templates = MailTemplate.findByType(MailTemplate.TemplateType.PERMISSION_REQUEST.name());
+    	
+    	Logger.debug("template: " + templates);
 
         return ok(
         	list.render(
@@ -84,7 +88,7 @@ public class CrawlPermissionController extends AbstractController {
         			order,
         			status,
         			sel,
-        			crawlPermissionStatuses)
+        			crawlPermissionStatuses, templates)
         	);
     }
     
@@ -788,6 +792,10 @@ public class CrawlPermissionController extends AbstractController {
 	        
 	        if (action.equals("preview")) {
 	        	Logger.debug("preview crawl permission requests");
+	        	if (crawlPermissions.size() > 1) {
+	        		
+	        	}
+	        	
 	        	CrawlPermission crawlPermission = crawlPermissions.get(0);
             	MailTemplate mailTemplate = MailTemplate.findByName(template);
             	String toMails = crawlPermission.contactPerson.email;

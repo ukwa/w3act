@@ -1285,7 +1285,7 @@ public class Target extends UrlModel {
 		return targets.findList();
 	}
 	
-	
+//	checkScopeIpWithoutLicense
 	public static boolean isInScope(Target target) throws WhoisException {
 		for (FieldUrl fieldUrl : target.fieldUrls) {
 			if(!Scope.INSTANCE.checkScopeIp(fieldUrl.url, target)) return false;
