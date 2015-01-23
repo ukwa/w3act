@@ -108,6 +108,18 @@ public enum FormHelper {
 
 		return results;
 	}
+	
+	public static Set<Target> getLowerTargets(FieldUrl fieldUrl) {
+		String query = "find target fetch fieldUrls where active = :active and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) > :length";
+		
+		Set<Target> higherTargets = Ebean.createQuery(Target.class, query)
+        		.setParameter("active", true)
+        		.setParameter("domain", fieldUrl.domain)
+        		.setParameter("length", fieldUrl.url.length())
+        		.findSet();
+		
+		return higherTargets;
+	}
 
 	public static Set<Target> getHigherTargetsWithLicenseAndQaIssue(FieldUrl fieldUrl) {
 		String query = "find target fetch fieldUrls fetch licenses where active = :active and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length";

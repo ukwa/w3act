@@ -1,21 +1,30 @@
 package controllers;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import models.CommunicationLog;
+import models.ContactPerson;
 import models.CrawlPermission;
+import models.FieldUrl;
 import models.License;
 import models.MailTemplate;
+import models.Target;
 import models.Taxonomy;
 import models.User;
 import play.Logger;
+import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.api.FormHelper;
 import uk.bl.api.Utils;
+import uk.bl.exception.ActException;
 import uk.bl.scope.EmailHelper;
 import views.html.licence.licences;
 import views.html.licence.ukwalicence;
@@ -47,9 +56,11 @@ public class LicenseController extends AbstractController {
      * @return
      */
     public static Result form(String permissionUrl) {
+    	CrawlPermission crawlPermission = CrawlPermission.showByUrl(permissionUrl);
+
 		return ok(
-            ukwalicence.render(permissionUrl, CrawlPermission.showByUrl(permissionUrl).name, 
-            		CrawlPermission.showByUrl(permissionUrl).target.title, "", "", "", "", "", "", "")
+            ukwalicence.render(permissionUrl, crawlPermission.name, 
+            		crawlPermission.target.title, "", "", "", "", "", "", "")
         );
     }
     
@@ -61,8 +72,11 @@ public class LicenseController extends AbstractController {
      */
     public static Result formview(String permissionUrl) {
     	Logger.debug("formview: " + permissionUrl);
+    	
+    	CrawlPermission permission = CrawlPermission.findByUrl(permissionUrl);
+    	
 		return ok(
-            ukwalicenceview.render(permissionUrl)
+            ukwalicenceview.render(permissionUrl, permission.target.fieldUrl())
         );
     }
     
@@ -112,11 +126,14 @@ public class LicenseController extends AbstractController {
 		sb.append(Const.CSV_LINE_END);
 		sb.append(Const.PUBLICITY_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.publish) + Const.CSV_LINE_END);
 		sb.append(Const.CSV_LINE_END);
-    	messageBody = CrawlPermission.
-            	replaceStringInText(
-            			messageBody
-						, Const.PLACE_HOLDER_DELIMITER + mailTemplate.placeHolders + Const.PLACE_HOLDER_DELIMITER
-						, sb.toString());
+		
+    	messageBody = mailTemplate.readTemplate();
+		
+//    	messageBody = CrawlPermission.
+//            	replaceStringInText(
+//            			messageBody
+//						, Const.PLACE_HOLDER_DELIMITER + mailTemplate.placeHolders + Const.PLACE_HOLDER_DELIMITER
+//						, sb.toString());
     	Logger.debug("sendAcknowledgementToSiteOwner messageBody: " + messageBody);
         EmailHelper.sendMessage(ownerEmail, messageSubject, messageBody);                	
     }
@@ -124,187 +141,185 @@ public class LicenseController extends AbstractController {
     /**
      * This method submits owner settings for UKWA licence.
      * @return
+     * @throws ActException 
      */
-    public static Result submit() {
+    public static Result submit() throws ActException {
     	Result res = null;
-//        Logger.debug("Licence controller submit()");
-//        String submit = getFormParam(Const.SUBMIT);
-//        Logger.debug("submit: " + submit);
-//        if (submit != null) {
-//        	if (StringUtils.isBlank(getFormParam(Const.TARGET)) 
-//        			|| StringUtils.isBlank(getFormParam(Const.NAME))
-//        			|| StringUtils.isBlank(getFormParam(Const.POSITION))
-//        			|| StringUtils.isBlank(getFormParam(Const.CONTACT_PERSON))
-//        			|| StringUtils.isBlank(getFormParam(Const.EMAIL))) {
-//    			Logger.debug("One of the required fields is empty. Please fill out all required fields marked by red star in the form.");
-//    			flash("message", "Please fill out all required fields marked by red star in the form");
-//    			return ok(
-//    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
-//    	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 
-//    	   						getFormParam(Const.EMAIL), getFormParam(Const.POSTAL_ADDRESS), 
-//    	   						getFormParam(Const.CONTACT_ORGANISATION), getFormParam(Const.PHONE), 
-//    	   						getFormParam(Const.DESCRIPTION))
-//    		        );
-//        	}  
-//        	Logger.debug("save UKWA licence - name: " + getFormParam(Const.NAME));
-//    		Logger.debug("agree: " + getFormParam(Const.AGREE));
-//            boolean isAgreed = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.AGREE));
-//    		if (!isAgreed || StringUtils.isBlank(getFormParam(Const.CONTENT)) 
-//        			|| StringUtils.isBlank(getFormParam(Const.PUBLISH))) {
-//    			Logger.debug("The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
-//    			flash("message", "The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
-//    			return ok(
-//    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
-//    	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 
-//    	   						getFormParam(Const.EMAIL), getFormParam(Const.POSTAL_ADDRESS), 
-//    	   						getFormParam(Const.CONTACT_ORGANISATION), getFormParam(Const.PHONE), 
-//    	   						getFormParam(Const.DESCRIPTION))
-//    		        );
-//    		}
-//            boolean noThirdPartyContent = false;
-//            if (getFormParam(Const.CONTENT) != null) {
-//        		Logger.debug("content: " + getFormParam(Const.CONTENT));
-//            	Long noThirdPartyContentValue = Long.valueOf(getFormParam(Const.CONTENT));
-//                if (noThirdPartyContentValue == 1L) {
-//                	noThirdPartyContent = true;
-//            	}
-//            } 
-//            boolean mayPublish = false;
-//            if (getFormParam(Const.PUBLISH) != null) {
-//        		Logger.debug("mayPublish: " + getFormParam(Const.PUBLISH));
-//            	Long mayPublishValue = Long.valueOf(getFormParam(Const.PUBLISH));
-//                if (mayPublishValue == 1L) {
-//                	mayPublish = true;
-//            	}
-//            } 
-//        	Logger.debug("flags isAgreed: " + isAgreed + ", noThirdPartyContent: " + noThirdPartyContent + ", mayPublish: " + mayPublish);
-//            if (getFormParam(Const.TARGET) != null) {
-//        	    String target = getFormParam(Const.TARGET);        	    
-//        	    List<CrawlPermission> permissionList = CrawlPermission.filterByTarget(target);
-//        	    if (permissionList != null && permissionList.size() > 0) {
-//        	    	CrawlPermission permission = permissionList.get(0);
-//                	Logger.debug("found crawl permission: " + permission);
-//            	    permission.target.title = target;
-//                    if (getFormParam(Const.NAME) != null) {
-//                        permission.name = getFormParam(Const.NAME);
-//                    }
-//                    if (getFormParam(Const.CONTACT_PERSON) != null) {
-//                        permission.contactPerson.name = getFormParam(Const.CONTACT_PERSON);
-//                    }
-//                    if (getFormParam(Const.DESCRIPTION) != null) {
-//                        permission.anyOtherInformation = getFormParam(Const.DESCRIPTION);
-//                    }
-//                    if (getFormParam(Const.CONTACT_PERSON) != null) {
-//                        String ownerName = getFormParam(Const.CONTACT_PERSON);
-//                        ContactPerson contactPerson = null;
-//                        try {
-//                        	contactPerson = ContactPerson.findByName(ownerName);
-//                        	Logger.debug("found contact person: " + contactPerson);
-//                            if (getFormParam(Const.POSITION) != null) {
-//                                contactPerson.position = getFormParam(Const.POSITION);
-//                            }
-//                            if (getFormParam(Const.EMAIL) != null) {
-//                                contactPerson.email = getFormParam(Const.EMAIL);
-//                            }
-//                            if (getFormParam(Const.POSTAL_ADDRESS) != null) {
-//                                contactPerson.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
-//                            }
-//                            if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
-//                                contactPerson.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
-//                            }
-//                            if (getFormParam(Const.PHONE) != null) {
-//                                contactPerson.phone = getFormParam(Const.PHONE);
-//                            }
-//                        	// update existing contact person
-//                        	Ebean.update(contactPerson);
-//                	        Logger.debug("update contact person: " + contactPerson.toString());
-//                            permission.contactPerson = contactPerson;
-//                        } catch (Exception e) {
-//                        	Logger.error("Owner not found: " + ownerName);
-//                        }
-//                        if (contactPerson == null) {
-//                        	// create new contact person
-//                        	ContactPerson person = new ContactPerson();
-//                        	person.name = ownerName;
-//                            person.id = Target.createId();
-//                            person.url = Const.ACT_URL + person.id;
-//                            if (getFormParam(Const.POSITION) != null) {
-//                                person.position = getFormParam(Const.POSITION);
-//                            }
-//                            if (getFormParam(Const.EMAIL) != null) {
-//                                person.email = getFormParam(Const.EMAIL);
-//                            }
-//                            if (getFormParam(Const.POSTAL_ADDRESS) != null) {
-//                                person.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
-//                            }
-//                            if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
-//                                person.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
-//                            }
-//                            if (getFormParam(Const.PHONE) != null) {
-//                                person.phone = getFormParam(Const.PHONE);
-//                            }
-//                        	Ebean.save(person);
-//                	        Logger.debug("save contact person: " + person.toString());
-//                            permission.contactPerson = person;
-//                        }
-//                    }
-//
-//                    if (getFormParam(Const.LICENCE) != null) {
-//                    	permission.license.name = getFormParam(Const.LICENCE);
-//                    }                    
-//                    if (isAgreed) {
-////                        if (isAgreed && noThirdPartyContent && mayPublish) {
-//                    	permission.status = Const.CrawlPermissionStatus.GRANTED.name();
-//                    } else {
-//                    	permission.status = Const.CrawlPermissionStatus.REFUSED.name();
-//                    }
-//                    permission.agree = isAgreed;
-//                    permission.thirdPartyContent = noThirdPartyContent;
-//                    permission.publish = mayPublish;
-//                	Ebean.update(permission);
-//        	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
-//        	        Ebean.save(log);
-//        	        CrawlPermissionController.updateAllByTarget(permission.url, permission.target.title, permission.status);
-//        	        TargetController.updateQaStatus(permission.target.title, permission.status);
-//        	    	Logger.debug("before sendAcknowledgementToSiteOwner mailTemplate: " + getFormParam(Const.EMAIL));
-//        	        if (getFormParam(Const.EMAIL) != null) {
-//        	        	sendAcknowledgementToSiteOwner(getFormParam(Const.EMAIL), permission);
-//        	        }
-//        	        try {
-//	                    if (getFormParam(Const.LICENCE) != null) {
-//	                    	String licenceName = getFormParam(Const.LICENCE);
-//	                    	Taxonomy licenceTaxonomy = Taxonomy.findByName(licenceName);
-//	                    	Logger.debug("Permission target: " + permission.target.title);
-//	                    	Target targetObj = Target.findByTarget(permission.target.title);
-//	                    	Logger.debug("Target object: " + targetObj);
-//	                    	if (targetObj != null) {
-////	                    		targetObj.fieldLicense = licenceTaxonomy.url;
-//	                    		Ebean.update(targetObj);
-//	                    		// lookup for all targets with lower level and update licence
-//	                    		List<Target> associatedTargetList = Target.findAllTargetsWithLowerLevel(target);
-//	                    		Iterator<Target> itr = associatedTargetList.iterator();
-//	                    		while (itr.hasNext()) {
-//	                    			Target current_target = itr.next();
-//	                    	    	if (current_target.fieldUrl() != null) {
-//	                    	    		if (current_target.fieldUrl().contains(Const.SLASH_DELIMITER)) {
-//	                    			    	String[] parts = current_target.fieldUrl().split(Const.SLASH_DELIMITER);
-//	                    			    	if (parts[0].equals(permission.target.title)) {
-////				                    			current_target.fieldLicense = licenceTaxonomy.url;
-//					                    		Ebean.update(current_target);
-//	                    			    	}
-//	                    	    		}
-//	                    	    	}
-//	                    		}
-//	                    	}
-//	                    }
-//        	        } catch (Exception e) {
-//        	        	Logger.debug("Update target for licence failed. " + e);
-//        	        }
-//        	        Logger.debug("update crawl permission: " + permission.toString());                    
-//        	    }
-//            } 
-//	        res = redirect(routes.LicenseController.result());
-//        } 
+        Logger.debug("Licence controller submit()");
+        
+        DynamicForm requestData = Form.form().bindFromRequest();
+    	
+    	String action = requestData.get("action");
+        
+    	try {
+	    	if (StringUtils.isNotEmpty(action)) {
+	        
+		        if (action.equals("submit")) {
+		        	String actUrl = requestData.get("url");
+		        	CrawlPermission permission = CrawlPermission.findByUrl(actUrl);
+		        	
+		        	if (StringUtils.isBlank(getFormParam(Const.TARGET)) 
+		        			|| StringUtils.isBlank(getFormParam(Const.NAME))
+		        			|| StringUtils.isBlank(getFormParam(Const.POSITION))
+		        			|| StringUtils.isBlank(getFormParam(Const.CONTACT_PERSON))
+		        			|| StringUtils.isBlank(getFormParam(Const.EMAIL))) {
+		    			Logger.debug("One of the required fields is empty. Please fill out all required fields marked by red star in the form.");
+		    			flash("message", "Please fill out all required fields marked by red star in the form");
+		    			
+		    			return ok(
+		    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
+		    	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 
+		    	   						getFormParam(Const.EMAIL), getFormParam(Const.POSTAL_ADDRESS), 
+		    	   						getFormParam(Const.CONTACT_ORGANISATION), getFormParam(Const.PHONE), 
+		    	   						getFormParam(Const.DESCRIPTION))
+		    		        );
+		        	}  
+		        	Logger.debug("save UKWA licence - name: " + getFormParam(Const.NAME));
+		    		Logger.debug("agree: " + getFormParam(Const.AGREE));
+		            boolean isAgreed = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.AGREE));
+		    		if (!isAgreed || StringUtils.isBlank(getFormParam(Const.CONTENT)) 
+		        			|| StringUtils.isBlank(getFormParam(Const.PUBLISH))) {
+		    			Logger.debug("The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
+		    			flash("message", "The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
+		    			return ok(
+		    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
+		    	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 
+		    	   						getFormParam(Const.EMAIL), getFormParam(Const.POSTAL_ADDRESS), 
+		    	   						getFormParam(Const.CONTACT_ORGANISATION), getFormParam(Const.PHONE), 
+		    	   						getFormParam(Const.DESCRIPTION))
+		    		        );
+		    		}
+		            boolean noThirdPartyContent = false;
+		            if (getFormParam(Const.CONTENT) != null) {
+		        		Logger.debug("content: " + getFormParam(Const.CONTENT));
+		            	Long noThirdPartyContentValue = Long.valueOf(getFormParam(Const.CONTENT));
+		                if (noThirdPartyContentValue == 1L) {
+		                	noThirdPartyContent = true;
+		            	}
+		            } 
+		            boolean mayPublish = false;
+		            if (getFormParam(Const.PUBLISH) != null) {
+		        		Logger.debug("mayPublish: " + getFormParam(Const.PUBLISH));
+		            	Long mayPublishValue = Long.valueOf(getFormParam(Const.PUBLISH));
+		                if (mayPublishValue == 1L) {
+		                	mayPublish = true;
+		            	}
+		            } 
+		            
+		        	Logger.debug("flags isAgreed: " + isAgreed + ", noThirdPartyContent: " + noThirdPartyContent + ", mayPublish: " + mayPublish);
+		        	
+		        	// we already have target
+		        	
+	            	Logger.debug("found crawl permission: " + permission);
+	                if (getFormParam(Const.NAME) != null) {
+	                    permission.name = getFormParam(Const.NAME);
+	                }
+	                if (getFormParam(Const.CONTACT_PERSON) != null) {
+	                    permission.contactPerson.name = getFormParam(Const.CONTACT_PERSON);
+	                }
+	                if (getFormParam(Const.DESCRIPTION) != null) {
+	                    permission.anyOtherInformation = getFormParam(Const.DESCRIPTION);
+	                }
+	                if (getFormParam(Const.CONTACT_PERSON) != null) {
+	                	
+	                    String ownerName = getFormParam(Const.CONTACT_PERSON);
+	                    ContactPerson contactPerson = null;
+	                    
+	                	contactPerson = ContactPerson.findByName(ownerName);
+	                	if (contactPerson != null) {
+	                    	Logger.debug("found contact person: " + contactPerson);
+	                        if (getFormParam(Const.POSITION) != null) {
+	                            contactPerson.position = getFormParam(Const.POSITION);
+	                        }
+	                        if (getFormParam(Const.EMAIL) != null) {
+	                            contactPerson.email = getFormParam(Const.EMAIL);
+	                        }
+	                        if (getFormParam(Const.POSTAL_ADDRESS) != null) {
+	                            contactPerson.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
+	                        }
+	                        if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
+	                            contactPerson.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
+	                        }
+	                        if (getFormParam(Const.PHONE) != null) {
+	                            contactPerson.phone = getFormParam(Const.PHONE);
+	                        }
+	                    	// update existing contact person
+	                        contactPerson.update();
+	            	        Logger.debug("update contact person: " + contactPerson.toString());
+	                	} else {
+	                    	// create new contact person
+	                		contactPerson = new ContactPerson();
+	                		
+	                		contactPerson.name = ownerName;
+	                        if (getFormParam(Const.POSITION) != null) {
+	                        	contactPerson.position = getFormParam(Const.POSITION);
+	                        }
+	                        if (getFormParam(Const.EMAIL) != null) {
+	                        	contactPerson.email = getFormParam(Const.EMAIL);
+	                        }
+	                        if (getFormParam(Const.POSTAL_ADDRESS) != null) {
+	                        	contactPerson.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
+	                        }
+	                        if (getFormParam(Const.CONTACT_ORGANISATION) != null) {
+	                        	contactPerson.contactOrganisation = getFormParam(Const.CONTACT_ORGANISATION);
+	                        }
+	                        if (getFormParam(Const.PHONE) != null) {
+	                        	contactPerson.phone = getFormParam(Const.PHONE);
+	                        }
+	                        contactPerson.save();
+	            	        Logger.debug("save contact person: " + contactPerson.toString());
+	                    }
+	                    permission.contactPerson = contactPerson;
+	                }
+	                if (isAgreed) {
+	//                        if (isAgreed && noThirdPartyContent && mayPublish) {
+	                	permission.status = Const.CrawlPermissionStatus.GRANTED.name();
+	                } else {
+	                	permission.status = Const.CrawlPermissionStatus.REFUSED.name();
+	                }
+	                permission.agree = isAgreed;
+	                permission.thirdPartyContent = noThirdPartyContent;
+	                permission.publish = mayPublish;
+	                
+	                
+	    	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
+	    	        log.save();
+	    	        CrawlPermissionController.updateAllByTarget(permission.id, permission.target.id, permission.status);
+	    	    	Logger.debug("before sendAcknowledgementToSiteOwner mailTemplate: " + getFormParam(Const.EMAIL));
+	    	        if (getFormParam(Const.EMAIL) != null) {
+	    	        	sendAcknowledgementToSiteOwner(getFormParam(Const.EMAIL), permission);
+	    	        }
+	    	        
+	                if (getFormParam(Const.LICENCE) != null) {
+	                	String licenceName = getFormParam(Const.LICENCE);
+	                	License license = License.findByName(licenceName);
+	                	permission.license = license;
+	                	
+	                	Target targetObj = permission.target;
+	                	targetObj.licenses.add(license);
+	                	targetObj.update();
+	
+	            		// lookup for all targets with lower level and update licence
+	                	for (FieldUrl fieldUrl : targetObj.fieldUrls) {
+	                    	Set<Target> lowerTargets = FormHelper.getLowerTargets(fieldUrl);
+	                    	for (Target target : lowerTargets) {
+	                    		target.licenses.add(license);
+	                    		Long id = target.id;
+	                    		target.update(id);
+	                    	}
+	                	}
+	                    	
+	                }
+	                permission.update();
+	    	        Logger.debug("update crawl permission: " + permission.toString());                    
+			        res = redirect(routes.LicenseController.result());
+		        }
+	        } 
+        } catch (Exception e) {
+        	Logger.debug("Update target for licence failed. " + e);
+        	throw new ActException(e);
+        }
+	    	
         return res;
     }	   
 	

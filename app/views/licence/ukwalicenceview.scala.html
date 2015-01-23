@@ -1,4 +1,4 @@
-@(permissionUrl: String)
+@(permissionUrl: String, targetUrls: String)
 
 <html>
     <head>
@@ -76,7 +76,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
 					    <div class="col-sm-6">
-							<input class="form-control" name="target" value="@CrawlPermission.showByUrl(permissionUrl).target" placeholder="http://www.londonbusinessforum.com/" type="text" readonly>
+							<input class="form-control" name="target" value="@targetUrls" placeholder="http://www.londonbusinessforum.com/" type="text" readonly>
 						</div>
 					</div>
 				</div>

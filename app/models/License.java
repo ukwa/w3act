@@ -89,6 +89,10 @@ public class License extends Taxonomy {
     	return license;
     }
     
+    public static License findByName(String name) {
+    	return find.where().eq("name", name).findUnique();
+    }
+    
     public static List<License> findAllLicenses() {
     	return find.all();
     }
