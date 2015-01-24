@@ -408,11 +408,11 @@ public enum Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public boolean checkScopeIpWithoutLicense(String url, Target target) throws WhoisException {
+	public boolean checkScopeIpWithoutLicense(Target target) throws WhoisException {
         boolean res = false;
-        Logger.debug("check for scope IP url: " + url + ", id: " + target.id);
-        url = normalizeUrl(url);
-        Logger.debug("normalizeUrl: " + url);
+//        Logger.debug("check for scope IP url: " + url + ", id: " + target.id);
+//        url = normalizeUrl(url);
+//        Logger.debug("normalizeUrl: " + url);
         
         /**
          *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
@@ -430,42 +430,70 @@ public enum Scope {
         // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
         if (target != null) {
         	if (!res) {
+        		// checking target fields
         		res = target.checkManualScope();
-        		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
+        		Logger.debug("checkScopeIp() after manual check ("
+        				+ "fields: field_uk_postal_address, "
+        				+ "field_via_correspondence and "
+        				+ "field_professional_judgement): " + res);
         	}
         }
 
-        // Rule 3.2: check geo IP
-        if (!res && StringUtils.isNotEmpty(url)) {
-        	res = checkGeoIp(url);
+        // Rule 3.2: check geo IP / uk hosting?
+//        if (!res && StringUtils.isNotEmpty(url)) {
+        if (!res) {
+        	// check target.isUkHosting field with SQL
+        	res = target.isUkHosting();
+        	// the above calls the same in the end
+//        	res = checkGeoIp(url);
     		Logger.debug("checkScopeIp() after geoIp check: " + res);
         }
         
-        // Rule 3.3: check whois lookup service
-        if (!res && StringUtils.isNotEmpty(url)) {
-        	res = checkWhois(url, target);
+        // Rule 3.3: check whois lookup service / uk registration?
+//        if (!res && StringUtils.isNotEmpty(url)) {
+        if (!res) {
+        	// check target.isUkRegistration field with SQL
+        	res = target.isUkRegistration();
+        	// the above calls the same in the end
+//        	res = checkWhois(url, target);
     		Logger.debug("checkScopeIp() after whois check: " + res);
         }
         
         /**
          * if database entry exists and is different to the current value - replace it
          */
-        if (StringUtils.isNotEmpty(url)) {
-        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(url);
+        for (FieldUrl fieldUrl : target.fieldUrls) {
+        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(fieldUrl.url);
         	if (lookupEntries.size() > 0) {
-        		boolean dbValue = LookupEntry.getValueByUrl(url);
+        		boolean dbValue = LookupEntry.getValueByUrl(fieldUrl.url);
         		if (dbValue != res) {
        		        LookupEntry lookupEntry = lookupEntries.get(0);
        		        lookupEntry.scopevalue = res;
        		        Ebean.update(lookupEntry);
-            		Logger.debug("updated lookup entry in database for '" + url + "' with value: " + res);
+            		Logger.debug("updated lookup entry in database for '" + fieldUrl.url + "' with value: " + res);
         		}
         	} else {
-        		storeInProjectDb(url, res, target);
+        		storeInProjectDb(fieldUrl.url, res, target);
         	}
+        	
         }
         
-		Logger.debug("resulting lookup entry for '" + url + "' is: " + res);        
+//        if (StringUtils.isNotEmpty(url)) {
+//        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(url);
+//        	if (lookupEntries.size() > 0) {
+//        		boolean dbValue = LookupEntry.getValueByUrl(url);
+//        		if (dbValue != res) {
+//       		        LookupEntry lookupEntry = lookupEntries.get(0);
+//       		        lookupEntry.scopevalue = res;
+//       		        Ebean.update(lookupEntry);
+//            		Logger.debug("updated lookup entry in database for '" + url + "' with value: " + res);
+//        		}
+//        	} else {
+//        		storeInProjectDb(url, res, target);
+//        	}
+//        }
+//        
+//		Logger.debug("resulting lookup entry for '" + url + "' is: " + res);
         return res;
 	}
 	

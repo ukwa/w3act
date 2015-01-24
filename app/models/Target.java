@@ -39,6 +39,7 @@ import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -1805,7 +1806,7 @@ public class Target extends UrlModel {
 	/**
 	 * This method checks whether the passed URL is in scope for rules
 	 * associated with scope IP. This check is without license field.
-	 * 
+	 * NPLD
 	 * @param url
 	 *            The search URL
 	 * @param nidUrl
@@ -1815,26 +1816,79 @@ public class Target extends UrlModel {
 	@JsonIgnore
 	public boolean isInScopeAllWithoutLicense() {
 		boolean isInScope = false;
-		try {
-			Logger.debug("isInScopeAllWithoutLicense()");
-			isInScope = checkScopeIpWithoutLicense(this);
-			if (!isInScope) {
-				isInScope = Scope.INSTANCE.isTopLevelDomain(this);
-			}
-		} catch (WhoisException | MalformedURLException | URISyntaxException e) {
-			e.printStackTrace();
+
+		Logger.debug("isInScopeAllWithoutLicense()");
+		
+//			isInScope = Scope.INSTANCE.checkScopeIpWithoutLicense(this);
+		isInScope = this.checkScopeIpWithoutLicense();
+		if (!isInScope) {
+			isInScope = this.isTopLevelDomain;
 		}
 		return isInScope;
 
 	}
-
-	@JsonIgnore
-	public static boolean checkScopeIpWithoutLicense(Target target) throws WhoisException {
-		for (FieldUrl fieldUrl : target.fieldUrls) {
-			if (!Scope.INSTANCE.checkScopeIpWithoutLicense(fieldUrl.url, target)) return false;
-		}
-		return true;
+	
+	private boolean checkScopeIpWithoutLicense() {
+        boolean res = false;
+        /**
+         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
+         *
+         *  Rule 1.1: "field_uk_domain"
+         *  Rule 1.2: "field_uk_postal_address"
+         *  Rule 1.3: "field_via_correspondence"
+         *  Rule 1.4: "field_professional_judgement"
+         *  
+         *  is true - checking result is positive.
+         *  
+         *  Rule 1.5: if the field "field_no_ld_criteria_met" is true - checking result is negative
+         * 
+         */
+        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
+    	if (!res) {
+    		// checking target fields
+    		res = this.checkManualScope();
+    	}
+        // Rule 3.2: check geo IP / uk hosting?
+        if (!res) {
+        	// check target.isUkHosting field with SQL
+        	res = this.isUkHosting;
+        }
+	        
+        // Rule 3.3: check whois lookup service / uk registration?
+        if (!res) {
+        	// check target.isUkRegistration field with SQL
+        	res = this.isUkRegistration;
+        }
+	        
+        /**
+         * if database entry exists and is different to the current value - replace it
+         */
+        for (FieldUrl fieldUrl : this.fieldUrls) {
+        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(fieldUrl.url);
+        	if (lookupEntries.size() > 0) {
+        		boolean dbValue = LookupEntry.getValueByUrl(fieldUrl.url);
+        		if (dbValue != res) {
+       		        LookupEntry lookupEntry = lookupEntries.get(0);
+       		        lookupEntry.scopevalue = res;
+       		        Ebean.update(lookupEntry);
+            		Logger.debug("updated lookup entry in database for '" + fieldUrl.url + "' with value: " + res);
+        		}
+        	} else {
+        		Scope.INSTANCE.storeInProjectDb(fieldUrl.url, res, this);
+        	}
+        	
+        }
+        
+        return res;
 	}
+
+//	@JsonIgnore
+//	public static boolean checkScopeIpWithoutLicense(Target target) throws WhoisException {
+//		for (FieldUrl fieldUrl : target.fieldUrls) {
+//			if (!Scope.INSTANCE.checkScopeIpWithoutLicense(target)) return false;
+//		}
+//		return true;
+//	}
 
 	@JsonIgnore
     public boolean indicateNpldStatus() throws ActException {
@@ -1994,8 +2048,7 @@ public class Target extends UrlModel {
 //		this.crawlPermissions;
 //		this.qaIssue;
 		for (License license : this.licenses) {
-			if (license.equals(License.LicenseStatus.GRANTED)) {
-				Logger.debug(License.LicenseStatus.GRANTED.getValue());
+			if (license.isGranted()) {
 				return true;
 			}
 		}
