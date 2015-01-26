@@ -114,6 +114,8 @@
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
 						
+				@warningmessage(flash)
+						
 				<div id="accordion">
 					<div id="filter-panel" class="panel-collapse collapse in">
 						<div class="panel-body">
@@ -212,6 +214,8 @@
 					  	</select>
 					</div>
 				</div>
+				<input type="hidden" id="statusValue" name="statusValue" value="@cur_status">
+				
 				<div class="btn-group">		
 					@if(currentPage.getTotalRowCount() > 0 && CrawlPermissionController.haveContactPerson(currentPage.getList())) {
 						<button type="submit" class="btn btn-primary" name="action" value="selectall">Select all</button>

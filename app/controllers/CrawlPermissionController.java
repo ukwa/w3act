@@ -758,6 +758,9 @@ public class CrawlPermissionController extends AbstractController {
 		    	template = temp;
 		    }
 	        
+	        String status = requestData.get("statusValue");
+	    	Logger.debug("status: " + status);
+
 //	    	String toMails = evaluateToEmails();
 //	    	Logger.debug("toMails: " + toMails);
 	
@@ -797,7 +800,11 @@ public class CrawlPermissionController extends AbstractController {
 	        if (action.equals("preview")) {
 	        	Logger.debug("preview crawl permission requests");
 	        	if (crawlPermissions.size() > 1) {
-	        		
+		        	Logger.debug("crawlPermissions.size(): " + crawlPermissions.size() + " - " + status);
+	    			flash("message", "Please select one for preview");
+		        	res = redirect(routes.CrawlPermissionController.list(
+		        			0, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
+	    	    	return res;
 	        	}
 	        	
 	        	CrawlPermission crawlPermission = crawlPermissions.get(0);
