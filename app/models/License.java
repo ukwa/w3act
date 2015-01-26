@@ -97,38 +97,6 @@ public class License extends Taxonomy {
     	return find.all();
     }
     
-    public boolean hasStatus(String status) {
-    	return (this.status.equals(status));
-    }
-    
-    public boolean isGranted() {
-    	return this.hasStatus(LicenseStatus.GRANTED.name());
-    }
-    
-    public boolean isNotInitiated() {
-    	return this.hasStatus(LicenseStatus.NOT_INITIATED.name());
-    }
-    
-    public boolean isQueued() {
-    	return this.hasStatus(LicenseStatus.QUEUED.name());
-    }
-    
-    public boolean isPending() {
-    	return this.hasStatus(LicenseStatus.PENDING.name());
-    }
-    
-    public boolean isRefused() {
-    	return this.hasStatus(LicenseStatus.REFUSED.name());
-    }
-    
-    public boolean isEmailRejected() {
-    	return this.hasStatus(LicenseStatus.EMAIL_REJECTED.name());
-    }
-    
-    public boolean isSuperseded() {
-    	return this.hasStatus(LicenseStatus.SUPERSEDED.name());
-    }
-    
 	public static Map<String,String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
         for(License t: License.findAllLicenses()) {

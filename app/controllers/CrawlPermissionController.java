@@ -407,6 +407,8 @@ public class CrawlPermissionController extends AbstractController {
 
     	        updateAllByTarget(filledForm.get().id, filledForm.get().target.id, filledForm.get().status);
     	        
+    	        filledForm.get().target.licenseStatus = filledForm.get().status;
+    	        filledForm.get().target.update();
 //    	        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
     	        
 		        filledForm.get().update(id);
@@ -492,7 +494,9 @@ public class CrawlPermissionController extends AbstractController {
        	log.save();
 //
         updateAllByTarget(filledForm.get().id, filledForm.get().target.id, filledForm.get().status);
-        
+        filledForm.get().target.licenseStatus = filledForm.get().status;    	        
+        filledForm.get().target.update();
+
         filledForm.get().contactPerson.save();
 //		queued etc // no need for this as you can get it using target.crawlpermissions
 //        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);

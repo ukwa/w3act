@@ -24,6 +24,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import models.License.LicenseStatus;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -2040,6 +2042,38 @@ public class Target extends UrlModel {
 		
 	}
 	
+    public boolean hasStatus(String licenseStatus) {
+    	return (StringUtils.isNotEmpty(this.licenseStatus) && this.licenseStatus.equals(licenseStatus));
+    }
+    
+    public boolean isGranted() {
+    	return this.hasStatus(LicenseStatus.GRANTED.name());
+    }
+    
+    public boolean isNotInitiated() {
+    	return this.hasStatus(LicenseStatus.NOT_INITIATED.name());
+    }
+    
+    public boolean isQueued() {
+    	return this.hasStatus(LicenseStatus.QUEUED.name());
+    }
+    
+    public boolean isPending() {
+    	return this.hasStatus(LicenseStatus.PENDING.name());
+    }
+    
+    public boolean isRefused() {
+    	return this.hasStatus(LicenseStatus.REFUSED.name());
+    }
+    
+    public boolean isEmailRejected() {
+    	return this.hasStatus(LicenseStatus.EMAIL_REJECTED.name());
+    }
+    
+    public boolean isSuperseded() {
+    	return this.hasStatus(LicenseStatus.SUPERSEDED.name());
+    }
+    	
 	// to helper
 	@JsonIgnore
 	public boolean hasGrantedLicense() {
@@ -2047,15 +2081,11 @@ public class Target extends UrlModel {
 //		if QAStatus is granted 
 //		this.crawlPermissions;
 //		this.qaIssue;
-		for (License license : this.licenses) {
-			if (license.isGranted()) {
-				return true;
-			}
-		}
+		return (this.hasLicenses() && this.isGranted());
+		
 //		if (this.qaIssue != null && this.qaIssue.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
 //			return true;
 //		}
-		return false;
 	}
 
 	public boolean hasQaIssue() {

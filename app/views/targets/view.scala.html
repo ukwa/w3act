@@ -541,7 +541,7 @@
 							UK Hosting (automated check)
 						</label>
 					    <div class="col-sm-6">
-							@if(target.isUkHosting()) {
+							@if(target.isUkHosting) {
 				            	<font id="isInScope" style="color: green">yes</font>
 							} else {
 								<font id="isInScope" style="color: red">no</font>
@@ -558,7 +558,7 @@
 							UK top-level domain (Includes .uk, .london and .scot domains) (automated check)
 						</label>
 					    <div class="col-sm-6">
-							@if(target.isTopLevelDomain()) {
+							@if(target.isTopLevelDomain) {
 				            	<font id="isInScope" style="color: green">yes</font>
 							} else {
 								<font id="isInScope" style="color: red">no</font>
@@ -575,7 +575,7 @@
 							UK Registration (automated check)
 						</label>
 					    <div class="col-sm-6">
-							@if(target.isUkRegistration()) {
+							@if(target.isUkRegistration) {
 				            	<font id="isInScope" style="color: green">yes</font>
 							} else {
 								<font id="isInScope" style="color: red">no</font>

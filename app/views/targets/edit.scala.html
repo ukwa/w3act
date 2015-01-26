@@ -270,7 +270,7 @@
 								UK Hosting (automated check)
 							</label>
 						    <div class="col-sm-6">
-								@if(targetForm("isUkHosting").value == "true") {
+								@if(FormHelper.INSTANCE.isUkHosting(id)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -287,7 +287,7 @@
 								UK top-level domain (Includes .uk, .london and .scot domains) (automated check)
 							</label>
 						    <div class="col-sm-6">
-								@if(targetForm("isTopLevelDomain").value == "true") {
+								@if(FormHelper.INSTANCE.isTopLevelDomain(id)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>

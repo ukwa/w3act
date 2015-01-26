@@ -115,18 +115,18 @@ public enum FormHelper {
 	@JsonIgnore
 	public boolean isUkHosting(Long targetId) {
 		Target target = Target.findById(targetId);
-		return target.isUkHosting();
+		return target.isUkHosting;
 	}
 	
 	@JsonIgnore
 	public boolean isTopLevelDomain(Long targetId) throws WhoisException, MalformedURLException, URISyntaxException {
 		Target target = Target.findById(targetId);
-		return target.isTopLevelDomain();
+		return target.isTopLevelDomain;
 	}
 	
 	public boolean isUkRegistration(Long targetId) throws WhoisException {
 		Target target = Target.findById(targetId);
-		return target.isUkRegistration();
+		return target.isUkRegistration;
 	}
 
 	public List<Target> getNpldStatusList(Long targetId) throws ActException {

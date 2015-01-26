@@ -295,17 +295,18 @@ public class LicenseController extends AbstractController {
 	                	License license = License.findByName(licenceName);
 	                	permission.license = license;
 	                	
-	                	Target targetObj = permission.target;
-	                	targetObj.licenses.add(license);
-	                	targetObj.update();
+	                	Target target = permission.target;
+	                	target.licenses.add(license);
+	                	target.licenseStatus = permission.status;
+	                	target.update();
 	
 	            		// lookup for all targets with lower level and update licence
-	                	for (FieldUrl fieldUrl : targetObj.fieldUrls) {
+	                	for (FieldUrl fieldUrl : target.fieldUrls) {
 	                    	Set<Target> lowerTargets = FormHelper.getLowerTargets(fieldUrl);
-	                    	for (Target target : lowerTargets) {
-	                    		target.licenses.add(license);
-	                    		Long id = target.id;
-	                    		target.update(id);
+	                    	for (Target lowerTarget : lowerTargets) {
+	                    		lowerTarget.licenses.add(license);
+	                    		lowerTarget.licenseStatus = permission.status;
+	                    		lowerTarget.update();
 	                    	}
 	                	}
 	                    	
