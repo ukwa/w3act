@@ -977,7 +977,7 @@ public class TargetController extends AbstractController {
 					flash("message", "Please choose a subject(s).");
 		            return info(filledForm, id);
 			  	}
-		
+			  	
 		        String fieldUrl = requestData.get("formUrl");
 		        
 		        if (StringUtils.isNotEmpty(fieldUrl)) {
@@ -1007,6 +1007,41 @@ public class TargetController extends AbstractController {
 		            filledForm.get().fieldUrls = fieldUrls;
 		            Logger.debug("fieldUrls: " + fieldUrls);
 		        }        
+		        
+		        String crawlStartDate = requestData.get("crawlStartDateText");
+		    	if (StringUtils.isNotEmpty(crawlStartDate)) {
+					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					try {
+						Date date = formatter.parse(crawlStartDate);
+						filledForm.get().crawlStartDate = date;
+					} catch (ParseException e) {
+						e.printStackTrace();
+			            return info(filledForm, id);
+					}
+		    	}
+		    	
+		        String crawlFrequency = filledForm.get().crawlFrequency;
+	        	Logger.debug("crawl frequency: " + crawlFrequency);
+	        	Logger.debug("crawlStartDate: " + crawlStartDate);
+		        if (crawlFrequency.equals(CrawlFrequency.DOMAINCRAWL.name())) {
+		        	if (StringUtils.isEmpty(crawlStartDate)) {
+			            ValidationError ve = new ValidationError("crawlStartDateText", "Start Date is required when 'Domain Crawl Only' is selected");
+			            filledForm.reject(ve);
+			            return info(filledForm, id);
+		        	}
+		        }
+		        
+		        String crawlEndDate = requestData.get("endStartDateText");
+		    	if (StringUtils.isNotEmpty(crawlEndDate)) {
+					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					try {
+						Date date = formatter.parse(crawlEndDate);
+						filledForm.get().crawlEndDate = date;
+					} catch (ParseException e) {
+						e.printStackTrace();
+			            return info(filledForm, id);
+					}
+		    	}
 		        
 		//        String qaIssueId = requestData.get("qaIssueId");
 		//        if (StringUtils.isNotEmpty(qaIssueId)) {
@@ -1093,30 +1128,6 @@ public class TargetController extends AbstractController {
 					}
 		    	}
 		        
-		        String crawlStartDate = requestData.get("crawlStartDateText");
-		    	if (StringUtils.isNotEmpty(crawlStartDate)) {
-					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-					try {
-						Date date = formatter.parse(crawlStartDate);
-						filledForm.get().crawlStartDate = date;
-					} catch (ParseException e) {
-						e.printStackTrace();
-			            return info(filledForm, id);
-					}
-		    	}
-		        String crawlEndDate = requestData.get("endStartDateText");
-		    	if (StringUtils.isNotEmpty(crawlEndDate)) {
-					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-					try {
-						Date date = formatter.parse(crawlEndDate);
-						filledForm.get().crawlEndDate = date;
-					} catch (ParseException e) {
-						e.printStackTrace();
-			            return info(filledForm, id);
-					}
-		    	}
-		    	
-		    	
 		        List<License> newLicenses = new ArrayList<License>();
 		        String[] licenseValues = formParams.get("licensesList");
 		
@@ -1241,7 +1252,40 @@ public class TargetController extends AbstractController {
 //	            	QaIssue qaIssue = QaIssue.findById(qaId);
 //	            	filledForm.get().qaIssue = qaIssue;
 //	            }
-        	            
+
+        String crawlStartDate = requestData.get("crawlStartDateText");
+    	if (StringUtils.isNotEmpty(crawlStartDate)) {
+			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			try {
+				Date date = formatter.parse(crawlStartDate);
+				filledForm.get().crawlStartDate = date;
+			} catch (ParseException e) {
+				e.printStackTrace();
+	            return newInfo(filledForm);
+			}
+    	}
+    	
+        String crawlFrequency = filledForm.get().crawlFrequency;
+        if (crawlFrequency.equals(CrawlFrequency.DOMAINCRAWL.name())) {
+        	if (StringUtils.isEmpty(crawlStartDate)) {
+	            ValidationError ve = new ValidationError("crawlStartDateText", "Start Date is required when 'Domain Crawl Only' is selected");
+	            filledForm.reject(ve);
+	            return newInfo(filledForm);
+        	}
+        }
+        
+        String crawlEndDate = requestData.get("endStartDateText");
+    	if (StringUtils.isNotEmpty(crawlEndDate)) {
+			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			try {
+				Date date = formatter.parse(crawlEndDate);
+				filledForm.get().crawlEndDate = date;
+			} catch (ParseException e) {
+				e.printStackTrace();
+	            return newInfo(filledForm);
+			}
+    	}        
+        
         List<Tag> newTags = new ArrayList<Tag>();
         String[] tagValues = formParams.get("tagsList");
 
@@ -1321,29 +1365,6 @@ public class TargetController extends AbstractController {
 			}
     	}
         
-        String crawlStartDate = requestData.get("crawlStartDateText");
-    	if (StringUtils.isNotEmpty(crawlStartDate)) {
-			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-			try {
-				Date date = formatter.parse(crawlStartDate);
-				filledForm.get().crawlStartDate = date;
-			} catch (ParseException e) {
-				e.printStackTrace();
-	            return newInfo(filledForm);
-			}
-    	}
-        String crawlEndDate = requestData.get("endStartDateText");
-    	if (StringUtils.isNotEmpty(crawlEndDate)) {
-			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-			try {
-				Date date = formatter.parse(crawlEndDate);
-				filledForm.get().crawlEndDate = date;
-			} catch (ParseException e) {
-				e.printStackTrace();
-	            return newInfo(filledForm);
-			}
-    	}
-    	
         List<License> newLicenses = new ArrayList<License>();
         String[] licenseValues = formParams.get("licensesList");
 
