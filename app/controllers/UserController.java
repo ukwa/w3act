@@ -122,7 +122,12 @@ public class UserController extends AbstractController {
     public static Result view(Long id) {
     	User curator = User.findById(id);
     	User user = User.findByEmail(request().username());
-    	List<Role> roles = Role.findAll();
+    	List<Role> roles = null;
+    	if (user.isSysAdmin()) {
+    		roles = Role.findAll();
+    	} else {
+    		roles = Role.findNonSysAdminRoles();
+    	}
     	List<Organisation> organisations = Organisation.findAll();
         return ok(view.render(curator, user, roles, organisations));
     }
@@ -130,16 +135,24 @@ public class UserController extends AbstractController {
     public static Result viewAct(String url) {
     	User curator = User.findByUrl(url);
     	User user = User.findByEmail(request().username());
-    	List<Role> roles = Role.findAll();
-    	List<Organisation> organisations = Organisation.findAll();
+    	List<Role> roles = null;
+    	if (user.isSysAdmin()) {
+    		roles = Role.findAll();
+    	} else {
+    		roles = Role.findNonSysAdminRoles();
+    	}    	List<Organisation> organisations = Organisation.findAll();
         return ok(view.render(curator, user, roles, organisations));
     }
 
     public static Result viewWct(String url) {
     	User curator = User.findByWct(url);
     	User user = User.findByEmail(request().username());
-    	List<Role> roles = Role.findAll();
-    	List<Organisation> organisations = Organisation.findAll();
+    	List<Role> roles = null;
+    	if (user.isSysAdmin()) {
+    		roles = Role.findAll();
+    	} else {
+    		roles = Role.findNonSysAdminRoles();
+    	}    	List<Organisation> organisations = Organisation.findAll();
         return ok(view.render(curator, user, roles, organisations));
     }
     
@@ -151,7 +164,12 @@ public class UserController extends AbstractController {
 			curator.name = name;
 		}
 		userForm = userForm.fill(curator);
-		List<Role> roles = Role.findAll();
+    	List<Role> roles = null;
+    	if (user.isSysAdmin()) {
+    		roles = Role.findAll();
+    	} else {
+    		roles = Role.findNonSysAdminRoles();
+    	}
 		Map<String,String> organisations = Organisation.options();
         return ok(newForm.render(userForm, user, roles, organisations));
     }
@@ -161,7 +179,12 @@ public class UserController extends AbstractController {
 		User curator = User.findById(id);
 		Form<User> userForm = Form.form(User.class);
 		userForm = userForm.fill(curator);
-		List<Role> roles = Role.findAll();
+    	List<Role> roles = null;
+    	if (user.isSysAdmin()) {
+    		roles = Role.findAll();
+    	} else {
+    		roles = Role.findNonSysAdminRoles();
+    	}
 		List<Role> curatorRoles = curator.roles;
 		Map<String,String> organisations = Organisation.options();
 		Logger.debug("roles: " + curator.roles.size());
@@ -171,7 +194,12 @@ public class UserController extends AbstractController {
     public static Result info(Form<User> form, Long id) {
     	User user = User.findByEmail(request().username());
 		User curator = User.findById(id);
-		List<Role> roles = Role.findAll();
+    	List<Role> roles = null;
+    	if (user.isSysAdmin()) {
+    		roles = Role.findAll();
+    	} else {
+    		roles = Role.findNonSysAdminRoles();
+    	}
 		List<Role> curatorRoles = curator.roles;
 		Map<String,String> organisations = Organisation.options();
 		return badRequest(edit.render(form, user, id, roles, organisations, curatorRoles));
@@ -179,7 +207,12 @@ public class UserController extends AbstractController {
     
 	public static Result newInfo(Form<User> form) {
 		User user = User.findByEmail(request().username());
-		List<Role> roles = Role.findAll();
+    	List<Role> roles = null;
+    	if (user.isSysAdmin()) {
+    		roles = Role.findAll();
+    	} else {
+    		roles = Role.findNonSysAdminRoles();
+    	}
 		Map<String,String> organisations = Organisation.options();		
 
 		return badRequest(newForm.render(form, user, roles, organisations));

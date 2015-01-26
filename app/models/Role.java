@@ -75,6 +75,10 @@ public class Role extends ActModel {
     public static List<Role> findAll() {
         return find.all();
     }
+    
+    public static List<Role> findNonSysAdminRoles() {
+    	return find.where().ne("name", "sys_admin").findList();
+    }
 
     /**
      * Retrieve an object by Id (id).

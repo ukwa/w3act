@@ -226,6 +226,10 @@ public class User extends ActModel {
     public static List<User> findAll() {
         return find.all();
     }
+    
+    public boolean isSysAdmin() {
+    	return (hasRole("sys_admin"));
+    }
 
     /**
      * This method checks whether user has a role by its name.

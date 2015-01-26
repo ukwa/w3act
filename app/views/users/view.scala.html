@@ -86,7 +86,7 @@
 							<select name="organisation" id="orgSelect" class="form-control">
 				            	<option>None</option>
 								@for(organisation <- organisations) {
-									@if(user.organisation.equals(organisation)) {
+									@if(user.organisation != null && user.organisation.equals(organisation)) {
 	             						<option value="@organisation.id" selected disabled>@organisation.title</option>
 	         						} else {
 	                					<option value="@organisation.id" disabled>@organisation.title</option>
