@@ -13,7 +13,7 @@
 	<script>
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
-			applySearch(context, 'documents'); 
+			applySearch(context, 'documents');
 		});
 	</script>
 }
@@ -40,7 +40,8 @@
     }
     
     // Generate the link
-    routes.Documents.list(filterForm("curator").value, filterForm("watchedtarget").value, status.toString, newPage, sortBy, order, searchstr)
+    routes.Documents.list(filterForm("user").value, filterForm("watchedtarget").value,
+    	filterForm("service").value, status.toString, newPage, sortBy, order, searchstr)
     
 }
 
@@ -50,36 +51,21 @@
 	    <h1>@{if (filters) "Documents" else "Document Harvesting"}</h1>
 	</div>
 	
-	@if(filters) {
-		<div class="col-md-6" @if(filterForm("curator").value == "null") {style="float:none"}>
-			@select(filterForm("curator"), options(Users.getUsers), true, '_label -> "Curator",
-				'onchange -> "document.location.href='list?user=' + this.value;"
-			)
-		</div>
-		@if(filterForm("curator").value != "null") {
-			<div class="col-md-6">
-				@select(filterForm("watchedtarget"), options(Users.getWatchedTargets(new Long(filterForm("curator").value))), true, '_label -> "Watched Target",
-					'onchange -> "document.location.href='list?user=' + getElementById('curator').value + '&watchedtarget=' + this.value;"
-				)
-			</div>
-		}
-	}
-	
 	<ul class="nav nav-tabs">
 		@if(filters) {
 			@if(status == Document.Status.NEW) {
 				<li class="active"><a href="#">New</a></li>
-				<li><a href="@routes.Documents.list(filterForm.get("curator"), filterForm.get("watchedtarget"), "" + Document.Status.SUBMITTED)">Submitted</a></li>
-				<li><a href="@routes.Documents.list(filterForm.get("curator"), filterForm.get("watchedtarget"), "" + Document.Status.IGNORED)">Ignored</a></li>
+				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, "" + Document.Status.SUBMITTED)">Submitted</a></li>
+				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, "" + Document.Status.IGNORED)">Ignored</a></li>
 			}
 			@if(status == Document.Status.SUBMITTED) {
-				<li><a href="@routes.Documents.list(filterForm.get("curator"), filterForm.get("watchedtarget"), "" + Document.Status.NEW)">New</a></li>
+				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, "" + Document.Status.NEW)">New</a></li>
 				<li class="active"><a href="#">Submitted</a></li>
-				<li><a href="@routes.Documents.list(filterForm.get("curator"), filterForm.get("watchedtarget"), "" + Document.Status.IGNORED)">Ignored</a></li>
+				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, "" + Document.Status.IGNORED)">Ignored</a></li>
 			}
 			@if(status == Document.Status.IGNORED) {
-				<li><a href="@routes.Documents.list(filterForm.get("curator"), filterForm.get("watchedtarget"), "" + Document.Status.NEW)">New</a></li>
-				<li><a href="@routes.Documents.list(filterForm.get("curator"), filterForm.get("watchedtarget"), "" + Document.Status.SUBMITTED)">Submitted</a></li>
+				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, "" + Document.Status.NEW)">New</a></li>
+				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, "" + Document.Status.SUBMITTED)">Submitted</a></li>
 				<li class="active"><a href="#">Ignored</a></li>
 			}
 		} else {
@@ -93,10 +79,8 @@
     	@if(filters) {
 			<div id="forms">
 	   			@warningmessage(flash)
-	   			@helper.form(action=routes.Documents.list(), 'class -> "form-inline") {
+	   			@helper.form(action=routes.Documents.list()) {
 		   			<div class="input-group">
-		   				<input type="hidden" name="user" value="@filterForm("curator").value">
-		   				<input type="hidden" name="watchedtarget" value="@filterForm("watchedtarget").value">
 		   				<input type="hidden" name="status" value="@status">
 		   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   					<input type="hidden" name="s" value="@currentSortBy">
@@ -106,10 +90,25 @@
 							<input type="submit" class="btn btn-primary" id="search" name="action" value="Search">
 						</span>
 					</div>
+					
+					<div class="col-md-6">
+						@select(filterForm("user"), options(Users.getUsers), true, '_label -> "Curator",
+							'onchange -> "if(this.form.watchedtarget)this.form.watchedtarget.value='';this.form.submit()"
+						)
+						@if(filterForm("user").value != "null") {
+								@select(filterForm("watchedtarget"), options(Users.getWatchedTargets(new Long(filterForm("user").value))), true, '_label -> "Watched Target",
+									'onchange -> "this.form.submit()"
+								)
+						}
+						@select(filterForm("service"), options(Documents.getPortalsSelection), true, '_label -> "Service",
+							'onchange -> "this.form.submit()"
+						)
+					</div>
+					<div style="clear: both"></div>
 				}
 	
 			</div>
-		}
+	}
     
     	@pagination(currentPage, link)
     	
@@ -140,8 +139,9 @@
 					<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
 					@if(status != Document.Status.SUBMITTED) {
 						<td><a href="@routes.Documents.ignore(document.id,
-								filterForm("curator").value,
+								filterForm("user").value,
 								filterForm("watchedtarget").value,
+								filterForm("service").value,
 								status.toString,
 								currentPage.getPageIndex,
 								currentSortBy,

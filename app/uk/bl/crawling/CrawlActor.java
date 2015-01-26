@@ -9,7 +9,9 @@ import java.util.List;
 import com.avaje.ebean.Ebean;
 
 import controllers.Documents;
+import controllers.Targets;
 import models.Document;
+import models.Flag;
 import models.WatchedTarget;
 import akka.actor.UntypedActor;
 import play.Logger;
@@ -40,19 +42,22 @@ public class CrawlActor extends UntypedActor {
 	public static List<Document> crawlAndConvertDocuments(WatchedTarget watchedTarget, Integer maxDocuments) {
 		List<Document> documentList = (new Crawler()).crawlForDocuments(watchedTarget, maxDocuments);
 		List<Document> newDocumentList = new ArrayList<>();
-		
-		for (Document document : documentList)
-			if (Document.find.where().eq("document_url", document.documentUrl).findRowCount() == 0)
-				newDocumentList.add(document);
-		
-		Ebean.save(newDocumentList);
-		
-		for (Document document : newDocumentList) {
-			try {
-				convertPdfToHtml(document);
-				Documents.addHash(document);
-			} catch (IOException e) {
-				Logger.error(e.getMessage());
+		if (documentList.isEmpty()) {
+			Targets.raiseFlag(watchedTarget.target, "No Documents Found");
+		} else {
+			for (Document document : documentList)
+				if (Document.find.where().eq("document_url", document.documentUrl).findRowCount() == 0)
+					newDocumentList.add(document);
+			
+			Ebean.save(newDocumentList);
+			
+			for (Document document : newDocumentList) {
+				try {
+					convertPdfToHtml(document);
+					Documents.addHash(document);
+				} catch (IOException e) {
+					Logger.error(e.getMessage());
+				}
 			}
 		}
 		

@@ -19,6 +19,7 @@ import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import controllers.Portals;
 import controllers.Users;
 import play.data.format.Formats.DateTime;
 import play.data.validation.Constraints.Required;
@@ -110,14 +111,16 @@ public class Document extends Model {
     	}
     }
     
-    public static Page<Document> page(Long userId, Long watchedTargetId, Status status, int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Document> page(Long userId, Long watchedTargetId, String service,
+    		Status status, int page, int pageSize, String sortBy, String order, String filter) {
 
     	ExpressionList<Document> el = find.where();
     	if (watchedTargetId != null) {
     		el = el.eq("id_watched_target", watchedTargetId);
     	} else if (userId != null) {
-    		//el = el.eq("watched_target.id_creator", userId);
     		el = el.in("id_watched_target", Users.getWatchedTargetIds(userId));
+    	} if (!service.isEmpty()) {
+    		el = el.in("id", Portals.getDocumentIds(service));
     	}
     	
     	return el.eq("status", status.ordinal())

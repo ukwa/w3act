@@ -69,7 +69,7 @@ public class WatchedTargets extends AbstractController {
     public static Result crawl(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
     	CrawlActor.crawlAndConvertDocuments(watchedTarget, 3);
-    	return redirect(routes.Documents.list("" + watchedTarget.user.uid, "" + id,
+    	return redirect(routes.Documents.list("" + watchedTarget.user.uid, "" + id, "",
     			Document.Status.NEW.toString(), 0, "title", "asc", ""));
     }
     
@@ -86,7 +86,7 @@ public class WatchedTargets extends AbstractController {
     
     public static DynamicForm filterForm(Long userId) {
     	Map<String,String> filterData = new HashMap<>();
-    	filterData.put("curator", "" + userId);
+    	filterData.put("user", "" + userId);
     	return Form.form().bind(filterData);
     }
 }

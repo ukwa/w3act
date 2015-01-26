@@ -37,7 +37,7 @@
         }
     }
     
-    routes.WatchedTargets.list(filterForm("curator").value, newPage, sortBy, order, searchstr)
+    routes.WatchedTargets.list(filterForm("user").value, newPage, sortBy, order, searchstr)
     
 }
 
@@ -46,14 +46,6 @@
 	<div class="page-header">
 	    <h1>@{if (filters) "Watched Targets" else "Document Harvesting"}</h1>
 	</div>
-	
-	@if(filters) {
-		<div class="col-md-6" style="float:none">
-			@select(filterForm("curator"), options(Users.getUsers), true, '_label -> "Curator",
-				'onchange -> "document.location.href='list?user=' + this.value;"
-			)
-		</div>
-	}
 	
 	@if(!filters) {
 		<ul class="nav nav-tabs">
@@ -69,7 +61,6 @@
 	   			@warningmessage(flash)
 	   			@helper.form(action=routes.WatchedTargets.list(), 'class -> "form-inline") {
 		   			<div class="input-group">
-		   				<input type="hidden" name="user" value="@filterForm("curator").value">
 		   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   					<input type="hidden" name="s" value="@currentSortBy">
 	   					<input type="hidden" name="o" value="@currentOrder">
@@ -78,6 +69,13 @@
 							<input type="submit" class="btn btn-primary" id="search" name="action" value="Search">
 						</span>
 					</div>
+					
+					<div class="col-md-6">
+						@select(filterForm("user"), options(Users.getUsers), true, '_label -> "Curator",
+							'onchange -> "this.form.submit()"
+						)
+					</div>
+					<div style="clear: both"></div>
 				}
 			</div>
 		}

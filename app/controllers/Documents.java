@@ -203,8 +203,8 @@ public class Documents extends AbstractController {
 		Ebean.save(arks);
 	}
 
-	public static Result ignore(Long id, String userString, String watchedTargetString, String statusString,
-    		int pageNo, String sortBy, String order, String filter, boolean filters) {
+	public static Result ignore(Long id, String userString, String watchedTargetString, String service,
+			String statusString, int pageNo, String sortBy, String order, String filter, boolean filters) {
 		Document document = Document.find.byId(id);
 		if (statusString.equals(Document.Status.NEW.toString()))
 			document.status = Document.Status.IGNORED;
@@ -212,7 +212,7 @@ public class Documents extends AbstractController {
 			document.status = Document.Status.NEW;
 		Ebean.save(document);
 		if (filters)
-			return redirect(routes.Documents.list(userString, watchedTargetString,
+			return redirect(routes.Documents.list(userString, watchedTargetString, service,
 					statusString, pageNo, sortBy, order, filter));
 		else
 			return redirect(routes.Documents.overview(pageNo, sortBy, "asc"));
@@ -268,6 +268,15 @@ public class Documents extends AbstractController {
 		return Portal.find.where().eq("active", true).findList();
 	}
 	
+	public static List<String> getPortalsSelection() {
+		List<Portal> portalList = getPortals();
+		List<String> portals = new ArrayList<>();
+		portals.add("All");
+		for (Portal portal : portalList)
+			portals.add(portal.title);
+		return portals;
+	}
+	
 	private static void updatePortals() {
 		Logger.info("update services");
 		List<Portal> oldPortals = Portal.find.all();
@@ -304,22 +313,25 @@ public class Documents extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on Documents
      */
-	public static Result list(String userString, String watchedTargetString, String statusString,
+	public static Result list(String userString, String watchedTargetString, String service, String statusString,
 			int pageNo, String sortBy, String order, String filter) {
 		Document.Status status = Document.Status.valueOf(statusString);
-		return renderList(userString, watchedTargetString, status, pageNo, sortBy, order, filter, true);
+		return renderList(userString, watchedTargetString, service, status, pageNo, sortBy, order, filter, true);
 	}
 	
     public static Result overview(int pageNo, String sortBy, String order) {
-    	return renderList("" + User.findByEmail(request().username()).uid, "", Document.Status.NEW, pageNo, sortBy, order, "", false);
+    	return renderList("" + User.findByEmail(request().username()).uid, "", "", Document.Status.NEW, pageNo, sortBy, order, "", false);
     }
     
-    public static Result renderList(String userString, String watchedTargetString, Document.Status status,
+    public static Result renderList(String userString, String watchedTargetString,
+    		String service, Document.Status status,
     		int pageNo, String sortBy, String order, String filter, boolean filters) {
     	Logger.info("Documents.list()");
 
     	Long watchedTargetId = watchedTargetString.isEmpty() || watchedTargetString.equals("null") ?
     			null : new Long(watchedTargetString);
+    	
+    	if (service.equals("All")) service = "";
     	
     	Long userId;
     	if (watchedTargetId == null) {
@@ -332,10 +344,10 @@ public class Documents extends AbstractController {
         return ok(
         	list.render(
         			User.findByEmail(request().username()),
-        			filterForm(userId, watchedTargetId),
+        			filterForm(userId, watchedTargetId, service),
         			status,
         			filter,
-        			Document.page(userId, watchedTargetId, status, pageNo, 10, sortBy, order, filter),
+        			Document.page(userId, watchedTargetId, service, status, pageNo, 10, sortBy, order, filter),
         			sortBy,
         			order,
         			filters)
@@ -375,10 +387,11 @@ public class Documents extends AbstractController {
 		file.delete();
 	}
 	
-	public static DynamicForm filterForm(Long userId, Long targetId) {
+	public static DynamicForm filterForm(Long userId, Long targetId, String service) {
     	Map<String,String> filterData = new HashMap<>();
-    	filterData.put("curator", "" + userId);
+    	filterData.put("user", "" + userId);
     	filterData.put("watchedtarget", "" + targetId);
+    	filterData.put("service", service);
     	return Form.form().bind(filterData);
     }
 

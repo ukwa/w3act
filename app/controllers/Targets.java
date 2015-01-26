@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DCollection;
+import models.Document;
 import models.Flag;
 import models.Organisation;
 import models.Target;
@@ -1101,6 +1102,16 @@ public class Targets extends AbstractController {
             Logger.error("showNpldStatusList() " + e.getMessage());
         }
     	return res;
-    }    
+    }
+    
+    public static void raiseFlag(Target target, String flagName) {
+    	for (Flag flag : target.flag_to_target) {
+    		if (flag.name.equals(flagName)) return;
+    	}
+    	target.flag_to_target.add(Flag.findByName(flagName));
+		//Ebean.saveManyToManyAssociations(target, "flag_to_target");
+		target.flags += ", " + flagName;
+		Ebean.update(target);
+    }
 }
 

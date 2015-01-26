@@ -33,3 +33,11 @@ flags:
     - !!models.Flag
         name:         GENERAL_CHANGE_REQUEST
         description:  This flag marks general change request
+
+    - !!models.Flag
+        name:         Missing PDF
+        description:  A PDF file is missing after a crawl
+
+    - !!models.Flag
+        name:         No Documents Found
+        description:  There were no documents found during a crawl

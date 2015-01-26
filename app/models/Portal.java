@@ -1,7 +1,11 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 import play.db.ebean.Model;
 
@@ -12,6 +16,8 @@ public class Portal extends Model {
 	public Long id;
 	public String title;
 	public boolean active;
+	@ManyToMany(mappedBy="portals")
+	public List<Document> documents = new ArrayList<>();
 	
 	public static final Model.Finder<Long, Portal> find = new Model.Finder<>(Long.class, Portal.class);
 	
