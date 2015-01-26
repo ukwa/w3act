@@ -5,7 +5,6 @@ import static play.data.Form.form;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -370,13 +369,15 @@ public class InstanceController extends AbstractController {
 							instance.save();
 						}
 					}
+				flash("message", "Import from Wayback Complete");
 				} catch (ParseException e) {
-					throw new ActException(e);
+					throw new ActException("No Instances Found");
 				}
+			} else {
+				flash("message", "No Instances Found");
 			}
     	}
 
-		flash("message", "Import from Wayback Complete");
 		if (StringUtils.isNotBlank(view)) {
 			if (view.equals("view")) {
 				return redirect(routes.TargetController.view(targetId));

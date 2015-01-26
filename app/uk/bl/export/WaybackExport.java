@@ -21,11 +21,7 @@ public enum WaybackExport {
 			context = JAXBContext.newInstance(Wayback.class);
 	        Unmarshaller unmarshaller = context.createUnmarshaller();
 	        URL url = new URL(urlValue);
-	        wayback = (Wayback) unmarshaller.unmarshal(url);
-	        System.out.println("instance: " + wayback);
-	        System.out.println("request: " + wayback.getRequest());
-	        System.out.println("results: " + wayback.getResults().getResults().size());
-	        
+	        wayback = (Wayback) unmarshaller.unmarshal(url);	        
 		} catch (JAXBException | MalformedURLException e) {
 			throw new ActException(e);
 		}
