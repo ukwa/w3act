@@ -997,7 +997,7 @@ public class TargetController extends AbstractController {
 							} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
 		//						flash("message", e.getMessage());
 		//						e.printStackTrace();
-					            ValidationError ve = new ValidationError("formUrl", e.getMessage());
+					            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
 					            filledForm.reject(ve);
 					            return newInfo(filledForm);
 					        }
@@ -1235,7 +1235,7 @@ public class TargetController extends AbstractController {
 					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
 //								flash("message", e.getMessage());
 //								e.printStackTrace();
-			            ValidationError ve = new ValidationError("formUrl", e.getMessage());
+			            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
 			            filledForm.reject(ve);
 			            return newInfo(filledForm);
 			        }
