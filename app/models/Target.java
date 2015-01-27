@@ -2081,7 +2081,7 @@ public class Target extends UrlModel {
 //		if QAStatus is granted 
 //		this.crawlPermissions;
 //		this.qaIssue;
-		return (this.hasLicenses() && this.isGranted());
+		return (this.hasLicenses());
 		
 //		if (this.qaIssue != null && this.qaIssue.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
 //			return true;
