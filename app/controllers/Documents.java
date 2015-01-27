@@ -184,15 +184,19 @@ public class Documents extends AbstractController {
 		Promise<List<AssignableArk>> arksPromise = holder.get().map(
 				new Function<WSResponse, List<AssignableArk>>() {
 					public List<AssignableArk> apply(WSResponse response) {
-						System.out.println("xml: " + response.getBody());
-						org.w3c.dom.Document xml = response.asXml();
+						Logger.debug("PII XML-Response: " + response.getBody());
 						List<AssignableArk> arks = new ArrayList<>();
-						if (xml != null) {
-							NodeList nodes = XPath.selectNodes("/pii/results/arkList/ark", xml);
-							for (int i=0; i < nodes.getLength(); i++) {
-								Node node = nodes.item(i);
-								arks.add(new AssignableArk(node.getTextContent()));
+						try {
+							org.w3c.dom.Document xml = response.asXml();
+							if (xml != null) {
+								NodeList nodes = XPath.selectNodes("/pii/results/arkList/ark", xml);
+								for (int i=0; i < nodes.getLength(); i++) {
+									Node node = nodes.item(i);
+									arks.add(new AssignableArk(node.getTextContent()));
+								}
 							}
+						} catch (Exception e) {
+							Logger.error(e.getMessage());
 						}
 						return arks;
 					}

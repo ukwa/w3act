@@ -24,7 +24,6 @@ public class MetadataExtractor {
 		Elements name = doc.select(nameSelector);		
 		if (!name.isEmpty()) {
 			document.title = name.get(0).text();
-			document.type=Document.Type.JOURNAL_ARTICLE.toString();
 			if (datePublishedSelector != null) {
 				Elements datePublished = doc.select(datePublishedSelector);
 				if (!datePublished.isEmpty()) {

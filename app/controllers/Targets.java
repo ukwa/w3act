@@ -1109,7 +1109,6 @@ public class Targets extends AbstractController {
     		if (flag.name.equals(flagName)) return;
     	}
     	target.flag_to_target.add(Flag.findByName(flagName));
-		//Ebean.saveManyToManyAssociations(target, "flag_to_target");
 		target.flags += ", " + flagName;
 		Ebean.update(target);
     }
