@@ -5,10 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Document;
 import models.User;
 import models.WatchedTarget;
-import play.data.Form;
 
 public class Users {
   

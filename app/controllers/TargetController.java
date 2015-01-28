@@ -33,6 +33,8 @@ import views.html.infomessage;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.RawSql;
+import com.avaje.ebean.RawSqlBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -282,7 +284,6 @@ public class TargetController extends AbstractController {
         String delete = getFormParam("delete");
         String request = getFormParam(Const.REQUEST);
         String archive = getFormParam(Const.ARCHIVE);
-        String journalTitle = getFormParam("journalTitle");
         boolean watched = getFormParam("watched") != null;
         Logger.info("save: " + save);
         Logger.info("delete: " + delete);
@@ -602,12 +603,22 @@ public class TargetController extends AbstractController {
             String changedTime = String.valueOf(unixTime);
             Logger.info("changed time: " + changedTime);
             
-            ExpressionList<Target> expressionList = Target.find.where()
+            String sql = " select t.id, t.field_url, t.active" +
+            		" from target t" +
+            		" inner join watched_target wt on wt.id_target = t.id";
+            RawSql rawSql = RawSqlBuilder
+            	        .parse(sql)
+            	        .columnMapping("t.id",  "nid")
+            	        .columnMapping("t.field_url", "field_url")  
+            	        .columnMapping("t.active", "active")  
+            	        .create();  
+            ExpressionList<Target> expressionList = Target.find
+            		.setRawSql(rawSql).where()
             		.eq(Const.FIELD_URL_NODE, newTarget.field_url)
             		.eq(Const.ACTIVE, true);
             if (isExisting)
-            	expressionList = expressionList.ne("id", target.nid);
-            boolean urlExists = expressionList.findRowCount() > 0;
+            	expressionList = expressionList.ne("nid", target.nid);
+            boolean urlExists = expressionList.findList().size() > 0;
             if (watched && urlExists) {
             	new FlashMessage(FlashMessage.Type.ERROR, "Can't create a watched target with an URL that is not unique.").send();
             	return info();
@@ -729,14 +740,6 @@ public class TargetController extends AbstractController {
     	        res = redirect(routes.TargetController.archiveTarget(target)); 
         	}
         }
-        else if (journalTitle != null) {
-            Logger.debug("add journal title for target title: " + getFormParam(Const.TITLE) + 
-            		" with URL: " + getFormParam(Const.FIELD_URL_NODE));
-        	if (getFormParam(Const.FIELD_URL_NODE) != null) {
-                String target = Scope.normalizeUrl(getFormParam(Const.FIELD_URL_NODE));
-    	        res = ok("work in progress: It should only be possible for saved targets to add journal titles."); 
-        	}
-        }
         return res;
     }
 	
@@ -746,9 +749,9 @@ public class TargetController extends AbstractController {
      * @param target The field URL of the target
      * @return
      */
-    public static Result archiveTarget(String target) {    	
-    	Logger.debug("archiveTarget() " + target);
-    	if (target != null && target.length() > 0) {
+    public static Result archiveTarget(String url) {    	
+    	Logger.debug("archiveTarget() " + url);
+    	if (url != null && url.length() > 0) {
     		try {
 		    	String queueHost = Play.application().configuration().getString(Const.QUEUE_HOST);
 		    	String queuePort = Play.application().configuration().getString(Const.QUEUE_PORT);
@@ -761,7 +764,10 @@ public class TargetController extends AbstractController {
 		      	Logger.debug("archiveTarget() queue name: " + queueName);
 		      	Logger.debug("archiveTarget() routing key: " + routingKey);
 		      	Logger.debug("archiveTarget() exchange name: " + exchangeName);
-	
+		      	
+		      	Target target = Target.findByUrl(url);
+		      	JsonNode jsonData = Json.toJson(target);
+		      	
 		      	ConnectionFactory factory = new ConnectionFactory();
 		    	if (queueHost != null) {
 		    		factory.setHost(queueHost);
@@ -775,7 +781,8 @@ public class TargetController extends AbstractController {
 		    	channel.exchangeDeclare(exchangeName, "direct", true);
 		    	channel.queueDeclare(queueName, true, false, false, null);
 		    	channel.queueBind(queueName, exchangeName, routingKey);
-		    	String message = target;
+		    	String message = jsonData.toString();
+		    	Logger.debug("Crawl Now message: " + message);
 		    	channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
 		    	Logger.debug(" ### sent target '" + message + "' to queue");    	    
 		    	channel.close();

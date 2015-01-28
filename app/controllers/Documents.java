@@ -1,7 +1,6 @@
 package controllers;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -42,13 +41,9 @@ import play.mvc.Result;
 import play.mvc.Security;
 import play.Play;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import uk.bl.Const;
 import views.html.documents.edit;
 import views.html.documents.list;
 import views.xml.documents.sip;

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import models.DCollection;
-import models.Document;
 import models.Flag;
 import models.Organisation;
 import models.Target;
