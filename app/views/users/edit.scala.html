@@ -1,4 +1,4 @@
-@(userForm: Form[User], admin: User, id: Long, roles: List[Role], organisations: Map[String,String], curatorRoles: List[Role])
+@(userForm: Form[User], admin: User, id: Long, roles: List[Role], organisations: Map[String,String], curatorRoles: List[Role], currentEmail: String)
 
 @import helper._
 @import bootstrap._
@@ -37,6 +37,7 @@
 	    
 			<input type="hidden" name="url" value="@userForm("url").value">
 			<input type="hidden" name="id" value="@id">
+			<input type="hidden" name="currentEmail" value="@currentEmail">
 	
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">

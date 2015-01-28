@@ -66,7 +66,7 @@ public class User extends ActModel {
 	public Organisation organisation;
 	
 	@JsonIgnore
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "role_user", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
 	public List<Role> roles = new ArrayList<Role>();

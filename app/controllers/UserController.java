@@ -188,10 +188,11 @@ public class UserController extends AbstractController {
 		List<Role> curatorRoles = curator.roles;
 		Map<String,String> organisations = Organisation.options();
 		Logger.debug("roles: " + curator.roles.size());
-        return ok(edit.render(userForm, user, id, roles, organisations, curatorRoles)); 
+		String currentEmail = curator.email;
+        return ok(edit.render(userForm, user, id, roles, organisations, curatorRoles, currentEmail)); 
     }
 
-    public static Result info(Form<User> form, Long id) {
+    public static Result info(Form<User> form, Long id, String currentEmail) {
     	User user = User.findByEmail(request().username());
 		User curator = User.findById(id);
     	List<Role> roles = null;
@@ -202,7 +203,7 @@ public class UserController extends AbstractController {
     	}
 		List<Role> curatorRoles = curator.roles;
 		Map<String,String> organisations = Organisation.options();
-		return badRequest(edit.render(form, user, id, roles, organisations, curatorRoles));
+		return badRequest(edit.render(form, user, id, roles, organisations, curatorRoles, currentEmail));
     }
     
 	public static Result newInfo(Form<User> form) {
@@ -230,6 +231,13 @@ public class UserController extends AbstractController {
 		        Form<User> filledForm = form(User.class).bindFromRequest();
 		        if(filledForm.hasErrors()) {
 	        		Logger.debug("errors: " + filledForm.errors());
+		            return newInfo(filledForm);
+		        }
+		        
+		        User user = User.findByEmail(filledForm.get().email);
+		        if (user != null) {
+		            ValidationError ve = new ValidationError("email", "User already exists with email");
+		            filledForm.reject(ve);
 		            return newInfo(filledForm);
 		        }
 		        
@@ -282,6 +290,7 @@ public class UserController extends AbstractController {
     	Logger.debug("hasErrors: " + filledForm.hasErrors());
 
     	String action = requestData.get("action");
+        String currentEmail = requestData.get("currentEmail");
 
     	Logger.debug("action: " + action);
     	
@@ -289,20 +298,18 @@ public class UserController extends AbstractController {
         	if (action.equals("save")) {    
 		        if (filledForm.hasErrors()) {
 		        	Logger.debug("hasErrors: " + filledForm.errors());
-		            return info(filledForm, id);
+		            return info(filledForm, id, currentEmail);
 		        }
 		        
 		    	String oldPassword = requestData.get("oldpassword");
 		    	String newPassword = requestData.get("newpassword");
-
-		    	Logger.debug(oldPassword + " " + newPassword);
 		    	
 	            if (StringUtils.isEmpty(newPassword) != StringUtils.isEmpty(oldPassword)) {
 	            	Logger.debug("To change password, both password fields need to be filled in.");
 //		  			flash("message", "The password field is empty.");
     	            ValidationError e = new ValidationError("password", "To change password, both password fields need to be filled in.");
     	            filledForm.reject(e);
-		  			return info(filledForm, id);
+		  			return info(filledForm, id, currentEmail);
 	            } 
 
 	            /**
@@ -316,7 +323,7 @@ public class UserController extends AbstractController {
 	            		if (!isValidOldPassword) {
 	                    	Logger.debug("The old password is not correct.");
 	        	  			flash("message", "The old password is not correct.");
-				  			return info(filledForm, id);
+				  			return info(filledForm, id, currentEmail);
 	        	  		} else {
 	        	  			filledForm.get().password = PasswordHash.createHash(newPassword);
 	        	  		}
@@ -326,6 +333,18 @@ public class UserController extends AbstractController {
 						Logger.debug("change password - key specification error: " + e);
 					}
 	    	    }		        
+		        
+	            // need to check the previous password
+	            String email = filledForm.get().email;
+	            Logger.debug("email: " + currentEmail + ", " + email);
+	            if (!currentEmail.equalsIgnoreCase(email)) {
+			        User user = User.findByEmail(email);
+			        if (user != null) {
+			            ValidationError ve = new ValidationError("email", "User already exists with email");
+			            filledForm.reject(ve);
+			            return info(filledForm, id, currentEmail);
+			        }
+	            }
 		        
 			    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
 
