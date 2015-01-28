@@ -196,7 +196,7 @@ public class Documents extends AbstractController {
 								}
 							}
 						} catch (Exception e) {
-							Logger.error(e.getMessage());
+							Logger.error("Can't get ARKs from the PII server: " + e.getMessage());
 						}
 						return arks;
 					}

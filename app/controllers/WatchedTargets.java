@@ -68,9 +68,14 @@ public class WatchedTargets extends AbstractController {
     
     public static Result crawl(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
-    	CrawlActor.crawlAndConvertDocuments(watchedTarget, 3);
+    	CrawlActor.crawlAndConvertDocuments(watchedTarget, false, null, 3);
     	return redirect(routes.Documents.list("" + watchedTarget.user.uid, "" + id, "",
     			Document.Status.NEW.toString(), 0, "title", "asc", ""));
+    }
+    
+    public static void setWaybackTimestamp(WatchedTarget watchedTarget, String waybackTimestamp) {
+    	watchedTarget.waybackTimestamp = waybackTimestamp;
+    	Ebean.update(watchedTarget);
     }
     
     @BodyParser.Of(BodyParser.Json.class)

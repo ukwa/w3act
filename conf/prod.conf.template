@@ -59,5 +59,8 @@ queue_name=w3actqueue
 routing_key=w3actroutingkey
 exchange_name=w3actexchange
 
+#Wayback-API endpoint
+wayback_url="http://opera.bl.uk:8080/wayback/"
+
 #Pii endpoint
 pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc?arks=3"

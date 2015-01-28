@@ -18,22 +18,32 @@ import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import models.Document;
 import models.WatchedTarget;
 import play.Logger;
+import play.Play;
+import play.libs.F.Function;
+import play.libs.F.Promise;
+import play.libs.XPath;
+import play.libs.ws.WS;
+import play.libs.ws.WSRequestHolder;
+import play.libs.ws.WSResponse;
 
 public class Crawler {
 	private Set<String> knownSites;
 	private List<Document> foundDocuments;
 	private Integer maxDocuments;
 	
-	private static boolean crawlWayback = false;
-	private static String waybackUrl = "http://www.webarchive.org.uk/wayback/archive/";
+	private boolean crawlWayback = false;
+	private static String waybackUrl = Play.application().configuration().getString("wayback_url");
 	
 	private Map<String, MetadataExtractor> metadataExtractors;
 	
-	public Crawler() {
+	public Crawler(boolean crawlWayback) {
+		this.crawlWayback = crawlWayback;
 		metadataExtractors = new HashMap<>();
 		metadataExtractors.put("www.ifs.org.uk", new MetadataExtractor("*[itemtype=http://schema.org/CreativeWork] *[itemprop=name]",
 				"*[itemtype=http://schema.org/CreativeWork] *[itemprop=datePublished]",
@@ -41,13 +51,52 @@ public class Crawler {
 		metadataExtractors.put("www.gov.uk", new MetadataExtractor("h1", null, null));
 	}
 	
-	public List<Document> crawlForDocuments(WatchedTarget watchedTarget, Integer maxDocuments) {
+	private static class CaptureRequestFunction implements Function<WSResponse, List<String>> {
+		private String waybackTimestamp;
+		
+		public CaptureRequestFunction(String waybackTimestamp) {
+			this.waybackTimestamp = waybackTimestamp;
+		}
+		public List<String> apply(WSResponse response) {
+			List<String> timestamps = new ArrayList<>();
+			try {
+				org.w3c.dom.Document xml = response.asXml();
+				if (xml != null) {
+					NodeList nodes = XPath.selectNodes("/wayback/results/result/capturedate", xml);
+					for (int i=0; i < nodes.getLength(); i++) {
+						Node node = nodes.item(i);
+						if (waybackTimestamp == null || node.getTextContent().compareTo(waybackTimestamp) > 0)
+							timestamps.add(node.getTextContent());
+					}
+				}
+			} catch (Exception e) {
+				Logger.error("Can't get timestamps via the Wayback API: " + e.getMessage());
+			}
+			return timestamps;
+		}
+	}
+	
+	public static List<String> getNewerCrawlTimes(WatchedTarget watchedTarget) {
+		String captureRequest = waybackUrl + "xmlquery?type=urlquery" +
+				"&url=" + watchedTarget.target.field_url;
+		if (watchedTarget.waybackTimestamp != null)
+			captureRequest += "&startdate=" + watchedTarget.waybackTimestamp;
+		Logger.debug("Capture Request: " + captureRequest);
+		
+		WSRequestHolder holder = WS.url(captureRequest);
+
+		Promise<List<String>> timestampPromise = holder.get().map(
+				new CaptureRequestFunction(watchedTarget.waybackTimestamp));
+		return timestampPromise.get(5000);
+	}
+	
+	public List<Document> crawlForDocuments(WatchedTarget watchedTarget, String crawlTime, Integer maxDocuments) {
 		knownSites = new HashSet<>();
 		foundDocuments = new ArrayList<>();
 		this.maxDocuments = maxDocuments;
 		
 		String seedUrl = crawlWayback ?
-				waybackReplayUrl(watchedTarget.target.field_url, "20140522210454") :
+				waybackReplayUrl(watchedTarget.target.field_url, crawlTime) :
 				watchedTarget.target.field_url;
 		knownSites.add(seedUrl);
 		Set<Link> fringe = new HashSet<>();

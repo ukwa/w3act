@@ -28,15 +28,15 @@ public class Global extends GlobalSettings {
     		DataImport.INSTANCE.insert(!omitInstances);
     	}
     	
-    	/*ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
+    	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
 		Akka.system().scheduler().schedule(
 				Duration.create(0, TimeUnit.MILLISECONDS), //Initial delay 0 milliseconds
-				Duration.create(12, TimeUnit.HOURS),     //Frequency 12 hours
+				Duration.create(24, TimeUnit.HOURS),     //Frequency 24 hours
 				crawlActor,
 				new CrawlActor.StartMessage(),
 				Akka.system().dispatcher(),
 				null
-    	);*/
+    	);
     }
     
     public Promise<Result> onError(RequestHeader request, Throwable t) {

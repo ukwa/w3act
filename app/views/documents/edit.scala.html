@@ -66,9 +66,19 @@
 			var authorNumber = 1;
 			while (authorNumber < 3 && document.getElementById("author" + authorNumber + "Fn").value)
 				authorNumber++;
-			var spacePosition = author.indexOf(" ");
-			document.getElementById("author" + authorNumber + "Fn").value = author.substring(0, spacePosition);
-			document.getElementById("author" + authorNumber + "Ln").value = author.substring(spacePosition + 1);
+			var firstName;
+			var lastName;
+			var commaPosition = author.indexOf(",");
+			if(commaPosition > 0) {
+				lastName = author.substring(0, commaPosition).trim();
+				firstName = author.substring(commaPosition + 1).trim();
+			} else {
+				var spacePosition = author.indexOf(" ");
+				firstName = author.substring(0, spacePosition).trim();
+				lastName = author.substring(spacePosition + 1).trim();
+			}
+			document.getElementById("author" + authorNumber + "Fn").value = firstName;
+			document.getElementById("author" + authorNumber + "Ln").value = lastName;
 			$("#selection_menu").css({display: "none"});
 		}
 

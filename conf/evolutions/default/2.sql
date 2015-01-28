@@ -4,7 +4,8 @@ create table watched_target (
   id			bigint primary key,
   id_target		bigint references target (id),
   id_creator		bigint references creator (id),
-  document_url_scheme	varchar(255)
+  document_url_scheme	varchar(255),
+  wayback_timestamp	varchar(255)
 );
 
 create table journal_title (

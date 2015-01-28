@@ -10,12 +10,12 @@ import com.avaje.ebean.Ebean;
 
 import controllers.Documents;
 import controllers.Targets;
+import controllers.WatchedTargets;
 import models.Document;
-import models.Flag;
 import models.WatchedTarget;
 import akka.actor.UntypedActor;
 import play.Logger;
-import play.libs.F.*;
+import play.libs.F.Function0;
 import play.libs.F.Promise;
 
 public class CrawlActor extends UntypedActor {
@@ -24,27 +24,35 @@ public class CrawlActor extends UntypedActor {
     
 	private class CrawlFunction implements Function0<List<Document>> {
 		
-		WatchedTarget watchedTarget;
+		private WatchedTarget watchedTarget;
+		private String crawlTime;
 		
-		public CrawlFunction(WatchedTarget watchedTarget) {
+		public CrawlFunction(WatchedTarget watchedTarget, String crawlTime) {
 			this.watchedTarget = watchedTarget;
+			this.crawlTime = crawlTime;
 		}
 		
 		public List<Document> apply() {
 			Logger.info("Crawling " + watchedTarget.target.field_url);
-			crawlAndConvertDocuments(watchedTarget, null);
+			crawlAndConvertDocuments(watchedTarget, true, crawlTime, null);
 			Logger.info("Finished crawling " + watchedTarget.target.field_url);
 			return null;
 		}
 
 	}
 	
-	public static List<Document> crawlAndConvertDocuments(WatchedTarget watchedTarget, Integer maxDocuments) {
-		List<Document> documentList = (new Crawler()).crawlForDocuments(watchedTarget, maxDocuments);
+	public static List<Document> crawlAndConvertDocuments(WatchedTarget watchedTarget,
+			boolean crawlWayback, String crawlTime, Integer maxDocuments) {
+		List<Document> documentList = (new Crawler(crawlWayback)).crawlForDocuments(watchedTarget, crawlTime, maxDocuments);
 		List<Document> newDocumentList = new ArrayList<>();
 		if (documentList.isEmpty()) {
 			Targets.raiseFlag(watchedTarget.target, "No Documents Found");
 		} else {
+			if (crawlWayback &&
+					(watchedTarget.waybackTimestamp == null ||
+					crawlTime.compareTo(watchedTarget.waybackTimestamp) > 0)) {
+				WatchedTargets.setWaybackTimestamp(watchedTarget, crawlTime);
+			}
 			for (Document document : documentList)
 				if (Document.find.where().eq("document_url", document.documentUrl).findRowCount() == 0)
 					newDocumentList.add(document);
@@ -83,7 +91,9 @@ public class CrawlActor extends UntypedActor {
 			Logger.info("Starting Crawl");
 			List<WatchedTarget> watchedTargets = WatchedTarget.find.all();
 			for (WatchedTarget watchedTarget : watchedTargets) {
-				Promise.promise(new CrawlFunction(watchedTarget));
+				List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
+				for (String crawlTime : newerCrawlTimes)
+					Promise.promise(new CrawlFunction(watchedTarget, crawlTime));
 			}
 		}
 	}

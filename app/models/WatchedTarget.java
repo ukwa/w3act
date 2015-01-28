@@ -10,12 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
-import com.avaje.ebean.RawSql;
-import com.avaje.ebean.RawSqlBuilder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import play.db.ebean.Model;
@@ -35,11 +32,10 @@ public class WatchedTarget extends Model {
     @OneToMany(mappedBy="watchedTarget", cascade=CascadeType.REMOVE) @JsonIgnore
     public List<JournalTitle> journalTitles = new ArrayList<>();
 	public String documentUrlScheme;
+	public String waybackTimestamp;
 	public String getUrl() { return ""+id; }
 	public String getName() { return target.field_url; }
 	public static final String SEARCH_FIELD = "target.field_url";
-	//@Transient
-	//public int documentCount;
 	
 	public static final Model.Finder<Long, WatchedTarget> find = new Model.Finder<>(Long.class, WatchedTarget.class);
 	
