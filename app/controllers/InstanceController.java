@@ -487,36 +487,40 @@ public class InstanceController extends AbstractController {
 		return badRequest(newForm.render(form, user, qaIssues, qaIssueCategories, authors, targetId));
 	}
 	
+	@BodyParser.Of(value = BodyParser.FormUrlEncoded.class, maxLength = 1024 * 1024)
 	public static Result update(Long id) {
+		Logger.debug("update");
 		RequestBody body = request().body();
-//		Map<String,String[]> map = body.asFormUrlEncoded();
-		Logger.debug("body: " + body);
-    	DynamicForm requestData = form().bindFromRequest();
-		Logger.debug("requestData: " + requestData);
-        Form<Instance> filledForm = form(Instance.class).bindFromRequest();
-    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
-    	Logger.debug("errors: " + filledForm.errors());
-
-    	String action = requestData.get("action");
-
-    	Logger.debug("action: " + action);
-    	
-        if (StringUtils.isNotEmpty(action)) {
-        	if (action.equals("save")) {
-                if (filledForm.hasErrors()) {
-                	Logger.debug("hasErrors: " + filledForm.errors());
-                    return info(filledForm, id);
-                }		                		
-		        filledForm.get().update(id);
-		        flash("message", "Instance " + filledForm.get().title + " has been updated");
-		        return redirect(routes.InstanceController.view(filledForm.get().id));
-        	} else if (action.equals("delete")) {
-            	Instance instance = Instance.findById(id);
-		        flash("message", "Instance " + filledForm.get().title + " has been deleted");
-            	instance.delete();
-        		return redirect(routes.InstanceController.index()); 
-        	}
-        }
+		if(body.isMaxSizeExceeded()) {
+			return badRequest("Too much data!");
+		} else {
+	    	DynamicForm requestData = form().bindFromRequest();
+			Logger.debug("requestData: " + requestData);
+	        Form<Instance> filledForm = form(Instance.class).bindFromRequest();
+	    	Logger.debug("hasGlobalErrors: " + filledForm.hasGlobalErrors());
+	    	Logger.debug("errors: " + filledForm.errors());
+	
+	    	String action = requestData.get("action");
+	
+	    	Logger.debug("action: " + action);
+	    	
+	        if (StringUtils.isNotEmpty(action)) {
+	        	if (action.equals("save")) {
+	                if (filledForm.hasErrors()) {
+	                	Logger.debug("hasErrors: " + filledForm.errors());
+	                    return info(filledForm, id);
+	                }		                		
+			        filledForm.get().update(id);
+			        flash("message", "Instance " + filledForm.get().title + " has been updated");
+			        return redirect(routes.InstanceController.view(filledForm.get().id));
+	        	} else if (action.equals("delete")) {
+	            	Instance instance = Instance.findById(id);
+			        flash("message", "Instance " + filledForm.get().title + " has been deleted");
+	            	instance.delete();
+	        		return redirect(routes.InstanceController.index()); 
+	        	}
+	        }
+		}
         return null;
 	}
 	

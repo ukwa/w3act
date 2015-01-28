@@ -91,6 +91,9 @@ public class User extends ActModel {
     public String edit_url;
     
     @Transient
+    public Role role;
+    
+    @Transient
     @JsonIgnore
     @JsonProperty
     public String last_access;

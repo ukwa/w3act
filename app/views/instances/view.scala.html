@@ -12,6 +12,8 @@
 	   <li><a href="@routes.InstanceController.edit(instance.id)">Edit</a></li>
 	</ul>
 	
+	@warningmessage(flash)
+	
 	<div class="tab-content padding-20">
 	   	<ol class="breadcrumb">
 			<li><a href="@routes.TargetController.index()">Targets</a></li>
