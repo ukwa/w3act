@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PLAY_HOME=
+PLAY_HOME=/opt/play
 
 if [ -z "$PLAY_HOME" ];then
     echo "PLAY_HOME NEEDS TO BE SET"
