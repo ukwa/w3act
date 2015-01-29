@@ -119,7 +119,7 @@
 					@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
 					@header("documentUrl", "Document", currentSortBy, currentOrder, link)
 					@if(status != Document.Status.SUBMITTED) {
-						<th>@{if(status == Document.Status.NEW) "Ignore" else "Restore"}</th>
+						<th>Action</th>
 					} else {
 						<th>SIP</th>
 					}

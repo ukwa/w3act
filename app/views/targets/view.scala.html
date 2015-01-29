@@ -867,14 +867,23 @@
 					</div>
 		     	</div>
 		     @if(target.watchedTarget != null) {
-			     <table>
-					@for(journalTitle <- target.watchedTarget.journalTitles) {
-						<tr>
-							<td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
-						</tr>
-					}
-				</table>
-				<a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">New Journal Title</a>
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Journal Titles</label>
+						    <div class="col-sm-6">
+		 						<table>
+									@for(journalTitle <- target.watchedTarget.journalTitles) {
+										<tr>
+											<td><a href="@routes.JournalTitles.edit(journalTitle.id)">@journalTitle.title</a></td>
+										</tr>
+									}
+								</table>
+								<a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">New Journal Title</a>
+							</div>
+						</div>
+					</div>
+		     	</div>
 			}
 		</div>
 	</div>

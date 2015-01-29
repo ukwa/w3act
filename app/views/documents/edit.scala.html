@@ -7,7 +7,7 @@
 @import templates.select
 @import templates.splitInputText
 
-@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+@implicitField = @{ helper.FieldConstructor(templates.fieldConstructorTemplate.f) }
 
 @scripts = {
 	<script src="@routes.Assets.at("javascripts/parse-date.js")" type="text/javascript"></script>

@@ -4,7 +4,7 @@
 @import helper.inputText
 @import helper.options
 @import helper.select
-@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+@implicitField = @{ helper.FieldConstructor(templates.fieldConstructorTemplate.f) }
 
 @scripts = {
 	<script type="text/javascript">
@@ -105,7 +105,7 @@
 			}
 			
 			<input type="submit" class="btn primary" value="Save">
-			@if(form("id").value != null) {
+			@if(form("id").value != null && form("id").value != "") {
 				<input type="submit" name="delete" class="btn primary" value="Delete">
 			}
 		</div>
