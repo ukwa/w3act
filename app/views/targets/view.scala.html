@@ -643,7 +643,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
 					    <div class="col-sm-6">
-			                @if(target.professionalJudgement != null) {             
+			                @if(target.professionalJudgement != null && target.professionalJudgement) {             
 				                yes
 			                } else {
 				                no
