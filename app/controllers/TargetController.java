@@ -603,22 +603,12 @@ public class TargetController extends AbstractController {
             String changedTime = String.valueOf(unixTime);
             Logger.info("changed time: " + changedTime);
             
-            String sql = " select t.id, t.field_url, t.active" +
-            		" from target t" +
-            		" inner join watched_target wt on wt.id_target = t.id";
-            RawSql rawSql = RawSqlBuilder
-            	        .parse(sql)
-            	        .columnMapping("t.id",  "nid")
-            	        .columnMapping("t.field_url", "field_url")  
-            	        .columnMapping("t.active", "active")  
-            	        .create();  
-            ExpressionList<Target> expressionList = Target.find
-            		.setRawSql(rawSql).where()
+            ExpressionList<Target> expressionList = Target.find.where()
             		.eq(Const.FIELD_URL_NODE, newTarget.field_url)
             		.eq(Const.ACTIVE, true);
-            if (isExisting)
-            	expressionList = expressionList.ne("nid", target.nid);
-            boolean urlExists = expressionList.findList().size() > 0;
+            		if (isExisting)
+            		expressionList = expressionList.ne("id", target.nid);
+            boolean urlExists = expressionList.findRowCount() > 0;
             if (watched && urlExists) {
             	new FlashMessage(FlashMessage.Type.ERROR, "Can't create a watched target with an URL that is not unique.").send();
             	return info();
