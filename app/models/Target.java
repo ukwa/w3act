@@ -325,7 +325,7 @@ public class Target extends Model {
     public static List<Target> findAllforUser(String url) {
     	Logger.info("findAllforUser() url: " + url);
     	List<Target> res = new ArrayList<Target>();
-        ExpressionList<Target> ll = find.where().eq(Const.AUTHOR, url);
+        ExpressionList<Target> ll = find.where().eq(Const.ACTIVE, true).eq(Const.AUTHOR, url);
         res = ll.findList();
     	Logger.info("findAllforUser() number: " + res.size());
         return res;

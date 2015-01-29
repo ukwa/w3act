@@ -131,7 +131,7 @@ GET		/journaltitles/:journaltitle		controllers.JournalTitles.edit(journaltitle: 
 POST	/journaltitles						controllers.JournalTitles.save(toDocument: Boolean ?= false)
 
 GET    	/watchedtargets/filterbyjson/:url	controllers.WatchedTargets.filterByJson(url)
-GET		/watchedtargets/list				controllers.WatchedTargets.list(user ?= "", p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET		/watchedtargets/list				controllers.WatchedTargets.list(user ?= "", children: Boolean ?= false, p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 GET		/watchedtargets/:watchedtarget		controllers.WatchedTargets.view(watchedtarget: Long)
 GET		/watchedtargets/:watchedtarget/journaltitles		controllers.JournalTitles.addJournalTitle(watchedtarget: Long, toDocument: Boolean ?= false)
 POST	/watchedtargets/crawl				controllers.WatchedTargets.crawl(watchedtarget: Long)

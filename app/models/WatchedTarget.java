@@ -11,10 +11,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.avaje.ebean.Expr;
+import com.avaje.ebean.Expression;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import play.Logger;
 import play.db.ebean.Model;
 
 @Entity
@@ -53,12 +56,27 @@ public class WatchedTarget extends Model {
 		user = User.findByUrl(target.author);
 		this.documentUrlScheme = documentUrlScheme;
 	}
-	public static Page<WatchedTarget> page(Long userId, int page, int pageSize, String sortBy, String order, String filter) {
+	public static Page<WatchedTarget> page(Long userId, boolean children,
+			int page, int pageSize, String sortBy, String order, String filter) {
 		
 		ExpressionList<WatchedTarget> el = find.where();
 		
-		if (userId != null)
-    		el = el.eq("id_creator", userId);
+		if (userId != null) {
+			if (children) {
+				List<Target> ownedTargets = Target.findAllforUser(User.find.byId(userId).url);
+				Expression expr = Expr.eq("id_creator", userId);
+				for (Target ownedTarget : ownedTargets) {
+					String[] urlParts = ownedTarget.field_url.split("//", 2);
+					String urlWithoutProtocol = urlParts.length == 2 ?
+							ownedTarget.field_url.split("//", 2)[1] :
+							ownedTarget.field_url;
+					expr = Expr.or(Expr.icontains("target.field_url", urlWithoutProtocol), expr);
+				}
+				el = el.add(expr);
+			} else {
+				el = el.eq("id_creator", userId);
+			}
+		}
 		
         return el.icontains(SEARCH_FIELD, filter)
         		.orderBy(sortBy + " " + order)

@@ -31,15 +31,15 @@ public class WatchedTargets extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on Documents
      */
-    public static Result list(String userString, int pageNo, String sortBy, String order, String filter) {
-        return renderList(userString, pageNo, sortBy, order, filter, true);
+    public static Result list(String userString, boolean children, int pageNo, String sortBy, String order, String filter) {
+        return renderList(userString, children, pageNo, sortBy, order, filter, true);
     }
     
     public static Result overview(int pageNo, String sortBy, String order) {
-    	return renderList("" + User.findByEmail(request().username()).uid, pageNo, sortBy, order, "", false);
+    	return renderList("" + User.findByEmail(request().username()).uid, true, pageNo, sortBy, order, "", false);
     }
     
-    public static Result renderList(String userString, int pageNo, String sortBy, String order, String filter, boolean filters) {
+    public static Result renderList(String userString, boolean children, int pageNo, String sortBy, String order, String filter, boolean filters) {
     	Logger.info("WatchedTargets.list()");
     	
     	Long userId = userString.isEmpty() || userString.equals("null") ?
@@ -48,9 +48,9 @@ public class WatchedTargets extends AbstractController {
         return ok(
         	list.render(
         			User.findByEmail(request().username()),
-        			filterForm(userId),
+        			filterForm(userId, children),
         			filter,
-        			WatchedTarget.page(userId, pageNo, 10, sortBy, order, filter),
+        			WatchedTarget.page(userId, children, pageNo, 10, sortBy, order, filter),
         			sortBy,
         			order,
         			filters)
@@ -59,7 +59,7 @@ public class WatchedTargets extends AbstractController {
     
     public static Result view(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
-		return redirect(routes.WatchedTargets.list("" + watchedTarget.user.uid, 0, "title", "asc", watchedTarget.target.title));
+		return redirect(routes.WatchedTargets.list("" + watchedTarget.user.uid, true, 0, "title", "asc", watchedTarget.target.title));
 	}
     
     public static Result crawl(Long id) {
@@ -85,9 +85,10 @@ public class WatchedTargets extends AbstractController {
         return ok(jsonData);
     }
     
-    public static DynamicForm filterForm(Long userId) {
+    public static DynamicForm filterForm(Long userId, boolean children) {
     	Map<String,String> filterData = new HashMap<>();
     	filterData.put("user", "" + userId);
+    	filterData.put("children", "" + children);
     	return Form.form().bind(filterData);
     }
 }

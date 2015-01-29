@@ -767,6 +767,8 @@ public class TargetController extends AbstractController {
 		      	
 		      	Target target = Target.findByUrl(url);
 		      	JsonNode jsonData = Json.toJson(target);
+		      	String message = jsonData.toString();
+		      	Logger.debug("Crawl Now message: " + message);
 		      	
 		      	ConnectionFactory factory = new ConnectionFactory();
 		    	if (queueHost != null) {
@@ -781,8 +783,6 @@ public class TargetController extends AbstractController {
 		    	channel.exchangeDeclare(exchangeName, "direct", true);
 		    	channel.queueDeclare(queueName, true, false, false, null);
 		    	channel.queueBind(queueName, exchangeName, routingKey);
-		    	String message = jsonData.toString();
-		    	Logger.debug("Crawl Now message: " + message);
 		    	channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
 		    	Logger.debug(" ### sent target '" + message + "' to queue");    	    
 		    	channel.close();

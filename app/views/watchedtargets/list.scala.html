@@ -1,6 +1,7 @@
 @(user: User, filterForm: DynamicForm, searchstr: String, currentPage: com.avaje.ebean.Page[WatchedTarget], currentSortBy: String, currentOrder: String, filters: Boolean)
 
 @import helper.options
+@import templates.checkbox
 @import templates.select
 @import templates.inputText
 
@@ -37,7 +38,7 @@
         }
     }
     
-    routes.WatchedTargets.list(filterForm("user").value, newPage, sortBy, order, searchstr)
+    routes.WatchedTargets.list(filterForm("user").value, new Boolean(filterForm("children").value), newPage, sortBy, order, searchstr)
     
 }
 
@@ -59,7 +60,7 @@
 		@if(filters) {
 			<div id="forms">
 	   			@warningmessage(flash)
-	   			@helper.form(action=routes.WatchedTargets.list(), 'class -> "form-inline") {
+	   			@helper.form(action=routes.WatchedTargets.list()) {
 		   			<div class="input-group">
 		   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   					<input type="hidden" name="s" value="@currentSortBy">
@@ -74,6 +75,11 @@
 						@select(filterForm("user"), options(Users.getUsers), true, '_label -> "Curator",
 							'onchange -> "this.form.submit()"
 						)
+						@if(filterForm("user").value != "null") {
+							@checkbox(filterForm("children"), true, '_label -> "Include Child Targets",
+								'onchange -> "this.form.submit()"
+							)
+						}
 					</div>
 					<div style="clear: both"></div>
 				}
@@ -87,6 +93,7 @@
 				<tr>
 					@header("target.title", "Title", currentSortBy, currentOrder, link)
 					@header("target.field_url", "URL", currentSortBy, currentOrder, link)
+					@header("user", "Curator", currentSortBy, currentOrder, link)
 					<th>Documents</th>
 					<th>Live Crawl</th>
 				</tr>
@@ -96,6 +103,7 @@
 				<tr>
 					<td><a href="@routes.Targets.view(watchedTarget.target.url)">@watchedTarget.target.title</a></td>
 					<td><a href="@watchedTarget.target.field_url" target="_blank">@watchedTarget.target.field_url</a></td>
+					<td><a href="@routes.Curators.view(watchedTarget.user.url)">@watchedTarget.user.name</a></td>
 					<td><a href="@routes.Documents.list("", "" + watchedTarget.id)">@watchedTarget.documents.size</a></td>
 					<td>
 						@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
