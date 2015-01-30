@@ -147,10 +147,10 @@
 	</div>  
 	
 	<ul class="nav nav-tabs">
-		@if(id != null) {
-			<li><a onclick="switchPage(); return false;" href="@routes.TargetController.view(id)">View</a></li>
-	   	}
-	   	@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) || (user.hasRole("user") && targetForm("authorUser.id").value != null && user.id == Long.valueOf(targetForm("authorUser.id").value))) {
+		<li><a onclick="switchPage(); return false;" href="@routes.TargetController.view(id)">View</a></li>
+	   	@if((user.hasRole("sys_admin") || user.hasRole("archivist")) 
+	   		|| (user.hasRole("user") && targetForm("authorUser.id").value != null 
+	   		&& user.id == Long.valueOf(targetForm("authorUser.id").value))) {
 			<li class="active"><a href="#">Edit</a></li> 
 			<li><a href="@routes.InstanceController.importFromWayback(id, "edit")" id="importWayback">Get New Instance(s)</a></li>
 	   	}
@@ -200,21 +200,19 @@
 		<input type="hidden" id="tabstatus" name="tabstatus" value="@tabStatus">
 		<input type="hidden" id="id" name="id" value="@id">
 	
-		@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {     			     		
-			<div class="row padding-10 pull-right">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="btn-group">
-					    @if((user.hasRole("user") && !user.hasRole("expert_user") && !user.hasRole("archivist") && !user.hasRole("sys_admin")) && (targetForm("authorUser.id").value != null && user.id == Long.valueOf(targetForm("authorUser.id").value))) { 
-							<button type="submit" class="btn btn-primary" name="action" id="edit-save" value="save" disabled>Save</button>
-							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
-						} else {
-							<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
-							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
-						}
-			       </div>
-				</div>
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+				    @if((user.hasRole("user") || user.hasRole("expert_user")) && (targetForm("authorUser.id").value != null && user.id != Long.valueOf(targetForm("authorUser.id").value))) { 
+						<button type="submit" class="btn btn-primary" name="action" id="edit-save" value="save" disabled>Save</button>
+						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
+					} else {
+						<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
+						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete">Delete</button>
+					}
+		       </div>
 			</div>
-		}
+		</div>
 
 		<div id="myTabContent" class="tab-content">
 		
@@ -438,16 +436,8 @@
 						<div class="form-group">
 			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || (targetForm("authorUser.id").value != null && user.id == Long.valueOf(targetForm("authorUser.id").value))) {
-								  	<div id="subjectTree"></div>
-							  		<input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
-							  	} else {
-									@if(targetForm("subjectIdsText").value != null && targetForm("subjectIdsText").value.length > 0) {
-										@targetForm("subjectIdsText").value
-									} else {
-										None
-	  								}
-		     	              	}	
+							  	<div id="subjectTree"></div>
+						  		<input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
 							</div>
 						</div>
 					</div>
@@ -458,16 +448,8 @@
 						<div class="form-group">
 			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
 						    <div class="col-sm-6">
-			    				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
-							  		<div id="collectionTree"></div>
-							  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionSelect").value">
-							  	} else {
-									@if(targetForm("collectionIdsText").value != null && targetForm("collectionIdsText").value.length > 0) {
-										@targetForm("collectionIdsText").value
-									} else {
-										None
-	  								}
-		     	              	}	   
+						  		<div id="collectionTree"></div>
+						  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@targetForm("collectionSelect").value">
 							</div>
 						</div>
 					</div>
@@ -1099,13 +1081,10 @@
 			</div>
 		</div>
 		
-		@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
-		     			     		
 			<div class="row padding-10 pull-right">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="btn-group">
-					    @if(user.hasRole("user") && !user.hasRole("expert_user") && !user.hasRole("archivist") && !user.hasRole("sys_admin") 
-					    	&& (targetForm("authorUser.id").value != null && user.id == Long.valueOf(targetForm("authorUser.id").value))) { 
+					    @if((user.hasRole("user") || user.hasRole("expert_user")) && (targetForm("authorUser.id").value != null && user.id != Long.valueOf(targetForm("authorUser.id").value))) { 
 							<button type="submit" class="btn btn-primary" name="action" id="edit-save" value="save" disabled>Save</button>
 							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');" id="delete" disabled>Delete</button>
 						} else {
@@ -1118,4 +1097,3 @@
 			
 		}
 	}
-}
