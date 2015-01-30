@@ -88,7 +88,10 @@
 								<li><a href="@routes.OrganisationController.index()">Organisations</a></li>
 								<li><a href="@routes.UserController.index()">Curators</a></li>
 								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-								<li><a href="@routes.RoleController.index()">Roles</a></li>
+									<li><a href="@routes.RoleController.index()">Roles</a></li>
+								}
+								@if(user.hasRole("sys_admin")) {
+									<li><a href="@routes.ResetController.showEmailForm()">Reset User Passwords</a></li>
 								}
 								<li><a href="@routes.PasswordController.edit()">Change Password</a></li>
 							</ul>

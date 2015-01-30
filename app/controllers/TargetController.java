@@ -979,7 +979,7 @@ public class TargetController extends AbstractController {
 			  	}
 			  	
 		        String fieldUrl = requestData.get("formUrl");
-		        
+		        Logger.debug("fieldUrl: " + fieldUrl);
 		        if (StringUtils.isNotEmpty(fieldUrl)) {
 		            String[] urls = fieldUrl.split(",");
 		            List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
@@ -1005,7 +1005,7 @@ public class TargetController extends AbstractController {
 		            	fieldUrls.add(fu);
 		            }
 		            filledForm.get().fieldUrls = fieldUrls;
-		            Logger.debug("fieldUrls: " + fieldUrls);
+		            Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
 		        }        
 		        
 		        String crawlStartDate = requestData.get("crawlStartDateText");
