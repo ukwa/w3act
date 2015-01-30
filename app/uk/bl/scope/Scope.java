@@ -766,6 +766,7 @@ public enum Scope {
 	
 	//	UK Domain 
 	public boolean isTopLevelDomain(Target target) throws WhoisException, MalformedURLException, URISyntaxException {
+		// i.e. terry.com and terry.co.uk - return false;
         for (FieldUrl fieldUrl : target.fieldUrls) {
             URL uri = new URI(fieldUrl.url).normalize().toURL();
 			String url = uri.toExternalForm();

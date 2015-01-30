@@ -1,16 +1,18 @@
 import static org.junit.Assert.*;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import models.FieldUrl;
+import models.Target;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import uk.bl.exception.WhoisException;
+import uk.bl.scope.Scope;
 
 public class TopLevelDomainTest {
 
@@ -18,37 +20,27 @@ public class TopLevelDomainTest {
 	public static final String LONDON_DOMAIN   = ".london";
 	public static final String SCOT_DOMAIN     = ".scot";
 	
+	Target target = null;
 	List<FieldUrl> fieldUrls;
 	
 	@Before
 	public void setUp() throws Exception {
+		target = new Target();
 		fieldUrls = new ArrayList<FieldUrl>();
-		fieldUrls.add(new FieldUrl("https://www.gov.uk/government/publications"));
-		fieldUrls.add(new FieldUrl("https://www.gov.uk/government/publications"));
+		fieldUrls.add(new FieldUrl("http://www.gov.uk"));
+		fieldUrls.add(new FieldUrl("http://www.google.scot"));
+		target.fieldUrls = fieldUrls;
 	}
 
 	@Test
-	public void test() {
-		assertTrue(isTopLevelDomain(fieldUrls));
-		fieldUrls.add(new FieldUrl("https://www.gov.com/government/publications"));
-		assertFalse(isTopLevelDomain(fieldUrls));
+	public void test() throws MalformedURLException, WhoisException, URISyntaxException {
+		Boolean pass = Scope.INSTANCE.isTopLevelDomain(target);
+		System.out.println("fieldUrls with valid top level domains: " + target.fieldUrls + " - " + pass);
+		assertTrue(pass);
+		FieldUrl newFieldUrl = new FieldUrl("http://www.gov.com");
+		target.fieldUrls.add(newFieldUrl);
+		Boolean fail = Scope.INSTANCE.isTopLevelDomain(target);
+		System.out.println("fieldUrls with invalid top level domains (.com): " + target.fieldUrls + " - " + fail);
+		assertFalse(fail);
 	}
-
-	public boolean isTopLevelDomain(List<FieldUrl> fieldUrls) {
-        for (FieldUrl fieldUrl : fieldUrls) {
-            URL uri = null;
-			try {
-				uri = new URI(fieldUrl.url).normalize().toURL();
-			} catch (MalformedURLException | URISyntaxException e) {
-				e.printStackTrace();
-			}
-			String url = uri.toExternalForm();
-            System.out.println("Normalised " + url);
-            // Rule 3.1: check domain name
-	        if (!url.contains(UK_DOMAIN) && !url.contains(LONDON_DOMAIN) && !url.contains(SCOT_DOMAIN)) return false;
-        }
-//		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
-        return true;
-	}
-	
 }

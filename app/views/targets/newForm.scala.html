@@ -185,11 +185,7 @@
 			<div class="row padding-10 pull-right">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="btn-group">
-					    @if(user.hasRole("user") && !user.hasRole("expert_user") && !user.hasRole("archivist") && !user.hasRole("sys_admin")) { 
-							<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save" disabled>Save</button>
-						} else {
-							<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
-						}
+						<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
 			       </div>
 				</div>
 			</div>

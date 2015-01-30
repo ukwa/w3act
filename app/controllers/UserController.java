@@ -397,6 +397,10 @@ public class UserController extends AbstractController {
         return null;
     }
     
+    public static Result adminPasswordReset() {
+    	return null;
+    }
+    
     public static Result sites(Long id) {
     	// user.targets?? or have to get again for paging
         return redirect(routes.TargetController.userTargets(0, "title", "asc", "", id, 0L, 0L));

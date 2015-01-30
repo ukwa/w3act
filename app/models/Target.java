@@ -584,18 +584,25 @@ public class Target extends UrlModel {
 	/**
 	 * This method analyzes manual scope settings for Target with given URL
 	 * 
+	 * Professional Judgement.
+	 * Postal Address (set manually to Yes by the user)
+	 * By Correspondence (also set manually)
+	 *  
+	 *  In the UI, if any of the three manual tests (these two or professional judgement) is set to Yes, then the following field (which provide the evidence) are then required.
+	 *  ie. if Postal Address is Yes, then Postal Address URL is required (doesn't need validating)
+	 *  
 	 * @param url
 	 * @return true if one of manual settings is true
 	 */
 	public boolean checkManualScope() {
 		boolean res = false;
-		if (BooleanUtils.isTrue(this.ukPostalAddress) || BooleanUtils.isTrue(this.viaCorrespondence) || BooleanUtils.isTrue(this.professionalJudgement)) {
+		if (BooleanUtils.isTrue(this.professionalJudgement) || BooleanUtils.isTrue(this.ukPostalAddress) || BooleanUtils.isTrue(this.viaCorrespondence)) {
 			Logger.debug("checkManualScope(): " + this.ukPostalAddress + ", " + this.viaCorrespondence + ", "+ this.professionalJudgement);
 			res = true;
 		}
-		if (BooleanUtils.isTrue(this.noLdCriteriaMet)) {
-			res = false;
-		}
+//		if (BooleanUtils.isTrue(this.noLdCriteriaMet)) {
+//			res = false;
+//		}
 		return res;
 	}
 
@@ -1817,20 +1824,8 @@ public class Target extends UrlModel {
 	 */
 	@JsonIgnore
 	public boolean isInScopeAllWithoutLicense() {
-		boolean isInScope = false;
-
 		Logger.debug("isInScopeAllWithoutLicense()");
 		
-//			isInScope = Scope.INSTANCE.checkScopeIpWithoutLicense(this);
-		isInScope = this.checkScopeIpWithoutLicense();
-		if (!isInScope) {
-			isInScope = this.isTopLevelDomain;
-		}
-		return isInScope;
-
-	}
-	
-	private boolean checkScopeIpWithoutLicense() {
         boolean res = false;
         /**
          *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
@@ -1846,21 +1841,36 @@ public class Target extends UrlModel {
          * 
          */
         // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-    	if (!res) {
-    		// checking target fields
-    		res = this.checkManualScope();
-    	}
+        if (!res) {
+        	// check target.isUkHosting field with SQL uk/london/scot
+        	res = this.isTopLevelDomain;
+        }
         // Rule 3.2: check geo IP / uk hosting?
         if (!res) {
         	// check target.isUkHosting field with SQL
         	res = this.isUkHosting;
         }
-	        
+        
         // Rule 3.3: check whois lookup service / uk registration?
         if (!res) {
         	// check target.isUkRegistration field with SQL
         	res = this.isUkRegistration;
         }
+
+        /**
+	   	 * Professional Judgement.
+	   	 * Postal Address (set manually to Yes by the user)
+	   	 * By Correspondence (also set manually)
+	   	 *  
+	   	 *  In the UI, if any of the three manual tests (these two or professional judgement) is set to Yes, then the following field (which provide the evidence) are then required.
+	   	 *  ie. if Postal Address is Yes, then Postal Address URL is required (doesn't need validating)
+	   	 */
+        
+    	if (!res) {
+    		// checking target fields
+    		res = this.checkManualScope();
+
+    	}
 	        
         /**
          * if database entry exists and is different to the current value - replace it
