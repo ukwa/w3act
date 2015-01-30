@@ -1,6 +1,7 @@
 package uk.bl.scope;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -83,26 +84,38 @@ public enum Scope {
 	public static final String HTTPS           = "https://";
 	public static final String WWW             = "www.";
 	public static final String END_STR         = "/";
-
+	
+	public static DatabaseReader databaseReader;
+	
+	static {
+		// A File object pointing to your GeoIP2 or GeoLite2 database
+		File database = new File(GEO_IP_SERVICE);
+		
+		// This creates the DatabaseReader object, which should be reused across
+		// lookups.
+		try {
+			databaseReader = new DatabaseReader.Builder(database).build();
+		} catch (IOException e) {
+			Logger.warn("Can't read database file. " + e);
+		}
+	}
+	
 	/**
 	 * This method queries geo IP from database
+	 * 
+	 * Synchronized in case the underlying database is not thread-safe.
+	 * 
 	 * @param ip - The host IP
 	 * @return true if in UK domain
 	 */
-	public boolean queryDb(String ip) {
+	public synchronized boolean queryDb(String ip) {
 		boolean res = false;
-		// A File object pointing to your GeoIP2 or GeoLite2 database
-		File database = new File(GEO_IP_SERVICE);
-	
-		try {
-			// This creates the DatabaseReader object, which should be reused across
-			// lookups.
-			DatabaseReader reader = new DatabaseReader.Builder(database).build();
 		
+		try {		
 			// Find city by given IP
-			CityResponse response = reader.city(InetAddress.getByName(ip));
-			Logger.debug(response.getCountry().getIsoCode()); 
-			Logger.debug(response.getCountry().getName()); 
+			CityResponse response = databaseReader.city(InetAddress.getByName(ip));
+			Logger.info(response.getCountry().getIsoCode()); 
+			Logger.info(response.getCountry().getName()); 
 			// Check country code in city response
 			if (response.getCountry().getIsoCode().equals(UK_COUNTRY_CODE)) {
 				res = true;
