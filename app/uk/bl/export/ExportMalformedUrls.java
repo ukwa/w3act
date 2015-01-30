@@ -10,8 +10,6 @@ import java.util.List;
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 
-import models.FieldUrl;
-import models.Target;
 import play.Logger;
 import uk.bl.Const;
 import uk.bl.api.Utils;

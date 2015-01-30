@@ -259,20 +259,22 @@
 					</div>
 		     	</div>	     	
 	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							@select(field = targetForm("qaIssue.id"), options = options(qaIssues), 
-					                args = 
-					                'class -> "form-control",
-					                '_label -> "QA Status:", 
-					                '_default -> "-- Choose a QA Status --",
-					                '_showConstraints -> false
-				            )(FieldConstructor(genericInput.f), lang)
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+		    		<div class="row padding-10">
+			     		<div class="col-md-12 col-xs-12 col-sm-12">
+							<div class="form-group">
+								@select(field = targetForm("qaIssue.id"), options = options(qaIssues), 
+						                args = 
+						                'class -> "form-control",
+						                '_label -> "QA Status:", 
+						                '_default -> "-- Choose a QA Status --",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericInput.f), lang)
+							</div>
 						</div>
-					</div>
-		     	</div>	     
-	
+			     	</div>	     
+				}
+					
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">

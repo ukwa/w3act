@@ -324,7 +324,7 @@ public enum JsonUtils {
 							}
 						}
 						if (user.roles == null || user.roles.isEmpty()) {
-							user.roles = Role.setRoleByName(Const.DEFAULT_BL_ROLE);
+							user.roles = Role.setRoleByName(Const.DEFAULT_ROLE);
 						}
 						user.url = this.getActUrlFromWebArchive(user.url);
 						user.edit_url = this.getWctUrlFromWebArchive(user.edit_url);
