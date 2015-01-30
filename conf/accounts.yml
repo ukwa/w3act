@@ -180,39 +180,45 @@ users:
         name:               Systems Administrator
         password:           sysAdmin
         affiliation:   BL
-        roles:              [*sys_admin]
+        #roles:              [*sys_admin]
+        roleHolder:         sys_admin
 
     - !!models.User
         email:              archivist@bl.uk
         name:               Archivist
         password:           secret
         affiliation:   BL
-        roles:              [*archivist]
+#        roles:              [*archivist]
+        roleHolder:         archivist
 
     - !!models.User
         email:              expert@bl.uk
         name:               Expert
         password:           secret
         affiliation:   BL
-        roles:              [*expert_user]
+#        roles:              [*expert_user]
+        roleHolder:         expert_user
 
     - !!models.User
         email:              user@bl.uk
         name:               User
         password:           secret
         affiliation:   BL
-        roles:              [*user]
+#        roles:              [*user]
+        roleHolder:         user
     
     - !!models.User
         email:              viewer@bl.uk
         name:               Viewer
         password:           secret
         affiliation:   BL
-        roles:              [*viewer]
+#        roles:              [*viewer]
+        roleHolder:         viewer
 
     - !!models.User
         email:              roman.graf@ait.ac.at
         name:               Roman Graf
         password:           secret
         affiliation:   AIT
-        roles:              [*archivist]
+#        roles:              [*archivist]
+        roleHolder:         archivist

@@ -102,6 +102,9 @@ public enum DataImport {
 			for (User user : users) {
 				user.password = PasswordHash.createHash(user.password);
 				user.createdAt = new Date();
+				String roleHolder = user.roleHolder;
+				Role role = Role.findByName(roleHolder);
+				user.roles.add(role);
 				user.save();
 			}
 		} catch (NoSuchAlgorithmException e) {

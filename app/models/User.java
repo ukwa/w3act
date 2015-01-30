@@ -110,6 +110,10 @@ public class User extends ActModel {
     
     @Transient
     @JsonIgnore
+    public String roleHolder;
+    
+    @Transient
+    @JsonIgnore
     @JsonProperty
     public String language;
     
