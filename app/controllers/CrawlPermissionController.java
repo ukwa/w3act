@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import models.CommunicationLog;
 import models.ContactPerson;
@@ -108,6 +109,7 @@ public class CrawlPermissionController extends AbstractController {
 		
         crawlPermission.status = Const.CrawlPermissionStatus.QUEUED.name();
         crawlPermission.user = user;
+        crawlPermission.token = UUID.randomUUID().toString();
 
 		Form<CrawlPermission> filledForm = Form.form(CrawlPermission.class);
 		filledForm = filledForm.fill(crawlPermission);
@@ -704,8 +706,10 @@ public class CrawlPermissionController extends AbstractController {
             	messageBody = mailTemplate.readTemplate();
             	String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
         		Logger.debug("setPendingSelectedCrawlPermissions permission.target: " + permission.target.title);
-        		Logger.debug("setPendingSelectedCrawlPermissions current: " + routes.LicenseController.form(permission.url).absoluteURL(request()).toString());
-        		String licenseUrl = routes.LicenseController.form(permission.url).absoluteURL(request()).toString();
+        		
+        		String licenseUrl = routes.LicenseController.form(permission.token).absoluteURL(request()).toString();
+        		Logger.debug("setPendingSelectedCrawlPermissions current: " + licenseUrl);
+        		
         		licenseUrl = injectServerName(licenseUrl);
         		Logger.debug("setPendingSelectedCrawlPermissions new: " + licenseUrl);
             	messageBody = CrawlPermission.
@@ -790,6 +794,7 @@ public class CrawlPermissionController extends AbstractController {
 //	        }
 	        if (action.equals("sendsome")) {
 	        	Logger.debug("send some crawl permission requests");
+	        	// TODO: do the Token send email here???
 	        	boolean sendingRes = setPendingSelectedCrawlPermissions(template, crawlPermissions);//messageBody, messageSubject); 
 	            if (!sendingRes) {
 	    			flash("message", "Missing contact email. Please check contact person");
@@ -801,7 +806,7 @@ public class CrawlPermissionController extends AbstractController {
 	        	Logger.debug("preview crawl permission requests");
 	        	if (crawlPermissions.size() > 1) {
 		        	Logger.debug("crawlPermissions.size(): " + crawlPermissions.size() + " - " + status);
-	    			flash("message", "Please select one for preview");
+	    			flash("message", "Please select only one email to preview");
 		        	res = redirect(routes.CrawlPermissionController.list(
 		        			0, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
 	    	    	return res;

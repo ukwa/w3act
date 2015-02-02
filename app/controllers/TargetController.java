@@ -1023,7 +1023,7 @@ public class TargetController extends AbstractController {
 		        String crawlFrequency = filledForm.get().crawlFrequency;
 	        	Logger.debug("crawl frequency: " + crawlFrequency);
 	        	Logger.debug("crawlStartDate: " + crawlStartDate);
-		        if (crawlFrequency.equals(CrawlFrequency.DOMAINCRAWL.name())) {
+		        if (!crawlFrequency.equals(CrawlFrequency.DOMAINCRAWL.name())) {
 		        	if (StringUtils.isEmpty(crawlStartDate)) {
 			            ValidationError ve = new ValidationError("crawlStartDateText", "Start Date is required when 'Domain Crawl Only' is selected");
 			            filledForm.reject(ve);
@@ -1266,7 +1266,7 @@ public class TargetController extends AbstractController {
     	}
     	
         String crawlFrequency = filledForm.get().crawlFrequency;
-        if (crawlFrequency.equals(CrawlFrequency.DOMAINCRAWL.name())) {
+        if (!crawlFrequency.equals(CrawlFrequency.DOMAINCRAWL.name())) {
         	if (StringUtils.isEmpty(crawlStartDate)) {
 	            ValidationError ve = new ValidationError("crawlStartDateText", "Start Date is required when 'Domain Crawl Only' is selected");
 	            filledForm.reject(ve);

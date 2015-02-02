@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,7 +41,7 @@ public class CrawlPermission extends ActModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "crawl_permission_seq")
 	public Long id;
-
+	
 //	the permission can be inherited from a 'parent' target. 
 //	Targets could in theory have multiple crawl permissions. This is most likely in the case where a 
 //	permission was sent and then cancelled for whatever reason, and then another one sent to supersede it.
@@ -91,6 +92,8 @@ public class CrawlPermission extends ActModel {
 	@JoinColumn(name="license_id")
     public License license; 
     
+	public String token;
+
     /**
      * This is a checkbox defining whether follow up e-mails should be send.
      */
@@ -125,17 +128,20 @@ public class CrawlPermission extends ActModel {
     
     public static final Model.Finder<Long, CrawlPermission> find = new Model.Finder<Long, CrawlPermission>(Long.class, CrawlPermission.class);
 
-    public CrawlPermission() {}
+    public CrawlPermission() {
+    	this(null, null, null);
+    }
     
     public CrawlPermission(Long id, String url) {
-		this.id = id;
-		this.url = url;
+		this(id, url, null);
 	}
 
 	public CrawlPermission(Long id, String url, String name) {
 		this.id = id;
 		this.url = url;
 		this.name = name;
+		this.token = UUID.randomUUID().toString();
+		
 	}
 
     public static CrawlPermission findByName(String name) {
@@ -152,6 +158,11 @@ public class CrawlPermission extends ActModel {
      */
     public static CrawlPermission findById(Long id) {
     	CrawlPermission res = find.where().eq(Const.ID, id).findUnique();
+    	return res;
+    }          
+    
+    public static CrawlPermission findByToken(String token) {
+    	CrawlPermission res = find.where().eq("token", token).findUnique();
     	return res;
     }          
     
@@ -209,7 +220,11 @@ public class CrawlPermission extends ActModel {
 //    	Logger.debug("permission res: " + res);
     	return res;
     }
-    
+
+    public static CrawlPermission showByToken(String token) {
+    	CrawlPermission crawlPermission = CrawlPermission.findByToken(token);
+    	return crawlPermission;
+    }
 	/**
 	 * This method filters crawl permissions by name and returns a list 
 	 * of filtered CrawlPermission objects.

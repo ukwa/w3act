@@ -50,6 +50,7 @@ create table crawl_permission (
   archivist_id              bigint,
   status                    text,
   license_id                bigint,
+  token                     varchar(255),
   request_followup          boolean,
   number_requests           bigint,
   third_party_content       boolean,

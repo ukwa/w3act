@@ -55,11 +55,11 @@ public class LicenseController extends AbstractController {
      * @param permissionUrl
      * @return
      */
-    public static Result form(String permissionUrl) {
-    	CrawlPermission crawlPermission = CrawlPermission.showByUrl(permissionUrl);
+    public static Result form(String token) {
+    	CrawlPermission crawlPermission = CrawlPermission.showByToken(token);
 
 		return ok(
-            ukwalicence.render(permissionUrl, crawlPermission.name, 
+            ukwalicence.render(crawlPermission.url, crawlPermission.name, 
             		crawlPermission.target.title, "", "", "", "", "", "", "")
         );
     }
@@ -179,8 +179,8 @@ public class LicenseController extends AbstractController {
 		            boolean isAgreed = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.AGREE));
 		    		if (!isAgreed || StringUtils.isBlank(getFormParam(Const.CONTENT)) 
 		        			|| StringUtils.isBlank(getFormParam(Const.PUBLISH))) {
-		    			Logger.debug("The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
-		    			flash("message", "The form cannot be submitted without selecting 'Yes' for field 'I/We agree' and selecting fields 'Third-Party Content' and 'publicity for the Web Archive'. Please agree for licence granting.");
+		    			Logger.debug("The form cannot be submitted without checking the 'I/We agree' box, or without answering the questions about 'Third-Party Content' and 'Publicity for the Web Archive'. Please check your input and try again.");
+		    			flash("message", "The form cannot be submitted without checking the 'I/We agree' box, or without answering the questions about 'Third-Party Content' and 'Publicity for the Web Archive'. Please check your input and try again.");
 		    			return ok(
 		    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
 		    	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 
