@@ -21,7 +21,7 @@ GET     /ukwa/licenses                      controllers.LicenseController.index(
 POST    /ukwa/licenses/submit               controllers.LicenseController.submit()
 GET     /ukwa/licenses/result               controllers.LicenseController.result()
 GET     /ukwa/licenseform/:token            controllers.LicenseController.form(token)
-GET     /ukwa/licenseformview/:url          controllers.LicenseController.formview(url)
+GET     /ukwa/licenseformview/:token        controllers.LicenseController.formview(token)
 
 GET     /licenses                           controllers.LicenseController.indexFilter()
 POST    /licenses/filter/                   controllers.LicenseController.filter()

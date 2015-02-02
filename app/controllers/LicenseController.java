@@ -54,9 +54,13 @@ public class LicenseController extends AbstractController {
      * that is identified by the given permission URL. 
      * @param permissionUrl
      * @return
+     * @throws ActException 
      */
-    public static Result form(String token) {
+    public static Result form(String token) throws ActException {
     	CrawlPermission crawlPermission = CrawlPermission.showByToken(token);
+    	if (crawlPermission == null) {
+    		throw new ActException("CrawlPermission Not Found found for token: " + token);
+    	}
 
 		return ok(
             ukwalicence.render(crawlPermission.url, crawlPermission.name, 
@@ -69,14 +73,16 @@ public class LicenseController extends AbstractController {
      * that is identified by the given permission URL. All fields are disabled. 
      * @param permissionUrl
      * @return
+     * @throws ActException 
      */
-    public static Result formview(String permissionUrl) {
-    	Logger.debug("formview: " + permissionUrl);
-    	
-    	CrawlPermission permission = CrawlPermission.findByUrl(permissionUrl);
+    public static Result formview(String token) throws ActException {
+    	CrawlPermission crawlPermission = CrawlPermission.showByToken(token);
+    	if (crawlPermission == null) {
+    		throw new ActException("CrawlPermission Not Found found for token: " + token);
+    	}
     	
 		return ok(
-            ukwalicenceview.render(permissionUrl, permission.target.fieldUrl())
+            ukwalicenceview.render(crawlPermission.url, crawlPermission.target.fieldUrl())
         );
     }
     

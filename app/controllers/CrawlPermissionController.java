@@ -812,17 +812,27 @@ public class CrawlPermissionController extends AbstractController {
 	    	    	return res;
 	        	}
 	        	
-	        	CrawlPermission crawlPermission = crawlPermissions.get(0);
-            	MailTemplate mailTemplate = MailTemplate.findByName(template);
-            	String toMails = crawlPermission.contactPerson.email;
-            	String messageSubject = mailTemplate.subject;
-            	String messageBody = mailTemplate.readTemplate();
-		        res = ok(
-		            crawlpermissionpreview.render(
-			            	crawlPermission, User.findByEmail(request().username()), toMails, template, messageSubject, messageBody
-		            )
-		        );
+	        	CrawlPermission crawlPermission = null;
+	        	
+		        if (permissionValues != null && permissionValues.length > 0) {
+		        	// should only be one after the above
+		        	String permissionValue = permissionValues[0];
+		        	if (StringUtils.isNotBlank(permissionValue)) {
+		        		Long permissionId = Long.valueOf(permissionValue);
+		        		crawlPermission = CrawlPermission.findById(permissionId);
+		            	MailTemplate mailTemplate = MailTemplate.findByName(template);
+		            	String toMails = crawlPermission.contactPerson.email;
+		            	String messageSubject = mailTemplate.subject;
+		            	String messageBody = mailTemplate.readTemplate();
+				        res = ok(
+				            crawlpermissionpreview.render(
+					            	crawlPermission, User.findByEmail(request().username()), toMails, template, messageSubject, messageBody
+				            )
+				        );
+			        }
+		        }
 	        }
+	        
 	        if (action.equals("reject")) {
 	        	Logger.debug("reject crawl permission requests");
 	        	rejectSelectedCrawlPermissions(crawlPermissions);        	
