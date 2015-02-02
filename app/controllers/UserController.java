@@ -236,7 +236,7 @@ public class UserController extends AbstractController {
 		        
 		        User user = User.findByEmail(filledForm.get().email);
 		        if (user != null) {
-		            ValidationError ve = new ValidationError("email", "User already exists with email");
+		            ValidationError ve = new ValidationError("email", "There is already a user account with that email address. Please check and enter a different email address.");
 		            filledForm.reject(ve);
 		            return newInfo(filledForm);
 		        }
@@ -340,7 +340,7 @@ public class UserController extends AbstractController {
 	            if (!currentEmail.equalsIgnoreCase(email)) {
 			        User user = User.findByEmail(email);
 			        if (user != null) {
-			            ValidationError ve = new ValidationError("email", "User already exists with email");
+			            ValidationError ve = new ValidationError("email", "There is already a user account with that email address. Please check and enter a different email address.");
 			            filledForm.reject(ve);
 			            return info(filledForm, id, currentEmail);
 			        }
