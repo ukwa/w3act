@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -47,6 +48,11 @@ public class Document extends Model {
 			joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
 			inverseJoinColumns = { @JoinColumn(name = "id_portal", referencedColumnName="id") })
 	public List<Portal> portals = new ArrayList<>();
+	@ManyToMany(cascade=CascadeType.REMOVE) @JsonIgnore
+	@JoinTable(name = Const.SUBJECT_DOCUMENT,
+		joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="id") })
+	public List<Taxonomy> taxonomies = new ArrayList<>();
     public String landingPageUrl;
     public String documentUrl;
     public String sha256Hash;
@@ -62,6 +68,8 @@ public class Document extends Model {
     @Required
 	public String filename;
     public boolean priorityCataloguing;
+	@Transient
+	public String subject;
     public String type;
 	public String author1Fn;
 	public String author1Ln;

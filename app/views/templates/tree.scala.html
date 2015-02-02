@@ -1,0 +1,14 @@
+@(field: Field, editable: Boolean, args: (Symbol, Any)*)
+
+@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+
+@if(editable) {
+	@helper.input(field, args: _*) { (id, name, value, args) =>
+		<span id="@{id}Tree"></span>
+		<input type="hidden" name="@name" id="@id" value="@value">
+	}
+} else {
+	@helper.input(field, args: _*) { (id, name, value, args) =>
+		@Taxonomy.convertUrlsToObjects(value.get).map(_.name).mkString(", ")
+	}
+}

@@ -39,20 +39,11 @@ public class JournalTitles extends AbstractController {
 		Logger.info("JournalTitles.edit()");
 		
 		JournalTitle journalTitle = Ebean.find(JournalTitle.class, id);
-		journalTitle.subject = serializeTaxonomies(journalTitle.taxonomies);
+		journalTitle.subject = TaxonomiesController.serializeTaxonomies(journalTitle.taxonomies);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
 				User.findByEmail(request().username()), false));
-	}
-	
-	public static String serializeTaxonomies(List<Taxonomy> taxonomies) {
-		String subject = "";
-		for (Taxonomy taxonomy : taxonomies) {
-			if (!subject.isEmpty()) subject += ", ";
-			subject += taxonomy.url;
-		}
-		return subject;
 	}
 
 	public static Result save(boolean toDocument) {

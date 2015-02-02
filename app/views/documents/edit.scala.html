@@ -6,6 +6,7 @@
 @import templates.inputText
 @import templates.select
 @import templates.splitInputText
+@import templates.tree
 
 @implicitField = @{ helper.FieldConstructor(templates.fieldConstructorTemplate.f) }
 
@@ -167,8 +168,37 @@
 						previousSelection = selectionText;
 					};
 			}
+			
+			$("#subjectTree").dynatree({
+				checkbox: true,
+				selectMode: 2,
+  
+				children: @Html(TargetController.getSubjectsJsonData("empty")),
+				onSelect: function(select, node) {
+					// Get a list of all selected nodes, and convert to a key array:
+					var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+						return node.data.key;
+					});
+					$("#subject")[0].value = selKeys.join(", ");
+					// Get a list of all selected TOP nodes
+					var selRootNodes = node.tree.getSelectedNodes(true);
+					// ... and convert to a key array:
+					var selRootKeys = $.map(selRootNodes, function(node){
+						return node.data.key;
+					});
+				}
+			});
+			var subjects = $("#subject")[0].value.split(", ");
+			for (subject of subjects) {
+				$("#subjectTree").dynatree("getTree").selectKey(subject);
+			}
 		});
 	</script>
+	<style type="text/css">
+		.container {
+			width: 98%;
+		}
+	</style>
 }
 
 @main(title, user, scripts) {
@@ -194,7 +224,7 @@
 	
 	@warningmessage(flash)
 	@helper.form(if (editable) routes.Documents.save() else routes.Documents.submit(new Long(form("id").value))) {
-		<div class="col-md-5">
+		<div class="col-md-6">
 			<input type="hidden" name="id" value="@form("id").value">
 			<input type="hidden" name="landingPageUrl" value="@form("landingPageUrl").value">
 			<input type="hidden" name="documentUrl" value="@form("documentUrl").value">
@@ -224,6 +254,7 @@
 					@checkbox(form("portal_" + portal.id), editable, '_label -> Html("&nbsp;&nbsp;&nbsp;&nbsp;" + portal.title), 'disabled -> "disabled")
 				}
 			}
+			@tree(form("subject"), editable, '_label -> "Subject(s)")
 			@select(form("type"),
 				options(List("", Document.Type.BOOK.toString,
 					Document.Type.JOURNAL_ARTICLE.toString,
@@ -264,7 +295,7 @@
 			}
 		</div>
 		
-		<div class="col-md-7">
+		<div class="col-md-6">
 			<div id="selection_menu" class="navbar navbar-default" style="display: none; position: absolute;
 				margin-left: 15px; padding: 8px">
 				<div>
@@ -316,7 +347,7 @@
 					if(form("status").value == Document.Status.SUBMITTED.toString) routes.Helper.passthrough(form("documentUrl").value,"")
 					else routes.Documents.html(form("htmlFilename").value)
 				}"
-				width="100%" height="600"></iframe>
+				width="100%" height="768"></iframe>
 		</div>
 	}
 }

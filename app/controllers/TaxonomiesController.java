@@ -214,5 +214,14 @@ public class TaxonomiesController extends AbstractController {
         }
         return res;
     }
+    
+	public static String serializeTaxonomies(List<Taxonomy> taxonomies) {
+		String subject = "";
+		for (Taxonomy taxonomy : taxonomies) {
+			if (!subject.isEmpty()) subject += ", ";
+			subject += taxonomy.url;
+		}
+		return subject;
+	}
 	    
 }

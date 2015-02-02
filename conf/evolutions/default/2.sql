@@ -29,7 +29,6 @@ create table document (
   id			bigint primary key,
   id_instance		bigint references instance (id),
   id_watched_target	bigint references watched_target (id),
---  status		varchar(255) not null check (status in ('new', 'submitted', 'ignored')),
   status		integer,
   landing_page_url	varchar(255),
   document_url		varchar(255),
@@ -48,6 +47,12 @@ create table document (
   author2ln		varchar(255),
   author3fn		varchar(255),
   author3ln		varchar(255)
+);
+
+create table subject_document (
+  id_taxonomy		bigint references taxonomy (id),
+  id_document		bigint references document (id),
+  primary key (id_taxonomy, id_document)
 );
 
 create table assignable_ark (
@@ -97,6 +102,7 @@ drop table if exists watched_target cascade;
 drop table if exists journal_title cascade;
 drop table if exists subject_journal_title cascade;
 drop table if exists document cascade;
+drop table if exists subject_document cascade;
 drop table if exists assignable_ark cascade;
 drop table if exists portal cascade;
 drop table if exists portal_document cascade;

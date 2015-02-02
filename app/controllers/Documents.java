@@ -23,6 +23,7 @@ import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
 import models.Portal;
+import models.Taxonomy;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -117,6 +118,7 @@ public class Documents extends AbstractController {
 		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
 		Document document = documentForm.get();
 		document.clearImproperFields();
+		document.taxonomies = Taxonomy.convertUrlsToObjects(document.subject);
 		setPortalsOfModel(document, documentForm);
 		Ebean.update(document);
 		
@@ -236,7 +238,8 @@ public class Documents extends AbstractController {
 		Document document = Ebean.find(Document.class, id);
 		if (document.type == null) document.type = "";
 		if (document.journal != null)
-			document.journal.journalTitleId = document.journal.journalTitle.id;		
+			document.journal.journalTitleId = document.journal.journalTitle.id;
+		document.subject = TaxonomiesController.serializeTaxonomies(document.taxonomies);
 		return document;
 	}
 	
