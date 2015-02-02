@@ -794,7 +794,6 @@ public class CrawlPermissionController extends AbstractController {
 //	        }
 	        if (action.equals("sendsome")) {
 	        	Logger.debug("send some crawl permission requests");
-	        	// TODO: do the Token send email here???
 	        	boolean sendingRes = setPendingSelectedCrawlPermissions(template, crawlPermissions);//messageBody, messageSubject); 
 	            if (!sendingRes) {
 	    			flash("message", "Missing contact email. Please check contact person");
@@ -824,6 +823,19 @@ public class CrawlPermissionController extends AbstractController {
 		            	String toMails = crawlPermission.contactPerson.email;
 		            	String messageSubject = mailTemplate.subject;
 		            	String messageBody = mailTemplate.readTemplate();
+		            	messageBody = mailTemplate.readTemplate();
+		            	
+		            	String[] placeHolderArray = Utils.INSTANCE.getMailArray(mailTemplate.placeHolders);
+		        		String licenseUrl = routes.LicenseController.form(crawlPermission.token).absoluteURL(request()).toString();
+		        		licenseUrl = injectServerName(licenseUrl);
+		            	messageBody = CrawlPermission.
+		                	replaceTwoStringsInText(
+		                			messageBody
+		    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[0] + Const.PLACE_HOLDER_DELIMITER
+		    						, Const.PLACE_HOLDER_DELIMITER + placeHolderArray[1] + Const.PLACE_HOLDER_DELIMITER
+		    						, crawlPermission.target.title
+		    						, licenseUrl);
+		            	
 				        res = ok(
 				            crawlpermissionpreview.render(
 					            	crawlPermission, User.findByEmail(request().username()), toMails, template, messageSubject, messageBody
