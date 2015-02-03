@@ -100,47 +100,48 @@ public class LicenseController extends AbstractController {
     	Logger.debug("sendAcknowledgementToSiteOwner mailTemplate: " + mailTemplate);
     	String messageSubject = mailTemplate.subject;
 //    	Logger.debug("sendAcknowledgementToSiteOwner text: " + mailTemplate.text);
-//    	String messageBody = mailTemplate.readTemplate();
-    	String messageBody = mailTemplate.text;
-		StringBuilder sb = new StringBuilder();
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.LICENCE_ACK + Const.TWO_POINTS + permission.license + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.WEBSITE_TITLE_ACK + Const.TWO_POINTS + permission.name + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.WEB_ADDRESS_ACK + Const.TWO_POINTS + permission.target.title + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.NAME_ACK + Const.TWO_POINTS + permission.contactPerson.name + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.POSITION_ACK + Const.TWO_POINTS + permission.contactPerson.position + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.EMAIL_ACK + Const.TWO_POINTS + permission.contactPerson.email + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.CONTACT_ORGANISATION_ACK + Const.TWO_POINTS + permission.contactPerson.contactOrganisation + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.TEL_ACK + Const.TWO_POINTS + permission.contactPerson.phone + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.POSTAL_ADDRESS_ACK + Const.TWO_POINTS + permission.contactPerson.postalAddress + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.DESCRIPTION_ACK + Const.TWO_POINTS + permission.anyOtherInformation + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.THIRD_PARTY_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.thirdPartyContent) + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.AGREE_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.agree) + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.DATE_ACK + Const.TWO_POINTS + permission.createdAt + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
-		sb.append(Const.PUBLICITY_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.publish) + Const.CSV_LINE_END);
-		sb.append(Const.CSV_LINE_END);
+    	String messageBody = mailTemplate.readTemplate();
+//    	String messageBody = mailTemplate.text;
+//		StringBuilder sb = new StringBuilder();
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.LICENCE_ACK + Const.TWO_POINTS + permission.license + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.WEBSITE_TITLE_ACK + Const.TWO_POINTS + permission.name + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.WEB_ADDRESS_ACK + Const.TWO_POINTS + permission.target.title + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.NAME_ACK + Const.TWO_POINTS + permission.contactPerson.name + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.POSITION_ACK + Const.TWO_POINTS + permission.contactPerson.position + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.EMAIL_ACK + Const.TWO_POINTS + permission.contactPerson.email + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.CONTACT_ORGANISATION_ACK + Const.TWO_POINTS + permission.contactPerson.contactOrganisation + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.TEL_ACK + Const.TWO_POINTS + permission.contactPerson.phone + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.POSTAL_ADDRESS_ACK + Const.TWO_POINTS + permission.contactPerson.postalAddress + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.DESCRIPTION_ACK + Const.TWO_POINTS + permission.anyOtherInformation + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.THIRD_PARTY_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.thirdPartyContent) + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.AGREE_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.agree) + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.DATE_ACK + Const.TWO_POINTS + permission.createdAt + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
+//		sb.append(Const.PUBLICITY_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.publish) + Const.CSV_LINE_END);
+//		sb.append(Const.CSV_LINE_END);
 		
-    	messageBody = mailTemplate.readTemplate();
-		
-//    	messageBody = CrawlPermission.
-//            	replaceStringInText(
-//            			messageBody
-//						, Const.PLACE_HOLDER_DELIMITER + mailTemplate.placeHolders + Const.PLACE_HOLDER_DELIMITER
-//						, sb.toString());
+		String targetUrl = routes.TargetController.view(permission.target.id).absoluteURL(request()).toString();
+
+    	messageBody = CrawlPermission.
+            	replaceStringInText(
+            			messageBody
+						, Const.PLACE_HOLDER_DELIMITER + mailTemplate.placeHolders + Const.PLACE_HOLDER_DELIMITER
+						, targetUrl);
     	Logger.debug("sendAcknowledgementToSiteOwner messageBody: " + messageBody);
+    	
         EmailHelper.sendMessage(ownerEmail, messageSubject, messageBody);                	
     }
     

@@ -154,7 +154,6 @@
 	   		|| (user.hasRole("user") && targetForm("authorUser.id").value != null 
 	   		&& user.id == Long.valueOf(targetForm("authorUser.id").value))) {
 			<li class="active"><a href="#">Edit</a></li> 
-			<li><a href="@routes.InstanceController.importFromWayback(id, "edit")" id="importWayback">Get New Instance(s)</a></li>
 	   	}
 	</ul>
 	<div class="tab-content padding-20">
@@ -874,7 +873,7 @@
 						                'class -> "form-control",
 						                '_label -> "Crawl Frequency (How often should this site be archived?):",
 						                '_showConstraints -> false
-					            )(FieldConstructor(genericMandatoryInput.f), lang)							
+					            )(FieldConstructor(genericMandatoryInput.f), lang)
 							</div>
 						</div>
 			     	</div>	
@@ -946,7 +945,23 @@
 							</div>
 						</div>
 			     	</div>
-				}		     	
+		        } else {
+		    		<div class="row padding-10">
+			     		<div class="col-md-12 col-xs-12 col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-6 control-label" for="crawlFrequency">
+									Crawl Frequency (How often should this site be archived?):
+									<font color="red">*</font>
+								</label>
+								<div class="col-sm-6">
+									<select id="crawlFrequency" class="form-control" name="crawlFrequency">
+										<option value="DOMAINCRAWL">Domain Crawl Only</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+		        }														
 	        </div>
 	        
 	        <div class="tab-pane fade" id="licensing">
