@@ -73,7 +73,7 @@
 					}
 				}
 			});
-			  
+			
 			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 2);
 			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect", 2);
             
@@ -124,6 +124,8 @@
 			})
 			
 			$('#selectionType option[value="SELECTION"]').prop('selected', true);
+			targetStartDateTime();
+
 		});		
 	</script>
 }
@@ -800,7 +802,7 @@
 							@inputText(targetForm("crawlStartDateText"),
 								'_label -> "Start date:",
 							    'class -> "form-control",
-							    'id -> "start-date"
+							    'id -> "start-date-time"
 							)(FieldConstructor(genericInput.f), lang)							
 						</div>
 					</div>

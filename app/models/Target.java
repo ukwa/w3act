@@ -399,7 +399,10 @@ public class Target extends UrlModel {
 //				},"log":"",
 //		"revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null
 	
-	public Target() {}
+	public Target() {
+		this.scope = Const.ScopeType.root.name();
+		this.depth = Const.DepthType.CAPPED.name();
+	}
 
 	public static Model.Finder<Long, Target> find = new Model.Finder<Long, Target>(
 			Long.class, Target.class);

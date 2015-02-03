@@ -10,6 +10,7 @@
 
 @scripts = {
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/time-picker.js")" type="text/javascript"></script>
 
 	<script>
 		// This is the code that switches to the other page.
@@ -74,7 +75,7 @@
 					}
 				}
 			});
-			  
+			
 			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 2);
 			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect", 2);            
 			// This happens right after the document is loaded.
@@ -123,6 +124,7 @@
 				window.scrollTo(0, 0);
 			})
 			
+			targetStartDateTime();
 			wayBackLoader();
 		});		
 	</script>
@@ -883,7 +885,7 @@
 								@inputText(targetForm("crawlStartDateText"),
 									'_label -> "Start date:",
 								    'class -> "form-control",
-								    'id -> "start-date"
+								    'id -> "start-date-time"
 								)(FieldConstructor(genericInput.f), lang)							
 							</div>
 						</div>

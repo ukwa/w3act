@@ -439,3 +439,23 @@ function showTreeParent(data, id, key) {
 */
     });
 }
+
+function targetStartDateTime() {
+	
+	$('#start-date-time').datetimepicker(
+		{ dateFormat: "dd-mm-yy" }
+	);
+
+	$("#crawlFrequency").change(function(event) {
+		var frequency = $(this).val();
+		event.preventDefault();
+		if (frequency != 'DOMAINCRAWL') {
+    		console.log('selected: ' + frequency);
+            var d = new Date(); // for now
+            var datetext = d.getDate() + "-" + d.getMonth()+1 + "-" + d.getFullYear() + " 09:00";
+            $('#start-date-time').val(datetext);
+		} else {
+    		$("#start-date-time").val('');
+		}
+	});			
+}
