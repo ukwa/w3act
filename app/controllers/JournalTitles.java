@@ -3,6 +3,7 @@ package controllers;
 import java.util.List;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.ExpressionList;
 
 import models.FlashMessage;
 import models.JournalTitle;
@@ -67,6 +68,18 @@ public class JournalTitles extends AbstractController {
 		
 		JournalTitle journalTitle = journalTitleForm.get();
 		journalTitle.taxonomies = Taxonomy.convertUrlsToObjects(journalTitle.subject);
+		
+		ExpressionList<JournalTitle> expressionList = JournalTitle.find.where()
+				.eq("id_watched_target", journalTitle.watchedTarget.id)
+				.eq("title", journalTitle.title);
+		if (journalTitle.id != null)
+			expressionList = expressionList.ne("id", journalTitle.id);
+		boolean titleExists = expressionList.findRowCount() > 0;
+		if (titleExists) {
+			new FlashMessage(FlashMessage.Type.ERROR, "This journal title is already defined for the target.").send();
+			return status(303, edit.render("Journal Title", journalTitleForm,
+					User.findByEmail(request().username()), toDocument));
+		}
 		
 		if (journalTitle.id == null)
 			Ebean.save(journalTitle);

@@ -1,6 +1,4 @@
-@(field: Field, editable: Boolean, args: (Symbol, Any)*)
-
-@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+@(field: Field, editable: Boolean, args: (Symbol, Any)*)(implicit handler: helper.FieldConstructor)
 
 @if(editable) {
 	@helper.checkbox(field, (args :+ 'class -> "checkbox"): _*)

@@ -606,8 +606,8 @@ public class TargetController extends AbstractController {
             ExpressionList<Target> expressionList = Target.find.where()
             		.eq(Const.FIELD_URL_NODE, newTarget.field_url)
             		.eq(Const.ACTIVE, true);
-            		if (isExisting)
-            		expressionList = expressionList.ne("id", target.nid);
+            if (isExisting)
+            	expressionList = expressionList.ne("id", target.nid);
             boolean urlExists = expressionList.findRowCount() > 0;
             if (watched && urlExists) {
             	new FlashMessage(FlashMessage.Type.ERROR, "Can't create a watched target with an URL that is not unique.").send();

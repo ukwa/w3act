@@ -40,6 +40,8 @@ public class JournalTitle extends Model {
 	@Transient
 	public String subject;
 	
+	public static final Model.Finder<Long, JournalTitle> find = new Model.Finder<>(Long.class, JournalTitle.class);
+	
 	public static List<String> frequencies() {
 		List<String> frequencies = new ArrayList<String>();
 		Frequency[] values = Frequency.values();

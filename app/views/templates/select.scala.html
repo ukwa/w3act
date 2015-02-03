@@ -1,6 +1,4 @@
-@(field: Field, options: Seq[(String, String)], editable: Boolean, args: (Symbol, Any)*)
-
-@implicitField = @{ helper.FieldConstructor(fieldConstructorTemplate.f) }
+@(field: Field, options: Seq[(String, String)], editable: Boolean, args: (Symbol, Any)*)(implicit handler: helper.FieldConstructor)
 
 @if(editable) {
 	@helper.select(field, options, (args :+ 'class -> "form-control"): _*)

@@ -3,6 +3,8 @@
 @import helper.options
 @import templates.select
 
+@implicitField = @{ helper.FieldConstructor(templates.standardFieldConstructor.f) }
+
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
 }
