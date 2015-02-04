@@ -17,8 +17,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -615,5 +617,85 @@ public enum Utils {
 		}
 		return date;
 	}
+	
+    public Set<String> getVaryingUrls(String url) {
+    	Set<String> varyingUrls = new HashSet<String>();
+    	// remove all slashes
+    	if (url.endsWith("/")) {
+    		url = removeSlash(url);
+    	}
+    	
+		String http = convertHttpToHttps(url); // https://
+		varyingUrls.add(http);
+		
+		String httpSlash = addSlash(http); // https://www.werwer.com/
+		varyingUrls.add(httpSlash);
+		
+		String httpNoWww = removeWww(http); // https://werwer.com
+		varyingUrls.add(httpNoWww);
+		
+		String httpNoWwwSlash = addSlash(httpNoWww); // https://werwer.com/
+		varyingUrls.add(httpNoWwwSlash);
+		
+		String httpWww = addWww(http);
+		varyingUrls.add(httpWww);
+		
+		String httpWwwSlash = addSlash(httpWww); // https://werwer.com/
+		varyingUrls.add(httpWwwSlash);
+		
+		
+		String https = convertHttpsToHttp(url);
+		varyingUrls.add(https);
+		
+		String httpsSlash = addSlash(https);
+		varyingUrls.add(httpsSlash);
+
+		String httpsNoWww = removeWww(https);
+		varyingUrls.add(httpsNoWww);
+
+		String httpsNoWwwSlash = addSlash(httpsNoWww); // https://werwer.com/
+		varyingUrls.add(httpsNoWwwSlash);
+		
+		String httpsWww = addWww(https);
+		varyingUrls.add(httpsWww);
+
+		String httpsWwwSlash = addSlash(httpsWww); // https://werwer.com/
+		varyingUrls.add(httpsWwwSlash);
+
+    	return varyingUrls;
+    }
+    
+    private String removeSlash(String url) {
+		return url.substring(0, url.length()-1);
+    }
+    
+    private String convertHttpToHttps(String url) {
+    	return url.replace("http://", "https://");
+    }
+
+    private String convertHttpsToHttp(String url) {
+    	return url.replace("https://", "http://");
+    }
+
+    private String addSlash(String url) {
+    	return url + "/";
+    }
+    
+    private String removeWww(String url) {
+    	return url.replace("www.", "");
+    }
+    
+    private String addWww(String url) {
+    	if (!url.contains("www.")) {
+			StringBuilder builder = new StringBuilder(url);
+			int offset = 7;
+			if (url.startsWith("https://")) {
+				offset = 8;
+			}
+			builder.insert(offset, "www.");
+			return builder.toString();
+    	}
+    	return url;
+    }
 }
 
