@@ -40,7 +40,10 @@
         }
     }
     
-    routes.WatchedTargets.list(filterForm("user").value, new Boolean(filterForm("children").value), newPage, sortBy, order, searchstr)
+    if (filters)
+    	routes.WatchedTargets.list(filterForm("user").value, new Boolean(filterForm("children").value), newPage, sortBy, order, searchstr)
+    else
+    	routes.WatchedTargets.overview(newPage, sortBy, order)
     
 }
 
@@ -64,7 +67,6 @@
 	   			@warningmessage(flash)
 	   			@helper.form(action=routes.WatchedTargets.list()) {
 		   			<div class="input-group">
-		   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   					<input type="hidden" name="s" value="@currentSortBy">
 	   					<input type="hidden" name="o" value="@currentOrder">
 						<input type="text" class="form-control lookup-form-control" name="f" placeholder="Enter Target Name" value="@searchstr" id="search-query">

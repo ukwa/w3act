@@ -12,6 +12,7 @@
 
 @scripts = {
 	<script src="@routes.Assets.at("javascripts/parse-date.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/tree.js")" type="text/javascript"></script>
 	<script type="text/javascript">
 		function getSelectionText() {
 			var text = "";
@@ -169,31 +170,11 @@
 					};
 			}
 			
-			$("#subjectTree").dynatree({
-				checkbox: true,
-				selectMode: 2,
-  
-				children: @Html(TargetController.getSubjectsJsonData("empty")),
-				onSelect: function(select, node) {
-					// Get a list of all selected nodes, and convert to a key array:
-					var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-						return node.data.key;
-					});
-					$("#subject")[0].value = selKeys.join(", ");
-					// Get a list of all selected TOP nodes
-					var selRootNodes = node.tree.getSelectedNodes(true);
-					// ... and convert to a key array:
-					var selRootKeys = $.map(selRootNodes, function(node){
-						return node.data.key;
-					});
-				}
-			});
-			var subjects = $("#subject")[0].value.split(", ");
-			for (subject of subjects) {
-				$("#subjectTree").dynatree("getTree").selectKey(subject);
-			}
+			fillTree("subject", @Html(TargetController.getSubjectsJsonData("empty")));
 		});
 	</script>
+}
+@styles = {
 	<style type="text/css">
 		.container {
 			width: 98%;
@@ -201,7 +182,7 @@
 	</style>
 }
 
-@main(title, user, scripts) {
+@main(title, user, scripts, styles) {
 	
 	<div class="page-header">
     	<h1>

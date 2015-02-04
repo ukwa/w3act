@@ -5,6 +5,7 @@ import java.util.List;
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 
+import models.DCollection;
 import models.FlashMessage;
 import models.JournalTitle;
 import models.Target;
@@ -29,6 +30,7 @@ public class JournalTitles extends AbstractController {
 		JournalTitle journalTitle = new JournalTitle();
 		journalTitle.watchedTarget = watchedTarget;
 		journalTitle.language = Const.JOURNAL_TITLE_LANGUAGE;
+		journalTitle.collection = watchedTarget.target.field_collection_categories;
 		journalTitle.subject = watchedTarget.target.field_subject;
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 
@@ -40,6 +42,7 @@ public class JournalTitles extends AbstractController {
 		Logger.info("JournalTitles.edit()");
 		
 		JournalTitle journalTitle = Ebean.find(JournalTitle.class, id);
+		journalTitle.collection = Collections.serializeCollections(journalTitle.dCollections);
 		journalTitle.subject = TaxonomiesController.serializeTaxonomies(journalTitle.taxonomies);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 
@@ -67,6 +70,7 @@ public class JournalTitles extends AbstractController {
 		}
 		
 		JournalTitle journalTitle = journalTitleForm.get();
+		journalTitle.dCollections = DCollection.convertUrlsToObjects(journalTitle.collection);
 		journalTitle.taxonomies = Taxonomy.convertUrlsToObjects(journalTitle.subject);
 		
 		ExpressionList<JournalTitle> expressionList = JournalTitle.find.where()

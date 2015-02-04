@@ -408,6 +408,7 @@ public final class Const {
     public static final String FLAG_INSTANCE         = "flag_instance";
     public static final String ROLE_USER             = "role_user";
     public static final String PERMISSION_ROLE       = "permission_role";
+    public static final String COLLECTION_JOURNAL_TITLE = "collection_journal_title";
     public static final String SUBJECT_JOURNAL_TITLE = "subject_journal_title";
     public static final String SUBJECT_DOCUMENT      = "subject_document";
     public static final String PORTAL_DOCUMENT       = "portal_document";

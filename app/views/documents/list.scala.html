@@ -42,9 +42,11 @@
     }
     
     // Generate the link
-    routes.Documents.list(filterForm("user").value, filterForm("watchedtarget").value,
-    	filterForm("service").value, status.toString, newPage, sortBy, order, searchstr)
-    
+    if (filters)
+    	routes.Documents.list(filterForm("user").value, filterForm("watchedtarget").value,
+    		filterForm("service").value, status.toString, newPage, sortBy, order, searchstr)
+    else
+    	routes.Documents.overview(newPage, sortBy, order)
 }
 
 @main("", user, scripts, styles) {
@@ -84,7 +86,6 @@
 	   			@helper.form(action=routes.Documents.list()) {
 		   			<div class="input-group">
 		   				<input type="hidden" name="status" value="@status">
-		   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   					<input type="hidden" name="s" value="@currentSortBy">
 	   					<input type="hidden" name="o" value="@currentOrder">
 						<input type="text" class="form-control lookup-form-control" name="f" placeholder="Enter Document Name" value="@searchstr" id="search-query">

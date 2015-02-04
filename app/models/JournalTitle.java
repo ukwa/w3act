@@ -25,6 +25,11 @@ public class JournalTitle extends Model {
 	@JoinColumn(name="id_watched_target")
 	public WatchedTarget watchedTarget;
 	@ManyToMany(cascade=CascadeType.REMOVE)
+	@JoinTable(name = Const.COLLECTION_JOURNAL_TITLE,
+		joinColumns = { @JoinColumn(name = "id_journal_title", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "id_dcollection", referencedColumnName="id") })
+	public List<DCollection> dCollections = new ArrayList<>();
+	@ManyToMany(cascade=CascadeType.REMOVE)
 	@JoinTable(name = Const.SUBJECT_JOURNAL_TITLE,
 		joinColumns = { @JoinColumn(name = "id_journal_title", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="id") })
@@ -36,7 +41,8 @@ public class JournalTitle extends Model {
 	@Required
 	public String publisherName;
 	public String language;
-	public String blCollectionSubset;
+	@Transient
+	public String collection;
 	@Transient
 	public String subject;
 	

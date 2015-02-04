@@ -15,8 +15,13 @@ create table journal_title (
   issn			varchar(255),
   frequency		varchar(255),
   publisher_name	varchar(255) not null,
-  language		varchar(255),
-  bl_collection_subset	varchar(255)
+  language		varchar(255)
+);
+
+create table collection_journal_title (
+  id_dcollection	bigint references dcollection (id),
+  id_journal_title	bigint references journal_title (id),
+  primary key (id_dcollection, id_journal_title)
 );
 
 create table subject_journal_title (
@@ -100,6 +105,7 @@ create sequence journal_seq;
 
 drop table if exists watched_target cascade;
 drop table if exists journal_title cascade;
+drop table if exists collection_journal_title cascade;
 drop table if exists subject_journal_title cascade;
 drop table if exists document cascade;
 drop table if exists subject_document cascade;

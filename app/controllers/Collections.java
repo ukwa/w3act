@@ -8,6 +8,7 @@ import java.util.List;
 
 import models.DCollection;
 import models.Target;
+import models.Taxonomy;
 import models.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -495,5 +496,14 @@ public class Collections extends AbstractController {
     	}
     	return res;
     }
+    
+	public static String serializeCollections(List<DCollection> dCollections) {
+		String collection = "";
+		for (DCollection dCollection : dCollections) {
+			if (!collection.isEmpty()) collection += ", ";
+			collection += dCollection.url;
+		}
+		return collection;
+	}
     
 }
