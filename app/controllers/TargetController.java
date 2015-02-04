@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 
 import models.Collection;
 import models.FieldUrl;
@@ -1250,10 +1251,19 @@ public class TargetController extends AbstractController {
 		            	Logger.debug("url: " + trimmed);
 						uri = new URI(trimmed).normalize().toURL();
 	        			String extFormUrl = uri.toExternalForm();
+	        			
+	        			String[] schemes = {"http","https"};
+	        			UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.ALLOW_ALL_SCHEMES);
+	        			boolean isValidUrl = urlValidator.isValid(trimmed);
+	        			Logger.debug("valid? " + isValidUrl);
+	        			if (!isValidUrl) {
+	        				throw new ActException("Invalid URL");
+	        			}
+	        			
 		            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
 		            	Logger.debug("extFormUrl: " + extFormUrl);
 		            	fieldUrls.add(fu);
-					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
+					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
 			            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
 			            filledForm.reject(ve);
 			            return newInfo(filledForm);
