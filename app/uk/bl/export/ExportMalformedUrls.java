@@ -7,12 +7,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import org.apache.commons.validator.routines.UrlValidator;
+
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 
 import play.Logger;
 import uk.bl.Const;
 import uk.bl.api.Utils;
+import uk.bl.exception.ActException;
 
 public enum ExportMalformedUrls {
 
@@ -40,7 +43,14 @@ public enum ExportMalformedUrls {
             	Logger.debug("url: " + url);
 				try {
 					new URI(url).normalize().toURL();
-				} catch (MalformedURLException | URISyntaxException e) {
+        			String[] schemes = {"http","https"};
+        			UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.ALLOW_ALL_SCHEMES);
+        			boolean isValidUrl = urlValidator.isValid(url);
+        			Logger.debug("valid? " + isValidUrl);
+        			if (!isValidUrl) {
+        				throw new ActException("Invalid URL");
+        			}
+				} catch (MalformedURLException | URISyntaxException | ActException e) {
 					e.printStackTrace();
 		    		sw.append(title);
 			 	    sw.append(Const.CSV_SEPARATOR);
