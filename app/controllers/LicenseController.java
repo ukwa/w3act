@@ -133,13 +133,15 @@ public class LicenseController extends AbstractController {
 //		sb.append(Const.PUBLICITY_ACK + Const.TWO_POINTS + Utils.INSTANCE.showBooleanAsString(permission.publish) + Const.CSV_LINE_END);
 //		sb.append(Const.CSV_LINE_END);
 		
-		String targetUrl = routes.TargetController.view(permission.target.id).absoluteURL(request()).toString();
+//		String targetUrl = routes.TargetController.view(permission.target.id).absoluteURL(request()).toString();
 
+		String targetUrls = permission.target.fieldUrl();
+		
     	messageBody = CrawlPermission.
             	replaceStringInText(
             			messageBody
 						, Const.PLACE_HOLDER_DELIMITER + mailTemplate.placeHolders + Const.PLACE_HOLDER_DELIMITER
-						, targetUrl);
+						, targetUrls);
     	Logger.debug("sendAcknowledgementToSiteOwner messageBody: " + messageBody);
     	
         EmailHelper.sendMessage(ownerEmail, messageSubject, messageBody);                	
