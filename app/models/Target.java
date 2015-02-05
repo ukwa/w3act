@@ -1809,7 +1809,7 @@ public class Target extends UrlModel {
 	
 	public String getCrawlEndDateText() {
 		if (crawlEndDate != null) {
-			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 			crawlEndDateText = dateFormat.format(crawlEndDate);
 		}
 		return crawlEndDateText;

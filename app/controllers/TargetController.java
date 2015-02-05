@@ -1035,7 +1035,7 @@ public class TargetController extends AbstractController {
 		        
 		        String crawlEndDate = requestData.get("endStartDateText");
 		    	if (StringUtils.isNotEmpty(crawlEndDate)) {
-					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 					try {
 						Date date = formatter.parse(crawlEndDate);
 						filledForm.get().crawlEndDate = date;
@@ -1304,7 +1304,7 @@ public class TargetController extends AbstractController {
         
         String crawlEndDate = requestData.get("endStartDateText");
     	if (StringUtils.isNotEmpty(crawlEndDate)) {
-			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 			try {
 				Date date = formatter.parse(crawlEndDate);
 				filledForm.get().crawlEndDate = date;

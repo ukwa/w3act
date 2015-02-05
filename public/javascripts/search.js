@@ -440,9 +440,13 @@ function showTreeParent(data, id, key) {
     });
 }
 
-function targetStartDateTime() {
+function targetDateTime() {
 	
 	$('#start-date-time').datetimepicker(
+		{ dateFormat: "dd-mm-yy" }
+	);
+
+	$('#end-date-time').datetimepicker(
 		{ dateFormat: "dd-mm-yy" }
 	);
 

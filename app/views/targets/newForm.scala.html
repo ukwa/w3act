@@ -125,7 +125,7 @@
 			})
 			
 			$('#selectionType option[value="SELECTION"]').prop('selected', true);
-			targetStartDateTime();
+			targetDateTime();
 
 		});		
 	</script>
@@ -827,7 +827,7 @@
 								@inputText(targetForm("endStartDateText"),
 									'_label -> "End date:",
 								    'class -> "form-control",
-								    'id -> "end-date"
+								    'id -> "end-date-time"
 								)(FieldConstructor(genericInput.f), lang)							
 							</div>
 						</div>
