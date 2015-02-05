@@ -1801,7 +1801,7 @@ public class Target extends UrlModel {
 
 	public String getCrawlStartDateText() {
 		if (crawlStartDate != null) {
-			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 			crawlStartDateText =  dateFormat.format(crawlStartDate);
 		}
 		return crawlStartDateText;

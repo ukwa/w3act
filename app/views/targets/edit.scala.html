@@ -820,8 +820,8 @@
 			</div>
 		     	
 	        <div class="tab-pane fade" id="crawlpolicy">
-	
-				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+	        
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
@@ -830,13 +830,16 @@
 						                options(scopeTypes), 
 						                args = 
 						                'class -> "form-control",
+					                	'_default -> "-- None --",
 						                '_label -> "Scope: Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)",
 						                '_showConstraints -> false
-					            )(FieldConstructor(genericMandatoryInput.f), lang)		
+					            )(FieldConstructor(genericMandatoryInput.f), lang)	
 							</div>
 						</div>
 			     	</div>
-			     	
+				}
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+			     
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
@@ -845,6 +848,7 @@
 						                options(depthTypes), 
 						                args = 
 						                'class -> "form-control",
+					                	'_default -> "-- None --",					                
 						                '_label -> "Depth: (Determines the depth of the crawl. Most crawls will be capped at 500MB)",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	
@@ -862,7 +866,9 @@
 							</div>
 						</div>
 			     	</div>	
+		     	}
 		     	
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
@@ -876,8 +882,26 @@
 					            )(FieldConstructor(genericMandatoryInput.f), lang)
 							</div>
 						</div>
-			     	</div>	
-			     	
+			     	</div>
+			  	} else {
+		    		<div class="row padding-10">
+			     		<div class="col-md-12 col-xs-12 col-sm-12">
+							<div class="form-group">
+								<label class="col-sm-6 control-label" for="crawlFrequency">
+									Crawl Frequency (How often should this site be archived?):
+									<font color="red">*</font>
+								</label>
+								<div class="col-sm-6">
+									<select id="crawlFrequency" class="form-control" name="crawlFrequency">
+										<option value="DOMAINCRAWL">Domain Crawl Only</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>			  	
+			  	}
+			  	
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
@@ -889,7 +913,7 @@
 							</div>
 						</div>
 			     	</div>	
-		
+				
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
@@ -901,7 +925,9 @@
 							</div>
 						</div>
 			     	</div>	
-		
+				}
+				
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
@@ -929,39 +955,17 @@
 							<div class="form-group">
 								<label class="col-sm-6 control-label"></label>
 							    <div class="col-sm-6">
-									@if(targetForm("id") != null) {
-										@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-											<button type="submit" name="archive" class="btn btn-success">Archive this now</button>
-										}
-									} else {
-										<button disabled type="submit" name="archive" class="btn btn-success">Archive this now</button>
-										<div class="padding-20">
-											<div class="alert alert-info">
-												Before you can archive this target, you need to save the target record.
-											</div>
+									<button disabled type="submit" name="archive" class="btn btn-success">Archive this now</button>
+									<div class="padding-20">
+										<div class="alert alert-info">
+											Before you can archive this target, you need to save the target record.
 										</div>
-									}
+									</div>
 								</div>
 							</div>
 						</div>
 			     	</div>
-		        } else {
-		    		<div class="row padding-10">
-			     		<div class="col-md-12 col-xs-12 col-sm-12">
-							<div class="form-group">
-								<label class="col-sm-6 control-label" for="crawlFrequency">
-									Crawl Frequency (How often should this site be archived?):
-									<font color="red">*</font>
-								</label>
-								<div class="col-sm-6">
-									<select id="crawlFrequency" class="form-control" name="crawlFrequency">
-										<option value="DOMAINCRAWL">Domain Crawl Only</option>
-									</select>
-								</div>
-							</div>
-						</div>
-					</div>
-		        }														
+		        }
 	        </div>
 	        
 	        <div class="tab-pane fade" id="licensing">

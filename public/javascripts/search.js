@@ -452,7 +452,7 @@ function targetStartDateTime() {
 		if (frequency != 'DOMAINCRAWL') {
     		console.log('selected: ' + frequency);
             var d = new Date(); // for now
-            var datetext = d.getDate() + "-" + d.getMonth()+1 + "-" + d.getFullYear() + " 09:00";
+            var datetext = d.getDate() + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " 09:00";
             $('#start-date-time').val(datetext);
 		} else {
     		$("#start-date-time").val('');
