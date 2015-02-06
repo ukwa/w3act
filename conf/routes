@@ -32,6 +32,7 @@ GET     /collections                        controllers.CollectionController.ind
 GET    	/collections/list                  	controllers.CollectionController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET    	/collections/search                 controllers.CollectionController.search()
 GET    	/collections/filterbyjson/:name		controllers.CollectionController.filterByJson(name)
+GET		/collections/byjson					controllers.CollectionController.getByJson()
 GET		/collections/new					controllers.CollectionController.newForm()
 GET     /collections/:id            		controllers.CollectionController.view(id:Long)
 GET     /collections/:url            		controllers.CollectionController.viewAct(url)

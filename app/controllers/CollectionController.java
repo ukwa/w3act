@@ -104,6 +104,12 @@ public class CollectionController extends AbstractController {
         return ok(jsonData);
     }
 	
+	@BodyParser.Of(BodyParser.Json.class)
+    public static Result getByJson() {
+    	JsonNode jsonData = getCollectionsData();
+        return ok(jsonData);
+    }
+	
 	public static Result view(Long id) {
 		User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
