@@ -214,11 +214,3 @@ users:
         affiliation:   BL
 #        roles:              [*viewer]
         roleHolder:         viewer
-
-    - !!models.User
-        email:              roman.graf@ait.ac.at
-        name:               Roman Graf
-        password:           secret
-        affiliation:   AIT
-#        roles:              [*archivist]
-        roleHolder:         archivist
