@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -311,9 +312,9 @@ public enum JsonUtils {
 						if (StringUtils.isEmpty(user.email)) {
 							user.email = user.name.toLowerCase().replace(" ", ".") + "@bl.uk";
 						}
-						if (user.password == null || user.password.length() == 0) {
-							user.password = Const.DEFAULT_PASSWORD;
-						}
+
+						user.password = UUID.randomUUID().toString();
+
 						if (user.password.length() > 0) {
 							try {
 								user.password = PasswordHash.createHash(user.password);

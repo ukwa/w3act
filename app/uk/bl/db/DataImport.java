@@ -38,6 +38,8 @@ public enum DataImport {
 
 	public void insert() {
 		
+    	Boolean importAccounts = play.Play.application().configuration().getBoolean("use.accounts");
+
         try {
 
 			if (Ebean.find(User.class).findRowCount() == 0) {
@@ -46,7 +48,9 @@ public enum DataImport {
 	        	this.importJsonOrganisations();
 	        	this.importOrganisations();
 	        	this.importCurators();
-	            this.importAccounts();
+	        	if (importAccounts) {
+	        		this.importAccounts();
+	        	}
 	        }
 			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
 	        	this.importMailTemplates();
@@ -70,6 +74,10 @@ public enum DataImport {
 				this.importInstances();
 			}
             Logger.debug("+++ Data import completed +++");
+        	String defaultAdminEmail = play.Play.application().configuration().getString("admin.default.email");
+
+			String password = AdminUserImport.INSTANCE.create(defaultAdminEmail);
+			Logger.info("Email: " + defaultAdminEmail + ", password: " + password);
             
         } catch (Exception e) {
         	e.printStackTrace();
