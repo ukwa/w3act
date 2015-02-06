@@ -489,7 +489,9 @@ public class Target extends UrlModel {
 
 	public static Target findById(Long id) {
 		Target target = find.where().eq("id", id).findUnique();
-		target.formUrl = target.fieldUrl();
+		if( target != null ) {
+			target.formUrl = target.fieldUrl();
+		}
 		return target;
 	}
 
@@ -1168,6 +1170,16 @@ public class Target extends UrlModel {
 				.setFetchAhead(false).getPage(page);
 	}
 
+
+	/**
+	 * 
+	 * @param collectionId
+	 * @return
+	 */
+	public static List<Target> allCollectionTargets(Long collectionId) {
+		return find.where().eq("collections.id", collectionId).findList();
+	}
+	
 	/**
 	 * Return a page of Target
 	 * 

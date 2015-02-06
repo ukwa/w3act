@@ -35,6 +35,7 @@ GET    	/collections/filterbyjson/:name		controllers.CollectionController.filter
 GET		/collections/byjson					controllers.CollectionController.getByJson()
 GET		/collections/new					controllers.CollectionController.newForm()
 GET     /collections/:id            		controllers.CollectionController.view(id:Long)
+#GET     /collections/:id/json          		controllers.CollectionController.viewAsJson(id:Long)
 GET     /collections/:url            		controllers.CollectionController.viewAct(url)
 GET     /collections/:id/edit       		controllers.CollectionController.edit(id:Long)
 GET     /collections/:id/sites				controllers.CollectionController.sites(id:Long)
@@ -181,6 +182,7 @@ GET    	/targets/list                  		controllers.TargetController.list(p:Int
 GET    	/targets/new                 		controllers.TargetController.newForm(title ?= "")
 
 GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", collectionId:Long ?= 0)
+#GET    	/targets/collectiontargets/:id/json controllers.TargetController.collectionTargetsAsJson(id:Long)
 GET    	/targets/organisationtargets/       controllers.TargetController.organisationTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", organisationId:Long)
 GET    	/targets/usertargets/           	controllers.TargetController.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", userId:Long, subjectId:Long ?= 0, collectionId:Long ?= 0)
 GET    	/targets/subjecttargets/        	controllers.TargetController.subjectTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", subjectId:Long ?= 0)
@@ -188,6 +190,7 @@ GET    	/targets/export/ld/:frequency		controllers.TargetController.exportLdFreq
 GET    	/targets/export/by/:frequency		controllers.TargetController.exportByFrequencyJson(frequency)
 
 GET     /targets/:id                      			controllers.TargetController.view(id:Long)
+#GET     /targets/:id/json                  			controllers.TargetController.viewAsJson(id:Long)
 GET     /targets/act/:id                    		controllers.TargetController.viewAct(id)
 GET     /targets/wct/:id                	    	controllers.TargetController.viewWct(id)
 GET     /targets/:revision/revision		         	controllers.TargetController.viewrevision(revision:Long)
@@ -296,6 +299,9 @@ GET     /api/suggested_collections_filter/:url      controllers.TargetController
 GET     /api/subjects_instance/:url          controllers.InstanceController.getSubjectTree(url)
 GET     /api/suggested_collections_instance/:url      controllers.InstanceController.getSuggestedCollections(url)
 #GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
+GET     /api/collections/:id          		 controllers.CollectionController.viewAsJson(id:Long)
+GET    	/api/targets/bycollection/:id        controllers.TargetController.collectionTargetsAsJson(id:Long)
+GET     /api/targets/:id                  	 controllers.TargetController.viewAsJson(id:Long)
 
 # Password management
 GET     /passwords                           controllers.PasswordController.edit()

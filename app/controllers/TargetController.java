@@ -197,8 +197,25 @@ public class TargetController extends AbstractController {
     
     public static Result view(Long id) {
     	Target target = Target.findById(id);
-    	User user = User.findByEmail(request().username());
-        return ok(view.render(target, user));
+    	if( target != null) {
+    		if (request().accepts("text/html")) {
+    			User user = User.findByEmail(request().username());
+    			return ok(view.render(target, user));
+    		} else {
+    			return ok(Json.toJson(target));
+    		}
+    	} else {
+    		return notFound("There is no Target with ID "+id);
+    	}
+    }
+    
+    public static Result viewAsJson(Long id) {
+    	Target target = Target.findById(id);
+    	if( target != null) {
+    		return ok(Json.toJson(target));
+    	} else {
+    		return notFound("There is no Target with ID "+id);
+    	}
     }
     
     public static Result viewAct(String url) {
@@ -425,6 +442,21 @@ public class TargetController extends AbstractController {
         			sortBy, 
         			order) 
         	);
+    }
+    
+    /**
+     * 
+     * @param collectionId
+     * @return
+     */
+    public static Result collectionTargetsAsJson(Long collectionId) {
+    	Collection collection = Collection.findById(collectionId);
+    	if( collection != null ) {
+    		List<Target> targets = Target.allCollectionTargets(collection.id);
+    		return ok( Json.toJson(targets));
+    	} else {
+    		return notFound("There is not collection with ID "+collectionId);
+    	}
     }
 	    
 

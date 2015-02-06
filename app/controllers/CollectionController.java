@@ -113,8 +113,26 @@ public class CollectionController extends AbstractController {
 	public static Result view(Long id) {
 		User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
-		Logger.debug("" + id+ " " + collection.parent);
-        return ok(view.render(collection, user));
+		if( collection != null ) {
+			Logger.debug("" + id+ " " + collection.parent);
+			if (request().accepts("text/html")) {
+				return ok(view.render(collection, user));
+			} else {
+				return ok(Json.toJson(collection));
+			}
+		} else {
+    		return notFound("There is no Collection with ID "+id);
+		}
+	}
+	
+	public static Result viewAsJson(Long id) {
+		Collection collection = Collection.findById(id);
+		if( collection!= null ) {
+			Logger.debug("" + id+ " " + collection.parent);
+			return ok(Json.toJson(collection));
+		} else {
+    		return notFound("There is no Collection with ID "+id);
+		}
 	}
 	
     public static Result viewAct(String url) {
