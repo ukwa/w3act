@@ -32,7 +32,6 @@ GET     /collections                        controllers.CollectionController.ind
 GET    	/collections/list                  	controllers.CollectionController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
 GET    	/collections/search                 controllers.CollectionController.search()
 GET    	/collections/filterbyjson/:name		controllers.CollectionController.filterByJson(name)
-GET		/collections/byjson					controllers.CollectionController.getByJson()
 GET		/collections/new					controllers.CollectionController.newForm()
 GET     /collections/:id            		controllers.CollectionController.view(id:Long)
 #GET     /collections/:id/json          		controllers.CollectionController.viewAsJson(id:Long)
@@ -286,7 +285,7 @@ POST    /nominations                   		controllers.NominationController.save()
 POST    /nominations/:id              		controllers.NominationController.update(id:Long)
 
 
-# Scope
+# JSON API
 #GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
 #GET     /api/scopeintance/:url               controllers.InstanceController.isInScope(url)
 GET     /api/licence/:url                    controllers.CrawlPermissionController.crawlPermissionExist(url)
@@ -299,9 +298,10 @@ GET     /api/suggested_collections_filter/:url      controllers.TargetController
 GET     /api/subjects_instance/:url          controllers.InstanceController.getSubjectTree(url)
 GET     /api/suggested_collections_instance/:url      controllers.InstanceController.getSuggestedCollections(url)
 #GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
-GET     /api/collections/:id          		 controllers.CollectionController.viewAsJson(id:Long)
-GET    	/api/targets/bycollection/:id        controllers.TargetController.collectionTargetsAsJson(id:Long)
 GET     /api/targets/:id                  	 controllers.TargetController.viewAsJson(id:Long)
+GET    	/api/targets/bycollection/:id        controllers.TargetController.collectionTargetsAsJson(id:Long)
+GET		/api/collections					 controllers.CollectionController.getByJson()
+GET     /api/collections/:id          		 controllers.CollectionController.viewAsJson(id:Long)
 
 # Password management
 GET     /passwords                           controllers.PasswordController.edit()
