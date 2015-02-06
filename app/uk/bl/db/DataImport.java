@@ -5,6 +5,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -74,10 +75,18 @@ public enum DataImport {
 				this.importInstances();
 			}
             Logger.debug("+++ Data import completed +++");
+            
         	String defaultAdminEmail = play.Play.application().configuration().getString("admin.default.email");
-
-			String password = AdminUserImport.INSTANCE.create(defaultAdminEmail);
-			Logger.info("Email: " + defaultAdminEmail + ", password: " + password);
+        	// find the imported admin user from Andy's act
+			User user = User.findByEmail(defaultAdminEmail);
+			String generated = UUID.randomUUID().toString();
+			if (user != null) {
+				user.password = PasswordHash.createHash(generated);
+				user.update();
+			}
+        	
+			//String password = AdminUserImport.INSTANCE.create(defaultAdminEmail);
+			Logger.info("Email: " + user.email + ", ADMIN PASSWORD: " + generated);
             
         } catch (Exception e) {
         	e.printStackTrace();
