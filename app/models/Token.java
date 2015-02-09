@@ -14,6 +14,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
@@ -116,8 +118,8 @@ public class Token extends Model {
      * @param user the current user
      * @throws java.net.MalformedURLException if token is wrong.
      */
-    public static void sendMailResetPassword(User user) throws MalformedURLException {
-        sendMail(user, TypeToken.password, null);
+    public static void sendMailResetPassword(User user, String hostname) throws MalformedURLException {
+        sendMail(user, TypeToken.password, null, hostname);
     }
 
     /**
@@ -127,8 +129,8 @@ public class Token extends Model {
      * @param email email for a change email token
      * @throws java.net.MalformedURLException if token is wrong.
      */
-    public static void sendMailChangeMail(User user, @Nullable String email) throws MalformedURLException {
-        sendMail(user, TypeToken.email, email);
+    public static void sendMailChangeMail(User user, @Nullable String email, String hostname) throws MalformedURLException {
+        sendMail(user, TypeToken.email, email, hostname);
     }
 
     /**
@@ -139,20 +141,22 @@ public class Token extends Model {
      * @param email email for a change email token
      * @throws java.net.MalformedURLException if token is wrong.
      */
-    private static void sendMail(User user, TypeToken type, String email) throws MalformedURLException {
+    private static void sendMail(User user, TypeToken type, String email, String hostname) throws MalformedURLException {
 
         Token token = getNewToken(user, type, email);
         
         String context = Configuration.root().getString("application.context");
 
-        String externalServer = Configuration.root().getString("server_name") + context;
+        String externalServer = hostname + context;
 
         String subject = null;
         String message = null;
         String toMail = null;
 
         // Should use reverse routing here.
-        String urlString = "http://" + externalServer + "/" + type.urlPath + "/" + token.token;
+        String urlString = externalServer + "/" + type.urlPath + "/" + token.token;
+        Logger.debug("urlString: " + urlString);
+        
         URL url = new URL(urlString); // validate the URL
 
         switch (type) {

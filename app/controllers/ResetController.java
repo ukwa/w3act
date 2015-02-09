@@ -66,8 +66,11 @@ public class ResetController extends Controller {
         Form<AskForm> askForm = form(AskForm.class).bindFromRequest();
 
     	DynamicForm requestData = form().bindFromRequest();
-
+    	
+    	String protocol = requestData.get("protocol");
+    	String host = request().host();
     	String email = requestData.get("email");
+    	String hostname = protocol + host;
     	
         if (StringUtils.isBlank(email)) {
             flash("message", "Email is required");
@@ -91,9 +94,10 @@ public class ResetController extends Controller {
         }
 
         Logger.debug("Sending password reset link to user " + user);
+        Logger.debug("hostname: " + hostname);
 
         try {
-            Token.sendMailResetPassword(user);
+            Token.sendMailResetPassword(user, hostname);
             return ok(emailRequestLink.render(email));
         } catch (MalformedURLException e) {
             Logger.error("Cannot validate URL", e);

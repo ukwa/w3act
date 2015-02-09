@@ -4,6 +4,13 @@
 @import bootstrap._
 
 @script = {
+	<script>
+		$(document).ready(function() {
+			var protocol = window.location.protocol;
+			console.log(protocol);
+			$('#protocol').val(protocol + "//");
+		});
+	</script>
 }
 
 @style = {
@@ -18,6 +25,8 @@
 	@warningmessage(flash)
 
     @form(routes.ResetController.confirmEmail()) {
+
+		<input type="hidden" id="protocol" name="protocol" value="">
 
 		<div class="row">
 			<div class="col-md-8 col-xs-8 col-sm-8">
