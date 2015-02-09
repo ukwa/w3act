@@ -6,9 +6,12 @@
 @script = {
 	<script>
 		$(document).ready(function() {
-			var protocol = window.location.protocol;
-			console.log(protocol);
-			$('#protocol').val(protocol + "//");
+			var port = "";
+			var hostname = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+
+
+			console.log(hostname);
+			$('#hostname').val(hostname);
 		});
 	</script>
 }
@@ -26,7 +29,7 @@
 
     @form(routes.ResetController.confirmEmail()) {
 
-		<input type="hidden" id="protocol" name="protocol" value="">
+		<input type="hidden" id="hostname" name="hostname" value="">
 
 		<div class="row">
 			<div class="col-md-8 col-xs-8 col-sm-8">

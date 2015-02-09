@@ -67,10 +67,8 @@ public class ResetController extends Controller {
 
     	DynamicForm requestData = form().bindFromRequest();
     	
-    	String protocol = requestData.get("protocol");
-    	String host = request().host();
+    	String hostname = requestData.get("hostname");
     	String email = requestData.get("email");
-    	String hostname = protocol + host;
     	
         if (StringUtils.isBlank(email)) {
             flash("message", "Email is required");
