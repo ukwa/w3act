@@ -366,6 +366,8 @@ public enum JsonUtils {
 
 			String jsonUrl = Const.URL_STR_BASE + TaxonomyType.TAXONOMY_VOCABULARY + Const.JSON;
 
+			Logger.debug("act url: " + jsonUrl);
+			
 		    String content = this.getAuthenticatedContent(jsonUrl);		    
 		    JsonNode parentNode = Json.parse(content);
 		    
@@ -447,6 +449,8 @@ public enum JsonUtils {
 		try {
 
 			String jsonUrl = Const.URL_STR_BASE + Taxonomy.TAXONOMY_TERM + Const.JSON;
+
+			Logger.debug("act url: " + jsonUrl);
 
 		    String content = this.getAuthenticatedContent(jsonUrl);		    
 		    JsonNode parentNode = Json.parse(content);

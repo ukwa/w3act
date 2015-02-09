@@ -81,6 +81,7 @@ public enum DataImport {
 			User user = User.findByEmail(defaultAdminEmail);
 			String generated = UUID.randomUUID().toString();
 			if (user != null) {
+				user.roles = Role.setRoleByName("sys_admin");
 				user.password = PasswordHash.createHash(generated);
 				user.update();
 			}
