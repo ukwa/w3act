@@ -68,7 +68,7 @@ public enum WaybackExport {
 								instance.revision = "initial revision";
 								instance.fieldDate = Utils.INSTANCE.getDateFromLongValue(result.getCapturedate());
 								instance.target = target;
-//								instance.save();
+								instance.save();
 							}
 						}
 					}
