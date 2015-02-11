@@ -710,7 +710,7 @@ public class CrawlPermissionController extends AbstractController {
         		String licenseUrl = routes.LicenseController.form(permission.token).absoluteURL(request()).toString();
         		Logger.debug("setPendingSelectedCrawlPermissions current: " + licenseUrl);
         		
-        		licenseUrl = injectServerName(licenseUrl);
+//        		licenseUrl = injectServerName(licenseUrl);
         		Logger.debug("setPendingSelectedCrawlPermissions new: " + licenseUrl);
             	messageBody = CrawlPermission.
                 	replaceTwoStringsInText(
