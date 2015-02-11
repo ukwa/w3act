@@ -76,20 +76,18 @@ public enum DataImport {
 			}
             Logger.debug("+++ Data import completed +++");
             
-			if (Ebean.find(User.class).findRowCount() == 0) {
-	        	String defaultAdminEmail = play.Play.application().configuration().getString("admin.default.email");
-	        	// find the imported admin user from Andy's act
-				User user = User.findByEmail(defaultAdminEmail);
-				String generated = UUID.randomUUID().toString();
-				if (user != null) {
-					user.roles = Role.setRoleByName("sys_admin");
-					user.password = PasswordHash.createHash(generated);
-					user.update();
-				}
-	        	
-				//String password = AdminUserImport.INSTANCE.create(defaultAdminEmail);
-				Logger.info("Email: " + user.email + ", ADMIN PASSWORD: " + generated);
+        	String defaultAdminEmail = play.Play.application().configuration().getString("admin.default.email");
+        	// find the imported admin user from Andy's act
+			User user = User.findByEmail(defaultAdminEmail);
+			String generated = UUID.randomUUID().toString();
+			if (user != null) {
+				user.roles = Role.setRoleByName("sys_admin");
+				user.password = PasswordHash.createHash(generated);
+				user.update();
 			}
+        	
+			//String password = AdminUserImport.INSTANCE.create(defaultAdminEmail);
+			Logger.info("Email: " + user.email + ", ADMIN PASSWORD: " + generated);
             
         } catch (Exception e) {
         	e.printStackTrace();
