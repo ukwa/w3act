@@ -670,9 +670,13 @@ public class CrawlPermissionController extends AbstractController {
 		if (licenseUrl != null && licenseUrl.length() > 0 && licenseUrl.contains(Const.HTTP_PREFIX)) {
 			String serverName = EmailHelper.getServerNameFromPropertyFile();
 			int startPos = licenseUrl.indexOf(Const.HTTP_PREFIX) + Const.HTTP_PREFIX.length();
+			if (startPos == 0) {
+				startPos = licenseUrl.indexOf("https://") + "https://".length();
+			}
+
 			int endPos = licenseUrl.substring(startPos).indexOf(Const.SLASH_DELIMITER) + startPos;
-			if (serverName != null && serverName.length() > 0) {
-				res = Const.HTTP_PREFIX + serverName + licenseUrl.substring(endPos);
+			if (StringUtils.isNotEmpty(serverName)) {
+				res = serverName + licenseUrl.substring(endPos);
 			}
 		}
         return res;
@@ -710,7 +714,7 @@ public class CrawlPermissionController extends AbstractController {
         		String licenseUrl = routes.LicenseController.form(permission.token).absoluteURL(request()).toString();
         		Logger.debug("setPendingSelectedCrawlPermissions current: " + licenseUrl);
         		
-//        		licenseUrl = injectServerName(licenseUrl);
+        		licenseUrl = injectServerName(licenseUrl);
         		Logger.debug("setPendingSelectedCrawlPermissions new: " + licenseUrl);
             	messageBody = CrawlPermission.
                 	replaceTwoStringsInText(
