@@ -154,6 +154,7 @@ public class CollectionController extends AbstractController {
     public static Result edit(Long id) {
     	User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
+		collection.description = collection.description.replace("<p>", "").replace("</p>", "").replace("<br />", "\n").replace("<br>", "\n");
 		List<Collection> thisCollection = new ArrayList<Collection>();
 		thisCollection.add((Collection)collection.parent);
 		JsonNode node = getCollectionsData(thisCollection);
