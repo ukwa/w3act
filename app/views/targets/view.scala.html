@@ -898,24 +898,4 @@
 	    	</div>
 		</div>
 	</div>
-	
-	<div class="padding-20">
-		<div class="panel-group" id="accordion3">
-			<div class="panel panel-primary" id="panels">
-				<div class="panel-heading">
-			    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseTargetInstances" style="color:#fff;">
-			        	Instances
-					</a>
-				</div>
-				<div id="collapseTargetInstances" class="panel-collapse collapse">
-					@for(instance <- target.instances) {
-						<div class="panel-footer">
-							<a class="brand" target="_blank" href="@routes.InstanceController.viewInstance(target.id, instance.id)">@instance.title</a>
-						</div>
-					}
-				</div>
-			</div>
-		</div>
-	</div>	    
-   		
 }
