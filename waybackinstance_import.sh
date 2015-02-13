@@ -8,4 +8,4 @@ if [ ! -d "$JAVA_HOME" ]; then
     exit 1
 fi
 
-${JAVA_HOME}/bin/java -cp "/opt/w3act/lib/*" uk.bl.export.WaybackExport
+${JAVA_HOME}/bin/java -cp "/opt/w3act/lib/*" -Dconfig.file=conf/prod.conf uk.bl.export.WaybackExport

@@ -1032,13 +1032,8 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
-								@if(targetForm("qaIssue.id").value == null) {
-									@if(!FormHelper.INSTANCE.indicateLicenses(id)) {
-										<button type="submit" name="action" value="request" class="btn btn-success">Open License Request</button>
-									}
-									@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-								   		<a href="@routes.CrawlPermissionController.showCrawlPermissions(targetForm("url").value)">Crawl Permissions</a>
-								   	}
+								@if(!FormHelper.INSTANCE.indicateLicenses(id)) {
+									<button type="submit" name="action" value="request" class="btn btn-success">Open License Request</button>
 								} else {
 									<button disabled type="submit" name="action" value="request" class="btn btn-success">Open License Request</button>
 									<div class="padding-20">
@@ -1047,6 +1042,9 @@
 										</div>
 									</div>
 								}
+								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+							   		<a href="@routes.CrawlPermissionController.showCrawlPermissions(targetForm("url").value)">Crawl Permissions</a>
+							   	}
 							</div>
 						</div>
 					</div>

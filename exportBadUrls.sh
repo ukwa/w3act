@@ -8,5 +8,5 @@ if [ ! -d "$JAVA_HOME" ]; then
     exit 1
 fi
 
-${JAVA_HOME}/bin/java -cp "/opt/w3act/lib/*" java uk.bl.export.ExportMalformedUrls
+${JAVA_HOME}/bin/java -cp "/opt/w3act/lib/*" -Dconfig.file=conf/prod.conf java uk.bl.export.ExportMalformedUrls
 
