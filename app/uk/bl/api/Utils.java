@@ -697,5 +697,10 @@ public enum Utils {
     	}
     	return url;
     }
+    
+    public boolean validUrl(String url) {
+    	String urlRegex = "^((http(s?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.*(\\:[0-9]+)*(/($|[a-zA-Z0-9\\.\\,\\;\\?\\:\\(\\)\\@\\#\\!\\'\\\\\\+&amp;%\\$#\\=~_\\-]+))*$";
+        return url.matches(urlRegex);
+    }
 }
 

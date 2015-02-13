@@ -1284,9 +1284,7 @@ public class TargetController extends AbstractController {
 						uri = new URI(trimmed).normalize().toURL();
 	        			String extFormUrl = uri.toExternalForm();
 	        			
-	        			String[] schemes = {"http","https"};
-	        			UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.ALLOW_ALL_SCHEMES);
-	        			boolean isValidUrl = urlValidator.isValid(trimmed);
+	        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
 	        			Logger.debug("valid? " + isValidUrl);
 	        			if (!isValidUrl) {
 	        				throw new ActException("Invalid URL");

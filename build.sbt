@@ -6,7 +6,7 @@ version := "1.0"
 
 libraryDependencies ++= Seq(javaJdbc, javaEbean)     
 
-libraryDependencies += "commons-validator" % "commons-validator" % "1.4.0"
+libraryDependencies += "commons-validator" % "commons-validator" % "1.4.1"
 
 playJavaSettings
 
