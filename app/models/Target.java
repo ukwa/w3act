@@ -2012,7 +2012,8 @@ public class Target extends UrlModel {
 	}
 
 	public boolean indicateLicenses() {
-		return (hasLicenses() || hasHigherLicense() || indicateUkwaLicenceStatus());
+		// removed indicateUkwaLicenceStatus() check as this was the one that check qastatus
+		return (hasLicenses() || hasHigherLicense());
 	}    
     
 	public boolean indicateUkwaLicenceStatus() {
