@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -61,6 +62,7 @@ public enum WaybackExport {
 							Instance instance = Instance.findbyTitleAndTargetId(captureDatetitle, target.id);
 							if (instance == null) {
 								instance = new Instance();
+								instance.url = UUID.randomUUID().toString();
 								instance.title = captureDatetitle;
 								instance.createdAt = Utils.INSTANCE.getDateFromLongValue(result.getCapturedate());
 								Logger.debug("instance.createdAt: " + instance.createdAt);
