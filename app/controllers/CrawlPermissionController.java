@@ -68,7 +68,7 @@ public class CrawlPermissionController extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
      */
-    public static Result list(int pageNo, String sortBy, String order, String filter, String status, String sel) {
+    public static Result list(int pageNo, String sortBy, String order, String filter, String status, String sel, List<CrawlPermission> crawlPermissions) {
     	Logger.debug("CrawlPermissions.list() " + filter + " - " + sel);
     	
     	Page<CrawlPermission> pages = CrawlPermission.page(pageNo, 20, sortBy, order, filter, status);
@@ -89,7 +89,7 @@ public class CrawlPermissionController extends AbstractController {
         			order,
         			status,
         			sel,
-        			crawlPermissionStatuses, templates)
+        			crawlPermissionStatuses, templates, crawlPermissions)
         	);
     }
     
@@ -148,15 +148,45 @@ public class CrawlPermissionController extends AbstractController {
     public static Result showCrawlPermissions(Long targetId) {
     	Result res = null;
     	String status = "";
-		Target target = Target.findById(targetId);
-		if (target.qaIssue != null) {
-    		status = target.qaIssue.url;
-		}
-    	Logger.debug("showCrawlPermissions: " + targetId + ", target: " + target);
+
+    	
+    	Page<CrawlPermission> pages = CrawlPermission.targetPager(0, 20, Const.NAME, Const.ASC, Const.DEFAULT_CRAWL_PERMISSION_STATUS, Const.SELECT_ALL, targetId);
+
+    	CrawlPermissionStatus[] crawlPermissionStatuses = Const.CrawlPermissionStatus.values();
+    	
+    	List<MailTemplate> templates = MailTemplate.findByType(MailTemplate.TemplateType.PERMISSION_REQUEST.name());
+    	
+    	Logger.debug("template: " + templates);
+		
+    	Logger.debug("showCrawlPermissions: " + targetId);
 //        List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);
 //    	Logger.debug("showCrawlPermissions count: " + resList.size());
-    	res = redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
-        return res;    	
+//    	res = redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL), crawlPermissions);
+
+		"CrawlPermissions", 
+		User.findByEmail(request().username()), 
+		filter, 
+		pages, 
+		sortBy, 
+		order,
+		status,
+		sel,
+		crawlPermissionStatuses, templates, crawlPermissions)
+
+
+        return ok(
+            	targetList.render(
+            			"CrawlPermissions", 
+            			User.findByEmail(request().username()), 
+            			"", 
+            			null, 
+            			null, 
+            			null,
+            			status,
+            			null,
+            			crawlPermissionStatuses, templates, crawlPermissions)
+            	);
+
     }
     
     /**
