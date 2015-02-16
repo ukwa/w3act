@@ -376,12 +376,9 @@ public class CrawlPermission extends ActModel {
         		.getPage(page);
     }
 
-    public static Page<CrawlPermission> targetPager(int page, int pageSize, String sortBy, String order, String filter, 
-    		String status, Long targetId) {
+    public static Page<CrawlPermission> targetPager(int page, int pageSize, String sortBy, String order, Long targetId) {
 
         return find.where()
-        		.icontains("name", filter)
-        		.eq("status", status)
         		.eq("target.id", targetId)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)

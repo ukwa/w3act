@@ -148,7 +148,7 @@ public class CrawlPermissionController extends AbstractController {
     public static Result showCrawlPermissions(Long targetId) {
     	String status = "";
     	
-		Page<CrawlPermission> pages = CrawlPermission.targetPager(0, 20, Const.NAME, Const.ASC, "", status, targetId);
+		Page<CrawlPermission> pages = CrawlPermission.targetPager(0, 20, Const.NAME, Const.ASC, targetId);
 
     	Logger.debug("showCrawlPermissions: " + targetId);
 //        List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);
