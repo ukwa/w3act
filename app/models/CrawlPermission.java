@@ -375,6 +375,20 @@ public class CrawlPermission extends ActModel {
         		.setFetchAhead(false)
         		.getPage(page);
     }
+
+    public static Page<CrawlPermission> targetPager(int page, int pageSize, String sortBy, String order, String filter, 
+    		String status, Long targetId) {
+
+        return find.where()
+        		.icontains("name", filter)
+        		.eq("status", status)
+        		.eq("targetId", targetId)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
+    }
+
     
     public static CrawlPermission create(Long id, String url) {
     	return new CrawlPermission(id, url);

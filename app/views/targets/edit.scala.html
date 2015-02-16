@@ -1043,7 +1043,7 @@
 									</div>
 								}
 								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-							   		<a href="@routes.CrawlPermissionController.showCrawlPermissions(targetForm("url").value)">Crawl Permissions</a>
+							   		<a href="@routes.CrawlPermissionController.showCrawlPermissions(id)">Crawl Permissions</a>
 							   	}
 							</div>
 						</div>

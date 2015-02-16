@@ -202,7 +202,7 @@ GET     /targets/:id/instances/new      			controllers.InstanceController.newWit
 GET		/targets/:targetId/instances				controllers.InstanceController.results(targetId:Long)
 GET		/targets/:targetId/instances/:instanceId	controllers.InstanceController.viewInstance(targetId:Long, instanceId:Long)
 
-GET     /target/crawlpermissions/:target    controllers.CrawlPermissionController.showCrawlPermissions(target)
+GET     /target/:targetId/crawlpermissions	controllers.CrawlPermissionController.showCrawlPermissions(targetId:Long)
 GET     /target/licencerequest/:targetId    controllers.CrawlPermissionController.licenceRequestForTarget(targetId:Long)
 GET     /target/archive/:id                 controllers.TargetController.archive(id:Long)
 
