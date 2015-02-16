@@ -1841,72 +1841,10 @@ public class Target extends UrlModel {
 	public boolean isInScopeAllWithoutLicense() {
 		Logger.debug("isInScopeAllWithoutLicense()");
 		
-        boolean res = false;
-        /**
-         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
-         *
-         *  Rule 1.1: "field_uk_domain"
-         *  Rule 1.2: "field_uk_postal_address"
-         *  Rule 1.3: "field_via_correspondence"
-         *  Rule 1.4: "field_professional_judgement"
-         *  
-         *  is true - checking result is positive.
-         *  
-         *  Rule 1.5: if the field "field_no_ld_criteria_met" is true - checking result is negative
-         * 
-         */
-        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-        if (!res) {
-        	// check target.isUkHosting field with SQL uk/london/scot
-        	res = this.isTopLevelDomain;
-        }
-        // Rule 3.2: check geo IP / uk hosting?
-        if (!res) {
-        	// check target.isUkHosting field with SQL
-        	res = this.isUkHosting;
-        }
-        
-        // Rule 3.3: check whois lookup service / uk registration?
-        if (!res) {
-        	// check target.isUkRegistration field with SQL
-        	res = this.isUkRegistration;
-        }
+		if (this.checkManualScope())
+		    return true;
 
-        /**
-	   	 * Professional Judgement.
-	   	 * Postal Address (set manually to Yes by the user)
-	   	 * By Correspondence (also set manually)
-	   	 *  
-	   	 *  In the UI, if any of the three manual tests (these two or professional judgement) is set to Yes, then the following field (which provide the evidence) are then required.
-	   	 *  ie. if Postal Address is Yes, then Postal Address URL is required (doesn't need validating)
-	   	 */
-        
-    	if (!res) {
-    		// checking target fields
-    		res = this.checkManualScope();
-
-    	}
-	        
-        /**
-         * if database entry exists and is different to the current value - replace it
-         */
-        for (FieldUrl fieldUrl : this.fieldUrls) {
-        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(fieldUrl.url);
-        	if (lookupEntries.size() > 0) {
-        		boolean dbValue = LookupEntry.getValueByUrl(fieldUrl.url);
-        		if (dbValue != res) {
-       		        LookupEntry lookupEntry = lookupEntries.get(0);
-       		        lookupEntry.scopevalue = res;
-       		        Ebean.update(lookupEntry);
-            		Logger.debug("updated lookup entry in database for '" + fieldUrl.url + "' with value: " + res);
-        		}
-        	} else {
-        		Scope.INSTANCE.storeInProjectDb(fieldUrl.url, res, this);
-        	}
-        	
-        }
-        
-        return res;
+		return (this.isTopLevelDomain || this.isUkHosting || this.isUkRegistration);
 	}
 
 //	@JsonIgnore

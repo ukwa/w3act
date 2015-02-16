@@ -145,16 +145,14 @@ public class CrawlPermissionController extends AbstractController {
      * @param targetUrl
      * @return
      */
-    public static Result showCrawlPermissions(String targetUrl) {
+    public static Result showCrawlPermissions(Long targetId) {
     	Result res = null;
-    	String target = "";
     	String status = "";
-    	if (targetUrl != null && targetUrl.length() > 0) {
-    		Target targObj = Target.findByUrl(targetUrl);
-    		target = targObj.fieldUrl();
-    		status = targObj.qaIssue.url;
-    	}
-    	Logger.debug("showCrawlPermissions: " + targetUrl + ", target: " + target);
+		Target target = Target.findById(targetId);
+		if (target.qaIssue != null) {
+    		status = target.qaIssue.url;
+		}
+    	Logger.debug("showCrawlPermissions: " + targetId + ", target: " + target);
 //        List<CrawlPermission> resList = processFilterCrawlPermissions("", status, target);
 //    	Logger.debug("showCrawlPermissions count: " + resList.size());
     	res = redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, "", status, Const.SELECT_ALL));
