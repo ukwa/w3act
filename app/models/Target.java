@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +59,7 @@ public class Target extends Model {
 	public Organisation organisation_to_target;
     
 	//bi-directional many-to-many association to Flag
-	@ManyToMany(mappedBy="targets") @JsonIgnore
+	@ManyToMany(mappedBy="targets", cascade=CascadeType.REMOVE) @JsonIgnore
 	public List<Flag> flag_to_target = new ArrayList<Flag>();
     
 	//bi-directional many-to-many association to Tag
@@ -80,7 +79,7 @@ public class Target extends Model {
     }    
     	
 	//bi-directional many-to-many association to DCollection
-	@ManyToMany(mappedBy="targets") @JsonIgnore
+	@ManyToMany(mappedBy="targets", cascade=CascadeType.REMOVE) @JsonIgnore
 	public List<DCollection> collection_to_target = new ArrayList<DCollection>();
 	
 	//bi-directional many-to-many association to Subject

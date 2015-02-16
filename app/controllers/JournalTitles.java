@@ -1,14 +1,11 @@
 package controllers;
 
-import java.util.List;
-
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 
 import models.DCollection;
 import models.FlashMessage;
 import models.JournalTitle;
-import models.Target;
 import models.Taxonomy;
 import models.User;
 import models.WatchedTarget;

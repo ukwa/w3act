@@ -80,7 +80,7 @@
 	
     <article class="documents">
     	
-    	@if(filters) {
+		@if(filters) {
 			<div id="forms">
 	   			@warningmessage(flash)
 	   			@helper.form(action=routes.Documents.list()) {
@@ -111,7 +111,7 @@
 				}
 	
 			</div>
-	}
+		}
     
     	@pagination(currentPage, link)
     	
