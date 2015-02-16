@@ -1079,7 +1079,7 @@
 					<div id="collapseInstances" class="panel-collapse collapse">
 						@for(fieldUrl <- FormHelper.INSTANCE.fieldUrls(id)) {
 							<div class="panel-footer">
-								<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@fieldUrl.url">In QA Wayback</a>
+								<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("application.wayback.url")/*/@fieldUrl.url">In QA Wayback</a>
 							</div>
 						    <div class="panel-footer">
 					        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>

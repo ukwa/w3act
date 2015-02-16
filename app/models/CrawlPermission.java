@@ -382,7 +382,7 @@ public class CrawlPermission extends ActModel {
         return find.where()
         		.icontains("name", filter)
         		.eq("status", status)
-        		.eq("targetId", targetId)
+        		.eq("target.id", targetId)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

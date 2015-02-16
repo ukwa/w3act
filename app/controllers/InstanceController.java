@@ -337,13 +337,16 @@ public class InstanceController extends AbstractController {
     public static Result importFromWayback(Long targetId, String view) throws ActException {
 
     	String webArchiveUrl = play.Play.application().configuration().getString("application.wayback.url");
-
-    	Logger.debug("webArchiveUrl: " + webArchiveUrl);
+    	String webArchivePath = play.Play.application().configuration().getString("application.wayback.query.path");
+    	
+    	String wayBackUrl = webArchiveUrl + webArchivePath;
+    	
+    	Logger.debug("webArchiveUrl: " + wayBackUrl);
     	Target target = Target.findById(targetId);
     	
     	for (FieldUrl fieldUrl : target.fieldUrls) {
 //    		http://www.bl.uk/bibliographic/ukmarc.html";
-    		String urlValue = webArchiveUrl + fieldUrl.url;
+    		String urlValue = wayBackUrl + fieldUrl.url;
     		
         	Logger.debug("urlValue: " + urlValue);
 

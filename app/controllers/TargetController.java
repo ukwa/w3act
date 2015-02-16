@@ -221,13 +221,13 @@ public class TargetController extends AbstractController {
     public static Result viewAct(String url) {
     	Target target = Target.findByUrl(url);
     	User user = User.findByEmail(request().username());
-        return ok(view.render(target, user));
+		return ok(view.render(target, user));
     }
 
     public static Result viewWct(String url) {
     	Target target = Target.findByWct(url);
     	User user = User.findByEmail(request().username());
-        return ok(view.render(target, user));
+		return ok(view.render(target, user));
     }
 
     @BodyParser.Of(BodyParser.Json.class)
@@ -767,7 +767,7 @@ public class TargetController extends AbstractController {
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
-        return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
+		return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
     }
     
     public static Result delete(Long id) {
@@ -784,7 +784,7 @@ public class TargetController extends AbstractController {
     public static Result viewrevision(Long id) {
     	Target target = Target.findById(id);
     	User user = User.findByEmail(request().username());
-        return ok(view.render(target, user));
+		return ok(view.render(target, user));
     }
     
     /**

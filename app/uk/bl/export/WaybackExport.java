@@ -40,13 +40,16 @@ public enum WaybackExport {
 	public void bulkTargetImport() {
 
     	String webArchiveUrl = play.Play.application().configuration().getString("application.wayback.url");
-
-    	Logger.debug("webArchiveUrl: " + webArchiveUrl);
+    	String webArchivePath = play.Play.application().configuration().getString("application.wayback.query.path");
+    	
+    	String wayBackUrl = webArchiveUrl + webArchivePath;
+    	
+    	Logger.debug("webArchiveUrl: " + wayBackUrl);
     	List<Target> targets = Target.findAll();
     	
     	for (Target target : targets) {
 	    	for (FieldUrl fieldUrl : target.fieldUrls) {
-	    		String urlValue = webArchiveUrl + fieldUrl.url;
+	    		String urlValue = wayBackUrl + fieldUrl.url;
 	    		
 	        	Logger.debug("urlValue: " + urlValue);
 	
