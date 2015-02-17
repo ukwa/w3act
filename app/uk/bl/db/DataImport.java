@@ -76,6 +76,14 @@ public enum DataImport {
 			}
             Logger.debug("+++ Data import completed +++");
             
+            Role closed = Role.findByName("closed");
+            Logger.debug("closed found: " + closed);
+            if (closed == null) {
+            	Role newClosed = new Role();
+            	newClosed.name = "closed";
+            	newClosed.save();
+            }
+            
         	String defaultAdminEmail = play.Play.application().configuration().getString("admin.default.email");
         	// find the imported admin user from Andy's act
 			User user = User.findByEmail(defaultAdminEmail);

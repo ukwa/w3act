@@ -13,6 +13,7 @@ import play.data.*;
 import static play.data.Form.*;
 import models.*;
 import uk.bl.Const;
+import uk.bl.Const.Roles;
 import uk.bl.api.PasswordHash;
 import views.html.*;
 
@@ -41,8 +42,12 @@ public class ApplicationController extends Controller {
 //				Logger.debug("validate() inserted password: " + password);
 				String inputPassword = password;
 //				Logger.debug("validate() db hash for email: " + email.toLowerCase());
-				if (User.findByEmail(email.toLowerCase()) == null) {
+				User user = User.findByEmail(email.toLowerCase());
+				if (user == null) {
 					return "Invalid email";
+				}
+				if (user.roles != null && !user.roles.isEmpty() && user.hasRole("closed")) {
+					return "User has a 'closed' role";
 				}
 				String userPassword = User.findByEmail(email.toLowerCase()).password;
 				Logger.debug("userPassword: " + userPassword + " - " + inputPassword);
