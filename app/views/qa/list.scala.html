@@ -130,7 +130,7 @@
 				</span>
 			</div>
 		
-		@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
+		@if((user.hasRole("sys_admin") || user.hasRole("archivist"))) {
 		
 			<div class="padding-20">
 			    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filter Targets &#9650;</span></a>
@@ -177,7 +177,7 @@
 		} <!-- end of role check -->	
 	} <!-- end of search form -->
 		
-	@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
+	@if((user.hasRole("sys_admin") || user.hasRole("archivist"))) {
 	
 		@pagination
 	   
@@ -204,11 +204,19 @@
 						</td>
 						<td><a class="brand" href="@routes.InstanceController.showByTarget(target.id)">@target.instances.size</a></td>
 						<td>
-							@if(target.getLastInstance != null) {
-								<a class="brand" href="@routes.InstanceController.edit(target.getLastInstance.id)?tab=qa">@Instance.showLatestTimestamp(target.url)</a>
+							@if(target.findLastInstance != null) {
+								<a class="brand" href="@routes.InstanceController.edit(target.findLastInstance.id)?tab=qa">@Instance.showLatestTimestamp(target.url)</a>
 							}
 						</td>
-						<td>@if(target.qaIssue != null) { @target.qaIssue.name }</td>
+						<td>
+							@if(target.getLatestInstance != null) {
+								@if(target.getLatestInstance.qaIssue == null) {
+									Unknown
+								} else {
+									@target.getLatestInstance.qaIssue.name
+								}
+							}
+						</td>
 						
 					</tr>
 				}

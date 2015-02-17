@@ -115,14 +115,11 @@ public class QAController extends AbstractController {
     	String sort = requestData.get("s");
     	String order = requestData.get("o");
     	String qaStatus = requestData.get("qaIssueId");
-    	Long qaStatusId = 0L;
+    	Long qaStatusId = null;
     	if (StringUtils.isNotBlank(qaStatus)) {
     		qaStatusId = Long.valueOf(qaStatus);
     	}
     			
-    	if (StringUtils.isEmpty(qaStatus)) {
-    		qaStatus = "";
-    	}
     	String collectionSelect = requestData.get("collectionSelect");
     	if (StringUtils.isEmpty(collectionSelect)) {
     		collectionSelect = "";

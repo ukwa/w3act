@@ -792,17 +792,32 @@ public class Target extends UrlModel {
 
 		Logger.debug("pageQa() collection: " + collections + ", qaStatus: " + qaIssueId + ", filter: " + filter);
 
-		ExpressionList<Target> results = Target.find.fetch("fieldUrls").fetch("collections").where();
+		ExpressionList<Target> results = Target.find.fetch("fieldUrls").fetch("collections").fetch("instances").where();
 		
-		results = results.add(Expr.or(
+		if (StringUtils.isNotEmpty(filter)) {
+			results = results.add(Expr.or(
 				Expr.icontains("fieldUrls.url", filter), 
 				Expr.icontains("title", filter))
 			);
+		}
 		
 		Logger.debug("qaIssueId: " + qaIssueId);
-		
-		if (qaIssueId != 0) {
-			results = results.eq("qaIssue.id", qaIssueId);
+
+		if (qaIssueId == null || qaIssueId == 0) {
+			Logger.debug("nothing selected: " + qaIssueId);
+			// get last instance
+//			results = Target.find.fetch("fieldUrls").fetch("collections").fetch("instances").setMaxRows(1).orderBy("").where();
+		} else {
+			if (qaIssueId == 285) {
+				// get last instance
+				Logger.debug("unknown: " + qaIssueId);
+
+				results = results.isNotNull("instances").add(Expr.or(
+						Expr.isNull("instances.qaIssue.id"), 
+						Expr.eq("instances.qaIssue.id", qaIssueId)));
+			} else {
+				results = results.eq("instances.qaIssue.id", qaIssueId);
+			}
 		}
 
         String collectionSelect = collections.replace("\"", "");
@@ -817,12 +832,11 @@ public class Target extends UrlModel {
             }
     		results = results.in("collections", collectionIds);
         }		     
-        
 
-		results = results.eq("active", true);
-
+        results = results.eq("active", true);
+//        order by t0.created_at desc
 		Page<Target> res = results.query().orderBy(sortBy + " " + order).findPagingList(pageSize).setFetchAhead(false).getPage(page);        
-        
+        Logger.debug("results: " + res.getList().size());
 		return res;
 	}
 
@@ -2061,8 +2075,15 @@ public class Target extends UrlModel {
 		return (target.qaIssue != null);
 	}
 	
+	public Instance getLatestInstance() {
+		if (instances != null && instances.size() > 0) {
+			return instances.get(instances.size() - 1);
+		}
+		return null;
+	}
+	
 	@JsonIgnore
-	public Instance getLastInstance() {
+	public Instance findLastInstance() {
 		Instance instance = Instance.findLastInstanceByTarget(this.id);
 		Logger.debug("Last instance: " + instance);
 		return instance;
