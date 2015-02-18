@@ -205,7 +205,7 @@
 						<td><a class="brand" href="@routes.InstanceController.showByTarget(target.id)">@target.instances.size</a></td>
 						<td>
 							@if(target.findLastInstance != null) {
-								<a class="brand" href="@routes.InstanceController.edit(target.findLastInstance.id)?tab=qa">@Instance.showLatestTimestamp(target.url)</a>
+								<a class="brand" href="@routes.InstanceController.edit(target.findLastInstance.id)?tab=qa">@target.findLastInstance().createdAt</a>
 							}
 						</td>
 						<td>

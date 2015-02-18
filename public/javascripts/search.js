@@ -361,11 +361,11 @@ function showTree(data, id, key) {
 	showTree(data, id, key, 3);
 }
 
-function showTree(data, id, key, selectMode) {
+function showTree(data, id, key, sm) {
 	//console.log(data);
  	$(id).dynatree({
 		checkbox: true,
-    	selectMode: selectMode,
+    	selectMode: selectionMode,
     	children: data,
     	onSelect: function(select, node) {
       		// Get a list of all selected nodes, and convert to a key array:

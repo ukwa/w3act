@@ -66,7 +66,8 @@ public class Target extends UrlModel {
 	public String originatingOrganisation;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+//    @OrderBy("createdAt DESC")
 	public List<CrawlPermission> crawlPermissions;
 
 	@JsonIgnore
@@ -2073,6 +2074,13 @@ public class Target extends UrlModel {
 	public static boolean hasQaIssue(Long targetId) {
 		Target target = Target.findById(targetId);
 		return (target.qaIssue != null);
+	}
+	
+	public CrawlPermission getLatestCrawlPermission() {
+		if (crawlPermissions != null && crawlPermissions.size() > 0) {
+			return crawlPermissions.get(crawlPermissions.size() - 1);
+		}
+		return null;
 	}
 	
 	public Instance getLatestInstance() {

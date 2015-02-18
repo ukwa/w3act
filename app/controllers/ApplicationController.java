@@ -47,7 +47,7 @@ public class ApplicationController extends Controller {
 					return "Invalid email";
 				}
 				if (user.roles != null && !user.roles.isEmpty() && user.hasRole("closed")) {
-					return "User has a 'closed' role";
+					return "This user account has been closed. Please contact the British Library web archiving team";
 				}
 				String userPassword = User.findByEmail(email.toLowerCase()).password;
 				Logger.debug("userPassword: " + userPassword + " - " + inputPassword);

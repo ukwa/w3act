@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import play.Logger;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
+import models.CrawlPermission;
 import models.FieldUrl;
 import models.Target;
 
@@ -112,6 +113,17 @@ public enum FormHelper {
 		Target target = Target.findById(targetId);
 		return target.indicateLicenses();
 	}
+	
+	public CrawlPermission getLatestCrawlPermission(Long targetId) {
+		Target target = Target.findById(targetId);
+		return target.getLatestCrawlPermission();
+	}
+	
+	public boolean hasLicenseAndCrawlPermission(Long targetId) {
+		Target target = Target.findById(targetId);
+		return target.indicateLicenses() || (target.crawlPermissions != null && target.crawlPermissions.size() > 0);
+	}
+	
 	@JsonIgnore
 	public boolean isUkHosting(Long targetId) {
 		Target target = Target.findById(targetId);

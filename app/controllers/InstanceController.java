@@ -104,6 +104,7 @@ public class InstanceController extends AbstractController {
     public static Result listByTarget(int pageNo, String sortBy, String order, String filter, Long targetId) {
     	Logger.debug("Instances.listByTarget()");
     	Page<Instance> pages = Instance.pageByTarget(pageNo, 10, sortBy, order, filter, targetId);
+    	Logger.debug("pages :" + pages);
         return ok(
         	listByTarget.render(
         			"Lookup", 

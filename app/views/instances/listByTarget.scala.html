@@ -135,13 +135,13 @@
 					<td>
 						@if(instance.target.fieldUrls != null) {
 							@for(fieldUrl <- instance.target.fieldUrls) {	
-								<a class="brand" href="opera.bl.uk:8080/wayback/*/@fieldUrl.url">(mid-crawl),</a>
+								<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("application.wayback.url")/*/@fieldUrl.url">(mid-crawl)</a>
 			                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">(archival),</a>
 			                 	<a class="brand" href="@fieldUrl.url">(live)</a><br />
 							}
 						}
 					</td>
-					<td>@instance.qaIssue.name</td>
+					<td>@if(instance.qaIssue != null) { @instance.qaIssue.name } else { Unknown }</td>
 					<td>@instance.updatedAt</td>
 					<td>
 						@if(instance.target.fieldUrls != null) {
