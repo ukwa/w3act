@@ -11,9 +11,12 @@ import play.*;
 import play.mvc.*;
 import play.data.*;
 import static play.data.Form.*;
+import play.libs.WS;
+import static play.libs.F.Function;
+import static play.libs.F.Promise;
+
 import models.*;
 import uk.bl.Const;
-import uk.bl.Const.Roles;
 import uk.bl.api.PasswordHash;
 import views.html.*;
 
@@ -173,6 +176,22 @@ public class ApplicationController extends Controller {
                 controllers.routes.javascript.ContactController.index()
             )
         );
+    }
+    
+    public static Promise<Result> wayback(String url) {
+    	String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
+    	final String wayback = wayBackUrl + "/" + url;
+    	Logger.debug(wayback);
+    	
+        final Promise<Result> resultPromise = WS.url(wayback).get().map(
+                new Function<WS.Response, Result>() {
+                    public Result apply(WS.Response response) {
+                    	Logger.debug("Expeption" + response.toString());
+                        return ok(response.asByteArray());
+                    }
+                }
+        );
+        return resultPromise;    	
     }
 
 }

@@ -225,7 +225,10 @@ public class Target extends UrlModel {
 	@JsonProperty("field_crawl_frequency")
 	public String crawlFrequency;
 
+	@JsonIgnore
 	public Date crawlStartDate;
+
+	@JsonIgnore
 	public Date crawlEndDate;
 	
 	public String whiteList; // regex for white list URLs
@@ -1828,16 +1831,14 @@ public class Target extends UrlModel {
 
 	public String getCrawlStartDateText() {
 		if (crawlStartDate != null) {
-			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-			crawlStartDateText =  dateFormat.format(crawlStartDate);
+			crawlStartDateText = Utils.INSTANCE.convertToDateTime(crawlStartDate);
 		}
 		return crawlStartDateText;
 	}
 	
 	public String getCrawlEndDateText() {
 		if (crawlEndDate != null) {
-			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-			crawlEndDateText = dateFormat.format(crawlEndDate);
+			crawlEndDateText = Utils.INSTANCE.convertToDateTime(crawlEndDate);
 		}
 		return crawlEndDateText;
 	}
@@ -2076,6 +2077,7 @@ public class Target extends UrlModel {
 		return (target.qaIssue != null);
 	}
 	
+	@JsonIgnore
 	public CrawlPermission getLatestCrawlPermission() {
 		if (crawlPermissions != null && crawlPermissions.size() > 0) {
 			return crawlPermissions.get(crawlPermissions.size() - 1);
@@ -2083,6 +2085,7 @@ public class Target extends UrlModel {
 		return null;
 	}
 	
+	@JsonIgnore
 	public Instance getLatestInstance() {
 		if (instances != null && instances.size() > 0) {
 			return instances.get(instances.size() - 1);

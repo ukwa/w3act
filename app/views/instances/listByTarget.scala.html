@@ -142,7 +142,7 @@
 						}
 					</td>
 					<td>@if(instance.qaIssue != null) { @instance.qaIssue.name } else { Unknown }</td>
-					<td>@instance.updatedAt</td>
+					<td>@instance.toUpdatedAtString</td>
 					<td>
 						@if(instance.target.fieldUrls != null) {
 							@for(fieldUrl <- instance.target.fieldUrls) {

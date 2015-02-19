@@ -363,6 +363,7 @@ function showTree(data, id, key) {
 
 function showTree(data, id, key, sm) {
 	//console.log(data);
+	var selectionMode = parseInt(sm); 
  	$(id).dynatree({
 		checkbox: true,
     	selectMode: selectionMode,

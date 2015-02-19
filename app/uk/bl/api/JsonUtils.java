@@ -162,7 +162,6 @@ public enum JsonUtils {
 		Date date = null;
 		if (seconds != null) {
 			date = new Date(seconds*1000L);
-//			Logger.debug("converted date: " + date);
 		}
 		return date;
 	}
@@ -924,6 +923,7 @@ public enum JsonUtils {
 						// "field_crawl_start_date":null,
 						if (target.getField_crawl_start_date() != null) {
 							target.crawlStartDate = getDateFromSeconds(target.getField_crawl_start_date());
+							Logger.debug(target.id + " - " + target.title + " - " + target.crawlStartDate);
 						}
 						// "field_crawl_end_date":null,
 						if (target.getField_crawl_end_date() != null) {

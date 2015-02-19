@@ -702,5 +702,15 @@ public enum Utils {
     	String urlRegex = "^((http(s?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.*(\\:[0-9]+)*(/($|[a-zA-Z0-9\\.\\,\\;\\?\\:\\(\\)\\@\\#\\!\\'\\\\\\+&amp;%\\$#\\=~_\\-]+))*$";
         return url.matches(urlRegex);
     }
+    
+    public String convertToDateTime(Date date) {
+    	String formatted = null;
+    	if (date != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+			dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+			formatted =  dateFormat.format(date);
+    	}
+    	return formatted;
+    }
 }
 

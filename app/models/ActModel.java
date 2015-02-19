@@ -1,6 +1,8 @@
 package models;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -46,5 +48,15 @@ abstract class ActModel extends Model {
     	}
     	super.save();
     }
+    
+	public String toCreatedAtString() {
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		return dateFormat.format(createdAt);
+	}
+	
+	public String toUpdatedAtString() {
+		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		return dateFormat.format(updatedAt);
+	}
 
 }

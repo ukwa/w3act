@@ -321,3 +321,5 @@ POST    /resetpassword                  	controllers.ResetController.confirmEmai
 # Resets the password using the password.
 GET     /reset/:token               		controllers.ResetController.resetPassword(token:String)
 POST    /reset/:token               		controllers.ResetController.confirmPassword(token:String)
+
+GET		/wayback/*url						controllers.ApplicationController.wayback(url)
