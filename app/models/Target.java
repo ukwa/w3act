@@ -1975,6 +1975,16 @@ public class Target extends UrlModel {
 		return this.getUkwaLicenceStatusList().size() > 0;
 	}
 
+	// Cannot create
+	public boolean enableLicenseCreation() {
+		return (StringUtils.isBlank(this.licenseStatus) || this.isNotInitiated());
+	}
+	
+	// only sys admin and archivist can create
+	public boolean hasInvalidLicenses() {
+		return (this.isRefused() || this.isEmailRejected() || this.isSuperseded());
+	}
+	
 	/**
 	 * This method should give a list of the Target records, which have an Open
 	 * UKWA Licence request in progress for a target at a higher level in the

@@ -124,6 +124,16 @@ public enum FormHelper {
 		return target.indicateLicenses() || (target.crawlPermissions != null && target.crawlPermissions.size() > 0);
 	}
 	
+	public boolean enableLicenseCreation(Long targetId) {
+		Target target = Target.findById(targetId);
+		return target.enableLicenseCreation();
+	}
+	
+	public boolean hasInvalidLicenses(Long targetId) {
+		Target target = Target.findById(targetId);
+		return target.hasInvalidLicenses();
+	}
+	
 	@JsonIgnore
 	public boolean isUkHosting(Long targetId) {
 		Target target = Target.findById(targetId);

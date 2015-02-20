@@ -1040,7 +1040,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label"></label>
 						    <div class="col-sm-6">
-								@if(!FormHelper.INSTANCE.hasLicenseAndCrawlPermission(id)) {
+								@if(FormHelper.INSTANCE.enableLicenseCreation(id) || ((user.hasRole("sys_admin") || user.hasRole("archivist")) && FormHelper.INSTANCE.hasInvalidLicenses(id))) {
 									<button type="submit" name="action" value="request" class="btn btn-success">Open License Request</button>
 								} else {
 									<button disabled type="submit" name="action" value="request" class="btn btn-success">Open License Request</button>

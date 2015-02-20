@@ -104,6 +104,39 @@ public class License extends Taxonomy {
         }
         return options;		
 	}
+	
+	public boolean isGranted() {
+		return (status.equals(LicenseStatus.GRANTED.name()));
+	}
+	
+	public boolean isNotInitiated() {
+		return (status.equals(LicenseStatus.NOT_INITIATED.name()));
+	}
+
+	public boolean isQueued() {
+		return (status.equals(LicenseStatus.QUEUED.name()));
+	}
+
+	public boolean isPending() {
+		return (status.equals(LicenseStatus.PENDING.name()));
+	}
+
+	public boolean isRefused() {
+		return (status.equals(LicenseStatus.REFUSED.name()));
+	}
+	
+	public boolean isEmailRejected() {
+		return (status.equals(LicenseStatus.EMAIL_REJECTED.name()));
+	}	
+
+	public boolean isSuperseded() {
+		return (status.equals(LicenseStatus.SUPERSEDED.name()));
+	}	
+	
+	public boolean isOpenUkwaLicense() {
+		return (name.equals(Const.OPEN_UKWA_LICENSE));
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
