@@ -177,22 +177,5 @@ public class ApplicationController extends Controller {
             )
         );
     }
-    
-    public static Promise<Result> wayback(String url) {
-    	String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
-    	final String wayback = wayBackUrl + "/" + url;
-    	Logger.debug(wayback);
-    	
-        final Promise<Result> resultPromise = WS.url(wayback).get().map(
-                new Function<WS.Response, Result>() {
-                    public Result apply(WS.Response response) {
-                    	Logger.debug("Expeption" + response.toString());
-                        return ok(response.asByteArray());
-                    }
-                }
-        );
-        return resultPromise;    	
-    }
-
 }
 

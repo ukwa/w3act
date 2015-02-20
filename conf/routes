@@ -322,4 +322,4 @@ POST    /resetpassword                  	controllers.ResetController.confirmEmai
 GET     /reset/:token               		controllers.ResetController.resetPassword(token:String)
 POST    /reset/:token               		controllers.ResetController.confirmPassword(token:String)
 
-GET		/wayback/*url						controllers.ApplicationController.wayback(url)
+GET		/wayback/*url						controllers.WaybackController.wayback(url)
