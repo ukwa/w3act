@@ -1114,9 +1114,12 @@ public class TargetController extends AbstractController {
 		        if (StringUtils.isNotEmpty(subjectSelect)) {
 		            String[] subjects = subjectSelect.split(", ");
 		            for (String sId : subjects) {
-		//            	sId = sId.replace("\"", "");
+//		            	sId = sId.replace("\"", "");
 		            	Long subjectId = Long.valueOf(sId);
 		            	Subject subject = Subject.findById(subjectId);
+		            	if (subject.parent != null) {
+		            		newSubjects = processParentsSubjects(newSubjects, subject.parent.id);
+		            	}
 		            	newSubjects.add(subject);
 		            }
 		            filledForm.get().subjects = newSubjects;
@@ -1131,6 +1134,9 @@ public class TargetController extends AbstractController {
 		//            	sId = sId.replace("\"", "");
 		            	Long collectionId = Long.valueOf(cId);
 		            	Collection collection = Collection.findById(collectionId);
+		            	if (collection.parent != null) {
+		            		newCollections = processParentsCollections(newCollections, collection.parent.id);
+		            	}
 		            	newCollections.add(collection);
 		            }
 		            filledForm.get().collections = newCollections;
@@ -1377,6 +1383,9 @@ public class TargetController extends AbstractController {
 //            	sId = sId.replace("\"", "");
             	Long subjectId = Long.valueOf(sId);
             	Subject subject = Subject.findById(subjectId);
+            	if (subject.parent != null) {
+            		newSubjects = processParentsSubjects(newSubjects, subject.parent.id);
+            	}
             	newSubjects.add(subject);
             }
             filledForm.get().subjects = newSubjects;
@@ -1391,6 +1400,9 @@ public class TargetController extends AbstractController {
 //            	sId = sId.replace("\"", "");
             	Long collectionId = Long.valueOf(cId);
             	Collection collection = Collection.findById(collectionId);
+            	if (collection.parent != null) {
+            		newCollections = processParentsCollections(newCollections, collection.parent.id);
+            	}
             	newCollections.add(collection);
             }
             filledForm.get().collections = newCollections;
@@ -1460,6 +1472,28 @@ public class TargetController extends AbstractController {
     	return redirect(routes.TargetController.view(filledForm.get().id));
     }
 	
+    private static List<Subject> processParentsSubjects(List<Subject> subjects, Long parentId) {
+		Subject parent = Subject.findById(parentId);
+		if (!subjects.contains(parent)) {
+			subjects.add(parent);
+		}
+		if (parent.parent != null) {
+			processParentsSubjects(subjects, parent.parent.id);
+		}
+		return subjects;
+    }
+
+    private static List<Collection> processParentsCollections(List<Collection> collections, Long parentId) {
+		Collection parent = Collection.findById(parentId);
+		if (!collections.contains(parent)) {
+			collections.add(parent);
+		}
+		if (parent.parent != null) {
+			processParentsCollections(collections, parent.parent.id);
+		}
+		return collections;
+    }
+
     /**
      * This method pushes a message onto a RabbitMQ queue for given target
      * using global settings from project configuration file.
