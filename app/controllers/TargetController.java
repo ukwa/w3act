@@ -1033,14 +1033,41 @@ public class TargetController extends AbstractController {
 		//						e.printStackTrace();
 					            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
 					            filledForm.reject(ve);
-					            return newInfo(filledForm);
+					            return info(filledForm, id);
 					        }
 		            	}
 		            	fieldUrls.add(fu);
 		            }
 		            filledForm.get().fieldUrls = fieldUrls;
 		            Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
-		        }        
+		        }    
+		        
+		        try {
+			        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
+					filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
+			        filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
+					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
+					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
+					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
+				} catch (MalformedURLException | WhoisException | URISyntaxException e) {
+					throw new ActException(e);
+				}
+
+		        Logger.debug("filledForm: " + filledForm.get());
+		        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
+		        String noLdCriteriaMet = requestData.get("noLdCriteriaMet");
+		        Logger.debug("noLdCriteriaMet: " + noLdCriteriaMet);
+		        
+		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
+//		        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
+		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
+		            filledForm.reject(ve);
+		            return info(filledForm, id);
+		        }
+		        
+		        if (filledForm.get().noLdCriteriaMet == null) {
+		        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
+		        }
 		        
 		        String crawlStartDate = requestData.get("crawlStartDateText");
 		    	if (StringUtils.isNotEmpty(crawlStartDate)) {
@@ -1180,17 +1207,6 @@ public class TargetController extends AbstractController {
 		            filledForm.get().licenses = newLicenses;
 		        }
 		    	
-		        try {
-			        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
-					filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
-			        filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
-					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
-					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
-					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
-				} catch (MalformedURLException | WhoisException | URISyntaxException e) {
-					throw new ActException(e);
-				}
-
 				filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));
@@ -1317,6 +1333,28 @@ public class TargetController extends AbstractController {
 //	            	filledForm.get().qaIssue = qaIssue;
 //	            }
 
+        try {
+	        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
+			filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
+	        filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
+			Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
+			Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
+			Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
+		} catch (MalformedURLException | WhoisException | URISyntaxException e) {
+			throw new ActException(e);
+		}
+        
+        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
+//        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
+            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
+            filledForm.reject(ve);
+            return newInfo(filledForm);
+        }
+        
+        if (filledForm.get().noLdCriteriaMet == null) {
+        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
+        }
+        
         String crawlStartDate = requestData.get("crawlStartDateText");
     	if (StringUtils.isNotEmpty(crawlStartDate)) {
 			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -1456,17 +1494,6 @@ public class TargetController extends AbstractController {
     	
     	Logger.debug("active: " + filledForm.get().active);
     	
-        try {
-	        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
-			filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
-	        filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
-			Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
-			Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
-			Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
-		} catch (MalformedURLException | WhoisException | URISyntaxException e) {
-			throw new ActException(e);
-		}
-        
     	filledForm.get().save();
         flash("success", "Target " + filledForm.get().title + " has been created");
     	return redirect(routes.TargetController.view(filledForm.get().id));
