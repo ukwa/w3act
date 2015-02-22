@@ -886,14 +886,13 @@
 							
 							<div class="col-sm-6">
 									@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-										<select name="licensesList" id="license" class="form-control">
-											<option value="">-- None --</option>
+										<select name="licensesList" id="license" class="form-control" multiple>
 											@for(license <- licenses) {
 												<option value="@license.id">@license.name</option>
 											}
 										</select>
 									} else {
-										<select name="licensesList" id="license" class="form-control" disabled>
+										<select name="licensesList" id="license" class="form-control" multiple disabled>
 											<option value="">-- None --</option>
 										</select>									
 									}

@@ -1069,6 +1069,24 @@ public class TargetController extends AbstractController {
 		        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
 		        }
 		        
+		        List<License> newLicenses = new ArrayList<License>();
+		        String[] licenseValues = formParams.get("licensesList");
+		
+		        if (licenseValues != null) {
+		            for(String licenseValue: licenseValues) {
+		            	Long licenseId = Long.valueOf(licenseValue);
+		            	License license =  License.findById(licenseId);
+		            	// could just use the ID instead
+		            	if (license.name.equals(Const.OPEN_UKWA_LICENSE)) {
+				            ValidationError ve = new ValidationError("licensesList", "<INSERT ERROR MESSAGE HERE REGARDING 'OPEN UKWA'>");
+				            filledForm.reject(ve);
+				            return info(filledForm, id);
+		            	}
+		            	newLicenses.add(license);
+		            }
+		            filledForm.get().licenses = newLicenses;
+		        }
+		        
 		        String crawlStartDate = requestData.get("crawlStartDateText");
 		    	if (StringUtils.isNotEmpty(crawlStartDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -1195,18 +1213,6 @@ public class TargetController extends AbstractController {
 					}
 		    	}
 		        
-		        List<License> newLicenses = new ArrayList<License>();
-		        String[] licenseValues = formParams.get("licensesList");
-		
-		        if (licenseValues != null) {
-		            for(String licenseValue: licenseValues) {
-		            	Long licenseId = Long.valueOf(licenseValue);
-		            	License license =  License.findById(licenseId);
-		            	newLicenses.add(license);
-		            }
-		            filledForm.get().licenses = newLicenses;
-		        }
-		    	
 				filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));
@@ -1355,6 +1361,24 @@ public class TargetController extends AbstractController {
         	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
         
+        List<License> newLicenses = new ArrayList<License>();
+        String[] licenseValues = formParams.get("licensesList");
+
+        if (licenseValues != null) {
+            for(String licenseValue: licenseValues) {
+            	Long licenseId = Long.valueOf(licenseValue);
+            	License license =  License.findById(licenseId);
+            	// could just use the ID instead
+            	if (license.name.equals(Const.OPEN_UKWA_LICENSE)) {
+		            ValidationError ve = new ValidationError("licensesList", "<INSERT ERROR MESSAGE HERE REGARDING 'OPEN UKWA'>");
+		            filledForm.reject(ve);
+		            return newInfo(filledForm);
+            	}
+            	newLicenses.add(license);
+            }
+            filledForm.get().licenses = newLicenses;
+        }
+        
         String crawlStartDate = requestData.get("crawlStartDateText");
     	if (StringUtils.isNotEmpty(crawlStartDate)) {
 			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -1472,22 +1496,6 @@ public class TargetController extends AbstractController {
 	            return newInfo(filledForm);
 			}
     	}
-        
-        List<License> newLicenses = new ArrayList<License>();
-        String[] licenseValues = formParams.get("licensesList");
-
-        if (licenseValues != null) {
-            for(String licenseValue : licenseValues) {
-            	if (StringUtils.isNotBlank(licenseValue)) {
-	            	Long licenseId = Long.valueOf(licenseValue);
-	            	License license =  License.findById(licenseId);
-	            	if (license != null) {
-	            		newLicenses.add(license);
-	            	}
-            	}
-            }
-            filledForm.get().licenses = newLicenses;
-        }
         
     	filledForm.get().url = "act-" + Utils.INSTANCE.createId();
     	filledForm.get().active = Boolean.TRUE;
