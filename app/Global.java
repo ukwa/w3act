@@ -20,7 +20,6 @@ public class Global extends GlobalSettings {
     		DataImport.INSTANCE.insert();
     	}
     	
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
     }
     
     public Promise<SimpleResult> onError(RequestHeader request, Throwable t) {
