@@ -209,7 +209,7 @@ GET     /target/archive/:id                 controllers.TargetController.archive
 GET     /instances                          controllers.InstanceController.index()
 GET    	/instances/search          			controllers.InstanceController.search()
 GET    	/instances/filterbyjson/:url		controllers.InstanceController.filterByJson(url)
-GET    	/instances/list/                  	controllers.InstanceController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+GET    	/instances/list/                  	controllers.InstanceController.list(p:Int ?= 0, s ?= "createdAt", o ?= "desc", f ?= "")
 GET     /instances/new      				controllers.InstanceController.newForm(title ?= "")
 GET    	/instances/listbytarget/           	controllers.InstanceController.listByTarget(p:Int ?= 0, s ?= "createdAt", o ?= "desc", f ?= "", t:Long)
 GET     /instances/showbytarget/:id			controllers.InstanceController.showByTarget(id:Long)

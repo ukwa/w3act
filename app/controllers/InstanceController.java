@@ -200,11 +200,11 @@ public class InstanceController extends AbstractController {
     	if (targetId != null) {
 			Logger.debug("Show instances filtered by target.");
 	        return redirect(
-	        		routes.InstanceController.listByTarget(0, "title", "asc", "", targetId)
+	        		routes.InstanceController.listByTarget(0, "createdAt", "desc", "", targetId)
 	        );
     	}    	
         return redirect(
-        		routes.InstanceController.list(0, "title", "asc", "")
+        		routes.InstanceController.list(0, "createdAt", "desc", "")
         );
     }
         
@@ -305,7 +305,7 @@ public class InstanceController extends AbstractController {
 //	}
 	
     public static Result GO_HOME = redirect(
-            routes.InstanceController.list(0, "title", "asc", "")
+            routes.InstanceController.list(0, "createdAt", "desc", "")
         );
     
     public static Result newForm(String title) {
