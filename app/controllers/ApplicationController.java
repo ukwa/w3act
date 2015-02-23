@@ -7,6 +7,8 @@ import java.security.spec.InvalidKeySpecException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import play.*;
 import play.mvc.*;
 import play.data.*;
@@ -14,7 +16,6 @@ import static play.data.Form.*;
 import play.libs.WS;
 import static play.libs.F.Function;
 import static play.libs.F.Promise;
-
 import models.*;
 import uk.bl.Const;
 import uk.bl.api.PasswordHash;
@@ -160,6 +161,21 @@ public class ApplicationController extends Controller {
             findcontent.render("FindContent", User.findByEmail(request().username()))
         );
     }
+
+    public static Result bulkImport() {
+    	JsonNode json = request().body().asJson();
+    	if(json == null) {
+    		return badRequest("Expecting Json data");
+    	} else {
+    	    String name = json.findPath("name").textValue();
+    	    // process Targets here
+    	    if(name == null) {
+    	    	return badRequest("Missing parameter [name]");
+    	    } else {
+    	    	return ok("\nHello " + name);
+    	    }
+    	}
+	}
     
     // -- Javascript routing
     
