@@ -205,6 +205,7 @@ GET		/targets/:targetId/instances/:instanceId	controllers.InstanceController.vie
 GET     /target/:targetId/crawlpermissions	controllers.CrawlPermissionController.showCrawlPermissions(targetId:Long)
 GET     /target/licencerequest/:targetId    controllers.CrawlPermissionController.licenceRequestForTarget(targetId:Long)
 GET     /target/archive/:id                 controllers.TargetController.archive(id:Long)
+#GET    	/targets/bulkimport/:json			controllers.TargetController.bulkImport(json ?= "")
 
 GET     /instances                          controllers.InstanceController.index()
 GET    	/instances/search          			controllers.InstanceController.search()
