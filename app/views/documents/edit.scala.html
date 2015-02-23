@@ -148,10 +148,22 @@
 			}
 		}
 		
+		function defineDefaultButton() {
+			$("form input").keypress(function (e) {
+				if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+					$('input[type=submit].primary').click();
+					return false;
+				} else {
+					return true;
+				}
+			});
+		}
+		
 		var previousSelection="";
 		
 		$(function() {
 			toggleVisibility();
+			defineDefaultButton();
 			@if(editable) {
 				document.getElementById("document_view").contentWindow.onmouseup =
 					function showOptions(event) {
@@ -228,12 +240,12 @@
 				editable,
 				'_label -> "Priority Cataloguing")
 			@helper.input(form("services"), '_label -> "Services") { (id, name, value, args) => }
-			@for(portal <- Documents.getPortals()) {
-				@if(Target.find.byId(new Long(form("watchedTarget.target.nid").value)).indicateUkwaLicenceStatus) {
+			@for(portal <- Documents.portalList.getList()) {
+				@*if(Target.find.byId(new Long(form("watchedTarget.target.nid").value)).indicateUkwaLicenceStatus) {*@
 					@checkbox(form("portal_" + portal.id), editable, '_label -> Html("&nbsp;&nbsp;&nbsp;&nbsp;" + portal.title))
-				} else {
+				@*} else {
 					@checkbox(form("portal_" + portal.id), editable, '_label -> Html("&nbsp;&nbsp;&nbsp;&nbsp;" + portal.title), 'disabled -> "disabled")
-				}
+				}*@
 			}
 			@tree(form("subject"), editable, '_label -> "Subject(s)")
 			@select(form("type"),

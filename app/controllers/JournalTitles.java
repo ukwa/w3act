@@ -3,7 +3,7 @@ package controllers;
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 
-import models.DCollection;
+import models.BlCollectionSubset;
 import models.FlashMessage;
 import models.JournalTitle;
 import models.Taxonomy;
@@ -14,11 +14,14 @@ import play.data.Form;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
+import uk.bl.configurable.BlCollectionSubsetList;
 import views.html.journaltitles.edit;
 
 @Security.Authenticated(Secured.class)
 public class JournalTitles extends AbstractController {
-
+	
+	public static BlCollectionSubsetList blCollectionSubsetList = new BlCollectionSubsetList();
+	
 	public static Result addJournalTitle(Long watchedTargetId, boolean toDocument) {
 		Logger.info("JournalTitles.addJournalTitle()");
 		
@@ -39,12 +42,23 @@ public class JournalTitles extends AbstractController {
 		Logger.info("JournalTitles.edit()");
 		
 		JournalTitle journalTitle = Ebean.find(JournalTitle.class, id);
-		journalTitle.collection = Collections.serializeCollections(journalTitle.dCollections);
 		journalTitle.subject = TaxonomiesController.serializeTaxonomies(journalTitle.taxonomies);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
+		setBlCollectionSubsetsOfView(journalTitleForm, journalTitle);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
 				User.findByEmail(request().username()), false));
+	}
+	
+	private static void setBlCollectionSubsetsOfModel(JournalTitle journalTitle, Form<JournalTitle> journalTitleForm) {
+		for (BlCollectionSubset blCollectionSubset : blCollectionSubsetList.getList())
+			if (journalTitleForm.apply("blCollectionSubset_" + blCollectionSubset.id).value() != null)
+				journalTitle.blCollectionSubsets.add(blCollectionSubset);
+	}
+	
+	private static void setBlCollectionSubsetsOfView(Form<JournalTitle> journalTitleForm, JournalTitle journalTitle) {
+		for (BlCollectionSubset portal : journalTitle.blCollectionSubsets)
+			journalTitleForm.data().put("blCollectionSubset_" + portal.id, "true");
 	}
 
 	public static Result save(boolean toDocument) {
@@ -67,7 +81,6 @@ public class JournalTitles extends AbstractController {
 		}
 		
 		JournalTitle journalTitle = journalTitleForm.get();
-		journalTitle.dCollections = DCollection.convertUrlsToObjects(journalTitle.collection);
 		journalTitle.taxonomies = Taxonomy.convertUrlsToObjects(journalTitle.subject);
 		
 		ExpressionList<JournalTitle> expressionList = JournalTitle.find.where()
@@ -81,6 +94,8 @@ public class JournalTitles extends AbstractController {
 			return status(303, edit.render("Journal Title", journalTitleForm,
 					User.findByEmail(request().username()), toDocument));
 		}
+		
+		setBlCollectionSubsetsOfModel(journalTitle, journalTitleForm);
 		
 		if (journalTitle.id == null)
 			Ebean.save(journalTitle);

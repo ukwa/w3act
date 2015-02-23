@@ -18,7 +18,8 @@ function fillTree (fieldName, jsonData) {
 		}
 	});
 	var elementsToSelect = $("#" + fieldName)[0].value.split(", ");
-	for (element of elementsToSelect) {
+	for (i = 0; i < elementsToSelect.length; i++) {
+		var element = elementsToSelect[i];
 		$("#" + fieldName + "Tree").dynatree("getTree").selectKey(element);
 	}
 }

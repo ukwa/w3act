@@ -6,11 +6,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Scanner;
 
 import com.avaje.ebean.Ebean;
@@ -45,6 +43,7 @@ import play.Play;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import uk.bl.configurable.PortalList;
 import views.html.documents.edit;
 import views.html.documents.list;
 import views.xml.documents.sip;
@@ -52,7 +51,7 @@ import views.xml.documents.sip;
 @Security.Authenticated(Secured.class)
 public class Documents extends AbstractController {
 	
-	public static long lastUpdatePortals;
+	public static PortalList portalList = new PortalList();
 	
 	public static Result view(Long id) {
 		return render(id, false);
@@ -253,7 +252,7 @@ public class Documents extends AbstractController {
 	}
 	
 	private static void setPortalsOfModel(Document document, Form<Document> documentForm) {
-		for (Portal portal : getPortals())
+		for (Portal portal : portalList.getList())
 			if (documentForm.apply("portal_" + portal.id).value() != null)
 				document.portals.add(portal);
 	}
@@ -263,48 +262,13 @@ public class Documents extends AbstractController {
 			documentForm.data().put("portal_" + portal.id, "true");
 	}
 	
-	public static List<Portal> getPortals() {
-		long quiteRecent = System.currentTimeMillis() - 60 * 1000;
-		if (lastUpdatePortals < quiteRecent)
-			updatePortals();
-		return Portal.find.where().eq("active", true).findList();
-	}
-	
 	public static List<String> getPortalsSelection() {
-		List<Portal> portalList = getPortals();
-		List<String> portals = new ArrayList<>();
-		portals.add("All");
-		for (Portal portal : portalList)
-			portals.add(portal.title);
-		return portals;
-	}
-	
-	private static void updatePortals() {
-		Logger.info("update services");
-		List<Portal> oldPortals = Portal.find.all();
-		Set<Portal> newPortals = new HashSet<>();
-		File file = Play.application().getFile("conf/services.txt");
-		try {
-			Scanner scanner = new Scanner(file);
-			scanner.useDelimiter("[\r\n]+");
-			while (scanner.hasNext())
-				newPortals.add(new Portal(scanner.next().trim()));
-			scanner.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		for (Portal oldPortal : oldPortals) {
-			if (oldPortal.active != newPortals.contains(oldPortal)) {
-				oldPortal.active = newPortals.contains(oldPortal);
-				Ebean.update(oldPortal);
-			}
-			if (newPortals.contains(oldPortal))
-				newPortals.remove(oldPortal);
-		}
-		
-		Ebean.save(newPortals);
-		lastUpdatePortals = System.currentTimeMillis();
+		List<Portal> portals = portalList.getList();
+		List<String> portalTitles = new ArrayList<>();
+		portalTitles.add("All");
+		for (Portal portal : portals)
+			portalTitles.add(portal.title);
+		return portalTitles;
 	}
 	
     /**

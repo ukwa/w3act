@@ -11,21 +11,21 @@ import play.db.ebean.Model;
 import uk.bl.configurable.Configurable;
 
 @Entity
-public class Portal extends Model implements Configurable {
+public class BlCollectionSubset extends Model implements Configurable {
 
 	@Id
 	public Long id;
 	public String title;
 	public boolean active;
-	@ManyToMany(mappedBy="portals")
-	public List<Document> documents = new ArrayList<>();
+	@ManyToMany(mappedBy="blCollectionSubsets")
+	public List<JournalTitle> journalTitles = new ArrayList<>();
 	
-	public static final Model.Finder<Long, Portal> find = new Model.Finder<>(Long.class, Portal.class);
+	public static final Model.Finder<Long, BlCollectionSubset> find = new Model.Finder<>(Long.class, BlCollectionSubset.class);
 	
 	/**
 	 * @param title must not be null
 	 */
-	public Portal(String title) {
+	public BlCollectionSubset(String title) {
 		this.title = title;
 		active = true;
 	}
@@ -38,8 +38,8 @@ public class Portal extends Model implements Configurable {
 	@Override
     public boolean equals(Object obj) {
 		if (obj == null) return false;
-		if (obj instanceof Portal) {
-			Portal other = (Portal) obj;
+		if (obj instanceof BlCollectionSubset) {
+			BlCollectionSubset other = (BlCollectionSubset) obj;
 			return title.equals(other.title);
 		} else {
 			return false;

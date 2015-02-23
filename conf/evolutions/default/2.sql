@@ -18,10 +18,16 @@ create table journal_title (
   language		varchar(255)
 );
 
-create table collection_journal_title (
-  id_dcollection	bigint references dcollection (id),
-  id_journal_title	bigint references journal_title (id),
-  primary key (id_dcollection, id_journal_title)
+create table bl_collection_subset (
+  id			bigint primary key,
+  title			varchar(255) unique not null,
+  active		boolean
+);
+
+create table bl_collection_subset_journal_title (
+  id_bl_collection_subset	bigint references bl_collection_subset (id),
+  id_journal_title		bigint references journal_title (id),
+  primary key (id_bl_collection_subset, id_journal_title)
 );
 
 create table subject_journal_title (
@@ -96,6 +102,7 @@ create table journal (
 
 create sequence watched_target_seq;
 create sequence journal_title_seq;
+create sequence bl_collection_subset_seq;
 create sequence document_seq;
 create sequence portal_seq;
 create sequence book_seq;
@@ -105,7 +112,8 @@ create sequence journal_seq;
 
 drop table if exists watched_target cascade;
 drop table if exists journal_title cascade;
-drop table if exists collection_journal_title cascade;
+drop table if exists bl_collection_subset cascade;
+drop table if exists bl_collection_subset_journal_title cascade;
 drop table if exists subject_journal_title cascade;
 drop table if exists document cascade;
 drop table if exists subject_document cascade;
@@ -117,6 +125,7 @@ drop table if exists journal cascade;
 
 drop sequence if exists watched_target_seq;
 drop sequence if exists journal_title_seq;
+drop sequence if exists bl_collection_subset_seq;
 drop sequence if exists document_seq;
 drop sequence if exists portal_seq;
 drop sequence if exists book_seq;

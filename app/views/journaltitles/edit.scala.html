@@ -2,6 +2,7 @@
 
 @import helper.input
 @import helper.options
+@import templates.checkbox
 @import templates.inputText
 @import templates.select
 @import templates.tree
@@ -12,7 +13,6 @@
 	<script src="@routes.Assets.at("javascripts/tree.js")" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(function() {
-			fillTree("collection", @Html(TargetController.getCollectionsJsonData("none")));
 			fillTree("subject", @Html(TargetController.getSubjectsJsonData("empty")));
 		});
 	</script>
@@ -56,7 +56,17 @@
 				@value
 				<input type="hidden" name="@name" id="@id" value="@value">
 			}
-			@tree(form("collection"), true, '_label -> "BL Collection Subset")
+			@*checkboxSet("blCollectionSubset", JournalTitles.blCollectionSubsetList.getList(), true, '_label -> "BL Collection Subset")
+			@for(blCollectionSubset <- JournalTitles.blCollectionSubsetList.getList()) {
+				@checkbox(form("blCollectionSubset_" + blCollectionSubset.id), true, '_label -> blCollectionSubset.title)
+			}*@
+			@helper.input(form("blCollectionSubset"), '_label -> "BL Collection Subset") { (id, name, value, args) =>
+				@for(blCollectionSubset <- JournalTitles.blCollectionSubsetList.getList()) {
+					@checkbox(form("blCollectionSubset_" + blCollectionSubset.id), true,'_label -> blCollectionSubset.title)(
+						helper.FieldConstructor(templates.checkboxFieldConstructor.f)
+					)
+				}
+			}
 			@tree(form("subject"), true, '_label -> "Subject(s)")
 			
 			<input type="submit" class="btn primary" value="Save">
