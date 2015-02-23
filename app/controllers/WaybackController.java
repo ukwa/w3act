@@ -20,7 +20,9 @@ public class WaybackController extends Controller {
         final Promise<Result> resultPromise = WS.url(wayback).get().map(
                 new Function<WS.Response, Result>() {
                     public Result apply(WS.Response response) {
-                        return ok(response.getBody()).as("text/html");
+                    	String contentType = response.getHeader(CONTENT_TYPE);
+                    	Logger.debug("content type: " + contentType);
+                        return ok(response.getBody()).as(contentType);
                     }
                 }
         );
