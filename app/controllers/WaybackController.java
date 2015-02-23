@@ -14,7 +14,7 @@ public class WaybackController extends Controller {
 
     public static Promise<Result> wayback(String url) {
     	String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
-    	final String wayback = wayBackUrl + "/" + url;
+    	final String wayback = wayBackUrl + "/*/" + url;
     	Logger.debug(wayback);
     	
         final Promise<Result> resultPromise = WS.url(wayback).get().map(
