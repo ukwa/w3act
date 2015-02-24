@@ -1086,18 +1086,31 @@
 					</div>
 					<div id="collapseInstances" class="panel-collapse collapse">
 						@for(fieldUrl <- FormHelper.INSTANCE.fieldUrls(id)) {
-							<div class="panel-footer">
-								<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">In QA Wayback</a>
+							<div class="padding-10">
+								<strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
 							</div>
-						    <div class="panel-footer">
-					        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
-							</div>
-							<div class="panel-footer">
-								<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
-							</div>
-						    <div class="panel-footer">
-					        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
-							</div>
+							<ul>
+								<li>
+									<div class="padding-10">
+										<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">In QA Wayback</a>
+									</div>
+								</li>
+								<li>
+								    <div class="padding-10">
+							        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
+									</div>
+								</li>
+								<li>
+									<div class="padding-10">
+										<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
+									</div>
+								</li>
+								<li>
+								    <div class="padding-10">
+							        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
+									</div>
+								</li>
+							</ul>
 						}
 					</div>
 				</div>
