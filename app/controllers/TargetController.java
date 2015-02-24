@@ -1045,10 +1045,8 @@ public class TargetController extends AbstractController {
 		        try {
 			        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
 					filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
-			        filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
 					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
 					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
-					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
 				} catch (MalformedURLException | WhoisException | URISyntaxException e) {
 					throw new ActException(e);
 				}
@@ -1213,6 +1211,14 @@ public class TargetController extends AbstractController {
 					}
 		    	}
 		        
+		        try {
+					filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
+				} catch (WhoisException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
+
 				filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));

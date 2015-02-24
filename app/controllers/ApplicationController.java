@@ -13,9 +13,7 @@ import play.*;
 import play.mvc.*;
 import play.data.*;
 import static play.data.Form.*;
-import play.libs.WS;
-import static play.libs.F.Function;
-import static play.libs.F.Promise;
+
 import models.*;
 import uk.bl.Const;
 import uk.bl.api.PasswordHash;
@@ -85,9 +83,7 @@ public class ApplicationController extends Controller {
      */
     public static Result authenticate() {
         Form<Login> loginForm = form(Login.class).bindFromRequest();
-        if(loginForm.hasErrors()) {
-            return badRequest(login.render(loginForm));
-        } else {
+      {
             session("email", loginForm.get().email.toLowerCase());
             return redirect(
                 routes.ApplicationController.index()

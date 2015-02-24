@@ -22,18 +22,21 @@ public class Global extends GlobalSettings {
     	
     }
     
+    @Override
     public Promise<SimpleResult> onError(RequestHeader request, Throwable t) {
         return Promise.<SimpleResult>pure(internalServerError(
             views.html.errorPage.render(t)
         ));
     }
     
+    @Override
     public Promise<SimpleResult> onHandlerNotFound(RequestHeader request) {
         return Promise.<SimpleResult>pure(notFound(
             views.html.notFoundPage.render(request.uri())
         ));
     }
     
+    @Override
     public Promise<SimpleResult> onBadRequest(RequestHeader request, String error) {
     	Logger.debug("error: " + error);
         return Promise.<SimpleResult>pure(badRequest("Please don't try to hack the URI!"));
