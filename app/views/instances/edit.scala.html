@@ -1,4 +1,4 @@
-@(instanceForm: Form[Instance], user: User, id: Long, qaIssues: Map[String,String], qaIssueCategories: Map[String,String], authors: Map[String,String])
+@(instanceForm: Form[Instance], user: User, id: Long, qaIssues: Map[String,String], qaIssueCategories: Map[String,String], authors: Map[String,String], targetId: Long)
 
 @import uk.bl.api.FormHelper
 @import helper._
@@ -178,7 +178,7 @@
 						</a>
 					</div>
 					<div id="collapseInstances" class="panel-collapse collapse">
-						@for(fieldUrl <- FormHelper.INSTANCE.fieldUrls(id)) {
+						@for(fieldUrl <- FormHelper.INSTANCE.fieldUrls(targetId)) {
 							<div class="padding-10">
 								<strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
 							</div>
