@@ -1056,7 +1056,7 @@ public class TargetController extends AbstractController {
 		        String noLdCriteriaMet = requestData.get("noLdCriteriaMet");
 		        Logger.debug("noLdCriteriaMet: " + noLdCriteriaMet);
 		        
-		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
+		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
 //		        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
 		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
 		            filledForm.reject(ve);
@@ -1356,7 +1356,7 @@ public class TargetController extends AbstractController {
 			throw new ActException(e);
 		}
         
-        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
+        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
 //        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
             ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
             filledForm.reject(ve);

@@ -37,8 +37,8 @@ public class UkRegistrationTest {
 //		try {
 //			Boolean valid = Scope.INSTANCE.isUkRegistration(target);
 //			assertTrue(valid);
-			assertTrue(checkWhois("http://www.islamic-relief.org.uk/"));
-			assertTrue(checkWhois("http://www.fishbournepreschool.org.uk/"));
+//			assertTrue(checkWhois("http://www.islamic-relief.org.uk/"));
+//			assertTrue(checkWhois("http://www.fishbournepreschool.org.uk/"));
 //			assertTrue(checkWhois("http://www.westsussex.gov.uk"));
 			
 //		} catch (WhoisException e) {
