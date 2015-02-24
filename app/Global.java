@@ -1,4 +1,5 @@
 
+import models.Role;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
@@ -19,7 +20,13 @@ public class Global extends GlobalSettings {
     	if (dataImport) {
     		DataImport.INSTANCE.insert();
     	}
-    	
+        Role closed = Role.findByName("closed");
+        Logger.debug("closed found: " + closed);
+        if (closed == null) {
+        	Role newClosed = new Role();
+        	newClosed.name = "closed";
+        	newClosed.save();
+        }
     }
     
     @Override
