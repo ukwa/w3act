@@ -409,6 +409,7 @@ public final class Const {
     public static final String ROLE_USER             = "role_user";
     public static final String PERMISSION_ROLE       = "permission_role";
     public static final String BL_COLLECTION_SUBSET_JOURNAL_TITLE = "bl_collection_subset_journal_title";
+    public static final String BL_COLLECTION_SUBSET_BOOK = "bl_collection_subset_book";
     public static final String SUBJECT_JOURNAL_TITLE = "subject_journal_title";
     public static final String SUBJECT_DOCUMENT      = "subject_document";
     public static final String PORTAL_DOCUMENT       = "portal_document";

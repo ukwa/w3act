@@ -14,13 +14,10 @@ import play.data.Form;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
-import uk.bl.configurable.BlCollectionSubsetList;
 import views.html.journaltitles.edit;
 
 @Security.Authenticated(Secured.class)
 public class JournalTitles extends AbstractController {
-	
-	public static BlCollectionSubsetList blCollectionSubsetList = new BlCollectionSubsetList();
 	
 	public static Result addJournalTitle(Long watchedTargetId, boolean toDocument) {
 		Logger.info("JournalTitles.addJournalTitle()");
@@ -51,7 +48,7 @@ public class JournalTitles extends AbstractController {
 	}
 	
 	private static void setBlCollectionSubsetsOfModel(JournalTitle journalTitle, Form<JournalTitle> journalTitleForm) {
-		for (BlCollectionSubset blCollectionSubset : blCollectionSubsetList.getList())
+		for (BlCollectionSubset blCollectionSubset : Documents.blCollectionSubsetList.getList())
 			if (journalTitleForm.apply("blCollectionSubset_" + blCollectionSubset.id).value() != null)
 				journalTitle.blCollectionSubsets.add(blCollectionSubset);
 	}

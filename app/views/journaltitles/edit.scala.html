@@ -56,12 +56,8 @@
 				@value
 				<input type="hidden" name="@name" id="@id" value="@value">
 			}
-			@*checkboxSet("blCollectionSubset", JournalTitles.blCollectionSubsetList.getList(), true, '_label -> "BL Collection Subset")
-			@for(blCollectionSubset <- JournalTitles.blCollectionSubsetList.getList()) {
-				@checkbox(form("blCollectionSubset_" + blCollectionSubset.id), true, '_label -> blCollectionSubset.title)
-			}*@
 			@helper.input(form("blCollectionSubset"), '_label -> "BL Collection Subset") { (id, name, value, args) =>
-				@for(blCollectionSubset <- JournalTitles.blCollectionSubsetList.getList()) {
+				@for(blCollectionSubset <- Documents.blCollectionSubsetList.getList()) {
 					@checkbox(form("blCollectionSubset_" + blCollectionSubset.id), true,'_label -> blCollectionSubset.title)(
 						helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 					)
@@ -69,9 +65,9 @@
 			}
 			@tree(form("subject"), true, '_label -> "Subject(s)")
 			
-			<input type="submit" class="btn primary" value="Save">
+			<input type="submit" class="btn btn-primary" value="Save">
 			@if(form("id").value != null && form("id").value != "") {
-				<input type="submit" name="delete" class="btn primary" value="Delete">
+				<input type="submit" name="delete" class="btn btn-primary" value="Delete">
 			}
 		</div>
 	}

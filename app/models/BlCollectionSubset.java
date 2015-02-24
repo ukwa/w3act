@@ -19,6 +19,8 @@ public class BlCollectionSubset extends Model implements Configurable {
 	public boolean active;
 	@ManyToMany(mappedBy="blCollectionSubsets")
 	public List<JournalTitle> journalTitles = new ArrayList<>();
+	@ManyToMany(mappedBy="blCollectionSubsets")
+	public List<Book> books = new ArrayList<>();
 	
 	public static final Model.Finder<Long, BlCollectionSubset> find = new Model.Finder<>(Long.class, BlCollectionSubset.class);
 	

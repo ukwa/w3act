@@ -84,7 +84,7 @@ create table portal_document (
 
 create table book (
   id			bigint primary key,
-  id_document		bigint references document (id),
+  id_document		bigint unique references document (id),
   isbn			varchar(255),
   corporate_author	varchar(255),
   series		varchar(255),
@@ -92,9 +92,15 @@ create table book (
   edition		varchar(255)
 );
 
+create table bl_collection_subset_book (
+  id_bl_collection_subset	bigint references bl_collection_subset (id),
+  id_book			bigint references book (id),
+  primary key (id_bl_collection_subset, id_book)
+);
+
 create table journal (
   id			bigint primary key,
-  id_document		bigint references document (id),
+  id_document		bigint unique references document (id),
   id_journal_title	bigint references journal_title (id),
   volume		varchar(255) not null,
   issue			varchar(255)
@@ -121,6 +127,7 @@ drop table if exists assignable_ark cascade;
 drop table if exists portal cascade;
 drop table if exists portal_document cascade;
 drop table if exists book cascade;
+drop table if exists bl_collection_subset_book cascade;
 drop table if exists journal cascade;
 
 drop sequence if exists watched_target_seq;

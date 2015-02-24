@@ -66,9 +66,9 @@
               <subfield code="a">@document.author3Ln, @document.author3Fn</subfield>
             </datafield>
           }
-          @for(portal <- document.portals) {
+          @for(blCollectionSubset <- document.book.blCollectionSubsets) {
             <datafield tag="690" ind2=" " ind1="7">
-              <subfield code="a">@portal.title</subfield>
+              <subfield code="a">@blCollectionSubset.title</subfield>
               <subfield code="2">blcoll</subfield>
             </datafield>
           }

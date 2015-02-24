@@ -15,6 +15,7 @@ import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.AssignableArk;
+import models.BlCollectionSubset;
 import models.Book;
 import models.Document;
 import models.FlashMessage;
@@ -43,6 +44,7 @@ import play.Play;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import uk.bl.configurable.BlCollectionSubsetList;
 import uk.bl.configurable.PortalList;
 import views.html.documents.edit;
 import views.html.documents.list;
@@ -52,6 +54,7 @@ import views.xml.documents.sip;
 public class Documents extends AbstractController {
 	
 	public static PortalList portalList = new PortalList();
+	public static BlCollectionSubsetList blCollectionSubsetList = new BlCollectionSubsetList();
 	
 	public static Result view(Long id) {
 		return render(id, false);
@@ -67,7 +70,7 @@ public class Documents extends AbstractController {
 		Document document = getDocumentFromDB(id);
 		if (document.status == Document.Status.SUBMITTED) editable = false;
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
-		setPortalsOfView(documentForm, document);
+		setPortalsAndBlCollectionSubsetsOfView(documentForm, document);
 		
 		return ok(edit.render("Document" + id, documentForm,
 				User.findByEmail(request().username()), editable));
@@ -118,7 +121,7 @@ public class Documents extends AbstractController {
 		Document document = documentForm.get();
 		document.clearImproperFields();
 		document.taxonomies = Taxonomy.convertUrlsToObjects(document.subject);
-		setPortalsOfModel(document, documentForm);
+		setPortalsAndBlCollectionSubsetsOfModel(document, documentForm);
 		Ebean.update(document);
 		
 		if (!document.isBookOrBookChapter() && document.book.id != null) {
@@ -170,6 +173,9 @@ public class Documents extends AbstractController {
 		document.status = Document.Status.SUBMITTED;
 		Ebean.save(document);
 		deleteHtmlFile(document.getHtmlFilename());
+		FlashMessage submitSuccess = new FlashMessage(FlashMessage.Type.SUCCESS,
+				"The document has been submitted.");
+		submitSuccess.send();
 		return redirect(routes.Documents.view(id));
 	}
 	
@@ -251,15 +257,22 @@ public class Documents extends AbstractController {
 		return titles;
 	}
 	
-	private static void setPortalsOfModel(Document document, Form<Document> documentForm) {
+	private static void setPortalsAndBlCollectionSubsetsOfModel(Document document, Form<Document> documentForm) {
 		for (Portal portal : portalList.getList())
 			if (documentForm.apply("portal_" + portal.id).value() != null)
 				document.portals.add(portal);
+		if (document.isBookOrBookChapter())
+			for (BlCollectionSubset blCollectionSubset : blCollectionSubsetList.getList())
+				if (documentForm.apply("blCollectionSubset_" + blCollectionSubset.id).value() != null)
+					document.book.blCollectionSubsets.add(blCollectionSubset);
 	}
 	
-	private static void setPortalsOfView(Form<Document> documentForm, Document document) {
+	private static void setPortalsAndBlCollectionSubsetsOfView(Form<Document> documentForm, Document document) {
 		for (Portal portal : document.portals)
 			documentForm.data().put("portal_" + portal.id, "true");
+		if (document.isBookOrBookChapter())
+			for (BlCollectionSubset portal : document.book.blCollectionSubsets)
+				documentForm.data().put("blCollectionSubset_" + portal.id, "true");
 	}
 	
 	public static List<String> getPortalsSelection() {

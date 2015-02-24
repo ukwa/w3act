@@ -152,7 +152,7 @@
 		function defineDefaultButton() {
 			$("form input").keypress(function (e) {
 				if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-					$('input[type=submit].primary').click();
+					$('input[type=submit].btn-primary').click();
 					return false;
 				} else {
 					return true;
@@ -261,6 +261,13 @@
 				editable,
 				'_label -> "Submission Type", 'onchange -> "toggleVisibility()")
 			<div id="book_general">
+				@helper.input(form("blCollectionSubset"), '_label -> "BL Collection Subset") { (id, name, value, args) =>
+					@for(blCollectionSubset <- Documents.blCollectionSubsetList.getList()) {
+						@checkbox2(form("blCollectionSubset_" + blCollectionSubset.id), editable,'_label -> blCollectionSubset.title)(
+							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
+						)
+					}
+				}
 				@inputText(form("book.isbn"), editable, '_label -> "ISBN")
 				@inputText(form("book.corporateAuthor"), editable, '_label -> "Corporate Author")
 			</div>
@@ -286,10 +293,10 @@
 			<a target="landingPage" onclick="openPopup('@form("landingPageUrl").value')">Open Landing Page</a><br>
 			<a target="document" onclick="openPopup('@form("documentUrl").value')">Open Document</a><br>
 			@if(editable) {
-				<input type="submit" class="btn primary" value="Save">
+				<input type="submit" class="btn btn-primary" value="Save">
 			} else {
 				@if(form("status").value != Document.Status.SUBMITTED.toString && !form("type").value.isEmpty) {
-					<input type="submit" name="submit" class="btn primary" value="Submit" onclick="return confirm('Are you sure?');">
+					<input type="submit" name="submit" class="btn btn-primary" value="Submit" onclick="return confirm('Are you sure?');">
 				}
 			}
 		</div>
