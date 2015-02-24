@@ -86,6 +86,7 @@ public class ApplicationController extends Controller {
             return badRequest(login.render(loginForm));
         } else {
             session("email", loginForm.get().email.toLowerCase());
+            session("password", loginForm.get().password);
             return redirect(
                 routes.ApplicationController.index()
             );
