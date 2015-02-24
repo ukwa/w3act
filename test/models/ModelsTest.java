@@ -30,7 +30,7 @@ public class ModelsTest extends WithApplication {
 //        conf.put("db.default.driver", "org.h2.Driver");
 //        conf.put("db.default.url", "jdbc:h2:mem:play;DB_CLOSE_DELAY=-1");
 //        start(fakeApplication(conf));
-        start(fakeApplication(inMemoryDatabase()));
+//        start(fakeApplication(inMemoryDatabase()));
     }
     
     @Test

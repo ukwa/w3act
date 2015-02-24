@@ -34,16 +34,16 @@ public class UkRegistrationTest {
 
 	@Test
 	public void test() {
-		try {
-			Boolean valid = Scope.INSTANCE.isUkRegistration(target);
-			assertTrue(valid);
+//		try {
+//			Boolean valid = Scope.INSTANCE.isUkRegistration(target);
+//			assertTrue(valid);
 			assertTrue(checkWhois("http://www.islamic-relief.org.uk/"));
 			assertTrue(checkWhois("http://www.fishbournepreschool.org.uk/"));
 //			assertTrue(checkWhois("http://www.westsussex.gov.uk"));
 			
-		} catch (WhoisException e) {
-			e.printStackTrace();
-		}
+//		} catch (WhoisException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public boolean checkWhois(String url) {
