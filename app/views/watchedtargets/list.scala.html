@@ -53,6 +53,8 @@
 	    <h1>@{if (filters) "Watched Targets" else "Document Harvesting"}</h1>
 	</div>
 	
+	@warningmessage(flash)
+	
 	@if(!filters) {
 		<ul class="nav nav-tabs">
 			<li class="active"><a href="#">My Watched Targets</a></li>
@@ -64,7 +66,6 @@
 		
 		@if(filters) {
 			<div id="forms">
-	   			@warningmessage(flash)
 	   			@helper.form(action=routes.WatchedTargets.list()) {
 		   			<div class="input-group">
 	   					<input type="hidden" name="s" value="@currentSortBy">

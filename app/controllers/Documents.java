@@ -152,7 +152,8 @@ public class Documents extends AbstractController {
 		
 		FlashMessage.updateSuccess.send();
 		
-		return redirect(routes.Documents.edit(document.id));
+		return redirect(routes.Documents.list("", documentForm.apply("watchedTarget.id").value(), "",
+				Document.Status.NEW.toString(), 0, "title", "asc", ""));
 	}
 	
 	public static Result submit(Long id) {

@@ -55,6 +55,8 @@
 	    <h1>@{if (filters) "Documents" else "Document Harvesting"}</h1>
 	</div>
 	
+	@warningmessage(flash)
+	
 	<ul class="nav nav-tabs">
 		@if(filters) {
 			@if(status == Document.Status.NEW) {
@@ -82,7 +84,6 @@
     	
 		@if(filters) {
 			<div id="forms">
-	   			@warningmessage(flash)
 	   			@helper.form(action=routes.Documents.list()) {
 		   			<div class="input-group">
 		   				<input type="hidden" name="status" value="@status">
