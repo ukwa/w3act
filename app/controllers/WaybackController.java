@@ -21,15 +21,19 @@ public class WaybackController extends Controller {
     	final String wayback = wayBackUrl + "/" + url;
     	
     	WSRequestHolder holder = WS.url(wayback);
-//    	holder.setAuth("email", "password", AuthScheme.BASIC);
-    	Promise<Response> responsePromise = holder.get();
+//    	holder.setAuth("kinman.li@bl.uk", "password", AuthScheme.BASIC);
+    	// pass on credentials
+    	Promise<Response> responsePromise = holder.setFollowRedirects(true).get();
     	
         final Promise<Result> resultPromise = responsePromise.map(
         		
                 new Function<WS.Response, Result>() {
                 	
                     public Result apply(WS.Response response) {
-                    	Logger.debug(wayback + " " + response.getStatusText() + " " + response.getStatus() + " " + response.getUri());
+
+//http://crawler03.bl.uk:8080/wayback/20140611000704js_/http://bl.uk/scripts/jquery-1.5.1.min.js OK 200 https://www.webarchive.org.uk/act/login
+
+                    	Logger.debug(wayback + " (" + response.getStatusText() + " " + response.getStatus() + ") " + response.getUri());
                     	
                     	String contentType = response.getHeader(CONTENT_TYPE);
                     	Logger.debug("content type: " + contentType);
