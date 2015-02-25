@@ -1163,7 +1163,9 @@ public class TargetController extends AbstractController {
 		            	if (subject.parent != null) {
 		            		newSubjects = processParentsSubjects(newSubjects, subject.parent.id);
 		            	}
-		            	newSubjects.add(subject);
+		        		if (!newSubjects.contains(subject)) {
+		        			newSubjects.add(subject);
+		        		}
 		            }
 		            filledForm.get().subjects = newSubjects;
 		        }
@@ -1454,7 +1456,9 @@ public class TargetController extends AbstractController {
             	if (subject.parent != null) {
             		newSubjects = processParentsSubjects(newSubjects, subject.parent.id);
             	}
-            	newSubjects.add(subject);
+        		if (!newSubjects.contains(subject)) {
+        			newSubjects.add(subject);
+        		}
             }
             filledForm.get().subjects = newSubjects;
         }
