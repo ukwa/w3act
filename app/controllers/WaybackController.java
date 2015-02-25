@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import models.User;
 
-import com.ning.http.client.Realm.AuthScheme;
 
 import play.Logger;
 import play.Play;
@@ -18,9 +17,7 @@ import play.libs.F.Promise;
 import play.libs.WS.Response;
 import play.libs.WS.WSRequestHolder;
 import play.mvc.Controller;
-import play.mvc.Http.Cookie;
 import play.mvc.Result;
-import play.mvc.Security;
 import uk.bl.api.PasswordHash;
 import uk.bl.exception.ActException;
 
@@ -33,8 +30,7 @@ public class WaybackController extends Controller {
     	String username = session("email");
     	String password = session("password");
     	
-    	Logger.debug("username: " + username);
-    	Logger.debug("password: " + password);
+    	Logger.debug("user: " + username + "/" + password);
 	    
     	String flashMessage = "";
     	if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
@@ -51,9 +47,12 @@ public class WaybackController extends Controller {
     		try {
 				boolean exists = PasswordHash.validatePassword(password, userPassword);
 				if (exists) {
+//		            session("email", username);
+//		            session("password", password);
+					Logger.debug("Logged in");
 			    	WSRequestHolder holder = WS.url(wayback);
 		
-			    	Promise<Response> responsePromise = holder.setFollowRedirects(true).get();
+			    	Promise<Response> responsePromise = holder.get();
 			    	
 			        final Promise<Result> resultPromise = responsePromise.map(
 			        		
