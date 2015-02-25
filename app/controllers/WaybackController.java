@@ -31,13 +31,15 @@ public class WaybackController extends Controller {
 
 						Logger.debug(wayback + " (" + response.getStatusText() + " " + response.getStatus() + ") " + response.getUri());
 
-						String contentType = response.getHeader(CONTENT_TYPE);
-						Logger.debug("content type: " + contentType);
+						Logger.debug("WS.Response: "+response);
 						// TODO Copy all headers over?
 						if ( response.getHeader(LOCATION) != null ) {
 							Logger.debug("Copying over Location header: "+response.getHeader(LOCATION));
 							response().setHeader(LOCATION, response.getHeader(LOCATION));
+							return status(response.getStatus());
 						}
+						String contentType = response.getHeader(CONTENT_TYPE);
+						Logger.debug("content type: " + contentType);
 						return status(response.getStatus(), response.getBody()).as(contentType);
 					}
 
