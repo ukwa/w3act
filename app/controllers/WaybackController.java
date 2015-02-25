@@ -35,6 +35,7 @@ public class WaybackController extends Controller {
 						Logger.debug("content type: " + contentType);
 						// TODO Copy all headers over?
 						if ( response.getHeader(LOCATION) != null ) {
+							Logger.debug("Copying over Location header: "+response.getHeader(LOCATION));
 							response().setHeader(LOCATION, response.getHeader(LOCATION));
 						}
 						return status(response.getStatus(), response.getBody()).as(contentType);
