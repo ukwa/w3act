@@ -592,7 +592,7 @@ public class Instance extends UrlModel {
 	
 	public static Instance findLastInstanceByTarget(Long targetId) {
 		Instance instance = null;
-		List<Instance> instances = find.setMaxRows(1).where().eq("target.id", targetId).order("createdAt desc").findList();
+		List<Instance> instances = find.where().eq("target.id", targetId).order("createdAt desc").findList();
 		if (instances != null && !instances.isEmpty()) {
 			instance = instances.get(0);
 		}
