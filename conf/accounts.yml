@@ -171,9 +171,15 @@ roles:
         url:                act-5
         name:               viewer
         permissions:        [*search_existing_targets]
-    
-# Users
 
+    - !!models.Role         &closed
+        id:                 6
+        url:                act-6
+        name:               closed
+        permissions:        []
+    
+
+# Users
 users:
     - !!models.User
         email:              wa-sysadm@bl.uk
