@@ -209,11 +209,11 @@
 							}
 						</td>
 						<td>
-							@if(target.getLatestInstance != null) {
-								@if(target.getLatestInstance.qaIssue == null) {
+							@if(target.findLastInstance != null) {
+								@if(target.findLastInstance.qaIssue == null) {
 									Unknown
 								} else {
-									@target.getLatestInstance.qaIssue.name
+									@target.findLastInstance.qaIssue.name
 								}
 							}
 						</td>

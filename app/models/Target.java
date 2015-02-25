@@ -2106,7 +2106,7 @@ public class Target extends UrlModel {
 	@JsonIgnore
 	public Instance findLastInstance() {
 		Instance instance = Instance.findLastInstanceByTarget(this.id);
-		Logger.debug("Last instance: " + instance);
+//		Logger.debug("Last instance: " + instance);
 		return instance;
 	}
 	
