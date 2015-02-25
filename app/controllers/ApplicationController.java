@@ -72,7 +72,6 @@ public class ApplicationController extends Controller {
      */
     public static Result login() {
 		String url = flash().get("url");
-        Logger.debug("Login found Flash URL: "+url);
         return ok(
             login.render(form(Login.class))
         );
@@ -85,7 +84,6 @@ public class ApplicationController extends Controller {
     public static Result authenticate() {
     	DynamicForm requestData = Form.form().bindFromRequest();
     	String url = requestData.get("redirectToUrl");
-        Logger.debug("Found URL: "+url);
         Form<Login> loginForm = form(Login.class).bindFromRequest();
         if(loginForm.hasErrors()) {
         	flash().put("url", url);

@@ -12,6 +12,7 @@ public class SecuredController extends Security.Authenticator {
     
     @Override
     public Result onUnauthorized(Context ctx) {
+    	// Store the original URL in the flash scope so it can be stored in the form:
     	ctx.flash().put("url", "GET".equals(ctx.request().method()) ? ctx.request().uri() : "/");
         return redirect(routes.ApplicationController.login());
     }
