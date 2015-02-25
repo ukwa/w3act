@@ -50,7 +50,7 @@ public class WaybackController extends Controller {
 //		            session("email", username);
 //		            session("password", password);
 					Logger.debug("Logged in");
-			    	WSRequestHolder holder = WS.url(wayback);
+			    	WSRequestHolder holder = WS.url(wayback).setFollowRedirects(false);
 		
 			    	Promise<Response> responsePromise = holder.get();
 			    	
@@ -66,7 +66,7 @@ public class WaybackController extends Controller {
 		                    	
 		                    	String contentType = response.getHeader(CONTENT_TYPE);
 		                    	Logger.debug("content type: " + contentType);
-		                        return ok(response.getBody()).as(contentType);
+		                    	return status(response.getStatus(), response.getBody()).as(contentType);
 		                    }
 		                    
 		                }
