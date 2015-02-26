@@ -326,10 +326,10 @@ public class Target extends UrlModel {
 	public String crawlEndDateText;
 
 	@Transient
-	public String crawlStartDateUTC;
+	public String crawlStartDateISO;
 
 	@Transient
-	public String crawlEndDateUTC;
+	public String crawlEndDateISO;
 
 	
 	@Required(message="Subjects Required")
@@ -1851,18 +1851,18 @@ public class Target extends UrlModel {
 	}
 
 	
-	public String getCrawlStartDateUTC() {
+	public String getCrawlStartDateISO() {
 		if (crawlStartDate != null) {
-			crawlStartDateUTC = Utils.INSTANCE.convertToDateTimeUTC(crawlStartDate);
+			crawlStartDateISO = Utils.INSTANCE.convertToDateTimeISO(crawlStartDate);
 		}
-		return crawlStartDateUTC;
+		return crawlStartDateISO;
 	}
 
-	public String getCrawlEndDateUTC() {
+	public String getCrawlEndDateISO() {
 		if (crawlEndDate != null) {
-			crawlEndDateUTC = Utils.INSTANCE.convertToDateTimeUTC(crawlEndDate);
+			crawlEndDateISO = Utils.INSTANCE.convertToDateTimeISO(crawlEndDate);
 		}
-		return crawlEndDateUTC;
+		return crawlEndDateISO;
 	}
 
 	/**

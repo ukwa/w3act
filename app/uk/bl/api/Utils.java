@@ -713,7 +713,7 @@ public enum Utils {
     	return formatted;
     }
     
-    public String convertToDateTimeUTC(Date date) {
+    public String convertToDateTimeISO(Date date) {
     	String formatted = null;
     	if (date != null) {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
