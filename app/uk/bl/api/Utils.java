@@ -712,5 +712,17 @@ public enum Utils {
     	}
     	return formatted;
     }
+    
+    public String convertToDateTimeUTC(Date date) {
+    	String formatted = null;
+    	if (date != null) {
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+//			"yyyy-MM-dd'T'HH:mm:ss.SSSZ" 	2001-07-04T12:08:56.235-0700
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			formatted =  dateFormat.format(date);
+    	}
+    	return formatted;
+    }
+
 }
 
