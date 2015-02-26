@@ -40,7 +40,7 @@ public class WaybackController extends Controller {
 						}
 						String contentType = response.getHeader(CONTENT_TYPE);
 						Logger.debug("content type: " + contentType);
-						return status(response.getStatus(), response.getBody()).as(contentType);
+						return status(response.getStatus(), response.getBodyAsStream()).as(contentType);
 					}
 
 				}
