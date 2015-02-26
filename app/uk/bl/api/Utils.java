@@ -707,7 +707,7 @@ public enum Utils {
     	String formatted = null;
     	if (date != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-			dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			formatted =  dateFormat.format(date);
     	}
     	return formatted;
