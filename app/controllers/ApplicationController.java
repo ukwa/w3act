@@ -77,7 +77,13 @@ public class ApplicationController extends Controller {
      * Login page.
      */
     public static Result login() {
-		String url = flash().get("url");
+    	// If user is already logged in, redirect to the homepage:
+    	String email = session().get("email");
+    	User user = User.findByEmail(email);
+    	if (user != null) { 
+            return redirect( routes.ApplicationController.index() );    		
+    	}
+		// Redirect to login page (embedding the flash scope url to redirect to afterwards):
         return ok(
             login.render(form(Login.class))
         );
@@ -88,15 +94,17 @@ public class ApplicationController extends Controller {
      * We only store lowercase emails and transform user input to lowercase for this field.
      */
     public static Result authenticate() {
+    	// Grab the url to redirect to after login:
     	DynamicForm requestData = Form.form().bindFromRequest();
     	String url = requestData.get("redirectToUrl");
+		// Parse the login:
         Form<Login> loginForm = form(Login.class).bindFromRequest();
         if(loginForm.hasErrors()) {
         	flash().put("url", url);
             return badRequest(login.render(loginForm));
         } else {
             session("email", loginForm.get().email.toLowerCase());
-            if( url == null ) url = routes.ApplicationController.index().url();
+            if( url == null ) url = routes.ApplicationController.index().url();            
             return redirect( url );
         }
     }
