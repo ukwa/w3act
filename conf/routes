@@ -4,7 +4,8 @@
 
 # The home page
 GET     /                                   controllers.ApplicationController.index()
-POST    /targets/bulkimport					controllers.ApplicationController.bulkImport()
+
+POST    /targets/bulk/import				controllers.ApplicationController.bulkImport()
 
 # Authentication
 GET     /login                              controllers.ApplicationController.login()

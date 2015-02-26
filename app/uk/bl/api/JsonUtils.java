@@ -73,22 +73,13 @@ public enum JsonUtils {
 	INSTANCE;
 
 	private String getActUrl(String jsonId) {
-		return this.getUrl(Const.ACT_URL, jsonId);
+		return Utils.INSTANCE.getActUrl(jsonId);
 	}
 	
 	private String getWctUrl(String jsonId) {
-		return this.getUrl(Const.WCT_URL, jsonId);
+		return Utils.INSTANCE.getWctUrl(jsonId);
 	}
 	
-	private String getUrl(String prefix, String jsonId) {
-		String actUrl = null;
-		if (StringUtils.isNotEmpty(jsonId)) {
-			StringBuilder url = new StringBuilder(prefix).append(jsonId);
-			actUrl = url.toString();
-		}
-		return actUrl;
-	}
-
 	private String getUrlFromWebArchive(String prefix, String url) {
 		return new StringBuilder(prefix).append(url.substring(url.lastIndexOf("/") + 1)).toString();
 	}

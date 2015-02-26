@@ -724,5 +724,21 @@ public enum Utils {
     	return formatted;
     }
 
+	public String getActUrl(String jsonId) {
+		return this.getUrl(Const.ACT_URL, jsonId);
+	}
+	
+	public String getWctUrl(String jsonId) {
+		return this.getUrl(Const.WCT_URL, jsonId);
+	}
+	
+	private String getUrl(String prefix, String jsonId) {
+		String actUrl = null;
+		if (StringUtils.isNotEmpty(jsonId)) {
+			StringBuilder url = new StringBuilder(prefix).append(jsonId);
+			actUrl = url.toString();
+		}
+		return actUrl;
+	}
 }
 

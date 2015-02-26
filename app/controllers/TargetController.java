@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 
 import models.Collection;
 import models.FieldUrl;
@@ -1824,21 +1823,5 @@ public class TargetController extends AbstractController {
 		}
 		return res;
 	}
-	
-    public static Result bulkImport() {
-    	JsonNode json = request().body().asJson();
-    	if(json == null) {
-    		return badRequest("Expecting Json data");
-    	} else {
-    	    String name = json.findPath("name").textValue();
-    	    // process Targets here
-    	    if(name == null) {
-    	    	return badRequest("Missing parameter [name]");
-    	    } else {
-    	    	return ok("\nHello " + name);
-    	    }
-    	}
-	}
-	
 }
 
