@@ -332,7 +332,6 @@ public class Target extends UrlModel {
 	public String crawlEndDateISO;
 
 	
-	@Required(message="Subjects Required")
 	@Transient
 	public String subjectSelect;
 

@@ -1006,12 +1006,6 @@ public class TargetController extends AbstractController {
 			            return info(filledForm, id);
 			  	}    	
 		
-			  	String subjectString = requestData.get("subjectSelect");
-			  	if (StringUtils.isBlank(subjectString)) {
-					flash("message", "Please choose a subject(s).");
-		            return info(filledForm, id);
-			  	}
-			  	
 		        String fieldUrl = requestData.get("formUrl");
 		        Logger.debug("fieldUrl: " + fieldUrl);
 		        if (StringUtils.isNotEmpty(fieldUrl)) {
@@ -1281,12 +1275,6 @@ public class TargetController extends AbstractController {
 				flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 	            return newInfo(filledForm);
 	  	}    	
-
-	  	String subjectString = requestData.get("subjectSelect");
-	  	if (StringUtils.isBlank(subjectString)) {
-			flash("message", "Please choose a subject(s).");
-            return newInfo(filledForm);
-	  	}
 
 //			  	String selectionType = requestData.get("selectionType");
 //			  	if (StringUtils.isEmpty(selectionType)) {

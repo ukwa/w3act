@@ -76,8 +76,8 @@
 				}
 			});
 			
-			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 3);
-			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect", 3);            
+			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 2);
+			showTree(@getJson(subjectData), "#subjectTree", "subjectSelect", 2);            
 			// This happens right after the document is loaded.
 			// Our nav pills won't do anything by themselves, so we need to make sure we
 			// check if the current URL has a #-component and if so, we activate the
@@ -437,7 +437,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="subjects" class="col-sm-6 control-label">Subject <font color="red">*</font></label>
+			              	<label for="subjects" class="col-sm-6 control-label">Subject</label>
 						    <div class="col-sm-6">
 							  	<div id="subjectTree"></div>
 						  		<input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
