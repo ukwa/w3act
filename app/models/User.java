@@ -1,20 +1,25 @@
 package models;
 
-import java.sql.Timestamp;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -25,76 +30,185 @@ import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.PasswordHash;
+import uk.bl.api.models.FieldModel;
+import uk.bl.exception.ActException;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * User entity managed by Ebean
  */
-@SuppressWarnings("serial")
-@Entity 
+@Entity
 @Table(name="creator")
-public class User extends Model {
+public class User extends ActModel {
 
-    @Id @JsonIgnore
-    @Column(name="ID")
-    public Long uid;
-    public String url;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5018094620896138537L;
 
-    //bi-directional many-to-one association to Organisation
+	@JsonIgnore
+	@OneToMany(mappedBy = "authorUser", cascade = CascadeType.PERSIST)
+	public List<Target> targets;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	public List<CrawlPermission> crawlPermissions;
+
+	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name="id_organisation") @JsonIgnore
+	@JoinColumn(name="organisation_id") 
 	public Organisation organisation;
 	
-	//bi-directional many-to-many association to Role
-	@ManyToMany(mappedBy="users") @JsonIgnore
-	public List<Role> role_to_user = new ArrayList<Role>();
+	@JsonIgnore
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "role_user", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
+	public List<Role> roles = new ArrayList<Role>();
     	
-    @JsonIgnore
-    @Constraints.Required
+    @Constraints.Required(message="Email is required")
     @Formats.NonEmpty
+	@JsonProperty("mail")
     public String email;
-    
-    @Constraints.Required
-    public String name;
     
     @JsonIgnore
     public String password;
     
+    // FROM ACT
+    @Constraints.Required
+    public String name;
+    
     @JsonIgnore
-    public String field_affiliation;
-
+    public String affiliation;
+    
     @JsonIgnore
+    @JsonProperty
     public String edit_url;
+    
+    @Transient
+    public Role role;
+    
+    @Transient
     @JsonIgnore
+    @JsonProperty
     public String last_access;
+    
+    @Transient
     @JsonIgnore
+    @JsonProperty
     public String last_login;
+    
+    @Transient
     @JsonIgnore
-    public String created;
-    @JsonIgnore
+    @JsonProperty
     public Long status;
+    
+    @Transient
     @JsonIgnore
+    public String roleHolder;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
     public String language;
+    
+    @Transient
     @JsonIgnore
+    @JsonProperty
     public Long feed_nid;
     
-    // lists
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private FieldModel field_affiliation;
     
+    @Transient
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String revision; 
+    @JsonProperty
+    private String uid;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private Long created;
+    
+    
+	@Transient
+	@JsonProperty("roles")
+    @JsonIgnore
+    private Object rolesAct;
+    
+	@Transient
+    private String theme;
+    
+//    {
+//    	"uid":"1",
+//    	"name":"admin",
+//    	"mail":"wa-sysadmin@bl.uk",
+//    	"url":"http:\/\/webarchive.org.uk\/act\/user\/1",
+//    	"edit_url":"http:\/\/webarchive.org.uk\/act\/user\/1\/edit",
+//    	"last_access":"1421857188",
+//    	"last_login":"1421840203",
+//    	"created":"1355148005",
+//    	"roles":[2,3],
+//    	"status":"1",
+//    	"theme":"ukwa_basic",
+//    	"language":"en",
+//    	"feed_nid":null
+//    }
+    
+    public FieldModel getField_affiliation() {
+		return field_affiliation;
+	}
 
-    @JsonIgnore
-    @Version
-    public Timestamp lastUpdate;
+	public void setField_affiliation(FieldModel field_affiliation) {
+		this.field_affiliation = field_affiliation;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+
+	public Long getCreated() {
+		return created;
+	}
+
+	public void setCreated(Long created) {
+		this.created = created;
+	}
+
+	public Object getRolesAct() {
+		return rolesAct;
+	}
+
+	public void setRolesAct(Object rolesAct) {
+		this.rolesAct = rolesAct;
+	}
+
+	public String getTheme() {
+		return theme;
+	}
+
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+
+	@JsonIgnore
+    @Column(columnDefinition = "text")
+    public String revision; 
 
     // -- Queries
     
-	public static Model.Finder<Long,User> find = new Model.Finder<>(Long.class, User.class);
+    public static Model.Finder<Long,User> find = new Model.Finder<>(Long.class, User.class);
     
     public User() {
     	this.revision = "";
@@ -113,28 +227,16 @@ public class User extends Model {
     }
     
     /**
-     * This method checks whether user has a role by its id.
-     * @param roleName
-     * @return true if exists
+     * Retrieve all users.
      */
-    public boolean hasRole(long roleId) {
-    	boolean res = false;
-//    	Logger.info("hasRole() role id: " + roleId + ", role_to_user.size(): " + role_to_user.size());
-    	if (role_to_user != null && role_to_user.size() > 0) {
-    		Iterator<Role> itr = role_to_user.iterator();
-    		while (itr.hasNext()) {
-    			Role role = itr.next();
-//    	    	Logger.info("hasRole() role id: " + roleId + ", role_to_user id: " + role.id);
-    			if (role.id == roleId) {
-    				res = true;
-    				break;
-    			}
-    		}
-    	}
-//    	Logger.info("hasRole res: " + res);
-    	return res;
+    public static List<User> findAll() {
+        return find.all();
     }
     
+    public boolean isSysAdmin() {
+    	return (hasRole("sys_admin"));
+    }
+
     /**
      * This method checks whether user has a role by its name.
      * @param roleName
@@ -142,46 +244,24 @@ public class User extends Model {
      */
     public boolean hasRole(String roleName) {
     	boolean res = false;
-//    	Logger.info("hasRole: " + roleName);
-    	if (roleName != null && roleName.length() > 0) {
+    	if (StringUtils.isNotBlank(roleName)) {
     		Role role = Role.findByName(roleName);
-//        	Logger.info("role id: " + role.id);
-    		res = hasRole(role.id);
+    		res = this.hasRole(role);
     	}
     	return res;
     }
     
-    public List<? extends Role> getRoles()
-    {
-    	return role_to_user;
+    public boolean hasRole(Role role) {
+    	return (this.roles != null && this.roles.contains(role));
     }
 
-    /**
-     * Retrieve all users.
-     */
-    public static List<User> findAll() {
-        return find.all();
-    }
-
-    /**
-     * Retrieve an object by Id (uid).
-     * @param nid
-     * @return object 
-     */
-    public static User findById(Long uid) {
-    	User res = find.where().eq(Const.UID, uid).findUnique();
-    	return res;
-    }
-    
     /**
      * This method returns all users alphabetically sorted.
      * @return user list
      */
     public static List<User> findAllSorted() {
-    	List<User> res = new ArrayList<User>();
-    	Page<User> page = page(0, find.all().size(), Const.NAME, Const.ASC, "");
-    	res = page.getList();
-        return res;
+    	List<User> users = find.where().orderBy("name asc").findList();
+        return users;
     }
         
     /**
@@ -208,6 +288,16 @@ public class User extends Model {
     public static User findByUrl(String url) {
         return find.where().eq(Const.URL, url).findUnique();
     }
+    
+    public static User findById(Long id) {
+    	User res = find.byId(id);
+    	return res;
+    }
+    
+	public static User findByWct(String url) {
+		return find.where().eq("edit_url", url).findUnique();
+	}
+
 
     /**
      * Retrieve a User by UID
@@ -235,9 +325,9 @@ public class User extends Model {
      * @param organisation The organisation URL
      * @return user list
      */
-    public static List<User> findByNotEqualOrganisation(String organisation) {
+    public static List<User> findByNotEqualOrganisation(Long organisationId) {
     	List<User> res = new ArrayList<User>();
-        ExpressionList<User> ll = find.where().ne(Const.FIELD_AFFILIATION, organisation);
+        ExpressionList<User> ll = find.where().add(Expr.or(Expr.isNull("organisation.id"), Expr.ne("organisation.id", organisationId)));
         res = ll.findList();
         return res;
     }
@@ -249,7 +339,7 @@ public class User extends Model {
      */
     public static List<User> findFilteredByUrl(String url) {
     	List<User> ll = new ArrayList<User>();
-//    	Logger.info("user findFilteredByUrl(): " + url);
+//    	Logger.debug("user findFilteredByUrl(): " + url);
     	if (url != null && url.length() > 0  && !url.equals(Const.NONE)) { 
             User user = find.where().eq(Const.URL, url).findUnique();
             ll.add(user);            
@@ -275,14 +365,14 @@ public class User extends Model {
      */
     public String calculate_membership() {
     	String res = "";
-//    	Logger.info("created: " + created + ", last_access: " + last_access + ", last_login: " + last_login);
+    	Logger.debug("createdAt: " + createdAt + ", last_access: " + last_access + ", last_login: " + last_login);
     	try {
-    		long timestampCreated = Long.valueOf(created);
+    		long timestampCreated = createdAt.getTime();
     		Date dateCreated = new Date(timestampCreated * 1000);
     		long timestampLastAccess = Long.valueOf(last_access);
     		Date dateLastAccess = new Date(timestampLastAccess * 1000);
-			Logger.info("date created: " + dateCreated);
-			Logger.info("date last access: " + dateLastAccess);
+			Logger.debug("date created: " + dateCreated);
+			Logger.debug("date last access: " + dateLastAccess);
 			 
 			DateTime dt1 = new DateTime(dateCreated);
 			DateTime dt2 = new DateTime(dateLastAccess);
@@ -292,21 +382,11 @@ public class User extends Model {
 		        .appendMonths().appendSuffix(" months ")
 		        .appendWeeks().appendSuffix(" weeks");
 			PeriodFormatter pf = formaterBuilder.toFormatter();
-//	        Logger.info(pf.print(period));
+//	        Logger.debug(pf.print(period));
 	        res = pf.print(period);
 		} catch (Exception e) {
-			Logger.info("date difference calculation error: " + e);
+			Logger.debug("date difference calculation error: " + e);
 		}
-    	return res;
-    }
-    
-    /**
-     * This method calculates target number for given user URL.
-     * @return
-     */
-    public int getTargetNumberByCuratorUrl() {
-    	int res = 0;
-    	res = Target.getTargetNumberByCuratorUrl(this.url);
     	return res;
     }
     
@@ -322,15 +402,11 @@ public class User extends Model {
 		return res;
 	}
     
-    public String toString() {
-        return "User(" + name + ")" + ", url:" + url;
-    }
-    
     // Could really do with many_to_one relationship
-    public Organisation getOrganisation() {
-    	return Organisation.findByUrl(field_affiliation);
-    }
-
+//    public Organisation getOrganisation() {
+//    	return Organisation.findByUrl(affiliation);
+//    }
+//
     /**
      * This method shows user in HTML page.
      * @param userUrl The link to user in Target object field 'author'
@@ -358,16 +434,72 @@ public class User extends Model {
         		.getPage(page);
     }
     
-    /**
-     * This method updates foreign key mapping between a user and an organisation.
-     */
-    public void updateOrganisation() {
-		if (field_affiliation != null
-				&& field_affiliation.length() > 0) {
-			Organisation organisation = Organisation.findByUrl(field_affiliation);
-//            Logger.info("Add creator to organisation: " + organisation.toString());
-            this.organisation = organisation;
-		}    	
+    public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(User c: User.findAll()) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
     }
-}
 
+    public void changePassword(String password) throws ActException {
+		try {
+			this.password = PasswordHash.createHash(password);
+//	        this.password = Hash.createPassword(password);
+	        this.save();
+	    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			throw new ActException(e);
+		}
+    }
+    
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (id == null) {
+			if (other.uid != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "User [organisation=" + organisation + ", roles=" + roles
+				+ ", email=" + email + ", password=" + password + ", name="
+				+ name + ", fieldAffiliation=" + affiliation
+				+ ", edit_url=" + edit_url + ", last_access=" + last_access
+				+ ", last_login=" + last_login + ", status=" + status
+				+ ", language=" + language + ", feed_nid=" + feed_nid
+				+ ", field_affiliation=" + field_affiliation + ", uid=" + uid
+				+ ", created=" + created + ", revision="
+				+ revision + ", id=" + id + ", url=" + url + ", createdAt="
+				+ createdAt + ", updatedAt=" + updatedAt + "]";
+	}
+}

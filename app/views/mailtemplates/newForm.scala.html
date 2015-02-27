@@ -1,0 +1,136 @@
+@(templateForm: Form[MailTemplate], user: User, mailTemplates: Map[String,String])
+
+@import helper._
+@import bootstrap._
+
+@main("", user) {
+
+   	<div class="page-header">
+	    <h1><a href="@routes.MailTemplateController.index()">Archivist Tasks > Mail Templates ></a>New mail template</h1>
+	</div>
+
+    @warningmessage(flash)
+
+    @if(templateForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- templateForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+		    
+   	@helper.form(action=routes.MailTemplateController.save()) {
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(templateForm("name"),
+						'_label -> "Name",
+					    'id -> "title",
+					    'class -> "form-control",
+					    'placeholder -> "Name"
+					)(FieldConstructor(genericMandatoryInput.f), lang)
+				</div>
+			</div>
+     	</div>
+	          
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@select(field = templateForm("ttype"), options = options(mailTemplates), 
+			                args = 
+			                'class -> "form-control",
+			                '_label -> "Type", 
+			                '_showConstraints -> false
+		            )(FieldConstructor(genericInput.f), lang)
+				</div>
+			</div>
+     	</div>		   
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(templateForm("subject"),
+						'_label -> "Subject",
+					    'id -> "subject",
+					    'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(templateForm("fromEmail"),
+						'_label -> "From E-mail",
+						'type -> "email",
+					    'id -> "fromEmail",
+					    'class -> "form-control"
+					)(FieldConstructor(genericMandatoryInput.f), lang)				
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(templateForm("placeHolders"),
+						'_label -> "Place Holders (Comma separated)",
+					    'id -> "placeHolders",
+					    'class -> "form-control"
+					)(FieldConstructor(genericMandatoryInput.f), lang)	
+				</div>
+			</div>
+     	</div>
+	          
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@helper.checkbox(templateForm("defaultEmail"), 
+						args = 
+						'_label -> "Default Email" 
+					)(FieldConstructor(genericInput.f), lang)				
+				</div>
+			</div>
+     	</div>	  
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					<label for="inputText" class="col-sm-6 control-label">Template Body</label>
+				</div>
+			</div>
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+				    <div class="col-sm-12">
+				    	@if(user.hasRole("sys_admin")) {
+							@textarea(field = templateForm("text"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> null,
+								'id -> "text",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)						    	
+						} else {
+							<textarea class="form-control" name="text" id="text" cols="100" rows="20" readonly>@templateForm("text").value</textarea>
+						}
+					</div>
+				</div>
+			</div>
+     	</div>
+			          
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">		
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+		       </div>
+			</div>
+		</div>
+	}
+}
+

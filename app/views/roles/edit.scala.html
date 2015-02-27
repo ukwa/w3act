@@ -1,0 +1,115 @@
+@(roleForm: Form[Role], user: User, id: Long, permissions: List[Permission], rolePermissions: List[Permission])
+
+@import helper._
+@import bootstrap._
+
+@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+
+	@main("", user) {
+	
+	   	<div class="page-header">
+		    <h1><a href="@routes.RoleController.index()">Users & Agencies > Roles > </a>Role @roleForm("name").value</h1>
+		</div>
+	
+		<ul class="nav nav-tabs">
+			<li><a href="@routes.RoleController.view(id)">View</a></li>
+			@if(user.hasRole("sys_admin")) {
+				<li class="active"><a href="@routes.RoleController.edit(id)">Edit</a></li>
+			  	<li><a href="@routes.RoleController.admin(id)">Role administration</a></li>
+		   	}
+		</ul>
+	    
+	    @warningmessage(flash)
+	    
+   	    @if(roleForm.hasErrors) {
+			<div class="padding-20">
+				<div class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					@for(entry <- roleForm.errors.entrySet){
+						@for(error <- entry.getValue) {
+							@error.message<br />
+						}
+					}
+				</div>
+			</div>
+		}
+		
+	    @helper.form(action=routes.RoleController.update(id)) {
+		    
+		    <input type="hidden" name="id" value="@id">
+	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@inputText(roleForm("name"),
+							'_label -> "Name",
+						    'id -> "inputName",
+						    'class -> "form-control",
+						    'placeholder -> "Name"
+						)(FieldConstructor(genericMandatoryInput.f), lang)
+					</div>
+				</div>
+	     	</div>
+	     	
+	   		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Permissions</label>
+						<div class="col-sm-6">
+  							@for((permission, index) <- permissions.zipWithIndex) {
+  								<label class="checkbox-inline">
+				                	<input type="checkbox" name="permissionsList" value="@permission.id" @if(rolePermissions.contains(permission)) {checked} />
+					                 @permission.name
+				                </label>
+				            }
+						</div>
+					</div>
+				</div>
+	     	</div>	     		     	
+	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+							@textarea(field = roleForm("description"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Description",
+								'id -> "inputDescription",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)						    	
+					</div>
+				</div>
+	     	</div>
+	     	
+	        <div id="revisionArea" class="revision">
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(field = roleForm("revision"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Revision log message",
+								'id -> "inputRevision",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)						    	
+						</div>
+					</div>
+		     	</div>
+			</div>
+	
+			<div class="alert alert-info">
+				Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+			</div>
+	
+			<div class="row padding-10 pull-right">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
+			       </div>
+				</div>
+			</div>
+		}
+	}
+} else {
+	@infomessage.render("Access Denied for URL @routes.RoleController.index()/edit")
+}
+

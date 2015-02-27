@@ -1,0 +1,13 @@
+@(field: Field, label: String = "CHANGEME", checkboxMap: Map[String, Boolean], help:String = "")
+
+   	<label class="col-sm-6 control-label" for="@field.id">@label</label>
+    
+	<div class="col-sm-6" id="@field.id">
+		@for(((checkboxName, isChecked), index) <- checkboxMap.zipWithIndex) {
+			<label class="checkbox-inline">
+				<input type="checkbox" name="@(field.name)[@index].id" id="@checkboxName" value="@checkboxName" @if(isChecked) {checked}> @checkboxName
+			</label>
+   		}
+   		<span class="help-block">@help</span>
+	</div>
+	

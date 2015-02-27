@@ -1,22 +1,76 @@
-@(user: User, message: String, domainMostChecked: String, domainLeastChecked: String)
+@(user: User, whoIsData: uk.bl.scope.WhoIsData)
 
-@main("", user) {
+@import uk.bl.api.Utils
 
+@styles = {
+	<style>
+		.modal-vertical-centered {
+			transform: translate(0, 50%) !important;
+		  	-ms-transform: translate(0, 50%) !important; /* IE 9 */
+		  	-webkit-transform: translate(0, 50%) !important; /* Safari and Chrome */
+		}
+	
+	.modal-vertical-centered-progress {
+		transform: translate(0, 300%) !important;
+	  	-ms-transform: translate(0, 300%) !important; /* IE 9 */
+	  	-webkit-transform: translate(0, 300%) !important; /* Safari and Chrome */
+	}
+	</style>
+
+}
+
+@scripts = {
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+			$('#checkButton').on('click', function() {
+				modalLoader();
+				$('#check-form').submit();
+
+			});
+
+			var total = getURLParameter('total');
+			if (total.length > 0) {
+				$('#total').val(total);
+			}
+			
+			function modalLoader() {
+				$('#modalLoader').modal({
+				    backdrop: true,
+				    keyboard: true
+				});
+			}
+		});
+	</script>
+}
+
+@main("", user, scripts, styles) {
+
+	@form(user, whoIsData.getUkRegistrantCount, whoIsData.getNonUKRegistrantCount, whoIsData.getFailedCount)
 
 	<div class="container">
 	
-		<div class="alert alert-info">
-			Whois Results
-		</div>
+		<h1>Whois Results</h1>
 		
-		<blockquote>
-			<p>@message</p>
-		</blockquote>
-		
-		<ul>
-			<li>@domainMostChecked</li>
-			<li>@domainLeastChecked</li>
-		</ul>
-
+		<table class="table">
+			<tr>
+				<th>#</th>
+				<th>Domain</th>
+				<th>Title</th>
+				<th>Target Date</th>
+				<th>Last Checked</th>
+				<th>Difference</th>
+			</tr>
+		@for((row, index) <- whoIsData.getResults.zipWithIndex) {
+			<tr>
+				<td>@(index+1))</td>
+				<td>@row.getString("lookup_name")</td>
+				<td>@row.getString("title")</td>
+				<td>@Utils.INSTANCE.formatSqlTimestamp(row.getTimestamp("target_date"))</td>
+				<td>@Utils.INSTANCE.formatSqlTimestamp(row.getTimestamp("lookup_date"))</td>
+				<td>@Utils.INSTANCE.convertPGIntervalToDate(row.get("diff"))</td>
+			</tr>
+		}
+		</table>
 	</div>
 }

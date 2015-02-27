@@ -1,4 +1,4 @@
-@(permissionUrl: String)
+@(permissionUrl: String, targetUrls: String)
 
 <html>
     <head>
@@ -24,7 +24,7 @@
         <script src="@routes.Assets.at("javascripts/jquery-ui-1.10.3.min.js")" type="text/javascript"></script>
         
         <script type="text/javascript" src="@routes.Assets.at("javascripts/script.js")"></script>
-        <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+        <script type="text/javascript" src="@routes.ApplicationController.javascriptRoutes"></script>
     </head>
     <body>
 		<div class="container">         
@@ -76,7 +76,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
 					    <div class="col-sm-6">
-							<input class="form-control" name="target" value="@CrawlPermission.showByUrl(permissionUrl).target" placeholder="http://www.londonbusinessforum.com/" type="text" readonly>
+							<input class="form-control" name="target" value="@targetUrls" placeholder="http://www.londonbusinessforum.com/" type="text" readonly>
 						</div>
 					</div>
 				</div>
@@ -95,7 +95,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Name: <small class="text-center">(organisation or individual)</small></label>
 					    <div class="col-sm-6">
-							<input class="form-control" name="contactPerson" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).name" placeholder="Max Mustermann" type="text" readonly>
+							<input class="form-control" name="contactPerson" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.name" placeholder="Max Mustermann" type="text" readonly>
 						</div>
 					</div>
 				</div>
@@ -106,7 +106,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Position:</label>
 					    <div class="col-sm-6">
-							<input class="form-control" name="position" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).position" type="text" readonly>
+							<input class="form-control" name="position" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.position" type="text" readonly>
 						</div>
 					</div>
 				</div>
@@ -117,7 +117,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
 					    <div class="col-sm-6">
-							<input class="form-control" name="email" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).email" placeholder="max.mustermann@@domain.com" type="text" readonly>
+							<input class="form-control" name="email" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.email" placeholder="max.mustermann@@domain.com" type="text" readonly>
 						</div>
 					</div>
 				</div>
@@ -128,7 +128,7 @@
 					<div class="form-group">
 						<label for="inputContactOrganisation" class="col-sm-6 control-label">Contact Organisation:</label>
 					    <div class="col-sm-6">
-		              		<input readonly class="form-control" name="contactOrganisation" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).contactOrganisation" type="text">
+		              		<input readonly class="form-control" name="contactOrganisation" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.contactOrganisation" type="text">
 						</div>
 					</div>
 				</div>
@@ -139,7 +139,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Phone:</label>
 					    <div class="col-sm-6">
-							<input class="form-control" name="phone" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).phone" placeholder="0041889923456" type="text" readonly>
+							<input class="form-control" name="phone" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.phone" placeholder="0041889923456" type="text" readonly>
 						</div>
 					</div>
 				</div>
@@ -150,7 +150,7 @@
 					<div class="form-group">
 						<label for="inputPostalAddress" class="col-sm-6 control-label">Postal Address:</label>
 					    <div class="col-sm-6">
-		              		<input readonly class="form-control" name="postalAddress" value="@ContactPerson.showByUrl(CrawlPermission.showByUrl(permissionUrl).contactPerson).postalAddress" type="text">
+		              		<input readonly class="form-control" name="postalAddress" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.postalAddress" type="text">
 						</div>
 					</div>
 				</div>
@@ -227,7 +227,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Date</label>
 					    <div class="col-sm-6">
-	 						<input type="text" name="log-date" class="form-control" id="log-date" value="@LicenceController.getCurrentDate()" readonly/>
+	 						<input type="text" name="log-date" class="form-control" id="log-date" value="@LicenseController.getCurrentDate()" readonly/>
                 		</div>
 					</div>
 				</div>

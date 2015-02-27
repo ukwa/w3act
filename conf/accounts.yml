@@ -1,0 +1,216 @@
+
+# Permissions
+
+permissions:
+
+    - !!models.Permission &create_roles_and_organisations
+        id:         1
+        url:        act-1
+        name:       create_roles_and_organisations
+    
+    - !!models.Permission &create_user
+        id:         2
+        url:        act-2
+        name:       create_user
+    
+    - !!models.Permission &administer_user
+        id:         3
+        url:        act-3
+        name:       administer_user
+    
+    - !!models.Permission &modify_metadata
+        id:         4
+        url:        act-4
+        name:       modify_metadata
+    
+    - !!models.Permission &administer_collections
+        id:         5
+        url:        act-5
+        name:       administer_collections
+    
+    - !!models.Permission &administer_subjects
+        id:         6
+        url:        act-6
+        name:       administer_subjects
+    
+    - !!models.Permission &administer_target
+        id:         7
+        url:        act-7
+        name:       administer_target
+    
+    - !!models.Permission &edit_foreign_target
+        id:         8
+        url:        act-8
+        name:       edit_foreign_target
+    
+    - !!models.Permission &check_duplicate_targets
+        id:         9
+        url:        act-9
+        name:       check_duplicate_targets
+    
+    - !!models.Permission &edit_collections
+        id:         10
+        url:        act-10
+        name:       edit_collections
+    
+    - !!models.Permission &administer_flags
+        id:         11
+        url:        act-11
+        name:       administer_flags
+    
+    - !!models.Permission &assign_flags_to_targets
+        id:         12
+        url:        act-12
+        name:       assign_flags_to_targets
+    
+    - !!models.Permission &exercise_professional_judgement
+        id:         13
+        url:        act-13
+        name:       exercise_professional_judgement
+    
+    - !!models.Permission &edit_template_email
+        id:         14
+        url:        act-14
+        name:       edit_template_email
+    
+    - !!models.Permission &queue_permissions_emails
+        id:         15
+        url:        act-15
+        name:       queue_permissions_emails
+    
+    - !!models.Permission &send_permissions_email
+        id:         16
+        url:        act-16
+        name:       send_permissions_email
+    
+    - !!models.Permission &send_follow_up_email
+        id:         17
+        url:        act-17
+        name:       send_follow_up_email
+    
+    - !!models.Permission &request_permissions
+        id:         18
+        url:        act-18
+        name:       request_permissions
+    
+    - !!models.Permission &populate_crawl_permissions_field
+        id:         19
+        url:        act-19
+        name:       populate_crawl_permissions_field
+    
+    - !!models.Permission &set_crawl_schedules
+        id:         20
+        url:        act-20
+        name:       set_crawl_schedules
+    
+    - !!models.Permission &all_qa_actions
+        id:         21
+        url:        act-21
+        name:       all_qa_actions
+    
+    - !!models.Permission &search_existing_targets
+        id:         22
+        url:        act-22
+        name:       search_existing_targets
+    
+    - !!models.Permission &obtain_reports_on_summary_schedules
+        id:         23
+        url:        act-23
+        name:       obtain_reports_on_summary_schedules
+    
+    - !!models.Permission &obtain_reports_on_numbers_targets
+        id:         24
+        url:        act-24
+        name:       obtain_reports_on_numbers_targets
+    
+    - !!models.Permission &obtain_user_report_own_activity
+        id:         25
+        url:        act-25
+        name:       obtain_user_report_own_activity
+    
+    - !!models.Permission &obtain_reports_on_flagged_targets
+        id:         26
+        url:        act-26
+        name:       obtain_reports_on_flagged_targets
+    
+    - !!models.Permission &filter_searches_by_qa_status
+        id:         27
+        url:        act-27
+        name:       filter_searches_by_qa_status
+        
+# Roles
+
+roles:
+
+    - !!models.Role        &sys_admin
+        id:                 1
+        url:                act-1
+        name:               sys_admin
+        permissions:        [*create_roles_and_organisations, *create_user, *administer_user, *modify_metadata, *administer_collections, *administer_subjects, *administer_target, *edit_foreign_target, *check_duplicate_targets, *edit_collections, *administer_flags, *assign_flags_to_targets, *exercise_professional_judgement, *edit_template_email, *queue_permissions_emails, *send_permissions_email, *send_follow_up_email, *request_permissions, *populate_crawl_permissions_field, *set_crawl_schedules, *all_qa_actions, *search_existing_targets, *obtain_reports_on_summary_schedules, *obtain_reports_on_numbers_targets, *obtain_user_report_own_activity, *obtain_reports_on_flagged_targets, *filter_searches_by_qa_status]
+    
+    - !!models.Role        &archivist
+        id:                 2
+        url:                act-2
+        name:               archivist
+        permissions:        [*create_user, *administer_user, *administer_collections, *administer_target, *edit_foreign_target, *check_duplicate_targets, *edit_collections, *assign_flags_to_targets, *exercise_professional_judgement, *queue_permissions_emails, *send_permissions_email, *send_follow_up_email, *request_permissions, *populate_crawl_permissions_field, *set_crawl_schedules, *all_qa_actions, *search_existing_targets, *obtain_reports_on_summary_schedules, *obtain_reports_on_numbers_targets, *obtain_user_report_own_activity, *obtain_reports_on_flagged_targets, *filter_searches_by_qa_status]
+    
+    - !!models.Role         &expert_user
+        id:                 3
+        url:                act-3
+        name:               expert_user
+        permissions:        [*administer_target, *edit_foreign_target, *check_duplicate_targets, *edit_collections, *assign_flags_to_targets, *exercise_professional_judgement, *request_permissions, *search_existing_targets, *obtain_user_report_own_activity, *filter_searches_by_qa_status]
+    
+    - !!models.Role         &user
+        id:                 4
+        url:                act-4
+        name:               user
+        permissions:        [*administer_target, *check_duplicate_targets, *assign_flags_to_targets, *request_permissions, *search_existing_targets, *obtain_user_report_own_activity]
+    
+    - !!models.Role         &viewer
+        id:                 5
+        url:                act-5
+        name:               viewer
+        permissions:        [*search_existing_targets]
+    
+# Users
+
+users:
+    - !!models.User
+        email:              wa-sysadm@bl.uk
+        name:               Systems Administrator
+        password:           sysAdmin
+        affiliation:   BL
+        #roles:              [*sys_admin]
+        roleHolder:         sys_admin
+
+    - !!models.User
+        email:              archivist@bl.uk
+        name:               Archivist
+        password:           secret
+        affiliation:   BL
+#        roles:              [*archivist]
+        roleHolder:         archivist
+
+    - !!models.User
+        email:              expert@bl.uk
+        name:               Expert
+        password:           secret
+        affiliation:   BL
+#        roles:              [*expert_user]
+        roleHolder:         expert_user
+
+    - !!models.User
+        email:              user@bl.uk
+        name:               User
+        password:           secret
+        affiliation:   BL
+#        roles:              [*user]
+        roleHolder:         user
+    
+    - !!models.User
+        email:              viewer@bl.uk
+        name:               Viewer
+        password:           secret
+        affiliation:   BL
+#        roles:              [*viewer]
+        roleHolder:         viewer

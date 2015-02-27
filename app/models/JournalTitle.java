@@ -14,7 +14,6 @@ import javax.persistence.Transient;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
-import uk.bl.Const;
 
 @Entity
 public class JournalTitle extends Model {
@@ -25,15 +24,15 @@ public class JournalTitle extends Model {
 	@JoinColumn(name="id_watched_target")
 	public WatchedTarget watchedTarget;
 	@ManyToMany(cascade=CascadeType.REMOVE)
-	@JoinTable(name = Const.BL_COLLECTION_SUBSET_JOURNAL_TITLE,
+	@JoinTable(name = "bl_collection_subset_journal_title",
 		joinColumns = { @JoinColumn(name = "id_journal_title", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_bl_collection_subset", referencedColumnName="id") })
 	public List<BlCollectionSubset> blCollectionSubsets = new ArrayList<>();
 	@ManyToMany(cascade=CascadeType.REMOVE)
-	@JoinTable(name = Const.SUBJECT_JOURNAL_TITLE,
+	@JoinTable(name = "subject_journal_title",
 		joinColumns = { @JoinColumn(name = "id_journal_title", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="id") })
-	public List<Taxonomy> taxonomies = new ArrayList<>();
+	public List<Subject> subjects = new ArrayList<>();
 	@Required
     public String title;
 	public String issn;
@@ -41,8 +40,6 @@ public class JournalTitle extends Model {
 	@Required
 	public String publisherName;
 	public String language;
-	@Transient
-	public String collection;
 	@Transient
 	public String subject;
 	

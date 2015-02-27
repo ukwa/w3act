@@ -1,4 +1,4 @@
-@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[Taxonomy], currentSortBy: String, currentOrder: String, data :com.fasterxml.jackson.databind.JsonNode)
+@(title: String, user: User, searchstr: String, currentPage: com.avaje.ebean.Page[Subject], currentSortBy: String, currentOrder: String, subjectData :com.fasterxml.jackson.databind.JsonNode)
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -9,37 +9,9 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'subjects'); 
-
-            showTree(@getJson(data));
-            
-            function showTree(data) {
-             	$("#tree3").dynatree({
-                	checkbox: false,
-                	selectMode: 1,
-                	children: data,
-    			    onActivate: function(node) { 
-    			        if( node.data.url ){
-    			            // use href to change the current frame:
-    			            window.location.href = node.data.url; 
-    			        }
-    			    },				    
-                	onSelect: function(select, node) {
-                  		// Get a list of all selected nodes, and convert to a key array:
-                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                    		return node.data.key;
-                  		});
-                  		document.getElementById('treeKeys').value = selKeys.join(", ");
-                  		// Get a list of all selected TOP nodes
-                  		var selRootNodes = node.tree.getSelectedNodes(true);
-                  		// ... and convert to a key array:
-                  		var selRootKeys = $.map(selRootNodes, function(node){
-                    		return node.data.key;
-                  		});
-                	}
-             	});
-            }
+			showTreeSelect(@getJson(subjectData), "#subjectTree", "subjectSelect");
 		});
 	</script>
 }
@@ -51,11 +23,11 @@
 
 @main(title, user, scripts, styles) {
 	<div class="page-header">
-	    <h1><a href="@routes.Subjects.index()">Taxonomies > </a>Subjects</h1>
+	    <h1><a href="@routes.SubjectController.index()">Taxonomies > </a>Subjects</h1>
 	</div>
  	<article class="collections">
 		<div id="forms">
-   			@helper.form(action=routes.Subjects.search, 'class -> "form-inline") {
+   			@helper.form(action=routes.SubjectController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   				<input type="hidden" name="s" value="@currentSortBy">
@@ -64,7 +36,7 @@
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for subject by name">Search</button>
 						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new subject">Add</button>
+							<a class="btn btn-primary" href="@routes.SubjectController.newForm()">Add</a>
 						}
 					</span>
 				</div>
@@ -74,8 +46,8 @@
 		<div class="row">		
 			<div class="form-group">									
 			    <div class="col-sm-12">
-					  <div id="tree3"></div>
-					  <input type="hidden" id="treeKeys" name="treeKeys">
+			  		<div id="subjectTree"></div>
+			  		<input type="hidden" id="subjectSelect" name="subjectSelect" value="">
 				</div>
 			</div>
 		</div>

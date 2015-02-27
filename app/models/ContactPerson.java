@@ -1,16 +1,13 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
@@ -24,77 +21,59 @@ import com.avaje.ebean.ExpressionList;
  */
 @Entity
 @Table(name = "contact_person")
-public class ContactPerson extends Model
-{
+public class ContactPerson extends ActModel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2257099575463302989L;
 
-	@Id 
-    public Long id;
-
     //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="contactperson_to_crawlpermission", cascade=CascadeType.PERSIST)
-    private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
-     
-    public List<CrawlPermission> getCrawlPermissions() {
-    	return this.crawlPermissions;
-    }
-    
-    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
-    	this.crawlPermissions = crawlPermissions;
-    }    
-        
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-	
+    @OneToMany(mappedBy="contactPerson", cascade=CascadeType.ALL)
+    public List<CrawlPermission> crawlPermissions;
+
     /**
      * The name of the contact person.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String name;
     
     /**
      * The job or position of the contact person within the relevant organisation.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String position;
     
     /**
      * Telephone contact details of the contact.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String phone;
     
     /**
      * E-mail address of the contact person.
      */
-    @Required
-    @Column(columnDefinition = "TEXT")
+    @Required(message="Email is required")
+    @Column(columnDefinition = "text")
     public String email;
     
     /**
      * The postal address of the contact person.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String postalAddress;
     
     /**
      * The URL of a contact web form 
      * (in the absence of a known email address).
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String webForm;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String description;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String contactOrganisation; 
        
     /**
@@ -109,9 +88,6 @@ public class ContactPerson extends Model
      */
     public Boolean permissionChecked;
     
-    @Version
-    public Timestamp lastUpdate;
-
     public static final Model.Finder<Long, ContactPerson> find = new Model.Finder<Long, ContactPerson>(Long.class, ContactPerson.class);
 
     public ContactPerson() {}
@@ -121,10 +97,13 @@ public class ContactPerson extends Model
 		this.url = url;
 	}
 
-	public String getName()
-    {
-        return name;
+    public List<CrawlPermission> getCrawlPermissions() {
+    	return this.crawlPermissions;
     }
+    
+    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
+    	this.crawlPermissions = crawlPermissions;
+    }    
 
     public static ContactPerson findByName(String name)
     {
@@ -136,7 +115,7 @@ public class ContactPerson extends Model
 
     /**
      * Retrieve an object by Id (id).
-     * @param nid
+     * @param id
      * @return object 
      */
     public static ContactPerson findById(Long id) {
@@ -159,7 +138,7 @@ public class ContactPerson extends Model
     				res.name = Const.NONE;
     			}
     		} catch (Exception e) {
-    			Logger.info("Contact person: findByUrl error: " + e);
+    			Logger.debug("Contact person: findByUrl error: " + e);
     			res.name = Const.NONE;
     			return res;
     		}    			
@@ -195,6 +174,10 @@ public class ContactPerson extends Model
     	res = ll.findList();
 		return res;
 	}
+	
+	public static ContactPerson findByEmail(String email) {
+		return find.where().eq("email", email).findUnique();
+	}
         
     /**
      * This method is used to show contact person in a table.
@@ -203,7 +186,7 @@ public class ContactPerson extends Model
      * @return
      */
     public static ContactPerson showByUrl(String url) {
-    	Logger.info("person findByUrl: " + url);
+    	Logger.debug("person findByUrl: " + url);
     	ContactPerson res = new ContactPerson();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		try {
@@ -212,12 +195,12 @@ public class ContactPerson extends Model
                 	res = new ContactPerson();
                 	res.name = Const.NONE;            	}
     		} catch (Exception e) {
-    			Logger.info("contact person could not be find in database: " + e);
+    			Logger.debug("contact person could not be find in database: " + e);
     		}
     	} else {
         	res.name = Const.NONE;
     	}
-    	Logger.info("contact person res: " + res);
+    	Logger.debug("contact person res: " + res);
     	return res;
     }
     	
@@ -235,7 +218,7 @@ public class ContactPerson extends Model
      */
     public static String findNamesByUrls(String urls) {
     	String res = "";
-		Logger.info("findNamesByUrls urls: " + urls);
+		Logger.debug("findNamesByUrls urls: " + urls);
     	if (urls != null) {
     		if (urls.contains(Const.LIST_DELIMITER)) {
 		    	String[] parts = urls.split(Const.LIST_DELIMITER);
@@ -245,7 +228,7 @@ public class ContactPerson extends Model
 			    		String name = findByUrl(part).name;
 			    		res = res + name + Const.LIST_DELIMITER;
 		    		} catch (Exception e) {
-		    			Logger.info("findNamesByUrls error: " + e);
+		    			Logger.debug("findNamesByUrls error: " + e);
 		    		}
 		        }
 	    	} else {
@@ -254,7 +237,7 @@ public class ContactPerson extends Model
 	    		}
 	    	}
     	}
-		Logger.info("findNamesByUrls res: " + res);
+		Logger.debug("findNamesByUrls res: " + res);
     	return res;
     }          
 	    

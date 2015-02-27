@@ -15,12 +15,12 @@ public class Users {
 		Map<String, String> users = new LinkedHashMap<>();
 		users.put("","All");
 		for (User user : userList)
-			users.put(""+user.uid, user.name);
+			users.put(""+user.id, user.name);
 		return users;
 	}
 	
 	public static Map<String, String> getWatchedTargets(Long userId) {
-		List<WatchedTarget> watchedTargets = WatchedTarget.find.where().eq("id_creator", userId).findList();
+		List<WatchedTarget> watchedTargets = WatchedTarget.find.where().eq("target.authorUser.id", userId).findList();
 		Map<String, String> targets = new LinkedHashMap<>();
 		targets.put("","All");
 		for (WatchedTarget watchedTarget : watchedTargets)
@@ -29,7 +29,7 @@ public class Users {
 	}
 	
 	public static List<Long> getWatchedTargetIds(Long userId) {
-		List<WatchedTarget> watchedTargets = WatchedTarget.find.where().eq("id_creator", userId).findList();
+		List<WatchedTarget> watchedTargets = WatchedTarget.find.where().eq("target.authorUser.id", userId).findList();
 		List<Long> targetIds = new ArrayList<>();
 		for (WatchedTarget watchedTarget : watchedTargets)
 			targetIds.add(watchedTarget.id);

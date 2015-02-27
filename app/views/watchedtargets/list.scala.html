@@ -97,8 +97,8 @@
 			<thead>
 				<tr>
 					@header("target.title", "Title", currentSortBy, currentOrder, link)
-					@header("target.field_url", "URL", currentSortBy, currentOrder, link)
-					@header("user", "Curator", currentSortBy, currentOrder, link)
+					<th>URL</th>
+					@header("target.authorUser", "Curator", currentSortBy, currentOrder, link)
 					<th>Documents</th>
 					<th>Action</th>
 				</tr>
@@ -106,14 +106,14 @@
 			<tbody>
 			@for(watchedTarget <- currentPage.getList) {
 				<tr>
-					<td><a href="@routes.Targets.view(watchedTarget.target.url)">@watchedTarget.target.title</a></td>
-					<td><a href="@watchedTarget.target.field_url" target="_blank">@watchedTarget.target.field_url</a></td>
-					<td><a href="@routes.Curators.view(watchedTarget.user.url)">@watchedTarget.user.name</a></td>
+					<td><a href="@routes.TargetController.view(new Long(watchedTarget.target.id))">@watchedTarget.target.title</a></td>
+					<td><a href="@watchedTarget.target.fieldUrls(0).url" target="_blank">@watchedTarget.target.fieldUrls(0).url</a></td>
+					<td><a href="@routes.UserController.view(watchedTarget.target.authorUser.id)">@watchedTarget.target.authorUser.name</a></td>
 					<td><a href="@routes.Documents.list("", "" + watchedTarget.id)">@watchedTarget.documents.size</a></td>
 					<td>
 						@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
 							<input type="submit" class="btn btn-success" value="Live Crawl" onclick=
-								"return confirm('You will start a crawl with the seed:\n@{watchedTarget.target.field_url}\n\nDo you want to proceed?');">
+								"return confirm('You will start a crawl with the seed:\n@{watchedTarget.target.fieldUrls(0).url}\n\nDo you want to proceed?');">
 						}
 					</td>
 				</tr>
@@ -124,7 +124,7 @@
 		@pagination(currentPage, link)
 		
 		@if(!filters) {
-			@helper.form(routes.Targets.list()) {
+			@helper.form(routes.TargetController.list()) {
 				<h3>New Target</h3>
 				<input type="hidden" name="s" value="title">
 				<div class="row padding-10">

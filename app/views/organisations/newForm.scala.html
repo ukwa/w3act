@@ -1,0 +1,94 @@
+@(organistionForm: Form[Organisation], user: User)
+
+@import helper._
+@import bootstrap._
+
+@main("", user) {
+    
+   	<div class="page-header">
+	    <h1><a href="@routes.OrganisationController.index()">Users & Agencies > Organisations > </a>New Organisation</h1>
+	</div>
+	
+	@warningmessage(flash)
+	
+    @if(organistionForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- organistionForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+		
+	@helper.form(action=routes.OrganisationController.save()) {
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(organistionForm("title"),
+										'_label -> "Title",
+									    'id -> "inputTitle",
+									    'class -> "form-control"
+									)(FieldConstructor(genericMandatoryInput.f), lang)
+				</div>
+			</div>
+     	</div>
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(organistionForm("field_abbreviation"),
+										'_label -> "Abbreviation (An abbreviation for this organisation (no more that 8 characters). e.g. 'BL', 'NLS', 'NLW' etc)",
+									    'id -> "inputAbbreviation",
+									    'class -> "form-control"
+									)(FieldConstructor(genericInput.f), lang)				
+				</div>
+			</div>
+     	</div>
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@textarea(field = organistionForm("summary"),
+		 				args = 'rows -> 1, 'cols -> 100,
+						'_label -> "Description",
+						'id -> "inputDescription",
+						'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)		
+				</div>
+			</div>
+     	</div>
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+     			<div class="form-group">
+					@textarea(field = organistionForm("revision"),
+		 				args = 'rows -> 1, 'cols -> 100,
+						'_label -> "Revision log message",
+						'id -> "inputRevision",
+						'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)	     			
+				</div>
+			</div>
+		</div>
+
+		<div class="padding-20">
+			<div class="alert alert-info">
+				Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+			</div>
+		</div>
+	
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+		       </div>
+			</div>
+		</div>
+	}
+}
+

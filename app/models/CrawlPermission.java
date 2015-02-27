@@ -1,22 +1,25 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.Logger;
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
+import scala.NotImplementedError;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -28,57 +31,52 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "crawl_permission")
-public class CrawlPermission extends Model
-{
+public class CrawlPermission extends ActModel {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2250099575463302989L;
 
-	@Id @JsonIgnore
-    public Long id;
-
-	//bi-directional many-to-one association to Target
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "crawl_permission_seq")
+	public Long id;
+	
+//	the permission can be inherited from a 'parent' target. 
+//	Targets could in theory have multiple crawl permissions. This is most likely in the case where a 
+//	permission was sent and then cancelled for whatever reason, and then another one sent to supersede it.
 	@ManyToOne
-	@JoinColumn(name="id_target")
-	public Target target_to_crawl_permission;
+	@JoinColumn(name="target_id")
+    @Required(message="Target is required")
+	public Target target;
     
 	//bi-directional many-to-one association to MailTemplate
 	@ManyToOne
-	@JoinColumn(name="id_mailtemplate")
-	public MailTemplate mailtemplate_to_crawlpermission;
+	@JoinColumn(name="mailTemplate_id")
+	public MailTemplate mailTemplate;
 	
 	//bi-directional many-to-one association to ContactPerson
 	@ManyToOne
-	@JoinColumn(name="id_contactperson")
-	public ContactPerson contactperson_to_crawlpermission;
+	@JoinColumn(name="contactPerson_id")
+    @Required(message="Contact Person is required")
+	public ContactPerson contactPerson;
 	
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-
-    @Column(columnDefinition = "TEXT")
-    @Required
+    @Column(columnDefinition = "text")
+    @Required(message="Name is required")
     public String name;
     
-    /**
-     * This field contains target URL.
-     */
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    @Required
-    public String target;
-    
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String description;
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String anyOtherInformation;
+    
+    @JsonIgnore
+	@ManyToOne
+	@JoinColumn(name="archivist_id")
+    public User user; 
     
     /**
      * Records status of permission process e.g. 
@@ -86,33 +84,16 @@ public class CrawlPermission extends Model
      * Usually populated by system actions, but may also be modified by Archivist 
      */
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String status; 
     
     @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String contactPerson; 
+	@ManyToOne
+	@JoinColumn(name="license_id")
+    public License license; 
     
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String creatorUser; 
-    
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String assignedArchivist; 
-    
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String template; 
-    
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String license;
-    
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String licenseDate;
-    
+	public String token;
+
     /**
      * This is a checkbox defining whether follow up e-mails should be send.
      */
@@ -145,32 +126,25 @@ public class CrawlPermission extends Model
     @JsonIgnore
     public Boolean agree;
     
-    @JsonIgnore
-    @Version
-    public Timestamp lastUpdate;
-
     public static final Model.Finder<Long, CrawlPermission> find = new Model.Finder<Long, CrawlPermission>(Long.class, CrawlPermission.class);
 
-    public CrawlPermission() {}
+    public CrawlPermission() {
+    	this(null, null, null);
+    }
     
     public CrawlPermission(Long id, String url) {
-		this.id = id;
-		this.url = url;
+		this(id, url, null);
 	}
 
 	public CrawlPermission(Long id, String url, String name) {
 		this.id = id;
 		this.url = url;
 		this.name = name;
+		this.token = UUID.randomUUID().toString();
+		
 	}
 
-	public String getName()
-    {
-        return name;
-    }
-
-    public static CrawlPermission findByName(String name)
-    {
+    public static CrawlPermission findByName(String name) {
         return find.where()
                    .eq("name",
                        name)
@@ -187,13 +161,18 @@ public class CrawlPermission extends Model
     	return res;
     }          
     
+    public static CrawlPermission findByToken(String token) {
+    	CrawlPermission res = find.where().eq("token", token).findUnique();
+    	return res;
+    }          
+    
     /**
      * Retrieve a crawl permission by URL.
      * @param url
      * @return crawl permission name
      */
     public static CrawlPermission findByUrl(String url) {
-//    	Logger.info("permission findByUrl: " + url);
+//    	Logger.debug("permission findByUrl: " + url);
     	CrawlPermission res = new CrawlPermission();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
@@ -224,7 +203,7 @@ public class CrawlPermission extends Model
      * @return
      */
     public static CrawlPermission showByUrl(String url) {
-//    	Logger.info("permission findByUrl: " + url);
+//    	Logger.debug("permission findByUrl: " + url);
     	CrawlPermission res = new CrawlPermission();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		try {
@@ -233,15 +212,19 @@ public class CrawlPermission extends Model
                 	res = new CrawlPermission();
                 	res.name = Const.NONE;            	}
     		} catch (Exception e) {
-    			Logger.info("crawl permission could not be find in database: " + e);
+    			Logger.debug("crawl permission could not be find in database: " + e);
     		}
     	} else {
         	res.name = Const.NONE;
     	}
-//    	Logger.info("permission res: " + res);
+//    	Logger.debug("permission res: " + res);
     	return res;
     }
-    
+
+    public static CrawlPermission showByToken(String token) {
+    	CrawlPermission crawlPermission = CrawlPermission.findByToken(token);
+    	return crawlPermission;
+    }
 	/**
 	 * This method filters crawl permissions by name and returns a list 
 	 * of filtered CrawlPermission objects.
@@ -301,27 +284,15 @@ public class CrawlPermission extends Model
     }
     
     /**
-     * This method returns a list of all status values for crawl permission record.
-     * @return
-     */
-    public static List<String> getAllStatus() {
-    	List<String> res = new ArrayList<String>();
-	    Const.CrawlPermissionStatus[] resArray = Const.CrawlPermissionStatus.values();
-	    for (int i=0; i < resArray.length; i++) {
-		    res.add(resArray[i].name());
-	    }
-	    return res;
-    }         
-
-    /**
      * This method evaluates if element is in a list separated by list delimiter e.g. ', '.
      * @param subject
      * @return true if in list
      */
     public boolean hasContactPerson(String curContactPerson) {
-    	boolean res = false;
-    	res = Utils.hasElementInList(curContactPerson, contactPerson);
-    	return res;
+//    	boolean res = false;
+//    	res = Utils.hasElementInList(curContactPerson, contactPerson);
+//    	return res;
+    	throw new NotImplementedError();
     }
 
     /**
@@ -374,26 +345,13 @@ public class CrawlPermission extends Model
     			&& placeHolders.size() == values.size()) {
     		int counter = placeHolders.size();
     		for (int i = 0; i < counter; i++) {
-    			Logger.info("replacePlaceholdersInText placeholder: " + placeHolders.get(i) +
+    			Logger.debug("replacePlaceholdersInText placeholder: " + placeHolders.get(i) +
     					", value: " + values.get(i));
     	    	res = res.replace(placeHolders.get(i), values.get(i));
     		}
     	}
     	return res;
-    }
-    
-    /**
-     * This method returns a list of all request filtering types for crawl permission record.
-     * @return
-     */
-    public static List<String> getAllRequestTypes() {
-    	List<String> res = new ArrayList<String>();
-	    Const.RequestTypes[] resArray = Const.RequestTypes.values();
-	    for (int i=0; i < resArray.length; i++) {
-		    res.add(resArray[i].name());
-	    }
-	    return res;
-    }         
+    }    
     
     /**
      * Return a page of crawl permission 
@@ -407,64 +365,27 @@ public class CrawlPermission extends Model
      * @param target The field URL
      */
     public static Page<CrawlPermission> page(int page, int pageSize, String sortBy, String order, String filter, 
-    		String status, String target) {
+    		String status) {
 
         return find.where()
-        		.icontains(Const.NAME, filter)
-        		.eq(Const.STATUS, status)
-//        		.ne(Const.STATUS, Const.NONE)
-//        		.ne(Const.STATUS, Const.NONE_VALUE)
-        		.icontains(Const.TARGET, target)
-//        		.ne(Const.TARGET, Const.NONE)
-//        		.ne(Const.TARGET, Const.NONE_VALUE)
+        		.icontains("name", filter)
+        		.eq("status", status)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
     }
-    
-    public String toString() {
-        return "CrawlPermission(" + name + ")" + ", id:" + id;
-    }    
 
-    /**
-     * This method updates foreign key mapping between a CrawlPermission and a Target.
-     */
-    public void updateTarget() {
-		if (target != null
-				&& target.length() > 0) {
-			Target targetObj = Target.findByTarget(target);
-//            Logger.info("Add crawl permission to target: " + targetObj.toString());
-            this.target_to_crawl_permission = targetObj;
-		}
-    	
+    public static Page<CrawlPermission> targetPager(int page, int pageSize, String sortBy, String order, Long targetId) {
+
+        return find.where()
+        		.eq("target.id", targetId)
+        		.orderBy(sortBy + " " + order)
+        		.findPagingList(pageSize)
+        		.setFetchAhead(false)
+        		.getPage(page);
     }
-    
-    /**
-     * This method updates foreign key mapping between a CrawlPermission and a MailTemplate.
-     */
-    public void updateMailTemplate() {
-        this.mailtemplate_to_crawlpermission = null;
-		if (template != null
-				&& template.length() > 0) {
-			MailTemplate mailTemplate = MailTemplate.findByUrl(template);
-//            Logger.info("Add crawl permission to mail template: " + mailTemplate.toString());
-            this.mailtemplate_to_crawlpermission = mailTemplate;
-		}    	
-    }
-    
-    /**
-     * This method updates foreign key mapping between a CrawlPermission and a ContactPerson.
-     */
-    public void updateContactPerson() {
-        this.contactperson_to_crawlpermission = null;
-		if (contactPerson != null
-				&& contactPerson.length() > 0) {
-			ContactPerson contactPersonObj = ContactPerson.findByUrl(contactPerson);
-//            Logger.info("Add crawl permission to contactPerson: " + contactPerson.toString());
-            this.contactperson_to_crawlpermission = contactPersonObj;
-		}    	
-    }
+
     
     public static CrawlPermission create(Long id, String url) {
     	return new CrawlPermission(id, url);
@@ -473,5 +394,55 @@ public class CrawlPermission extends Model
     public static CrawlPermission create(Long id, String url, String name) {
     	return new CrawlPermission(id, url, name);
     }
+    
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CrawlPermission other = (CrawlPermission) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+    public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(CrawlPermission c: find.all()) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
+    }
+
+	@Override
+	public String toString() {
+		return "CrawlPermission [target=" + target + ", mailTemplate="
+				+ mailTemplate + ", contactPerson=" + contactPerson + ", name="
+				+ name + ", description=" + description
+				+ ", anyOtherInformation=" + anyOtherInformation + ", user="
+				+ user + ", status=" + status + ", license=" + license
+				+ ", requestFollowup=" + requestFollowup + ", numberRequests="
+				+ numberRequests + ", thirdPartyContent=" + thirdPartyContent
+				+ ", publish=" + publish + ", agree=" + agree + "]";
+	}  
 }

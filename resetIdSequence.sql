@@ -1,0 +1,15 @@
+select setval('communication_log_seq', (select MAX(id) from communication_log));
+select setval('contact_person_seq', (select MAX(id) from contact_person));
+select setval('crawl_permission_seq', (select MAX(id) from crawl_permission));
+select setval('creator_seq', (select MAX(id) from creator));
+select setval('field_url_seq', (select MAX(id) from field_url));
+select setval('instance_seq', (select MAX(id) from instance));
+select setval('lookup_entry_seq', (select MAX(id) from lookup_entry));
+select setval('mail_template_seq', (select MAX(id) from mail_template));
+select setval('nomination_seq', (select MAX(id) from nomination));
+select setval('permission_refusal_seq', (select MAX(id) from permission_refusal));
+select setval('permission_seq', (select MAX(id) from permission));
+select setval('role_seq', (select MAX(id) from role));
+select setval('target_seq', (select MAX(id) from target));
+select setval('taxonomy_seq', (select MAX(id) from taxonomy));
+select setval('taxonomy_type_seq', (select MAX(id) from taxonomy_type));

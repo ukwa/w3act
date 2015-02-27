@@ -4,22 +4,24 @@
 @main("", user) {
     
 	<div class="page-header">
-	    <h1><a href="@routes.Flags.index()">Taxonomies > Flags > </a>Flag @flag.name</h1>
+	    <h1><a href="@routes.FlagController.index()">Taxonomies > Flags > </a>Flag @flag.name</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.Flags.view(flag.url)">View</a></li>
+	   <li class="active"><a href="@routes.FlagController.view(flag.id)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-	   	<li><a href="@routes.Flags.edit(flag.url)">Edit</a></li>
+	   		<li><a href="@routes.FlagController.edit(flag.id)">Edit</a></li>
 	   }
 	</ul>
+	
+	@warningmessage(flash)
 
 	<div class="row padding-10">
     	<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
 				<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
 			    <div class="col-sm-6">
-              		<input class="form-control" name="name" id="inputName" value="@Flags.getGuiName(flag.name)" type="text" readonly>
+              		@flag.name
 				</div>
 			</div>
 		</div>
@@ -30,7 +32,7 @@
 			<div class="form-group">
                <label class="col-sm-6 control-label" for="inputDescription">Description</label>
 			    <div class="col-sm-6">
-               		<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" readonly>@flag.description</textarea>
+               		@flag.description
 				</div>
 			</div>
 		</div>

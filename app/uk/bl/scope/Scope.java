@@ -4,21 +4,27 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
+import models.FieldUrl;
 import models.LookupEntry;
 import models.Target;
 import play.Logger;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 import uk.bl.exception.WhoisException;
 import uk.bl.wa.whois.JRubyWhois;
 import uk.bl.wa.whois.WhoisResult;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlRow;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 
@@ -50,17 +56,28 @@ import com.maxmind.geoip2.model.CityResponse;
  *      3.3 Use whois lookup service to check whether the given domain name is associated with the UK. 
  *          
  */
-public class Scope {
+public enum Scope {
 
+	INSTANCE;
+	
 	public static final String UK_DOMAIN       = ".uk";
 	public static final String LONDON_DOMAIN   = ".london";
 	public static final String SCOT_DOMAIN     = ".scot";
+	public static List<String> DOMAINS;
+
+	static {
+		DOMAINS = new ArrayList<String>();
+		DOMAINS.add(UK_DOMAIN);
+		DOMAINS.add(LONDON_DOMAIN);
+		DOMAINS.add(SCOT_DOMAIN);
+	}
+	
 	public static final String GEO_IP_SERVICE  = "GeoLite2-City.mmdb";
 	public static final String UK_COUNTRY_CODE = "GB";
 	public static final String HTTP            = "http://";
 	public static final String HTTPS           = "https://";
 	public static final String WWW             = "www.";
-	//public static final String END_STR         = "/";
+	public static final String END_STR         = "/";
 	
 	public static DatabaseReader databaseReader;
 	
@@ -82,14 +99,14 @@ public class Scope {
 	 * @param ip - The host IP
 	 * @return true if in UK domain
 	 */
-	public static boolean queryDb(String ip) {
+	public boolean queryDb(String ip) {
 		boolean res = false;
 		
 		try {		
 			// Find city by given IP
 			CityResponse response = databaseReader.city(InetAddress.getByName(ip));
-			Logger.info(response.getCountry().getIsoCode()); 
-			Logger.info(response.getCountry().getName()); 
+			Logger.debug(response.getCountry().getIsoCode()); 
+			Logger.debug(response.getCountry().getName()); 
 			// Check country code in city response
 			if (response.getCountry().getIsoCode().equals(UK_COUNTRY_CODE)) {
 				res = true;
@@ -106,7 +123,7 @@ public class Scope {
 	 * @param url The passed URL
 	 * @return normalized URL
 	 */
-	public static String normalizeUrl(String url) {
+	public String normalizeUrl(String url, boolean slash) {
 		String res = url;
 		if (res != null && res.length() > 0) {
 	        if (!res.contains(WWW) && !res.contains(HTTP) && !res.contains(HTTPS)) {
@@ -117,12 +134,20 @@ public class Scope {
 		        	res = HTTP + res;
 		        }
 	        }
-	        /*if (!res.endsWith(END_STR)) {
+	        if (slash && !res.endsWith(END_STR)) {
 	        	res = res + END_STR;
-	        }*/
+	        }
 		}
-        Logger.info("normalized URL: " + res);
+//        Logger.debug("normalized URL: " + res);
 		return res;
+	}
+
+	public String normalizeUrl(String url) {
+		return normalizeUrl(url, true);
+	}
+
+	public String normalizeUrlNoSlash(String url) {
+		return normalizeUrl(url, false);
 	}
 
 	/**
@@ -133,8 +158,8 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException 
 	 */
-	public static boolean check(String url, String nidUrl) throws WhoisException {
-	    return checkExt(url, nidUrl, Const.ScopeCheckType.ALL.name());
+	public boolean check(String url, Target target) throws WhoisException {
+	    return checkExt(url, target, Const.ScopeCheckType.ALL.name());
 	}
 	
 	/**
@@ -146,16 +171,17 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean isLookupExistsInDb(String url) {
+	public boolean isLookupExistsInDb(String url) {
         boolean res = false;
-        url = normalizeUrl(url);        
+        url = normalizeUrlNoSlash(url);        
         if (url != null && url.length() > 0) {
+        	Logger.debug("normalizeUrl: " + url);
         	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
         	if (lookupEntryCount.size() > 0) {
         		res = true;
         	}
         }
-        Logger.info("isLookupExistsInDb() url: " + url + ", res: " + res);
+        Logger.debug("isLookupExistsInDb() url: " + url + ", res: " + res);
         return res;
 	}
 	
@@ -165,32 +191,32 @@ public class Scope {
 	 * @param target The target object
 	 * @param newStatus The QA status value
 	 */
-	public static void updateLookupEntry(Target target, boolean newStatus) {
+	public void updateLookupEntry(Target target, boolean newStatus) {
         boolean res = false;
-        Logger.info("updateLookupEntry() field URL: " + target.field_url + ", new QA status: " + newStatus);
-        String url = normalizeUrl(target.field_url);
+        Logger.debug("updateLookupEntry() field URL: " + target.fieldUrl() + ", new QA status: " + newStatus);
+        String url = normalizeUrl(target.fieldUrl());
         
         /**
          * Check for fields of target that not yet stored in database.
          */
         if (target != null
-        		&& (target.field_uk_postal_address 
-        		|| target.field_via_correspondence
-        		|| target.field_professional_judgement)) {
-        	Logger.debug("updateLookupEntry(): " + target.field_uk_postal_address + ", " + 
-        		target.field_via_correspondence + ", " + target.field_professional_judgement);
+        		&& (target.ukPostalAddress 
+        		|| target.viaCorrespondence
+        		|| target.professionalJudgement)) {
+        	Logger.debug("updateLookupEntry(): " + target.ukPostalAddress + ", " + 
+        		target.viaCorrespondence + ", " + target.professionalJudgement);
         	res = true;
         }
-        if (target != null && target.field_no_ld_criteria_met) {
+        if (target != null && target.noLdCriteriaMet) {
         	res = false;
         }
         
-        if (target != null 
-        		&& target.field_license != null 
-        		&& target.field_license.length() > 0 
-        		&& !target.field_license.toLowerCase().contains(Const.NONE)) {
-        	res = true;
-        }
+//        if (target != null 
+//        		&& target.fieldLicense != null 
+//        		&& target.fieldLicense.length() > 0 
+//        		&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
+//        	res = true;
+//        }
 
         Logger.debug("updateLookupEntry() new scope: " + newStatus + ", fields check: " + res);
         if (!newStatus && res) {
@@ -208,17 +234,17 @@ public class Scope {
         	if (resLookupEntry != null && !resLookupEntry.name.toLowerCase().equals(Const.NONE)) {
         		inProjectDb = true;
         		res = LookupEntry.getValueByUrl(url);
-        		Logger.info("updateLookupEntry lookup entry for '" + url + "' is in database with value: " + res);
+        		Logger.debug("updateLookupEntry lookup entry for '" + url + "' is in database with value: " + res);
         		if (newStatus != res) {
         			resLookupEntry.scopevalue = newStatus;
-            		Logger.info("updateLookupEntry lookup entry for '" + url + "' changed to value: " + newStatus);
+            		Logger.debug("updateLookupEntry lookup entry for '" + url + "' changed to value: " + newStatus);
         			Ebean.update(resLookupEntry);
         		}
         	}
         }
 
         if (!inProjectDb) {
-	        storeInProjectDb(url, newStatus);
+	        storeInProjectDb(url, newStatus, target);
 	    }
 	}
 	
@@ -231,9 +257,9 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean checkExt(String url, String nidUrl, String mode) throws WhoisException {
+	public boolean checkExt(String url, Target target, String mode) throws WhoisException {
         boolean res = false;
-        Logger.info("check url: " + url + ", nid: " + nidUrl);
+        Logger.debug("check url: " + url + ", nid: " + target.id);
         url = normalizeUrl(url);
         
         /**
@@ -248,12 +274,12 @@ public class Scope {
 //        	if (lookupEntryCount.size() > 0) {
         		inProjectDb = true;
         		res = LookupEntry.getValueByUrl(url);
-        		Logger.info("check lookup entry for '" + url + "' is in database with value: " + res);
+        		Logger.debug("check lookup entry for '" + url + "' is in database with value: " + res);
         	}
         }
         
         if (!inProjectDb) {
-        	Logger.info("URL not in database - calculate scope");
+        	Logger.debug("URL not in database - calculate scope");
 	        /**
 	         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
 	         *
@@ -268,19 +294,19 @@ public class Scope {
 	         * 
 	         */
 	        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-	        if (nidUrl != null && nidUrl.length() > 0 
+	        if (target != null 
 	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
 	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
 	        	if (!res) {
-	        		res = Target.checkManualScope(nidUrl);
+	        		res = target.checkManualScope();
 	        	}
 	        }
 	
 	    	// Rule 2: by permission
-	        if (!res && nidUrl != null && nidUrl.length() > 0
+	        if (!res && target != null
 	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
 	    	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
-	        	res = Target.checkLicense(nidUrl);
+	        	res = target.checkLicense();
 	        }
 	
 	        // Rule 3.1: check domain name
@@ -303,12 +329,12 @@ public class Scope {
 	        if (!res && url != null && url.length() > 0
 	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
 	    	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
-	        	res = checkWhois(url);
+	        	res = checkWhois(url, target);
 	        }
 	        // store in project DB
-	        storeInProjectDb(url, res);
+	        storeInProjectDb(url, res, target);
         }
-		Logger.info("lookup entry for '" + url + "' is in database with value: " + res);        
+		Logger.debug("lookup entry for '" + url + "' is in database with value: " + res);        
         return res;
 	}
 	
@@ -320,9 +346,9 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean checkScopeIp(String url, String nidUrl) throws WhoisException {
+	public boolean checkScopeIp(String url, Target target) throws WhoisException {
         boolean res = false;
-        Logger.info("check for scope IP url: " + url + ", nid: " + nidUrl);
+        Logger.debug("check for scope IP url: " + url + ", nid: " + target.id);
         url = normalizeUrl(url);
         
         /**
@@ -339,16 +365,14 @@ public class Scope {
          * 
          */
         // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-        if (nidUrl != null && nidUrl.length() > 0) {
-        	if (!res) {
-        		res = Target.checkManualScope(nidUrl);
-        		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
-        	}
-        }
+    	if (!res) {
+    		res = target.checkManualScope();
+    		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
+    	}
 
     	// Rule 2: by permission
-        if (!res && nidUrl != null && nidUrl.length() > 0) {
-        	res = Target.checkLicense(nidUrl);
+        if (!res && target != null) {
+        	res = target.checkLicense();
     		Logger.debug("checkScopeIp() after license check (field: field_license): " + res);
         }
 
@@ -360,7 +384,7 @@ public class Scope {
         
         // Rule 3.3: check whois lookup service
         if (!res && url != null && url.length() > 0) {
-        	res = checkWhois(url);
+        	res = checkWhois(url, target);
     		Logger.debug("checkScopeIp() after whois check: " + res);
         }
         
@@ -375,14 +399,14 @@ public class Scope {
        		        LookupEntry lookupEntry = lookupEntries.get(0);
        		        lookupEntry.scopevalue = res;
        		        Ebean.update(lookupEntry);
-            		Logger.info("updated lookup entry in database for '" + url + "' with value: " + res);
+            		Logger.debug("updated lookup entry in database for '" + url + "' with value: " + res);
         		}
         	} else {
-        		storeInProjectDb(url, res);
+        		storeInProjectDb(url, res, target);
         	}
         }
         
-		Logger.info("resulting lookup entry for '" + url + "' is: " + res);        
+		Logger.debug("resulting lookup entry for '" + url + "' is: " + res);        
         return res;
 	}
 	
@@ -394,10 +418,11 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean checkScopeIpWithoutLicense(String url, String nidUrl) throws WhoisException {
+	public boolean checkScopeIpWithoutLicense(Target target) throws WhoisException {
         boolean res = false;
-        Logger.info("check for scope IP url: " + url + ", nid: " + nidUrl);
-        url = normalizeUrl(url);
+//        Logger.debug("check for scope IP url: " + url + ", id: " + target.id);
+//        url = normalizeUrl(url);
+//        Logger.debug("normalizeUrl: " + url);
         
         /**
          *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
@@ -413,44 +438,72 @@ public class Scope {
          * 
          */
         // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-        if (nidUrl != null && nidUrl.length() > 0) {
+        if (target != null) {
         	if (!res) {
-        		res = Target.checkManualScope(nidUrl);
-        		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
+        		// checking target fields
+        		res = target.checkManualScope();
+        		Logger.debug("checkScopeIp() after manual check ("
+        				+ "fields: field_uk_postal_address, "
+        				+ "field_via_correspondence and "
+        				+ "field_professional_judgement): " + res);
         	}
         }
 
-        // Rule 3.2: check geo IP
-        if (!res && url != null && url.length() > 0) {
-        	res = checkGeoIp(url);
+        // Rule 3.2: check geo IP / uk hosting?
+//        if (!res && StringUtils.isNotEmpty(url)) {
+        if (!res) {
+        	// check target.isUkHosting field with SQL
+        	res = target.isUkHosting();
+        	// the above calls the same in the end
+//        	res = checkGeoIp(url);
     		Logger.debug("checkScopeIp() after geoIp check: " + res);
         }
         
-        // Rule 3.3: check whois lookup service
-        if (!res && url != null && url.length() > 0) {
-        	res = checkWhois(url);
+        // Rule 3.3: check whois lookup service / uk registration?
+//        if (!res && StringUtils.isNotEmpty(url)) {
+        if (!res) {
+        	// check target.isUkRegistration field with SQL
+        	res = target.isUkRegistration();
+        	// the above calls the same in the end
+//        	res = checkWhois(url, target);
     		Logger.debug("checkScopeIp() after whois check: " + res);
         }
         
         /**
          * if database entry exists and is different to the current value - replace it
          */
-        if (url != null && url.length() > 0) {
-        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(url);
+        for (FieldUrl fieldUrl : target.fieldUrls) {
+        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(fieldUrl.url);
         	if (lookupEntries.size() > 0) {
-        		boolean dbValue = LookupEntry.getValueByUrl(url);
+        		boolean dbValue = LookupEntry.getValueByUrl(fieldUrl.url);
         		if (dbValue != res) {
        		        LookupEntry lookupEntry = lookupEntries.get(0);
        		        lookupEntry.scopevalue = res;
        		        Ebean.update(lookupEntry);
-            		Logger.info("updated lookup entry in database for '" + url + "' with value: " + res);
+            		Logger.debug("updated lookup entry in database for '" + fieldUrl.url + "' with value: " + res);
         		}
         	} else {
-        		storeInProjectDb(url, res);
+        		storeInProjectDb(fieldUrl.url, res, target);
         	}
+        	
         }
         
-		Logger.info("resulting lookup entry for '" + url + "' is: " + res);        
+//        if (StringUtils.isNotEmpty(url)) {
+//        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(url);
+//        	if (lookupEntries.size() > 0) {
+//        		boolean dbValue = LookupEntry.getValueByUrl(url);
+//        		if (dbValue != res) {
+//       		        LookupEntry lookupEntry = lookupEntries.get(0);
+//       		        lookupEntry.scopevalue = res;
+//       		        Ebean.update(lookupEntry);
+//            		Logger.debug("updated lookup entry in database for '" + url + "' with value: " + res);
+//        		}
+//        	} else {
+//        		storeInProjectDb(url, res, target);
+//        	}
+//        }
+//        
+//		Logger.debug("resulting lookup entry for '" + url + "' is: " + res);
         return res;
 	}
 	
@@ -462,9 +515,10 @@ public class Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public static boolean checkScopeDomain(String url, String nidUrl) throws WhoisException {
+	public boolean checkScopeDomain(String url) throws WhoisException {
         boolean res = false;
-        Logger.info("check for scope Domain url: " + url + ", nid: " + nidUrl);
+//        Logger.debug("check for scope Domain url: " + url + ", nid: " + nidUrl);
+        // full domain with protocol
         url = normalizeUrl(url);
         
         // Rule 3.1: check domain name
@@ -473,18 +527,19 @@ public class Scope {
 	        	res = true;
 	        }
         }
-		Logger.info("lookup entry for '" + url + "' regarding domain has value: " + res);        
+//		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);        
         return res;
 	}
-	
+
 	/**
 	 * This method extracts host from the given URL and checks geo IP using geo IP database.
 	 * @param url
 	 * @return true if in UK domain
 	 */
-	public static boolean checkGeoIp(String url) {
+	public boolean checkGeoIp(String url) {
 		boolean res = false;
 		String ip = getIpFromUrl(url);
+		Logger.debug("ip: " + ip);
 		res = queryDb(ip);
 		return res;
 	}
@@ -496,23 +551,23 @@ public class Scope {
 	 * @return true if in UK domain
 	 * @throws WhoisException 
 	 */
-	public static boolean checkWhois(String url) throws WhoisException {
+	public boolean checkWhois(String url, Target target) throws WhoisException {
 		boolean res = false;
     	try {
         	JRubyWhois whoIs = new JRubyWhois();
-        	Logger.info("checkWhois: " + whoIs + " " + url);
+        	Logger.debug("checkWhois: " + whoIs + " " + url);
         	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
-        	Logger.info("whoIsRes: " + whoIsRes);
+        	Logger.debug("whoIsRes: " + whoIsRes);
 //        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl("marksandspencer.com"));
         	res = whoIsRes.isUKRegistrant();
-        	Logger.info("isUKRegistrant?: " + res);
+        	Logger.debug("isUKRegistrant?: " + res);
     	} catch (Exception e) {
-    		Logger.info("whois lookup message: " + e.getMessage());
+    		Logger.debug("whois lookup message: " + e.getMessage());
 	        // store in project DB
-	        storeInProjectDb(url, false);
-    		throw new WhoisException(e);
+	        storeInProjectDb(url, false, target);
+//    		throw new WhoisException(e);
     	}
-		Logger.info("whois res: " + res);
+    	Logger.debug("whois res: " + res);
 		return res;
 	}
 	
@@ -523,37 +578,110 @@ public class Scope {
 	 * @return true if in UK domain
 	 * @throws WhoisException 
 	 */
-	public static boolean checkWhoisThread(int number) throws WhoisException {
-    	Logger.info("checkWhoisThread: " + number);
+	public boolean checkWhoisThread(int number) throws WhoisException {
+    	Logger.debug("checkWhoisThread: " + number);
 		boolean res = false;
     	JRubyWhois whoIs = new JRubyWhois();
-    	int count = 0;
-//    	List<Target> targetList = Target.findAllActive();
     	List<Target> targetList = Target.findLastActive(number);
-    	Logger.info("targetList: " + targetList.size());
+    	Logger.debug("targetList: " + targetList.size());
     	Iterator<Target> itr = targetList.iterator();
     	while (itr.hasNext()) {
     		Target target = itr.next();
-        	try {
-	        	Logger.info("checkWhoisThread count: " + count + ", URL: " + target.field_url +
-	        			", last update: " + String.valueOf(target.lastUpdate));
-	        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(target.field_url));
-	        	Logger.info("whoIsRes: " + whoIsRes);
-	        	res = whoIsRes.isUKRegistrant();
-	        	Logger.info("isUKRegistrant?: " + res);
-	        	storeInProjectDb(target.field_url, res);
-	        	target.isInScopeUkRegistrationValue = res;
-	    	} catch (Exception e) {
-	    		Logger.info("whois lookup message: " + e.getMessage());
-		        // store in project DB
-		        storeInProjectDb(target.field_url, false);
-	        	target.isInScopeUkRegistrationValue = false;
-	    	}
+    		for (FieldUrl fieldUrl : target.fieldUrls) {
+		        	Logger.debug("checkWhoisThread URL: " + target.fieldUrl() + ", last update: " + String.valueOf(target.updatedAt));
+		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
+		        	Logger.debug("whoIsRes: " + whoIsRes);
+		        	// DOMAIN A UK REGISTRANT?
+		        	res = whoIsRes.isUKRegistrant();
+		        	Logger.debug("isUKRegistrant?: " + res);
+		        	// STORE
+		        	storeInProjectDb(fieldUrl.url, res, target);
+		        	// ASSIGN TO TARGET
+		        	target.isUkRegistration = res;
+
+//		        	Logger.debug("whois lookup message: " + e.getMessage());
+//			        // store in project DB
+//		    		// FAILED - UNCHECKED
+//			        storeInProjectDb(fieldUrl.url, false);
+//			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
+//			        target.isInScopeUkRegistration = false;
+		    
+    		}
         	Ebean.update(target);
-        	count++;
     	}
-    	Logger.info("whois res: " + res);        	
+//    	Logger.debug("whois res: " + res);        	
 		return res;
+	}
+	
+	public WhoIsData checkWhois(int number) throws WhoisException {
+    	Logger.debug("checkWhoisThread: " + number);
+		boolean res = false;
+		List<Target> targets = new ArrayList<Target>();
+		int ukRegistrantCount = 0;
+		int nonUKRegistrantCount = 0;
+		int failedCount = 0;
+    	JRubyWhois whoIs = new JRubyWhois();
+    	List<Target> targetList = Target.findLastActive(number);
+    	Logger.debug("targetList: " + targetList.size());
+    	Iterator<Target> itr = targetList.iterator();
+    	while (itr.hasNext()) {
+    		Target target = itr.next();
+    		for (FieldUrl fieldUrl : target.fieldUrls) {
+	        	try {
+	//	        	Logger.debug("checkWhoisThread URL: " + target.field_url + ", last update: " + String.valueOf(target.lastUpdate));
+		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
+	//	        	Logger.debug("whoIsRes: " + whoIsRes);
+		        	// DOMAIN A UK REGISTRANT?
+		        	res = whoIsRes.isUKRegistrant();
+		        	if (res) ukRegistrantCount++;
+		        	else nonUKRegistrantCount++;
+	//	        	Logger.debug("isUKRegistrant?: " + res);
+		        	// STORE
+		        	Logger.debug("CHECK TO SAVE " + target.fieldUrl());
+		        	storeInProjectDb(fieldUrl.url, res, target);
+		        	// ASSIGN TO TARGET
+		        	target.isUkRegistration = res;
+		        	ukRegistrantCount++;
+		    	} catch (Exception e) {
+		    		Logger.debug("whois lookup message: " + e.getMessage());
+			        // store in project DB
+		    		// FAILED - UNCHECKED
+			        storeInProjectDb(fieldUrl.url, false, target);
+			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
+			        target.isUkRegistration = false;
+		        	failedCount++;
+		    	}
+    		}
+        	Ebean.update(target);
+        	targets.add(target);
+    	}
+    	
+    	
+//        List<Target> result = Target.find.select("title").where().eq(Const.ACTIVE, true).orderBy(Const.LAST_UPDATE + " " + Const.DESC).setMaxRows(number).findList();
+
+//    	LookupEntry.find.fetch("target").where().select("name").select("target.title")
+//    	
+//
+		StringBuilder lookupSql = new StringBuilder("select l.name as lookup_name, t.title as title, t.updated_at as target_date, l.updated_at as lookup_date, (l.updated_at::timestamp - t.updated_at::timestamp) as diff from Lookup_entry l, Target t "); 
+		lookupSql.append(" where l.name in (select f.url from field_url as f, target tar where tar.active = true and tar.id = f.target_id order by tar.updated_at desc ");
+		lookupSql.append(" limit ").append(number).append(") and l.target_id = t.id order by diff desc");
+
+		List<SqlRow> results = Ebean.createSqlQuery(lookupSql.toString()).findList();
+    	
+		
+//		for (SqlRow row : results) {
+//			Logger.debug("row: " + row.getString("name") + " - " + row.get("diff"));
+//		}
+//    	List<LookupEntry> lookupEntries = LookupEntry.find.where().in("name", result).findList();
+//    	StringBuilder builder = new StringBuilder("name in (select tar.field_url from target tar where tar.active = true order by tar.last_update desc)");
+//    	List<LookupEntry> lookupEntries = LookupEntry.find.where().raw(builder.toString()).findList();
+
+
+//    	Logger.debug("lookupEntries: " + lookupEntries.size());
+    	WhoIsData whoIsData = new WhoIsData(targets, results, ukRegistrantCount, nonUKRegistrantCount, failedCount);
+
+//    	Logger.debug("whois res: " + res);        	
+		return whoIsData;
 	}
 	
 	/**
@@ -562,15 +690,16 @@ public class Scope {
 	 * @param url The search URL
 	 * @param res The evaluated result after checking by expert rules
 	 */
-	public static void storeInProjectDb(String url, boolean res) {
-		if (!isLookupExistsInDb(url)) {
+	public void storeInProjectDb(String url, boolean res, Target target) {
+		boolean stored = isLookupExistsInDb(url);
+		Logger.debug("STORED: " + stored + " - " + url);
+		if (!stored) {
 			LookupEntry lookupEntry = new LookupEntry();
-			lookupEntry.id = Utils.createId();
-			lookupEntry.url = Const.ACT_URL + lookupEntry.id;
 			lookupEntry.name = url;
 			lookupEntry.scopevalue = res;
-	        Logger.info("Save lookup entry " + lookupEntry.toString());
-	    	Ebean.save(lookupEntry);	
+			lookupEntry.target = target;
+	        lookupEntry.save();
+	        Logger.debug("Saved lookup entry " + lookupEntry.toString());
 		}
     }
 	
@@ -579,37 +708,93 @@ public class Scope {
 	 * @param url
 	 * @return IP address as a string
 	 */
-	public static String getIpFromUrl(String url) {
+	public String getIpFromUrl(String url) {
 		String ip = "";
 		InetAddress address;
 		try {
 			address = InetAddress.getByName(new URL(url).getHost());
 			ip = address.getHostAddress();
 		} catch (UnknownHostException e) {
-			Logger.info("ip calculation unknown host error for url=" + url + ". " + e.getMessage());
+			Logger.debug("ip calculation unknown host error for url=" + url + ". " + e.getMessage());
 		} catch (MalformedURLException e) {
-			Logger.info("ip calculation error for url=" + url + ". " + e.getMessage());
+			Logger.debug("ip calculation error for url=" + url + ". " + e.getMessage());
 		}
         return ip;
 	}
 	
-	/**
-	 * This method extracts domain name from the given URL.
-	 * @param url
-	 * @return
-	 */
-	public static String getDomainFromUrl(String url) {
-		String domain = "";
+//	/**
+//	 * This method extracts domain name from the given URL.
+//	 * @param url
+//	 * @return
+//	 */
+//	public String getDomainFromUrl(String url) {
+//		String domain = "";
+//		try {
+////			Logger.debug("get host: " + new URL(url).getHost());
+//			domain = new URL(url).getHost().replace(WWW, "");
+////			Logger.debug("extracted domain: " + domain);
+//		} catch (Exception e) {
+//			Logger.error("domain calculation error for url=" + url + ". " + e.getMessage());
+//			domain = url;
+//		}
+//        return domain;
+//	}
+	
+	public String getDomainFromUrl(String url) {
+	    URI uri;
 		try {
-//			Logger.info("get host: " + new URL(url).getHost());
-			domain = new URL(url).getHost().replace(WWW, "");
-			Logger.info("extracted domain: " + domain);
-		} catch (Exception e) {
-			Logger.info("domain calculation error for url=" + url + ". " + e.getMessage());
-			domain = url;
+			uri = new URI(url);
+			String domain = uri.getHost();
+			if (StringUtils.isNotEmpty(domain)) {
+				return domain.startsWith("www.") ? domain.substring(4) : domain;
+			}
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-        return domain;
+		return null;
 	}
 	
+	public boolean isUkHosting(String url) {
+		if (this.checkGeoIp(url)) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isInScopeUkRegistration(String url, Target target) throws WhoisException {
+		return checkWhois(url, target);
+	}
+
+	//	UK GeoIP
+	public boolean isUkHosting(Target target) {
+		for (FieldUrl fieldUrl : target.fieldUrls) {
+			if (!this.checkGeoIp(fieldUrl.url)) return false;
+		}
+		return true;
+	}
+	
+	//	UK Domain 
+	public boolean isTopLevelDomain(Target target) throws WhoisException, MalformedURLException, URISyntaxException {
+		// i.e. terry.com and terry.co.uk - return false;
+        for (FieldUrl fieldUrl : target.fieldUrls) {
+            URL uri = new URI(fieldUrl.url).normalize().toURL();
+			String url = uri.toExternalForm();
+            Logger.debug("Normalised " + url);
+            // Rule 3.1: check domain name
+	        if (!url.contains(UK_DOMAIN) && !url.contains(LONDON_DOMAIN) && !url.contains(SCOT_DOMAIN)) return false;
+        }
+//		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);        
+        return true;
+	}
+	
+	
+	public boolean isUkRegistration(Target target) throws WhoisException {
+        for (FieldUrl fieldUrl : target.fieldUrls) {
+        	if (!checkWhois(fieldUrl.url, target)) return false;
+        }
+		return true;
+	}
+
 }
 

@@ -1,7 +1,5 @@
 package uk.bl.scope;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -67,7 +65,7 @@ public class EmailHelper {
 		        message.setSubject(subject);
 		        message.setText(msg);
 		        Transport.send(message);
-		        Logger.info("E-mail message to " + to + ", with subject '" + subject + "' was sent");
+		        Logger.debug("E-mail message to " + to + ", with subject '" + subject + "' was sent");
 		        Logger.debug("E-mail message to " + to + ", with subject '" + subject + "' was sent");
 		    } catch (MessagingException e) {
 		        Logger.debug("E-mail message error: " + e);

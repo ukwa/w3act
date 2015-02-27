@@ -1,4 +1,4 @@
-@(form: Form[Application.Login])
+@(form: Form[ApplicationController.Login])
 <!DOCTYPE html>
 <html lang="en"><head>
 <title>W3ACT</title>
@@ -23,19 +23,19 @@
 <script type="text/javascript" src="@routes.Assets.at("javascripts/main.min.js")"></script>
 <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.tablesorter.min.js")"></script>
 <script type="text/javascript"
-	src="@routes.Application.javascriptRoutes"></script>
+	src="@routes.ApplicationController.javascriptRoutes"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="@routes.About.index">
+			<a class="navbar-brand" href="@routes.ApplicationController.index">
 				<image src="@routes.Assets.at("images/ukwa-icon-nobg-16.png")" />
 					W3ACT
 			</a>
 		</div>
 	</nav>
 	<div class="container">
-		@helper.form(routes.Application.authenticate, 'class -> "form-horizontal") { 
+		@helper.form(routes.ApplicationController.authenticate, 'class -> "form-horizontal") { 
 			<div class="alert alert-info">
 				Please use your e-mail as a user name e.g. <em>sample@@sample.com</em>
 				with your w3act password.
@@ -65,7 +65,7 @@
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
 					<button class="btn btn-success navbar-btn loginbtn" type="submit"
-						name="submit" id="submit">Login</button>
+						name="submit" id="submit">Login</button>  <a href="@routes.ResetController.showEmailForm()">Forgotten Password</a>
 				</div>
 			</div>
 		}

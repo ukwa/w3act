@@ -1,16 +1,15 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -24,66 +23,65 @@ import com.avaje.ebean.ExpressionList;
  */
 @Entity
 @Table(name = "mail_template")
-public class MailTemplate extends Model
-{
+public class MailTemplate extends ActModel {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2157694575463302989L;
 
-	@Id 
-    public Long id;
-
-    //bi-directional one-to-many association to CrawlPermission
-    @OneToMany(mappedBy="mailtemplate_to_crawlpermission", cascade=CascadeType.PERSIST)
-    private List<CrawlPermission> crawlPermissions = new ArrayList<CrawlPermission>();
-     
-    public List<CrawlPermission> getCrawlPermissions() {
-    	return this.crawlPermissions;
-    }
-    
-    public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
-    	this.crawlPermissions = crawlPermissions;
-    }    
-        
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
 	
+	public enum TemplateType {
+
+		PERMISSION_REQUEST("General"),
+		THANK_YOU_ONLINE_PERMISSION_FORM("Acknowledgement");
+		
+        private String value;
+
+        private TemplateType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+	}
+	
+    //bi-directional one-to-many association to CrawlPermission
+    @OneToMany(mappedBy="mailTemplate", cascade=CascadeType.ALL)
+    public List<CrawlPermission> crawlPermissions;
+     
     /**
      * The name of the e-mail.
      */
-    @Column(columnDefinition = "TEXT")
-    @Required
+    @Column(columnDefinition = "text")
+    @Required(message="Name is required")
     public String name;
        
     /**
      * E-mail type: Permission Request, Thank you - Online Permission Form, 
      * Thank you - Online Nomination by Owner, Opt out.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String ttype;
     
     /**
      * E-mail subject.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String subject;
 
     /**
      * E-mail from field.
      */
-    @Column(columnDefinition = "TEXT")
-    @Required
+    @Column(columnDefinition = "text")
+    @Required(message="From email is required")
     public String fromEmail;
 
     /**
      * The place holders in E-mail that should be rewritten by user.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String placeHolders;
 
     /**
@@ -95,11 +93,8 @@ public class MailTemplate extends Model
     /**
      * Either text as a string or name of the associated text file.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String text;
-
-    @Version
-    public Timestamp lastUpdate;
 
     public static final Model.Finder<Long, MailTemplate> find = new Model.Finder<Long, MailTemplate>(Long.class, MailTemplate.class);
 
@@ -113,8 +108,11 @@ public class MailTemplate extends Model
         return name;
     }
 
-    public static MailTemplate findByName(String name)
-    {
+    public static List<MailTemplate> findByType(String type) {
+        return find.where().eq("ttype", type).findList();
+    }
+    
+    public static MailTemplate findByName(String name) {
         return find.where()
                    .eq("name",
                        name)
@@ -184,7 +182,7 @@ public class MailTemplate extends Model
      * @return
      */
     public String readTemplate() {
-    	return Utils.readTextFile(Const.TEMPLATES_PATH + text);
+    	return Utils.INSTANCE.readTextFile(Const.TEMPLATES_PATH + text);
     }
     
     /**
@@ -192,11 +190,19 @@ public class MailTemplate extends Model
      * @return
      */
     public String readInitialTemplate() {
-    	text = Utils.readTextFile(Const.TEMPLATES_PATH + text);
+    	text = Utils.INSTANCE.readTextFile(Const.TEMPLATES_PATH + text);
     	return text;
     }
     
     public String toString() {
         return "MailTemplate(" + name + ")" + ", id:" + id;
     }
+    
+    public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(MailTemplate c: find.all()) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
+    }   
 }

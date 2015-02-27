@@ -20,7 +20,7 @@ import play.mvc.Security;
 import uk.bl.crawling.CrawlActor;
 import views.html.watchedtargets.list;
 
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class WatchedTargets extends AbstractController {
 
     /**
@@ -36,7 +36,7 @@ public class WatchedTargets extends AbstractController {
     }
     
     public static Result overview(int pageNo, String sortBy, String order) {
-    	return renderList("" + User.findByEmail(request().username()).uid, true, pageNo, sortBy, order, "", false);
+    	return renderList("" + User.findByEmail(request().username()).id, true, pageNo, sortBy, order, "", false);
     }
     
     public static Result renderList(String userString, boolean children, int pageNo, String sortBy, String order, String filter, boolean filters) {
@@ -59,13 +59,13 @@ public class WatchedTargets extends AbstractController {
     
     public static Result view(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
-		return redirect(routes.WatchedTargets.list("" + watchedTarget.user.uid, true, 0, "title", "asc", watchedTarget.target.title));
+		return redirect(routes.WatchedTargets.list("" + watchedTarget.target.authorUser.id, true, 0, "title", "asc", watchedTarget.target.title));
 	}
     
     public static Result crawl(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
     	CrawlActor.crawlAndConvertDocuments(watchedTarget, false, null, 3);
-    	return redirect(routes.Documents.list("" + watchedTarget.user.uid, "" + id, "",
+    	return redirect(routes.Documents.list("" + watchedTarget.target.authorUser.id, "" + id, "",
     			Document.Status.NEW.toString(), 0, "title", "asc", ""));
     }
     

@@ -9,7 +9,7 @@ import java.util.List;
 import com.avaje.ebean.Ebean;
 
 import controllers.Documents;
-import controllers.Targets;
+import controllers.TargetController;
 import controllers.WatchedTargets;
 import models.Document;
 import models.WatchedTarget;
@@ -33,9 +33,9 @@ public class CrawlActor extends UntypedActor {
 		}
 		
 		public List<Document> apply() {
-			Logger.info("Crawling " + watchedTarget.target.field_url);
+			Logger.info("Crawling " + watchedTarget.target.fieldUrls.get(0).url);
 			crawlAndConvertDocuments(watchedTarget, true, crawlTime, null);
-			Logger.info("Finished crawling " + watchedTarget.target.field_url);
+			Logger.info("Finished crawling " + watchedTarget.target.fieldUrls.get(0).url);
 			return null;
 		}
 
@@ -46,7 +46,7 @@ public class CrawlActor extends UntypedActor {
 		List<Document> documentList = (new Crawler(crawlWayback)).crawlForDocuments(watchedTarget, crawlTime, maxDocuments);
 		List<Document> newDocumentList = new ArrayList<>();
 		if (documentList.isEmpty()) {
-			Targets.raiseFlag(watchedTarget.target, "No Documents Found");
+			TargetController.raiseFlag(watchedTarget.target, "No Documents Found");
 		} else {
 			if (crawlWayback &&
 					(watchedTarget.waybackTimestamp == null ||

@@ -22,7 +22,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import models.Document;
-import models.Taxonomy;
 import models.WatchedTarget;
 import play.Logger;
 import play.Play;
@@ -79,7 +78,7 @@ public class Crawler {
 	
 	public static List<String> getNewerCrawlTimes(WatchedTarget watchedTarget) {
 		String captureRequest = waybackUrl + "xmlquery?type=urlquery" +
-				"&url=" + watchedTarget.target.field_url;
+				"&url=" + watchedTarget.target.fieldUrls.get(0).url;
 		if (watchedTarget.waybackTimestamp != null)
 			captureRequest += "&startdate=" + watchedTarget.waybackTimestamp;
 		Logger.debug("Capture Request: " + captureRequest);
@@ -97,8 +96,8 @@ public class Crawler {
 		this.maxDocuments = maxDocuments;
 		
 		String seedUrl = crawlWayback ?
-				waybackReplayUrl(watchedTarget.target.field_url, crawlTime) :
-				watchedTarget.target.field_url;
+				waybackReplayUrl(watchedTarget.target.fieldUrls.get(0).url, crawlTime) :
+				watchedTarget.target.fieldUrls.get(0).url;
 		knownSites.add(seedUrl);
 		Set<Link> fringe = new HashSet<>();
 		fringe.add(new Link(null, seedUrl));
@@ -138,7 +137,7 @@ public class Crawler {
 											document.filename = URLDecoder.decode(hrefUrl.substring(hrefUrl.lastIndexOf('/')+1), "UTF-8");
 											document.title = document.filename.substring(0, document.filename.indexOf('.'));
 											document.watchedTarget = watchedTarget;
-											document.taxonomies = Taxonomy.convertUrlsToObjects(watchedTarget.target.field_subject);
+											document.subjects = watchedTarget.target.subjects;
 											extractMetadata(document);
 											foundDocuments.add(document);
 											if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
@@ -163,7 +162,7 @@ public class Crawler {
 								document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
 								document.title = document.filename.substring(0, document.filename.indexOf('.'));
 								document.watchedTarget = watchedTarget;
-								document.taxonomies = Taxonomy.convertUrlsToObjects(watchedTarget.target.field_subject);
+								document.subjects = watchedTarget.target.subjects;
 								foundDocuments.add(document);
 								if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
 								Logger.debug("hidden pdf found: " + document.filename + " (url: " + pageUrl + ")");

@@ -1,115 +1,51 @@
-@(instance: Instance, user: User)
+@(instance: Instance, user: User, qaIssues: List[QaIssue], qaIssueCategories: Array[uk.bl.Const.QAIssueCategory])
 
 @script = {
 	<script>
-		(function () {
-			var query = window.location.search.substring(1);
-			var tab = getQueryVariable('tab');
-			
-			setTimeout(function(){
-				//alert('instance view tab: ' + tab);
-				if (tab == 'qa') {
-	  			  $('#li-overview').removeClass('active'); // Remove 'active' from #overview tab
-				  $('#li-qa').addClass('active'); // Set 'active' #qa tab		  
-				  $('#overview').removeClass('active in');
-				  $('#qa').addClass('active in');
-				}
-			}, 1);
-		})();
-		
-		// sample URL: http://www.webarchive.org.uk/actdev/instance/act-13790?tab=qa
-		function getQueryVariable(variable) {
-		    var query = window.location.search.substring(1);
-		    var vars = query.split('&');
-		    for (var i = 0; i < vars.length; i++) {
-		        var pair = vars[i].split('=');
-		        if (decodeURIComponent(pair[0]) == variable) {
-		            return decodeURIComponent(pair[1]);
-		        }
-		    }
-		    console.log('Query variable %s not found', variable);
-		}
-		
-	    function switchPage() {
-	        var activeTab = $('#myNavbar li.active'); // Here we grab the li that's currently marked as 'active'
-	        var href = activeTab.find('a').attr('href'); // here we grab the href of the link inside the active tab
-	        
-	        // And finally we just attach the href to view.html and forward the browser. 
-	        // An example URL would be: 'view.html#npld-scope'
-	        window.location.href="@routes.InstanceController.edit(instance.url)" + href;
-	      }
-	    
-	      $(document).ready(function() {
-	        // This happens right after the document is loaded.
-	        // Our nav pills won't do anything by themselves, so we need to make sure we
-	        // check if the current URL has a #-component and if so, we activate the
-	        // appropriate pill.
-	        var hash = window.location.hash;
-	        if (hash.indexOf('#') == 0) {
-	          // We have a hash - let's see if it matches with nav pill href
-	          var el = $('#myNavbar a[href=' + hash + ']');
-	        
-	          // We have an <a> with this ID, and it has a parent node that's an <li>
-	          if (el && el.parent() && el.parent().prop('tagName') == 'LI') {
-	            // So we activate this nav pill
-	            $(el).tab('show');
-	            window.scrollTo(0, 0);
-	          }
-	        }
-	        
-	        // This is completely optional!! But it keeps the hash in our current URL bar
-	        // in sync with the tab we have selected, so the pages stay nice and bookmarkable
-	        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-	          window.location.hash = ($(e.target).attr('href'));
-	          window.scrollTo(0, 0);
-	        })
-	      });	
 	</script>
 }
 
 @main("", user, script) {
 
-   	<div class="page-header">
-	    <h1><a href="@routes.Instances.index()">Targets > Instances > </a>Instance @instance.title</h1>
-	</div>
-	
 	<ul class="nav nav-tabs">
 	   <li class="active"><a href="#">View</a></li>
-	   <li><a onclick="switchPage(); return false;" href="@routes.InstanceController.edit(instance.url)">Edit</a></li>
+	   <li><a href="@routes.InstanceController.edit(instance.id)">Edit</a></li>
 	</ul>
 	
+	@warningmessage(flash)
+	
 	<div class="tab-content padding-20">
-		<input type="hidden" name="nid" value="@instance.nid">
-        <input type="hidden" name="user" value="@user.url">
-           
-		<ul class="nav nav-pills" id="myNavbar">
-		    <li class="active" id="li-qa"><a href="#qa" data-toggle="tab">QA</a></li>
-        	<li id="li-overview"><a href="#overview" data-toggle="tab">Overview</a></li>
-        	<li class=""><a href="#metadata" data-toggle="tab">Metadata</a></li>
-	        <li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-			@if(Target.isInScopeAll(instance.field_url, instance.url)) {
-				<font color="green">(+)</font>
-			} else {
-				<font color="red">(-)</font>
-			}		                
-			</a></li>
-        	<li class=""><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
-		    <li class=""><a href="#licensing" data-toggle="tab">UKWA Licensing</a></li>
-      	</ul>
+	   	<ol class="breadcrumb">
+			<li><a href="@routes.TargetController.index()">Targets</a></li>
+			<li><a href="@routes.TargetController.view(instance.target.id)">@instance.target.title</a></li>
+			<li><a href="@routes.InstanceController.results(instance.target.id)">Instances</a></li>
+			<li class="active"><span class="badge">@instance.target.fieldUrl()</span></li>
+		</ol>
 	</div>
 	
 	<div id="myTabContent" class="tab-content">
 		
-		<div class="tab-pane padding-20 fade active in" id="qa">    	
+		<div class="tab-pane padding-20 fade active in" id="qa">
+		
+	   		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
+					    <div class="col-sm-6">
+			            	@instance.title
+						</div>
+					</div>
+				</div>
+	     	</div>    	
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 		            	<label for="qa_status" class="col-sm-6 control-label">QA Status</label>
 		            	<div class="col-sm-6">
-					        @if(instance.qa_status != null && instance.qa_status.length() > 0) {
-								@instance.qa_status
+					        @if(instance.qaIssue.name != null && instance.qaIssue.name.length() > 0) {
+								@instance.qaIssue.name
 							} else {
-							    <p>none</p>
+							    None
 							}
 						</div>
 		         	</div>
@@ -121,7 +57,26 @@
 					<div class="form-group">
 		            	<label for="qa_issue_category" class="col-sm-6 control-label">QA Issue Category</label>
 		            	<div class="col-sm-6">
-		            		@instance.qa_issue_category
+					        @if(instance.qaIssueCategory != null && instance.qaIssueCategory.length() > 0) {
+								@uk.bl.Const.QAIssueCategory.getQAIssueCategory(instance.qaIssueCategory).getValue
+							} else {
+							    None
+							}
+						</div>
+		         	</div>
+				</div>
+			</div>
+
+    		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		            	<label for="qa_issue_category" class="col-sm-6 control-label">User:</label>
+		            	<div class="col-sm-6">
+					        @if(instance.authorUser != null) {
+								@instance.authorUser.name
+							} else {
+							    None
+							}
 						</div>
 		         	</div>
 				</div>
@@ -132,7 +87,7 @@
 					<div class="form-group">
 		            	<label for="qa_notes" class="col-sm-6 control-label">QA Notes</label>
 		            	<div class="col-sm-6">
-			            	<textarea class="form-control" name="qa_notes" id="qa_notes" cols="100" rows="1" value="@instance.qa_notes" readonly>@instance.qa_notes</textarea>
+			            	@instance.qaNotes
 						</div>
 		         	</div>
 				</div>
@@ -141,9 +96,9 @@
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
-		            	<label for="quality_notes" class="col-sm-6 control-label">Quality Notes</label>
+		            	<label for="quality_notes" class="col-sm-6 control-label">Technical Notes</label>
 		            	<div class="col-sm-6">
-			            	<textarea class="form-control" name="quality_notes" id="quality_notes" cols="100" rows="1" value="@instance.quality_notes" readonly>@instance.quality_notes</textarea>
+			            	@instance.notes
 						</div>
 		         	</div>
 				</div>
@@ -153,665 +108,20 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 						<label for="inputUrls" class="col-sm-6 control-label">
-							@if(instance.field_url != null && instance.field_url.length > 0) {
-							<br><a href="@routes.Instances.index()/list/?s=title&f=@instance.field_url">all instances for the target</a>
+							@if(instance.target != null) {
+								@for(fieldUrl <- instance.target.fieldUrls) {
+									<br><a href="@routes.InstanceController.index()/list/?s=title&f=@fieldUrl.url">all instances for the target</a>
+								}
 							}
 						</label>
 					</div>
 				</div>
 	     	</div>	 		     	    				
 		</div>
-
-		<div class="tab-pane padding-20 fade" id="overview">
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
-						    <div class="col-sm-6">
-				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@instance.title" readonly>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">ID <font color="red">*</font></label>
-						    <div class="col-sm-6">
-								<input class="form-control" name="nid" value="@instance.nid" size="30" readonly>
-							</div>
-						</div>
-					</div>
-		     	</div>
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputUrls" class="col-sm-6 control-label">
-								Seed URL(s) <font color="red">*</font> 
-								<small class="text-center">(One or more URLs, separated by comma)</small>
-								@if(instance.field_url != null && instance.field_url.length > 0) {
-								<br><a href="@routes.Instances.index()/list/?s=title&f=@instance.field_url">all instances for the target</a>
-								}
-							</label>
-						    <div class="col-sm-6">
-								<input class="form-control" name="fieldurl" id="fieldurl" placeholder="url1, url2" type="text" value="@instance.field_url" readonly>
-							</div>
-						</div>
-					</div>
-		     	</div>	 
-		     	    	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Hosting
-							</label>
-						    <div class="col-sm-6">
-								@if(Target.checkUkHosting(instance.field_url)) {
-					            	<font id="isInScope" style="color: green">yes</font>
-								} else {
-									<font id="isInScope" style="color: red">no</font>
-								}
-							</div>
-						</div>
-					</div>
-		     	</div>	     	
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputUrls" class="col-sm-6 control-label">
-								UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
-							</label>
-						    <div class="col-sm-6">
-								@if(Target.isInScopeDomain(instance.field_url, instance.url)) {
-					            	<font id="isInScope" style="color: green">yes</font>
-								} else {
-									<font id="isInScope" style="color: red">no</font>
-								}
-							</div>
-						</div>
-					</div>
-		     	</div>	     	
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputUrls" class="col-sm-6 control-label">
-								UK Registration
-							</label>
-						    <div class="col-sm-6">
-								@if(Target.isInScopeUkRegistration(instance.field_url)) {
-					            	<font id="isInScope" style="color: green">yes</font>
-								} else {
-									<font id="isInScope" style="color: red">no</font>
-								}
-							</div>
-						</div>
-					</div>
-		     	</div>	     	
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Live Site Status <small class="text-center">(If know, please add the current status of the site)</small></label>
-						    <div class="col-sm-6">
-							  		@if(instance.field_live_site_status != null && instance.field_live_site_status.equals("N/A")) {
-							        	N/A
-							        }
-							  		@if(instance.field_live_site_status != null && instance.field_live_site_status.equals("Still live")) {
-							        	Still live 
-							        }
-							  		@if(instance.field_live_site_status != null && instance.field_live_site_status.equals("No longer updated")) {
-							        	No longer updated 
-							        }
-							  		@if(instance.field_live_site_status != null && instance.field_live_site_status.equals("Vanished")) {
-							        	Vanished
-							        }
-							  		@if(instance.field_live_site_status != null && !instance.field_live_site_status.equals("Vanished")
-							  			&& !instance.field_live_site_status.equals("No longer updated")
-							  			&& !instance.field_live_site_status.equals("Still live")
-							  			&& !instance.field_live_site_status.equals("N/A")) {
-							        	none
-							        }
-							</div>
-						</div>
-					</div>
-		     	</div>	     
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
-						    <div class="col-sm-6">
-				                @if(instance.field_key_site != null && instance.field_key_site) {  
-				                   yes           
-				                } else {
-				                   no
-				                }
-							</div>
-						</div>
-					</div>
-		     	</div>	     
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputWCT" class="col-sm-6 control-label">WCT ID</label>
-						    <div class="col-sm-6">
-			              		<input name="wct" class="form-control" id="inputWCT" placeholder="0" type="text" readonly value="@instance.field_wct_id">
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputSPT" class="col-sm-6 control-label">SPT ID</label>
-						    <div class="col-sm-6">
-			              		<input name="spt" class="form-control" id="inputSPT" placeholder="0" type="text" readonly value="@instance.field_spt_id">
-							</div>
-						</div>
-					</div>
-		     	</div>
-	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="keywords" class="col-sm-6 control-label">Keyword(s) <small class="text-center">(The multiple private uncontrolled keywords)</small></label>
-						    <div class="col-sm-6">
-		 				  		<input id="keywords" type="text" name="keywords" value="@instance.keywords" size="60" maxlength="2048" class="form-control" readonly/>
-							</div>
-						</div>
-					</div>
-		     	</div>
-	
-		   		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="tags" class="col-sm-6 control-label">Tag(s) <small class="text-center">(The multiple open keywords)</small></label>
-						    <div class="col-sm-6">
-						      	@instance.getSelectedTags()
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="Synonyms" class="col-sm-6 control-label">Synonyms <small class="text-center">(The synonyms support manual logging of identical content hosted on multiple domains)</small></label>
-						    <div class="col-sm-6">
-		 				  		<input type="text" name="synonyms" value="@instance.synonyms" size="60" maxlength="2048" class="form-control" readonly/>
-							</div>
-						</div>
-					</div>
-		     	</div>			
-		</div>
-		
-		<div class="tab-pane fade padding-20" id="metadata">
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Description <small class="text-center">(A description of this web site)</small></label>
-						    <div class="col-sm-6">
-				            	<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1" value="@instance.field_description" readonly>@instance.field_description</textarea>
-							</div>
-						</div>
-					</div>
-		     	</div>		    
-		    
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Subject <font color="red">*</font></label>
-			              	 <div class="col-sm-6">
-						        @if(instance.url != null) {
-  									@Taxonomy.getSubjectsAsString(Taxonomy.getSelectedSubjectsByInstance(instance.url))
-  								} else {
-  								    none
-  								}
-			              	</div>
-						</div>
-					</div>
-		     	</div>	
-		     		    
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="suggestions-collections" class="col-sm-6 control-label">Collections <small class="text-center">(Special collections that you think this web site should appear in)</small></label>
-						    <div class="col-sm-6">
-						        @if(instance.url != null) {
-  									@DCollection.getCollectionsAsString(DCollection.getSelectedCollectionsByInstanceUrl(instance.url))
-  								} else {
-  								    none
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="mySel" class="col-sm-6 control-label">Nominating Organisation <small class="text-center">(The organisation that nominated this web site. Used to track down further information if the original user cannot be contacted)</small></label>
-						    <div class="col-sm-6">
-						        @if(instance.url != null && instance.field_nominating_organisation != null) {
-  									@Organisation.getNominatingOrganisation(instance.field_nominating_organisation)
-  								} else {
-  								    none
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="mySel" class="col-sm-6 control-label">Originating Organisation <small class="text-center">(the organisation(s) responsible for creating the content)</small></label>
-						    <div class="col-sm-6">
-				            	<textarea readonly class="form-control" name="originating_organisation" id="originating_organisation" cols="100" rows="1" value="@instance.originating_organisation">@instance.originating_organisation</textarea>
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="userSel" class="col-sm-6 control-label">Selector <font color="red">*</font> <small class="text-center">(The user that nominated this web site. A record can be created on behalf of other user by high-level roles)</small></label>
-						    <div class="col-sm-6">
-						        @if(instance.url != null && instance.author != null) {
-  									@User.showUser(instance.author)
-  								} else {
-  								    none
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>	
-		     	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="status" class="col-sm-6 control-label">Language <small class="text-center">(the predominant language in which the page is written)</small></label>
-						    <div class="col-sm-6">
-						        @if(instance.url != null && instance.language != null) {
-  									@instance.language
-  								} else {
-  								    none
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-		     	
-		   		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="inputContactPerson" class="col-sm-6 control-label">Author(s) <small class="text-center">(a named individual responsible for creating the content)</small></label>
-						    <div class="col-sm-6">
-				            	<textarea readonly class="form-control" name="authors" id="authors" cols="100" rows="1" value="@instance.authors">@instance.authors</textarea>
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-     			     	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="status" class="col-sm-6 control-label">Flag(s) <small class="text-center">(Allows users to flag record for attention, using a pre-defined list of flag names)</small></label>
-						    <div class="col-sm-6">
-						      	@instance.getSelectedFlags()
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-
-				<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Date of publication</label>
-						    <div class="col-sm-6">
-		 						<input type="text" name="date_of_publication" value="@instance.date_of_publication" size="30" maxlength="2048" class="form-control" id="date_of_publication" readonly/>
-	                		</div>
-						</div>
-					</div>
-		     	</div>			     	
-
-				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Justification <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
-						    <div class="col-sm-6">
-		 						<input type="text" name="justification" value="@instance.justification" size="60" maxlength="2048" class="form-control" readonly/>
-							</div>
-						</div>
-					</div>
-		     	</div>	
-		     	}	     			     
-		     	
-		     	<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-			              	<label for="selection_type" class="col-sm-6 control-label">Selection Type <font color="red">*</font> <small class="text-center">(This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User))</small></label>
-						    <div class="col-sm-6">
-						        @if(instance.url != null && instance.selection_type != null) {
-  									@instance.selection_type
-  								} else {
-  								    none
-  								}
-							</div>
-						</div>
-					</div>
-		     	</div>		   
-		     			     
-		     			     			     			     			     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Selector Notes <small class="text-center">(This field allows further notes to selection for WA team, not captured in Justification field.)</small></label>
-						    <div class="col-sm-6">
-		 						<input type="text" name="selector_notes" value="@instance.selector_notes" size="60" maxlength="2048" class="form-control" readonly/>
-							</div>
-						</div>
-					</div>
-		     	</div>	
-		     	
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Archivist Notes <small class="text-center">(This field should include any information provided by curators justifying the creation of the record. This field is NOT public.)</small></label>
-						    <div class="col-sm-6">
-		 						<input type="text" name="archivist_notes" value="@instance.archivist_notes" size="60" maxlength="2048" class="form-control" readonly/>
-							</div>
-						</div>
-					</div>
-		     	</div>	
-
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							<label for="legacy_site_id" class="col-sm-6 control-label">Legacy site ID <small class="text-center">(ID used to identify paper licences.)</small></label>
-						    <div class="col-sm-6">
-			              		<input name="legacy_site_id" class="form-control" id="legacy_site_id" placeholder="0" type="text" value="@instance.legacy_site_id" readonly>
-							</div>
-						</div>
-					</div>
-		     	</div>
-		     			     			     	
-		</div>
-
-		<div class="tab-pane fade" id="crawlpermission">
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Legal Deposit Criteria</label>
-					</div>
-				</div>
-	     	</div>
-    	
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputUrls" class="col-sm-6 control-label">
-							UK Hosting
-						</label>
-					    <div class="col-sm-6">
-							@if(Target.checkUkHosting(instance.field_url)) {
-				            	<font id="isInScope" style="color: green">yes</font>
-							} else {
-								<font id="isInScope" style="color: red">no</font>
-							}
-						</div>
-					</div>
-				</div>
-	     	</div>	     	
-
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputUrls" class="col-sm-6 control-label">
-							UK top-level domain <small class="text-center">(Includes .uk, .london and .scot domains)</small>
-						</label>
-					    <div class="col-sm-6">
-							@if(Target.isInScopeDomain(instance.field_url, instance.url)) {
-				            	<font id="isInScope" style="color: green">yes</font>
-							} else {
-								<font id="isInScope" style="color: red">no</font>
-							}
-						</div>
-					</div>
-				</div>
-	     	</div>	     	
-	
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label for="inputUrls" class="col-sm-6 control-label">
-							UK Registration
-						</label>
-					    <div class="col-sm-6">
-							@if(Target.isInScopeUkRegistration(instance.field_url)) {
-				            	<font id="isInScope" style="color: green">yes</font>
-							} else {
-								<font id="isInScope" style="color: red">no</font>
-							}
-						</div>
-					</div>
-				</div>
-	     	</div>	     	
-	
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
-					    <div class="col-sm-6">
-			                @if(instance.field_uk_postal_address != null && instance.field_uk_postal_address) {             
-				                yes
-			                } else {
-				                no
-			                }						
-			                </div>
-					</div>
-				</div>
-	     	</div>		     				     	
-
-    		<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Postal Address URL <small class="text-center">(The URL on the site that contains the postal address used to determine that the site is in the UK)</small></label>
-					    <div class="col-sm-6">
-	 						<input type="text" value="@instance.field_uk_postal_address_url" size="60" maxlength="2048" class="form-control"  readonly/>
-						</div>
-					</div>
-				</div>
-	     	</div>
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
-					    <div class="col-sm-6">
-				                @if(instance.field_via_correspondence != null && instance.field_via_correspondence) {             
-					                yes
-				                } else {
-					                no
-				                }
-						</div>
-					</div>
-				</div>
-	     	</div>		
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Notes <small class="text-center">(Any relevant notes, e.g. a more detailed description of this URL or set of URLs)</small></label>
-					    <div class="col-sm-6">
-	 						<textarea cols="100" rows="1" class="form-control" readonly>@instance.field_notes</textarea>
-						</div>
-					</div>
-				</div>
-	     	</div>	
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
-					    <div class="col-sm-6">
-			                @if(instance.field_professional_judgement != null && instance.field_professional_judgement) {             
-				                yes
-			                } else {
-				                no
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>	
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Professional Judgement Explanation <small class="text-center">(Please describe the rational behind this decision, indicating any evidence used)</small></label>
-					    <div class="col-sm-6">
-		 					<textarea cols="100" rows="1" class="form-control" readonly>@instance.field_professional_judgement_exp</textarea>
-						</div>
-					</div>
-				</div>
-	     	</div>	
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
-					    <div class="col-sm-6">
-			                @if(instance.field_no_ld_criteria_met != null && instance.field_no_ld_criteria_met) {             
-				                yes
-			                } else {
-			                	no
-			                }
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-        </div>
-        
-        <div class="tab-pane fade" id="crawlpolicy">
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Scope <small class="text-center">(Select the scope of the crawl around this URL. In general, when nominating a site for crawling, you should specify the homepage and say 'All URLs that start like this'. If you wish to include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)</small></label>
-					    <div class="col-sm-6">
-			                @if(instance.field_scope != null) {             
-				                @Targets.getScopeGuiName(instance.field_scope)
-			                } else {
-				                none
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Depth <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
-					    <div class="col-sm-6">
-			                @if(instance.field_depth != null) {             
-				                @Targets.getDepthGuiName(instance.field_depth)
-			                } else {
-				                none
-			                }
-						</div>
-					</div>
-				</div>
-	     	</div>	
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Ignore Robots.txt <small class="text-center">(Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems)</small></label>
-					    <div class="col-sm-6">
-			                @if(instance.field_ignore_robots_txt != null && instance.field_ignore_robots_txt) {             
-				                yes
-			                } else {
-				                no
-			                }
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Crawl Frequency <small class="text-center">(How often should this site be archived?)</small></label>
-					    <div class="col-sm-6">
-	 						<input type="text" name="field_crawl_frequency" value="@instance.field_crawl_frequency" size="60" maxlength="2048" class="form-control" readonly/>
-						</div>
-					</div>
-				</div>
-	     	</div>	
-	     	
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Start date</label>
-					    <div class="col-sm-6">
-	 						@Targets.showDate(instance.field_crawl_start_date)
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">End date</label>
-					    <div class="col-sm-6">
-	 						@Targets.showDate(instance.field_crawl_end_date)
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">White list</label>
-					    <div class="col-sm-6">
-	 						<input type="text" name="white_list" value="@instance.white_list" size="30" maxlength="2048" class="form-control" readonly/>
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-
-			<div class="row padding-10">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="form-group">
-						<label class="col-sm-6 control-label">Black list</label>
-					    <div class="col-sm-6">
-	 						<input type="text" name="black_list" value="@instance.black_list" size="30" maxlength="2048" class="form-control" readonly/>
-                		</div>
-					</div>
-				</div>
-	     	</div>	
-        </div>
-	        
-		<div class="tab-pane fade padding-20" id="licensing">
-			<dl class="dl-horizontal">
-				<dt>License:</dt>
-				<dd>The license terms under which this site should be archived and made available.</dd>
-			</dl>
-		</div>
-				
 	</div>
+
 	<hr>
+
 	<div id="revisionArea" class="revision">
 		<dl class="dl-horizontal">
 			<dt>Revision log message:</dt>
@@ -828,18 +138,33 @@
 					</a>
 				</div>
 				<div id="collapseInstances" class="panel-collapse collapse">
-					<div class="panel-footer">
-						<a class="brand" target="_blank" href="http://opera.bl.uk:8080/wayback/*/@instance.field_url">In QA Wayback</a>
-					</div>
-				    <div class="panel-footer">
-			        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.field_url">In Open UK Web Archive</a>
-					</div>
-					<div class="panel-footer">
-						<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@instance.field_url">In other web archives</a>
-					</div>
-				    <div class="panel-footer">
-			        	<a class="brand" target="_blank" href="@instance.field_url">Live site</a>
-					</div>
+					@for(fieldUrl <- instance.target.fieldUrls) {
+						<div class="padding-10">
+							<strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
+						</div>
+						<ul>
+							<li>
+								<div class="padding-10">
+									<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">In QA Wayback</a>
+								</div>
+							</li>
+							<li>
+							    <div class="padding-10">
+						        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
+								</div>
+							</li>
+							<li>
+								<div class="padding-10">
+									<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
+								</div>
+							</li>
+							<li>
+							    <div class="padding-10">
+						        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
+								</div>
+							</li>
+						</ul>
+					}
 				</div>
 			</div>
 		</div>
@@ -856,8 +181,8 @@
 				<div id="collapseRevisions" class="panel-collapse collapse">
 	       			@for(prevInstance <- Instance.findRevisions(instance.url)) {
 	       			<div class="panel-footer">
-	       				<a class="brand" href="@routes.InstanceController.viewrevision(prevInstance.nid)">
-	         				(@prevInstance.nid) &nbsp; @prevInstance.revision &nbsp; @prevInstance.lastUpdate</a>
+	       				<a class="brand" href="@routes.InstanceController.viewrevision(prevInstance.id)">
+	         				(@prevInstance.id) &nbsp; @prevInstance.revision &nbsp; @prevInstance.updatedAt</a>
 	       			</div>
 	       			}
 	     		</div>

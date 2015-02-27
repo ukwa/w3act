@@ -1,6 +1,7 @@
 package uk.bl.api;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,14 +10,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -26,18 +30,23 @@ import com.avaje.ebean.SqlUpdate;
 import play.Logger;
 import uk.bl.Const;
 
+import org.apache.commons.lang3.StringUtils;
+import org.postgresql.util.PGInterval;
+
 /**
  * Helper class.
  */
-public class Utils {
+public enum Utils {
 
+	INSTANCE;
+	
 	/**
 	 * This method generates random Long ID.
 	 * @return new ID as Long value
 	 */
-	public static Long createId() {
+	public Long createId() {
         UUID id = UUID.randomUUID();
-        Logger.info("id: " + id.toString());
+        Logger.debug("id: " + id.toString());
         Long res = id.getMostSignificantBits();
         if (res < 0) {
         	res = res*(-1);
@@ -50,7 +59,7 @@ public class Utils {
 	 * @param value
 	 * @return normalized boolean value (true or false)
 	 */
-	public static boolean getNormalizeBooleanString(String value) {
+	public boolean getNormalizeBooleanString(String value) {
 		boolean res = false;	
 		if (value != null && value.length() > 0) {
 			if (value.equals("Yes") 
@@ -72,7 +81,7 @@ public class Utils {
      * @param value
      * @return
      */
-    public static String getStringFromBoolean(Boolean value) {
+    public String getStringFromBoolean(Boolean value) {
     	String res = "";
     	if (value != null && value.toString().length() > 0) {
     		res = value.toString();
@@ -84,22 +93,21 @@ public class Utils {
      * This method creates CSV file for passed data.
      * @param sFileName
      */
-    public static void generateCsvFile(String sFileName, String data)
-    {
-	 	try
-	 	{
-	 	    FileWriter writer = new FileWriter(sFileName);
+    public File generateCsvFile(String sFileName, String data) {
+ 		File file = new File(sFileName);
+    	
+	 	try {
+	 	    FileWriter writer = new FileWriter(file);
 
 	  	    String decodedData = replacer(data); //URLDecoder.decode(data, Const.STR_FORMAT);
-//	  	    Logger.info("generateCsvFile: " + decodedData);
+//	  	    Logger.debug("generateCsvFile: " + decodedData);
 	 	    writer.append(decodedData);
 	 	    writer.flush();
 	 	    writer.close();
+	 	} catch(IOException e) {
+	 		e.printStackTrace();
 	 	}
-	 	catch(IOException e)
-	 	{
-	 	     e.printStackTrace();
-	 	} 
+	 	return file;
     }    
     
     /**
@@ -107,7 +115,7 @@ public class Utils {
      * @param data
      * @return
      */
-    public static String replacer(String data) {
+    public String replacer(String data) {
         try {
            StringBuffer tempBuffer = new StringBuffer();
            int incrementor = 0;
@@ -137,7 +145,7 @@ public class Utils {
      * This method generates current date for e.g. licence form.
      * @return
      */
-    public static String getCurrentDate() {
+    public String getCurrentDate() {
     	return new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
     }
     
@@ -146,7 +154,7 @@ public class Utils {
      * @param curDate
      * @return long value of the unix date in string format
      */
-    public static String getUnixDateStringFromDate(String curDate) {
+    public String getUnixDateStringFromDate(String curDate) {
     	String res = "";
 		try {
 	    	Logger.debug("getUnixDateStringFromDate curDate: " + curDate);
@@ -156,9 +164,9 @@ public class Utils {
 			 * creates timestamp for one day older than the current day.
 			 */
 			Long longTime = new Long(resDate.getTime()/1000 + 86400);
-			Logger.info("long time: " + longTime);
+			Logger.debug("long time: " + longTime);
 			res = String.valueOf(longTime);
-			Logger.info("res date: " + res);
+			Logger.debug("res date: " + res);
 			Logger.debug("check stored date - convert back to human date: " + getDateFromUnixDate(res));
 		} catch (ParseException e) {
 			Logger.debug("Conversion of date in string format dd-MM-yyyy to unix date: " + e);
@@ -172,15 +180,15 @@ public class Utils {
      * @param curDate
      * @return long value of the unix date in string format
      */
-    public static String getUnixDateStringFromDateExt(String curDate) {
+    public String getUnixDateStringFromDateExt(String curDate) {
     	String res = "";
 		try {
 	    	Logger.debug("getUnixDateStringFromDate curDate: " + curDate);
 			Date resDate = new SimpleDateFormat(Const.DATE_FORMAT).parse(curDate);
 			Long longTime = new Long(resDate.getTime()/1000);
-			Logger.info("long time: " + longTime);
+			Logger.debug("long time: " + longTime);
 			res = String.valueOf(longTime);
-			Logger.info("res date: " + res);
+			Logger.debug("res date: " + res);
 			Logger.debug("check stored date - convert back to human date: " + getDateFromUnixDate(res));
 		} catch (ParseException e) {
 			Logger.debug("Conversion of date in string format dd-MM-yyyy to unix date: " + e);
@@ -193,7 +201,7 @@ public class Utils {
      * @param unixDate
      * @return date as a string
      */
-    public static String getDateFromUnixDate(String unixDate) {
+    public String getDateFromUnixDate(String unixDate) {
     	String res = "";
 //    	Logger.debug("getDateFromUnixDate unixDate: " + unixDate);
     	if (unixDate != null && unixDate.length() > 0) {
@@ -211,7 +219,7 @@ public class Utils {
      * @param timestamp
      * @return formatted timestamp
      */
-    public static String showTimestamp(String timestamp) {
+    public String showTimestamp(String timestamp) {
     	String res = "";
     	if (timestamp.length() > 0) {
 			try {
@@ -224,7 +232,7 @@ public class Utils {
 							Integer.toString(mydate.get(Calendar.YEAR));
 				}
 			} catch (ParseException e) {
-				Logger.info("QA timestamp conversion error: " + e);
+				Logger.debug("QA timestamp conversion error: " + e);
 			}
     	}
     	return res;
@@ -235,9 +243,9 @@ public class Utils {
      * @param timestamp
      * @return formatted timestamp
      */
-    public static String showTimestampInHtml(String timestamp) {
+    public String showTimestampInHtml(String timestamp) {
     	String res = "";
-		Logger.info("showTimestampInHtml timestamp: " + timestamp);
+		Logger.debug("showTimestampInHtml timestamp: " + timestamp);
     	if (timestamp.length() > 0) {
 			try {
 				Date resDate = new SimpleDateFormat("yyyyMMddHHMMss").parse(timestamp);
@@ -249,7 +257,7 @@ public class Utils {
 							Integer.toString(mydate.get(Calendar.YEAR));
 				}
 			} catch (ParseException e) {
-				Logger.info("QA timestamp conversion error: " + e);
+				Logger.debug("QA timestamp conversion error: " + e);
 			}
     	}
     	return res;
@@ -260,16 +268,16 @@ public class Utils {
      * @param long timestamp
      * @return formatted timestamp "dd/MM/yyyy"
      */
-    public static String showTimestampInTable(String timestamp) {
+    public String showTimestampInTable(String timestamp) {
     	String res = "";
     	if (timestamp.length() > 0) {
 			try {
 				Date resDate = new Date(Long.parseLong(timestamp)*1000L);
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // the format of date
 				res = sdf.format(resDate);
-//				Logger.info("res date: " + res);
+//				Logger.debug("res date: " + res);
 			} catch (Exception e) {
-				Logger.info("Long timestamp conversion error: " + e);
+				Logger.debug("Long timestamp conversion error: " + e);
 			}
     	}
     	return res;
@@ -281,7 +289,7 @@ public class Utils {
      * @param list The list that contains elements
      * @return true if in list
      */
-    public static boolean hasElementInList(String elem, String list) {
+    public boolean hasElementInList(String elem, String list) {
     	boolean res = false;
     	if (list != null) {
     		if (list.contains(Const.LIST_DELIMITER)) {   	
@@ -308,7 +316,7 @@ public class Utils {
      * @param list The list that contains objects of the same type
      * @return true if in list
      */
-    public static boolean hasObjectInList(String object, List<String> list) {
+    public boolean hasObjectInList(String object, List<String> list) {
     	boolean res = false;
     	if (list != null && object != null) {
 	    	Iterator<String> itr = list.iterator();
@@ -328,7 +336,7 @@ public class Utils {
      * @param list The list that contains elements
      * @return result list
      */
-    public static String removeDuplicatesFromList(String list) {
+    public String removeDuplicatesFromList(String list) {
     	String res = "";
     	boolean firstIteration = true;
     	if (list != null) {
@@ -367,7 +375,7 @@ public class Utils {
      * @param list The list that contains elements
      * @return true if in list
      */
-    public static String[] getMailArray(String list) {
+    public String[] getMailArray(String list) {
     	String[] mailArray = {"None"};
     	if (list != null) {
     		if (list.contains(Const.LIST_DELIMITER)) {
@@ -384,7 +392,7 @@ public class Utils {
      * @param arr
      * @return string value
      */
-    public static String convertStringArrayToString(String[] arr) {
+    public String convertStringArrayToString(String[] arr) {
     	StringBuilder builder = new StringBuilder();
     	for(String s : arr) {
     	    builder.append(s);
@@ -397,7 +405,7 @@ public class Utils {
      * @param fileName
      * @return string value
      */
-    public static String readTextFile(String fileName) {
+    public String readTextFile(String fileName) {
     	String res = "";
     	try {
     		Logger.debug("template path: " + fileName);
@@ -428,7 +436,7 @@ public class Utils {
 	 * @param target The target string in site content
 	 * @return target row
 	 */
-	public static String buildWebRequestByUrl(String resourceUrl, String target) {
+	public String buildWebRequestByUrl(String resourceUrl, String target) {
         String res = "";
 		try {
 	        URL github = new URL(resourceUrl);
@@ -443,9 +451,9 @@ public class Utils {
 	        }
 	        in.close();
 		} catch (MalformedURLException e) {
-			Logger.info("Reading last github hash: " + e);
+			Logger.debug("Reading last github hash: " + e);
 		} catch (Exception e) {
-			Logger.info("Reading last github hash: " + e);
+			Logger.debug("Reading last github hash: " + e);
 		}
 		return res;
 	}
@@ -455,7 +463,7 @@ public class Utils {
      * @param value The boolean value
      * @return value as a string
      */
-    public static String showBooleanAsString(boolean value) {
+    public String showBooleanAsString(boolean value) {
     	String res = Const.NO;
     	if (value) {
     		res = Const.YES;
@@ -469,7 +477,7 @@ public class Utils {
      * @param str
      * @return true if numeric
      */
-    public static boolean isNumeric(String str)  
+    public boolean isNumeric(String str)  
     {  
         try {  
             Double.parseDouble(str);  
@@ -489,7 +497,7 @@ public class Utils {
      * @param str
      * @return true if numeric
      */
-    public static boolean isNumericLong(String str)  
+    public boolean isNumericLong(String str)  
     {  
         try {  
             Long.parseLong(str);  
@@ -504,13 +512,13 @@ public class Utils {
      * @param fields
      * @return
      */
-    public static String showMissingFields(String fields) {
+    public String showMissingFields(String fields) {
     	if (fields != null && fields.length() > 0) {
-    		for (Map.Entry<String, String> entry : Const.guiMap.entrySet()) {
-				if (fields.contains(entry.getKey())) {
-					fields = fields.replace(entry.getKey(), entry.getValue());
-				}
-			}
+//    		for (Map.Entry<String, String> entry : Const.guiMap.entrySet()) {
+//				if (fields.contains(entry.getKey())) {
+//					fields = fields.replace(entry.getKey(), entry.getValue());
+//				}
+//			}
     	}
     	return fields;
     	
@@ -521,10 +529,10 @@ public class Utils {
      * @param fields
      * @return
      */
-    public static String showMissingField(String field) {
+    public String showMissingField(String field) {
     	String res = field;
     	if (field != null && field.length() > 0) {
-    		res = Const.guiMap.get(field);
+//    		res = Const.guiMap.get(field);
     	}
     	return res;
     	
@@ -535,7 +543,7 @@ public class Utils {
      * @param str The string list
      * @return first value
      */
-    public static String cutFirstSelection(String str) {
+    public String cutFirstSelection(String str) {
     	String res = str;
     	if (str != null && str.contains(Const.COMMA)) {
     		int commaPos = str.indexOf(Const.COMMA);
@@ -550,9 +558,159 @@ public class Utils {
      * @param tableName
      * @param id
      */
-    public static void removeAssociationFromDb(String tableName, String columnName, Long id) {
+    public void removeAssociationFromDb(String tableName, String columnName, Long id) {
         SqlUpdate removeOldAssociation = Ebean.createSqlUpdate("DELETE FROM " + tableName + " WHERE " + columnName + " = " + id);
         removeOldAssociation.execute();     	
+    }
+    
+    public String formatSqlTimestamp(Timestamp timestamp) {
+    	if (timestamp != null) {
+			String formatted = new SimpleDateFormat("E dd MMM yyyy HH:mm:ss ").format(timestamp);
+			return formatted;
+    	}
+		return "";
+	}
+    
+    public String convertPGIntervalToDate(Object object) {
+    	PGInterval pgInterval = (PGInterval)object;
+    	int years = pgInterval.getYears();
+    	int months = pgInterval.getMonths();
+    	int days = pgInterval.getDays();
+    	int hours = pgInterval.getHours();
+    	int minutes = pgInterval.getMinutes();
+    	double seconds = pgInterval.getSeconds();
+    	
+    	StringBuilder builder = new StringBuilder("");
+    	if (years > 0) builder.append(years + " years ");
+    	if (months > 0) builder.append(months + " months ");
+    	if (days > 0) builder.append(days + " days " );
+    	if (hours > 0) builder.append(hours + " hours ");
+    	if (minutes > 0) builder.append(minutes + " minutes ");
+    	if (seconds > 0) builder.append(Math.round(seconds) + " seconds ");
+    	return builder.toString();
+    }
+    
+    public Date convertDate(String dateText) throws ParseException {
+    	Date date = null;
+    	if (StringUtils.isNotEmpty(dateText)) {
+			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			date = formatter.parse(dateText);
+    	}
+    	return date;
+    }
+    
+	public Date getDateFromSeconds(Long seconds) {
+		Date date = null;
+		if (seconds != null) {
+			date = new Date(seconds*1000L);
+//			Logger.debug("converted date: " + date);
+		}
+		return date;
+	}
+	
+	public Date getDateFromLongValue(String dateValue) throws ParseException {
+		Date date = null;
+    	if (StringUtils.isNotEmpty(dateValue)) {
+//			20090617 083042
+			DateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+			date = formatter.parse(dateValue);
+		}
+		return date;
+	}
+	
+    public Set<String> getVaryingUrls(String url) {
+    	Set<String> varyingUrls = new HashSet<String>();
+    	// remove all slashes
+    	if (url.endsWith("/")) {
+    		url = removeSlash(url);
+    	}
+    	
+		String http = convertHttpToHttps(url); // https://
+		varyingUrls.add(http);
+		
+		String httpSlash = addSlash(http); // https://www.werwer.com/
+		varyingUrls.add(httpSlash);
+		
+		String httpNoWww = removeWww(http); // https://werwer.com
+		varyingUrls.add(httpNoWww);
+		
+		String httpNoWwwSlash = addSlash(httpNoWww); // https://werwer.com/
+		varyingUrls.add(httpNoWwwSlash);
+		
+		String httpWww = addWww(http);
+		varyingUrls.add(httpWww);
+		
+		String httpWwwSlash = addSlash(httpWww); // https://werwer.com/
+		varyingUrls.add(httpWwwSlash);
+		
+		
+		String https = convertHttpsToHttp(url);
+		varyingUrls.add(https);
+		
+		String httpsSlash = addSlash(https);
+		varyingUrls.add(httpsSlash);
+
+		String httpsNoWww = removeWww(https);
+		varyingUrls.add(httpsNoWww);
+
+		String httpsNoWwwSlash = addSlash(httpsNoWww); // https://werwer.com/
+		varyingUrls.add(httpsNoWwwSlash);
+		
+		String httpsWww = addWww(https);
+		varyingUrls.add(httpsWww);
+
+		String httpsWwwSlash = addSlash(httpsWww); // https://werwer.com/
+		varyingUrls.add(httpsWwwSlash);
+
+    	return varyingUrls;
+    }
+    
+    private String removeSlash(String url) {
+		return url.substring(0, url.length()-1);
+    }
+    
+    private String convertHttpToHttps(String url) {
+    	return url.replace("http://", "https://");
+    }
+
+    private String convertHttpsToHttp(String url) {
+    	return url.replace("https://", "http://");
+    }
+
+    private String addSlash(String url) {
+    	return url + "/";
+    }
+    
+    private String removeWww(String url) {
+    	return url.replace("www.", "");
+    }
+    
+    private String addWww(String url) {
+    	if (!url.contains("www.")) {
+			StringBuilder builder = new StringBuilder(url);
+			int offset = 7;
+			if (url.startsWith("https://")) {
+				offset = 8;
+			}
+			builder.insert(offset, "www.");
+			return builder.toString();
+    	}
+    	return url;
+    }
+    
+    public boolean validUrl(String url) {
+    	String urlRegex = "^((http(s?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.*(\\:[0-9]+)*(/($|[a-zA-Z0-9\\.\\,\\;\\?\\:\\(\\)\\@\\#\\!\\'\\\\\\+&amp;%\\$#\\=~_\\-]+))*$";
+        return url.matches(urlRegex);
+    }
+    
+    public String convertToDateTime(Date date) {
+    	String formatted = null;
+    	if (date != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+			dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+			formatted =  dateFormat.format(date);
+    	}
+    	return formatted;
     }
 }
 

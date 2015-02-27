@@ -1,11 +1,11 @@
-@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Instance], currentSortBy: String, currentOrder: String, targetUrl: String)
+@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Instance], currentSortBy: String, currentOrder: String, targetId: Long)
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")'
 			searchContext = 'instances';
 			urlTo = 'instance';
 			applySearch(context, searchContext, urlTo);
@@ -40,7 +40,7 @@
     }
     
     // Generate the link
-    routes.Instances.listByTarget(newPage, sortBy, order, searchurl, targetUrl)
+    routes.InstanceController.listByTarget(newPage, sortBy, order, searchurl, targetId)
     
 }
 
@@ -83,14 +83,14 @@
 
 @main(title, user, scripts, styles) {
 	<div class="page-header">    
-    	<h1><a href="@routes.Instances.index()">Instances > </a>Instances List </h1>
+    	<h1><a href="@routes.InstanceController.index()">Instances > </a>Instances List </h1>
     </div>
     
     <article class="lookup">
     
 		<div id="forms">
 			@warningmessage(flash)
-			@helper.form(action=routes.Instances.search, 'class -> "form-inline") {
+			@helper.form(action=routes.InstanceController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 	   				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
    					<input type="hidden" name="s" value="@currentSortBy">
@@ -124,13 +124,32 @@
 			<tbody>
 				@for(instance <- currentPage.getList) {
 				<tr>
-					<td><a class="brand" href="@routes.InstanceController.edit(instance.url)">@instance.title</a><br><a class="brand" href="@instance.get_field_list_as_str("field_url")">@instance.get_field_list_as_str("field_url")</a></td>
-					<td><a class="brand" href="opera.bl.uk:8080/wayback/*/@instance.get_field_list_as_str("field_url")">(mid-crawl),</a>
-	                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@instance.get_field_list_as_str("field_url")">(archival),</a>
-	                 	<a class="brand" href="@instance.get_field_list_as_str("field_url")">(live)</a></td>
-					<td>@uk.bl.Const.QAStatusType.getQaStatus(instance.qa_status).getValue()</td>
-					<td>@Instance.showTimestamp(instance.changed)</td>
-					<td><a class="brand" href="http://www.webarchive.org.uk/mementos/search/http://@instance.get_field_list_as_str("field_url")">(mementos)</a></td>
+					<td>
+						<a class="brand" href="@routes.InstanceController.edit(instance.id)">@instance.title</a><br>					
+						@if(instance.target.fieldUrls != null) {
+							@for(fieldUrl <- instance.target.fieldUrls) {						
+								<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a><br />
+							}
+						}
+					</td>
+					<td>
+						@if(instance.target.fieldUrls != null) {
+							@for(fieldUrl <- instance.target.fieldUrls) {	
+								<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("application.wayback.url")/*/@fieldUrl.url">(mid-crawl)</a>
+			                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">(archival),</a>
+			                 	<a class="brand" href="@fieldUrl.url">(live)</a><br />
+							}
+						}
+					</td>
+					<td>@if(instance.qaIssue != null) { @instance.qaIssue.name } else { Unknown }</td>
+					<td>@instance.toCreatedAtString</td>
+					<td>
+						@if(instance.target.fieldUrls != null) {
+							@for(fieldUrl <- instance.target.fieldUrls) {
+								<a class="brand" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">(mementos)</a><br />
+							}
+						}
+					</td>
 				</tr>
 				}
 			</tbody>

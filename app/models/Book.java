@@ -13,7 +13,6 @@ import javax.persistence.OneToOne;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
-import uk.bl.Const;
 
 @Entity
 public class Book extends Model {
@@ -27,7 +26,7 @@ public class Book extends Model {
 	@JoinColumn(name="id_document")
 	public Document document;
 	@ManyToMany(cascade=CascadeType.REMOVE)
-	@JoinTable(name = Const.BL_COLLECTION_SUBSET_BOOK,
+	@JoinTable(name = "bl_collection_subset_book",
 		joinColumns = { @JoinColumn(name = "id_book", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_bl_collection_subset", referencedColumnName="id") })
 	public List<BlCollectionSubset> blCollectionSubsets = new ArrayList<>();

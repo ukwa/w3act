@@ -1,0 +1,134 @@
+@(userForm: Form[User], admin: User, roles: List[Role], organisations: Map[String,String])
+
+@import helper._
+@import bootstrap._
+
+@if(admin.hasRole("sys_admin") || admin.hasRole("archivist")) {
+
+	@main("", admin){
+	    
+	   	<div class="page-header">
+		    <h1><a href="@routes.UserController.index()">Users & Agencies > Curators > </a>New Curator</h1>
+		</div>
+
+	    @warningmessage(flash)
+	    
+	    @if(userForm.hasErrors) {
+			<div class="padding-20">
+				<div class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					@for(entry <- userForm.errors.entrySet){
+						@for(error <- entry.getValue){
+							@error.message<br />
+						}
+					}
+				</div>
+			</div>
+		}
+		    
+	    @helper.form(action=routes.UserController.save()) {
+	    
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@inputText(userForm("name"),
+							'_label -> "Name",
+						    'id -> "name",
+						    'class -> "form-control",
+						    'placeholder -> "My name"
+						)(FieldConstructor(genericMandatoryInput.f), lang)
+					</div>
+				</div>
+	     	</div>
+	     	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@inputText(userForm("email"),
+							'_label -> "E-mail",
+						    'id -> "email",
+						    'type -> "email",
+						    'class -> "form-control",
+						    'placeholder -> "sample@@domain.uk"
+						)(FieldConstructor(genericMandatoryInput.f), lang)				
+					</div>
+				</div>
+	     	</div>
+	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@inputText(userForm("password"),
+							'_label -> "Password",
+						    'id -> "password",
+						    'type -> "password",
+						    'class -> "form-control"
+						)(FieldConstructor(genericMandatoryInput.f), lang)		
+					</div>
+				</div>
+	     	</div>
+			
+	   		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-6 control-label">Roles</label>
+						<div class="col-sm-6">
+  							@for((role, index) <- roles.zipWithIndex) {
+  								<label class="checkbox-inline">
+			                	<input type="checkbox" name="rolesList" value="@role.id" />
+					                 @role.name
+				                </label>
+				            }
+						</div>
+					</div>
+				</div>
+	     	</div>	     		
+	
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@select(
+	      					userForm("organisation.id"), 
+			                options(organisations),
+			                args =
+			                'class -> "form-control", 
+			                '_label -> "Organisation",
+			                '_showConstraints -> false
+			            )(FieldConstructor(genericInput.f), lang)
+					</div>
+				</div>
+	     	</div>
+	     	
+	        <div id="revisionArea" class="revision">
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(field = userForm("revision"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Revision log message (Provide an explanation of the changes you are making. This will help other authors understand your motivations)",
+								'id -> "inputRevision",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)				            
+						</div>
+					</div>
+		     	</div>
+			</div>
+	
+			<div class="alert alert-info">
+				Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+			</div>
+	
+		    @if(admin.hasRole("sys_admin") || admin.hasRole("archivist") || userForm("id").value.equals(admin.id)) {
+				<div class="row padding-10 pull-right">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="btn-group">
+							<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+				       </div>
+					</div>
+				</div>
+			}
+		}
+	}
+} else {
+	@infomessage.render("Access Denied for URL @routes.UserController.index()/edit")
+}

@@ -1,38 +1,23 @@
-@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, currentCollection: String, currentQaStatus: String)
+@(title: String, user: User, searchurl: String, currentPage: com.avaje.ebean.Page[Target], currentSortBy: String, currentOrder: String, currentCollection: String, qaIssueId: Long, collectionData :com.fasterxml.jackson.databind.JsonNode, qaIssues: List[QaIssue])
+
+@getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
+	Html(data.toString)
+}
 
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")'
 			searchContext = 'targets';
-			applySearch(context, searchContext);
+/* 			applySearch(context, searchContext);
 			scopeCheck(context);
+ */			
+			showTree(@getJson(collectionData), "#collectionTree", "collectionSelect", 3);
+
 			
-		      SUGGESTED_COLLECTION_URI = '@routes.QAController.getCollections(currentCollection)';
-              $.getJSON(SUGGESTED_COLLECTION_URI, function(data) {    	
-              	$("#tree3").dynatree({
-                	checkbox: true,
-                	selectMode: 1,
-                	children: data,
-                	onSelect: function(select, node) {
-                  		// Get a list of all selected nodes, and convert to a key array:
-                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                    		return node.data.key;
-                  		});
-                  		document.getElementById('treeKeys').value = selKeys.join(", ");
-                  		// Get a list of all selected TOP nodes
-                  		var selRootNodes = node.tree.getSelectedNodes(true);
-                  		// ... and convert to a key array:
-                  		var selRootKeys = $.map(selRootNodes, function(node){
-                    		return node.data.key;
-                  		});
-                	}
-              	});
-             })
-			
-         	$('#qa_status').change(function(event) {
+/*          	$('#qa_status').change(function(event) {
         		console.log('qa_status');
         		event.preventDefault();
         		
@@ -43,7 +28,7 @@
 		    	$('#forms').append($(action));
        			$('#forms').submit();
         	});
-             
+ */             
              
 		});
 	</script>
@@ -75,7 +60,7 @@
     }
     
     // Generate the link
-    routes.QAController.list(newPage, sortBy, order, searchurl, currentCollection, currentQaStatus)
+    routes.QAController.list(newPage, sortBy, order, searchurl, currentCollection, qaIssueId)
     
 }
 
@@ -89,6 +74,7 @@
 }
 
 @pagination = {
+	@if(currentPage.getTotalPageCount() > 0) {
 		<div class="text-center">
 			<ul class="pagination">
 	        	@if(currentPage.hasPrev) {
@@ -114,96 +100,92 @@
 				}
 			</ul>
 		</div>
+	}
 }
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 
 @main(title, user, scripts, styles) {
 	<div class="page-header">    
-    	<h1><a href="@routes.CrawlPermissions.index()">Archivist Tasks > </a>QA dashboard</h1>
+    	<h1><a href="@routes.CrawlPermissionController.index()">Archivist Tasks > </a>QA dashboard</h1>
     </div>
     
     <article class="targets">
     
 		@warningmessage(flash)
+		
 		@helper.form(action=routes.QAController.search, 'id -> "forms") {
+
+			<div class="alert alert-info">
+				Enter any whole or part URL, or part of a target name.
+			</div>				
+
    			<div class="input-group">
    				<input type="hidden" name="p" value="@currentPage.getPageIndex" />
   					<input type="hidden" name="s" value="@currentSortBy">
   					<input type="hidden" name="o" value="@currentOrder">
-  					<input type="hidden" name="query_collection" value="@currentCollection">
-  					<input type="hidden" name="query_qa_status" value="@currentQaStatus">
 				<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
 	   			<span class="input-group-btn">
 					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
 				</span>
 			</div>
-
-			<div class="alert alert-info">
-				Enter any whole or part URL, or part of a target name.
-			</div>				
 		
-		@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
+		@if((user.hasRole("sys_admin") || user.hasRole("archivist"))) {
 		
-				<div class="padding-20">
-				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filter Targets &#9650;</span></a>
-				</div>
-						
-				<div id="accordion">
-					<div id="filter-panel" class="panel-collapse collapse in">
-						<div class="panel-body">
-						
-							<div class="row">
-							
-								<div class="col-md-6">
-									<div class="form-group">									
-						              	<label for="collections" class="col-sm-6 control-label">By Collection</label>
-									    <div class="col-sm-12">
-											  <div id="tree3"></div>
-								                @if(currentCollection != null) {
-											  	<input type="hidden" id="treeKeys" name="treeKeys" value="@currentCollection">
-								                } else {
-											  	<input type="hidden" id="treeKeys" name="treeKeys">
-								                }
-										</div>
+			<div class="padding-20">
+			    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filter Targets &#9650;</span></a>
+			</div>
+					
+			<div id="accordion">
+				<div id="filter-panel" class="panel-collapse collapse in">
+					<div class="panel-body">
+					
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">									
+					              	<label for="collections" class="col-sm-6 control-label">By Collection</label>
+								    <div class="col-sm-12">
+							  			<div id="collectionTree" style="padding:10px;"></div>
+			  							<input type="hidden" id="collectionSelect" name="collectionSelect" value="@currentCollection">
 									</div>
 								</div>
 							</div>
-							
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-						            	<label for="qa_status" class="col-sm-6 control-label">By QA Status</label>
-						            	<div class="col-sm-6">
-											<select name="qa_status" class="form-control target-form-control" id="qa_status">
-									        	<option>None</option>
-									    		@for(qaStatusType <- uk.bl.Const.QAStatusType.values()) {
-						                 			@if(currentQaStatus != null && currentQaStatus.equals(qaStatusType.name)) {
-						                				<option value="@qaStatusType.name" selected>@qaStatusType.getValue</option>
-						                			} else {
-						                				<option value="@qaStatusType.name">@qaStatusType.getValue</option>
-						                			}
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+					            	<label for="qa_status" class="col-sm-6 control-label">By QA Status</label>
+					            	<div class="col-sm-6">
+										<select name="qaIssueId" class="form-control target-form-control" id="qa_status">
+								        	<option value="0">None</option>
+								    		@for(qaIssue <- qaIssues) {
+					                 			@if(qaIssueId != null && qaIssueId.longValue == qaIssue.id.longValue) {
+					                				<option value="@qaIssue.id" selected>@qaIssue.name</option>
+					                			} else {
+					                				<option value="@qaIssue.id">@qaIssue.name</option>
 					                			}
-											</select>
-										</div>
-						         	</div>
-								</div>
+				                			}
+										</select>
+									</div>
+					         	</div>
 							</div>
 						</div>
 					</div>
-				</div>		
-				} <!-- end of role check -->	
-		} <!-- end of search form -->
+				</div>
+			</div>		
+		} <!-- end of role check -->	
+	} <!-- end of search form -->
 		
-		@if((user.hasRole("sys_admin") || user.hasRole("archivist")) && searchurl != null && searchurl.length() > 0) {
-		
+	@if((user.hasRole("sys_admin") || user.hasRole("archivist"))) {
+	
 		@pagination
-    
+	   
 		<table class="table table-hover">
 			<thead>
 				<tr>
 					@header("title", "Target Name")
-					@header("url", "URL")
+					@header("fieldUrls.url", "URL")
 					<th>Instances to date</th>
 					<th>Most Recent</th>
 					<th>QA Status</th>
@@ -211,19 +193,38 @@
 			</thead>
 			<tbody>
 				@for(target <- currentPage.getList) {
-				<tr>
-					<td><a class="brand" href="@routes.Targets.view(target.url)">@target.title</a><br><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
-					<td><a class="brand" href="@target.get_field_list_as_str("field_url")">@target.get_field_list_as_str("field_url")</a></td>
-					<td><a class="brand" href="@routes.Instances.showByTarget(target.url)">@Instance.findAllByTarget(target.url)</a></td>
-					<td><a class="brand" href="@routes.InstanceController.edit(Instance.getLatestInstance(target.url))?tab=qa">@Instance.showLatestTimestamp(target.url)</a></td>
-					<td>@uk.bl.Const.QAStatusType.getQaStatus(Taxonomy.findQaStatus(target.field_qa_status)).getValue()</td>
-				</tr>
+					<tr>
+						<td>
+							<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a><br>
+						</td>
+						<td>
+							@for(fieldUrl <- target.fieldUrls) {
+								<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
+							}						
+						</td>
+						<td><a class="brand" href="@routes.InstanceController.showByTarget(target.id)">@target.instances.size</a></td>
+						<td>
+							@if(target.findLastInstance != null) {
+								<a class="brand" href="@routes.InstanceController.edit(target.findLastInstance.id)?tab=qa">@target.findLastInstance().toCreatedAtString</a>
+							}
+						</td>
+						<td>
+							@if(target.getLatestInstance != null) {
+								@if(target.getLatestInstance.qaIssue == null) {
+									Unknown
+								} else {
+									@target.getLatestInstance.qaIssue.name
+								}
+							}
+						</td>
+						
+					</tr>
 				}
 			</tbody>
 		</table>
 		 
 		@pagination
-		}
+	}
 
    </article>
     

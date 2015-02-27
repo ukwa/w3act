@@ -1,0 +1,193 @@
+@(instanceForm: Form[Instance], user: User, qaIssues: Map[String,String], qaIssueCategories: Map[String,String], authors: Map[String,String], targetId: Long)
+
+@import uk.bl.api.FormHelper
+@import helper._
+@import bootstrap._
+
+@implicitFieldConstructor = @{ FieldConstructor(genericInput.f) }
+
+@script = {
+	<script>
+		
+	    $(document).ready(function() {
+	          
+	        // Restarts the keyboard-idleness timeout
+			var restartIdleTimeout = function(text) {
+	        	if (idle_timeout)
+	            	window.clearTimeout(idle_timeout);
+	            
+	            idle_timeout = window.setTimeout(function() { doScope(text); }, IDLE_THRESHOLD);
+			};		
+	          
+		});		
+	</script>
+}
+
+@main("", user, script) {
+    
+	<div class="tab-content padding-20">
+	   	<ol class="breadcrumb">
+			<li><a href="@routes.TargetController.index()">Targets</a></li>
+			<li><a href="@routes.TargetController.view(targetId)">@instanceForm("target.title").value</a></li>
+			<li><a href="@routes.InstanceController.index()">Instances</a></li>
+			<li class="active"><span class="badge">@instanceForm("target.fieldUrl").value</span></li>
+		</ol>
+	</div>
+
+	<div class="tab-content padding-20">
+           
+		<ul class="nav nav-pills" id="myNavbar">
+		    <li class="active"><a href="#qa" data-toggle="tab">QA</a></li>
+	  	</ul>
+	</div>
+	
+    @warningmessage(flash)
+    
+	@if(instanceForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- instanceForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+	
+	@helper.form(action=routes.InstanceController.save()) {
+	
+		<input type="hidden" id="targetId" name="targetId" value="@targetId">
+	
+		<div id="myTabContent" class="tab-content">
+		
+			<div class="tab-pane padding-20 fade active in" id="qa">
+			
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label for="inputTitle" class="col-sm-6 control-label">Title <font color="red">*</font></label>
+						    <div class="col-sm-6">
+				              <input class="form-control" name="title" id="inputTitle" size="60" placeholder="My title" type="text" value="@instanceForm("title").value">
+							</div>
+						</div>
+					</div>
+		     	</div>
+			
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@select(field = instanceForm("qaIssue.id"), options = options(qaIssues), 
+					                args = 
+					                'class -> "form-control",
+					                '_label -> "QA Status:", 
+					                '_default -> "-- Choose a QA Status --",
+					                '_showConstraints -> false
+				            )(FieldConstructor(genericInput.f), lang)
+			         	</div>
+					</div>
+				</div>
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@select(field = instanceForm("qaIssueCategory"), options = options(qaIssueCategories), 
+					                args = 
+					                'class -> "form-control",
+					                '_label -> "QA Issue Category", 
+					                '_default -> "-- Choose a QA Category --",
+					                '_showConstraints -> false
+				            )(FieldConstructor(genericInput.f), lang)
+			         	</div>
+					</div>
+				</div>
+	
+		    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@select(
+               					instanceForm("authorUser.id"), 
+					                options(authors), 
+					                args = 
+					                'class -> "form-control",
+					                '_label -> "Author:",
+				                	'_default -> "-- None --",
+					                '_showConstraints -> true
+				            )(FieldConstructor(genericMandatoryInput.f), lang)						
+			         	</div>
+					</div>
+				</div>			
+				
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(field = instanceForm("qaNotes"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "QA Notes",
+								'id -> "qa_notes",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)		
+			         	</div>
+					</div>
+				</div>
+	
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(field = instanceForm("notes"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Technical Notes",
+								'id -> "quality_notes",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)								
+			         	</div>
+					</div>
+				</div>
+				
+	    		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@textarea(field = instanceForm("revision"),
+				 				args = 'rows -> 1, 'cols -> 100,
+								'_label -> "Revision log message",
+								'id -> "inputRevision",
+								'class -> "form-control"
+							)(FieldConstructor(genericInput.f), lang)	
+						</div>
+					</div>
+		     	</div>
+			</div>
+		</div>
+                        
+
+		<div class="padding-20">
+			<div class="panel-group" id="accordion">
+				<div class="panel panel-primary" id="panels">
+					<div class="panel-heading">
+				    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
+				        	Instances
+						</a>
+					</div>
+					<div id="collapseInstances" class="panel-collapse collapse">
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<div class="padding-20">
+			<div class="alert alert-info">
+				Provide an explanation of the changes you are making. This will help other authors understand your motivations.
+			</div>
+		</div>
+
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">
+					<button type="submit" class="btn btn-primary" name="action" value="save" id="edit-save">Save</button>
+		       </div>
+			</div>
+		</div>
+	}
+}
+

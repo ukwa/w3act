@@ -25,7 +25,6 @@ import play.data.format.Formats.DateTime;
 import play.data.validation.Constraints.Required;
 import play.data.validation.ValidationError;
 import play.db.ebean.Model;
-import uk.bl.Const;
 
 @Entity
 public class Document extends Model {
@@ -44,15 +43,15 @@ public class Document extends Model {
 	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
 	public Journal journal;
 	@ManyToMany(cascade=CascadeType.ALL) @JsonIgnore
-	@JoinTable(name = Const.PORTAL_DOCUMENT,
+	@JoinTable(name = "portal_document",
 			joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
 			inverseJoinColumns = { @JoinColumn(name = "id_portal", referencedColumnName="id") })
 	public List<Portal> portals = new ArrayList<>();
 	@ManyToMany(cascade=CascadeType.REMOVE) @JsonIgnore
-	@JoinTable(name = Const.SUBJECT_DOCUMENT,
+	@JoinTable(name = "subject_document",
 		joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="id") })
-	public List<Taxonomy> taxonomies = new ArrayList<>();
+	public List<Subject> subjects = new ArrayList<>();
     public String landingPageUrl;
     public String documentUrl;
     public String sha256Hash;

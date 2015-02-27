@@ -1,32 +1,48 @@
-@(form: Form[Flag], user: User)
+@(flagForm: Form[Flag], user: User, id: Long)
+
+@import helper._
+@import bootstrap._
 
 @main("", user) {
 
    	<div class="page-header">
-    	<h1><a href="@routes.Flags.index()">Taxonomies > Flags > </a>Flag @form("name").value</h1>
+    	<h1><a href="@routes.FlagController.index()">Taxonomies > Flags > </a>Flag @flagForm("name").value</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
-	   @if(Flag.findById(Long.valueOf(form("id").value)) != null) {
-	   <li><a href="@routes.Flags.view(form("url").value)">View</a></li>
-	   }
+	   <li><a href="@routes.FlagController.view(id)">View</a></li>
 	   @if(user.hasRole("sys_admin")) {
-		   <li class="active"><a href="@routes.Flags.edit(form("url").value)">Edit</a></li>
+		   <li class="active"><a href="@routes.FlagController.edit(id)">Edit</a></li>
 	   }
 	</ul>
 
 	@warningmessage(flash)
-	@helper.form(action=routes.Flags.save) {
-		<input type="hidden" name="url" value="@form("url").value">
-		<input type="hidden" name="id" value="@form("id").value">
+	
+    @if(flagForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- flagForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+			
+	@helper.form(action=routes.FlagController.update(id)) {
+		<input type="hidden" name="id" value="@id">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
-				    <div class="col-sm-6">
-	              		<input class="form-control" name="name" id="inputName" value="@Flags.getGuiName(form("name").value)" type="text">
-					</div>
+					@inputText(flagForm("name"),
+						'_label -> "Name",
+					    'id -> "inputName",
+					    'class -> "form-control",
+					    'placeholder -> "Name"
+					)(FieldConstructor(genericMandatoryInput.f), lang)
 				</div>
 			</div>
      	</div>
@@ -34,25 +50,25 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-	               <label class="col-sm-6 control-label" for="inputDescription">Description</label>
-				    <div class="col-sm-6">
-	               		<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1">@form("description").value</textarea>
-					</div>
+					@textarea(field = flagForm("description"),
+		 				args = 'rows -> 1, 'cols -> 100,
+						'_label -> "Description (A description of this web site):",
+						'id -> "inputDescription",
+						'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)
 				</div>
 			</div>
      	</div>
      				          
 		@if(user.hasRole("sys_admin")) {
-		<div class="row padding-10 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">		
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
-					@if(Flag.findById(Long.valueOf(form("id").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
-					}
-		       </div>
+			<div class="row padding-10 pull-right">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="btn-group">		
+						<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
+			       </div>
+				</div>
 			</div>
-		</div>
 		}
 	}
 }

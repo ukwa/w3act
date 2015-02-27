@@ -1,18 +1,18 @@
-@(subject: Taxonomy, user: User) 
+@(subject: Subject, user: User) 
 
 @main("", user) {
 
 	<div class="page-header">
-		<h1><a href="@routes.Subjects.index()">Taxonomies > Subjects > </a>Subject @subject.name </h1>
+		<h1><a href="@routes.SubjectController.index()">Taxonomies > Subjects > </a>Subject @subject.name </h1>
 	</div>
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a
-			href="@routes.Subjects.view(subject.url)">View</a></li>
+			href="@routes.SubjectController.view(subject.id)">View</a></li>
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		<li><a href="@routes.Subjects.edit(subject.url)">Edit</a></li>
+		<li><a href="@routes.SubjectController.edit(subject.id)">Edit</a></li>
 		}
-		<li><a href="@routes.Subjects.sites(subject.url)">Targets</a></li>
+		<li><a href="@routes.SubjectController.sites(subject.id)">Targets</a></li>
 	</ul>
 
 		<div class="row padding-10">
@@ -31,8 +31,8 @@
 				<div class="form-group">
 	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
 				    <div class="col-sm-6">
-				    @if(subject.parent != null && subject.parent.length() > 0) { 
-		                @subject.parent
+				    @if(subject.parent != null) { 
+		                @subject.parent.name
 		            } else {
 		                None
 		            }
@@ -63,7 +63,7 @@
 				<div class="form-group">
 					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
 				    <div class="col-sm-6">
-		          		@subject.description
+		          		@Html(subject.description)
 					</div>
 				</div>
 			</div>

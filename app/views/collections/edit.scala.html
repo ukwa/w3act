@@ -1,4 +1,7 @@
-@(form: Form[DCollection], user: User, data :com.fasterxml.jackson.databind.JsonNode)
+@(collectionsForm: Form[models.Collection], user: User, id: Long, collectionData :com.fasterxml.jackson.databind.JsonNode)
+
+@import helper._
+@import bootstrap._
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -9,172 +12,130 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'collections'); 
 
-            showTree(@getJson(data));
-            
-            function showTree(data) {
-             	$("#tree3").dynatree({
-                	checkbox: true,
-                	selectMode: 2,
-                	children: data,
-    			    onActivate: function(node) { 
-    			        if( node.data.url ){
-    			            // use href to change the current frame:
-    			            window.location.href = node.data.url; 
-    			        }
-    			    },				    
-                	onSelect: function(select, node) {
-                  		// Get a list of all selected nodes, and convert to a key array:
-                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                    		return node.data.key;
-                  		});
-                  		document.getElementById('treeKeys').value = selKeys.join(", ");
-                  		// Get a list of all selected TOP nodes
-                  		var selRootNodes = node.tree.getSelectedNodes(true);
-                  		// ... and convert to a key array:
-                  		var selRootKeys = $.map(selRootNodes, function(node){
-                    		return node.data.key;
-                  		});
-                	}
-             	});
-            }
+			showTreeParent(@getJson(collectionData), "#collectionTree", "collectionSelect");
+			
 		});
 	</script>
 }
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 
-@main("", user, scripts) {
-    
-   	<div class="page-header">
-	    <h1><a href="@routes.Collections.index()">Taxonomies > Collections > </a>Collection @form("title").value</h1>
-    </div>
-    
-	<ul class="nav nav-tabs">
-	    @if(DCollection.findById(Long.valueOf(form("nid").value)) != null) {
-		<li><a href="@routes.Collections.view(form("url").value)">View</a></li>
-		}
-		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.Collections.edit(form("url").value)">Edit</a></li>
-		}
-	    @if(DCollection.findById(Long.valueOf(form("nid").value)) != null) {
-		<li><a href="@routes.Collections.sites(form("url").value)">Targets</a></li>
-		}
-	</ul>
-	
+	@main("", user, scripts) {
+	    
+	   	<div class="page-header">
+		    <h1><a href="@routes.CollectionController.index()">Taxonomies > Collections > </a>Collection @collectionsForm("title").value</h1>
+	    </div>
+	    
+		<ul class="nav nav-tabs">
+			<li><a href="@routes.CollectionController.view(id)">View</a></li>
+			@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+			   <li class="active"><a href="@routes.CollectionController.edit(id)">Edit</a></li>
+			}
+			<li><a href="@routes.CollectionController.sites(id)">Targets</a></li>
+		</ul>
+		
 	    @warningmessage(flash)
-		@helper.form(action=routes.Collections.save) {
-   		<input type="hidden" name="url" value="@form("url").value">
-   	    <input type="hidden" name="nid" value="@form("nid").value">
-
-		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Title <font color="red">*</font></label>
-				    <div class="col-sm-6">
-						<input class="form-control" name="title" id="title" value="@form("title").value" type="text">
-					</div>
-				</div>
-			</div>
-     	</div>
-     	
-   		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-	              	<label for="suggestions-collections" class="col-sm-6 control-label">Parent</label>
-				    <div class="col-sm-6">
-	    			  @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
-					  <div id="tree3"></div>
-					  <input type="hidden" id="treeKeys" name="treeKeys" value="@form("parent").value">
-					  } else {
-					        @if(form("url").value != null) {
-								@form("parent").value
-							} else {
-							    none
-							}
-     	              }	   
-					</div>
-				</div>
-			</div>
-     	</div>	   
-
-		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-   		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label class="col-sm-6 control-label">Publish</label>
-				    <div class="col-sm-6">
-		                @if(form("publish").value != null && form("publish").value == "true") {             
-			                <input type="checkbox" name="publish" value="true" checked/>
-		                } else {
-			                <input type="checkbox" name="publish" value="true"/>
-		                }
-					</div>
-				</div>
-			</div>
-     	</div>		     				     	
-		}     	
-		
-		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
-				    <div class="col-sm-6">
-		          		<textarea class="form-control" name="summary" id="inputDescription" value="@form("summary").value" cols="100" rows="1">@form("summary").value</textarea>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<!-- div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-     			
-     			<div class="padding-10">
-	     			<a data-toggle="collapse" data-parent="#accordion" href="#parent-panel">
-						<span id="toggle">&#9660; Parent Terms &#9650;</span>
-					</a>
-				</div>
-								
-				<div id="accordion">
-					<div id="parent-panel" class="panel-collapse collapse">
-						<ul>
-		            		@for(curParent <- DCollection.getParentsByUrl(form("url").value)) {
-		            			<li><a class="brand" href="@routes.Collections.view(curParent.url)">(@curParent.nid) &nbsp; @curParent.title</a></li>
-				            }
-			            </ul>
-					</div>
-				</div>
-	    	</div>
-    	</div-->
-    	    	
-		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-     			<div class="form-group">
-					<label for="inputRevision" class="col-sm-6 control-label">Revision log message</label>
-				    <div class="col-sm-6">
-						<textarea class="form-control text-full form-textarea" name="revision" id="inputRevision" cols="100" rows="1">@form("revision").value</textarea>
-					</div>
-				</div>
-			</div>
-		</div>
-    	
-    	@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		<div class="row padding-10 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
-				    @if(DCollection.findById(Long.valueOf(form("nid").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
+	    
+        @if(collectionsForm.hasErrors) {
+			<div class="padding-20">
+				<div class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					@for(entry <- collectionsForm.errors.entrySet){
+						@for(error <- entry.getValue){
+							@error.message<br />
+						}
 					}
-		       </div>
+				</div>
 			</div>
-		</div>
+		}
+			    
+		@helper.form(action=routes.CollectionController.update(id)) {
+	   	    <input type="hidden" name="id" value="@id">
+
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@inputText(collectionsForm("name"),
+							'_label -> "Name",
+						    'id -> "title",
+						    'class -> "form-control",
+						    'placeholder -> "Name"
+						)(FieldConstructor(genericMandatoryInput.f), lang)
+					</div>
+				</div>
+	     	</div>
+	     	
+	   		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+		              	<label for="suggestions-collections" class="col-sm-6 control-label">Parent</label>
+					    <div class="col-sm-6">
+							@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+								<div id="collectionTree"></div>
+						  		<input type="hidden" id="collectionSelect" name="collectionSelect" value="@collectionsForm("parentName").value">
+							} else {
+								@collectionsForm("parent.name").value
+	     	              	}	   
+						</div>
+					</div>
+				</div>
+	     	</div>	   
+
+			@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+		   		<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							@helper.checkbox(collectionsForm("publish"), 
+								args = 
+								'_label -> "Publish" 
+							)(FieldConstructor(genericInput.f), lang)
+						</div>
+					</div>
+		     	</div>		     				     	
+			}     	
+		
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@textarea(field = collectionsForm("description"),
+			 				args = 'rows -> 1, 'cols -> 100,
+							'_label -> "Description",
+							'id -> "inputDescription",
+							'class -> "form-control"
+						)(FieldConstructor(genericInput.f), lang)						
+					</div>
+				</div>
+			</div>
+		
+			<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+	     			<div class="form-group">
+						@textarea(field = collectionsForm("revision"),
+			 				args = 'rows -> 1, 'cols -> 100,
+							'_label -> "Revision log message",
+							'id -> "inputRevision",
+							'class -> "form-control"
+						)(FieldConstructor(genericInput.f), lang)						
+					</div>
+				</div>
+			</div>
+    	
+	    	@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+				<div class="row padding-10 pull-right">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="btn-group">
+							<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+							<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
+				       </div>
+					</div>
+				</div>
+			}
 		}
 	}
-}
 } else {
-	@infomessage.render("Access Denied for URL @routes.Collections.index()/edit")
+	@infomessage.render("Access Denied for URL @routes.CollectionController.index()/edit")
 }
 

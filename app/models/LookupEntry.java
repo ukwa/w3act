@@ -1,14 +1,14 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.Transient;
 
 import play.Logger;
 import play.db.ebean.Model;
@@ -18,32 +18,22 @@ import com.avaje.ebean.ExpressionList;
 
 @Entity
 @Table(name = "lookup_entry")
-public class LookupEntry extends Model
-{
+public class LookupEntry extends ActModel {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = -2250699575468302989L;
 
-	@Id 
-    public Long id;
-	
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-
     /**
      * This field contains stored lookup URLs.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String name;
 
     /**
      * The type of lookup can be e.g. WHOIS, GEOIP ...
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String ttype;
     
     /**
@@ -51,9 +41,13 @@ public class LookupEntry extends Model
      */
     public Boolean scopevalue;
     
-    @Version
-    public Timestamp lastUpdate;
-
+	@ManyToOne
+	@JoinColumn(name = "target_id")
+	public Target target;
+	
+    @Transient
+    public Integer totalRows;
+    
     public static final Model.Finder<Long, LookupEntry> find = new Model.Finder<Long, LookupEntry>(Long.class, LookupEntry.class);
 
     public String getName()
@@ -92,7 +86,7 @@ public class LookupEntry extends Model
      * @return lookup entry name
      */
     public static LookupEntry findBySiteName(String name) {
-    	Logger.info("findBySiteName() name: " + name);
+    	Logger.debug("findBySiteName() name: " + name);
     	LookupEntry res = new LookupEntry();
     	
 		List<LookupEntry> list = new ArrayList<LookupEntry>();
@@ -120,11 +114,11 @@ public class LookupEntry extends Model
      */
     public static boolean getValueByUrl(String url) {
     	boolean res = false;
-    	Logger.info("getValueByUrl() url: " + url);
+    	Logger.debug("getValueByUrl() url: " + url);
     	LookupEntry resLookupEntry = findBySiteName(url);    	
 //    	Logger.debug("getValueByUrl() resLookupEntry: " + resLookupEntry);
     	if (resLookupEntry != null && resLookupEntry.scopevalue != null) {
-        	Logger.info("getValueByUrl() resLookupEntry.scopevalue: " + resLookupEntry.scopevalue);
+        	Logger.debug("getValueByUrl() resLookupEntry.scopevalue: " + resLookupEntry.scopevalue);
     		res = resLookupEntry.scopevalue;
     	}
     	return res;
@@ -140,16 +134,10 @@ public class LookupEntry extends Model
 		List<LookupEntry> res = new ArrayList<LookupEntry>();
         ExpressionList<LookupEntry> ll = find.where().icontains(Const.NAME, name);
     	res = ll.findList();
-    	Logger.info("LookupEntry filterByName res size: " + res.size());
+    	Logger.debug("LookupEntry filterByName res size: " + res.size());
 		return res;
 	}
  
-    public static LookupEntry findLatest()
-    {
-    	Logger.info("findLatest()");
-        return find.where().orderBy("lastUpdate desc").setMaxRows(1).findUnique();
-    }
-   
    /**
      * Retrieve all lookup entry objects.
      */
@@ -160,5 +148,4 @@ public class LookupEntry extends Model
     public String toString() {
         return "LookupEntry(" + url + ")" + ", id:" + id + ", scopevalue: " + scopevalue;
     }
-    
 }

@@ -9,8 +9,8 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context") + 'permission';
-			applySearch(context); 
+			context = '@play.api.Play.current.configuration.getString("application.context")'
+			applySearch(context, 'permissions'); 
 		});
 	</script>
 }
@@ -18,22 +18,21 @@
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.CrawlPermissions.index()">Archivist Tasks > </a>Communication Logging</h1>
+	    <h1><a href="@routes.CrawlPermissionController.index()">Archivist Tasks > </a>Communication Logging</h1>
 	</div>
 	
     <ul class="nav nav-tabs">
-	   <li><a href="@routes.CrawlPermissions.index()">Permissions Queue</a></li>
-	   <li><a href="@routes.CrawlPermissions.templates()">Mail Templates</a></li> 
-	   <li><a href="@routes.CrawlPermissions.contactpersons()">Contact Persons</a></li> 
-	   <li><a href="@routes.CrawlPermissions.licences()">License Templates</a></li> 
-	   <!-- li><a href="@routes.CrawlPermissions.refusals()">Refusals</a></li--> 
-	   <li class="active"><a href="@routes.CrawlPermissions.communicationLogs()">Communication Logging</a></li> 
+	   <li><a href="@routes.CrawlPermissionController.index()">Permissions Queue</a></li>
+	   <li><a href="@routes.MailTemplateController.index()">Mail Templates</a></li> 
+	   <li><a href="@routes.ContactPersonController.index()">Contact Persons</a></li> 
+	   <li><a href="@routes.LicenseController.indexFilter()">License Templates</a></li> 
+	   <li class="active"><a href="@routes.CommunicationLogController.index()">Communication Logging</a></li> 
 	</ul>
 		
     <article class="permissions">
 
 		<div id="forms">
-			@helper.form(action=routes.CommunicationLogs.search, 'class -> "form-inline") {
+			@helper.form(action=routes.CommunicationLogController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="text" class="form-control lookup-form-control" name="name" placeholder="Enter communication log Name" value="@searchstr" id="search-query">
 		   			<span class="input-group-btn">
@@ -91,12 +90,12 @@
 			<tbody>
 			@logs.map { log =>		              
 				<tr>
-					<td><a href="@routes.CommunicationLogs.view(log.url)">@log.name</a></td>
+					<td><a href="@routes.CommunicationLogController.view(log.id)">@log.name</a></td>
 					<td>@log.date</td>
 					<td>@log.ttype</td>
-					<td>@User.findByUrl(log.curator).name</td>
-					@if(log.permission != null && log.permission.length() > 0) {
-					<td>@CrawlPermission.showByUrl(log.permission).name</td>
+					<td>@log.user.name</td>
+					@if(log.crawlPermission != null) {
+					<td>@log.crawlPermission.name</td>
 					} else {
 					<td></td>
 					}

@@ -1,4 +1,7 @@
-@(form: Form[Taxonomy], user: User, data :com.fasterxml.jackson.databind.JsonNode)
+@(subjectForm: Form[models.Subject], user: User, id: Long, subjectData :com.fasterxml.jackson.databind.JsonNode)
+
+@import helper._
+@import bootstrap._
 
 @getJson(data: com.fasterxml.jackson.databind.JsonNode) = @{
 	Html(data.toString)
@@ -9,37 +12,12 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'subjects'); 
 
-            showTree(@getJson(data));
-            
-            function showTree(data) {
-             	$("#tree3").dynatree({
-                	checkbox: true,
-                	selectMode: 2,
-                	children: data,
-    			    onActivate: function(node) { 
-    			        if( node.data.url ){
-    			            // use href to change the current frame:
-    			            window.location.href = node.data.url; 
-    			        }
-    			    },				    
-                	onSelect: function(select, node) {
-                  		// Get a list of all selected nodes, and convert to a key array:
-                  		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
-                    		return node.data.key;
-                  		});
-                  		document.getElementById('treeKeys').value = selKeys.join(", ");
-                  		// Get a list of all selected TOP nodes
-                  		var selRootNodes = node.tree.getSelectedNodes(true);
-                  		// ... and convert to a key array:
-                  		var selRootKeys = $.map(selRootNodes, function(node){
-                    		return node.data.key;
-                  		});
-                	}
-             	});
-            }
+			showTreeParent(@getJson(subjectData), "#subjectTree", "subjectSelect");
+
+
 		});
 	</script>
 }
@@ -49,32 +27,45 @@
 @main("", user, scripts) {
     
    	<div class="page-header">
-	    <h1><a href="@routes.Subjects.index()">Taxonomies > Subjects > </a>Subject @form("name").value</h1>
+	    <h1><a href="@routes.SubjectController.index()">Taxonomies > Subjects > </a>Subject @subjectForm("name").value</h1>
     </div>
     
 	<ul class="nav nav-tabs">
-	    @if(Taxonomy.findById(Long.valueOf(form("tid").value)) != null) {
-		<li><a href="@routes.Subjects.view(form("url").value)">View</a></li>
-		}
+		<li><a href="@routes.SubjectController.view(id)">View</a></li>
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.Subjects.edit(form("url").value)">Edit</a></li>
+		   <li class="active"><a href="@routes.SubjectController.edit(id)">Edit</a></li>
 		}
-		<li><a href="@routes.Subjects.sites(form("url").value)">Targets</a></li>
+		<li><a href="@routes.SubjectController.sites(id)">Targets</a></li>
 	</ul>
 	
-	    @warningmessage(flash)
-		@helper.form(action=routes.Subjects.save) {
-   		<input type="hidden" name="url" value="@form("url").value">
-   	    <input type="hidden" name="tid" value="@form("tid").value">
-        <input type="hidden" name="ttype" value="@form("ttype").value">
+    @warningmessage(flash)
+
+       @if(subjectForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- subjectForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+		    
+	@helper.form(action=routes.SubjectController.update(id)) {
+		
+   	    <input type="hidden" name="id" value="@id">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
-				    <div class="col-sm-6">
-						<input class="form-control" name="name" id="name" value="@form("name").value" type="text">
-					</div>
+					@inputText(subjectForm("name"),
+						'_label -> "Name",
+					    'id -> "title",
+					    'class -> "form-control",
+					    'placeholder -> "Name"
+					)(FieldConstructor(genericMandatoryInput.f), lang)
 				</div>
 			</div>
      	</div>
@@ -84,64 +75,35 @@
 				<div class="form-group">
 	              	<label for="subjects" class="col-sm-6 control-label">Parent</label>
 				    <div class="col-sm-6">
-					  <div id="tree3"></div>
-					  <input type="hidden" id="treeKeys" name="treeKeys" value="@form("parent").value">
+					  <div id="subjectTree"></div>
+					  <input type="hidden" id="subjectSelect" name="subjectSelect" value="@subjectForm("parentName").value">
 					</div>
 				</div>
 			</div>
      	</div>	   
 
-     	
-   		<!-- div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-	              	<label for="tags" class="col-sm-6 control-label">Parent</label>
-				    <div class="col-sm-6">
-		                @if((form("parent").value == null || form("parent").value.length() == 0) 
-		                	&& Taxonomy.findById(Long.valueOf(form("tid").value)) != null) {
-		                	None
-		                } else {
-						<select name="parent" id="parent" class="form-control">
-			                @for(subject <- Taxonomy.findListByTypeAndParentSorted("subject","")) {
-				                @if(form("parent").value != null 
-				                	&& Taxonomy.findByName(form("parent").value) != null 
-				                	&& Taxonomy.findByName(form("parent").value).url.equals(subject.url)) {
-				                	<option selected>@subject.name</option>
-				                } else {
-				                	<option>@subject.name</option>
-				                }
-			                }
-						</select>
-		                }				    
-					</div>
-				</div>
-			</div>
-     	</div-->		   
-
 		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-   		<div class="row padding-10">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label class="col-sm-6 control-label">Publish</label>
-				    <div class="col-sm-6">
-		                @if(form("publish").value != null && form("publish").value == "true") {             
-			                <input type="checkbox" name="publish" value="true" checked/>
-		                } else {
-			                <input type="checkbox" name="publish" value="true"/>
-		                }
+	   		<div class="row padding-10">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="form-group">
+						@helper.checkbox(subjectForm("publish"), 
+							args = 
+							'_label -> "Publish" 
+						)(FieldConstructor(genericInput.f), lang)
 					</div>
 				</div>
-			</div>
-     	</div>		     				     	
+	     	</div>		     				     	
 		}     	
 		
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
-				    <div class="col-sm-6">
-		          		<textarea class="form-control" name="description" id="description" value="@form("description").value" cols="100" rows="1">@form("description").value</textarea>
-					</div>
+					@textarea(field = subjectForm("description"),
+		 				args = 'rows -> 1, 'cols -> 100,
+						'_label -> "Description",
+						'id -> "inputDescription",
+						'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)		
 				</div>
 			</div>
 		</div>
@@ -150,10 +112,8 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
-				    @if(Taxonomy.findById(Long.valueOf(form("tid").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
-					}
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Delete @id Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>
@@ -161,6 +121,6 @@
 	}
 }
 } else {
-	@infomessage.render("Access Denied for URL @routes.Subjects.index()/edit")
+	@infomessage.render("Access Denied for URL @routes.SubjectController.index()/edit")
 }
 

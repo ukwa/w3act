@@ -1,22 +1,20 @@
 #### Production values
 application.name=w3act
 application.context="/act-ddhapt/"
+application.langs="en"
 
 # Secret key
-# ~~~~~
 # The secret key is used to secure cryptographics functions.
 # If you deploy your application to several instances be sure to use the same key!
 #
 application.secret=${?APPLICATION_SECRET}
 
 # Database configuration
-# ~~~~~ 
 db.default.logStatements=true
 db.default.driver=org.postgresql.Driver
 db.default.url="postgres://training:training@127.0.0.1/w3act"
 
 # Ebean configuration
-# ~~~~~
 ebean.default="models.*"
 
 # Evolutions
@@ -32,29 +30,29 @@ logger.play=WARN
 logger.application=DEBUG
 
 # Data import
-# ~~~~~
 application.data.import=false
 
 # SMTP connection for email sending
-
 host=juno.bl.uk
 mail.user=""
 mail.password=""
 from="web-archivist@bl.uk"
 port=25
 
-
 # Drupal connection
 drupal_user=""
 drupal_password=""
 
 # Host details
-server_name=www.webarchive.org.uk
+server_name="https://www.webarchive.org.uk"
+
+application.wayback.url="http://crawler03.bl.uk:8080/wayback"
+application.wayback.query.path="/xmlquery.jsp?url="
 
 
 #The queue endpoint
-queue_host=www.webarchive.org.uk
-queue_port=5762
+queue_host=crawler03.bl.uk
+queue_port=5672
 queue_name=w3actqueue
 routing_key=w3actroutingkey
 exchange_name=w3actexchange
@@ -64,3 +62,8 @@ wayback_url="http://opera.bl.uk:8080/wayback/"
 
 #Pii endpoint
 pii_url="http://localhost:9000/act-ddhapt-dev/pii/vdc?arks=3"
+
+ehcacheplugin=disabled
+
+use.accounts=false
+admin.default.email="wa-sysadm@bl.uk"

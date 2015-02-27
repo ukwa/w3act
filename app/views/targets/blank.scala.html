@@ -1,9 +1,10 @@
 @(targetForm: Form[Target], user: User)
+
 @import helper._
 
 @main("", user) {
 
-	@helper.form(action=routes.Targets.saveBlank) {
+	@helper.form(action=routes.TargetController.saveBlank) {
         
        	@if(flash.contains("success")) {
 			<div class="alert alert-success">@flash.get("success")</div>
@@ -26,5 +27,4 @@
         </div>
         
     }
-    
 }

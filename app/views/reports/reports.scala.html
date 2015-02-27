@@ -1,4 +1,4 @@
-@(title: String, user: User, permissions: List[Target], permissionsGranted: List[Target], permissionsRefused: List[Target], curatorUrl: String, organisationUrl: String, startDate: String, endDate: String, requestType: String)
+@(title: String, user: User, permissions: List[Target], permissionsGranted: List[Target], permissionsRefused: List[Target], curatorId: Long, organisationId: Long, startDate: String, endDate: String, requestType: String, users: List[User], organisations: List[Organisation], requestTypes: Array[uk.bl.Const.RequestType])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -9,8 +9,15 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context") + 'permission';
-			applySearch(context); 
+			context = '@play.api.Play.current.configuration.getString("application.context")'
+			applySearch(context, 'permissions'); 
+			
+			$(document).on( 'shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
+				var id = $(this).attr('id');
+				console.log(id); // activated tab
+ 				$('#tabStatus').val(id);
+			})
+			
 		});
 	</script>
 }
@@ -20,32 +27,29 @@
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.Reports.index()">Targets > </a>Reports</h1>
+	    <h1><a href="@routes.ReportController.index()">Targets > </a>Reports</h1>
 	</div>
 	
     <ul class="nav nav-tabs">
-	   <!-- li><a href="@routes.Reports.summary()">Summary</a></li-->
-	   <li class="active"><a href="@routes.Reports.openLicences()">Open UKWA licences</a></li> 
-	   <li><a href="@routes.Reports.recordCreation()">Target creation</a></li> 
-	   <li><a href="@routes.Reports.qa()">QA</a></li> 
+	   <!-- li><a href="@routes.ReportController.summary()">Summary</a></li-->
+	   <li class="active"><a href="@routes.ReportController.openLicences()">Open UKWA licences</a></li> 
+	   <li><a href="@routes.ReportController.recordCreation()">Target creation</a></li> 
+	   <!-- <li><a href="@routes.ReportController.qa()">QA</a></li> --> 
 	</ul>
 		
 	<div class="tab-content padding-20">          
-		<ul class="nav nav-pills">
-	        <li class="active"><a href="#requested" data-toggle="tab">Requested</a></li>
-	        <li><a href="#granted" data-toggle="tab">Granted</a></li>
-		    <li><a href="#refused" data-toggle="tab">Refused</a></li>
+		<ul class="nav nav-pills" id="crawlTabs">
+	        <li class="active"><a href="#requested" data-toggle="tab" id="tabRequested">Requested</a></li>
+	        <li><a href="#granted" data-toggle="tab" id="tabGranted">Granted</a></li>
+		    <li><a href="#refused" data-toggle="tab" id="tabRefused">Refused</a></li>
 	  	</ul>
 	</div>
 	
     <article class="reports">
 
-		@helper.form(action=routes.Reports.search) {
+		@helper.form(action=routes.ReportController.search) {
 		<div id="forms">
-			<div class="input-group">
-				<input type="hidden" name="query_curator" value="@curatorUrl">
-				<input type="hidden" name="query_organisation" value="organisationUrl">
-   			</div>				
+			<input type="hidden" name="status" value="requested" id="tabStatus">
 				<div class="padding-20">
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
@@ -58,13 +62,13 @@
 									<div class="form-group">
 										<label for="curator" class="col-sm-6 control-label">Filter by curator</label>
 									    <div class="col-sm-6">
-											<select name="author" class="form-control target-form-control" id="curator">
-												<option>None</option>
-												@for(curator <- User.findAll()) {
-													@if(curatorUrl != null && !curatorUrl.equals("") && curatorUrl.equals(curator.url)) {
-														<option selected>@curator.name</option>
+											<select name="curator" class="form-control target-form-control" id="curator">
+												<option value="">None</option>
+												@for(curator <- users) {
+													@if(curator.id == curatorId) {
+														<option value="@curator.id" selected>@curator.name</option>
 													} else {
-														<option>@curator.name</option>
+														<option value="@curator.id">@curator.name</option>
 													}
 												}
 											</select>
@@ -75,16 +79,16 @@
 									<div class="form-group">					
 						            	<label for="organisation" class="col-sm-6 control-label">Filter by nominating organisation</label>
 						            	<div class="col-sm-6">
-											<select name="field_nominating_organisation" class="form-control target-form-control" id="organisation">
-									        	<option>All Agencies</option>
-									            	@for(organisation <- Organisation.findAllSorted()) {
-							                 		  		@if(organisationUrl != null && organisationUrl.equals(organisation.url)) {
-								                			<option selected>@organisation.title</option>
-								                		} else {
-								                			<option>@organisation.title</option>
-								                		}
-									                }
-											</select>
+											<select name="organisation" class="form-control target-form-control" id="organisation">
+									        	<option value="">All Agencies</option>
+								            	@for(organisation <- organisations) {
+						                 		  		@if(organisation.id == organisationId) {
+							                			<option value="@organisation.id" selected>@organisation.title</option>
+							                		} else {
+							                			<option value="@organisation.id">@organisation.title</option>
+							                		}
+								                }											
+								 			</select>
 										</div>
 						         	</div>
 								</div>
@@ -95,7 +99,7 @@
 											<label class="col-sm-6 control-label">Filter by time period from </label>
 										    <div class="col-sm-6">
 										    	<div class="input-group">
-						 							<input type="text" name="field_crawl_start_date" value="@startDate" size="30" maxlength="2048" class="form-control  target-form-control" id="start-date"/>
+						 							<input type="text" name="startDate" value="@startDate" size="30" maxlength="2048" class="form-control  target-form-control" id="start-date"/>
 						 						</div>
 					                		</div>
 										</div>
@@ -106,7 +110,7 @@
 											<label class="col-sm-6 control-label">to </label>
 										    <div class="col-sm-6">
 										    	<div class="input-group">
-						 							<input type="text" name="field_crawl_end_date" value="@endDate" size="30" maxlength="2048" class="form-control target-form-control" id="end-date"/>
+						 							<input type="text" name="endDate" value="@endDate" size="30" maxlength="2048" class="form-control target-form-control" id="end-date"/>
 						 						</div>
 					                		</div>
 										</div>
@@ -119,13 +123,14 @@
 							              	<label for="request" class="col-sm-6 control-label">Request type </label>
 										    <div class="col-sm-6">
 												<select name="request" id="request" class="form-control">
-									                @for(request <- CrawlPermission.getAllRequestTypes()) {
-										                @if(request.equals(requestType)) {
-										                	<option selected>@request</option>
-										                } else {
-										                	<option>@request</option>
-										                }
-									                }
+													<option value="">None</option>
+									                @for(requestType <- requestTypes) {
+						                 		  		@if(requestType.name.equals(requestType)) {
+									                		<option value="@requestType.name" selected>@requestType.getValue</option>
+								                		} else {
+									                		<option value="@requestType.name">@requestType.getValue</option>
+								                		}
+									                }												
 												</select>
 											</div>
 										</div>
@@ -169,17 +174,17 @@
 						@permissions.map { target =>		              
 							<tr>
 								<td>
-								    @if(!target.title.equals("none")) {					                	
-					                	<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+								    @if(target.title != null || target.title.length() > 0) {					                	
+					                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
 					                } else {
 					                    none
 					                }
 								</td>
 								<td>
-				                	<a class="brand" href="@target.field_url">@target.field_url</a>					                
+				                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl()</a>					                
 								</td>
-								@if(target.url != null && target.created != null) {
-									<td>@Target.getDateAsString(target.created)</td>
+								@if(target.url != null && target.createdAt != null) {
+									<td>@target.createdAt</td>
 								} else {
 									<td></td>
 								}		                  
@@ -191,7 +196,6 @@
 			</div>
 			
 			<div class="tab-pane padding-20 fade" id="granted">
-				<input type="hidden" name="status" value="granted">
 			   	<div class="row padding-20">
 					<table class="table table-hover">
 						<thead>
@@ -206,16 +210,16 @@
 							<tr>
 								<td>
 								    @if(!target.title.equals("none")) {					                	
-					                	<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+					                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
 					                } else {
 					                    none
 					                }
 								</td>
 								<td>
-				                	<a class="brand" href="@target.field_url">@target.field_url</a>					                
+				                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl</a>					                
 								</td>
-								@if(target.url != null && target.created != null) {
-									<td>@Target.getDateAsString(target.created)</td>
+								@if(target.url != null && target.createdAt != null) {
+									<td>@target.createdAt</td>
 								} else {
 									<td></td>
 								}		                  
@@ -241,16 +245,18 @@
 							<tr>
 								<td>
 								    @if(!target.title.equals("none")) {					                	
-					                	<a class="brand" href="@routes.Targets.view(target.url)">@target.title</a>
+					                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
 					                } else {
 					                    none
 					                }
 								</td>
 								<td>
-				                	<a class="brand" href="@target.field_url">@target.field_url</a>					                
+									@for(fieldUrl <- target.fieldUrls) {
+				                		<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
+				                	}					                
 								</td>
-								@if(target.url != null && target.created != null) {
-									<td>@Target.getDateAsString(target.created)</td>
+								@if(target.url != null && target.createdAt != null) {
+									<td>@target.createdAt</td>
 								} else {
 									<td></td>
 								}		                  
@@ -267,6 +273,6 @@
 	</article>
 }
 } else {
-	@infomessage.render("Access Denied for URL @routes.Reports.index()/list")
+	@infomessage.render("Access Denied for URL @routes.ReportController.index()/list")
 }
 

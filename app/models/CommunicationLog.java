@@ -1,14 +1,15 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -16,6 +17,7 @@ import uk.bl.Const;
 import uk.bl.api.Utils;
 
 import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class supports the management of logging communications occurring
@@ -23,73 +25,51 @@ import com.avaje.ebean.ExpressionList;
  */
 @Entity
 @Table(name = "communication_log")
-public class CommunicationLog extends Model
-{
-
-	/**
-	 * file id
-	 */
-	private static final long serialVersionUID = -2157699575463302989L;
-
-	@Id 
-    public Long id;
-   
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
+public class CommunicationLog extends ActModel {
 	
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6095384513958569564L;
+
+	/**
      * The name of the communication.
      */
-    @Required
-    @Column(columnDefinition = "TEXT")
+    @Required(message="Name is required")
+    @Column(columnDefinition = "text")
     public String name;
-    
-    /**
-     * The name of the curator with whom the communication took place.
-     * This name should be auto-populated with name of logged-in user.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String curator;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	public User user;
     
     /**
      * The date of communication in format (dd/mm/yyyy).
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String date;
     
     /**
      * Communication type: Email, Phone, Letter, Web Form, Contact Detail Request, Other.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String ttype;
     
-    /**
-     * This field is for associated crawl permission ID.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String permission;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "crawlPermission_id")
+	public CrawlPermission crawlPermission;
     
     /**
      * Allows the addition of further notes regarding communication.
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String notes;
-
-    @Version
-    public Timestamp lastUpdate;
 
     public static final Model.Finder<Long, CommunicationLog> find = new Model.Finder<Long, CommunicationLog>(Long.class, CommunicationLog.class);
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public static CommunicationLog findByName(String name)
-    {
+    public static CommunicationLog findByName(String name) {
         return find.where()
                    .eq("name",
                        name)
@@ -159,26 +139,35 @@ public class CommunicationLog extends Model
      * like creation of permission, date when permission was queued, send and granted
      * or refused. 
      * @param name The title of the log entry
-     * @param permission The crawl permission
+     * @param crawlPermission The crawl permission
      * @param user The responsible user
      * @param notes Additional information about log entry like save, update, remove
      */
-    public static CommunicationLog logHistory(String name, String permission, String user, String notes) {
+    public static CommunicationLog logHistory(String name, CrawlPermission crawlPermission, User user, String notes) {
         CommunicationLog log = new CommunicationLog();
-        log.id = Utils.createId();
-        log.url = Const.ACT_URL + log.id;
+//        log.id = Utils.INSTANCE.createId();
+//        log.url = Const.ACT_URL + log.id;
 //        log.curator = User.findByEmail(request().username()).url; 
-        log.curator = user;
+        log.user = user;
         log.ttype = Const.CommunicationLogTypes.OTHER.name();
-        log.date = Utils.getCurrentDate();
+        log.date = Utils.INSTANCE.getCurrentDate();
         log.name = name;
-        log.permission = permission;
+        log.crawlPermission = crawlPermission;
         log.notes = notes;
        	return log;
     }
     
     public String toString() {
         return "CommunicationLog(" + name + ")" + ", id:" + id;
-    }    
+    }
+    
+    public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(CommunicationLog c: find.all()) {
+            options.put(c.id.toString(), c.name);
+        }
+        return options;
+    }
+
 
 }

@@ -1,0 +1,93 @@
+@(refusalForm: Form[PermissionRefusal], user: User, refusalTypes: Map[String,String])
+
+@import helper._
+@import bootstrap._
+
+@main("", user) {
+
+   	<div class="page-header">
+	    <h1><a href="@routes.PermissionRefusalController.indexFilter()">Archivist Tasks > Permission Refusals ></a>New Refusal</h1>
+	</div>
+
+    @warningmessage(flash)
+    
+       @if(refusalForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- refusalForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+	@helper.form(action=routes.PermissionRefusalController.save()) {
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(refusalForm("name"),
+						'_label -> "Name",
+					    'id -> "inputName",
+					    'class -> "form-control",
+					    'placeholder -> "Name"
+					)(FieldConstructor(genericMandatoryInput.f), lang)
+				</div>
+			</div>
+     	</div>
+     	
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(refusalForm("date"),
+						'_label -> "Date",
+					    'id -> "refusal-date",
+					    'type -> "date",
+					    'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)
+				</div>
+			</div>
+     	</div>	     	
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@select(field = refusalForm("ttype"), options = options(refusalTypes), 
+			                args = 
+			                'class -> "form-control",
+			                '_label -> "Type", 
+			                '_showConstraints -> false
+		            )(FieldConstructor(genericInput.f), lang)				
+				</div>
+			</div>
+     	</div>		   
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@textarea(field = refusalForm("reason"),
+		 				args = 'rows -> 1, 'cols -> 100,
+						'_label -> "Reason",
+						'id -> "reason",
+						'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)					
+				</div>
+			</div>
+     	</div>
+			          
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+		</div>
+
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">		
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+		       </div>
+			</div>
+		</div>
+	}
+}
+

@@ -1,0 +1,26 @@
+@(email: String)
+
+
+@import helper._
+
+@script = {
+}
+
+@style = {
+}
+    
+@main("", null, script, style) {
+
+   	<div class="page-header">
+	    <h1>Password Reset</h1>
+	</div>  
+
+	@warningmessage(flash)
+	
+ 	@email has been successfully reset
+ 	 
+    <div class="form-actions">
+        <a href="@routes.ApplicationController.index" class="btn">Back to Main Page</a>
+    </div>
+
+}

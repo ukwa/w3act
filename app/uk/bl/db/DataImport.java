@@ -2,36 +2,37 @@ package uk.bl.db;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
+import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
+
+import models.Collection;
 import models.ContactPerson;
-import models.DCollection;
-import models.Document;
 import models.Flag;
 import models.Instance;
-import models.JournalTitle;
 import models.MailTemplate;
 import models.Organisation;
 import models.Permission;
 import models.Role;
+import models.Subject;
 import models.Tag;
 import models.Target;
 import models.Taxonomy;
+import models.TaxonomyType;
 import models.User;
 
 import com.avaje.ebean.Ebean;
 
-import controllers.Organisations;
 import play.Logger;
 import play.libs.Yaml;
 import uk.bl.Const;
 import uk.bl.api.JsonUtils;
 import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
-import uk.bl.crawling.Crawler;
 
 public enum DataImport {
 
@@ -39,274 +40,230 @@ public enum DataImport {
 
 	public void insert(boolean importInstances) {
 		
-		//List<Object> allTaxonomies2 = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY);
-//        List<Taxonomy> cleanedTaxonomies = cleanUpTaxonomies(allTaxonomies);
-		// store taxonomies in DB
-        //Ebean.save(allTaxonomies2);
-		
-        if(Ebean.find(User.class).findRowCount() == 0) {
-            try {
-                Logger.info("loading roles, permissions and users from configuration ...");
-                @SuppressWarnings("unchecked")
-				Map<String,List<Object>> allusers = (Map<String,List<Object>>)Yaml.load("users.yml");
-                insertInitialData(Const.PERMISSIONS, Permission.class, allusers);	
-                insertInitialData(Const.ROLES, Role.class, allusers);	
-                Logger.info("allusers..." + allusers);
-                insertInitialData(Const.USERS, User.class, allusers);
-                Logger.info("loading taxonomies from configuration ...");
-                @SuppressWarnings("unchecked")
-				Map<String,List<Object>> alltaxonomies = (Map<String,List<Object>>)Yaml.load("taxonomies.yml");
-                insertInitialData(Const.TAXONOMIES, Taxonomy.class, alltaxonomies);	
-                Logger.info("loading open tags from configuration ...");
-                @SuppressWarnings("unchecked")
-				Map<String,List<Object>> alltags = (Map<String,List<Object>>)Yaml.load("tags.yml");
-                insertInitialData(Const.TAGS, Tag.class, alltags);	
-                Logger.info("loading flags from configuration ...");
-                @SuppressWarnings("unchecked")
-				Map<String,List<Object>> allflags = (Map<String,List<Object>>)Yaml.load("flags.yml");
-                insertInitialData(Const.FLAGS, Flag.class, allflags);	
-                Logger.info("loading e-mail templates from configuration ...");
-                @SuppressWarnings("unchecked")
-				Map<String,List<Object>> alltemplates = (Map<String,List<Object>>)Yaml.load("templates.yml");
-                insertInitialData(Const.MAILTEMPLATES, MailTemplate.class, alltemplates);	
-                Logger.info("loading contact persons from configuration ...");
-                @SuppressWarnings("unchecked")
-				Map<String,List<Object>> allContactPersons = (Map<String,List<Object>>)Yaml.load("contact-persons.yml");
-                insertInitialData(Const.CONTACTPERSONS, ContactPerson.class, allContactPersons);	
-                Logger.info("loading organisations from configuration ...");
-                @SuppressWarnings("unchecked")
-				Map<String,List<Object>> all = (Map<String,List<Object>>)Yaml.load("initial-data.yml");
-                insertInitialData(Const.ORGANISATIONS, Organisation.class, all);
-                
-                Logger.info("load curators ...");
-		        List<Object> allCurators = JsonUtils.getDrupalDataBase(Const.NodeType.USER);
-				// store curators in DB
-                Ebean.save(allCurators);
-                Logger.info("curators successfully loaded");
-                Logger.info("load urls");
-				// aggregate url data from drupal and store JSON content in a file
-		        List<Object> allUrls = JsonUtils.getDrupalData(Const.NodeType.URL);
-				// store urls in DB
-                Ebean.save(allUrls);
-                Logger.info("targets successfully loaded");
-                Logger.info("load organisations ...");
-				// aggregate organisations data from drupal and store JSON content in a file
-		        List<Object> allOrganisations = JsonUtils.getDrupalData(Const.NodeType.ORGANISATION);
-		        List<Object> allSingleOrganisations = Organisations.skipExistingObjects(allOrganisations);
-				// store organisations in DB
-                Ebean.save(allSingleOrganisations);
-                JsonUtils.normalizeOrganisationUrlInUser();
-                Logger.info("organisations successfully loaded");
-                Logger.info("load taxonomies ...");
-                // aggregate original taxonomies from drupal extracting information from aggregated data
-		        List<Object> allTaxonomies = JsonUtils.extractDrupalData(Const.NodeType.TAXONOMY);
-//		        List<Taxonomy> cleanedTaxonomies = cleanUpTaxonomies(allTaxonomies);
-				// store taxonomies in DB
-                Ebean.save(allTaxonomies);
-//                Ebean.save(cleanedTaxonomies);
-                Logger.info("taxonomies successfully loaded");
-                // due to merging of different original object models the resulting 
-                // collection set is evaluated from particular taxonomy type
-                Logger.info("load collections ..."); 
-		        List<Object> allCollections = JsonUtils.readCollectionsFromTaxonomies();
-				// store collections in DB
-                Ebean.save(allCollections);
-                Logger.info("collections successfully loaded");
-                if (importInstances) {
-	                Logger.info("load instances");
-					// aggregate instances data from drupal and store JSON content in a file
-			        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
-			        Logger.info("Number of instances: " + allInstances.size());
-					// store instances in DB
-	                Ebean.save(allInstances);
-	                Logger.info("instances successfully loaded");
-	                JsonUtils.mapInstancesToTargets();
-	                Logger.info("map instances to targets");
-                }
-                JsonUtils.getDomainForTargets();
-                Logger.info("Target domains extracted");
-                normalizeUrls();
-                // Create association between Creator and Organisation
-	            List<User> creatorList = (List<User>) User.find.all();
-	            Iterator<User> creatorItr = creatorList.iterator();
-	            while (creatorItr.hasNext()) {
-	              	User creator = creatorItr.next();
-//                    Logger.info("Test creator test object: " + creator.toString());
-                    creator.updateOrganisation();
-                    // Create association between User and Role
-//                	creator.role_to_user = Role.convertUrlsToObjects(creator.roles);
-        			Ebean.update(creator);
-	            }                
-                // Create associations for Target
-	            List<Target> targetList = (List<Target>) Target.find.all();
-	            Iterator<Target> targetItr = targetList.iterator();
-	            while (targetItr.hasNext()) {
-	            	Target target = targetItr.next();
-//                    Logger.info("Test target object: " + target.toString());
-	            	// Create association between Target and Organisation
-	            	target.updateOrganisation();
-                    // Create association between Target and DCollection
-                	target.collection_to_target = DCollection.convertUrlsToObjects(target.field_collection_categories);
-                    // Create association between Target and Subject (Taxonomy)
-                	target.subject_to_target = Taxonomy.convertUrlsToObjects(target.field_subject);
-                    // Create association between Target and License (Taxonomy)
-                	target.license_to_target = Taxonomy.convertUrlsToObjects(target.field_license);
-                    // Create association between Target and Flag
-                	target.flag_to_target = Flag.convertUrlsToObjects(target.flags);
-                    // Create association between Target and Tag
-                	target.tag_to_target = Tag.convertUrlsToObjects(target.tags);
-        			Ebean.update(target);
-	            }
-                // Create associations for Instance
-	            List<Instance> instanceList = (List<Instance>) Instance.find.all();
-	            Iterator<Instance> instanceItr = instanceList.iterator();
-	            while (instanceItr.hasNext()) {
-	            	Instance instance = instanceItr.next();
-	                // Create association between Instance and Organisation
-                    instance.updateOrganisation();
-                    // Create association between Instance and DCollection
-                	instance.collection_to_instance = DCollection.convertUrlsToObjects(instance.field_collection_categories);
-                    // Create association between Instance and Subject (Taxonomy)
-                	instance.subject_to_instance = Taxonomy.convertUrlsToObjects(instance.field_subject);                    
-                    // Create association between Instance and Flag
-                	instance.flag_to_instance = Flag.convertUrlsToObjects(instance.flags);
-                    // Create association between Instance and Tag
-                	instance.tag_to_instance = Tag.convertUrlsToObjects(instance.tags);
-        			Ebean.update(instance);
-	            }
-                Logger.info("+++ Data import completed +++");
-	        } catch (Exception e) {
-            	Logger.info("Store error: " + e);
-            	e.printStackTrace();
+    	Boolean importAccounts = play.Play.application().configuration().getBoolean("use.accounts");
+
+        try {
+
+			if (Ebean.find(User.class).findRowCount() == 0) {
+	        	this.importPermissions();
+	        	this.importRoles();
+	        	this.importJsonOrganisations();
+	        	this.importOrganisations();
+	        	this.importCurators();
+	        	if (importAccounts) {
+	        		this.importAccounts();
+	        	}
+	        }
+			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
+	        	this.importMailTemplates();
+			}
+			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
+	        	this.importContactPersons();
+			}
+			if (Ebean.find(TaxonomyType.class).findRowCount() == 0) {
+				this.importJsonTaxonomyVocabularies();
+			}
+			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
+				this.importJsonTaxonomies();
+				this.importTaxonomies();
+	        	this.importTags();
+	        	this.importFlags();
+			}
+			if (Ebean.find(Target.class).findRowCount() == 0) {
+	        	this.importTargets();
+			}
+			if (importInstances && Ebean.find(Instance.class).findRowCount() == 0) {
+				this.importInstances();
+			}
+            Logger.debug("+++ Data import completed +++");
+            
+            Role closed = Role.findByName("closed");
+            Logger.debug("closed found: " + closed);
+            if (closed == null) {
+            	Role newClosed = new Role();
+            	newClosed.name = "closed";
+            	newClosed.save();
             }
+            
+        	String defaultAdminEmail = play.Play.application().configuration().getString("admin.default.email");
+        	// find the imported admin user from Andy's act
+			User user = User.findByEmail(defaultAdminEmail);
+			String generated = UUID.randomUUID().toString();
+			if (user != null) {
+				user.roles = Role.setRoleByName("sys_admin");
+				user.password = PasswordHash.createHash(generated);
+				user.update();
+			}
+        	
+			//String password = AdminUserImport.INSTANCE.create(defaultAdminEmail);
+			Logger.info("Email: " + user.email + ", ADMIN PASSWORD: " + generated);
+            
+        } catch (Exception e) {
+        	e.printStackTrace();
         }
 	}
 	
-    /**
-     * This method adds different section elements described in initial-data file.
-     * @param sectionName
-     * @param cls The current object type
-     * @param all The whole data
-     */
-    private void insertInitialData(String sectionName, Class<?> cls, Map<String,List<Object>> all) {
-        List<Object> sectionList = all.get(sectionName);
-        Iterator<Object> sectionItr = sectionList.iterator();
-        while (sectionItr.hasNext()) {
-        	Object value = sectionItr.next();
-	        if (cls == User.class) {
-            	User user = (User) value;
-            	user.uid = Utils.createId();
-            	user.url = Const.ACT_URL + user.uid;
-        		try {
-					user.password = PasswordHash.createHash(user.password);
-//					Logger.info("hash password: " + user.password);
-				} catch (NoSuchAlgorithmException e) {
-					Logger.info("initial password creation - no algorithm error: " + e);
-				} catch (InvalidKeySpecException e) {
-					Logger.info("initial password creation - key specification error: " + e);
-				}
-                Logger.info("Predefined " + User.class.getSimpleName() + ": " + user.toString());
-                Logger.info("+++ user role_to_user size: " + user.role_to_user.size());
-	        }
-	        if (cls == Role.class) {
-            	Role role = (Role) value;
-            	role.id = Utils.createId();
-	        	role.url= Const.ACT_URL + role.id;
-                Logger.info("Predefined " + Role.class.getSimpleName() + ": " + role.toString());
-                Logger.info("+++ role permissionsMap size: " + role.permissionsMap.size());
-	        }
-	        if (cls == Permission.class) {
-	        	Permission permission = (Permission) value;
-	        	permission.id = Utils.createId();
-	        	permission.url= Const.ACT_URL + permission.id;
-                Logger.info("Predefined " + Permission.class.getSimpleName() + ": " + permission.toString());
-	        }
-	        if (cls == Organisation.class) {
-	        	Organisation organisation = (Organisation) value;
-	        	organisation.nid = Utils.createId();
-	        	organisation.url= Const.ACT_URL + organisation.nid;
-                Logger.info("Predefined " + Organisation.class.getSimpleName() + ": " + organisation.toString());
-	        }
-	        if (cls == MailTemplate.class) {
-	        	MailTemplate mailTemplate = (MailTemplate) value;
-	        	mailTemplate.id = Utils.createId();
-	        	mailTemplate.url = Const.ACT_URL + mailTemplate.id;
-	        	mailTemplate.readInitialTemplate();
-                Logger.info("Predefined " + MailTemplate.class.getSimpleName() + ": " + mailTemplate.toString());
-	        }
-	        if (cls == ContactPerson.class) {
-	        	ContactPerson contactPerson = (ContactPerson) value;
-	        	contactPerson.id = Utils.createId();
-	        	contactPerson.url = Const.ACT_URL + contactPerson.id;
-                Logger.info("Predefined " + ContactPerson.class.getSimpleName() + ": " + contactPerson.toString());
-	        }
-	        if (cls == Tag.class) {
-	        	Tag tag = (Tag) value;
-	        	tag.id = Utils.createId();
-	        	tag.url = Const.ACT_URL + tag.id;
-                Logger.info("Predefined " + Tag.class.getSimpleName() + ": " + tag.toString());
-	        }
-	        if (cls == Flag.class) {
-	        	Flag flag = (Flag) value;
-	        	flag.id = Utils.createId();
-	        	flag.url = Const.ACT_URL + flag.id;
-                Logger.info("Predefined " + Flag.class.getSimpleName() + ": " + flag.toString());
-	        }
-	        if (cls == Taxonomy.class) {
-	        	Taxonomy taxonomy = (Taxonomy) value;
-	        	taxonomy.tid = Utils.createId();
-	        	taxonomy.url = Const.ACT_URL + taxonomy.tid;
-                Logger.info("Predefined " + Taxonomy.class.getSimpleName() + ": " + taxonomy.toString());
-	        }
-	        if (cls == Document.class) {
-	        	Document document = (Document) value;
-	        	document.filename = document.title + ".pdf";
-                Logger.info("Predefined " + Document.class.getSimpleName() + ": " + document.toString());
-	        }
-        }
-        Ebean.save(sectionList);
-    }
-
-	/**
-	 * normalize URL if there is "_" e.g. in taxonomy_term
-	 */
-	public void normalizeUrls() {
-        List<Target> targets = Target.findAll();
-        Iterator<Target> itr = targets.iterator();
-        while (itr.hasNext()) {
-        	Target target = itr.next();
-			if (target.field_collection_categories != null && target.field_collection_categories.contains("_")) {
-				target.field_collection_categories = target.field_collection_categories.replace("_", "/");
-			}
-			if (target.field_license != null && target.field_license.contains("_")) {
-				target.field_license = target.field_license.replace("_", "/");
-			}
-            Ebean.update(target);
+	private void importPermissions() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<Permission>> allPermissions = (Map<String,List<Permission>>)Yaml.load("accounts.yml");
+		List<Permission> permissions = allPermissions.get(Const.PERMISSIONS);
+		for (Permission permission : permissions) {
+			permission.save();
 		}
 	}
+	
+	private void importRoles() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<Role>> allRoles = (Map<String,List<Role>>)Yaml.load("accounts.yml");
+		List<Role> roles = allRoles.get(Const.ROLES);
+		for (Role role : roles) {
+			role.save();
+		}
+	}
+	
+	private void importAccounts() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<User>> accounts = (Map<String,List<User>>)Yaml.load("accounts.yml");
+		List<User> users = accounts.get(Const.USERS);
+		try {
+			for (User user : users) {
+				user.password = PasswordHash.createHash(user.password);
+				user.createdAt = new Date();
+				String roleHolder = user.roleHolder;
+				Role role = Role.findByName(roleHolder);
+				user.roles.add(role);
+				user.save();
+			}
+		} catch (NoSuchAlgorithmException e) {
+			Logger.debug("initial password creation - no algorithm error: " + e);
+		} catch (InvalidKeySpecException e) {
+			Logger.debug("initial password creation - key specification error: " + e);
+		}
+        Logger.debug("Loaded Permissions, Roles and Users");
+	}
+	
+	private void importJsonTaxonomyVocabularies() {
+		JsonUtils.INSTANCE.convertTaxonomyVocabulary();
+        Logger.debug("Loaded Json Taxonomies Vocabularies");
+	}
 
-    /**
-     * This method removes from taxonomy list old subject taxonomies.
-     * @param taxonomyList
-     * @return
-     */
-    public List<Taxonomy> cleanUpTaxonomies(List<Object> taxonomyList) {
-    	List<Taxonomy> res = new ArrayList<Taxonomy>();
-        Iterator<Object> taxonomyItr = taxonomyList.iterator();
-        while (taxonomyItr.hasNext()) {
-        	Taxonomy taxonomy = (Taxonomy) taxonomyItr.next();
-        	if (!(taxonomy.ttype.equals(Const.SUBJECT) && (taxonomy.parent == null || taxonomy.parent.length() == 0)) 
-        			&& !(taxonomy.ttype.equals(Const.SUBSUBJECT) && taxonomy.parent.contains(Const.ACT_URL))) {
-        		res.add(taxonomy);
-        	}
-        }
-        return res;
-    }
-    
+	private void importJsonTaxonomies() {
+		JsonUtils.INSTANCE.convertTaxonomies();
+        Logger.debug("Loaded Json Taxonomies");
+	}
+	
+	private void importTaxonomies() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<Taxonomy>> allTaxonomies = (Map<String,List<Taxonomy>>)Yaml.load("taxonomies.yml");
+		List<Taxonomy> taxonomies = allTaxonomies.get(Const.TAXONOMIES);
+		TaxonomyType tv = null;
+		for (Taxonomy taxonomy : taxonomies) {
+			
+			// see if they are already stored?
+			Taxonomy lookup = Taxonomy.findByNameAndType(taxonomy.name, taxonomy.ttype);
+			if (lookup == null) {
+				tv = TaxonomyType.findByMachineName(taxonomy.ttype);
+				Logger.debug("ttype: " + taxonomy.ttype + " - " + tv);
+				taxonomy.setTaxonomyType(tv);
+				taxonomy.url = Const.ACT_URL + Utils.INSTANCE.createId();
+				if (StringUtils.isNotEmpty(taxonomy.parentName)) {
+					Taxonomy parent = Taxonomy.findByNameAndType(taxonomy.parentName, taxonomy.ttype);
+					Logger.debug("Parent found: " + parent);
+					if (parent != null) {
+						if (taxonomy instanceof Collection) {
+							((Collection)taxonomy).parent = (Collection)parent;
+						}
+						else if (taxonomy instanceof Subject) {
+							((Subject)taxonomy).parent = (Subject)parent;
+						}
+					}
+				}
+				taxonomy.save();
+			}
+		}
+        Logger.debug("Loaded Taxonomies");
+	}
+	
+	private void importTags() { 
+		@SuppressWarnings("unchecked")
+		Map<String,List<Tag>> allTags = (Map<String,List<Tag>>)Yaml.load("tags.yml");
+		List<Tag> tags = allTags.get(Const.TAGS);
+		for (Tag tag : tags) {
+			tag.url = Const.ACT_URL + Utils.INSTANCE.createId();
+			tag.save();
+		}
+        Logger.debug("Loaded Tags");
+	}
+	
+	private void importFlags() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<Flag>> allFlags = (Map<String,List<Flag>>)Yaml.load("flags.yml");
+		List<Flag> flags = allFlags.get(Const.FLAGS);
+		for (Flag flag : flags) {
+			flag.url = Const.ACT_URL + Utils.INSTANCE.createId();
+			flag.save();
+		}
+        Logger.debug("Loaded Flags");
+	}
+
+	private void importMailTemplates() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<MailTemplate>> allTemplates = (Map<String,List<MailTemplate>>)Yaml.load("mail-templates.yml");
+		List<MailTemplate> mailTemplates = allTemplates.get(Const.MAILTEMPLATES);
+		for (MailTemplate mailTemplate : mailTemplates) {
+			mailTemplate.url = Const.ACT_URL + Utils.INSTANCE.createId();
+			mailTemplate.save();
+		}
+        Logger.debug("Loaded MailTemplates");
+	}
+	
+	private void importContactPersons() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<ContactPerson>> allContactPersons = (Map<String,List<ContactPerson>>)Yaml.load("contact-persons.yml");
+		List<ContactPerson> contactPersons = allContactPersons.get(Const.CONTACTPERSONS);
+		for (ContactPerson contactPerson : contactPersons) {
+			contactPerson.url = Const.ACT_URL + Utils.INSTANCE.createId();
+			contactPerson.save();
+		}
+        Logger.debug("Loaded ContactPersons");
+	}
+	
+	private void importOrganisations() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<Organisation>> allOrganisations = (Map<String,List<Organisation>>)Yaml.load("organisations.yml");
+		List<Organisation> organisations = allOrganisations.get(Const.ORGANISATIONS);
+		for (Organisation organisation : organisations) {
+			organisation.url = Const.ACT_URL + Utils.INSTANCE.createId();
+			organisation.save();
+		}
+        Logger.debug("Loaded Organisations");
+	}
+
+	private void importJsonOrganisations() {
+		JsonUtils.INSTANCE.convertOrganisations();
+        Logger.debug("Loaded Json Organisations");
+	}
+	
+	private void importCurators() {
+		JsonUtils.INSTANCE.convertCurators();
+        Logger.debug("Loaded Curators");
+	}
+	
+	private void importTargets() {
+		// store urls in DB
+        JsonUtils.INSTANCE.convertTargets();
+        Logger.debug("Loaded URLs");
+	}
+	
+	private void importInstances() {
+        JsonUtils.INSTANCE.convertInstances();;
+        Logger.debug("Loaded Instances");
+	}
+
 	public static void main(String[] args) {
-		Logger.info("start");
+		Logger.debug("start");
 		new play.core.StaticApplication(new java.io.File("."));
 		DataImport.INSTANCE.insert(true);
-		Logger.info("finished");
+		Logger.debug("finished");
 	}
 }

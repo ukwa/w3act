@@ -2,6 +2,7 @@ import java.util.concurrent.TimeUnit;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
+import models.Role;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
@@ -20,13 +21,20 @@ public class Global extends GlobalSettings {
     	// should run in background and return view
     	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
     	Boolean omitInstances = play.Play.application().configuration().getBoolean("application.data.omit_instances");
-    	Logger.info("dataImport: " + dataImport);
+    	Logger.debug("dataImport: " + dataImport);
 //        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 
     	if (dataImport != null && dataImport) {
     		if (omitInstances == null) omitInstances = false;
     		DataImport.INSTANCE.insert(!omitInstances);
     	}
+	Role closed = Role.findByName("closed");
+	Logger.debug("closed found: " + closed);
+	if (closed == null) {
+		Role newClosed = new Role();
+		newClosed.name = "closed";
+		newClosed.save();
+	}
     	
     	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
 		Akka.system().scheduler().schedule(
@@ -39,19 +47,23 @@ public class Global extends GlobalSettings {
     	);
     }
     
+    @Override
     public Promise<Result> onError(RequestHeader request, Throwable t) {
         return Promise.<Result>pure(internalServerError(
             views.html.errorPage.render(t)
         ));
     }
     
+    @Override
     public Promise<Result> onHandlerNotFound(RequestHeader request) {
         return Promise.<Result>pure(notFound(
             views.html.notFoundPage.render(request.uri())
         ));
     }
     
+    @Override
     public Promise<Result> onBadRequest(RequestHeader request, String error) {
+        Logger.debug("error: " + error);
         return Promise.<Result>pure(badRequest("Please don't try to hack the URI!"));
     }
 }

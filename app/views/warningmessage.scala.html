@@ -4,7 +4,7 @@
 	@defining(new models.FlashMessage(flash.get("message"))) { message =>
 		<div class="padding-20">
 			<div class="alert alert-@message.messageType alert-dismissable">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				@message.text
 			</div>
 		</div>

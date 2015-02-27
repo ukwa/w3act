@@ -1,14 +1,15 @@
 package models;
 
-import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.Transient;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
@@ -23,61 +24,51 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "nomination")
-public class Nomination extends Model
-{
+public class Nomination extends ActModel {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2357699575463702989L;
 
-	@Id 
-    public Long id;
-   
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-	
     /**
      * The name of the nomination. Derived from UKWA Nomination Form > Full name
      */
-    @Required
-    @Column(columnDefinition = "TEXT")
+    @Required(message="Name is required")
+    @Column(columnDefinition = "text")
     public String name;
     
     /**
      * The title of the nomination. Derived from UKWA Nomination Form > Title of website
      */
-    @Required
-    @Column(columnDefinition = "TEXT")
+    @Required(message="Website title is required")
+    @Column(columnDefinition = "text")
     public String title;
     
     /**
      * The URL of the nomination. Derived from UKWA Nomination Form > URL of website
      */
-    @Required
-    @Column(columnDefinition = "TEXT")
-    public String website_url;
+    @Required(message="Web address is required")
+    @Column(columnDefinition = "text")
+    public String websiteUrl;
     
     /**
      * The email of the nomination. Derived from UKWA Nomination Form > Email address
      */
-    @Required
-    @Column(columnDefinition = "TEXT")
+    @Required(message="Email is required")
+    @Column(columnDefinition = "text")
     public String email;
     
     /**
      * The telephone number of the nomination. Derived from UKWA Nomination Form > Telephone number
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String tel;
     
     /**
      * The address of the nomination. Derived from UKWA Nomination Form > Address
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String address;
     
     /**
@@ -85,53 +76,63 @@ public class Nomination extends Model
      * owner or not. Derived from UKWA Nomination Form > 
      * Are you the copyright holder or owner of the website?
      */
-    public Boolean nominated_website_owner;
+    public Boolean nominatedWebsiteOwner;
     
     /**
      * The justification of the nomination. Derived from UKWA Nomination Form > Your justification...
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String justification;
     
     /**
      * Allows the notes regarding nomination description. 
      * Derived from UKWA Nomination Form > Notes about your...
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     public String notes;
 
-    /**
-     * The date of the nomination. System generated.
-     */
-    public String nomination_date;
-    
     /**
      * Indicates that the new nomination has been inspected by Archivist.
      */
     @JsonIgnore
-    public Boolean nomination_checked;
+    public Boolean nominationChecked;
     
-    @Version
-    @JsonIgnore
-    public Timestamp lastUpdate;
-
+    public Date nominationDate;
+    
+    @Transient
+    public String nominationDateText;
+    
     public static final Model.Finder<Long, Nomination> find = new Model.Finder<Long, Nomination>(Long.class, Nomination.class);
 
     public Nomination() {
     	super();
     }
     
-    public String getName()
-    {
-        return name;
-    }
+//    public String validate() {
+//        if (StringUtils.isEmpty(this.title)) {
+//            return "Title is blank";
+//        }
+//        if (StringUtils.isEmpty(this.name)) {
+//        	return "Name is blank";
+//        }
+//        if (StringUtils.isEmpty(this.websiteUrl)) {
+//        	return "WebsiteUrl is blank";
+//        }
+//        if (StringUtils.isEmpty(this.email)) {
+//        	return "Email is blank";
+//        }
+//        return null;
+//    }
 
-    public static Nomination findByName(String name)
-    {
-        return find.where()
-                   .eq("name",
-                       name)
-                   .findUnique();
+    /**
+     * Retrieve all nominations.
+     */
+    public static List<Nomination> findAll() {
+        return find.all();
+    }
+    
+    public static Nomination findByName(String name) {
+        return find.where().eq("name", name).findUnique();
     }
 
     /**
@@ -172,13 +173,14 @@ public class Nomination extends Model
 		return res;
 	}
         
-    /**
-     * Retrieve all nominations.
-     */
-    public static List<Nomination> findAll() {
-        return find.all();
-    }
-    
+	public String getNominationDateText() {
+		if (nominationDate != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			return dateFormat.format(nominationDate);
+		}
+		return null;
+	}
+	
     public String toString() {
         return "Nomination(" + name + ")" + " id:" + id;
     }

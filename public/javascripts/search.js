@@ -4,7 +4,7 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 	    var resultMap = {};
 		$('#search-query').typeahead({
 			remote: {
-				url: context + searchContext + '/filterbyjson/%QUERY',
+				url: context + '/' + searchContext + '/filterbyjson/%QUERY',
 				filter: function(items) {
 					var searchResults = [];
 					for (var i = 0; i < items.length; i++) {
@@ -13,10 +13,16 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 						if (label === undefined) {
 							label = item.title;
 						}
+						var urls = "";
+						var fieldUrls = item.fieldUrls;
+						for (var x = 0; x < fieldUrls.length; x++) {
+							urls += fieldUrls[x].url + " ";
+						}
 						searchResults[i] = {
 							value: label,
 							url: item.url,
-							field_url: item.field_url
+							field_url: urls,
+							id: item.id
 						};
 					}				
 		          	return searchResults;
@@ -25,14 +31,14 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 			 template: '<p><strong>{{value}}</strong></p><p>{{field_url}}</p>',
 			 engine: Hogan
 		}).on('typeahead:selected', function(event, datum) {
-			console.log("contextTo: " + urlTo);
+			console.log("contextTo: " + urlTo + " " + datum.id);
 			if (datum.field_url !== undefined) {
 				$(this).val(datum.field_url);
 			}
 			if (urlTo !== undefined) {
-				window.location.replace(context + urlTo + "/" + "view?target=" + datum.url + "&tabStatus=overview");
+				window.location.replace(context + "/" + urlTo + "/" + datum.id + "&tabStatus=overview");
 			} else {
-				window.location.replace(context + searchContext + "/" + "view?target=" + datum.url); 
+				window.location.replace(context + "/" + searchContext + "/" + datum.id); 
 			}
 		});
 	}
@@ -40,7 +46,7 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 
 function scopeCheck(context) {
     var idle_timeout,
-    SCOPE_URI = context + 'api/scope/',
+    SCOPE_URI = context + '/api/scope/',
     MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doScope server
     TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
     IDLE_THRESHOLD = 2000; // doScope is also done after IDLE_THRESHOLD milliseconds of key idleness
@@ -96,7 +102,7 @@ function scopeCheck(context) {
 
 function licenceCheck(context) {
     var idle_timeout,
-    LICENCE_URI = context + 'api/licence/',
+    LICENCE_URI = context + '/api/licence/',
     MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doLicence server
     TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
     IDLE_THRESHOLD = 2000; // doLicence is also done after IDLE_THRESHOLD milliseconds of key idleness
@@ -148,7 +154,7 @@ function licenceCheck(context) {
 
 function licenceHigherLevelCheck(context) {
     var idle_timeout,
-    LICENCE_URI = context + 'api/licencelevel/',
+    LICENCE_URI = context + '/api/licencelevel/',
     MIN_TEXT_LENGTH = 4, // minimum length annotation must have before being allowed to the doLicence server
     TRIGGER_CHARS = ". ,", // characters that force an doScope lookup
     IDLE_THRESHOLD = 2000; // doLicence is also done after IDLE_THRESHOLD milliseconds of key idleness
@@ -252,40 +258,13 @@ function licencePromptHigherLevel(context) {
     });
 }
 
-function applySearchTargets(context, searchContext, urlTo) {
-	if (searchContext !== undefined) {
-	    var resultMap = {};
-		$('#search-query').typeahead({
-			remote: {
-				url: context + searchContext + '/filterbyjson/%QUERY',
-				filter: function(items) {
-					var searchResults = [];
-					for (var i = 0; i < items.length; i++) {
-						var item = items[i];
-						label = item.field_url;
-						searchResults[i] = {
-							value: label,
-							title: item.title
-						};
-					}				
-		          	return searchResults;
-				}
-			},
-			 template: '<p><strong>{{title}}</strong></p><p>{{value}}</p>',
-			 engine: Hogan
-		}).on('typeahead:selected', function(event, datum) {
-			window.location = datum.value;
-		});
-	}
-}
-
 function applySearch(context, searchContext, urlTo) {
 
 	if (searchContext !== undefined) {
 	    var resultMap = {};
 		$('#search-query').typeahead({
 			remote: {
-				url: context + searchContext + '/filterbyjson/%QUERY',
+				url: context + "/" + searchContext + '/filterbyjson/%QUERY',
 				filter: function(items) {
 					var searchResults = [];
 					for (var i = 0; i < items.length; i++) {
@@ -294,11 +273,28 @@ function applySearch(context, searchContext, urlTo) {
 						if (label === undefined) {
 							label = item.title;
 						}
-						searchResults[i] = {
-							value: label,
-							url: item.url,
-							field_url: item.field_url
-						};
+						var urls = "";
+						var fieldUrls = item.fieldUrls;
+						if (searchContext == 'instances') {
+							fieldUrls = item.target.fieldUrls;
+						}
+						if (fieldUrls != null && (searchContext == 'instances' || searchContext == 'targets')) {
+	 						for (var x = 0; x < fieldUrls.length; x++) {
+								urls += fieldUrls[x].url + " ";
+							}
+							searchResults[i] = {
+									value: label,
+									url: item.url,
+									field_url: urls,
+									id: item.id
+							};
+						} else {
+							searchResults[i] = {
+									value: label,
+									url: item.url,
+									id: item.id
+							};
+						}
 					}				
 		          	return searchResults;
 				}
@@ -311,9 +307,9 @@ function applySearch(context, searchContext, urlTo) {
 				$(this).val(datum.field_url);
 			}
 			if (urlTo !== undefined) {
-				window.location.replace(context + urlTo + "/" + datum.url);
+				window.location.replace(context + "/" + urlTo + "/" + datum.id);
 			} else {
-				window.location.replace(context + searchContext + "/" + datum.url); 
+				window.location.replace(context + "/" + searchContext + "/" + datum.id); 
 			}
 		});
 	}
@@ -326,7 +322,7 @@ function applySearchExt(context, searchContext, urlTo) {
 	    var resultMap = {};
 		$('#search-query').typeahead({
 			remote: {
-				url: context + searchContext + '/filterbyjson/%QUERY',
+				url: context + "/" + searchContext + '/filterbyjson/%QUERY',
 				filter: function(items) {
 					var searchResults = [];
 					for (var i = 0; i < items.length; i++) {
@@ -338,7 +334,8 @@ function applySearchExt(context, searchContext, urlTo) {
 						searchResults[i] = {
 							value: label,
 							url: item.url,
-							field_url: item.field_url
+							field_url: item.field_url,
+							id: item.id
 						};
 					}				
 		          	return searchResults;
@@ -352,11 +349,118 @@ function applySearchExt(context, searchContext, urlTo) {
 				$(this).val(datum.field_url);
 			}
 			if (urlTo !== undefined) {
-				window.location.replace(context + urlTo + "/view?target=" + datum.url);
+				window.location.replace(context + "/" + urlTo + "/" + datum.id);
 			} else {
-				window.location.replace(context + searchContext + "/view?target=" + datum.url); 
+				window.location.replace(context + "/" + searchContext + "/" + datum.id); 
 			}
 		});
 	}
 }
 
+function showTree(data, id, key) {
+	showTree(data, id, key, 3);
+}
+
+function showTree(data, id, key, sm) {
+	//console.log(data);
+	var selectionMode = parseInt(sm); 
+ 	$(id).dynatree({
+		checkbox: true,
+    	selectMode: selectionMode,
+    	children: data,
+    	onSelect: function(select, node) {
+      		// Get a list of all selected nodes, and convert to a key array:
+      		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+        		return node.data.key;
+      		});
+      		document.getElementById(key).value = selKeys.join(", ");
+      		
+      		console.log("test: " + document.getElementById(key).value);
+      		// Get a list of all selected TOP nodes
+      		var selRootNodes = node.tree.getSelectedNodes(true);
+      		// ... and convert to a key array:
+      		var selRootKeys = $.map(selRootNodes, function(node){
+        		return node.data.key;
+      		});
+    	},
+    	onPostInit: function(isReloading, isError) {
+            var tree = $(id).dynatree('getTree');
+            var selKeys = $.map(tree.getSelectedNodes(), function(node){
+                node.makeVisible();
+            });
+         }
+ 	});
+}
+
+function showTreeSelect(data, id, key) {
+ 	$(id).dynatree({
+    	checkbox: false,
+    	selectMode: 3,
+    	children: data,
+	    onActivate: function(node) { 
+	        if( node.data.url ){
+	            // use href to change the current frame:
+	            window.location.href = node.data.url; 
+	        }
+	    },				    
+    	onSelect: function(select, node) {
+      		// Get a list of all selected nodes, and convert to a key array:
+      		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+        		return node.data.key;
+      		});
+      		document.getElementById(key).value = selKeys.join(", ");
+      		// Get a list of all selected TOP nodes
+      		var selRootNodes = node.tree.getSelectedNodes(true);
+      		// ... and convert to a key array:
+      		var selRootKeys = $.map(selRootNodes, function(node){
+        		return node.data.key;
+      		});
+    	}
+ 	});
+}
+
+function showTreeParent(data, id, key) {
+ 	
+    $(id).dynatree({
+        checkbox: true,
+        // Override class name for checkbox icon:
+        classNames: {checkbox: "dynatree-radio"},
+        selectMode: 1,
+        children: data,
+        onSelect: function(select, node) {
+      		var selKeys = $.map(node.tree.getSelectedNodes(), function(node){
+        		return node.data.key;
+      		});
+      		document.getElementById(key).value = selKeys.join(", ");
+        },
+        // The following options are only required, if we have more than one tree on one page:
+//        initId: "treeData",
+/* 			        cookieId: "dynatree-Cb1",
+        idPrefix: "dynatree-Cb1-"
+*/
+    });
+}
+
+function targetDateTime() {
+	
+	$('#start-date-time').datetimepicker(
+		{ dateFormat: "dd-mm-yy" }
+	);
+
+	$('#end-date-time').datetimepicker(
+		{ dateFormat: "dd-mm-yy" }
+	);
+
+	$("#crawlFrequency").change(function(event) {
+		var frequency = $(this).val();
+		event.preventDefault();
+		if (frequency != 'DOMAINCRAWL') {
+    		console.log('selected: ' + frequency);
+            var d = new Date(); // for now
+            var datetext = d.getDate() + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " 09:00";
+            $('#start-date-time').val(datetext);
+		} else {
+    		$("#start-date-time").val('');
+		}
+	});			
+}

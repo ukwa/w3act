@@ -2,511 +2,390 @@
 
 create table communication_log (
   id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  curator                   TEXT,
-  date                      TEXT,
-  ttype                     TEXT,
-  permission                TEXT,
-  notes                     TEXT,
-  last_update               timestamp not null,
+  url                       varchar(255),
+  created_at                timestamp,
+  name                      text,
+  user_id                   bigint,
+  date                      text,
+  ttype                     text,
+  crawlPermission_id        bigint,
+  notes                     text,
+  updated_at                timestamp not null,
+  constraint uq_communication_log_url unique (url),
   constraint pk_communication_log primary key (id))
 ;
 
 create table contact_person (
   id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  position                  TEXT,
-  phone                     TEXT,
-  email                     TEXT,
-  postal_address            TEXT,
-  web_form                  TEXT,
-  description               TEXT,
-  contact_organisation      TEXT,
+  url                       varchar(255),
+  created_at                timestamp,
+  name                      text,
+  position                  text,
+  phone                     text,
+  email                     text,
+  postal_address            text,
+  web_form                  text,
+  description               text,
+  contact_organisation      text,
   default_contact           boolean,
   permission_checked        boolean,
-  last_update               timestamp not null,
+  updated_at                timestamp not null,
+  constraint uq_contact_person_url unique (url),
   constraint pk_contact_person primary key (id))
 ;
 
 create table crawl_permission (
   id                        bigint not null,
-  id_target                 bigint,
-  id_mailtemplate           bigint,
-  id_contactperson          bigint,
-  url                       TEXT,
-  name                      TEXT,
-  target                    TEXT,
-  description               TEXT,
-  any_other_information     TEXT,
-  status                    TEXT,
-  contact_person            TEXT,
-  creator_user              TEXT,
-  assigned_archivist        TEXT,
-  template                  TEXT,
-  license                   TEXT,
-  license_date              TEXT,
+  url                       varchar(255),
+  created_at                timestamp,
+  target_id                 bigint,
+  mailTemplate_id           bigint,
+  contactPerson_id          bigint,
+  name                      text,
+  description               text,
+  any_other_information     text,
+  archivist_id              bigint,
+  status                    text,
+  license_id                bigint,
+  token                     varchar(255),
   request_followup          boolean,
   number_requests           bigint,
   third_party_content       boolean,
   publish                   boolean,
   agree                     boolean,
-  last_update               timestamp not null,
+  updated_at                timestamp not null,
+  constraint uq_crawl_permission_url unique (url),
   constraint pk_crawl_permission primary key (id))
 ;
 
-create table dcollection (
-  ID                        bigint not null,
-  value                     TEXT,
-  summary                   TEXT,
-  format                    varchar(255),
-  vid                       bigint,
-  is_new                    boolean,
-  type                      varchar(255),
-  title                     varchar(255),
-  language                  varchar(255),
-  url                       varchar(255),
-  edit_url                  varchar(255),
-  status                    bigint,
-  promote                   bigint,
-  sticky                    bigint,
-  created                   varchar(255),
-  changed                   varchar(255),
-  author                    varchar(255),
-  log                       varchar(255),
-  comment                   bigint,
-  comment_count             bigint,
-  comment_count_new         bigint,
-  revision                  varchar(255),
-  feed_nid                  bigint,
-  field_owner               TEXT,
-  field_dates               TEXT,
-  publish                   boolean,
-  field_targets             TEXT,
-  field_sub_collections     TEXT,
-  field_instances           TEXT,
-  weight                    bigint,
-  node_count                bigint,
-  vocabulary                TEXT,
-  parent                    TEXT,
-  parents_all               TEXT,
-  constraint pk_dcollection primary key (ID))
-;
-
-create table flag (
-  ID                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  description               TEXT,
-  last_update               timestamp not null,
-  constraint pk_flag primary key (ID))
+create table field_url (
+  id                        bigint not null,
+  url                       text,
+  created_at                timestamp,
+  target_id                 bigint,
+  domain                    text,
+  updated_at                timestamp not null,
+  constraint pk_field_url primary key (id))
 ;
 
 create table instance (
-  ID                        bigint not null,
-  id_organisation           bigint,
-  value                     TEXT,
-  summary                   TEXT,
-  act_url                   varchar(255),
-  wct_url                   varchar(255),
-  format                    varchar(255),
-  field_scope               varchar(255),
-  field_depth               varchar(255),
-  field_via_correspondence  boolean,
-  field_uk_postal_address   boolean,
-  field_uk_hosting          boolean,
-  field_nominating_organisation varchar(255),
-  field_crawl_frequency     varchar(255),
-  field_crawl_start_date    varchar(255),
-  field_uk_domain           boolean,
-  field_crawl_permission    varchar(255),
-  field_special_dispensation varchar(255),
-  field_uk_geoip            boolean,
-  field_professional_judgement boolean,
-  vid                       bigint,
-  is_new                    boolean,
-  type                      varchar(255),
+  id                        bigint not null,
+  url                       varchar(255),
+  created_at                timestamp,
   title                     varchar(255),
   language                  varchar(255),
-  url                       varchar(255),
+  revision                  text,
   edit_url                  varchar(255),
-  status                    bigint,
-  promote                   bigint,
-  sticky                    bigint,
-  created                   varchar(255),
-  changed                   varchar(255),
-  author                    varchar(255),
-  log                       varchar(255),
-  comment                   bigint,
-  comment_count             bigint,
-  comment_count_new         bigint,
-  feed_nid                  bigint,
-  field_crawl_end_date      varchar(255),
-  field_live_site_status    varchar(255),
-  field_wct_id              bigint,
-  field_spt_id              bigint,
-  field_no_ld_criteria_met  boolean,
-  field_key_site            boolean,
-  field_professional_judgement_exp TEXT,
-  field_ignore_robots_txt   boolean,
-  revision                  varchar(255),
-  field_qa_issues           TEXT,
-  field_target              TEXT,
-  field_description_of_qa_issues TEXT,
-  field_timestamp           TEXT,
-  field_published           boolean,
-  field_to_be_published     boolean,
-  date_of_publication       varchar(255),
-  justification             TEXT,
-  selector_notes            TEXT,
-  archivist_notes           TEXT,
-  selection_type            varchar(255),
-  selector                  varchar(255),
-  legacy_site_id            bigint,
-  white_list                varchar(255),
-  black_list                varchar(255),
-  field_url                 TEXT,
-  field_description         TEXT,
-  field_uk_postal_address_url TEXT,
-  field_suggested_collections TEXT,
-  field_collections         TEXT,
-  field_license             TEXT,
-  field_collection_categories TEXT,
-  field_notes               TEXT,
-  field_instances           TEXT,
-  field_subject             TEXT,
-  field_subsubject          TEXT,
-  field_qa_status           TEXT,
-  qa_status                 TEXT,
-  qa_issue_category         TEXT,
-  qa_notes                  TEXT,
-  quality_notes             TEXT,
-  keywords                  TEXT,
-  tags                      TEXT,
-  synonyms                  TEXT,
-  originating_organisation  TEXT,
-  flags                     TEXT,
-  authors                   TEXT,
-  last_update               timestamp not null,
-  constraint pk_instance primary key (ID))
+  qaissue_id                bigint,
+  notes                     text,
+  format                    varchar(255),
+  qa_issue_category         varchar(255),
+  qa_notes                  text,
+  target_id                 bigint,
+  author_id                 bigint,
+  field_timestamp           timestamp,
+  value                     text,
+  summary                   text,
+  field_date                timestamp,
+  updated_at                timestamp not null,
+  constraint uq_instance_url unique (url),
+  constraint pk_instance primary key (id))
 ;
 
 create table lookup_entry (
   id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  ttype                     TEXT,
+  url                       varchar(255),
+  created_at                timestamp,
+  name                      text,
+  ttype                     text,
   scopevalue                boolean,
-  last_update               timestamp not null,
+  target_id                 bigint,
+  updated_at                timestamp not null,
+  constraint uq_lookup_entry_url unique (url),
   constraint pk_lookup_entry primary key (id))
 ;
 
 create table mail_template (
   id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  ttype                     TEXT,
-  subject                   TEXT,
-  from_email                TEXT,
-  place_holders             TEXT,
+  url                       varchar(255),
+  created_at                timestamp,
+  name                      text,
+  ttype                     text,
+  subject                   text,
+  from_email                text,
+  place_holders             text,
   default_email             boolean,
-  text                      TEXT,
-  last_update               timestamp not null,
+  text                      text,
+  updated_at                timestamp not null,
+  constraint uq_mail_template_url unique (url),
   constraint pk_mail_template primary key (id))
 ;
 
 create table nomination (
   id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  title                     TEXT,
-  website_url               TEXT,
-  email                     TEXT,
-  tel                       TEXT,
-  address                   TEXT,
+  url                       varchar(255),
+  created_at                timestamp,
+  name                      text,
+  title                     text,
+  website_url               text,
+  email                     text,
+  tel                       text,
+  address                   text,
   nominated_website_owner   boolean,
-  justification             TEXT,
-  notes                     TEXT,
-  nomination_date           varchar(255),
+  justification             text,
+  notes                     text,
   nomination_checked        boolean,
-  last_update               timestamp not null,
+  nomination_date           timestamp,
+  updated_at                timestamp not null,
+  constraint uq_nomination_url unique (url),
   constraint pk_nomination primary key (id))
 ;
 
 create table organisation (
-  nid                       bigint not null,
-  value                     TEXT,
-  summary                   varchar(255),
-  format                    varchar(255),
-  field_abbreviation        varchar(255),
-  vid                       bigint,
-  is_new                    boolean,
-  type                      varchar(255),
-  title                     varchar(255),
-  language                  varchar(255),
+  id                        bigint not null,
   url                       varchar(255),
+  created_at                timestamp,
+  title                     varchar(255),
   edit_url                  varchar(255),
-  status                    bigint,
-  promote                   bigint,
-  sticky                    bigint,
-  created                   varchar(255),
-  changed                   varchar(255),
-  author                    varchar(255),
-  log                       varchar(255),
-  comment                   bigint,
-  comment_count             bigint,
-  comment_count_new         bigint,
-  revision                  TEXT,
-  feed_nid                  bigint,
-  last_update               timestamp not null,
-  constraint pk_organisation primary key (nid))
+  summary                   varchar(255),
+  author_id                 bigint,
+  affiliation               varchar(255),
+  revision                  text,
+  updated_at                timestamp not null,
+  constraint uq_organisation_url unique (url),
+  constraint pk_organisation primary key (id))
 ;
 
 create table permission (
-  ID                        bigint not null,
-  name                      TEXT,
-  url                       TEXT,
-  description               TEXT,
-  revision                  TEXT,
-  last_update               timestamp not null,
-  constraint pk_permission primary key (ID))
+  id                        bigint not null,
+  url                       varchar(255),
+  created_at                timestamp,
+  name                      text,
+  description               text,
+  revision                  text,
+  updated_at                timestamp not null,
+  constraint uq_permission_url unique (url),
+  constraint pk_permission primary key (id))
 ;
 
 create table permission_refusal (
   id                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  date                      TEXT,
-  ttype                     TEXT,
-  reason                    TEXT,
-  last_update               timestamp not null,
+  url                       varchar(255),
+  created_at                timestamp,
+  name                      text,
+  date                      text,
+  ttype                     text,
+  reason                    text,
+  updated_at                timestamp not null,
+  constraint uq_permission_refusal_url unique (url),
   constraint pk_permission_refusal primary key (id))
 ;
 
 create table role (
-  ID                        bigint not null,
-  name                      TEXT,
-  url                       TEXT,
-  description               TEXT,
-  revision                  TEXT,
-  last_update               timestamp not null,
-  constraint pk_role primary key (ID))
-;
-
-create table tag (
-  ID                        bigint not null,
-  url                       TEXT,
-  name                      TEXT,
-  description               TEXT,
-  last_update               timestamp not null,
-  constraint pk_tag primary key (ID))
+  id                        bigint not null,
+  url                       varchar(255),
+  created_at                timestamp,
+  name                      text,
+  description               text,
+  revision                  text,
+  updated_at                timestamp not null,
+  constraint uq_role_url unique (url),
+  constraint pk_role primary key (id))
 ;
 
 create table target (
-  ID                        bigint not null,
-  id_organisation           bigint,
-  value                     TEXT,
-  summary                   TEXT,
-  format                    varchar(255),
-  field_scope               varchar(255),
-  field_depth               varchar(255),
-  field_via_correspondence  boolean,
-  field_uk_postal_address   boolean,
-  field_uk_hosting          boolean,
-  field_nominating_organisation varchar(255),
-  field_crawl_frequency     varchar(255),
-  field_crawl_start_date    varchar(255),
-  field_uk_domain           boolean,
-  field_crawl_permission    varchar(255),
-  field_special_dispensation boolean,
-  field_special_dispensation_reaso TEXT,
-  field_uk_geoip            boolean,
-  field_professional_judgement boolean,
-  vid                       bigint,
-  is_new                    boolean,
-  type                      varchar(255),
+  id                        bigint not null,
+  url                       varchar(255),
+  created_at                timestamp,
   title                     varchar(255),
   language                  varchar(255),
-  url                       varchar(255),
+  revision                  text,
   edit_url                  varchar(255),
-  status                    bigint,
-  promote                   bigint,
-  sticky                    bigint,
-  created                   varchar(255),
-  changed                   varchar(255),
-  author                    varchar(255),
-  log                       varchar(255),
-  comment                   bigint,
-  comment_count             bigint,
-  comment_count_new         bigint,
-  feed_nid                  bigint,
-  field_crawl_end_date      varchar(255),
-  field_live_site_status    varchar(255),
-  field_wct_id              bigint,
-  field_spt_id              bigint,
-  legacy_site_id            bigint,
-  field_no_ld_criteria_met  boolean,
-  field_key_site            boolean,
-  field_professional_judgement_exp TEXT,
-  field_ignore_robots_txt   boolean,
-  revision                  TEXT,
+  qaissue_id                bigint,
+  notes                     text,
+  format                    varchar(255),
+  originating_organisation  text,
+  description               text,
+  is_in_scope_ip            boolean,
+  is_in_scope_ip_without_license boolean,
   active                    boolean,
+  author_id                 bigint,
+  flag_notes                text,
+  value                     text,
+  summary                   text,
+  special_dispensation      boolean,
+  special_dispensation_reason text,
+  is_uk_hosting             boolean,
+  is_top_level_domain       boolean,
+  is_uk_registration        boolean,
+  live_site_status          varchar(255),
+  key_site                  boolean,
+  wct_id                    bigint,
+  spt_id                    bigint,
+  keywords                  text,
+  synonyms                  text,
+  organisation_id           bigint,
+  authors                   text,
+  date_of_publication       timestamp,
+  justification             text,
+  selection_type            varchar(255),
+  selector_notes            text,
+  archivist_notes           text,
+  legacy_site_id            bigint,
+  uk_postal_address         boolean,
+  uk_postal_address_url     text,
+  via_correspondence        boolean,
+  professional_judgement    boolean,
+  professional_judgement_exp text,
+  no_ld_criteria_met        boolean,
+  scope                     varchar(255),
+  depth                     varchar(255),
+  ignore_robots_txt         boolean,
+  crawl_frequency           varchar(255),
+  crawl_start_date          timestamp,
+  crawl_end_date            timestamp,
   white_list                varchar(255),
   black_list                varchar(255),
-  date_of_publication       varchar(255),
-  justification             TEXT,
-  selector_notes            TEXT,
-  archivist_notes           TEXT,
-  selection_type            varchar(255),
-  selector                  varchar(255),
-  flag_notes                TEXT,
-  tabstatus                 varchar(255),
-  is_in_scope_uk_registration_value boolean,
-  is_in_scope_domain_value  boolean,
-  is_uk_hosting_value       boolean,
-  is_in_scope_ip_value      boolean,
-  is_in_scope_ip_without_license_value boolean,
-  field_url                 TEXT,
-  domain                    TEXT,
-  field_description         TEXT,
-  field_uk_postal_address_url TEXT,
-  field_suggested_collections TEXT,
-  field_collections         TEXT,
-  field_license             TEXT,
-  field_collection_categories TEXT,
-  field_notes               TEXT,
-  field_instances           TEXT,
-  field_subject             TEXT,
-  field_subsubject          TEXT,
-  keywords                  TEXT,
-  tags                      TEXT,
-  synonyms                  TEXT,
-  originating_organisation  TEXT,
-  flags                     TEXT,
-  authors                   TEXT,
-  field_qa_status           TEXT,
-  qa_status                 TEXT,
-  qa_issue_category         TEXT,
-  qa_notes                  TEXT,
-  quality_notes             TEXT,
-  last_update               timestamp not null,
-  constraint pk_target primary key (ID))
+  license_status            varchar(255),
+  updated_at                timestamp not null,
+  constraint uq_target_url unique (url),
+  constraint pk_target primary key (id))
 ;
 
 create table taxonomy (
-  ID                        bigint not null,
+  ttype                     varchar(31) not null,
+  id                        bigint not null,
+  url                       varchar(255),
+  created_at                timestamp,
   name                      varchar(255),
-  ttype                     varchar(255),
-  description               TEXT,
-  weight                    bigint,
-  node_count                bigint,
-  url                       TEXT,
-  vocabulary                TEXT,
-  feed_nid                  bigint,
-  field_owner               TEXT,
-  field_dates               TEXT,
-  field_publish             TEXT,
+  description               text,
   publish                   boolean,
-  parent                    TEXT,
-  parents_all               TEXT,
-  constraint pk_taxonomy primary key (ID))
+  parents_all               text,
+  revision                  text,
+  taxonomyType_id           bigint,
+  parent_id                 bigint,
+  updated_at                timestamp not null,
+  status                    varchar(255),
+  constraint uq_taxonomy_url unique (url),
+  constraint pk_taxonomy primary key (id))
 ;
 
-create table taxonomy_vocabulary (
-  vid                       bigint not null,
+create table taxonomy_type (
+  id                        bigint not null,
+  url                       varchar(255),
+  created_at                timestamp,
   name                      varchar(255),
   machine_name              varchar(255),
-  description               TEXT,
-  term_count                bigint,
-  constraint pk_taxonomy_vocabulary primary key (vid))
+  description               text,
+  vid                       bigint,
+  updated_at                timestamp not null,
+  constraint uq_taxonomy_type_url unique (url),
+  constraint pk_taxonomy_type primary key (id))
+;
+
+create table token (
+  token                     varchar(255) not null,
+  user_id                   bigint,
+  type                      varchar(8),
+  date_creation             timestamp,
+  email                     varchar(255),
+  constraint ck_token_type check (type in ('password','email')),
+  constraint pk_token primary key (token))
 ;
 
 create table creator (
-  ID                        bigint not null,
+  id                        bigint not null,
   url                       varchar(255),
-  id_organisation           bigint,
+  created_at                timestamp,
+  organisation_id           bigint,
   email                     varchar(255),
-  name                      varchar(255),
   password                  varchar(255),
-  field_affiliation         varchar(255),
+  name                      varchar(255),
+  affiliation               varchar(255),
   edit_url                  varchar(255),
-  last_access               varchar(255),
-  last_login                varchar(255),
-  created                   varchar(255),
-  status                    bigint,
-  language                  varchar(255),
-  feed_nid                  bigint,
-  revision                  TEXT,
-  last_update               timestamp not null,
-  constraint pk_creator primary key (ID))
+  revision                  text,
+  updated_at                timestamp not null,
+  constraint uq_creator_url unique (url),
+  constraint pk_creator primary key (id))
 ;
 
 
-create table collection_target (
-  id_collection                  bigint not null,
-  id_target                      bigint not null,
-  constraint pk_collection_target primary key (id_collection, id_target))
-;
-
-create table collection_instance (
-  id_collection                  bigint not null,
-  id_instance                    bigint not null,
-  constraint pk_collection_instance primary key (id_collection, id_instance))
-;
-
-create table flag_target (
-  id_flag                        bigint not null,
-  id_target                      bigint not null,
-  constraint pk_flag_target primary key (id_flag, id_target))
-;
-
-create table flag_instance (
-  id_flag                        bigint not null,
-  id_instance                    bigint not null,
-  constraint pk_flag_instance primary key (id_flag, id_instance))
+create table organisation_instance (
+  organisation_id                bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_organisation_instance primary key (organisation_id, instance_id))
 ;
 
 create table permission_role (
-  id_permission                  bigint not null,
-  id_role                        bigint not null,
-  constraint pk_permission_role primary key (id_permission, id_role))
+  permission_id                  bigint not null,
+  role_id                        bigint not null,
+  constraint pk_permission_role primary key (permission_id, role_id))
 ;
 
 create table role_user (
-  id_role                        bigint not null,
-  id_user                        bigint not null,
-  constraint pk_role_user primary key (id_role, id_user))
-;
-
-create table tag_target (
-  id_tag                         bigint not null,
-  id_target                      bigint not null,
-  constraint pk_tag_target primary key (id_tag, id_target))
-;
-
-create table tag_instance (
-  id_tag                         bigint not null,
-  id_instance                    bigint not null,
-  constraint pk_tag_instance primary key (id_tag, id_instance))
-;
-
-create table subject_target (
-  id_taxonomy                    bigint not null,
-  id_target                      bigint not null,
-  constraint pk_subject_target primary key (id_taxonomy, id_target))
-;
-
-create table subject_instance (
-  id_taxonomy                    bigint not null,
-  id_instance                    bigint not null,
-  constraint pk_subject_instance primary key (id_taxonomy, id_instance))
+  role_id                        bigint not null,
+  user_id                        bigint not null,
+  constraint pk_role_user primary key (role_id, user_id))
 ;
 
 create table license_target (
-  id_license                     bigint not null,
-  id_target                      bigint not null,
-  constraint pk_license_target primary key (id_license, id_target))
+  target_id                      bigint not null,
+  license_id                     bigint not null,
+  constraint pk_license_target primary key (target_id, license_id))
+;
+
+create table subject_target (
+  target_id                      bigint not null,
+  subject_id                     bigint not null,
+  constraint pk_subject_target primary key (target_id, subject_id))
+;
+
+create table collection_target (
+  target_id                      bigint not null,
+  collection_id                  bigint not null,
+  constraint pk_collection_target primary key (target_id, collection_id))
+;
+
+create table tag_target (
+  target_id                      bigint not null,
+  tag_id                         bigint not null,
+  constraint pk_tag_target primary key (target_id, tag_id))
+;
+
+create table flag_target (
+  target_id                      bigint not null,
+  flag_id                        bigint not null,
+  constraint pk_flag_target primary key (target_id, flag_id))
+;
+
+create table taxonomy_user (
+  taxonomy_id                    bigint not null,
+  user_id                        bigint not null,
+  constraint pk_taxonomy_user primary key (taxonomy_id, user_id))
+;
+
+create table taxonomy_parents_all (
+  taxonomy_id                    bigint not null,
+  parent_id                      bigint not null,
+  constraint pk_taxonomy_parents_all primary key (taxonomy_id, parent_id))
+;
+
+create table flag_instance (
+  flag_id                        bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_flag_instance primary key (flag_id, instance_id))
+;
+
+create table tag_instance (
+  tag_id                         bigint not null,
+  instance_id                    bigint not null,
+  constraint pk_tag_instance primary key (tag_id, instance_id))
+;
+
+create table license_instance (
+  instance_id                    bigint not null,
+  license_id                     bigint not null,
+  constraint pk_license_instance primary key (instance_id, license_id))
 ;
 create sequence communication_log_seq;
 
@@ -514,9 +393,7 @@ create sequence contact_person_seq;
 
 create sequence crawl_permission_seq;
 
-create sequence dcollection_seq;
-
-create sequence flag_seq;
+create sequence field_url_seq;
 
 create sequence instance_seq;
 
@@ -534,74 +411,108 @@ create sequence permission_refusal_seq;
 
 create sequence role_seq;
 
-create sequence tag_seq;
-
 create sequence target_seq;
 
 create sequence taxonomy_seq;
 
-create sequence taxonomy_vocabulary_seq;
+create sequence taxonomy_type_seq;
+
+create sequence token_seq;
 
 create sequence creator_seq;
 
-alter table crawl_permission add constraint fk_crawl_permission_target_to__1 foreign key (id_target) references target (ID);
-create index ix_crawl_permission_target_to__1 on crawl_permission (id_target);
-alter table crawl_permission add constraint fk_crawl_permission_mailtempla_2 foreign key (id_mailtemplate) references mail_template (id);
-create index ix_crawl_permission_mailtempla_2 on crawl_permission (id_mailtemplate);
-alter table crawl_permission add constraint fk_crawl_permission_contactper_3 foreign key (id_contactperson) references contact_person (id);
-create index ix_crawl_permission_contactper_3 on crawl_permission (id_contactperson);
-alter table instance add constraint fk_instance_organisation_to_in_4 foreign key (id_organisation) references organisation (nid);
-create index ix_instance_organisation_to_in_4 on instance (id_organisation);
-alter table target add constraint fk_target_organisation_to_targ_5 foreign key (id_organisation) references organisation (nid);
-create index ix_target_organisation_to_targ_5 on target (id_organisation);
-alter table creator add constraint fk_creator_organisation_6 foreign key (id_organisation) references organisation (nid);
-create index ix_creator_organisation_6 on creator (id_organisation);
+alter table communication_log add constraint fk_communication_log_user_1 foreign key (user_id) references creator (id);
+create index ix_communication_log_user_1 on communication_log (user_id);
+alter table communication_log add constraint fk_communication_log_crawlPerm_2 foreign key (crawlPermission_id) references crawl_permission (id);
+create index ix_communication_log_crawlPerm_2 on communication_log (crawlPermission_id);
+alter table crawl_permission add constraint fk_crawl_permission_target_3 foreign key (target_id) references target (id);
+create index ix_crawl_permission_target_3 on crawl_permission (target_id);
+alter table crawl_permission add constraint fk_crawl_permission_mailTempla_4 foreign key (mailTemplate_id) references mail_template (id);
+create index ix_crawl_permission_mailTempla_4 on crawl_permission (mailTemplate_id);
+alter table crawl_permission add constraint fk_crawl_permission_contactPer_5 foreign key (contactPerson_id) references contact_person (id);
+create index ix_crawl_permission_contactPer_5 on crawl_permission (contactPerson_id);
+alter table crawl_permission add constraint fk_crawl_permission_user_6 foreign key (archivist_id) references creator (id);
+create index ix_crawl_permission_user_6 on crawl_permission (archivist_id);
+alter table crawl_permission add constraint fk_crawl_permission_license_7 foreign key (license_id) references taxonomy (id);
+create index ix_crawl_permission_license_7 on crawl_permission (license_id);
+alter table field_url add constraint fk_field_url_target_8 foreign key (target_id) references target (id);
+create index ix_field_url_target_8 on field_url (target_id);
+alter table instance add constraint fk_instance_qaIssue_9 foreign key (qaissue_id) references taxonomy (id);
+create index ix_instance_qaIssue_9 on instance (qaissue_id);
+alter table instance add constraint fk_instance_target_10 foreign key (target_id) references target (id);
+create index ix_instance_target_10 on instance (target_id);
+alter table instance add constraint fk_instance_authorUser_11 foreign key (author_id) references creator (id);
+create index ix_instance_authorUser_11 on instance (author_id);
+alter table lookup_entry add constraint fk_lookup_entry_target_12 foreign key (target_id) references target (id);
+create index ix_lookup_entry_target_12 on lookup_entry (target_id);
+alter table organisation add constraint fk_organisation_authorUser_13 foreign key (author_id) references creator (id);
+create index ix_organisation_authorUser_13 on organisation (author_id);
+alter table target add constraint fk_target_qaIssue_14 foreign key (qaissue_id) references taxonomy (id);
+create index ix_target_qaIssue_14 on target (qaissue_id);
+alter table target add constraint fk_target_authorUser_15 foreign key (author_id) references creator (id);
+create index ix_target_authorUser_15 on target (author_id);
+alter table target add constraint fk_target_organisation_16 foreign key (organisation_id) references organisation (id);
+create index ix_target_organisation_16 on target (organisation_id);
+alter table taxonomy add constraint fk_taxonomy_taxonomyType_17 foreign key (taxonomyType_id) references taxonomy_type (id);
+create index ix_taxonomy_taxonomyType_17 on taxonomy (taxonomyType_id);
+alter table taxonomy add constraint fk_taxonomy_parent_18 foreign key (parent_id) references taxonomy (id);
+create index ix_taxonomy_parent_18 on taxonomy (parent_id);
+alter table creator add constraint fk_creator_organisation_19 foreign key (organisation_id) references organisation (id);
+create index ix_creator_organisation_19 on creator (organisation_id);
 
 
 
-alter table collection_target add constraint fk_collection_target_dcollect_01 foreign key (id_collection) references dcollection (ID);
+alter table organisation_instance add constraint fk_organisation_instance_orga_01 foreign key (organisation_id) references organisation (id);
 
-alter table collection_target add constraint fk_collection_target_target_02 foreign key (id_target) references target (ID);
+alter table organisation_instance add constraint fk_organisation_instance_inst_02 foreign key (instance_id) references instance (id);
 
-alter table collection_instance add constraint fk_collection_instance_dcolle_01 foreign key (id_collection) references dcollection (ID);
+alter table permission_role add constraint fk_permission_role_permission_01 foreign key (permission_id) references permission (id);
 
-alter table collection_instance add constraint fk_collection_instance_instan_02 foreign key (id_instance) references instance (ID);
+alter table permission_role add constraint fk_permission_role_role_02 foreign key (role_id) references role (id);
 
-alter table flag_target add constraint fk_flag_target_flag_01 foreign key (id_flag) references flag (ID);
+alter table role_user add constraint fk_role_user_role_01 foreign key (role_id) references role (id);
 
-alter table flag_target add constraint fk_flag_target_target_02 foreign key (id_target) references target (ID);
+alter table role_user add constraint fk_role_user_creator_02 foreign key (user_id) references creator (id);
 
-alter table flag_instance add constraint fk_flag_instance_flag_01 foreign key (id_flag) references flag (ID);
+alter table license_target add constraint fk_license_target_target_01 foreign key (target_id) references target (id);
 
-alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (id_instance) references instance (ID);
+alter table license_target add constraint fk_license_target_taxonomy_02 foreign key (license_id) references taxonomy (id);
 
-alter table permission_role add constraint fk_permission_role_permission_01 foreign key (id_permission) references permission (ID);
+alter table subject_target add constraint fk_subject_target_target_01 foreign key (target_id) references target (id);
 
-alter table permission_role add constraint fk_permission_role_role_02 foreign key (id_role) references role (ID);
+alter table subject_target add constraint fk_subject_target_taxonomy_02 foreign key (subject_id) references taxonomy (id);
 
-alter table role_user add constraint fk_role_user_role_01 foreign key (id_role) references role (ID);
+alter table collection_target add constraint fk_collection_target_target_01 foreign key (target_id) references target (id);
 
-alter table role_user add constraint fk_role_user_creator_02 foreign key (id_user) references creator (ID);
+alter table collection_target add constraint fk_collection_target_taxonomy_02 foreign key (collection_id) references taxonomy (id);
 
-alter table tag_target add constraint fk_tag_target_tag_01 foreign key (id_tag) references tag (ID);
+alter table tag_target add constraint fk_tag_target_target_01 foreign key (target_id) references target (id);
 
-alter table tag_target add constraint fk_tag_target_target_02 foreign key (id_target) references target (ID);
+alter table tag_target add constraint fk_tag_target_taxonomy_02 foreign key (tag_id) references taxonomy (id);
 
-alter table tag_instance add constraint fk_tag_instance_tag_01 foreign key (id_tag) references tag (ID);
+alter table flag_target add constraint fk_flag_target_target_01 foreign key (target_id) references target (id);
 
-alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (id_instance) references instance (ID);
+alter table flag_target add constraint fk_flag_target_taxonomy_02 foreign key (flag_id) references taxonomy (id);
 
-alter table subject_target add constraint fk_subject_target_taxonomy_01 foreign key (id_taxonomy) references taxonomy (ID);
+alter table taxonomy_user add constraint fk_taxonomy_user_taxonomy_01 foreign key (taxonomy_id) references taxonomy (id);
 
-alter table subject_target add constraint fk_subject_target_target_02 foreign key (id_target) references target (ID);
+alter table taxonomy_user add constraint fk_taxonomy_user_creator_02 foreign key (user_id) references creator (id);
 
-alter table subject_instance add constraint fk_subject_instance_taxonomy_01 foreign key (id_taxonomy) references taxonomy (ID);
+alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_01 foreign key (taxonomy_id) references taxonomy (id);
 
-alter table subject_instance add constraint fk_subject_instance_instance_02 foreign key (id_instance) references instance (ID);
+alter table taxonomy_parents_all add constraint fk_taxonomy_parents_all_taxon_02 foreign key (parent_id) references taxonomy (id);
 
-alter table license_target add constraint fk_license_target_taxonomy_01 foreign key (id_license) references taxonomy (ID);
+alter table flag_instance add constraint fk_flag_instance_taxonomy_01 foreign key (flag_id) references taxonomy (id);
 
-alter table license_target add constraint fk_license_target_target_02 foreign key (id_target) references target (ID);
+alter table flag_instance add constraint fk_flag_instance_instance_02 foreign key (instance_id) references instance (id);
+
+alter table tag_instance add constraint fk_tag_instance_taxonomy_01 foreign key (tag_id) references taxonomy (id);
+
+alter table tag_instance add constraint fk_tag_instance_instance_02 foreign key (instance_id) references instance (id);
+
+alter table license_instance add constraint fk_license_instance_taxonomy_01 foreign key (instance_id) references taxonomy (id);
+
+alter table license_instance add constraint fk_license_instance_instance_02 foreign key (license_id) references instance (id);
 
 # --- !Downs
 
@@ -611,23 +522,9 @@ drop table if exists contact_person cascade;
 
 drop table if exists crawl_permission cascade;
 
-drop table if exists dcollection cascade;
-
-drop table if exists collection_target cascade;
-
-drop table if exists collection_instance cascade;
-
-drop table if exists flag cascade;
-
-drop table if exists flag_target cascade;
-
-drop table if exists flag_instance cascade;
+drop table if exists field_url cascade;
 
 drop table if exists instance cascade;
-
-drop table if exists subject_instance cascade;
-
-drop table if exists tag_instance cascade;
 
 drop table if exists lookup_entry cascade;
 
@@ -636,6 +533,8 @@ drop table if exists mail_template cascade;
 drop table if exists nomination cascade;
 
 drop table if exists organisation cascade;
+
+drop table if exists organisation_instance cascade;
 
 drop table if exists permission cascade;
 
@@ -647,19 +546,27 @@ drop table if exists role cascade;
 
 drop table if exists role_user cascade;
 
-drop table if exists tag cascade;
-
-drop table if exists tag_target cascade;
-
 drop table if exists target cascade;
-
-drop table if exists subject_target cascade;
-
-drop table if exists taxonomy cascade;
 
 drop table if exists license_target cascade;
 
-drop table if exists taxonomy_vocabulary cascade;
+drop table if exists subject_target cascade;
+
+drop table if exists collection_target cascade;
+
+drop table if exists tag_target cascade;
+
+drop table if exists flag_target cascade;
+
+drop table if exists taxonomy cascade;
+
+drop table if exists taxonomy_user cascade;
+
+drop table if exists taxonomy_parents_all cascade;
+
+drop table if exists taxonomy_type cascade;
+
+drop table if exists token cascade;
 
 drop table if exists creator cascade;
 
@@ -669,9 +576,7 @@ drop sequence if exists contact_person_seq;
 
 drop sequence if exists crawl_permission_seq;
 
-drop sequence if exists dcollection_seq;
-
-drop sequence if exists flag_seq;
+drop sequence if exists field_url_seq;
 
 drop sequence if exists instance_seq;
 
@@ -689,13 +594,13 @@ drop sequence if exists permission_refusal_seq;
 
 drop sequence if exists role_seq;
 
-drop sequence if exists tag_seq;
-
 drop sequence if exists target_seq;
 
 drop sequence if exists taxonomy_seq;
 
-drop sequence if exists taxonomy_vocabulary_seq;
+drop sequence if exists taxonomy_type_seq;
+
+drop sequence if exists token_seq;
 
 drop sequence if exists creator_seq;
 

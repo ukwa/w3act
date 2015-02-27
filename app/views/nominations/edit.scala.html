@@ -1,34 +1,53 @@
-@(form: Form[Nomination], user: User)
+@(nominationForm: Form[Nomination], user: User, id: Long)
+
+@import helper._
+@import bootstrap._
+
+@implicitFieldConstructor = @{ FieldConstructor(genericInput.f) }
 
 @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
 
 @main("", user) {
 
    	<div class="page-header">
-    	<h1><a href="@routes.Nominations.index()">Archivist Tasks > Nominations > </a>Nomination @form("name").value</h1>
+    	<h1><a href="@routes.NominationController.index()">Archivist Tasks > Nominations > </a>Nomination @nominationForm("name").value</h1>
 	</div>
 
 	<ul class="nav nav-tabs">
-	   @if(Nomination.findById(Long.valueOf(form("id").value)) != null) {
-	   <li><a href="@routes.Nominations.view(form("url").value)">View</a></li>
-	   }
+	   <li><a href="@routes.NominationController.view(id)">View</a></li>
 	   @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		   <li class="active"><a href="@routes.Nominations.edit(form("url").value)">Edit</a></li>
+		   <li class="active"><a href="@routes.NominationController.edit(id)">Edit</a></li>
 	   }
 	</ul>
-    
+
     @warningmessage(flash)
-	@helper.form(action=routes.Nominations.save) {
-		<input type="hidden" name="url" value="@form("url").value">
-		<input type="hidden" name="id" value="@form("id").value">
+    
+    @if(nominationForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- nominationForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+	    
+	@helper.form(routes.NominationController.update(id)) {
+		<input type="hidden" name="id" value="@nominationForm("id").value">
 
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="form-group">
-					<label for="inputName" class="col-sm-6 control-label">Name <font color="red">*</font></label>
-				    <div class="col-sm-6">
-	              		<input class="form-control" name="name" id="inputName" value="@form("name").value" type="text">
-					</div>
+     			<div class="form-group">
+					@inputText(nominationForm("name"),
+										'_label -> "Name:",
+									    'id -> "name",
+									    'class -> "form-control",
+									    'placeholder -> "Name",
+									    '_error -> nominationForm("name").error.map(_.withMessage("Enter Name"))
+									)(FieldConstructor(genericMandatoryInput.f), lang)
 				</div>
 			</div>
      	</div>
@@ -36,10 +55,13 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
-				    <div class="col-sm-6">
-		              <input class="form-control" name="title" id="title"  value="@form("title").value" placeholder="London Business Forum" type="text">
-					</div>
+					@inputText(nominationForm("title"),
+										'_label -> "Title of Website:",
+									    'id -> "title",
+									    'class -> "form-control",
+									    'placeholder -> "London Business Forum",
+									    '_error -> nominationForm("title").error.map(_.withMessage("Enter Website Title"))
+									)(FieldConstructor(genericMandatoryInput.f), lang)
 				</div>
 			</div>
      	</div>
@@ -47,10 +69,14 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
-				    <div class="col-sm-6">
-						<input class="form-control" name="website_url" value="@form("website_url").value" placeholder="http://www.londonbusinessforum.com/" type="text">
-					</div>
+					@inputText(nominationForm("websiteUrl"),
+										'_label -> "Web Address (URL):",
+									    'id -> "websiteUrl",
+									    'class -> "form-control",
+									    'placeholder -> "http://www.londonbusinessforum.com/",
+									    'type -> "url",
+									    '_error -> nominationForm("websiteUrl").error.map(_.withMessage("Enter Website URL"))
+									)(FieldConstructor(genericMandatoryInput.f), lang)
 				</div>
 			</div>
      	</div>
@@ -58,10 +84,14 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
-				    <div class="col-sm-6">
-						<input class="form-control" name="email" value="@form("email").value" placeholder="max.mustermann@@domain.com" type="text">
-					</div>
+					@inputText(nominationForm("email"),
+										'_label -> "E-mail:",
+									    'id -> "max.mustermann@@domain.commax.mustermann@@domain.com",
+									    'type -> "email",
+									    'class -> "form-control",
+									    'placeholder -> "max.mustermann@domain.com",
+									    '_error -> nominationForm("email").error.map(_.withMessage("Enter Email"))
+									)(FieldConstructor(genericMandatoryInput.f), lang)
 				</div>
 			</div>
      	</div>
@@ -69,10 +99,7 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Phone:</label>
-				    <div class="col-sm-6">
-						<input class="form-control" value="@form("tel").value" name="phone" placeholder="0041889923456" type="text">
-					</div>
+					@inputText(nominationForm("tel"), '_label -> "Phone:", 'class -> "form-control", 'placeholder -> "0041889923456", 'type -> "tel")
 				</div>
 			</div>
      	</div>
@@ -80,10 +107,7 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Address:</label>
-				    <div class="col-sm-6">
-						<input class="form-control" value="@form("address").value" name="address" type="text">
-					</div>
+					@inputText(nominationForm("address"), '_label -> "Address:", 'class -> "form-control")
 				</div>
 			</div>
      	</div>
@@ -91,14 +115,10 @@
      	<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Nominated Website Owner:</label>
-				    <div class="col-sm-6">
-				    @if(form("nominated_website_owner").value != null && form("nominated_websit_owner").value) {
-		                <input type="checkbox" name="nominated_website_owner" checked/>
-		            } else {
-		                <input type="checkbox" name="nominated_website_owner"/>
-		            }
-					</div>
+					@helper.checkbox(nominationForm("nominatedWebsiteOwner"), 
+						args = 
+						'_label -> "Nominated Website Owner:" 
+					)(FieldConstructor(genericInput.f), lang)	
 				</div>
 			</div>
      	</div>	     
@@ -106,10 +126,7 @@
    		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Justification:</label>
-				    <div class="col-sm-6">
-						<input class="form-control" value="@form("justification").value" name="justification" type="text">
-					</div>
+					@inputText(nominationForm("justification"), '_label -> "Justification:", 'class -> "form-control")
 				</div>
 			</div>
      	</div>
@@ -117,14 +134,10 @@
      	<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Nomination Checked:</label>
-				    <div class="col-sm-6">
-				    @if(form("nomination_checked").value != null && form("nomination_checked").value) {
-		                <input type="checkbox" name="nomination_checked" checked/>
-		            } else {
-		                <input type="checkbox" name="nomination_checked"/>
-		            }
-					</div>
+					@helper.checkbox(nominationForm("nominationChecked"), 
+						args = 
+						'_label -> "Nomination Checked:" 
+					)(FieldConstructor(genericInput.f), lang)	
 				</div>
 			</div>
      	</div>	     
@@ -132,10 +145,12 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
-				    <div class="col-sm-6">
-						<textarea class="form-control" name="description" id="inputDescription" cols="100" rows="1">@form("notes").value</textarea>
-					</div>
+					@textarea(field = nominationForm("notes"),
+		 				args = 'rows -> 1, 'cols -> 100,
+						'_label -> "Description",
+						'id -> "inputDescription",
+						'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)					
 				</div>
 			</div>
      	</div>
@@ -143,10 +158,7 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					<label class="col-sm-6 control-label">Date</label>
-				    <div class="col-sm-6">
- 						<input type="text" name="log-date" class="form-control" id="log-date" value="@form("nomination_date").value"/>
-               		</div>
+					@inputText(nominationForm("nominationDateText"), '_label -> "Date:", 'class -> "form-control", 'type ->"date", 'id -> "log-date")
 				</div>
 			</div>
      	</div>	
@@ -154,10 +166,8 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="save">Save</button>
-				    @if(Nomination.findById(Long.valueOf(form("id").value)) != null) {
-					<button type="submit" class="btn btn-primary" name="delete" onclick="return confirm('Are you sure?');">Delete</button>
-					}
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
 		       </div>
 			</div>
 		</div>

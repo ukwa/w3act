@@ -5,114 +5,128 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import play.Logger;
-import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
+import scala.NotImplementedError;
 import uk.bl.Const;
+import uk.bl.api.models.FieldModel;
 
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Taxonomy entity managed by Ebean
  */
-@SuppressWarnings("serial")
-@Entity 
-@Table(name = "taxonomy")
-public class Taxonomy extends Model {
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="ttype")
+public class Taxonomy extends MappedSuperClass {
      
-    @Id
-    @Column(name="ID")
-    public Long tid;
+	public final static String TAXONOMY_TERM = "taxonomy_term";
+    public static final String TAXONOMY_PARENTS  	 = "taxonomy_parents"; 
+    public static final String TAXONOMY_PARENTS_ALL  = "taxonomy_parents_all"; 
 
-    //bi-directional many-to-many association to Target
-    @ManyToMany
-	@JoinTable(name = Const.SUBJECT_TARGET, joinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
-    private List<Target> targets = new ArrayList<Target>();
- 
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
-    //bi-directional many-to-many association to Instance
-    @ManyToMany
-	@JoinTable(name = Const.SUBJECT_INSTANCE, joinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_instance", referencedColumnName="ID") }) 
-    private List<Instance> instances = new ArrayList<Instance>();
-   
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-  
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-  
-    //bi-directional many-to-many association to Target
-    @ManyToMany
-	@JoinTable(name = Const.LICENSE_TARGET, joinColumns = { @JoinColumn(name = "id_license", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
-	private List<Target> targetLicenses = new ArrayList<Target>();
-	   
-	public List<Target> getTargetLicenses() {
-		return this.targetLicenses;
-	}
-	  
-	public void setTargetLicenses(List<Target> targetLicenses) {
-	  	this.targetLicenses = targetLicenses;
-	}    
-  
-    @Required
-    public String name; 
-    // additional field to make a difference between collection, subject, license and quality issue. 
-    public String ttype;  
-    @Column(columnDefinition = "TEXT")
-    public String description;
-    public Long weight;
-    public Long node_count;
-    @Column(columnDefinition = "TEXT")
-    public String url;
-    @Column(columnDefinition = "TEXT")
-    public String vocabulary;
-    public Long feed_nid;    
-    // lists
-    @Column(columnDefinition = "TEXT") 
-    public String field_owner;
-    @Column(columnDefinition = "TEXT") 
-    public String field_dates;
-    @Column(columnDefinition = "TEXT") 
-    public String field_publish;
     /**
-     * 'true' if collection should be made visible in the UI, default 'false'
-     */
+	 * MappedSuperClass "superclass" is needed as "Properties from superclasses not mapped as @MappedSuperclass are ignored"
+	 */
+	private static final long serialVersionUID = -8987367110038045775L;
+
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = "taxonomy_user", joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+	inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 
+	public List<User> ownerUsers;
+
+	@JsonIgnore
+	@ManyToOne(optional=true)
+	@JoinColumn(name = "taxonomyType_id")
+	public TaxonomyType taxonomyType;
+	
+	@Column(insertable=false, updatable=false)
+	public String ttype;
+	 
+	@JsonIgnore
+    @ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name = "parent_id")
+	public Taxonomy parent;
+	
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="parent")
+	public List<Taxonomy> children;
+
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = TAXONOMY_PARENTS_ALL, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
+	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
+	public List<Taxonomy> parentsAllList;
+
+    @Transient
+    @JsonProperty
+    private String tid;
+    
+    @Transient
     @JsonIgnore
-    public Boolean publish;
-//    @Required
-    @Column(columnDefinition = "TEXT") 
-    public String parent;
-    @Column(columnDefinition = "TEXT") 
-    public String parents_all;
+    public Long node_count;
+    
+    @Transient
+    @JsonProperty(value="vocabulary")
+    private FieldModel vocabularyValue;
+    
+    @Transient
+    @JsonProperty(value="parent")
+    private List<FieldModel> parentFieldList;
+    
+    @Transient
+    @JsonProperty(value="parents_all")
+    private List<FieldModel> parents_all;
+    
+    @Transient
+    @JsonIgnore
+    public Long feed_nid;
+    
+    @Transient
+    @JsonIgnore
+    public Long weight;
+
+    @Transient
+    @JsonProperty
+    private List<FieldModel> field_owner;
+    
+    @Transient
+    @JsonProperty
+    private Object field_dates;
+    
+    @Transient
+    public String parentName;
+    
+//    {"field_owner":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/user\/9","id":"9","resource":"user"}],
+//    "field_dates":{"value":"1396310400","value2":"1404086400","duration":7776000},
+//    "field_publish":true,"tid":"250","name":"European Parliament Elections 2014","description":"","weight":"0","node_count":10,"url":"http:\/\/www.webarchive.org.uk\/act\/taxonomy\/term\/250","vocabulary":{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_vocabulary\/5","id":"5","resource":"taxonomy_vocabulary"},"parent":[],"parents_all":[{"uri":"http:\/\/www.webarchive.org.uk\/act\/taxonomy_term\/250","id":"250","resource":"taxonomy_term"}],"feed_nid":null}
+
+    public Taxonomy() {}
 
     public Taxonomy(String name) {
         this.name = name;
     }
     
-    public Taxonomy() {
+    public Taxonomy(String name, String description) {
+        this(name);
+        this.description = description;
     }
     
     // -- Queries
@@ -139,11 +153,24 @@ public class Taxonomy extends Model {
      * @param nid
      * @return object 
      */
-    public static Taxonomy findById(Long nid) {
-    	Taxonomy res = find.where().eq(Const.TID, nid).findUnique();
+    public static Taxonomy findById(Long id) {
+    	Taxonomy res = find.where().eq(Const.ID, id).findUnique();
     	return res;
-    }          
+    }
     
+    /**
+     * Retrieve a taxonomy by title.
+     * @param title
+     * @return taxonomy object
+     */
+    public static Taxonomy findByName(String name) {
+    	return find.where().eq("name", name).findUnique();
+    }
+
+    public static Taxonomy findByNameAndType(String name, String type) {
+    	return find.where().eq("name", name).eq("ttype", type).findUnique();
+    }
+
     /**
      * Create a new Taxonomy.
      */
@@ -152,6 +179,7 @@ public class Taxonomy extends Model {
         Taxonomy.save();
         return Taxonomy;
     }
+
     
     /**
      * Rename a Taxonomy
@@ -169,7 +197,7 @@ public class Taxonomy extends Model {
      * @return taxonomy object
      */
     public static Taxonomy findByUrlExt(String url) {
-//    	Logger.info("taxonomy findByUrl: " + url);
+//    	Logger.debug("taxonomy findByUrl: " + url);
     	Taxonomy res = new Taxonomy();
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
     		res = find.where().eq(Const.URL, url).findUnique();
@@ -185,24 +213,8 @@ public class Taxonomy extends Model {
      * @return taxonomy object
      */
     public static Taxonomy findByUrl(String url) {
-    	Taxonomy res = new Taxonomy();
-//        Logger.info("taxonomy url: " + url);
-        
-        if (url != null && url.length() > 0 && !url.contains(Const.COMMA)) {
-	        // in order to replace "taxonomy_term" read from target.collection_categories by "taxonomy/term"
-//	        url = url.replace("_", "/"); 
-	        Taxonomy res2 = find.where().eq(Const.URL, url).findUnique();
-	        if (res2 == null) {
-	        	res.name = Const.NONE;
-	        } else {
-	        	res = res2;
-	        }
-//	        Logger.info("taxonomy name: " + res.name);
-        } else {
-        	res.name = Const.NONE;
-        }
-//        return find.where().eq(Const.URL, url).findUnique();
-    	return res;
+    	Taxonomy taxonomy = find.where().eq(Const.URL, url).findUnique();
+    	return taxonomy;
     }          
     
     /**
@@ -251,7 +263,7 @@ public class Taxonomy extends Model {
 	        } else {
 	        	res = res2;
 	        }
-//	        Logger.info("taxonomy name: " + res.name);
+//	        Logger.debug("taxonomy name: " + res.name);
         } else {
         	res.name = Const.NONE;
         }
@@ -264,10 +276,10 @@ public class Taxonomy extends Model {
      * @return QA status string
      */
     public static String findQaStatus(String url) {
-//    	Logger.info("findQaStatus url: " + url);
+//    	Logger.debug("findQaStatus url: " + url);
     	Taxonomy taxonomy = findByUrl(url);
     	String res = taxonomy.name;
-//    	Logger.info("findQaStatus taxonomy: " + taxonomy);
+//    	Logger.debug("findQaStatus taxonomy: " + taxonomy);
     	if (taxonomy.name.equals("No QA issues found (OK to publish)")) {
     		res = Const.QAStatusType.PASSED_PUBLISH_NO_ACTION_REQUIRED.name();
     	}
@@ -283,10 +295,10 @@ public class Taxonomy extends Model {
      * @return QA status string
      */
     public static String findQaStatusByName(String name) {
-//    	Logger.info("findQaStatus name: " + name);
+//    	Logger.debug("findQaStatus name: " + name);
     	Taxonomy taxonomy = findQaIssueByName(name);
     	String res = taxonomy.name;
-//    	Logger.info("findQaStatus taxonomy: " + taxonomy);
+//    	Logger.debug("findQaStatus taxonomy: " + taxonomy);
 		// No QA issues found (OK to publish), QA issues found, Unknown
 		// PASSED_PUBLISH_NO_ACTION_REQUIRED, ISSUE_NOTED, None
     	if (taxonomy.name.equals("No QA issues found (OK to publish)")) {
@@ -312,8 +324,7 @@ public class Taxonomy extends Model {
     public static String findQaStatusUrl(String name) {
     	if (name.equals(Const.QAStatusType.PASSED_PUBLISH_NO_ACTION_REQUIRED.name())) {
     		name = "No QA issues found (OK to publish)";
-    	}
-    	if (name.equals(Const.QAStatusType.ISSUE_NOTED.name())) {
+    	} else if (name.equals(Const.QAStatusType.ISSUE_NOTED.name())) {
     		name = "QA issues found";
     	}
     	Taxonomy taxonomy = findQaIssueByName(name);
@@ -368,7 +379,7 @@ public class Taxonomy extends Model {
      */
     public static List<Taxonomy> findListByUrl(String url) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
-//        Logger.info("taxonomy url: " + url);
+//        Logger.debug("taxonomy url: " + url);
     	if (url != null && url.length() > 0) {
     		if (url.contains(Const.COMMA)) {
     			List<String> resList = Arrays.asList(url.split(Const.COMMA));
@@ -386,26 +397,6 @@ public class Taxonomy extends Model {
     }
         
     /**
-     * Retrieve a taxonomy by title.
-     * @param title
-     * @return taxonomy object
-     */
-    public static Taxonomy findByName(String name) {
-    	Taxonomy res = new Taxonomy();
-    	if (name != null && name.length() > 0) {
-//    		Logger.info("p1: " + name);
-    		if (name.contains(Const.COMMA)) {
-    			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
-    		}
-    		res = find.where().eq(Const.NAME, name).findUnique();
-    	} else {
-    		res.name = Const.NONE;
-    	}
-//		Logger.info("res: " + res);
-    	return res;
-    }
-
-    /**
      * Retrieve a taxonomy by name. The origin of these subjects is from the configuration file.
      * @param title
      * @return taxonomy object
@@ -413,7 +404,7 @@ public class Taxonomy extends Model {
     public static Taxonomy findByNameConf(String name) {
     	Taxonomy res = new Taxonomy();
     	if (name != null && name.length() > 0) {
-//    		Logger.info("p1: " + name);
+//    		Logger.debug("p1: " + name);
     		if (name.contains(Const.COMMA)) {
     			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
     		}
@@ -428,7 +419,7 @@ public class Taxonomy extends Model {
     	} else {
     		res.name = Const.NONE;
     	}
-//		Logger.info("res: " + res);
+//		Logger.debug("res: " + res);
     	return res;
     }
 
@@ -442,7 +433,7 @@ public class Taxonomy extends Model {
     public static Taxonomy findByNameExt(String name) {
     	Taxonomy res = new Taxonomy();
     	if (name != null && name.length() > 0) {
-//    		Logger.info("p1: " + name);
+//    		Logger.debug("p1: " + name);
     		if (name.contains(Const.COMMA)) {
     			name = name.replace(Const.COMMA, Const.COMMA + " "); // in database entry with comma has additional space after comma
     		}
@@ -456,7 +447,7 @@ public class Taxonomy extends Model {
     	} else {
     		res.name = Const.NONE;
     	}
-//		Logger.info("res: " + res);
+//		Logger.debug("res: " + res);
     	return res;
     }
 
@@ -499,13 +490,13 @@ public class Taxonomy extends Model {
      */
     public static Taxonomy findByFullName(String name) {
     	Taxonomy res = new Taxonomy();
-    	Logger.info("findByFullName: " + name);
+    	Logger.debug("findByFullName: " + name);
     	if (name != null && name.length() > 0) {
     		res = find.where().eq(Const.NAME, name).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
-//		Logger.info("res: " + res);
+//		Logger.debug("res: " + res);
     	return res;
     }
     
@@ -516,13 +507,13 @@ public class Taxonomy extends Model {
      */
     public static Taxonomy findByFullNameExt(String name, String ttype) {
     	Taxonomy res = new Taxonomy();
-//    	Logger.info("findByFullNameExt: " + name);
+//    	Logger.debug("findByFullNameExt: " + name);
     	if (name != null && name.length() > 0) {
     		res = find.where().eq(Const.NAME, name).eq(Const.TTYPE, ttype).findUnique();
     	} else {
     		res.name = Const.NONE;
     	}
-//		Logger.info("res: " + res);
+//		Logger.debug("res: " + res);
     	return res;
     }
     
@@ -582,7 +573,7 @@ public class Taxonomy extends Model {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	Page<Taxonomy> page = pageByTypeAll(0, find.all().size(), Const.NAME, Const.ASC, "");
     	res = page.getList();
-    	Logger.info("findListByTypeSortedAll() subjects list size: " + res.size());
+    	Logger.debug("findListByTypeSortedAll() subjects list size: " + res.size());
         return res;
     }
         	
@@ -616,13 +607,13 @@ public class Taxonomy extends Model {
 	public static List<Taxonomy> findSubSubjectsList(String parent) {
     	List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (parent != null && parent.length() > 0) {
-//    		Logger.info("findSubSubjectsList() parent: " + parent);
+//    		Logger.debug("findSubSubjectsList() parent: " + parent);
     		parent = formatDbComma(parent);
 	        ExpressionList<Taxonomy> ll = find.where()
 	        		.eq(Const.TTYPE, Const.TaxonomyType.SUBSUBJECT.name().toLowerCase())
 	        		.eq(Const.PARENT, parent);
 	    	res = ll.findList(); 
-//	    	Logger.info("size: " + res.size());
+//	    	Logger.debug("size: " + res.size());
         }
     	return res;
     }
@@ -865,7 +856,7 @@ public class Taxonomy extends Model {
     /**
      * This method calculates selected taxonomies for presentation in view page.
      * @param type The type of taxonomy
-     * @param target The instance object
+     * @param targetName The instance object
      * @return taxonomy list as a string
      */
     public static String getSelectedSubjectsByInstance(String type, Instance instance) {
@@ -875,14 +866,14 @@ public class Taxonomy extends Model {
 		boolean firstTime = true;
 		while (itr.hasNext()) {
 			Taxonomy taxonomy = itr.next();
-			if(instance.hasSubject(taxonomy.url)) {
-				if (firstTime) {
-					res = taxonomy.name;
-					firstTime = false;
-				} else {
-					res = res + Const.COMMA + " " + taxonomy.name;
-				}
-			}
+//			if(instance.hasSubject(taxonomy.url)) {
+//				if (firstTime) {
+//					res = taxonomy.name;
+//					firstTime = false;
+//				} else {
+//					res = res + Const.COMMA + " " + taxonomy.name;
+//				}
+//			}
 		}
 		if (res.length() == 0) {
 			res = Const.NONE;
@@ -926,7 +917,7 @@ public class Taxonomy extends Model {
     /**
      * This method calculates selected taxonomies in second level for presentation in view page.
      * @param type The type of taxonomy
-     * @param target The target object
+     * @param targetName The target object
      * @return taxonomy list as a string
      */
     public static String getSelectedSubjectsList(String type, String targetUrl) {
@@ -962,7 +953,7 @@ public class Taxonomy extends Model {
     /**
      * This method calculates selected taxonomies in second level for presentation in view page.
      * @param type The type of taxonomy
-     * @param target The instance object
+     * @param targetName The instance object
      * @return taxonomy list as a string
      */
     public static String getSelectedSubjectsByInstanceSecondLevel(String type, Instance instance) {
@@ -976,14 +967,14 @@ public class Taxonomy extends Model {
 			Iterator<Taxonomy> itrSub = subTaxonomyList.iterator();
 			while (itrSub.hasNext()) {
 				Taxonomy subTaxonomy = itrSub.next();
-				if(instance.hasSubSubject(subTaxonomy.url)) {
-					if (firstTime) {
-						res = subTaxonomy.name;
-						firstTime = false;
-					} else {
-						res = res + Const.COMMA + " " + subTaxonomy.name;
-					}
-				}
+//				if(instance.hasSubSubject(subTaxonomy.url)) {
+//					if (firstTime) {
+//						res = subTaxonomy.name;
+//						firstTime = false;
+//					} else {
+//						res = res + Const.COMMA + " " + subTaxonomy.name;
+//					}
+//				}
 			}
 		}
 		if (res.length() == 0) {
@@ -998,24 +989,25 @@ public class Taxonomy extends Model {
 	 * @return
 	 */
 	public static List<Taxonomy> getSelectedSubjects(String targetUrl) {
-//		Logger.info("getSelectedSubjects() targetUrl: " + targetUrl);
-		List<Taxonomy> res = new ArrayList<Taxonomy>();
-    	if (targetUrl != null && targetUrl.length() > 0) {
-    		Target target = Target.findByUrl(targetUrl);
-    		if (target.field_subject != null) {
-//    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
-		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Taxonomy subject = findByUrl(part);
-		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-//			    		Logger.info("subject name: " + subject.name);
-		    			res.add(subject);
-		    		}
-		    	}
-    		}
-    	}
-		return res;
+//		Logger.debug("getSelectedSubjects() targetUrl: " + targetUrl);
+//		List<Taxonomy> res = new ArrayList<Taxonomy>();
+//    	if (targetUrl != null && targetUrl.length() > 0) {
+//    		Target target = Target.findByUrl(targetUrl);
+//    		if (target.fieldSubject != null) {
+////    			Logger.debug("getSelectedSubjects() field_subject: " + target.field_subject);
+//		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
+//		    	for (String part: parts) {
+////		    		Logger.debug("part: " + part);
+//		    		Taxonomy subject = findByUrl(part);
+//		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+////			    		Logger.debug("subject name: " + subject.name);
+//		    			res.add(subject);
+//		    		}
+//		    	}
+//    		}
+//    	}
+//		return res;
+		throw new NotImplementedError();
 	}       
     
 	/**
@@ -1024,22 +1016,22 @@ public class Taxonomy extends Model {
 	 * @return
 	 */
 	public static List<Taxonomy> getSelectedSubjectsForInstance(String targetUrl) {
-//		Logger.info("getSelectedSubjects() targetUrl: " + targetUrl);
+//		Logger.debug("getSelectedSubjects() targetUrl: " + targetUrl);
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
-    		if (target.field_subject != null) {
-//    			Logger.info("getSelectedSubjects() field_subject: " + target.field_subject);
-		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Taxonomy subject = findByUrl(part);
-		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-//			    		Logger.info("subject name: " + subject.name);
-		    			res.add(subject);
-		    		}
-		    	}
-    		}
+//    		if (target.fieldSubject != null) {
+////    			Logger.debug("getSelectedSubjects() field_subject: " + target.field_subject);
+//		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
+//		    	for (String part: parts) {
+////		    		Logger.debug("part: " + part);
+//		    		Taxonomy subject = findByUrl(part);
+//		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+////			    		Logger.debug("subject name: " + subject.name);
+//		    			res.add(subject);
+//		    		}
+//		    	}
+//    		}
     	}
 		return res;
 	}       
@@ -1050,24 +1042,25 @@ public class Taxonomy extends Model {
 	 * @return
 	 */
 	public static List<Taxonomy> getSelectedLicenses(String targetUrl) {
-//		Logger.info("getSelectedLicenses() targetUrl: " + targetUrl);
-		List<Taxonomy> res = new ArrayList<Taxonomy>();
-    	if (targetUrl != null && targetUrl.length() > 0) {
-    		Target target = Target.findByUrl(targetUrl);
-    		if (target.field_license != null) {
-//    			Logger.info("getSelectedLicenses() field_license: " + target.field_license);
-		    	String[] parts = target.field_license.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Taxonomy license = findByUrl(part);
-		    		if (license != null && license.name != null && license.name.length() > 0) {
-//			    		Logger.info("license name: " + license.name);
-		    			res.add(license);
-		    		}
-		    	}
-    		}
-    	}
-		return res;
+//		Logger.debug("getSelectedLicenses() targetUrl: " + targetUrl);
+//		List<Taxonomy> res = new ArrayList<Taxonomy>();
+//    	if (targetUrl != null && targetUrl.length() > 0) {
+//    		Target target = Target.findByUrl(targetUrl);
+//    		if (target.fieldLicense != null) {
+////    			Logger.debug("getSelectedLicenses() field_license: " + target.field_license);
+//		    	String[] parts = target.fieldLicense.split(Const.COMMA + " ");
+//		    	for (String part: parts) {
+////		    		Logger.debug("part: " + part);
+//		    		Taxonomy license = findByUrl(part);
+//		    		if (license != null && license.name != null && license.name.length() > 0) {
+////			    		Logger.debug("license name: " + license.name);
+//		    			res.add(license);
+//		    		}
+//		    	}
+//    		}
+//    	}
+//		return res;
+		throw new NotImplementedError();
 	}       
     
 	/**
@@ -1076,22 +1069,22 @@ public class Taxonomy extends Model {
 	 * @return
 	 */
 	public static List<Taxonomy> getSelectedSubjectsByInstance(String targetUrl) {
-//		Logger.info("getSelectedSubjectsByInstance() targetUrl: " + targetUrl);
+//		Logger.debug("getSelectedSubjectsByInstance() targetUrl: " + targetUrl);
 		List<Taxonomy> res = new ArrayList<Taxonomy>();
     	if (targetUrl != null && targetUrl.length() > 0) {
     		Instance target = Instance.findByUrl(targetUrl);
-    		if (target.field_subject != null) {
-//    			Logger.info("getSelectedSubjectsByInstance() field_subject: " + target.field_subject);
-		    	String[] parts = target.field_subject.split(Const.COMMA + " ");
-		    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
-		    		Taxonomy subject = findByUrl(part);
-		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
-//			    		Logger.info("subject name: " + subject.name);
-		    			res.add(subject);
-		    		}
-		    	}
-    		}
+//    		if (target.fieldSubject != null) {
+////    			Logger.debug("getSelectedSubjectsByInstance() field_subject: " + target.field_subject);
+//		    	String[] parts = target.fieldSubject.split(Const.COMMA + " ");
+//		    	for (String part: parts) {
+////		    		Logger.debug("part: " + part);
+//		    		Taxonomy subject = findByUrl(part);
+//		    		if (subject != null && subject.name != null && subject.name.length() > 0) {
+////			    		Logger.debug("subject name: " + subject.name);
+//		    			res.add(subject);
+//		    		}
+//		    	}
+//    		}
     	}
 		return res;
 	}       
@@ -1103,17 +1096,17 @@ public class Taxonomy extends Model {
 	 */
 	public static String getSubjectsAsString(List<Taxonomy> list) {
     	String res = "";
-//		Logger.info("getSubjectsAsString() list size: " + list.size());
+//		Logger.debug("getSubjectsAsString() list size: " + list.size());
 		Iterator<Taxonomy> itr = list.iterator();
 		boolean firstTime = true;
 		while (itr.hasNext()) {
 			Taxonomy subject = itr.next();
 			if (firstTime) {
-//				Logger.info("add first subject.name: " + subject.name);
+//				Logger.debug("add first subject.name: " + subject.name);
 				res = subject.name;
 				firstTime = false;
 			} else {
-//				Logger.info("add subject.name: " + subject.name);
+//				Logger.debug("add subject.name: " + subject.name);
 				res = res + Const.COMMA + " " + subject.name;
 			}
 		}
@@ -1133,10 +1126,10 @@ public class Taxonomy extends Model {
    		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
 	    	String[] parts = urls.split(Const.COMMA + " ");
 	    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
+//		    		Logger.debug("part: " + part);
 	    		Taxonomy subject = findByUrl(part);
 	    		if (subject != null && subject.tid != null && subject.name != null && subject.name.length() > 0) {
-//			    	Logger.info("subject name: " + subject.name);
+//			    	Logger.debug("subject name: " + subject.name);
 	    			res.add(subject);
 	    		}
 	    	}
@@ -1144,14 +1137,165 @@ public class Taxonomy extends Model {
 		return res;
 	}       
     	
-    public String toString() {
-        return "Taxonomy(" + tid + ") with name: " + name;
-    }
-    
     public static Taxonomy findByTypeAndUrl(String type, String url) {
         Taxonomy taxonomy = find.where().eq(Const.TTYPE, type).eq(Const.URL, url).findUnique();
     	return taxonomy;
     }
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Long getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Long weight) {
+		this.weight = weight;
+	}
+
+	public String getTid() {
+		return tid;
+	}
+
+	public void setTid(String tid) {
+		this.tid = tid;
+	}
+
+	public Long getNode_count() {
+		return node_count;
+	}
+
+	public void setNode_count(Long node_count) {
+		this.node_count = node_count;
+	}
+
+	public FieldModel getVocabularyValue() {
+		return vocabularyValue;
+	}
+
+	public void setVocabularyValue(FieldModel vocabularyValue) {
+		this.vocabularyValue = vocabularyValue;
+	}
+
+	public List<FieldModel> getParentFieldList() {
+		return parentFieldList;
+	}
+
+	public void setParentFieldList(List<FieldModel> parentFieldList) {
+		this.parentFieldList = parentFieldList;
+	}
+
+	public List<FieldModel> getParents_all() {
+		return parents_all;
+	}
+
+	public void setParents_all(List<FieldModel> parents_all) {
+		this.parents_all = parents_all;
+	}
+
+	public Long getFeed_nid() {
+		return feed_nid;
+	}
+
+	public void setFeed_nid(Long feed_nid) {
+		this.feed_nid = feed_nid;
+	}
+
+	public List<FieldModel> getField_owner() {
+		return field_owner;
+	}
+
+	public void setField_owner(List<FieldModel> field_owner) {
+		this.field_owner = field_owner;
+	}
+
+	public Object getField_dates() {
+		return field_dates;
+	}
+
+	public void setField_dates(Object field_dates) {
+		this.field_dates = field_dates;
+	}
+
+	public Boolean getPublish() {
+		return publish;
+	}
+
+	public void setPublish(Boolean publish) {
+		this.publish = publish;
+	}
+
+	public List<User> getOwnerUsers() {
+		return ownerUsers;
+	}
+
+	public void setOwnerUsers(List<User> ownerUsers) {
+		this.ownerUsers = ownerUsers;
+	}
+
+	public TaxonomyType getTaxonomyType() {
+		return taxonomyType;
+	}
+
+	public void setTaxonomyType(TaxonomyType taxonomyType) {
+		this.taxonomyType = taxonomyType;
+	}
+
+	public String getTtype() {
+		return ttype;
+	}
+
+	public void setTtype(String ttype) {
+		this.ttype = ttype;
+	}
+	
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Taxonomy other = (Taxonomy) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Taxonomy [name=" + name + ", description="
+				+ description + ", tid=" + tid + ", ttype=" + ttype + " node_count=" + node_count
+				+ ", vocabularyList=" + vocabularyValue + ", parentList="
+				+ parentFieldList + ", parents_all=" + parents_all + ", feed_nid="
+				+ feed_nid + ", weight=" + weight + ", field_owner="
+				+ field_owner + ", field_dates=" + field_dates
+				+ ", publish=" + publish + "]";
+	}
 }
 

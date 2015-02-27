@@ -1,0 +1,119 @@
+@(communicationForm: Form[CommunicationLog], user: User, communicationLogTypes: Map[String,String], crawlPermissions: Map[String,String])
+
+@import helper._
+@import bootstrap._
+
+@main("", user) {
+
+   	<div class="page-header">
+	    <h1><a href="@routes.CommunicationLogController.index()">Archivist Tasks > Communication Logs ></a>New communication log</h1>
+	</div>
+
+    @warningmessage(flash)
+    
+	@if(communicationForm.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- communicationForm.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}
+		
+	@helper.form(action=routes.CommunicationLogController.save()) {
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(communicationForm("name"),
+						'_label -> "Name",
+					    'id -> "inputName",
+					    'class -> "form-control",
+					    'placeholder -> "Name"
+					)(FieldConstructor(genericMandatoryInput.f), lang)
+				</div>
+			</div>
+     	</div>
+     	
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(communicationForm("curator"),
+						'_label -> "Curator",
+					    'id -> "curator",
+					    'class -> "form-control",
+					    'placeholder -> "Name"
+					)(FieldConstructor(genericInput.f), lang)				
+				</div>
+			</div>
+     	</div>	     	
+     	
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(communicationForm("date"),
+						'_label -> "Date",
+					    'id -> "log-date",
+					    'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)	
+				</div>
+			</div>
+     	</div>	     	
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@select(field = communicationForm("ttype"), options = options(communicationLogTypes), 
+			                args = 
+			                'class -> "form-control",
+			                '_label -> "Type", 
+			                '_showConstraints -> false
+		            )(FieldConstructor(genericInput.f), lang)				
+				</div>
+			</div>
+     	</div>		   
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@select(field = communicationForm("permission"), options = options(crawlPermissions), 
+			                args = 
+			                'class -> "form-control",
+			                '_label -> "Crawl Permission", 
+			                '_showConstraints -> false
+		            )(FieldConstructor(genericInput.f), lang)				
+				</div>
+			</div>
+     	</div>		   	               
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+						@textarea(field = communicationForm("notes"),
+			 				args = 'rows -> 1, 'cols -> 100,
+							'_label -> "Notes",
+							'id -> "notes",
+							'class -> "form-control"
+						)(FieldConstructor(genericInput.f), lang)					
+				</div>
+			</div>
+     	</div>
+			          
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+		</div>
+
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">		
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+		       </div>
+			</div>
+		</div>
+	}
+}
+

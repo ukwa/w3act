@@ -1,133 +1,195 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.Transient;
 
 import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.models.FieldModel;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
  * Organisation entity managed by Ebean
  */
-@SuppressWarnings("serial")
 @Entity 
 @Table(name = "organisation")
-public class Organisation extends Model {
+public class Organisation extends ActModel {
 
-    @Id @JsonIgnore
-    public Long nid;
-    
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -651293364349635342L;
+
     //bi-directional many-to-one association to User
-    @OneToMany(mappedBy="organisation", cascade=CascadeType.PERSIST)
     @JsonIgnore
-    private List<User> users = new ArrayList<User>();
+    @OneToMany(mappedBy="organisation", cascade=CascadeType.ALL)
+    public List<User> users;
      
-    public List<User> getUsers() {
-    	return this.users;
-    }
-    
-    public void setUsers(List<User> users) {
-    	this.users = users;
-    }    
-    
     //bi-directional one-to-many association to Target
-    @OneToMany(mappedBy="organisation_to_target", cascade=CascadeType.PERSIST)
     @JsonIgnore
-    private List<Target> targets = new ArrayList<Target>();
-     
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
-    //bi-directional many-to-one association to Instance
-    @OneToMany(mappedBy="organisation_to_instance", cascade=CascadeType.PERSIST)
-    @JsonIgnore
-    private List<Instance> instances = new ArrayList<Instance>();
-     
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-    
-    @Column(columnDefinition = "TEXT") @JsonIgnore
-    public String value;
-    @JsonIgnore
-    public String summary;
-    @JsonIgnore
-    public String format;
-    @JsonIgnore
-    @Required
-    public String field_abbreviation;
-    @JsonIgnore
-    public Long vid;
-    @JsonIgnore
-    public Boolean is_new;
-    @JsonIgnore
-    public String type;
-    @Required
+    @OneToMany(mappedBy="organisation", cascade=CascadeType.ALL)
+    public List<Target> targets;
+
+	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "organisation_instance", joinColumns = { @JoinColumn(name = "organisation_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+	public List<Instance> instances;
+	
+    @JsonProperty
+    @Required(message="Title is required")
     public String title;
+
     @JsonIgnore
-    public String language;
-    public String url;
-    @JsonIgnore
+    @JsonProperty
     public String edit_url;
+
     @JsonIgnore
-    public Long status;
+    @JsonProperty
+    public String summary;
+    
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	@JsonIgnore
+	public User authorUser;
+
     @JsonIgnore
-    public Long promote;
+    @JsonProperty
+    @Required(message="Abbreviation is required")
+    @Column(name="affiliation")
+    public String field_abbreviation;
+
     @JsonIgnore
-    public Long sticky;
-    @JsonIgnore
-    public String created;
-    @JsonIgnore
-    public String changed;
-    @JsonIgnore
-    public String author;
-    @JsonIgnore
-    public String log;
-    @JsonIgnore
-    public Long comment;
-    @JsonIgnore
-    public Long comment_count;
-    @JsonIgnore
-    public Long comment_count_new;
-    @Column(columnDefinition = "TEXT") @JsonIgnore
+    @JsonProperty
+    @Column(columnDefinition = "text")
     public String revision;
+
+    @Transient
     @JsonIgnore
+    @JsonProperty
+    public String language;
+
+    @Transient
+    @JsonIgnore
+    @Column(columnDefinition = "text") 
+    public String value;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
     public Long feed_nid;
     
-    @Version @JsonIgnore
-    public Timestamp lastUpdate;
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long status;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long promote;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long sticky;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private String log;
     
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private Long created;
     
-    public Organisation(String title) {
-        this.title = title;
-    }
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private Long changed;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private FieldModel author;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private List<String> body;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private String nid;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public String vid;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    private Boolean is_new;
     
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public String type;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long comment;
+
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public List<String> comments;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long comment_count;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public Long comment_count_new;
+    
+    @Transient
+    @JsonIgnore
+    @JsonProperty
+    public String format;
+
     public Organisation() {
+    	//    	
     }
+
+//    public Organisation(String title) {
+//        this.title = title;
+//    }
     
     // -- Queries
     
@@ -146,27 +208,34 @@ public class Organisation extends Model {
      * @param nid
      * @return object 
      */
-    public static Organisation findById(Long nid) {
-    	Organisation res = find.where().eq(Const.NID, nid).findUnique();
+    public static Organisation findById(Long id) {
+    	Organisation res = find.where().eq(Const.ID, id).findUnique();
     	return res;
     }          
+
+    public static Organisation findByUrl(String url) {
+    	return find.where().eq(Const.URL, url).findUnique();
+    }
     
+	public static Organisation findByWct(String url) {
+		return find.where().eq("edit_url", url).findUnique();
+	}
+	
     /**
      * This method returns all organisations related alphabetically sorted.
      * @return user list
      */
     public static List<Organisation> findAllSorted() {
-    	List<Organisation> res = new ArrayList<Organisation>();
-    	Page<Organisation> page = page(0, find.all().size(), Const.TITLE, Const.ASC, "");
-    	res = page.getList();
-        return res;
+    	List<Organisation> organisations = find.where().orderBy("title asc").findList();
+        return organisations;
     }
         
     /**
      * Create a new Organisation.
      */
     public static Organisation create(String title) {
-        Organisation organisation = new Organisation(title);
+        Organisation organisation = new Organisation();
+        organisation.title = title;
         organisation.save();
         return organisation;
     }
@@ -214,41 +283,16 @@ public class Organisation extends Model {
     }
     
     /**
-     * Retrieve an organisation name by URL.
-     * @param url
-     * @return organisation name
-     */
-    public static Organisation findByUrl(String url) {
-//    	Logger.info("organisation findByUrl: " + url);
-    	Organisation res = new Organisation();
-    	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) {
-    		res = find.where().eq(Const.URL, url).findUnique();
-//    		Logger.info("found: " + res);
-    		if (res == null) {
-    			res = new Organisation();
-        		res.title = Const.NONE;
-        		res.url = Const.NONE;
-    		}
-    	} else {
-    		res.title = Const.NONE;
-    		res.url = Const.NONE;
-//    		Logger.info("not found: " + res);
-    	}
-//		Logger.info("return: " + res);
-    	return res;
-    }
-
-    /**
      * Retrieve an organisation by title.
      * @param title
      * @return organisation object
      */
     public static Organisation findByTitle(String title) {
-//    	Logger.info("organisation title: " + title);
+//    	Logger.debug("organisation title: " + title);
     	Organisation res = new Organisation();
     	if (title != null && title.length() > 0) {
     		res = find.where().eq(Const.TITLE, title).findUnique();
-//        	Logger.info("res: " + res);
+//        	Logger.debug("res: " + res);
     		if (res == null) {
     			res = new Organisation();
         		res.title = Const.NONE;
@@ -258,7 +302,7 @@ public class Organisation extends Model {
     		res.title = Const.NONE;
     		res.url = Const.NONE;
     	}
-//    	Logger.info("final organisation res: " + res);
+//    	Logger.debug("final organisation res: " + res);
     	return res;
     }
 
@@ -282,7 +326,7 @@ public class Organisation extends Model {
      */
     public static List<Organisation> findFilteredByUrl(String url) {
     	List<Organisation> ll = new ArrayList<Organisation>();
-//    	Logger.info("organisation findFilteredByUrl(): " + url);
+//    	Logger.debug("organisation findFilteredByUrl(): " + url);
     	if (url != null && url.length() > 0 && !url.equals(Const.NONE)) { 
             Organisation organisation = find.where().eq(Const.URL, url).findUnique();
             ll.add(organisation);            
@@ -292,36 +336,11 @@ public class Organisation extends Model {
     	return ll;
     }
 
-	/**
-	 * This method computes a number of targets per organisation for given organisation URL.
-	 * @return
-	 */
-    public int getTargetNumberByOrganisationUrl() {
-    	int res = 0;
-    	res = Target.getTargetNumberByOrganisationUrl(this.url);
-    	return res;
-    }	
-
     /**
      * Retrieve all organisations.
      */
     public static List<Organisation> findAll() {
         return find.all();
-    }
-
-    /**
-     * This method shows nominating organisation in HTML page.
-     * @param organisationUrl The link to organisation in Target object field 
-     * 'field_nominating_organisation'
-     * @return
-     */
-    public static String getNominatingOrganisation(String organisationUrl) {
-        return Organisation.findByUrl(organisationUrl).title; 
-    }
-            
-    public String toString() {
-        return "Organisation(" + nid + ") with title: " + title + 
-        	", format: " + format + ", summary: " + summary + ", value: " + value;
     }
 
     /**
@@ -341,5 +360,118 @@ public class Organisation extends Model {
         		.getPage(page);
     }
 
+	public List<String> getBody() {
+		return body;
+	}
+
+	public void setBody(List<String> body) {
+		this.body = body;
+	}
+
+	public String getNid() {
+		return nid;
+	}
+
+	public void setNid(String nid) {
+		this.nid = nid;
+	}
+
+	public Boolean getIs_new() {
+		return is_new;
+	}
+
+	public void setIs_new(Boolean is_new) {
+		this.is_new = is_new;
+	}
+
+	public Long getCreated() {
+		return created;
+	}
+
+	public void setCreated(Long created) {
+		this.created = created;
+	}
+
+	public Long getChanged() {
+		return changed;
+	}
+
+	public void setChanged(Long changed) {
+		this.changed = changed;
+	}
+
+	public FieldModel getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(FieldModel author) {
+		this.author = author;
+	}
+
+	public String getLog() {
+		return log;
+	}
+
+	public void setLog(String log) {
+		this.log = log;
+	}
+
+	public static Map<String, String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(Organisation s : Organisation.findAll()) {
+            options.put(s.id.toString(), s.title);
+        }
+        return options;
+		
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Organisation other = (Organisation) obj;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Organisation [users=" + users + ", targets=" + targets + ", title=" + title
+				+ ", edit_url=" + edit_url + ", summary=" + summary
+				+ ", authorUser=" + authorUser + ", field_abbreviation="
+				+ field_abbreviation + ", revision=" + revision + ", language="
+				+ language + ", value=" + value + ", feed_nid=" + feed_nid
+				+ ", status=" + status + ", promote=" + promote + ", sticky="
+				+ sticky + ", log=" + log + ", created=" + created
+				+ ", changed=" + changed + ", author=" + author + ", body="
+				+ body + ", nid=" + nid + ", vid=" + vid + ", is_new=" + is_new
+				+ ", type=" + type + ", comment=" + comment + ", comments="
+				+ comments + ", comment_count=" + comment_count
+				+ ", comment_count_new=" + comment_count_new + ", format="
+				+ format + ", id=" + id + ", url=" + url + ", createdAt="
+				+ createdAt + ", updatedAt=" + updatedAt + "]";
+	}
 }
 

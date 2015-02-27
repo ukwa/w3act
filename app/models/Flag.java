@@ -1,19 +1,16 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Version;
 
-import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -24,75 +21,26 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open flags.
  */
 @Entity
-@Table(name = "flag")
-public class Flag extends Model
-{
+@DiscriminatorValue("flags")
+public class Flag extends Taxonomy {
 
 	/**
 	 * file id
 	 */
 	private static final long serialVersionUID = -2257699575463702989L;
 
-	@Id 
-    @Column(name="ID")
-    public Long id;
-
-    //bi-directional many-to-many association to Target
     @ManyToMany
-	@JoinTable(name = Const.FLAG_TARGET, joinColumns = { @JoinColumn(name = "id_flag", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
-    private List<Target> targets = new ArrayList<Target>();
- 
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
-    //bi-directional many-to-many association to Instance
-    @ManyToMany
-	@JoinTable(name = Const.FLAG_INSTANCE, joinColumns = { @JoinColumn(name = "id_flag", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_instance", referencedColumnName="ID") }) 
-    private List<Instance> instances = new ArrayList<Instance>();
-    
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-    
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
-	
-    /**
-     * The name of the refusal.
-     */
-    @Required
-    @Column(columnDefinition = "TEXT")
-    public String name;
-    
-    /**
-     * Allows the addition of further notes regarding flag description.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String description;
+	@JoinTable(name = "flag_target", joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
+    public List<Target> targets;
 
-    @Version
-    public Timestamp lastUpdate;
+    @ManyToMany
+	@JoinTable(name = "flag_instance", joinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+    public List<Instance> instances;
+
 
     public static final Model.Finder<Long, Flag> find = new Model.Finder<Long, Flag>(Long.class, Flag.class);
-
-    public String getName()
-    {
-        return name;
-    }
 
     public static Flag findByName(String name)
     {
@@ -134,7 +82,7 @@ public class Flag extends Model
 	 * @param name
 	 * @return
 	 */
-	public static List<Flag> filterByName(String name) {
+	public static List<Flag> filterByFlagName(String name) {
 		List<Flag> res = new ArrayList<Flag>();
         ExpressionList<Flag> ll = find.where().icontains(Const.NAME, name);
     	res = ll.findList();
@@ -144,7 +92,7 @@ public class Flag extends Model
     /**
      * Retrieve all flags.
      */
-    public static List<Flag> findAll() {
+    public static List<Flag> findAllFlags() {
         return find.all();
     }
     
@@ -153,26 +101,65 @@ public class Flag extends Model
 	 * @param targetUrl
 	 * @return
 	 */
-	public static List<Flag> convertUrlsToObjects(String urls) {
+	public static List<Flag> convertUrlsToFlagObjects(String urls) {
 		List<Flag> res = new ArrayList<Flag>();
    		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
 	    	String[] parts = urls.split(Const.COMMA + " ");
 	    	for (String part: parts) {
-//		    		Logger.info("part: " + part);
+//		    		Logger.debug("part: " + part);
 	    		Flag flag = findByName(part);
 	    		if (flag != null && flag.name != null && flag.name.length() > 0) {
-//			    	Logger.info("flag name: " + flag.name);
+//			    	Logger.debug("flag name: " + flag.name);
 	    			res.add(flag);
 	    		}
 	    	}
     	}
 		return res;
-	}       
+	}
+	
+	public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(Flag t: Flag.findAllFlags()) {
+            options.put(t.id.toString(), t.name);
+        }
+        return options;		
+	}
     	
    public String toString() {
         return "Flag(" + name + ")" + ", id:" + id;
     }
     
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Flag other = (Flag) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
     /**
      * Return a page of User
      *
@@ -182,7 +169,7 @@ public class Flag extends Model
      * @param order Sort order (either or asc or desc)
      * @param filter Filter applied on the name column
      */
-    public static Page<Flag> page(int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Flag> pager(int page, int pageSize, String sortBy, String order, String filter) {
 
         return find.where().icontains("name", filter)
         		.orderBy(sortBy + " " + order)

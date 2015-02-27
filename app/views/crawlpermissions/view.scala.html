@@ -1,21 +1,21 @@
 @(permission: CrawlPermission, user: User)
 
-@if(user.hasRole("sys_admin") || user.hasRole("archivist") || (permission.creatorUser.equals(user.url))) {
+@if(user.hasRole("sys_admin") || user.hasRole("archivist") || (permission.user.url.equals(user.url))) {
 
 @main("", user) {
     
 	<div class="page-header">
    		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-    	<h1><a href="@routes.CrawlPermissions.index()">Quality Control > Crawl Permissions > </a>Crawl Permission @permission.name</h1>
+    	<h1><a href="@routes.CrawlPermissionController.index()">Quality Control > Crawl Permissions > </a>Crawl Permission @permission.name</h1>
     	} else {
     	<h1>Archivist Tasks > Crawl Permissions > Crawl Permission @permission.name</h1>
     	}
 	</div>
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="@routes.CrawlPermissions.view(permission.url)">View</a></li>
+	   <li class="active"><a href="@routes.CrawlPermissionController.view(permission.id)">View</a></li>
 	   @if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
-	   	<li><a href="@routes.CrawlPermissions.edit(permission.url)">Edit</a></li>
+	   	<li><a href="@routes.CrawlPermissionController.edit(permission.id)">Edit</a></li>
 	   }
 	</ul>
 
@@ -36,7 +36,7 @@
 			<div class="form-group">
 				<label for="inputTarget" class="col-sm-6 control-label">Target <font color="red">*</font></label>
 			    <div class="col-sm-6">
-					<label for="valueTarget" class="col-sm-6 control-label">@permission.target</label>
+					<label for="valueTarget" class="col-sm-6 control-label">@permission.target.fieldUrl()</label>
 				</div>
 			</div>
 		</div>
@@ -48,7 +48,7 @@
 				<div class="form-group">
 					<label for="inputName" class="col-sm-6 control-label">Contact Person Name</label>
 				    <div class="col-sm-6">
-	              		<input readonly class="form-control" name="contactPerson" id="contactPerson" value="@ContactPerson.findByUrl(permission.contactPerson).name" type="text">
+	              		<input readonly class="form-control" name="contactPerson" id="contactPerson" value="@permission.contactPerson.name" type="text">
 					</div>
 				</div>
 			</div>
@@ -59,7 +59,7 @@
 				<div class="form-group">
 					<label class="col-sm-6 control-label">Position</label>
 				    <div class="col-sm-6">
-						<input readonly class="form-control" name="position" value="@ContactPerson.findByUrl(permission.contactPerson).position" type="text">
+						<input readonly class="form-control" name="position" value="@permission.contactPerson.position" type="text">
 					</div>
 				</div>
 			</div>
@@ -70,7 +70,7 @@
 				<div class="form-group">
 					<label for="inputEmail" class="col-sm-6 control-label">E-mail <font color="red">*</font></label>
 				    <div class="col-sm-6">
-	              		<input readonly class="form-control" name="email" id="email" value="@ContactPerson.findByUrl(permission.contactPerson).email" type="text">
+	              		<input readonly class="form-control" name="email" id="email" value="@permission.contactPerson.email" type="text">
 					</div>
 				</div>
 			</div>
@@ -81,7 +81,7 @@
 				<div class="form-group">
 					<label for="inputContactOrganisation" class="col-sm-6 control-label">Contact Organisation</label>
 				    <div class="col-sm-6">
-	              		<input readonly class="form-control" name="contactOrganisation" id="contactOrganisation" value="@ContactPerson.findByUrl(permission.contactPerson).contactOrganisation" type="text">
+	              		<input readonly class="form-control" name="contactOrganisation" id="contactOrganisation" value="@permission.contactPerson.contactOrganisation" type="text">
 					</div>
 				</div>
 			</div>
@@ -92,7 +92,7 @@
 				<div class="form-group">
 					<label for="inputPhone" class="col-sm-6 control-label">Phone</label>
 				    <div class="col-sm-6">
-	              		<input readonly class="form-control" name="phone" id="phone" value="@ContactPerson.findByUrl(permission.contactPerson).phone" type="text">
+	              		<input readonly class="form-control" name="phone" id="phone" value="@permission.contactPerson.phone" type="text">
 					</div>
 				</div>
 			</div>
@@ -103,7 +103,7 @@
 				<div class="form-group">
 					<label for="inputPostalAddress" class="col-sm-6 control-label">Postal Address</label>
 				    <div class="col-sm-6">
-	              		<input readonly class="form-control" name="postalAddress" id="postalAddress" value="@ContactPerson.findByUrl(permission.contactPerson).postalAddress" type="text">
+	              		<input readonly class="form-control" name="postalAddress" id="postalAddress" value="@permission.contactPerson.postalAddress" type="text">
 					</div>
 				</div>
 			</div>
@@ -115,7 +115,7 @@
 			<div class="form-group">
 				<label for="inputCreatorUser" class="col-sm-6 control-label">Creator User </label>
 			    <div class="col-sm-6">
-					<label for="valueCreatorUser" class="col-sm-6 control-label">@User.findByUrl(permission.creatorUser).name</label>
+					<label for="valueCreatorUser" class="col-sm-6 control-label">@permission.user.name</label>
 				</div>
 			</div>
 		</div>
@@ -126,7 +126,7 @@
 			<div class="form-group">
 				<label for="inputTemplate" class="col-sm-6 control-label">Template </label>
 			    <div class="col-sm-6">
-					<label for="valueTemplate" class="col-sm-6 control-label">@permission.template</label>
+					<label for="valueTemplate" class="col-sm-6 control-label">@permission.mailTemplate</label>
 				</div>
 			</div>
 		</div>
@@ -173,10 +173,10 @@
     		<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="btn-group">		
 				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-					<a href="@routes.CrawlPermissions.index()" class="btn btn-primary" title="Go to the email queue">Send </a>					
+					<a href="@routes.CrawlPermissionController.index()" class="btn btn-primary" title="Go to the email queue">Send </a>					
 				}
-				@if(permission.target != null && permission.target.length() > 0) {
-				<a href="@routes.Targets.view(Target.findByTarget(permission.target).url)" class="btn btn-primary" title="Return to the target record">Back to Target Record</a>
+				@if(permission.target.title != null && permission.target.title.length() > 0) {
+				<a href="@routes.TargetController.viewAct(permission.target.url)" class="btn btn-primary" title="Return to the target record">Back to Target Record</a>
 				}
 	       </div>
 		</div>
@@ -184,7 +184,7 @@
 	
 }
 } else {
-	@infomessage.render("Access Denied for URL @routes.CrawlPermissions.index()/view")
+	@infomessage.render("Access Denied for URL @routes.CrawlPermissionController.index()/view")
 }                   
 	            
 

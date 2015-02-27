@@ -2,6 +2,7 @@ package uk.bl;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class Const {
@@ -53,7 +54,6 @@ public final class Const {
 	public static final String FIELD_SUBJECT      = "field_subject";
 	public static final String FIELD_QA_STATUS    = "field_qa_status";
 	public static final String FIELD_NOMINATING_ORGANISATION = "field_nominating_organisation";
-	public static final String FIELD_TARGET       = "field_target";
 	public static final String FIELD_QA_ISSUE     = "field_qa_issue";
 	public static final String JSON               = ".json";
 	public static final String COMMA              = ",";
@@ -100,7 +100,10 @@ public final class Const {
 	public static final String UND                = "und";
     public static final String NUMBER             = "number";
 	
-	/**
+    public static final String CREATED_AT			= "createdAt";
+    public static final String UPDATED_AT			= "updatedAt";
+
+    /**
 	 * SQL constants
 	 */
 	public static final String ASC                = "asc";
@@ -131,10 +134,9 @@ public final class Const {
 	/**
 	 * Target
 	 */
-	public static final String NID                = "nid";
 	public static final String TID                = "tid";
 	public static final String TITLE              = "title";
-	public static final String FIELD_URL          = "fieldurl";
+	public static final String FIELD_URL          = "field_url";
 	public static final String KEYSITE            = "keysite";
 	public static final String STATUS             = "status";
 	public static final String LIVE_SITE_STATUS   = "livesitestatus";
@@ -142,8 +144,8 @@ public final class Const {
 	public static final String SUBJECT            = "subject";
 	public static final String SUBSUBJECT         = "subsubject";
 	public static final String ORGANISATION       = "organisation";
-	public static final String ORIGINATING_ORGANISATION = "originating_organisation";
-	public static final String FIELD_SUGGESTED_COLLECTIONS = "field_suggested_collections";
+	public static final String ORIGINATING_ORGANISATION = "originatingOrganisation";
+	public static final String FIELD_SUGGESTED_COLLECTIONS = "fieldSuggestedCollections";
 	public static final String IS_IN_SCOPE_UK_REGISTRATION_VALUE = "isInScopeUkRegistrationValue";
 	public static final String FIELD_CRAWL_FREQUENCY = "field_crawl_frequency";
 	public static final String FIELD_COLLECTION_CATEGORIES = "field_collection_categories";
@@ -153,7 +155,7 @@ public final class Const {
 	public static final String REVISION           = "revision";
 	public static final String ACTIVE             = "active";
 	public static final String FIELD_WCT_ID       = "wct";
-	public static final String FIELD_WCT          = "field_wct_id";
+	public static final String FIELD_WCT          = "fieldWct_id";
 	public static final String FIELD_SPT_ID       = "spt";
 	public static final String FIELD_LICENSE      = "license";
 	public static final String FIELD_LICENSE_NODE = "field_license";
@@ -161,15 +163,15 @@ public final class Const {
 	public static final String FIELD_UK_POSTAL_ADDRESS = "field_uk_postal_address";
 	public static final String FIELD_UK_POSTAL_ADDRESS_URL = "field_uk_postal_address_url";
     public static final String FIELD_VIA_CORRESPONDENCE = "field_via_correspondence";
-    public static final String FIELD_NOTES        = "field_notes";
-    public static final String FIELD_PROFESSIONAL_JUDGEMENT = "field_professional_judgement";
-    public static final String FIELD_PROFESSIONAL_JUDGEMENT_EXP = "field_professional_judgement_exp";
-    public static final String FIELD_NO_LD_CRITERIA_MET = "field_no_ld_criteria_met";
-    public static final String FIELD_IGNORE_ROBOTS_TXT = "field_ignore_robots_txt";
-    public static final String FIELD_CRAWL_START_DATE = "field_crawl_start_date";
-    public static final String FIELD_CRAWL_END_DATE = "field_crawl_end_date";
-    public static final String WHITE_LIST = "white_list";
-    public static final String BLACK_LIST = "black_list";
+    public static final String FIELD_NOTES        = "fieldNotes";
+    public static final String FIELD_PROFESSIONAL_JUDGEMENT = "fieldProfessionalJudgement";
+    public static final String FIELD_PROFESSIONAL_JUDGEMENT_EXP = "fieldProfessionalJudgementExp";
+    public static final String FIELD_NO_LD_CRITERIA_MET = "fieldNoLdCriteriaMet";
+    public static final String FIELD_IGNORE_ROBOTS_TXT = "fieldIgnoreRobotsTxt";
+    public static final String FIELD_CRAWL_START_DATE = "fieldCrawlStartDate";
+    public static final String FIELD_CRAWL_END_DATE = "fieldCrawlEndDate";
+    public static final String WHITE_LIST = "whiteList";
+    public static final String BLACK_LIST = "blackList";
     public static final String KEYWORDS = "keywords";
     public static final String SYNONYMS = "synonyms";
     public static final String SORTED = "sorted";
@@ -178,31 +180,29 @@ public final class Const {
     public static final String FLAGS = "flags";
     public static final String DOCUMENTS = "documents";
     public static final String JOURNAL_TITLES = "journalTitles";
-	public static final String DATE_OF_PUBLICATION = "date_of_publication";
+	public static final String DATE_OF_PUBLICATION = "dateOfPublication";
 	public static final String JUSTIFICATION      = "justification";
-	public static final String SELECTION_TYPE     = "selection_type";
-	public static final String SELECTOR_NOTES     = "selector_notes";
-	public static final String ARCHIVIST_NOTES    = "archivist_notes";
-	public static final String LEGACY_SITE_ID     = "legacy_site_id";
-	public static final String FIELD_TIMESTAMP    = "field_timestamp";
-	public static final String QA_STATUS          = "qa_status";
-	public static final String QA_ISSUE_CATEGORY  = "qa_issue_category";
-	public static final String QA_NOTES           = "qa_notes";
-	public static final String QUALITY_NOTES      = "quality_notes";
+	public static final String SELECTION_TYPE     = "selectionType";
+	public static final String SELECTOR_NOTES     = "selectorNotes";
+	public static final String ARCHIVIST_NOTES    = "archivistNotes";
+	public static final String LEGACY_SITE_ID     = "legacySiteId";
+	public static final String FIELD_TIMESTAMP    = "fieldTimestamp";
+	public static final String QA_STATUS          = "qaStatus";
+	public static final String QA_ISSUE_CATEGORY  = "qaIssueCategory";
+	public static final String QA_NOTES           = "qaNotes";
+	public static final String QUALITY_NOTES      = "qualityNotes";
 	public static final String DOMAIN             = "domain";
-	public static final String CREATED            = "created";
-	public static final String FLAG_NOTES         = "flag_notes";
-	public static final String LAST_UPDATE        = "lastUpdate";
+	public static final String FLAG_NOTES         = "flagNotes";
 	public static final String CHANGED            = "changed";
 	public static final String TREE_KEYS          = "treeKeys";
 	public static final String SUBJECT_TREE_KEYS  = "subjectTreeKeys";
 	public static final String NA                 = "N/A";
 	public static final int    MAX_NPLD_LIST_SIZE = 3;
-	public static final String TAB_STATUS         = "tabstatus";
+	public static final String TAB_STATUS         = "tabStatus";
 	public static final String NPLD               = "npld";
 	public static final String TLD                = "tld";
-	public static final String FILTER_NPLD        = "filter_npld";
-	public static final String FILTER_TLD         = "filter_tld";
+	public static final String FILTER_NPLD        = "filterNpld";
+	public static final String FILTER_TLD         = "filterTld";
 	public static final String INSTANCE           = "instance";
 	
     /**
@@ -348,7 +348,7 @@ public final class Const {
 	public static final String EXPORT_REQUESTED_LICENCE_FILE = "export_requested_licences.csv";
 	public static final String EXPORT_GRANTED_LICENCE_FILE = "export_granted_licences.csv";
 	public static final String EXPORT_REFUSED_LICENCE_FILE = "export_refused_licences.csv";
-	public static final String CSV_SEPARATOR      = ";";
+	public static final String CSV_SEPARATOR      = ",";
 	public static final String CSV_LINE_END       = "\n";
 	public static final String TWO_POINTS         = ": ";
 	public static final String SEARCH             = "search";
@@ -394,26 +394,6 @@ public final class Const {
     public static final String GITHUB = "https://github.com/ukwa/w3act/commits/master/"; 
     public static final String LAST_COMMIT = "/ukwa/w3act/commit/"; 
 	
-	/**
-	 * Database associations
-	 */
-    public static final String SUBJECT_TARGET        = "subject_target";
-    public static final String SUBJECT_INSTANCE      = "subject_instance";
-    public static final String COLLECTION_TARGET     = "collection_target";
-    public static final String COLLECTION_INSTANCE   = "collection_instance";
-    public static final String LICENSE_TARGET        = "license_target";
-    public static final String TAG_TARGET            = "tag_target";
-    public static final String FLAG_TARGET           = "flag_target";
-    public static final String TAG_INSTANCE          = "tag_instance";
-    public static final String FLAG_INSTANCE         = "flag_instance";
-    public static final String ROLE_USER             = "role_user";
-    public static final String PERMISSION_ROLE       = "permission_role";
-    public static final String BL_COLLECTION_SUBSET_JOURNAL_TITLE = "bl_collection_subset_journal_title";
-    public static final String BL_COLLECTION_SUBSET_BOOK = "bl_collection_subset_book";
-    public static final String SUBJECT_JOURNAL_TITLE = "subject_journal_title";
-    public static final String SUBJECT_DOCUMENT      = "subject_document";
-    public static final String PORTAL_DOCUMENT       = "portal_document";
-
     // Types of the JSON nodes
 	public enum NodeType {
         URL, 
@@ -434,42 +414,6 @@ public final class Const {
     }
 	
 	/**
-	 * Records status of permission process.
-	 */
-	public enum CrawlPermissionStatus {
-		NOT_INITIATED,
-		QUEUED,
-		PENDING,
-		REFUSED,
-		EMAIL_REJECTED,
-		GRANTED,
-		SUPERSEDED;
-    }
-    
-    /**
-     * E-mail type
-     */
-	public enum MailTemplateType {
-		PERMISSION_REQUEST,
-		THANK_YOU_ONLINE_PERMISSION_FORM,
-		THANK_YOU_ONLINE_NOMINATION_BY_OWNER,
-		THANK_YOU_ONLINE_NOMINATION_BY_NOMINATOR;
-    }
-	    
-	/**
-	 * Types of permission refusal.
-	 */
-	public enum RefusalType {
-		THIRD_PARTY_CONTENT,
-		IMPRACTICALITY,
-		INTERNAL_REASONS,
-		LEGALISTIC_FORM,
-		NO_REASON,
-		PRIVACY,
-		OTHER;
-    }
-    	
-	/**
 	 * Types of communication logs.
 	 */
 	public enum CommunicationLogTypes {
@@ -479,14 +423,6 @@ public final class Const {
 		WEB_FORM,
 		CONTACT_DETAIL_REQUEST,
 		OTHER;
-    }
-    	
-	/**
-	 * The predominant language of target.
-	 */
-	public enum TargetLanguage {
-		EN,
-		DE;
     }
 	
 	/**
@@ -515,12 +451,30 @@ public final class Const {
     }
     
 	public enum Roles {
-        sys_admin, 
-		archivist,
-		expert_user,
-		user,
-		viewer;
-    }
+        sys_admin("System Admin"), 
+		archivist("Archivist"),
+		expert_user("Expert User"),
+		user("User"),
+		viewer("Viewer");
+        
+        private String value;
+
+        private Roles(String value) {
+	        this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static Roles getRole(String name) {
+    		for (Roles role : Roles.values()) {
+    			if (role.name().equals(name)) {
+    				return role;
+    			}
+    		}
+    		return null;
+    	}}
 	
 	public enum TabStatus {
 		overview,
@@ -530,77 +484,183 @@ public final class Const {
 		licensing;
     }
 		
-    /**
-     * Help mapping to present predefined Flag values in GUI.
-     */
-    public static final Map<String, String> guiFlagMap = new HashMap<String, String>();
-    	static {
-    	guiFlagMap.put("PRIORITY_PERMISSION",    "Priority Permission");
-    	guiFlagMap.put("PRIORITY_CRAWL_AND_QA",  "Priority Crawl & QA");
-    	guiFlagMap.put("PRIORITY_QA",            "Priority QA");
-    	guiFlagMap.put("QA_ISSUE_APPEARANCE",    "QA Issue - Appearance");
-    	guiFlagMap.put("QA_ISSUE_FUNCTIONALITY", "QA Issue - Functionality");
-    	guiFlagMap.put("QA_ISSUE_CONTENT",       "QA Issue - Content");
-    	guiFlagMap.put("FOLLOW_UP_PERMISSION",   "Follow Up Permission");
-    	guiFlagMap.put("GENERAL_CHANGE_REQUEST", "General Change Request");
-    }
+	/**
+	 * Records status of permission process.
+	 */
+	public enum CrawlPermissionStatus {
+		NOT_INITIATED("Not Initiated"),
+		QUEUED("Queued"),
+		PENDING("Pending"),
+		REFUSED("Refused"),
+		EMAIL_REJECTED("Email Rejected"),
+		GRANTED("Granted"),
+		SUPERSEDED("Superseded");
 		
-    /**
-     * GUI fields in relation to domain field names.
-     */
-    public static final Map<String, String> guiMap = new HashMap<String, String>();
-    	static {
-    	guiMap.put(NAME,                     "Name");
-    	guiMap.put(TITLE,                    "Title");
-    	guiMap.put(NID,                      "ID");
-    	guiMap.put(ID,                       "ID");
-    	guiMap.put(FIELD_SUBJECT,            "Subject");
-    	guiMap.put(FIELD_URL_NODE,           "Seed URL(s)");
-    	guiMap.put(AUTHOR,                   "Selector");
-    	guiMap.put(SELECTION_TYPE,           "Selection Type");
-    	guiMap.put(TARGET,                   "Target");
-    	guiMap.put(EMAIL,                    "E-mail");
-    	guiMap.put(FIELD_ABBREVIATION,       "Abbreviation");
-    	guiMap.put(FROM_EMAIL,               "From E-mail");
-    }
+        private String value;
+
+        private CrawlPermissionStatus(String value) {
+	        this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static CrawlPermissionStatus getCrawlPermissionStatus(String name) {
+    		for (CrawlPermissionStatus crawlPermissionStatus : CrawlPermissionStatus.values()) {
+    			if (crawlPermissionStatus.name().equals(name)) {
+    				return crawlPermissionStatus;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(CrawlPermissionStatus s : CrawlPermissionStatus.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
     		
+    	}
+	}
+
+	/**
+	 * The predominant language of target.
+	 */
+	public enum TargetLanguage {
+		EN("English"),
+		DE("Deutsche");
+		
+        private String value;
+
+        private TargetLanguage(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static TargetLanguage getLanguage(String name) {
+    		for (TargetLanguage language : TargetLanguage.values()) {
+    			if (language.name().equals(name)) {
+    				return language;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(TargetLanguage s : TargetLanguage.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}    	
+    }
+    
 	public enum SelectionType {
-		NOMINATION, // when created from UKWA
-		SELECTION;
+		NOMINATION("Nomination"), // when created from UKWA
+		SELECTION("Selection");
+		
+        private String value;
+
+        private SelectionType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static SelectionType getSelectionType(String name) {
+    		for (SelectionType selectionType : SelectionType.values()) {
+    			if (selectionType.name().equals(name)) {
+    				return selectionType;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(SelectionType s : SelectionType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}    
     }
 	
-    /**
-     * Help mapping to present predefined Scope values in GUI.
-     */
-    public static final Map<String, String> guiScopeMap = new HashMap<String, String>();
-    	static {
-		guiScopeMap.put("resource",   "Just this URL.");
-		guiScopeMap.put("plus1",      "This URL plus any directly linked resources.");
-		guiScopeMap.put("root",       "All URLs that start like this.");
-		guiScopeMap.put("subdomains", "All URLs that match match this host or any subdomains.");
-    }
-		
 	public enum ScopeType {
-		resource, 
-		plus1,
-		root,
-		subdomains;
+		resource("Just this URL."), 
+		plus1("This URL plus any directly linked resources."),
+		root("All URLs that start like this."),
+		subdomains("All URLs that match match this host or any subdomains.");
+		
+        private String value;
+
+        private ScopeType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static ScopeType getScopeType(String name) {
+    		for (ScopeType scopeType : ScopeType.values()) {
+    			if (scopeType.name().equals(name)) {
+    				return scopeType;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(ScopeType s : ScopeType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}        	
     }
     	
-    /**
-     * Help mapping to present predefined Depth values in GUI.
-     */
-    public static final Map<String, String> guiDepthMap = new HashMap<String, String>();
-    	static {
-		guiDepthMap.put("capped",       "Capped (small - 500MB)");
-		guiDepthMap.put("capped_large", "Capped (large - 2GB)");
-		guiDepthMap.put("deep",         "Uncapped");
-    }
-		
 	public enum DepthType {
-		capped, 
-		capped_large,
-		deep;
+		CAPPED("Capped (small - 500MB)"),
+		CAPPED_LARGE("Capped (large - 2GB)"),
+		DEEP("Uncapped");
+		
+        private String value;
+
+        private DepthType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static DepthType getDepthType(String name) {
+    		for (DepthType depthType : DepthType.values()) {
+    			if (depthType.name().equals(name)) {
+    				return depthType;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(DepthType s : DepthType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}        	
     }
     	
 	/**
@@ -633,40 +693,334 @@ public final class Const {
     		}
     		return null;
     	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(QAStatusType s : QAStatusType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}        	    	
 	}
+	
+	public enum NpldType {
+		UK_HOSTING("UK Hosting"),
+		UK_TOP_LEVEL_DOMAIN("UK Top Level Domain"),
+		UK_REGISTRATION("UK Registration"),
+		UK_POSTAL_ADDRESS("UK Postal Address"),
+		VIA_CORRESPONDENCE("Via Correspondance"),
+		PROFESSIONAL_JUDGEMENT("Professional Judgement"),
+		NO_LD_CRITERIA_MET("No LD Criteria Met");
+		
+        private String value;
+
+        private NpldType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(NpldType s : NpldType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}              
+    }
 	
 	/**
 	 * The QA issue category.
 	 */
 	public enum QAIssueCategory { 
-		APPEARANCE_BACKGROUND_TEXT_COLOUR_AND_FONT,
-		APPEARANCE_CHARACTERS,
-		APPEARANCE_FORMATTING_OF_THE_PAGE,
-		FUNCTIONALITY_LANGUAGE,
-		FUNCTIONALITY_ACCESSIBILITY,
-		FUNCTIONALITY_NAVIGATION,
-		FUNCTIONALITY_MEDIA,
-		CONTENT_IMAGES,
-		CONTENT_VIDEO,
-		CONTENT_DOCUMENTS,
-		CONTENT_PAGES_SUB_SECTIONS,
-		CONTENT_MENUS,
-		OTHER;
+		APPEARANCE_BACKGROUND_TEXT_COLOUR_AND_FONT("Appearance Background Text Colour and Font"),
+		APPEARANCE_CHARACTERS("Appearance Characters"),
+		APPEARANCE_FORMATTING_OF_THE_PAGE("Appearance Formatting of the Page"),
+		FUNCTIONALITY_LANGUAGE("Functionality Language"),
+		FUNCTIONALITY_ACCESSIBILITY("Functionality Accessibility"),
+		FUNCTIONALITY_NAVIGATION("Functionality Navigation"),
+		FUNCTIONALITY_MEDIA("Functionality Media"),
+		CONTENT_IMAGES("Content Images"),
+		CONTENT_VIDEO("Content Video"),
+		CONTENT_DOCUMENTS("Content Documents"),
+		CONTENT_PAGES_SUB_SECTIONS("Content Pages Sub-sections"),
+		CONTENT_MENUS("Content Menus"),
+		OTHER("Other");
+		
+        private String value;
+
+        private QAIssueCategory(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static QAIssueCategory getQAIssueCategory(String name) {
+    		for (QAIssueCategory qaIssueCategory : QAIssueCategory.values()) {
+    			if (qaIssueCategory.name().equals(name)) {
+    				return qaIssueCategory;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(QAIssueCategory s : QAIssueCategory.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}             	
     }
-    
+
+	/**
+	 * The CrawlFrequency.
+	 */
+	public enum CrawlFrequency { 
+		DOMAINCRAWL("Domain Crawl Only"),
+		ANNUAL("Annually"),
+		SIXMONTHLY("Six-monthly"),
+		QUARTERLY("Quarterly"),
+		MONTHLY("Monthly"),
+		OLD_MONTHLY_DO_NOT_USE("Old-Monthly-DO-NOT-USE"),
+		WEEKLY("Weekly"),
+		DAILY("Daily"),
+		NEVERCRAWL("Never Crawl");
+
+        private String value;
+
+        private CrawlFrequency(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static CrawlFrequency getCrawlFrequency(String name) {
+    		for (CrawlFrequency crawlFrequency : CrawlFrequency.values()) {
+    			if (crawlFrequency.name().equals(name)) {
+    				return crawlFrequency;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(CrawlFrequency s : CrawlFrequency.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}              	
+    }
+	
+	/**
+	 * The SiteStatus.
+	 */
+	public enum SiteStatus { 
+//		NA("N/A"),
+		LIVE("Still live"),
+		NO_LONGER_UPDATED("No longer updated"),
+		VANISHED("Vanished"),
+//		MONTLY("Monthly"),
+//		OLD_MONTHLY_DO_NOT_USE("Old-Monthly-DO-NOT-USE"),
+//		WEEKLY("Weekly"),
+//		DAILY("Daily"),
+//		NEVER_CRAWL("Never Crawl"),
+		DEAD("Dead");
+
+        private String value;
+
+        private SiteStatus(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static SiteStatus getSiteStatus(String name) {
+    		for (SiteStatus siteStatus : SiteStatus.values()) {
+    			if (siteStatus.name().equals(name)) {
+    				return siteStatus;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(SiteStatus siteStatus : SiteStatus.values()) {
+                options.put(siteStatus.name(), siteStatus.getValue());
+            }
+            return options;
+    		
+    	}
+    }
+	
+	/**
+	 * The predominant language of target.
+	 */
+	public enum RequestType {
+		ALL("All"),
+		FIRST_REQUEST("First Request"),
+		FOLLOW_UP("Follow Up");
+		
+        private String value;
+
+        private RequestType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static RequestType getRequestType(String name) {
+    		for (RequestType requestType : RequestType.values()) {
+    			if (requestType.name().equals(name)) {
+    				return requestType;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(RequestType s : RequestType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}             	
+    }
+	
 	/**
 	 * The report QA status types.
 	 */
 	public enum ReportQaStatusType { 
-		QAED,
-		AWAITINGQA,
-		WITHQAISSUES,
-		WITHNOQAISSUES,
-		FAILEDINSTANCES,
-		PASSED,
-		WITHQAISSUESRESOLVED;
+		QAED("Instances QA'ed"),
+		AWAITINGQA("Awaiting QA"),
+		WITHQAISSUES("With QA issues"),
+		WITHNOQAISSUES("With no QA issues"),
+		FAILEDINSTANCES("Failed Instances"),
+		PASSED("Passed to Crawl Engineer"),
+		WITHQAISSUESRESOLVED("With QA issues resolved");
+		
+        private String value;
+
+        private ReportQaStatusType(String value) {
+                this.value = value;
+        }
+        
+        public String getValue() {
+        	return value;
+        }
+
+    	public static ReportQaStatusType getReportQaStatusType(String name) {
+    		for (ReportQaStatusType reportQaStatusType : ReportQaStatusType.values()) {
+    			if (reportQaStatusType.name().equals(name)) {
+    				return reportQaStatusType;
+    			}
+    		}
+    		return null;
+    	}
+    	
+    	public static Map<String, String> options() {
+            LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+            for(ReportQaStatusType s : ReportQaStatusType.values()) {
+                options.put(s.name(), s.getValue());
+            }
+            return options;
+    		
+    	}                	
     }
+	
+	public enum MailTemplateType {
+		PERMISSION_REQUEST("Permission Request"),
+		THANK_YOU_ONLINE_PERMISSION_FORM("Permission Acknowledgement"),
+		THANK_YOU_ONLINE_NOMINATION_BY_OWNER("Thank you nomination by Owner"),
+		THANK_YOU_ONLINE_NOMINATION_BY_NOMINATOR("Thank you nomination by Nominator");
+		
+        private String value;
+        
+        private MailTemplateType(String value) {
+            this.value = value;
+        }
     
+	    public String getValue() {
+	    	return value;
+	    }
+	
+		public static MailTemplateType getMailTemplateType(String name) {
+			for (MailTemplateType mailTemplate : MailTemplateType.values()) {
+				if (mailTemplate.name().equals(name)) {
+					return mailTemplate;
+				}
+			}
+			return null;
+		}
+		
+		public static Map<String, String> options() {
+	        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+	        for(MailTemplateType s : MailTemplateType.values()) {
+	            options.put(s.name(), s.getValue());
+	        }
+	        return options;
+			
+		}                	
+	}
+
+	/**
+	 * Types of permission refusal.
+	 */
+	public enum RefusalType {
+		THIRD_PARTY_CONTENT("Third Party Content"),
+		IMPRACTICALITY("Impracticality"),
+		INTERNAL_REASONS("Internal Reasons"),
+		LEGALISTIC_FORM("Legalistic Form"),
+		NO_REASON("No Reason"),
+		PRIVACY("Privacy"),
+		OTHER("Other");
+		
+        private String value;
+        
+        private RefusalType(String value) {
+            this.value = value;
+        }
+    
+	    public String getValue() {
+	    	return value;
+	    }
+	
+		public static RefusalType getRefusalType(String name) {
+			for (RefusalType refusalType : RefusalType.values()) {
+				if (refusalType.name().equals(name)) {
+					return refusalType;
+				}
+			}
+			return null;
+		}
+		
+		public static Map<String, String> options() {
+	        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+	        for(RefusalType s : RefusalType.values()) {
+	            options.put(s.name(), s.getValue());
+	        }
+	        return options;
+			
+		}    		
+    }
+	
     /**
      * Help collections to read JSON lists like
      * "field_url":[{"url":"http:\/\/www.adoptionuk.org\/"}]
@@ -719,24 +1073,6 @@ public final class Const {
     	statusStrMap.put(2L, "No QA issues found");
     	statusStrMap.put(3L, "QA issue");
     }
-		
-    /**
-     * Help collection to read JSON sub nodes like 
-     * "field_affiliation":{"uri":"http:\/\/www.webarchive.org.uk\/act\/node\/101","id":"101","resource":"node"}
-     */
-    public static final Map<String, String> subNodeMap = new HashMap<String, String>();
-    	static {
-    	subNodeMap.put(AUTHOR, URI);
-    	subNodeMap.put(FIELD_AFFILIATION, URI);
-    	subNodeMap.put(FIELD_NOMINATING_ORGANISATION, URI);
-    	subNodeMap.put(FIELD_SUBJECT, URI);
-    	subNodeMap.put(FIELD_QA_STATUS, URI);
-    	subNodeMap.put(FIELD_OWNER, URI);
-    	subNodeMap.put(PARENT, URI);
-    	subNodeMap.put(PARENTS_ALL, URI);
-    	subNodeMap.put(FIELD_TARGET, URI);
-    	subNodeMap.put(FIELD_QA_ISSUE, URI);
-    }
 
 	public enum ScopeCheckType {
 		ALL,
@@ -744,27 +1080,6 @@ public final class Const {
 		DOMAIN;
     }    	
     	
-	public enum NpldType {
-		UK_HOSTING("UK Hosting"),
-		UK_TOP_LEVEL_DOMAIN("UK Top Level Domain"),
-		UK_REGISTRATION("UK Registration"),
-		UK_POSTAL_ADDRESS("UK Postal Address"),
-		VIA_CORRESPONDENCE("Via Correspondance"),
-		PROFESSIONAL_JUDGEMENT("Professional Judgement"),
-		NO_LD_CRITERIA_MET("No LD Criteria Met");
-		
-        private String value;
-
-        private NpldType(String value) {
-                this.value = value;
-        }
-        
-        public String getValue() {
-        	return value;
-        }
-
-    }    
-
     /**
      * DEFINITIONS FOR TESTING  	
      */

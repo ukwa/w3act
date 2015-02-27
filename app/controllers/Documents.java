@@ -50,7 +50,7 @@ import views.html.documents.edit;
 import views.html.documents.list;
 import views.xml.documents.sip;
 
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class Documents extends AbstractController {
 	
 	public static PortalList portalList = new PortalList();
@@ -120,7 +120,8 @@ public class Documents extends AbstractController {
 		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
 		Document document = documentForm.get();
 		document.clearImproperFields();
-		document.taxonomies = Taxonomy.convertUrlsToObjects(document.subject);
+		//TODO: adapt
+		//document.subjects = Taxonomy.convertUrlsToObjects(document.subject);
 		setPortalsAndBlCollectionSubsetsOfModel(document, documentForm);
 		Ebean.update(document);
 		
@@ -245,7 +246,8 @@ public class Documents extends AbstractController {
 		if (document.type == null) document.type = "";
 		if (document.journal != null)
 			document.journal.journalTitleId = document.journal.journalTitle.id;
-		document.subject = TaxonomiesController.serializeTaxonomies(document.taxonomies);
+		//TODO: adapt
+		//document.subject = TaxonomyController.serializeTaxonomies(document.subjects);
 		return document;
 	}
 	
@@ -300,7 +302,7 @@ public class Documents extends AbstractController {
 	}
 	
     public static Result overview(int pageNo, String sortBy, String order) {
-    	return renderList("" + User.findByEmail(request().username()).uid, "", "", Document.Status.NEW, pageNo, sortBy, order, "", false);
+    	return renderList("" + User.findByEmail(request().username()).id, "", "", Document.Status.NEW, pageNo, sortBy, order, "", false);
     }
     
     public static Result renderList(String userString, String watchedTargetString,
@@ -318,7 +320,7 @@ public class Documents extends AbstractController {
     		userId = userString.isEmpty() || userString.equals("null") ?
     				null : new Long(userString);
     	} else {
-    		userId = WatchedTarget.find.byId(watchedTargetId).user.uid;
+    		userId = WatchedTarget.find.byId(watchedTargetId).target.authorUser.id;
     	}
     	
         return ok(

@@ -1,20 +1,18 @@
 package models;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Version;
 
 import play.Logger;
-import play.data.validation.Constraints.Required;
 import play.db.ebean.Model;
 import uk.bl.Const;
 
@@ -25,86 +23,28 @@ import com.avaje.ebean.Page;
  * This class allows archivist to manage open tags.
  */
 @Entity
-@Table(name = "tag")
-public class Tag extends Model
-{
+@DiscriminatorValue("tags")
+public class Tag extends Taxonomy {
 
 	/**
-	 * file idwdsdsa
+	 * 
 	 */
 	private static final long serialVersionUID = -2257699575463702989L;
-
-	@Id 
-    @Column(name="ID")
-    public Long id;
-
-    //bi-directional many-to-many association to Target
-    @ManyToMany
-	@JoinTable(name = Const.TAG_TARGET, joinColumns = { @JoinColumn(name = "id_tag", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_target", referencedColumnName="ID") }) 
-    private List<Target> targets = new ArrayList<Target>();
- 
-    public List<Target> getTargets() {
-    	return this.targets;
-    }
-    
-    public void setTargets(List<Target> targets) {
-    	this.targets = targets;
-    }    
-    
-    //bi-directional many-to-many association to Instance
-    @ManyToMany
-	@JoinTable(name = Const.TAG_INSTANCE, joinColumns = { @JoinColumn(name = "id_tag", referencedColumnName="ID") },
-		inverseJoinColumns = { @JoinColumn(name = "id_instance", referencedColumnName="ID") }) 
-    private List<Instance> instances = new ArrayList<Instance>();
-    
-    public List<Instance> getInstances() {
-    	return this.instances;
-    }
-    
-    public void setInstances(List<Instance> instances) {
-    	this.instances = instances;
-    }    
-    
-    /**
-     * This field with prefix "act-" builds an unique identifier in W3ACT database.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String url;
 	
-    /**
-     * The name of the tag.
-     */
-    @Required
-    @Column(columnDefinition = "TEXT")
-    public String name;
+    @ManyToMany
+	@JoinTable(name = "tag_target", joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") }) 
+    public List<Target> targets;
+
+    @ManyToMany
+	@JoinTable(name = "tag_instance", joinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
+    public List<Instance> instances;
     
-    /**
-     * Allows the addition of further notes regarding tag description.
-     */
-    @Column(columnDefinition = "TEXT")
-    public String description;
-
-    @Version
-    public Timestamp lastUpdate;
-
     public static final Model.Finder<Long, Tag> find = new Model.Finder<Long, Tag>(Long.class, Tag.class);
 
-    public Tag() {
-		super();
-	}
-
-	public String getName()
-    {
-        return name;
-    }
-
-    public static Tag findByName(String name)
-    {
-        return find.where()
-                   .eq("name",
-                       name)
-                   .findUnique();
+    public static Tag findByName(String name) {
+    	return find.where().eq("name", name).findUnique();
     }
 
     /**
@@ -138,7 +78,7 @@ public class Tag extends Model
 	 * @param name
 	 * @return
 	 */
-	public static List<Tag> filterByName(String name) {
+	public static List<Tag> filterByTagName(String name) {
 		List<Tag> res = new ArrayList<Tag>();
         ExpressionList<Tag> ll = find.where().icontains(Const.NAME, name);
     	res = ll.findList();
@@ -148,7 +88,7 @@ public class Tag extends Model
     /**
      * Retrieve all tags.
      */
-    public static List<Tag> findAll() {
+    public static List<Tag> findAllTags() {
         return find.all();
     }
     
@@ -157,21 +97,60 @@ public class Tag extends Model
 	 * @param targetUrl
 	 * @return
 	 */
-	public static List<Tag> convertUrlsToObjects(String urls) {
+	public static List<Tag> convertUrlsToTagObjects(String urls) {
 		List<Tag> res = new ArrayList<Tag>();
    		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
 	    	String[] parts = urls.split(Const.COMMA + " ");
 	    	for (String part: parts) {
-		    	Logger.info("+++ Tag convertUrlsToObjects() part: " + part);
+		    	Logger.debug("+++ Tag convertUrlsToObjects() part: " + part);
 	    		Tag tag = findByUrl(part);
 	    		if (tag != null && tag.name != null && tag.name.length() > 0) {
-			    	Logger.info("tag name: " + tag.name);
+			    	Logger.debug("tag name: " + tag.name);
 	    			res.add(tag);
 	    		}
 	    	}
     	}
 		return res;
 	}       
+	
+	public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(Tag t: Tag.findAllTags()) {
+            options.put(t.id.toString(), t.name);
+        }
+        return options;		
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Tag other = (Tag) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
     	
     public String toString() {
         return "Tag(" + name + ")" + ", id:" + id;
@@ -186,7 +165,7 @@ public class Tag extends Model
      * @param order Sort order (either or asc or desc)
      * @param filter Filter applied on the name column
      */
-    public static Page<Tag> page(int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Tag> pager(int page, int pageSize, String sortBy, String order, String filter) {
 
         return find.where().icontains("name", filter)
         		.orderBy(sortBy + " " + order)
@@ -195,4 +174,12 @@ public class Tag extends Model
         		.getPage(page);
     }    
 
+    public static Map<String, Boolean> options(List<Tag> myTags) {
+    	if (myTags == null) myTags = new ArrayList<Tag>();
+        Map<String, Boolean> tagsMap = new HashMap<String, Boolean>();
+        for (Tag tag : Tag.findAllTags()) {
+        	tagsMap.put(tag.name, (myTags != null && myTags.contains(tag)));
+        }
+        return tagsMap;
+    }
 }

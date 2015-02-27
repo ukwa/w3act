@@ -16,7 +16,7 @@ import play.mvc.Security;
 import uk.bl.Const;
 import views.html.journaltitles.edit;
 
-@Security.Authenticated(Secured.class)
+@Security.Authenticated(SecuredController.class)
 public class JournalTitles extends AbstractController {
 	
 	public static Result addJournalTitle(Long watchedTargetId, boolean toDocument) {
@@ -27,8 +27,8 @@ public class JournalTitles extends AbstractController {
 		JournalTitle journalTitle = new JournalTitle();
 		journalTitle.watchedTarget = watchedTarget;
 		journalTitle.language = Const.JOURNAL_TITLE_LANGUAGE;
-		journalTitle.collection = watchedTarget.target.field_collection_categories;
-		journalTitle.subject = watchedTarget.target.field_subject;
+		//TODO: adapt
+		//journalTitle.subject = watchedTarget.target.field_subject;
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
@@ -39,7 +39,8 @@ public class JournalTitles extends AbstractController {
 		Logger.info("JournalTitles.edit()");
 		
 		JournalTitle journalTitle = Ebean.find(JournalTitle.class, id);
-		journalTitle.subject = TaxonomiesController.serializeTaxonomies(journalTitle.taxonomies);
+		//TODO: adapt
+		//journalTitle.subject = TaxonomyController.serializeTaxonomies(journalTitle.taxonomies);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 		setBlCollectionSubsetsOfView(journalTitleForm, journalTitle);
 
@@ -67,7 +68,7 @@ public class JournalTitles extends AbstractController {
 		if (delete != null) {
 			JournalTitle journalTitle = Ebean.find(JournalTitle.class, journalTitleForm.apply("id").value());
 			Ebean.delete(journalTitle);
-			return redirect(routes.Targets.view(journalTitle.watchedTarget.target.url));
+			return redirect(routes.TargetController.view(journalTitle.watchedTarget.target.id));
 		}
 		
 		if (journalTitleForm.hasErrors()) {
@@ -78,7 +79,8 @@ public class JournalTitles extends AbstractController {
 		}
 		
 		JournalTitle journalTitle = journalTitleForm.get();
-		journalTitle.taxonomies = Taxonomy.convertUrlsToObjects(journalTitle.subject);
+		//TODO: adapt
+		//journalTitle.taxonomies = Taxonomy.convertUrlsToObjects(journalTitle.subject);
 		
 		ExpressionList<JournalTitle> expressionList = JournalTitle.find.where()
 				.eq("id_watched_target", journalTitle.watchedTarget.id)

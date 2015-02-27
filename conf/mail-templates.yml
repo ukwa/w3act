@@ -1,0 +1,20 @@
+# Mail Templates
+
+mailtemplates:
+
+    - !!models.MailTemplate
+        name:         General
+        ttype:        PERMISSION_REQUEST
+        subject:      UK Web Archive
+        placeHolders: URL, LINK
+        fromEmail:    web-archivist@bl.uk
+        text:         default.txt
+    
+    - !!models.MailTemplate
+        name:         Acknowledgement
+        ttype:        THANK_YOU_ONLINE_PERMISSION_FORM
+        subject:      British Library UKWA Licence Received
+        placeHolders: LICENCE
+        fromEmail:    web-archivist@bl.uk
+        text:         acknowledgement.txt
+        

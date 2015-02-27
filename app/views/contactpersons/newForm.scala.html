@@ -1,0 +1,163 @@
+@(contactPersonform: Form[ContactPerson], user: User)
+
+@import helper._
+@import bootstrap._
+
+@main("", user) {
+
+   	<div class="page-header">
+	    <h1><a href="@routes.ContactPersonController.index()">Archivist Tasks > Contact Persons ></a>New contact person</h1>
+	</div>
+
+    @warningmessage(flash)
+    
+    @if(contactPersonform.hasErrors) {
+		<div class="padding-20">
+			<div class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				@for(entry <- contactPersonform.errors.entrySet){
+					@for(error <- entry.getValue){
+						@error.message<br />
+					}
+				}
+			</div>
+		</div>
+	}    
+	
+	@helper.form(action=routes.ContactPersonController.save()) {
+
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(contactPersonform("name"),
+						'_label -> "Name",
+					    'id -> "title",
+					    'class -> "form-control",
+					    'placeholder -> "Name"
+					)(FieldConstructor(genericInput.f), lang)				
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(contactPersonform("position"),
+						'_label -> "Position",
+					    'id -> "position",
+					    'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)	
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(contactPersonform("email"),
+						'_label -> "E-mail",
+						'type -> "email",
+					    'id -> "email",
+					    'class -> "form-control"
+					)(FieldConstructor(genericMandatoryInput.f), lang)	
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(contactPersonform("contactOrganisation"),
+						'_label -> "Contact Organisation",
+					    'id -> "contactOrganisation",
+					    'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)					
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(contactPersonform("phone"),
+						'_label -> "Phone",
+					    'id -> "phone",
+					    'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(contactPersonform("postalAddress"),
+						'_label -> "Postal Address",
+					    'id -> "postalAddress",
+					    'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)
+				</div>
+			</div>
+     	</div>
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@inputText(contactPersonform("webForm"),
+						'_label -> "Web Form",
+					    'id -> "webForm",
+					    'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)
+				</div>
+			</div>
+     	</div>
+     	
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@helper.checkbox(contactPersonform("defaultContact"), 
+						args = 
+						'_label -> "Default Contact" 
+					)(FieldConstructor(genericInput.f), lang)				
+				</div>
+			</div>
+     	</div>	  
+	          
+   		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@helper.checkbox(contactPersonform("permissionChecked"), 
+						args = 
+						'_label -> "Permission Checked" 
+					)(FieldConstructor(genericInput.f), lang)					
+				</div>
+			</div>
+     	</div>	  
+	          
+		<div class="row padding-10">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="form-group">
+					@textarea(field = contactPersonform("description"),
+		 				args = 'rows -> 1, 'cols -> 100,
+						'_label -> "Description",
+						'id -> "inputDescription",
+						'class -> "form-control"
+					)(FieldConstructor(genericInput.f), lang)	
+				</div>
+			</div>
+     	</div>
+			          
+		<div class="alert alert-info">
+			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
+		</div>
+
+		<div class="row padding-10 pull-right">
+     		<div class="col-md-12 col-xs-12 col-sm-12">
+				<div class="btn-group">		
+					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+		       </div>
+			</div>
+		</div>
+	}
+}
+

@@ -9,7 +9,7 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")'
 			applySearch(context, 'flags'); 
 		});
 	</script>
@@ -37,7 +37,7 @@
     }
     
     // Generate the link
-    routes.Flags.list(newPage, sortBy, order, searchstr)
+    routes.FlagController.list(newPage, sortBy, order, searchstr)
     
 }
 
@@ -81,14 +81,14 @@
 @main(title, user, scripts, styles) {
 
 	<div class="page-header">
-	    <h1><a href="@routes.Flags.index()">Taxonomies > </a>Flags</h1>
+	    <h1><a href="@routes.FlagController.index()">Taxonomies > </a>Flags</h1>
 	</div>
 		
     <article class="flags">
 
 		<div id="forms">
    			@warningmessage(flash)
-   			@helper.form(action=routes.Flags.search, 'class -> "form-inline") {
+   			@helper.form(action=routes.FlagController.search, 'class -> "form-inline") {
 	   			<div class="input-group">
 					<input type="hidden" name="p" value="@currentPage.getPageIndex" />
 	   				<input type="hidden" name="s" value="@currentSortBy">
@@ -97,7 +97,7 @@
 		   			<span class="input-group-btn">
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for flag by name">Search</button>
 						@if(user.hasRole("sys_admin")) {
-							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new flag">Add</button>
+							<a class="btn btn-primary" href="@routes.FlagController.newForm()">Add</a>
 						}						
 					</span>
 				</div>
@@ -114,7 +114,7 @@
 			<tbody>
 			@for(flag <- currentPage.getList) {
 				<tr>
-					<td><a href="@routes.Flags.view(flag.url)">@Flags.getGuiName(flag.name)</a></td>
+					<td><a href="@routes.FlagController.view(flag.id)">@flag.name</a></td>
 					<td>@flag.description</td>
 				</tr>
 			}
