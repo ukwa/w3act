@@ -97,9 +97,7 @@
    					<input type="hidden" name="o" value="@currentOrder">
 					<input type="text" class="form-control lookup-form-control" name="url" placeholder="http://www.bbc.co.uk" value="@searchurl" id="search-query">
 		   			<span class="input-group-btn">
-						@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
 						<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Search for url">Search</button>
-						}
 						@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) && searchurl != null && searchurl.length() > 0) {
 							<button type="submit" class="btn btn-primary" id="addentry" name="action" value="addentry" title="Add new url">Add Instance</button>
 						}
