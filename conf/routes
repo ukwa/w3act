@@ -185,8 +185,8 @@ GET    	/targets/new                 		controllers.TargetController.newForm(titl
 GET    	/targets/collectiontargets        	controllers.TargetController.collectionTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", collectionId:Long ?= 0)
 #GET    	/targets/collectiontargets/:id/json controllers.TargetController.collectionTargetsAsJson(id:Long)
 GET    	/targets/organisationtargets/       controllers.TargetController.organisationTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", organisationId:Long)
-GET    	/targets/usertargets/           	controllers.TargetController.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", userId:Long, subjectId:Long ?= 0, collectionId:Long ?= 0)
-GET    	/targets/subjecttargets/        	controllers.TargetController.subjectTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", subjectId:Long ?= 0)
+GET    	/targets/usertargets           		controllers.TargetController.userTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", userId:Long, subjectId:Long ?= 0, collectionId:Long ?= 0)
+GET    	/targets/subjecttargets	        	controllers.TargetController.subjectTargets(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "", subjectId:Long ?= 0)
 GET    	/targets/export/ld/:frequency		controllers.TargetController.exportLdFrequencyJson(frequency)
 GET    	/targets/export/by/:frequency		controllers.TargetController.exportByFrequencyJson(frequency)
 
@@ -211,9 +211,9 @@ GET     /target/archive/:id                 controllers.TargetController.archive
 GET     /instances                          controllers.InstanceController.index()
 GET    	/instances/search          			controllers.InstanceController.search()
 GET    	/instances/filterbyjson/:url		controllers.InstanceController.filterByJson(url)
-GET    	/instances/list/                  	controllers.InstanceController.list(p:Int ?= 0, s ?= "createdAt", o ?= "desc", f ?= "")
+GET    	/instances/list                  	controllers.InstanceController.list(p:Int ?= 0, s ?= "createdAt", o ?= "desc", f ?= "")
 GET     /instances/new      				controllers.InstanceController.newForm(title ?= "")
-GET    	/instances/listbytarget/           	controllers.InstanceController.listByTarget(p:Int ?= 0, s ?= "createdAt", o ?= "desc", f ?= "", t:Long)
+GET    	/instances/listbytarget           	controllers.InstanceController.listByTarget(p:Int ?= 0, s ?= "createdAt", o ?= "desc", f ?= "", t:Long)
 GET     /instances/showbytarget/:id			controllers.InstanceController.showByTarget(id:Long)
 
 GET     /instances/:id                		controllers.InstanceController.view(id:Long)
@@ -314,7 +314,7 @@ GET     /whois                               controllers.WhoIsController.index()
 GET     /whois/check            			 controllers.WhoIsController.check(total:Int ?= 0)
 
 # Sample forms with validation
-GET     /targets/blank/						controllers.TargetController.blank()
+GET     /targets/blank						controllers.TargetController.blank()
 POST    /targets/save						controllers.TargetController.saveBlank()
 
 GET     /resetpassword                  	controllers.ResetController.showEmailForm()
