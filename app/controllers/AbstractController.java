@@ -230,7 +230,7 @@ public class AbstractController extends Controller {
 	}
     
     
-	protected static JsonNode getSubjectsData() {
+	public static JsonNode getSubjectsData() {
 		return getSubjectsData(null);
 	}
 
@@ -280,7 +280,7 @@ public class AbstractController extends Controller {
 			if (mySubjects != null && mySubjects.contains(subject)) {
 				child.put("select", true);
 			}
-			child.put("key", "\"" + subject.id + "\"");
+			child.put("key", subject.id);
 	    	List<Subject> children = Subject.findChildrenByParentId(subject.id);
 	    	if (children.size() > 0) {
 	    		child.put("children", Json.toJson(getSubjectTreeElements(children, filter, false, mySubjects)));

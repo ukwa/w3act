@@ -196,11 +196,11 @@ public class TaxonomyController extends AbstractController {
         return res;
     }
     
-	public static String serializeTaxonomies(List<Taxonomy> taxonomies) {
+	public static String serializeTaxonomies(List<? extends Taxonomy> taxonomies) {
 		String subject = "";
 		for (Taxonomy taxonomy : taxonomies) {
 			if (!subject.isEmpty()) subject += ", ";
-			subject += taxonomy.url;
+			subject += taxonomy.id;
 		}
 		return subject;
 	}

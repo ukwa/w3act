@@ -183,7 +183,7 @@
 					};
 			}
 			
-			fillTree("subject", @Html(TargetController.getSubjectsJsonData("empty")));
+			fillTree("subject", @Html(AbstractController.getSubjectsData().toString));
 		});
 	</script>
 }

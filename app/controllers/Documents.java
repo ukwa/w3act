@@ -246,8 +246,7 @@ public class Documents extends AbstractController {
 		if (document.type == null) document.type = "";
 		if (document.journal != null)
 			document.journal.journalTitleId = document.journal.journalTitle.id;
-		//TODO: adapt
-		//document.subject = TaxonomyController.serializeTaxonomies(document.subjects);
+		document.subject = TaxonomyController.serializeTaxonomies(document.subjects);
 		return document;
 	}
 	
