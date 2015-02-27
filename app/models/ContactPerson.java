@@ -176,7 +176,7 @@ public class ContactPerson extends ActModel {
 	}
 	
 	public static ContactPerson findByEmail(String email) {
-		return find.where().eq("email", email).findUnique();
+		return find.where().ieq("email", email).findUnique();
 	}
         
     /**

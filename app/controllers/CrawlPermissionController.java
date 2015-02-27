@@ -388,7 +388,7 @@ public class CrawlPermissionController extends AbstractController {
 		            return info(filledForm, id, null);
 		        }
 		        
-		    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail);
+		    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail.trim());
 		    	
 		    	if (existingContact != null) {
 			    	Logger.debug("validateForm contactPersonName: " + contactPersonName + "/" + existingContact.name);
@@ -469,7 +469,7 @@ public class CrawlPermissionController extends AbstractController {
             return newInfo(filledForm, targetId, null);
         }
         
-    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail);
+    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail.trim());
     	
     	if (existingContact != null) {
 	    	Logger.debug("validateForm contactPersonName: " + contactPersonName + "/" + existingContact.name);
