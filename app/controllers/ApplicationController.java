@@ -27,6 +27,7 @@ import play.data.*;
 import static play.data.Form.*;
 import models.*;
 import uk.bl.Const;
+import uk.bl.api.Base64;
 import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
@@ -211,18 +212,19 @@ public class ApplicationController extends Controller {
 	 * {"body":[],"field_scope":"root","field_url":[{"url":"http:\/\/www.electionwatch.co.uk\/","attributes":[]}],"field_subject":{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/227","id":"227","resource":"taxonomy_term"},"field_depth":"capped","field_via_correspondence":false,"field_uk_postal_address":false,"field_uk_hosting":false,"field_description":[],"field_uk_postal_address_url":[],"field_nominating_organisation":{"uri":"http:\/\/webarchive.org.uk\/act\/node\/101","id":"101","resource":"node"},"field_crawl_frequency":"daily","field_suggested_collections":[],"field_collections":[],"field_crawl_start_date":"1422943200","field_crawl_end_date":"1431057600","field_uk_domain":"Yes","field_license":[],"field_crawl_permission":"","field_collection_categories":[{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/300","id":"300","resource":"taxonomy_term"},{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/305","id":"305","resource":"taxonomy_term"}],"field_special_dispensation":false,"field_special_dispensation_reaso":null,"field_live_site_status":null,"field_notes":[],"field_wct_id":null,"field_spt_id":null,"field_snapshots":[],"field_no_ld_criteria_met":false,"field_key_site":false,"field_uk_geoip":"Yes","field_professional_judgement":false,"field_professional_judgement_exp":null,"field_ignore_robots_txt":false,"field_instances":[],"nid":"21593","vid":"34746","is_new":false,"type":"url","title":"Election Watch - UK General Election 2015 ","language":"en","url":"http:\/\/webarchive.org.uk\/act\/node\/21593","edit_url":"http:\/\/webarchive.org.uk\/act\/node\/21593\/edit","status":"1","promote":"0","sticky":"0","created":"1422887984","changed":"1422887984","author":{"uri":"http:\/\/webarchive.org.uk\/act\/user\/61","id":"61","resource":"user"},"log":"","revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null}  
 	 *  
 	 * curl -v -H "Accept: application/json" -H "Content-Type: application/json" -X POST -u kinman.li@bl.uk:password -d '{"body":[],"field_scope":"root","field_url":[{"url":"http:\/\/www.electionwatch.co.uk\/","attributes":[]}],"field_subject":{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/227","id":"227","resource":"taxonomy_term"},"field_depth":"capped","field_via_correspondence":false,"field_uk_postal_address":false,"field_uk_hosting":false,"field_description":[],"field_uk_postal_address_url":[],"field_nominating_organisation":{"uri":"http:\/\/webarchive.org.uk\/act\/node\/101","id":"101","resource":"node"},"field_crawl_frequency":"daily","field_suggested_collections":[],"field_collections":[],"field_crawl_start_date":"1422943200","field_crawl_end_date":"1431057600","field_uk_domain":"Yes","field_license":[],"field_crawl_permission":"","field_collection_categories":[{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/300","id":"300","resource":"taxonomy_term"},{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/305","id":"305","resource":"taxonomy_term"}],"field_special_dispensation":false,"field_special_dispensation_reaso":null,"field_live_site_status":null,"field_notes":[],"field_wct_id":null,"field_spt_id":null,"field_snapshots":[],"field_no_ld_criteria_met":false,"field_key_site":false,"field_uk_geoip":"Yes","field_professional_judgement":false,"field_professional_judgement_exp":null,"field_ignore_robots_txt":false,"field_instances":[],"nid":"21593","vid":"34746","is_new":false,"type":"url","title":"Election Watch - UK General Election 2015 ","language":"en","url":"http:\/\/webarchive.org.uk\/act\/node\/21593","edit_url":"http:\/\/webarchive.org.uk\/act\/node\/21593\/edit","status":"1","promote":"0","sticky":"0","created":"1422887984","changed":"1422887984","author":{"uri":"http:\/\/webarchive.org.uk\/act\/user\/61","id":"61","resource":"user"},"log":"","revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null}' http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -u kinman.li@bl.uk:password -d '{"body":[],"field_scope":"root","field_url":[{"url":"http:\/\/www.electionwatch.co.uk\/","attributes":[]}],"field_subject":{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/227","id":"227","resource":"taxonomy_term"},"field_depth":"capped","field_via_correspondence":false,"field_uk_postal_address":false,"field_uk_hosting":false,"field_description":[],"field_uk_postal_address_url":[],"field_nominating_organisation":{"uri":"http:\/\/webarchive.org.uk\/act\/node\/101","id":"101","resource":"node"},"field_crawl_frequency":"daily","field_suggested_collections":[],"field_collections":[],"field_crawl_start_date":"1422943200","field_crawl_end_date":"1431057600","field_uk_domain":"Yes","field_license":[],"field_crawl_permission":"","field_collection_categories":[{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/300","id":"300","resource":"taxonomy_term"},{"uri":"http:\/\/webarchive.org.uk\/act\/taxonomy_term\/305","id":"305","resource":"taxonomy_term"}],"field_special_dispensation":false,"field_special_dispensation_reaso":null,"field_live_site_status":null,"field_notes":[],"field_wct_id":null,"field_spt_id":null,"field_snapshots":[],"field_no_ld_criteria_met":false,"field_key_site":false,"field_uk_geoip":"Yes","field_professional_judgement":false,"field_professional_judgement_exp":null,"field_ignore_robots_txt":false,"field_instances":[],"nid":"21593","vid":"34746","is_new":false,"type":"url","title":"Election Watch - UK General Election 2015 ","language":"en","url":"http:\/\/webarchive.org.uk\/act\/node\/21593","edit_url":"http:\/\/webarchive.org.uk\/act\/node\/21593\/edit","status":"1","promote":"0","sticky":"0","created":"1422887984","changed":"1422887984","author":{"uri":"http:\/\/webarchive.org.uk\/act\/user\/61","id":"61","resource":"user"},"log":"","revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null}' http://localhost:9000/actdev/api/targets
      * @throws ActException 
 	 **/
+    @With(SecuredAction.class)
     @BodyParser.Of(BodyParser.Json.class)
     public static Result bulkImport() throws ActException {
     	JsonNode node = request().body().asJson();
 
-//    	HttpExecution.defaultContext().
-    	
-    	if(node == null) {
-    		return badRequest("Expecting Json data");
-    	} else {
-			try {
+        
+        try {
+	    	if(node == null) {
+	    		return badRequest("Expecting Json data");
+	    	} else {
 				ObjectMapper objectMapper = new ObjectMapper();
 				objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
 				Logger.debug("node: " + node);
@@ -266,7 +268,7 @@ public class ApplicationController extends Controller {
 				for (Map<String,String> map : target.getField_url()) {
 					String url = map.get("url");
 					try {
-						url = Utils.INSTANCE.validateUrl(url) + "xxxxxxxxxxxxxx";
+						url = Utils.INSTANCE.validateUrl(url);
 						Logger.debug("Checked Url: " + url);
 						
 						FieldUrl existingFieldUrl = FieldUrl.findByUrl(url);
@@ -459,12 +461,12 @@ public class ApplicationController extends Controller {
 				Logger.debug("location: " + url);
 				response().setHeader(LOCATION, url);
 				target.save();
-			} catch (IOException e) {
-				throw new ActException(e);
-			}
-			Logger.debug("response 201 created");
-		    return created(response().getHeaders().get(LOCATION));
-    	}
+				Logger.debug("response 201 created");
+			    return created(response().getHeaders().get(LOCATION));
+	    	}
+        } catch (IOException e) {
+            return Results.internalServerError();
+        }
 	}
     
 	private static Collection getCollection(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
