@@ -232,19 +232,21 @@ public class LicenseController extends AbstractController {
 	                if (getFormParam(Const.DESCRIPTION) != null) {
 	                    permission.anyOtherInformation = getFormParam(Const.DESCRIPTION);
 	                }
-	                if (getFormParam(Const.CONTACT_PERSON) != null) {
-	                	
-	                    String ownerName = getFormParam(Const.CONTACT_PERSON);
-	                    ContactPerson contactPerson = null;
-	                    
-	                	contactPerson = ContactPerson.findByName(ownerName);
+	                
+                    String email = getFormParam(Const.EMAIL);
+                	String ownerName = getFormParam(Const.CONTACT_PERSON);
+                    
+                    if (StringUtils.isNotBlank(email)) {
+
+	                    ContactPerson contactPerson = ContactPerson.findByEmail(email);
+
 	                	if (contactPerson != null) {
 	                    	Logger.debug("found contact person: " + contactPerson);
+	    	                if (StringUtils.isNotBlank(ownerName)) {
+	    	                	contactPerson.name = ownerName;
+	    	                }	                    
 	                        if (getFormParam(Const.POSITION) != null) {
 	                            contactPerson.position = getFormParam(Const.POSITION);
-	                        }
-	                        if (getFormParam(Const.EMAIL) != null) {
-	                            contactPerson.email = getFormParam(Const.EMAIL);
 	                        }
 	                        if (getFormParam(Const.POSTAL_ADDRESS) != null) {
 	                            contactPerson.postalAddress = getFormParam(Const.POSTAL_ADDRESS);
