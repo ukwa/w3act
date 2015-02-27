@@ -10,7 +10,6 @@ import play.mvc.SimpleResult;
 import play.mvc.Http.HeaderNames;
 
 import java.util.Base64;
-import java.util.Optional;
 
 import uk.bl.api.PasswordHash;
 
@@ -20,9 +19,9 @@ public class SecuredAction extends Action.Simple {
 	@Override
 	public Promise<SimpleResult> call(Context ctx) throws Throwable {
 		
-        Optional<String> header = Optional.ofNullable(ctx.request().getHeader(HeaderNames.AUTHORIZATION));
-        
-    	String auth = header.get().substring(6);
+    	String[] authorization = ctx.request().headers().get(HeaderNames.AUTHORIZATION);
+    	
+    	String auth = authorization[0].substring(6);
     	Logger.debug("auth: " + auth);
     	
         final byte[] decodedAuth = Base64.getDecoder().decode(auth);
@@ -41,7 +40,7 @@ public class SecuredAction extends Action.Simple {
         
 		Logger.debug("RESULT: " + result);
 		if (result) {
-//            ctx.request().setUsername(user.email);
+            ctx.request().setUsername(user.email);
 			return delegate.call(ctx);
 		}
 		return F.Promise.pure((SimpleResult) unauthorized("unauthorized"));
