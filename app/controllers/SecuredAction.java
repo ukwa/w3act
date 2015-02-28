@@ -9,10 +9,8 @@ import play.mvc.Http.Context;
 import play.mvc.SimpleResult;
 import play.mvc.Http.HeaderNames;
 
-import java.util.Base64;
-
 import uk.bl.api.PasswordHash;
-
+import uk.bl.api.Base64;
 
 public class SecuredAction extends Action.Simple {
 
@@ -24,7 +22,7 @@ public class SecuredAction extends Action.Simple {
     	String auth = authorization[0].substring(6);
     	Logger.debug("auth: " + auth);
     	
-        final byte[] decodedAuth = Base64.getDecoder().decode(auth);
+        final byte[] decodedAuth = Base64.decode(auth);
         final String[] credentials = new String(decodedAuth, "UTF-8").split(":");
         
         if (credentials == null || credentials.length != 2) {
