@@ -19,9 +19,12 @@ public class SecuredAction extends Action.Simple {
 		
     	String[] authorization = ctx.request().headers().get(HeaderNames.AUTHORIZATION);
     	
+    	if (authorization == null) {
+    		return F.Promise.pure((SimpleResult) unauthorized("unauthorized"));
+    	}
     	String auth = authorization[0].substring(6);
     	Logger.debug("auth: " + auth);
-    	
+	    	
         final byte[] decodedAuth = Base64.decode(auth);
         final String[] credentials = new String(decodedAuth, "UTF-8").split(":");
         
