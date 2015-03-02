@@ -1228,17 +1228,7 @@ public class TargetController extends AbstractController {
     }
     
     private static boolean isExistingTarget(String url) {
-    	Set<String> varyingUrls = Utils.INSTANCE.getVaryingUrls(url);
-    	for (String varyingUrl : varyingUrls) {
-    		Logger.debug("varyingUrl: " + varyingUrl);
-    		FieldUrl fieldUrl = FieldUrl.findByUrl(varyingUrl);
-    		Logger.debug("fieldUrl found : " + fieldUrl);
-    		if (fieldUrl != null) {
-    			return true;
-    		}
-    	}
-    	return false;
-	
+    	return Utils.INSTANCE.isExistingTarget(url);
     }
     
 	/**

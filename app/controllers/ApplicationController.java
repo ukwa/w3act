@@ -3,7 +3,10 @@ package controllers;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
@@ -247,33 +250,37 @@ public class ApplicationController extends Controller {
 				
 				List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
 				for (String url : target.getField_urls()) {
-					try {
-						// this take from old import as there were some dodgy URL's coming from old ACT
-						url = Utils.INSTANCE.validateUrl(url);
-						Logger.debug("Checked Url: " + url);
-						
-						FieldUrl existingFieldUrl = FieldUrl.findByUrl(url);
-						FieldUrl fieldUrl = new FieldUrl(url);
-						fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(fieldUrl.url);
-						fieldUrls.add(fieldUrl);
-
-						if (existingFieldUrl != null) {
-							Logger.debug("CONFLICT existingFieldUrl Url: " + existingFieldUrl.url);
-							return status(Http.Status.CONFLICT);
-						}
-					} catch (UrlInvalidException e) {
-						throw new ActException(e);
+	            	String trimmed = url.trim();
+					URL uri = new URI(trimmed).normalize().toURL();
+        			String extFormUrl = uri.toExternalForm();
+        			
+        			FieldUrl existingFieldUrl = FieldUrl.findByUrl(trimmed);
+					if (existingFieldUrl != null) {
+						Logger.debug("CONFLICT existingFieldUrl Url: " + existingFieldUrl.url);
+						return status(Http.Status.CONFLICT);
 					}
+
+	            	FieldUrl fieldUrl = new FieldUrl(extFormUrl.trim());
+					fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(fieldUrl.url);
+					fieldUrls.add(fieldUrl);
 				}
 				// "field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
 				if (!fieldUrls.isEmpty()) {
 					target.fieldUrls = fieldUrls;
-				}				
-				List<String> fieldSubjects = target.getField_subjects();
-				for (String fieldSubject : fieldSubjects) {
-					Subject subject = getSubject(fieldSubject);
-					target.subjects.add(subject);
 				}
+					List<String> fieldSubjects = target.getField_subjects();
+					for (String fieldSubject : fieldSubjects) {
+						try {
+							Subject subject = getSubject(fieldSubject);
+							if (subject != null) {
+								target.subjects.add(subject);
+							}
+						} catch(TaxonomyNotFoundException e) {
+							return badRequest("No Subject Found for : " + e);
+						} catch(Exception e) {
+							return badRequest("Issue with Subject: " + fieldSubject);
+						}
+					}
 
 				// "field_crawl_frequency": "monthly"
 				target.crawlFrequency = target.crawlFrequency.toUpperCase();
@@ -281,20 +288,30 @@ public class ApplicationController extends Controller {
 				String fieldOrganisation = target.getField_nominating_org();				
 				if (StringUtils.isNotEmpty(fieldOrganisation)) {
 					Long id = Long.valueOf(fieldOrganisation);
+					Organisation organisation = Organisation.findById(id);
+					if (organisation == null) {
+						return badRequest("No Organisation Found for : " + id);
+					}
 					target.organisation = Organisation.findById(id);
 				}
 
-				List<String> fieldCategories = target.getField_collection_cats();
-				for (String fieldModel : fieldCategories) {
-					Collection collection = getCollection(fieldModel);
-					if (collection != null) {
-						target.collections.add(collection);
+				List<String> fieldCollections = target.getField_collection_cats();
+				for (String fieldCollection : fieldCollections) {
+					try {
+						Collection collection = getCollection(fieldCollection);
+						if (collection != null) {
+							target.collections.add(collection);
+						}
+					} catch(TaxonomyNotFoundException e) {
+						return badRequest("No Collection Found for : " + fieldCollection);
+					} catch(Exception e) {
+						return badRequest("Issue with Collection: " + fieldCollection);
 					}
 				}
 
 				Logger.debug("fieldSubjects: " + fieldSubjects);
 				Logger.debug("fieldOrganisations: " + fieldOrganisation);
-				Logger.debug("fieldCategories: " + fieldCategories);
+				Logger.debug("fieldCategories: " + fieldCollections);
 
 				// "field_crawl_start_date": "1417255200"
 				if (target.getField_crawl_start_date() != null) {
@@ -337,13 +354,16 @@ public class ApplicationController extends Controller {
 				Logger.debug("response 201 created");
 			    return created(response().getHeaders().get(LOCATION));
 	    	}
-        } catch (IOException | WhoisException | URISyntaxException | TaxonomyNotFoundException e) {
+        } catch (IllegalArgumentException e) {
+			return badRequest("URL invalid: " + e);
+        }
+        catch (Exception e) {
         	Logger.error("error: " + e);
-            return Results.internalServerError();
+            return Results.internalServerError(e.getMessage());
         }
 	}
     
-	private static Collection getCollection(String stringId) throws IOException, TaxonomyNotFoundException {
+	private static Collection getCollection(String stringId) throws IOException, TaxonomyNotFoundException, NumberFormatException {
 		Long id = Long.valueOf(stringId);
 		Collection collection = Collection.findById(id);
 		if (collection == null) {

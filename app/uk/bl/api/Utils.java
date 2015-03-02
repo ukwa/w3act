@@ -30,6 +30,7 @@ import com.avaje.ebean.SqlUpdate;
 import play.Logger;
 import uk.bl.Const;
 import uk.bl.exception.UrlInvalidException;
+import models.FieldUrl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.postgresql.util.PGInterval;
@@ -770,5 +771,19 @@ public enum Utils {
 //	    }
 		return url;
 	}
+	
+    public boolean isExistingTarget(String url) {
+    	Set<String> varyingUrls = getVaryingUrls(url);
+    	for (String varyingUrl : varyingUrls) {
+    		Logger.debug("varyingUrl: " + varyingUrl);
+    		FieldUrl fieldUrl = FieldUrl.findByUrl(varyingUrl);
+    		Logger.debug("fieldUrl found : " + fieldUrl);
+    		if (fieldUrl != null) {
+    			return true;
+    		}
+    	}
+    	return false;
+	
+    }
 }
 
