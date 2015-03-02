@@ -234,7 +234,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Key Site <small class="text-center">(Is this a 'key site', i.e. one of such significance that it requires higher levels of QA and archival management)</small></label>
 						    <div class="col-sm-6">
-				                @if(target.keySite != null) {  
+				                @if(target.keySite != null && target.keySite) {  
 				                   yes           
 				                } else {
 				                   no
