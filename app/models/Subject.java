@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
@@ -43,6 +44,19 @@ public class Subject extends Taxonomy {
 	
 	public static List<Subject> findChildrenByParentId(Long parentId) {
 		return find.where().eq("t0.parent_id", parentId).order().asc("name").findList();
+	}
+	
+	public static List<Subject> convertIdsToObjects(String ids) {
+		List<Subject> res = new ArrayList<>();
+   		if (ids != null && ids.length() > 0 && !ids.toLowerCase().contains(Const.NONE)) {
+	    	String[] parts = ids.split(Const.COMMA + " ");
+	    	for (String part: parts) {
+	    		Subject subject = findById(new Long(part));
+	    		if (subject != null)
+	    			res.add(subject);
+	    	}
+    	}
+		return res;
 	}
 	
 	@Override

@@ -7,6 +7,6 @@
 	}
 } else {
 	@helper.input(field, args: _*) { (id, name, value, args) =>
-		@Taxonomy.convertUrlsToObjects(value.get).map(_.name).mkString(", ")
+		@Subject.convertIdsToObjects(value.get).map(_.name).mkString(", ")
 	}
 }

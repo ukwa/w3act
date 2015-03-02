@@ -131,8 +131,7 @@ public class Taxonomy extends MappedSuperClass {
     
     // -- Queries
     
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Model.Finder<Long,Taxonomy> find = new Model.Finder(Long.class, Taxonomy.class);
+	public static Model.Finder<Long,Taxonomy> find = new Model.Finder<>(Long.class, Taxonomy.class);
     
     /**
      * Retrieve Taxonomy for user
@@ -1114,28 +1113,7 @@ public class Taxonomy extends MappedSuperClass {
 			res = Const.NONE;
 		}
         return res;
-	}
-	
-	/**
-	 * This method retrieves selected subjects from target object.
-	 * @param targetUrl
-	 * @return
-	 */
-	public static List<Taxonomy> convertUrlsToObjects(String urls) {
-		List<Taxonomy> res = new ArrayList<Taxonomy>();
-   		if (urls != null && urls.length() > 0 && !urls.toLowerCase().contains(Const.NONE)) {
-	    	String[] parts = urls.split(Const.COMMA + " ");
-	    	for (String part: parts) {
-//		    		Logger.debug("part: " + part);
-	    		Taxonomy subject = findByUrl(part);
-	    		if (subject != null && subject.tid != null && subject.name != null && subject.name.length() > 0) {
-//			    	Logger.debug("subject name: " + subject.name);
-	    			res.add(subject);
-	    		}
-	    	}
-    	}
-		return res;
-	}       
+	}      
     	
     public static Taxonomy findByTypeAndUrl(String type, String url) {
         Taxonomy taxonomy = find.where().eq(Const.TTYPE, type).eq(Const.URL, url).findUnique();

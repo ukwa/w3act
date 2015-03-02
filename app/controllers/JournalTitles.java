@@ -6,7 +6,7 @@ import com.avaje.ebean.ExpressionList;
 import models.BlCollectionSubset;
 import models.FlashMessage;
 import models.JournalTitle;
-import models.Taxonomy;
+import models.Subject;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -27,8 +27,7 @@ public class JournalTitles extends AbstractController {
 		JournalTitle journalTitle = new JournalTitle();
 		journalTitle.watchedTarget = watchedTarget;
 		journalTitle.language = Const.JOURNAL_TITLE_LANGUAGE;
-		//TODO: adapt
-		//journalTitle.subject = watchedTarget.target.field_subject;
+		journalTitle.subject = TaxonomyController.serializeTaxonomies(watchedTarget.target.subjects);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
@@ -39,8 +38,7 @@ public class JournalTitles extends AbstractController {
 		Logger.info("JournalTitles.edit()");
 		
 		JournalTitle journalTitle = Ebean.find(JournalTitle.class, id);
-		//TODO: adapt
-		//journalTitle.subject = TaxonomyController.serializeTaxonomies(journalTitle.taxonomies);
+		journalTitle.subject = TaxonomyController.serializeTaxonomies(journalTitle.subjects);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 		setBlCollectionSubsetsOfView(journalTitleForm, journalTitle);
 
@@ -79,8 +77,7 @@ public class JournalTitles extends AbstractController {
 		}
 		
 		JournalTitle journalTitle = journalTitleForm.get();
-		//TODO: adapt
-		//journalTitle.taxonomies = Taxonomy.convertUrlsToObjects(journalTitle.subject);
+		journalTitle.subjects = Subject.convertIdsToObjects(journalTitle.subject);
 		
 		ExpressionList<JournalTitle> expressionList = JournalTitle.find.where()
 				.eq("id_watched_target", journalTitle.watchedTarget.id)

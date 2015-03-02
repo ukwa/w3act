@@ -76,9 +76,6 @@ import views.html.users.usersites;
 @Security.Authenticated(SecuredController.class)
 public class TargetController extends AbstractController {
 	
-	private static String collectionsJsonData;
-	private static String subjectsJsonData;
-	
     final static Form<Target> targetForm = new Form<Target>(Target.class);
 
     /**
@@ -1843,24 +1840,6 @@ public class TargetController extends AbstractController {
 			}
 		}
 		return res;
-	}
-	
-	public static String getCollectionsJsonData(String targetUrl) {
-		if (collectionsJsonData != null) return collectionsJsonData;
-		final StringBuffer sb = new StringBuffer();
-		List<Collection> suggestedCollections = Collection.getFirstLevelCollections();
-		sb.append(getTreeElements(suggestedCollections, targetUrl, true));
-		collectionsJsonData = sb.toString();
-		return collectionsJsonData;
-	}
-	
-	public static String getSubjectsJsonData(String targetUrl) {
-		if (subjectsJsonData != null) return subjectsJsonData;
-		final StringBuffer sb = new StringBuffer();
-		List<Subject> parentSubjects = Subject.findAllSubjects();
-		sb.append(getSubjectTreeElements(parentSubjects, targetUrl, true));
-		subjectsJsonData = sb.toString();
-		return subjectsJsonData;
 	}
 	
 	public static void raiseFlag(Target target, String flagName) {

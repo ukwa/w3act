@@ -22,7 +22,7 @@ import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
 import models.Portal;
-import models.Taxonomy;
+import models.Subject;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -120,8 +120,7 @@ public class Documents extends AbstractController {
 		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
 		Document document = documentForm.get();
 		document.clearImproperFields();
-		//TODO: adapt
-		//document.subjects = Taxonomy.convertUrlsToObjects(document.subject);
+		document.subjects = Subject.convertIdsToObjects(document.subject);
 		setPortalsAndBlCollectionSubsetsOfModel(document, documentForm);
 		Ebean.update(document);
 		
