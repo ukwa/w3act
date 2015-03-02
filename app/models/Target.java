@@ -341,6 +341,31 @@ public class Target extends UrlModel {
 	@Transient
 	public String authorIdText;
 	
+	@Transient
+	@JsonProperty
+	private List<String> field_urls;
+
+	@Transient
+	@JsonProperty
+	private List<String> field_subjects;
+
+	@Transient
+	@JsonProperty
+	private String field_nominating_org;
+
+	@Transient
+	@JsonProperty
+	private List<String> field_collection_cats;
+
+	
+//	  "title": "Your Thurrock" - fine
+//	  "field_subject": ["24"],
+//	  "field_crawl_frequency": "monthly" - fine
+//	  "field_nominating_organisation": "101",
+//	  "field_url": ["http://yourthurrock.com"],
+//	  "field_collection_categories": ["297"],
+//	  "field_crawl_start_date": "1417255200"
+	
 //		"body":[],
 //		"field_scope":"root",
 //		"field_url":[
@@ -2131,6 +2156,39 @@ public class Target extends UrlModel {
 		return instance;
 	}
 	
+	
+	public List<String> getField_urls() {
+		return field_urls;
+	}
+
+	public void setField_urls(List<String> field_urls) {
+		this.field_urls = field_urls;
+	}
+
+	public List<String> getField_subjects() {
+		return field_subjects;
+	}
+
+	public void setField_subjects(List<String> field_subjects) {
+		this.field_subjects = field_subjects;
+	}
+
+	public String getField_nominating_org() {
+		return field_nominating_org;
+	}
+
+	public void setField_nominating_org(String field_nominating_org) {
+		this.field_nominating_org = field_nominating_org;
+	}
+
+	public List<String> getField_collection_cats() {
+		return field_collection_cats;
+	}
+
+	public void setField_collection_cats(List<String> field_collection_cats) {
+		this.field_collection_cats = field_collection_cats;
+	}
+
 	@Override
 	public String toString() {
 		return "Target [qaIssue=" + qaIssue + ", authorUser=" + authorUser

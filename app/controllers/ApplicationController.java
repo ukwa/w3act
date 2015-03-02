@@ -11,9 +11,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Transient;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -205,9 +208,7 @@ public class ApplicationController extends Controller {
     
     /***
 	 *
-	 * 
-	 * {"title": "Your Thurrock","field_subject": {"resource": "taxonomy_term","uri": "http://webarchive.org.uk/act/taxonomy_term/192","id": "192"},"field_crawl_frequency": "monthly","field_nominating_organisation": {"resource": "node","uri": "http://www.webarchive.org.uk/act/node/101","id": "101"},"field_url": [{"url": "http://yourthurrock.com"}],"field_collection_categories": [{"resource": "taxonomy_term","uri": "http://www.webarchive.org.uk/act/taxonomy_term/297","id": "297"}],"type": "url","field_crawl_start_date": "1417255200"}  
-	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Your Thurrock","field_subject": {"resource": "taxonomy_term","uri": "http://webarchive.org.uk/act/taxonomy_term/192","id": "192"},"field_crawl_frequency": "monthly","field_nominating_organisation": {"resource": "node","uri": "http://www.webarchive.org.uk/act/node/101","id": "101"},"field_url": [{"url": "http://yourthurrock.com"}],"field_collection_categories": [{"resource": "taxonomy_term","uri": "http://www.webarchive.org.uk/act/taxonomy_term/297","id": "297"}],"type": "url","field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Turok 2","field_subjects": ["13","14"],"field_crawl_frequency": "monthly","field_nominating_org": "1","field_urls": ["http://turok99.com"],"field_collection_cats": ["8","9"],"field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
      * @throws ActException 
 	 **/
     @With(SecuredAction.class)
@@ -229,19 +230,23 @@ public class ApplicationController extends Controller {
 				Logger.debug("target: " + target);
 				
 //				{
-//					"title": "Your Thurrock", done
-//					"field_subject": {"resource": "taxonomy_term","uri": "http://webarchive.org.uk/act/taxonomy_term/192","id": "192"}, done
-//					"field_crawl_frequency": "monthly", done
-//					"field_nominating_organisation": {"resource": "node","uri": "http://www.webarchive.org.uk/act/node/101","id": "101"}, done
-//					"field_url": [{"url": "http://yourthurrock.com"}], done
-//					"field_collection_categories": [{"resource": "taxonomy_term","uri": "http://www.webarchive.org.uk/act/taxonomy_term/297","id": "297"}],
-//					"type": "url", done
-//					"field_crawl_start_date": "1417255200" done
+//					  "title": "Your Thurrock",
+//					  "field_subjects": ["13","14"],
+//					  "field_crawl_frequency": "monthly",
+//					  "field_nominating_org": "1",
+//					  "field_url": ["http://yourthurrock.com"],
+//					  "field_collection_cats": ["10","11"],
+//					  "field_crawl_start_date": "1417255200"
 //				}
 				
+//				public Object field_subjects;
+//				public Object field_nominating_org;
+//				public Object field_collection_cats;
+
+				Logger.debug("getField_urls: " + target.getField_urls().getClass());
+				
 				List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
-				for (Map<String,String> map : target.getField_url()) {
-					String url = map.get("url");
+				for (String url : target.getField_urls()) {
 					try {
 						// this take from old import as there were some dodgy URL's coming from old ACT
 						url = Utils.INSTANCE.validateUrl(url);
@@ -260,46 +265,36 @@ public class ApplicationController extends Controller {
 						throw new ActException(e);
 					}
 				}
-				
-				// "field_subject":{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/16","id":"16","resource":"taxonomy_term"},"
-				FieldModel fieldSubject = target.getField_subject();
-				if (fieldSubject != null) {
-					try {
-						Subject subject = getSubject(fieldSubject);
-						target.subjects.add(subject);
-					} catch (TaxonomyNotFoundException tnfe) {
-						throw new ActException(tnfe);
-					}
-				}
-
 				// "field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
 				if (!fieldUrls.isEmpty()) {
 					target.fieldUrls = fieldUrls;
+				}				
+				List<String> fieldSubjects = target.getField_subjects();
+				for (String fieldSubject : fieldSubjects) {
+					Subject subject = getSubject(fieldSubject);
+					target.subjects.add(subject);
 				}
 
 				// "field_crawl_frequency": "monthly"
 				target.crawlFrequency = target.crawlFrequency.toUpperCase();
-
-				// "field_nominating_organisation":{"uri":"http://www.webarchive.org.uk/act/node/101","id":"101","resource":"node"},
-				FieldModel fieldNominatingOrganisation = target.getField_nominating_organisation();
-				if (fieldNominatingOrganisation != null && StringUtils.isNotEmpty(fieldNominatingOrganisation.getId())) {
-					String orgUrl = Utils.INSTANCE.getActUrl(fieldNominatingOrganisation.getId());
-					if (StringUtils.isNotEmpty(orgUrl)) {
-						target.organisation = Organisation.findByUrl(orgUrl);
-					}
-				}
 				
-				// "field_collection_categories":[{"uri":"http://www.webarchive.org.uk/act/taxonomy_term/160","id":"160","resource":"taxonomy_term"}],
-				if (target.getField_collection_categories() != null) {
-					List<FieldModel> collectionCategories = target.getField_collection_categories();
-					
-					for (FieldModel fieldModel : collectionCategories) {
-						Collection collection = getCollection(fieldModel);
-						if (collection != null) {
-							target.collections.add(collection);
-						}
+				String fieldOrganisation = target.getField_nominating_org();				
+				if (StringUtils.isNotEmpty(fieldOrganisation)) {
+					Long id = Long.valueOf(fieldOrganisation);
+					target.organisation = Organisation.findById(id);
+				}
+
+				List<String> fieldCategories = target.getField_collection_cats();
+				for (String fieldModel : fieldCategories) {
+					Collection collection = getCollection(fieldModel);
+					if (collection != null) {
+						target.collections.add(collection);
 					}
 				}
+
+				Logger.debug("fieldSubjects: " + fieldSubjects);
+				Logger.debug("fieldOrganisations: " + fieldOrganisation);
+				Logger.debug("fieldCategories: " + fieldCategories);
 
 				// "field_crawl_start_date": "1417255200"
 				if (target.getField_crawl_start_date() != null) {
@@ -343,42 +338,25 @@ public class ApplicationController extends Controller {
 			    return created(response().getHeaders().get(LOCATION));
 	    	}
         } catch (IOException | WhoisException | URISyntaxException | TaxonomyNotFoundException e) {
+        	Logger.error("error: " + e);
             return Results.internalServerError();
         }
 	}
     
-	private static Collection getCollection(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
-		String actUrl = Utils.INSTANCE.getActUrl(fieldModel.getId());
-		Collection collection = Collection.findByUrl(actUrl);
+	private static Collection getCollection(String stringId) throws IOException, TaxonomyNotFoundException {
+		Long id = Long.valueOf(stringId);
+		Collection collection = Collection.findById(id);
 		if (collection == null) {
-			throw new TaxonomyNotFoundException("No Collection for actUrl: " + actUrl);
+			throw new TaxonomyNotFoundException("No Collection id for: " + id);
 		}
 		return collection;
 	}
 	
-	private static License getLicense(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
-		String actUrl = Utils.INSTANCE.getActUrl(fieldModel.getId());
-		License license = License.findByUrl(actUrl);
-		if (license == null) {
-			throw new TaxonomyNotFoundException("No License for actUrl: " + actUrl);
-		}
-		return license;
-	}
-	
-	private static QaIssue getQaIssue(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
-		String actUrl = Utils.INSTANCE.getActUrl(fieldModel.getId());
-		QaIssue qaIssue = QaIssue.findByUrl(actUrl);
-		if (qaIssue == null) {
-			throw new TaxonomyNotFoundException("No QaIssue for actUrl: " + actUrl);
-		}
-		return qaIssue;
-	}
-	
-	private static Subject getSubject(FieldModel fieldModel) throws IOException, TaxonomyNotFoundException {
-		String actUrl = Utils.INSTANCE.getActUrl(fieldModel.getId());
-		Subject subject = Subject.findByUrl(actUrl);
+	private static Subject getSubject(String stringId) throws IOException, TaxonomyNotFoundException {
+		Long id = Long.valueOf(stringId);
+		Subject subject = Subject.findById(id);
 		if (subject == null) {
-			throw new TaxonomyNotFoundException("No Subject for actUrl: " + actUrl);
+			throw new TaxonomyNotFoundException("No Subject id for: " + id);
 		}
 		return subject;
 	}
