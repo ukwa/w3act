@@ -212,6 +212,7 @@ public class ApplicationController extends Controller {
     /***
 	 *
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Turok 2","field_subjects": ["13","14"],"field_crawl_frequency": "monthly","field_nominating_org": "1","field_urls": ["http://turok99.com"],"field_collection_cats": ["8","9"],"field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1","title": "Independent, The: UK Politics"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
      * @throws ActException 
 	 **/
     @With(SecuredAction.class)
@@ -246,9 +247,8 @@ public class ApplicationController extends Controller {
 //				public Object field_nominating_org;
 //				public Object field_collection_cats;
 
-				Logger.debug("getField_urls: " + target.getField_urls().getClass());
-				
 				List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
+				
 				for (String url : target.getField_urls()) {
 	            	String trimmed = url.trim();
 					URL uri = new URI(trimmed).normalize().toURL();
@@ -263,12 +263,16 @@ public class ApplicationController extends Controller {
 	            	FieldUrl fieldUrl = new FieldUrl(extFormUrl.trim());
 					fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(fieldUrl.url);
 					fieldUrls.add(fieldUrl);
+					Logger.debug("fieldUrls: " + fieldUrl.url);
 				}
 				// "field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
 				if (!fieldUrls.isEmpty()) {
 					target.fieldUrls = fieldUrls;
 				}
-					List<String> fieldSubjects = target.getField_subjects();
+				
+				Logger.debug("subjects...");
+				List<String> fieldSubjects = target.getField_subjects();
+				if (fieldSubjects != null) {
 					for (String fieldSubject : fieldSubjects) {
 						try {
 							Subject subject = getSubject(fieldSubject);
@@ -281,10 +285,15 @@ public class ApplicationController extends Controller {
 							return badRequest("Issue with Subject: " + fieldSubject);
 						}
 					}
+				}
 
 				// "field_crawl_frequency": "monthly"
-				target.crawlFrequency = target.crawlFrequency.toUpperCase();
+				Logger.debug("crawlFrequency...");
+				if (target.crawlFrequency != null) {
+					target.crawlFrequency = target.crawlFrequency.toUpperCase();
+				}
 				
+				Logger.debug("fieldOrganisation...");
 				String fieldOrganisation = target.getField_nominating_org();				
 				if (StringUtils.isNotEmpty(fieldOrganisation)) {
 					Long id = Long.valueOf(fieldOrganisation);
@@ -296,16 +305,18 @@ public class ApplicationController extends Controller {
 				}
 
 				List<String> fieldCollections = target.getField_collection_cats();
-				for (String fieldCollection : fieldCollections) {
-					try {
-						Collection collection = getCollection(fieldCollection);
-						if (collection != null) {
-							target.collections.add(collection);
+				if (fieldCollections != null) {
+					for (String fieldCollection : fieldCollections) {
+						try {
+							Collection collection = getCollection(fieldCollection);
+							if (collection != null) {
+								target.collections.add(collection);
+							}
+						} catch(TaxonomyNotFoundException e) {
+							return badRequest("No Collection Found for : " + fieldCollection);
+						} catch(Exception e) {
+							return badRequest("Issue with Collection: " + fieldCollection);
 						}
-					} catch(TaxonomyNotFoundException e) {
-						return badRequest("No Collection Found for : " + fieldCollection);
-					} catch(Exception e) {
-						return badRequest("Issue with Collection: " + fieldCollection);
 					}
 				}
 
@@ -347,7 +358,7 @@ public class ApplicationController extends Controller {
 	        	target.save();
 				
 				Logger.debug("target: " + target);
-				String url = request().host() + Play.application().configuration().getString("application.context") + "/targets/" + target.id;
+				String url = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + target.id;
 				Logger.debug("location: " + url);
 				response().setHeader(LOCATION, url);
 				target.save();
