@@ -213,6 +213,8 @@ public class ApplicationController extends Controller {
 	 *
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Turok 2","field_subjects": ["13","14"],"field_crawl_frequency": "monthly","field_nominating_org": "1","field_urls": ["http://turok99.com"],"field_collection_cats": ["8","9"],"field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1","title": "Independent, The: UK Politics"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
      * @throws ActException 
 	 **/
     @With(SecuredAction.class)
@@ -247,7 +249,15 @@ public class ApplicationController extends Controller {
 //				public Object field_nominating_org;
 //				public Object field_collection_cats;
 
+				if (StringUtils.isEmpty(target.title)) {
+					return badRequest("No Title Found for Target");
+				}
+
 				List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
+				
+				if (target.getField_urls() == null || target.getField_urls().isEmpty()) {
+					return badRequest("No URL(s) Found for Target");
+				}
 				
 				for (String url : target.getField_urls()) {
 	            	String trimmed = url.trim();
