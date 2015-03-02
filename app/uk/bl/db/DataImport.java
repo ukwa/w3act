@@ -51,7 +51,7 @@ public enum DataImport {
 	        	this.importOrganisations();
 	        	this.importCurators();
 	        	if (importAccounts) {
-	        		this.importAccounts();
+//	        		this.importAccounts();
 	        	}
 	        }
 			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
