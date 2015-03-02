@@ -2,11 +2,11 @@ package controllers;
 
 import play.Logger;
 import play.Play;
-import play.libs.WS;
+import play.libs.ws.WS;
 import play.libs.F.Function;
 import play.libs.F.Promise;
-import play.libs.WS.Response;
-import play.libs.WS.WSRequestHolder;
+import play.libs.ws.WSResponse;
+import play.libs.ws.WSRequestHolder;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -21,13 +21,13 @@ public class WaybackController extends Controller {
 
 		WSRequestHolder holder = WS.url(wayback).setFollowRedirects(false);
 
-		Promise<Response> responsePromise = holder.get();
+		Promise<WSResponse> responsePromise = holder.get();
 
 		final Promise<Result> resultPromise = responsePromise.map(
 
-				new Function<WS.Response, Result>() {
+				new Function<WSResponse, Result>() {
 
-					public Result apply(WS.Response response) {
+					public Result apply(WSResponse response) {
 
 						Logger.debug(wayback + " (" + response.getStatusText() + " " + response.getStatus() + ") " + response.getUri());
 

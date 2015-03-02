@@ -1336,7 +1336,6 @@ public class TargetController extends AbstractController {
 			            return newInfo(filledForm);
 			        }
             	}
-            	newLicenses.add(license);
             }
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + fieldUrls);
