@@ -18,7 +18,7 @@ public class Global extends GlobalSettings {
 //        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 
     	if (dataImport) {
-    		DataImport.INSTANCE.insert();
+//    		DataImport.INSTANCE.insert();
     	}
         Role closed = Role.findByName("closed");
         Logger.debug("closed found: " + closed);
