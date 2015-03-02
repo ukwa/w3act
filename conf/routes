@@ -324,4 +324,6 @@ POST    /resetpassword                  	controllers.ResetController.confirmEmai
 GET     /reset/:token               		controllers.ResetController.resetPassword(token:String)
 POST    /reset/:token               		controllers.ResetController.confirmPassword(token:String)
 
+# Authenticate and proxy requests to the QA Wayback:
+GET		/wayback/					  		controllers.WaybackController.waybackRoot()
 GET		/wayback/*url						controllers.WaybackController.wayback(url)
