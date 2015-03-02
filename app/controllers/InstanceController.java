@@ -411,6 +411,7 @@ public class InstanceController extends AbstractController {
     public static Result edit(Long id) {
 		Instance instance = Instance.findById(id);
 //		instance.notes = StringEscapeUtils.escapeJava(instance.notes);
+		Long targetId = instance.target.id;
 		Logger.debug("title: " + instance.title);
 		Logger.debug("authorUser: " + instance.authorUser);
 		Form<Instance> instanceForm = Form.form(Instance.class);
@@ -419,7 +420,7 @@ public class InstanceController extends AbstractController {
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> qaIssueCategories = QAIssueCategory.options();
 		Map<String,String> authors = User.options();
-        return ok(edit.render(instanceForm, user, id, qaIssues, qaIssueCategories, authors));
+        return ok(edit.render(instanceForm, user, id, qaIssues, qaIssueCategories, authors, targetId));
     }
     
     public static Result view(Long id) {
@@ -475,12 +476,13 @@ public class InstanceController extends AbstractController {
     	
 	public static Result info(Form<Instance> form, Long id) {
 		User user = User.findByEmail(request().username());
-
+		Instance instance = Instance.findById(id);
+		Long targetId = instance.target.id;
 		Map<String,String> qaIssues = QaIssue.options();
 		Map<String,String> qaIssueCategories = QAIssueCategory.options();
 		Map<String,String> authors = User.options();
 
-        return badRequest(edit.render(form, user, id, qaIssues, qaIssueCategories, authors));
+        return badRequest(edit.render(form, user, id, qaIssues, qaIssueCategories, authors, targetId));
 	}
 
 	public static Result newInfo(Form<Instance> form, Long targetId) {

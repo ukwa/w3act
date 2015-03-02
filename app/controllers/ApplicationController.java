@@ -13,9 +13,6 @@ import play.*;
 import play.mvc.*;
 import play.data.*;
 import static play.data.Form.*;
-import play.libs.ws.WS;
-import static play.libs.F.Function;
-import static play.libs.F.Promise;
 import models.*;
 import uk.bl.Const;
 import uk.bl.api.PasswordHash;
@@ -74,6 +71,7 @@ public class ApplicationController extends Controller {
      * Login page.
      */
     public static Result login() {
+		String url = flash().get("url");
         return ok(
             login.render(form(Login.class))
         );
@@ -84,14 +82,16 @@ public class ApplicationController extends Controller {
      * We only store lowercase emails and transform user input to lowercase for this field.
      */
     public static Result authenticate() {
+    	DynamicForm requestData = Form.form().bindFromRequest();
+    	String url = requestData.get("redirectToUrl");
         Form<Login> loginForm = form(Login.class).bindFromRequest();
         if(loginForm.hasErrors()) {
+        	flash().put("url", url);
             return badRequest(login.render(loginForm));
         } else {
             session("email", loginForm.get().email.toLowerCase());
-            return redirect(
-                routes.ApplicationController.home()
-            );
+            if( url == null ) url = routes.ApplicationController.index().url();
+            return redirect( url );
         }
     }
 

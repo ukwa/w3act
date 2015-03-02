@@ -1164,7 +1164,9 @@ public class TargetController extends AbstractController {
 		            	if (subject.parent != null) {
 		            		newSubjects = processParentsSubjects(newSubjects, subject.parent.id);
 		            	}
-		            	newSubjects.add(subject);
+		        		if (!newSubjects.contains(subject)) {
+		        			newSubjects.add(subject);
+		        		}
 		            }
 		            filledForm.get().subjects = newSubjects;
 		        }
@@ -1334,6 +1336,7 @@ public class TargetController extends AbstractController {
 			            return newInfo(filledForm);
 			        }
             	}
+            	newLicenses.add(license);
             }
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + fieldUrls);
@@ -1455,7 +1458,9 @@ public class TargetController extends AbstractController {
             	if (subject.parent != null) {
             		newSubjects = processParentsSubjects(newSubjects, subject.parent.id);
             	}
-            	newSubjects.add(subject);
+        		if (!newSubjects.contains(subject)) {
+        			newSubjects.add(subject);
+        		}
             }
             filledForm.get().subjects = newSubjects;
         }

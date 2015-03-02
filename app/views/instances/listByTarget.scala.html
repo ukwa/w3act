@@ -134,8 +134,8 @@
 					</td>
 					<td>
 						@if(instance.target.fieldUrls != null) {
-							@for(fieldUrl <- instance.target.fieldUrls) {	
-								<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("application.wayback.url")/*/@fieldUrl.url">(mid-crawl)</a>
+							@for(fieldUrl <- instance.target.fieldUrls) {
+								<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">(mid-crawl)</a>
 			                 	<a class="brand" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">(archival),</a>
 			                 	<a class="brand" href="@fieldUrl.url">(live)</a><br />
 							}

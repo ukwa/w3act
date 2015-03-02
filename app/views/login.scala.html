@@ -64,6 +64,7 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
+				    <input type="hidden" name="redirectToUrl" value="@flash.get("url")"/>
 					<button class="btn btn-success navbar-btn loginbtn" type="submit"
 						name="submit" id="submit">Login</button>  <a href="@routes.ResetController.showEmailForm()">Forgotten Password</a>
 				</div>

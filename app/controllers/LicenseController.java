@@ -37,12 +37,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Support for adding owner licence.
  */
-@Security.Authenticated(SecuredController.class)
 public class LicenseController extends AbstractController {
   
     /**
      * Display the licence form.
      */
+	@Security.Authenticated(SecuredController.class)
     public static Result index() {
 		return ok(
             ukwalicence.render("", "", "", "", "", "", "", "", "", "")
@@ -75,6 +75,7 @@ public class LicenseController extends AbstractController {
      * @return
      * @throws ActException 
      */
+	@Security.Authenticated(SecuredController.class)
     public static Result formview(String token) throws ActException {
     	CrawlPermission crawlPermission = CrawlPermission.showByToken(token);
     	if (crawlPermission == null) {
@@ -86,6 +87,7 @@ public class LicenseController extends AbstractController {
         );
     }
     
+	@Security.Authenticated(SecuredController.class)
     public static String getCurrentDate() {
     	return Utils.INSTANCE.getCurrentDate();
     }
@@ -95,6 +97,7 @@ public class LicenseController extends AbstractController {
      * @param ownerEmail
      * @param permission The crawl permission that comprises outputs the data entered into the licence form
      */
+	@Security.Authenticated(SecuredController.class)
     public static void sendAcknowledgementToSiteOwner(String ownerEmail, CrawlPermission permission) {
     	MailTemplate mailTemplate = MailTemplate.findByName(Const.ACKNOWLEDGEMENT);
     	Logger.debug("sendAcknowledgementToSiteOwner mailTemplate: " + mailTemplate);
@@ -345,6 +348,7 @@ public class LicenseController extends AbstractController {
     /**
      * Display the person.
      */
+	@Security.Authenticated(SecuredController.class)
     public static Result indexFilter() {
     	User user = User.findByEmail(request().username());
         List<License> licenses = License.findAllLicenses();
@@ -360,6 +364,7 @@ public class LicenseController extends AbstractController {
      * if required.
      * @return
      */
+	@Security.Authenticated(SecuredController.class)
     public static Result filter() {
     	Result res = null;
     	Logger.debug("LicenseController.filter()");
@@ -385,6 +390,7 @@ public class LicenseController extends AbstractController {
      * @param status
      * @return
      */
+	@Security.Authenticated(SecuredController.class)
     public static List<License> processFilterLicences(String filterUrl) {
 //    	Logger.debug("process filter filterUrl: " + filterUrl);
     	ExpressionList<License> exp = License.find.where();
@@ -395,6 +401,7 @@ public class LicenseController extends AbstractController {
         return res;
     }        
 
+	@Security.Authenticated(SecuredController.class)
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
         JsonNode jsonData = null;
