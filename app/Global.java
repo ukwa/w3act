@@ -1,5 +1,4 @@
 
-import models.Role;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
@@ -13,10 +12,12 @@ public class Global extends GlobalSettings {
     
     public void onStart(Application app) {
     	// should run in background and return view
-    	
-    	DataImport.INSTANCE.importPermissions();
-    	DataImport.INSTANCE.importRoles();
-		DataImport.INSTANCE.importAccounts();
+    	Boolean useAccounts = play.Play.application().configuration().getBoolean("use.accounts");
+    	if (useAccounts) {
+	    	DataImport.INSTANCE.importPermissions();
+	    	DataImport.INSTANCE.importRoles();
+			DataImport.INSTANCE.importAccounts();
+    	}
     }
     
     @Override
