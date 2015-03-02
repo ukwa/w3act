@@ -1003,7 +1003,14 @@ public class TargetController extends AbstractController {
 			          Logger.debug("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 						flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 			            return info(filledForm, id);
-			  	}    	
+			  	}
+			  	
+			  	String author = requestData.get("authorUser.id");
+			  	if (StringUtils.isBlank(author)) {
+		        	flash("message", "Please choose a Selector");
+		            return info(filledForm, id);
+			  	}
+			  	
 		
 		        String fieldUrl = requestData.get("formUrl");
 		        Logger.debug("fieldUrl: " + fieldUrl);
@@ -1275,6 +1282,12 @@ public class TargetController extends AbstractController {
 	            return newInfo(filledForm);
 	  	}    	
 
+	  	String author = requestData.get("authorUser.id");
+	  	if (StringUtils.isBlank(author)) {
+        	flash("message", "Please choose a Selector");
+            return newInfo(filledForm);
+	  	}
+	  	
 //			  	String selectionType = requestData.get("selectionType");
 //			  	if (StringUtils.isEmpty(selectionType)) {
 //					flash("message", "Please choose a selection.");
