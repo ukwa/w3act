@@ -46,6 +46,8 @@ public class Global extends GlobalSettings {
     @Override
     public Promise<SimpleResult> onBadRequest(RequestHeader request, String error) {
     	Logger.debug("error: " + error);
-        return Promise.<SimpleResult>pure(badRequest("Please don't try to hack the URI!"));
+        return Promise.<SimpleResult>pure(badRequest(
+        		views.html.errorPage.render(new Throwable("Bad Request"))
+        ));
     }
 }
