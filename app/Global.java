@@ -13,20 +13,10 @@ public class Global extends GlobalSettings {
     
     public void onStart(Application app) {
     	// should run in background and return view
-    	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
-    	Logger.debug("dataImport: " + dataImport);
-//        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
-
-    	if (dataImport) {
-//    		DataImport.INSTANCE.insert();
-    	}
-        Role closed = Role.findByName("closed");
-        Logger.debug("closed found: " + closed);
-        if (closed == null) {
-        	Role newClosed = new Role();
-        	newClosed.name = "closed";
-        	newClosed.save();
-        }
+    	
+    	DataImport.INSTANCE.importPermissions();
+    	DataImport.INSTANCE.importRoles();
+		DataImport.INSTANCE.importAccounts();
     }
     
     @Override
