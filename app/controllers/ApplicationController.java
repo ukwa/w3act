@@ -69,10 +69,10 @@ public class ApplicationController extends Controller {
 			} catch (InvalidKeySpecException e) {
 				Logger.debug("validate() key specification error: " + e);
 			}
-        	Logger.debug("res: " + res);
             if(!res || User.authenticate(email.toLowerCase(), User.findByEmail(email.toLowerCase()).password) == null) {
                 return "Password not recognised";
             }
+        	Logger.debug("res: " + res);
             return null;
         }
         
@@ -109,7 +109,8 @@ public class ApplicationController extends Controller {
             return badRequest(login.render(loginForm));
         } else {
             session("email", loginForm.get().email.toLowerCase());
-            if( url == null ) url = routes.ApplicationController.index().url();            
+            Logger.debug("url: " + url);
+            if( StringUtils.isBlank(url) ) url = routes.ApplicationController.index().url();            
             return redirect( url );
         }
     }
