@@ -66,8 +66,8 @@ db.default.url="jdbc:h2:mem:play;DB_CLOSE_DELAY=-1"
 #### For PostgreSQL
 db.default.driver=org.postgresql.Driver
 
-To create database 'w3actprod' with user 'training' and password 'training'
-db.default.url="postgres://training:training@127.0.0.1/w3actprod"
+To create database 'w3actprod' with user 'training'
+db.default.url="postgres://training:(password)@127.0.0.1/w3actprod"
 
 In order to add and activate Travis CI application profile please add a new configuration file: conf/travis-ci.conf
 This file overrides the default application.conf database (PostgreSQL) with the H2 one.
