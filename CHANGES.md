@@ -2,7 +2,7 @@
 -----
 Enhancement/s:
 * Creating new targets in bulk [#266](https://github.com/ukwa/w3act/issues/266)
-* Presenting QA wayback content only to w3act authenticated users [#268#(https://github.com/ukwa/w3act/issues/268)
+* Presenting QA wayback content only to w3act authenticated users [#268](https://github.com/ukwa/w3act/issues/268)
 
 Bug fixes:
 * Target exports occasionally produced Internal Server Error from postgres database [#282](https://github.com/ukwa/w3act/issues/282)
