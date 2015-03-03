@@ -34,6 +34,7 @@ import models.Tag;
 import models.Target;
 import models.Taxonomy;
 import models.User;
+import models.WatchedTarget;
 import play.Logger;
 import play.Play;
 import play.data.DynamicForm;
@@ -1223,6 +1224,19 @@ public class TargetController extends AbstractController {
 				Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
 
 				filledForm.get().update(id);
+				
+				boolean watched = getFormParam("watched") != null;
+				Target target = Target.find.byId(id);
+		    	if (!watched && target.isWatched()) {
+		    		Ebean.delete(target.watchedTarget);
+		    	} else if (watched && !target.isWatched()) {
+		    		filledForm.get().watchedTarget.target = target;
+		    		Ebean.save(filledForm.get().watchedTarget);
+		    	} else if (watched && target.isWatched()) {
+		    		target.watchedTarget.documentUrlScheme = filledForm.get().watchedTarget.documentUrlScheme;
+		    		Ebean.update(target.watchedTarget);
+		    	}
+				
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));
 	        } else if (action.equals("archive")) {
@@ -1514,6 +1528,13 @@ public class TargetController extends AbstractController {
     	Logger.debug("active: " + filledForm.get().active);
     	
     	filledForm.get().save();
+    	
+    	boolean watched = getFormParam("watched") != null;
+    	if (watched) {
+    		Target target = filledForm.get();
+    		target.watchedTarget.target = target;
+    		Ebean.save(target.watchedTarget);
+    	}
         flash("success", "Target " + filledForm.get().title + " has been created");
     	return redirect(routes.TargetController.view(filledForm.get().id));
     }
