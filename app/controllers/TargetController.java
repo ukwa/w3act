@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -1055,18 +1054,15 @@ public class TargetController extends AbstractController {
 
 		        Logger.debug("filledForm: " + filledForm.get());
 		        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
-		        String noLdCriteriaMet = requestData.get("noLdCriteriaMet");
-		        Logger.debug("noLdCriteriaMet: " + noLdCriteriaMet);
+		        if (filledForm.get().noLdCriteriaMet == null) {
+		        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
+		        }
 		        
 		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
 //		        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
 		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
 		            filledForm.reject(ve);
 		            return info(filledForm, id);
-		        }
-		        
-		        if (filledForm.get().noLdCriteriaMet == null) {
-		        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
 		        }
 		        
 		        List<License> newLicenses = new ArrayList<License>();
@@ -1344,15 +1340,15 @@ public class TargetController extends AbstractController {
 			throw new ActException(e);
 		}
         
+        if (filledForm.get().noLdCriteriaMet == null) {
+        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
+        }
+
         if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
 //        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
             ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
             filledForm.reject(ve);
             return newInfo(filledForm);
-        }
-        
-        if (filledForm.get().noLdCriteriaMet == null) {
-        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
         
         List<License> newLicenses = new ArrayList<License>();

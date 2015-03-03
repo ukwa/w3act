@@ -1383,47 +1383,12 @@ public class Target extends UrlModel {
 	 * @throws MalformedURLException 
 	 */
 	public static List<Target> exportLdFrequency(String frequency) throws WhoisException, MalformedURLException, URISyntaxException {
-		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true);
+		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true).eq("noLdCriteriaMet", Boolean.FALSE);
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
 		}
-		
-//		exp = exp.eq("isUkHosting", true);
-//	} else if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
-//		// uk registration address
-//		exp = exp.eq("isUkRegistration", true);
-//	}
-//
-//	if (tld.equals("no")) {
-//		// not a UK top level domain
-//		exp = exp.eq("isTopLevelDomain", false);
-//	}
-//	if (tld.equals("yes") || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
-//		// UK top level domain
-//		exp = exp.eq("isTopLevelDomain", true);
-//
-		/**
-		 * The resulting list should only include those records that are in
-		 * scope according to InScopeIp and InScopeDomain rules.
-		 */
-		
-		for (Target target : targets.findList()) {
-			boolean isInScope = isInScope(target);
-			
-			
-			if (!isInScope) {
-				isInScope = isInScopeDomain(target);
-			}
-			
-			if (isInScope) {
-				Logger.debug("add to export ld: " + target);
-				res.add(target);
-			}
-			
-		}
 		Logger.debug("exportLdFrequency() resulting list size: " + targets.findRowCount());
-		return res;
+		return targets.findList();
 	}
 
 	/**
