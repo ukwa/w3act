@@ -1387,8 +1387,14 @@ public class Target extends UrlModel {
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
 		}
-		Logger.debug("exportLdFrequency() resulting list size: " + targets.findRowCount());
-		return targets.findList();
+		List<Target> result = new ArrayList<Target>();
+		for (Target target : targets.findList()) {
+			if (target.isInScopeAllWithoutLicense()) {
+				result.add(target);
+			}
+		}
+		Logger.debug("exportLdFrequency() resulting list size: " + result.size());
+		return result;
 	}
 
 	/**
