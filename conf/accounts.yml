@@ -188,10 +188,3 @@ users:
         affiliation:   BL
         #roles:              [*sys_admin]
         roleHolder:         sys_admin
-
-    - !!models.User
-        email:              testing@bl.uk
-        name:               Testing Account Import
-        password:           password
-        affiliation:   BL
-        roleHolder:         viewer
