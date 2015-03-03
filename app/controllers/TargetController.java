@@ -1184,7 +1184,9 @@ public class TargetController extends AbstractController {
 		            	if (collection.parent != null) {
 		            		newCollections = processParentsCollections(newCollections, collection.parent.id);
 		            	}
-		            	newCollections.add(collection);
+		        		if (!newCollections.contains(collection)) {
+		        			newCollections.add(collection);
+		        		}
 		            }
 		            filledForm.get().collections = newCollections;
 		        }
@@ -1459,7 +1461,9 @@ public class TargetController extends AbstractController {
             	if (collection.parent != null) {
             		newCollections = processParentsCollections(newCollections, collection.parent.id);
             	}
-            	newCollections.add(collection);
+        		if (!newCollections.contains(collection)) {
+        			newCollections.add(collection);
+        		}
             }
             filledForm.get().collections = newCollections;
         }

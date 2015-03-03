@@ -3,23 +3,15 @@ package controllers;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.persistence.Transient;
-
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,11 +24,8 @@ import models.*;
 import uk.bl.Const;
 import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
-import uk.bl.api.models.FieldModel;
 import uk.bl.exception.ActException;
 import uk.bl.exception.TaxonomyNotFoundException;
-import uk.bl.exception.UrlInvalidException;
-import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import views.html.*;
 
@@ -281,20 +270,25 @@ public class ApplicationController extends Controller {
 				}
 				
 				Logger.debug("subjects...");
+		        List<Subject> newSubjects = new ArrayList<Subject>();
 				List<String> fieldSubjects = target.getField_subjects();
 				if (fieldSubjects != null) {
 					for (String fieldSubject : fieldSubjects) {
 						try {
 							Subject subject = getSubject(fieldSubject);
-							if (subject != null) {
-								target.subjects.add(subject);
-							}
+			            	if (subject.parent != null) {
+			            		newSubjects = Utils.INSTANCE.processParentsSubjects(newSubjects, subject.parent.id);
+			            	}
+			        		if (!newSubjects.contains(subject)) {
+			        			newSubjects.add(subject);
+			        		}
 						} catch(TaxonomyNotFoundException e) {
 							return badRequest("No Subject Found for : " + e);
 						} catch(Exception e) {
 							return badRequest("Issue with Subject: " + fieldSubject);
 						}
 					}
+		            target.subjects = newSubjects;
 				}
 
 				// "field_crawl_frequency": "monthly"
@@ -314,20 +308,25 @@ public class ApplicationController extends Controller {
 					target.organisation = Organisation.findById(id);
 				}
 
+		        List<Collection> newCollections = new ArrayList<Collection>();
 				List<String> fieldCollections = target.getField_collection_cats();
 				if (fieldCollections != null) {
 					for (String fieldCollection : fieldCollections) {
 						try {
 							Collection collection = getCollection(fieldCollection);
-							if (collection != null) {
-								target.collections.add(collection);
-							}
+			            	if (collection.parent != null) {
+			            		newCollections = Utils.INSTANCE.processParentsCollections(newCollections, collection.parent.id);
+			            	}
+			        		if (!newCollections.contains(collection)) {
+			        			newCollections.add(collection);
+			        		}
 						} catch(TaxonomyNotFoundException e) {
 							return badRequest("No Collection Found for : " + fieldCollection);
 						} catch(Exception e) {
 							return badRequest("Issue with Collection: " + fieldCollection);
 						}
 					}
+					target.collections = newCollections;
 				}
 
 				Logger.debug("fieldSubjects: " + fieldSubjects);
