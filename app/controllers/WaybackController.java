@@ -17,10 +17,17 @@ public class WaybackController extends Controller {
 	@Security.Authenticated(SecuredController.class)
 	public static Promise<Result> wayback(String url) throws ActException {
 		String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
+		
+		// Build up the wayback query:
 		final String wayback = wayBackUrl + "/" + url;
 
+		// Build up URL and copy over query parameters:
 		WSRequestHolder holder = WS.url(wayback).setFollowRedirects(false);
+		for( String key : request().queryString().keySet() ) {
+			holder.setQueryParameter(key, request().getQueryString(key));
+		}
 
+		// GET
 		Promise<WSResponse> responsePromise = holder.get();
 
 		final Promise<Result> resultPromise = responsePromise.map(
@@ -40,12 +47,16 @@ public class WaybackController extends Controller {
 						}
 						String contentType = response.getHeader(CONTENT_TYPE);
 						Logger.debug("content type: " + contentType);
-						return status(response.getStatus(), response.getBody()).as(contentType);
+						return status(response.getStatus(), response.getBodyAsStream()).as(contentType);
 					}
 
 				}
 				);
 		return resultPromise;
+	}
+
+	public static Promise<Result> waybackRoot() throws ActException {
+		return wayback("");
 	}
 
 }

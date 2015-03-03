@@ -51,7 +51,7 @@ public enum DataImport {
 	        	this.importOrganisations();
 	        	this.importCurators();
 	        	if (importAccounts) {
-	        		this.importAccounts();
+//	        		this.importAccounts();
 	        	}
 	        }
 			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
@@ -95,36 +95,47 @@ public enum DataImport {
         }
 	}
 	
-	private void importPermissions() {
+	public void importPermissions() {
 		@SuppressWarnings("unchecked")
 		Map<String,List<Permission>> allPermissions = (Map<String,List<Permission>>)Yaml.load("accounts.yml");
 		List<Permission> permissions = allPermissions.get(Const.PERMISSIONS);
 		for (Permission permission : permissions) {
-			permission.save();
+			Permission existingPermission = Permission.findByName(permission.name);
+			if (existingPermission == null) {
+				permission.save();
+			}
 		}
 	}
 	
-	private void importRoles() {
+	public void importRoles() {
 		@SuppressWarnings("unchecked")
 		Map<String,List<Role>> allRoles = (Map<String,List<Role>>)Yaml.load("accounts.yml");
 		List<Role> roles = allRoles.get(Const.ROLES);
 		for (Role role : roles) {
-			role.save();
+	        Role existingRole = Role.findByName(role.name);
+	        if (existingRole == null) {
+				role.save();
+	        }
 		}
 	}
 	
-	private void importAccounts() {
+	public void importAccounts() {
 		@SuppressWarnings("unchecked")
 		Map<String,List<User>> accounts = (Map<String,List<User>>)Yaml.load("accounts.yml");
 		List<User> users = accounts.get(Const.USERS);
 		try {
 			for (User user : users) {
-				user.password = PasswordHash.createHash(user.password);
-				user.createdAt = new Date();
-				String roleHolder = user.roleHolder;
-				Role role = Role.findByName(roleHolder);
-				user.roles.add(role);
-				user.save();
+				Logger.debug("email: " + user.email);
+				User existingUser = User.findByEmail(user.email);
+				if (existingUser == null) {
+					user.url = "act-" + Utils.INSTANCE.createId();
+					user.password = PasswordHash.createHash(user.password);
+					user.createdAt = new Date();
+					String roleHolder = user.roleHolder;
+					Role role = Role.findByName(roleHolder);
+					user.roles.add(role);
+					user.save();
+				}
 			}
 		} catch (NoSuchAlgorithmException e) {
 			Logger.debug("initial password creation - no algorithm error: " + e);

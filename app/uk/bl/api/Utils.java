@@ -29,6 +29,8 @@ import com.avaje.ebean.SqlUpdate;
 
 import play.Logger;
 import uk.bl.Const;
+import uk.bl.exception.UrlInvalidException;
+import models.FieldUrl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.postgresql.util.PGInterval;
@@ -707,10 +709,81 @@ public enum Utils {
     	String formatted = null;
     	if (date != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-			dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			formatted =  dateFormat.format(date);
     	}
     	return formatted;
+    }
+    
+    public String convertToDateTimeISO(Date date) {
+    	String formatted = null;
+    	if (date != null) {
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+//			"yyyy-MM-dd'T'HH:mm:ss.SSSZ" 	2001-07-04T12:08:56.235-0700
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			formatted =  dateFormat.format(date);
+    	}
+    	return formatted;
+    }
+
+	public String getActUrl(String jsonId) {
+		return this.getUrl(Const.ACT_URL, jsonId);
+	}
+	
+	public String getWctUrl(String jsonId) {
+		return this.getUrl(Const.WCT_URL, jsonId);
+	}
+	
+	private String getUrl(String prefix, String jsonId) {
+		String actUrl = null;
+		if (StringUtils.isNotEmpty(jsonId)) {
+			StringBuilder url = new StringBuilder(prefix).append(jsonId);
+			actUrl = url.toString();
+		}
+		return actUrl;
+	}
+	
+	public String validateUrl(String url) throws UrlInvalidException {
+		if (url.startsWith("at ")) {
+			url = url.replace("at ", "");
+		}
+		else if (url.startsWith("www.")) {
+			url = "http://" + url;
+		}
+		else if (url.startsWith("ttp")) {
+			url = url.replace("ttp", "");
+			url = "http" + url;
+		}
+		else if (url.startsWith("ttps")) {
+			url = url.replace("ttps", "");
+			url = "https" + url;
+		}
+		else if (!url.startsWith("http")) {
+			url = "http://" + url;
+		}
+		url = url.replaceAll(" ", "%20");
+		
+//		UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_ALL_SCHEMES);
+//	    if (!urlValidator.isValid(url)) {
+//	    	if (!url.endsWith(Scope.UK_DOMAIN) || !url.endsWith(Scope.SCOT_DOMAIN) || !url.endsWith(Scope.LONDON_DOMAIN)) {
+//	    		throw new UrlInvalidException("Something wrong with this url: " + url);
+//	    	}
+//	    }
+		return url;
+	}
+	
+    public boolean isExistingTarget(String url) {
+    	Set<String> varyingUrls = getVaryingUrls(url);
+    	for (String varyingUrl : varyingUrls) {
+    		Logger.debug("varyingUrl: " + varyingUrl);
+    		FieldUrl fieldUrl = FieldUrl.findByUrl(varyingUrl);
+    		Logger.debug("fieldUrl found : " + fieldUrl);
+    		if (fieldUrl != null) {
+    			return true;
+    		}
+    	}
+    	return false;
+	
     }
 }
 

@@ -29,9 +29,6 @@ logger=WARN
 logger.play=WARN
 logger.application=DEBUG
 
-# Data import
-application.data.import=false
-
 # SMTP connection for email sending
 host=juno.bl.uk
 mail.user=""

@@ -234,11 +234,14 @@ public class UserController extends AbstractController {
 		            return newInfo(filledForm);
 		        }
 		        
-		        User user = User.findByEmail(filledForm.get().email);
-		        if (user != null) {
-		            ValidationError ve = new ValidationError("email", "There is already a user account with that email address. Please check and enter a different email address.");
-		            filledForm.reject(ve);
-		            return newInfo(filledForm);
+		        String email = filledForm.get().email;
+		        if (StringUtils.isNotBlank(email)) {
+			        User user = User.findByEmail(email.toLowerCase().trim());
+			        if (user != null) {
+			            ValidationError ve = new ValidationError("email", "There is already a user account with that email address. Please check and enter a different email address.");
+			            filledForm.reject(ve);
+			            return newInfo(filledForm);
+			        }
 		        }
 		        
 			    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
@@ -256,6 +259,8 @@ public class UserController extends AbstractController {
 		            filledForm.get().roles = newRoles;
 		        }		        
 
+		        filledForm.get().email = email.toLowerCase().trim();
+		        
 		        String password = requestData.get("password");
 		    	
 		        if (StringUtils.isEmpty(password)) {
@@ -338,7 +343,7 @@ public class UserController extends AbstractController {
 	            String email = filledForm.get().email;
 	            Logger.debug("email: " + currentEmail + ", " + email);
 	            if (!currentEmail.equalsIgnoreCase(email)) {
-			        User user = User.findByEmail(email);
+			        User user = User.findByEmail(email.trim());
 			        if (user != null) {
 			            ValidationError ve = new ValidationError("email", "There is already a user account with that email address. Please check and enter a different email address.");
 			            filledForm.reject(ve);
@@ -383,6 +388,7 @@ public class UserController extends AbstractController {
 //					Logger.debug("change password - key specification error: " + e);
 //				}
 		        
+		        filledForm.get().email = email.toLowerCase();
 		        filledForm.get().update(id);
 		        flash("message", "Curator " + filledForm.get().name + " has been updated");
 		        return redirect(routes.UserController.view(filledForm.get().id));

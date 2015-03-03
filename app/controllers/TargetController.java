@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 
 import models.Collection;
 import models.FieldUrl;
@@ -1006,14 +1005,15 @@ public class TargetController extends AbstractController {
 			          Logger.debug("Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 						flash("message", "Only numeric values are valid identifiers. Please check field 'LEGACY SITE ID'.");
 			            return info(filledForm, id);
-			  	}    	
-		
-			  	String subjectString = requestData.get("subjectSelect");
-			  	if (StringUtils.isBlank(subjectString)) {
-					flash("message", "Please choose a subject(s).");
+			  	}
+			  	
+			  	String author = requestData.get("authorUser.id");
+			  	if (StringUtils.isBlank(author)) {
+		        	flash("message", "Please choose a Selector");
 		            return info(filledForm, id);
 			  	}
 			  	
+		
 		        String fieldUrl = requestData.get("formUrl");
 		        Logger.debug("fieldUrl: " + fieldUrl);
 		        if (StringUtils.isNotEmpty(fieldUrl)) {
@@ -1047,8 +1047,10 @@ public class TargetController extends AbstractController {
 		        try {
 			        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
 					filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
+					filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
 					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
 					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
+					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
 				} catch (MalformedURLException | WhoisException | URISyntaxException e) {
 					throw new ActException(e);
 				}
@@ -1215,14 +1217,6 @@ public class TargetController extends AbstractController {
 					}
 		    	}
 		        
-		        try {
-					filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
-				} catch (WhoisException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
-
 				filledForm.get().update(id);
 				
 				boolean watched = getFormParam("watched") != null;
@@ -1249,17 +1243,7 @@ public class TargetController extends AbstractController {
     }
     
     private static boolean isExistingTarget(String url) {
-    	Set<String> varyingUrls = Utils.INSTANCE.getVaryingUrls(url);
-    	for (String varyingUrl : varyingUrls) {
-    		Logger.debug("varyingUrl: " + varyingUrl);
-    		FieldUrl fieldUrl = FieldUrl.findByUrl(varyingUrl);
-    		Logger.debug("fieldUrl found : " + fieldUrl);
-    		if (fieldUrl != null) {
-    			return true;
-    		}
-    	}
-    	return false;
-	
+    	return Utils.INSTANCE.isExistingTarget(url);
     }
     
 	/**
@@ -1303,12 +1287,12 @@ public class TargetController extends AbstractController {
 	            return newInfo(filledForm);
 	  	}    	
 
-	  	String subjectString = requestData.get("subjectSelect");
-	  	if (StringUtils.isBlank(subjectString)) {
-			flash("message", "Please choose a subject(s).");
+	  	String author = requestData.get("authorUser.id");
+	  	if (StringUtils.isBlank(author)) {
+        	flash("message", "Please choose a Selector");
             return newInfo(filledForm);
 	  	}
-
+	  	
 //			  	String selectionType = requestData.get("selectionType");
 //			  	if (StringUtils.isEmpty(selectionType)) {
 //					flash("message", "Please choose a selection.");

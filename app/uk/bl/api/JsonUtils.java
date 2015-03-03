@@ -73,22 +73,13 @@ public enum JsonUtils {
 	INSTANCE;
 
 	private String getActUrl(String jsonId) {
-		return this.getUrl(Const.ACT_URL, jsonId);
+		return Utils.INSTANCE.getActUrl(jsonId);
 	}
 	
 	private String getWctUrl(String jsonId) {
-		return this.getUrl(Const.WCT_URL, jsonId);
+		return Utils.INSTANCE.getWctUrl(jsonId);
 	}
 	
-	private String getUrl(String prefix, String jsonId) {
-		String actUrl = null;
-		if (StringUtils.isNotEmpty(jsonId)) {
-			StringBuilder url = new StringBuilder(prefix).append(jsonId);
-			actUrl = url.toString();
-		}
-		return actUrl;
-	}
-
 	private String getUrlFromWebArchive(String prefix, String url) {
 		return new StringBuilder(prefix).append(url.substring(url.lastIndexOf("/") + 1)).toString();
 	}
@@ -665,32 +656,7 @@ public enum JsonUtils {
 	// some specific pre-pending
 	// check if valid url 
 	private String validateUrl(String url) throws UrlInvalidException {
-		if (url.startsWith("at ")) {
-			url = url.replace("at ", "");
-		}
-		else if (url.startsWith("www.")) {
-			url = "http://" + url;
-		}
-		else if (url.startsWith("ttp")) {
-			url = url.replace("ttp", "");
-			url = "http" + url;
-		}
-		else if (url.startsWith("ttps")) {
-			url = url.replace("ttps", "");
-			url = "https" + url;
-		}
-		else if (!url.startsWith("http")) {
-			url = "http://" + url;
-		}
-		url = url.replaceAll(" ", "%20");
-		
-//		UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_ALL_SCHEMES);
-//	    if (!urlValidator.isValid(url)) {
-//	    	if (!url.endsWith(Scope.UK_DOMAIN) || !url.endsWith(Scope.SCOT_DOMAIN) || !url.endsWith(Scope.LONDON_DOMAIN)) {
-//	    		throw new UrlInvalidException("Something wrong with this url: " + url);
-//	    	}
-//	    }
-		return url;
+		return Utils.INSTANCE.validateUrl(url);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -991,8 +957,6 @@ public enum JsonUtils {
 						target.crawlFrequency = target.crawlFrequency.toUpperCase();
 						target.depth = target.depth.toUpperCase();
 						
-						target.createdAt = this.getDateFromSeconds(target.getCreated());
-
 			        	target.save();
 			        	count++;
 					}

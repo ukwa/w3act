@@ -45,6 +45,12 @@ public class Global extends GlobalSettings {
 				Akka.system().dispatcher(),
 				null
     	);
+    	/*Boolean useAccounts = play.Play.application().configuration().getBoolean("use.accounts");
+    	if (useAccounts) {
+	    	DataImport.INSTANCE.importPermissions();
+	    	DataImport.INSTANCE.importRoles();
+			DataImport.INSTANCE.importAccounts();
+    	}*/
     }
     
     @Override
@@ -63,7 +69,9 @@ public class Global extends GlobalSettings {
     
     @Override
     public Promise<Result> onBadRequest(RequestHeader request, String error) {
-        Logger.debug("error: " + error);
-        return Promise.<Result>pure(badRequest("Please don't try to hack the URI!"));
+    	Logger.debug("error: " + error);
+        return Promise.<Result>pure(badRequest(
+        		views.html.errorPage.render(new Throwable("Bad Request"))
+        ));
     }
 }

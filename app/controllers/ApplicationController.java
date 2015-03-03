@@ -2,12 +2,27 @@ package controllers;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
+import javax.persistence.Transient;
+
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import play.*;
 import play.mvc.*;
@@ -16,6 +31,13 @@ import static play.data.Form.*;
 import models.*;
 import uk.bl.Const;
 import uk.bl.api.PasswordHash;
+import uk.bl.api.Utils;
+import uk.bl.api.models.FieldModel;
+import uk.bl.exception.ActException;
+import uk.bl.exception.TaxonomyNotFoundException;
+import uk.bl.exception.UrlInvalidException;
+import uk.bl.exception.WhoisException;
+import uk.bl.scope.Scope;
 import views.html.*;
 
 public class ApplicationController extends Controller {
@@ -71,7 +93,13 @@ public class ApplicationController extends Controller {
      * Login page.
      */
     public static Result login() {
-		String url = flash().get("url");
+    	// If user is already logged in, redirect to the homepage:
+    	String email = session().get("email");
+    	User user = User.findByEmail(email);
+    	if (user != null) { 
+            return redirect( routes.ApplicationController.index() );    		
+    	}
+		// Redirect to login page (embedding the flash scope url to redirect to afterwards):
         return ok(
             login.render(form(Login.class))
         );
@@ -82,15 +110,17 @@ public class ApplicationController extends Controller {
      * We only store lowercase emails and transform user input to lowercase for this field.
      */
     public static Result authenticate() {
+    	// Grab the url to redirect to after login:
     	DynamicForm requestData = Form.form().bindFromRequest();
     	String url = requestData.get("redirectToUrl");
+		// Parse the login:
         Form<Login> loginForm = form(Login.class).bindFromRequest();
         if(loginForm.hasErrors()) {
         	flash().put("url", url);
             return badRequest(login.render(loginForm));
         } else {
             session("email", loginForm.get().email.toLowerCase());
-            if( url == null ) url = routes.ApplicationController.index().url();
+            if( url == null ) url = routes.ApplicationController.index().url();            
             return redirect( url );
         }
     }
@@ -162,21 +192,6 @@ public class ApplicationController extends Controller {
         );
     }
 
-    public static Result bulkImport() {
-    	JsonNode json = request().body().asJson();
-    	if(json == null) {
-    		return badRequest("Expecting Json data");
-    	} else {
-    	    String name = json.findPath("name").textValue();
-    	    // process Targets here
-    	    if(name == null) {
-    	    	return badRequest("Missing parameter [name]");
-    	    } else {
-    	    	return ok("\nHello " + name);
-    	    }
-    	}
-	}
-    
     // -- Javascript routing
     
     public static Result javascriptRoutes() {
@@ -196,6 +211,199 @@ public class ApplicationController extends Controller {
     
     	public static Result home() {
 		return redirect(routes.WatchedTargets.overview(0, "target.title", "asc"));
+	}
+
+    /***
+	 *
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Turok 2","field_subjects": ["13","14"],"field_crawl_frequency": "monthly","field_nominating_org": "1","field_urls": ["http://turok99.com"],"field_collection_cats": ["8","9"],"field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1","title": "Independent, The: UK Politics"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+     * @throws ActException 
+	 **/
+    @With(SecuredAction.class)
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result bulkImport() throws ActException {
+    	JsonNode node = request().body().asJson();
+
+        
+        try {
+	    	if(node == null) {
+	    		return badRequest("Expecting Json data");
+	    	} else {
+				ObjectMapper objectMapper = new ObjectMapper();
+				objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
+				Logger.debug("node: " + node);
+	    	    // process Targets here
+				Target target = objectMapper.readValue(node.toString(), Target.class);
+				
+				Logger.debug("target: " + target);
+				
+//				{
+//					  "title": "Your Thurrock",
+//					  "field_subjects": ["13","14"],
+//					  "field_crawl_frequency": "monthly",
+//					  "field_nominating_org": "1",
+//					  "field_url": ["http://yourthurrock.com"],
+//					  "field_collection_cats": ["10","11"],
+//					  "field_crawl_start_date": "1417255200"
+//				}
+				
+//				public Object field_subjects;
+//				public Object field_nominating_org;
+//				public Object field_collection_cats;
+
+				if (StringUtils.isEmpty(target.title)) {
+					return badRequest("No Title Found for Target");
+				}
+
+				List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
+				
+				if (target.getField_urls() == null || target.getField_urls().isEmpty()) {
+					return badRequest("No URL(s) Found for Target");
+				}
+				
+				for (String url : target.getField_urls()) {
+	            	String trimmed = url.trim();
+					URL uri = new URI(trimmed).normalize().toURL();
+        			String extFormUrl = uri.toExternalForm();
+        			
+        			FieldUrl existingFieldUrl = FieldUrl.findByUrl(trimmed);
+					if (existingFieldUrl != null) {
+						Logger.debug("CONFLICT existingFieldUrl Url: " + existingFieldUrl.url);
+						return status(Http.Status.CONFLICT);
+					}
+
+	            	FieldUrl fieldUrl = new FieldUrl(extFormUrl.trim());
+					fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(fieldUrl.url);
+					fieldUrls.add(fieldUrl);
+					Logger.debug("fieldUrls: " + fieldUrl.url);
+				}
+				// "field_url":[{"url":"http://www.childrenslegalcentre.com/"}],
+				if (!fieldUrls.isEmpty()) {
+					target.fieldUrls = fieldUrls;
+				}
+				
+				Logger.debug("subjects...");
+				List<String> fieldSubjects = target.getField_subjects();
+				if (fieldSubjects != null) {
+					for (String fieldSubject : fieldSubjects) {
+						try {
+							Subject subject = getSubject(fieldSubject);
+							if (subject != null) {
+								target.subjects.add(subject);
+							}
+						} catch(TaxonomyNotFoundException e) {
+							return badRequest("No Subject Found for : " + e);
+						} catch(Exception e) {
+							return badRequest("Issue with Subject: " + fieldSubject);
+						}
+					}
+				}
+
+				// "field_crawl_frequency": "monthly"
+				Logger.debug("crawlFrequency...");
+				if (target.crawlFrequency != null) {
+					target.crawlFrequency = target.crawlFrequency.toUpperCase();
+				}
+				
+				Logger.debug("fieldOrganisation...");
+				String fieldOrganisation = target.getField_nominating_org();				
+				if (StringUtils.isNotEmpty(fieldOrganisation)) {
+					Long id = Long.valueOf(fieldOrganisation);
+					Organisation organisation = Organisation.findById(id);
+					if (organisation == null) {
+						return badRequest("No Organisation Found for : " + id);
+					}
+					target.organisation = Organisation.findById(id);
+				}
+
+				List<String> fieldCollections = target.getField_collection_cats();
+				if (fieldCollections != null) {
+					for (String fieldCollection : fieldCollections) {
+						try {
+							Collection collection = getCollection(fieldCollection);
+							if (collection != null) {
+								target.collections.add(collection);
+							}
+						} catch(TaxonomyNotFoundException e) {
+							return badRequest("No Collection Found for : " + fieldCollection);
+						} catch(Exception e) {
+							return badRequest("Issue with Collection: " + fieldCollection);
+						}
+					}
+				}
+
+				Logger.debug("fieldSubjects: " + fieldSubjects);
+				Logger.debug("fieldOrganisations: " + fieldOrganisation);
+				Logger.debug("fieldCategories: " + fieldCollections);
+
+				// "field_crawl_start_date": "1417255200"
+				if (target.getField_crawl_start_date() != null) {
+					target.crawlStartDate = Utils.INSTANCE.getDateFromSeconds(target.getField_crawl_start_date());
+				}
+
+				target.url = "act-" + Utils.INSTANCE.createId();
+				
+				target.isUkHosting = target.isUkHosting();
+				target.isTopLevelDomain = target.isTopLevelDomain();
+				target.isUkRegistration = target.isUkRegistration();
+				
+//				target.edit_url = Utils.INSTANCE.getWctUrl(target.vid);
+//				target.createdAt = Utils.INSTANCE.getDateFromSeconds(target.getCreated());
+				
+				target.revision = Const.INITIAL_REVISION;
+				target.active = true;
+				
+				target.selectionType = Const.SelectionType.SELECTION.name();
+				
+				if (target.noLdCriteriaMet == null) {
+					target.noLdCriteriaMet = Boolean.FALSE;
+				}
+
+				if (target.keySite == null) {
+					target.keySite = Boolean.FALSE;
+				}
+
+				if (target.ignoreRobotsTxt == null) {
+					target.ignoreRobotsTxt = Boolean.FALSE;
+				}
+
+	        	target.save();
+				
+				Logger.debug("target: " + target);
+				String url = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + target.id;
+				Logger.debug("location: " + url);
+				response().setHeader(LOCATION, url);
+				target.save();
+				Logger.debug("response 201 created");
+			    return created(response().getHeaders().get(LOCATION));
+	    	}
+        } catch (IllegalArgumentException e) {
+			return badRequest("URL invalid: " + e);
+        }
+        catch (Exception e) {
+        	Logger.error("error: " + e);
+            return Results.internalServerError(e.getMessage());
+        }
+	}
+    
+	private static Collection getCollection(String stringId) throws IOException, TaxonomyNotFoundException, NumberFormatException {
+		Long id = Long.valueOf(stringId);
+		Collection collection = Collection.findById(id);
+		if (collection == null) {
+			throw new TaxonomyNotFoundException("No Collection id for: " + id);
+		}
+		return collection;
+	}
+	
+	private static Subject getSubject(String stringId) throws IOException, TaxonomyNotFoundException {
+		Long id = Long.valueOf(stringId);
+		Subject subject = Subject.findById(id);
+		if (subject == null) {
+			throw new TaxonomyNotFoundException("No Subject id for: " + id);
+		}
+		return subject;
 	}
 }
 

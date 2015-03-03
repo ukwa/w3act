@@ -388,14 +388,14 @@ public class CrawlPermissionController extends AbstractController {
 		            return info(filledForm, id, null);
 		        }
 		        
-		    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail);
+		    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail.trim());
 		    	
 		    	if (existingContact != null) {
 			    	Logger.debug("validateForm contactPersonName: " + contactPersonName + "/" + existingContact.name);
 			    	Logger.debug("validateForm contactPersonEmail: " + contactPersonEmail + "/" + existingContact.email);
 		    		if (StringUtils.isNotEmpty(existingContact.name) && StringUtils.isNotEmpty(existingContact.email) && 
 		    			StringUtils.isNotBlank(contactPersonName) && StringUtils.isNotBlank(contactPersonEmail) 
-		    			&& existingContact.email.equals(contactPersonEmail) && !existingContact.name.equals(contactPersonName)) {
+		    			&& existingContact.email.equalsIgnoreCase(contactPersonEmail) && !existingContact.name.equalsIgnoreCase(contactPersonName)) {
 		    			// matching emails but names don't match
 		    	    	Logger.debug("validateForm validation error");
 
@@ -469,14 +469,14 @@ public class CrawlPermissionController extends AbstractController {
             return newInfo(filledForm, targetId, null);
         }
         
-    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail);
+    	ContactPerson existingContact = ContactPerson.findByEmail(contactPersonEmail.trim());
     	
     	if (existingContact != null) {
 	    	Logger.debug("validateForm contactPersonName: " + contactPersonName + "/" + existingContact.name);
 	    	Logger.debug("validateForm contactPersonEmail: " + contactPersonEmail + "/" + existingContact.email);
     		if (StringUtils.isNotEmpty(existingContact.name) && StringUtils.isNotEmpty(existingContact.email) && 
     			StringUtils.isNotBlank(contactPersonName) && StringUtils.isNotBlank(contactPersonEmail) 
-    			&& existingContact.email.equals(contactPersonEmail) && !existingContact.name.equals(contactPersonName)) {
+    			&& existingContact.email.equalsIgnoreCase(contactPersonEmail) && !existingContact.name.equalsIgnoreCase(contactPersonName)) {
     			// matching emails but names don't match
     	    	Logger.debug("validateForm validation error");
 
