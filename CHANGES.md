@@ -3,6 +3,7 @@
 Enhancement/s:
 * Creating new targets in bulk [#266](https://github.com/ukwa/w3act/issues/266)
 * Presenting QA wayback content only to w3act authenticated users [#268](https://github.com/ukwa/w3act/issues/268)
+* Added .wales and .cymru to TLD whitelist [#284](https://github.com/ukwa/w3act/issues/284)
 * Improved presentation and visibility of links to Wayback and to the known Instances.
 
 Bug fixes:
