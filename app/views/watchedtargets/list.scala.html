@@ -107,7 +107,16 @@
 			@for(watchedTarget <- currentPage.getList) {
 				<tr>
 					<td><a href="@routes.TargetController.view(new Long(watchedTarget.target.id))">@watchedTarget.target.title</a></td>
-					<td><a href="@watchedTarget.target.fieldUrls(0).url" target="_blank">@watchedTarget.target.fieldUrls(0).url</a></td>
+					<td>
+						@if(watchedTarget.target.fieldUrls != null) {
+							@for(fieldUrl <- watchedTarget.target.fieldUrls) {
+								<a href="@fieldUrl.url" target="_blank">@fieldUrl.url</a><br>
+							}
+						} else {
+							N/A
+						}
+					
+					</td>
 					<td><a href="@routes.UserController.view(watchedTarget.target.authorUser.id)">@watchedTarget.target.authorUser.name</a></td>
 					<td><a href="@routes.Documents.list("", "" + watchedTarget.id)">@watchedTarget.documents.size</a></td>
 					<td>

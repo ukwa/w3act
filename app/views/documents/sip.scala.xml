@@ -42,13 +42,8 @@
               <subfield code="c">@document.publicationYear</subfield>
             </datafield>
           @if(!document.book.series.isEmpty) {
-            <datafield tag="490" ind2=" " ind1=" ">
+            <datafield tag="490" ind2=" " ind1="0">
               <subfield code="a">@document.book.series</subfield>
-            </datafield>
-          }
-          @if(!document.book.corporateAuthor.isEmpty) {
-            <datafield tag="710" ind2=" " ind1="1">
-              <subfield code="a">@document.book.corporateAuthor</subfield>
             </datafield>
           }
           @if(!document.author1Ln.isEmpty) {
@@ -57,15 +52,21 @@
             </datafield>
           }
           @if(!document.author2Ln.isEmpty) {
-            <datafield tag="720" ind2=" " ind1="1">
+            <datafield tag="700" ind2=" " ind1="1">
               <subfield code="a">@document.author2Ln, @document.author2Fn</subfield>
             </datafield>
           }
           @if(!document.author3Ln.isEmpty) {
-            <datafield tag="720" ind2=" " ind1="1">
+            <datafield tag="700" ind2=" " ind1="1">
               <subfield code="a">@document.author3Ln, @document.author3Fn</subfield>
             </datafield>
           }
+          @if(!document.book.corporateAuthor.isEmpty) {
+            <datafield tag="710" ind2=" " ind1="2">
+              <subfield code="a">@document.book.corporateAuthor</subfield>
+            </datafield>
+          }
+          
           @for(blCollectionSubset <- document.book.blCollectionSubsets) {
             <datafield tag="690" ind2=" " ind1="7">
               <subfield code="a">@blCollectionSubset.title</subfield>
@@ -74,7 +75,7 @@
           }
           @if(document.priorityCataloguing) {
             <datafield tag="985" ind2=" " ind1=" ">
-              <subfield code="a">Priority Cataloguing</subfield>
+              <subfield code="a">Priority cataloguing</subfield>
             </datafield>
           }
           </record>
