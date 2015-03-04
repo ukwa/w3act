@@ -1105,6 +1105,8 @@ public class Target extends UrlModel {
 			exp = exp.add(Expr.raw("fieldUrls.url NOT like '%"
 					+ Scope.UK_DOMAIN + "%' or fieldUrl NOT like '%"
 					+ Scope.LONDON_DOMAIN + "%' or fieldUrl NOT like '%"
+					+ Scope.WALES_DOMAIN + "%' or fieldUrl NOT like '%"
+					+ Scope.CYMRU_DOMAIN + "%' or fieldUrl NOT like '%"
 					+ Scope.SCOT_DOMAIN + "%'"));
 		} else if (npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
 			// Expression ex = Expr.or(Expr.icontains("field_url",
@@ -1114,6 +1116,8 @@ public class Target extends UrlModel {
 			// Scope.SCOT_DOMAIN)));
 			exp = exp.add(Expr.raw("fieldUrls.url like '%" + Scope.UK_DOMAIN
 					+ "%' or fieldUrls.url like '%" + Scope.LONDON_DOMAIN
+					+ "%' or fieldUrls.url like '%" + Scope.WALES_DOMAIN
+					+ "%' or fieldUrls.url like '%" + Scope.CYMRU_DOMAIN
 					+ "%' or fieldUrls.url like '%" + Scope.SCOT_DOMAIN + "%'"));
 		} else if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
 			// uk hosting

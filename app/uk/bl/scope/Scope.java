@@ -62,6 +62,9 @@ public enum Scope {
 	public static final String UK_DOMAIN       = ".uk";
 	public static final String LONDON_DOMAIN   = ".london";
 	public static final String SCOT_DOMAIN     = ".scot";
+	public static final String WALES_DOMAIN     = ".wales";
+	public static final String CYMRU_DOMAIN     = ".cymru";
+	
 	public static List<String> DOMAINS;
 
 	static {
@@ -69,6 +72,8 @@ public enum Scope {
 		DOMAINS.add(UK_DOMAIN);
 		DOMAINS.add(LONDON_DOMAIN);
 		DOMAINS.add(SCOT_DOMAIN);
+		DOMAINS.add(WALES_DOMAIN);
+		DOMAINS.add(CYMRU_DOMAIN);
 	}
 	
 	public static final String GEO_IP_SERVICE  = "GeoLite2-City.mmdb";
@@ -303,7 +308,7 @@ public enum Scope {
 	        if (!res && url != null && url.length() > 0
 	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
 	    	        		|| mode.equals(Const.ScopeCheckType.DOMAIN.name()))) {
-		        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN) || url.contains(SCOT_DOMAIN)) {
+		        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN) || url.contains(SCOT_DOMAIN) || url.contains(WALES_DOMAIN) || url.contains(CYMRU_DOMAIN)) {
 		        	res = true;
 		        }
 	        }
@@ -513,7 +518,7 @@ public enum Scope {
         
         // Rule 3.1: check domain name
         if (!res && url != null && url.length() > 0) {
-	        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN) || url.contains(SCOT_DOMAIN)) {
+	        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN) || url.contains(SCOT_DOMAIN) || url.contains(WALES_DOMAIN) || url.contains(CYMRU_DOMAIN)) {
 	        	res = true;
 	        }
         }
@@ -772,7 +777,7 @@ public enum Scope {
 			String url = uri.toExternalForm();
             Logger.debug("Normalised " + url);
             // Rule 3.1: check domain name
-	        if (!url.contains(UK_DOMAIN) && !url.contains(LONDON_DOMAIN) && !url.contains(SCOT_DOMAIN)) return false;
+	        if (!url.contains(UK_DOMAIN) && !url.contains(LONDON_DOMAIN) && !url.contains(SCOT_DOMAIN) && !url.contains(WALES_DOMAIN) && !url.contains(CYMRU_DOMAIN)) return false;
         }
 //		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);        
         return true;
