@@ -357,6 +357,10 @@ public class Target extends UrlModel {
 	@JsonProperty
 	private List<String> field_collection_cats;
 
+	@Transient
+	@JsonProperty
+	private String selector;
+	
 	
 //	  "title": "Your Thurrock" - fine
 //	  "field_subject": ["24"],
@@ -2162,6 +2166,14 @@ public class Target extends UrlModel {
 
 	public void setField_collection_cats(List<String> field_collection_cats) {
 		this.field_collection_cats = field_collection_cats;
+	}
+
+	public String getSelector() {
+		return selector;
+	}
+
+	public void setSelector(String selector) {
+		this.selector = selector;
 	}
 
 	@Override
