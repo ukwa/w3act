@@ -64,7 +64,7 @@ public class LicenseController extends AbstractController {
 
 		return ok(
             ukwalicence.render(crawlPermission.url, crawlPermission.name, 
-            		crawlPermission.target.title, "", "", "", "", "", "", "")
+            		crawlPermission.target.fieldUrl(), "", "", "", "", "", "", "")
         );
     }
     
