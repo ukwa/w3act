@@ -770,7 +770,9 @@ public class TargetController extends AbstractController {
     
     public static Result delete(Long id) {
     	Target target = Target.findById(id);
+    	Logger.debug("deleted " + target);
     	target.delete();
+    	Logger.debug("deleted");
     	return redirect(routes.TargetController.index());
     }
     
@@ -1219,7 +1221,13 @@ public class TargetController extends AbstractController {
 	        } else if (action.equals("archive")) {
 		        return redirect(routes.TargetController.archive(id)); 
 	        } else if (action.equals("delete")) {
-		        return redirect(routes.TargetController.delete(id)); 
+	        	Logger.debug("deleting");
+	        	Target target = Target.findById(id);
+	        	Logger.debug("deleted " + target);
+	        	target.delete();
+	        	Logger.debug("deleted");
+	        	return redirect(routes.TargetController.index());
+//		        return redirect(routes.TargetController.delete(id)); 
 	        }
         }
     	return null;
