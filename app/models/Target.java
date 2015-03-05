@@ -1349,7 +1349,9 @@ public class Target extends UrlModel {
 		ExpressionList<Target> targets = find.fetch("licenses").where().eq(Const.ACTIVE, true).isNotNull("licenses");
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
-		}		
+		} else {
+			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
+		}
 
 		/**
 		 * The resulting list should only include those records where there is
@@ -1394,7 +1396,10 @@ public class Target extends UrlModel {
 		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true).eq("noLdCriteriaMet", Boolean.FALSE);
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
+		} else {
+			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
 		}
+		
 		List<Target> result = new ArrayList<Target>();
 		for (Target target : targets.findList()) {
 			if (target.isInScopeAllWithoutLicense()) {
