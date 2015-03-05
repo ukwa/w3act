@@ -121,6 +121,7 @@
 					<td><a href="@routes.Documents.list("", "" + watchedTarget.id)">@watchedTarget.documents.size</a></td>
 					<td>
 						@helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
+							<input type="hidden" name="watchedtarget" value="@watchedTarget.id">
 							<input type="submit" class="btn btn-success" value="Live Crawl" onclick=
 								"return confirm('You will start a crawl with the seed:\n@{watchedTarget.target.fieldUrls(0).url}\n\nDo you want to proceed?');">
 						}

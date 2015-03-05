@@ -117,7 +117,7 @@ public class Document extends Model {
     	}
     }
     
-    public static Page<Document> page(Long userId, Long watchedTargetId, String service,
+    public static Page<Document> page(Long userId, Long watchedTargetId, String service, List<Long> subjectIds,
     		Status status, int page, int pageSize, String sortBy, String order, String filter) {
 
     	ExpressionList<Document> el = find.where();
@@ -125,8 +125,12 @@ public class Document extends Model {
     		el = el.eq("id_watched_target", watchedTargetId);
     	} else if (userId != null) {
     		el = el.in("id_watched_target", Users.getWatchedTargetIds(userId));
-    	} if (!service.isEmpty()) {
+    	}
+    	if (!service.isEmpty()) {
     		el = el.in("id", Portals.getDocumentIds(service));
+    	}
+    	if (subjectIds != null && !subjectIds.isEmpty()) {
+    		el = el.in("subjects.id", subjectIds);
     	}
     	
     	return el.eq("status", status.ordinal())

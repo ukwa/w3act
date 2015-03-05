@@ -18,6 +18,7 @@ import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.crawling.CrawlActor;
+import uk.bl.crawling.Crawler;
 import views.html.watchedtargets.list;
 
 @Security.Authenticated(SecuredController.class)
@@ -62,10 +63,14 @@ public class WatchedTargets extends AbstractController {
 		return redirect(routes.WatchedTargets.list("" + watchedTarget.target.authorUser.id, true, 0, "title", "asc", watchedTarget.target.title));
 	}
     
-    public static Result crawl(Long id) {
+    public static Result crawl(Long id, boolean crawlWayback) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
-    	CrawlActor.crawlAndConvertDocuments(watchedTarget, false, null, 3);
-    	return redirect(routes.Documents.list("" + watchedTarget.target.authorUser.id, "" + id, "",
+    	List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
+    	for (String crawlTime : newerCrawlTimes) {
+    		Logger.debug("crawlTime: " + crawlTime);
+    		CrawlActor.crawlAndConvertDocuments(watchedTarget, crawlWayback, crawlTime, 3);
+    	}
+    	return redirect(routes.Documents.list("" + watchedTarget.target.authorUser.id, "" + id, "", "",
     			Document.Status.NEW.toString(), 0, "title", "asc", ""));
     }
     

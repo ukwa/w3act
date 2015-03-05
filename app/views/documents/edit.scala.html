@@ -183,7 +183,7 @@
 					};
 			}
 			
-			fillTree("subject", @Html(AbstractController.getSubjectsData().toString));
+			fillTree("subject", @Html(AbstractController.getSubjectsDataByIds(Documents.stringToLongList(form("subject").value)).toString));
 		});
 	</script>
 }

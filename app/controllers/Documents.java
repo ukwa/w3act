@@ -41,6 +41,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 import play.Play;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -209,7 +210,7 @@ public class Documents extends AbstractController {
 		Ebean.save(arks);
 	}
 
-	public static Result ignore(Long id, String userString, String watchedTargetString, String service,
+	public static Result ignore(Long id, String userString, String watchedTargetString, String service, String subject,
 			String statusString, int pageNo, String sortBy, String order, String filter, boolean filters) {
 		Document document = Document.find.byId(id);
 		if (statusString.equals(Document.Status.NEW.toString()))
@@ -218,7 +219,7 @@ public class Documents extends AbstractController {
 			document.status = Document.Status.NEW;
 		Ebean.save(document);
 		if (filters)
-			return redirect(routes.Documents.list(userString, watchedTargetString, service,
+			return redirect(routes.Documents.list(userString, watchedTargetString, service, subject,
 					statusString, pageNo, sortBy, order, filter));
 		else
 			return redirect(routes.Documents.overview(pageNo, sortBy, "asc"));
@@ -292,18 +293,18 @@ public class Documents extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on Documents
      */
-	public static Result list(String userString, String watchedTargetString, String service, String statusString,
+	public static Result list(String userString, String watchedTargetString, String service, String subject, String statusString,
 			int pageNo, String sortBy, String order, String filter) {
 		Document.Status status = Document.Status.valueOf(statusString);
-		return renderList(userString, watchedTargetString, service, status, pageNo, sortBy, order, filter, true);
+		return renderList(userString, watchedTargetString, service, subject, status, pageNo, sortBy, order, filter, true);
 	}
 	
     public static Result overview(int pageNo, String sortBy, String order) {
-    	return renderList("" + User.findByEmail(request().username()).id, "", "", Document.Status.NEW, pageNo, sortBy, order, "", false);
+    	return renderList("" + User.findByEmail(request().username()).id, "", "", "", Document.Status.NEW, pageNo, sortBy, order, "", false);
     }
     
     public static Result renderList(String userString, String watchedTargetString,
-    		String service, Document.Status status,
+    		String service, String subject, Document.Status status,
     		int pageNo, String sortBy, String order, String filter, boolean filters) {
     	Logger.info("Documents.list()");
 
@@ -320,13 +321,15 @@ public class Documents extends AbstractController {
     		userId = WatchedTarget.find.byId(watchedTargetId).target.authorUser.id;
     	}
     	
+    	List<Long> subjectIds = stringToLongList(subject);
+    	
         return ok(
         	list.render(
         			User.findByEmail(request().username()),
-        			filterForm(userId, watchedTargetId, service),
+        			filterForm(userId, watchedTargetId, service, subject),
         			status,
         			filter,
-        			Document.page(userId, watchedTargetId, service, status, pageNo, 10, sortBy, order, filter),
+        			Document.page(userId, watchedTargetId, service, subjectIds, status, pageNo, 10, sortBy, order, filter),
         			sortBy,
         			order,
         			filters)
@@ -366,12 +369,25 @@ public class Documents extends AbstractController {
 		file.delete();
 	}
 	
-	public static DynamicForm filterForm(Long userId, Long targetId, String service) {
+	public static DynamicForm filterForm(Long userId, Long targetId, String service, String subject) {
     	Map<String,String> filterData = new HashMap<>();
     	filterData.put("user", "" + userId);
     	filterData.put("watchedtarget", "" + targetId);
     	filterData.put("service", service);
+    	filterData.put("subject", subject);
     	return Form.form().bind(filterData);
     }
+	
+	public static List<Long> stringToLongList(String subject) {
+		List<Long> subjectIds = new ArrayList<Long>();
+    	if (!subject.isEmpty()) {
+            String[] subjects = subject.split(", ");
+            for (String sId : subjects) {
+            	Long subjectId = Long.valueOf(sId);
+            	subjectIds.add(subjectId);
+            }
+        }
+    	return subjectIds;
+	}
 
 }

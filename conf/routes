@@ -132,11 +132,11 @@ GET		/overview/documents					controllers.Documents.overview(p:Int ?= 0, s ?= "ti
 
 GET    	/documents/filterbyjson/:title		controllers.Documents.filterByJson(title)
 GET		/documents/unsaved					controllers.Documents.continueEdit()
-GET     /documents/list						controllers.Documents.list(user ?= "", watchedtarget ?= "", service ?= "", status ?= models.Document.Status.NEW.toString, p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET     /documents/list						controllers.Documents.list(user ?= "", watchedtarget ?= "", service ?= "", subject ?= "", status ?= models.Document.Status.NEW.toString, p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 GET		/documents/:document				controllers.Documents.view(document: Long)
 GET		/documents/:document/edit			controllers.Documents.edit(document: Long)
 GET		/documents/:document/submit			controllers.Documents.submit(document: Long)
-GET		/documents/:document/ignore			controllers.Documents.ignore(document: Long, user, watchedtarget, service, status, p:Int, s, o, f, filters: Boolean)
+GET		/documents/:document/ignore			controllers.Documents.ignore(document: Long, user, watchedtarget, service, subject, status, p:Int, s, o, f, filters: Boolean)
 GET		/documents/:document/sip			controllers.Documents.sip(document: Long)
 GET     /documents/html/*file				controllers.Documents.html(file)
 POST	/documents							controllers.Documents.save()
@@ -147,10 +147,10 @@ GET		/journaltitles/:journaltitle		controllers.JournalTitles.edit(journaltitle: 
 POST	/journaltitles						controllers.JournalTitles.save(toDocument: Boolean ?= false)
 
 GET    	/watchedtargets/filterbyjson/:url	controllers.WatchedTargets.filterByJson(url)
+GET		/watchedtargets/crawl				controllers.WatchedTargets.crawl(watchedtarget: Long, wayback: Boolean ?= false)
 GET		/watchedtargets/list				controllers.WatchedTargets.list(user ?= "", children: Boolean ?= false, p:Int ?= 0, s ?= "target.title", o ?= "asc", f ?= "")
 GET		/watchedtargets/:watchedtarget		controllers.WatchedTargets.view(watchedtarget: Long)
 GET		/watchedtargets/:watchedtarget/journaltitles		controllers.JournalTitles.addJournalTitle(watchedtarget: Long, toDocument: Boolean ?= false)
-POST	/watchedtargets/crawl				controllers.WatchedTargets.crawl(watchedtarget: Long)
 
 GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)
 

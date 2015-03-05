@@ -25,16 +25,16 @@ public class CrawlActor extends UntypedActor {
 	private class CrawlFunction implements Function0<List<Document>> {
 		
 		private WatchedTarget watchedTarget;
-		private String crawlTime;
 		
-		public CrawlFunction(WatchedTarget watchedTarget, String crawlTime) {
+		public CrawlFunction(WatchedTarget watchedTarget) {
 			this.watchedTarget = watchedTarget;
-			this.crawlTime = crawlTime;
 		}
 		
 		public List<Document> apply() {
 			Logger.info("Crawling " + watchedTarget.target.fieldUrls.get(0).url);
-			crawlAndConvertDocuments(watchedTarget, true, crawlTime, null);
+			List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
+			for (String crawlTime : newerCrawlTimes)
+				crawlAndConvertDocuments(watchedTarget, true, crawlTime, null);
 			Logger.info("Finished crawling " + watchedTarget.target.fieldUrls.get(0).url);
 			return null;
 		}
@@ -91,9 +91,7 @@ public class CrawlActor extends UntypedActor {
 			Logger.info("Starting Crawl");
 			List<WatchedTarget> watchedTargets = WatchedTarget.find.all();
 			for (WatchedTarget watchedTarget : watchedTargets) {
-				List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
-				for (String crawlTime : newerCrawlTimes)
-					Promise.promise(new CrawlFunction(watchedTarget, crawlTime));
+				Promise.promise(new CrawlFunction(watchedTarget));
 			}
 		}
 	}
