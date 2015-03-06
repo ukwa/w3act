@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -89,9 +90,6 @@ public class User extends ActModel {
     @JsonIgnore
     @JsonProperty
     public String edit_url;
-    
-    @Transient
-    public Role role;
     
     @Transient
     @JsonIgnore
@@ -451,6 +449,17 @@ public class User extends ActModel {
 	    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new ActException(e);
 		}
+    }
+    
+    
+    /**
+     * @return role (user's should only have a single role)
+     */
+    public Role getRole() {
+    	if (CollectionUtils.isNotEmpty(roles)) {
+    		return roles.get(0);
+    	}
+    	return null;
     }
     
     @Override

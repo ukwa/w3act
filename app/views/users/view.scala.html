@@ -64,14 +64,7 @@
 						<label class="col-sm-6 control-label">Roles</label>
 					    <div class="col-sm-6">
 					        @for(role <- roles) {
-								<label class="checkbox-inline">
-									@if(user.hasRole(role)) {
-				                		<input type="checkbox" name="role" value="@role.id" checked disabled />
-					                } else {
-				                		<input type="checkbox" name="role" value="@role.id" disabled />
-					                }
-					                 @role.name
-				                </label>
+  							    <input type="radio" name="rolesList" value="@role.id" @if(user.hasRole(role)) {checked} disabled/> <label for="track">@role.name </label> 
 				            }
 						</div>
 					</div>
