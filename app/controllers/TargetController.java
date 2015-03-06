@@ -1221,12 +1221,6 @@ public class TargetController extends AbstractController {
 	        } else if (action.equals("archive")) {
 		        return redirect(routes.TargetController.archive(id)); 
 	        } else if (action.equals("delete")) {
-//	        	Logger.debug("deleting");
-//	        	Target target = Target.findById(id);
-//	        	
-//	        	target.delete();
-//	        	Logger.debug("deleted");
-//	        	return redirect(routes.TargetController.index());
 		        return delete(id);
 	        }
         }

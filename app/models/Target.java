@@ -105,6 +105,9 @@ public class Target extends UrlModel {
     public List<Flag> flags;
 
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
+	public List<LookupEntry> lookupEntries;
+
+	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<FieldUrl> fieldUrls;
 
 	@Column(columnDefinition = "text")
