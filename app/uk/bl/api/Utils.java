@@ -774,17 +774,17 @@ public enum Utils {
 		return url;
 	}
 	
-    public boolean isExistingTarget(String url) {
+    public FieldUrl isExistingTarget(String url) {
     	Set<String> varyingUrls = getVaryingUrls(url);
     	for (String varyingUrl : varyingUrls) {
     		Logger.debug("varyingUrl: " + varyingUrl);
     		FieldUrl fieldUrl = FieldUrl.findByUrl(varyingUrl);
     		Logger.debug("fieldUrl found : " + fieldUrl);
     		if (fieldUrl != null) {
-    			return true;
+    			return fieldUrl;
     		}
     	}
-    	return false;
+    	return null;
 	
     }
     

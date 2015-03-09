@@ -765,6 +765,7 @@ public class TargetController extends AbstractController {
 		Map<String,String> crawlFrequencies = Const.CrawlFrequency.options();
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
+		target.fieldUrl = target.fieldUrl();
 		return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
     }
     
@@ -935,6 +936,7 @@ public class TargetController extends AbstractController {
 
 		DynamicForm requestData = Form.form().bindFromRequest();
         String tabStatus = requestData.get("tabstatus");
+        form.get().fieldUrl = target.fieldUrl(); 
         return badRequest(edit.render(form, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus, targetTags, targetFlags, targetLicenses));
     }
 
@@ -966,6 +968,13 @@ public class TargetController extends AbstractController {
 		return badRequest(newForm.render(form, user, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus));
 	}
 	
+	private static String urlNoTrailingSlash(String url) {
+		if (url.endsWith("/")) {
+			url = url.substring(0, url.length() - 1);
+		}
+		return url;
+	}
+
     public static Result update(Long id) throws ActException {
     	DynamicForm requestData = form().bindFromRequest();
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
@@ -1014,30 +1023,57 @@ public class TargetController extends AbstractController {
 			  	
 		
 		        String fieldUrl = requestData.get("formUrl");
+		        
+		        String originalUrl = requestData.get("currentUrls");
+		        
 		        Logger.debug("fieldUrl: " + fieldUrl);
 		        if (StringUtils.isNotEmpty(fieldUrl)) {
 		            String[] urls = fieldUrl.split(",");
 		            List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
 		            
 		            for (String url : urls) {
-		            	FieldUrl fu = FieldUrl.findByUrl(url.trim());
-		            	if (fu == null) {
+		            	
+		            	String trimmed = url.trim();
+		            	
+		            	if (StringUtils.isNotEmpty(originalUrl) && (!urlNoTrailingSlash(trimmed).equalsIgnoreCase(urlNoTrailingSlash(originalUrl)))) {
+		            		
+		            		Logger.debug("originalUrl " + originalUrl);
+		            		Logger.debug("urlNoTrailingSlash(originalUrl) " + urlNoTrailingSlash(originalUrl));
+		            		Logger.debug("urlNoTrailingSlash(trimmed) " + urlNoTrailingSlash(trimmed));
+		            		Logger.debug("trimmed " + trimmed);
+		            		
+			            	FieldUrl isExistingFieldUrl = isExistingTarget(trimmed);
+		            		Logger.debug("isExistingTarget " + isExistingFieldUrl.target.fieldUrl());
+			            	
+			            	if (isExistingFieldUrl != null) {
+			    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
+					            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
+					            filledForm.reject(ve);
+					            return info(filledForm, id);
+			            	}
+		            	
+		            	} else {
 		                    URL uri;
 							try {
-				            	Logger.debug("url: " + url.trim());
-								uri = new URI(url.trim()).normalize().toURL();
+				            	Logger.debug("url: " + trimmed);
+								uri = new URI(trimmed).normalize().toURL();
 			        			String extFormUrl = uri.toExternalForm();
-				            	fu = new FieldUrl(extFormUrl.trim());
+			        			
+			        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
+			        			Logger.debug("valid? " + isValidUrl);
+			        			if (!isValidUrl) {
+			        				throw new ActException("Invalid URL");
+			        			}
+			        			
+				            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
 				            	Logger.debug("extFormUrl: " + extFormUrl);
-							} catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
-		//						flash("message", e.getMessage());
-		//						e.printStackTrace();
+				            	fieldUrls.add(fu);
+							} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
 					            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
 					            filledForm.reject(ve);
 					            return info(filledForm, id);
 					        }
-		            	}
-		            	fieldUrls.add(fu);
+		            	}		            	
 		            }
 		            filledForm.get().fieldUrls = fieldUrls;
 		            Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
@@ -1227,7 +1263,7 @@ public class TargetController extends AbstractController {
     	return null;
     }
     
-    private static boolean isExistingTarget(String url) {
+    private static FieldUrl isExistingTarget(String url) {
     	return Utils.INSTANCE.isExistingTarget(url);
     }
     
@@ -1292,9 +1328,9 @@ public class TargetController extends AbstractController {
             
             for (String url : urls) {
             	String trimmed = url.trim();
-            	boolean isExistingTarget = isExistingTarget(trimmed); 
-            	if (isExistingTarget) {
-		            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target");
+            	FieldUrl isExistingTarget = isExistingTarget(trimmed); 
+            	if (isExistingTarget != null) {
+		            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target " + "");
 		            filledForm.reject(ve);
 		            return newInfo(filledForm);
             	} else {

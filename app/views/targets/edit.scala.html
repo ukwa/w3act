@@ -189,7 +189,7 @@
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				@for(entry <- targetForm.errors.entrySet){
 					@for(error <- entry.getValue){
-						@error.message<br />
+						@Html(error.message)<br />
 					}
 				}
 			</div>
@@ -200,6 +200,7 @@
 	
 		<input type="hidden" id="tabstatus" name="tabstatus" value="@tabStatus">
 		<input type="hidden" id="id" name="id" value="@id">
+		<input type="hidden" id="currentUrls" name="currentUrls" value="@targetForm("fieldUrl").value">
 	
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">

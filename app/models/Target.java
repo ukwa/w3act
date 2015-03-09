@@ -26,6 +26,7 @@ import javax.persistence.Transient;
 
 import models.License.LicenseStatus;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -343,7 +344,11 @@ public class Target extends UrlModel {
 
 	@Transient
 	public String authorIdText;
-	
+
+	@Transient
+	@JsonProperty
+	public String fieldUrl;
+
 	@Transient
 	@JsonProperty
 	private List<String> field_urls;
@@ -2143,6 +2148,10 @@ public class Target extends UrlModel {
 		return instance;
 	}
 	
+	@JsonIgnore
+	public boolean isDeletable() {
+		return (!indicateLicenses() && CollectionUtils.isEmpty(this.collections));
+	}
 	
 	public List<String> getField_urls() {
 		return field_urls;
