@@ -74,13 +74,15 @@
 				Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
 			</div>
 	
-			<div class="row padding-10 pull-right">
-	     		<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="btn-group">
-						<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-			       </div>
+			@if(user.hasRole("sys_admin")) {
+				<div class="row padding-10 pull-right">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="btn-group">
+							<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+				       </div>
+					</div>
 				</div>
-			</div>
+			}
 		}
 	}
 } else {
