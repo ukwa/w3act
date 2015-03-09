@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.avaje.ebean.Ebean;
 
@@ -15,12 +16,15 @@ import models.Document;
 import models.WatchedTarget;
 import akka.actor.UntypedActor;
 import play.Logger;
+import play.libs.Akka;
 import play.libs.F.Function0;
 import play.libs.F.Promise;
+import scala.concurrent.duration.Duration;
 
 public class CrawlActor extends UntypedActor {
 	
-	public static class StartMessage {}
+	public static class CrawlMessage {}
+	public static class ConvertMessage {}
     
 	private class CrawlFunction implements Function0<List<Document>> {
 		
@@ -34,14 +38,14 @@ public class CrawlActor extends UntypedActor {
 			Logger.info("Crawling " + watchedTarget.target.fieldUrls.get(0).url);
 			List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
 			for (String crawlTime : newerCrawlTimes)
-				crawlAndConvertDocuments(watchedTarget, true, crawlTime, null);
+				crawlDocuments(watchedTarget, true, crawlTime, null);
 			Logger.info("Finished crawling " + watchedTarget.target.fieldUrls.get(0).url);
 			return null;
 		}
 
 	}
 	
-	public static List<Document> crawlAndConvertDocuments(WatchedTarget watchedTarget,
+	public static List<Document> crawlDocuments(WatchedTarget watchedTarget,
 			boolean crawlWayback, String crawlTime, Integer maxDocuments) {
 		List<Document> documentList = (new Crawler(crawlWayback)).crawlForDocuments(watchedTarget, crawlTime, maxDocuments);
 		List<Document> newDocumentList = new ArrayList<>();
@@ -58,18 +62,30 @@ public class CrawlActor extends UntypedActor {
 					newDocumentList.add(document);
 			
 			Ebean.save(newDocumentList);
-			
-			for (Document document : newDocumentList) {
-				try {
-					convertPdfToHtml(document);
-					Documents.addHash(document);
-				} catch (IOException e) {
-					Logger.error(e.getMessage());
-				}
-			}
 		}
 		
 		return newDocumentList;
+	}
+	
+	public static void crawlAndConvertDocuments(WatchedTarget watchedTarget,
+			boolean crawlWayback, String crawlTime, Integer maxDocuments) {
+		convertDocuments(crawlDocuments(watchedTarget, crawlWayback, crawlTime, maxDocuments));
+	}
+	
+	public static void convertDocuments(List<Document> newDocumentList) {
+		for (Document document : newDocumentList) {
+			try {
+				convertPdfToHtml(document);
+				Documents.addHash(document);
+			} catch (IOException e) {
+				Logger.error(e.getMessage());
+			}
+		}
+	}
+	
+	public static void convertDocuments() {
+		List<Document> newDocumentList = Document.find.where().eq("sha256hash", null).findList();
+		convertDocuments(newDocumentList);
 	}
 
 	private static void convertPdfToHtml(Document document) throws IOException {
@@ -87,12 +103,22 @@ public class CrawlActor extends UntypedActor {
 	}
 	
 	public void onReceive(Object message) throws Exception {
-		if (message instanceof StartMessage) {
-			Logger.info("Starting Crawl");
+		if (message instanceof CrawlMessage) {
+			Logger.info("Starting crawl");
 			List<WatchedTarget> watchedTargets = WatchedTarget.find.all();
 			for (WatchedTarget watchedTarget : watchedTargets) {
 				Promise.promise(new CrawlFunction(watchedTarget));
 			}
+			Akka.system().scheduler().scheduleOnce(
+					Duration.create(1, TimeUnit.HOURS),
+					getSelf(),
+					new CrawlActor.ConvertMessage(),
+					Akka.system().dispatcher(),
+					null
+			);
+		} else if (message instanceof ConvertMessage) {
+			Logger.info("Convert documents");
+			convertDocuments();
 		}
 	}
 }

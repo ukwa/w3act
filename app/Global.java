@@ -1,3 +1,4 @@
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import akka.actor.ActorRef;
@@ -38,10 +39,10 @@ public class Global extends GlobalSettings {
     	
     	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
 		Akka.system().scheduler().schedule(
-				Duration.create(0, TimeUnit.MILLISECONDS), //Initial delay 0 milliseconds
+				Duration.create(millisecondsUntilMidnight(), TimeUnit.MILLISECONDS), //Initial delay
 				Duration.create(24, TimeUnit.HOURS),     //Frequency 24 hours
 				crawlActor,
-				new CrawlActor.StartMessage(),
+				new CrawlActor.CrawlMessage(),
 				Akka.system().dispatcher(),
 				null
     	);
@@ -51,6 +52,18 @@ public class Global extends GlobalSettings {
 	    	DataImport.INSTANCE.importRoles();
 			DataImport.INSTANCE.importAccounts();
     	}*/
+    }
+    
+    public long millisecondsUntilMidnight() {
+    	Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        long milliseconds = c.getTimeInMillis()-System.currentTimeMillis();
+        Logger.debug("First crawl will start in " + milliseconds + "ms");
+        return milliseconds;
     }
     
     @Override

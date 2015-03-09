@@ -3,6 +3,10 @@ package controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import akka.actor.ActorRef;
+import akka.actor.Props;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,10 +17,12 @@ import models.WatchedTarget;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.libs.Akka;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
+import scala.concurrent.duration.Duration;
 import uk.bl.crawling.CrawlActor;
 import uk.bl.crawling.Crawler;
 import views.html.watchedtargets.list;
@@ -65,13 +71,42 @@ public class WatchedTargets extends AbstractController {
     
     public static Result crawl(Long id, boolean crawlWayback) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
-    	List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
-    	for (String crawlTime : newerCrawlTimes) {
-    		Logger.debug("crawlTime: " + crawlTime);
-    		CrawlActor.crawlAndConvertDocuments(watchedTarget, crawlWayback, crawlTime, 3);
+    	if (crawlWayback) {
+	    	List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
+	    	for (String crawlTime : newerCrawlTimes) {
+	    		Logger.debug("crawlTime: " + crawlTime);
+	    		CrawlActor.crawlAndConvertDocuments(watchedTarget, crawlWayback, crawlTime, null);
+	    	}
+    	} else {
+    		CrawlActor.crawlAndConvertDocuments(watchedTarget, crawlWayback, null, null);
     	}
+    	
     	return redirect(routes.Documents.list("" + watchedTarget.target.authorUser.id, "" + id, "", "",
     			Document.Status.NEW.toString(), 0, "title", "asc", ""));
+    }
+    
+    public static Result crawlAll() {
+    	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
+    	Akka.system().scheduler().scheduleOnce(
+				Duration.create(0, TimeUnit.MILLISECONDS),
+				crawlActor,
+				new CrawlActor.CrawlMessage(),
+				Akka.system().dispatcher(),
+				null
+    	);
+    	return redirect(routes.ApplicationController.home());
+    }
+    
+    public static Result convert() {
+    	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
+    	Akka.system().scheduler().scheduleOnce(
+				Duration.create(0, TimeUnit.MILLISECONDS),
+				crawlActor,
+				new CrawlActor.ConvertMessage(),
+				Akka.system().dispatcher(),
+				null
+    	);
+    	return redirect(routes.ApplicationController.home());
     }
     
     public static void setWaybackTimestamp(WatchedTarget watchedTarget, String waybackTimestamp) {

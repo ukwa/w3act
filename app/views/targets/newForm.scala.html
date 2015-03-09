@@ -950,15 +950,15 @@
 			<div class="tab-pane fade" id="watchedTarget">
 				@if(targetForm("author").value == null || user.url.equals(targetForm("author").value)) {
 					@templates.checkbox(targetForm("watched"), true, '_label -> "watched")(
-						helper.FieldConstructor(templates.standardFieldConstructor.f)
+						helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 					)
 				} else {
 					@templates.checkbox(targetForm("watched"), false, '_label -> "watched (only the owner can modify this)")(
-						helper.FieldConstructor(templates.standardFieldConstructor.f)
+						helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 					)
 				}
 				@templates.inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")(
-					helper.FieldConstructor(templates.standardFieldConstructor.f)
+					helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 				)
 	        </div>
 	                    

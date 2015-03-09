@@ -1,0 +1,18 @@
+@(elements: helper.FieldElements)
+
+<div class="row padding-10">
+	<div class="col-md-12 col-xs-12 col-sm-12">
+		<div class="form-group">
+			<label for="@elements.id" class="col-sm-4 control-label">
+				@elements.label(elements.lang)
+				@if(elements.infos.contains("Required")) {
+					<font color="red">*</font>
+				}
+			</label>
+			<div class="col-sm-8">
+				@elements.input
+				<span class="errors"><font color="red">@elements.errors.mkString(", ")</font></span>
+			</div>
+		</div>
+	</div>
+</div>

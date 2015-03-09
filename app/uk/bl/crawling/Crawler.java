@@ -77,14 +77,12 @@ public class Crawler {
 	}
 	
 	public static List<String> getNewerCrawlTimes(WatchedTarget watchedTarget) {
-		String captureRequest = waybackUrl + "xmlquery?type=urlquery" +
-				"&url=" + watchedTarget.target.fieldUrls.get(0).url;
+		WSRequestHolder holder = WS.url(waybackUrl + "xmlquery")
+				.setQueryParameter("type", "urlquery")
+				.setQueryParameter("url", watchedTarget.target.fieldUrls.get(0).url);
 		if (watchedTarget.waybackTimestamp != null)
-			captureRequest += "&startdate=" + watchedTarget.waybackTimestamp;
-		Logger.debug("Capture Request: " + captureRequest);
+			holder.setQueryParameter("startdate", watchedTarget.waybackTimestamp);
 		
-		WSRequestHolder holder = WS.url(captureRequest);
-
 		Promise<List<String>> timestampPromise = holder.get().map(
 				new CaptureRequestFunction(watchedTarget.waybackTimestamp));
 		return timestampPromise.get(5000);
@@ -172,6 +170,7 @@ public class Crawler {
 				}
 			} catch (IOException e) {
 				Logger.info("Can't get content of url: " + link.target);
+				e.printStackTrace();
 			}
 		}
 		
