@@ -3,6 +3,6 @@
 organisations:
 
     - !!models.Organisation
-        title:              Austrian Institute of Technology
-        field_abbreviation: AIT
+        title:              The British Library
+        field_abbreviation: BL
         

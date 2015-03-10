@@ -453,6 +453,12 @@ public class InstanceController extends AbstractController {
 		return ok(results.render(target, user));	
     }
 
+    public static Result byTargetAsJson(Long targetId) {
+    	Target target = Target.findById(targetId);
+        JsonNode jsonData = Json.toJson(target.instances);
+        return ok(jsonData);
+    }
+
     public static Result viewInstance(Long targetId, Long instanceId) {
 		Instance instance = Instance.findByTargetAndInstance(targetId, instanceId);
 		User user = User.findByEmail(request().username());

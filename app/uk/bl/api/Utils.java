@@ -30,7 +30,9 @@ import com.avaje.ebean.SqlUpdate;
 import play.Logger;
 import uk.bl.Const;
 import uk.bl.exception.UrlInvalidException;
+import models.Collection;
 import models.FieldUrl;
+import models.Subject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.postgresql.util.PGInterval;
@@ -772,18 +774,40 @@ public enum Utils {
 		return url;
 	}
 	
-    public boolean isExistingTarget(String url) {
+    public FieldUrl isExistingTarget(String url) {
     	Set<String> varyingUrls = getVaryingUrls(url);
     	for (String varyingUrl : varyingUrls) {
     		Logger.debug("varyingUrl: " + varyingUrl);
     		FieldUrl fieldUrl = FieldUrl.findByUrl(varyingUrl);
     		Logger.debug("fieldUrl found : " + fieldUrl);
     		if (fieldUrl != null) {
-    			return true;
+    			return fieldUrl;
     		}
     	}
-    	return false;
+    	return null;
 	
+    }
+    
+    public List<Subject> processParentsSubjects(List<Subject> subjects, Long parentId) {
+		Subject parent = Subject.findById(parentId);
+		if (!subjects.contains(parent)) {
+			subjects.add(parent);
+		}
+		if (parent.parent != null) {
+			processParentsSubjects(subjects, parent.parent.id);
+		}
+		return subjects;
+    }
+    
+    public List<Collection> processParentsCollections(List<Collection> collections, Long parentId) {
+		Collection parent = Collection.findById(parentId);
+		if (!collections.contains(parent)) {
+			collections.add(parent);
+		}
+		if (parent.parent != null) {
+			processParentsCollections(collections, parent.parent.id);
+		}
+		return collections;
     }
 }
 

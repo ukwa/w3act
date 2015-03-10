@@ -3,23 +3,15 @@ package controllers;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.persistence.Transient;
-
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,11 +24,8 @@ import models.*;
 import uk.bl.Const;
 import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
-import uk.bl.api.models.FieldModel;
 import uk.bl.exception.ActException;
 import uk.bl.exception.TaxonomyNotFoundException;
-import uk.bl.exception.UrlInvalidException;
-import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import views.html.*;
 
@@ -80,10 +69,10 @@ public class ApplicationController extends Controller {
 			} catch (InvalidKeySpecException e) {
 				Logger.debug("validate() key specification error: " + e);
 			}
-        	Logger.debug("res: " + res);
             if(!res || User.authenticate(email.toLowerCase(), User.findByEmail(email.toLowerCase()).password) == null) {
                 return "Password not recognised";
             }
+        	Logger.debug("res: " + res);
             return null;
         }
         
@@ -120,7 +109,8 @@ public class ApplicationController extends Controller {
             return badRequest(login.render(loginForm));
         } else {
             session("email", loginForm.get().email.toLowerCase());
-            if( url == null ) url = routes.ApplicationController.index().url();            
+            Logger.debug("url: " + url);
+            if( StringUtils.isBlank(url) ) url = routes.ApplicationController.index().url();            
             return redirect( url );
         }
     }
@@ -218,6 +208,7 @@ public class ApplicationController extends Controller {
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Turok 2","field_subjects": ["13","14"],"field_crawl_frequency": "monthly","field_nominating_org": "1","field_urls": ["http://turok99.com"],"field_collection_cats": ["8","9"],"field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1","title": "Independent, The: UK Politics"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_urls": ["http://www.dailymail.co.uk/news/article-2943512/Labour-s-500k-help-tax-avoidance-firm-Party-urged-stop-taking-advice-company-accused-controversial-schemes.html"],"title": "Daily Mail: Labours 500k help from tax avoidance firm","field_nominating_org": "1","field_collection_cats": ["188"],"field_crawl_frequency": "annual","field_crawl_end_date": "1425877200","field_crawl_start_date": "1425790800","field_subjects": [],"field_uk_postal_address": true,"field_via_correspondence": false,"field_professional_judgement": true,"field_professional_judgement_exp": ""}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets 
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
      * @throws ActException 
 	 **/
@@ -249,10 +240,23 @@ public class ApplicationController extends Controller {
 //					  "field_crawl_start_date": "1417255200"
 //				}
 				
-//				public Object field_subjects;
-//				public Object field_nominating_org;
-//				public Object field_collection_cats;
-
+//				{
+//				    "field_urls": [
+//				        "http://www.dailymail.co.uk/news/article-2943512/Labour-s-500k-help-tax-avoidance-firm-Party-urged-stop-taking-advice-company-accused-controversial-schemes.html"
+//				    ],
+//				    "title": "Daily Mail: Labour's 500k help from 'tax avoidance' firm",
+//				    "field_nominating_org": "1",
+//				    "field_collection_cats": ["188"],
+//				    "field_crawl_frequency": "annual",
+//				    "field_crawl_end_date": "1425877200",
+//				    "field_crawl_start_date": "1425790800",
+//				    "field_subjects": [],
+//				    "field_uk_postal_address": false,
+//				    "field_via_correspondence": false,
+//				    "field_professional_judgement": false,
+//				    "field_professional_judgement_exp": ""
+//				}				
+				
 				if (StringUtils.isEmpty(target.title)) {
 					return badRequest("No Title Found for Target");
 				}
@@ -285,20 +289,25 @@ public class ApplicationController extends Controller {
 				}
 				
 				Logger.debug("subjects...");
+		        List<Subject> newSubjects = new ArrayList<Subject>();
 				List<String> fieldSubjects = target.getField_subjects();
 				if (fieldSubjects != null) {
 					for (String fieldSubject : fieldSubjects) {
 						try {
 							Subject subject = getSubject(fieldSubject);
-							if (subject != null) {
-								target.subjects.add(subject);
-							}
+			            	if (subject.parent != null) {
+			            		newSubjects = Utils.INSTANCE.processParentsSubjects(newSubjects, subject.parent.id);
+			            	}
+			        		if (!newSubjects.contains(subject)) {
+			        			newSubjects.add(subject);
+			        		}
 						} catch(TaxonomyNotFoundException e) {
 							return badRequest("No Subject Found for : " + e);
 						} catch(Exception e) {
 							return badRequest("Issue with Subject: " + fieldSubject);
 						}
 					}
+		            target.subjects = newSubjects;
 				}
 
 				// "field_crawl_frequency": "monthly"
@@ -318,20 +327,25 @@ public class ApplicationController extends Controller {
 					target.organisation = Organisation.findById(id);
 				}
 
+		        List<Collection> newCollections = new ArrayList<Collection>();
 				List<String> fieldCollections = target.getField_collection_cats();
 				if (fieldCollections != null) {
 					for (String fieldCollection : fieldCollections) {
 						try {
 							Collection collection = getCollection(fieldCollection);
-							if (collection != null) {
-								target.collections.add(collection);
-							}
+			            	if (collection.parent != null) {
+			            		newCollections = Utils.INSTANCE.processParentsCollections(newCollections, collection.parent.id);
+			            	}
+			        		if (!newCollections.contains(collection)) {
+			        			newCollections.add(collection);
+			        		}
 						} catch(TaxonomyNotFoundException e) {
 							return badRequest("No Collection Found for : " + fieldCollection);
 						} catch(Exception e) {
 							return badRequest("Issue with Collection: " + fieldCollection);
 						}
 					}
+					target.collections = newCollections;
 				}
 
 				Logger.debug("fieldSubjects: " + fieldSubjects);
@@ -342,7 +356,18 @@ public class ApplicationController extends Controller {
 				if (target.getField_crawl_start_date() != null) {
 					target.crawlStartDate = Utils.INSTANCE.getDateFromSeconds(target.getField_crawl_start_date());
 				}
-
+				if (target.getField_crawl_end_date() != null) {
+					target.crawlEndDate = Utils.INSTANCE.getDateFromSeconds(target.getField_crawl_end_date());
+				}
+				
+				if (StringUtils.isNotBlank(target.getSelector())) {
+					Long selectorId = Long.valueOf(target.getSelector());
+					User selector = User.findById(selectorId);
+					if (selector != null) {
+						target.authorUser = selector;
+					}
+				}
+				
 				target.url = "act-" + Utils.INSTANCE.createId();
 				
 				target.isUkHosting = target.isUkHosting();

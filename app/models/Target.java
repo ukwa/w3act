@@ -27,6 +27,7 @@ import javax.persistence.Transient;
 
 import models.License.LicenseStatus;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -67,43 +68,46 @@ public class Target extends UrlModel {
 	public String originatingOrganisation;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 //    @OrderBy("createdAt DESC")
 	public List<CrawlPermission> crawlPermissions;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<Instance> instances;
 
 	@JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "license_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
 	public List<License> licenses;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "subject_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "subject_id", referencedColumnName="id") }) 
 	public List<Subject> subjects;
 
     @JsonIgnore
-    @ManyToMany(cascade=CascadeType.REMOVE)
+    @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "collection_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "collection_id", referencedColumnName="id") }) 
 	public List<Collection> collections;
 
 	@JsonIgnore
-    @ManyToMany(cascade=CascadeType.REMOVE)
+    @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "tag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "tag_id", referencedColumnName="id") }) 
 	public List<Tag> tags;
 	
 	@JsonIgnore
-    @ManyToMany(cascade=CascadeType.REMOVE)
+    @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "flag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
     public List<Flag> flags;
+
+	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
+	public List<LookupEntry> lookupEntries;
 
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<FieldUrl> fieldUrls;
@@ -341,7 +345,11 @@ public class Target extends UrlModel {
 
 	@Transient
 	public String authorIdText;
-	
+
+	@Transient
+	@JsonProperty
+	public String fieldUrl;
+
 	@Transient
 	@JsonProperty
 	private List<String> field_urls;
@@ -357,6 +365,10 @@ public class Target extends UrlModel {
 	@Transient
 	@JsonProperty
 	private List<String> field_collection_cats;
+
+	@Transient
+	@JsonProperty
+	private String selector;
 	
 	@OneToOne(mappedBy="target", cascade=CascadeType.REMOVE) @JsonIgnore
 	public WatchedTarget watchedTarget;
@@ -1111,6 +1123,8 @@ public class Target extends UrlModel {
 			exp = exp.add(Expr.raw("fieldUrls.url NOT like '%"
 					+ Scope.UK_DOMAIN + "%' or fieldUrl NOT like '%"
 					+ Scope.LONDON_DOMAIN + "%' or fieldUrl NOT like '%"
+					+ Scope.WALES_DOMAIN + "%' or fieldUrl NOT like '%"
+					+ Scope.CYMRU_DOMAIN + "%' or fieldUrl NOT like '%"
 					+ Scope.SCOT_DOMAIN + "%'"));
 		} else if (npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
 			// Expression ex = Expr.or(Expr.icontains("field_url",
@@ -1120,6 +1134,8 @@ public class Target extends UrlModel {
 			// Scope.SCOT_DOMAIN)));
 			exp = exp.add(Expr.raw("fieldUrls.url like '%" + Scope.UK_DOMAIN
 					+ "%' or fieldUrls.url like '%" + Scope.LONDON_DOMAIN
+					+ "%' or fieldUrls.url like '%" + Scope.WALES_DOMAIN
+					+ "%' or fieldUrls.url like '%" + Scope.CYMRU_DOMAIN
 					+ "%' or fieldUrls.url like '%" + Scope.SCOT_DOMAIN + "%'"));
 		} else if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
 			// uk hosting
@@ -1347,7 +1363,9 @@ public class Target extends UrlModel {
 		ExpressionList<Target> targets = find.fetch("licenses").where().eq(Const.ACTIVE, true).isNotNull("licenses");
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
-		}		
+		} else {
+			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
+		}
 
 		/**
 		 * The resulting list should only include those records where there is
@@ -1389,47 +1407,21 @@ public class Target extends UrlModel {
 	 * @throws MalformedURLException 
 	 */
 	public static List<Target> exportLdFrequency(String frequency) throws WhoisException, MalformedURLException, URISyntaxException {
-		List<Target> res = new ArrayList<Target>();
-		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true);
+		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true).eq("noLdCriteriaMet", Boolean.FALSE);
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
+		} else {
+			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
 		}
 		
-//		exp = exp.eq("isUkHosting", true);
-//	} else if (npld.equals(Const.NpldType.UK_REGISTRATION.name())) {
-//		// uk registration address
-//		exp = exp.eq("isUkRegistration", true);
-//	}
-//
-//	if (tld.equals("no")) {
-//		// not a UK top level domain
-//		exp = exp.eq("isTopLevelDomain", false);
-//	}
-//	if (tld.equals("yes") || npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
-//		// UK top level domain
-//		exp = exp.eq("isTopLevelDomain", true);
-//
-		/**
-		 * The resulting list should only include those records that are in
-		 * scope according to InScopeIp and InScopeDomain rules.
-		 */
-		
+		List<Target> result = new ArrayList<Target>();
 		for (Target target : targets.findList()) {
-			boolean isInScope = isInScope(target);
-			
-			
-			if (!isInScope) {
-				isInScope = isInScopeDomain(target);
+			if (target.isInScopeAllWithoutLicense()) {
+				result.add(target);
 			}
-			
-			if (isInScope) {
-				Logger.debug("add to export ld: " + target);
-				res.add(target);
-			}
-			
 		}
-		Logger.debug("exportLdFrequency() resulting list size: " + targets.findRowCount());
-		return res;
+		Logger.debug("exportLdFrequency() resulting list size: " + result.size());
+		return result;
 	}
 
 	/**
@@ -2163,6 +2155,10 @@ public class Target extends UrlModel {
 		return instance;
 	}
 	
+	@JsonIgnore
+	public boolean isDeletable() {
+		return (!indicateLicenses() && CollectionUtils.isEmpty(this.collections));
+	}
 	
 	public List<String> getField_urls() {
 		return field_urls;
@@ -2194,6 +2190,14 @@ public class Target extends UrlModel {
 
 	public void setField_collection_cats(List<String> field_collection_cats) {
 		this.field_collection_cats = field_collection_cats;
+	}
+
+	public String getSelector() {
+		return selector;
+	}
+
+	public void setSelector(String selector) {
+		this.selector = selector;
 	}
 
 	@Override

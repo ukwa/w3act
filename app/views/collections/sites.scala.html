@@ -123,6 +123,7 @@
 	            <th>Collections</th>
 	            <th>Subject</th>
 	            <th>By</th>
+	            <th>In QA Wayback</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -156,7 +157,12 @@
 				<td><a href="@routes.UserController.edit(target.authorUser.id)">@target.authorUser.name</a></td>
                 } else {
 	            	<td></td>
-				}	
+				}
+				<td>
+            		@for(fieldUrl <- target.fieldUrls) {
+            			<a class="brand" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">@fieldUrl.url</a><br />
+            		}
+				</td>
 			</tr>
             }
 		</tbody>

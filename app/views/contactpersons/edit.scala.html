@@ -159,14 +159,16 @@
 			Provide an explanation of the changes you are making. This will help other authors understand your motivations. 
 		</div>
 
-		<div class="row padding-10 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">		
-					<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
-					<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
-		       </div>
+		@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user") || user.hasRole("user")) {
+			<div class="row padding-10 pull-right">
+	     		<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="btn-group">		
+						<button type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+						<button type="submit" class="btn btn-primary" name="action" value="delete" onclick="return confirm('Are you sure?');">Delete</button>
+			       </div>
+				</div>
 			</div>
-		</div>
+		}
 	}
 }
 

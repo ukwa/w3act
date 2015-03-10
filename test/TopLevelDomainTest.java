@@ -19,6 +19,8 @@ public class TopLevelDomainTest {
 	public static final String UK_DOMAIN       = ".uk";
 	public static final String LONDON_DOMAIN   = ".london";
 	public static final String SCOT_DOMAIN     = ".scot";
+	public static final String WALES_DOMAIN     = ".wales";
+	public static final String CYMRU_DOMAIN     = ".cymru";
 	
 	Target target = null;
 	List<FieldUrl> fieldUrls;

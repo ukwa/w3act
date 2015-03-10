@@ -72,7 +72,10 @@
 			<a href="@routes.TargetController.view(target.id)">Click here for the most recent revision</a></li>
 		</div>
 	</div>	
-	}	     	
+	}
+	
+	<div class="row">
+	  <div class="col-md-8 col-sm-8 col-xs-12">
 	
 	<ul class="nav nav-tabs">
 	   <li class="active"><a href="#">View</a></li>
@@ -169,7 +172,7 @@
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
 							<label for="inputUrls" class="col-sm-6 control-label">
-								UK top-level domain (Includes .uk, .london and .scot domains) (automated check)
+								UK top-level domain (Includes .uk, .london, .scot, .wales and .cymru domains) (automated check)
 							</label>
 						    <div class="col-sm-6">
 								@if(target.isTopLevelDomain) {
@@ -558,7 +561,7 @@
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
 						<label for="inputUrls" class="col-sm-6 control-label">
-							UK top-level domain (Includes .uk, .london and .scot domains) (automated check)
+								UK top-level domain (Includes .uk, .london, .scot, .wales and .cymru domains) (automated check)
 						</label>
 					    <div class="col-sm-6">
 							@if(target.isTopLevelDomain) {
@@ -901,46 +904,6 @@
      	</div>
 	</div>
 	
-	<div class="padding-20">
-		<div class="panel-group" id="accordion">
-			<div class="panel panel-primary" id="panels">
-				<div class="panel-heading">
-			    	<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInstances" style="color:#fff;">
-			        	Instances
-					</a>
-				</div>
-				<div id="collapseInstances" class="panel-collapse collapse">
-					@for(fieldUrl <- target.fieldUrls) {
-						<div class="padding-10">
-							<strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
-						</div>
-						<ul>
-							<li>
-								<div class="padding-10">
-									<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">In QA Wayback</a>
-								</div>
-							</li>
-							<li>
-							    <div class="padding-10">
-						        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">In Open UK Web Archive</a>
-								</div>
-							</li>
-							<li>
-								<div class="padding-10">
-									<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">In other web archives</a>
-								</div>
-							</li>
-							<li>
-							    <div class="padding-10">
-						        	<a class="brand" target="_blank" href="@fieldUrl.url">Live site</a>
-								</div>
-							</li>
-						</ul>
-					}
-				</div>
-			</div>
-		</div>
-	</div>
 	
 	<div class="padding-20">
 		<div class="panel-group" id="accordion2">
@@ -961,4 +924,45 @@
 	    	</div>
 		</div>
 	</div>
+	
+    </div>
+	<div class="col-md-4 col-sm-4 col-xs-12">
+
+	<div class="padding-20">
+		<div class="panel-group">
+			<div class="panel panel-primary" id="wayback-instances-panel">
+				<div class="panel-heading">
+			        	Instances
+				</div>
+				<div id="collapseInstances" class="panel-body">
+					@for(fieldUrl <- target.fieldUrls) {
+						<div class="padding-10">
+							<strong><a href="@fieldUrl.url">@fieldUrl.url</a></strong>
+						</div>
+						<ul>
+						    <li>
+									<a class="brand" target="_blank" href="@routes.InstanceController.showByTarget(target.id)">Instances</a>
+						    </li>
+							<li>
+									<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">Search QA Wayback</a>
+							</li>
+							<li>
+						        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">Search Open UK Web Archive</a>
+							</li>
+							<li>
+									<a class="brand" target="_blank" href="http://www.webarchive.org.uk/mementos/search/@fieldUrl.url">Search Other Web Archives</a>
+							</li>
+							<li>
+						        	<a class="brand" target="_blank" href="@fieldUrl.url">View Live Site</a>
+							</li>
+						</ul>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	</div>
+</div>
+	
 }

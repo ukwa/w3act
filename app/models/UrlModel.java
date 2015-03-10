@@ -23,18 +23,6 @@ abstract class UrlModel extends ActModel {
 
 	@JsonIgnore
 	@Transient
-	protected final String UK_DOMAIN       = ".uk";
-
-	@JsonIgnore
-	@Transient
-	protected final String LONDON_DOMAIN   = ".london";
-
-	@JsonIgnore
-	@Transient
-	protected final String SCOT_DOMAIN     = ".scot";
-
-	@JsonIgnore
-	@Transient
 	protected final String GEO_IP_SERVICE  = "GeoLite2-City.mmdb";
 
 	@JsonIgnore
