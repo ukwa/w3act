@@ -778,7 +778,7 @@ public class TargetController extends AbstractController {
 		filledForm = filledForm.fill(target);
 
 		if (!target.isDeletable()) {
-	        ValidationError ve = new ValidationError("formUrl", "You cannot delete this Target");
+	        ValidationError ve = new ValidationError("formUrl", "Unable to delete Target as it references License(s) and/or Collections(s)");
 	        filledForm.reject(ve);
 	        return info(filledForm, id);
 		}

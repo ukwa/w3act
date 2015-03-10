@@ -236,6 +236,10 @@ public class User extends ActModel {
     	return (hasRole("sys_admin"));
     }
 
+    public boolean isArchivist() {
+    	return (hasRole("archivist"));
+    }
+
     /**
      * This method checks whether user has a role by its name.
      * @param roleName
