@@ -766,14 +766,23 @@ public class TargetController extends AbstractController {
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
 		target.fieldUrl = target.fieldUrl();
+		
+		Logger.debug("collections: " + target.collections.size());
 		return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
     }
     
     public static Result delete(Long id) {
     	Target target = Target.findById(id);
-    	Logger.debug("deleted " + target);
-    	target.delete();
-    	Logger.debug("deleted");
+    	
+		Form<Target> filledForm = Form.form(Target.class);
+		filledForm = filledForm.fill(target);
+
+		if (!target.isDeletable()) {
+	        ValidationError ve = new ValidationError("formUrl", "You cannot delete this Target");
+	        filledForm.reject(ve);
+	        return info(filledForm, id);
+		}
+//    	target.delete();
     	return redirect(routes.TargetController.index());
     }
     
@@ -913,10 +922,12 @@ public class TargetController extends AbstractController {
 //		Form<Target> targetFormNew = targetForm.fill(target);
 		
 		User user = User.findByEmail(request().username());
-		JsonNode collectionData = getCollectionsData();
-		JsonNode subjectData = getSubjectsData();
 
 		Target target = Target.findById(id);
+		
+		JsonNode collectionData = getCollectionsData(target.collections);
+		JsonNode subjectData = getSubjectsData(target.subjects);
+
 		Map<String,String> authors = User.options();
 		List<Tag> tags = Tag.findAllTags();
 		List<Tag> targetTags = target.tags;
@@ -936,7 +947,7 @@ public class TargetController extends AbstractController {
 
 		DynamicForm requestData = Form.form().bindFromRequest();
         String tabStatus = requestData.get("tabstatus");
-        form.get().fieldUrl = target.fieldUrl(); 
+        target.fieldUrl = target.fieldUrl(); 
         return badRequest(edit.render(form, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus, targetTags, targetFlags, targetLicenses));
     }
 
@@ -1021,7 +1032,6 @@ public class TargetController extends AbstractController {
 		            return info(filledForm, id);
 			  	}
 			  	
-		
 		        String fieldUrl = requestData.get("formUrl");
 		        
 		        String originalUrl = requestData.get("currentUrls");
@@ -1037,9 +1047,6 @@ public class TargetController extends AbstractController {
 		            	
 		            	if (StringUtils.isNotEmpty(originalUrl) && (!urlNoTrailingSlash(trimmed).equalsIgnoreCase(urlNoTrailingSlash(originalUrl)))) {
 		            		
-		            		Logger.debug("originalUrl " + originalUrl);
-		            		Logger.debug("urlNoTrailingSlash(originalUrl) " + urlNoTrailingSlash(originalUrl));
-		            		Logger.debug("urlNoTrailingSlash(trimmed) " + urlNoTrailingSlash(trimmed));
 		            		Logger.debug("trimmed " + trimmed);
 		            		
 			            	FieldUrl isExistingFieldUrl = isExistingTarget(trimmed);
@@ -1105,13 +1112,16 @@ public class TargetController extends AbstractController {
 		        
 		        List<License> newLicenses = new ArrayList<License>();
 		        String[] licenseValues = formParams.get("licensesList");
-		
+		        
+		        // if it was originally set then let it go
+			  	String openUkwa = requestData.get("openUkwaLicense");
+
 		        if (licenseValues != null) {
 		            for(String licenseValue: licenseValues) {
 		            	Long licenseId = Long.valueOf(licenseValue);
 		            	License license =  License.findById(licenseId);
 		            	// could just use the ID instead
-		            	if (license.name.equals(Const.OPEN_UKWA_LICENSE)) {
+		            	if (StringUtils.isEmpty(openUkwa) && license.name.equals(Const.OPEN_UKWA_LICENSE)) {
 				            ValidationError ve = new ValidationError("licensesList", "It is not possible to attach an Open UKWA Licence directly to a target in this way. Please initiate the licensing process using the green button below");
 				            filledForm.reject(ve);
 				            return info(filledForm, id);

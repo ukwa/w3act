@@ -627,9 +627,9 @@
 					                args = 
 					                'class -> "form-control",					                
 					                '_label -> "Selection Type (This records if the selection was a Nomination (e.g. via UKWA website or other means) or a Selection (via an ACT User)):",
-				                	'_default -> "Selection",
+				                	'_id -> "selectionType",
 					                '_showConstraints -> false
-				            )(FieldConstructor(genericMandatoryInput.f), lang)							
+				            )(FieldConstructor(genericMandatoryInput.f), lang)
 						</div>
 					</div>
 		     	</div>		   
@@ -990,6 +990,11 @@
 											<option disabled value="@license.id" @if(targetLicenses.contains(license)) {selected} >@license.name</option>
 										}
 									</select>
+								}
+								@for(license <- licenses) {
+									@if(license.name == "Open UKWA Licence (2014-)" && targetLicenses.contains(license)) {
+										<input type="hidden" id="openUkwaLicense" name="openUkwaLicense" value="@license.name">
+									}
 								}
 							</div>
 						</div>

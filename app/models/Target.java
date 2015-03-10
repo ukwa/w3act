@@ -42,7 +42,6 @@ import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -2150,7 +2149,9 @@ public class Target extends UrlModel {
 	
 	@JsonIgnore
 	public boolean isDeletable() {
-		return (!indicateLicenses() && CollectionUtils.isEmpty(this.collections));
+		Logger.debug("collections size...." + this.collections.size());
+		Logger.debug("licenses size...." + this.licenses.size());
+		return (!this.indicateLicenses() && CollectionUtils.isEmpty(this.collections));
 	}
 	
 	public List<String> getField_urls() {

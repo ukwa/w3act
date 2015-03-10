@@ -207,7 +207,6 @@
 	              	<label for="selectTemplate" class="col-sm-4 control-label">Template</label>
 				    <div class="col-sm-6">
 						<select name="template" value="General" class="form-control">
-							<option value="">None</option>
 							@for(template <- templates) {
 								<option value="@template.name" selected>@template.name</option>
 							}
