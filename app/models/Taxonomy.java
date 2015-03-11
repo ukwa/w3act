@@ -74,7 +74,9 @@ public class Taxonomy extends MappedSuperClass {
 	@JoinTable(name = TAXONOMY_PARENTS_ALL, joinColumns = { @JoinColumn(name = "taxonomy_id", referencedColumnName="id") },
 	inverseJoinColumns = { @JoinColumn(name = "parent_id", referencedColumnName="id") }) 
 	public List<Taxonomy> parentsAllList;
-
+	
+	public String fastId;
+	
     @Transient
     @JsonProperty
     private String tid;

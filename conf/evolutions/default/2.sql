@@ -105,6 +105,8 @@ create table journal (
   issue			varchar(255)
 );
 
+alter table taxonomy add fast_id varchar(255);
+
 create sequence watched_target_seq;
 create sequence journal_title_seq;
 create sequence bl_collection_subset_seq;
@@ -128,6 +130,8 @@ drop table if exists portal_document cascade;
 drop table if exists book cascade;
 drop table if exists bl_collection_subset_book cascade;
 drop table if exists journal cascade;
+
+alter table taxonomy drop fast_id;
 
 drop sequence if exists watched_target_seq;
 drop sequence if exists journal_title_seq;

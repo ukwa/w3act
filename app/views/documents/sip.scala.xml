@@ -66,11 +66,17 @@
               <subfield code="a">@document.book.corporateAuthor</subfield>
             </datafield>
           }
-          
           @for(blCollectionSubset <- document.book.blCollectionSubsets) {
             <datafield tag="690" ind2=" " ind1="7">
               <subfield code="a">@blCollectionSubset.title</subfield>
               <subfield code="2">blcoll</subfield>
+            </datafield>
+          }
+          @for(subject <- document.subjects) {
+            <datafield tag="650" ind2="7" ind1=" ">
+              <subfield code="a">@subject.name</subfield>
+              <subfield code="2">fast</subfield>
+              <subfield code="0">(OCoLC)fst@subject.fastId</subfield>
             </datafield>
           }
           @if(document.priorityCataloguing) {
@@ -159,12 +165,27 @@
             </mods:identifier>
           }
           </mods:relatedItem>
+        @if(!document.journal.journalTitle.blCollectionSubsets.isEmpty) {
+          <mods:location>
+            <mods:physicalLocation authority="marcorg">Uk</mods:physicalLocation>
+            <mods:holdingSimple>
+              <mods:copyInformation>
+              @for(blCollectionSubset <- document.journal.journalTitle.blCollectionSubsets) {
+                <mods:subLocation>@blCollectionSubset.title</mods:subLocation>
+              }
+              </mods:copyInformation>
+            </mods:holdingSimple>
+          </mods:location>
+        }
           @*<mods:languageOfCataloging>
             <mods:languageTerm type="code" authority="iso639-2b">
               @document.journal.journalTitle.language
             </mods:languageTerm>
           </mods:languageOfCataloging>*@
         </mods:mods>
+      @for(subject <- document.subjects) {
+        <mods:subject authority="fast" valueURI="(OCoLC)fst@subject.fastId"></mods:subject>
+      }
       </mets:xmlData>
     </mets:mdWrap>
   }
