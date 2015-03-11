@@ -204,7 +204,7 @@ public class ApplicationController extends Controller {
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Turok 2","field_subjects": ["13","14"],"field_crawl_frequency": "monthly","field_nominating_org": "1","field_urls": ["http://turok99.com"],"field_collection_cats": ["8","9"],"field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1","title": "Independent, The: UK Politics"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
-	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_urls": ["http://www.dailymail.co.uk/news/article-2943512/Labour-s-500k-help-tax-avoidance-firm-Party-urged-stop-taking-advice-company-accused-controversial-schemes.html"],"title": "Daily Mail: Labours 500k help from tax avoidance firm","field_nominating_org": "1","field_collection_cats": ["188"],"field_crawl_frequency": "annual","field_crawl_end_date": "1425877200","field_crawl_start_date": "1425790800","field_subjects": [],"field_uk_postal_address": true,"field_via_correspondence": false,"field_professional_judgement": true,"field_professional_judgement_exp": ""}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets 
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_urls": ["http://www.sdfsdfsf.co.ukxxxxxxxxxxxxxxxxxxx"],"title": "Daily Mail: Labours 500k help from tax avoidance firm","field_nominating_org": "1","field_collection_cats": ["188"],"field_crawl_frequency": "annual","field_crawl_end_date": "1425877200","field_crawl_start_date": "1425790800","field_subjects": [],"field_uk_postal_address": true,"uk_postal_address_url": "http://territest.co.uk", "field_via_correspondence": false,"field_professional_judgement": true,"field_professional_judgement_exp": ""}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets 
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
      * @throws ActException 
 	 **/
@@ -224,7 +224,7 @@ public class ApplicationController extends Controller {
 	    	    // process Targets here
 				Target target = objectMapper.readValue(node.toString(), Target.class);
 				
-				Logger.debug("target: " + target);
+//				Logger.debug("target: " + target);
 				
 //				{
 //					  "title": "Your Thurrock",
@@ -305,9 +305,17 @@ public class ApplicationController extends Controller {
 					}
 		            target.subjects = newSubjects;
 				}
+				
+				if (!target.ukPostalAddress) {
+					target.ukPostalAddressUrl = null;
+				}
+
+				Logger.debug("ukPostalAddress: " + target.ukPostalAddress);
+				Logger.debug("ukPostalAddressUrl: " + target.ukPostalAddressUrl);
 
 				// "field_crawl_frequency": "monthly"
 				Logger.debug("crawlFrequency...");
+				
 				if (target.crawlFrequency != null) {
 					target.crawlFrequency = target.crawlFrequency.toUpperCase();
 				}
@@ -347,7 +355,7 @@ public class ApplicationController extends Controller {
 				Logger.debug("fieldSubjects: " + fieldSubjects);
 				Logger.debug("fieldOrganisations: " + fieldOrganisation);
 				Logger.debug("fieldCategories: " + fieldCollections);
-
+				
 				// "field_crawl_start_date": "1417255200"
 				if (target.getField_crawl_start_date() != null) {
 					target.crawlStartDate = Utils.INSTANCE.getDateFromSeconds(target.getField_crawl_start_date());

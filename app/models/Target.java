@@ -201,6 +201,7 @@ public class Target extends UrlModel {
 	public Boolean ukPostalAddress = Boolean.FALSE;
 
 	@Column(columnDefinition = "text")
+	@JsonProperty("uk_postal_address_url")
 	public String ukPostalAddressUrl;
 	
 	@JsonProperty("field_via_correspondence")
@@ -2192,6 +2193,15 @@ public class Target extends UrlModel {
 
 	public void setSelector(String selector) {
 		this.selector = selector;
+	}
+	
+	
+	public String getUkPostalAddressUrl() {
+		return ukPostalAddressUrl;
+	}
+
+	public void setUkPostalAddressUrl(String ukPostalAddressUrl) {
+		this.ukPostalAddressUrl = ukPostalAddressUrl;
 	}
 
 	@Override
