@@ -75,10 +75,10 @@ public class WatchedTargets extends AbstractController {
 	    	List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
 	    	for (String crawlTime : newerCrawlTimes) {
 	    		Logger.debug("crawlTime: " + crawlTime);
-	    		CrawlActor.crawlAndConvertDocuments(watchedTarget, crawlWayback, crawlTime, null);
+	    		CrawlActor.crawlAndConvertDocuments(watchedTarget, crawlWayback, crawlTime, 3);
 	    	}
     	} else {
-    		CrawlActor.crawlAndConvertDocuments(watchedTarget, crawlWayback, null, null);
+    		CrawlActor.crawlAndConvertDocuments(watchedTarget, crawlWayback, null, 3);
     	}
     	
     	return redirect(routes.Documents.list("" + watchedTarget.target.authorUser.id, "" + id, "", "",

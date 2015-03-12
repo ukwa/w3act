@@ -1067,7 +1067,9 @@
 			</div>
 	        
 			<div class="tab-pane fade" id="watchedTarget">
-				@if(targetForm("author").value == null || user.url.equals(targetForm("author").value)) {
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") ||
+						targetForm("authorUser.id").value == null ||
+						user.id == Long.valueOf(targetForm("authorUser.id").value)) {
 					@checkbox(targetForm("watched"), true, '_label -> "watched")
 				} else {
 					@checkbox(targetForm("watched"), false, '_label -> "watched (only the owner can modify this)")

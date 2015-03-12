@@ -128,6 +128,7 @@
 					@header("title", "Title", currentSortBy, currentOrder, link)
 					@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
 					@header("documentUrl", "Document", currentSortBy, currentOrder, link)
+					@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
 					@if(status != Document.Status.SUBMITTED) {
 						<th>Action</th>
 					} else {
@@ -147,6 +148,7 @@
 					</td>
 					<td><a href="@document.landingPageUrl" target="_blank">@document.landingPageUrl</a></td>
 					<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
+					<td>@document.waybackTimestamp</td>
 					@if(status != Document.Status.SUBMITTED) {
 						<td><a href="@routes.Documents.ignore(document.id,
 								filterForm("user").value,

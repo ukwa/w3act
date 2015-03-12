@@ -32,11 +32,9 @@ public class Document extends Model {
     @Id
     public Long id;
 	@ManyToOne @JsonIgnore
-	@JoinColumn(name="id_instance")
-	public Instance instance;
-	@ManyToOne @JsonIgnore
 	@JoinColumn(name="id_watched_target")
 	public WatchedTarget watchedTarget;
+	public String waybackTimestamp;
 	public Status status;
 	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
 	public Book book;

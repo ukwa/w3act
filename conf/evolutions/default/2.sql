@@ -37,8 +37,8 @@ create table subject_journal_title (
 
 create table document (
   id			bigint primary key,
-  id_instance		bigint references instance (id),
   id_watched_target	bigint references watched_target (id),
+  wayback_timestamp	varchar(255),
   status		integer,
   landing_page_url	varchar(255),
   document_url		varchar(255),

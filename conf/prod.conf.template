@@ -49,7 +49,7 @@ application.wayback.query.path="/xmlquery.jsp?url="
 
 #The queue endpoint
 queue_host=crawler03.bl.uk
-queue_port=5672
+queue_port=5762
 queue_name=w3actqueue
 routing_key=w3actroutingkey
 exchange_name=w3actexchange
