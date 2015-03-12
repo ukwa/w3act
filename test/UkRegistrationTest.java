@@ -40,7 +40,7 @@ public class UkRegistrationTest {
 //			assertTrue(checkWhois("http://www.islamic-relief.org.uk/"));
 //			assertTrue(checkWhois("http://www.fishbournepreschool.org.uk/"));
 //			assertTrue(checkWhois("http://www.westsussex.gov.uk"));
-			
+//			assertTrue(checkWhois("http://www.ukbiologycompetitions.org/"));
 //		} catch (WhoisException e) {
 //			e.printStackTrace();
 //		}

@@ -46,6 +46,7 @@ import uk.bl.Const.CrawlFrequency;
 import uk.bl.api.Utils;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
+import uk.bl.scope.Scope;
 import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
 import views.html.infomessage;
@@ -1076,6 +1077,7 @@ public class TargetController extends AbstractController {
 		        			}
 		        			
 			            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
+			            	fu.domain = Scope.INSTANCE.getDomainFromUrl(extFormUrl.trim());
 			            	Logger.debug("extFormUrl: " + extFormUrl);
 			            	fieldUrls.add(fu);
 						} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
@@ -1359,6 +1361,8 @@ public class TargetController extends AbstractController {
 	        			}
 	        			
 		            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
+		            	fu.domain = Scope.INSTANCE.getDomainFromUrl(extFormUrl.trim());
+
 		            	Logger.debug("extFormUrl: " + extFormUrl);
 		            	fieldUrls.add(fu);
 					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {

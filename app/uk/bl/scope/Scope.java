@@ -776,8 +776,13 @@ public enum Scope {
             URL uri = new URI(fieldUrl.url).normalize().toURL();
 			String url = uri.toExternalForm();
             Logger.debug("Normalised " + url);
+            
+            String domain = getDomainFromUrl(url);
+
+            Logger.debug("domain " + domain);
+
             // Rule 3.1: check domain name
-	        if (!url.contains(UK_DOMAIN) && !url.contains(LONDON_DOMAIN) && !url.contains(SCOT_DOMAIN) && !url.contains(WALES_DOMAIN) && !url.contains(CYMRU_DOMAIN)) return false;
+	        if (!domain.endsWith(UK_DOMAIN) && !domain.endsWith(LONDON_DOMAIN) && !domain.endsWith(SCOT_DOMAIN) && !domain.endsWith(WALES_DOMAIN) && !domain.endsWith(CYMRU_DOMAIN)) return false;
         }
 //		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);        
         return true;
