@@ -46,6 +46,7 @@ import play.Play;
 import play.libs.Json;
 import uk.bl.Const;
 import uk.bl.api.models.FieldModel;
+import uk.bl.exception.ActException;
 import uk.bl.exception.TaxonomyNotFoundException;
 import uk.bl.exception.UrlInvalidException;
 import uk.bl.scope.Scope;
@@ -739,7 +740,7 @@ public enum JsonUtils {
 								FieldUrl fieldUrl = new FieldUrl(url);
 								fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(fieldUrl.url);
 								fieldUrls.add(fieldUrl);
-							} catch (UrlInvalidException e) {
+							} catch (UrlInvalidException | ActException e) {
 								// SKIP BAD URLS
 								e.printStackTrace();
 							}

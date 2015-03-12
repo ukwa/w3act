@@ -1385,7 +1385,7 @@ public class Target extends UrlModel {
 		return true;
 	}
 
-	public static boolean isInScopeDomain(Target target) throws MalformedURLException, WhoisException, URISyntaxException {
+	public static boolean isInScopeDomain(Target target) throws ActException {
 		 return Scope.INSTANCE.isTopLevelDomain(target);
 	}
 	
@@ -1816,7 +1816,7 @@ public class Target extends UrlModel {
 	}
 	
 	@JsonIgnore
-	public boolean isTopLevelDomain() throws WhoisException, MalformedURLException, URISyntaxException {
+	public boolean isTopLevelDomain() throws ActException {
 		return Scope.INSTANCE.isTopLevelDomain(this);
 	}
 	
@@ -1951,15 +1951,11 @@ public class Target extends UrlModel {
 		 */
 		for (Target target : targets) {
 			
-			try {
-				if (!target.isUkHosting() && !target.isTopLevelDomain()) {
-					unsorted.add(target);
-					 if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
-						 break;
-					 }
-				}
-			} catch (MalformedURLException | WhoisException | URISyntaxException e) {
-				throw new ActException(e);
+			if (!target.isUkHosting() && !target.isTopLevelDomain()) {
+				unsorted.add(target);
+				 if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
+					 break;
+				 }
 			}
 		}
 		

@@ -1097,7 +1097,7 @@ public class TargetController extends AbstractController {
 					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
 					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
 					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
-				} catch (MalformedURLException | WhoisException | URISyntaxException e) {
+				} catch (WhoisException e) {
 					throw new ActException(e);
 				}
 
@@ -1390,7 +1390,7 @@ public class TargetController extends AbstractController {
 			Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
 			Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
 			Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
-		} catch (MalformedURLException | WhoisException | URISyntaxException e) {
+		} catch (WhoisException e) {
 			throw new ActException(e);
 		}
         

@@ -18,6 +18,7 @@ import models.LookupEntry;
 import models.Target;
 import play.Logger;
 import uk.bl.Const;
+import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.wa.whois.JRubyWhois;
 import uk.bl.wa.whois.WhoisResult;
@@ -571,9 +572,10 @@ public enum Scope {
 	 * in response using whois lookup service.
 	 * @param number The number of targets for which the elapsed time since the last check is greatest
 	 * @return true if in UK domain
+	 * @throws ActException 
 	 * @throws WhoisException 
 	 */
-	public boolean checkWhoisThread(int number) throws WhoisException {
+	public boolean checkWhoisThread(int number) throws ActException {
     	Logger.debug("checkWhoisThread: " + number);
 		boolean res = false;
     	JRubyWhois whoIs = new JRubyWhois();
@@ -735,7 +737,7 @@ public enum Scope {
 //        return domain;
 //	}
 	
-	public String getDomainFromUrl(String url) {
+	public String getDomainFromUrl(String url) throws ActException {
 	    URI uri;
 		try {
 			uri = new URI(url);
@@ -744,8 +746,7 @@ public enum Scope {
 				return domain.startsWith("www.") ? domain.substring(4) : domain;
 			}
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ActException(e);
 		}
 		return null;
 	}
@@ -770,21 +771,28 @@ public enum Scope {
 	}
 	
 	//	UK Domain 
-	public boolean isTopLevelDomain(Target target) throws WhoisException, MalformedURLException, URISyntaxException {
+	public boolean isTopLevelDomain(Target target) throws ActException {
 		// i.e. terry.com and terry.co.uk - return false;
-        for (FieldUrl fieldUrl : target.fieldUrls) {
-            URL uri = new URI(fieldUrl.url).normalize().toURL();
-			String url = uri.toExternalForm();
-            Logger.debug("Normalised " + url);
-            
-            String domain = getDomainFromUrl(url);
+		try {
 
-            Logger.debug("domain " + domain);
-
-            // Rule 3.1: check domain name
-	        if (!domain.endsWith(UK_DOMAIN) && !domain.endsWith(LONDON_DOMAIN) && !domain.endsWith(SCOT_DOMAIN) && !domain.endsWith(WALES_DOMAIN) && !domain.endsWith(CYMRU_DOMAIN)) return false;
-        }
-//		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);        
+	        for (FieldUrl fieldUrl : target.fieldUrls) {
+	            URL uri;
+					uri = new URI(fieldUrl.url).normalize().toURL();
+	
+				String url = uri.toExternalForm();
+	            Logger.debug("Normalised " + url);
+	            
+	            String domain = getDomainFromUrl(url);
+	
+	            Logger.debug("domain " + domain);
+	
+	            // Rule 3.1: check domain name
+		        if (!domain.endsWith(UK_DOMAIN) && !domain.endsWith(LONDON_DOMAIN) && !domain.endsWith(SCOT_DOMAIN) && !domain.endsWith(WALES_DOMAIN) && !domain.endsWith(CYMRU_DOMAIN)) return false;
+	        }
+//		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);
+		} catch (MalformedURLException | URISyntaxException e) {
+			throw new ActException(e);
+		}
         return true;
 	}
 	

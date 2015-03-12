@@ -2,6 +2,7 @@ package uk.bl.api;
 
 import models.Target;
 import play.Logger;
+import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
@@ -24,7 +25,7 @@ public class WhoIsThread implements Runnable  {
 	        try {
 				boolean res = Scope.INSTANCE.checkWhoisThread(number);
 //				target.isInScopeUkRegistration = res;
-			} catch (WhoisException e) {
+			} catch (ActException e) {
 				Logger.error("WhoIsThread error: " + e.getStackTrace());
 			}
 	        target.notify();
