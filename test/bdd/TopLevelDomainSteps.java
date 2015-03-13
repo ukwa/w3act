@@ -17,19 +17,15 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
-public class TopLevelDomainFailedSteps {
+public class TopLevelDomainSteps {
 	
 	private String url;
-	private Scope scope = Scope.INSTANCE;
 	private Boolean topLevelDomain = Boolean.FALSE;
 	
 	@Given("^I have a Target domain of \"(.*?)\"$")
 	public void i_have_a_Target_domain_of(String url) throws Throwable {
-		this.url = "http://www.ukbiologycompetitions.org/test.uk";
-        assertThat(this.url).isEqualTo(url);
-        String actual = scope.getDomainFromUrl(this.url);
-        String expected = scope.getDomainFromUrl(url);
-        assertThat(actual).isEqualTo(expected);
+		this.url = url;
+        assertThat(this.url).isNotEmpty();
 	}
 
 	@When("^I check to see if it is a top-level domain$")
@@ -40,13 +36,13 @@ public class TopLevelDomainFailedSteps {
 		String url = uri.toExternalForm();
         Logger.debug("Normalised " + url);
 		
-        String domain = scope.getDomainFromUrl(url);
+        String domain = Scope.INSTANCE.getDomainFromUrl(url);
         Logger.debug("domain " + domain);
 		FieldUrl fieldUrl = new FieldUrl(url);
 		fieldUrl.domain = domain;
 		fieldUrls.add(fieldUrl);
 		target.fieldUrls = fieldUrls;
-		this.topLevelDomain = scope.isTopLevelDomain(target);
+		this.topLevelDomain = Scope.INSTANCE.isTopLevelDomain(target);
 	}
 
 	@Then("^I should see it is \"(.*?)\"$")
