@@ -1,0 +1,27 @@
+# Users
+
+users:
+
+  - &bob !!models.User
+    email:      bob@example.com
+    name:       Bob
+    password:   secret
+
+# Field Url
+
+fieldUrls:
+
+  - &fieldUrl1 !!models.FieldUrl
+    url:   http://www.bbc.co.uk/test1
+    
+# Targets
+
+targets: 
+
+  - &target1 !!models.Target
+    id:             1
+    title:          BBC Target title
+    crawlFrequency: MONTHLY
+    fieldUrls:      [*fieldUrl1]
+    authorUser:     *bob
+    createdAt:      2012-02-01

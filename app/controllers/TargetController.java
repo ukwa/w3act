@@ -288,17 +288,23 @@ public class TargetController extends AbstractController {
     			return GO_HOME;
     		} 
     		else if (action.equals("export")) {
-//    			List<Target> exportTargets = new ArrayList<Target>();
-//    	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, 
-//    					subject, crawlFrequency, depth, collection, license, flag); 
-//    			int rowCount = page.getTotalRowCount();
-//    	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, 
-//    					subject, crawlFrequency, depth, collection, license, flag); 
-//    			exportTargets.addAll(pageAll.getList());
-//				Logger.debug("export size: " + exportTargets.size());
-//    			export(exportTargets);
+    			List<Target> exportTargets = new ArrayList<Target>();
+//    	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, subject, crawlFrequency, depth, collection, license, flag);
+    			// TODO: no time to do it now but this needs redoing with straight SQL/JPA to get the count
+    	    	Page<Target> page = Target.pageTargets(pageNo, pageSize, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+    			int rowCount = page.getTotalRowCount();
+//    	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, subject, crawlFrequency, depth, collection, license, flag); 
+    	    	Page<Target> pageAll = Target.pageTargets(pageNo, rowCount, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+    			exportTargets.addAll(pageAll.getList());
+				Logger.debug("export size: " + exportTargets.size());
+    			String csvData = Utils.INSTANCE.export(exportTargets);
 //    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
 //    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
+    			
+    			response().setContentType("text/csv; charset=utf-8");
+    			response().setHeader("Content-disposition","attachment; filename=\"target-export.csv");
+    			return ok(csvData);
+//    	        return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
     		} 
     		else if (action.equals("search") || action.equals("apply")) {
     			if (StringUtils.isBlank(filter)) {
@@ -309,80 +315,6 @@ public class TargetController extends AbstractController {
 		    	return badRequest("This action is not allowed");
 		    }
     	}
-    	return ok("");
-    }
-    
-    /**
-     * This method exports selected targets to CSV file.
-     * @param list of Target objects
-     * @return
-     */
-    public static void export(List<Target> targetList) {
-    	Logger.debug("export() targetList size: " + targetList.size());
-
-        StringWriter sw = new StringWriter();
-        for (int i = 0; i < Const.targetExportMap.size(); i++) {
-        {
-            for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet())
-//        	Logger.debug("export key: " + entry.getKey());
-            	if (entry.getValue() == i) {
-	            	sw.append(entry.getKey());
-		 	    	sw.append(Const.CSV_SEPARATOR);
-            	}
-            }
-        }
-
-        sw.append(Const.CSV_LINE_END);
- 	    
- 	    if (targetList != null && targetList.size() > 0) {
- 	    	Iterator<Target> itr = targetList.iterator();
- 	    	while (itr.hasNext()) {
- 	    		Target target = itr.next();
-// 	        	Logger.debug("export target: " + target); 	    		
- 	            for (int i = 0; i < Const.targetExportMap.size(); i++) {
-		 	        for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet()) {
-			 	   		Field[] fields = Target.class.getFields();
-			 			for (Field field : fields) {
-		 	               if (entry.getValue() == i) {
-//		 	                   Logger.debug("field.name: " + field.getName() + ", entry.getkey: " + entry.getKey());
-		 	                   if (field.getName().equals(entry.getKey())) {
-		 	                	   try {
-										Object value = field.get(target);
-//				 	                    Logger.debug("value: " + value);
-				 	                    if (field.getName().equals(Const.AUTHOR)) {
-				 	                    	if (value != null) {
-				 	                    		value = User.findByUrl((String) value).name;
-				 	                    	}
-				 	                    }
-				 	                    // TODO: CREATED_AT
-				 	                    if (field.getName().equals(Const.CREATED_AT)) {
-				 	                    	if (value != null) {
-				 	                    		value = Utils.INSTANCE.showTimestampInTable((String) value);
-				 	                    	}
-				 	                    }
-										if (field.getType().equals(String.class)) {
-								    		sw.append((String) value);
-									 	    sw.append(Const.CSV_SEPARATOR);
-										}
-										if (field.getType().equals(Long.class)) {
-								    		sw.append(String.valueOf(((Long) value)));
-									 	    sw.append(Const.CSV_SEPARATOR);
-										}
-									} catch (IllegalArgumentException e) {
-										e.printStackTrace();
-									} catch (IllegalAccessException e) {
-										e.printStackTrace();
-									}
-		 	                   }
-		 	               }
-			 			}
-		 	        }
-	            }
-	 	 	    sw.append(Const.CSV_LINE_END);
- 	    	}
- 	    }
-
-    	Utils.INSTANCE.generateCsvFile(Const.EXPORT_FILE, sw.toString());
     }
     
     /**

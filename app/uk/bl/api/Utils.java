@@ -20,6 +20,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -33,6 +34,7 @@ import uk.bl.exception.UrlInvalidException;
 import models.Collection;
 import models.FieldUrl;
 import models.Subject;
+import models.Target;
 
 import org.apache.commons.lang3.StringUtils;
 import org.postgresql.util.PGInterval;
@@ -808,6 +810,54 @@ public enum Utils {
 			processParentsCollections(collections, parent.parent.id);
 		}
 		return collections;
+    }
+    
+    /**
+     * This method exports selected targets to CSV file.
+     * @param list of Target objects
+     * @return
+     */
+    public String export(List<Target> targetList) {
+    	Logger.debug("export() targetList size: " + targetList.size());
+
+    	StringBuilder builder = new StringBuilder();
+//        StringWriter sw = new StringWriter();
+        for (int i = 0; i < Const.targetExportMap.size(); i++) {
+        {
+            for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet())
+//        	Logger.debug("export key: " + entry.getKey());
+            	if (entry.getValue() == i) {
+            		builder.append(entry.getKey());
+            		builder.append(Const.CSV_SEPARATOR);
+            	}
+            }
+        }
+
+        builder.append(Const.CSV_LINE_END);
+ 	    
+ 	    if (targetList != null && targetList.size() > 0) {
+// 			"nid", "title", "field_url", "author", "field_crawl_frequency", "created"	
+ 	    	for (Target target : targetList) {
+ 	    		builder.append(String.valueOf(target.id));
+ 	    		builder.append(Const.CSV_SEPARATOR);
+ 	    		builder.append(target.title);
+ 	    		builder.append(Const.CSV_SEPARATOR);
+ 	    		builder.append(target.fieldUrl());
+ 	    		builder.append(Const.CSV_SEPARATOR);
+		 	    String authorName = "";
+		 	    if (target.authorUser != null) {
+		 	    	authorName = target.authorUser.name;
+		 	    }
+				builder.append(authorName);
+				builder.append(Const.CSV_SEPARATOR);
+				builder.append(target.crawlFrequency);
+				builder.append(Const.CSV_SEPARATOR);
+				builder.append(String.valueOf(target.createdAt));
+				builder.append(Const.CSV_LINE_END);
+ 	    	}
+ 	    }
+//    	Utils.INSTANCE.generateCsvFile(Const.EXPORT_FILE, sw.toString());
+ 	    return builder.toString();
     }
 }
 
