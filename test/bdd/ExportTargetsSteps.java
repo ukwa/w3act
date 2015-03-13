@@ -9,6 +9,7 @@ import play.Logger;
 import play.libs.Yaml;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;
+import static play.test.Helpers.*;
 
 import uk.bl.api.Utils;
 import models.Target;
@@ -25,7 +26,7 @@ public class ExportTargetsSteps {
 	@Given("^I have a list of Target result on view$")
 	public void i_have_a_list_of_Target_result_on_view() throws Throwable {
 
-		running(fakeApplication(), new Runnable() {
+		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
 				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("targets.yml");		
 				targets = allTargets.get("targets");
