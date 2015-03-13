@@ -114,6 +114,15 @@ public class WatchedTargets extends AbstractController {
     	Ebean.update(watchedTarget);
     }
     
+    public static String prettyDateString(String waybackTimestamp) {
+    	String year = waybackTimestamp.substring(0, 4);
+    	String month = waybackTimestamp.substring(4, 6);
+    	String day = waybackTimestamp.substring(6, 8);
+    	String hour = waybackTimestamp.substring(8, 10);
+    	String minute = waybackTimestamp.substring(10, 12);
+    	return day + "-" + month + "-" + year + " " + hour + ":" + minute;
+    }
+    
     @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String title) {
         JsonNode jsonData = null;

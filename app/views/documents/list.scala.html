@@ -148,7 +148,7 @@
 					</td>
 					<td><a href="@document.landingPageUrl" target="_blank">@document.landingPageUrl</a></td>
 					<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
-					<td>@document.waybackTimestamp</td>
+					<td>@WatchedTargets.prettyDateString(document.waybackTimestamp)</td>
 					@if(status != Document.Status.SUBMITTED) {
 						<td><a href="@routes.Documents.ignore(document.id,
 								filterForm("user").value,
