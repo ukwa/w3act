@@ -54,9 +54,11 @@ import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.MessageProperties;
 
 import views.html.targets.blank;
 import views.html.targets.newForm;
@@ -1547,7 +1549,11 @@ public class TargetController extends AbstractController {
 		    	channel.queueDeclare(queueName, true, false, false, null);
 		    	channel.queueBind(queueName, exchangeName, routingKey);
 		    	String message = target.fieldUrl();
-		    	channel.basicPublish(exchangeName, routingKey, null, message.getBytes());
+		    	
+		    	BasicProperties.Builder propsBuilder = new BasicProperties.Builder();
+		    	propsBuilder.deliveryMode(2);
+		    	channel.basicPublish(exchangeName, routingKey, propsBuilder.build(), message.getBytes());
+		    	
 		    	Logger.debug(" ### sent target '" + message + "' to queue");    	    
 		    	channel.close();
 		    	connection.close();
