@@ -2,8 +2,6 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.io.File;
-import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,8 +38,9 @@ public class ReportController extends AbstractController {
   
     /**
      * Display the report.
+     * @throws ActException 
      */
-    public static Result index() {
+    public static Result index() throws ActException {
         List<Target> resList = processFilterReports(null, null, Const.CrawlPermissionStatus.PENDING.name(), "", "", "");
         List<Target> resListGranted = processFilterReports(null, null, Const.CrawlPermissionStatus.GRANTED.name(), "", "", "");
         List<Target> resListRefused = processFilterReports(null, null, Const.CrawlPermissionStatus.REFUSED.name(), "", "", "");
@@ -61,8 +60,9 @@ public class ReportController extends AbstractController {
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
      * @return
+     * @throws ActException 
      */
-    public static Result search() {
+    public static Result search() throws ActException {
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
 
@@ -92,12 +92,17 @@ public class ReportController extends AbstractController {
         List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, startDate, endDate);
         List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, startDate, endDate);
 
-        Logger.debug("resList: " + resListRequest);
-        Logger.debug("resListGranted: " + resListGranted);
-        Logger.debug("resListRefused: " + resListRefused);
+        Logger.debug("resListRequest: " + resListRequest);
+        Logger.debug("resListRequest");
+//        Logger.debug("resListGranted: " + resListGranted);
+//        Logger.debug("resListGranted");
+//        Logger.debug("resListRefused: " + resListRefused);
+//        Logger.debug("resListRefused");
         
         List<User> users = User.findAll();
+//        Logger.debug("users: " + users);
         List<Organisation> organisations = Organisation.findAllSorted();
+//        Logger.debug("organisations: " + organisations);
         RequestType[] requestTypes = Const.RequestType.values();
 
         User user = User.findByEmail(request().username());
@@ -113,26 +118,40 @@ public class ReportController extends AbstractController {
                     );
 		    } else if (action.equals("export")) {
     	    	String status = requestData.get("status");
+    			Logger.debug("in export: " + status);
 
 
         		if (StringUtils.isNotEmpty(status)) {
     				Logger.debug("status: " + status);
     				if (status.equals("tabRequested")) {
 	    				Logger.debug("export requested size: " + resListRequest.size());
-	    				File file = export(resListRequest, Const.EXPORT_REQUESTED_LICENCE_FILE);
-	        	        return ok(file);
+	    				String file = export(resListRequest);
+	        			response().setContentType("text/csv; charset=utf-8");
+	        			response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_REQUESTED_LICENCE_FILE + "\"");
+	        			return ok(file);
     				} else if (status.equals("tabGranted")) {
 	    				Logger.debug("export refused size: " + resListGranted.size());
-	        			File file = export(resListGranted, Const.EXPORT_GRANTED_LICENCE_FILE);
+	        			String file = export(resListGranted);
+	        			response().setContentType("text/csv; charset=utf-8");
+	        			response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_GRANTED_LICENCE_FILE + "\"");
 	        	        return ok(file);
 
         			} else if (status.equals("tabRefused")) {
 	    				Logger.debug("export refused size: " + resListRefused.size());
-	    				File file = export(resListRefused, Const.EXPORT_REFUSED_LICENCE_FILE);
+	    				String file = export(resListRefused);
+	        			response().setContentType("text/csv; charset=utf-8");
+	        			response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_REFUSED_LICENCE_FILE + "\"");
 	        	        return ok(file);
         			}
-    				return null;
+        			return ok(
+                    		reports.render(
+                                "Reports", user, resListRequest, resListGranted,
+                                resListRefused, curatorId, organisationId, startDate, endDate, request, users, organisations, requestTypes
+                            )
+                        );
         		}
+    			Logger.debug("returning in export");
+        		
 		    }
 	    	return badRequest("This action is not allowed");
     	}
@@ -153,11 +172,12 @@ public class ReportController extends AbstractController {
      * @param file name
      * @return
      */
-    public static File export(List<Target> permissionList, String fileName) {
+    public static String export(List<Target> permissionList) {
 //        public static void export(List<CrawlPermission> permissionList, String fileName) {
     	Logger.debug("export() permissionList size: " + permissionList.size());
 
-        StringWriter sw = new StringWriter();
+//        StringWriter sw = new StringWriter();
+        StringBuilder sw = new StringBuilder();
 	    sw.append("Target title");
 		sw.append(Const.CSV_SEPARATOR);
 	    sw.append("Target URL");
@@ -179,8 +199,8 @@ public class ReportController extends AbstractController {
 	 	 	    sw.append(Const.CSV_LINE_END);
  	    	}
  	    }
-    	File file = Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
-    	return file;
+//    	File file = Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
+    	return sw.toString();
     }
             	
     /**
@@ -190,9 +210,10 @@ public class ReportController extends AbstractController {
      * @param status The status of the report workflow
      * @param request The request type (first request/folloup/all)
      * @return
+     * @throws ActException 
      */
     public static List<Target> processFilterReports(Long curatorId, Long organisationId, 
-    		String crawlPermissionsStatus, String request, String startDate, String endDate) {
+    		String crawlPermissionsStatus, String request, String startDate, String endDate) throws ActException {
 //    	boolean isProcessed = false;
 		ExpressionList<Target> exp = Target.find.fetch("crawlPermissions").where();
 		exp = exp.eq("active", true);
@@ -219,7 +240,7 @@ public class ReportController extends AbstractController {
 	    		Date date = Utils.INSTANCE.convertDate(startDate);
 	    		exp = exp.ge(Const.CREATED_AT, date);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				throw new ActException(e);
 			}
     	}
 
@@ -228,7 +249,7 @@ public class ReportController extends AbstractController {
 	    		Date date = Utils.INSTANCE.convertDate(endDate);
 	    		exp = exp.le(Const.CREATED_AT, date);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				throw new ActException(e);
 			}
     	}
 
@@ -343,40 +364,6 @@ public class ReportController extends AbstractController {
     }
     
     /**
-     * This method exports selected targets to CSV file.
-     * @param list of Target objects
-     * @param file name
-     * @return
-     */
-    public static void exportCreation(List<Target> targetList, String fileName) {
-    	Logger.debug("export() targetList size: " + targetList.size());
-
-        StringWriter sw = new StringWriter();
-	    sw.append("Target title");
-		sw.append(Const.CSV_SEPARATOR);
-	    sw.append("Target URL");
-		sw.append(Const.CSV_SEPARATOR);
-	    sw.append("Date created");
-		sw.append(Const.CSV_SEPARATOR);
-        sw.append(Const.CSV_LINE_END);
- 	    
- 	    if (targetList != null && targetList.size() > 0) {
- 	    	Iterator<Target> itr = targetList.iterator();
- 	    	while (itr.hasNext()) {
- 	    		Target target = itr.next();
-	    		sw.append(target.title);
-		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.fieldUrl());
-		 	    sw.append(Const.CSV_SEPARATOR);
-	    		sw.append(target.createdAt + "");
-		 	    sw.append(Const.CSV_SEPARATOR);
-	 	 	    sw.append(Const.CSV_LINE_END);
- 	    	}
- 	    }
-    	Utils.INSTANCE.generateCsvFile(fileName, sw.toString());
-    }
-    
-    /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.
      * @return
@@ -426,8 +413,9 @@ public class ReportController extends AbstractController {
     	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, startDate, endDate, npld, crawlFrequencyName, tld);
     			exportTargets.addAll(pageAll.getList());
 				Logger.debug("export report creation size: " + exportTargets.size());
-
-    			File file = export(exportTargets, Const.EXPORT_TARGETS_REPORT_CREATION);
+    			String file = export(exportTargets);
+    			response().setContentType("text/csv; charset=utf-8");
+    			response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_TARGETS_REPORT_CREATION + "\"");
     	        return ok(file);
     		} else if (action.equals("search")) {
     	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 

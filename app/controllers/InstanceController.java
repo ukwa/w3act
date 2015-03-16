@@ -2,10 +2,7 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.io.StringWriter;
-import java.lang.reflect.Field;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -117,40 +114,6 @@ public class InstanceController extends AbstractController {
         	);
     }
 	
-    /**
-     * This method exports selected instances to CSV file.
-     * @param list of Instance objects
-     * @return
-     */
-    public static void export(List<Instance> instanceList) {
-    	Logger.debug("export() instanceList size: " + instanceList.size());
-
-        StringWriter sw = new StringWriter();
-		Field[] fields = Instance.class.getFields();
-		for (Field f : fields) {
-//			Logger.debug("Instance fields: " + f.getName());
-    		sw.append(f.getName());
-	 	    sw.append(Const.CSV_SEPARATOR);
-		}
- 	    sw.append(Const.CSV_LINE_END);
- 	    
- 	    String csv = "";
- 	    if (instanceList != null && instanceList.size() > 0) {
- 	    	Iterator<Instance> itr = instanceList.iterator();
- 	    	while (itr.hasNext()) {
- 	    		Instance instance = itr.next();
- 	    		csv = csv + ", " + instance.toString();
- 	    	}
- 	    }
-        if (csv != null) {
-	        String content = csv.replace(", " + Const.TARGET_DEF,  "").replace("[", "").replace("]", "").substring(Const.TARGET_DEF.length());
-	        sw.append(content);
-//        Logger.debug("content: " + content);
-        }
-
-    	Utils.INSTANCE.generateCsvFile(Const.EXPORT_INSTANCE_FILE, sw.toString());
-    }
-    
     /**
      * This method enables searching for given URL and redirection in order to add new entry
      * if required.

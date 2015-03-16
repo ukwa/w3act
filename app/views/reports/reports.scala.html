@@ -18,6 +18,19 @@
  				$('#tabStatus').val(id);
 			})
 			
+			var status = getURLParameter('status');
+			if (status !== undefined) {
+				var li = $('#' + status).parent('li');
+				li.parent().children().removeClass('active');
+				li.toggleClass("active");
+				//active in
+				var panelId = status.substring(3, status.length).toLowerCase();
+				var panel = $('#'+panelId);
+				panel.parent().children().removeClass('active').removeClass('in');
+				panel.toggleClass("active in");
+				console.log(status + " - " + panelId);
+			}
+			
 		});
 	</script>
 }
@@ -48,228 +61,227 @@
     <article class="reports">
 
 		@helper.form(action=routes.ReportController.search) {
-		<div id="forms">
-			<input type="hidden" name="status" value="requested" id="tabStatus">
+			<div id="forms">
+				<input type="hidden" name="status" value="tabRequested" id="tabStatus">
 				<div class="padding-20">
 				    <a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
 						
 				<div id="accordion">
-					<div id="filter-panel" class="panel-collapse collapse in">
-						<div class="panel-body">
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-										<label for="curator" class="col-sm-6 control-label">Filter by curator</label>
-									    <div class="col-sm-6">
-											<select name="curator" class="form-control target-form-control" id="curator">
-												<option value="">None</option>
-												@for(curator <- users) {
-													@if(curator.id == curatorId) {
-														<option value="@curator.id" selected>@curator.name</option>
-													} else {
-														<option value="@curator.id">@curator.name</option>
-													}
-												}
-											</select>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="form-group">					
-						            	<label for="organisation" class="col-sm-6 control-label">Filter by nominating organisation</label>
-						            	<div class="col-sm-6">
-											<select name="organisation" class="form-control target-form-control" id="organisation">
-									        	<option value="">All Agencies</option>
-								            	@for(organisation <- organisations) {
-						                 		  		@if(organisation.id == organisationId) {
-							                			<option value="@organisation.id" selected>@organisation.title</option>
-							                		} else {
-							                			<option value="@organisation.id">@organisation.title</option>
-							                		}
-								                }											
-								 			</select>
-										</div>
-						         	</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-6">
+						<div id="filter-panel" class="panel-collapse collapse in">
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-md-6">
 										<div class="form-group">
-											<label class="col-sm-6 control-label">Filter by time period from </label>
+											<label for="curator" class="col-sm-6 control-label">Filter by curator</label>
 										    <div class="col-sm-6">
-										    	<div class="input-group">
-						 							<input type="text" name="startDate" value="@startDate" size="30" maxlength="2048" class="form-control  target-form-control" id="start-date"/>
-						 						</div>
-					                		</div>
-										</div>
-						     	</div>	
-				
-								<div class="col-md-6">
-										<div class="form-group">
-											<label class="col-sm-6 control-label">to </label>
-										    <div class="col-sm-6">
-										    	<div class="input-group">
-						 							<input type="text" name="endDate" value="@endDate" size="30" maxlength="2048" class="form-control target-form-control" id="end-date"/>
-						 						</div>
-					                		</div>
-										</div>
-						     	</div>	
-							</div>
-							<div class="row">
-								<div class="row padding-10">
-						     		<div class="col-md-12 col-xs-12 col-sm-12">
-										<div class="form-group">
-							              	<label for="request" class="col-sm-6 control-label">Request type </label>
-										    <div class="col-sm-6">
-												<select name="request" id="request" class="form-control">
+												<select name="curator" class="form-control target-form-control" id="curator">
 													<option value="">None</option>
-									                @for(requestType <- requestTypes) {
-						                 		  		@if(requestType.name.equals(requestType)) {
-									                		<option value="@requestType.name" selected>@requestType.getValue</option>
-								                		} else {
-									                		<option value="@requestType.name">@requestType.getValue</option>
-								                		}
-									                }												
+													@for(curator <- users) {
+														@if(curator.id == curatorId) {
+															<option value="@curator.id" selected>@curator.name</option>
+														} else {
+															<option value="@curator.id">@curator.name</option>
+														}
+													}
 												</select>
 											</div>
 										</div>
 									</div>
-						     	</div>	     
-									
+									<div class="col-md-6">
+										<div class="form-group">					
+							            	<label for="organisation" class="col-sm-6 control-label">Filter by nominating organisation</label>
+							            	<div class="col-sm-6">
+												<select name="organisation" class="form-control target-form-control" id="organisation">
+										        	<option value="">All Agencies</option>
+									            	@for(organisation <- organisations) {
+							                 		  		@if(organisation.id == organisationId) {
+								                			<option value="@organisation.id" selected>@organisation.title</option>
+								                		} else {
+								                			<option value="@organisation.id">@organisation.title</option>
+								                		}
+									                }											
+									 			</select>
+											</div>
+							         	</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+											<div class="form-group">
+												<label class="col-sm-6 control-label">Filter by time period from </label>
+											    <div class="col-sm-6">
+											    	<div class="input-group">
+							 							<input type="text" name="startDate" value="@startDate" size="30" maxlength="2048" class="form-control  target-form-control" id="start-date"/>
+							 						</div>
+						                		</div>
+											</div>
+							     	</div>	
+					
+									<div class="col-md-6">
+											<div class="form-group">
+												<label class="col-sm-6 control-label">to </label>
+											    <div class="col-sm-6">
+											    	<div class="input-group">
+							 							<input type="text" name="endDate" value="@endDate" size="30" maxlength="2048" class="form-control target-form-control" id="end-date"/>
+							 						</div>
+						                		</div>
+											</div>
+							     	</div>	
+								</div>
+								<div class="row">
+									<div class="row padding-10">
+							     		<div class="col-md-12 col-xs-12 col-sm-12">
+											<div class="form-group">
+								              	<label for="request" class="col-sm-6 control-label">Request type </label>
+											    <div class="col-sm-6">
+													<select name="request" id="request" class="form-control">
+														<option value="">None</option>
+										                @for(requestType <- requestTypes) {
+							                 		  		@if(requestType.name.equals(requestType)) {
+										                		<option value="@requestType.name" selected>@requestType.getValue</option>
+									                		} else {
+										                		<option value="@requestType.name">@requestType.getValue</option>
+									                		}
+										                }												
+													</select>
+												</div>
+											</div>
+										</div>
+							     	</div>	     
+										
+								</div>
 							</div>
 						</div>
+					</div>				
+			</div>	        
+		
+			@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+				<div class="row padding-20 pull-right">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="btn-group">		
+							<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Apply filters">Apply</button>
+							@if(permissions.size() > 0 || permissionsGranted.size() > 0 || permissionsRefused.size() > 0) {
+								<button type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
+							} else {
+								<button disabled type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
+							}
+				       </div>
 					</div>
-				</div>				
-		</div>	        
-		
-		@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-		<div class="row padding-20 pull-right">
-     		<div class="col-md-12 col-xs-12 col-sm-12">
-				<div class="btn-group">		
-					<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Apply filters">Apply</button>
-					@if(permissions.size() > 0 || permissionsGranted.size() > 0 || permissionsRefused.size() > 0) {
-						<button type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
-					} else {
-						<button disabled type="submit" class="btn btn-primary" id="export" name="action" value="export">Download (.csv)</button>
-					}
-		       </div>
-			</div>
-		</div>
-		}				
-
-		<div id="myTabContent" class="tab-content">
-		
-			<div class="tab-pane padding-20 fade active in" id="requested">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>Target URL</th>
-								<th>Date requested</th>
-							</tr>
-						</thead>
-						<tbody>
-						@permissions.map { target =>		              
-							<tr>
-								<td>
-								    @if(target.title != null || target.title.length() > 0) {					                	
-					                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
-					                } else {
-					                    none
-					                }
-								</td>
-								<td>
-				                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl()</a>					                
-								</td>
-								@if(target.url != null && target.createdAt != null) {
-									<td>@target.createdAt</td>
-								} else {
-									<td></td>
-								}		                  
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>
+				</div>
+			}				
+			<div id="myTabContent" class="tab-content">
 			
-			<div class="tab-pane padding-20 fade" id="granted">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>Target URL</th>
-								<th>Date requested</th>
-							</tr>
-						</thead>
-						<tbody>
-						@permissionsGranted.map { target =>		              
-							<tr>
-								<td>
-								    @if(!target.title.equals("none")) {					                	
-					                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
-					                } else {
-					                    none
-					                }
-								</td>
-								<td>
-				                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl</a>					                
-								</td>
-								@if(target.url != null && target.createdAt != null) {
-									<td>@target.createdAt</td>
-								} else {
-									<td></td>
-								}		                  
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>  
+				<div class="tab-pane padding-20 fade active in" id="requested">
+				   	<div class="row padding-20">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Target Title</th>
+									<th>Target URL</th>
+									<th>Date requested</th>
+								</tr>
+							</thead>
+							<tbody>
+							@permissions.map { target =>		              
+								<tr>
+									<td>
+									    @if(target.title != null || target.title.length() > 0) {					                	
+						                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
+						                } else {
+						                    none
+						                }
+									</td>
+									<td>
+					                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl()</a>					                
+									</td>
+									@if(target.url != null && target.createdAt != null) {
+										<td>@target.createdAt</td>
+									} else {
+										<td></td>
+									}		                  
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>	
+				</div>
+				
+				<div class="tab-pane padding-20 fade" id="granted">
+				   	<div class="row padding-20">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Target Title</th>
+									<th>Target URL</th>
+									<th>Date requested</th>
+								</tr>
+							</thead>
+							<tbody>
+							@permissionsGranted.map { target =>		              
+								<tr>
+									<td>
+									    @if(!target.title.equals("none")) {					                	
+						                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
+						                } else {
+						                    none
+						                }
+									</td>
+									<td>
+					                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl</a>					                
+									</td>
+									@if(target.url != null && target.createdAt != null) {
+										<td>@target.createdAt</td>
+									} else {
+										<td></td>
+									}		                  
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>	
+				</div>  
+	
+				<div class="tab-pane padding-20 fade" id="refused">
+				   	<div class="row padding-20">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Target Title</th>
+									<th>Target URL</th>
+									<th>Date requested</th>
+								</tr>
+							</thead>
+							<tbody>
+							@permissionsRefused.map { target =>		              
+								<tr>
+									<td>
+									    @if(!target.title.equals("none")) {					                	
+						                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
+						                } else {
+						                    none
+						                }
+									</td>
+									<td>
+										@for(fieldUrl <- target.fieldUrls) {
+					                		<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
+					                	}					                
+									</td>
+									@if(target.url != null && target.createdAt != null) {
+										<td>@target.createdAt</td>
+									} else {
+										<td></td>
+									}		                  
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>	
+				</div>
+				
+			</div>	  
 
-			<div class="tab-pane padding-20 fade" id="refused">
-			   	<div class="row padding-20">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Target Title</th>
-								<th>Target URL</th>
-								<th>Date requested</th>
-							</tr>
-						</thead>
-						<tbody>
-						@permissionsRefused.map { target =>		              
-							<tr>
-								<td>
-								    @if(!target.title.equals("none")) {					                	
-					                	<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
-					                } else {
-					                    none
-					                }
-								</td>
-								<td>
-									@for(fieldUrl <- target.fieldUrls) {
-				                		<a class="brand" href="@fieldUrl.url">@fieldUrl.url</a>
-				                	}					                
-								</td>
-								@if(target.url != null && target.createdAt != null) {
-									<td>@target.createdAt</td>
-								} else {
-									<td></td>
-								}		                  
-							</tr>
-						}
-						</tbody>
-					</table>
-				</div>	
-			</div>
-			
-		</div>	  
-
-	}
+		}
 	</article>
 }
 } else {

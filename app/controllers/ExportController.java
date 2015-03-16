@@ -2,7 +2,6 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,11 +38,13 @@ public class ExportController extends AbstractController {
      * @param list of Target objects
      * @return
      */
-    public static void exportLookup(List<LookupEntry> lookupList) {
+    public static Result exportLookup(List<LookupEntry> lookupList) {
     	Logger.debug("export lookups size: " + lookupList.size());
 
-        StringWriter sw = new StringWriter();
-	    
+    
+    	StringBuilder sw = new StringBuilder();
+
+        
 		sw.append(Const.URL);
  	    sw.append(Const.CSV_SEPARATOR);
 		sw.append(Const.VALUE);
@@ -68,8 +69,10 @@ public class ExportController extends AbstractController {
  	    		}
  	    	}
  	    }
-
-    	Utils.INSTANCE.generateCsvFile(Const.EXPORT_LOOKUP_FILE, sw.toString());
+		String csvData = sw.toString();
+		response().setContentType("text/csv; charset=utf-8");
+		response().setHeader("Content-disposition","attachment; filename=\"" + Const.EXPORT_LOOKUP_FILE + "\"");
+		return ok(csvData);
     }
     
     /**
@@ -86,7 +89,7 @@ public class ExportController extends AbstractController {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (Const.EXPORT_LOOKUPS.equals(action)) {
-    			exportLookup(LookupEntry.findAll());    			
+    			return exportLookup(LookupEntry.findAll());    			
     		} 
     	}
     	return GO_EXPORT_HOME;
