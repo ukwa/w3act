@@ -103,14 +103,14 @@ public class QAController extends AbstractController {
     	
     	Logger.debug("QAController.search() query: " + query);
     	
-    	if (StringUtils.isBlank(query)) {
-			Logger.debug("Target name is empty. Please write name in search window.");
-			flash("message", "Please enter a name in the search window");
-	        return redirect(
-	        		routes.QAController.list(0, "title", "asc", "", "", 0)
-	        );
-    	}    	
-
+//    	if (StringUtils.isBlank(query)) {
+//			Logger.debug("Target name is empty. Please write name in search window.");
+//			flash("message", "Please enter a name in the search window");
+//	        return redirect(
+//	        		routes.QAController.list(0, "title", "asc", "", "", 0)
+//	        );
+//    	}    	
+//
     	int pageNo = Integer.parseInt(requestData.get("p"));
     	String sort = requestData.get("s");
     	String order = requestData.get("o");

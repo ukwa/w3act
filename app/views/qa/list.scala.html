@@ -141,10 +141,10 @@
 					<div class="panel-body">
 					
 						<div class="row">
-							<div class="col-md-6">
+							<div class="col-md-12">
 								<div class="form-group">									
-					              	<label for="collections" class="col-sm-6 control-label">By Collection</label>
-								    <div class="col-sm-12">
+					              	<label for="collections" class="col-sm-4 control-label">By Collection</label>
+								    <div class="col-sm-8">
 							  			<div id="collectionTree" style="padding:10px;"></div>
 			  							<input type="hidden" id="collectionSelect" name="collectionSelect" value="@currentCollection">
 									</div>
@@ -153,9 +153,9 @@
 						</div>
 						
 						<div class="row">
-							<div class="col-md-6">
+							<div class="col-md-12">
 								<div class="form-group">
-					            	<label for="qa_status" class="col-sm-6 control-label">By QA Status</label>
+					            	<label for="qa_status" class="col-sm-4 control-label">By QA Status</label>
 					            	<div class="col-sm-6">
 										<select name="qaIssueId" class="form-control target-form-control" id="qa_status">
 								        	<option value="0">None</option>
@@ -168,8 +168,13 @@
 				                			}
 										</select>
 									</div>
+									<div class="col-md-2 pull-right">
+										<button type="submit" class="btn btn-primary" id="search" name="action" value="search" title="Apply filters">Apply</button>
+									</div>									
 					         	</div>
 							</div>
+
+
 						</div>
 					</div>
 				</div>

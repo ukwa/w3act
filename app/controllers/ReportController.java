@@ -431,7 +431,7 @@ public class ReportController extends AbstractController {
      */
     public static Result indexCreation() {
     	return redirect(routes.ReportController.targets(0, "createdAt", "desc", -1l, -1l, 
-    			Utils.INSTANCE.getCurrentDate(), "", "", "", "either"));
+    			"", "", "", "", "either"));
     }
 
 }

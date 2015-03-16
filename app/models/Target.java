@@ -1075,10 +1075,10 @@ public class Target extends UrlModel {
 		exp = exp.eq(Const.ACTIVE, true);
 		
 		Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + npld + ", " + crawlFrequencyName + ", " + tld);
-		if (curatorId != 0) {
+		if (curatorId != -1) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
-		if (organisationId != 0) {
+		if (organisationId != -1) {
 			exp = exp.eq("organisation.id", organisationId);
 		}
 		if (StringUtils.isNotEmpty(crawlFrequencyName)) {
