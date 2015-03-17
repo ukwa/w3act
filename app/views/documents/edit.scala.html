@@ -273,6 +273,7 @@
 			</div>
 			<div id="book">
 				@inputText(form("book.series"), editable, '_label -> "Series")
+				@inputText(form("book.seriesNumber"), editable, '_label -> "Series Number")
 				@inputText(form("book.publisher"), editable, '_label -> "Publisher")
 				@inputText(form("book.edition"), editable, '_label -> "Edition")
 			</div>
@@ -327,6 +328,9 @@
 				<div id="book_buttons">
 					<div style="padding-top: 5px">
 						<input type="button" class="btn btn-success" value="Series" onclick="fillInput('book_series')" style="width: 100%">
+					</div>
+					<div style="padding-top: 5px">
+						<input type="button" class="btn btn-success" value="Series Number" onclick="fillInput('book_seriesNumber')" style="width: 100%">
 					</div>
 					<div style="padding-top: 5px">
 						<input type="button" class="btn btn-success" value="Publisher" onclick="fillInput('book_publisher')" style="width: 100%">

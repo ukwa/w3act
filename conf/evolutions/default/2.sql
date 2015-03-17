@@ -87,6 +87,7 @@ create table book (
   isbn			varchar(255),
   corporate_author	varchar(255),
   series		varchar(255),
+  series_number		varchar(255),
   publisher		varchar(255),
   edition		varchar(255)
 );

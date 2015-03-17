@@ -1,6 +1,6 @@
 #### Production values
 application.name=w3act
-application.context="/act-ddhapt/"
+application.context="/act-ddhapt"
 application.langs="en"
 
 # Secret key

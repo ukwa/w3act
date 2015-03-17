@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.AssignableArk;
@@ -221,7 +222,23 @@ public class Documents extends AbstractController {
 			return redirect(routes.Documents.list(documentFilter, pageNo, sortBy, order, filter));
 		else
 			return redirect(routes.Documents.overview(pageNo, sortBy, "asc"));
-			
+	}
+	
+	public static Result ignoreAll(DocumentFilter documentFilter, String filter, boolean filters) {
+		ExpressionList<Document> expressionList = Document.expressionList(documentFilter, filter);
+		Document.Status status;
+		if (documentFilter.status == Document.Status.NEW)
+			status = Document.Status.IGNORED;
+		else
+			status = Document.Status.NEW;
+		for (Document document : expressionList.findList()) {
+			document.status = status;
+			Ebean.save(document);
+		}
+		if (filters)
+			return redirect(routes.Documents.list(documentFilter, 0, "title", "asc", ""));
+		else
+			return redirect(routes.Documents.overview(0, "title", "asc"));
 	}
 	
 	public static Result sip(Long id) {

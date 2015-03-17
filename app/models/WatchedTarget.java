@@ -34,7 +34,7 @@ public class WatchedTarget extends Model {
 	public String waybackTimestamp;
 	public String getUrl() { return ""+id; }
 	public String getName() { return target.fieldUrls.get(0).url; }
-	public static final String SEARCH_FIELD = "target.title";
+	public static final String SEARCH_FIELD = "target.fieldUrls.url";
 	
 	public static final Model.Finder<Long, WatchedTarget> find = new Model.Finder<>(Long.class, WatchedTarget.class);
 	

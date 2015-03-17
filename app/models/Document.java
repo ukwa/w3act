@@ -116,8 +116,7 @@ public class Document extends Model {
     	}
     }
     
-    public static Page<Document> page(DocumentFilter documentFilter, int page,
-    		int pageSize, String sortBy, String order, String filter) {
+    public static ExpressionList<Document> expressionList(DocumentFilter documentFilter, String filter) {
 
     	ExpressionList<Document> el = find.where();
     	if (documentFilter.watchedtarget != null) {
@@ -140,8 +139,13 @@ public class Document extends Model {
     	}
     	
     	return el.eq("status", documentFilter.status.ordinal())
-        		.icontains("title", filter)
-        		.orderBy(sortBy + " " + order)
+        		.icontains("title", filter);
+    }
+    
+    public static Page<Document> page(DocumentFilter documentFilter, int page,
+    		int pageSize, String sortBy, String order, String filter) {
+    	return expressionList(documentFilter, filter)
+    			.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);

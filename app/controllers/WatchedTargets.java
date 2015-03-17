@@ -66,7 +66,7 @@ public class WatchedTargets extends AbstractController {
     
     public static Result view(Long id) {
     	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
-		return redirect(routes.WatchedTargets.list("" + watchedTarget.target.authorUser.id, true, 0, "title", "asc", watchedTarget.target.title));
+		return redirect(routes.WatchedTargets.list("" + watchedTarget.target.authorUser.id, true, 0, "target.title", "asc", watchedTarget.getName()));
 	}
     
     public static Result crawl(Long id, boolean crawlWayback) {

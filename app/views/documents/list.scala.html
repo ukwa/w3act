@@ -17,7 +17,7 @@
 	<script src="@routes.Assets.at("javascripts/tree.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
-			context = @play.api.Play.current.configuration.getString("application.context");
+			context = '@play.api.Play.current.configuration.getString("application.context")';
 			applySearch(context, 'documents');
 			fillTree("subject", @Html(AbstractController.getSubjectsDataByIds(filterForm.get.subject).toString));
 			$("#startdate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true, maxDate: $("#enddate")[0].value,
@@ -182,10 +182,12 @@
 			@pagination(currentPage, link)
 		}
 		
-		@*helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
-			<input type="submit" class="btn btn-success" value="Live Crawl" onclick=
-				"return confirm('You will start a crawl with the seed:\n@{watchedTarget.target.field_url}\n\nDo you want to proceed?');">
-		}*@
+		@if(currentPage.getTotalRowCount() > 1) {
+			<a href="@routes.Documents.ignoreAll(filterForm.get, searchstr, filters)" class="btn btn-success" onclick=
+				"return confirm('You are about to @{if(filterForm.get.status == Document.Status.NEW) "ignore" else "restore"} @currentPage.getTotalRowCount() documents.\nDo you want to proceed?');">
+				@{if(filterForm.get.status == Document.Status.NEW) "Ignore All" else "Restore All"}
+			</a>
+		}
 		
 	</article>
 }

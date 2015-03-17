@@ -33,6 +33,7 @@ public class Book extends Model {
 	public String isbn;
 	public String corporateAuthor;
 	public String series;
+	public String seriesNumber;
 	@Required
 	public String publisher;
 	public String edition;
