@@ -114,6 +114,7 @@ public class WatchedTargets extends AbstractController {
     }
     
     public static String prettyDateString(String waybackTimestamp) {
+    	if (waybackTimestamp == null || waybackTimestamp.length() < 12) return waybackTimestamp;
     	String year = waybackTimestamp.substring(0, 4);
     	String month = waybackTimestamp.substring(4, 6);
     	String day = waybackTimestamp.substring(6, 8);

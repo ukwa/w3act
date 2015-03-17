@@ -20,6 +20,16 @@
 			context = @play.api.Play.current.configuration.getString("application.context");
 			applySearch(context, 'documents');
 			fillTree("subject", @Html(AbstractController.getSubjectsDataByIds(filterForm.get.subject).toString));
+			$("#startdate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true, maxDate: $("#enddate")[0].value,
+				onClose: function( selectedDate ) {
+					$( "#enddate" ).datepicker( "option", "minDate", selectedDate );
+				}
+			});
+			$("#enddate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true, minDate: $("#startdate")[0].value,
+				onClose: function( selectedDate ) {
+					$( "#startdate" ).datepicker( "option", "maxDate", selectedDate );
+				}
+			});
 		});
 	</script>
 }

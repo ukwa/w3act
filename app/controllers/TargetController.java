@@ -775,6 +775,7 @@ public class TargetController extends AbstractController {
     	Target target = Target.findById(id);
     	Logger.debug("deleted " + target);
     	Ebean.delete(target.watchedTarget.journalTitles);
+    	Ebean.delete(target.watchedTarget.documents);
     	target.delete();
     	Logger.debug("deleted");
     	return redirect(routes.TargetController.index());
@@ -1260,6 +1261,7 @@ public class TargetController extends AbstractController {
 				Target target = Target.find.byId(id);
 		    	if (!watched && target.isWatched()) {
 		    		Ebean.delete(target.watchedTarget.journalTitles);
+		    		Ebean.delete(target.watchedTarget.documents);
 		    		Ebean.delete(target.watchedTarget);
 		    	} else if (watched && !target.isWatched()) {
 		    		filledForm.get().watchedTarget.target = target;
