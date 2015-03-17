@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import models.AssignableArk;
 import models.BlCollectionSubset;
 import models.Book;
 import models.Document;
+import models.DocumentFilter;
 import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
@@ -26,7 +26,6 @@ import models.Subject;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
-import play.data.DynamicForm;
 import play.data.Form;
 import play.data.validation.ValidationError;
 import play.libs.F.Function;
@@ -210,17 +209,16 @@ public class Documents extends AbstractController {
 		Ebean.save(arks);
 	}
 
-	public static Result ignore(Long id, String userString, String watchedTargetString, String service, String subject,
-			String statusString, int pageNo, String sortBy, String order, String filter, boolean filters) {
+	public static Result ignore(Long id, DocumentFilter documentFilter, int pageNo,
+			String sortBy, String order, String filter, boolean filters) {
 		Document document = Document.find.byId(id);
-		if (statusString.equals(Document.Status.NEW.toString()))
+		if (documentFilter.status == Document.Status.NEW)
 			document.status = Document.Status.IGNORED;
 		else
 			document.status = Document.Status.NEW;
 		Ebean.save(document);
 		if (filters)
-			return redirect(routes.Documents.list(userString, watchedTargetString, service, subject,
-					statusString, pageNo, sortBy, order, filter));
+			return redirect(routes.Documents.list(documentFilter, pageNo, sortBy, order, filter));
 		else
 			return redirect(routes.Documents.overview(pageNo, sortBy, "asc"));
 			
@@ -293,43 +291,26 @@ public class Documents extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on Documents
      */
-	public static Result list(String userString, String watchedTargetString, String service, String subject, String statusString,
+	public static Result list(DocumentFilter documentFilter,
 			int pageNo, String sortBy, String order, String filter) {
-		Document.Status status = Document.Status.valueOf(statusString);
-		return renderList(userString, watchedTargetString, service, subject, status, pageNo, sortBy, order, filter, true);
+		return renderList(documentFilter, pageNo, sortBy, order, filter, true);
 	}
 	
     public static Result overview(int pageNo, String sortBy, String order) {
-    	return renderList("" + User.findByEmail(request().username()).id, "", "", "", Document.Status.NEW, pageNo, sortBy, order, "", false);
+    	DocumentFilter documentFilter = new DocumentFilter(User.findByEmail(request().username()).id);
+    	return renderList(documentFilter, pageNo, sortBy, order, "", false);
     }
     
-    public static Result renderList(String userString, String watchedTargetString,
-    		String service, String subject, Document.Status status,
+    public static Result renderList(DocumentFilter documentFilter,
     		int pageNo, String sortBy, String order, String filter, boolean filters) {
     	Logger.info("Documents.list()");
-
-    	Long watchedTargetId = watchedTargetString.isEmpty() || watchedTargetString.equals("null") ?
-    			null : new Long(watchedTargetString);
-    	
-    	if (service.equals("All")) service = "";
-    	
-    	Long userId;
-    	if (watchedTargetId == null) {
-    		userId = userString.isEmpty() || userString.equals("null") ?
-    				null : new Long(userString);
-    	} else {
-    		userId = WatchedTarget.find.byId(watchedTargetId).target.authorUser.id;
-    	}
-    	
-    	List<Long> subjectIds = stringToLongList(subject);
     	
         return ok(
         	list.render(
         			User.findByEmail(request().username()),
-        			filterForm(userId, watchedTargetId, service, subject),
-        			status,
+        			Form.form(DocumentFilter.class).fill(documentFilter),
         			filter,
-        			Document.page(userId, watchedTargetId, service, subjectIds, status, pageNo, 10, sortBy, order, filter),
+        			Document.page(documentFilter, pageNo, 10, sortBy, order, filter),
         			sortBy,
         			order,
         			filters)
@@ -369,18 +350,9 @@ public class Documents extends AbstractController {
 		file.delete();
 	}
 	
-	public static DynamicForm filterForm(Long userId, Long targetId, String service, String subject) {
-    	Map<String,String> filterData = new HashMap<>();
-    	filterData.put("user", "" + userId);
-    	filterData.put("watchedtarget", "" + targetId);
-    	filterData.put("service", service);
-    	filterData.put("subject", subject);
-    	return Form.form().bind(filterData);
-    }
-	
 	public static List<Long> stringToLongList(String subject) {
 		List<Long> subjectIds = new ArrayList<Long>();
-    	if (!subject.isEmpty()) {
+    	if (subject != null && !subject.isEmpty()) {
             String[] subjects = subject.split(", ");
             for (String sId : subjects) {
             	Long subjectId = Long.valueOf(sId);
@@ -388,6 +360,10 @@ public class Documents extends AbstractController {
             }
         }
     	return subjectIds;
+	}
+	
+	public static String longListToString(List<Long> subjectIds) {
+    	return StringUtils.join(subjectIds, ", ");
 	}
 
 }

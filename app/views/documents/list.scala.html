@@ -1,7 +1,8 @@
-@(user: User, filterForm: DynamicForm, status: Document.Status, searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String, filters: Boolean)
+@(user: User, filterForm: Form[DocumentFilter], searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String, filters: Boolean)
 
 @import helper.options
 @import templates.select
+@import templates.inputRange
 @import templates.tree
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio4to8FieldConstructor.f) }
@@ -18,7 +19,7 @@
 		$(document).ready(function() {
 			context = @play.api.Play.current.configuration.getString("application.context");
 			applySearch(context, 'documents');
-			fillTree("subject", @Html(AbstractController.getSubjectsDataByIds(Documents.stringToLongList(filterForm("subject").value)).toString));
+			fillTree("subject", @Html(AbstractController.getSubjectsDataByIds(filterForm.get.subject).toString));
 		});
 	</script>
 }
@@ -46,8 +47,7 @@
     
     // Generate the link
     if (filters)
-    	routes.Documents.list(filterForm("user").value, filterForm("watchedtarget").value,
-    		filterForm("service").value, filterForm("subject").value, status.toString, newPage, sortBy, order, searchstr)
+    	routes.Documents.list(filterForm.get, newPage, sortBy, order, searchstr)
     else
     	routes.Documents.overview(newPage, sortBy, order)
 }
@@ -60,36 +60,35 @@
 	
 	@warningmessage(flash)
 	
-	<ul class="nav nav-tabs">
-		@if(filters) {
-			@if(status == Document.Status.NEW) {
-				<li class="active"><a href="#">New</a></li>
-				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, filterForm("subject").value, "" + Document.Status.SUBMITTED)">Submitted</a></li>
-				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, filterForm("subject").value, "" + Document.Status.IGNORED)">Ignored</a></li>
-			}
-			@if(status == Document.Status.SUBMITTED) {
-				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, filterForm("subject").value, "" + Document.Status.NEW)">New</a></li>
-				<li class="active"><a href="#">Submitted</a></li>
-				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, filterForm("subject").value, "" + Document.Status.IGNORED)">Ignored</a></li>
-			}
-			@if(status == Document.Status.IGNORED) {
-				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, filterForm("subject").value, "" + Document.Status.NEW)">New</a></li>
-				<li><a href="@routes.Documents.list(filterForm.get("user"), filterForm.get("watchedtarget"), filterForm("service").value, filterForm("subject").value, "" + Document.Status.SUBMITTED)">Submitted</a></li>
-				<li class="active"><a href="#">Ignored</a></li>
-			}
-		} else {
-			<li><a href="@routes.WatchedTargets.overview()">My Watched Targets</a></li>
-			<li class="active"><a href="#">My New Documents</a></li>
-		}
-	</ul>
-	
-    <article class="documents">
-    	
-		@if(filters) {
-			<div id="forms">
-	   			@helper.form(action=routes.Documents.list()) {
+	<article class="documents">
+		@helper.form(action=routes.Documents.list()) {
+			<ul class="nav nav-tabs">
+				@if(filters) {
+					@if(filterForm.get.status == Document.Status.NEW) {
+						<li class="active"><a href="#">New</a></li>
+						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.SUBMITTED))">Submitted</a></li>
+						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.IGNORED))">Ignored</a></li>
+					}
+					@if(filterForm.get.status == Document.Status.SUBMITTED) {
+						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.NEW))">New</a></li>
+						<li class="active"><a href="#">Submitted</a></li>
+						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.IGNORED))">Ignored</a></li>
+					}
+					@if(filterForm.get.status == Document.Status.IGNORED) {
+						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.NEW))">New</a></li>
+						<li><a href="@routes.Documents.list(filterForm.get.withStatus(Document.Status.SUBMITTED))">Submitted</a></li>
+						<li class="active"><a href="#">Ignored</a></li>
+					}
+				} else {
+					<li><a href="@routes.WatchedTargets.overview()">My Watched Targets</a></li>
+					<li class="active"><a href="#">My New Documents</a></li>
+				}
+			</ul>
+	    	
+			@if(filters) {
+				<div id="forms">
 		   			<div class="input-group">
-		   				<input type="hidden" name="status" value="@status">
+		   				<input type="hidden" name="status" value="@filterForm.get.status">
 	   					<input type="hidden" name="s" value="@currentSortBy">
 	   					<input type="hidden" name="o" value="@currentOrder">
 						<input type="text" class="form-control lookup-form-control" name="f" placeholder="Enter Document Name" value="@searchstr" id="search-query">
@@ -102,7 +101,7 @@
 						@select(filterForm("user"), options(Users.getUsers), true, '_label -> "Curator",
 							'onchange -> "if(this.form.watchedtarget)this.form.watchedtarget.value='';this.form.submit()"
 						)
-						@if(filterForm("user").value != "null") {
+						@if(filterForm("user").value != null) {
 								@select(filterForm("watchedtarget"), options(Users.getWatchedTargets(new Long(filterForm("user").value))), true, '_label -> "Watched Target",
 									'onchange -> "this.form.submit()"
 								)
@@ -110,70 +109,68 @@
 						@select(filterForm("service"), options(Documents.getPortalsSelection), true, '_label -> "Service",
 							'onchange -> "this.form.submit()"
 						)
+						@inputRange(filterForm("startdate"), filterForm("enddate"), true, '_label -> "Crawl Date",
+							'onchange -> "this.form.submit()"
+						)
 					</div>
 					<div class="col-md-6">
 						@tree(filterForm("subject"), true, '_label -> "Subject(s)", 'onchange -> "this.form.submit()")
 					</div>
 					<div style="clear: both"></div>
-				}
-	
-			</div>
-		}
-    
-    	@pagination(currentPage, link)
-    	
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					@header("title", "Title", currentSortBy, currentOrder, link)
-					@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
-					@header("documentUrl", "Document", currentSortBy, currentOrder, link)
-					@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
-					@if(status != Document.Status.SUBMITTED) {
-						<th>Action</th>
-					} else {
-						<th>SIP</th>
-					}
-				</tr>
-			</thead>
-			<tbody>
-			@for(document <- currentPage.getList) {
-				<tr>
-					<td>
-						@if(status == Document.Status.IGNORED) {
-							@document.title
-						} else {
-							<a href="@routes.Documents.edit(document.id)">@document.title</a>
-						}
-					</td>
-					<td><a href="@document.landingPageUrl" target="_blank">@document.landingPageUrl</a></td>
-					<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
-					<td>@WatchedTargets.prettyDateString(document.waybackTimestamp)</td>
-					@if(status != Document.Status.SUBMITTED) {
-						<td><a href="@routes.Documents.ignore(document.id,
-								filterForm("user").value,
-								filterForm("watchedtarget").value,
-								filterForm("service").value,
-								filterForm("subject").value,
-								status.toString,
-								currentPage.getPageIndex,
-								currentSortBy,
-								currentOrder,
-								searchstr,
-								filters)" class="btn btn-success">
-							@{if(status == Document.Status.NEW) "Ignore" else "Restore"}
-						</a></td>
-					} else {
-						<td>
-							<a href="@routes.Documents.sip(document.id)"  target="_blank">SIP</a>
-						</td>
-					}
-				</tr>
+				</div>
 			}
-			</tbody>
-		</table>
-		
-		@pagination(currentPage, link)
+	    
+	    	@pagination(currentPage, link)
+	    	
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						@header("title", "Title", currentSortBy, currentOrder, link)
+						@header("landingPageUrl", "Landing Page", currentSortBy, currentOrder, link)
+						@header("documentUrl", "Document", currentSortBy, currentOrder, link)
+						@header("waybackTimestamp", "Crawl Date", currentSortBy, currentOrder, link)
+						@if(filterForm.get.status != Document.Status.SUBMITTED) {
+							<th>Action</th>
+						} else {
+							<th>SIP</th>
+						}
+					</tr>
+				</thead>
+				<tbody>
+				@for(document <- currentPage.getList) {
+					<tr>
+						<td>
+							@if(filterForm.get.status == Document.Status.IGNORED) {
+								@document.title
+							} else {
+								<a href="@routes.Documents.edit(document.id)">@document.title</a>
+							}
+						</td>
+						<td><a href="@document.landingPageUrl" target="_blank">@document.landingPageUrl</a></td>
+						<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
+						<td>@WatchedTargets.prettyDateString(document.waybackTimestamp)</td>
+						@if(filterForm.get.status != Document.Status.SUBMITTED) {
+							<td><a href="@routes.Documents.ignore(document.id,
+									filterForm.get,
+									currentPage.getPageIndex,
+									currentSortBy,
+									currentOrder,
+									searchstr,
+									filters)" class="btn btn-success">
+								@{if(filterForm.get.status == Document.Status.NEW) "Ignore" else "Restore"}
+							</a></td>
+						} else {
+							<td>
+								<a href="@routes.Documents.sip(document.id)"  target="_blank">SIP</a>
+							</td>
+						}
+					</tr>
+				}
+				</tbody>
+			</table>
+			
+			@pagination(currentPage, link)
+		}
 		
 		@*helper.form(action = routes.WatchedTargets.crawl(watchedTarget.id)) {
 			<input type="submit" class="btn btn-success" value="Live Crawl" onclick=

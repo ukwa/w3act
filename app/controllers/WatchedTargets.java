@@ -11,7 +11,7 @@ import akka.actor.Props;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import models.Document;
+import models.DocumentFilter;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -81,8 +81,7 @@ public class WatchedTargets extends AbstractController {
     		CrawlActor.crawlAndConvertDocuments(watchedTarget, crawlWayback, null, 3);
     	}
     	
-    	return redirect(routes.Documents.list("" + watchedTarget.target.authorUser.id, "" + id, "", "",
-    			Document.Status.NEW.toString(), 0, "title", "asc", ""));
+    	return redirect(routes.Documents.list(new DocumentFilter().withWatchedTarget(id), 0, "title", "asc", ""));
     }
     
     public static Result crawlAll() {

@@ -132,11 +132,11 @@ GET		/overview/documents					controllers.Documents.overview(p:Int ?= 0, s ?= "ti
 
 GET    	/documents/filterbyjson/:title		controllers.Documents.filterByJson(title)
 GET		/documents/unsaved					controllers.Documents.continueEdit()
-GET     /documents/list						controllers.Documents.list(user ?= "", watchedtarget ?= "", service ?= "", subject ?= "", status ?= models.Document.Status.NEW.toString, p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
+GET     /documents/list						controllers.Documents.list(filter: models.DocumentFilter ?= new models.DocumentFilter(), p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 GET		/documents/:document				controllers.Documents.view(document: Long)
 GET		/documents/:document/edit			controllers.Documents.edit(document: Long)
 GET		/documents/:document/submit			controllers.Documents.submit(document: Long)
-GET		/documents/:document/ignore			controllers.Documents.ignore(document: Long, user, watchedtarget, service, subject, status, p:Int, s, o, f, filters: Boolean)
+GET		/documents/:document/ignore			controllers.Documents.ignore(document: Long, filter: models.DocumentFilter, p:Int, s, o, f, filters: Boolean)
 GET		/documents/:document/sip			controllers.Documents.sip(document: Long)
 GET     /documents/html/*file				controllers.Documents.html(file)
 POST	/documents							controllers.Documents.save()

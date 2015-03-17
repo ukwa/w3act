@@ -5,6 +5,16 @@ $(function () {
 	$("#log-date").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$("#date_of_publication").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$("#publicationDate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
+	$("#startdate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true, maxDate: $("#enddate")[0].value,
+		onClose: function( selectedDate ) {
+			$( "#enddate" ).datepicker( "option", "minDate", selectedDate );
+		}
+	});
+	$("#enddate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true, minDate: $("#startdate")[0].value,
+		onClose: function( selectedDate ) {
+			$( "#startdate" ).datepicker( "option", "maxDate", selectedDate );
+		}
+	});
 });
 
 function getURLParameter(param) {

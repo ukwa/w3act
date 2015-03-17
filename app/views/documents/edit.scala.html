@@ -199,7 +199,7 @@
 	
 	<div class="page-header">
     	<h1>
-    		<a href="@routes.Documents.list("",form("watchedTarget.id").value)">Documents</a> >
+    		<a href="@routes.Documents.list(new DocumentFilter().withWatchedTarget(new Long(form("watchedTarget.id").value)))">Documents</a> >
     		@form("title").value
     	</h1>
 	</div>

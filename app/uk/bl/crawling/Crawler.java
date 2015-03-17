@@ -36,6 +36,7 @@ public class Crawler {
 	private Set<String> knownSites;
 	private List<Document> foundDocuments;
 	private Integer maxDocuments;
+	private String crawlTime;
 	
 	private boolean crawlWayback = false;
 	private static String waybackUrl = Play.application().configuration().getString("wayback_url");
@@ -89,8 +90,10 @@ public class Crawler {
 	}
 	
 	public List<Document> crawlForDocuments(WatchedTarget watchedTarget, String crawlTime, Integer maxDocuments) {
+		Logger.debug("crawlForDocuments");
 		knownSites = new HashSet<>();
 		foundDocuments = new ArrayList<>();
+		this.crawlTime = crawlTime;
 		this.maxDocuments = maxDocuments;
 		
 		String seedUrl = crawlWayback ?
@@ -105,6 +108,7 @@ public class Crawler {
 	}
 	
 	private void breathFirstSearch (WatchedTarget watchedTarget, Set<Link> fringe, int linkDepth) {
+		Logger.debug("breathFirstSearch");
 		if (linkDepth < -1 || (linkDepth == -1 && !foundDocuments.isEmpty())) return;
 		Set<Link> children = new HashSet<>();
 		for (Link link : fringe) {
@@ -131,6 +135,7 @@ public class Crawler {
 											Document document = new Document();
 											document.landingPageUrl = pageUrl;
 											document.documentUrl = hrefUrl;
+											document.waybackTimestamp = crawlTime;
 											document.status = Document.Status.NEW;
 											document.filename = URLDecoder.decode(hrefUrl.substring(hrefUrl.lastIndexOf('/')+1), "UTF-8");
 											document.title = document.filename.substring(0, document.filename.indexOf('.'));
@@ -156,6 +161,7 @@ public class Crawler {
 								document.landingPageUrl = crawlWayback ?
 										urlFromWayback(link.source) : link.source;
 								document.documentUrl = pageUrl;
+								document.waybackTimestamp = crawlTime;
 								document.status = Document.Status.NEW;
 								document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
 								document.title = document.filename.substring(0, document.filename.indexOf('.'));
@@ -187,15 +193,16 @@ public class Crawler {
 				metadataExtractor.extract(document, doc);
 			}
 		} catch (IOException | URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public Response getResponse(String url) throws IOException {
+		Logger.debug("getResponse: " + url);
 		Connection connection = Jsoup.connect(url);
 		
 		connection.request().method(Method.GET);
+		
 		connection.ignoreContentType(true);
 		connection.execute();
 		

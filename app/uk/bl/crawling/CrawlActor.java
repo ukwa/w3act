@@ -37,6 +37,7 @@ public class CrawlActor extends UntypedActor {
 		public List<Document> apply() {
 			Logger.info("Crawling " + watchedTarget.target.fieldUrls.get(0).url);
 			List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
+			Logger.debug("got " + newerCrawlTimes.size() + " new crawl dates");
 			for (String crawlTime : newerCrawlTimes)
 				crawlDocuments(watchedTarget, true, crawlTime, null);
 			Logger.info("Finished crawling " + watchedTarget.target.fieldUrls.get(0).url);
@@ -47,6 +48,7 @@ public class CrawlActor extends UntypedActor {
 	
 	public static List<Document> crawlDocuments(WatchedTarget watchedTarget,
 			boolean crawlWayback, String crawlTime, Integer maxDocuments) {
+		Logger.debug("crawlDocuments of " + watchedTarget.target.fieldUrls.get(0).url + " (date: " + crawlTime + ")");
 		List<Document> documentList = (new Crawler(crawlWayback)).crawlForDocuments(watchedTarget, crawlTime, maxDocuments);
 		List<Document> newDocumentList = new ArrayList<>();
 		if (documentList.isEmpty()) {

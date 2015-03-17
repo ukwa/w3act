@@ -1,5 +1,6 @@
 package models;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -115,23 +116,30 @@ public class Document extends Model {
     	}
     }
     
-    public static Page<Document> page(Long userId, Long watchedTargetId, String service, List<Long> subjectIds,
-    		Status status, int page, int pageSize, String sortBy, String order, String filter) {
+    public static Page<Document> page(DocumentFilter documentFilter, int page,
+    		int pageSize, String sortBy, String order, String filter) {
 
     	ExpressionList<Document> el = find.where();
-    	if (watchedTargetId != null) {
-    		el = el.eq("id_watched_target", watchedTargetId);
-    	} else if (userId != null) {
-    		el = el.in("id_watched_target", Users.getWatchedTargetIds(userId));
+    	if (documentFilter.watchedtarget != null) {
+    		el = el.eq("id_watched_target", documentFilter.watchedtarget);
+    	} else if (documentFilter.user != null) {
+    		el = el.in("id_watched_target", Users.getWatchedTargetIds(documentFilter.user));
     	}
-    	if (!service.isEmpty()) {
-    		el = el.in("id", Portals.getDocumentIds(service));
+    	if (documentFilter.service != null && !documentFilter.service.isEmpty()) {
+    		el = el.in("id", Portals.getDocumentIds(documentFilter.service));
     	}
-    	if (subjectIds != null && !subjectIds.isEmpty()) {
-    		el = el.in("subjects.id", subjectIds);
+    	if (documentFilter.subject != null && !documentFilter.subject.isEmpty()) {
+    		el = el.in("subjects.id", documentFilter.subject);
+    	}
+    	SimpleDateFormat waybackFormat = new SimpleDateFormat("yyyyMMdd");
+    	if (documentFilter.startdate != null) {
+    		el = el.gt("waybackTimestamp", waybackFormat.format(documentFilter.startdate));
+    	}
+    	if (documentFilter.enddate != null) {
+    		el = el.lt("waybackTimestamp", waybackFormat.format(documentFilter.enddate));
     	}
     	
-    	return el.eq("status", status.ordinal())
+    	return el.eq("status", documentFilter.status.ordinal())
         		.icontains("title", filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
@@ -160,24 +168,6 @@ public class Document extends Model {
 		NEW,
 		SUBMITTED,
 		IGNORED;
-		
-        /*private String value;
-
-        private Status(String value) {
-                this.value = value;
-        }
-        
-        public String toString() {
-        	return value;
-        }
-        
-        public static Status getStatus(String value) {
-        	List<Status> statuses = Arrays.<Status>asList(Status.values());
-			for (Status status : statuses)
-				if (status.toString().equals(value))
-					return status;
-			return null;
-        }*/
     }
     
 }
