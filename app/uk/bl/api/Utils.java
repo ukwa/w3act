@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -30,6 +32,7 @@ import com.avaje.ebean.SqlUpdate;
 
 import play.Logger;
 import uk.bl.Const;
+import uk.bl.exception.ActException;
 import uk.bl.exception.UrlInvalidException;
 import models.Collection;
 import models.FieldUrl;
@@ -862,6 +865,33 @@ public enum Utils {
  	    }
 //    	Utils.INSTANCE.generateCsvFile(Const.EXPORT_FILE, sw.toString());
  	    return builder.toString();
+    }
+    
+    public boolean isDuplicate(String url, String dbUrl) throws ActException {
+        url = Utils.INSTANCE.getPath(url);
+        dbUrl = Utils.INSTANCE.getPath(dbUrl);
+    	boolean match = (url.equalsIgnoreCase(dbUrl));
+    	Logger.debug("matched: " + url + " " + dbUrl);
+    	Logger.debug("matched: " + match);
+    	return match;
+    }
+    
+    public String getPath(String url) throws ActException {
+    	String path = null;
+        URI uri;
+		try {
+			uri = new URI(url).normalize();
+	        path = uri.getHost() + uri.getPath();
+	        if (path.startsWith("www.")) {
+	        	path = path.replace("www.", "");
+	        }
+	        if (path.endsWith("/")) {
+	        	path = path.substring(0, path.length() - 1);
+	        }
+		} catch (URISyntaxException e) {
+			throw new ActException(e);
+		}
+		return path;
     }
 }
 

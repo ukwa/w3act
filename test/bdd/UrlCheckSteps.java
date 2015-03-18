@@ -1,12 +1,9 @@
 package bdd;
 
 import static org.fest.assertions.Assertions.assertThat;
-
-import java.net.URI;
-
 import org.apache.commons.lang3.BooleanUtils;
 
-import play.Logger;
+import uk.bl.api.Utils;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -14,8 +11,8 @@ import cucumber.api.java.en.When;
 public class UrlCheckSteps {
 	
 	private String url;
-	private String path;
-	private Boolean duplicate = Boolean.TRUE;
+	private Boolean duplicate = Boolean.FALSE;
+	private String dbUrl = "https://www.bbc.co.uk/test1&query=1&terri=2";
 
 
 	@Given("^I have a URL of \"(.*?)\"$")
@@ -25,13 +22,7 @@ public class UrlCheckSteps {
 
 	@When("^I check to see if it exists in the DB$")
 	public void i_check_to_see_if_it_exists_in_the_DB() throws Throwable {
-        URI uri = new URI(url).normalize();
-        this.path = uri.getHost();
-        if (this.path.startsWith("www.")) {
-        	this.path = this.path.replace("www.", "");
-        }
-        Logger.debug("Normalised " + uri);
-        Logger.debug("Path: " + this.path);
+        this.duplicate = Utils.INSTANCE.isDuplicate(this.url, this.dbUrl);
 	}
 
 	@Then("^I should see a \"(.*?)\"$")
