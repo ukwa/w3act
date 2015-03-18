@@ -777,6 +777,9 @@ public enum Utils {
 	}
 	
     public FieldUrl isExistingTarget(String url) {
+    	
+    	// remove protocol
+    	
     	Set<String> varyingUrls = getVaryingUrls(url);
     	for (String varyingUrl : varyingUrls) {
     		Logger.debug("varyingUrl: " + varyingUrl);
@@ -786,6 +789,7 @@ public enum Utils {
     			return fieldUrl;
     		}
     	}
+    	
     	return null;
 	
     }

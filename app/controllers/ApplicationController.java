@@ -349,17 +349,6 @@ public class ApplicationController extends Controller {
 	    }
     }
     
-    @With(SecuredAction.class)
-    @BodyParser.Of(BodyParser.Json.class)
-    public static Result collectionUpdate(Long id) throws ActException {
-//    	JsonNode node = request().body().asJson();
-//    	ObjectMapper objectMapper = new ObjectMapper();
-//		objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
-		
-	    return ok(response().getHeaders().get(LOCATION));
-    }
-    
-    
     /***
 	 *
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Turok 2","field_subjects": ["13","14"],"field_crawl_frequency": "monthly","field_nominating_org": "1","field_urls": ["http://turok99.com"],"field_collection_cats": ["8","9"],"field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets

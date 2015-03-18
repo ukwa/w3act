@@ -298,14 +298,18 @@ GET     /api/suggested_collections_filter/:url      controllers.TargetController
 GET     /api/subjects_instance/:url          controllers.InstanceController.getSubjectTree(url)
 GET     /api/suggested_collections_instance/:url      controllers.InstanceController.getSuggestedCollections(url)
 #GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
+
 GET     /api/targets/:id                  	 controllers.TargetController.viewAsJson(id:Long)
 GET     /api/targets/:id/instances       	 controllers.InstanceController.byTargetAsJson(id:Long)
 GET    	/api/targets/bycollection/:id        controllers.TargetController.collectionTargetsAsJson(id:Long)
-GET		/api/collections					 controllers.CollectionController.getByJson()
-GET     /api/collections/:id          		 controllers.CollectionController.viewAsJson(id:Long)
 POST    /api/targets						controllers.ApplicationController.bulkImport()
 PUT		/api/targets/:id					controllers.ApplicationController.targetUpdate(id:Long)
-PUT 	/api/collections/:id 				controllers.ApplicationController.collectionUpdate(id:Long)
+
+GET		/api/collections					controllers.CollectionController.getByJson()
+GET     /api/collections/:id          		controllers.CollectionController.viewAsJson(id:Long)
+PUT 	/api/collections/:id 				controllers.CollectionController.collectionUpdate(id:Long)
+GET		/api/collections/:id/targets		controllers.CollectionController.getCollectionTargets(id:Long)
+
 
 # Password management
 GET     /passwords                           controllers.PasswordController.edit()

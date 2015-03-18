@@ -11,6 +11,7 @@ import models.User;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
+import play.Play;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.validation.ValidationError;
@@ -18,7 +19,9 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Security;
+import play.mvc.With;
 import uk.bl.Const;
+import uk.bl.exception.ActException;
 import views.html.collections.edit;
 import views.html.collections.list;
 import views.html.collections.view;
@@ -28,12 +31,20 @@ import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 
 
-@Security.Authenticated(SecuredController.class)
+/**
+ * @author kli
+ *
+ */
+/**
+ * @author kli
+ *
+ */
 public class CollectionController extends AbstractController {
 
 	/**
 	 * Display the Collections.
 	 */
+	@Security.Authenticated(SecuredController.class)
 	public static Result index() {
 		return GO_HOME;
 	}
@@ -52,6 +63,7 @@ public class CollectionController extends AbstractController {
 	 * @param filter
 	 *            Filter applied on target urls
 	 */
+	@Security.Authenticated(SecuredController.class)
 	public static Result list(int pageNo, String sortBy, String order, String filter) {
 		
 		JsonNode node = getCollectionsDataByFilter(filter);
@@ -67,6 +79,7 @@ public class CollectionController extends AbstractController {
 	 * 
 	 * @return
 	 */
+	@Security.Authenticated(SecuredController.class)
 	public static Result search() {
     	DynamicForm requestData = form().bindFromRequest();
     	String action = requestData.get("action");
@@ -94,6 +107,7 @@ public class CollectionController extends AbstractController {
     	}
 	}
 
+	@Security.Authenticated(SecuredController.class)
 	@BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String name) {
     	JsonNode jsonData = null;
@@ -104,12 +118,14 @@ public class CollectionController extends AbstractController {
         return ok(jsonData);
     }
 	
+	@Security.Authenticated(SecuredController.class)
 	@BodyParser.Of(BodyParser.Json.class)
     public static Result getByJson() {
     	JsonNode jsonData = getCollectionsData();
         return ok(jsonData);
     }
 	
+	@Security.Authenticated(SecuredController.class)
 	public static Result view(Long id) {
 		User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
@@ -125,6 +141,7 @@ public class CollectionController extends AbstractController {
 		}
 	}
 	
+	@Security.Authenticated(SecuredController.class)
 	public static Result viewAsJson(Long id) {
 		Collection collection = Collection.findById(id);
 		if( collection!= null ) {
@@ -135,12 +152,14 @@ public class CollectionController extends AbstractController {
 		}
 	}
 	
+	@Security.Authenticated(SecuredController.class)
     public static Result viewAct(String url) {
 		User user = User.findByEmail(request().username());
 		Collection collection = Collection.findByUrl(url);
         return ok(view.render(collection, user));
     }
     
+	@Security.Authenticated(SecuredController.class)
     public static Result newForm() {
     	User user = User.findByEmail(request().username());
 		JsonNode node = getCollectionsData();
@@ -151,6 +170,7 @@ public class CollectionController extends AbstractController {
     	
     }
 
+	@Security.Authenticated(SecuredController.class)
     public static Result edit(Long id) {
     	User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
@@ -164,6 +184,7 @@ public class CollectionController extends AbstractController {
         return ok(edit.render(collectionForm, user, id, node));
     }
 
+	@Security.Authenticated(SecuredController.class)
     public static Result info(Form<Collection> form, Long id) {
     	Logger.debug("info");
     	User user = User.findByEmail(request().username());
@@ -174,12 +195,14 @@ public class CollectionController extends AbstractController {
 		return badRequest(edit.render(form, user, id, node));
     }
     
+	@Security.Authenticated(SecuredController.class)
 	public static Result newInfo(Form<Collection> form) {
 		User user = User.findByEmail(request().username());
 		JsonNode node = getCollectionsData();
         return badRequest(newForm.render(form, user, node));
 	}
 	
+	@Security.Authenticated(SecuredController.class)
     public static Result save() {
     	
     	DynamicForm requestData = form().bindFromRequest();
@@ -220,6 +243,7 @@ public class CollectionController extends AbstractController {
         return null;    	
     }
     
+	@Security.Authenticated(SecuredController.class)
     public static Result update(Long id) {
     	DynamicForm requestData = form().bindFromRequest();
         Form<Collection> filledForm = form(Collection.class).bindFromRequest();
@@ -284,7 +308,37 @@ public class CollectionController extends AbstractController {
         return null;
     }
 	    
+	@Security.Authenticated(SecuredController.class)
     public static Result sites(Long id) {
         return redirect(routes.TargetController.collectionTargets(0, "title", "asc", "", id));
-    }    
+    }
+	
+	
+    /**
+     * @param id
+     * @return
+     * 
+     * curl -v -H "Content-Type: application/json" -X PUT -d '{"name": "kinman li"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/collections/1
+     * @throws ActException
+     */
+    @With(SecuredAction.class)
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result collectionUpdate(Long id) throws ActException {
+//    	JsonNode node = request().body().asJson();
+//    	ObjectMapper objectMapper = new ObjectMapper();
+//		objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
+    	Collection collection = Collection.findById(id);
+		String url = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/collections/" + collection.id;
+		Logger.debug("location: " + url);
+		response().setHeader(LOCATION, url);
+		Logger.debug("response 200 updated");
+	    return ok(response().getHeaders().get(LOCATION));
+    }
+    
+	@Security.Authenticated(SecuredController.class)
+    public static Result getCollectionTargets(Long id) {
+		Collection collection = Collection.findById(id);
+		Logger.debug("collections: " + collection.targets.size());
+		return ok(Json.toJson(collection.targets));
+    }
 }

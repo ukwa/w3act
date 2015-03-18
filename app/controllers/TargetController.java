@@ -384,6 +384,7 @@ public class TargetController extends AbstractController {
     	Collection collection = Collection.findById(collectionId);
     	if( collection != null ) {
     		List<Target> targets = Target.allCollectionTargets(collection.id);
+    		Logger.debug("collections targets: " + targets.size());
     		return ok( Json.toJson(targets));
     	} else {
     		return notFound("There is not collection with ID "+collectionId);
@@ -1272,38 +1273,45 @@ public class TargetController extends AbstractController {
             String[] urls = fieldUrl.split(",");
             List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
             
-            for (String url : urls) {
-            	String trimmed = url.trim();
-            	FieldUrl isExistingTarget = isExistingTarget(trimmed); 
-            	if (isExistingTarget != null) {
-		            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target " + "");
-		            filledForm.reject(ve);
-		            return newInfo(filledForm);
-            	} else {
-                    URL uri;
-					try {
-		            	Logger.debug("url: " + trimmed);
-						uri = new URI(trimmed).normalize().toURL();
-	        			String extFormUrl = uri.toExternalForm();
-	        			
-	        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
-	        			Logger.debug("valid? " + isValidUrl);
-	        			if (!isValidUrl) {
-	        				throw new ActException("Invalid URL");
-	        			}
-	        			
-		            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
-		            	fu.domain = Scope.INSTANCE.getDomainFromUrl(extFormUrl.trim());
-
-		            	Logger.debug("extFormUrl: " + extFormUrl);
-		            	fieldUrls.add(fu);
-					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
-			            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+			try {
+				
+	            for (String url : urls) {
+	            	String trimmed = url.trim();
+	            	Logger.debug("url: " + trimmed);
+	                URL uri = new URI(trimmed).normalize().toURL();
+	                
+	    			String extFormUrl = uri.toExternalForm();
+	    			
+//	    			String path = uri.getPath(); 
+	    			
+	    			
+	            	FieldUrl isExistingFieldUrl = isExistingTarget(trimmed);
+	            	
+	            	if (isExistingFieldUrl != null) {
+	    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
+			            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
 			            filledForm.reject(ve);
 			            return newInfo(filledForm);
-			        }
-            	}
-            }
+	            	} else {
+		        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
+		        			Logger.debug("valid? " + isValidUrl);
+		        			if (!isValidUrl) {
+		        				throw new ActException("Invalid URL");
+		        			}
+		        			
+			            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
+			            	fu.domain = Scope.INSTANCE.getDomainFromUrl(extFormUrl.trim());
+	
+			            	Logger.debug("extFormUrl: " + extFormUrl);
+			            	fieldUrls.add(fu);
+	            	}
+	            }
+			} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
+	            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+	            filledForm.reject(ve);
+	            return newInfo(filledForm);
+	        }
+	            
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + fieldUrls);
         }		        
