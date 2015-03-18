@@ -184,7 +184,8 @@
 		
 		@if(currentPage.getTotalRowCount() > 1) {
 			<a href="@routes.Documents.ignoreAll(filterForm.get, searchstr, filters)" class="btn btn-success" onclick=
-				"return confirm('You are about to @{if(filterForm.get.status == Document.Status.NEW) "ignore" else "restore"} @currentPage.getTotalRowCount() documents.\nDo you want to proceed?');">
+				"return confirm('You are about to @{if(filterForm.get.status == Document.Status.NEW) "ignore" else "restore"} @currentPage.getTotalRowCount() documents.\nDo you want to proceed?');"
+				style="float: right">
 				@{if(filterForm.get.status == Document.Status.NEW) "Ignore All" else "Restore All"}
 			</a>
 		}

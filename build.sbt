@@ -1,6 +1,6 @@
 name := "w3act"
 
-version := "0.5.1"
+version := "0.6"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 

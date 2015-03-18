@@ -40,9 +40,9 @@
 						cssSelector = localCssSelector;
 					}
 				}
-				console.log("cssSelector: " + cssSelector);
+				//console.log("cssSelector: " + cssSelector);
 				text = win.getSelection().toString();
-				console.log("text: " + text);
+				//console.log("text: " + text);
 			} else if (win.document.selection && win.document.selection.type != "Control") {
 				text = win.document.selection.createRange().text;
 				alert("case2: " + text);
@@ -168,7 +168,7 @@
 			@if(editable) {
 				document.getElementById("document_view").contentWindow.onmouseup =
 					function showOptions(event) {
-						console.log(event);
+						//console.log(event);
 						var selectionText = getSelectionText();
 						if (selectionText && previousSelection != selectionText) {
 							$("#selection_menu").css({display: "block", left: event.pageX - 50});
