@@ -13,8 +13,11 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 
 import play.*;
 import play.mvc.*;
@@ -199,6 +202,164 @@ public class ApplicationController extends Controller {
         );
     }
     
+    /**
+     * @param id
+     * @return
+     * 
+     * curl -v -H "Content-Type: application/json" -X PUT -d '{"uk_postal_address_url": "http://belly.co.uk"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets/74
+     * curl -v -H "Content-Type: application/json" -X PUT -d '{"uk_postal_address_url": "http://belly.co.uk", "field_urls": ["http://www.poopoo.co.uk"]}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets/74
+     * curl -v -H "Content-Type: application/json" -X PUT -d '{"field_subjects": ["13","14"]}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets/74
+     * curl -v -H "Content-Type: application/json" -X PUT -d '{"field_collection_cats": ["2","4"]}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets/74
+     * @throws ActException
+     */
+    @With(SecuredAction.class)
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result targetUpdate(Long id) throws ActException {
+    	JsonNode node = request().body().asJson();
+    	ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
+    	Logger.debug(node.asText());
+		try {
+			Target jsonTarget = objectMapper.readValue(node.toString(), Target.class);
+//			Long id = jsonTarget.id;
+			if (id == null) {
+				return badRequest("No ID found: " + id);
+			}
+			Logger.debug("node: " + node);
+			
+			// process Targets here
+			Target dbTarget = Target.findById(id);
+			
+			if (dbTarget == null) {
+				return badRequest("No Target Found for ID: " + id);
+			}
+			Logger.debug("old value: " + dbTarget.ukPostalAddressUrl);
+			
+			// find field and then update/save
+			ObjectReader updater = objectMapper.readerForUpdating(dbTarget);
+			Target merged = updater.readValue(node);
+			Logger.debug("merged: " + merged.id + " " + merged.fieldUrl());
+			
+			// url update
+			if (jsonTarget.fieldUrls != null) {
+				if (merged.fieldUrls == null) {
+					merged.fieldUrls = new ArrayList<FieldUrl>();
+				}
+				if (jsonTarget.getField_urls() != null) {
+					for (String url : jsonTarget.getField_urls()) {
+		            	String trimmed = url.trim();
+						URL uri = new URI(trimmed).normalize().toURL();
+		    			String extFormUrl = uri.toExternalForm();
+		    			
+		    			FieldUrl existingFieldUrl = FieldUrl.findByUrl(trimmed);
+						if (existingFieldUrl != null) {
+							Logger.debug("CONFLICT existingFieldUrl Url: " + existingFieldUrl.url);
+							return status(Http.Status.CONFLICT);
+						}
+		
+		            	FieldUrl fieldUrl = new FieldUrl(extFormUrl.trim());
+						fieldUrl.domain = Scope.INSTANCE.getDomainFromUrl(fieldUrl.url);
+						merged.fieldUrls.add(fieldUrl);
+					}
+				}
+			}
+			
+			List<String> fieldSubjects = jsonTarget.getField_subjects();
+			if (fieldSubjects != null) {
+				if (merged.subjects == null) {
+					merged.subjects = new ArrayList<Subject>();
+				}
+				for (String fieldSubject : fieldSubjects) {
+					try {
+						Subject subject = getSubject(fieldSubject);
+		            	if (subject.parent != null) {
+		            		merged.subjects = Utils.INSTANCE.processParentsSubjects(merged.subjects, subject.parent.id);
+		            	}
+		        		if (!merged.subjects.contains(subject)) {
+		        			merged.subjects.add(subject);
+		        		}
+					} catch(TaxonomyNotFoundException e) {
+						return badRequest("No Subject Found for : " + e);
+					} catch(Exception e) {
+						return badRequest("Issue with Subject: " + fieldSubject);
+					}
+				}
+			}
+			
+			List<String> fieldCollections = jsonTarget.getField_collection_cats();
+			if (fieldCollections != null) {
+				if (merged.collections == null) {
+					merged.collections = new ArrayList<Collection>();
+				}
+				for (String fieldCollection : fieldCollections) {
+					try {
+						Collection collection = getCollection(fieldCollection);
+						Logger.debug("collection: " + collection);
+		            	if (collection.parent != null) {
+		            		merged.collections = Utils.INSTANCE.processParentsCollections(merged.collections, collection.parent.id);
+		            	}
+		        		if (!merged.collections.contains(collection)) {
+		        			merged.collections.add(collection);
+		        		}
+					} catch(TaxonomyNotFoundException e) {
+						return badRequest("No Collection Found for : " + fieldCollection);
+					} catch(Exception e) {
+						return badRequest("Issue with Collection: " + fieldCollection);
+					}
+				}
+			}
+			
+			Logger.debug("fieldOrganisation...");
+			String fieldOrganisation = jsonTarget.getField_nominating_org();				
+			if (StringUtils.isNotEmpty(fieldOrganisation)) {
+				Long orgId = Long.valueOf(fieldOrganisation);
+				Organisation organisation = Organisation.findById(orgId);
+				if (organisation == null) {
+					return badRequest("No Organisation Found for : " + orgId);
+				}
+				merged.organisation = organisation;
+			}
+			
+			// "field_crawl_start_date": "1417255200"
+			if (jsonTarget.getField_crawl_start_date() != null) {
+				merged.crawlStartDate = Utils.INSTANCE.getDateFromSeconds(jsonTarget.getField_crawl_start_date());
+			}
+			if (jsonTarget.getField_crawl_end_date() != null) {
+				merged.crawlEndDate = Utils.INSTANCE.getDateFromSeconds(jsonTarget.getField_crawl_end_date());
+			}
+			
+			if (StringUtils.isNotBlank(jsonTarget.getSelector())) {
+				Long selectorId = Long.valueOf(jsonTarget.getSelector());
+				User selector = User.findById(selectorId);
+				if (selector != null) {
+					merged.authorUser = selector;
+				}
+			}
+			
+			merged.runChecks();
+			merged.update();
+			String url = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + merged.id;
+			Logger.debug("location: " + url);
+			response().setHeader(LOCATION, url);
+			Logger.debug("response 200 updated");
+		    return ok(response().getHeaders().get(LOCATION));
+	    } catch (Exception e) {
+	    	Logger.error("error: " + e);
+	        return Results.internalServerError(e.getMessage());
+	    }
+    }
+    
+    @With(SecuredAction.class)
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result collectionUpdate(Long id) throws ActException {
+//    	JsonNode node = request().body().asJson();
+//    	ObjectMapper objectMapper = new ObjectMapper();
+//		objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
+		
+	    return ok(response().getHeaders().get(LOCATION));
+    }
+    
+    
     /***
 	 *
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"title": "Turok 2","field_subjects": ["13","14"],"field_crawl_frequency": "monthly","field_nominating_org": "1","field_urls": ["http://turok99.com"],"field_collection_cats": ["8","9"],"field_crawl_start_date": "1417255200"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
@@ -328,7 +489,7 @@ public class ApplicationController extends Controller {
 					if (organisation == null) {
 						return badRequest("No Organisation Found for : " + id);
 					}
-					target.organisation = Organisation.findById(id);
+					target.organisation = organisation;
 				}
 
 		        List<Collection> newCollections = new ArrayList<Collection>();
@@ -374,9 +535,7 @@ public class ApplicationController extends Controller {
 				
 				target.url = "act-" + Utils.INSTANCE.createId();
 				
-				target.isUkHosting = target.isUkHosting();
-				target.isTopLevelDomain = target.isTopLevelDomain();
-				target.isUkRegistration = target.isUkRegistration();
+				target.runChecks();
 				
 //				target.edit_url = Utils.INSTANCE.getWctUrl(target.vid);
 //				target.createdAt = Utils.INSTANCE.getDateFromSeconds(target.getCreated());
@@ -410,8 +569,7 @@ public class ApplicationController extends Controller {
 	    	}
         } catch (IllegalArgumentException e) {
 			return badRequest("URL invalid: " + e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
         	Logger.error("error: " + e);
             return Results.internalServerError(e.getMessage());
         }

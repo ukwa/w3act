@@ -21,6 +21,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -104,6 +106,7 @@ public class Target extends UrlModel {
 		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
     public List<Flag> flags;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<LookupEntry> lookupEntries;
 
@@ -2151,6 +2154,21 @@ public class Target extends UrlModel {
 		return (!this.indicateLicenses() && CollectionUtils.isEmpty(this.collections));
 	}
 	
+    @PreUpdate
+    @PrePersist
+	public void preSaveChecks() throws ActException, WhoisException {
+		Logger.debug("before persist");
+		runChecks();
+		Logger.debug("after persist");
+	}
+
+    public void runChecks() throws ActException, WhoisException {
+		this.isUkHosting = isUkHosting();
+		this.isTopLevelDomain = isTopLevelDomain();
+		this.isUkRegistration = isUkRegistration();
+		Logger.debug("runChecks");
+    }
+    
 	public List<String> getField_urls() {
 		return field_urls;
 	}
