@@ -1,4 +1,4 @@
-package bdd;
+package bdd.step_definitions;
 
 import static org.fest.assertions.Assertions.assertThat;
 

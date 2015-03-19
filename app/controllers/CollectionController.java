@@ -3,7 +3,9 @@ package controllers;
 import static play.data.Form.form;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import models.Collection;
 import models.User;
@@ -339,6 +341,13 @@ public class CollectionController extends AbstractController {
     public static Result getCollectionTargets(Long id) {
 		Collection collection = Collection.findById(id);
 		Logger.debug("collections: " + collection.targets.size());
-		return ok(Json.toJson(collection.targets));
+		
+		JsonNode jsonNode = Json.toJson(collection.targets);
+        Iterator<Entry<String, JsonNode>> fieldsIter = jsonNode.fields();
+        while (fieldsIter.hasNext()) {
+            Entry<String, JsonNode> field = fieldsIter.next();
+            Logger.debug("key: " + field.getKey() + " - " + field.getValue());
+        }		
+		return ok(jsonNode);
     }
 }

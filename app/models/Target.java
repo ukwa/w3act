@@ -2169,6 +2169,19 @@ public class Target extends UrlModel {
 		Logger.debug("runChecks");
     }
     
+    @JsonIgnore
+    public List<Collection> getCollectionCategories() {
+    	List<Collection> categories = new ArrayList<Collection>();
+    	for (Collection collection : this.collections) {
+    		if (collection.parent == null) {
+    			categories.add(collection);
+    		}
+    	}
+    	Logger.debug(this.collections.size()  + " - " + categories.size());
+    	return categories;
+//    	return Collection.getCollectionCategoriesByTargetId(this.id);
+    }
+    
 	public List<String> getField_urls() {
 		return field_urls;
 	}

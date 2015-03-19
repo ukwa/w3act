@@ -379,5 +379,20 @@ public class Collection extends Taxonomy {
 		return children;
 	}
 	
+	public static List<Collection> getCollectionCategoriesByTargetId(Long id) {
+		ExpressionList<Collection> categories = find.fetch("target").where().eq("target.id", id).isNull("parent");
+		return categories.findList();
+	}
+
+    @JsonIgnore
+	public List<Target> getDirectTargets() {
+		List<Target> directTargets = new ArrayList<Target>();
+		for (Target target : this.targets) {
+			
+		}
+		return this.targets;
+		
+	}
+
 }
 

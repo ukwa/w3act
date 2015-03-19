@@ -299,11 +299,12 @@ GET     /api/subjects_instance/:url          controllers.InstanceController.getS
 GET     /api/suggested_collections_instance/:url      controllers.InstanceController.getSuggestedCollections(url)
 #GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
 
-GET     /api/targets/:id                  	 controllers.TargetController.viewAsJson(id:Long)
-GET     /api/targets/:id/instances       	 controllers.InstanceController.byTargetAsJson(id:Long)
-GET    	/api/targets/bycollection/:id        controllers.TargetController.collectionTargetsAsJson(id:Long)
+GET     /api/targets/:id                  	controllers.TargetController.viewAsJson(id:Long)
+GET     /api/targets/:id/instances       	controllers.InstanceController.byTargetAsJson(id:Long)
+GET    	/api/targets/bycollection/:id       controllers.TargetController.collectionTargetsAsJson(id:Long)
 POST    /api/targets						controllers.ApplicationController.bulkImport()
 PUT		/api/targets/:id					controllers.ApplicationController.targetUpdate(id:Long)
+GET    	/api/targets/:id/categories        	controllers.TargetController.getTargetCategories(id:Long)
 
 GET		/api/collections					controllers.CollectionController.getByJson()
 GET     /api/collections/:id          		controllers.CollectionController.viewAsJson(id:Long)

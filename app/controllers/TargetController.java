@@ -54,6 +54,7 @@ import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -1824,5 +1825,21 @@ public class TargetController extends AbstractController {
 		}
 		return res;
 	}
+	
+	@Security.Authenticated(SecuredController.class)
+	public static Result getTargetCategories(Long id) {
+		Target target = Target.findById(id);
+		List<Collection> categories = target.getCollectionCategories();
+		
+		JsonNode jsonNode = Json.toJson(categories);
+		Iterator<JsonNode> iterator = jsonNode.iterator();
+		Logger.debug("hasNext? " + iterator.hasNext());
+		while(iterator.hasNext()) {
+			JsonNode node = (JsonNode) iterator.next();
+			ObjectNode objectNode = (ObjectNode)node;
+			objectNode.remove("children");
+		}
+		return ok(jsonNode);
+    }
 }
 

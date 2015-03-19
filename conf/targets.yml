@@ -13,7 +13,24 @@ fieldUrls:
 
   - &fieldUrl1 !!models.FieldUrl
     url:   http://www.bbc.co.uk/test1
+
+  - &fieldUrl2 !!models.FieldUrl
+    url:   https://www.woooosh.co.uk
+
+# Collections
+
+collections:
+  - &collection1 !!models.Collection
+    id:             60
+    name:           UK General Election 2015
+    createdAt:      2012-02-01
     
+  - &collection2 !!models.Collection
+    id:             105
+    name:           Election Blogs
+    createdAt:      2012-02-01
+    parent:         *collection1
+
 # Targets
 
 targets: 
@@ -25,3 +42,13 @@ targets:
     fieldUrls:      [*fieldUrl1]
     authorUser:     *bob
     createdAt:      2012-02-01
+    collections:    [*collection1, *collection2]
+    
+  - &target2 !!models.Target
+    id:             2
+    title:          Another Target Title
+    crawlFrequency: MONTHLY
+    fieldUrls:      [*fieldUrl2]
+    authorUser:     *bob
+    createdAt:      2012-02-01
+    
