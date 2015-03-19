@@ -384,15 +384,5 @@ public class Collection extends Taxonomy {
 		return categories.findList();
 	}
 
-    @JsonIgnore
-	public List<Target> getDirectTargets() {
-		List<Target> directTargets = new ArrayList<Target>();
-		for (Target target : this.targets) {
-			
-		}
-		return this.targets;
-		
-	}
-
 }
 

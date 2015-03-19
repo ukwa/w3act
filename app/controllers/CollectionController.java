@@ -343,11 +343,6 @@ public class CollectionController extends AbstractController {
 		Logger.debug("collections: " + collection.targets.size());
 		
 		JsonNode jsonNode = Json.toJson(collection.targets);
-        Iterator<Entry<String, JsonNode>> fieldsIter = jsonNode.fields();
-        while (fieldsIter.hasNext()) {
-            Entry<String, JsonNode> field = fieldsIter.next();
-            Logger.debug("key: " + field.getKey() + " - " + field.getValue());
-        }		
 		return ok(jsonNode);
     }
 }

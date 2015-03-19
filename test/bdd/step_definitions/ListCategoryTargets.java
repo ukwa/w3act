@@ -43,8 +43,8 @@ public class ListCategoryTargets {
 				}
 				Collection categoryFound = Collection.findById(categoryId);
 				Logger.debug("categoryFound: " + categoryFound);
-				targets = categoryFound.getDirectTargets();
-				targetCount = categoryFound.getDirectTargets().size();
+				targets = categoryFound.targets;
+				targetCount = categoryFound.targets.size();
 				Logger.debug("targets: " + targetCount);
 		    	JsonNode jsonData = Json.toJson(targets);
 				Logger.debug("JSON: " + jsonData);
