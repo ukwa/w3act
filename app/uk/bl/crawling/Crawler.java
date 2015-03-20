@@ -102,7 +102,7 @@ public class Crawler {
 		knownSites.add(seedUrl);
 		Set<Link> fringe = new HashSet<>();
 		fringe.add(new Link(null, seedUrl));
-		breathFirstSearch(watchedTarget, fringe, 1);
+		breathFirstSearch(watchedTarget, fringe, 2);
 		
 		return foundDocuments;
 	}
@@ -154,23 +154,26 @@ public class Crawler {
 						}
 					} else if (urlMatchesScheme(pageUrl, watchedTarget.documentUrlScheme)) {
 						String contentDisposition = response.header("Content-Disposition");
-						if (contentDisposition != null) {
-							contentDisposition = contentDisposition.replace("\"", "");
-							if (contentDisposition.endsWith(".pdf")) {
-								Document document = new Document();
-								document.landingPageUrl = crawlWayback ?
-										urlFromWayback(link.source) : link.source;
-								document.documentUrl = pageUrl;
-								document.waybackTimestamp = crawlTime;
-								document.status = Document.Status.NEW;
+						contentDisposition = contentDisposition == null ?
+								"" : contentDisposition.replace("\"", "");
+						String contentType = response.header("Content-Type");
+						if (contentType.equals("application/pdf") || contentDisposition.endsWith(".pdf")) {
+							Document document = new Document();
+							document.landingPageUrl = crawlWayback ?
+									urlFromWayback(link.source) : link.source;
+							document.documentUrl = pageUrl;
+							document.waybackTimestamp = crawlTime;
+							document.status = Document.Status.NEW;
+							if (contentType.equals("application/pdf"))
+								document.filename = URLDecoder.decode(pageUrl.substring(pageUrl.lastIndexOf('/')+1), "UTF-8");
+							else
 								document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
-								document.title = document.filename.substring(0, document.filename.indexOf('.'));
-								document.watchedTarget = watchedTarget;
-								document.subjects = watchedTarget.target.subjects;
-								foundDocuments.add(document);
-								if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
-								Logger.debug("hidden pdf found: " + document.filename + " (url: " + pageUrl + ")");
-							}
+							document.title = document.filename.substring(0, document.filename.indexOf('.'));
+							document.watchedTarget = watchedTarget;
+							document.subjects = watchedTarget.target.subjects;
+							Logger.debug("hidden pdf found: " + document.filename + " (url: " + pageUrl + ")");
+							foundDocuments.add(document);
+							if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
 						}
 					}
 				}

@@ -127,9 +127,12 @@
 						@tree(filterForm("subject"), true, '_label -> "Subject(s)", 'onchange -> "this.form.submit()")
 					</div>
 					<div style="clear: both"></div>
+					<div class="text-center">
+						<a href="@routes.Documents.export(filterForm.get, currentSortBy, currentOrder, searchstr)" class="btn btn-primary">Export</a>
+					</div>
 				</div>
 			}
-	    
+			
 	    	@pagination(currentPage, link)
 	    	
 			<table class="table table-hover">

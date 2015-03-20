@@ -134,6 +134,7 @@ GET    	/documents/filterbyjson/:title		controllers.Documents.filterByJson(title
 GET		/documents/unsaved					controllers.Documents.continueEdit()
 GET     /documents/list						controllers.Documents.list(filter: models.DocumentFilter ?= new models.DocumentFilter(), p:Int ?= 0, s ?= "title", o ?= "asc", f ?= "")
 GET		/documents/ignoreall				controllers.Documents.ignoreAll(filter: models.DocumentFilter, f, filters: Boolean)
+GET		/documents/export					controllers.Documents.export(filter: models.DocumentFilter, s, o, f)
 GET     /documents/html/*file				controllers.Documents.html(file)
 GET		/documents/:document				controllers.Documents.view(document: Long)
 GET		/documents/:document/edit			controllers.Documents.edit(document: Long)

@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
+import com.avaje.ebean.Query;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import controllers.Portals;
@@ -116,7 +117,7 @@ public class Document extends Model {
     	}
     }
     
-    public static ExpressionList<Document> expressionList(DocumentFilter documentFilter, String filter) {
+    public static Query<Document> query(DocumentFilter documentFilter, String sortBy, String order, String filter) {
 
     	ExpressionList<Document> el = find.where();
     	if (documentFilter.watchedtarget != null) {
@@ -139,13 +140,13 @@ public class Document extends Model {
     	}
     	
     	return el.eq("status", documentFilter.status.ordinal())
-        		.icontains("title", filter);
+        		.icontains("title", filter)
+        		.orderBy(sortBy + " " + order);
     }
     
     public static Page<Document> page(DocumentFilter documentFilter, int page,
     		int pageSize, String sortBy, String order, String filter) {
-    	return expressionList(documentFilter, filter)
-    			.orderBy(sortBy + " " + order)
+    	return query(documentFilter, sortBy, order, filter)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);

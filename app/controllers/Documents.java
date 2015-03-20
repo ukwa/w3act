@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.avaje.ebean.Ebean;
-import com.avaje.ebean.ExpressionList;
+import com.avaje.ebean.Query;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.AssignableArk;
@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import uk.bl.Const;
 import uk.bl.configurable.BlCollectionSubsetList;
 import uk.bl.configurable.PortalList;
 import views.html.documents.edit;
@@ -225,20 +226,51 @@ public class Documents extends AbstractController {
 	}
 	
 	public static Result ignoreAll(DocumentFilter documentFilter, String filter, boolean filters) {
-		ExpressionList<Document> expressionList = Document.expressionList(documentFilter, filter);
+		Query<Document> query = Document.query(documentFilter, "title", "asc", filter);
 		Document.Status status;
 		if (documentFilter.status == Document.Status.NEW)
 			status = Document.Status.IGNORED;
 		else
 			status = Document.Status.NEW;
-		for (Document document : expressionList.findList()) {
+		for (Document document : query.findList()) {
 			document.status = status;
 			Ebean.save(document);
 		}
 		if (filters)
-			return redirect(routes.Documents.list(documentFilter, 0, "title", "asc", ""));
+			return redirect(routes.Documents.list(documentFilter, 0, "title", "asc", filter));
 		else
 			return redirect(routes.Documents.overview(0, "title", "asc"));
+	}
+	
+	public static Result export(DocumentFilter documentFilter, String sortBy,
+			String order, String filter) {
+		Query<Document> query = Document.query(documentFilter, sortBy, order, filter);
+		
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append(
+				"id" + Const.CSV_SEPARATOR +
+				"id_watched_target" + Const.CSV_SEPARATOR +
+				"title" + Const.CSV_SEPARATOR +
+				"landing_page_url" + Const.CSV_SEPARATOR +
+				"document_url" + Const.CSV_SEPARATOR +
+				"wayback_timestamp" + Const.CSV_LINE_END
+		);
+		
+		for (Document document : query.findList()) {
+			builder.append(
+					document.id + Const.CSV_SEPARATOR +
+					document.watchedTarget.id + Const.CSV_SEPARATOR +
+					document.title + Const.CSV_SEPARATOR +
+					document.landingPageUrl + Const.CSV_SEPARATOR +
+					document.documentUrl + Const.CSV_SEPARATOR +
+					document.waybackTimestamp + Const.CSV_LINE_END
+			);
+		}
+		
+		response().setContentType("text/csv; charset=utf-8");
+		response().setHeader("Content-Disposition","attachment; filename=\"document-export.csv");
+		return ok(builder.toString());
 	}
 	
 	public static Result sip(Long id) {
