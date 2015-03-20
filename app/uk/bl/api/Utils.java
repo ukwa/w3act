@@ -885,13 +885,11 @@ public enum Utils {
 	        if (path.startsWith("www.")) {
 	        	path = path.replace("www.", "");
 	        }
-	        if (path.endsWith("/")) {
-	        	path = path.substring(0, path.length() - 1);
-	        }
 		} catch (URISyntaxException e) {
 			throw new ActException(e);
 		}
 		return path;
     }
+    
 }
 

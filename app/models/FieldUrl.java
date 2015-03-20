@@ -2,7 +2,9 @@ package models;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,11 +14,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.apache.commons.lang3.StringUtils;
+
 import play.Logger;
 import play.db.ebean.Model;
+import uk.bl.api.Utils;
+import uk.bl.exception.ActException;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
+import com.avaje.ebean.Expression;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -63,6 +70,35 @@ public class FieldUrl extends Model {
 		return find.where().endsWith("url", url).findList();
 	}
 	
+	public static FieldUrl hasDuplicate(String url) throws ActException {
+		url = Utils.INSTANCE.getPath(url);
+		String urlSlash = url.endsWith("/") ? StringUtils.stripEnd(url, "/") : StringUtils.appendIfMissing(url, "/");
+		Logger.debug("url: " + url);
+		Logger.debug("urlNoSlash: " + urlSlash);
+		
+		List<FieldUrl> fieldUrls = find.where().add(Expr.or(
+				Expr.iendsWith("url", url),
+				Expr.iendsWith("url", urlSlash))).findList();
+		
+		// filter this list
+		Set<FieldUrl> results = new HashSet<FieldUrl>();
+		for (FieldUrl fieldUrl : fieldUrls) {
+			String dbUrl = Utils.INSTANCE.getPath(fieldUrl.url);
+			String dbUrlSlash = dbUrl.endsWith("/") ? StringUtils.stripEnd(url, "/") :  StringUtils.appendIfMissing(dbUrl, "/");
+			Logger.debug("found: " + dbUrl);
+//			results.add()
+			
+			
+		}
+		
+		if (fieldUrls != null && fieldUrls.size() > 0) {
+			return fieldUrls.get(0);
+		}
+		
+		
+		return null; 
+	}
+
 	public static List<FieldUrl> findHigherLevelUrls(String domain, String url) {
 		Logger.debug("Parameters: " + domain + " - " + url.length());
 		String query = "find fieldUrl fetch target fetch target.licenses where url like :domain and LENGTH(url) < :length";
@@ -82,5 +118,30 @@ public class FieldUrl extends Model {
 	@Override
 	public String toString() {
 		return this.url;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FieldUrl other = (FieldUrl) obj;
+		if (url == null) {
+			if (other.url != null)
+				return false;
+		} else if (!url.equals(other.url))
+			return false;
+		return true;
 	}
 }

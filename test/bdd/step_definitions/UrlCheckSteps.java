@@ -5,11 +5,9 @@ import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import models.Collection;
 import models.FieldUrl;
 import models.Target;
 
@@ -18,8 +16,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import play.Logger;
 import play.libs.Yaml;
 
-
-import uk.bl.api.Utils;
 import uk.bl.exception.ActException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -30,13 +26,12 @@ public class UrlCheckSteps {
 	private String url;
 	private Boolean duplicate = Boolean.FALSE;
 //	private String dbUrl = "https://www.bbc.co.uk/test1&query=1&terri=2";
-	private List<FieldUrl> fieldUrls =  null;
+//	private List<FieldUrl> fieldUrls =  null;
 
 
 	@Given("^I have a URL of \"(.*?)\"$")
 	public void i_have_a_URL_of(String url) throws Throwable {
 		this.url = url;
-		this.fieldUrls = new ArrayList<FieldUrl>();
     	Logger.debug("original url: " + this.url);
 	}
 
@@ -48,23 +43,11 @@ public class UrlCheckSteps {
 				Map<String,List<Target>> allTargets = (Map<String,List<Target>>)Yaml.load("targets.yml");		
 				List<Target> targs = allTargets.get("targets");
 				for (Target target : targs) {
-					Logger.debug("collection categories: " + target.collections.size());
+					Logger.debug("Target target: " + target.fieldUrl());
 					target.save();
 				}
 		        try {
-					url = Utils.INSTANCE.getPath(url);
-
-					fieldUrls = FieldUrl.findByContains(url);
-					for (FieldUrl fieldUrl : fieldUrls) {
-						Logger.debug("DB found: " + fieldUrl.url + " based on " + url);
-					}
-	//				Collection categoryFound = Collection.findById(categoryId);
-	//				Logger.debug("categoryFound: " + categoryFound);
-	//				targets = categoryFound.targets;
-	//				targetCount = categoryFound.targets.size();
-	//				Logger.debug("targets: " + targetCount);
-	//		    	JsonNode jsonData = Json.toJson(targets);
-	//				Logger.debug("JSON: " + jsonData);
+		        	duplicate = (FieldUrl.hasDuplicate(url) != null);
 				} catch (ActException e) {
 					e.printStackTrace();
 				}
@@ -76,9 +59,9 @@ public class UrlCheckSteps {
 
 	@Then("^I should see a \"(.*?)\"$")
 	public void i_should_see_a(String result) throws Throwable {
-		assertThat(fieldUrls.size()).isGreaterThan(0);
-//		Boolean expected = BooleanUtils.toBoolean(result);
-//		assertThat(this.duplicate).isEqualTo(expected);
+//		assertThat(fieldUrls.size()).isGreaterThan(0);
+		Boolean expected = BooleanUtils.toBoolean(result);
+		assertThat(this.duplicate).isEqualTo(expected);
 	}
 
 }

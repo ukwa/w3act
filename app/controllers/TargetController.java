@@ -985,8 +985,7 @@ public class TargetController extends AbstractController {
 		            		
 		            		Logger.debug("trimmed " + trimmed);
 		            		
-			            	FieldUrl isExistingFieldUrl = isExistingTarget(trimmed);
-//		            		Logger.debug("isExistingTarget " + isExistingFieldUrl.target.fieldUrl());
+			            	FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(trimmed);
 			            	
 			            	if (isExistingFieldUrl != null) {
 			    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
@@ -1279,14 +1278,8 @@ public class TargetController extends AbstractController {
 	            for (String url : urls) {
 	            	String trimmed = url.trim();
 	            	Logger.debug("url: " + trimmed);
-	                URL uri = new URI(trimmed).normalize().toURL();
-	                
-	    			String extFormUrl = uri.toExternalForm();
-	    			
-//	    			String path = uri.getPath(); 
-	    			
-	    			
-	            	FieldUrl isExistingFieldUrl = isExistingTarget(trimmed);
+
+	            	FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(trimmed);
 	            	
 	            	if (isExistingFieldUrl != null) {
 	    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
@@ -1299,7 +1292,8 @@ public class TargetController extends AbstractController {
 		        			if (!isValidUrl) {
 		        				throw new ActException("Invalid URL");
 		        			}
-		        			
+			                URL uri = new URI(trimmed).normalize().toURL();
+			    			String extFormUrl = uri.toExternalForm();
 			            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
 			            	fu.domain = Scope.INSTANCE.getDomainFromUrl(extFormUrl.trim());
 	

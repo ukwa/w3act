@@ -12,10 +12,13 @@ users:
 fieldUrls:
 
   - &fieldUrl1 !!models.FieldUrl
-    url:   http://www.bbc.co.uk/test1
+    url:   http://www.bbc.co.uk/test1/
 
   - &fieldUrl2 !!models.FieldUrl
-    url:   https://www.woooosh.co.uk
+    url:   https://www.bbc.co.uk/test1&query=1&terri=2/
+    
+  - &fieldUrl3 !!models.FieldUrl
+    url:   http://england.shelter.org.uk/
 
 # Collections
 
@@ -48,7 +51,7 @@ targets:
     id:             2
     title:          Another Target Title
     crawlFrequency: MONTHLY
-    fieldUrls:      [*fieldUrl2]
+    fieldUrls:      [*fieldUrl2, *fieldUrl3]
     authorUser:     *bob
     createdAt:      2012-02-01
     

@@ -173,7 +173,7 @@
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				@for(entry <- targetForm.errors.entrySet){
 					@for(error <- entry.getValue){
-						@error.message<br />
+						@Html(error.message)<br />
 					}
 				}
 			</div>
