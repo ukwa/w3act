@@ -81,20 +81,18 @@ public class FieldUrl extends Model {
 				Expr.iendsWith("url", urlSlash))).findList();
 		
 		// filter this list
-		Set<FieldUrl> results = new HashSet<FieldUrl>();
 		for (FieldUrl fieldUrl : fieldUrls) {
 			String dbUrl = Utils.INSTANCE.getPath(fieldUrl.url);
-			String dbUrlSlash = dbUrl.endsWith("/") ? StringUtils.stripEnd(url, "/") :  StringUtils.appendIfMissing(dbUrl, "/");
-			Logger.debug("found: " + dbUrl);
-//			results.add()
-			
-			
+			String dbUrlSlash = dbUrl.endsWith("/") ? StringUtils.stripEnd(dbUrl, "/") :  StringUtils.appendIfMissing(dbUrl, "/");
+			Logger.debug("url: " + url);
+			Logger.debug("urlSlash: " + urlSlash);
+			Logger.debug("dbUrl: " + dbUrl);
+			Logger.debug("dbUrlSlash: " + dbUrlSlash);
+			if (url.equalsIgnoreCase(dbUrl) || url.equalsIgnoreCase(dbUrlSlash) ||
+					urlSlash.equalsIgnoreCase(dbUrl) || urlSlash.equalsIgnoreCase(dbUrlSlash)) {
+				return fieldUrl;
+			}
 		}
-		
-		if (fieldUrls != null && fieldUrls.size() > 0) {
-			return fieldUrls.get(0);
-		}
-		
 		
 		return null; 
 	}
