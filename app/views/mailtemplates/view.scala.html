@@ -31,7 +31,11 @@
 			<div class="form-group">
 				<label for="inputType" class="col-sm-6 control-label">Type</label>
 			    <div class="col-sm-6">
-              		<input class="form-control" name="type" id="type" type="text" value="@uk.bl.Const.MailTemplateType.getMailTemplateType(template.ttype).getValue" readonly>
+			    	@if(template.ttype != null && uk.bl.Const.MailTemplateType.getMailTemplateType(template.ttype) != null) {
+              			<input class="form-control" name="type" id="type" type="text" value="@uk.bl.Const.MailTemplateType.getMailTemplateType(template.ttype).getValue" readonly>
+              		} else {
+              			<input class="form-control" name="type" id="type" type="text" value="" readonly>
+              		}
 				</div>
 			</div>
 		</div>

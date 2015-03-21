@@ -30,6 +30,7 @@ import views.html.licence.licences;
 import views.html.licence.ukwalicence;
 import views.html.licence.ukwalicenceresult;
 import views.html.licence.ukwalicenceview;
+//import views.html.licence.view;
 
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,6 +50,21 @@ public class LicenseController extends AbstractController {
         );
     }
     
+	@Security.Authenticated(SecuredController.class)
+    public static Result view(Long id) {
+//    	License license = License.findById(id);
+//    	if (license != null) {
+//    		if (request().accepts("text/html")) {
+//    			User user = User.findByEmail(request().username());
+////    			return ok(view.render(license, user));
+//    		} else {
+//    			return ok(Json.toJson(license));
+//    		}
+//    	} else {
+//    		return notFound("There is no License with ID "+id);
+//    	}
+		return null;
+    }
     /**
      * This method presents licence form for selected premission request
      * that is identified by the given permission URL. 
