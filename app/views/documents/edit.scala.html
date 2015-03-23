@@ -217,7 +217,7 @@
 	</ul>
 	
 	@warningmessage(flash)
-	@helper.form(if (editable) routes.Documents.save() else routes.Documents.submit(new Long(form("id").value))) {
+	@helper.form(if (editable) routes.Documents.save(new Long(form("id").value)) else routes.Documents.submit(new Long(form("id").value))) {
 		<div class="col-md-6">
 			<input type="hidden" name="id" value="@form("id").value">
 			<input type="hidden" name="landingPageUrl" value="@form("landingPageUrl").value">

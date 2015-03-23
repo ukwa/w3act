@@ -141,7 +141,8 @@ GET		/documents/:document/edit			controllers.Documents.edit(document: Long)
 GET		/documents/:document/submit			controllers.Documents.submit(document: Long)
 GET		/documents/:document/ignore			controllers.Documents.ignore(document: Long, filter: models.DocumentFilter, p:Int, s, o, f, filters: Boolean)
 GET		/documents/:document/sip			controllers.Documents.sip(document: Long)
-POST	/documents							controllers.Documents.save()
+POST	/documents/:id						controllers.Documents.save(id: Long)
+POST	/documents							controllers.Documents.importJson()
 
 GET		/pii/vdc							controllers.Pii.pii(arks: Integer)
 

@@ -91,7 +91,7 @@ public class Documents extends AbstractController {
 				User.findByEmail(request().username()), true));
 	}
 
-	public static Result save() {
+	public static Result save(Long id) {
 		Logger.info("Documents.save()");
 		
 		String journalTitle = getFormParam("journalTitle");
@@ -240,6 +240,25 @@ public class Documents extends AbstractController {
 			return redirect(routes.Documents.list(documentFilter, 0, "title", "asc", filter));
 		else
 			return redirect(routes.Documents.overview(0, "title", "asc"));
+	}
+	
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result importJson() {
+		JsonNode json = request().body().asJson();
+		List<Document> documents = new ArrayList<>();
+		JsonNode arrNode = json.get("documents");
+		for (final JsonNode objNode : arrNode) {
+			Document document = new Document();
+			document.watchedTarget.id = objNode.get("id_watched_target").longValue();
+			document.waybackTimestamp = objNode.get("wayback_timestamp").textValue();
+			document.landingPageUrl = objNode.get("landing_page_url").textValue();
+			document.documentUrl = objNode.get("document_url").textValue();
+			document.filename = objNode.get("filename").textValue();
+			Logger.debug("add document " + document.filename);
+			documents.add(document);
+		}
+		Ebean.save(documents);
+		return ok("Documents added");
 	}
 	
 	public static Result export(DocumentFilter documentFilter, String sortBy,
