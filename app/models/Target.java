@@ -370,7 +370,7 @@ public class Target extends UrlModel {
 	@JsonProperty
 	private String selector;
 	
-	@OneToOne(mappedBy="target", cascade=CascadeType.REMOVE) @JsonIgnore
+	@OneToOne(mappedBy="target", cascade=CascadeType.REMOVE)
 	public WatchedTarget watchedTarget;
 	
 	public boolean isWatched() {

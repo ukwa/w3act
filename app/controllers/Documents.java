@@ -246,14 +246,16 @@ public class Documents extends AbstractController {
 	public static Result importJson() {
 		JsonNode json = request().body().asJson();
 		List<Document> documents = new ArrayList<>();
-		JsonNode arrNode = json.get("documents");
-		for (final JsonNode objNode : arrNode) {
+		for (JsonNode objNode : json) {
 			Document document = new Document();
-			document.watchedTarget.id = objNode.get("id_watched_target").longValue();
+			Long watchedTargetId = objNode.get("id_watched_target").longValue();
+			document.watchedTarget = WatchedTarget.find.byId(watchedTargetId);
 			document.waybackTimestamp = objNode.get("wayback_timestamp").textValue();
 			document.landingPageUrl = objNode.get("landing_page_url").textValue();
 			document.documentUrl = objNode.get("document_url").textValue();
 			document.filename = objNode.get("filename").textValue();
+			document.title = document.filename.substring(0, document.filename.indexOf('.'));
+			document.status = Document.Status.NEW;
 			Logger.debug("add document " + document.filename);
 			documents.add(document);
 		}

@@ -32,7 +32,9 @@ public class WatchedTarget extends Model {
     public List<JournalTitle> journalTitles = new ArrayList<>();
 	public String documentUrlScheme;
 	public String waybackTimestamp;
+	@JsonIgnore
 	public String getUrl() { return ""+id; }
+	@JsonIgnore
 	public String getName() { return target.fieldUrls.get(0).url; }
 	public static final String SEARCH_FIELD = "target.fieldUrls.url";
 	
