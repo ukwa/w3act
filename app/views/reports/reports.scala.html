@@ -193,7 +193,9 @@
 						                }
 									</td>
 									<td>
-					                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl()</a>					                
+										@for(fieldUrl <- target.fieldUrls) {
+					                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
+					                	}					                
 									</td>
 									@if(target.url != null && target.createdAt != null) {
 										<td>@target.createdAt</td>
@@ -228,7 +230,9 @@
 						                }
 									</td>
 									<td>
-					                	<a class="brand" href="@target.fieldUrl">@target.fieldUrl</a>					                
+										@for(fieldUrl <- target.fieldUrls) {
+					                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
+					                	}									
 									</td>
 									@if(target.url != null && target.createdAt != null) {
 										<td>@target.createdAt</td>
