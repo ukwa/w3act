@@ -30,3 +30,5 @@ server.pid
 /bin
 /.target
 /bin
+/.target
+/bin

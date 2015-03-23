@@ -1015,28 +1015,16 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-					        @if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-								@select(
-		              					targetForm("licenseStatus"), 
-						                options(licenseStatuses), 
-						                args = 
-						                'class -> "form-control",
-						                '_label -> "Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):",
-					                	'_default -> "-- None --",
-						                '_showConstraints -> false
-					            )(FieldConstructor(genericInput.f), lang)
-					        } else {
-								@select(
-		              					targetForm("licenseStatus"), 
-						                options(licenseStatuses), 
-						                args = 
-						                'class -> "form-control",
-						                '_label -> "Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):",
-					                	'_default -> "-- None --",
-						                '_showConstraints -> false,
-						                '_disabled -> None
-					            )(FieldConstructor(genericInput.f), lang)
-					        }		
+							<label class="col-sm-6 control-label" for="license">
+								Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):
+							</label>
+							<div class="col-sm-6">
+								@if(targetForm("licenseStatus") != null && targetForm("licenseStatus").value != null) {					        
+					        		@targetForm("licenseStatus").value
+					        	} else {
+					                -- None --
+					        	}
+							</div>
 						</div>
 					</div>
 		     	</div>
