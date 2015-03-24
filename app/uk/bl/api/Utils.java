@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlUpdate;
@@ -708,8 +710,22 @@ public enum Utils {
     }
     
     public boolean validUrl(String url) {
-    	String urlRegex = "^((http(s?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.*(\\:[0-9]+)*(/($|[a-zA-Z0-9\\.\\,\\;\\?\\:\\(\\)\\@\\#\\!\\'\\\\\\+&amp;%\\$#\\=~_\\-]+))*$";
-        return url.matches(urlRegex);
+//    	String urlRegex = "^((http(s?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.*(\\:[0-9]+)*(/($|[a-zA-Z0-9\\.\\,\\;\\?\\:\\(\\)\\@\\#\\!\\'\\\\\\+&amp;%\\$#\\=~_\\-]+))*$";
+//    	String urlRegex = "^(?:(?:https?|ftp):\\/\\/)(?:\\S+(?::\\S*)?@)?(?:(?!(?:10|127)(?:\\.\\d{1,3}){3})(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))(?::\\d{2,5})?(?:\\/\\S*)?$/i";
+//    	String urlRegex = "/^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$/";
+//    	return url.matches(urlRegex);
+    	
+//        String urlRegex = "\\b(https?|ftp|file|ldap)://"
+//                + "[-A-Za-z0-9+&@#/%?=~_|!:,.;]"
+//                + "*[-A-Za-z0-9+&@#/%=~_|]";
+        
+        String urlRegex = "https?:\\/\\/[\\w-]+[\\w\\d.-]+\\.[\\w]{2,}";
+        
+//        urlRegex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?"
+    	Pattern p = Pattern.compile(urlRegex);  
+        Matcher m = p.matcher(url);
+        return m.matches();
+    	
     }
     
     public String convertToDateTime(Date date) {

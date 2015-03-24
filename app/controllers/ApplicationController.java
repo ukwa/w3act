@@ -356,6 +356,23 @@ public class ApplicationController extends Controller {
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_urls": ["http://www.independent.co.uk/news/uk/politics/"],"field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_urls": ["http://www.sdfsdfsf.co.ukxxxxxxxxxxxxxxxxxxx"],"title": "Daily Mail: Labours 500k help from tax avoidance firm","field_nominating_org": "1","field_collection_cats": ["188"],"field_crawl_frequency": "annual","field_crawl_end_date": "1425877200","field_crawl_start_date": "1425790800","field_subjects": [],"field_uk_postal_address": true,"uk_postal_address_url": "http://territest.co.uk", "field_via_correspondence": false,"field_professional_judgement": true,"field_professional_judgement_exp": ""}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets 
 	 * curl -v -H "Content-Type: application/json" -X POST -d '{"field_collection_cats": ["188"],"field_crawl_frequency": "daily","field_nominating_org": "1"}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
+	 * curl -v -H "Content-Type: application/json" -X POST -d '{
+    "field_subjects":[
+        "189"
+    ],
+    "field_crawl_frequency":"annual",
+    "field_urls":[
+        "http://www.nottheguardian.com/commentisfree/2015/feb/10/tories-britain-democracy-auction-party-funds-donors-test"
+    ],
+    "field_crawl_end_date":"1425877200",
+    "title":"Guardian, The: The Tories are putting Britain\u0027s democracy up for auction",
+    "uk_postal_address_url":"http://www.theguardian.com/",
+    "field_collection_cats":[
+        "188"
+    ],
+    "field_nominating_org":"4",
+    "field_crawl_start_date":"1425790800",
+    "field_uk_postal_address":true}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets
      * @throws ActException 
 	 **/
     @With(SecuredAction.class)
