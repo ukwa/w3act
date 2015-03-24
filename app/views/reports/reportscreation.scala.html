@@ -273,10 +273,12 @@
 					@for(target <- currentPage.getList) {	              
 						<tr>
 							<td>
-				                <a class="brand" href="@routes.TargetController.viewAct(target.url)">@target.title</a>
+				                <a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
 							</td>
 							<td>
-				                @target.fieldUrl
+								@for(fieldUrl <- target.fieldUrls) {
+			                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
+			                	}						
 							</td>
 							@if(target.url != null && target.createdAt != null) {
 								<td>@target.createdAt</td>
