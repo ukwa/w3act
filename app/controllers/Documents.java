@@ -379,10 +379,8 @@ public class Documents extends AbstractController {
     	Logger.info("Documents.list()");
     	
     	Form<DocumentFilter> filterForm = Form.form(DocumentFilter.class).fill(documentFilter);
-    	for (String fastSubject : documentFilter.fastSubjects) {
-    		Logger.debug("adding fastSubject: " + fastSubject);
+    	for (String fastSubject : documentFilter.fastSubjects)
     		filterForm.data().put(fastSubject, "true");
-    	}
     	
         return ok(
         	list.render(
