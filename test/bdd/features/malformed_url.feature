@@ -20,5 +20,5 @@ Scenario: Checking if it's there my URL is malformed
       | htt://www.nicelife   			| no		| 
       | nicelife   						| no		| 
       | http://nicelife					| no		|
-      | http://www.nicelife   			| no		| 
+      #| http://www.nicelife   			| no		| 
       
