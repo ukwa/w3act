@@ -2,11 +2,11 @@ package models;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import controllers.Documents;
 import play.data.format.Formats.DateTime;
 import play.libs.F.Option;
 import play.mvc.QueryStringBindable;
@@ -16,7 +16,7 @@ public class DocumentFilter implements QueryStringBindable<DocumentFilter> {
 	public Long user;
 	public Long watchedtarget;
 	public String service;
-	public List<Long> subject;
+	public List<String> fastSubjects = new ArrayList<>();
 	@DateTime(pattern="dd-MM-yyyy")
 	public Date startdate;
 	@DateTime(pattern="dd-MM-yyyy")
@@ -36,7 +36,7 @@ public class DocumentFilter implements QueryStringBindable<DocumentFilter> {
 		user = documentFilter.user;
 		watchedtarget = documentFilter.watchedtarget;
 		service = documentFilter.service;
-		subject = documentFilter.subject;
+		fastSubjects = documentFilter.fastSubjects;
 		startdate = documentFilter.startdate;
 		enddate = documentFilter.enddate;
 	}
@@ -66,8 +66,9 @@ public class DocumentFilter implements QueryStringBindable<DocumentFilter> {
 		}
 		if (data.containsKey("service") && !data.get("service")[0].equals("All"))
 			service = data.get("service")[0];
-		if (data.containsKey("subject"))
-			subject = Documents.stringToLongList(data.get("subject")[0].replace("[", "").replace("]", ""));
+		for (FastSubject fastSubject : FastSubject.find.all())
+			if (data.containsKey(fastSubject.id))
+				fastSubjects.add(fastSubject.id);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		if (data.containsKey("startdate"))
 			try {
@@ -83,12 +84,13 @@ public class DocumentFilter implements QueryStringBindable<DocumentFilter> {
 	@Override
 	public String unbind(String key) {
 		String result = "status=" + status.toString();
-		if (user != null) result += "&" + "user=" + user;
-		if (watchedtarget != null) result += "&" + "watchedtarget=" + watchedtarget;
-		if (service != null) result += "&" + "service=" + service;
-		if (subject != null) result += "&" + "subject=[" + Documents.longListToString(subject) + "]";
-		if (startdate != null) result += "&" + "startdate=" + startdate;
-		if (enddate != null) result += "&" + "enddate=" + enddate;
+		if (user != null) result += "&user=" + user;
+		if (watchedtarget != null) result += "&watchedtarget=" + watchedtarget;
+		if (service != null) result += "&service=" + service;
+		for (String fastSubject : fastSubjects)
+			result += "&" + fastSubject + "=true";
+		if (startdate != null) result += "&startdate=" + startdate;
+		if (enddate != null) result += "&enddate=" + enddate;
 		return result;
 	}
 	

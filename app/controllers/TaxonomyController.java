@@ -194,15 +194,5 @@ public class TaxonomyController extends AbstractController {
 	        res = redirect(routes.TaxonomyController.index()); 
         }
         return res;
-    }
-    
-	public static String serializeTaxonomies(List<? extends Taxonomy> taxonomies) {
-		String subject = "";
-		for (Taxonomy taxonomy : taxonomies) {
-			if (!subject.isEmpty()) subject += ", ";
-			subject += taxonomy.id;
-		}
-		return subject;
-	}
-	    
+    }	    
 }

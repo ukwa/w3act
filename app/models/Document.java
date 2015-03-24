@@ -14,7 +14,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -48,10 +47,10 @@ public class Document extends Model {
 			inverseJoinColumns = { @JoinColumn(name = "id_portal", referencedColumnName="id") })
 	public List<Portal> portals = new ArrayList<>();
 	@ManyToMany(cascade=CascadeType.REMOVE) @JsonIgnore
-	@JoinTable(name = "subject_document",
+	@JoinTable(name = "fast_subject_document",
 		joinColumns = { @JoinColumn(name = "id_document", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="id") })
-	public List<Subject> subjects = new ArrayList<>();
+		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
+	public List<FastSubject> fastSubjects = new ArrayList<>();
     public String landingPageUrl;
     public String documentUrl;
     public String sha256Hash;
@@ -67,8 +66,6 @@ public class Document extends Model {
     @Required
 	public String filename;
     public boolean priorityCataloguing;
-	@Transient
-	public String subject;
     public String type;
 	public String author1Fn;
 	public String author1Ln;
@@ -128,8 +125,8 @@ public class Document extends Model {
     	if (documentFilter.service != null && !documentFilter.service.isEmpty()) {
     		el = el.in("id", Portals.getDocumentIds(documentFilter.service));
     	}
-    	if (documentFilter.subject != null && !documentFilter.subject.isEmpty()) {
-    		el = el.in("subjects.id", documentFilter.subject);
+    	if (documentFilter.fastSubjects != null && !documentFilter.fastSubjects.isEmpty()) {
+    		el = el.in("fastSubjects.id", documentFilter.fastSubjects);
     	}
     	SimpleDateFormat waybackFormat = new SimpleDateFormat("yyyyMMdd");
     	if (documentFilter.startdate != null) {

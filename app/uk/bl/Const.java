@@ -23,6 +23,7 @@ public final class Const {
 	public static final String COLLECTION_URL  = "collection_url";
 	public static final String ORGANISATION_URL = "organisation_url";
 	public static final String SUBJECT_URL     = "subject_url";
+	public static final String FAST_SUBJECTS   = "subjects";
 
     // Drupal connection definitions
     public static final String URI             = "uri";

@@ -5,13 +5,13 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 
 import models.Collection;
 import models.ContactPerson;
+import models.FastSubject;
 import models.Flag;
 import models.Instance;
 import models.MailTemplate;
@@ -43,7 +43,11 @@ public enum DataImport {
     	Boolean importAccounts = play.Play.application().configuration().getBoolean("use.accounts");
 
         try {
-
+        	
+        	if (Ebean.find(FastSubject.class).findRowCount() == 0) {
+        		importFastSubjects();
+        	}
+        	
 			if (Ebean.find(User.class).findRowCount() == 0) {
 	        	this.importPermissions();
 	        	this.importRoles();
@@ -95,6 +99,13 @@ public enum DataImport {
         }
 	}
 	
+	private void importFastSubjects() {
+		@SuppressWarnings("unchecked")
+		Map<String,List<FastSubject>> allFastSubjects = (Map<String,List<FastSubject>>)Yaml.load("fast-subjects.yml");
+		List<FastSubject> fastSubjects = allFastSubjects.get(Const.FAST_SUBJECTS);
+		Ebean.save(fastSubjects);
+	}
+
 	public void importPermissions() {
 		@SuppressWarnings("unchecked")
 		Map<String,List<Permission>> allPermissions = (Map<String,List<Permission>>)Yaml.load("accounts.yml");

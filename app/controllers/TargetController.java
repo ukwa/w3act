@@ -611,7 +611,7 @@ public class TargetController extends AbstractController {
      * @param order Sort order (either asc or desc)
      * @param filter Filter applied on target urls
      * @param user_url User for whom targets search occurs
-     * @param subject Taxonomy of type subject
+     * @param fastSubjects Taxonomy of type subject
      * @param collection Taxonomy of type collection
      */
     public static Result userTargets(int pageNo, String sortBy, String order, String filter, 

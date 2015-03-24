@@ -7,13 +7,11 @@
 @import templates.inputText
 @import templates.select
 @import templates.splitInputText
-@import templates.tree
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio5to7FieldConstructor.f) }
 
 @scripts = {
 	<script src="@routes.Assets.at("javascripts/parse-date.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("javascripts/tree.js")" type="text/javascript"></script>
 	<script type="text/javascript">
 		function getSelectionText() {
 			var text = "";
@@ -182,8 +180,6 @@
 						previousSelection = selectionText;
 					};
 			}
-			
-			fillTree("subject", @Html(AbstractController.getSubjectsDataByIds(Documents.stringToLongList(form("subject").value)).toString));
 		});
 	</script>
 }
@@ -243,7 +239,7 @@
 			@helper.input(form("services"), '_label -> "Services") { (id, name, value, args) =>
 				@for(portal <- Documents.portalList.getList()) {
 					@*if(Target.find.byId(new Long(form("watchedTarget.target.nid").value)).indicateUkwaLicenceStatus) {*@
-						@checkbox2(form("portal_" + portal.id), editable,'_label -> portal.title)(
+						@checkbox2(form("portal_" + portal.id), editable, '_label -> portal.title)(
 							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 						)
 					@*} else {
@@ -253,7 +249,15 @@
 					}*@
 				}
 			}
-			@tree(form("subject"), editable, '_label -> "Subject(s)")
+			@helper.input(form("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
+				<div @if(editable) {class="scroll-box"}>
+					@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
+						@checkbox2(form(fastSubject.id), editable, '_label -> fastSubject.name)(
+							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
+						)
+					}
+				</div>
+			}
 			@select(form("type"),
 				options(List("", Document.Type.BOOK.toString,
 					Document.Type.JOURNAL_ARTICLE.toString,

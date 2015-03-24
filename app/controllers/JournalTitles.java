@@ -4,9 +4,9 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 
 import models.BlCollectionSubset;
+import models.FastSubject;
 import models.FlashMessage;
 import models.JournalTitle;
-import models.Subject;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -27,7 +27,6 @@ public class JournalTitles extends AbstractController {
 		JournalTitle journalTitle = new JournalTitle();
 		journalTitle.watchedTarget = watchedTarget;
 		journalTitle.language = Const.JOURNAL_TITLE_LANGUAGE;
-		journalTitle.subject = TaxonomyController.serializeTaxonomies(watchedTarget.target.subjects);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
@@ -38,21 +37,25 @@ public class JournalTitles extends AbstractController {
 		Logger.info("JournalTitles.edit()");
 		
 		JournalTitle journalTitle = Ebean.find(JournalTitle.class, id);
-		journalTitle.subject = TaxonomyController.serializeTaxonomies(journalTitle.subjects);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
-		setBlCollectionSubsetsOfView(journalTitleForm, journalTitle);
+		setRelatedEntitiesOfView(journalTitleForm, journalTitle);
 
 		return ok(edit.render("Journal Title", journalTitleForm,
 				User.findByEmail(request().username()), false));
 	}
 	
-	private static void setBlCollectionSubsetsOfModel(JournalTitle journalTitle, Form<JournalTitle> journalTitleForm) {
+	private static void setRelatedEntitiesOfModel(JournalTitle journalTitle, Form<JournalTitle> journalTitleForm) {
+		for (FastSubject fastSubject : FastSubject.find.all())
+			if (journalTitleForm.apply(fastSubject.id).value() != null)
+				journalTitle.fastSubjects.add(fastSubject);
 		for (BlCollectionSubset blCollectionSubset : Documents.blCollectionSubsetList.getList())
 			if (journalTitleForm.apply("blCollectionSubset_" + blCollectionSubset.id).value() != null)
 				journalTitle.blCollectionSubsets.add(blCollectionSubset);
 	}
 	
-	private static void setBlCollectionSubsetsOfView(Form<JournalTitle> journalTitleForm, JournalTitle journalTitle) {
+	private static void setRelatedEntitiesOfView(Form<JournalTitle> journalTitleForm, JournalTitle journalTitle) {
+		for (FastSubject fastSubject : journalTitle.fastSubjects)
+			journalTitleForm.data().put(fastSubject.id, "true");
 		for (BlCollectionSubset portal : journalTitle.blCollectionSubsets)
 			journalTitleForm.data().put("blCollectionSubset_" + portal.id, "true");
 	}
@@ -77,7 +80,6 @@ public class JournalTitles extends AbstractController {
 		}
 		
 		JournalTitle journalTitle = journalTitleForm.get();
-		journalTitle.subjects = Subject.convertIdsToObjects(journalTitle.subject);
 		
 		ExpressionList<JournalTitle> expressionList = JournalTitle.find.where()
 				.eq("id_watched_target", journalTitle.watchedTarget.id)
@@ -91,7 +93,7 @@ public class JournalTitles extends AbstractController {
 					User.findByEmail(request().username()), toDocument));
 		}
 		
-		setBlCollectionSubsetsOfModel(journalTitle, journalTitleForm);
+		setRelatedEntitiesOfModel(journalTitle, journalTitleForm);
 		
 		if (journalTitle.id == null)
 			Ebean.save(journalTitle);

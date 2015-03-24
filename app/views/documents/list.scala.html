@@ -1,9 +1,9 @@
 @(user: User, filterForm: Form[DocumentFilter], searchstr: String, currentPage: com.avaje.ebean.Page[Document], currentSortBy: String, currentOrder: String, filters: Boolean)
 
 @import helper.options
+@import templates.checkbox2
 @import templates.select
 @import templates.inputRange
-@import templates.tree
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio4to8FieldConstructor.f) }
 
@@ -14,12 +14,10 @@
 @scripts = {
 	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("javascripts/tree.js")" type="text/javascript"></script>
 	<script>
 		$(document).ready(function() {
 			context = '@play.api.Play.current.configuration.getString("application.context")';
 			applySearch(context, 'documents');
-			fillTree("subject", @Html(AbstractController.getSubjectsDataByIds(filterForm.get.subject).toString));
 			$("#startdate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true, maxDate: $("#enddate")[0].value,
 				onClose: function( selectedDate ) {
 					$( "#enddate" ).datepicker( "option", "minDate", selectedDate );
@@ -124,7 +122,17 @@
 						)
 					</div>
 					<div class="col-md-6">
-						@tree(filterForm("subject"), true, '_label -> "Subject(s)", 'onchange -> "this.form.submit()")
+						@*tree(filterForm("subject"), true, '_label -> "Subject(s)", 'onchange -> "this.form.submit()")*@
+						@helper.input(filterForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
+							<div class="scroll-box">
+								@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
+									@checkbox2(filterForm(fastSubject.id), true, '_label -> fastSubject.name,
+										'onchange -> "this.form.submit()")(
+											helper.FieldConstructor(templates.checkboxFieldConstructor.f)
+										)
+								}
+							</div>
+						}
 					</div>
 					<div style="clear: both"></div>
 					<div class="text-center">

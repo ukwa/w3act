@@ -105,7 +105,8 @@ public class Target extends UrlModel {
 	@JoinTable(name = "flag_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "flag_id", referencedColumnName="id") }) 
     public List<Flag> flags;
-
+	
+	@JsonIgnore
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<LookupEntry> lookupEntries;
 
@@ -817,7 +818,7 @@ public class Target extends UrlModel {
 	 * This method evaluates if element is in a list separated by list delimiter
 	 * e.g. ', '.
 	 * 
-	 * @param subject
+	 * @param fastSubjects
 	 * @return true if in list
 	 */
 	public boolean hasContactPerson(String curContactPerson) {
@@ -1318,7 +1319,7 @@ public class Target extends UrlModel {
 	 *            Filter applied on the name column
 	 * @param user_url
 	 *            User for whom targets search occurs
-	 * @param subject
+	 * @param fastSubjects
 	 *            Taxonomy of type subject
 	 * @param collection
 	 *            Taxonomy of type collection

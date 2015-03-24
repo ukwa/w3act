@@ -7,6 +7,11 @@ create table watched_target (
   wayback_timestamp	varchar(255)
 );
 
+create table fast_subject (
+  id			char(11) primary key,
+  name			varchar(255)
+);
+
 create table journal_title (
   id			bigint primary key,
   id_watched_target	bigint references watched_target (id),
@@ -29,10 +34,10 @@ create table bl_collection_subset_journal_title (
   primary key (id_bl_collection_subset, id_journal_title)
 );
 
-create table subject_journal_title (
-  id_taxonomy		bigint references taxonomy (id),
+create table fast_subject_journal_title (
+  id_fast_subject	char(11) references fast_subject (id),
   id_journal_title	bigint references journal_title (id),
-  primary key (id_taxonomy, id_journal_title)
+  primary key (id_fast_subject, id_journal_title)
 );
 
 create table document (
@@ -59,10 +64,10 @@ create table document (
   author3ln		varchar(255)
 );
 
-create table subject_document (
-  id_taxonomy		bigint references taxonomy (id),
+create table fast_subject_document (
+  id_fast_subject	char(11) references fast_subject (id),
   id_document		bigint references document (id),
-  primary key (id_taxonomy, id_document)
+  primary key (id_fast_subject, id_document)
 );
 
 create table assignable_ark (
@@ -106,8 +111,6 @@ create table journal (
   issue			varchar(255)
 );
 
-alter table taxonomy add fast_id varchar(255);
-
 create sequence watched_target_seq;
 create sequence journal_title_seq;
 create sequence bl_collection_subset_seq;
@@ -122,17 +125,15 @@ drop table if exists watched_target cascade;
 drop table if exists journal_title cascade;
 drop table if exists bl_collection_subset cascade;
 drop table if exists bl_collection_subset_journal_title cascade;
-drop table if exists subject_journal_title cascade;
+drop table if exists fast_subject_journal_title cascade;
 drop table if exists document cascade;
-drop table if exists subject_document cascade;
+drop table if exists fast_subject_document cascade;
 drop table if exists assignable_ark cascade;
 drop table if exists portal cascade;
 drop table if exists portal_document cascade;
 drop table if exists book cascade;
 drop table if exists bl_collection_subset_book cascade;
 drop table if exists journal cascade;
-
-alter table taxonomy drop fast_id;
 
 drop sequence if exists watched_target_seq;
 drop sequence if exists journal_title_seq;

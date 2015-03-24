@@ -19,11 +19,11 @@ import models.BlCollectionSubset;
 import models.Book;
 import models.Document;
 import models.DocumentFilter;
+import models.FastSubject;
 import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
 import models.Portal;
-import models.Subject;
 import models.User;
 import models.WatchedTarget;
 import play.Logger;
@@ -72,7 +72,7 @@ public class Documents extends AbstractController {
 		Document document = getDocumentFromDB(id);
 		if (document.status == Document.Status.SUBMITTED) editable = false;
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
-		setPortalsAndBlCollectionSubsetsOfView(documentForm, document);
+		setRelatedEntitiesOfView(documentForm, document);
 		
 		return ok(edit.render("Document" + id, documentForm,
 				User.findByEmail(request().username()), editable));
@@ -122,8 +122,7 @@ public class Documents extends AbstractController {
 		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
 		Document document = documentForm.get();
 		document.clearImproperFields();
-		document.subjects = Subject.convertIdsToObjects(document.subject);
-		setPortalsAndBlCollectionSubsetsOfModel(document, documentForm);
+		setRelatedEntitiesOfModel(document, documentForm);
 		Ebean.update(document);
 		
 		if (!document.isBookOrBookChapter() && document.book.id != null) {
@@ -313,7 +312,6 @@ public class Documents extends AbstractController {
 		if (document.type == null) document.type = "";
 		if (document.journal != null)
 			document.journal.journalTitleId = document.journal.journalTitle.id;
-		document.subject = TaxonomyController.serializeTaxonomies(document.subjects);
 		return document;
 	}
 	
@@ -326,7 +324,10 @@ public class Documents extends AbstractController {
 		return titles;
 	}
 	
-	private static void setPortalsAndBlCollectionSubsetsOfModel(Document document, Form<Document> documentForm) {
+	private static void setRelatedEntitiesOfModel(Document document, Form<Document> documentForm) {
+		for (FastSubject fastSubject : FastSubject.find.all())
+			if (documentForm.apply(fastSubject.id).value() != null)
+				document.fastSubjects.add(fastSubject);
 		for (Portal portal : portalList.getList())
 			if (documentForm.apply("portal_" + portal.id).value() != null)
 				document.portals.add(portal);
@@ -336,7 +337,9 @@ public class Documents extends AbstractController {
 					document.book.blCollectionSubsets.add(blCollectionSubset);
 	}
 	
-	private static void setPortalsAndBlCollectionSubsetsOfView(Form<Document> documentForm, Document document) {
+	private static void setRelatedEntitiesOfView(Form<Document> documentForm, Document document) {
+		for (FastSubject fastSubject : document.fastSubjects)
+			documentForm.data().put(fastSubject.id, "true");
 		for (Portal portal : document.portals)
 			documentForm.data().put("portal_" + portal.id, "true");
 		if (document.isBookOrBookChapter())
@@ -375,10 +378,16 @@ public class Documents extends AbstractController {
     		int pageNo, String sortBy, String order, String filter, boolean filters) {
     	Logger.info("Documents.list()");
     	
+    	Form<DocumentFilter> filterForm = Form.form(DocumentFilter.class).fill(documentFilter);
+    	for (String fastSubject : documentFilter.fastSubjects) {
+    		Logger.debug("adding fastSubject: " + fastSubject);
+    		filterForm.data().put(fastSubject, "true");
+    	}
+    	
         return ok(
         	list.render(
         			User.findByEmail(request().username()),
-        			Form.form(DocumentFilter.class).fill(documentFilter),
+        			filterForm,
         			filter,
         			Document.page(documentFilter, pageNo, 10, sortBy, order, filter),
         			sortBy,

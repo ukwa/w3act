@@ -72,11 +72,11 @@
               <subfield code="2">blcoll</subfield>
             </datafield>
           }
-          @for(subject <- document.subjects) {
+          @for(fastSubject <- document.fastSubjects) {
             <datafield tag="650" ind2="7" ind1=" ">
-              <subfield code="a">@subject.name</subfield>
+              <subfield code="a">@fastSubject.name</subfield>
               <subfield code="2">fast</subfield>
-              <subfield code="0">(OCoLC)fst@subject.fastId</subfield>
+              <subfield code="0">(OCoLC)@fastSubject.id</subfield>
             </datafield>
           }
           @if(document.priorityCataloguing) {
@@ -183,8 +183,8 @@
             </mods:languageTerm>
           </mods:languageOfCataloging>*@
         </mods:mods>
-      @for(subject <- document.subjects) {
-        <mods:subject authority="fast" valueURI="(OCoLC)fst@subject.fastId"></mods:subject>
+      @for(fastSubject <- document.fastSubjects) {
+        <mods:subject authority="fast" valueURI="(OCoLC)@fastSubject.id"></mods:subject>
       }
       </mets:xmlData>
     </mets:mdWrap>

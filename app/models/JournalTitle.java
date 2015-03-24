@@ -29,10 +29,10 @@ public class JournalTitle extends Model {
 		inverseJoinColumns = { @JoinColumn(name = "id_bl_collection_subset", referencedColumnName="id") })
 	public List<BlCollectionSubset> blCollectionSubsets = new ArrayList<>();
 	@ManyToMany(cascade=CascadeType.REMOVE)
-	@JoinTable(name = "subject_journal_title",
+	@JoinTable(name = "fast_subject_journal_title",
 		joinColumns = { @JoinColumn(name = "id_journal_title", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="id") })
-	public List<Subject> subjects = new ArrayList<>();
+		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
+	public List<FastSubject> fastSubjects = new ArrayList<>();
 	@Required
     public String title;
 	public String issn;
