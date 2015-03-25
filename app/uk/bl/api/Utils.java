@@ -718,13 +718,13 @@ public enum Utils {
 //        String urlRegex = "\\b(https?|ftp|file|ldap)://"
 //                + "[-A-Za-z0-9+&@#/%?=~_|!:,.;]"
 //                + "*[-A-Za-z0-9+&@#/%=~_|]";
-        
-        String urlRegex = "https?:\\/\\/(www)?+[\\w\\d.-]+\\.[\\w]{2,}";
-        
+       
 //        urlRegex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?"
-    	Pattern p = Pattern.compile(urlRegex);  
-        Matcher m = p.matcher(url);
-        return m.matches();
+        String urlRegex = "https?:\\/\\/(www)?+[\\w\\d.-]+\\.[\\w]{2,}(/.*)?";
+    	return url.matches(urlRegex);
+//    	Pattern p = Pattern.compile(urlRegex);  
+//        Matcher m = p.matcher(url);
+//        return m.matches();
     	
     }
     

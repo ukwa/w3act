@@ -14,12 +14,15 @@ Scenario: Checking if it's there my URL is malformed
   	When I check to see if it is malformed
   	Then I should see a result of "<output>"
     Examples:
-      | input 							| output  	| 
-      | http://nicelife.co.uk   		| yes		| 
-      | https://www.nicelife.wales   	| yes		| 
-      | htt://www.nicelife   			| no		| 
-      | nicelife   						| no		| 
-      | http://nicelife					| no		|
-      | https://nicelife				| no		|
-      | http://www.nicelife   			| no		| 
-      
+      | input 											| output  	| 
+      | http://nicelife.co.uk   						| yes		| 
+      | https://www.nicelife.wales   					| yes		| 
+      | htt://www.nicelife   							| no		| 
+      | nicelife   										| no		| 
+      | http://nicelife									| no		|
+      | https://nicelife								| no		|
+      | http://www.nicelife   							| no		| 
+	  | https://www.bbc.co.uk/test1&query=1&terri=2   	| yes    	| 
+	  | https://www.bbc.co.uk/test1&query=1&terri=2/   	| yes    	|
+	  | https://www.bbc.co.uk/test1/   					| yes    	|
+	  | http://www.bbc.co.uk/test1						| yes    	|	  	  
