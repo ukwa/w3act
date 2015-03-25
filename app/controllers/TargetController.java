@@ -230,6 +230,7 @@ public class TargetController extends AbstractController {
 		return ok(view.render(target, user));
     }
 
+//    @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String url) {
     	if (url.startsWith("http://")) {
     		url = url.replace("http://", "");
@@ -288,7 +289,7 @@ public class TargetController extends AbstractController {
         String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
     	
     	Logger.debug(filter + " " + pageNo + " " + sort + " " + order + " " + pageSize + " " + curatorId + " " + curatorId + " " + licenseId + " " + depthName + " " + crawlFrequencyName + " " + flagId + " " + collectionSelect + " " + subjectSelect);
-    	
+
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
@@ -348,6 +349,19 @@ public class TargetController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
+    		
+    		// check url
+    		
+			boolean isValidUrl = Utils.INSTANCE.validUrl(query);
+			
+			Logger.debug("valid? " + isValidUrl);
+			if (!isValidUrl) {
+	            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+	            form.reject(ve);
+	  			flash("message", "Invalid URL.");
+    	    	return redirect(routes.TargetController.lookup(pageNo, sort, order, query));
+			}
+    		
     		if (action.equals("add")) {
     			return redirect(
 	        		routes.TargetController.newForm(query)
@@ -729,7 +743,7 @@ public class TargetController extends AbstractController {
 	        filledForm.reject(ve);
 	        return info(filledForm, id);
 		}
-//    	target.delete();
+    	target.delete();
     	return redirect(routes.TargetController.index());
     }
     

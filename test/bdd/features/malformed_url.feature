@@ -7,6 +7,7 @@ Scenario: Checking if it's there my URL is malformed
   Given I have a malformed URL of "http://www.nicelife"
   When I check to see if it is malformed
   Then I should see a result of "no"
+  # A good tip is to avoid putting anything about the outcome in the Given
 
 
   Scenario Outline: Checking if it's there my URL is malformed
