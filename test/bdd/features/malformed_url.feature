@@ -25,4 +25,6 @@ Scenario: Checking if it's there my URL is malformed
 	  | https://www.bbc.co.uk/test1&query=1&terri=2   	| yes    	| 
 	  | https://www.bbc.co.uk/test1&query=1&terri=2/   	| yes    	|
 	  | https://www.bbc.co.uk/test1/   					| yes    	|
-	  | http://www.bbc.co.uk/test1						| yes    	|	  	  
+	  | http://www.bbc.co.uk/test1						| yes    	|
+	  | htt://www.nicolaagain.co.uk						| no    	|
+	  	  	  

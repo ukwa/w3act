@@ -230,8 +230,17 @@ public class TargetController extends AbstractController {
 		return ok(view.render(target, user));
     }
 
-    @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String url) {
+    	if (url.startsWith("http://")) {
+    		url = url.replace("http://", "");
+    	}
+
+    	if (url.startsWith("https://")) {
+    		url = url.replace("https://", "");
+    	}
+
+    	Logger.debug("after prefix: " + url);
+
         JsonNode jsonData = null;
         if (url != null) {
 	        List<Target> targets = Target.filterActiveUrl(url);
