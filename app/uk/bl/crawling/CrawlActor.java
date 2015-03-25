@@ -39,7 +39,7 @@ public class CrawlActor extends UntypedActor {
 			List<String> newerCrawlTimes = Crawler.getNewerCrawlTimes(watchedTarget);
 			Logger.debug("got " + newerCrawlTimes.size() + " new crawl dates");
 			for (String crawlTime : newerCrawlTimes)
-				crawlDocuments(watchedTarget, true, crawlTime, null);
+				crawlDocuments(watchedTarget, true, crawlTime, 2, null);
 			Logger.info("Finished crawling " + watchedTarget.target.fieldUrls.get(0).url);
 			return null;
 		}
@@ -47,9 +47,9 @@ public class CrawlActor extends UntypedActor {
 	}
 	
 	public static List<Document> crawlDocuments(WatchedTarget watchedTarget,
-			boolean crawlWayback, String crawlTime, Integer maxDocuments) {
+			boolean crawlWayback, String crawlTime, int depth, Integer maxDocuments) {
 		Logger.debug("crawlDocuments of " + watchedTarget.target.fieldUrls.get(0).url + " (date: " + crawlTime + ")");
-		List<Document> documentList = (new Crawler(crawlWayback)).crawlForDocuments(watchedTarget, crawlTime, maxDocuments);
+		List<Document> documentList = (new Crawler(crawlWayback)).crawlForDocuments(watchedTarget, crawlTime, depth, maxDocuments);
 		List<Document> newDocumentList = new ArrayList<>();
 		if (documentList.isEmpty()) {
 			TargetController.raiseFlag(watchedTarget.target, "No Documents Found");
@@ -70,8 +70,8 @@ public class CrawlActor extends UntypedActor {
 	}
 	
 	public static void crawlAndConvertDocuments(WatchedTarget watchedTarget,
-			boolean crawlWayback, String crawlTime, Integer maxDocuments) {
-		convertDocuments(crawlDocuments(watchedTarget, crawlWayback, crawlTime, maxDocuments));
+			boolean crawlWayback, String crawlTime, int depth, Integer maxDocuments) {
+		convertDocuments(crawlDocuments(watchedTarget, crawlWayback, crawlTime, depth, maxDocuments));
 	}
 	
 	public static void convertDocuments(List<Document> newDocumentList) {

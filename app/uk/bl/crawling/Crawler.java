@@ -89,7 +89,7 @@ public class Crawler {
 		return timestampPromise.get(5000);
 	}
 	
-	public List<Document> crawlForDocuments(WatchedTarget watchedTarget, String crawlTime, Integer maxDocuments) {
+	public List<Document> crawlForDocuments(WatchedTarget watchedTarget, String crawlTime, int depth, Integer maxDocuments) {
 		Logger.debug("crawlForDocuments");
 		knownSites = new HashSet<>();
 		foundDocuments = new ArrayList<>();
@@ -102,7 +102,7 @@ public class Crawler {
 		knownSites.add(seedUrl);
 		Set<Link> fringe = new HashSet<>();
 		fringe.add(new Link(null, seedUrl));
-		breathFirstSearch(watchedTarget, fringe, 2);
+		breathFirstSearch(watchedTarget, fringe, depth);
 		
 		return foundDocuments;
 	}

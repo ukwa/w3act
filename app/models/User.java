@@ -454,6 +454,7 @@ public class User extends ActModel {
     /**
      * @return role (user's should only have a single role)
      */
+    @JsonIgnore
     public Role getRole() {
     	if (CollectionUtils.isNotEmpty(roles)) {
     		return roles.get(0);
