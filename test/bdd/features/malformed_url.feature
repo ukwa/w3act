@@ -6,7 +6,7 @@ Feature: Check if there is an existing URL is malformed
 Scenario: Checking if it's there my URL is malformed
   Given I have a malformed URL of "http://www.nicelife"
   When I check to see if it is malformed
-  Then I should see a result of "yes"
+  Then I should see a result of "no"
 
 
   Scenario Outline: Checking if it's there my URL is malformed
@@ -20,5 +20,6 @@ Scenario: Checking if it's there my URL is malformed
       | htt://www.nicelife   			| no		| 
       | nicelife   						| no		| 
       | http://nicelife					| no		|
-      #| http://www.nicelife   			| no		| 
+      | https://nicelife				| no		|
+      | http://www.nicelife   			| no		| 
       
