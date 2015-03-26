@@ -3,9 +3,7 @@ package controllers;
 import static play.data.Form.form;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import models.Collection;
 import models.User;
@@ -340,7 +338,7 @@ public class CollectionController extends AbstractController {
 	@Security.Authenticated(SecuredController.class)
     public static Result getCollectionTargets(Long id) {
 		Collection collection = Collection.findById(id);
-		Logger.debug("collections: " + collection.targets.size());
+		Logger.debug("targets: " + collection.targets.size());
 		
 		JsonNode jsonNode = Json.toJson(collection.targets);
 		return ok(jsonNode);

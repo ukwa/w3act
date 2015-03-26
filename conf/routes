@@ -286,7 +286,7 @@ POST    /nominations/:id              		controllers.NominationController.update(
 
 
 # JSON API
-#GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
+GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
 #GET     /api/scopeintance/:url               controllers.InstanceController.isInScope(url)
 GET     /api/licence/:url                    controllers.CrawlPermissionController.crawlPermissionExist(url)
 GET     /api/licencelevel/:url               controllers.CrawlPermissionController.crawlPermissionExistAtHigherLevel(url)

@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import play.db.ebean.Model;
 import uk.bl.Const;
-import uk.bl.api.Utils;
 
 @MappedSuperclass
 abstract class ActModel extends Model {
@@ -55,18 +54,4 @@ abstract class ActModel extends Model {
 		return dateFormat.format(createdAt);
 	}
 	
-	public String toUpdatedAtString() {
-		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-		return dateFormat.format(updatedAt);
-	}
-	
-	public String getUpdatedDate() {
-		String updatedDate = "";
-		if (this.updatedAt != null) {
-			updatedDate = Utils.INSTANCE.convertToDateTimeISO(this.updatedAt);
-		}
-		return updatedDate;
-	}
-
-
 }

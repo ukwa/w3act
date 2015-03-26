@@ -255,7 +255,7 @@ public enum Scope {
 	 */
 	public boolean checkExt(String url, Target target, String mode) throws WhoisException {
         boolean res = false;
-        Logger.debug("check url: " + url + ", nid: " + target.id);
+        Logger.debug("check url: " + url);
         url = normalizeUrl(url);
         
         /**

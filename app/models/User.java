@@ -432,8 +432,9 @@ public class User extends ActModel {
      */
     public static Page<User> page(int page, int pageSize, String sortBy, String order, String filter) {
 
-        return find.fetch("roles").where().icontains("name", filter)
-        		.order(sortBy + " " + order)
+        return find.fetch("roles").where()
+        		.icontains("name", filter)
+        		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);

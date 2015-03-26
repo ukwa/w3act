@@ -54,6 +54,8 @@ import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.ConnectionFactory;
@@ -1624,12 +1626,14 @@ public class TargetController extends AbstractController {
      * @return JSON result
      * @throws WhoisException 
      */
-//    public static Result isInScope(String url) throws WhoisException {
-////    	Logger.debug("isInScope controller: " + url);
+    public static Result isInScope(String url) throws WhoisException {
+    	Logger.debug("isInScope controller: " + url);
 //    	boolean res = Target.isInScope(url, null);
-////    	Logger.debug("isInScope res: " + res);
-//    	return ok(Json.toJson(res));
-//    }
+		boolean res = Scope.INSTANCE.check(url, null);
+
+//    	Logger.debug("isInScope res: " + res);
+    	return ok(Json.toJson(res));
+    }
     
     /**
      * This method calculates collection children - objects that have parents.
@@ -1846,20 +1850,54 @@ public class TargetController extends AbstractController {
 		return res;
 	}
 	
+	private static ObjectNode createCollectionNode(Taxonomy collection) {
+		ObjectNode collectionNode = JsonNodeFactory.instance.objectNode();
+		Logger.debug("collection: " + collection.name);
+		collectionNode.put("id", collection.id);
+		collectionNode.put("name", collection.name);
+//		collectionNode.put("description", collection.description);
+		collectionNode.put("createdAt", collection.createdAt.toString());
+		Long milliseconds = collection.updatedAt.getTime();
+		Long seconds = (Long)(milliseconds/1000);
+		collectionNode.put("updatedAt", seconds);
+		collectionNode.put("publish", collection.publish);
+		if (collection.parent != null) {
+			collectionNode.put("parent", createCollectionNode(collection.parent));
+		}
+		return collectionNode;
+	}
+	
 	@Security.Authenticated(SecuredController.class)
 	public static Result getTargetCategories(Long id) {
 		Target target = Target.findById(id);
-		List<Collection> categories = target.getCollectionCategories();
+//		List<Collection> categories = target.getCollectionCategories();
+		List<Collection> categories = target.collections;
 		
-		JsonNode jsonNode = Json.toJson(categories);
-		Iterator<JsonNode> iterator = jsonNode.iterator();
-		Logger.debug("hasNext? " + iterator.hasNext());
-		while(iterator.hasNext()) {
-			JsonNode node = (JsonNode) iterator.next();
-			ObjectNode objectNode = (ObjectNode)node;
-			objectNode.remove("children");
+		ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
+		
+		for (Collection collection : categories) {
+			ObjectNode collectionNode = createCollectionNode(collection);
+			arrayNode.add(collectionNode);
 		}
-		return ok(jsonNode);
+		
+//		JsonNode jsonNode = Json.toJson(categories);
+//		Iterator<JsonNode> iterator = jsonNode.iterator();
+//		if (categories != null) {
+//			Logger.debug("collections: " + categories.size());
+//		}
+//		while(iterator.hasNext()) {
+//			JsonNode node = (JsonNode) iterator.next();
+//			ObjectNode objectNode = (ObjectNode)node;
+//			objectNode.remove("children");
+//			JsonNode updatedAt = objectNode.get("updatedAt");
+//			Long milliseconds = updatedAt.asLong();
+//			Long seconds = (Long)(milliseconds/1000);
+//			Logger.debug("milliseconds: " + milliseconds);
+//			Logger.debug("seconds: " + seconds);
+//			objectNode.put("updatedAt", seconds);
+//		}
+		
+		return ok(arrayNode);
     }
 }
 
