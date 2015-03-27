@@ -1,0 +1,37 @@
+@(form: Form[FastSubject], user: User)
+
+@import helper.input
+@import helper.options
+@import templates.checkbox
+@import templates.checkbox2
+@import templates.inputText
+@import templates.select
+
+@implicitField = @{ helper.FieldConstructor(templates.ratio6to6FieldConstructor.f) }
+
+@main("", user) {
+	<div class="page-header">
+    	<h1>
+    		<a href="@routes.FastSubjects.list()">FAST Subjects</a> >
+			@if(form("id").value != null) {
+				@form("name").value
+			} else {
+				New FAST Subject
+			}
+		</h1>
+	</div>
+	
+	@warningmessage(flash)
+	@helper.form(action = routes.FastSubjects.save()) {
+		<div>
+			<input type="hidden" name="id" value="@form("id").value">
+			@inputText(form("name"), true, '_label -> "Name")
+			@inputText(form("fastId"), true, '_label -> "FAST ID")
+			
+			<input type="submit" class="btn btn-primary" value="Save">
+			@if(form("id").value != null && form("id").value != "") {
+				<a href="@routes.FastSubjects.delete(new Long(form("id").value))" class="btn btn-primary">Delete</a>
+			}
+		</div>
+	}
+}

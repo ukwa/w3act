@@ -22,6 +22,7 @@ public class Global extends GlobalSettings {
     	// should run in background and return view
     	Boolean dataImport = play.Play.application().configuration().getBoolean("application.data.import");
     	Boolean omitInstances = play.Play.application().configuration().getBoolean("application.data.omit_instances");
+    	Boolean activeCrawling = play.Play.application().configuration().getBoolean("application.activeCrawling");
     	Logger.debug("dataImport: " + dataImport);
 //        List<Object> allInstances = JsonUtils.getDrupalData(Const.NodeType.INSTANCE);
 
@@ -29,23 +30,25 @@ public class Global extends GlobalSettings {
     		if (omitInstances == null) omitInstances = false;
     		DataImport.INSTANCE.insert(!omitInstances);
     	}
-	Role closed = Role.findByName("closed");
-	Logger.debug("closed found: " + closed);
-	if (closed == null) {
-		Role newClosed = new Role();
-		newClosed.name = "closed";
-		newClosed.save();
-	}
+		Role closed = Role.findByName("closed");
+		Logger.debug("closed found: " + closed);
+		if (closed == null) {
+			Role newClosed = new Role();
+			newClosed.name = "closed";
+			newClosed.save();
+		}
     	
-    	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
-		Akka.system().scheduler().schedule(
-				Duration.create(millisecondsUntilMidnight(), TimeUnit.MILLISECONDS), //Initial delay
-				Duration.create(24, TimeUnit.HOURS),     //Frequency 24 hours
-				crawlActor,
-				new CrawlActor.CrawlMessage(),
-				Akka.system().dispatcher(),
-				null
-    	);
+		if (activeCrawling != null && activeCrawling) {
+	    	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
+			Akka.system().scheduler().schedule(
+					Duration.create(millisecondsUntilMidnight(), TimeUnit.MILLISECONDS), //Initial delay
+					Duration.create(24, TimeUnit.HOURS),     //Frequency 24 hours
+					crawlActor,
+					new CrawlActor.CrawlMessage(),
+					Akka.system().dispatcher(),
+					null
+	    	);
+		}
     	/*Boolean useAccounts = play.Play.application().configuration().getBoolean("use.accounts");
     	if (useAccounts) {
 	    	DataImport.INSTANCE.importPermissions();

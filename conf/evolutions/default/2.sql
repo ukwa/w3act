@@ -8,8 +8,9 @@ create table watched_target (
 );
 
 create table fast_subject (
-  id			char(11) primary key,
-  name			varchar(255)
+  id			bigint primary key,
+  fast_id		char(11) unique not null,
+  name			varchar(255) not null
 );
 
 create table journal_title (
@@ -35,7 +36,7 @@ create table bl_collection_subset_journal_title (
 );
 
 create table fast_subject_journal_title (
-  id_fast_subject	char(11) references fast_subject (id),
+  id_fast_subject	bigint references fast_subject (id),
   id_journal_title	bigint references journal_title (id),
   primary key (id_fast_subject, id_journal_title)
 );
@@ -65,7 +66,7 @@ create table document (
 );
 
 create table fast_subject_document (
-  id_fast_subject	char(11) references fast_subject (id),
+  id_fast_subject	bigint references fast_subject (id),
   id_document		bigint references document (id),
   primary key (id_fast_subject, id_document)
 );
@@ -112,6 +113,7 @@ create table journal (
 );
 
 create sequence watched_target_seq;
+create sequence fast_subject_seq;
 create sequence journal_title_seq;
 create sequence bl_collection_subset_seq;
 create sequence document_seq;
@@ -122,6 +124,7 @@ create sequence journal_seq;
 # --- !Downs
 
 drop table if exists watched_target cascade;
+drop table if exists fast_subject cascade;
 drop table if exists journal_title cascade;
 drop table if exists bl_collection_subset cascade;
 drop table if exists bl_collection_subset_journal_title cascade;
@@ -136,6 +139,7 @@ drop table if exists bl_collection_subset_book cascade;
 drop table if exists journal cascade;
 
 drop sequence if exists watched_target_seq;
+drop sequence if exists fast_subject_seq;
 drop sequence if exists journal_title_seq;
 drop sequence if exists bl_collection_subset_seq;
 drop sequence if exists document_seq;

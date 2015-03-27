@@ -76,7 +76,7 @@
             <datafield tag="650" ind2="7" ind1=" ">
               <subfield code="a">@fastSubject.name</subfield>
               <subfield code="2">fast</subfield>
-              <subfield code="0">(OCoLC)@fastSubject.id</subfield>
+              <subfield code="0">(OCoLC)@fastSubject.fastId</subfield>
             </datafield>
           }
           @if(document.priorityCataloguing) {
@@ -184,7 +184,7 @@
           </mods:languageOfCataloging>*@
         </mods:mods>
       @for(fastSubject <- document.fastSubjects) {
-        <mods:subject authority="fast" valueURI="(OCoLC)@fastSubject.id"></mods:subject>
+        <mods:subject authority="fast" valueURI="(OCoLC)@fastSubject.fastId"></mods:subject>
       }
       </mets:xmlData>
     </mets:mdWrap>

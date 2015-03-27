@@ -37,6 +37,7 @@ import play.libs.ws.WSRequestHolder;
 import play.libs.ws.WSResponse;
 import play.libs.XPath;
 import play.mvc.BodyParser;
+import play.mvc.Http.RequestBody;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.Play;
@@ -326,7 +327,7 @@ public class Documents extends AbstractController {
 	
 	private static void setRelatedEntitiesOfModel(Document document, Form<Document> documentForm) {
 		for (FastSubject fastSubject : FastSubject.find.all())
-			if (documentForm.apply(fastSubject.id).value() != null)
+			if (documentForm.apply(fastSubject.fastId).value() != null)
 				document.fastSubjects.add(fastSubject);
 		for (Portal portal : portalList.getList())
 			if (documentForm.apply("portal_" + portal.id).value() != null)
@@ -339,7 +340,7 @@ public class Documents extends AbstractController {
 	
 	private static void setRelatedEntitiesOfView(Form<Document> documentForm, Document document) {
 		for (FastSubject fastSubject : document.fastSubjects)
-			documentForm.data().put(fastSubject.id, "true");
+			documentForm.data().put(fastSubject.fastId, "true");
 		for (Portal portal : document.portals)
 			documentForm.data().put("portal_" + portal.id, "true");
 		if (document.isBookOrBookChapter())
@@ -387,7 +388,7 @@ public class Documents extends AbstractController {
         			User.findByEmail(request().username()),
         			filterForm,
         			filter,
-        			Document.page(documentFilter, pageNo, 10, sortBy, order, filter),
+        			Document.page(documentFilter, pageNo, 20, sortBy, order, filter),
         			sortBy,
         			order,
         			filters)

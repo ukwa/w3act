@@ -57,7 +57,7 @@
 			@helper.input(form("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
 				<div class="scroll-box">
 					@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
-						@checkbox2(form(fastSubject.id), true, '_label -> fastSubject.name)(
+						@checkbox2(form(fastSubject.fastId), true, '_label -> fastSubject.name)(
 							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 						)
 					}

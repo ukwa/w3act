@@ -17,6 +17,7 @@ public class DocumentFilter implements QueryStringBindable<DocumentFilter> {
 	public Long watchedtarget;
 	public String service;
 	public List<String> fastSubjects = new ArrayList<>();
+	SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	@DateTime(pattern="dd-MM-yyyy")
 	public Date startdate;
 	@DateTime(pattern="dd-MM-yyyy")
@@ -67,9 +68,8 @@ public class DocumentFilter implements QueryStringBindable<DocumentFilter> {
 		if (data.containsKey("service") && !data.get("service")[0].equals("All"))
 			service = data.get("service")[0];
 		for (FastSubject fastSubject : FastSubject.find.all())
-			if (data.containsKey(fastSubject.id))
-				fastSubjects.add(fastSubject.id);
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			if (data.containsKey(fastSubject.fastId))
+				fastSubjects.add(fastSubject.fastId);
 		if (data.containsKey("startdate"))
 			try {
 				startdate = dateFormat.parse(data.get("startdate")[0]);
@@ -89,8 +89,8 @@ public class DocumentFilter implements QueryStringBindable<DocumentFilter> {
 		if (service != null) result += "&service=" + service;
 		for (String fastSubject : fastSubjects)
 			result += "&" + fastSubject + "=true";
-		if (startdate != null) result += "&startdate=" + startdate;
-		if (enddate != null) result += "&enddate=" + enddate;
+		if (startdate != null) result += "&startdate=" + dateFormat.format(startdate);
+		if (enddate != null) result += "&enddate=" + dateFormat.format(enddate);
 		return result;
 	}
 	

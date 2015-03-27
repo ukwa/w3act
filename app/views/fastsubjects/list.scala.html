@@ -1,0 +1,76 @@
+@(user: User, searchstr: String, currentPage: com.avaje.ebean.Page[FastSubject], currentSortBy: String, currentOrder: String)
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+
+    routes.FastSubjects.list(newPage, sortBy, order, searchstr)
+}
+
+@main("", user) {
+
+	<div class="page-header">
+	    <h1>FAST Subjects</h1>
+	</div>
+	
+	@warningmessage(flash)
+	
+	<article class="fastsubjects">
+		@helper.form(action=routes.FastSubjects.list()) {	    	
+			<div id="forms">
+	   			<div class="input-group">
+   					<input type="hidden" name="s" value="@currentSortBy">
+   					<input type="hidden" name="o" value="@currentOrder">
+					<input type="text" class="form-control lookup-form-control" name="f" placeholder="Enter FAST Subject Name" value="@searchstr" id="search-query">
+		   			<span class="input-group-btn">
+						<input type="submit" class="btn btn-primary" id="search" name="action" value="Search">
+						@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+							<a class="btn btn-primary" href="@routes.FastSubjects.newForm()">Add</a>
+						}
+					</span>
+				</div>
+			</div>
+			
+	    	@pagination(currentPage, link)
+	    	
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						@header("name", "Name", currentSortBy, currentOrder, link)
+						@header("id", "FAST ID", currentSortBy, currentOrder, link)
+					</tr>
+				</thead>
+				<tbody>
+				@for(fastSubject <- currentPage.getList) {
+					<tr>
+						<td><a href="@routes.FastSubjects.edit(fastSubject.id)">@fastSubject.name</a></td>
+						<td>@fastSubject.fastId</td>
+					</tr>
+				}
+				</tbody>
+			</table>
+			
+			@pagination(currentPage, link)
+		}
+				
+	</article>
+}
+
+

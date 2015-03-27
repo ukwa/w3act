@@ -46,7 +46,7 @@ public class JournalTitles extends AbstractController {
 	
 	private static void setRelatedEntitiesOfModel(JournalTitle journalTitle, Form<JournalTitle> journalTitleForm) {
 		for (FastSubject fastSubject : FastSubject.find.all())
-			if (journalTitleForm.apply(fastSubject.id).value() != null)
+			if (journalTitleForm.apply(fastSubject.fastId).value() != null)
 				journalTitle.fastSubjects.add(fastSubject);
 		for (BlCollectionSubset blCollectionSubset : Documents.blCollectionSubsetList.getList())
 			if (journalTitleForm.apply("blCollectionSubset_" + blCollectionSubset.id).value() != null)
@@ -55,7 +55,7 @@ public class JournalTitles extends AbstractController {
 	
 	private static void setRelatedEntitiesOfView(Form<JournalTitle> journalTitleForm, JournalTitle journalTitle) {
 		for (FastSubject fastSubject : journalTitle.fastSubjects)
-			journalTitleForm.data().put(fastSubject.id, "true");
+			journalTitleForm.data().put(fastSubject.fastId, "true");
 		for (BlCollectionSubset portal : journalTitle.blCollectionSubsets)
 			journalTitleForm.data().put("blCollectionSubset_" + portal.id, "true");
 	}

@@ -122,11 +122,10 @@
 						)
 					</div>
 					<div class="col-md-6">
-						@*tree(filterForm("subject"), true, '_label -> "Subject(s)", 'onchange -> "this.form.submit()")*@
 						@helper.input(filterForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
 							<div class="scroll-box">
 								@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
-									@checkbox2(filterForm(fastSubject.id), true, '_label -> fastSubject.name,
+									@checkbox2(filterForm(fastSubject.fastId), true, '_label -> fastSubject.name,
 										'onchange -> "this.form.submit()")(
 											helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 										)
