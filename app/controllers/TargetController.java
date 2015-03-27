@@ -1068,8 +1068,7 @@ public class TargetController extends AbstractController {
 		        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
 		        }
 		        
-		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
-//		        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
+		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
 		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
 		            filledForm.reject(ve);
 		            return info(filledForm, id);
@@ -1361,8 +1360,7 @@ public class TargetController extends AbstractController {
         	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
 
-        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
-//        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
+        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
             ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
             filledForm.reject(ve);
             return newInfo(filledForm);

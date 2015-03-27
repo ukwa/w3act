@@ -210,10 +210,9 @@ public class ApplicationController extends Controller {
      * curl -v -H "Content-Type: application/json" -X PUT -d '{"uk_postal_address_url": "http://belly.co.uk", "field_urls": ["http://www.poopoo.co.uk"]}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets/74
      * curl -v -H "Content-Type: application/json" -X PUT -d '{"field_subjects": ["13","14"]}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets/74
      * curl -v -H "Content-Type: application/json" -X PUT -d '{"field_collection_cats": ["2","4"]}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets/74
-     * curl -v -H "Content-Type: application/json" -X PUT -d ' {
-    "uk_postal_address_url": true,
-    "field_uk_postal_address_url": "http://www.theguardian.com/"
-}' -u kinman.li@bl.uk:password http://www.webarchive.org.uk/actdev/targets/17356
+     * curl -v -H "Content-Type: application/json" -X PUT -d '{"uk_postal_address_url": true,"field_uk_postal_address_url": "http://www.theguardian.com/"}' -u kinman.li@bl.uk:password http://www.webarchive.org.uk/actdev/api/targets/17356
+	 * curl -v -H "Content-Type: application/json" -X PUT -d '{"uk_postal_address_url": "http://www.theguardian.com/","id": 17516,"field_uk_postal_address": true}' -u kinman.li@bl.uk:password http://www.webarchive.org.uk/actdev/api/targets/17516
+	 * curl -v -H "Content-Type: application/json" -X PUT -d '{"uk_postal_address_url": "http://www.theguardian.com/","field_uk_postal_address": true}' -u kinman.li@bl.uk:password http://localhost:9000/actdev/api/targets/1
      * 
      * @throws ActException
      */
