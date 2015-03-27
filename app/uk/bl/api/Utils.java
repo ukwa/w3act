@@ -725,7 +725,17 @@ public enum Utils {
 //        return m.matches();
     	
     }
-    
+
+    public String convertToDateString(Date date) {
+    	String formatted = null;
+    	if (date != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			formatted =  dateFormat.format(date);
+    	}
+    	return formatted;
+    }
+
     public String convertToDateTime(Date date) {
     	String formatted = null;
     	if (date != null) {

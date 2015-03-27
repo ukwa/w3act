@@ -156,6 +156,7 @@
 						<th>Contact Person</th>
 						<th>Communication Log</th>
 						<th>Licence</th>
+						<th>Date</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -188,6 +189,9 @@
 				                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Preview License</a>
 			                }
 						</td>
+						<td>
+							@permission.toUpdatedAtString
+						</td>						
 					</tr>
 				}
 				</tbody>
