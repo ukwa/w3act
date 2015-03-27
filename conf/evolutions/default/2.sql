@@ -13,6 +13,12 @@ create table fast_subject (
   name			varchar(255) not null
 );
 
+create table fast_subject_watched_target (
+  id_fast_subject	bigint references fast_subject (id),
+  id_watched_target	bigint references watched_target (id),
+  primary key (id_fast_subject, id_watched_target)
+);
+
 create table journal_title (
   id			bigint primary key,
   id_watched_target	bigint references watched_target (id),
@@ -125,6 +131,7 @@ create sequence journal_seq;
 
 drop table if exists watched_target cascade;
 drop table if exists fast_subject cascade;
+drop table if exists fast_subject_watched_target cascade;
 drop table if exists journal_title cascade;
 drop table if exists bl_collection_subset cascade;
 drop table if exists bl_collection_subset_journal_title cascade;

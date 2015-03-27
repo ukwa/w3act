@@ -37,7 +37,6 @@ import play.libs.ws.WSRequestHolder;
 import play.libs.ws.WSResponse;
 import play.libs.XPath;
 import play.mvc.BodyParser;
-import play.mvc.Http.RequestBody;
 import play.mvc.Result;
 import play.mvc.Security;
 import play.Play;
