@@ -140,6 +140,7 @@ public class Crawler {
 											document.filename = URLDecoder.decode(hrefUrl.substring(hrefUrl.lastIndexOf('/')+1), "UTF-8");
 											document.title = document.filename.substring(0, document.filename.indexOf('.'));
 											document.watchedTarget = watchedTarget;
+											document.fastSubjects = watchedTarget.fastSubjects;
 											extractMetadata(document);
 											foundDocuments.add(document);
 											if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;
@@ -169,6 +170,7 @@ public class Crawler {
 								document.filename = contentDisposition.substring(contentDisposition.lastIndexOf('=')+1);
 							document.title = document.filename.substring(0, document.filename.indexOf('.'));
 							document.watchedTarget = watchedTarget;
+							document.fastSubjects = watchedTarget.fastSubjects;
 							Logger.debug("hidden pdf found: " + document.filename + " (url: " + pageUrl + ")");
 							foundDocuments.add(document);
 							if (maxDocuments != null && foundDocuments.size() >= maxDocuments) return;

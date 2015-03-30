@@ -1,10 +1,14 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.avaje.ebean.Ebean;
 
 import models.FastSubject;
 import models.FlashMessage;
-import models.JournalTitle;
 import models.User;
 import play.data.Form;
 import play.mvc.Result;
@@ -57,6 +61,21 @@ public class FastSubjects extends AbstractController {
 			Ebean.update(fastSubject);
 		FlashMessage.updateSuccess.send();
 		return redirect(routes.FastSubjects.edit(fastSubject.id));
+	}
+	
+	public static List<FastSubject> getFastSubjects(Form<?> form) {
+		List<FastSubject> fastSubjects = new ArrayList<>();
+		for (FastSubject fastSubject : FastSubject.find.all())
+			if (form.apply(fastSubject.fastId).value() != null)
+				fastSubjects.add(fastSubject);
+		return fastSubjects;
+	}
+	
+	public static Map<String, String> getFormData(List<FastSubject> fastSubjects) {
+		Map<String, String> formData = new HashMap<>();
+		for (FastSubject fastSubject : fastSubjects)
+			formData.put(fastSubject.fastId, "true");
+		return formData;
 	}
 
 }

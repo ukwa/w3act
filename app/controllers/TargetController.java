@@ -32,7 +32,6 @@ import models.Tag;
 import models.Target;
 import models.Taxonomy;
 import models.User;
-import models.WatchedTarget;
 import play.Logger;
 import play.Play;
 import play.data.DynamicForm;
@@ -747,6 +746,7 @@ public class TargetController extends AbstractController {
 		target.subjectSelect = target.subjectIdsAsString();
 		target.collectionSelect = target.collectionIdsAsString();
 		Form<Target> filledForm = targetForm.fill(target);
+		filledForm.data().putAll(FastSubjects.getFormData(target.watchedTarget.fastSubjects));
 		User user = User.findByEmail(request().username());
 		JsonNode collectionData = getCollectionsData(target.collections);
 		JsonNode subjectData = getSubjectsData(target.subjects);
@@ -1267,9 +1267,11 @@ public class TargetController extends AbstractController {
 		    		Ebean.delete(target.watchedTarget);
 		    	} else if (watched && !target.isWatched()) {
 		    		filledForm.get().watchedTarget.target = target;
+		    		filledForm.get().watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
 		    		Ebean.save(filledForm.get().watchedTarget);
 		    	} else if (watched && target.isWatched()) {
 		    		target.watchedTarget.documentUrlScheme = filledForm.get().watchedTarget.documentUrlScheme;
+		    		target.watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
 		    		Ebean.update(target.watchedTarget);
 		    	}
 				
@@ -1561,6 +1563,7 @@ public class TargetController extends AbstractController {
     	if (watched) {
     		Target target = filledForm.get();
     		target.watchedTarget.target = target;
+    		target.watchedTarget.fastSubjects = FastSubjects.getFastSubjects(filledForm);
     		Ebean.save(target.watchedTarget);
     	}
         flash("success", "Target " + filledForm.get().title + " has been created");

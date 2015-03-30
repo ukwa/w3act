@@ -322,7 +322,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="inputDescription" class="col-sm-6 control-label">Subject</label>
+			              	<label for="inputDescription" class="col-sm-6 control-label">Browse Subject</label>
 			              	 <div class="col-sm-6">
 			              	 	@if(target.subjectsAsString.length > 0) {
 				              	 	@target.subjectsAsString
@@ -857,6 +857,7 @@
 						</div>
 					</div>
 		     	</div>
+		     @if(target.watchedTarget != null) {
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -867,7 +868,6 @@
 						</div>
 					</div>
 		     	</div>
-		     @if(target.watchedTarget != null) {
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -881,6 +881,20 @@
 									}
 								</table>
 								<a class="btn btn-success" href="@routes.JournalTitles.addJournalTitle(target.watchedTarget.id, false)">New Journal Title</a>
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Subjects</label>
+						    <div class="col-sm-6">
+								@for(fastSubject <- target.watchedTarget.fastSubjects) {
+									<div>
+										@fastSubject.name
+									</div>
+								}
 							</div>
 						</div>
 					</div>

@@ -4,7 +4,6 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 
 import models.BlCollectionSubset;
-import models.FastSubject;
 import models.FlashMessage;
 import models.JournalTitle;
 import models.User;
@@ -28,6 +27,7 @@ public class JournalTitles extends AbstractController {
 		journalTitle.watchedTarget = watchedTarget;
 		journalTitle.language = Const.JOURNAL_TITLE_LANGUAGE;
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
+		journalTitleForm.data().putAll(FastSubjects.getFormData(watchedTarget.fastSubjects));
 
 		return ok(edit.render("Journal Title", journalTitleForm,
 				User.findByEmail(request().username()), toDocument));
@@ -45,17 +45,14 @@ public class JournalTitles extends AbstractController {
 	}
 	
 	private static void setRelatedEntitiesOfModel(JournalTitle journalTitle, Form<JournalTitle> journalTitleForm) {
-		for (FastSubject fastSubject : FastSubject.find.all())
-			if (journalTitleForm.apply(fastSubject.fastId).value() != null)
-				journalTitle.fastSubjects.add(fastSubject);
+		journalTitle.fastSubjects = FastSubjects.getFastSubjects(journalTitleForm);
 		for (BlCollectionSubset blCollectionSubset : Documents.blCollectionSubsetList.getList())
 			if (journalTitleForm.apply("blCollectionSubset_" + blCollectionSubset.id).value() != null)
 				journalTitle.blCollectionSubsets.add(blCollectionSubset);
 	}
 	
 	private static void setRelatedEntitiesOfView(Form<JournalTitle> journalTitleForm, JournalTitle journalTitle) {
-		for (FastSubject fastSubject : journalTitle.fastSubjects)
-			journalTitleForm.data().put(fastSubject.fastId, "true");
+		journalTitleForm.data().putAll(FastSubjects.getFormData(journalTitle.fastSubjects));
 		for (BlCollectionSubset portal : journalTitle.blCollectionSubsets)
 			journalTitleForm.data().put("blCollectionSubset_" + portal.id, "true");
 	}

@@ -390,7 +390,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="subjects" class="col-sm-6 control-label">Subject</label>
+			              	<label for="subjects" class="col-sm-6 control-label">Browse Subject</label>
 						    <div class="col-sm-6">
 							  	<div id="subjectTree"></div>
 						  		<input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
@@ -959,6 +959,17 @@
 				}
 				@templates.inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")(
 					helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
+				)
+				@helper.input(targetForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
+					<div class="scroll-box">
+						@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
+							@templates.checkbox2(targetForm(fastSubject.fastId), true, '_label -> fastSubject.name)(
+								helper.FieldConstructor(templates.checkboxFieldConstructor.f)
+							)
+						}
+					</div>
+				}(
+					helper.FieldConstructor(templates.ratio6to6FieldConstructor.f), new Lang("en")
 				)
 	        </div>
 	                    

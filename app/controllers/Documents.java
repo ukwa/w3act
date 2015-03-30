@@ -19,7 +19,6 @@ import models.BlCollectionSubset;
 import models.Book;
 import models.Document;
 import models.DocumentFilter;
-import models.FastSubject;
 import models.FlashMessage;
 import models.Journal;
 import models.JournalTitle;
@@ -255,6 +254,7 @@ public class Documents extends AbstractController {
 			document.filename = objNode.get("filename").textValue();
 			document.title = document.filename.substring(0, document.filename.indexOf('.'));
 			document.status = Document.Status.NEW;
+			document.fastSubjects = WatchedTarget.find.byId(watchedTargetId).fastSubjects;
 			Logger.debug("add document " + document.filename);
 			documents.add(document);
 		}
@@ -325,9 +325,7 @@ public class Documents extends AbstractController {
 	}
 	
 	private static void setRelatedEntitiesOfModel(Document document, Form<Document> documentForm) {
-		for (FastSubject fastSubject : FastSubject.find.all())
-			if (documentForm.apply(fastSubject.fastId).value() != null)
-				document.fastSubjects.add(fastSubject);
+		document.fastSubjects = FastSubjects.getFastSubjects(documentForm);
 		for (Portal portal : portalList.getList())
 			if (documentForm.apply("portal_" + portal.id).value() != null)
 				document.portals.add(portal);
@@ -338,8 +336,7 @@ public class Documents extends AbstractController {
 	}
 	
 	private static void setRelatedEntitiesOfView(Form<Document> documentForm, Document document) {
-		for (FastSubject fastSubject : document.fastSubjects)
-			documentForm.data().put(fastSubject.fastId, "true");
+		documentForm.data().putAll(FastSubjects.getFormData(document.fastSubjects));
 		for (Portal portal : document.portals)
 			documentForm.data().put("portal_" + portal.id, "true");
 		if (document.isBookOrBookChapter())

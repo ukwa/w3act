@@ -4,6 +4,7 @@
 @import bootstrap._
 @import uk.bl.api.FormHelper
 @import templates.checkbox
+@import templates.checkbox2
 @import templates.inputText
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio6to6FieldConstructor.f) }
@@ -443,7 +444,7 @@
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
-			              	<label for="subjects" class="col-sm-6 control-label">Subject</label>
+			              	<label for="subjects" class="col-sm-6 control-label">Browse Subject</label>
 						    <div class="col-sm-6">
 							  	<div id="subjectTree"></div>
 						  		<input type="hidden" id="subjectSelect" name="subjectSelect" value="@targetForm("subjectSelect").value">
@@ -1075,6 +1076,15 @@
 					@checkbox(targetForm("watched"), false, '_label -> "watched (only the owner can modify this)")
 				}
 				@inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")
+				@helper.input(targetForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
+					<div class="scroll-box">
+						@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
+							@checkbox2(targetForm(fastSubject.fastId), true, '_label -> fastSubject.name)(
+								helper.FieldConstructor(templates.checkboxFieldConstructor.f)
+							)
+						}
+					</div>
+				}
 	        </div>
 	        
 		</div>

@@ -7,6 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -30,6 +32,11 @@ public class WatchedTarget extends Model {
 	public List<Document> documents;
     @OneToMany(mappedBy="watchedTarget", cascade=CascadeType.REMOVE) @JsonIgnore
     public List<JournalTitle> journalTitles = new ArrayList<>();
+	@ManyToMany(cascade=CascadeType.REMOVE) @JsonIgnore
+	@JoinTable(name = "fast_subject_watched_target",
+		joinColumns = { @JoinColumn(name = "id_watched_target", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
+	public List<FastSubject> fastSubjects = new ArrayList<>();
 	public String documentUrlScheme;
 	public String waybackTimestamp;
 	@JsonIgnore
