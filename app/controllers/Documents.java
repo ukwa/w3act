@@ -240,7 +240,7 @@ public class Documents extends AbstractController {
 			return redirect(routes.Documents.overview(0, "title", "asc"));
 	}
 	
-	@BodyParser.Of(BodyParser.Json.class)
+	@BodyParser.Of(value = BodyParser.Json.class, maxLength = 1024 * 1024)
 	public static Result importJson() {
 		JsonNode json = request().body().asJson();
 		List<Document> documents = new ArrayList<>();
