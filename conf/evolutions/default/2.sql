@@ -55,6 +55,7 @@ create table document (
   landing_page_url	varchar(255),
   document_url		varchar(255),
   sha256hash		varchar(255),
+  ctp_hash		varchar(255),
   title			TEXT not null,
   doi			varchar(255),
   ark			varchar(255),

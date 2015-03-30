@@ -54,6 +54,7 @@ public class Document extends Model {
     public String landingPageUrl;
     public String documentUrl;
     public String sha256Hash;
+    public String ctpHash;
     @Required
     @Column(columnDefinition = "TEXT")
 	public String title;

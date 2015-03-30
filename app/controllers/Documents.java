@@ -1,6 +1,5 @@
 package controllers;
 
-import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -298,12 +297,25 @@ public class Documents extends AbstractController {
 		return ok(sip.render(document));
 	}
 	
-	public static void addHash(Document document) throws FileNotFoundException {
+	public static void addHashes(Document document) {
 		File file = Play.application().getFile("conf/converter/" + document.id + ".sha256");
-		Scanner scanner = new Scanner(file);
-		String sha1Hash = scanner.next();
-		scanner.close();
-		document.sha256Hash = sha1Hash;
+		try {
+			Scanner scanner = new Scanner(file);
+			document.sha256Hash = scanner.next();
+			scanner.close();
+			file.delete();
+		} catch (Exception e) {
+			Logger.warn("can't read sha256 hash: " + e.getMessage());
+		}
+		file = Play.application().getFile("conf/converter/" + document.id + ".ctp");
+		try {
+			Scanner scanner = new Scanner(file);
+			document.ctpHash = scanner.next();
+			scanner.close();
+			file.delete();
+		} catch (Exception e) {
+			Logger.warn("can't read ctp hash: " + e.getMessage());
+		}
 		Ebean.save(document);
 	}
 	

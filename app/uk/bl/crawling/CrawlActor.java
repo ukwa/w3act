@@ -78,7 +78,7 @@ public class CrawlActor extends UntypedActor {
 		for (Document document : newDocumentList) {
 			try {
 				convertPdfToHtml(document);
-				Documents.addHash(document);
+				Documents.addHashes(document);
 			} catch (IOException e) {
 				Logger.error(e.getMessage());
 			}
