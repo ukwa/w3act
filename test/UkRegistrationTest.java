@@ -12,13 +12,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import play.test.WithApplication;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import uk.bl.wa.whois.JRubyWhois;
 import uk.bl.wa.whois.WhoisResult;
 
 
-public class UkRegistrationTest {
+public class UkRegistrationTest extends WithApplication {
 
 	Target target = null;
 	List<FieldUrl> fieldUrls;
