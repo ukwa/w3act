@@ -1,8 +1,6 @@
 package models;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -12,7 +10,6 @@ import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import play.db.ebean.Model;
@@ -31,7 +28,6 @@ abstract class ActModel extends Model {
 	@Column(unique=true)
 	public String url;
 
-    @JsonIgnore
     public Date createdAt;
 
     @Version
