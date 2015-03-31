@@ -3,7 +3,6 @@ package uk.bl.crawling;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +49,7 @@ public class CrawlActor extends UntypedActor {
 			boolean crawlWayback, String crawlTime, int depth, Integer maxDocuments) {
 		Logger.debug("crawlDocuments of " + watchedTarget.target.fieldUrls.get(0).url + " (date: " + crawlTime + ")");
 		List<Document> documentList = (new Crawler(crawlWayback)).crawlForDocuments(watchedTarget, crawlTime, depth, maxDocuments);
-		List<Document> newDocumentList = new ArrayList<>();
+		List<Document> newDocumentList = Documents.filterNew(documentList);
 		if (documentList.isEmpty()) {
 			TargetController.raiseFlag(watchedTarget.target, "No Documents Found");
 		} else {
@@ -58,14 +57,9 @@ public class CrawlActor extends UntypedActor {
 					(watchedTarget.waybackTimestamp == null ||
 					crawlTime.compareTo(watchedTarget.waybackTimestamp) > 0)) {
 				WatchedTargets.setWaybackTimestamp(watchedTarget, crawlTime);
-			}
-			for (Document document : documentList)
-				if (Document.find.where().eq("document_url", document.documentUrl).findRowCount() == 0)
-					newDocumentList.add(document);
-			
+			}			
 			Ebean.save(newDocumentList);
-		}
-		
+		}		
 		return newDocumentList;
 	}
 	

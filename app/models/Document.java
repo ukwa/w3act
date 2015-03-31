@@ -127,7 +127,7 @@ public class Document extends Model {
     		el = el.in("id", Portals.getDocumentIds(documentFilter.service));
     	}
     	if (documentFilter.fastSubjects != null && !documentFilter.fastSubjects.isEmpty()) {
-    		el = el.in("fastSubjects.id", documentFilter.fastSubjects);
+    		el = el.in("fastSubjects.fastId", documentFilter.fastSubjects);
     	}
     	SimpleDateFormat waybackFormat = new SimpleDateFormat("yyyyMMdd");
     	if (documentFilter.startdate != null) {

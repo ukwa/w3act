@@ -746,7 +746,8 @@ public class TargetController extends AbstractController {
 		target.subjectSelect = target.subjectIdsAsString();
 		target.collectionSelect = target.collectionIdsAsString();
 		Form<Target> filledForm = targetForm.fill(target);
-		filledForm.data().putAll(FastSubjects.getFormData(target.watchedTarget.fastSubjects));
+		if (target.watchedTarget != null)
+			filledForm.data().putAll(FastSubjects.getFormData(target.watchedTarget.fastSubjects));
 		User user = User.findByEmail(request().username());
 		JsonNode collectionData = getCollectionsData(target.collections);
 		JsonNode subjectData = getSubjectsData(target.subjects);

@@ -2,7 +2,7 @@
 
 create table watched_target (
   id			bigint primary key,
-  id_target		bigint references target (id),
+  id_target		bigint not null references target (id),
   document_url_scheme	varchar(255),
   wayback_timestamp	varchar(255)
 );
@@ -21,7 +21,7 @@ create table fast_subject_watched_target (
 
 create table journal_title (
   id			bigint primary key,
-  id_watched_target	bigint references watched_target (id),
+  id_watched_target	bigint not null references watched_target (id),
   title			varchar(255) not null,
   issn			varchar(255),
   frequency		varchar(255),
@@ -49,7 +49,7 @@ create table fast_subject_journal_title (
 
 create table document (
   id			bigint primary key,
-  id_watched_target	bigint references watched_target (id),
+  id_watched_target	bigint not null references watched_target (id),
   wayback_timestamp	varchar(255),
   status		integer,
   landing_page_url	varchar(255),
@@ -96,7 +96,7 @@ create table portal_document (
 
 create table book (
   id			bigint primary key,
-  id_document		bigint unique references document (id),
+  id_document		bigint unique not null references document (id),
   isbn			varchar(255),
   corporate_author	varchar(255),
   series		varchar(255),
@@ -113,7 +113,7 @@ create table bl_collection_subset_book (
 
 create table journal (
   id			bigint primary key,
-  id_document		bigint unique references document (id),
+  id_document		bigint unique not null references document (id),
   id_journal_title	bigint references journal_title (id),
   volume		varchar(255) not null,
   issue			varchar(255)

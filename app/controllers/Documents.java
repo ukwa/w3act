@@ -257,8 +257,16 @@ public class Documents extends AbstractController {
 			Logger.debug("add document " + document.filename);
 			documents.add(document);
 		}
-		Ebean.save(documents);
+		Ebean.save(filterNew(documents));
 		return ok("Documents added");
+	}
+	
+	public static List<Document> filterNew(List<Document> documentList) {
+		List<Document> newDocumentList = new ArrayList<>();
+		for (Document document : documentList)
+			if (Document.find.where().eq("document_url", document.documentUrl).findRowCount() == 0)
+				newDocumentList.add(document);
+		return newDocumentList;
 	}
 	
 	public static Result export(DocumentFilter documentFilter, String sortBy,
