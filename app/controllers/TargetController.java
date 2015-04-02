@@ -1161,6 +1161,9 @@ public class TargetController extends AbstractController {
 						e.printStackTrace();
 			            return info(filledForm, id);
 					}
+		    	} else {
+		    		Ebean.createUpdate(Target.class, "update target SET crawl_end_date=null where id=:id")
+						.setParameter("id", id).execute();
 		    	}
 		        
 		//        String qaIssueId = requestData.get("qaIssueId");

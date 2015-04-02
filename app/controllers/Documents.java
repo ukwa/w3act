@@ -122,6 +122,10 @@ public class Documents extends AbstractController {
 		document.clearImproperFields();
 		setRelatedEntitiesOfModel(document, documentForm);
 		Ebean.update(document);
+		if (document.publicationDate == null) {
+			Ebean.createUpdate(Document.class, "update document SET publication_date=null where id=:id")
+					.setParameter("id", document.id).execute();
+		}
 		
 		if (!document.isBookOrBookChapter() && document.book.id != null) {
 			Book book = Ebean.find(Book.class, document.book.id);
