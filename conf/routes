@@ -163,6 +163,9 @@ GET		/watchedtargets/list				controllers.WatchedTargets.list(user ?= "", childre
 GET		/watchedtargets/:watchedtarget		controllers.WatchedTargets.view(watchedtarget: Long)
 GET		/watchedtargets/:watchedtarget/journaltitles		controllers.JournalTitles.addJournalTitle(watchedtarget: Long, toDocument: Boolean ?= false)
 
+GET		/alerts/list						controllers.Alerts.list(p:Int ?= 0, s ?= "createdAt", o ?= "desc")
+POST	/alerts/action						controllers.Alerts.action()
+
 GET		/site/:url/$relative<.*>			controllers.Helper.passthrough(url, relative)
 
 GET     /flags                              controllers.FlagController.index()

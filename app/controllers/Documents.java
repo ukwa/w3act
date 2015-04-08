@@ -252,6 +252,11 @@ public class Documents extends AbstractController {
 			Long watchedTargetId = objNode.get("id_watched_target").longValue();
 			document.watchedTarget = WatchedTarget.find.byId(watchedTargetId);
 			document.waybackTimestamp = objNode.get("wayback_timestamp").textValue();
+			if (document.watchedTarget.waybackTimestamp == null ||
+					document.waybackTimestamp.compareTo(document.watchedTarget.waybackTimestamp) > 0) {
+				document.watchedTarget.waybackTimestamp = document.waybackTimestamp;
+				Ebean.save(document.watchedTarget);
+			}
 			document.landingPageUrl = objNode.get("landing_page_url").textValue();
 			document.documentUrl = objNode.get("document_url").textValue();
 			document.filename = objNode.get("filename").textValue();

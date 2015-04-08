@@ -1,0 +1,106 @@
+@(user: User, currentPage: com.avaje.ebean.Page[Alert], currentSortBy: String, currentOrder: String)
+
+@scripts = {
+	<script>
+		function checkAll() {
+			if ($("#action_all")[0].checked)
+				$(".action_single").prop('checked', true);
+			else
+				$(".action_single").prop('checked', false);
+			checkboxState();
+		}
+		function checkboxState() {
+			if ($(".action_single").length - $(".action_single:checked").length > 0)
+				$("#action_all").prop('checked', false);
+			else
+				$("#action_all").prop('checked', true);
+			
+			if ($(".action_single:checked").length > 0)
+				$(".btn-primary").prop('disabled', false);
+			else
+				$(".btn-primary").prop('disabled', true);
+		}
+		function deleteAlerts() {
+			var numberChecked = $(".action_single:checked").length;
+			var alertString = numberChecked == 1 ? "alert" : "alerts";
+			return "You are about to delete " + numberChecked + " " + alertString +
+					".\nDo you want to proceed?";
+		}
+	</script>
+}
+
+@link(newPage:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+    
+    routes.Alerts.list(newPage, sortBy, order)
+}
+
+@main("", user, scripts) {
+
+	<div class="page-header">
+	    <h1>Alerts</h1>
+	</div>
+	
+	@warningmessage(flash)
+	
+	<ul class="nav nav-tabs">
+		<li><a href="@routes.WatchedTargets.overview()">My Watched Targets</a></li>
+		<li><a href="@routes.Documents.overview()">My New Documents</a></li>
+		<li class="active"><a href="#">Alerts</a></li>
+	</ul>
+	
+	<article class="alerts">
+		
+		@helper.form(action=routes.Alerts.action()) {
+			@pagination(currentPage, link)
+			
+			<table id="checkbox-container" class="table table-hover">
+				<thead>
+					<tr>
+						@header("text", "Message", currentSortBy, currentOrder, link)
+						@header("createdAt", "Time", currentSortBy, currentOrder, link)
+						<th><input type="checkbox" id="action_all" onclick="checkAll()"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@for(alert <- currentPage.getList) {
+						<tr>
+							<td>@if(alert.read) {@Html(alert.text)} else {<strong>@Html(alert.text)</strong>}</td>
+							<td>@if(alert.read) {@alert.formattedDateString} else {<strong>@alert.formattedDateString</strong>}</td>
+							<td><input type="checkbox" class="action_single" name="action_@alert.id" onclick="checkboxState()"></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			
+			@if(currentPage.getTotalRowCount() > 0) {
+				<span class="btn-group" style="float: right">
+					<input type="submit" class="btn btn-primary" value="Mark As Read">
+					<input type="submit" class="btn btn-primary" value="Delete" name="delete" onclick=
+						"return confirm(deleteAlerts());">
+				</span>
+				<div style="clear: both"></div>
+			}
+			
+			@pagination(currentPage, link)
+		}
+		
+	</article>
+}
+
+

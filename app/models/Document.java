@@ -56,7 +56,7 @@ public class Document extends Model {
     public String sha256Hash;
     public String ctpHash;
     @Required
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
 	public String title;
 	public String doi;
 	public String ark;

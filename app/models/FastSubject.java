@@ -23,5 +23,5 @@ public class FastSubject extends Model {
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
-    }  
+    }
 }

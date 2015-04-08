@@ -56,7 +56,7 @@ create table document (
   document_url		varchar(255),
   sha256hash		varchar(255),
   ctp_hash		varchar(255),
-  title			TEXT not null,
+  title			text not null,
   doi			varchar(255),
   ark			varchar(255),
   publication_date	date,
@@ -119,6 +119,14 @@ create table journal (
   issue			varchar(255)
 );
 
+create table alert (
+  id			bigint primary key,
+  id_creator		bigint not null references creator (id),
+  text			text not null,
+  created_at		timestamp not null,
+  read			boolean not null
+);
+
 create sequence watched_target_seq;
 create sequence fast_subject_seq;
 create sequence journal_title_seq;
@@ -127,6 +135,7 @@ create sequence document_seq;
 create sequence portal_seq;
 create sequence book_seq;
 create sequence journal_seq;
+create sequence alert_seq;
 
 # --- !Downs
 
@@ -145,6 +154,7 @@ drop table if exists portal_document cascade;
 drop table if exists book cascade;
 drop table if exists bl_collection_subset_book cascade;
 drop table if exists journal cascade;
+drop table if exists alert cascade;
 
 drop sequence if exists watched_target_seq;
 drop sequence if exists fast_subject_seq;
@@ -154,3 +164,4 @@ drop sequence if exists document_seq;
 drop sequence if exists portal_seq;
 drop sequence if exists book_seq;
 drop sequence if exists journal_seq;
+drop sequence if exists alert_seq;
