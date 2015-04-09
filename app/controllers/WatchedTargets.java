@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 
+import com.avaje.ebean.CallableSql;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -97,6 +98,9 @@ public class WatchedTargets extends AbstractController {
     }
     
     public static Result convert() {
+    	CallableSql cs = Ebean.createCallableSql("{call many_documents_alert()}");
+    	cs.addModification("alert", true, false, false);
+    	Ebean.execute(cs);
     	ActorRef crawlActor = Akka.system().actorOf(Props.create(CrawlActor.class));
     	Akka.system().scheduler().scheduleOnce(
 				Duration.create(0, TimeUnit.MILLISECONDS),

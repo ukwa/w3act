@@ -1084,18 +1084,7 @@ public class TargetController extends AbstractController {
 		            }
 		            filledForm.get().fieldUrls = fieldUrls;
 		            Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
-		        }    
-		        
-		        try {
-			        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
-					filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
-					filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
-					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
-					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
-					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
-				} catch (MalformedURLException | WhoisException | URISyntaxException e) {
-					throw new ActException(e);
-				}
+		        }
 
 		        Logger.debug("filledForm: " + filledForm.get());
 		        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
@@ -1185,16 +1174,25 @@ public class TargetController extends AbstractController {
 		            filledForm.get().tags = newTags;
 		        }
 		        
-		        List<Flag> newFlags = new ArrayList<Flag>();
+		        Target target = Target.find.byId(id);
 		        String[] flagValues = formParams.get("flagsList");
 		
 		        if (flagValues != null) {
-		            for(String flagValue: flagValues) {
+		        	List<Flag> newFlags = new ArrayList<>();
+		        	for(String flagValue: flagValues) {
 		            	Long flagId = Long.valueOf(flagValue);
 		            	Flag flag =  Flag.findById(flagId);
 		            	newFlags.add(flag);
+		            	if (!target.flags.contains(flag))
+		            		target.flags.add(flag);
 		            }
-		            filledForm.get().flags = newFlags;
+		        	for (Flag flag : target.flags) {
+		        		if (!newFlags.contains(flag))
+		        			target.flags.remove(flag);
+		        	}
+		            
+		            Ebean.update(target);
+		            filledForm.get().flags = null;
 		        }
 		        
 		        List<Subject> newSubjects = new ArrayList<Subject>();
@@ -1264,7 +1262,7 @@ public class TargetController extends AbstractController {
 				filledForm.get().update(id);
 				
 				boolean watched = getFormParam("watched") != null;
-				Target target = Target.find.byId(id);
+				//Target target = Target.find.byId(id);
 		    	if (!watched && target.isWatched()) {
 		    		Ebean.delete(target.watchedTarget.documents);
 		    		Ebean.delete(target.watchedTarget.journalTitles);

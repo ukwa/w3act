@@ -73,14 +73,14 @@
 				<thead>
 					<tr>
 						@header("text", "Message", currentSortBy, currentOrder, link)
-						@header("createdAt", "Time", currentSortBy, currentOrder, link)
+						@header("createdAt", "Date", currentSortBy, currentOrder, link)
 						<th><input type="checkbox" id="action_all" onclick="checkAll()"></th>
 					</tr>
 				</thead>
 				<tbody>
 					@for(alert <- currentPage.getList) {
 						<tr>
-							<td>@if(alert.read) {@Html(alert.text)} else {<strong>@Html(alert.text)</strong>}</td>
+							<td>@if(alert.read) {@Html(alert.getHtml)} else {<strong>@Html(alert.getHtml)</strong>}</td>
 							<td>@if(alert.read) {@alert.formattedDateString} else {<strong>@alert.formattedDateString</strong>}</td>
 							<td><input type="checkbox" class="action_single" name="action_@alert.id" onclick="checkboxState()"></td>
 						</tr>
@@ -90,9 +90,9 @@
 			
 			@if(currentPage.getTotalRowCount() > 0) {
 				<span class="btn-group" style="float: right">
-					<input type="submit" class="btn btn-primary" value="Mark As Read">
+					<input type="submit" class="btn btn-primary" value="Mark As Read" disabled>
 					<input type="submit" class="btn btn-primary" value="Delete" name="delete" onclick=
-						"return confirm(deleteAlerts());">
+						"return confirm(deleteAlerts());" disabled>
 				</span>
 				<div style="clear: both"></div>
 			}

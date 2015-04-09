@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 
 import com.avaje.ebean.Page;
 
+import play.Play;
 import play.db.ebean.Model;
 
 @Entity
@@ -38,6 +39,10 @@ public class Alert extends Model {
 	public String formattedDateString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 		return dateFormat.format(createdAt);
+	}
+	
+	public String getHtml() {
+		return text.replace("href=\"/", "href=\"" + Play.application().configuration().getString("application.context") + "/");
 	}
 	
 }
