@@ -1186,10 +1186,10 @@ public class TargetController extends AbstractController {
 		            	if (!target.flags.contains(flag))
 		            		target.flags.add(flag);
 		            }
-		        	for (Flag flag : target.flags) {
-		        		if (!newFlags.contains(flag))
-		        			target.flags.remove(flag);
-		        	}
+		        	
+		        	for (Iterator<Flag> it = target.flags.iterator(); it.hasNext(); )
+		        		if (!newFlags.contains(it.next()))
+		        			it.remove();
 		            
 		            Ebean.update(target);
 		            filledForm.get().flags = null;
