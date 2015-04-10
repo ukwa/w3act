@@ -17,10 +17,11 @@ import views.html.alerts.list;
 public class Alerts extends AbstractController {
 	
 	public static Result list(int pageNo, String sortBy, String order) {
+		User user = User.findByEmail(request().username());
 		return ok(
 			list.render(
-					User.findByEmail(request().username()),
-					Alert.page(pageNo, 20, sortBy, order),
+					user,
+					Alert.page(user.id, pageNo, 20, sortBy, order),
 					sortBy,
 					order)
 			);

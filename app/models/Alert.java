@@ -29,8 +29,9 @@ public class Alert extends Model {
 	
 	public static final Model.Finder<Long, Alert> find = new Model.Finder<>(Long.class, Alert.class);
 	
-	public static Page<Alert> page(int page, int pageSize, String sortBy, String order) {
-        return find.where().orderBy(sortBy + " " + order)
+	public static Page<Alert> page(Long userId, int page, int pageSize, String sortBy, String order) {
+        return find.where().eq("id_creator", userId)
+        		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
