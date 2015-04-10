@@ -52,6 +52,7 @@ create table document (
   id_watched_target	bigint not null references watched_target (id),
   wayback_timestamp	varchar(255),
   status		integer,
+  current_status_set	date,
   landing_page_url	varchar(255),
   document_url		varchar(255),
   sha256hash		varchar(255),

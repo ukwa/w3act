@@ -37,6 +37,7 @@ public class Document extends Model {
 	public WatchedTarget watchedTarget;
 	public String waybackTimestamp;
 	public Status status;
+	public Date currentStatusSet;
 	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
 	public Book book;
 	@OneToOne(mappedBy="document", cascade=CascadeType.REMOVE) @JsonIgnore
@@ -149,8 +150,13 @@ public class Document extends Model {
         		.setFetchAhead(false)
         		.getPage(page);
     }
-    
-    public enum Type {
+
+	public void setStatus(Status status) {
+		this.status = status;
+		currentStatusSet = new Date();
+	}
+
+	public enum Type {
     	BOOK ("Book"),
     	BOOK_CHAPTER ("Book Chapter"),
     	JOURNAL_ARTICLE ("Journal Article"),
@@ -170,7 +176,8 @@ public class Document extends Model {
 	public enum Status {
 		NEW,
 		SUBMITTED,
-		IGNORED;
+		IGNORED,
+		DELETED;
     }
     
 }

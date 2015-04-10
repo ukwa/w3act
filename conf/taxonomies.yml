@@ -6,6 +6,22 @@ taxonomies:
         ttype:        licenses
         name:         Open UKWA Licence (2014-)
 
+    - !!models.License
+        ttype:        licenses
+        name:         NPLD + remote access for registered users of the MBS Portal only, negotiated
+
+    - !!models.License
+        ttype:        licenses
+        name:         NPLD + remote access for all BL services, negotiated
+
+    - !!models.License
+        ttype:        licenses
+        name:         NPLD + remote access for registered users of all the Legal Deposit Library
+
+    - !!models.License
+        ttype:        licenses
+        name:         NPLD + remote access for all services, not negotiated
+
     - !!models.Subject
 #        ttype:        subsubject
         ttype:        subject

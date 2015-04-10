@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Query;
+import com.avaje.ebean.SqlUpdate;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import models.AssignableArk;
@@ -173,7 +174,7 @@ public class Documents extends AbstractController {
 		}
 		document.ark = assignableArks.get(0).ark;
 		Ebean.delete(assignableArks.get(0));
-		document.status = Document.Status.SUBMITTED;
+		document.setStatus(Document.Status.SUBMITTED);
 		Ebean.save(document);
 		deleteHtmlFile(document.getHtmlFilename());
 		FlashMessage submitSuccess = new FlashMessage(FlashMessage.Type.SUCCESS,
@@ -216,9 +217,9 @@ public class Documents extends AbstractController {
 			String sortBy, String order, String filter, boolean filters) {
 		Document document = Document.find.byId(id);
 		if (documentFilter.status == Document.Status.NEW)
-			document.status = Document.Status.IGNORED;
+			document.setStatus(Document.Status.IGNORED);
 		else
-			document.status = Document.Status.NEW;
+			document.setStatus(Document.Status.NEW);
 		Ebean.save(document);
 		if (filters)
 			return redirect(routes.Documents.list(documentFilter, pageNo, sortBy, order, filter));
@@ -234,7 +235,7 @@ public class Documents extends AbstractController {
 		else
 			status = Document.Status.NEW;
 		for (Document document : query.findList()) {
-			document.status = status;
+			document.setStatus(status);
 			Ebean.save(document);
 		}
 		if (filters)
@@ -261,7 +262,7 @@ public class Documents extends AbstractController {
 			document.documentUrl = objNode.get("document_url").textValue();
 			document.filename = objNode.get("filename").textValue();
 			document.title = document.filename.substring(0, document.filename.indexOf('.'));
-			document.status = Document.Status.NEW;
+			document.setStatus(Document.Status.NEW);
 			document.fastSubjects = WatchedTarget.find.byId(watchedTargetId).fastSubjects;
 			Logger.debug("add document " + document.filename);
 			documents.add(document);
@@ -392,6 +393,11 @@ public class Documents extends AbstractController {
      */
 	public static Result list(DocumentFilter documentFilter,
 			int pageNo, String sortBy, String order, String filter) {
+		if (documentFilter.status == Document.Status.IGNORED) {
+			SqlUpdate su = Ebean.createSqlUpdate("update document set status=3 where status=2 " +
+					"and age(current_status_set) >= interval '1 month'");
+			Ebean.execute(su);
+		}
 		return renderList(documentFilter, pageNo, sortBy, order, filter, true);
 	}
 	
