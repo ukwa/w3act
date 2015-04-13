@@ -124,7 +124,7 @@ create table alert (
   id			bigint primary key,
   id_creator		bigint not null references creator (id),
   text			text not null,
-  created_at		timestamp not null,
+  created_at		timestamp(0) not null,
   read			boolean not null
 );
 

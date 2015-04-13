@@ -29,6 +29,7 @@ import play.Logger;
 import play.data.Form;
 import play.data.validation.ValidationError;
 import play.libs.F.Function;
+import play.libs.F.Function0;
 import play.libs.F.Promise;
 import play.libs.Json;
 import play.libs.ws.WS;
@@ -393,12 +394,26 @@ public class Documents extends AbstractController {
      */
 	public static Result list(DocumentFilter documentFilter,
 			int pageNo, String sortBy, String order, String filter) {
-		if (documentFilter.status == Document.Status.IGNORED) {
-			SqlUpdate su = Ebean.createSqlUpdate("update document set status=3 where status=2 " +
-					"and age(current_status_set) >= interval '1 month'");
-			Ebean.execute(su);
-		}
+		if (documentFilter.status == Document.Status.IGNORED)
+			changeStatusOfIgnoredDocuments();
 		return renderList(documentFilter, pageNo, sortBy, order, filter, true);
+	}
+
+	private static void changeStatusOfIgnoredDocuments() {
+		SqlUpdate su = Ebean.createSqlUpdate("update document" +
+				" set status=" + Document.Status.DELETED.ordinal() +
+				" where status=" + Document.Status.IGNORED.ordinal() +
+				" and age(current_status_set) >= interval '1 month'");
+		Ebean.execute(su);
+		
+		Promise.promise(new Function0<Boolean>() {
+			public Boolean apply() {
+				List<Document> documents = Document.find.where().eq("status", Document.Status.DELETED.ordinal()).findList();
+				for (Document document : documents)
+					deleteHtmlFile(document.getHtmlFilename());
+				return true;
+			}
+		});
 	}
 	
     public static Result overview(int pageNo, String sortBy, String order) {
