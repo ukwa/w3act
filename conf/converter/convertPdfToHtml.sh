@@ -1,20 +1,22 @@
 #!/bin/bash
 
-PDF_URL=$1
-BASE_FILE_NAME=$2
+pdf_url=$1
+base_file_name=$2
+ctph_file=$3
 
-wget -O "$BASE_FILE_NAME.pdf" "$PDF_URL"
+wget -O "$base_file_name.pdf" "$pdf_url"
 
-openssl sha256 "$BASE_FILE_NAME.pdf" | awk '{print $2}' > "$BASE_FILE_NAME.sha256"
-ssdeep -b "$BASE_FILE_NAME.pdf" | tail -n 1 > "$BASE_FILE_NAME.ctp"
+openssl sha256 "$base_file_name.pdf" | awk '{print $2}' > "$base_file_name.sha256"
+ssdeep -b "$base_file_name.pdf" | tail -n 1 > "$base_file_name.ctp"
+cat "$base_file_name.ctp" >> "$ctph_file"
 
-pdf2htmlEX --embed-font 0 --process-outline 0 "$BASE_FILE_NAME.pdf"
+pdf2htmlEX --embed-font 0 --process-outline 0 "$base_file_name.pdf"
 
-rm "$BASE_FILE_NAME.pdf"
+rm "$base_file_name.pdf"
 rm *.woff
 
-sed -i s/@font-face{[^}]*}// "$BASE_FILE_NAME.html"
-sed -i "s/\(\.fs.*{font-size:\)\(.*px\)/\1calc(\2 * 0.9)/" "$BASE_FILE_NAME.html"
+sed -i s/@font-face{[^}]*}// "$base_file_name.html"
+sed -i "s/\(\.fs.*{font-size:\)\(.*px\)/\1calc(\2 * 0.9)/" "$base_file_name.html"
 
 mkdir -p ../../../html
-mv "$BASE_FILE_NAME.html" ../../../html/
+mv "$base_file_name.html" ../../../html/

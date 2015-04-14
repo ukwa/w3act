@@ -24,8 +24,8 @@ public class Alert extends Model {
 	public User user;
 	@Column(columnDefinition="text")
 	public String text;
-	public Date createdAt;
-	public boolean read;
+	public Date createdAt = new Date();
+	public boolean read = false;
 	
 	public static final Model.Finder<Long, Alert> find = new Model.Finder<>(Long.class, Alert.class);
 	
@@ -44,6 +44,10 @@ public class Alert extends Model {
 	
 	public String getHtml() {
 		return text.replace("href=\"/", "href=\"" + Play.application().configuration().getString("application.context") + "/");
+	}
+	
+	public static String link(Document document) {
+		return "<a href=\"/documents/" + document.id + "\">" + document.title + "</a>";
 	}
 	
 }

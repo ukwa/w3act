@@ -14,6 +14,7 @@ import com.avaje.ebean.Query;
 import com.avaje.ebean.SqlUpdate;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import models.Alert;
 import models.AssignableArk;
 import models.BlCollectionSubset;
 import models.Book;
@@ -336,6 +337,35 @@ public class Documents extends AbstractController {
 			Logger.warn("can't read ctp hash: " + e.getMessage());
 		}
 		Ebean.save(document);
+	}
+	
+	public static void addDuplicateAlert() {
+		File file = Play.application().getFile("conf/converter/matches.out");
+		try {
+			Scanner scanner = new Scanner(file);
+			scanner.useDelimiter("[\r\n]+");
+			while (scanner.hasNext()) {
+				String line = scanner.next();
+				String[] parts = line.split("[ :]");
+				if (parts.length == 6) {
+					long docId1 = Long.parseLong(parts[1].split("\\.")[0]);
+					long docId2 = Long.parseLong(parts[4].split("\\.")[0]);
+					int similarity = Integer.parseInt(parts[5].replace("(", "").replace(")", ""));
+					Document doc1 = Document.find.byId(docId1);
+					Document doc2 = Document.find.byId(docId2);
+					Alert alert = new Alert();
+					alert.user = doc1.watchedTarget.target.authorUser;
+					alert.text = "possible duplicate found: " + Alert.link(doc1) + " matches " +
+							Alert.link(doc2) + " with " + similarity + "%";
+					Ebean.save(alert);
+				}
+			}
+			scanner.close();
+			file.delete();
+		} catch (Exception e) {
+			Logger.warn("can't read ctph matches:");
+			e.printStackTrace();
+		}
 	}
 	
 	public static Document getDocumentFromDB(long id) {

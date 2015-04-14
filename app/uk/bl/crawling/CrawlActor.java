@@ -3,6 +3,8 @@ package uk.bl.crawling;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -69,24 +71,32 @@ public class CrawlActor extends UntypedActor {
 	}
 	
 	public static void convertDocuments(List<Document> newDocumentList) {
+		String ctphFile = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + ".txt";
 		for (Document document : newDocumentList) {
 			try {
-				convertPdfToHtml(document);
+				convertPdfToHtml(document, ctphFile);
 				Documents.addHashes(document);
 			} catch (IOException e) {
 				Logger.error(e.getMessage());
 			}
 		}
+		try {
+			compareHashes(ctphFile);
+			Documents.addDuplicateAlert();
+		} catch (IOException e) {
+			Logger.error(e.getMessage());
+		}		
 	}
-	
+
 	public static void convertDocuments() {
 		List<Document> newDocumentList = Document.find.where().eq("sha256hash", null).findList();
 		convertDocuments(newDocumentList);
 	}
 
-	private static void convertPdfToHtml(Document document) throws IOException {
-		ProcessBuilder builder = new ProcessBuilder(
- 			"/bin/bash", "-c", "cd conf/converter && ./convertPdfToHtml.sh '" + document.documentUrl + "' '" + document.id + "'");
+	private static void convertPdfToHtml(Document document, String ctphFile) throws IOException {
+		ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c",
+				"cd conf/converter && ./convertPdfToHtml.sh '" + document.documentUrl +
+				"' '" + document.id + "' " + ctphFile);
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
 		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -96,6 +106,12 @@ public class CrawlActor extends UntypedActor {
  			if (line == null) { break; }
 			Logger.debug(line);
 		}
+	}
+	
+	private static void compareHashes(String ctphFile) throws IOException {
+		ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c",
+				"cd conf/converter && ./compareHashes.sh " + ctphFile);
+		builder.start();
 	}
 	
 	public void onReceive(Object message) throws Exception {

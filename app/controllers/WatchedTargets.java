@@ -112,6 +112,12 @@ public class WatchedTargets extends AbstractController {
     	return redirect(routes.ApplicationController.home());
     }
     
+    public static Result noDocuments(Long id) {
+    	WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
+    	TargetController.raiseFlag(watchedTarget.target, "No Documents Found");
+    	return ok();
+    }
+    
     public static void setWaybackTimestamp(WatchedTarget watchedTarget, String waybackTimestamp) {
     	watchedTarget.waybackTimestamp = waybackTimestamp;
     	Ebean.update(watchedTarget);
