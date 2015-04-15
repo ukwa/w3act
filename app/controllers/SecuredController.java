@@ -1,5 +1,6 @@
 package controllers;
 
+import models.User;
 import play.mvc.*;
 import play.mvc.Http.*;
 
@@ -19,12 +20,14 @@ public class SecuredController extends Security.Authenticator {
     
     // Access rights
     
-    public static boolean isMemberOf(Long project) {
-        return true;
+    public static boolean isSysAdmin(String email) {
+    	User user = User.findByEmail(email);
+        return user.isSysAdmin();
     }
-    
-    public static boolean isOwnerOf(Long task) {
-        return true;
+
+    public static boolean isArchivist(String email) {
+    	User user = User.findByEmail(email);
+        return user.isArchivist();
     }
-    
+
 }

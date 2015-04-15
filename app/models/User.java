@@ -16,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -67,6 +68,7 @@ public class User extends ActModel {
 	public Organisation organisation;
 	
 	@JsonIgnore
+    @OrderBy("name asc")
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "role_user", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") }) 
@@ -233,6 +235,10 @@ public class User extends ActModel {
     
     public boolean isSysAdmin() {
     	return (hasRole("sys_admin"));
+    }
+
+    public boolean isArchivist() {
+    	return (hasRole("archivist"));
     }
 
     /**
@@ -425,7 +431,8 @@ public class User extends ActModel {
      */
     public static Page<User> page(int page, int pageSize, String sortBy, String order, String filter) {
 
-        return find.where().icontains("name", filter)
+        return find.fetch("roles").where()
+        		.icontains("name", filter)
         		.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)

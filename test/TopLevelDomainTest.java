@@ -1,7 +1,9 @@
 import static org.junit.Assert.*;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import models.Target;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
@@ -35,7 +38,7 @@ public class TopLevelDomainTest {
 	}
 
 	@Test
-	public void test() throws MalformedURLException, WhoisException, URISyntaxException {
+	public void test() throws ActException  {
 		Boolean pass = Scope.INSTANCE.isTopLevelDomain(target);
 		System.out.println("fieldUrls with valid top level domains: " + target.fieldUrls + " - " + pass);
 		assertTrue(pass);
@@ -44,5 +47,26 @@ public class TopLevelDomainTest {
 		Boolean fail = Scope.INSTANCE.isTopLevelDomain(target);
 		System.out.println("fieldUrls with invalid top level domains (.com): " + target.fieldUrls + " - " + fail);
 		assertFalse(fail);
+		
+		target = new Target();
+		fieldUrls = new ArrayList<FieldUrl>();
+		target.fieldUrls = fieldUrls;
+		String url = "http://www.ukbiologycompetitions.org/dfsfsf.uk";
+		FieldUrl ukFieldUrl = new FieldUrl(url);
+        URL uri;
+		try {
+			uri = new URI(url).normalize().toURL();
+		} catch (MalformedURLException | URISyntaxException e) {
+			throw new ActException(e);
+		}
+		url = uri.toExternalForm();
+		System.out.println("extForm: " + url);
+    	String domain = Scope.INSTANCE.getDomainFromUrl(url);
+		System.out.println("domain: " + domain);
+
+		target.fieldUrls.add(ukFieldUrl);
+		Boolean failedAgain = Scope.INSTANCE.isTopLevelDomain(target);
+		System.out.println("fieldUrls with invalid top level domains (.org): " + target.fieldUrls + " - " + failedAgain);
+		assertFalse(failedAgain);
 	}
 }

@@ -24,7 +24,6 @@ applyEvolutions.default=true
 applyDownEvolutions.default=true
 
 # Logger
-# ~~~~~
 logger=WARN
 logger.play=WARN
 logger.application=DEBUG
@@ -64,3 +63,5 @@ ehcacheplugin=disabled
 
 use.accounts=false
 admin.default.email="wa-sysadm@bl.uk"
+
+privacy.statement="http://www.webarchive.org.uk/ukwa/info/privacy"

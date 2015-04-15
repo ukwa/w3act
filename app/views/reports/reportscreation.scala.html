@@ -116,7 +116,7 @@
 										<label for="curator" class="col-sm-6 control-label">Filter by curator</label>
 									    <div class="col-sm-6">
 											<select name="curator" class="form-control target-form-control" id="curator">
-												<option value="0">None</option>
+												<option value="-1">None</option>
 												@for(curator <- users) {
 													@if(curator.id == curatorId) {
 														<option value="@curator.id" selected>@curator.name</option>
@@ -133,7 +133,7 @@
 						            	<label for="organisation" class="col-sm-6 control-label">Filter by nominating organisation</label>
 						            	<div class="col-sm-6">
 											<select name="organisation" class="form-control target-form-control" id="organisation">
-									        	<option value="0">All Agencies</option>
+									        	<option value="-1">All Agencies</option>
 									            	@for(organisation <- organisations) {
 							                 		  		@if(organisation.id == organisationId) {
 								                			<option value="@organisation.id" selected>@organisation.title</option>
@@ -273,10 +273,12 @@
 					@for(target <- currentPage.getList) {	              
 						<tr>
 							<td>
-				                <a class="brand" href="@routes.TargetController.viewAct(target.url)">@target.title</a>
+				                <a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a>
 							</td>
 							<td>
-				                @target.fieldUrl
+								@for(fieldUrl <- target.fieldUrls) {
+			                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
+			                	}						
 							</td>
 							@if(target.url != null && target.createdAt != null) {
 								<td>@target.createdAt</td>

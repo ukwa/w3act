@@ -1,8 +1,6 @@
 package models;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -12,11 +10,11 @@ import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import play.db.ebean.Model;
 import uk.bl.Const;
+import uk.bl.api.Utils;
 
 @MappedSuperclass
 abstract class ActModel extends Model {
@@ -30,7 +28,6 @@ abstract class ActModel extends Model {
 	@Column(unique=true)
 	public String url;
 
-    @JsonIgnore
     public Date createdAt;
 
     @Version
@@ -50,13 +47,11 @@ abstract class ActModel extends Model {
     }
     
 	public String toCreatedAtString() {
-		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-		return dateFormat.format(createdAt);
+		return Utils.INSTANCE.convertToDateString(createdAt);
 	}
 	
 	public String toUpdatedAtString() {
-		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-		return dateFormat.format(updatedAt);
+		return Utils.INSTANCE.convertToDateTime(updatedAt);
 	}
-
+	
 }

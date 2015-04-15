@@ -191,14 +191,14 @@ public class CrawlPermissionController extends AbstractController {
         if (StringUtils.isBlank(name)) {
 			Logger.debug("Organisation name is empty. Please write name in search window.");
 			flash("message", "Please enter a name in the search window");
-	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, Const.SELECT_ALL));
+	    	return redirect(routes.CrawlPermissionController.list(0, "updatedAt", Const.ASC, name, status, Const.SELECT_ALL));
 		}
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
     		if (action.equals("search")) {
-    	    	return redirect(routes.CrawlPermissionController.list(0, Const.NAME, Const.ASC, name, status, Const.SELECT_ALL));
+    	    	return redirect(routes.CrawlPermissionController.list(0, "updatedAt", Const.ASC, name, status, Const.SELECT_ALL));
 		    } else {
 		      return badRequest("This action is not allowed");
 		    }

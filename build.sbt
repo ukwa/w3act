@@ -19,5 +19,8 @@ libraryDependencies ++= Seq(
   "org.mindrot" % "jbcrypt" % "0.3m",
   "commons-io" % "commons-io" % "2.3",
   "com.rabbitmq" % "amqp-client" % "3.3.1",
-  "org.jsoup" % "jsoup" % "1.8.1"
+  "org.jsoup" % "jsoup" % "1.8.1",
+  "info.cukes" % "cucumber-java" % "1.2.2",
+  "info.cukes" % "cucumber-junit" % "1.2.2",
+  "net.sourceforge.htmlunit" % "htmlunit" % "2.15"
 )

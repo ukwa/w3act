@@ -379,5 +379,10 @@ public class Collection extends Taxonomy {
 		return children;
 	}
 	
+	public static List<Collection> getCollectionCategoriesByTargetId(Long id) {
+		ExpressionList<Collection> categories = find.fetch("target").where().eq("target.id", id).isNull("parent");
+		return categories.findList();
+	}
+
 }
 

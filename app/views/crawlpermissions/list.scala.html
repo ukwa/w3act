@@ -156,6 +156,7 @@
 						<th>Contact Person</th>
 						<th>Communication Log</th>
 						<th>Licence</th>
+						<th>Date</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -172,7 +173,7 @@
 						</td>
 						<td>
 							@for(fieldUrl <- permission.target.fieldUrls) {
-								<a href="@fieldUrl.url">@fieldUrl.url</a>
+		                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
 							}			                
 						</td>
 						<td>
@@ -188,6 +189,9 @@
 				                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Preview License</a>
 			                }
 						</td>
+						<td>
+							@permission.toUpdatedAtString
+						</td>						
 					</tr>
 				}
 				</tbody>
@@ -207,7 +211,6 @@
 	              	<label for="selectTemplate" class="col-sm-4 control-label">Template</label>
 				    <div class="col-sm-6">
 						<select name="template" value="General" class="form-control">
-							<option value="">None</option>
 							@for(template <- templates) {
 								<option value="@template.name" selected>@template.name</option>
 							}

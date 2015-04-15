@@ -5,7 +5,6 @@ import static play.data.Form.form;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -46,6 +45,7 @@ import uk.bl.Const.CrawlFrequency;
 import uk.bl.api.Utils;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
+import uk.bl.scope.Scope;
 import views.html.collections.sites;
 import views.html.licence.ukwalicenceresult;
 import views.html.infomessage;
@@ -55,6 +55,10 @@ import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
@@ -229,8 +233,21 @@ public class TargetController extends AbstractController {
 		return ok(view.render(target, user));
     }
 
-    @BodyParser.Of(BodyParser.Json.class)
+//    @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String url) {
+    	if (url.startsWith("http://")) {
+    		url = url.replace("http://", "");
+    	}
+    	if (url.startsWith("https://")) {
+    		url = url.replace("https://", "");
+    	}
+    	
+    	if (url.startsWith("www.")) {
+    		url = url.replace("www.", "");
+    	}
+
+    	Logger.debug("after prefix: " + url);
+
         JsonNode jsonData = null;
         if (url != null) {
 	        List<Target> targets = Target.filterActiveUrl(url);
@@ -275,7 +292,7 @@ public class TargetController extends AbstractController {
         String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
     	
     	Logger.debug(filter + " " + pageNo + " " + sort + " " + order + " " + pageSize + " " + curatorId + " " + curatorId + " " + licenseId + " " + depthName + " " + crawlFrequencyName + " " + flagId + " " + collectionSelect + " " + subjectSelect);
-    	
+
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
@@ -288,17 +305,23 @@ public class TargetController extends AbstractController {
     			return GO_HOME;
     		} 
     		else if (action.equals("export")) {
-//    			List<Target> exportTargets = new ArrayList<Target>();
-//    	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, 
-//    					subject, crawlFrequency, depth, collection, license, flag); 
-//    			int rowCount = page.getTotalRowCount();
-//    	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, 
-//    					subject, crawlFrequency, depth, collection, license, flag); 
-//    			exportTargets.addAll(pageAll.getList());
-//				Logger.debug("export size: " + exportTargets.size());
-//    			export(exportTargets);
+    			List<Target> exportTargets = new ArrayList<Target>();
+//    	    	Page<Target> page = Target.pageTargets(0, pageSize, sort, order, query, curator, organisation, subject, crawlFrequency, depth, collection, license, flag);
+    			// TODO: no time to do it now but this needs redoing with straight SQL/JPA to get the count
+    	    	Page<Target> page = Target.pageTargets(pageNo, pageSize, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+    			int rowCount = page.getTotalRowCount();
+//    	    	Page<Target> pageAll = Target.pageTargets(0, rowCount, sort, order, query, curator, organisation, subject, crawlFrequency, depth, collection, license, flag); 
+    	    	Page<Target> pageAll = Target.pageTargets(pageNo, rowCount, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, flagId);
+    			exportTargets.addAll(pageAll.getList());
+				Logger.debug("export size: " + exportTargets.size());
+    			String csvData = Utils.INSTANCE.export(exportTargets);
 //    	    	return redirect(routes.TargetController.list(pageNo, sort, order, query, curator, organisation, 
 //    	    			subject, crawlFrequency, depth, collection, license, pageSize, flag));
+    			
+    			response().setContentType("text/csv; charset=utf-8");
+    			response().setHeader("Content-disposition","attachment; filename=\"target-export.csv");
+    			return ok(csvData);
+//    	        return redirect(routes.TargetController.list(pageNo, sort, order, filter, curatorId, organisationId, subjectSelect, crawlFrequencyName, depthName, collectionSelect, licenseId, pageSize, flagId));
     		} 
     		else if (action.equals("search") || action.equals("apply")) {
     			if (StringUtils.isBlank(filter)) {
@@ -309,80 +332,6 @@ public class TargetController extends AbstractController {
 		    	return badRequest("This action is not allowed");
 		    }
     	}
-    	return ok("");
-    }
-    
-    /**
-     * This method exports selected targets to CSV file.
-     * @param list of Target objects
-     * @return
-     */
-    public static void export(List<Target> targetList) {
-    	Logger.debug("export() targetList size: " + targetList.size());
-
-        StringWriter sw = new StringWriter();
-        for (int i = 0; i < Const.targetExportMap.size(); i++) {
-        {
-            for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet())
-//        	Logger.debug("export key: " + entry.getKey());
-            	if (entry.getValue() == i) {
-	            	sw.append(entry.getKey());
-		 	    	sw.append(Const.CSV_SEPARATOR);
-            	}
-            }
-        }
-
-        sw.append(Const.CSV_LINE_END);
- 	    
- 	    if (targetList != null && targetList.size() > 0) {
- 	    	Iterator<Target> itr = targetList.iterator();
- 	    	while (itr.hasNext()) {
- 	    		Target target = itr.next();
-// 	        	Logger.debug("export target: " + target); 	    		
- 	            for (int i = 0; i < Const.targetExportMap.size(); i++) {
-		 	        for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet()) {
-			 	   		Field[] fields = Target.class.getFields();
-			 			for (Field field : fields) {
-		 	               if (entry.getValue() == i) {
-//		 	                   Logger.debug("field.name: " + field.getName() + ", entry.getkey: " + entry.getKey());
-		 	                   if (field.getName().equals(entry.getKey())) {
-		 	                	   try {
-										Object value = field.get(target);
-//				 	                    Logger.debug("value: " + value);
-				 	                    if (field.getName().equals(Const.AUTHOR)) {
-				 	                    	if (value != null) {
-				 	                    		value = User.findByUrl((String) value).name;
-				 	                    	}
-				 	                    }
-				 	                    // TODO: CREATED_AT
-				 	                    if (field.getName().equals(Const.CREATED_AT)) {
-				 	                    	if (value != null) {
-				 	                    		value = Utils.INSTANCE.showTimestampInTable((String) value);
-				 	                    	}
-				 	                    }
-										if (field.getType().equals(String.class)) {
-								    		sw.append((String) value);
-									 	    sw.append(Const.CSV_SEPARATOR);
-										}
-										if (field.getType().equals(Long.class)) {
-								    		sw.append(String.valueOf(((Long) value)));
-									 	    sw.append(Const.CSV_SEPARATOR);
-										}
-									} catch (IllegalArgumentException e) {
-										e.printStackTrace();
-									} catch (IllegalAccessException e) {
-										e.printStackTrace();
-									}
-		 	                   }
-		 	               }
-			 			}
-		 	        }
-	            }
-	 	 	    sw.append(Const.CSV_LINE_END);
- 	    	}
- 	    }
-
-    	Utils.INSTANCE.generateCsvFile(Const.EXPORT_FILE, sw.toString());
     }
     
     /**
@@ -403,6 +352,19 @@ public class TargetController extends AbstractController {
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
     	} else {
+    		
+    		// check url
+    		
+			boolean isValidUrl = Utils.INSTANCE.validUrl(query);
+			
+			Logger.debug("valid? " + isValidUrl);
+			if (!isValidUrl) {
+	            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+	            form.reject(ve);
+	  			flash("message", "Invalid URL.");
+    	    	return redirect(routes.TargetController.lookup(pageNo, sort, order, query));
+			}
+    		
     		if (action.equals("add")) {
     			return redirect(
 	        		routes.TargetController.newForm(query)
@@ -452,6 +414,7 @@ public class TargetController extends AbstractController {
     	Collection collection = Collection.findById(collectionId);
     	if( collection != null ) {
     		List<Target> targets = Target.allCollectionTargets(collection.id);
+    		Logger.debug("collections targets: " + targets.size());
     		return ok( Json.toJson(targets));
     	} else {
     		return notFound("There is not collection with ID "+collectionId);
@@ -769,18 +732,27 @@ public class TargetController extends AbstractController {
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
 		target.fieldUrl = target.fieldUrl();
+		
+		Logger.debug("collections: " + target.collections.size());
 		return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
     }
     
     public static Result delete(Long id) {
     	Target target = Target.findById(id);
-    	Logger.debug("deleted " + target);
-    	if (target.watchedTarget != null) {
-    		Ebean.delete(target.watchedTarget.documents);
-	    	Ebean.delete(target.watchedTarget.journalTitles);
-    	}
+    	
+		Form<Target> filledForm = Form.form(Target.class);
+		filledForm = filledForm.fill(target);
+
+		if (!target.isDeletable()) {
+			ValidationError ve = new ValidationError("formUrl", "Unable to delete Target as it references License(s) and/or Collections(s)");
+			filledForm.reject(ve);
+			return info(filledForm, id);
+		}
+		if (target.watchedTarget != null) {
+			Ebean.delete(target.watchedTarget.documents);
+			Ebean.delete(target.watchedTarget.journalTitles);
+		}
     	target.delete();
-    	Logger.debug("deleted");
     	return redirect(routes.TargetController.index());
     }
     
@@ -920,10 +892,12 @@ public class TargetController extends AbstractController {
 //		Form<Target> targetFormNew = targetForm.fill(target);
 		
 		User user = User.findByEmail(request().username());
-		JsonNode collectionData = getCollectionsData();
-		JsonNode subjectData = getSubjectsData();
 
 		Target target = Target.findById(id);
+		
+		JsonNode collectionData = getCollectionsData(target.collections);
+		JsonNode subjectData = getSubjectsData(target.subjects);
+
 		Map<String,String> authors = User.options();
 		List<Tag> tags = Tag.findAllTags();
 		List<Tag> targetTags = target.tags;
@@ -943,7 +917,8 @@ public class TargetController extends AbstractController {
 
 		DynamicForm requestData = Form.form().bindFromRequest();
         String tabStatus = requestData.get("tabstatus");
-        form.get().fieldUrl = target.fieldUrl(); 
+        String currentUrls = requestData.get("currentUrls");
+        target.fieldUrl = currentUrls; 
         return badRequest(edit.render(form, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, tabStatus, targetTags, targetFlags, targetLicenses));
     }
 
@@ -1028,7 +1003,6 @@ public class TargetController extends AbstractController {
 		            return info(filledForm, id);
 			  	}
 			  	
-		
 		        String fieldUrl = requestData.get("formUrl");
 		        
 		        String originalUrl = requestData.get("currentUrls");
@@ -1044,47 +1018,56 @@ public class TargetController extends AbstractController {
 		            	
 		            	if (StringUtils.isNotEmpty(originalUrl) && (!urlNoTrailingSlash(trimmed).equalsIgnoreCase(urlNoTrailingSlash(originalUrl)))) {
 		            		
-		            		Logger.debug("originalUrl " + originalUrl);
-		            		Logger.debug("urlNoTrailingSlash(originalUrl) " + urlNoTrailingSlash(originalUrl));
-		            		Logger.debug("urlNoTrailingSlash(trimmed) " + urlNoTrailingSlash(trimmed));
 		            		Logger.debug("trimmed " + trimmed);
 		            		
-			            	FieldUrl isExistingFieldUrl = isExistingTarget(trimmed);
-		            		Logger.debug("isExistingTarget " + isExistingFieldUrl.target.fieldUrl());
+			            	FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(trimmed);
 			            	
 			            	if (isExistingFieldUrl != null) {
 			    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
 					            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
 					            filledForm.reject(ve);
+					            filledForm.get().fieldUrl = originalUrl;
 					            return info(filledForm, id);
 			            	}
 		            	
-		            	} else {
-		                    URL uri;
-							try {
-				            	Logger.debug("url: " + trimmed);
-								uri = new URI(trimmed).normalize().toURL();
-			        			String extFormUrl = uri.toExternalForm();
-			        			
-			        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
-			        			Logger.debug("valid? " + isValidUrl);
-			        			if (!isValidUrl) {
-			        				throw new ActException("Invalid URL");
-			        			}
-			        			
-				            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
-				            	Logger.debug("extFormUrl: " + extFormUrl);
-				            	fieldUrls.add(fu);
-							} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
-					            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
-					            filledForm.reject(ve);
-					            return info(filledForm, id);
-					        }
-		            	}		            	
+		            	} 
+		            	
+	                    URL uri;
+						try {
+			            	Logger.debug("url: " + trimmed);
+							uri = new URI(trimmed).normalize().toURL();
+		        			String extFormUrl = uri.toExternalForm();
+		        			
+		        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
+		        			Logger.debug("valid? " + isValidUrl);
+		        			if (!isValidUrl) {
+		        				throw new ActException("Invalid URL");
+		        			}
+		        			
+			            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
+			            	fu.domain = Scope.INSTANCE.getDomainFromUrl(extFormUrl.trim());
+			            	Logger.debug("extFormUrl: " + extFormUrl);
+			            	fieldUrls.add(fu);
+						} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
+				            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+				            filledForm.reject(ve);
+				            return info(filledForm, id);
+				        }
 		            }
 		            filledForm.get().fieldUrls = fieldUrls;
 		            Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
 		        }
+		        
+		        try {
+			        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
+					filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
+					filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
+					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
+					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
+					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
+				} catch (WhoisException e) {
+					throw new ActException(e);
+				}
 
 		        Logger.debug("filledForm: " + filledForm.get());
 		        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
@@ -1092,8 +1075,7 @@ public class TargetController extends AbstractController {
 		        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
 		        }
 		        
-		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
-//		        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
+		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
 		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
 		            filledForm.reject(ve);
 		            return info(filledForm, id);
@@ -1101,13 +1083,16 @@ public class TargetController extends AbstractController {
 		        
 		        List<License> newLicenses = new ArrayList<License>();
 		        String[] licenseValues = formParams.get("licensesList");
-		
+		        
+		        // if it was originally set then let it go
+			  	String openUkwa = requestData.get("openUkwaLicense");
+
 		        if (licenseValues != null) {
 		            for(String licenseValue: licenseValues) {
 		            	Long licenseId = Long.valueOf(licenseValue);
 		            	License license =  License.findById(licenseId);
 		            	// could just use the ID instead
-		            	if (license.name.equals(Const.OPEN_UKWA_LICENSE)) {
+		            	if (StringUtils.isEmpty(openUkwa) && license.name.equals(Const.OPEN_UKWA_LICENSE)) {
 				            ValidationError ve = new ValidationError("licensesList", "It is not possible to attach an Open UKWA Licence directly to a target in this way. Please initiate the licensing process using the green button below");
 				            filledForm.reject(ve);
 				            return info(filledForm, id);
@@ -1351,36 +1336,40 @@ public class TargetController extends AbstractController {
             String[] urls = fieldUrl.split(",");
             List<FieldUrl> fieldUrls = new ArrayList<FieldUrl>();
             
-            for (String url : urls) {
-            	String trimmed = url.trim();
-            	FieldUrl isExistingTarget = isExistingTarget(trimmed); 
-            	if (isExistingTarget != null) {
-		            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target " + "");
-		            filledForm.reject(ve);
-		            return newInfo(filledForm);
-            	} else {
-                    URL uri;
-					try {
-		            	Logger.debug("url: " + trimmed);
-						uri = new URI(trimmed).normalize().toURL();
-	        			String extFormUrl = uri.toExternalForm();
-	        			
-	        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
-	        			Logger.debug("valid? " + isValidUrl);
-	        			if (!isValidUrl) {
-	        				throw new ActException("Invalid URL");
-	        			}
-	        			
-		            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
-		            	Logger.debug("extFormUrl: " + extFormUrl);
-		            	fieldUrls.add(fu);
-					} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
-			            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+			try {
+				
+	            for (String url : urls) {
+	            	String trimmed = url.trim();
+	            	Logger.debug("url: " + trimmed);
+
+	            	FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(trimmed);
+	            	
+	            	if (isExistingFieldUrl != null) {
+	    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
+			            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
 			            filledForm.reject(ve);
 			            return newInfo(filledForm);
-			        }
-            	}
-            }
+	            	} else {
+		        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
+		        			Logger.debug("valid? " + isValidUrl);
+		        			if (!isValidUrl) {
+		        				throw new ActException("Invalid URL");
+		        			}
+			                URL uri = new URI(trimmed).normalize().toURL();
+			    			String extFormUrl = uri.toExternalForm();
+			            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
+			            	fu.domain = Scope.INSTANCE.getDomainFromUrl(extFormUrl.trim());
+	
+			            	Logger.debug("extFormUrl: " + extFormUrl);
+			            	fieldUrls.add(fu);
+	            	}
+	            }
+			} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
+	            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+	            filledForm.reject(ve);
+	            return newInfo(filledForm);
+	        }
+	            
             filledForm.get().fieldUrls = fieldUrls;
             Logger.debug("fieldUrls: " + fieldUrls);
         }		        
@@ -1399,7 +1388,7 @@ public class TargetController extends AbstractController {
 			Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
 			Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
 			Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
-		} catch (MalformedURLException | WhoisException | URISyntaxException e) {
+		} catch (WhoisException e) {
 			throw new ActException(e);
 		}
         
@@ -1407,8 +1396,7 @@ public class TargetController extends AbstractController {
         	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
 
-        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
-//        	filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence
+        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
             ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
             filledForm.reject(ve);
             return newInfo(filledForm);
@@ -1636,7 +1624,11 @@ public class TargetController extends AbstractController {
 		    	channel.exchangeDeclare(exchangeName, "direct", true);
 		    	channel.queueDeclare(queueName, true, false, false, null);
 		    	channel.queueBind(queueName, exchangeName, routingKey);
-		    	channel.basicPublish(exchangeName, routingKey, null, message.getBytes());   	    
+		    	
+		    	BasicProperties.Builder propsBuilder = new BasicProperties.Builder();
+		    	propsBuilder.deliveryMode(2);
+		    	channel.basicPublish(exchangeName, routingKey, propsBuilder.build(), message.getBytes());
+			
 		    	channel.close();
 		    	connection.close();
 	    	
@@ -1678,12 +1670,14 @@ public class TargetController extends AbstractController {
      * @return JSON result
      * @throws WhoisException 
      */
-//    public static Result isInScope(String url) throws WhoisException {
-////    	Logger.debug("isInScope controller: " + url);
+    public static Result isInScope(String url) throws WhoisException {
+    	Logger.debug("isInScope controller: " + url);
 //    	boolean res = Target.isInScope(url, null);
-////    	Logger.debug("isInScope res: " + res);
-//    	return ok(Json.toJson(res));
-//    }
+		boolean res = Scope.INSTANCE.check(url, null);
+
+//    	Logger.debug("isInScope res: " + res);
+    	return ok(Json.toJson(res));
+    }
     
     /**
      * This method calculates collection children - objects that have parents.
@@ -1907,5 +1901,55 @@ public class TargetController extends AbstractController {
 		target.flags.add(Flag.findByName(flagName));
 		Ebean.update(target);
 	}
+	
+	private static ObjectNode createCollectionNode(Taxonomy collection) {
+		ObjectNode collectionNode = JsonNodeFactory.instance.objectNode();
+		Logger.debug("collection: " + collection.name);
+		collectionNode.put("id", collection.id);
+		collectionNode.put("name", collection.name);
+//		collectionNode.put("description", collection.description);
+		collectionNode.put("createdAt", collection.createdAt.toString());
+		Long milliseconds = collection.updatedAt.getTime();
+		Long seconds = (Long)(milliseconds/1000);
+		collectionNode.put("updatedAt", seconds);
+		collectionNode.put("publish", collection.publish);
+		if (collection.parent != null) {
+			collectionNode.put("parent", createCollectionNode(collection.parent));
+		}
+		return collectionNode;
+	}
+	
+	@Security.Authenticated(SecuredController.class)
+	public static Result getTargetCategories(Long id) {
+		Target target = Target.findById(id);
+//		List<Collection> categories = target.getCollectionCategories();
+		List<Collection> categories = target.collections;
+		
+		ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
+		
+		for (Collection collection : categories) {
+			ObjectNode collectionNode = createCollectionNode(collection);
+			arrayNode.add(collectionNode);
+		}
+		
+//		JsonNode jsonNode = Json.toJson(categories);
+//		Iterator<JsonNode> iterator = jsonNode.iterator();
+//		if (categories != null) {
+//			Logger.debug("collections: " + categories.size());
+//		}
+//		while(iterator.hasNext()) {
+//			JsonNode node = (JsonNode) iterator.next();
+//			ObjectNode objectNode = (ObjectNode)node;
+//			objectNode.remove("children");
+//			JsonNode updatedAt = objectNode.get("updatedAt");
+//			Long milliseconds = updatedAt.asLong();
+//			Long seconds = (Long)(milliseconds/1000);
+//			Logger.debug("milliseconds: " + milliseconds);
+//			Logger.debug("seconds: " + seconds);
+//			objectNode.put("updatedAt", seconds);
+//		}
+		
+		return ok(arrayNode);
+    }
 }
 

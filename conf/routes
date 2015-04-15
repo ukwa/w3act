@@ -5,8 +5,6 @@
 # The home page
 GET     /                                   controllers.ApplicationController.home()
 
-POST    /api/targets						controllers.ApplicationController.bulkImport()
-
 # About
 GET     /about								controllers.ApplicationController.index()
 
@@ -333,7 +331,7 @@ POST    /nominations/:id              		controllers.NominationController.update(
 
 
 # JSON API
-#GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
+GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
 #GET     /api/scopeintance/:url               controllers.InstanceController.isInScope(url)
 GET     /api/licence/:url                    controllers.CrawlPermissionController.crawlPermissionExist(url)
 GET     /api/licencelevel/:url               controllers.CrawlPermissionController.crawlPermissionExistAtHigherLevel(url)
@@ -345,11 +343,19 @@ GET     /api/suggested_collections_filter/:url      controllers.TargetController
 GET     /api/subjects_instance/:url          controllers.InstanceController.getSubjectTree(url)
 GET     /api/suggested_collections_instance/:url      controllers.InstanceController.getSuggestedCollections(url)
 #GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
-GET     /api/targets/:id                  	 controllers.TargetController.viewAsJson(id:Long)
-GET     /api/targets/:id/instances       	 controllers.InstanceController.byTargetAsJson(id:Long)
-GET    	/api/targets/bycollection/:id        controllers.TargetController.collectionTargetsAsJson(id:Long)
-GET		/api/collections					 controllers.CollectionController.getByJson()
-GET     /api/collections/:id          		 controllers.CollectionController.viewAsJson(id:Long)
+
+GET     /api/targets/:id                  	controllers.TargetController.viewAsJson(id:Long)
+GET     /api/targets/:id/instances       	controllers.InstanceController.byTargetAsJson(id:Long)
+GET    	/api/targets/bycollection/:id       controllers.TargetController.collectionTargetsAsJson(id:Long)
+POST    /api/targets						controllers.ApplicationController.bulkImport()
+PUT		/api/targets/:id					controllers.ApplicationController.targetUpdate(id:Long)
+GET    	/api/targets/:id/categories        	controllers.TargetController.getTargetCategories(id:Long)
+
+GET		/api/collections					controllers.CollectionController.getByJson()
+GET     /api/collections/:id          		controllers.CollectionController.viewAsJson(id:Long)
+PUT 	/api/collections/:id 				controllers.CollectionController.collectionUpdate(id:Long)
+GET		/api/collections/:id/targets		controllers.CollectionController.getCollectionTargets(id:Long)
+
 
 # Password management
 GET     /passwords                           controllers.PasswordController.edit()

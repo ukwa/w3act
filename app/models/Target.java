@@ -22,6 +22,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -43,7 +45,6 @@ import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
@@ -204,6 +205,7 @@ public class Target extends UrlModel {
 	public Boolean ukPostalAddress = Boolean.FALSE;
 
 	@Column(columnDefinition = "text")
+	@JsonProperty("uk_postal_address_url")
 	public String ukPostalAddressUrl;
 	
 	@JsonProperty("field_via_correspondence")
@@ -1082,10 +1084,10 @@ public class Target extends UrlModel {
 		exp = exp.eq(Const.ACTIVE, true);
 		
 		Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + npld + ", " + crawlFrequencyName + ", " + tld);
-		if (curatorId != 0) {
+		if (curatorId != -1) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
-		if (organisationId != 0) {
+		if (organisationId != -1) {
 			exp = exp.eq("organisation.id", organisationId);
 		}
 		if (StringUtils.isNotEmpty(crawlFrequencyName)) {
@@ -1392,7 +1394,7 @@ public class Target extends UrlModel {
 		return true;
 	}
 
-	public static boolean isInScopeDomain(Target target) throws MalformedURLException, WhoisException, URISyntaxException {
+	public static boolean isInScopeDomain(Target target) throws ActException {
 		 return Scope.INSTANCE.isTopLevelDomain(target);
 	}
 	
@@ -1824,7 +1826,7 @@ public class Target extends UrlModel {
 	}
 	
 	@JsonIgnore
-	public boolean isTopLevelDomain() throws WhoisException, MalformedURLException, URISyntaxException {
+	public boolean isTopLevelDomain() throws ActException {
 		return Scope.INSTANCE.isTopLevelDomain(this);
 	}
 	
@@ -1959,15 +1961,11 @@ public class Target extends UrlModel {
 		 */
 		for (Target target : targets) {
 			
-			try {
-				if (!target.isUkHosting() && !target.isTopLevelDomain()) {
-					unsorted.add(target);
-					 if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
-						 break;
-					 }
-				}
-			} catch (MalformedURLException | WhoisException | URISyntaxException e) {
-				throw new ActException(e);
+			if (!target.isUkHosting() && !target.isTopLevelDomain()) {
+				unsorted.add(target);
+				 if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
+					 break;
+				 }
 			}
 		}
 		
@@ -2158,9 +2156,39 @@ public class Target extends UrlModel {
 	
 	@JsonIgnore
 	public boolean isDeletable() {
-		return (!indicateLicenses() && CollectionUtils.isEmpty(this.collections));
+		Logger.debug("collections size...." + this.collections.size());
+		Logger.debug("licenses size...." + this.licenses.size());
+		return (!this.indicateLicenses() && CollectionUtils.isEmpty(this.collections));
 	}
 	
+    @PreUpdate
+    @PrePersist
+	public void preSaveChecks() throws ActException, WhoisException {
+		Logger.debug("before persist");
+		runChecks();
+		Logger.debug("after persist");
+	}
+
+    public void runChecks() throws ActException, WhoisException {
+		this.isUkHosting = isUkHosting();
+		this.isTopLevelDomain = isTopLevelDomain();
+		this.isUkRegistration = isUkRegistration();
+		Logger.debug("runChecks");
+    }
+    
+    @JsonIgnore
+    public List<Collection> getCollectionCategories() {
+    	List<Collection> categories = new ArrayList<Collection>();
+    	for (Collection collection : this.collections) {
+    		if (collection.parent == null) {
+    			categories.add(collection);
+    		}
+    	}
+    	Logger.debug(this.collections.size()  + " - " + categories.size());
+    	return categories;
+//    	return Collection.getCollectionCategoriesByTargetId(this.id);
+    }
+    
 	public List<String> getField_urls() {
 		return field_urls;
 	}
@@ -2199,6 +2227,15 @@ public class Target extends UrlModel {
 
 	public void setSelector(String selector) {
 		this.selector = selector;
+	}
+	
+	
+	public String getUkPostalAddressUrl() {
+		return ukPostalAddressUrl;
+	}
+
+	public void setUkPostalAddressUrl(String ukPostalAddressUrl) {
+		this.ukPostalAddressUrl = ukPostalAddressUrl;
 	}
 
 	@Override

@@ -2,15 +2,12 @@ package controllers;
 
 import static play.data.Form.form;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import models.Organisation;
 import models.User;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
@@ -27,7 +24,6 @@ import views.html.organisations.edit;
 import views.html.organisations.list;
 import views.html.organisations.view;
 
-import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -150,20 +146,27 @@ public class OrganisationController extends AbstractController {
     }
 
     public static Result newForm() {
-    	User user = User.findByEmail(request().username());
-		Form<Organisation> organisationForm = Form.form(Organisation.class);
-		Organisation organisation = new Organisation();
-		organisationForm = organisationForm.fill(organisation);
-        return ok(newForm.render(organisationForm, user));
-    	
+        if(SecuredController.isSysAdmin(request().username())) {
+	    	User user = User.findByEmail(request().username());
+			Form<Organisation> organisationForm = Form.form(Organisation.class);
+			Organisation organisation = new Organisation();
+			organisationForm = organisationForm.fill(organisation);
+	        return ok(newForm.render(organisationForm, user));
+        } else {
+        	return forbidden("Your do not have the right privileges to view this page");
+        }
     }
 
     public static Result edit(Long id) {
-    	User user = User.findByEmail(request().username());
-    	Organisation organisation = Organisation.findById(id);
-		Form<Organisation> organisationForm = Form.form(Organisation.class);
-		organisationForm = organisationForm.fill(organisation);
-        return ok(edit.render(organisationForm, user, id));
+        if(SecuredController.isSysAdmin(request().username())) {
+	    	User user = User.findByEmail(request().username());
+	    	Organisation organisation = Organisation.findById(id);
+			Form<Organisation> organisationForm = Form.form(Organisation.class);
+			organisationForm = organisationForm.fill(organisation);
+	        return ok(edit.render(organisationForm, user, id));
+        } else {
+        	return forbidden("Your do not have the right privileges to view this page");
+        }
     }
 
     public static Result info(Form<Organisation> form, Long id) {

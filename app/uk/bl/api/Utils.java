@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -20,6 +22,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -29,10 +32,12 @@ import com.avaje.ebean.SqlUpdate;
 
 import play.Logger;
 import uk.bl.Const;
+import uk.bl.exception.ActException;
 import uk.bl.exception.UrlInvalidException;
 import models.Collection;
 import models.FieldUrl;
 import models.Subject;
+import models.Target;
 
 import org.apache.commons.lang3.StringUtils;
 import org.postgresql.util.PGInterval;
@@ -703,10 +708,34 @@ public enum Utils {
     }
     
     public boolean validUrl(String url) {
-    	String urlRegex = "^((http(s?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.*(\\:[0-9]+)*(/($|[a-zA-Z0-9\\.\\,\\;\\?\\:\\(\\)\\@\\#\\!\\'\\\\\\+&amp;%\\$#\\=~_\\-]+))*$";
-        return url.matches(urlRegex);
+//    	String urlRegex = "^((http(s?))\\://)?(www.|[a-zA-Z0-9].)[a-zA-Z0-9\\-\\.]+\\.*(\\:[0-9]+)*(/($|[a-zA-Z0-9\\.\\,\\;\\?\\:\\(\\)\\@\\#\\!\\'\\\\\\+&amp;%\\$#\\=~_\\-]+))*$";
+//    	String urlRegex = "^(?:(?:https?|ftp):\\/\\/)(?:\\S+(?::\\S*)?@)?(?:(?!(?:10|127)(?:\\.\\d{1,3}){3})(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))(?::\\d{2,5})?(?:\\/\\S*)?$/i";
+//    	String urlRegex = "/^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$/";
+//    	return url.matches(urlRegex);
+    	
+//        String urlRegex = "\\b(https?|ftp|file|ldap)://"
+//                + "[-A-Za-z0-9+&@#/%?=~_|!:,.;]"
+//                + "*[-A-Za-z0-9+&@#/%=~_|]";
+       
+//        urlRegex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?"
+        String urlRegex = "https?:\\/\\/(www)?+[\\w\\d.-]+\\.[\\w]{2,}(/.*)?";
+    	return url.matches(urlRegex);
+//    	Pattern p = Pattern.compile(urlRegex);  
+//        Matcher m = p.matcher(url);
+//        return m.matches();
+    	
     }
-    
+
+    public String convertToDateString(Date date) {
+    	String formatted = null;
+    	if (date != null) {
+			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			formatted =  dateFormat.format(date);
+    	}
+    	return formatted;
+    }
+
     public String convertToDateTime(Date date) {
     	String formatted = null;
     	if (date != null) {
@@ -775,6 +804,9 @@ public enum Utils {
 	}
 	
     public FieldUrl isExistingTarget(String url) {
+    	
+    	// remove protocol
+    	
     	Set<String> varyingUrls = getVaryingUrls(url);
     	for (String varyingUrl : varyingUrls) {
     		Logger.debug("varyingUrl: " + varyingUrl);
@@ -784,6 +816,7 @@ public enum Utils {
     			return fieldUrl;
     		}
     	}
+    	
     	return null;
 	
     }
@@ -809,5 +842,78 @@ public enum Utils {
 		}
 		return collections;
     }
+    
+    /**
+     * This method exports selected targets to CSV file.
+     * @param list of Target objects
+     * @return
+     */
+    public String export(List<Target> targetList) {
+    	Logger.debug("export() targetList size: " + targetList.size());
+
+    	StringBuilder builder = new StringBuilder();
+//        StringWriter sw = new StringWriter();
+        for (int i = 0; i < Const.targetExportMap.size(); i++) {
+        {
+            for (Map.Entry<String, Integer> entry : Const.targetExportMap.entrySet())
+//        	Logger.debug("export key: " + entry.getKey());
+            	if (entry.getValue() == i) {
+            		builder.append(entry.getKey());
+            		builder.append(Const.CSV_SEPARATOR);
+            	}
+            }
+        }
+
+        builder.append(Const.CSV_LINE_END);
+ 	    
+ 	    if (targetList != null && targetList.size() > 0) {
+// 			"nid", "title", "field_url", "author", "field_crawl_frequency", "created"	
+ 	    	for (Target target : targetList) {
+ 	    		builder.append(String.valueOf(target.id));
+ 	    		builder.append(Const.CSV_SEPARATOR);
+ 	    		builder.append(target.title);
+ 	    		builder.append(Const.CSV_SEPARATOR);
+ 	    		builder.append(target.fieldUrl());
+ 	    		builder.append(Const.CSV_SEPARATOR);
+		 	    String authorName = "";
+		 	    if (target.authorUser != null) {
+		 	    	authorName = target.authorUser.name;
+		 	    }
+				builder.append(authorName);
+				builder.append(Const.CSV_SEPARATOR);
+				builder.append(target.crawlFrequency);
+				builder.append(Const.CSV_SEPARATOR);
+				builder.append(String.valueOf(target.createdAt));
+				builder.append(Const.CSV_LINE_END);
+ 	    	}
+ 	    }
+//    	Utils.INSTANCE.generateCsvFile(Const.EXPORT_FILE, sw.toString());
+ 	    return builder.toString();
+    }
+    
+    public boolean isDuplicate(String url, String dbUrl) throws ActException {
+        url = Utils.INSTANCE.getPath(url);
+        dbUrl = Utils.INSTANCE.getPath(dbUrl);
+    	boolean match = (url.equalsIgnoreCase(dbUrl));
+    	Logger.debug("matched: " + url + " " + dbUrl);
+    	Logger.debug("matched: " + match);
+    	return match;
+    }
+    
+    public String getPath(String url) throws ActException {
+    	String path = null;
+        URI uri;
+		try {
+			uri = new URI(url).normalize();
+	        path = uri.getHost() + uri.getPath();
+	        if (path.startsWith("www.")) {
+	        	path = path.replace("www.", "");
+	        }
+		} catch (URISyntaxException e) {
+			throw new ActException(e);
+		}
+		return path;
+    }
+    
 }
 

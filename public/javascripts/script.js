@@ -5,6 +5,7 @@ $(function () {
 	$("#log-date").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$("#date_of_publication").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
 	$("#publicationDate").datepicker({ dateFormat: "dd-mm-yy", changeYear: true });
+	$('a[rel="external"]').attr('target', '_blank');
 });
 
 function getURLParameter(param) {
