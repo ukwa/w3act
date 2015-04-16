@@ -8,7 +8,6 @@ import play.mvc.Action;
 import play.mvc.Http.Context;
 import play.mvc.SimpleResult;
 import play.mvc.Http.HeaderNames;
-
 import uk.bl.api.PasswordHash;
 import uk.bl.api.Base64;
 

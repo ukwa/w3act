@@ -40,6 +40,7 @@ GET     /collections/:id/edit       		controllers.CollectionController.edit(id:L
 GET     /collections/:id/sites				controllers.CollectionController.sites(id:Long)
 POST    /collections             			controllers.CollectionController.save()
 POST    /collections/:id             		controllers.CollectionController.update(id:Long)
+PUT     /collections/:id             		controllers.CollectionController.update(id:Long)
 
 GET     /subjects                           controllers.SubjectController.index()
 GET    	/subjects/list                  	controllers.SubjectController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
@@ -307,6 +308,7 @@ PUT		/api/targets/:id					controllers.ApplicationController.targetUpdate(id:Long
 GET    	/api/targets/:id/categories        	controllers.TargetController.getTargetCategories(id:Long)
 
 GET		/api/collections					controllers.CollectionController.getByJson()
+POST 	/api/collections 		   			controllers.CollectionController.collectionCreate()
 GET     /api/collections/:id          		controllers.CollectionController.viewAsJson(id:Long)
 PUT 	/api/collections/:id 				controllers.CollectionController.collectionUpdate(id:Long)
 GET		/api/collections/:id/targets		controllers.CollectionController.getCollectionTargets(id:Long)

@@ -367,7 +367,13 @@ public class Collection extends Taxonomy {
 	public String toString() {
 		return "Collection [targets=" + targets + ", children=" + children
 				+ ", ttype=" + ttype + ", name=" + name + ", parent=" + parent
-				+ "]";
+			    + ", description="
+						+ description + ", tid=" + getTid() + ", ttype=" + ttype + " node_count=" + node_count
+						+ ", vocabularyList=" + getVocabularyValue() + ", parentList="
+						+ getParentFieldList() + ", parents_all=" + getParents_all() + ", feed_nid="
+						+ feed_nid + ", weight=" + weight + ", field_owner="
+						+ getField_owner() + ", field_dates=" + getField_dates()
+						+ ", publish=" + publish + "]";
 	}
 
 	/**
