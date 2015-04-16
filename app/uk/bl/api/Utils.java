@@ -906,6 +906,9 @@ public enum Utils {
 		try {
 			uri = new URI(url).normalize();
 	        path = uri.getHost() + uri.getPath();
+	        if (!uri.getQuery().isEmpty()) {
+	        	path += "?" + uri.getQuery();
+	        }
 	        if (path.startsWith("www.")) {
 	        	path = path.replace("www.", "");
 	        }
