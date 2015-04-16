@@ -370,7 +370,7 @@ public class CollectionController extends AbstractController {
 				cl.save();
 	    	}
         } catch (IllegalArgumentException e) {
-    		return badRequest("URL invalid: " + e);
+    		return badRequest(" Collection invalid: " + e);
         } catch (Exception e) {
         	Logger.error("error: " + e);
             return Results.internalServerError(e.getMessage());
