@@ -72,9 +72,15 @@ public class License extends Taxonomy {
 
 	@JsonIgnore
     @ManyToMany
-	@JoinTable(name = "license_instance", joinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") },
-		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
+	@JoinTable(name = "license_instance", joinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "instance_id", referencedColumnName="id") }) 
 	public List<Instance> instances;
+	
+	@JsonIgnore
+    @ManyToMany
+	@JoinTable(name = "portal_license", joinColumns = { @JoinColumn(name = "id_taxonomy", referencedColumnName="id") },
+		inverseJoinColumns = { @JoinColumn(name = "id_portal", referencedColumnName="id") }) 
+	public List<Portal> portals;
 	
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,License> find = new Model.Finder(Long.class, License.class);

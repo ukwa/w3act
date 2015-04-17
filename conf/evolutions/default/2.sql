@@ -95,6 +95,12 @@ create table portal_document (
   primary key (id_portal, id_document)
 );
 
+create table portal_license (
+  id_portal		bigint references portal (id),
+  id_taxonomy		bigint references taxonomy (id),
+  primary key (id_portal, id_taxonomy)
+);
+
 create table book (
   id			bigint primary key,
   id_document		bigint unique not null references document (id),
@@ -152,6 +158,7 @@ drop table if exists fast_subject_document cascade;
 drop table if exists assignable_ark cascade;
 drop table if exists portal cascade;
 drop table if exists portal_document cascade;
+drop table if exists portal_license cascade;
 drop table if exists book cascade;
 drop table if exists bl_collection_subset_book cascade;
 drop table if exists journal cascade;

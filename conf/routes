@@ -162,6 +162,10 @@ GET		/watchedtargets/:id					controllers.WatchedTargets.view(id: Long)
 GET		/watchedtargets/:id/journaltitles	controllers.JournalTitles.addJournalTitle(id: Long, toDocument: Boolean ?= false)
 GET		/watchedtargets/:id/nodocuments		controllers.WatchedTargets.noDocuments(id: Long)
 
+GET		/services/list						controllers.Services.list()
+GET		/services/edit/:id					controllers.Services.edit(id: Long)
+GET		/services/save/:id					controllers.Services.save(id: Long)
+
 GET		/alerts/list						controllers.Alerts.list(p:Int ?= 0, s ?= "createdAt", o ?= "desc")
 POST	/alerts/action						controllers.Alerts.action()
 

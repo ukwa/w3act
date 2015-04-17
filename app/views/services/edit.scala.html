@@ -1,0 +1,30 @@
+@(form: DynamicForm, user: User, license: License)
+
+@import templates.checkbox2
+
+@implicitField = @{ helper.FieldConstructor(templates.ratio6to6FieldConstructor.f) }
+
+@main("", user) {
+
+	<div class="page-header">
+    	<h1>
+    		<a href="@routes.Services.list()">Services for License</a> >
+    		@license.name
+    	</h1>
+	</div>
+	
+	@helper.form(action = routes.Services.save(license.id)) {
+		<div>
+			@helper.input(form("services"), '_label -> "Services") { (id, name, value, args) =>
+				@for(portal <- Portals.portalList.getList()) {
+					@checkbox2(form("portal_" + portal.id), true, '_label -> portal.title)(
+						helper.FieldConstructor(templates.checkboxFieldConstructor.f)
+					)
+				}
+			}
+			<input type="submit" class="btn btn-primary" value="Save">
+		</div>
+	}
+}
+
+

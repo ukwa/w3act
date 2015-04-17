@@ -237,16 +237,16 @@
 				editable,
 				'_label -> "Priority Cataloguing")
 			@helper.input(form("services"), '_label -> "Services") { (id, name, value, args) =>
-				@for(portal <- Documents.portalList.getList()) {
-					@*if(Target.find.byId(new Long(form("watchedTarget.target.nid").value)).indicateUkwaLicenceStatus) {*@
+				@for(portal <- Portals.portalList.getList()) {
+					@if(Document.find.byId(new Long(form("id").value)).hasPermissionForService(portal)) {
 						@checkbox2(form("portal_" + portal.id), editable, '_label -> portal.title)(
 							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 						)
-					@*} else {
+					} else {
 						@checkbox2(form("portal_" + portal.id), editable,'_label -> portal.title, 'disabled -> "disabled")(
 							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 						)
-					}*@
+					}
 				}
 			}
 			@helper.input(form("subjects"), '_label -> "Subjects") { (id, name, value, args) =>

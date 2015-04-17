@@ -48,7 +48,6 @@ import org.w3c.dom.NodeList;
 
 import uk.bl.Const;
 import uk.bl.configurable.BlCollectionSubsetList;
-import uk.bl.configurable.PortalList;
 import views.html.documents.edit;
 import views.html.documents.list;
 import views.xml.documents.sip;
@@ -56,7 +55,6 @@ import views.xml.documents.sip;
 @Security.Authenticated(SecuredController.class)
 public class Documents extends AbstractController {
 	
-	public static PortalList portalList = new PortalList();
 	public static BlCollectionSubsetList blCollectionSubsetList = new BlCollectionSubsetList();
 	
 	public static Result view(Long id) {
@@ -387,9 +385,7 @@ public class Documents extends AbstractController {
 	
 	private static void setRelatedEntitiesOfModel(Document document, Form<Document> documentForm) {
 		document.fastSubjects = FastSubjects.getFastSubjects(documentForm);
-		for (Portal portal : portalList.getList())
-			if (documentForm.apply("portal_" + portal.id).value() != null)
-				document.portals.add(portal);
+		document.portals = Portals.getPortals(documentForm);
 		if (document.isBookOrBookChapter())
 			for (BlCollectionSubset blCollectionSubset : blCollectionSubsetList.getList())
 				if (documentForm.apply("blCollectionSubset_" + blCollectionSubset.id).value() != null)
@@ -398,15 +394,14 @@ public class Documents extends AbstractController {
 	
 	private static void setRelatedEntitiesOfView(Form<Document> documentForm, Document document) {
 		documentForm.data().putAll(FastSubjects.getFormData(document.fastSubjects));
-		for (Portal portal : document.portals)
-			documentForm.data().put("portal_" + portal.id, "true");
+		documentForm.data().putAll(Portals.getFormData(document.portals));
 		if (document.isBookOrBookChapter())
 			for (BlCollectionSubset portal : document.book.blCollectionSubsets)
 				documentForm.data().put("blCollectionSubset_" + portal.id, "true");
 	}
 	
 	public static List<String> getPortalsSelection() {
-		List<Portal> portals = portalList.getList();
+		List<Portal> portals = Portals.portalList.getList();
 		List<String> portalTitles = new ArrayList<>();
 		portalTitles.add("All");
 		for (Portal portal : portals)

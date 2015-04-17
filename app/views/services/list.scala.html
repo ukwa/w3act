@@ -1,0 +1,37 @@
+@(user: User)
+
+@main("", user) {
+
+	<div class="page-header">
+	    <h1>Services for License</h1>
+	</div>
+	
+	@warningmessage(flash)
+	
+	<article class="services">
+	    	
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>License</th>
+					<th>Services</th>
+				</tr>
+			</thead>
+			<tbody>
+			@for(license <- License.findAllLicenses) {
+				<tr>
+					<td><a href="@routes.Services.edit(license.id)">@license.name</a></td>
+					<td>
+						@for(portal <- license.portals) {
+							@portal.title<br>
+						}
+					</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+				
+	</article>
+}
+
+

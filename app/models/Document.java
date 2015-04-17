@@ -110,6 +110,14 @@ public class Document extends Model {
 	
 	public boolean isJournalArticleOrIssue() { return isJournalArticle() || isJournalIssue(); }
     
+	public boolean hasPermissionForService(Portal portal) {
+		List<License> licenses = watchedTarget.target.licenses;
+		if (licenses.isEmpty())
+			return false;
+		else
+			return licenses.get(0).portals.contains(portal);
+	}
+	
     public void clearImproperFields() {
     	if (isJournalIssue()) {
     		author1Fn = author1Ln = author2Fn = author2Ln = author3Fn = author3Ln = "";
