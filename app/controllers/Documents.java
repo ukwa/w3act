@@ -273,9 +273,11 @@ public class Documents extends AbstractController {
 	
 	public static List<Document> filterNew(List<Document> documentList) {
 		List<Document> newDocumentList = new ArrayList<>();
-		for (Document document : documentList)
-			if (Document.find.where().eq("document_url", document.documentUrl).findRowCount() == 0)
+		for (Document document : documentList) {
+			String urlWithoutSchema = document.documentUrl.replaceFirst("^.*://", "");
+			if (Document.find.where().eq("regexp_replace(document_url,'^.*://','')", urlWithoutSchema).findRowCount() == 0)
 				newDocumentList.add(document);
+		}
 		return newDocumentList;
 	}
 	
