@@ -1024,7 +1024,7 @@ public class TargetController extends AbstractController {
 			            	
 			            	if (isExistingFieldUrl != null && !isExistingFieldUrl.target.id.equals(id)) {
 			    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
-					            ValidationError ve = new ValidationError("formUrl", id + "Seed URL already associated with a current Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
+					            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
 					            filledForm.reject(ve);
 					            filledForm.get().fieldUrl = originalUrl;
 					            return info(filledForm, id);
