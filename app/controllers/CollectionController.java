@@ -363,10 +363,6 @@ public class CollectionController extends AbstractController {
 				if ( cl.id != null ) {
 					return badRequest("No ID should be passed when creating a new Collection!");
 				}
-				Collection cbn = Collection.findByName(cl.name);
-				if( cbn != null ) {
-					return badRequest("A collection with the name '"+cl.name+"' already exists! " );
-				}
 				cl.save();
 	    	}
         } catch (IllegalArgumentException e) {
