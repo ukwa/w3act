@@ -76,15 +76,17 @@ public class CrawlActor extends UntypedActor {
 			try {
 				convertPdfToHtml(document, ctphFile);
 				Documents.addHashes(document);
-			} catch (IOException e) {
-				Logger.error(e.getMessage());
+			} catch (Exception e) {
+				Logger.error("can't convert document " + document.documentUrl + " to html:");
+				e.printStackTrace();
 			}
 		}
 		try {
 			compareHashes(ctphFile);
 			Documents.addDuplicateAlert();
 		} catch (IOException e) {
-			Logger.error(e.getMessage());
+			Logger.error("can't compare ctp hashes of " + ctphFile + ":");
+			e.printStackTrace();
 		}		
 	}
 
@@ -105,6 +107,9 @@ public class CrawlActor extends UntypedActor {
 			line = r.readLine();
  			if (line == null) { break; }
 			Logger.debug(line);
+		}
+		if (p.exitValue() != 0) {
+			throw new IOException();
 		}
 	}
 	

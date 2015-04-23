@@ -354,16 +354,18 @@ public class Documents extends AbstractController {
 				String line = scanner.next();
 				String[] parts = line.split("[ :]");
 				if (parts.length == 6) {
-					long docId1 = Long.parseLong(parts[1].split("\\.")[0]);
-					long docId2 = Long.parseLong(parts[4].split("\\.")[0]);
 					int similarity = Integer.parseInt(parts[5].replace("(", "").replace(")", ""));
-					Document doc1 = Document.find.byId(docId1);
-					Document doc2 = Document.find.byId(docId2);
-					Alert alert = new Alert();
-					alert.user = doc1.watchedTarget.target.authorUser;
-					alert.text = "possible duplicate found: " + Alert.link(doc1) + " matches " +
-							Alert.link(doc2) + " with " + similarity + "%";
-					Ebean.save(alert);
+					if (similarity >= 98) {
+						long docId1 = Long.parseLong(parts[1].split("\\.")[0]);
+						long docId2 = Long.parseLong(parts[4].split("\\.")[0]);
+						Document doc1 = Document.find.byId(docId1);
+						Document doc2 = Document.find.byId(docId2);
+						Alert alert = new Alert();
+						alert.user = doc1.watchedTarget.target.authorUser;
+						alert.text = "possible duplicate found: " + Alert.link(doc1) + " matches " +
+								Alert.link(doc2) + " with " + similarity + "%";
+						Ebean.save(alert);
+					}
 				}
 			}
 			scanner.close();
