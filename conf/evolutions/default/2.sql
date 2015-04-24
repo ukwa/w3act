@@ -4,9 +4,10 @@ create table watched_target (
   id			bigint primary key,
   id_target		bigint not null references target (id),
   document_url_scheme	varchar(255),
+  wayback_timestamp	varchar(255),
   login_page_url	varchar(255),
   logout_url		varchar(255),
-  wayback_timestamp	varchar(255)
+  secret_id		integer
 );
 
 create table fast_subject (

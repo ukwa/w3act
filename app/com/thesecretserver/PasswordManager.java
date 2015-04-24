@@ -1,5 +1,7 @@
 package com.thesecretserver;
 
+import java.io.IOException;
+
 import com.thesecretserver.service.AddSecretResult;
 import com.thesecretserver.service.ArrayOfInt;
 import com.thesecretserver.service.ArrayOfString;
@@ -15,6 +17,7 @@ public class PasswordManager {
 	private String organization;
 	private String domain;
 	private SSWebServiceSoap ssWebServiceSoap;
+	private static final int URL_FIELD_ID = 38;
 	private static final int USERNAME_FIELD_ID = 39;
 	private static final int PASSWORD_FIELD_ID = 40;
 	private static final int SECRET_TYPE_ID = 9;
@@ -28,23 +31,28 @@ public class PasswordManager {
 		ssWebServiceSoap = new SSWebService().getSSWebServiceSoap();
 	}
 
-	public int addLoginCredentials(String secretName, LoginCredentials loginCredentials) {		
-		AddSecretResult addSecretResult = ssWebServiceSoap.addSecret(authenticate(),
+	public int addLoginCredentials(String secretName, LoginCredentials loginCredentials) throws IOException {
+		String token = authenticate();
+		if (token == null || token.isEmpty()) throw new IOException();
+		AddSecretResult addSecretResult = ssWebServiceSoap.addSecret(token,
 				SECRET_TYPE_ID, secretName,
 				getSecretFieldIds(), getSecretItemValues(loginCredentials),
 				FOLDER_ID);
 		return addSecretResult.getSecret().getId();
 	}
 	
-	public LoginCredentials getLoginCredentials(int secretId) {
-		GetSecretResult getSecretResult = ssWebServiceSoap.getSecret(authenticate(), secretId, false, null);
+	public LoginCredentials getLoginCredentials(int secretId) throws IOException {
+		String token = authenticate();
+		if (token == null || token.isEmpty()) throw new IOException();
+		GetSecretResult getSecretResult = ssWebServiceSoap.getSecret(token, secretId, false, null);
 		LoginCredentials loginCredentials = new LoginCredentials();
 		for (SecretItem secretItem : getSecretResult.getSecret().getItems().getSecretItem()) {
-			if (secretItem.getFieldId().equals(USERNAME_FIELD_ID)) {
+			if (secretItem.getFieldId().equals(URL_FIELD_ID))
+				loginCredentials.url = secretItem.getValue();
+			else if (secretItem.getFieldId().equals(USERNAME_FIELD_ID))
 				loginCredentials.username = secretItem.getValue();
-			} else if (secretItem.getFieldId().equals(PASSWORD_FIELD_ID)) {
+			else if (secretItem.getFieldId().equals(PASSWORD_FIELD_ID))
 				loginCredentials.password = secretItem.getValue();
-			}
 		}
 		return loginCredentials;
 	}
@@ -55,6 +63,7 @@ public class PasswordManager {
 	
 	private ArrayOfInt getSecretFieldIds() {
 		ArrayOfInt secretFieldIds = new ArrayOfInt();
+		secretFieldIds.getInt().add(URL_FIELD_ID);
 		secretFieldIds.getInt().add(USERNAME_FIELD_ID);
 		secretFieldIds.getInt().add(PASSWORD_FIELD_ID);
 		return secretFieldIds;
@@ -62,6 +71,7 @@ public class PasswordManager {
 	
 	private ArrayOfString getSecretItemValues(LoginCredentials loginCredentials) {
 		ArrayOfString secretItemValues = new ArrayOfString();
+		secretItemValues.getString().add(loginCredentials.url);
 		secretItemValues.getString().add(loginCredentials.username);
 		secretItemValues.getString().add(loginCredentials.password);
 		return secretItemValues;

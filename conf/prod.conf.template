@@ -39,6 +39,10 @@ port=25
 drupal_user=""
 drupal_password=""
 
+# Secret Server connection
+secret_server_user=""
+secret_server_password=""
+
 # Host details
 server_name="https://www.webarchive.org.uk"
 

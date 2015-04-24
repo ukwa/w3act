@@ -1,0 +1,29 @@
+@(form: Form[WatchedTarget], user: User)
+
+@import templates.inputPassword
+@import templates.inputText
+
+@implicitField = @{ helper.FieldConstructor(templates.ratio5to7FieldConstructor.f) }
+
+@main("", user) {
+	<div class="page-header">
+    	<h1>
+    		<a href="@routes.TargetController.index()">Targets</a> >
+			<a href="@routes.TargetController.view(new Long(form("target.id").value))#watchedTarget">@form("target.title").value</a> >
+			@if(form("secretId").value == null || form("secretId").value == "") {Add} else {Change} Login Credentials
+		</h1>
+	</div>
+	
+	@warningmessage(flash)
+	@helper.form(action = routes.LoginCredentialsController.save(new Long(form("id").value))) {
+		<div>
+			<input type="hidden" name="id" value="@form("id").value">
+			@inputText(form("loginPageUrl"), true, '_label -> "Login Page URL")
+			@inputText(form("logoutUrl"), true, '_label -> "Logout URL")
+			@inputText(form("username"), true, '_label -> "Username")
+			@inputPassword(form("password"), '_label -> "Password")
+			
+			<input type="submit" class="btn btn-primary" value="Save">
+		</div>
+	}
+}
