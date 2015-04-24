@@ -38,6 +38,8 @@ public class WatchedTarget extends Model {
 		inverseJoinColumns = { @JoinColumn(name = "id_fast_subject", referencedColumnName="id") })
 	public List<FastSubject> fastSubjects = new ArrayList<>();
 	public String documentUrlScheme;
+	public String loginPageUrl;
+	public String logoutUrl;
 	public String waybackTimestamp;
 	@JsonIgnore
 	public String getUrl() { return ""+id; }

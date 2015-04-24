@@ -863,7 +863,27 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Document URL Scheme</label>
 						    <div class="col-sm-6">
-		 						<input readonly type="text" value="@{if(target.watchedTarget != null) target.watchedTarget.documentUrlScheme}" size="60" maxlength="2048" class="form-control" />
+		 						<input readonly type="text" value="@target.watchedTarget.documentUrlScheme" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Login Page URL</label>
+						    <div class="col-sm-6">
+		 						<input readonly type="text" value="@target.watchedTarget.loginPageUrl" size="60" maxlength="2048" class="form-control" />
+							</div>
+						</div>
+					</div>
+		     	</div>
+		     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Logout URL</label>
+						    <div class="col-sm-6">
+		 						<input readonly type="text" value="@target.watchedTarget.logoutUrl" size="60" maxlength="2048" class="form-control" />
 							</div>
 						</div>
 					</div>

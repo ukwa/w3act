@@ -953,6 +953,12 @@
 				@templates.inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")(
 					helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
 				)
+				@templates.inputText(targetForm("watchedTarget.loginPageUrl"), true, '_label -> "Login Page URL")(
+					helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
+				)
+				@templates.inputText(targetForm("watchedTarget.logoutUrl"), true, '_label -> "Logout URL")(
+					helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
+				)
 				@helper.input(targetForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
 					<div class="scroll-box">
 						@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {

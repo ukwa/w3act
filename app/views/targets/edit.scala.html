@@ -992,8 +992,11 @@
 										}
 									</select>
 								} else {
-									<select name="licensesList" id="license" class="form-control">
-										<option value="">None</option>
+									@if(!targetLicenses.isEmpty) {
+										<input type="hidden" name="licensesList" value="@targetLicenses(0).id">
+									}
+									<select id="license" class="form-control">
+										<option disabled value="">None</option>
 										@for(license <- licenses) {
 											<option disabled value="@license.id" @if(targetLicenses.contains(license)) {selected} >@license.name</option>
 										}
@@ -1071,6 +1074,8 @@
 					@checkbox(targetForm("watched"), false, '_label -> "watched (only the owner can modify this)")
 				}
 				@inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")
+				@inputText(targetForm("watchedTarget.loginPageUrl"), true, '_label -> "Login Page URL")
+				@inputText(targetForm("watchedTarget.logoutUrl"), true, '_label -> "Logout URL")
 				@helper.input(targetForm("subjects"), '_label -> "Subjects") { (id, name, value, args) =>
 					<div class="scroll-box">
 						@for(fastSubject <- FastSubject.find.orderBy("name").findList()) {
