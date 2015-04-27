@@ -3,7 +3,6 @@ package controllers;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -259,10 +258,8 @@ public class Documents extends AbstractController {
 				document.watchedTarget.waybackTimestamp = document.waybackTimestamp;
 				Ebean.save(document.watchedTarget);
 			}
-			try {
-				document.landingPageUrl = URLEncoder.encode(objNode.get("landing_page_url").textValue(), "UTF-8");
-				document.documentUrl = URLEncoder.encode(objNode.get("document_url").textValue(), "UTF-8");
-			} catch (UnsupportedEncodingException e) {/*should not happen*/}
+			document.landingPageUrl = objNode.get("landing_page_url").textValue().replace("'", "%27");
+			document.documentUrl = objNode.get("document_url").textValue().replace("'", "%27");
 			document.filename = objNode.get("filename").textValue();
 			if (document.filename.contains("."))
 				document.title = document.filename.substring(0, document.filename.lastIndexOf("."));

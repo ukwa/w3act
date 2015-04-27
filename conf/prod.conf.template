@@ -26,7 +26,7 @@ applyDownEvolutions.default=true
 # Logger
 logger=WARN
 logger.play=WARN
-logger.application=DEBUG
+logger.application=INFO
 
 # SMTP connection for email sending
 host=juno.bl.uk
