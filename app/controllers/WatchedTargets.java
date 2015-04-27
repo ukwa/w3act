@@ -48,7 +48,7 @@ public class WatchedTargets extends AbstractController {
     }
     
     public static Result renderList(String userString, boolean children, int pageNo, String sortBy, String order, String filter, boolean filters) {
-    	Logger.info("WatchedTargets.list()");
+    	Logger.debug("WatchedTargets.list()");
     	
     	Long userId = userString.isEmpty() || userString.equals("null") ?
 				null : new Long(userString);

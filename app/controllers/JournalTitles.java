@@ -19,7 +19,7 @@ import views.html.journaltitles.edit;
 public class JournalTitles extends AbstractController {
 	
 	public static Result addJournalTitle(Long watchedTargetId, boolean toDocument) {
-		Logger.info("JournalTitles.addJournalTitle()");
+		Logger.debug("JournalTitles.addJournalTitle()");
 		
 		WatchedTarget watchedTarget = Ebean.find(WatchedTarget.class, watchedTargetId);
 		
@@ -34,7 +34,7 @@ public class JournalTitles extends AbstractController {
 	}
 	
 	public static Result edit(Long id) {
-		Logger.info("JournalTitles.edit()");
+		Logger.debug("JournalTitles.edit()");
 		
 		JournalTitle journalTitle = Ebean.find(JournalTitle.class, id);
 		Form<JournalTitle> journalTitleForm = Form.form(JournalTitle.class).fill(journalTitle);
@@ -58,7 +58,7 @@ public class JournalTitles extends AbstractController {
 	}
 
 	public static Result save(boolean toDocument) {
-		Logger.info("JournalTitles.save()");
+		Logger.debug("JournalTitles.save()");
 		
 		String delete = getFormParam("delete");
 		
@@ -70,7 +70,7 @@ public class JournalTitles extends AbstractController {
 		}
 		
 		if (journalTitleForm.hasErrors()) {
-			Logger.info("Show errors in html");
+			Logger.debug("Show errors in html");
 			FlashMessage.validationWarning.send();
 			return status(303, edit.render("Journal Title", journalTitleForm,
 					User.findByEmail(request().username()), toDocument));

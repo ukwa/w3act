@@ -66,7 +66,7 @@ public class Documents extends AbstractController {
 	}
 	
 	private static Result render(Long id, boolean editable) {
-		Logger.info("Documents.render()");
+		Logger.debug("Documents.render()");
 		
 		Document document = getDocumentFromDB(id);
 		if (document.status == Document.Status.SUBMITTED) editable = false;
@@ -78,7 +78,7 @@ public class Documents extends AbstractController {
 	}
 	
 	public static Result continueEdit() {
-		Logger.info("Documents.continueEdit()");
+		Logger.debug("Documents.continueEdit()");
 		
 		if (flash("journalTitle") != null)
 			session("journal.journalTitleId", flash("journalTitle"));
@@ -91,7 +91,7 @@ public class Documents extends AbstractController {
 	}
 
 	public static Result save(Long id) {
-		Logger.info("Documents.save()");
+		Logger.debug("Documents.save()");
 		
 		String journalTitle = getFormParam("journalTitle");
 		
@@ -103,22 +103,22 @@ public class Documents extends AbstractController {
 					new Long(documentForm.apply("watchedTarget.id").value()), true));
 		}
 		
-		Logger.info("Errors: " + documentForm.hasErrors());
+		Logger.debug("Errors: " + documentForm.hasErrors());
 		for (String key : documentForm.errors().keySet()) {
-			Logger.info("Key: " + key);
+			Logger.debug("Key: " + key);
 			for (ValidationError error : documentForm.errors().get(key)) {
 				for (String message : error.messages()) {
-					Logger.info("Message: " + message);
+					Logger.debug("Message: " + message);
 				}
 			}
 		}
 		if (documentForm.hasErrors()) {
-			Logger.info("Show errors in html");
+			Logger.debug("Show errors in html");
 			FlashMessage.validationWarning.send();
 			return status(303, edit.render("Document", documentForm,
 					User.findByEmail(request().username()), true));
 		}
-		Logger.info("Glob Errors: " + documentForm.hasGlobalErrors());
+		Logger.debug("Glob Errors: " + documentForm.hasGlobalErrors());
 		Document document = documentForm.get();
 		document.clearImproperFields();
 		setRelatedEntitiesOfModel(document, documentForm);
@@ -455,7 +455,7 @@ public class Documents extends AbstractController {
     
     public static Result renderList(DocumentFilter documentFilter,
     		int pageNo, String sortBy, String order, String filter, boolean filters) {
-    	Logger.info("Documents.list()");
+    	Logger.debug("Documents.list()");
     	
     	Form<DocumentFilter> filterForm = Form.form(DocumentFilter.class).fill(documentFilter);
     	for (String fastSubject : documentFilter.fastSubjects)
