@@ -27,7 +27,6 @@ public class LoginCredentialsController extends AbstractController {
 	public static Result save(Long id) {
 		Form<WatchedTarget> watchedTargetForm = Form.form(WatchedTarget.class).bindFromRequest();
 		WatchedTarget watchedTarget = watchedTargetForm.get();
-		Ebean.update(watchedTarget);
 		String username = watchedTargetForm.field("username").value();
 		String password = watchedTargetForm.field("password").value();
 		if(!watchedTarget.loginPageUrl.isEmpty() && !username.isEmpty() && !password.isEmpty()) {
@@ -36,7 +35,7 @@ public class LoginCredentialsController extends AbstractController {
 			String secretServerPassword = Play.application().configuration().getString("secret_server_password");
 			try {
 				PasswordManager passwordManager = new PasswordManager(secretServerUser, secretServerPassword, "", "AD");
-				passwordManager.addLoginCredentials(watchedTarget.target.title, loginCredentials);
+				watchedTarget.secretId = passwordManager.addLoginCredentials(watchedTarget.target.title, loginCredentials);
 				FlashMessage.updateSuccess.send();
 			} catch(Exception e) {
 				new FlashMessage(FlashMessage.Type.ERROR,
@@ -45,6 +44,7 @@ public class LoginCredentialsController extends AbstractController {
 				e.printStackTrace();
 			}
 		}
+		Ebean.update(watchedTarget);
 		return redirect(routes.LoginCredentialsController.edit(id));
 	}
 }

@@ -18,7 +18,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="token" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="includeRestricted" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,14 +28,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "token",
-    "includeRestricted"
+    "token"
 })
 @XmlRootElement(name = "GetFavorites")
 public class GetFavorites {
 
     protected String token;
-    protected boolean includeRestricted;
 
     /**
      * Gets the value of the token property.
@@ -60,22 +57,6 @@ public class GetFavorites {
      */
     public void setToken(String value) {
         this.token = value;
-    }
-
-    /**
-     * Gets the value of the includeRestricted property.
-     * 
-     */
-    public boolean isIncludeRestricted() {
-        return includeRestricted;
-    }
-
-    /**
-     * Sets the value of the includeRestricted property.
-     * 
-     */
-    public void setIncludeRestricted(boolean value) {
-        this.includeRestricted = value;
     }
 
 }

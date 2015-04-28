@@ -95,7 +95,7 @@ public class CrawlActor extends UntypedActor {
 		convertDocuments(newDocumentList);
 	}
 
-	private static void convertPdfToHtml(Document document, String ctphFile) throws IOException {
+	private static void convertPdfToHtml(Document document, String ctphFile) throws IOException, InterruptedException {
 		ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c",
 				"cd conf/converter && ./convertPdfToHtml.sh '" + document.documentUrl +
 				"' '" + document.id + "' " + ctphFile);
@@ -108,7 +108,7 @@ public class CrawlActor extends UntypedActor {
  			if (line == null) { break; }
 			Logger.debug(line);
 		}
-		if (p.exitValue() != 0) {
+		if (p.waitFor() != 0) {
 			throw new IOException();
 		}
 	}

@@ -44,7 +44,7 @@ public class PasswordManager {
 	public LoginCredentials getLoginCredentials(int secretId) throws IOException {
 		String token = authenticate();
 		if (token == null || token.isEmpty()) throw new IOException();
-		GetSecretResult getSecretResult = ssWebServiceSoap.getSecret(token, secretId, false, null);
+		GetSecretResult getSecretResult = ssWebServiceSoap.getSecret(token, secretId);
 		LoginCredentials loginCredentials = new LoginCredentials();
 		for (SecretItem secretItem : getSecretResult.getSecret().getItems().getSecretItem()) {
 			if (secretItem.getFieldId().equals(URL_FIELD_ID))

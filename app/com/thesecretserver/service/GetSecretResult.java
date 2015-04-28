@@ -18,7 +18,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Errors" type="{urn:thesecretserver.com}ArrayOfString" minOccurs="0"/>
- *         &lt;element name="SecretError" type="{urn:thesecretserver.com}SecretError" minOccurs="0"/>
  *         &lt;element name="Secret" type="{urn:thesecretserver.com}Secret" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -31,15 +30,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetSecretResult", propOrder = {
     "errors",
-    "secretError",
     "secret"
 })
 public class GetSecretResult {
 
     @XmlElement(name = "Errors")
     protected ArrayOfString errors;
-    @XmlElement(name = "SecretError")
-    protected SecretError secretError;
     @XmlElement(name = "Secret")
     protected Secret secret;
 
@@ -65,30 +61,6 @@ public class GetSecretResult {
      */
     public void setErrors(ArrayOfString value) {
         this.errors = value;
-    }
-
-    /**
-     * Gets the value of the secretError property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecretError }
-     *     
-     */
-    public SecretError getSecretError() {
-        return secretError;
-    }
-
-    /**
-     * Sets the value of the secretError property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecretError }
-     *     
-     */
-    public void setSecretError(SecretError value) {
-        this.secretError = value;
     }
 
     /**

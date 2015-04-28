@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="SecretTypeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="SecretTypeId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="FolderId" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="IsRestricted" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,8 +36,7 @@ import javax.xml.bind.annotation.XmlType;
     "secretName",
     "secretTypeName",
     "secretTypeId",
-    "folderId",
-    "isRestricted"
+    "folderId"
 })
 public class SecretSummary {
 
@@ -52,8 +50,6 @@ public class SecretSummary {
     protected int secretTypeId;
     @XmlElement(name = "FolderId")
     protected int folderId;
-    @XmlElement(name = "IsRestricted")
-    protected boolean isRestricted;
 
     /**
      * Gets the value of the secretId property.
@@ -149,22 +145,6 @@ public class SecretSummary {
      */
     public void setFolderId(int value) {
         this.folderId = value;
-    }
-
-    /**
-     * Gets the value of the isRestricted property.
-     * 
-     */
-    public boolean isIsRestricted() {
-        return isRestricted;
-    }
-
-    /**
-     * Sets the value of the isRestricted property.
-     * 
-     */
-    public void setIsRestricted(boolean value) {
-        this.isRestricted = value;
     }
 
 }

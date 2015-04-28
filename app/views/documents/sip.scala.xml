@@ -10,6 +10,12 @@
     xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd
         info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/premis.xsd
         http://www.loc.gov/mods/v3 http://www.loc.gov/mods/v3/mods-3-4.xsd">
+  <mets:metsHdr CREATEDATE="@document.currentStatusSetUTCString">
+    <mets:agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
+      <mets:name>ACT;1.0</mets:name>
+    </mets:agent>
+    <mets:metsDocumentID>@document.ark</mets:metsDocumentID>
+  </mets:metsHdr>
   <mets:dmdSec ID="dmd0001">
   @if(document.isWholeBook) {
     <mets:mdWrap MDTYPE="MARC">
@@ -205,6 +211,7 @@
                 <premis:messageDigestAlgorithm>SHA-256</premis:messageDigestAlgorithm>
                 <premis:messageDigest>@document.sha256Hash</premis:messageDigest>
               </premis:fixity>
+              <premis:size>@document.size</premis:size>
               <premis:format>
                 <premis:formatDesignation>
                   <premis:formatName>application/pdf</premis:formatName>
@@ -241,7 +248,8 @@
   <mets:fileSec>
     <mets:fileGrp USE="Original">
       <mets:file ADMID="amd0001-object" ID="file0001">
-        <mets:FLocat LOCTYPE="ARK" xlink:href="@document.ark"/>
+        <mets:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="EXTERNALCONTENT"
+            xlink:href="@document.waybackUrl"/>
       </mets:file>
     </mets:fileGrp>
   </mets:fileSec>

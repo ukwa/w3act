@@ -33,8 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 @XmlSeeAlso({
     FileDownloadResult.class,
-    CreateFolderResult.class,
-    SSHCredentialsResult.class
+    CreateFolderResult.class
 })
 public class WebServiceResult {
 

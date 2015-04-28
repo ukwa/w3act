@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import controllers.Portals;
 import controllers.Users;
+import play.Play;
 import play.data.format.Formats.DateTime;
 import play.data.validation.Constraints.Required;
 import play.data.validation.ValidationError;
@@ -67,6 +69,7 @@ public class Document extends Model {
     public Integer publicationYear;
     @Required
 	public String filename;
+    public Long size;
     public boolean priorityCataloguing;
     public String type;
 	public String author1Fn;
@@ -162,6 +165,17 @@ public class Document extends Model {
 	public void setStatus(Status status) {
 		this.status = status;
 		currentStatusSet = new Date();
+	}
+	
+	public String currentStatusSetUTCString() {
+		SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		dateFormatGmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return dateFormatGmt.format(currentStatusSet);
+	}
+	
+	public String waybackUrl() {
+		return Play.application().configuration().getString("wayback_url") +
+				waybackTimestamp + "/" + documentUrl;
 	}
 
 	public enum Type {

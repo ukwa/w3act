@@ -25,43 +25,6 @@ public interface SSWebServiceSoap {
 
     /**
      * 
-     * @param userOverride
-     * @param hours
-     * @param approvalId
-     * @return
-     *     returns com.thesecretserver.service.RequestApprovalResult
-     */
-    @WebMethod(operationName = "ApproveSecretAccessRequest", action = "urn:thesecretserver.com/ApproveSecretAccessRequest")
-    @WebResult(name = "ApproveSecretAccessRequestResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "ApproveSecretAccessRequest", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.ApproveSecretAccessRequest")
-    @ResponseWrapper(localName = "ApproveSecretAccessRequestResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.ApproveSecretAccessRequestResponse")
-    public RequestApprovalResult approveSecretAccessRequest(
-        @WebParam(name = "approvalId", targetNamespace = "urn:thesecretserver.com")
-        String approvalId,
-        @WebParam(name = "hours", targetNamespace = "urn:thesecretserver.com")
-        String hours,
-        @WebParam(name = "userOverride", targetNamespace = "urn:thesecretserver.com")
-        boolean userOverride);
-
-    /**
-     * 
-     * @param userOverride
-     * @param approvalId
-     * @return
-     *     returns com.thesecretserver.service.RequestApprovalResult
-     */
-    @WebMethod(operationName = "DenySecretAccessRequest", action = "urn:thesecretserver.com/DenySecretAccessRequest")
-    @WebResult(name = "DenySecretAccessRequestResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "DenySecretAccessRequest", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.DenySecretAccessRequest")
-    @ResponseWrapper(localName = "DenySecretAccessRequestResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.DenySecretAccessRequestResponse")
-    public RequestApprovalResult denySecretAccessRequest(
-        @WebParam(name = "approvalId", targetNamespace = "urn:thesecretserver.com")
-        String approvalId,
-        @WebParam(name = "userOverride", targetNamespace = "urn:thesecretserver.com")
-        boolean userOverride);
-
-    /**
-     * 
      * @param organization
      * @param username
      * @param domain
@@ -130,25 +93,6 @@ public interface SSWebServiceSoap {
      * @return
      *     returns com.thesecretserver.service.GetSecretResult
      */
-    @WebMethod(operationName = "GetSecretLegacy", action = "urn:thesecretserver.com/GetSecretLegacy")
-    @WebResult(name = "GetSecretLegacyResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "GetSecretLegacy", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetSecretLegacy")
-    @ResponseWrapper(localName = "GetSecretLegacyResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetSecretLegacyResponse")
-    public GetSecretResult getSecretLegacy(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "secretId", targetNamespace = "urn:thesecretserver.com")
-        int secretId);
-
-    /**
-     * 
-     * @param secretId
-     * @param token
-     * @param codeResponses
-     * @param loadSettingsAndPermissions
-     * @return
-     *     returns com.thesecretserver.service.GetSecretResult
-     */
     @WebMethod(operationName = "GetSecret", action = "urn:thesecretserver.com/GetSecret")
     @WebResult(name = "GetSecretResult", targetNamespace = "urn:thesecretserver.com")
     @RequestWrapper(localName = "GetSecret", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetSecret")
@@ -157,11 +101,7 @@ public interface SSWebServiceSoap {
         @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
         String token,
         @WebParam(name = "secretId", targetNamespace = "urn:thesecretserver.com")
-        int secretId,
-        @WebParam(name = "loadSettingsAndPermissions", targetNamespace = "urn:thesecretserver.com")
-        Boolean loadSettingsAndPermissions,
-        @WebParam(name = "codeResponses", targetNamespace = "urn:thesecretserver.com")
-        ArrayOfCodeResponse codeResponses);
+        int secretId);
 
     /**
      * 
@@ -202,6 +142,23 @@ public interface SSWebServiceSoap {
 
     /**
      * 
+     * @param token
+     * @param url
+     * @return
+     *     returns com.thesecretserver.service.GetWebPasswordResult
+     */
+    @WebMethod(operationName = "SearchWebPasswordsForUrl", action = "urn:thesecretserver.com/SearchWebPasswordsForUrl")
+    @WebResult(name = "SearchWebPasswordsForUrlResult", targetNamespace = "urn:thesecretserver.com")
+    @RequestWrapper(localName = "SearchWebPasswordsForUrl", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.SearchWebPasswordsForUrl")
+    @ResponseWrapper(localName = "SearchWebPasswordsForUrlResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.SearchWebPasswordsForUrlResponse")
+    public GetWebPasswordResult searchWebPasswordsForUrl(
+        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
+        String token,
+        @WebParam(name = "url", targetNamespace = "urn:thesecretserver.com")
+        String url);
+
+    /**
+     * 
      * @param searchTerm
      * @param token
      * @param showDeleted
@@ -225,32 +182,6 @@ public interface SSWebServiceSoap {
 
     /**
      * 
-     * @param showRestricted
-     * @param searchTerm
-     * @param token
-     * @param showDeleted
-     * @param fieldName
-     * @return
-     *     returns com.thesecretserver.service.SearchSecretsResult
-     */
-    @WebMethod(operationName = "SearchSecretsByFieldValue", action = "urn:thesecretserver.com/SearchSecretsByFieldValue")
-    @WebResult(name = "SearchSecretsByFieldValueResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "SearchSecretsByFieldValue", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.SearchSecretsByFieldValue")
-    @ResponseWrapper(localName = "SearchSecretsByFieldValueResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.SearchSecretsByFieldValueResponse")
-    public SearchSecretsResult searchSecretsByFieldValue(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "fieldName", targetNamespace = "urn:thesecretserver.com")
-        String fieldName,
-        @WebParam(name = "searchTerm", targetNamespace = "urn:thesecretserver.com")
-        String searchTerm,
-        @WebParam(name = "showDeleted", targetNamespace = "urn:thesecretserver.com")
-        boolean showDeleted,
-        @WebParam(name = "showRestricted", targetNamespace = "urn:thesecretserver.com")
-        boolean showRestricted);
-
-    /**
-     * 
      * @param token
      * @param newUser
      * @return
@@ -268,10 +199,8 @@ public interface SSWebServiceSoap {
 
     /**
      * 
-     * @param includeDeleted
      * @param searchTerm
      * @param token
-     * @param includeRestricted
      * @return
      *     returns com.thesecretserver.service.SearchSecretsResult
      */
@@ -283,36 +212,13 @@ public interface SSWebServiceSoap {
         @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
         String token,
         @WebParam(name = "searchTerm", targetNamespace = "urn:thesecretserver.com")
-        String searchTerm,
-        @WebParam(name = "includeDeleted", targetNamespace = "urn:thesecretserver.com")
-        Boolean includeDeleted,
-        @WebParam(name = "includeRestricted", targetNamespace = "urn:thesecretserver.com")
-        Boolean includeRestricted);
-
-    /**
-     * 
-     * @param searchTerm
-     * @param token
-     * @return
-     *     returns com.thesecretserver.service.SearchSecretsResult
-     */
-    @WebMethod(operationName = "SearchSecretsLegacy", action = "urn:thesecretserver.com/SearchSecretsLegacy")
-    @WebResult(name = "SearchSecretsLegacyResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "SearchSecretsLegacy", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.SearchSecretsLegacy")
-    @ResponseWrapper(localName = "SearchSecretsLegacyResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.SearchSecretsLegacyResponse")
-    public SearchSecretsResult searchSecretsLegacy(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "searchTerm", targetNamespace = "urn:thesecretserver.com")
         String searchTerm);
 
     /**
      * 
-     * @param includeDeleted
      * @param searchTerm
      * @param token
      * @param includeSubFolders
-     * @param includeRestricted
      * @param folderId
      * @return
      *     returns com.thesecretserver.service.SearchSecretsResult
@@ -329,39 +235,11 @@ public interface SSWebServiceSoap {
         @WebParam(name = "folderId", targetNamespace = "urn:thesecretserver.com")
         Integer folderId,
         @WebParam(name = "includeSubFolders", targetNamespace = "urn:thesecretserver.com")
-        boolean includeSubFolders,
-        @WebParam(name = "includeDeleted", targetNamespace = "urn:thesecretserver.com")
-        Boolean includeDeleted,
-        @WebParam(name = "includeRestricted", targetNamespace = "urn:thesecretserver.com")
-        Boolean includeRestricted);
-
-    /**
-     * 
-     * @param searchTerm
-     * @param token
-     * @param includeSubFolders
-     * @param folderId
-     * @return
-     *     returns com.thesecretserver.service.SearchSecretsResult
-     */
-    @WebMethod(operationName = "SearchSecretsByFolderLegacy", action = "urn:thesecretserver.com/SearchSecretsByFolderLegacy")
-    @WebResult(name = "SearchSecretsByFolderLegacyResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "SearchSecretsByFolderLegacy", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.SearchSecretsByFolderLegacy")
-    @ResponseWrapper(localName = "SearchSecretsByFolderLegacyResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.SearchSecretsByFolderLegacyResponse")
-    public SearchSecretsResult searchSecretsByFolderLegacy(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "searchTerm", targetNamespace = "urn:thesecretserver.com")
-        String searchTerm,
-        @WebParam(name = "folderId", targetNamespace = "urn:thesecretserver.com")
-        Integer folderId,
-        @WebParam(name = "includeSubFolders", targetNamespace = "urn:thesecretserver.com")
         boolean includeSubFolders);
 
     /**
      * 
      * @param token
-     * @param includeRestricted
      * @return
      *     returns com.thesecretserver.service.GetFavoritesResult
      */
@@ -371,9 +249,7 @@ public interface SSWebServiceSoap {
     @ResponseWrapper(localName = "GetFavoritesResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetFavoritesResponse")
     public GetFavoritesResult getFavorites(
         @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "includeRestricted", targetNamespace = "urn:thesecretserver.com")
-        boolean includeRestricted);
+        String token);
 
     /**
      * 
@@ -421,43 +297,6 @@ public interface SSWebServiceSoap {
         ArrayOfInt secretFieldIds,
         @WebParam(name = "secretItemValues", targetNamespace = "urn:thesecretserver.com")
         ArrayOfString secretItemValues,
-        @WebParam(name = "folderId", targetNamespace = "urn:thesecretserver.com")
-        int folderId);
-
-    /**
-     * 
-     * @param token
-     * @param secret
-     * @return
-     *     returns com.thesecretserver.service.AddSecretResult
-     */
-    @WebMethod(operationName = "AddNewSecret", action = "urn:thesecretserver.com/AddNewSecret")
-    @WebResult(name = "AddNewSecretResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "AddNewSecret", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.AddNewSecret")
-    @ResponseWrapper(localName = "AddNewSecretResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.AddNewSecretResponse")
-    public AddSecretResult addNewSecret(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "secret", targetNamespace = "urn:thesecretserver.com")
-        Secret secret);
-
-    /**
-     * 
-     * @param token
-     * @param secretTypeId
-     * @param folderId
-     * @return
-     *     returns com.thesecretserver.service.GetSecretResult
-     */
-    @WebMethod(operationName = "GetNewSecret", action = "urn:thesecretserver.com/GetNewSecret")
-    @WebResult(name = "GetNewSecretResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "GetNewSecret", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetNewSecret")
-    @ResponseWrapper(localName = "GetNewSecretResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetNewSecretResponse")
-    public GetSecretResult getNewSecret(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "secretTypeId", targetNamespace = "urn:thesecretserver.com")
-        int secretTypeId,
         @WebParam(name = "folderId", targetNamespace = "urn:thesecretserver.com")
         int folderId);
 
@@ -810,60 +649,6 @@ public interface SSWebServiceSoap {
 
     /**
      * 
-     * @param dependency
-     * @param token
-     * @return
-     *     returns com.thesecretserver.service.WebServiceResult
-     */
-    @WebMethod(operationName = "AddDependency", action = "urn:thesecretserver.com/AddDependency")
-    @WebResult(name = "AddDependencyResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "AddDependency", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.AddDependency")
-    @ResponseWrapper(localName = "AddDependencyResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.AddDependencyResponse")
-    public WebServiceResult addDependency(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "dependency", targetNamespace = "urn:thesecretserver.com")
-        Dependency dependency);
-
-    /**
-     * 
-     * @param secretId
-     * @param token
-     * @param dependencyId
-     * @return
-     *     returns com.thesecretserver.service.WebServiceResult
-     */
-    @WebMethod(operationName = "RemoveDependency", action = "urn:thesecretserver.com/RemoveDependency")
-    @WebResult(name = "RemoveDependencyResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "RemoveDependency", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.RemoveDependency")
-    @ResponseWrapper(localName = "RemoveDependencyResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.RemoveDependencyResponse")
-    public WebServiceResult removeDependency(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "dependencyId", targetNamespace = "urn:thesecretserver.com")
-        int dependencyId,
-        @WebParam(name = "secretId", targetNamespace = "urn:thesecretserver.com")
-        int secretId);
-
-    /**
-     * 
-     * @param secretId
-     * @param token
-     * @return
-     *     returns com.thesecretserver.service.GetDependenciesResult
-     */
-    @WebMethod(operationName = "GetDependencies", action = "urn:thesecretserver.com/GetDependencies")
-    @WebResult(name = "GetDependenciesResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "GetDependencies", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetDependencies")
-    @ResponseWrapper(localName = "GetDependenciesResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetDependenciesResponse")
-    public GetDependenciesResult getDependencies(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "secretId", targetNamespace = "urn:thesecretserver.com")
-        int secretId);
-
-    /**
-     * 
      * @param token
      * @return
      *     returns com.thesecretserver.service.GetAgentsResult
@@ -895,182 +680,5 @@ public interface SSWebServiceSoap {
         int secretId,
         @WebParam(name = "agentId", targetNamespace = "urn:thesecretserver.com")
         int agentId);
-
-    /**
-     * 
-     * @param secretId
-     * @param token
-     * @return
-     *     returns com.thesecretserver.service.WebServiceResult
-     */
-    @WebMethod(operationName = "CheckIn", action = "urn:thesecretserver.com/CheckIn")
-    @WebResult(name = "CheckInResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "CheckIn", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.CheckIn")
-    @ResponseWrapper(localName = "CheckInResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.CheckInResponse")
-    public WebServiceResult checkIn(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "secretId", targetNamespace = "urn:thesecretserver.com")
-        int secretId);
-
-    /**
-     * 
-     * @param secretId
-     * @param token
-     * @param userId
-     * @param ticketNumber
-     * @param referenceId
-     * @param notes
-     * @param ipAddress
-     * @return
-     *     returns com.thesecretserver.service.WebServiceResult
-     */
-    @WebMethod(operationName = "AddSecretCustomAudit", action = "urn:thesecretserver.com/AddSecretCustomAudit")
-    @WebResult(name = "AddSecretCustomAuditResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "AddSecretCustomAudit", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.AddSecretCustomAudit")
-    @ResponseWrapper(localName = "AddSecretCustomAuditResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.AddSecretCustomAuditResponse")
-    public WebServiceResult addSecretCustomAudit(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "secretId", targetNamespace = "urn:thesecretserver.com")
-        int secretId,
-        @WebParam(name = "notes", targetNamespace = "urn:thesecretserver.com")
-        String notes,
-        @WebParam(name = "ipAddress", targetNamespace = "urn:thesecretserver.com")
-        String ipAddress,
-        @WebParam(name = "referenceId", targetNamespace = "urn:thesecretserver.com")
-        Integer referenceId,
-        @WebParam(name = "ticketNumber", targetNamespace = "urn:thesecretserver.com")
-        String ticketNumber,
-        @WebParam(name = "userId", targetNamespace = "urn:thesecretserver.com")
-        int userId);
-
-    /**
-     * 
-     * @param groupOrUserRecord
-     * @param secretId
-     * @param token
-     * @param owner
-     * @param edit
-     * @param view
-     * @return
-     *     returns com.thesecretserver.service.WebServiceResult
-     */
-    @WebMethod(operationName = "UpdateSecretPermission", action = "urn:thesecretserver.com/UpdateSecretPermission")
-    @WebResult(name = "UpdateSecretPermissionResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "UpdateSecretPermission", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.UpdateSecretPermission")
-    @ResponseWrapper(localName = "UpdateSecretPermissionResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.UpdateSecretPermissionResponse")
-    public WebServiceResult updateSecretPermission(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "secretId", targetNamespace = "urn:thesecretserver.com")
-        int secretId,
-        @WebParam(name = "groupOrUserRecord", targetNamespace = "urn:thesecretserver.com")
-        GroupOrUserRecord groupOrUserRecord,
-        @WebParam(name = "view", targetNamespace = "urn:thesecretserver.com")
-        boolean view,
-        @WebParam(name = "edit", targetNamespace = "urn:thesecretserver.com")
-        boolean edit,
-        @WebParam(name = "owner", targetNamespace = "urn:thesecretserver.com")
-        boolean owner);
-
-    /**
-     * 
-     * @param sessionKey
-     * @return
-     *     returns com.thesecretserver.service.WebServiceResult
-     */
-    @WebMethod(operationName = "CheckInByKey", action = "urn:thesecretserver.com/CheckInByKey")
-    @WebResult(name = "CheckInByKeyResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "CheckInByKey", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.CheckInByKey")
-    @ResponseWrapper(localName = "CheckInByKeyResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.CheckInByKeyResponse")
-    public WebServiceResult checkInByKey(
-        @WebParam(name = "sessionKey", targetNamespace = "urn:thesecretserver.com")
-        String sessionKey);
-
-    /**
-     * 
-     * @param token
-     * @return
-     *     returns com.thesecretserver.service.UserInfoResult
-     */
-    @WebMethod(operationName = "WhoAmI", action = "urn:thesecretserver.com/WhoAmI")
-    @WebResult(name = "WhoAmIResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "WhoAmI", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.WhoAmI")
-    @ResponseWrapper(localName = "WhoAmIResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.WhoAmIResponse")
-    public UserInfoResult whoAmI(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token);
-
-    /**
-     * 
-     * @param token
-     * @return
-     *     returns com.thesecretserver.service.GetAllGroupsResult
-     */
-    @WebMethod(operationName = "GetAllGroups", action = "urn:thesecretserver.com/GetAllGroups")
-    @WebResult(name = "GetAllGroupsResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "GetAllGroups", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetAllGroups")
-    @ResponseWrapper(localName = "GetAllGroupsResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetAllGroupsResponse")
-    public GetAllGroupsResult getAllGroups(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token);
-
-    /**
-     * 
-     * @param groupId
-     * @param token
-     * @param userId
-     * @return
-     *     returns com.thesecretserver.service.WebServiceResult
-     */
-    @WebMethod(operationName = "AssignUserToGroup", action = "urn:thesecretserver.com/AssignUserToGroup")
-    @WebResult(name = "AssignUserToGroupResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "AssignUserToGroup", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.AssignUserToGroup")
-    @ResponseWrapper(localName = "AssignUserToGroupResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.AssignUserToGroupResponse")
-    public WebServiceResult assignUserToGroup(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "userId", targetNamespace = "urn:thesecretserver.com")
-        int userId,
-        @WebParam(name = "groupId", targetNamespace = "urn:thesecretserver.com")
-        int groupId);
-
-    /**
-     * 
-     * @param secretId
-     * @param token
-     * @return
-     *     returns com.thesecretserver.service.SSHCredentialsResult
-     */
-    @WebMethod(operationName = "GetSSHLoginCredentials", action = "urn:thesecretserver.com/GetSSHLoginCredentials")
-    @WebResult(name = "GetSSHLoginCredentialsResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "GetSSHLoginCredentials", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetSSHLoginCredentials")
-    @ResponseWrapper(localName = "GetSSHLoginCredentialsResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetSSHLoginCredentialsResponse")
-    public SSHCredentialsResult getSSHLoginCredentials(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "secretId", targetNamespace = "urn:thesecretserver.com")
-        int secretId);
-
-    /**
-     * 
-     * @param secretId
-     * @param token
-     * @param machine
-     * @return
-     *     returns com.thesecretserver.service.SSHCredentialsResult
-     */
-    @WebMethod(operationName = "GetSSHLoginCredentialsWithMachine", action = "urn:thesecretserver.com/GetSSHLoginCredentialsWithMachine")
-    @WebResult(name = "GetSSHLoginCredentialsWithMachineResult", targetNamespace = "urn:thesecretserver.com")
-    @RequestWrapper(localName = "GetSSHLoginCredentialsWithMachine", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetSSHLoginCredentialsWithMachine")
-    @ResponseWrapper(localName = "GetSSHLoginCredentialsWithMachineResponse", targetNamespace = "urn:thesecretserver.com", className = "com.thesecretserver.service.GetSSHLoginCredentialsWithMachineResponse")
-    public SSHCredentialsResult getSSHLoginCredentialsWithMachine(
-        @WebParam(name = "token", targetNamespace = "urn:thesecretserver.com")
-        String token,
-        @WebParam(name = "secretId", targetNamespace = "urn:thesecretserver.com")
-        int secretId,
-        @WebParam(name = "machine", targetNamespace = "urn:thesecretserver.com")
-        String machine);
 
 }

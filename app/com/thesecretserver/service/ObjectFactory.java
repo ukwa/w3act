@@ -24,31 +24,27 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _GetSecretResult_QNAME = new QName("urn:thesecretserver.com", "GetSecretResult");
-    private final static QName _SearchFolderResult_QNAME = new QName("urn:thesecretserver.com", "SearchFolderResult");
-    private final static QName _VersionGetResult_QNAME = new QName("urn:thesecretserver.com", "VersionGetResult");
-    private final static QName _SearchSecretsResult_QNAME = new QName("urn:thesecretserver.com", "SearchSecretsResult");
-    private final static QName _GetSecretsByFieldValueResult_QNAME = new QName("urn:thesecretserver.com", "GetSecretsByFieldValueResult");
-    private final static QName _CreateFolderResult_QNAME = new QName("urn:thesecretserver.com", "CreateFolderResult");
-    private final static QName _WebServiceResult_QNAME = new QName("urn:thesecretserver.com", "WebServiceResult");
-    private final static QName _AuthenticateResult_QNAME = new QName("urn:thesecretserver.com", "AuthenticateResult");
-    private final static QName _GetSecretAuditResult_QNAME = new QName("urn:thesecretserver.com", "GetSecretAuditResult");
     private final static QName _GetFolderResult_QNAME = new QName("urn:thesecretserver.com", "GetFolderResult");
     private final static QName _GetSecretTemplateFieldsResult_QNAME = new QName("urn:thesecretserver.com", "GetSecretTemplateFieldsResult");
-    private final static QName _UserInfoResult_QNAME = new QName("urn:thesecretserver.com", "UserInfoResult");
+    private final static QName _GetSecretResult_QNAME = new QName("urn:thesecretserver.com", "GetSecretResult");
+    private final static QName _GetWebPasswordResult_QNAME = new QName("urn:thesecretserver.com", "GetWebPasswordResult");
     private final static QName _FileDownloadResult_QNAME = new QName("urn:thesecretserver.com", "FileDownloadResult");
-    private final static QName _AddSecretResult_QNAME = new QName("urn:thesecretserver.com", "AddSecretResult");
     private final static QName _GetFavoritesResult_QNAME = new QName("urn:thesecretserver.com", "GetFavoritesResult");
-    private final static QName _GetAllGroupsResult_QNAME = new QName("urn:thesecretserver.com", "GetAllGroupsResult");
-    private final static QName _GetDependenciesResult_QNAME = new QName("urn:thesecretserver.com", "GetDependenciesResult");
-    private final static QName _RequestApprovalResult_QNAME = new QName("urn:thesecretserver.com", "RequestApprovalResult");
+    private final static QName _AddSecretResult_QNAME = new QName("urn:thesecretserver.com", "AddSecretResult");
+    private final static QName _SearchFolderResult_QNAME = new QName("urn:thesecretserver.com", "SearchFolderResult");
+    private final static QName _VersionGetResult_QNAME = new QName("urn:thesecretserver.com", "VersionGetResult");
     private final static QName _GetSecretTemplatesResult_QNAME = new QName("urn:thesecretserver.com", "GetSecretTemplatesResult");
-    private final static QName _SSHCredentialsResult_QNAME = new QName("urn:thesecretserver.com", "SSHCredentialsResult");
     private final static QName _GetAgentsResult_QNAME = new QName("urn:thesecretserver.com", "GetAgentsResult");
+    private final static QName _SearchSecretsResult_QNAME = new QName("urn:thesecretserver.com", "SearchSecretsResult");
+    private final static QName _GetSecretsByFieldValueResult_QNAME = new QName("urn:thesecretserver.com", "GetSecretsByFieldValueResult");
     private final static QName _GeneratePasswordResult_QNAME = new QName("urn:thesecretserver.com", "GeneratePasswordResult");
     private final static QName _GetCheckOutStatusResult_QNAME = new QName("urn:thesecretserver.com", "GetCheckOutStatusResult");
     private final static QName _GetFoldersResult_QNAME = new QName("urn:thesecretserver.com", "GetFoldersResult");
     private final static QName _TokenIsValidResult_QNAME = new QName("urn:thesecretserver.com", "TokenIsValidResult");
+    private final static QName _CreateFolderResult_QNAME = new QName("urn:thesecretserver.com", "CreateFolderResult");
+    private final static QName _WebServiceResult_QNAME = new QName("urn:thesecretserver.com", "WebServiceResult");
+    private final static QName _AuthenticateResult_QNAME = new QName("urn:thesecretserver.com", "AuthenticateResult");
+    private final static QName _GetSecretAuditResult_QNAME = new QName("urn:thesecretserver.com", "GetSecretAuditResult");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.thesecretserver.service
@@ -66,22 +62,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetSecretLegacyResponse }
-     * 
-     */
-    public GetSecretLegacyResponse createGetSecretLegacyResponse() {
-        return new GetSecretLegacyResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetSecretResult }
-     * 
-     */
-    public GetSecretResult createGetSecretResult() {
-        return new GetSecretResult();
-    }
-
-    /**
      * Create an instance of {@link VersionGet }
      * 
      */
@@ -90,11 +70,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetSecretTemplates }
+     * Create an instance of {@link DownloadFileAttachmentByItemId }
      * 
      */
-    public GetSecretTemplates createGetSecretTemplates() {
-        return new GetSecretTemplates();
+    public DownloadFileAttachmentByItemId createDownloadFileAttachmentByItemId() {
+        return new DownloadFileAttachmentByItemId();
     }
 
     /**
@@ -114,19 +94,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DenySecretAccessRequestResponse }
+     * Create an instance of {@link UpdateSecretResponse }
      * 
      */
-    public DenySecretAccessRequestResponse createDenySecretAccessRequestResponse() {
-        return new DenySecretAccessRequestResponse();
+    public UpdateSecretResponse createUpdateSecretResponse() {
+        return new UpdateSecretResponse();
     }
 
     /**
-     * Create an instance of {@link RequestApprovalResult }
+     * Create an instance of {@link WebServiceResult }
      * 
      */
-    public RequestApprovalResult createRequestApprovalResult() {
-        return new RequestApprovalResult();
+    public WebServiceResult createWebServiceResult() {
+        return new WebServiceResult();
+    }
+
+    /**
+     * Create an instance of {@link GetSecretTemplates }
+     * 
+     */
+    public GetSecretTemplates createGetSecretTemplates() {
+        return new GetSecretTemplates();
+    }
+
+    /**
+     * Create an instance of {@link ImportXML }
+     * 
+     */
+    public ImportXML createImportXML() {
+        return new ImportXML();
     }
 
     /**
@@ -143,6 +139,30 @@ public class ObjectFactory {
      */
     public GetSecretsByFieldValueResult createGetSecretsByFieldValueResult() {
         return new GetSecretsByFieldValueResult();
+    }
+
+    /**
+     * Create an instance of {@link AuthenticateRADIUS }
+     * 
+     */
+    public AuthenticateRADIUS createAuthenticateRADIUS() {
+        return new AuthenticateRADIUS();
+    }
+
+    /**
+     * Create an instance of {@link GetSecretTemplatesResponse }
+     * 
+     */
+    public GetSecretTemplatesResponse createGetSecretTemplatesResponse() {
+        return new GetSecretTemplatesResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSecretTemplatesResult }
+     * 
+     */
+    public GetSecretTemplatesResult createGetSecretTemplatesResult() {
+        return new GetSecretTemplatesResult();
     }
 
     /**
@@ -170,6 +190,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetSecretResult }
+     * 
+     */
+    public GetSecretResult createGetSecretResult() {
+        return new GetSecretResult();
+    }
+
+    /**
      * Create an instance of {@link GetFavorites }
      * 
      */
@@ -186,11 +214,51 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetSecretTemplatesResult }
+     * Create an instance of {@link GeneratePasswordResponse }
      * 
      */
-    public GetSecretTemplatesResult createGetSecretTemplatesResult() {
-        return new GetSecretTemplatesResult();
+    public GeneratePasswordResponse createGeneratePasswordResponse() {
+        return new GeneratePasswordResponse();
+    }
+
+    /**
+     * Create an instance of {@link GeneratePasswordResult }
+     * 
+     */
+    public GeneratePasswordResult createGeneratePasswordResult() {
+        return new GeneratePasswordResult();
+    }
+
+    /**
+     * Create an instance of {@link GetSecretTemplateFields }
+     * 
+     */
+    public GetSecretTemplateFields createGetSecretTemplateFields() {
+        return new GetSecretTemplateFields();
+    }
+
+    /**
+     * Create an instance of {@link SearchFoldersResponse }
+     * 
+     */
+    public SearchFoldersResponse createSearchFoldersResponse() {
+        return new SearchFoldersResponse();
+    }
+
+    /**
+     * Create an instance of {@link SearchFolderResult }
+     * 
+     */
+    public SearchFolderResult createSearchFolderResult() {
+        return new SearchFolderResult();
+    }
+
+    /**
+     * Create an instance of {@link FileDownloadResult }
+     * 
+     */
+    public FileDownloadResult createFileDownloadResult() {
+        return new FileDownloadResult();
     }
 
     /**
@@ -199,6 +267,14 @@ public class ObjectFactory {
      */
     public SearchSecrets createSearchSecrets() {
         return new SearchSecrets();
+    }
+
+    /**
+     * Create an instance of {@link AddSecretResult }
+     * 
+     */
+    public AddSecretResult createAddSecretResult() {
+        return new AddSecretResult();
     }
 
     /**
@@ -218,19 +294,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FileDownloadResult }
+     * Create an instance of {@link AssignAgentResponse }
      * 
      */
-    public FileDownloadResult createFileDownloadResult() {
-        return new FileDownloadResult();
-    }
-
-    /**
-     * Create an instance of {@link GetNewSecret }
-     * 
-     */
-    public GetNewSecret createGetNewSecret() {
-        return new GetNewSecret();
+    public AssignAgentResponse createAssignAgentResponse() {
+        return new AssignAgentResponse();
     }
 
     /**
@@ -250,27 +318,43 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AssignAgentResponse }
+     * Create an instance of {@link SearchSecretsResponse }
      * 
      */
-    public AssignAgentResponse createAssignAgentResponse() {
-        return new AssignAgentResponse();
+    public SearchSecretsResponse createSearchSecretsResponse() {
+        return new SearchSecretsResponse();
     }
 
     /**
-     * Create an instance of {@link WebServiceResult }
+     * Create an instance of {@link SearchSecretsResult }
      * 
      */
-    public WebServiceResult createWebServiceResult() {
-        return new WebServiceResult();
+    public SearchSecretsResult createSearchSecretsResult() {
+        return new SearchSecretsResult();
     }
 
     /**
-     * Create an instance of {@link CheckIn }
+     * Create an instance of {@link FolderGet }
      * 
      */
-    public CheckIn createCheckIn() {
-        return new CheckIn();
+    public FolderGet createFolderGet() {
+        return new FolderGet();
+    }
+
+    /**
+     * Create an instance of {@link ChangePassword }
+     * 
+     */
+    public ChangePassword createChangePassword() {
+        return new ChangePassword();
+    }
+
+    /**
+     * Create an instance of {@link ExpireSecretResponse }
+     * 
+     */
+    public ExpireSecretResponse createExpireSecretResponse() {
+        return new ExpireSecretResponse();
     }
 
     /**
@@ -279,6 +363,30 @@ public class ObjectFactory {
      */
     public UploadFileAttachmentByItemId createUploadFileAttachmentByItemId() {
         return new UploadFileAttachmentByItemId();
+    }
+
+    /**
+     * Create an instance of {@link UpdateIsFavoriteResponse }
+     * 
+     */
+    public UpdateIsFavoriteResponse createUpdateIsFavoriteResponse() {
+        return new UpdateIsFavoriteResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSecretAuditResponse }
+     * 
+     */
+    public GetSecretAuditResponse createGetSecretAuditResponse() {
+        return new GetSecretAuditResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSecretAuditResult }
+     * 
+     */
+    public GetSecretAuditResult createGetSecretAuditResult() {
+        return new GetSecretAuditResult();
     }
 
     /**
@@ -314,19 +422,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SearchSecretsResult }
+     * Create an instance of {@link SetCheckOutEnabledResponse }
      * 
      */
-    public SearchSecretsResult createSearchSecretsResult() {
-        return new SearchSecretsResult();
+    public SetCheckOutEnabledResponse createSetCheckOutEnabledResponse() {
+        return new SetCheckOutEnabledResponse();
     }
 
     /**
-     * Create an instance of {@link UpdateSecretPermissionResponse }
+     * Create an instance of {@link FolderGetAllChildren }
      * 
      */
-    public UpdateSecretPermissionResponse createUpdateSecretPermissionResponse() {
-        return new UpdateSecretPermissionResponse();
+    public FolderGetAllChildren createFolderGetAllChildren() {
+        return new FolderGetAllChildren();
+    }
+
+    /**
+     * Create an instance of {@link Authenticate }
+     * 
+     */
+    public Authenticate createAuthenticate() {
+        return new Authenticate();
     }
 
     /**
@@ -362,518 +478,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RemoveDependencyResponse }
-     * 
-     */
-    public RemoveDependencyResponse createRemoveDependencyResponse() {
-        return new RemoveDependencyResponse();
-    }
-
-    /**
-     * Create an instance of {@link CheckInByKeyResponse }
-     * 
-     */
-    public CheckInByKeyResponse createCheckInByKeyResponse() {
-        return new CheckInByKeyResponse();
-    }
-
-    /**
-     * Create an instance of {@link AssignUserToGroup }
-     * 
-     */
-    public AssignUserToGroup createAssignUserToGroup() {
-        return new AssignUserToGroup();
-    }
-
-    /**
-     * Create an instance of {@link AssignAgent }
-     * 
-     */
-    public AssignAgent createAssignAgent() {
-        return new AssignAgent();
-    }
-
-    /**
-     * Create an instance of {@link AddDependencyResponse }
-     * 
-     */
-    public AddDependencyResponse createAddDependencyResponse() {
-        return new AddDependencyResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetDependenciesResult }
-     * 
-     */
-    public GetDependenciesResult createGetDependenciesResult() {
-        return new GetDependenciesResult();
-    }
-
-    /**
-     * Create an instance of {@link AssignUserToGroupResponse }
-     * 
-     */
-    public AssignUserToGroupResponse createAssignUserToGroupResponse() {
-        return new AssignUserToGroupResponse();
-    }
-
-    /**
-     * Create an instance of {@link AddNewSecret }
-     * 
-     */
-    public AddNewSecret createAddNewSecret() {
-        return new AddNewSecret();
-    }
-
-    /**
-     * Create an instance of {@link Secret }
-     * 
-     */
-    public Secret createSecret() {
-        return new Secret();
-    }
-
-    /**
-     * Create an instance of {@link GetSSHLoginCredentials }
-     * 
-     */
-    public GetSSHLoginCredentials createGetSSHLoginCredentials() {
-        return new GetSSHLoginCredentials();
-    }
-
-    /**
-     * Create an instance of {@link DenySecretAccessRequest }
-     * 
-     */
-    public DenySecretAccessRequest createDenySecretAccessRequest() {
-        return new DenySecretAccessRequest();
-    }
-
-    /**
-     * Create an instance of {@link AuthenticateRADIUSResponse }
-     * 
-     */
-    public AuthenticateRADIUSResponse createAuthenticateRADIUSResponse() {
-        return new AuthenticateRADIUSResponse();
-    }
-
-    /**
-     * Create an instance of {@link AddNewSecretResponse }
-     * 
-     */
-    public AddNewSecretResponse createAddNewSecretResponse() {
-        return new AddNewSecretResponse();
-    }
-
-    /**
-     * Create an instance of {@link AddSecretResult }
-     * 
-     */
-    public AddSecretResult createAddSecretResult() {
-        return new AddSecretResult();
-    }
-
-    /**
-     * Create an instance of {@link GetFolderResult }
-     * 
-     */
-    public GetFolderResult createGetFolderResult() {
-        return new GetFolderResult();
-    }
-
-    /**
-     * Create an instance of {@link FolderCreateResponse }
-     * 
-     */
-    public FolderCreateResponse createFolderCreateResponse() {
-        return new FolderCreateResponse();
-    }
-
-    /**
-     * Create an instance of {@link WhoAmIResponse }
-     * 
-     */
-    public WhoAmIResponse createWhoAmIResponse() {
-        return new WhoAmIResponse();
-    }
-
-    /**
-     * Create an instance of {@link UserInfoResult }
-     * 
-     */
-    public UserInfoResult createUserInfoResult() {
-        return new UserInfoResult();
-    }
-
-    /**
-     * Create an instance of {@link GetCheckOutStatus }
-     * 
-     */
-    public GetCheckOutStatus createGetCheckOutStatus() {
-        return new GetCheckOutStatus();
-    }
-
-    /**
-     * Create an instance of {@link ImportXMLResponse }
-     * 
-     */
-    public ImportXMLResponse createImportXMLResponse() {
-        return new ImportXMLResponse();
-    }
-
-    /**
-     * Create an instance of {@link SearchSecretsByFolderLegacyResponse }
-     * 
-     */
-    public SearchSecretsByFolderLegacyResponse createSearchSecretsByFolderLegacyResponse() {
-        return new SearchSecretsByFolderLegacyResponse();
-    }
-
-    /**
-     * Create an instance of {@link UpdateIsFavorite }
-     * 
-     */
-    public UpdateIsFavorite createUpdateIsFavorite() {
-        return new UpdateIsFavorite();
-    }
-
-    /**
-     * Create an instance of {@link DownloadFileAttachment }
-     * 
-     */
-    public DownloadFileAttachment createDownloadFileAttachment() {
-        return new DownloadFileAttachment();
-    }
-
-    /**
-     * Create an instance of {@link GetSecretAudit }
-     * 
-     */
-    public GetSecretAudit createGetSecretAudit() {
-        return new GetSecretAudit();
-    }
-
-    /**
-     * Create an instance of {@link GetSecretAuditResult }
-     * 
-     */
-    public GetSecretAuditResult createGetSecretAuditResult() {
-        return new GetSecretAuditResult();
-    }
-
-    /**
-     * Create an instance of {@link WhoAmI }
-     * 
-     */
-    public WhoAmI createWhoAmI() {
-        return new WhoAmI();
-    }
-
-    /**
-     * Create an instance of {@link GetDependenciesResponse }
-     * 
-     */
-    public GetDependenciesResponse createGetDependenciesResponse() {
-        return new GetDependenciesResponse();
-    }
-
-    /**
-     * Create an instance of {@link ExpireSecret }
-     * 
-     */
-    public ExpireSecret createExpireSecret() {
-        return new ExpireSecret();
-    }
-
-    /**
-     * Create an instance of {@link SearchSecretsLegacyResponse }
-     * 
-     */
-    public SearchSecretsLegacyResponse createSearchSecretsLegacyResponse() {
-        return new SearchSecretsLegacyResponse();
-    }
-
-    /**
-     * Create an instance of {@link DeactivateSecret }
-     * 
-     */
-    public DeactivateSecret createDeactivateSecret() {
-        return new DeactivateSecret();
-    }
-
-    /**
-     * Create an instance of {@link GetAgents }
-     * 
-     */
-    public GetAgents createGetAgents() {
-        return new GetAgents();
-    }
-
-    /**
-     * Create an instance of {@link SearchSecretsByFieldValueResponse }
-     * 
-     */
-    public SearchSecretsByFieldValueResponse createSearchSecretsByFieldValueResponse() {
-        return new SearchSecretsByFieldValueResponse();
-    }
-
-    /**
-     * Create an instance of {@link UploadFileAttachmentByItemIdResponse }
-     * 
-     */
-    public UploadFileAttachmentByItemIdResponse createUploadFileAttachmentByItemIdResponse() {
-        return new UploadFileAttachmentByItemIdResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetSecret }
-     * 
-     */
-    public GetSecret createGetSecret() {
-        return new GetSecret();
-    }
-
-    /**
-     * Create an instance of {@link ArrayOfCodeResponse }
-     * 
-     */
-    public ArrayOfCodeResponse createArrayOfCodeResponse() {
-        return new ArrayOfCodeResponse();
-    }
-
-    /**
-     * Create an instance of {@link RemoveDependency }
-     * 
-     */
-    public RemoveDependency createRemoveDependency() {
-        return new RemoveDependency();
-    }
-
-    /**
-     * Create an instance of {@link SearchSecretsLegacy }
-     * 
-     */
-    public SearchSecretsLegacy createSearchSecretsLegacy() {
-        return new SearchSecretsLegacy();
-    }
-
-    /**
-     * Create an instance of {@link UpdateSecretResponse }
-     * 
-     */
-    public UpdateSecretResponse createUpdateSecretResponse() {
-        return new UpdateSecretResponse();
-    }
-
-    /**
-     * Create an instance of {@link DownloadFileAttachmentByItemId }
-     * 
-     */
-    public DownloadFileAttachmentByItemId createDownloadFileAttachmentByItemId() {
-        return new DownloadFileAttachmentByItemId();
-    }
-
-    /**
-     * Create an instance of {@link AuthenticateRADIUS }
-     * 
-     */
-    public AuthenticateRADIUS createAuthenticateRADIUS() {
-        return new AuthenticateRADIUS();
-    }
-
-    /**
-     * Create an instance of {@link ImportXML }
-     * 
-     */
-    public ImportXML createImportXML() {
-        return new ImportXML();
-    }
-
-    /**
-     * Create an instance of {@link GetSecretTemplatesResponse }
-     * 
-     */
-    public GetSecretTemplatesResponse createGetSecretTemplatesResponse() {
-        return new GetSecretTemplatesResponse();
-    }
-
-    /**
-     * Create an instance of {@link GeneratePasswordResponse }
-     * 
-     */
-    public GeneratePasswordResponse createGeneratePasswordResponse() {
-        return new GeneratePasswordResponse();
-    }
-
-    /**
-     * Create an instance of {@link GeneratePasswordResult }
-     * 
-     */
-    public GeneratePasswordResult createGeneratePasswordResult() {
-        return new GeneratePasswordResult();
-    }
-
-    /**
-     * Create an instance of {@link UpdateSecretPermission }
-     * 
-     */
-    public UpdateSecretPermission createUpdateSecretPermission() {
-        return new UpdateSecretPermission();
-    }
-
-    /**
-     * Create an instance of {@link GroupOrUserRecord }
-     * 
-     */
-    public GroupOrUserRecord createGroupOrUserRecord() {
-        return new GroupOrUserRecord();
-    }
-
-    /**
-     * Create an instance of {@link GetSecretTemplateFields }
-     * 
-     */
-    public GetSecretTemplateFields createGetSecretTemplateFields() {
-        return new GetSecretTemplateFields();
-    }
-
-    /**
-     * Create an instance of {@link SearchFoldersResponse }
-     * 
-     */
-    public SearchFoldersResponse createSearchFoldersResponse() {
-        return new SearchFoldersResponse();
-    }
-
-    /**
-     * Create an instance of {@link SearchFolderResult }
-     * 
-     */
-    public SearchFolderResult createSearchFolderResult() {
-        return new SearchFolderResult();
-    }
-
-    /**
-     * Create an instance of {@link SearchSecretsResponse }
-     * 
-     */
-    public SearchSecretsResponse createSearchSecretsResponse() {
-        return new SearchSecretsResponse();
-    }
-
-    /**
-     * Create an instance of {@link FolderGet }
-     * 
-     */
-    public FolderGet createFolderGet() {
-        return new FolderGet();
-    }
-
-    /**
-     * Create an instance of {@link AddSecretCustomAudit }
-     * 
-     */
-    public AddSecretCustomAudit createAddSecretCustomAudit() {
-        return new AddSecretCustomAudit();
-    }
-
-    /**
-     * Create an instance of {@link CheckInByKey }
-     * 
-     */
-    public CheckInByKey createCheckInByKey() {
-        return new CheckInByKey();
-    }
-
-    /**
-     * Create an instance of {@link ChangePassword }
-     * 
-     */
-    public ChangePassword createChangePassword() {
-        return new ChangePassword();
-    }
-
-    /**
-     * Create an instance of {@link ExpireSecretResponse }
-     * 
-     */
-    public ExpireSecretResponse createExpireSecretResponse() {
-        return new ExpireSecretResponse();
-    }
-
-    /**
-     * Create an instance of {@link UpdateIsFavoriteResponse }
-     * 
-     */
-    public UpdateIsFavoriteResponse createUpdateIsFavoriteResponse() {
-        return new UpdateIsFavoriteResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetSecretAuditResponse }
-     * 
-     */
-    public GetSecretAuditResponse createGetSecretAuditResponse() {
-        return new GetSecretAuditResponse();
-    }
-
-    /**
-     * Create an instance of {@link SetCheckOutEnabledResponse }
-     * 
-     */
-    public SetCheckOutEnabledResponse createSetCheckOutEnabledResponse() {
-        return new SetCheckOutEnabledResponse();
-    }
-
-    /**
-     * Create an instance of {@link FolderGetAllChildren }
-     * 
-     */
-    public FolderGetAllChildren createFolderGetAllChildren() {
-        return new FolderGetAllChildren();
-    }
-
-    /**
-     * Create an instance of {@link GetSSHLoginCredentialsWithMachine }
-     * 
-     */
-    public GetSSHLoginCredentialsWithMachine createGetSSHLoginCredentialsWithMachine() {
-        return new GetSSHLoginCredentialsWithMachine();
-    }
-
-    /**
-     * Create an instance of {@link GetSecretLegacy }
-     * 
-     */
-    public GetSecretLegacy createGetSecretLegacy() {
-        return new GetSecretLegacy();
-    }
-
-    /**
-     * Create an instance of {@link Authenticate }
-     * 
-     */
-    public Authenticate createAuthenticate() {
-        return new Authenticate();
-    }
-
-    /**
-     * Create an instance of {@link SearchSecretsByFieldValue }
-     * 
-     */
-    public SearchSecretsByFieldValue createSearchSecretsByFieldValue() {
-        return new SearchSecretsByFieldValue();
-    }
-
-    /**
-     * Create an instance of {@link GetNewSecretResponse }
-     * 
-     */
-    public GetNewSecretResponse createGetNewSecretResponse() {
-        return new GetNewSecretResponse();
-    }
-
-    /**
      * Create an instance of {@link GetFavoritesResponse }
      * 
      */
@@ -895,6 +499,30 @@ public class ObjectFactory {
      */
     public FolderUpdateResponse createFolderUpdateResponse() {
         return new FolderUpdateResponse();
+    }
+
+    /**
+     * Create an instance of {@link AssignAgent }
+     * 
+     */
+    public AssignAgent createAssignAgent() {
+        return new AssignAgent();
+    }
+
+    /**
+     * Create an instance of {@link SearchWebPasswordsForUrlResponse }
+     * 
+     */
+    public SearchWebPasswordsForUrlResponse createSearchWebPasswordsForUrlResponse() {
+        return new SearchWebPasswordsForUrlResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetWebPasswordResult }
+     * 
+     */
+    public GetWebPasswordResult createGetWebPasswordResult() {
+        return new GetWebPasswordResult();
     }
 
     /**
@@ -930,22 +558,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CheckInResponse }
-     * 
-     */
-    public CheckInResponse createCheckInResponse() {
-        return new CheckInResponse();
-    }
-
-    /**
-     * Create an instance of {@link AddSecretCustomAuditResponse }
-     * 
-     */
-    public AddSecretCustomAuditResponse createAddSecretCustomAuditResponse() {
-        return new AddSecretCustomAuditResponse();
-    }
-
-    /**
      * Create an instance of {@link DownloadFileAttachmentByItemIdResponse }
      * 
      */
@@ -962,14 +574,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SSHCredentialsResult }
-     * 
-     */
-    public SSHCredentialsResult createSSHCredentialsResult() {
-        return new SSHCredentialsResult();
-    }
-
-    /**
      * Create an instance of {@link GetAgentsResult }
      * 
      */
@@ -978,35 +582,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetSSHLoginCredentialsWithMachineResponse }
+     * Create an instance of {@link AuthenticateRADIUSResponse }
      * 
      */
-    public GetSSHLoginCredentialsWithMachineResponse createGetSSHLoginCredentialsWithMachineResponse() {
-        return new GetSSHLoginCredentialsWithMachineResponse();
-    }
-
-    /**
-     * Create an instance of {@link ApproveSecretAccessRequest }
-     * 
-     */
-    public ApproveSecretAccessRequest createApproveSecretAccessRequest() {
-        return new ApproveSecretAccessRequest();
-    }
-
-    /**
-     * Create an instance of {@link GetDependencies }
-     * 
-     */
-    public GetDependencies createGetDependencies() {
-        return new GetDependencies();
-    }
-
-    /**
-     * Create an instance of {@link GetAllGroupsResult }
-     * 
-     */
-    public GetAllGroupsResult createGetAllGroupsResult() {
-        return new GetAllGroupsResult();
+    public AuthenticateRADIUSResponse createAuthenticateRADIUSResponse() {
+        return new AuthenticateRADIUSResponse();
     }
 
     /**
@@ -1015,6 +595,14 @@ public class ObjectFactory {
      */
     public FolderGetResponse createFolderGetResponse() {
         return new FolderGetResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetFolderResult }
+     * 
+     */
+    public GetFolderResult createGetFolderResult() {
+        return new GetFolderResult();
     }
 
     /**
@@ -1042,6 +630,70 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link FolderCreateResponse }
+     * 
+     */
+    public FolderCreateResponse createFolderCreateResponse() {
+        return new FolderCreateResponse();
+    }
+
+    /**
+     * Create an instance of {@link ImportXMLResponse }
+     * 
+     */
+    public ImportXMLResponse createImportXMLResponse() {
+        return new ImportXMLResponse();
+    }
+
+    /**
+     * Create an instance of {@link SearchWebPasswordsForUrl }
+     * 
+     */
+    public SearchWebPasswordsForUrl createSearchWebPasswordsForUrl() {
+        return new SearchWebPasswordsForUrl();
+    }
+
+    /**
+     * Create an instance of {@link GetCheckOutStatus }
+     * 
+     */
+    public GetCheckOutStatus createGetCheckOutStatus() {
+        return new GetCheckOutStatus();
+    }
+
+    /**
+     * Create an instance of {@link DownloadFileAttachment }
+     * 
+     */
+    public DownloadFileAttachment createDownloadFileAttachment() {
+        return new DownloadFileAttachment();
+    }
+
+    /**
+     * Create an instance of {@link UpdateIsFavorite }
+     * 
+     */
+    public UpdateIsFavorite createUpdateIsFavorite() {
+        return new UpdateIsFavorite();
+    }
+
+    /**
+     * Create an instance of {@link GetSecretAudit }
+     * 
+     */
+    public GetSecretAudit createGetSecretAudit() {
+        return new GetSecretAudit();
+    }
+
+    /**
+     * Create an instance of {@link GetTokenIsValid }
+     * 
+     */
+    public GetTokenIsValid createGetTokenIsValid() {
+        return new GetTokenIsValid();
+    }
+
+    /**
      * Create an instance of {@link AddSecret }
      * 
      */
@@ -1066,35 +718,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetTokenIsValid }
-     * 
-     */
-    public GetTokenIsValid createGetTokenIsValid() {
-        return new GetTokenIsValid();
-    }
-
-    /**
      * Create an instance of {@link SearchSecretsByFolderResponse }
      * 
      */
     public SearchSecretsByFolderResponse createSearchSecretsByFolderResponse() {
         return new SearchSecretsByFolderResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetSSHLoginCredentialsResponse }
-     * 
-     */
-    public GetSSHLoginCredentialsResponse createGetSSHLoginCredentialsResponse() {
-        return new GetSSHLoginCredentialsResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetAllGroups }
-     * 
-     */
-    public GetAllGroups createGetAllGroups() {
-        return new GetAllGroups();
     }
 
     /**
@@ -1106,11 +734,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link UpdateSecret }
+     * Create an instance of {@link ExpireSecret }
      * 
      */
-    public UpdateSecret createUpdateSecret() {
-        return new UpdateSecret();
+    public ExpireSecret createExpireSecret() {
+        return new ExpireSecret();
+    }
+
+    /**
+     * Create an instance of {@link GetAgents }
+     * 
+     */
+    public GetAgents createGetAgents() {
+        return new GetAgents();
+    }
+
+    /**
+     * Create an instance of {@link DeactivateSecret }
+     * 
+     */
+    public DeactivateSecret createDeactivateSecret() {
+        return new DeactivateSecret();
     }
 
     /**
@@ -1122,6 +766,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link UpdateSecret }
+     * 
+     */
+    public UpdateSecret createUpdateSecret() {
+        return new UpdateSecret();
+    }
+
+    /**
+     * Create an instance of {@link Secret }
+     * 
+     */
+    public Secret createSecret() {
+        return new Secret();
+    }
+
+    /**
      * Create an instance of {@link GetCheckOutStatusResponse }
      * 
      */
@@ -1130,51 +790,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetAllGroupsResponse }
+     * Create an instance of {@link UploadFileAttachmentByItemIdResponse }
      * 
      */
-    public GetAllGroupsResponse createGetAllGroupsResponse() {
-        return new GetAllGroupsResponse();
+    public UploadFileAttachmentByItemIdResponse createUploadFileAttachmentByItemIdResponse() {
+        return new UploadFileAttachmentByItemIdResponse();
     }
 
     /**
-     * Create an instance of {@link SearchSecretsByFolderLegacy }
+     * Create an instance of {@link GetSecret }
      * 
      */
-    public SearchSecretsByFolderLegacy createSearchSecretsByFolderLegacy() {
-        return new SearchSecretsByFolderLegacy();
-    }
-
-    /**
-     * Create an instance of {@link ApproveSecretAccessRequestResponse }
-     * 
-     */
-    public ApproveSecretAccessRequestResponse createApproveSecretAccessRequestResponse() {
-        return new ApproveSecretAccessRequestResponse();
-    }
-
-    /**
-     * Create an instance of {@link AddDependency }
-     * 
-     */
-    public AddDependency createAddDependency() {
-        return new AddDependency();
-    }
-
-    /**
-     * Create an instance of {@link Dependency }
-     * 
-     */
-    public Dependency createDependency() {
-        return new Dependency();
-    }
-
-    /**
-     * Create an instance of {@link AddSecretResponse }
-     * 
-     */
-    public AddSecretResponse createAddSecretResponse() {
-        return new AddSecretResponse();
+    public GetSecret createGetSecret() {
+        return new GetSecret();
     }
 
     /**
@@ -1186,91 +814,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ArrayOfGroupOrUserRecord }
+     * Create an instance of {@link AddSecretResponse }
      * 
      */
-    public ArrayOfGroupOrUserRecord createArrayOfGroupOrUserRecord() {
-        return new ArrayOfGroupOrUserRecord();
-    }
-
-    /**
-     * Create an instance of {@link Group }
-     * 
-     */
-    public Group createGroup() {
-        return new Group();
-    }
-
-    /**
-     * Create an instance of {@link RemoteAgent }
-     * 
-     */
-    public RemoteAgent createRemoteAgent() {
-        return new RemoteAgent();
-    }
-
-    /**
-     * Create an instance of {@link ArrayOfSecretSummary }
-     * 
-     */
-    public ArrayOfSecretSummary createArrayOfSecretSummary() {
-        return new ArrayOfSecretSummary();
-    }
-
-    /**
-     * Create an instance of {@link ArrayOfSecretField }
-     * 
-     */
-    public ArrayOfSecretField createArrayOfSecretField() {
-        return new ArrayOfSecretField();
-    }
-
-    /**
-     * Create an instance of {@link ArrayOfPermission }
-     * 
-     */
-    public ArrayOfPermission createArrayOfPermission() {
-        return new ArrayOfPermission();
-    }
-
-    /**
-     * Create an instance of {@link ArrayOfGroup }
-     * 
-     */
-    public ArrayOfGroup createArrayOfGroup() {
-        return new ArrayOfGroup();
-    }
-
-    /**
-     * Create an instance of {@link AdditionalDependencyInfoJson }
-     * 
-     */
-    public AdditionalDependencyInfoJson createAdditionalDependencyInfoJson() {
-        return new AdditionalDependencyInfoJson();
-    }
-
-    /**
-     * Create an instance of {@link CodeResponse }
-     * 
-     */
-    public CodeResponse createCodeResponse() {
-        return new CodeResponse();
-    }
-
-    /**
-     * Create an instance of {@link GenericResult }
-     * 
-     */
-    public GenericResult createGenericResult() {
-        return new GenericResult();
-    }
-
-    /**
-     * Create an instance of {@link ArrayOfSecretItem }
-     * 
-     */
-    public ArrayOfSecretItem createArrayOfSecretItem() {
-        return new ArrayOfSecretItem();
+    public AddSecretResponse createAddSecretResponse() {
+        return new AddSecretResponse();
     }
 
     /**
@@ -1290,14 +838,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SecretError }
-     * 
-     */
-    public SecretError createSecretError() {
-        return new SecretError();
-    }
-
-    /**
      * Create an instance of {@link ArrayOfSecretTemplate }
      * 
      */
@@ -1311,6 +851,14 @@ public class ObjectFactory {
      */
     public SecretTemplate createSecretTemplate() {
         return new SecretTemplate();
+    }
+
+    /**
+     * Create an instance of {@link RemoteAgent }
+     * 
+     */
+    public RemoteAgent createRemoteAgent() {
+        return new RemoteAgent();
     }
 
     /**
@@ -1330,6 +878,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ArrayOfSecretSummary }
+     * 
+     */
+    public ArrayOfSecretSummary createArrayOfSecretSummary() {
+        return new ArrayOfSecretSummary();
+    }
+
+    /**
      * Create an instance of {@link ArrayOfAuditSecret }
      * 
      */
@@ -1338,35 +894,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Permission }
+     * Create an instance of {@link ArrayOfSecretField }
      * 
      */
-    public Permission createPermission() {
-        return new Permission();
-    }
-
-    /**
-     * Create an instance of {@link SecretPermissions }
-     * 
-     */
-    public SecretPermissions createSecretPermissions() {
-        return new SecretPermissions();
-    }
-
-    /**
-     * Create an instance of {@link ArrayOfDependency }
-     * 
-     */
-    public ArrayOfDependency createArrayOfDependency() {
-        return new ArrayOfDependency();
-    }
-
-    /**
-     * Create an instance of {@link ApprovalInfo }
-     * 
-     */
-    public ApprovalInfo createApprovalInfo() {
-        return new ApprovalInfo();
+    public ArrayOfSecretField createArrayOfSecretField() {
+        return new ArrayOfSecretField();
     }
 
     /**
@@ -1386,6 +918,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link WebPassword }
+     * 
+     */
+    public WebPassword createWebPassword() {
+        return new WebPassword();
+    }
+
+    /**
+     * Create an instance of {@link ArrayOfWebPassword }
+     * 
+     */
+    public ArrayOfWebPassword createArrayOfWebPassword() {
+        return new ArrayOfWebPassword();
+    }
+
+    /**
      * Create an instance of {@link SecretSummary }
      * 
      */
@@ -1394,92 +942,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SecretSettings }
+     * Create an instance of {@link ArrayOfSecretItem }
      * 
      */
-    public SecretSettings createSecretSettings() {
-        return new SecretSettings();
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetSecretResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetSecretResult")
-    public JAXBElement<GetSecretResult> createGetSecretResult(GetSecretResult value) {
-        return new JAXBElement<GetSecretResult>(_GetSecretResult_QNAME, GetSecretResult.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SearchFolderResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "SearchFolderResult")
-    public JAXBElement<SearchFolderResult> createSearchFolderResult(SearchFolderResult value) {
-        return new JAXBElement<SearchFolderResult>(_SearchFolderResult_QNAME, SearchFolderResult.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link VersionGetResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "VersionGetResult")
-    public JAXBElement<VersionGetResult> createVersionGetResult(VersionGetResult value) {
-        return new JAXBElement<VersionGetResult>(_VersionGetResult_QNAME, VersionGetResult.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SearchSecretsResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "SearchSecretsResult")
-    public JAXBElement<SearchSecretsResult> createSearchSecretsResult(SearchSecretsResult value) {
-        return new JAXBElement<SearchSecretsResult>(_SearchSecretsResult_QNAME, SearchSecretsResult.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetSecretsByFieldValueResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetSecretsByFieldValueResult")
-    public JAXBElement<GetSecretsByFieldValueResult> createGetSecretsByFieldValueResult(GetSecretsByFieldValueResult value) {
-        return new JAXBElement<GetSecretsByFieldValueResult>(_GetSecretsByFieldValueResult_QNAME, GetSecretsByFieldValueResult.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link CreateFolderResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "CreateFolderResult")
-    public JAXBElement<CreateFolderResult> createCreateFolderResult(CreateFolderResult value) {
-        return new JAXBElement<CreateFolderResult>(_CreateFolderResult_QNAME, CreateFolderResult.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WebServiceResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "WebServiceResult")
-    public JAXBElement<WebServiceResult> createWebServiceResult(WebServiceResult value) {
-        return new JAXBElement<WebServiceResult>(_WebServiceResult_QNAME, WebServiceResult.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AuthenticateResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "AuthenticateResult")
-    public JAXBElement<AuthenticateResult> createAuthenticateResult(AuthenticateResult value) {
-        return new JAXBElement<AuthenticateResult>(_AuthenticateResult_QNAME, AuthenticateResult.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetSecretAuditResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetSecretAuditResult")
-    public JAXBElement<GetSecretAuditResult> createGetSecretAuditResult(GetSecretAuditResult value) {
-        return new JAXBElement<GetSecretAuditResult>(_GetSecretAuditResult_QNAME, GetSecretAuditResult.class, null, value);
+    public ArrayOfSecretItem createArrayOfSecretItem() {
+        return new ArrayOfSecretItem();
     }
 
     /**
@@ -1501,12 +968,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link UserInfoResult }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSecretResult }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "UserInfoResult")
-    public JAXBElement<UserInfoResult> createUserInfoResult(UserInfoResult value) {
-        return new JAXBElement<UserInfoResult>(_UserInfoResult_QNAME, UserInfoResult.class, null, value);
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetSecretResult")
+    public JAXBElement<GetSecretResult> createGetSecretResult(GetSecretResult value) {
+        return new JAXBElement<GetSecretResult>(_GetSecretResult_QNAME, GetSecretResult.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetWebPasswordResult }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetWebPasswordResult")
+    public JAXBElement<GetWebPasswordResult> createGetWebPasswordResult(GetWebPasswordResult value) {
+        return new JAXBElement<GetWebPasswordResult>(_GetWebPasswordResult_QNAME, GetWebPasswordResult.class, null, value);
     }
 
     /**
@@ -1519,15 +995,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AddSecretResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "AddSecretResult")
-    public JAXBElement<AddSecretResult> createAddSecretResult(AddSecretResult value) {
-        return new JAXBElement<AddSecretResult>(_AddSecretResult_QNAME, AddSecretResult.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetFavoritesResult }{@code >}}
      * 
      */
@@ -1537,30 +1004,30 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetAllGroupsResult }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link AddSecretResult }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetAllGroupsResult")
-    public JAXBElement<GetAllGroupsResult> createGetAllGroupsResult(GetAllGroupsResult value) {
-        return new JAXBElement<GetAllGroupsResult>(_GetAllGroupsResult_QNAME, GetAllGroupsResult.class, null, value);
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "AddSecretResult")
+    public JAXBElement<AddSecretResult> createAddSecretResult(AddSecretResult value) {
+        return new JAXBElement<AddSecretResult>(_AddSecretResult_QNAME, AddSecretResult.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetDependenciesResult }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link SearchFolderResult }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetDependenciesResult")
-    public JAXBElement<GetDependenciesResult> createGetDependenciesResult(GetDependenciesResult value) {
-        return new JAXBElement<GetDependenciesResult>(_GetDependenciesResult_QNAME, GetDependenciesResult.class, null, value);
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "SearchFolderResult")
+    public JAXBElement<SearchFolderResult> createSearchFolderResult(SearchFolderResult value) {
+        return new JAXBElement<SearchFolderResult>(_SearchFolderResult_QNAME, SearchFolderResult.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link RequestApprovalResult }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link VersionGetResult }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "RequestApprovalResult")
-    public JAXBElement<RequestApprovalResult> createRequestApprovalResult(RequestApprovalResult value) {
-        return new JAXBElement<RequestApprovalResult>(_RequestApprovalResult_QNAME, RequestApprovalResult.class, null, value);
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "VersionGetResult")
+    public JAXBElement<VersionGetResult> createVersionGetResult(VersionGetResult value) {
+        return new JAXBElement<VersionGetResult>(_VersionGetResult_QNAME, VersionGetResult.class, null, value);
     }
 
     /**
@@ -1573,21 +1040,30 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SSHCredentialsResult }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "SSHCredentialsResult")
-    public JAXBElement<SSHCredentialsResult> createSSHCredentialsResult(SSHCredentialsResult value) {
-        return new JAXBElement<SSHCredentialsResult>(_SSHCredentialsResult_QNAME, SSHCredentialsResult.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetAgentsResult }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetAgentsResult")
     public JAXBElement<GetAgentsResult> createGetAgentsResult(GetAgentsResult value) {
         return new JAXBElement<GetAgentsResult>(_GetAgentsResult_QNAME, GetAgentsResult.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SearchSecretsResult }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "SearchSecretsResult")
+    public JAXBElement<SearchSecretsResult> createSearchSecretsResult(SearchSecretsResult value) {
+        return new JAXBElement<SearchSecretsResult>(_SearchSecretsResult_QNAME, SearchSecretsResult.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSecretsByFieldValueResult }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetSecretsByFieldValueResult")
+    public JAXBElement<GetSecretsByFieldValueResult> createGetSecretsByFieldValueResult(GetSecretsByFieldValueResult value) {
+        return new JAXBElement<GetSecretsByFieldValueResult>(_GetSecretsByFieldValueResult_QNAME, GetSecretsByFieldValueResult.class, null, value);
     }
 
     /**
@@ -1624,6 +1100,42 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "TokenIsValidResult")
     public JAXBElement<TokenIsValidResult> createTokenIsValidResult(TokenIsValidResult value) {
         return new JAXBElement<TokenIsValidResult>(_TokenIsValidResult_QNAME, TokenIsValidResult.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CreateFolderResult }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "CreateFolderResult")
+    public JAXBElement<CreateFolderResult> createCreateFolderResult(CreateFolderResult value) {
+        return new JAXBElement<CreateFolderResult>(_CreateFolderResult_QNAME, CreateFolderResult.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link WebServiceResult }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "WebServiceResult")
+    public JAXBElement<WebServiceResult> createWebServiceResult(WebServiceResult value) {
+        return new JAXBElement<WebServiceResult>(_WebServiceResult_QNAME, WebServiceResult.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AuthenticateResult }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "AuthenticateResult")
+    public JAXBElement<AuthenticateResult> createAuthenticateResult(AuthenticateResult value) {
+        return new JAXBElement<AuthenticateResult>(_AuthenticateResult_QNAME, AuthenticateResult.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSecretAuditResult }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "urn:thesecretserver.com", name = "GetSecretAuditResult")
+    public JAXBElement<GetSecretAuditResult> createGetSecretAuditResult(GetSecretAuditResult value) {
+        return new JAXBElement<GetSecretAuditResult>(_GetSecretAuditResult_QNAME, GetSecretAuditResult.class, null, value);
     }
 
 }

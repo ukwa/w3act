@@ -8,21 +8,21 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for SSHCredentialsResult complex type.
+ * <p>Java class for WebPassword complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SSHCredentialsResult">
+ * &lt;complexType name="WebPassword">
  *   &lt;complexContent>
- *     &lt;extension base="{urn:thesecretserver.com}WebServiceResult">
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="SecretName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="Url" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="Username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="Password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="Host" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="Port" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
- *     &lt;/extension>
+ *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
@@ -30,24 +30,70 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SSHCredentialsResult", propOrder = {
+@XmlType(name = "WebPassword", propOrder = {
+    "secretName",
+    "url",
     "username",
-    "password",
-    "host",
-    "port"
+    "password"
 })
-public class SSHCredentialsResult
-    extends WebServiceResult
-{
+public class WebPassword {
 
+    @XmlElement(name = "SecretName")
+    protected String secretName;
+    @XmlElement(name = "Url")
+    protected String url;
     @XmlElement(name = "Username")
     protected String username;
     @XmlElement(name = "Password")
     protected String password;
-    @XmlElement(name = "Host")
-    protected String host;
-    @XmlElement(name = "Port")
-    protected String port;
+
+    /**
+     * Gets the value of the secretName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSecretName() {
+        return secretName;
+    }
+
+    /**
+     * Sets the value of the secretName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSecretName(String value) {
+        this.secretName = value;
+    }
+
+    /**
+     * Gets the value of the url property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Sets the value of the url property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUrl(String value) {
+        this.url = value;
+    }
 
     /**
      * Gets the value of the username property.
@@ -95,54 +141,6 @@ public class SSHCredentialsResult
      */
     public void setPassword(String value) {
         this.password = value;
-    }
-
-    /**
-     * Gets the value of the host property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getHost() {
-        return host;
-    }
-
-    /**
-     * Sets the value of the host property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setHost(String value) {
-        this.host = value;
-    }
-
-    /**
-     * Gets the value of the port property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getPort() {
-        return port;
-    }
-
-    /**
-     * Sets the value of the port property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setPort(String value) {
-        this.port = value;
     }
 
 }

@@ -265,6 +265,7 @@ public class Documents extends AbstractController {
 				document.title = document.filename.substring(0, document.filename.lastIndexOf("."));
 			else
 				document.title = document.filename;
+			document.size = objNode.get("size").longValue();
 			document.setStatus(Document.Status.NEW);
 			document.fastSubjects = WatchedTarget.find.byId(watchedTargetId).fastSubjects;
 			Logger.debug("add document " + document.filename);

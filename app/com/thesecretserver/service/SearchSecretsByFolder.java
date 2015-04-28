@@ -22,8 +22,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="searchTerm" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="folderId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="includeSubFolders" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="includeDeleted" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="includeRestricted" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,9 +35,7 @@ import javax.xml.bind.annotation.XmlType;
     "token",
     "searchTerm",
     "folderId",
-    "includeSubFolders",
-    "includeDeleted",
-    "includeRestricted"
+    "includeSubFolders"
 })
 @XmlRootElement(name = "SearchSecretsByFolder")
 public class SearchSecretsByFolder {
@@ -49,10 +45,6 @@ public class SearchSecretsByFolder {
     @XmlElement(required = true, type = Integer.class, nillable = true)
     protected Integer folderId;
     protected boolean includeSubFolders;
-    @XmlElement(required = true, type = Boolean.class, nillable = true)
-    protected Boolean includeDeleted;
-    @XmlElement(required = true, type = Boolean.class, nillable = true)
-    protected Boolean includeRestricted;
 
     /**
      * Gets the value of the token property.
@@ -140,54 +132,6 @@ public class SearchSecretsByFolder {
      */
     public void setIncludeSubFolders(boolean value) {
         this.includeSubFolders = value;
-    }
-
-    /**
-     * Gets the value of the includeDeleted property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isIncludeDeleted() {
-        return includeDeleted;
-    }
-
-    /**
-     * Sets the value of the includeDeleted property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIncludeDeleted(Boolean value) {
-        this.includeDeleted = value;
-    }
-
-    /**
-     * Gets the value of the includeRestricted property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isIncludeRestricted() {
-        return includeRestricted;
-    }
-
-    /**
-     * Sets the value of the includeRestricted property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIncludeRestricted(Boolean value) {
-        this.includeRestricted = value;
     }
 
 }

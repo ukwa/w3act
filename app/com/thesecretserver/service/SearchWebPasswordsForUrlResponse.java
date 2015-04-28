@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="UpdateSecretPermissionResult" type="{urn:thesecretserver.com}WebServiceResult" minOccurs="0"/>
+ *         &lt;element name="SearchWebPasswordsForUrlResult" type="{urn:thesecretserver.com}GetWebPasswordResult" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,36 +29,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "updateSecretPermissionResult"
+    "searchWebPasswordsForUrlResult"
 })
-@XmlRootElement(name = "UpdateSecretPermissionResponse")
-public class UpdateSecretPermissionResponse {
+@XmlRootElement(name = "SearchWebPasswordsForUrlResponse")
+public class SearchWebPasswordsForUrlResponse {
 
-    @XmlElement(name = "UpdateSecretPermissionResult")
-    protected WebServiceResult updateSecretPermissionResult;
+    @XmlElement(name = "SearchWebPasswordsForUrlResult")
+    protected GetWebPasswordResult searchWebPasswordsForUrlResult;
 
     /**
-     * Gets the value of the updateSecretPermissionResult property.
+     * Gets the value of the searchWebPasswordsForUrlResult property.
      * 
      * @return
      *     possible object is
-     *     {@link WebServiceResult }
+     *     {@link GetWebPasswordResult }
      *     
      */
-    public WebServiceResult getUpdateSecretPermissionResult() {
-        return updateSecretPermissionResult;
+    public GetWebPasswordResult getSearchWebPasswordsForUrlResult() {
+        return searchWebPasswordsForUrlResult;
     }
 
     /**
-     * Sets the value of the updateSecretPermissionResult property.
+     * Sets the value of the searchWebPasswordsForUrlResult property.
      * 
      * @param value
      *     allowed object is
-     *     {@link WebServiceResult }
+     *     {@link GetWebPasswordResult }
      *     
      */
-    public void setUpdateSecretPermissionResult(WebServiceResult value) {
-        this.updateSecretPermissionResult = value;
+    public void setSearchWebPasswordsForUrlResult(GetWebPasswordResult value) {
+        this.searchWebPasswordsForUrlResult = value;
     }
 
 }

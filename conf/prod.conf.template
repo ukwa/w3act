@@ -24,7 +24,7 @@ applyEvolutions.default=true
 applyDownEvolutions.default=true
 
 # Logger
-logger=WARN
+logger.root=WARN
 logger.play=WARN
 logger.application=INFO
 

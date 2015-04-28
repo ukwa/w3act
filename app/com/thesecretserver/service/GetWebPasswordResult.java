@@ -8,17 +8,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for GetAllGroupsResult complex type.
+ * <p>Java class for GetWebPasswordResult complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="GetAllGroupsResult">
+ * &lt;complexType name="GetWebPasswordResult">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Errors" type="{urn:thesecretserver.com}ArrayOfString" minOccurs="0"/>
- *         &lt;element name="Groups" type="{urn:thesecretserver.com}ArrayOfGroup" minOccurs="0"/>
+ *         &lt;element name="WebPasswords" type="{urn:thesecretserver.com}ArrayOfWebPassword" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -28,16 +28,16 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GetAllGroupsResult", propOrder = {
+@XmlType(name = "GetWebPasswordResult", propOrder = {
     "errors",
-    "groups"
+    "webPasswords"
 })
-public class GetAllGroupsResult {
+public class GetWebPasswordResult {
 
     @XmlElement(name = "Errors")
     protected ArrayOfString errors;
-    @XmlElement(name = "Groups")
-    protected ArrayOfGroup groups;
+    @XmlElement(name = "WebPasswords")
+    protected ArrayOfWebPassword webPasswords;
 
     /**
      * Gets the value of the errors property.
@@ -64,27 +64,27 @@ public class GetAllGroupsResult {
     }
 
     /**
-     * Gets the value of the groups property.
+     * Gets the value of the webPasswords property.
      * 
      * @return
      *     possible object is
-     *     {@link ArrayOfGroup }
+     *     {@link ArrayOfWebPassword }
      *     
      */
-    public ArrayOfGroup getGroups() {
-        return groups;
+    public ArrayOfWebPassword getWebPasswords() {
+        return webPasswords;
     }
 
     /**
-     * Sets the value of the groups property.
+     * Sets the value of the webPasswords property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ArrayOfGroup }
+     *     {@link ArrayOfWebPassword }
      *     
      */
-    public void setGroups(ArrayOfGroup value) {
-        this.groups = value;
+    public void setWebPasswords(ArrayOfWebPassword value) {
+        this.webPasswords = value;
     }
 
 }

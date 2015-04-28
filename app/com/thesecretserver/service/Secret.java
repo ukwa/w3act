@@ -24,15 +24,13 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="FolderId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="IsWebLauncher" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="Active" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="CheckOutEnabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="CheckOutMinutesRemaining" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="IsCheckedOut" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="CheckOutUserDisplayName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="CheckOutUserId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="IsOutOfSync" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="IsRestricted" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="OutOfSyncReason" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="SecretSettings" type="{urn:thesecretserver.com}SecretSettings" minOccurs="0"/>
- *         &lt;element name="SecretPermissions" type="{urn:thesecretserver.com}SecretPermissions" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -50,15 +48,13 @@ import javax.xml.bind.annotation.XmlType;
     "folderId",
     "isWebLauncher",
     "active",
+    "checkOutEnabled",
     "checkOutMinutesRemaining",
     "isCheckedOut",
     "checkOutUserDisplayName",
     "checkOutUserId",
     "isOutOfSync",
-    "isRestricted",
-    "outOfSyncReason",
-    "secretSettings",
-    "secretPermissions"
+    "outOfSyncReason"
 })
 public class Secret {
 
@@ -76,6 +72,8 @@ public class Secret {
     protected boolean isWebLauncher;
     @XmlElement(name = "Active")
     protected boolean active;
+    @XmlElement(name = "CheckOutEnabled")
+    protected boolean checkOutEnabled;
     @XmlElement(name = "CheckOutMinutesRemaining", required = true, type = Integer.class, nillable = true)
     protected Integer checkOutMinutesRemaining;
     @XmlElement(name = "IsCheckedOut", required = true, type = Boolean.class, nillable = true)
@@ -86,14 +84,8 @@ public class Secret {
     protected Integer checkOutUserId;
     @XmlElement(name = "IsOutOfSync", required = true, type = Boolean.class, nillable = true)
     protected Boolean isOutOfSync;
-    @XmlElement(name = "IsRestricted", required = true, type = Boolean.class, nillable = true)
-    protected Boolean isRestricted;
     @XmlElement(name = "OutOfSyncReason")
     protected String outOfSyncReason;
-    @XmlElement(name = "SecretSettings")
-    protected SecretSettings secretSettings;
-    @XmlElement(name = "SecretPermissions")
-    protected SecretPermissions secretPermissions;
 
     /**
      * Gets the value of the name property.
@@ -224,6 +216,22 @@ public class Secret {
     }
 
     /**
+     * Gets the value of the checkOutEnabled property.
+     * 
+     */
+    public boolean isCheckOutEnabled() {
+        return checkOutEnabled;
+    }
+
+    /**
+     * Sets the value of the checkOutEnabled property.
+     * 
+     */
+    public void setCheckOutEnabled(boolean value) {
+        this.checkOutEnabled = value;
+    }
+
+    /**
      * Gets the value of the checkOutMinutesRemaining property.
      * 
      * @return
@@ -344,30 +352,6 @@ public class Secret {
     }
 
     /**
-     * Gets the value of the isRestricted property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isIsRestricted() {
-        return isRestricted;
-    }
-
-    /**
-     * Sets the value of the isRestricted property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsRestricted(Boolean value) {
-        this.isRestricted = value;
-    }
-
-    /**
      * Gets the value of the outOfSyncReason property.
      * 
      * @return
@@ -389,54 +373,6 @@ public class Secret {
      */
     public void setOutOfSyncReason(String value) {
         this.outOfSyncReason = value;
-    }
-
-    /**
-     * Gets the value of the secretSettings property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecretSettings }
-     *     
-     */
-    public SecretSettings getSecretSettings() {
-        return secretSettings;
-    }
-
-    /**
-     * Sets the value of the secretSettings property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecretSettings }
-     *     
-     */
-    public void setSecretSettings(SecretSettings value) {
-        this.secretSettings = value;
-    }
-
-    /**
-     * Gets the value of the secretPermissions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecretPermissions }
-     *     
-     */
-    public SecretPermissions getSecretPermissions() {
-        return secretPermissions;
-    }
-
-    /**
-     * Sets the value of the secretPermissions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecretPermissions }
-     *     
-     */
-    public void setSecretPermissions(SecretPermissions value) {
-        this.secretPermissions = value;
     }
 
 }
