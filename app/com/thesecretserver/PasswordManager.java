@@ -2,6 +2,8 @@ package com.thesecretserver;
 
 import java.io.IOException;
 
+import play.Logger;
+
 import com.thesecretserver.service.AddSecretResult;
 import com.thesecretserver.service.ArrayOfInt;
 import com.thesecretserver.service.ArrayOfString;
@@ -20,6 +22,7 @@ public class PasswordManager {
 	private static final int URL_FIELD_ID = 38;
 	private static final int USERNAME_FIELD_ID = 39;
 	private static final int PASSWORD_FIELD_ID = 40;
+	private static final int NOTES_FIELD_ID = 41;
 	private static final int SECRET_TYPE_ID = 9;
 	private static final int FOLDER_ID = 12;
 	
@@ -38,6 +41,9 @@ public class PasswordManager {
 				SECRET_TYPE_ID, secretName,
 				getSecretFieldIds(), getSecretItemValues(loginCredentials),
 				FOLDER_ID);
+		for (String error : addSecretResult.getErrors().getString()) {
+			Logger.error("addSecret: " + error);
+		}
 		return addSecretResult.getSecret().getId();
 	}
 	
@@ -66,6 +72,7 @@ public class PasswordManager {
 		secretFieldIds.getInt().add(URL_FIELD_ID);
 		secretFieldIds.getInt().add(USERNAME_FIELD_ID);
 		secretFieldIds.getInt().add(PASSWORD_FIELD_ID);
+		secretFieldIds.getInt().add(NOTES_FIELD_ID);
 		return secretFieldIds;
 	}
 	
@@ -74,6 +81,7 @@ public class PasswordManager {
 		secretItemValues.getString().add(loginCredentials.url);
 		secretItemValues.getString().add(loginCredentials.username);
 		secretItemValues.getString().add(loginCredentials.password);
+		secretItemValues.getString().add("");
 		return secretItemValues;
 	}
 }

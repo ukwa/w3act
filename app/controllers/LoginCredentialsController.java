@@ -35,7 +35,7 @@ public class LoginCredentialsController extends AbstractController {
 			String secretServerPassword = Play.application().configuration().getString("secret_server_password");
 			try {
 				PasswordManager passwordManager = new PasswordManager(secretServerUser, secretServerPassword, "", "AD");
-				watchedTarget.secretId = passwordManager.addLoginCredentials(watchedTarget.target.title, loginCredentials);
+				watchedTarget.secretId = passwordManager.addLoginCredentials(WatchedTarget.find.byId(id).target.title, loginCredentials);
 				FlashMessage.updateSuccess.send();
 			} catch(Exception e) {
 				new FlashMessage(FlashMessage.Type.ERROR,
