@@ -164,6 +164,8 @@ GET		/watchedtargets/:id/logincredentials	controllers.LoginCredentialsController
 POST	/watchedtargets/:id/logincredentials	controllers.LoginCredentialsController.save(id: Long)
 GET		/watchedtargets/:id/nodocuments		controllers.WatchedTargets.noDocuments(id: Long)
 
+GET		/secret/:id							controllers.LoginCredentialsController.getSecret(id: Int)
+
 GET		/services/list						controllers.Services.list()
 GET		/services/edit/:id					controllers.Services.edit(id: Long)
 GET		/services/save/:id					controllers.Services.save(id: Long)

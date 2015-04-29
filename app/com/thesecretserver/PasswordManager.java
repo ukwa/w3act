@@ -31,7 +31,6 @@ public class PasswordManager {
 		this.password = password;
 		this.organization = organization;
 		this.domain = domain;
-		ssWebServiceSoap = new SSWebService().getSSWebServiceSoap();
 	}
 
 	public int addLoginCredentials(String secretName, LoginCredentials loginCredentials) throws IOException {
@@ -64,6 +63,7 @@ public class PasswordManager {
 	}
 	
 	private String authenticate() {
+		ssWebServiceSoap = new SSWebService().getSSWebServiceSoap();
 		return ssWebServiceSoap.authenticate(username, password, organization, domain).getToken();
 	}
 	

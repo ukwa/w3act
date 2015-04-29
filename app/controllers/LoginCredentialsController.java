@@ -9,12 +9,21 @@ import models.User;
 import models.WatchedTarget;
 import play.Play;
 import play.data.Form;
+import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.logincredentials.edit;
 
 @Security.Authenticated(SecuredController.class)
 public class LoginCredentialsController extends AbstractController {
+	
+	private static PasswordManager passwordManager;
+	
+	static {
+		String secretServerUser = Play.application().configuration().getString("secret_server_user");
+		String secretServerPassword = Play.application().configuration().getString("secret_server_password");
+		passwordManager = new PasswordManager(secretServerUser, secretServerPassword, "", "AD");
+	}
 	
 	public static Result edit(Long id) {
 		WatchedTarget watchedTarget = WatchedTarget.find.byId(id);
@@ -31,10 +40,7 @@ public class LoginCredentialsController extends AbstractController {
 		String password = watchedTargetForm.field("password").value();
 		if(!watchedTarget.loginPageUrl.isEmpty() && !username.isEmpty() && !password.isEmpty()) {
 			LoginCredentials loginCredentials = new LoginCredentials(watchedTarget.loginPageUrl, username, password);
-			String secretServerUser = Play.application().configuration().getString("secret_server_user");
-			String secretServerPassword = Play.application().configuration().getString("secret_server_password");
 			try {
-				PasswordManager passwordManager = new PasswordManager(secretServerUser, secretServerPassword, "", "AD");
 				watchedTarget.secretId = passwordManager.addLoginCredentials(WatchedTarget.find.byId(id).target.title, loginCredentials);
 				FlashMessage.updateSuccess.send();
 			} catch(Exception e) {
@@ -46,5 +52,15 @@ public class LoginCredentialsController extends AbstractController {
 		}
 		Ebean.update(watchedTarget);
 		return redirect(routes.LoginCredentialsController.edit(id));
+	}
+	
+	public static Result getSecret(Integer id) {
+		try {
+			LoginCredentials loginCredentials = passwordManager.getLoginCredentials(id);
+			return ok(Json.toJson(loginCredentials));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return internalServerError(e.getMessage());
+		}
 	}
 }
