@@ -369,8 +369,7 @@ public class Documents extends AbstractController {
 			scanner.close();
 			file.delete();
 		} catch (Exception e) {
-			Logger.warn("can't read ctph matches:");
-			e.printStackTrace();
+			Logger.warn("can't read ctph matches:", e);
 		}
 	}
 	
@@ -489,9 +488,6 @@ public class Documents extends AbstractController {
 			String filename = URLDecoder.decode(encodedFilename, "UTF-8");
 			File file = Play.application().getFile("../html/" + filename);
 			return ok(file, filename);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return ok("There is a problem with the encoding.");
 		} catch (Exception e) {
 			return ok("This file was not found on the system.");
 		}
