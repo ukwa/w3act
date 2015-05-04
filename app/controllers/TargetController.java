@@ -744,7 +744,17 @@ public class TargetController extends AbstractController {
 		filledForm = filledForm.fill(target);
 
 		if (!target.isDeletable()) {
-			ValidationError ve = new ValidationError("formUrl", "Unable to delete Target as it references License(s) and/or Collections(s)");
+			ValidationError ve = new ValidationError("formUrl", "Unable to delete Target as it references License(s) and/or Collection(s)");
+			filledForm.reject(ve);
+			return info(filledForm, id);
+		}
+		
+		User user = User.findByEmail(request().username());
+		if (!user.hasRole("sys_admin") && !user.hasRole("archivist") &&
+				target.authorUser != null &&
+				!user.id.equals(target.authorUser.id) &&
+				target.isWatched()) {
+			ValidationError ve = new ValidationError("watched", "You are not allowed to delete another user's Watched Target.");
 			filledForm.reject(ve);
 			return info(filledForm, id);
 		}
