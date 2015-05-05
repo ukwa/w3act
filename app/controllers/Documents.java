@@ -1,7 +1,6 @@
 package controllers;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -48,6 +47,7 @@ import org.w3c.dom.NodeList;
 
 import uk.bl.Const;
 import uk.bl.configurable.BlCollectionSubsetList;
+import uk.bl.crawling.Crawler;
 import views.html.documents.edit;
 import views.html.documents.list;
 import views.xml.documents.sip;
@@ -271,8 +271,25 @@ public class Documents extends AbstractController {
 			Logger.debug("add document " + document.filename);
 			documents.add(document);
 		}
-		Ebean.save(filterNew(documents));
+		Promise.promise(new ExtractFunction(documents));
 		return ok("Documents added");
+	}
+	
+	private static class ExtractFunction implements Function0<Boolean> {
+		
+		public List<Document> documents;
+		public ExtractFunction(List<Document> documents) {
+			this.documents = documents;
+		}
+		
+		public Boolean apply() {
+			for (Document document : filterNew(documents)) {
+				Crawler crawler = new Crawler(true);
+				crawler.extractMetadata(document);
+				Ebean.save(document);
+			}
+			return true;
+		}
 	}
 	
 	public static List<Document> filterNew(List<Document> documentList) {

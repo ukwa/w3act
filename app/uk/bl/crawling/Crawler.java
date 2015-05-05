@@ -136,7 +136,7 @@ public class Crawler {
 											document.landingPageUrl = pageUrl;
 											document.documentUrl = hrefUrl;
 											document.waybackTimestamp = crawlTime;
-											document.status = Document.Status.NEW;
+											document.setStatus(Document.Status.NEW);
 											document.filename = URLDecoder.decode(hrefUrl.substring(hrefUrl.lastIndexOf('/')+1), "UTF-8");
 											document.title = document.filename.substring(0, document.filename.indexOf('.'));
 											document.watchedTarget = watchedTarget;
@@ -163,7 +163,7 @@ public class Crawler {
 									urlFromWayback(link.source) : link.source;
 							document.documentUrl = pageUrl;
 							document.waybackTimestamp = crawlTime;
-							document.status = Document.Status.NEW;
+							document.setStatus(Document.Status.NEW);
 							if (contentType.equals("application/pdf"))
 								document.filename = URLDecoder.decode(pageUrl.substring(pageUrl.lastIndexOf('/')+1), "UTF-8");
 							else
@@ -186,7 +186,7 @@ public class Crawler {
 		breathFirstSearch(watchedTarget, children, linkDepth - 1);
 	}
 	
-	private void extractMetadata(Document document) {
+	public void extractMetadata(Document document) {
 		
 		try {
 			String domain = new URI(document.landingPageUrl).getHost();
@@ -200,7 +200,7 @@ public class Crawler {
 		}
 	}
 
-	public Response getResponse(String url) throws IOException {
+	private Response getResponse(String url) throws IOException {
 		Logger.debug("getResponse: " + url);
 		Connection connection = Jsoup.connect(url);
 		
