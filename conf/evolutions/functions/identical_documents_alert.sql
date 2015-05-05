@@ -18,7 +18,9 @@ begin
 			insert into alert values(nextval('alert_seq'), id_creator, 'the documents ' ||
 			'<a href="/documents/' || new.id || '">' || new.title || '</a> and ' ||
 			'<a href="/documents/' || id || '">' || title || '</a>' ||
-			' seem to be identical', now(), false);
+			' seem to be identical (' ||
+			'<a href="/documents/compare/' || new.id || '..' || id || '">compare</a>' ||
+			')', now(), false);
 		end if;
 	end if;
 	return new;

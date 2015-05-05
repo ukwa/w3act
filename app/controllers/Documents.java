@@ -48,6 +48,7 @@ import org.w3c.dom.NodeList;
 import uk.bl.Const;
 import uk.bl.configurable.BlCollectionSubsetList;
 import uk.bl.crawling.Crawler;
+import views.html.documents.compare;
 import views.html.documents.edit;
 import views.html.documents.list;
 import views.xml.documents.sip;
@@ -181,6 +182,12 @@ public class Documents extends AbstractController {
 				"The document has been submitted.");
 		submitSuccess.send();
 		return redirect(routes.Documents.view(id));
+	}
+	
+	public static Result compare(Long id1, Long id2) {
+		Document d1 = Document.find.byId(id1);
+		Document d2 = Document.find.byId(id2);
+		return ok(compare.render(d1, d2, User.findByEmail(request().username())));
 	}
 	
 	private static void requestNewArks() {
@@ -378,7 +385,8 @@ public class Documents extends AbstractController {
 						Alert alert = new Alert();
 						alert.user = doc1.watchedTarget.target.authorUser;
 						alert.text = "possible duplicate found: " + Alert.link(doc1) + " matches " +
-								Alert.link(doc2) + " with " + similarity + "%";
+								Alert.link(doc2) + " with " + similarity + "% " +
+								"(" + Alert.compareLink(doc1, doc2) + ")";
 						Ebean.save(alert);
 					}
 				}

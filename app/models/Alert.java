@@ -50,4 +50,7 @@ public class Alert extends Model {
 		return "<a href=\"/documents/" + document.id + "\">" + document.title + "</a>";
 	}
 	
+	public static String compareLink(Document d1, Document d2) {
+		return "<a href=\"/documents/compare/" + d1.id + ".." + d2.id + "\">compare</a>";
+	}
 }
