@@ -358,7 +358,7 @@
 				</div>
 			</div>
 			<iframe id="document_view" src="@{
-					if(form("status").value == Document.Status.SUBMITTED.toString) routes.Helper.passthrough(form("documentUrl").value,"")
+					if(form("status").value == Document.Status.SUBMITTED.toString) routes.Helper.passthrough(form("actualSourceUrl").value,"")
 					else routes.Documents.html(form("htmlFilename").value)
 				}"
 				width="100%" height="768"></iframe>

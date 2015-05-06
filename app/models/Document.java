@@ -173,11 +173,15 @@ public class Document extends Model {
 		return dateFormatGmt.format(currentStatusSet);
 	}
 	
-	public String waybackUrl() {
+	private String waybackUrl() {
 		return Play.application().configuration().getString("wayback_url") +
 				waybackTimestamp + "/" + documentUrl;
 	}
-
+	
+	public String getActualSourceUrl() {
+		return waybackTimestamp != null ? waybackUrl() : documentUrl;
+	}
+	
 	public enum Type {
     	BOOK ("Book"),
     	BOOK_CHAPTER ("Book Chapter"),

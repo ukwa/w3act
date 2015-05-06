@@ -249,7 +249,7 @@
     <mets:fileGrp USE="Original">
       <mets:file ADMID="amd0001-object" ID="file0001">
         <mets:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="EXTERNALCONTENT"
-            xlink:href="@document.waybackUrl"/>
+            xlink:href="@document.getActualSourceUrl"/>
       </mets:file>
     </mets:fileGrp>
   </mets:fileSec>
