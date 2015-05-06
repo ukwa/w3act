@@ -113,7 +113,7 @@ public class ApplicationController extends Controller {
         } else {
             session("email", loginForm.get().email.toLowerCase());
             Logger.debug("url: " + url);
-            if( StringUtils.isBlank(url) ) url = routes.ApplicationController.index().url();            
+            if( StringUtils.isBlank(url) ) url = routes.ApplicationController.home().url();            
             return redirect( url );
         }
     }
@@ -202,8 +202,15 @@ public class ApplicationController extends Controller {
         );
     }
     
-    	public static Result home() {
-		return redirect(routes.WatchedTargets.overview(0, "target.title", "asc"));
+	public static Result home() {
+		String email = session().get("email");
+		User user = User.findByEmail(email);
+		if (user == null)
+    		return redirect(routes.ApplicationController.login());
+		if (user.ddhaptUser)
+			return redirect(routes.WatchedTargets.overview(0, "target.title", "asc"));
+		else
+			return redirect(routes.ApplicationController.index());
 	}
 
     /**

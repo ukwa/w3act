@@ -138,6 +138,8 @@ create table alert (
   read			boolean not null
 );
 
+alter table creator add ddhapt_user boolean not null default false;
+
 create sequence watched_target_seq;
 create sequence fast_subject_seq;
 create sequence journal_title_seq;
@@ -167,6 +169,8 @@ drop table if exists book cascade;
 drop table if exists bl_collection_subset_book cascade;
 drop table if exists journal cascade;
 drop table if exists alert cascade;
+
+alter table creator drop ddhapt_user;
 
 drop sequence if exists watched_target_seq;
 drop sequence if exists fast_subject_seq;

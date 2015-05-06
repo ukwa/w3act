@@ -131,6 +131,10 @@
 				</div>
 	     	</div>
 	     	
+			@templates.checkbox(userForm("ddhaptUser"), true, '_label -> "show DDHAPT start page")(
+				helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
+			)
+	     	
 	        <div id="revisionArea" class="revision">
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">

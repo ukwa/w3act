@@ -1,7 +1,7 @@
 @(field: Field, editable: Boolean, args: (Symbol, Any)*)(implicit handler: helper.FieldConstructor)
 
 @if(editable) {
-	@helper.checkbox(field, (args :+ 'class -> "checkbox"): _*)
+	@helper.checkbox(field, args: _*)
 } else {
 	@if(field.value.isDefined && field.value.get == "true") {
 		@helper.input(field, args: _*) { (id, name, value, args) =>

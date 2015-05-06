@@ -122,6 +122,8 @@ public class User extends ActModel {
     @JsonProperty
     public Long feed_nid;
     
+    public boolean ddhaptUser;
+    
     @Transient
     @JsonIgnore
     @JsonProperty
