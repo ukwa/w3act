@@ -82,8 +82,8 @@ public class CrawlActor extends UntypedActor {
 		}
 		try {
 			compareHashes(ctphFile);
-			Documents.addDuplicateAlert();
-		} catch (IOException e) {
+			Documents.addDuplicateAlert(ctphFile);
+		} catch (Exception e) {
 			Logger.error("can't compare ctp hashes of " + ctphFile, e);
 		}		
 	}
@@ -111,10 +111,13 @@ public class CrawlActor extends UntypedActor {
 		}
 	}
 	
-	private static void compareHashes(String ctphFile) throws IOException {
+	private static void compareHashes(String ctphFile) throws IOException, InterruptedException {
 		ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c",
 				"cd conf/converter && ./compareHashes.sh " + ctphFile);
-		builder.start();
+		Process p = builder.start();
+		if (p.waitFor() != 0) {
+			throw new IOException();
+		}
 	}
 	
 	public void onReceive(Object message) throws Exception {

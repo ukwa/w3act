@@ -367,8 +367,8 @@ public class Documents extends AbstractController {
 		Ebean.save(document);
 	}
 	
-	public static void addDuplicateAlert() {
-		File file = Play.application().getFile("conf/converter/matches.out");
+	public static void addDuplicateAlert(String ctphFile) {
+		File file = Play.application().getFile("conf/converter/" + ctphFile + ".out");
 		try {
 			Scanner scanner = new Scanner(file);
 			scanner.useDelimiter("[\r\n]+");
@@ -377,7 +377,7 @@ public class Documents extends AbstractController {
 				String[] parts = line.split("[ :]");
 				if (parts.length == 6) {
 					int similarity = Integer.parseInt(parts[5].replace("(", "").replace(")", ""));
-					if (similarity >= 98) {
+					if (similarity >= 98 && similarity < 100) {
 						long docId1 = Long.parseLong(parts[1].split("\\.")[0]);
 						long docId2 = Long.parseLong(parts[4].split("\\.")[0]);
 						Document doc1 = Document.find.byId(docId1);

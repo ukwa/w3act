@@ -9,7 +9,7 @@ if [ "$(ls -A ../../hashes)" ]
 then
 	for file in ../../hashes/*
 	do
-		ssdeep -k "$file" "$ctph_file" >> matches.out
+		ssdeep -k "$file" "$ctph_file" >> "$ctph_file.out"
 	done
 fi
 mv "$ctph_file" ../../hashes/
