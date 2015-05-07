@@ -55,7 +55,7 @@ create table document (
   id_watched_target	bigint not null references watched_target (id),
   wayback_timestamp	varchar(255),
   status		integer,
-  current_status_set	timestamp(0),
+  current_status_set	timestamp(3),
   landing_page_url	varchar(255),
   document_url		varchar(255),
   sha256hash		varchar(255),
@@ -134,7 +134,7 @@ create table alert (
   id			bigint primary key,
   id_creator		bigint not null references creator (id),
   text			text not null,
-  created_at		timestamp(0) not null,
+  created_at		timestamp(3) not null,
   read			boolean not null
 );
 
