@@ -70,6 +70,7 @@ public class Documents extends AbstractController {
 		Logger.debug("Documents.render()");
 		
 		Document document = getDocumentFromDB(id);
+		if (document == null) return ok("Document not found: The requested document is no longer available.");
 		if (document.status == Document.Status.SUBMITTED) editable = false;
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
 		setRelatedEntitiesOfView(documentForm, document);
@@ -253,6 +254,7 @@ public class Documents extends AbstractController {
 	
 	@BodyParser.Of(value = BodyParser.Json.class, maxLength = 1024 * 1024)
 	public static Result importJson() {
+		Logger.info("documents are imported");
 		JsonNode json = request().body().asJson();
 		List<Document> documents = new ArrayList<>();
 		for (JsonNode objNode : json) {
@@ -400,6 +402,7 @@ public class Documents extends AbstractController {
 	
 	public static Document getDocumentFromDB(long id) {
 		Document document = Ebean.find(Document.class, id);
+		if (document == null) return null;
 		if (document.type == null) document.type = "";
 		if (document.journal != null)
 			document.journal.journalTitleId = document.journal.journalTitle.id;

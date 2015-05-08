@@ -74,10 +74,17 @@ public class CrawlActor extends UntypedActor {
 		String ctphFile = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + ".txt";
 		for (Document document : newDocumentList) {
 			try {
-				convertPdfToHtml(document, ctphFile);
-				Documents.addHashes(document);
+				int exitCode = convertPdfToHtml(document, ctphFile);
+				boolean hashesExist = exitCode != 2;
+				if (hashesExist) {
+					if (exitCode != 0)
+						Logger.error("can't convert document " + document.documentUrl + " to html");
+					Documents.addHashes(document);
+				} else {
+					Logger.error("can't download document " + document.documentUrl);
+				}
 			} catch (Exception e) {
-				Logger.error("can't convert document " + document.documentUrl + " to html", e);
+				Logger.error("error while converting document " + document.documentUrl + " to html", e);
 			}
 		}
 		try {
@@ -93,7 +100,7 @@ public class CrawlActor extends UntypedActor {
 		convertDocuments(newDocumentList);
 	}
 
-	private static void convertPdfToHtml(Document document, String ctphFile) throws IOException, InterruptedException {
+	private static int convertPdfToHtml(Document document, String ctphFile) throws IOException, InterruptedException {
 		ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c",
 				"cd conf/converter && ./convertPdfToHtml.sh '" + document.getActualSourceUrl() +
 				"' '" + document.id + "' " + ctphFile);
@@ -106,9 +113,7 @@ public class CrawlActor extends UntypedActor {
  			if (line == null) { break; }
 			Logger.debug(line);
 		}
-		if (p.waitFor() != 0) {
-			throw new IOException();
-		}
+		return p.waitFor();
 	}
 	
 	private static void compareHashes(String ctphFile) throws IOException, InterruptedException {

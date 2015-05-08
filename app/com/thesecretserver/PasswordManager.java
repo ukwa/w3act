@@ -62,6 +62,11 @@ public class PasswordManager {
 		return loginCredentials;
 	}
 	
+	public static String versionGet() {
+		SSWebServiceSoap ssWebServiceSoap = new SSWebService().getSSWebServiceSoap();
+		return ssWebServiceSoap.versionGet().getVersion();
+	}
+	
 	private String authenticate() {
 		ssWebServiceSoap = new SSWebService().getSSWebServiceSoap();
 		return ssWebServiceSoap.authenticate(username, password, organization, domain).getToken();
