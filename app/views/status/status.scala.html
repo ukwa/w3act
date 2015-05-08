@@ -1,0 +1,28 @@
+@(user: User)
+
+@good = {<font color="green">&#x2714;</font>}
+@bad = {<font color="red">&#x2718;</font>}
+
+@check(test: Boolean) = { 
+	@if(test) {@good} else {@bad}
+}
+
+@main("", user) {
+	<h2>Status</h2>
+	The database
+	<ul>
+		<li>containts FAST Subjects @check(StatusController.areThereFastSubjects())</li>
+	</ul>
+	The required software
+	<ul>
+		<li>pdf2htmlEX is available @check(StatusController.isPdf2htmlEXAvailable())</li>
+		<li>ssdeep is available @check(StatusController.isSsdeepAvailable())</li>
+	</ul>
+@defining(StatusController.secretServerVersion()) { version =>
+	The Secret Server<br>
+	<ul>
+		<li>is accessible @check(version != null)</li>
+		<li>has version 8.1.000014 @check(version == "8.1.000014")</li>
+	</ul>
+}
+}
