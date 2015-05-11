@@ -10,7 +10,7 @@
     	<h1>
     		<a href="@routes.TargetController.index()">Targets</a> >
 			<a href="@routes.TargetController.view(new Long(form("target.id").value))#watchedTarget">@form("target.title").value</a> >
-			@if(form("secretId").value == null || form("secretId").value == "") {Add} else {Change} Login Credentials
+			@if(form("secretId").value == null) {Add} else {Change} Login Credentials
 		</h1>
 	</div>
 	
@@ -20,8 +20,12 @@
 			<input type="hidden" name="id" value="@form("id").value">
 			@inputText(form("loginPageUrl"), true, '_label -> "Login Page URL")
 			@inputText(form("logoutUrl"), true, '_label -> "Logout URL")
-			@inputText(form("username"), true, '_label -> "Username")
-			@inputPassword(form("password"), '_label -> "Password")
+			<br>
+			@if(form("secretId").value != null) {
+				Username and Password are stored for this Watched Target, but not displayed. Use the fields below to overwrite.
+			}
+			@inputText(form("username"), true, '_label -> "Username", 'autocomplete -> "off")
+			@inputText(form("password"), true, '_label -> "Password", 'autocomplete -> "off")
 			
 			<input type="submit" class="btn btn-primary" value="Save">
 		</div>
