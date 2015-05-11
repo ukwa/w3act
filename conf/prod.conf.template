@@ -19,9 +19,9 @@ ebean.default="models.*"
 
 # Evolutions
 # ~~~~~
-evolutionplugin=enabled
-applyEvolutions.default=true
-applyDownEvolutions.default=true
+evolutionplugin=disabled
+applyEvolutions.default=false
+applyDownEvolutions.default=false
 
 # Logger
 logger.root=WARN
