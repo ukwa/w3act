@@ -43,7 +43,7 @@ public class LoginCredentialsController extends AbstractController {
 			LoginCredentials loginCredentials = new LoginCredentials(watchedTarget.loginPageUrl, username, password);
 			try {
 				watchedTarget.secretId = passwordManager.addLoginCredentials(WatchedTarget.find.byId(id).target.title, loginCredentials);
-				FlashMessage.updateSuccess.send();
+				new FlashMessage(FlashMessage.Type.SUCCESS, "The credentials were successfully saved to the Secret Server.").send();
 			} catch(Exception e) {
 				String msg = "Can't store username and password because there is no connection to the Secret Server.";
 				new FlashMessage(FlashMessage.Type.ERROR, msg).send();

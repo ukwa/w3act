@@ -14,7 +14,7 @@
 			
 			$(document).on( 'shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
 				var id = $(this).attr('id');
-				console.log(id); // activated tab
+				//console.log(id); // activated tab
  				$('#tabStatus').val(id);
 			})
 			
@@ -28,7 +28,7 @@
 				var panel = $('#'+panelId);
 				panel.parent().children().removeClass('active').removeClass('in');
 				panel.toggleClass("active in");
-				console.log(status + " - " + panelId);
+				//console.log(status + " - " + panelId);
 			}
 			
 		});

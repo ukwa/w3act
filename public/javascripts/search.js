@@ -31,7 +31,7 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 			 template: '<p><strong>{{value}}</strong></p><p>{{field_url}}</p>',
 			 engine: Hogan
 		}).on('typeahead:selected', function(event, datum) {
-			console.log("contextTo: " + urlTo + " " + datum.id);
+			//console.log("contextTo: " + urlTo + " " + datum.id);
 			if (datum.field_url !== undefined) {
 				$(this).val(datum.field_url);
 			}
@@ -63,17 +63,17 @@ function scopeCheck(context) {
 	    		if (data) {
 			    	addButton.css('background-color','green');
 			    	searchButton.css('background-color', 'green');
-			    	console.log("success " + data);
+			    	//console.log("success " + data);
 	    		} else {
 			    	addButton.css('background-color','red');
 			    	searchButton.css('background-color', 'red');
-			    	console.log("success " + data);
+			    	//console.log("success " + data);
 	    		}
 	    	},
 	    	error: function(jqXHR, textStatus, errorThrown) {
 		    	addButton.css('background-color','red');
 		    	searchButton.css('background-color', 'red');
-		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+		    	//console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
 	    	}
 	    });
     };
@@ -117,15 +117,15 @@ function licenceCheck(context) {
 	    	success: function(data) {
 	    		if (data) {
 			    	saveButton.css('background-color','red');
-			    	console.log("success " + data);
+			    	//console.log("success " + data);
 	    		} else {
 			    	saveButton.css('background-color','green');
-			    	console.log("success " + data);
+			    	//console.log("success " + data);
 	    		}
 	    	},
 	    	error: function(jqXHR, textStatus, errorThrown) {
 		    	saveButton.css('background-color','red');
-		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+		    	//console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
 	    	}
 	    });
     };
@@ -169,15 +169,15 @@ function licenceHigherLevelCheck(context) {
 	    	success: function(data) {
 	    		if (data) {
 			    	saveButton.css('background-color','yellow');
-			    	console.log("success " + data);
+			    	//console.log("success " + data);
 	    		} else {
 			    	saveButton.css('background-color','green');
-			    	console.log("success " + data);
+			    	//console.log("success " + data);
 	    		}
 	    	},
 	    	error: function(jqXHR, textStatus, errorThrown) {
 		    	saveButton.css('background-color','yellow');
-		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+		    	//console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
 	    	}
 	    });
     };
@@ -222,16 +222,16 @@ function licencePromptHigherLevel(context) {
 	    		if (data) {
 			    	saveButton.css('color','yellow');
 //			    	saveButton.css('background-color','yellow');
-			    	console.log("success " + data);
+			    	//console.log("success " + data);
 	    		} else {
 			    	saveButton.css('color','green');
 //			    	saveButton.css('background-color','green');
-			    	console.log("success " + data);
+			    	//console.log("success " + data);
 	    		}
 	    	},
 	    	error: function(jqXHR, textStatus, errorThrown) {
 		    	saveButton.css('background-color','green');
-		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+		    	//console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
 	    	}
 	    });
     };
@@ -302,7 +302,7 @@ function applySearch(context, searchContext, urlTo) {
 			 template: '<p><strong>{{value}}</strong></p><p>{{field_url}}</p>',
 			 engine: Hogan
 		}).on('typeahead:selected', function(event, datum) {
-			console.log("contextTo: " + urlTo);
+			//console.log("contextTo: " + urlTo);
 			if (datum.field_url !== undefined) {
 				$(this).val(datum.field_url);
 			}
@@ -344,7 +344,7 @@ function applySearchExt(context, searchContext, urlTo) {
 			 template: '<p><strong>{{value}}</strong></p><p>{{field_url}}</p>',
 			 engine: Hogan
 		}).on('typeahead:selected', function(event, datum) {
-			console.log("contextTo: " + urlTo);
+			//console.log("contextTo: " + urlTo);
 			if (datum.field_url !== undefined) {
 				$(this).val(datum.field_url);
 			}
@@ -375,7 +375,7 @@ function showTree(data, id, key, sm) {
       		});
       		document.getElementById(key).value = selKeys.join(", ");
       		
-      		console.log("test: " + document.getElementById(key).value);
+      		//console.log("test: " + document.getElementById(key).value);
       		// Get a list of all selected TOP nodes
       		var selRootNodes = node.tree.getSelectedNodes(true);
       		// ... and convert to a key array:
@@ -455,7 +455,7 @@ function targetDateTime() {
 		var frequency = $(this).val();
 		event.preventDefault();
 		if (frequency != 'DOMAINCRAWL') {
-    		console.log('selected: ' + frequency);
+    		//console.log('selected: ' + frequency);
             var d = new Date(); // for now
             var datetext = d.getDate() + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " 09:00";
             $('#start-date-time').val(datetext);

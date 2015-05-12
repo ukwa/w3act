@@ -37,6 +37,14 @@ public class Alert extends Model {
         		.getPage(page);
     }
 	
+	public static String numberOfUnreadAlerts(User user) {
+		int unreadAlerts = find.where().eq("id_creator", user.id)
+				.eq("read", false)
+				.findRowCount();
+		if (unreadAlerts == 0) return "";
+		return " (" + unreadAlerts + ")";
+	}
+	
 	public String formattedDateString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 		return dateFormat.format(createdAt);

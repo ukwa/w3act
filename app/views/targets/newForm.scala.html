@@ -86,7 +86,7 @@
 	        if (hash.indexOf('#') == 0) {
 				// We have a hash - let's see if it matches with nav pill href
 				var el = $('#myNavbar a[href=' + hash + ']');
-        		console.log(el + " " + hash);
+				//console.log(el + " " + hash);
 
 				// pass the current tab to the save method in order to load page in the same tab
 				document.getElementById('tabstatus').value = hash;
@@ -101,7 +101,7 @@
 			} else {
 	        	//console.log('tabstatus after validation: ' + document.getElementById('tabstatus').value);
 	        	var valtab = document.getElementById('tabstatus').value;
-        		console.log(valtab);
+        		//console.log(valtab);
 	            if (valtab.indexOf('#') == 0) {
 	                // We have a hash - let's see if it matches with nav pill href
 	                var valel = $('#myNavbar a[href=' + valtab + ']');

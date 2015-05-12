@@ -90,7 +90,7 @@
 				} else {
 					<li><a href="@routes.WatchedTargets.overview()">My Watched Targets</a></li>
 					<li class="active"><a href="#">My New Documents</a></li>
-					<li><a href="@routes.Alerts.list()">Alerts</a></li>
+					<li><a href="@routes.Alerts.list()">Alerts@Alert.numberOfUnreadAlerts(user)</a></li>
 				}
 			</ul>
 	    	
@@ -171,15 +171,19 @@
 						<td><a href="@document.documentUrl" target="_blank">@document.documentUrl</a></td>
 						<td>@WatchedTargets.prettyDateString(document.waybackTimestamp)</td>
 						@if(filterForm.get.status != Document.Status.SUBMITTED) {
-							<td><a href="@routes.Documents.ignore(document.id,
-									filterForm.get,
-									currentPage.getPageIndex,
-									currentSortBy,
-									currentOrder,
-									searchstr,
-									filters)" class="btn btn-success">
-								@{if(filterForm.get.status == Document.Status.NEW) "Ignore" else "Restore"}
-							</a></td>
+							<td>
+								@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.id == filterForm.get.user) {
+									<a href="@routes.Documents.ignore(document.id,
+											filterForm.get,
+											currentPage.getPageIndex,
+											currentSortBy,
+											currentOrder,
+											searchstr,
+											filters)" class="btn btn-success">
+										@{if(filterForm.get.status == Document.Status.NEW) "Ignore" else "Restore"}
+									</a>
+								}
+							</td>
 						} else {
 							<td>
 								<a href="@routes.Documents.sip(document.id)"  target="_blank">SIP</a>
@@ -193,7 +197,8 @@
 			@pagination(currentPage, link)
 		}
 		
-		@if(currentPage.getTotalRowCount() > 1) {
+		@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.id == filterForm.get.user) &&
+				currentPage.getTotalRowCount() > 1) {
 			<a href="@routes.Documents.ignoreAll(filterForm.get, searchstr, filters)" class="btn btn-success" onclick=
 				"return confirm('You are about to @{if(filterForm.get.status == Document.Status.NEW) "ignore" else "restore"} @currentPage.getTotalRowCount() documents.\nDo you want to proceed?');"
 				style="float: right">

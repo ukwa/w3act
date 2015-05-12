@@ -290,9 +290,9 @@
 				@inputText(form("journal.issue"), editable, '_label -> "Issue/Part")
 			</div>
 			<div id="author">
-				@splitInputText(form("author1Fn"), form("author1Ln"), editable, '_label -> "Author(s)")
-				@splitInputText(form("author2Fn"), form("author2Ln"), editable, '_label -> "")
-				@splitInputText(form("author3Fn"), form("author3Ln"), editable, '_label -> "")
+				@splitInputText(form("author1Fn"), form("author1Ln"), editable, '_label -> "1st Author")
+				@splitInputText(form("author2Fn"), form("author2Ln"), editable, '_label -> "2nd Author")
+				@splitInputText(form("author3Fn"), form("author3Ln"), editable, '_label -> "3rd Author")
 			</div>
 			
 			<a target="landingPage" onclick="openPopup('@form("landingPageUrl").value')">Open Landing Page</a><br>
