@@ -749,17 +749,13 @@ public class TargetController extends AbstractController {
 			return info(filledForm, id);
 		}
 		
-		User user = User.findByEmail(request().username());
-		if (!user.hasRole("sys_admin") && !user.hasRole("archivist") &&
-				target.authorUser != null &&
-				!user.id.equals(target.authorUser.id) &&
-				target.isWatched()) {
-			ValidationError ve = new ValidationError("watched", "You are not allowed to delete another user's Watched Target.");
+		if (target.hasDocuments()) {
+			ValidationError ve = new ValidationError("watched", "Watched Targets with existing crawled documents can not be deleted.");
 			filledForm.reject(ve);
 			return info(filledForm, id);
 		}
 		if (target.watchedTarget != null) {
-			Ebean.delete(target.watchedTarget.documents);
+			//Ebean.delete(target.watchedTarget.documents);
 			Ebean.delete(target.watchedTarget.journalTitles);
 		}
     	target.delete();

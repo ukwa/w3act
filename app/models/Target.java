@@ -380,6 +380,10 @@ public class Target extends UrlModel {
 		return watchedTarget != null;
 	}
 	
+	public boolean hasDocuments() {
+		return isWatched() && !watchedTarget.documents.isEmpty();
+	}
+	
 //	  "title": "Your Thurrock" - fine
 //	  "field_subject": ["24"],
 //	  "field_crawl_frequency": "monthly" - fine
