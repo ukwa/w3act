@@ -1065,11 +1065,13 @@
 		     	
 			</div>
 	        
+	    @defining(Target.find.byId(id)) { target =>
 			<div class="tab-pane fade" id="watchedTarget">
-				@if(Target.find.byId(id).hasDocuments) {
-					@checkbox(targetForm("watched"), false, '_label -> "watched")
-				} else {
+				@if(!target.hasDocuments && user.hasExpertUserRights &&
+						(user.id.equals(target.authorUser.id) || user.hasArchivistRights)) {
 					@checkbox(targetForm("watched"), true, '_label -> "watched")
+				} else {
+					@checkbox(targetForm("watched"), false, '_label -> "watched")
 				}
 				@inputText(targetForm("watchedTarget.documentUrlScheme"), true, '_label -> "Document URL Scheme")
 				@inputText(targetForm("watchedTarget.loginPageUrl"), true, '_label -> "Login Page URL")
@@ -1084,6 +1086,7 @@
 					</div>
 				}
 	        </div>
+	    }
 	        
 		</div>
                         

@@ -20,7 +20,7 @@
 	<div class="col-sm-6">
 		@if(document1 != null) {
 			<h3>Document <a href="@routes.Documents.view(document1.id)">@document1.title</a></h3>
-			<iframe id="document1" src="@routes.Documents.html(document1.getHtmlFilename)"></iframe>
+			<iframe id="document1" src="@routes.Documents.html(document1.htmlFilename)"></iframe>
 		} else {
 			<h3>Document not Found</h3>
 			The requested document is no longer available.
@@ -29,7 +29,7 @@
 	<div class="col-sm-6">
 		@if(document2 != null) {
 			<h3>Document <a href="@routes.Documents.view(document2.id)">@document2.title</a></h3>
-			<iframe id="document2" src="@routes.Documents.html(document2.getHtmlFilename)"></iframe>
+			<iframe id="document2" src="@routes.Documents.html(document2.htmlFilename)"></iframe>
 		} else {
 			<h3>Document not Found</h3>
 			The requested document is no longer available.

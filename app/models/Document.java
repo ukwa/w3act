@@ -82,7 +82,7 @@ public class Document extends Model {
     
     public static final Model.Finder<Long, Document> find = new Model.Finder<>(Long.class, Document.class);
     
-    public String getHtmlFilename() {
+    public String htmlFilename() {
     	return id + ".html";
     }
     
@@ -112,6 +112,14 @@ public class Document extends Model {
 	public boolean isBookOrBookChapter() { return isWholeBook() || isBookChapter(); }
 	
 	public boolean isJournalArticleOrIssue() { return isJournalArticle() || isJournalIssue(); }
+	
+	public boolean isOwnedBy(User user) {
+		return user.id.equals(watchedTarget.target.authorUser.id);
+	}
+	
+	public boolean isEditableFor(User user) {
+		return isOwnedBy(user) || user.hasExpertUserRights();
+	}
     
 	public boolean hasPermissionForService(Portal portal) {
 		List<License> licenses = watchedTarget.target.licenses;
@@ -178,7 +186,7 @@ public class Document extends Model {
 				waybackTimestamp + "/" + documentUrl;
 	}
 	
-	public String getActualSourceUrl() {
+	public String actualSourceUrl() {
 		return waybackTimestamp != null ? waybackUrl() : documentUrl;
 	}
 	

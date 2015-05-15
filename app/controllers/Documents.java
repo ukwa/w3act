@@ -72,11 +72,16 @@ public class Documents extends AbstractController {
 		Document document = getDocumentFromDB(id);
 		if (document == null) return ok("Document not found: The requested document is no longer available.");
 		if (document.status == Document.Status.SUBMITTED) editable = false;
+		
+		User user = User.findByEmail(request().username());
+		if (!document.isEditableFor(user))
+			editable = false;
+		
 		Form<Document> documentForm = Form.form(Document.class).fill(document);
 		setRelatedEntitiesOfView(documentForm, document);
 		
-		return ok(edit.render("Document" + id, documentForm,
-				User.findByEmail(request().username()), editable));
+		return ok(edit.render("Document" + id, document, documentForm,
+				user, editable));
 	}
 	
 	public static Result continueEdit() {
@@ -88,7 +93,7 @@ public class Documents extends AbstractController {
 		Form<Document> documentForm = Form.form(Document.class).bind(session());
 		documentForm.discardErrors();
 		
-		return ok(edit.render("Document", documentForm,
+		return ok(edit.render("Document", Document.find.byId(documentForm.get().id), documentForm,
 				User.findByEmail(request().username()), true));
 	}
 
@@ -117,7 +122,8 @@ public class Documents extends AbstractController {
 		if (documentForm.hasErrors()) {
 			Logger.debug("Show errors in html");
 			FlashMessage.validationWarning.send();
-			return status(303, edit.render("Document", documentForm,
+			return status(303, edit.render("Document",
+					Document.find.byId(new Long(documentForm.field("id").value())), documentForm,
 					User.findByEmail(request().username()), true));
 		}
 		Logger.debug("Glob Errors: " + documentForm.hasGlobalErrors());
@@ -178,7 +184,7 @@ public class Documents extends AbstractController {
 		Ebean.delete(assignableArks.get(0));
 		document.setStatus(Document.Status.SUBMITTED);
 		Ebean.save(document);
-		deleteHtmlFile(document.getHtmlFilename());
+		deleteHtmlFile(document.htmlFilename());
 		FlashMessage submitSuccess = new FlashMessage(FlashMessage.Type.SUCCESS,
 				"The document has been submitted.");
 		submitSuccess.send();
@@ -470,7 +476,7 @@ public class Documents extends AbstractController {
 			public Boolean apply() {
 				List<Document> documents = Document.find.where().eq("status", Document.Status.DELETED.ordinal()).findList();
 				for (Document document : documents)
-					deleteHtmlFile(document.getHtmlFilename());
+					deleteHtmlFile(document.htmlFilename());
 				return true;
 			}
 		});
@@ -523,7 +529,7 @@ public class Documents extends AbstractController {
     
 	public static void deleteHtmlFiles(WatchedTarget watchedTarget) {
 		for (Document document : watchedTarget.documents)
-			deleteHtmlFile(document.getHtmlFilename());
+			deleteHtmlFile(document.htmlFilename());
 	}
     
 	public static void deleteHtmlFile(String filename) {

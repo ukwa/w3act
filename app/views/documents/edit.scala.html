@@ -1,4 +1,4 @@
-@(title: String, form: Form[Document], user: User, editable: Boolean)
+@(title: String, document: Document, form: Form[Document], user: User, editable: Boolean)
 
 @import helper.options
 @import scala.List
@@ -6,7 +6,7 @@
 @import templates.checkbox2
 @import templates.inputText
 @import templates.select
-@import templates.splitInputText
+@import templates.nameInputText
 
 @implicitField = @{ helper.FieldConstructor(templates.ratio5to7FieldConstructor.f) }
 
@@ -195,25 +195,26 @@
 	
 	<div class="page-header">
     	<h1>
-    		<a href="@routes.Documents.list(new DocumentFilter().withWatchedTarget(new Long(form("watchedTarget.id").value)))">Documents</a> >
-    		@form("title").value
+    		<a href="@routes.Documents.list(new DocumentFilter().withWatchedTarget(document.watchedTarget.id))">Documents</a> >
+    		@document.title
     	</h1>
 	</div>
 	
 	<ul class="nav nav-tabs">
 		@if(editable) {
-			<li><a href="@routes.Documents.view(new Long(form("id").value))">View</a></li>
+			<li><a href="@routes.Documents.view(document.id)">View</a></li>
 			<li class="active"><a href="#">Edit</a></li>
 		} else {
 			<li class="active"><a href="#">View</a></li>
-			@if(form("status").value != Document.Status.SUBMITTED.toString) {
-				<li><a href="@routes.Documents.edit(new Long(form("id").value))">Edit</a></li>
+			@if(document.status != Document.Status.SUBMITTED &&
+					document.isEditableFor(user)) {
+				<li><a href="@routes.Documents.edit(document.id)">Edit</a></li>
 			}
 		}
 	</ul>
 	
 	@warningmessage(flash)
-	@helper.form(if (editable) routes.Documents.save(new Long(form("id").value)) else routes.Documents.submit(new Long(form("id").value))) {
+	@helper.form(if (editable) routes.Documents.save(document.id) else routes.Documents.submit(document.id)) {
 		<div class="col-md-6">
 			<input type="hidden" name="id" value="@form("id").value">
 			<input type="hidden" name="landingPageUrl" value="@form("landingPageUrl").value">
@@ -238,7 +239,7 @@
 				'_label -> "Priority Cataloguing")
 			@helper.input(form("services"), '_label -> "Services") { (id, name, value, args) =>
 				@for(portal <- Portals.portalList.getList()) {
-					@if(Document.find.byId(new Long(form("id").value)).hasPermissionForService(portal)) {
+					@if(document.hasPermissionForService(portal)) {
 						@checkbox2(form("portal_" + portal.id), editable, '_label -> portal.title)(
 							helper.FieldConstructor(templates.checkboxFieldConstructor.f)
 						)
@@ -290,17 +291,17 @@
 				@inputText(form("journal.issue"), editable, '_label -> "Issue/Part")
 			</div>
 			<div id="author">
-				@splitInputText(form("author1Fn"), form("author1Ln"), editable, '_label -> "1st Author")
-				@splitInputText(form("author2Fn"), form("author2Ln"), editable, '_label -> "2nd Author")
-				@splitInputText(form("author3Fn"), form("author3Ln"), editable, '_label -> "3rd Author")
+				@nameInputText(form("author1Fn"), form("author1Ln"), editable, '_label -> "Author(s)")
+				@nameInputText(form("author2Fn"), form("author2Ln"), editable, '_label -> "")
+				@nameInputText(form("author3Fn"), form("author3Ln"), editable, '_label -> "")
 			</div>
 			
-			<a target="landingPage" onclick="openPopup('@form("landingPageUrl").value')">Open Landing Page</a><br>
-			<a target="document" onclick="openPopup('@form("documentUrl").value')">Open Document</a><br>
+			<a target="landingPage" onclick="openPopup('@document.landingPageUrl')">Open Landing Page</a><br>
+			<a target="document" onclick="openPopup('@document.documentUrl')">Open Document</a><br>
 			@if(editable) {
 				<input type="submit" class="btn btn-primary" value="Save">
 			} else {
-				@if(form("status").value != Document.Status.SUBMITTED.toString && !form("type").value.isEmpty) {
+				@if(document.status != Document.Status.SUBMITTED && !form("type").value.isEmpty) {
 					<input type="submit" name="submit" class="btn btn-primary" value="Submit" onclick="return confirm('Are you sure?');">
 				}
 			}
@@ -358,8 +359,8 @@
 				</div>
 			</div>
 			<iframe id="document_view" src="@{
-					if(form("status").value == Document.Status.SUBMITTED.toString) routes.Helper.passthrough(form("actualSourceUrl").value,"")
-					else routes.Documents.html(form("htmlFilename").value)
+					if(document.status == Document.Status.SUBMITTED) routes.Helper.passthrough(document.actualSourceUrl,"")
+					else routes.Documents.html(document.htmlFilename)
 				}"
 				width="100%" height="768"></iframe>
 		</div>

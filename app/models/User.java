@@ -235,13 +235,14 @@ public class User extends ActModel {
         return find.all();
     }
     
-    public boolean isSysAdmin() {
-    	return (hasRole("sys_admin"));
-    }
-
-    public boolean isArchivist() {
-    	return (hasRole("archivist"));
-    }
+    public boolean isSysAdmin() { return hasRole("sys_admin"); }
+    public boolean isArchivist() { return hasRole("archivist"); }
+    public boolean isExpertUser() { return hasRole("expert_user"); }
+    public boolean isUser() { return hasRole("user"); }
+    
+    public boolean hasArchivistRights() { return isSysAdmin() || isArchivist(); }
+    public boolean hasExpertUserRights() { return hasArchivistRights() || isExpertUser(); }
+    public boolean hasUserRights() { return hasExpertUserRights() || isUser(); }
 
     /**
      * This method checks whether user has a role by its name.

@@ -164,7 +164,13 @@
 							@if(filterForm.get.status == Document.Status.IGNORED) {
 								@document.title
 							} else {
-								<a href="@routes.Documents.edit(document.id)">@document.title</a>
+								<a href="@{
+										if (document.isEditableFor(user))
+											routes.Documents.edit(document.id)
+										else
+											routes.Documents.view(document.id)}">
+									@document.title
+								</a>
 							}
 						</td>
 						<td><a href="@document.landingPageUrl" target="_blank">@document.landingPageUrl</a></td>
@@ -172,7 +178,7 @@
 						<td>@WatchedTargets.prettyDateString(document.waybackTimestamp)</td>
 						@if(filterForm.get.status != Document.Status.SUBMITTED) {
 							<td>
-								@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.id == filterForm.get.user) {
+								@if(document.isEditableFor(user)) {
 									<a href="@routes.Documents.ignore(document.id,
 											filterForm.get,
 											currentPage.getPageIndex,
@@ -197,7 +203,7 @@
 			@pagination(currentPage, link)
 		}
 		
-		@if((user.hasRole("sys_admin") || user.hasRole("archivist") || user.id == filterForm.get.user) &&
+		@if((user.hasExpertUserRights || user.id == filterForm.get.user) &&
 				currentPage.getTotalRowCount() > 1) {
 			<a href="@routes.Documents.ignoreAll(filterForm.get, searchstr, filters)" class="btn btn-success" onclick=
 				"return confirm('You are about to @{if(filterForm.get.status == Document.Status.NEW) "ignore" else "restore"} @currentPage.getTotalRowCount() documents.\nDo you want to proceed?');"

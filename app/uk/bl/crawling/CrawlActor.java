@@ -102,7 +102,7 @@ public class CrawlActor extends UntypedActor {
 
 	private static int convertPdfToHtml(Document document, String ctphFile) throws IOException, InterruptedException {
 		ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c",
-				"cd conf/converter && ./convertPdfToHtml.sh '" + document.getActualSourceUrl() +
+				"cd conf/converter && ./convertPdfToHtml.sh '" + document.actualSourceUrl() +
 				"' '" + document.id + "' " + ctphFile);
 		builder.redirectErrorStream(true);
 		Process p = builder.start();
