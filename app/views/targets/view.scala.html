@@ -78,12 +78,11 @@
 	  <div class="col-md-8 col-sm-8 col-xs-12">
 	
 	<ul class="nav nav-tabs">
-	   <li class="active"><a href="#">View</a></li>
-	   @if((user.hasRole("sys_admin") || user.hasRole("archivist")  || user.hasRole("expert_user")) 
-	   		|| ((user.hasRole("user") || user.hasRole("expert_user")) && target.authorUser != null 
-	   		&& user.id == target.authorUser.id)) {
-	   <li><a onclick="switchPage(); return false;" href="id">Edit</a></li>
-	   }
+		<li class="active"><a href="#">View</a></li>
+		@if(user.hasArchivistRights ||
+				(user.hasUserRights && target.authorUser != null && user.id == target.authorUser.id)) {
+			<li><a onclick="switchPage(); return false;" href="id">Edit</a></li>
+		}
 	</ul>
 	      
 	@warningmessage(flash)

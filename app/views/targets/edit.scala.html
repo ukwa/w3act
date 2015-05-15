@@ -494,34 +494,21 @@
 					</div>
 		     	</div>		    		    
 	    			     		
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-							@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-								@select(
-	               					targetForm("authorUser.id"), 
-						                options(authors), 
-						                args = 
-						                'class -> "form-control",
-						                '_label -> "Selector (The user that nominated this web site):",
-					                	'_default -> "-- None --",
-						                '_showConstraints -> true
-					            )(FieldConstructor(genericMandatoryInput.f), lang)						
-						  	} else {
-								@select(
-	               					targetForm("authorUser.id"), 
-						                options(authors), 
-						                args = 
-						                'class -> "form-control",
-						                '_label -> "Selector (The user that nominated this web site. A record can be created on behalf of other user by high-level roles):",
-					                	'_default -> "-- None --",
-						                '_showConstraints -> false,
-						                '_disabled -> None
-					            )(FieldConstructor(genericMandatoryInput.f), lang)						
-						  	}
-						</div>
-					</div>
-		     	</div>	
+				@if(user.hasArchivistRights) {
+					@templates.select(
+						targetForm("authorUser.id"),
+						options(authors),
+						true,
+						'_label -> "Selector (The user that nominated this web site):",
+						'_default -> "-- None --",
+						'_showConstraints -> true)
+				} else {
+					@input(targetForm("authorUser.id"),
+							'_label -> "Selector (The user that nominated this web site):") { (id, name, value, args) =>
+						<input type="hidden" name="@name" id="@id" value="@value">
+						@targetForm("authorUser.name").value
+					}
+				}
 		     	
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">

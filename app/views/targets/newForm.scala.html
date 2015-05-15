@@ -440,21 +440,25 @@
 					</div>
 		     	</div>		    		    		    
      			     		
-	    		<div class="row padding-10">
-		     		<div class="col-md-12 col-xs-12 col-sm-12">
-						<div class="form-group">
-								@select(
-	               					targetForm("authorUser.id"), 
-						                options(authors), 
-						                args = 
-						                'class -> "form-control",
-						                '_label -> "Selector (The user that nominated this web site):",
-					                	'_default -> "-- None --",
-						                '_showConstraints -> false
-					            )(FieldConstructor(genericMandatoryInput.f), lang)							            
-						</div>
-					</div>
-		     	</div>	
+				@if(user.hasArchivistRights) {
+					@templates.select(
+						targetForm("authorUser.id"),
+						options(authors),
+						true,
+						'_label -> "Selector (The user that nominated this web site):",
+						'_default -> "-- None --",
+						'_showConstraints -> true)(
+							helper.FieldConstructor(templates.ratio6to6FieldConstructor.f)
+						)
+				} else {
+					@input(targetForm("authorUser.id"),
+							'_label -> "Selector (The user that nominated this web site):") { (id, name, value, args) =>
+						<input type="hidden" name="@name" id="@id" value="@value">
+						@user.name
+					}(
+						helper.FieldConstructor(templates.ratio6to6FieldConstructor.f), lang
+					)
+				}
 		     	
 		     	<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
