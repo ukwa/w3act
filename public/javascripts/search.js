@@ -36,9 +36,9 @@ function applySearchTargetsTab(context, searchContext, urlTo) {
 				$(this).val(datum.field_url);
 			}
 			if (urlTo !== undefined) {
-				window.location.replace(context + "/" + urlTo + "/" + datum.id + "&tabStatus=overview");
+				window.location.href = context + "/" + urlTo + "/" + datum.id + "&tabStatus=overview";
 			} else {
-				window.location.replace(context + "/" + searchContext + "/" + datum.id); 
+				window.location.href = context + "/" + searchContext + "/" + datum.id;
 			}
 		});
 	}
@@ -307,9 +307,10 @@ function applySearch(context, searchContext, urlTo) {
 				$(this).val(datum.field_url);
 			}
 			if (urlTo !== undefined) {
-				window.location.replace(context + "/" + urlTo + "/" + datum.id);
+				window.location.href = context + "/" + urlTo + "/" + datum.id;
 			} else {
-				window.location.replace(context + "/" + searchContext + "/" + datum.id); 
+				window.location.href = context + "/" + searchContext + "/" + datum.id;
+				
 			}
 		});
 	}
@@ -349,9 +350,9 @@ function applySearchExt(context, searchContext, urlTo) {
 				$(this).val(datum.field_url);
 			}
 			if (urlTo !== undefined) {
-				window.location.replace(context + "/" + urlTo + "/" + datum.id);
+				window.location.href = context + "/" + urlTo + "/" + datum.id;
 			} else {
-				window.location.replace(context + "/" + searchContext + "/" + datum.id); 
+				window.location.href = context + "/" + searchContext + "/" + datum.id;
 			}
 		});
 	}
