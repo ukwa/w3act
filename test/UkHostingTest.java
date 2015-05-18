@@ -9,6 +9,7 @@ import models.Target;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.bl.exception.ActException;
 import uk.bl.scope.Scope;
 
 public class UkHostingTest {
@@ -26,7 +27,7 @@ public class UkHostingTest {
 	}
 
 	@Test
-	public void test() {
+	public void test() throws ActException {
 		Boolean pass = Scope.INSTANCE.isUkHosting(target);
 		System.out.println("fieldUrls with valid top level domains: " + target.fieldUrls + " - " + pass);
 		assertTrue(pass);

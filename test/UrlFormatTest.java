@@ -10,6 +10,8 @@ import models.FieldUrl;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.bl.exception.ActException;
+
 
 public class UrlFormatTest {
 
@@ -73,7 +75,13 @@ public class UrlFormatTest {
     
     // mirror finder
     public FieldUrl findByUrl(String url) {
-		FieldUrl dbFieldUrl = new FieldUrl(dbUrl);
+		FieldUrl dbFieldUrl;
+		try {
+			dbFieldUrl = new FieldUrl(dbUrl);
+		} catch (ActException e) {
+			e.printStackTrace();
+			return null;
+		}
     	if (dbFieldUrl.url.equals(url)) {
     		return dbFieldUrl;
     	}
