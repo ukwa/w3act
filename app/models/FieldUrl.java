@@ -20,6 +20,7 @@ import play.Logger;
 import play.db.ebean.Model;
 import uk.bl.api.Utils;
 import uk.bl.exception.ActException;
+import uk.bl.scope.Scope;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Expr;
@@ -57,9 +58,10 @@ public class FieldUrl extends Model {
 	
 	public static Model.Finder<Long, FieldUrl> find = new Finder<Long, FieldUrl>(Long.class, FieldUrl.class);
 
-	public FieldUrl(String url) {
+	public FieldUrl(String url) throws ActException {
 		super();
-		this.url = url;
+		this.url = url.trim();
+		this.domain = Scope.INSTANCE.getDomainFromUrl(this.url);
 	}
 
 	public static FieldUrl findByUrl(String url) {

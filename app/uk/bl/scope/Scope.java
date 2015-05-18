@@ -738,14 +738,16 @@ public enum Scope {
 //	}
 	
 	public String getDomainFromUrl(String url) throws ActException {
-	    URI uri;
+	    URL uri;
 		try {
-			uri = new URI(url);
+			uri = new URL(url);
+			Logger.debug("getDomainFromUrl: "+uri);
 			String domain = uri.getHost();
+			Logger.debug("getDomainFromUrl GOT: "+domain);
 			if (StringUtils.isNotEmpty(domain)) {
 				return domain.startsWith("www.") ? domain.substring(4) : domain;
 			}
-		} catch (URISyntaxException e) {
+		} catch (MalformedURLException e) {
 			throw new ActException(e);
 		}
 		return null;

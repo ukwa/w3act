@@ -1,0 +1,30 @@
+@(user: User)
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main("", user) {
+	
+   	@if(flash.contains("error")) {
+		<div class="alert alert-warning">@flash.get("error")<pre>@flash.get("error_log")</pre></div>
+	}
+        
+   	@if(flash.contains("success")) {
+		<div class="alert alert-success">@flash.get("success")</div>
+	}
+        
+	@form(action = routes.TargetController.uploadExcel, 'enctype -> "multipart/form-data") {
+    
+        <fieldset>
+            <label for="excelFile">Please select a spreadsheet to upload:</label>
+    		<input type="file" id="excelFile" name="excelFile">
+    		<p>NOTE: This system only supports Excel XLS or XSLX files.</p>
+        </fieldset>
+         
+        <div class="actions">
+            <input type="submit" class="btn primary" value="Save">
+        </div>
+        
+    }
+
+}

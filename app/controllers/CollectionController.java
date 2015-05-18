@@ -31,7 +31,6 @@ import views.html.collections.newForm;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -363,6 +362,14 @@ public class CollectionController extends AbstractController {
 				if ( cl.id != null ) {
 					return badRequest("No ID should be passed when creating a new Collection!");
 				}
+				/*
+				// Refuse if there's an existing one at the same point in the tree:
+				for ( Collection c : Collection.findAllCollections() ) {
+					if( c.name.equals(cl.name) && c.parent.equals(cl.parent)) {
+						return badRequest("A collection with the name '"+cl.name+"' and parent '"+cl.parent+"' already exists! " );
+					}
+				}
+				*/
 				cl.save();
 	    	}
         } catch (IllegalArgumentException e) {
