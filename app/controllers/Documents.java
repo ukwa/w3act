@@ -93,7 +93,7 @@ public class Documents extends AbstractController {
 		Form<Document> documentForm = Form.form(Document.class).bind(session());
 		documentForm.discardErrors();
 		
-		return ok(edit.render("Document", Document.find.byId(documentForm.get().id), documentForm,
+		return ok(edit.render("Document", Document.find.byId(new Long(session("id"))), documentForm,
 				User.findByEmail(request().username()), true));
 	}
 
@@ -507,7 +507,6 @@ public class Documents extends AbstractController {
         	);
     }
     
-    @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String title) {
         JsonNode jsonData = null;
         if (title != null) {

@@ -133,7 +133,6 @@ public class WatchedTargets extends AbstractController {
     	return day + "-" + month + "-" + year + " " + hour + ":" + minute;
     }
     
-    @BodyParser.Of(BodyParser.Json.class)
     public static Result filterByJson(String title) {
         JsonNode jsonData = null;
         if (title != null) {

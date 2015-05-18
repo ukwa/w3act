@@ -42,9 +42,6 @@ public class WatchedTarget extends Model {
 	public String loginPageUrl;
 	public String logoutUrl;
 	public Integer secretId;
-	@JsonIgnore
-	public String getUrl() { return ""+id; }
-	@JsonIgnore
 	public String getName() { return target.fieldUrls.get(0).url; }
 	public static final String SEARCH_FIELD = "target.fieldUrls.url";
 	

@@ -78,7 +78,6 @@ public class Document extends Model {
 	public String author2Ln;
 	public String author3Fn;
 	public String author3Ln;
-    public String getUrl() { return ""+id; }
     
     public static final Model.Finder<Long, Document> find = new Model.Finder<>(Long.class, Document.class);
     
