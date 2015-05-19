@@ -49,6 +49,8 @@ public class LoginCredentialsController extends AbstractController {
 				new FlashMessage(FlashMessage.Type.ERROR, msg).send();
 				Logger.error(msg, e);
 			}
+		} else if (username.isEmpty() && password.isEmpty()) {
+			FlashMessage.updateSuccess.send();
 		}
 		Ebean.update(watchedTarget);
 		return redirect(routes.LoginCredentialsController.edit(id));
