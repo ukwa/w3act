@@ -7,6 +7,7 @@ ctph_file=$3
 wget -O "$base_file_name.pdf" "$pdf_url"
 if [ $? -ne 0 ]
 then
+	rm "$base_file_name.pdf"
 	exit 2
 fi
 
