@@ -6,7 +6,10 @@
 @main("", user) {
 	
    	@if(flash.contains("error")) {
-		<div class="alert alert-warning">@flash.get("error")<pre>@flash.get("error_log")</pre></div>
+		<div class="alert alert-warning">
+  			<p>@flash.get("error")</p>
+			<pre>@flash.get("error_log")</pre>
+		</div>
 	}
         
    	@if(flash.contains("success")) {
