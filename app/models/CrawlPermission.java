@@ -146,7 +146,7 @@ public class CrawlPermission extends ActModel {
 		this.url = url;
 		this.name = name;
 		this.token = UUID.randomUUID().toString();
-        Logger.info("Created new CrawlPermission from constructor("+id+","+url+","+name+") with UUID "+token);
+        Logger.debug("Created new CrawlPermission from constructor("+id+","+url+","+name+") with UUID "+token);
 		
 	}
 
@@ -372,11 +372,14 @@ public class CrawlPermission extends ActModel {
      */
     public static Page<CrawlPermission> page(int page, int pageSize, String sortBy, String order, String filter, 
     		String status) {
-
-        return find.where()
-        		.icontains("name", filter)
-        		.eq("status", status)
-        		.orderBy(sortBy + " " + order)
+    	// Set up query:
+    	ExpressionList<CrawlPermission> q = find.where().icontains("name", filter);
+    	// Add optional status filter:
+    	if( ! "-1".equals(status)) {
+    		q = q .eq("status", status);
+    	}
+    	// Query and return paged list:
+    	return q.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
@@ -449,6 +452,6 @@ public class CrawlPermission extends ActModel {
 				+ user + ", status=" + status + ", license=" + license
 				+ ", requestFollowup=" + requestFollowup + ", numberRequests="
 				+ numberRequests + ", thirdPartyContent=" + thirdPartyContent
-				+ ", publish=" + publish + ", agree=" + agree + "]";
+				+ ", publish=" + publish + ", agree=" + agree + ", token=" + token + "]";
 	}  
 }
