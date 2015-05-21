@@ -180,13 +180,13 @@
 			                @permission.contactPerson.name
 						</td>
 						<td>
-			                <a href="@routes.CommunicationLogController.showLogs(permission.url)">Log</a>
+			                <a href="@routes.CommunicationLogController.showLogs(permission.token)">Log</a>
 						</td>
 						<td>
 						    @if(permission.status.equals("GRANTED")) {
-				                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Granted License</a>
+				                <a href="@routes.LicenseController.formview(permission.token)" target="_blank">Granted License</a>
 			                } else {
-				                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Preview License</a>
+				                <a href="@routes.LicenseController.formview(permission.token)" target="_blank">View License Form</a>
 			                }
 						</td>
 						<td>

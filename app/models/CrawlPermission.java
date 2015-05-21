@@ -146,6 +146,7 @@ public class CrawlPermission extends ActModel {
 		this.url = url;
 		this.name = name;
 		this.token = UUID.randomUUID().toString();
+        Logger.info("Created new CrawlPermission from constructor("+id+","+url+","+name+") with UUID "+token);
 		
 	}
 

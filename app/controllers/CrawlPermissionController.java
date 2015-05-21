@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 @Security.Authenticated(SecuredController.class)
 public class CrawlPermissionController extends AbstractController {
-    final static Form<CrawlPermission> crawlPermissionForm = new Form<CrawlPermission>(CrawlPermission.class);
+    //final static Form<CrawlPermission> crawlPermissionForm = new Form<CrawlPermission>(CrawlPermission.class);
 
     /**
      * Display the crawl permissions.
@@ -110,6 +110,9 @@ public class CrawlPermissionController extends AbstractController {
         crawlPermission.status = Const.CrawlPermissionStatus.QUEUED.name();
         crawlPermission.user = user;
         crawlPermission.token = UUID.randomUUID().toString();
+        Exception tracer = new Exception();
+        tracer.printStackTrace();
+        Logger.info("Created new CrawlPermission from newForm("+targetId+") with UUID "+crawlPermission.token);
 
 		Form<CrawlPermission> filledForm = Form.form(CrawlPermission.class);
 		filledForm = filledForm.fill(crawlPermission);
@@ -706,7 +709,7 @@ public class CrawlPermissionController extends AbstractController {
         
         Logger.debug("template: " + template);
         for (CrawlPermission permission : permissionList) {
-        	Logger.debug("mail to contact person: " + permission.contactPerson.name.replace(Const.LIST_DELIMITER,"") + ".");
+        	Logger.debug("mail to contact person: " + permission.contactPerson);
         	Logger.debug("mail template: " + template);
         	ContactPerson contactPerson = permission.contactPerson;
     		String email = contactPerson.email;
