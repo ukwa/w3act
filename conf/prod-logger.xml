@@ -3,14 +3,14 @@
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 		<file>/var/log/w3act.log</file>
 		<encoder>
-			<pattern>%date - [%level] - from %logger in %thread %n%message%n%xException%n</pattern>
+                        <pattern>%date %coloredLevel %logger{15} - %message%n%xException{5}</pattern>
 		</encoder>
 	</appender>
 
-	<logger name="play" level="DEBUG" />
+	<logger name="play" level="ERROR" />
 	<logger name="application" level="DEBUG" />
 
-	<root level="DEBUG">
+	<root level="ERROR">
 		<appender-ref ref="FILE" />
 	</root>
 </configuration>
