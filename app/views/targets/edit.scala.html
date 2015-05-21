@@ -1019,11 +1019,23 @@
 								Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):
 							</label>
 							<div class="col-sm-6">
+							@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {					        	
+								@select(
+	               					targetForm("licenseStatus"), 
+						                options(licenseStatuses), 
+						                args = 
+						                'class -> "form-control",
+					                	'_default -> "-- None --",
+						                '_label -> "License Status - In case something goes wrong with the licensing process.",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericInput.f), lang)
+					        } else {
 								@if(targetForm("licenseStatus") != null && targetForm("licenseStatus").value != null) {					        
 					        		@targetForm("licenseStatus").value
 					        	} else {
-					                -- None --
-					        	}
+					                <i>None</i>
+ 					        	}
+					        }
 							</div>
 						</div>
 					</div>

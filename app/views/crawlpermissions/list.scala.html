@@ -125,7 +125,7 @@
 										<label for="curator" class="col-sm-6 control-label">Filter by status</label>
 									    <div class="col-sm-6">
 											<select name="status" id="status" class="form-control">
-												<option value="-1">None</option>
+												<option value="-1">ANY</option>
 								                @for(status <- crawlPermissionStatuses) {
 									                @if(status.name.equals(cur_status)) {
 									                	<option value="@status.name" selected>@status.getValue</option>

@@ -147,9 +147,6 @@ public class CommunicationLog extends ActModel {
      */
     public static CommunicationLog logHistory(String name, CrawlPermission crawlPermission, User user, String notes) {
         CommunicationLog log = new CommunicationLog();
-//        log.id = Utils.INSTANCE.createId();
-//        log.url = Const.ACT_URL + log.id;
-//        log.curator = User.findByEmail(request().username()).url; 
         log.user = user;
         log.ttype = Const.CommunicationLogTypes.EMAIL.name();
         log.date = Utils.INSTANCE.getCurrentDate();
@@ -157,7 +154,8 @@ public class CommunicationLog extends ActModel {
         log.crawlPermission = crawlPermission;
         log.notes = notes;
         if( crawlPermission != null ){
-        	log.url = controllers.routes.TargetController.view(crawlPermission.target.id).url();
+        	log.notes =  log.notes + "\n\n" + "n.b. Target URL:" +controllers.routes.TargetController.view(crawlPermission.target.id).url();
+        	log.name = log.name + " ("+crawlPermission.target.title+")";
         }
        	return log;
     }
