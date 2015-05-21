@@ -32,7 +32,9 @@ public class EmailHelper {
     		final String password = Play.application().configuration().getString(Const.MAIL_PASSWORD);
     		String port = Play.application().configuration().getString(Const.PORT);
     		String from = Play.application().configuration().getString(Const.FROM);
+    		boolean dummy = Play.application().configuration().getBoolean(Const.MAIL_DUMMY, false);
     		
+    		// Send email:
     		props.put("mail.smtp.host", host);
     		props.put("mail.smtp.ssl.trust", host);
 			props.put("mail.smtp.user", user);
@@ -64,7 +66,16 @@ public class EmailHelper {
 			            InternetAddress.parse(to));
 		        message.setSubject(subject);
 		        message.setText(msg);
-		        Transport.send(message);
+	    		// Log only if we are in 'dummy' mode, for testing/debug:
+	    		if( dummy ) {
+	    			Logger.info("Not sending email as in DUMMY mode.");
+	    			Logger.info("SUBJECT: "+subject);
+	    			Logger.info("MESSAGE: "+msg);
+	    		}
+	    		// Otherwise, send for real:
+	    		else {
+	    			Transport.send(message);
+	    		}
 		        Logger.debug("E-mail message to " + to + ", with subject '" + subject + "' was sent");
 		        Logger.debug("E-mail message to " + to + ", with subject '" + subject + "' was sent");
 		    } catch (MessagingException e) {
