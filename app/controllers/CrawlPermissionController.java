@@ -795,11 +795,12 @@ public class CrawlPermissionController extends AbstractController {
 		        	if (StringUtils.isNotBlank(permissionValue)) {
 		        		Long permissionId = Long.valueOf(permissionValue);
 		        		CrawlPermission crawlPermission = CrawlPermission.findById(permissionId);
+		        		Logger.debug("crawlPermissions: send() has found: "+crawlPermission);
 		        		crawlPermissions.add(crawlPermission);
 		        	}
 		        }
 	        }
-	    	Logger.debug("crawlPermissions: " + crawlPermissions);
+	    	Logger.debug("crawlPermissions: total = " + crawlPermissions.size());
 	    	
 //	    	if (action.equals("sendall")) {
 //	        	Logger.debug("send all crawl permission requests");
