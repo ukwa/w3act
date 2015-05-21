@@ -741,12 +741,12 @@ public class CrawlPermissionController extends AbstractController {
     		}
     		Logger.debug("email: " + email + ", " + messageSubject + ", " + messageBody);
         	if (StringUtils.isNotBlank(email)) {
-                EmailHelper.sendMessage(email, messageSubject, messageBody);                	
+                EmailHelper.sendMessage(email, messageSubject, messageBody);
 //                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
             	permission.status = Const.CrawlPermissionStatus.PENDING.name();
             	Logger.debug("new permission staus: " + permission.status);
-               	Ebean.update(permission);   
-    	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
+               	Ebean.update(permission);
+    	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE + "\nSubject: " + messageSubject + "\n" + messageBody);
     	        Ebean.save(log);
             	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
     	        updateAllByTarget(permission.id, permission.target.id, permission.status);

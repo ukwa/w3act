@@ -19,6 +19,8 @@ import uk.bl.api.Utils;
 import com.avaje.ebean.ExpressionList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import controllers.routes;
+
 /**
  * This class supports the management of logging communications occurring
  * outside ACT. Archivist is treating each individual communication as a unique record.
@@ -149,11 +151,14 @@ public class CommunicationLog extends ActModel {
 //        log.url = Const.ACT_URL + log.id;
 //        log.curator = User.findByEmail(request().username()).url; 
         log.user = user;
-        log.ttype = Const.CommunicationLogTypes.OTHER.name();
+        log.ttype = Const.CommunicationLogTypes.EMAIL.name();
         log.date = Utils.INSTANCE.getCurrentDate();
         log.name = name;
         log.crawlPermission = crawlPermission;
         log.notes = notes;
+        if( crawlPermission != null ){
+        	log.url = controllers.routes.TargetController.view(crawlPermission.target.id).url();
+        }
        	return log;
     }
     
