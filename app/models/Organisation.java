@@ -60,11 +60,9 @@ public class Organisation extends ActModel {
     public String title;
 
     @JsonIgnore
-    @JsonProperty
     public String edit_url;
 
     @JsonIgnore
-    @JsonProperty
     public String summary;
     
 	@ManyToOne
@@ -72,116 +70,19 @@ public class Organisation extends ActModel {
 	@JsonIgnore
 	public User authorUser;
 
-    @JsonIgnore
     @JsonProperty
     @Required(message="Abbreviation is required")
     @Column(name="affiliation")
     public String field_abbreviation;
 
     @JsonIgnore
-    @JsonProperty
     @Column(columnDefinition = "text")
     public String revision;
 
     @Transient
     @JsonIgnore
-    @JsonProperty
-    public String language;
-
-    @Transient
-    @JsonIgnore
     @Column(columnDefinition = "text") 
     public String value;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public Long feed_nid;
-    
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public Long status;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public Long promote;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public Long sticky;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    private String log;
-    
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    private Long created;
-    
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    private Long changed;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    private FieldModel author;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    private List<String> body;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    private String nid;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public String vid;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    private Boolean is_new;
-    
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public String type;
-    
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public Long comment;
-
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public List<String> comments;
-    
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public Long comment_count;
-    
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public Long comment_count_new;
-    
-    @Transient
-    @JsonIgnore
-    @JsonProperty
-    public String format;
 
     public Organisation() {
     	//    	
@@ -360,62 +261,6 @@ public class Organisation extends ActModel {
         		.getPage(page);
     }
 
-	public List<String> getBody() {
-		return body;
-	}
-
-	public void setBody(List<String> body) {
-		this.body = body;
-	}
-
-	public String getNid() {
-		return nid;
-	}
-
-	public void setNid(String nid) {
-		this.nid = nid;
-	}
-
-	public Boolean getIs_new() {
-		return is_new;
-	}
-
-	public void setIs_new(Boolean is_new) {
-		this.is_new = is_new;
-	}
-
-	public Long getCreated() {
-		return created;
-	}
-
-	public void setCreated(Long created) {
-		this.created = created;
-	}
-
-	public Long getChanged() {
-		return changed;
-	}
-
-	public void setChanged(Long changed) {
-		this.changed = changed;
-	}
-
-	public FieldModel getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(FieldModel author) {
-		this.author = author;
-	}
-
-	public String getLog() {
-		return log;
-	}
-
-	public void setLog(String log) {
-		this.log = log;
-	}
-
 	public static Map<String, String> options() {
         LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
         for(Organisation s : Organisation.findAll()) {
@@ -461,16 +306,8 @@ public class Organisation extends ActModel {
 		return "Organisation [users=" + users + ", targets=" + targets + ", title=" + title
 				+ ", edit_url=" + edit_url + ", summary=" + summary
 				+ ", authorUser=" + authorUser + ", field_abbreviation="
-				+ field_abbreviation + ", revision=" + revision + ", language="
-				+ language + ", value=" + value + ", feed_nid=" + feed_nid
-				+ ", status=" + status + ", promote=" + promote + ", sticky="
-				+ sticky + ", log=" + log + ", created=" + created
-				+ ", changed=" + changed + ", author=" + author + ", body="
-				+ body + ", nid=" + nid + ", vid=" + vid + ", is_new=" + is_new
-				+ ", type=" + type + ", comment=" + comment + ", comments="
-				+ comments + ", comment_count=" + comment_count
-				+ ", comment_count_new=" + comment_count_new + ", format="
-				+ format + ", id=" + id + ", url=" + url + ", createdAt="
+				+ field_abbreviation + ", revision=" + revision + ", value=" + value
+				+ ", id=" + id + ", url=" + url + ", createdAt="
 				+ createdAt + ", updatedAt=" + updatedAt + "]";
 	}
 }

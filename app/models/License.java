@@ -76,6 +76,7 @@ public class License extends Taxonomy {
 		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
 	public List<Instance> instances;
 	
+	
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,License> find = new Model.Finder(Long.class, License.class);
     
@@ -105,34 +106,42 @@ public class License extends Taxonomy {
         return options;		
 	}
 	
+	@JsonIgnore
 	public boolean isGranted() {
 		return (status.equals(LicenseStatus.GRANTED.name()));
 	}
 	
+	@JsonIgnore
 	public boolean isNotInitiated() {
 		return (status.equals(LicenseStatus.NOT_INITIATED.name()));
 	}
 
+	@JsonIgnore
 	public boolean isQueued() {
 		return (status.equals(LicenseStatus.QUEUED.name()));
 	}
 
+	@JsonIgnore
 	public boolean isPending() {
 		return (status.equals(LicenseStatus.PENDING.name()));
 	}
 
+	@JsonIgnore
 	public boolean isRefused() {
 		return (status.equals(LicenseStatus.REFUSED.name()));
 	}
 	
+	@JsonIgnore
 	public boolean isEmailRejected() {
 		return (status.equals(LicenseStatus.EMAIL_REJECTED.name()));
 	}	
 
+	@JsonIgnore
 	public boolean isSuperseded() {
 		return (status.equals(LicenseStatus.SUPERSEDED.name()));
 	}	
 	
+	@JsonIgnore
 	public boolean isOpenUkwaLicense() {
 		return (name.equals(Const.OPEN_UKWA_LICENSE));
 	}
