@@ -438,7 +438,7 @@ public class CrawlPermission extends ActModel {
 
 	@Override
 	public String toString() {
-		return "CrawlPermission [target=" + target + ", mailTemplate="
+		return "CrawlPermission [target=" + target.id + ", mailTemplate="
 				+ mailTemplate + ", contactPerson=" + contactPerson + ", name="
 				+ name + ", description=" + description
 				+ ", anyOtherInformation=" + anyOtherInformation + ", user="
