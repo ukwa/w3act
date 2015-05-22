@@ -1235,6 +1235,15 @@ public class TargetController extends AbstractController {
 					}
 		    	}
 		        
+		    	
+		    	// Ensure items NOT edited here are re-attached:
+		        Target target = Target.findById(id);
+		        filledForm.get().crawlPermissions = target.crawlPermissions;
+		        Logger.warn("Attempting to repair "+target.crawlPermissions+ "("+target.crawlPermissions.size()+")");
+		        //filledForm.get().licenses = target.licenses;
+		        //filledForm.get().licenseStatus = target.licenseStatus;
+		        filledForm.get().instances = target.instances;
+		    	
 				filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));
@@ -1269,7 +1278,7 @@ public class TargetController extends AbstractController {
     		Logger.debug("errors: " + filledForm.errors());
             return newInfo(filledForm);
         }
-
+        
         String wctId = requestData.get("wctId");
         
         if (StringUtils.isNotBlank(wctId) && !Utils.INSTANCE.isNumeric(wctId)) {
@@ -1520,6 +1529,7 @@ public class TargetController extends AbstractController {
     	filledForm.get().active = Boolean.TRUE;
     	
     	Logger.debug("active: " + filledForm.get().active);
+
     	
     	filledForm.get().save();
         flash("success", "Target " + filledForm.get().title + " has been created");
