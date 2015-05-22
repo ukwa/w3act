@@ -1243,6 +1243,7 @@ public class TargetController extends AbstractController {
 		        //filledForm.get().licenses = target.licenses;
 		        //filledForm.get().licenseStatus = target.licenseStatus;
 		        filledForm.get().instances = target.instances;
+		        filledForm.get().lookupEntries = target.lookupEntries;
 		    	
 				filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
