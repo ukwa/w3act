@@ -445,8 +445,6 @@ public class ReportController extends AbstractController {
     	List<Target> nocp = new ArrayList<Target>();
     	for( Target t : Target.findAll() ) {
     		// Does this target have a license?
-    		Logger.info("GOT t: "+t);
-    		Logger.info("LICENCE: "+t.licenseStatus);
     		if( t.licenseStatus != null && ! "".equals(t.licenseStatus)) {
     			// Is there a crawl permission?
     			if( t.crawlPermissions == null || t.crawlPermissions.size() == 0 ) {
