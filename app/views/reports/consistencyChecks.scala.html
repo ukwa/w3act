@@ -1,0 +1,39 @@
+@(user: User, nocp: List[Target])
+
+@script = {
+}
+
+@style = {
+}
+    
+@main("", user, script, style) {
+   	<div class="page-header">
+	    <h1><a href="@routes.ReportController.index()">Reports > </a> Consistency Checks</h1>
+	</div>
+	
+    <ul class="nav nav-tabs">
+	   <!-- li><a href="@routes.ReportController.summary()">Summary</a></li-->
+	   <li><a href="@routes.ReportController.openLicences()">Open UKWA licences</a></li> 
+	   <li><a href="@routes.ReportController.recordCreation()">Target creation</a></li> 
+	   <li class="active"><a href="@routes.ReportController.consistencyChecks()">Consistency Checks</a></li> 
+	   <!-- <li><a href="@routes.ReportController.qa()">QA</a></li> --> 
+	</ul>
+
+	<div class="row">
+	  <div class="col-md-12 col-sm-12 col-xs-12">
+	  
+	  <h3>Missing Crawl Permissions</h3>
+	  
+	  <p>The following @nocp.size target(s) have some kind of licence status but have no associated crawl permission.</p>
+	  
+	  <ul>
+	    @for( t <- nocp ) {
+	  		<li><a href="@routes.TargetController.view(t.id)">@t.title</a></li>
+	  	}
+	  </ul>
+	
+	
+	</div>
+</div>
+	
+}

@@ -68,10 +68,10 @@ public class Target extends UrlModel {
 	@Column(columnDefinition = "text")
 	public String originatingOrganisation;
 	
-	//@JsonIgnore
+	@JsonIgnore
+	//@JsonProperty("crawl_permissions")
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 //    @OrderBy("createdAt DESC")
-	@JsonProperty("crawl_permissions")
 	public List<CrawlPermission> crawlPermissions;
 
 	@JsonIgnore
