@@ -16,6 +16,8 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-email" % "1.3.2",
   "org.apache.commons" % "commons-lang3" % "3.3.2",
   "commons-validator" % "commons-validator" % "1.4.1",
+  "org.apache.tika" % "tika-core" % "1.8",
+  "org.apache.tika" % "tika-parsers" % "1.8",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "commons-io" % "commons-io" % "2.3",
   "com.rabbitmq" % "amqp-client" % "3.3.1",

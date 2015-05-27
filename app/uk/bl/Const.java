@@ -86,6 +86,7 @@ public final class Const {
 	public static final String PORT               = "port";
 	public static final String MAIL_USER          = "mail.user";
 	public static final String MAIL_PASSWORD      = "mail.password";
+	public static final String MAIL_DUMMY         = "mail.dummy";
 	public static final String FROM               = "from";
 	public static final String BL_MAIL_ADDRESS    = "wa-sysadm@bl.uk";
 	public static final String TAGS               = "tags";

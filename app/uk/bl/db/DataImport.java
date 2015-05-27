@@ -51,9 +51,9 @@ public enum DataImport {
 			if (Ebean.find(User.class).findRowCount() == 0) {
 	        	this.importPermissions();
 	        	this.importRoles();
-	        	this.importJsonOrganisations();
+//	        	this.importJsonOrganisations();
 	        	this.importOrganisations();
-	        	this.importCurators();
+//	        	this.importCurators();
 	        	if (importAccounts) {
 //	        		this.importAccounts();
 	        	}
@@ -65,19 +65,19 @@ public enum DataImport {
 	        	this.importContactPersons();
 			}
 			if (Ebean.find(TaxonomyType.class).findRowCount() == 0) {
-				this.importJsonTaxonomyVocabularies();
+//				this.importJsonTaxonomyVocabularies();
 			}
 			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
-				this.importJsonTaxonomies();
+//				this.importJsonTaxonomies();
 				this.importTaxonomies();
 	        	this.importTags();
 	        	this.importFlags();
 			}
 			if (Ebean.find(Target.class).findRowCount() == 0) {
-	        	this.importTargets();
+//	        	this.importTargets();
 			}
 			if (importInstances && Ebean.find(Instance.class).findRowCount() == 0) {
-				this.importInstances();
+//				this.importInstances();
 			}
             Logger.debug("+++ Data import completed +++");
             
@@ -154,16 +154,6 @@ public enum DataImport {
 			Logger.debug("initial password creation - key specification error: " + e);
 		}
         Logger.debug("Loaded Permissions, Roles and Users");
-	}
-	
-	private void importJsonTaxonomyVocabularies() {
-		JsonUtils.INSTANCE.convertTaxonomyVocabulary();
-        Logger.debug("Loaded Json Taxonomies Vocabularies");
-	}
-
-	private void importJsonTaxonomies() {
-		JsonUtils.INSTANCE.convertTaxonomies();
-        Logger.debug("Loaded Json Taxonomies");
 	}
 	
 	private void importTaxonomies() {
@@ -251,27 +241,6 @@ public enum DataImport {
 			organisation.save();
 		}
         Logger.debug("Loaded Organisations");
-	}
-
-	private void importJsonOrganisations() {
-		JsonUtils.INSTANCE.convertOrganisations();
-        Logger.debug("Loaded Json Organisations");
-	}
-	
-	private void importCurators() {
-		JsonUtils.INSTANCE.convertCurators();
-        Logger.debug("Loaded Curators");
-	}
-	
-	private void importTargets() {
-		// store urls in DB
-        JsonUtils.INSTANCE.convertTargets();
-        Logger.debug("Loaded URLs");
-	}
-	
-	private void importInstances() {
-        JsonUtils.INSTANCE.convertInstances();;
-        Logger.debug("Loaded Instances");
 	}
 
 	public static void main(String[] args) {

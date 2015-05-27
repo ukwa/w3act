@@ -823,7 +823,6 @@
 	               					targetForm("scope"), 
 						                options(scopeTypes), 
 						                args = 
-						                'class -> "form-control",
 					                	'_default -> "-- None --",
 						                '_label -> "Scope: Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)",
 						                '_showConstraints -> false
@@ -839,7 +838,6 @@
 	               					targetForm("depth"), 
 						                options(depthTypes), 
 						                args = 
-						                'class -> "form-control",
 					                	'_default -> "-- None --",					                
 						                '_label -> "Depth: (Determines the depth of the crawl. Most crawls will be capped at 500MB)",
 						                '_showConstraints -> false
@@ -853,10 +851,10 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								@helper.inputText(targetForm("ignoreRobotsTxt"),
-									'_label -> "Ignore Robots.txt (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems):",
-								    'class -> "form-control"
-								)(FieldConstructor(genericInput.f), lang)		
+  							@helper.checkbox(field = targetForm("ignoreRobotsTxt"), 
+						                '_label -> "Ignore Robots.txt (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems):",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericMandatoryInput.f), lang)
 							</div>
 						</div>
 			     	</div>	
@@ -870,7 +868,6 @@
 	               					targetForm("crawlFrequency"), 
 						                options(crawlFrequencies), 
 						                args = 
-						                'class -> "form-control",
 						                '_label -> "Crawl Frequency (How often should this site be archived?):",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)
@@ -1017,11 +1014,23 @@
 								Open UKWA license requests (This shows the current status of any requests to site owners for Open UKWA licences. If this has not yet been initiated, you can begin the process using the 'Open License Request' button):
 							</label>
 							<div class="col-sm-6">
+							@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {					        	
+								@select(
+	               					targetForm("licenseStatus"), 
+						                options(licenseStatuses), 
+						                args = 
+						                'class -> "form-control",
+					                	'_default -> "-- None --",
+						                '_label -> "License Status - In case something goes wrong with the licensing process.",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericInput.f), lang)
+					        } else {
 								@if(targetForm("licenseStatus") != null && targetForm("licenseStatus").value != null) {					        
 					        		@targetForm("licenseStatus").value
 					        	} else {
-					                -- None --
-					        	}
+					                <i>None</i>
+ 					        	}
+					        }
 							</div>
 						</div>
 					</div>
@@ -1038,7 +1047,8 @@
 									<button disabled type="submit" name="action" value="request" class="btn btn-success">Open License Request</button>
 									<div class="padding-20">
 										<div class="alert alert-info">
-											Before you can request an Open UKWA license, you need to save the target record. You cannot open a new licence request if a request is already queued.
+											Before you can request an Open UKWA license, you need to save the target record.
+											Also, note that you cannot open a new licence request if a request is already queued.
 										</div>
 									</div>
 								}

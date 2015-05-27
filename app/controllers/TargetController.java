@@ -2,6 +2,9 @@ package controllers;
 
 import static play.data.Form.form;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,6 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import models.Collection;
 import models.FieldUrl;
@@ -38,6 +46,8 @@ import play.data.Form;
 import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
+import play.mvc.Http.MultipartFormData;
+import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -1028,9 +1038,14 @@ public class TargetController extends AbstractController {
 		            		
 			            	FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(trimmed);
 			            	
+			            	Logger.debug("For url "+url);
+			            	Logger.debug("Found existing FieldUrl "+isExistingFieldUrl);
+			            	Logger.debug("Got filledForm.get().id: "+filledForm.get().id);
+			            	
 			            	if (isExistingFieldUrl != null && !isExistingFieldUrl.target.id.equals(id)) {
+				            	Logger.debug("Found existing FieldUrl.target "+isExistingFieldUrl.target);
 			    				String duplicateUrl = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + isExistingFieldUrl.target.id;
-					            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with a current Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
+					            ValidationError ve = new ValidationError("formUrl", "Seed URL already associated with another Target <a href=\"" + duplicateUrl  + "\">" + duplicateUrl + "</a>");
 					            filledForm.reject(ve);
 					            filledForm.get().fieldUrl = originalUrl;
 					            return info(filledForm, id);
@@ -1252,6 +1267,15 @@ public class TargetController extends AbstractController {
 					}
 		    	}
 		        
+		    	
+		    	// Ensure items NOT edited here are re-attached:
+		        filledForm.get().crawlPermissions = target.crawlPermissions;
+		        Logger.warn("Attempting to repair "+target.crawlPermissions+ "("+target.crawlPermissions.size()+")");
+		        //filledForm.get().licenses = target.licenses;
+		        //filledForm.get().licenseStatus = target.licenseStatus;
+		        filledForm.get().instances = target.instances;
+		        filledForm.get().lookupEntries = target.lookupEntries;
+		    	
 				filledForm.get().update(id);
 				
 				boolean watched = getFormParam("watched") != null;
@@ -1303,7 +1327,7 @@ public class TargetController extends AbstractController {
     		Logger.debug("errors: " + filledForm.errors());
             return newInfo(filledForm);
         }
-
+        
         String wctId = requestData.get("wctId");
         
         if (StringUtils.isNotBlank(wctId) && !Utils.INSTANCE.isNumeric(wctId)) {
@@ -1556,6 +1580,7 @@ public class TargetController extends AbstractController {
     	filledForm.get().active = Boolean.TRUE;
     	
     	Logger.debug("active: " + filledForm.get().active);
+
     	
     	filledForm.get().save();
     	
@@ -1961,5 +1986,131 @@ public class TargetController extends AbstractController {
 		
 		return ok(arrayNode);
     }
-}
+	
+	@Security.Authenticated(SecuredController.class)
+	public static Result upload() {
+	    User user = User.findByEmail(request().username());
+	    return ok(views.html.targets.upload.render(user));    
+	}
 
+	@Security.Authenticated(SecuredController.class)
+	public static Result uploadExcel() {
+		  MultipartFormData body = request().body().asMultipartFormData();
+		  FilePart picture = body.getFile("excelFile");
+		  if (picture != null) {
+		    String fileName = picture.getFilename();
+		    String contentType = picture.getContentType(); 
+		    File file = picture.getFile();
+		    Logger.info("Uploaded "+ fileName);
+		    try {
+		    	excelParser(file);
+			    flash("success", "File "+fileName+" uploaded");
+		    } catch( Throwable e ) {
+			    flash("error", "File "+fileName+" parse errors:");
+			    flash("error_log", e.getMessage());
+			    e.printStackTrace();
+		    }
+		    return redirect(routes.TargetController.upload());
+		  } else {
+			Logger.info("Upload failed ");
+		    flash("error", "Missing file");
+		    return redirect(routes.TargetController.upload());
+		  }
+	}
+	
+	private static void excelParser(File inputFile) throws Throwable {
+
+  		FileInputStream file = new FileInputStream(inputFile);
+		 
+        //Create Workbook instance holding reference to .xls[x] file
+  		Workbook workbook = WorkbookFactory.create(file);
+
+        //Get first/desired sheet from the workbook
+        Sheet sheet = workbook.getSheetAt(0);
+        
+        // Check total row:
+        if( sheet.getPhysicalNumberOfRows() <= 1 ) {
+        	throw new Exception("Sheet should have at least one row.");
+        }
+        Logger.debug("Sheet has "+sheet.getPhysicalNumberOfRows()+" rows.");        
+
+        //Iterate through each rows one by one
+        Iterator<Row> rowIterator = sheet.iterator();
+        
+        // Header row:
+        Row header = rowIterator.next();
+        Logger.debug("HEADER: "+header);
+        // TODO Check header row is right.
+        
+        // And the rest:
+        StringBuilder sb = new StringBuilder();
+        while (rowIterator.hasNext())
+        {
+            Row row = rowIterator.next();
+            
+            // Get
+            Target target = new Target();
+            target.title = row.getCell(0).getStringCellValue();
+            target.fieldUrls = new ArrayList<FieldUrl>();
+            // Check URL
+            FieldUrl url = new FieldUrl(row.getCell(1).getStringCellValue());
+            target.fieldUrls.add(url);
+            FieldUrl existingFieldUrl = FieldUrl.findByUrl(url.url);
+			if (existingFieldUrl != null) {
+				String error = "Row # "+row.getRowNum()+ ": CONFLICT - URL " + existingFieldUrl.url+" is already part of target "+existingFieldUrl.target.id+"\n"; 
+				Logger.debug(error);
+				sb.append(error);
+				continue;
+			}
+            //Collection c = new Collection();
+            //c.name = 
+
+            // 
+            System.out.println(target);
+            
+			// TODO Merge with controllers.ApplicationController.bulkImport() code to avoid repetition.
+			target.revision = Const.INITIAL_REVISION;
+			target.active = true;
+			
+			target.selectionType = Const.SelectionType.SELECTION.name();
+			
+			if (target.noLdCriteriaMet == null) {
+				target.noLdCriteriaMet = Boolean.FALSE;
+			}
+
+			if (target.keySite == null) {
+				target.keySite = Boolean.FALSE;
+			}
+
+			if (target.ignoreRobotsTxt == null) {
+				target.ignoreRobotsTxt = Boolean.FALSE;
+			}
+			
+			// Save - disabled right now, as we do not want this live as yet.
+			/*
+			target.runChecks();
+			target.save();
+			*/
+			
+			//
+            System.out.println(target);
+        }
+        workbook.close();
+        file.close();
+        
+        // And report errors
+        if( sb.length() > 0 ) {
+        	throw( new Exception(sb.toString()));
+        }
+    }
+	
+	public static void main( String args[] ) {
+		try {
+			excelParser(new File("test/upload/w3act-targets-upload.xlsx"));
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}

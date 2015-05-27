@@ -741,7 +741,6 @@
 	               					targetForm("scope"), 
 						                options(scopeTypes), 
 						                args = 
-						                'class -> "form-control",
 					                	'_default -> "-- None --",
 						                '_label -> "Scope: Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)",
 						                '_showConstraints -> false
@@ -757,7 +756,6 @@
 	               					targetForm("depth"), 
 						                options(depthTypes), 
 						                args = 
-						                'class -> "form-control",
 					                	'_default -> "-- None --",					                
 						                '_label -> "Depth: (Determines the depth of the crawl. Most crawls will be capped at 500MB)",
 						                '_showConstraints -> false
@@ -772,10 +770,12 @@
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
-								@inputText(targetForm("ignoreRobotsTxt"),
-									'_label -> "Ignore Robots.txt (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems):",
-								    'class -> "form-control"
-								)(FieldConstructor(genericInput.f), lang)		
+							<div class="form-group">
+    							@checkbox(field = targetForm("ignoreRobotsTxt"), 
+						                '_label -> "Ignore Robots.txt (Should we ignore Robots.txt while crawling this site? Note that although this may lead to us exploring more crawler traps, this does not present much of a problem to our crawling systems):",
+						                '_showConstraints -> false
+					            )(FieldConstructor(genericMandatoryInput.f), lang)
+							</div>
 							</div>
 						</div>
 			     	</div>	
@@ -789,7 +789,6 @@
 	               					targetForm("crawlFrequency"), 
 						                options(crawlFrequencies), 
 						                args = 
-						                'class -> "form-control",
 						                '_label -> "Crawl Frequency (How often should this site be archived?):",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)
@@ -820,7 +819,6 @@
 							<div class="form-group">
 								@inputText(targetForm("crawlStartDateText"),
 									'_label -> "Start date:",
-								    'class -> "form-control",
 								    'id -> "start-date-time"
 								)(FieldConstructor(genericInput.f), lang)							
 							</div>

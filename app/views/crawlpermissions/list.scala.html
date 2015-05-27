@@ -125,7 +125,7 @@
 										<label for="curator" class="col-sm-6 control-label">Filter by status</label>
 									    <div class="col-sm-6">
 											<select name="status" id="status" class="form-control">
-												<option value="-1">None</option>
+												<option value="-1">ANY</option>
 								                @for(status <- crawlPermissionStatuses) {
 									                @if(status.name.equals(cur_status)) {
 									                	<option value="@status.name" selected>@status.getValue</option>
@@ -153,9 +153,11 @@
 					<tr>
 						<th>Name</th>
 						<th>Target</th>
+						<th>URLs</th>
 						<th>Contact Person</th>
-						<th>Communication Log</th>
-						<th>Licence</th>
+						<th>Status</th>
+						<th>Communications</th>
+						<th>Licence Form</th>
 						<th>Date</th>
 					</tr>
 				</thead>
@@ -172,6 +174,9 @@
 							</label>
 						</td>
 						<td>
+						    <a class="brand" href="@routes.TargetController.view(permission.target.id)">View</a>
+						</td>
+						<td>
 							@for(fieldUrl <- permission.target.fieldUrls) {
 		                		<a class="brand" rel="external" href="@fieldUrl.url">@fieldUrl.url</a>
 							}			                
@@ -180,13 +185,16 @@
 			                @permission.contactPerson.name
 						</td>
 						<td>
-			                <a href="@routes.CommunicationLogController.showLogs(permission.url)">Log</a>
+			                @permission.status
+						</td>
+						<td>
+			                <a href="@routes.CommunicationLogController.showLogs(permission.token)">View Log</a>
 						</td>
 						<td>
 						    @if(permission.status.equals("GRANTED")) {
-				                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Granted License</a>
+				                <a href="@routes.LicenseController.formview(permission.token)" target="_blank">View</a>
 			                } else {
-				                <a href="@routes.LicenseController.formview(permission.url)" target="_blank">Preview License</a>
+				                <a href="@routes.LicenseController.formview(permission.token)" target="_blank">View</a>
 			                }
 						</td>
 						<td>

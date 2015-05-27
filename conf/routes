@@ -43,7 +43,8 @@ GET     /collections/:url            		controllers.CollectionController.viewAct(
 GET     /collections/:id/edit       		controllers.CollectionController.edit(id:Long)
 GET     /collections/:id/sites				controllers.CollectionController.sites(id:Long)
 POST    /collections             			controllers.CollectionController.save()
-POST    /collections/:id             		controllers.CollectionController.update(id:Long)
+#POST    /collections/:id             		controllers.CollectionController.update(id:Long)
+PUT     /collections/:id             		controllers.CollectionController.update(id:Long)
 
 GET     /subjects                           controllers.SubjectController.index()
 GET    	/subjects/list                  	controllers.SubjectController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
@@ -204,6 +205,7 @@ GET    	/reports/search            	            controllers.ReportController.sea
 GET    	/reports/summary     		            controllers.ReportController.summary()
 GET    	/reports/openLicences    	            controllers.ReportController.openLicences()
 GET    	/reports/recordCreation        		    controllers.ReportController.recordCreation()
+GET    	/reports/consistencyChecks              controllers.ReportController.consistencyChecks()
 GET    	/reports/qa                         	controllers.ReportController.qa()
 GET    	/reportscreation               	        controllers.ReportController.indexCreation() 
 GET    	/reportscreation/search                 controllers.ReportController.searchCreation()
@@ -243,6 +245,8 @@ GET    	/targets/subjecttargets	        	controllers.TargetController.subjectTar
 GET    	/targets/export/ld/:frequency		controllers.TargetController.exportLdFrequencyJson(frequency)
 GET    	/targets/export/by/:frequency		controllers.TargetController.exportByFrequencyJson(frequency)
 
+GET     /targets/upload                				controllers.TargetController.upload()
+POST    /targets/upload/submit                		controllers.TargetController.uploadExcel()
 GET     /targets/:id                      			controllers.TargetController.view(id:Long)
 #GET     /targets/:id/json                  			controllers.TargetController.viewAsJson(id:Long)
 GET     /targets/act/:id                    		controllers.TargetController.viewAct(id)
@@ -362,6 +366,7 @@ PUT		/api/targets/:id					controllers.ApplicationController.targetUpdate(id:Long
 GET    	/api/targets/:id/categories        	controllers.TargetController.getTargetCategories(id:Long)
 
 GET		/api/collections					controllers.CollectionController.getByJson()
+POST 	/api/collections 		   			controllers.CollectionController.collectionCreate()
 GET     /api/collections/:id          		controllers.CollectionController.viewAsJson(id:Long)
 PUT 	/api/collections/:id 				controllers.CollectionController.collectionUpdate(id:Long)
 GET		/api/collections/:id/targets		controllers.CollectionController.getCollectionTargets(id:Long)

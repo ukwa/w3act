@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 @Security.Authenticated(SecuredController.class)
 public class CrawlPermissionController extends AbstractController {
-    final static Form<CrawlPermission> crawlPermissionForm = new Form<CrawlPermission>(CrawlPermission.class);
+    //final static Form<CrawlPermission> crawlPermissionForm = new Form<CrawlPermission>(CrawlPermission.class);
 
     /**
      * Display the crawl permissions.
@@ -110,6 +110,9 @@ public class CrawlPermissionController extends AbstractController {
         crawlPermission.status = Const.CrawlPermissionStatus.QUEUED.name();
         crawlPermission.user = user;
         crawlPermission.token = UUID.randomUUID().toString();
+        Exception tracer = new Exception();
+        tracer.printStackTrace();
+        Logger.info("Created new CrawlPermission from newForm("+targetId+") with UUID "+crawlPermission.token);
 
 		Form<CrawlPermission> filledForm = Form.form(CrawlPermission.class);
 		filledForm = filledForm.fill(crawlPermission);
@@ -706,7 +709,7 @@ public class CrawlPermissionController extends AbstractController {
         
         Logger.debug("template: " + template);
         for (CrawlPermission permission : permissionList) {
-        	Logger.debug("mail to contact person: " + permission.contactPerson.name.replace(Const.LIST_DELIMITER,"") + ".");
+        	Logger.debug("mail to contact person: " + permission.contactPerson);
         	Logger.debug("mail template: " + template);
         	ContactPerson contactPerson = permission.contactPerson;
     		String email = contactPerson.email;
@@ -738,12 +741,12 @@ public class CrawlPermissionController extends AbstractController {
     		}
     		Logger.debug("email: " + email + ", " + messageSubject + ", " + messageBody);
         	if (StringUtils.isNotBlank(email)) {
-                EmailHelper.sendMessage(email, messageSubject, messageBody);                	
+                EmailHelper.sendMessage(email, messageSubject, messageBody);
 //                    EmailHelper.sendMessage(toMailAddresses, messageSubject, messageBody);                	
             	permission.status = Const.CrawlPermissionStatus.PENDING.name();
             	Logger.debug("new permission staus: " + permission.status);
-               	Ebean.update(permission);   
-    	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
+               	Ebean.update(permission);
+    	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE + "\nSubject: " + messageSubject + "\n" + messageBody);
     	        Ebean.save(log);
             	Logger.debug("updated permission name: " + permission.name + ", staus: " + permission.status);
     	        updateAllByTarget(permission.id, permission.target.id, permission.status);
@@ -792,11 +795,12 @@ public class CrawlPermissionController extends AbstractController {
 		        	if (StringUtils.isNotBlank(permissionValue)) {
 		        		Long permissionId = Long.valueOf(permissionValue);
 		        		CrawlPermission crawlPermission = CrawlPermission.findById(permissionId);
+		        		Logger.debug("crawlPermissions: send() has found: "+crawlPermission);
 		        		crawlPermissions.add(crawlPermission);
 		        	}
 		        }
 	        }
-	    	Logger.debug("crawlPermissions: " + crawlPermissions);
+	    	Logger.debug("crawlPermissions: total = " + crawlPermissions.size());
 	    	
 //	    	if (action.equals("sendall")) {
 //	        	Logger.debug("send all crawl permission requests");

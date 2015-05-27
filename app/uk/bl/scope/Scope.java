@@ -102,17 +102,20 @@ public enum Scope {
 	
 	/**
 	 * This method queries geo IP from database
+	 * 
+	 * Synchronized in case the underlying database is not thread-safe.
+	 * 
 	 * @param ip - The host IP
 	 * @return true if in UK domain
 	 */
-	public boolean queryDb(String ip) {
+	public synchronized boolean queryDb(String ip) {
 		boolean res = false;
 		
 		try {		
 			// Find city by given IP
 			CityResponse response = databaseReader.city(InetAddress.getByName(ip));
-			Logger.debug(response.getCountry().getIsoCode()); 
-			Logger.debug(response.getCountry().getName()); 
+			Logger.info(response.getCountry().getIsoCode()); 
+			Logger.info(response.getCountry().getName()); 
 			// Check country code in city response
 			if (response.getCountry().getIsoCode().equals(UK_COUNTRY_CODE)) {
 				res = true;
@@ -748,14 +751,16 @@ public enum Scope {
 //	}
 	
 	public String getDomainFromUrl(String url) throws ActException {
-	    URI uri;
+	    URL uri;
 		try {
-			uri = new URI(url);
+			uri = new URL(url);
+			Logger.debug("getDomainFromUrl: "+uri);
 			String domain = uri.getHost();
+			Logger.debug("getDomainFromUrl GOT: "+domain);
 			if (StringUtils.isNotEmpty(domain)) {
 				return domain.startsWith("www.") ? domain.substring(4) : domain;
 			}
-		} catch (URISyntaxException e) {
+		} catch (MalformedURLException e) {
 			throw new ActException(e);
 		}
 		return null;

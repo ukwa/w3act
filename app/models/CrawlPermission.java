@@ -47,11 +47,13 @@ public class CrawlPermission extends ActModel {
 //	the permission can be inherited from a 'parent' target. 
 //	Targets could in theory have multiple crawl permissions. This is most likely in the case where a 
 //	permission was sent and then cancelled for whatever reason, and then another one sent to supersede it.
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="target_id")
     @Required(message="Target is required")
 	public Target target;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "crawlPermission", cascade = CascadeType.ALL)
 	public List<CommunicationLog> communicationLogs;
     
@@ -70,15 +72,13 @@ public class CrawlPermission extends ActModel {
     @Required(message="Name is required")
     public String name;
     
-    @JsonIgnore
     @Column(columnDefinition = "text")
     public String description;
     
-    @JsonIgnore
     @Column(columnDefinition = "text")
     public String anyOtherInformation;
     
-    @JsonIgnore
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="archivist_id")
     public User user; 
@@ -88,47 +88,42 @@ public class CrawlPermission extends ActModel {
      * Not Initiated, Queued, Pending, Refused, Granted
      * Usually populated by system actions, but may also be modified by Archivist 
      */
-    @JsonIgnore
     @Column(columnDefinition = "text")
     public String status; 
     
-    @JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="license_id")
     public License license; 
     
+	// Do not include the token as this is the 'secret' used to grant licenses
+	@JsonIgnore
 	public String token;
 
     /**
      * This is a checkbox defining whether follow up e-mails should be send.
      */
-    @JsonIgnore
     public Boolean requestFollowup;
     
     /**
      * The number of requests that were sent.
      */
-    @JsonIgnore
     public Long numberRequests;
     
     /**
      * This is a checkbox defining whether any content on this web site subject 
      * to copyright and/or the database right held by another party.
      */
-    @JsonIgnore
     public Boolean thirdPartyContent;
     
     /**
      * This is a checkbox defining whether owner allows the archived web site 
      * to be used in any future publicity for the Web Archive.
      */
-    @JsonIgnore
     public Boolean publish;
     
     /**
      * This is a checkbox defining whether owner agrees to archive web site.
      */
-    @JsonIgnore
     public Boolean agree;
     
     public static final Model.Finder<Long, CrawlPermission> find = new Model.Finder<Long, CrawlPermission>(Long.class, CrawlPermission.class);
@@ -146,7 +141,6 @@ public class CrawlPermission extends ActModel {
 		this.url = url;
 		this.name = name;
 		this.token = UUID.randomUUID().toString();
-		
 	}
 
     public static CrawlPermission findByName(String name) {
@@ -371,11 +365,14 @@ public class CrawlPermission extends ActModel {
      */
     public static Page<CrawlPermission> page(int page, int pageSize, String sortBy, String order, String filter, 
     		String status) {
-
-        return find.where()
-        		.icontains("name", filter)
-        		.eq("status", status)
-        		.orderBy(sortBy + " " + order)
+    	// Set up query:
+    	ExpressionList<CrawlPermission> q = find.where().icontains("name", filter);
+    	// Add optional status filter:
+    	if( ! "-1".equals(status)) {
+    		q = q .eq("status", status);
+    	}
+    	// Query and return paged list:
+    	return q.orderBy(sortBy + " " + order)
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
@@ -441,13 +438,13 @@ public class CrawlPermission extends ActModel {
 
 	@Override
 	public String toString() {
-		return "CrawlPermission [target=" + target + ", mailTemplate="
+		return "CrawlPermission [target=" + target.id + ", mailTemplate="
 				+ mailTemplate + ", contactPerson=" + contactPerson + ", name="
 				+ name + ", description=" + description
 				+ ", anyOtherInformation=" + anyOtherInformation + ", user="
 				+ user + ", status=" + status + ", license=" + license
 				+ ", requestFollowup=" + requestFollowup + ", numberRequests="
 				+ numberRequests + ", thirdPartyContent=" + thirdPartyContent
-				+ ", publish=" + publish + ", agree=" + agree + "]";
+				+ ", publish=" + publish + ", agree=" + agree + ", token=" + token + "]";
 	}  
 }

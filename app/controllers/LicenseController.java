@@ -116,6 +116,10 @@ public class LicenseController extends AbstractController {
 	@Security.Authenticated(SecuredController.class)
     public static void sendAcknowledgementToSiteOwner(String ownerEmail, CrawlPermission permission) {
     	MailTemplate mailTemplate = MailTemplate.findByName(Const.ACKNOWLEDGEMENT);
+    	if( mailTemplate == null ) {
+    		Logger.error("NO Acknowledgement template found!");
+    		return;
+    	}
     	Logger.debug("sendAcknowledgementToSiteOwner mailTemplate: " + mailTemplate);
     	String messageSubject = mailTemplate.subject;
 //    	Logger.debug("sendAcknowledgementToSiteOwner text: " + mailTemplate.text);
@@ -323,11 +327,17 @@ public class LicenseController extends AbstractController {
 	                if (getFormParam(Const.LICENCE) != null) {
 	                	String licenceName = getFormParam(Const.LICENCE);
 	                	License license = License.findByName(licenceName);
+	                	if( license == null ) {
+	                		Logger.error("No suitable license found - inventing one");
+	                		license = new License();
+	                		license.name = "INVENTED LICENSE";
+	                	}
 	                	permission.license = license;
 	                	
 	                	Target target = permission.target;
 	                	target.licenses.add(license);
 	                	target.licenseStatus = permission.status;
+	                	Logger.debug("Updating Target "+target.id);
 	                	target.update();
 	
 	            		// lookup for all targets with lower level and update licence
@@ -341,13 +351,15 @@ public class LicenseController extends AbstractController {
 	                	}
 	                    	
 	                }
+	                Logger.debug("About to update crawl permission: "+permission);
 	                permission.update();
-	    	        Logger.debug("update crawl permission: " + permission.toString());                    
+	    	        Logger.debug("updated crawl permission.");
 			        res = redirect(routes.LicenseController.result());
 		        }
 	        } 
         } catch (Exception e) {
-        	Logger.debug("Update target for licence failed. " + e);
+        	Logger.error("Update target for licence failed. ");
+        	e.printStackTrace();
         	throw new ActException(e);
         }
 	    	

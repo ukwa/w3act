@@ -12,6 +12,8 @@
 			<li><a href="@routes.CollectionController.edit(collection.id)">Edit</a></li>
 		}
 		<li><a href="@routes.CollectionController.sites(collection.id)">Targets</a></li>
+		<li><a href="@routes.CollectionController.viewAsJson(collection.id)">JSON</a></li>
+		
 	</ul>
 
 		<div class="row padding-10">
@@ -61,7 +63,9 @@
 				<div class="form-group">
 					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
 				    <div class="col-sm-6">
+				    @if(collection.description != null ) {
 		          		@Html(collection.description)
+		          	}
 					</div>
 				</div>
 			</div>
@@ -77,6 +81,7 @@
 				</div>
 			</div>
 		</div>
+		
     	
 }
 

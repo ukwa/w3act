@@ -64,11 +64,13 @@ public class Target extends UrlModel {
 	 */
 	private static final long serialVersionUID = -8283372689443804260L;
 
-	@JsonIgnore
+	//@JsonIgnore
+	@JsonProperty("originating_organisation")
 	@Column(columnDefinition = "text")
 	public String originatingOrganisation;
 	
 	@JsonIgnore
+	//@JsonProperty("crawl_permissions")
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 //    @OrderBy("createdAt DESC")
 	public List<CrawlPermission> crawlPermissions;
@@ -176,7 +178,8 @@ public class Target extends UrlModel {
 	@Column(columnDefinition = "text")
 	public String synonyms;
 	
-	@JsonIgnore
+	//@JsonIgnore
+	@JsonProperty("nominating_organisation")
 	@ManyToOne
 	@JoinColumn(name = "organisation_id")
 	public Organisation organisation;
@@ -1431,21 +1434,6 @@ public class Target extends UrlModel {
 		return result;
 	}
 
-	/**
-	 * This method returns status value as a String
-	 * 
-	 * @return
-	 */
-	@JsonIgnore
-	public String getStatusStr() {
-		String res = Const.NA;
-		if (status != null) {
-			res = Const.statusStrMap.get(Long.valueOf(status));
-		}
-		return res;
-	}
-
-
 
 	/**
 	 * This method evaluates the latest created target from the passed unsorted
@@ -2135,7 +2123,7 @@ public class Target extends UrlModel {
 		return (target.qaIssue != null);
 	}
 	
-	@JsonIgnore
+	@JsonProperty("crawl_permission")
 	public CrawlPermission getLatestCrawlPermission() {
 		if (crawlPermissions != null && crawlPermissions.size() > 0) {
 			return crawlPermissions.get(crawlPermissions.size() - 1);
@@ -2295,8 +2283,7 @@ public class Target extends UrlModel {
 				+ field_qa_status + ", field_snapshots=" + field_snapshots
 				+ ", field_notes=" + field_notes + ", title=" + title
 				+ ", edit_url=" + edit_url + ", language=" + language
-				+ ", revision=" + revision + ", vid=" + vid + ", type=" + type
-				+ ", status=" + status + ", author=" + author + ", id=" + id
+				+ ", revision=" + revision + ", id=" + id
 				+ ", url=" + url + "]";
 	}
 	

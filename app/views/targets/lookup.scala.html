@@ -126,7 +126,7 @@
 				@for(target <- currentPage.getList) {
 				<tr>
 					<td>
-						<a class="brand" href="@routes.TargetController.view(target.id)">@target.title</a><br>
+						<a class="brand" href="@routes.TargetController.view(target.id)">@target.title&nbsp;</a><br>
 						@if(target.fieldUrls != null && target.url != null) {
 							@for(fieldUrl <- target.fieldUrls) {
 								<a class="brand" href="@fieldUrl.url" target="_blank">@fieldUrl.url</a>

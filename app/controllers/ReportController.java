@@ -434,5 +434,25 @@ public class ReportController extends AbstractController {
     			"", "", "", "", "either"));
     }
 
+    /**
+     * Performs some basic self-consistency checks on the targets etc.
+     * 
+     * @return A report showning where there are any problems.
+     */
+    public static Result consistencyChecks() {
+        User user = User.findByEmail(request().username());
+        //
+    	List<Target> nocp = new ArrayList<Target>();
+    	for( Target t : Target.findAll() ) {
+    		// Does this target have a license?
+    		if( t.licenseStatus != null && ! "".equals(t.licenseStatus)) {
+    			// Is there a crawl permission?
+    			if( t.crawlPermissions == null || t.crawlPermissions.size() == 0 ) {
+    				nocp.add(t);
+    			}
+    		}
+    	}
+    	return ok(consistencyChecks.render(user, nocp));
+    }
 }
 

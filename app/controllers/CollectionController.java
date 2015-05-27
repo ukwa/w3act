@@ -18,6 +18,7 @@ import play.data.validation.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Result;
+import play.mvc.Results;
 import play.mvc.Security;
 import play.mvc.With;
 import uk.bl.Const;
@@ -28,7 +29,9 @@ import views.html.collections.view;
 import views.html.collections.newForm;
 
 import com.avaje.ebean.Page;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 /**
@@ -132,6 +135,7 @@ public class CollectionController extends AbstractController {
 		if( collection != null ) {
 			Logger.debug("" + id+ " " + collection.parent);
 			if (request().accepts("text/html")) {
+				Logger.info("Rendering collection: "+collection);
 				return ok(view.render(collection, user));
 			} else {
 				return ok(Json.toJson(collection));
@@ -174,6 +178,7 @@ public class CollectionController extends AbstractController {
     public static Result edit(Long id) {
     	User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
+		if( collection.description == null ) collection.description = "";
 		collection.description = collection.description.replace("<p>", "").replace("</p>", "").replace("<br />", "\n").replace("<br>", "\n");
 		List<Collection> thisCollection = new ArrayList<Collection>();
 		thisCollection.add((Collection)collection.parent);
@@ -341,6 +346,48 @@ public class CollectionController extends AbstractController {
 		response().setHeader(LOCATION, url);
 		Logger.debug("response 200 updated");
 	    return ok(response().getHeaders().get(LOCATION));
+    }
+    
+    /**
+     * 
+     *  curl -v -H "Content-Type: application/json" -X POST -d '{"name": "Test Collection"}' -u wa-sysadm@bl.uk:sysAdmin http://localhost:9000/act/api/collections
+     *  
+     * @return
+     */
+    @With(SecuredAction.class)
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result collectionCreate() {
+    	JsonNode node = request().body().asJson();
+
+        
+        try {
+	    	if(node == null) {
+	    		return badRequest("Expecting Json data");
+	    	} else {
+				ObjectMapper objectMapper = new ObjectMapper();
+				objectMapper.setSerializationInclusion(Include.NON_DEFAULT);
+				Collection cl = objectMapper.readValue(node.toString(), Collection.class);
+				if ( cl.id != null ) {
+					return badRequest("No ID should be passed when creating a new Collection!");
+				}
+				/*
+				// Refuse if there's an existing one at the same point in the tree:
+				for ( Collection c : Collection.findAllCollections() ) {
+					if( c.name.equals(cl.name) && c.parent.equals(cl.parent)) {
+						return badRequest("A collection with the name '"+cl.name+"' and parent '"+cl.parent+"' already exists! " );
+					}
+				}
+				*/
+				cl.save();
+	    	}
+        } catch (IllegalArgumentException e) {
+    		return badRequest(" Collection invalid: " + e);
+        } catch (Exception e) {
+        	Logger.error("error: " + e);
+            return Results.internalServerError(e.getMessage());
+        }        
+    	Logger.debug("response 200 updated");
+    	return ok("OK");
     }
     
 	@Security.Authenticated(SecuredController.class)
