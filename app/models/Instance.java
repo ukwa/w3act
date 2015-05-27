@@ -129,6 +129,7 @@ public class Instance extends UrlModel {
 //same	"comment_count_new":"0",
 //same	"feed_nid":null}
 	
+	@Transient
     public String log;
 
 
