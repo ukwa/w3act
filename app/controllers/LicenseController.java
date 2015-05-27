@@ -335,7 +335,9 @@ public class LicenseController extends AbstractController {
 	                	permission.license = license;
 	                	
 	                	Target target = permission.target;
-	                	target.licenses.add(license);
+	                	// Only add this license if it's not already associated:
+	                	if( ! target.licenses.contains(license))
+	                		target.licenses.add(license);
 	                	target.licenseStatus = permission.status;
 	                	Logger.debug("Updating Target "+target.id);
 	                	target.update();
