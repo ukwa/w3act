@@ -16,6 +16,27 @@
 
 1.0.2
 -----
+* Enhancement: Detection of duplicate URLs, particularly http and https version of same site
+* Enhancement: Added testing of URLs
+* Enhancement: External links now open in new browser window
+* Enhancement: Postal address URL added to bulk importer
+* Enhancement: HTTP update API implemented
+* Enhancement: Mobile device layout improved
+* Enhancement: Management of targets improved, target deletion possible but only as orphans
+* Enhancement: Defunct accounts now markable as inactive/closed
+* Enhancement: Validation of target records with no LD criteria met
+* Enhancement: Bad URL entered now reports error message in UI
+* Change: Search term no longer required on QA dashboard
+* Change: Default date on target report
+* Bug fix: Removed duplicate results in reports view
+* Bug fix: Target end date now editable
+* Bug fix: Corrected link to licence privacy statement
+* Bug fix: Fixed editing of target schedule
+* Bug fix: Target results export button
+* Bug fix: Collections page shows Published status
+* Bug fix: Licence form shows website URL
+* Bug fix: Java crawl permission persistence error fixed
+* Bug fix: Refused licence requests now displayed in refused list
 
 1.0.1
 -----
