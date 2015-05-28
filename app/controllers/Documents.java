@@ -201,7 +201,7 @@ public class Documents extends AbstractController {
 		String piiUrl = Play.application().configuration().getString("pii_url");
 		WSRequestHolder holder = WS.url(piiUrl);
 
-		Promise<List<AssignableArk>> arksPromise = holder.get().map(
+		Promise<List<AssignableArk>> arksPromise = holder.post("").map(
 				new Function<WSResponse, List<AssignableArk>>() {
 					public List<AssignableArk> apply(WSResponse response) {
 						Logger.debug("PII XML-Response: " + response.getBody());
