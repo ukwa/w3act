@@ -167,30 +167,11 @@ public class WaybackController extends Controller {
 			e.printStackTrace();
 		}
 		  
-		  TransformerFactory tf = TransformerFactory.newInstance();
-		  Transformer transformer = null;
-		try {
-			transformer = tf.newTransformer();
-		} catch (TransformerConfigurationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		  transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		  StringWriter writer = new StringWriter();
-		  try {
-			transformer.transform(new DOMSource(doc), new StreamResult(writer));
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		  String output = writer.getBuffer().toString().replaceAll("\n|\r", "");		 
-		  
-		 int start = output.indexOf("<numresults>");
-		 int end = output.indexOf("</numresults>");
-		 String value = output.substring(start+12, end);
-		 Logger.debug("DOC:"+ value);
-		 
-		 return value;
+		  NodeList nl = doc.getElementsByTagName("request");
+	      Node n = nl.item(0).getChildNodes().item(9);  
+	      Logger.debug("node:"+ n.getNodeName());
+	      	     
+	      return n.getTextContent();
 		  
 			}
 			else{
@@ -251,30 +232,10 @@ public class WaybackController extends Controller {
 			e.printStackTrace();
 		}
 		  
-		  TransformerFactory tf = TransformerFactory.newInstance();
-		  Transformer transformer = null;
-		try {
-			transformer = tf.newTransformer();
-		} catch (TransformerConfigurationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		  transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		  StringWriter writer = new StringWriter();
-		  try {
-			transformer.transform(new DOMSource(doc), new StreamResult(writer));
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		  String output = writer.getBuffer().toString().replaceAll("\n|\r", "");		 
-		  
-		 int start = output.indexOf("<numresults>");
-		 int end = output.indexOf("</numresults>");
-		 String value = output.substring(start+12, end);
-		 Logger.debug("DOC:"+ value);
-		 
-		 return value;
+		  NodeList nl = doc.getElementsByTagName("request");
+	      Node n = nl.item(0).getChildNodes().item(9);  
+		
+	      return n.getTextContent();
 		  
 			}
 			else{
