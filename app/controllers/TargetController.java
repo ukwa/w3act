@@ -118,7 +118,7 @@ public class TargetController extends AbstractController {
     	
         return ok(
         	lookup.render(
-        			"Lookup", 
+        			"Lookup "+filter, 
         			User.findByEmail(request().username()), 
         			filter, 
         			pages, 

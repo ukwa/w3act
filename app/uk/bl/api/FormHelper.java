@@ -40,18 +40,24 @@ public enum FormHelper {
     	return target.indicateNpldStatus();
     }
     
-	public boolean indicateUkwaLicenceStatus(Long targetId) {
-		// include what RGRAF implemented
-		Target target = Target.findById(targetId);
-		return target.indicateUkwaLicenceStatus();
-	}
-	
 	// to helper
 	public Set<Target> getUkwaLicenceStatusList(Long targetId) {
 		Target target = Target.findById(targetId);
 		return target.getUkwaLicenceStatusList();
 	}
-	
+
+	/**
+	 * Indicate whether this target has a license or permission request, either direct or inherited.
+	 * @param targetId
+	 * @return
+	 */
+	public boolean indicateUkwaLicenceStatus(Long targetId) {
+		Target target = Target.findById(targetId);
+		return target.indicateLicenses();
+	}
+
+	/*
+	// FIXME This is insanely wrong.
 	public static Set<Target> getLowerTargets(FieldUrl fieldUrl) {
 		String query = "find target fetch fieldUrls where active = :active and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) > :length";
 		
@@ -64,6 +70,7 @@ public enum FormHelper {
 		return higherTargets;
 	}
 
+	// FIXME This is insanely wrong.
 	public static Set<Target> getHigherTargetsWithLicenseAndQaIssue(FieldUrl fieldUrl) {
 		String query = "find target fetch fieldUrls fetch licenses where active = :active and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length";
 		
@@ -77,6 +84,7 @@ public enum FormHelper {
 		return higherTargets;
 	}
 	
+	// FIXME This is insanely wrong.
 	public static Target getHigherLevelTargetLicense(FieldUrl fieldUrl) {
 		String query = "find target fetch fieldUrls fetch licenses where active = :active and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length";
 		
@@ -90,6 +98,7 @@ public enum FormHelper {
 		return higherTarget;
 	}
 	
+	// FIXME This is insanely wrong.
 	public static Set<Target> getHigherTargetsForNpld(FieldUrl fieldUrl) {
 		StringBuilder query = new StringBuilder("find target fetch fieldUrls where active = :active and fieldUrls.domain = :domain and LENGTH(fieldUrls.url) < :length and isUkHosting = :isUkHosting ");
 			query.append("and (ukPostalAddress = :ukPostalAddress or viaCorrespondence = :viaCorrespondence or professionalJudgement = :professionalJudgement or noLdCriteriaMet = :noLdCriteriaMet)");
@@ -107,6 +116,7 @@ public enum FormHelper {
 		
 		return higherTargets;
 	}
+	*/
 	
 	// to helper
 	public boolean indicateLicenses(Long targetId) {

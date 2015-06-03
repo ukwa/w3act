@@ -57,7 +57,7 @@
     </style>
 }
     
-@main("", user, script, style) {
+@main("Target %s".format(target.title), user, script, style) {
    	<div class="page-header">
 	    <h1><a href="@routes.TargetController.index()">Targets > </a>Target @target.title</h1>
 	</div>

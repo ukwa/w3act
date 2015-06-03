@@ -142,7 +142,7 @@
     </style>
 }
 
-@main("", user, scripts, styles) {
+@main("Editing %s".format(targetForm("title").value), user, scripts, styles) {
     
    	<div class="page-header">
 	    <h1><a href="@routes.TargetController.index()">Targets > </a>Target @targetForm("title").value</h1>

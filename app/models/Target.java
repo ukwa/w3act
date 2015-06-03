@@ -1930,9 +1930,9 @@ public class Target extends UrlModel {
 			Logger.debug("getNpldStatusList() domain: " + domain);
 		
 			
-			// higher level again
-			Set<Target> higherTargets = FormHelper.getHigherTargetsForNpld(fieldUrl);
-			targets.addAll(higherTargets);
+			// FIXME higher level again
+//			Set<Target> higherTargets = FormHelper.getHigherTargetsForNpld(fieldUrl);
+//			targets.addAll(higherTargets);
 		}
 
 		Logger.debug("getNpldStatusList() targets list size: " + targets.size());
@@ -1983,16 +1983,17 @@ public class Target extends UrlModel {
 //		if (higherTarget != null) {
 //			return (indicateLicenses(higherTarget.fieldLicense));
 //		}
-		for (FieldUrl fieldUrl : this.fieldUrls) {
-			if (FormHelper.getHigherLevelTargetLicense(fieldUrl) != null) {
-				return true;
-			}
+
+		// FIXME This is all terribly wrong:
+		for (FieldUrl fieldUrl : this.fieldUrls) {			
+//			if (FormHelper.getHigherLevelTargetLicense(fieldUrl) != null) {
+//				return true;
+//			}
 		} 
 		return false;
 	}
 
 	public boolean indicateLicenses() {
-		// removed indicateUkwaLicenceStatus() check as this was the one that check qastatus
 		return (hasLicenses() || hasHigherLicense());
 	}    
     
@@ -2046,12 +2047,14 @@ public class Target extends UrlModel {
 			// license field checked as required in issue 176.
 			// higher level domain and has a license or higher level domain
 			// and has pending qa status
+			
+			// FIXME This is all rong.
 
-			Set<Target> higherTargets = FormHelper.getHigherTargetsWithLicenseAndQaIssue(thisFieldUrl);
+//			Set<Target> higherTargets = FormHelper.getHigherTargetsWithLicenseAndQaIssue(thisFieldUrl);
 			
-			Logger.debug("higherTargets: " + higherTargets.size());
+//			Logger.debug("higherTargets: " + higherTargets.size());
 			
-			results.addAll(higherTargets);
+//			results.addAll(higherTargets);
 		}
 
 		return results;

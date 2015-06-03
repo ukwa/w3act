@@ -342,6 +342,11 @@ public class LicenseController extends AbstractController {
 	                	Logger.debug("Updating Target "+target.id);
 	                	target.update();
 	
+	                	/*
+	                	 * 
+	                	 * FIXME This is not the right moment to be doing this, as it could only ever
+	                	 * fix up targets that exist at the time the license is submitted.
+
 	            		// lookup for all targets with lower level and update licence
 	                	for (FieldUrl fieldUrl : target.fieldUrls) {
 	                    	Set<Target> lowerTargets = FormHelper.getLowerTargets(fieldUrl);
@@ -351,6 +356,7 @@ public class LicenseController extends AbstractController {
 	                    		lowerTarget.update();
 	                    	}
 	                	}
+	                	*/
 	                    	
 	                }
 	                Logger.debug("About to update crawl permission: "+permission);
