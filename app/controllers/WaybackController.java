@@ -89,32 +89,7 @@ public class WaybackController extends Controller {
 	public static Promise<Result> waybackRoot() throws ActException {
 		return wayback("");
 	}
-	
-	
-//	public static String sayHello(String url) {
-//		  Document dom = request().body().asXml();
-//		  Logger.debug("DOM:"+dom + request() + request().body());
-//		  if(dom == null) {
-//		    return badRequest("Expecting Xml data");
-//		  } else {
-//		    String name = XPath.selectText("http://www.webarchive.org.uk/wayback/archive/xmlquery.jsp?type=prefixquery&url=" + url, dom);
-//		    if(name == null) {
-//		      return badRequest("Missing parameter [name]");
-//		    } else {
-//		      return ok("Hello " + name);
-//		    }
-//		  }
-//		  Request request=this.getLoggedRequest();
-//		  request.url="http://www.webarchive.org.uk/wayback/archive/xmlquery.jsp?type=prefixquery&url=" + url;
-//		  request.method="GET";
-//		  Response response=makeRequest(request);
-//		  Logger.debug("NIL:"+response);
-//		  if (response == null)
-//			  return ("Expecting Xml data");
-//		  else
-//		  return ("Hello");
-		
-//		}
+
 	
 	/**Method to fetch number of crawled urls**/
 	public static String show(String url) {
