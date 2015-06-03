@@ -92,7 +92,7 @@ public class WaybackController extends Controller {
 
 	
 	/**Method to fetch number of crawled urls**/
-	public static String show(String url) {
+	public static String getTotalCrawledUrls(String url) {
 		  Logger.debug("url:"+url);
 		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		  String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
@@ -158,7 +158,7 @@ public class WaybackController extends Controller {
 		}
 	
 	/**Method to fetch number of times the specific url has been crawled**/
-	public static String show1(String url) {
+	public static String getTotalCrawledInstances(String url) {
 		  Logger.debug("url:"+url);
 		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		  String wayBackUrl = Play.application().configuration().getString("application.wayback.url");

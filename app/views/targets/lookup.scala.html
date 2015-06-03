@@ -115,7 +115,7 @@
 					@header("title", "Title")
 					@header("organisation", "Organisation")
 					<th>Crawled URL(s)</th>
-					<th>Crawl Number</th>
+					<th>Crawled Instances</th>
 					<th>Crawl Frequency</th>
 					<th>User</th>
 					<th>QA Status</th>
@@ -143,13 +143,13 @@
 					@if(target.fieldUrls != null && target.url != null) {
 						<td>@for(fieldUrl <- target.fieldUrls) {
 						<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">
-						@controllers.WaybackController.show(fieldUrl.url)</a>
+						@controllers.WaybackController.getTotalCrawledUrls(fieldUrl.url)</a>
 						}</td>
 					} 
 						@if(target.fieldUrls != null && target.url != null) {
 						<td>@for(fieldUrl <- target.fieldUrls) {
 						<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">
-						@controllers.WaybackController.show1(fieldUrl.url)</a>
+						@controllers.WaybackController.getTotalCrawledInstances(fieldUrl.url)</a>
 						}</td>
 					} 
 					<td>
