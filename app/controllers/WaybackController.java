@@ -94,7 +94,8 @@ public class WaybackController extends Controller {
 	/**Method to fetch number of crawled urls**/
 	public static String show(String url) {
 		  Logger.debug("url:"+url);
-		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();		  
+		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		  String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
 		try {
 			db = dbf.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
@@ -104,7 +105,7 @@ public class WaybackController extends Controller {
 		/***Check the http status code***/
 		
 		try {
-			wayback_url = new URL("http://www.webarchive.org.uk/wayback/archive/xmlquery.jsp?type=prefixquery&url="+url);
+			wayback_url = new URL(wayBackUrl+"/xmlquery.jsp?type=prefixquery&url="+url);
 		} catch (MalformedURLException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -159,7 +160,8 @@ public class WaybackController extends Controller {
 	/**Method to fetch number of times the specific url has been crawled**/
 	public static String show1(String url) {
 		  Logger.debug("url:"+url);
-		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();		  
+		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		  String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
 		try {
 			db = dbf.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
@@ -169,7 +171,7 @@ public class WaybackController extends Controller {
 		/***Check the http status code***/
 		
 		try {
-			wayback_url = new URL("http://www.webarchive.org.uk/wayback/archive/xmlquery.jsp?type=urlquery&url="+url);
+			wayback_url = new URL(wayBackUrl + "/xmlquery.jsp?type=urlquery&url=" + url);
 		} catch (MalformedURLException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
