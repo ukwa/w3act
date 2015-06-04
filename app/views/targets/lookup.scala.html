@@ -115,6 +115,7 @@
 					@header("title", "Title")
 					@header("organisation", "Organisation")
 					<th>Crawled URL(s)</th>
+					<th>Crawled Instances</th>
 					<th>Crawl Frequency</th>
 					<th>User</th>
 					<th>QA Status</th>
@@ -139,7 +140,18 @@
 					} else {
 						<td></td>
 					}
-					<td>0</td>
+					@if(target.fieldUrls != null && target.url != null) {
+						<td>@for(fieldUrl <- target.fieldUrls) {
+						<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">
+						@controllers.WaybackController.getTotalCrawledUrls(fieldUrl.url)</a>
+						}</td>
+					} 
+						@if(target.fieldUrls != null && target.url != null) {
+						<td>@for(fieldUrl <- target.fieldUrls) {
+						<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">
+						@controllers.WaybackController.getTotalCrawledInstances(fieldUrl.url)</a>
+						}</td>
+					} 
 					<td>
 				    	@if(target.crawlFrequency != null && target.crawlFrequency.length > 0) {
  							@uk.bl.Const.CrawlFrequency.getCrawlFrequency(target.crawlFrequency).getValue
