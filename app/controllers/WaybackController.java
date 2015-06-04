@@ -93,7 +93,7 @@ public class WaybackController extends Controller {
 	
 	/**Method to fetch number of crawled urls**/
 	public static String getTotalCrawledUrls(String url) {
-		  Logger.debug("url:"+url);
+		  Logger.debug("getTotalCrawledUrls url:"+url);
 		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		  String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
 		try {
@@ -121,7 +121,7 @@ public class WaybackController extends Controller {
 		}
 		try {
 			 statusCode = http.getResponseCode();
-			 Logger.debug("statusCode:"+ statusCode);
+			 Logger.debug("getTotalCrawledUrls statusCode:"+ statusCode);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -145,7 +145,7 @@ public class WaybackController extends Controller {
 		  
 		  NodeList nl = doc.getElementsByTagName("request");
 	      Node n = nl.item(0).getChildNodes().item(9);  
-	      Logger.debug("node:"+ n.getNodeName());
+	      Logger.debug("getTotalCrawledUrls = "+ n.getTextContent());
 	      	     
 	      return n.getTextContent();
 		  
@@ -159,7 +159,7 @@ public class WaybackController extends Controller {
 	
 	/**Method to fetch number of times the specific url has been crawled**/
 	public static String getTotalCrawledInstances(String url) {
-		  Logger.debug("url:"+url);
+		  Logger.debug("getTotalCrawledInstances url:"+url);
 		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		  String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
 		try {
@@ -187,7 +187,7 @@ public class WaybackController extends Controller {
 		}
 		try {
 			 statusCode = http.getResponseCode();
-			 Logger.debug("statusCode:"+ statusCode);
+			 Logger.debug("getTotalCrawledInstances statusCode:"+ statusCode);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
