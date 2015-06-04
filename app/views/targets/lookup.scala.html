@@ -107,6 +107,16 @@
 			}
 		</div>
 		
+		
+	   <ul class="nav nav-pills" role="tablist">
+	 
+	   @if(filter.toString() != null) {
+ 		 <li ><a href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/query?type=prefixquery&url=@filter.toString()">Crawled Instances<span class="badge">@controllers.WaybackController.getTotalCrawledInstances(filter.toString())</span></a></li>
+ 		 <li><a href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/query?type=prefixquery&url=@filter.toString()">Crawled URL(s)<span class="badge">@controllers.WaybackController.getTotalCrawledUrls(filter.toString())</span></a></li>
+	      }
+	   </ul>
+	
+		
 		@pagination
     
 		<table class="table table-hover">
