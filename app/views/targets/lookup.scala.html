@@ -108,7 +108,7 @@
 		</div>
 		
 	@if(filter.toString() != null && filter.length() > 0) {		   
-	   <div style="margin-left: -170px; left: 50%; width: 360px; position: relative;">
+	   <div style="margin-left: -180px; left: 50%; width: 420px; position: relative;">
 	    <ul class="nav nav-pills" role="tablist"> 	   
  		 <li ><a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@filter.toString()">Crawled Instances<span class="badge">@controllers.WaybackController.getTotalCrawledInstances(filter.toString())</span></a></li>
  		 <li><a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/query?type=prefixquery&url=@filter.toString()">Crawled URL(s)<span class="badge">@controllers.WaybackController.getTotalCrawledUrls(filter.toString())</span></a></li>	      
