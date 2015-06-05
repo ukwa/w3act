@@ -637,12 +637,7 @@ public class Instance extends UrlModel {
 	 * @return result as a flag
 	 */
     public boolean isInScope(String url, String nidUrl) {
-    	try {
-    		return Scope.INSTANCE.check(url, this.target);
-    	} catch (WhoisException ex) {
-    		Logger.debug("Exception: " + ex);
-    		return false;
-    	}
+    	return Scope.INSTANCE.check(url, this.target);
     }
     
     /**

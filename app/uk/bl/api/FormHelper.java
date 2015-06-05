@@ -161,7 +161,7 @@ public enum FormHelper {
 		return target.isUkRegistration;
 	}
 
-	public List<Target> getNpldStatusList(Long targetId) throws ActException {
+	public Set<Target> getNpldStatusList(Long targetId) throws ActException {
 		Target target = Target.findById(targetId);
 		return target.getNpldStatusList();
 	}

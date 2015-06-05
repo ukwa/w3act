@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -465,11 +466,10 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * This method returns all Targets that comprise link to given collection
+	 * Count total number of records that rely on whois?
 	 * 
-	 * @param collectionUrl
-	 *            - The collection identifier
-	 * @return Targets list
+	 * @param value
+	 * @return
 	 */
 	public static int findWhoIsCount(boolean value) {
 		int count = 0;
@@ -688,12 +688,7 @@ public class Target extends UrlModel {
 	 * @return result as a flag
 	 */
 	public boolean isInScope(String url) {
-		try {
-			return Scope.INSTANCE.check(url, this);
-		} catch (WhoisException ex) {
-			Logger.debug("Exception: " + ex);
-			return false;
-		}
+		return Scope.INSTANCE.check(url, this);
 	}
 
 	/**
@@ -709,12 +704,7 @@ public class Target extends UrlModel {
 	 * @return result as a flag
 	 */
 	public static boolean isInScopeExt(String url, Target target, String mode) {
-		try {
-			return Scope.INSTANCE.checkExt(url, target, mode);
-		} catch (WhoisException ex) {
-			Logger.debug("Exception: " + ex);
-			return false;
-		}
+		return Scope.INSTANCE.checkExt(url, target, mode);
 	}
 
 	/**
@@ -746,14 +736,13 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * This method finds all targets that have higher level domain containing in
-	 * their path on order to extend licence obtained for higher level to the
-	 * lower levels.
+	 * This method finds all targets that share a domain.
 	 */
-	public static List<Target> findAllTargetsWithLowerLevel(String target) {
+	public static List<Target> findAllTargetsForDomain(String domain) {
 		List<Target> res = new ArrayList<Target>();
 		ExpressionList<Target> ll = find.where()
-				.icontains(Const.FIELD_URL_NODE, target).eq(Const.ACTIVE, true);
+				.eq(Const.ACTIVE, true)
+				.ieq("field_url.domain", domain);
 		res = ll.findList();
 		return res;
 	}
@@ -1901,115 +1890,72 @@ public class Target extends UrlModel {
 //		return true;
 //	}
 
+
+	/**
+	 * Look for any kind of license at a higher level.
+	 * 
+	 * Loop over Targets that may cover each URL.
+	 * For each one, it checks if it might apply to the current target, and whether 
+	 * it's a NPLD or licensed Target.
+	 * This means checking that all URLs are covered by the 'parent'.
+	 * Every URL must be covered by at least on Target.
+	 * 
+	 * @return
+	 */
+	@JsonIgnore
+	public Set<Target> getInheritedLicences() {
+		Set<Target> parents = new LinkedHashSet<Target>();
+		int lc = 0;
+		for (FieldUrl fieldUrl : this.fieldUrls) {
+			Logger.info("Looking for inherited licensed for "+fieldUrl.url);
+			for( Target t : Target.findAllTargetsForDomain(fieldUrl.domain) ) {
+				Logger.info("Checking "+t.title);
+				// Check if the scoping of the target applies here:
+				for( FieldUrl pt : t.fieldUrls) {
+					Logger.info("Checking "+pt.url);
+					// If one of the 'parent's' URLs is a prefix of this one:
+					if( fieldUrl.url.startsWith(pt.url) ) {
+						// Check if this is in scope, includes hasLicense check:
+						// Also check if a license process is underway:
+						if( Scope.INSTANCE.check(t) || (! t.enableLicenseCreation())) {
+							Logger.info("Found parent, licenseStatus="+t.licenseStatus);
+							parents.add(t);
+						}
+					}
+				}
+			}
+		}
+		// Clear out if these Targets did not cover all the URLs:
+		if(lc != fieldUrl.length()) {
+			parents.clear();
+		}
+		return parents;
+	}
+
+	/**
+	 * Simple boolean check build on presence of a license.
+	 * 
+	 * @return
+	 */
+	@JsonIgnore
+	public boolean hasInheritedLicense() {
+		if( this.getInheritedLicences().size() > 0 ) return true;
+		return false;
+	}
+
 	@JsonIgnore
     public boolean indicateNpldStatus() throws ActException {
     	return (getNpldStatusList().size() > 0);
     }
 
-	/**
-	 * This method evaluates the Target list where NPLD status of (i) one or
-	 * more of the 'UK Postal Address', 'Via Correspondence', and/or
-	 * 'Professional Judgment' fields is not null in any other target record at
-	 * a higher level within the same domain AND (ii) where both 'UK hosting'
-	 * and 'UK top-level domain' = No.
-	 * 
-	 * @return target list
-	 * @throws ActException 
-	 */
 	@JsonIgnore
-	public List<Target> getNpldStatusList() throws ActException {
-		
-		List<Target> res = new ArrayList<Target>();
-		List<Target> unsorted = new ArrayList<Target>();
-		
-		List<Target> targets = new ArrayList<Target>();
-		
-		for (FieldUrl fieldUrl : this.fieldUrls) {
-//			String url = this.normalizeUrl(fieldUrl.url);
-			String domain = fieldUrl.domain;
-			Logger.debug("getNpldStatusList() domain: " + domain);
-		
-			
-			// FIXME higher level again
-//			Set<Target> higherTargets = FormHelper.getHigherTargetsForNpld(fieldUrl);
-//			targets.addAll(higherTargets);
-		}
-
-		Logger.debug("getNpldStatusList() targets list size: " + targets.size());
-
-		/**
-		 * Check that UK top level domain is false, one of mentioned flags is
-		 * true and the domain is of higher level.
-		 */
-		for (Target target : targets) {
-			
-			if (!target.isUkHosting() && !target.isTopLevelDomain()) {
-				unsorted.add(target);
-				 if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
-					 break;
-				 }
-			}
-		}
-		
-		Logger.debug("getNpldStatusList() targets unsorted result list size: " + unsorted.size());
-
-		/**
-		 * Check that UK top level domain is false, one of mentioned flags is
-		 * true and the domain is of higher level.
-		 */
-		for (int i = 0; i < Const.MAX_NPLD_LIST_SIZE; i++) {
-			if (i < unsorted.size()) {
-				Target target = getLatestCreatedTarget(unsorted);
-				if (target != null) {
-					res.add(i, target);
-					unsorted.remove(target);
-				}
-			}
-		}
-		Logger.debug("getNpldStatusList() targets result list size: " + res.size());
+	public Set<Target> getNpldStatusList() throws ActException {
+		Set<Target> res = this.getInheritedLicences();
 		return res;
 	}
 
-	@JsonIgnore
-	public boolean hasLicenses() {
-		return (this.licenses != null && !this.licenses.isEmpty());
-	}
-
-	@JsonIgnore
-	public boolean hasHigherLicense() {
-		// Open UKWA Licence at higher level - disabled
-		// Other license at higher level - disabled
-//		Target higherTarget = this.getHigherLevelTarget();
-//		if (higherTarget != null) {
-//			return (indicateLicenses(higherTarget.fieldLicense));
-//		}
-
-		// FIXME This is all terribly wrong:
-		for (FieldUrl fieldUrl : this.fieldUrls) {			
-//			if (FormHelper.getHigherLevelTargetLicense(fieldUrl) != null) {
-//				return true;
-//			}
-		} 
-		return false;
-	}
-
-	public boolean indicateLicenses() {
-		return (hasLicenses() || hasHigherLicense());
-	}    
-    
 	public boolean indicateUkwaLicenceStatus() {
-		// include what RGRAF implemented
 		return this.getUkwaLicenceStatusList().size() > 0;
-	}
-
-	// Cannot create
-	public boolean enableLicenseCreation() {
-		return (StringUtils.isBlank(this.licenseStatus) || this.isNotInitiated());
-	}
-	
-	// only sys admin and archivist can create
-	public boolean hasInvalidLicenses() {
-		return (this.isRefused() || this.isEmailRejected() || this.isSuperseded());
 	}
 	
 	/**
@@ -2022,43 +1968,28 @@ public class Target extends UrlModel {
 	 */
 	@JsonIgnore
 	public Set<Target> getUkwaLicenceStatusList() {
-		// Open UKWA Licence at higher level - disabled
-		// Open UKWA licence for target being edited - disabled
+		Set<Target> res = this.getInheritedLicences();
+		return res;
 		
-		// url is similar but less in characters
-		// has a license
-		// has a qaIssue
-		Set<Target> results = new LinkedHashSet<Target>();
-		// first aggregate a list of active targets for associated URL
-			// TODO: KL REDO THIS
-//			this.fieldUrl = Scope.normalizeUrl(this.fieldUrl());
-		for (FieldUrl thisFieldUrl : this.fieldUrls) {
-			Logger.debug("getUkwaLicenceStatusList() domain: " + thisFieldUrl.domain);
+	}
+	
+	@JsonIgnore
+	public boolean hasLicenses() {
+		return (this.licenses != null && !this.licenses.isEmpty());
+	}
 
-			// all the target/urls that are shorter than me with a license and qa
-
-			// Then for each target from selected list look if ‘qa_status’
-			// field is not empty. If it is not empty then we know a crawl
-			// permission request has already been sent.
-			// also check if this target has a valid license too
-			// Then look if it is a target of a higher level domain
-			// analyzing given URL.
-			
-			// license field checked as required in issue 176.
-			// higher level domain and has a license or higher level domain
-			// and has pending qa status
-			
-			// FIXME This is all rong.
-
-//			Set<Target> higherTargets = FormHelper.getHigherTargetsWithLicenseAndQaIssue(thisFieldUrl);
-			
-//			Logger.debug("higherTargets: " + higherTargets.size());
-			
-//			results.addAll(higherTargets);
-		}
-
-		return results;
-		
+	public boolean indicateLicenses() {
+		return (hasLicenses() || hasInheritedLicense());
+	}    
+    
+	// Cannot create
+	public boolean enableLicenseCreation() {
+		return (StringUtils.isBlank(this.licenseStatus) || this.isNotInitiated());
+	}
+	
+	// only sys admin and archivist can create
+	public boolean hasInvalidLicenses() {
+		return (this.isRefused() || this.isEmailRejected() || this.isSuperseded());
 	}
 	
     public boolean hasStatus(String licenseStatus) {

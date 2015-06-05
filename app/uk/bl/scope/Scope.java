@@ -167,8 +167,27 @@ public enum Scope {
 	 * @return true if in scope
 	 * @throws WhoisException 
 	 */
-	public boolean check(String url, Target target) throws WhoisException {
+	public boolean check(String url, Target target) {
 	    return checkExt(url, target, Const.ScopeCheckType.ALL.name());
+	}
+	
+	/**
+	 * 
+	 * Checks if a Target is in NPLD scope by running each of it's URL fields through the checks.
+	 * 
+	 * @param target
+	 * @return
+	 * @throws WhoisException
+	 */
+	public boolean check(Target target ) {
+		int i = 0;
+		for( FieldUrl url : target.fieldUrls) {
+			if( check( url.url, target)) {
+				i++;
+			}
+		}
+		if( i == target.fieldUrls.size() ) return true;
+		return false;
 	}
 	
 	/**
@@ -266,7 +285,7 @@ public enum Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public boolean checkExt(String url, Target target, String mode) throws WhoisException {
+	public boolean checkExt(String url, Target target, String mode) {
         boolean res = false;
         Logger.debug("check url: " + url);
         url = normalizeUrl(url);
@@ -338,7 +357,12 @@ public enum Scope {
 	        if (!res && url != null && url.length() > 0
 	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
 	    	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
-	        	res = checkWhois(url, target);
+	        	try {
+					res = checkWhois(url, target);
+				} catch (WhoisException e) {
+					Logger.error("WHOIS failed!",e);
+					res = false;
+				}
 	        }
 	        // store in project DB
 	        storeInProjectDb(url, res, target);
