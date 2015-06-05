@@ -742,7 +742,7 @@ public class Target extends UrlModel {
 		List<Target> res = new ArrayList<Target>();
 		ExpressionList<Target> ll = find.where()
 				.eq(Const.ACTIVE, true)
-				.ieq("field_url.domain", domain);
+				.ieq("fieldUrls.domain", domain);
 		res = ll.findList();
 		return res;
 	}
@@ -1908,7 +1908,17 @@ public class Target extends UrlModel {
 		int lc = 0;
 		for (FieldUrl fieldUrl : this.fieldUrls) {
 			Logger.info("Looking for inherited licensed for "+fieldUrl.url);
-			for( Target t : Target.findAllTargetsForDomain(fieldUrl.domain) ) {
+			List<Target> tp = Target.findAllTargetsForDomain(fieldUrl.domain);
+			if( tp == null ) {
+				Logger.info("Found no potential matches.");
+				continue;
+			}
+			Logger.info("Found " + tp.size() + " potential matches.");
+			for( Target t :  tp ) {
+				if( t.id.equals(id)) {
+					Logger.info("Skipping "+t.title);
+					continue;
+				}
 				Logger.info("Checking "+t.title);
 				// Check if the scoping of the target applies here:
 				for( FieldUrl pt : t.fieldUrls) {
@@ -1917,16 +1927,23 @@ public class Target extends UrlModel {
 					if( fieldUrl.url.startsWith(pt.url) ) {
 						// Check if this is in scope, includes hasLicense check:
 						// Also check if a license process is underway:
-						if( Scope.INSTANCE.check(t) || (! t.enableLicenseCreation())) {
-							Logger.info("Found parent, licenseStatus="+t.licenseStatus);
+						boolean isInScope = Scope.INSTANCE.check(t);
+						boolean midLic = ! t.enableLicenseCreation();
+						if( isInScope || midLic) {
+							Logger.info("Found licensed parent, mid-licensing="+midLic+" inScope="+isInScope);
 							parents.add(t);
+							lc++;
+						} else {
+							Logger.info("Found unlicensed parent, mid-licensing="+midLic+" inScope="+isInScope);
 						}
+					} else {
+						Logger.info("Parent license does not apply to "+fieldUrl.url);						
 					}
 				}
 			}
 		}
 		// Clear out if these Targets did not cover all the URLs:
-		if(lc != fieldUrl.length()) {
+		if(lc != this.fieldUrls.size()) {
 			parents.clear();
 		}
 		return parents;
