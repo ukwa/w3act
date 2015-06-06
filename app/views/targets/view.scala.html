@@ -102,7 +102,11 @@
 		    	@if(target.hasGrantedLicense()) {
 					<font color="green">(+)</font>
 				} else {
+				  @if(! target.enableLicenseCreation() ) {
+					<font color="orange">(~)</font>
+				  } else {
 					<font color="red">(-)</font>
+				  }
 				}		        
 		    </a></li>
       	</ul>

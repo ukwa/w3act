@@ -117,7 +117,7 @@ public enum FormHelper {
 		return higherTargets;
 	}
 	*/
-	
+
 	// to helper
 	public boolean indicateLicenses(Long targetId) {
 		Target target = Target.findById(targetId);

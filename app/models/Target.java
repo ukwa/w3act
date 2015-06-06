@@ -39,6 +39,7 @@ import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.FormHelper;
+import uk.bl.api.OverallLicenseStatus;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
 import uk.bl.exception.ActException;
@@ -1892,62 +1893,17 @@ public class Target extends UrlModel {
 
 
 	/**
-	 * Look for any kind of license at a higher level.
+	 * This helper looks at the direct and inherited licenses and returns an object that 
+	 * describes the current state.
 	 * 
-	 * Loop over Targets that may cover each URL.
-	 * For each one, it checks if it might apply to the current target, and whether 
-	 * it's a NPLD or licensed Target.
-	 * This means checking that all URLs are covered by the 'parent'.
-	 * Every URL must be covered by at least on Target.
-	 * 
+	 * @param targetId
 	 * @return
 	 */
 	@JsonIgnore
-	public Set<Target> getInheritedLicences() {
-		Set<Target> parents = new LinkedHashSet<Target>();
-		int lc = 0;
-		for (FieldUrl fieldUrl : this.fieldUrls) {
-			Logger.info("Looking for inherited licensed for "+fieldUrl.url);
-			List<Target> tp = Target.findAllTargetsForDomain(fieldUrl.domain);
-			if( tp == null ) {
-				Logger.info("Found no potential matches.");
-				continue;
-			}
-			Logger.info("Found " + tp.size() + " potential matches.");
-			for( Target t :  tp ) {
-				if( t.id.equals(id)) {
-					Logger.info("Skipping "+t.title);
-					continue;
-				}
-				Logger.info("Checking "+t.title);
-				// Check if the scoping of the target applies here:
-				for( FieldUrl pt : t.fieldUrls) {
-					Logger.info("Checking "+pt.url);
-					// If one of the 'parent's' URLs is a prefix of this one:
-					if( fieldUrl.url.startsWith(pt.url) ) {
-						// Check if this is in scope, includes hasLicense check:
-						// Also check if a license process is underway:
-						boolean isInScope = Scope.INSTANCE.check(t);
-						boolean midLic = ! t.enableLicenseCreation();
-						if( isInScope || midLic) {
-							Logger.info("Found licensed parent, mid-licensing="+midLic+" inScope="+isInScope);
-							parents.add(t);
-							lc++;
-						} else {
-							Logger.info("Found unlicensed parent, mid-licensing="+midLic+" inScope="+isInScope);
-						}
-					} else {
-						Logger.info("Parent license does not apply to "+fieldUrl.url);						
-					}
-				}
-			}
-		}
-		// Clear out if these Targets did not cover all the URLs:
-		if(lc != this.fieldUrls.size()) {
-			parents.clear();
-		}
-		return parents;
+	public OverallLicenseStatus getOverallLicenseStatus() {
+		return new OverallLicenseStatus(this);
 	}
+	
 
 	/**
 	 * Simple boolean check build on presence of a license.
@@ -1956,23 +1912,25 @@ public class Target extends UrlModel {
 	 */
 	@JsonIgnore
 	public boolean hasInheritedLicense() {
-		if( this.getInheritedLicences().size() > 0 ) return true;
-		return false;
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.inheritedLicense;
 	}
 
 	@JsonIgnore
     public boolean indicateNpldStatus() throws ActException {
-    	return (getNpldStatusList().size() > 0);
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.inheritedNPLDScope;
     }
 
 	@JsonIgnore
 	public Set<Target> getNpldStatusList() throws ActException {
-		Set<Target> res = this.getInheritedLicences();
-		return res;
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.NPLDParents;
 	}
 
 	public boolean indicateUkwaLicenceStatus() {
-		return this.getUkwaLicenceStatusList().size() > 0;
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.licensedOrPending;
 	}
 	
 	/**
@@ -1985,9 +1943,8 @@ public class Target extends UrlModel {
 	 */
 	@JsonIgnore
 	public Set<Target> getUkwaLicenceStatusList() {
-		Set<Target> res = this.getInheritedLicences();
-		return res;
-		
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.licenseParents;
 	}
 	
 	@JsonIgnore
