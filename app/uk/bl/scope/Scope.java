@@ -22,7 +22,8 @@ import uk.bl.Const;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.wa.whois.JRubyWhois;
-import uk.bl.wa.whois.WhoisResult;
+import uk.bl.wa.whois.record.WhoisContact;
+import uk.bl.wa.whois.record.WhoisResult;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
@@ -578,6 +579,31 @@ public enum Scope {
 	}
 	
 	/**
+	 * Check parsed WHOIS result for UK/GB.
+	 * 
+	 * @param whoIsRes
+	 * @return
+	 */
+	public static boolean isUKRegistrant( WhoisResult whoIsRes ) {
+		boolean isUK = false;
+
+		for( WhoisContact c : whoIsRes.getRegistrantContacts() ) {
+			if( "uk".equalsIgnoreCase(c.getCountry_code()) || 
+				"gb".equalsIgnoreCase(c.getCountry_code()) ) {
+				isUK = true;
+				break;
+			}
+			if( "united kingdom".equalsIgnoreCase(c.getCountry()) || 
+				"great britain".equalsIgnoreCase(c.getCountry()) ) {
+				isUK = true;
+				break;
+			}
+		}
+		
+		return isUK;
+	}
+	
+	/**
 	 * This method extracts domain name from the given URL and checks country or country code
 	 * in response using whois lookup service.
 	 * @param url
@@ -592,7 +618,7 @@ public enum Scope {
         	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
         	Logger.debug("whoIsRes: " + whoIsRes);
 //        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl("marksandspencer.com"));
-        	res = whoIsRes.isUKRegistrant();
+        	res = isUKRegistrant(whoIsRes);
         	Logger.debug("isUKRegistrant?: " + res);
     	} catch (Exception e) {
     		Logger.debug("whois lookup message: " + e.getMessage());
@@ -626,7 +652,7 @@ public enum Scope {
 		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
 		        	Logger.debug("whoIsRes: " + whoIsRes);
 		        	// DOMAIN A UK REGISTRANT?
-		        	res = whoIsRes.isUKRegistrant();
+		        	res = isUKRegistrant(whoIsRes);
 		        	Logger.debug("isUKRegistrant?: " + res);
 		        	// STORE
 		        	storeInProjectDb(fieldUrl.url, res, target);
@@ -666,7 +692,7 @@ public enum Scope {
 		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
 	//	        	Logger.debug("whoIsRes: " + whoIsRes);
 		        	// DOMAIN A UK REGISTRANT?
-		        	res = whoIsRes.isUKRegistrant();
+		        	res = isUKRegistrant(whoIsRes);
 		        	if (res) ukRegistrantCount++;
 		        	else nonUKRegistrantCount++;
 	//	        	Logger.debug("isUKRegistrant?: " + res);

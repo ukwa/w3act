@@ -6,7 +6,7 @@ import play.Project._
 object ApplicationBuild extends Build {
 
     val appName         = "w3act"
-    val appVersion      = "0.2"
+    val appVersion      = "1.0.5"
 
     val appDependencies = Seq(
       javaCore,
@@ -22,8 +22,9 @@ object ApplicationBuild extends Build {
       "com.typesafe" %% "play-plugins-mailer" % "2.1.0",
       "org.mindrot" % "jbcrypt" % "0.3m",
       "commons-io" % "commons-io" % "2.3",
-	  "com.rabbitmq" % "amqp-client" % "3.3.1",
-	  "org.avaje" % "ebean" % "2.7.1"
+      "com.rabbitmq" % "amqp-client" % "3.3.1",
+      "org.avaje" % "ebean" % "2.7.1",
+      "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2"
     )
     
     val main = play.Project(appName, appVersion, appDependencies).settings(

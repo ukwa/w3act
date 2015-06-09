@@ -434,6 +434,9 @@ public class ReportController extends AbstractController {
     			"", "", "", "", "either"));
     }
 
+    
+    /* ----- CONSISTENCY CHECK CODE ---
+    
     /**
      * Looks up Targets that are missing a Crawl Permission.
      * 
@@ -451,6 +454,21 @@ public class ReportController extends AbstractController {
     		}
     	}
     	return nocp;
+    }
+
+    /**
+     * Looks up Targets that have empty start dates:
+     * 
+     * @return
+     */
+    private static List<Target> getTargetsWithoutStartDate() {
+    	List<Target> ts = new ArrayList<Target>();
+    	for( Target t : Target.findAll() ) {
+    		if( t.crawlStartDate == null ) {
+    			ts.add(t);
+    		}
+    	}
+    	return ts;
     }
 
     /**
@@ -536,5 +554,7 @@ public class ReportController extends AbstractController {
     	}
     	return redirect(routes.ReportController.consistencyChecks());
     }
+    
+    
 }
 
