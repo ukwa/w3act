@@ -435,13 +435,11 @@ public class ReportController extends AbstractController {
     }
 
     /**
-     * Performs some basic self-consistency checks on the targets etc.
+     * Looks up Targets that are missing a Crawl Permission.
      * 
-     * @return A report showning where there are any problems.
+     * @return
      */
-    public static Result consistencyChecks() {
-        User user = User.findByEmail(request().username());
-        //
+    private static List<Target> getTargetsWithoutCrawlPermissions() {
     	List<Target> nocp = new ArrayList<Target>();
     	for( Target t : Target.findAll() ) {
     		// Does this target have a license?
@@ -452,7 +450,38 @@ public class ReportController extends AbstractController {
     			}
     		}
     	}
-    	return ok(consistencyChecks.render(user, nocp));
+    	return nocp;
+    }
+
+    /**
+     * Performs some basic self-consistency checks on the targets etc.
+     * 
+     * @return A report showning where there are any problems.
+     */
+    public static Result consistencyChecks() {
+        User user = User.findByEmail(request().username());
+    	return ok(consistencyChecks.render(user, getTargetsWithoutCrawlPermissions() ));
+    }
+    
+    /**
+     * Used to repair problems where we have lost all records of crawl permissions.
+     * 
+     * Currently only repairs Twitter errors.
+     * 
+     * @return
+     */
+    public static Result recoverFromLostCrawlPermissions() {
+    	List<Target> targets = getTargetsWithoutCrawlPermissions();
+    	for( Target t : targets ) {
+    	  if( t.fieldUrl().contains("twitter.com")) {
+    		Logger.warn("Setting licenseStatus to NULL for "+t.title+"("+t.fieldUrl()+")...");
+    		t.licenseStatus = null;
+    		t.update();
+    	  } else {
+      		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
+    	  }
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
     }
 }
 

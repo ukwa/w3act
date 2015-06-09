@@ -151,6 +151,7 @@ GET    	/reports/summary     		            controllers.ReportController.summary(
 GET    	/reports/openLicences    	            controllers.ReportController.openLicences()
 GET    	/reports/recordCreation        		    controllers.ReportController.recordCreation()
 GET    	/reports/consistencyChecks              controllers.ReportController.consistencyChecks()
+GET    	/reports/consistencyChecks/rflcp        controllers.ReportController.recoverFromLostCrawlPermissions()
 GET    	/reports/qa                         	controllers.ReportController.qa()
 GET    	/reportscreation               	        controllers.ReportController.indexCreation() 
 GET    	/reportscreation/search                 controllers.ReportController.searchCreation()
