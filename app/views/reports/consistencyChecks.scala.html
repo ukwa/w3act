@@ -32,8 +32,6 @@
 	    <th>Target</th>
 	    <th>URL(s)</th>
 	    <th>License Status</th>
-	    <th>Inherited NPLD Scope?</th>
-	    <th>Inherited OUKWA License?</th>
 	  </tr>
 	  </thead>
 	  <tbody>
@@ -42,8 +40,6 @@
 	  		<td><a href="@routes.TargetController.view(t.id)">@t.title</a></td>
 	  		<td>@t.fieldUrl()</td>
 	  		<td>@t.licenseStatus</td>
-	  		<td>@t.indicateNpldStatus()</td>
-	  		<td>@t.hasInheritedLicense()</td>
 	  		</tr>
 	  	}
 	  </tbody>
