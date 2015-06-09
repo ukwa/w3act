@@ -24,13 +24,30 @@
 	  
 	  <h3>Missing Crawl Permissions</h3>
 	  
-	  <p>The following @nocp.size target(s) have some kind of licence status but have no associated crawl permission.</p>
+	  <p>The following @nocp.size target(s) have some kind of license status but have no associated crawl permission.</p>
 	  
-	  <ul>
+	  <table class="table table-striped table-bordered">
+	  <thead>
+	  <tr>
+	    <th>Target</th>
+	    <th>URL(s)</th>
+	    <th>License Status</th>
+	    <th>Inherited NPLD Scope?</th>
+	    <th>Inherited OUKWA License?</th>
+	  </tr>
+	  </thead>
+	  <tbody>
 	    @for( t <- nocp ) {
-	  		<li><a href="@routes.TargetController.view(t.id)">@t.title</a></li>
+	    	<tr>
+	  		<td><a href="@routes.TargetController.view(t.id)">@t.title</a></td>
+	  		<td>@t.fieldUrl()</td>
+	  		<td>@t.licenseStatus</td>
+	  		<td>@t.indicateNpldStatus()</td>
+	  		<td>@t.hasInheritedLicense()</td>
+	  		</tr>
 	  	}
-	  </ul>
+	  </tbody>
+	  </table>
 	
 	
 	</div>

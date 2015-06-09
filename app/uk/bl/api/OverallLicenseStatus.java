@@ -62,14 +62,14 @@ public class OverallLicenseStatus {
 						// Check if this is in scope, includes hasLicense check:
 						boolean isInScope = Scope.INSTANCE.check(t);
 						if( isInScope ) {
-							Logger.info("Found licensed parent, inScope="+isInScope);
+							Logger.info("Found licensed parent for "+fieldUrl.url+", inScope="+isInScope);
 							NPLDParents.add(t);
 							npldc++;
 						}
 						// Also check if a license process is underway:
 						boolean midLic = ! t.enableLicenseCreation();
 						if( midLic ) {
-							Logger.info("Found licensed parent, mid-licensing="+midLic);
+							Logger.info("Found licensed parent for "+fieldUrl.url+", mid-licensing="+midLic);
 							licenseParents.add(t);
 							lc++;
 						}
