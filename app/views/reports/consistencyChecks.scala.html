@@ -26,7 +26,11 @@
 	  
 	  <p>The following @nocp.size target(s) have some kind of license status but have no associated crawl permission.
 	  </p>
-	  <p><a class="btn btn-success" role="button" href="@routes.ReportController.recoverFromLostCrawlPermissions()">Remove twitter.com entries</a></p>
+	  <p>
+	  <a class="btn btn-success" role="button" href="@routes.ReportController.removeTwitterInconsistencies()">Remove twitter.com entries</a>
+	  <a class="btn btn-success" role="button" href="@routes.ReportController.removeGrantedInconsistencies()">Remove GRANTED entries</a>
+	  <a class="btn btn-success" role="button" href="@routes.ReportController.removeQueuedInconsistencies()">Remove QUEUED entries</a>
+	  </p>
 	  
 	  <table class="table table-striped table-bordered">
 	  <thead>
@@ -41,7 +45,7 @@
 	    	<tr>
 	  		<td><a href="@routes.TargetController.view(t.id)">@t.title</a></td>
 	  		<td>@t.fieldUrl()</td>
-	  		<td>@t.licenseStatus</td>
+	  		<td>@t.licenseStatus <a class="btn btn-success" role="button" href="@routes.ReportController.resetThisLicenseToNull(t.id)">X</a></td>
 	  		</tr>
 	  	}
 	  </tbody>

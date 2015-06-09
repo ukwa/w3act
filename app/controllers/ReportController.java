@@ -464,22 +464,75 @@ public class ReportController extends AbstractController {
     }
     
     /**
-     * Used to repair problems where we have lost all records of crawl permissions.
-     * 
-     * Currently only repairs Twitter errors.
+     * Used to reset twitter entries where we have lost all records of crawl permissions.
      * 
      * @return
      */
-    public static Result recoverFromLostCrawlPermissions() {
+    public static Result removeTwitterInconsistencies() {
     	List<Target> targets = getTargetsWithoutCrawlPermissions();
     	for( Target t : targets ) {
     	  if( t.fieldUrl().contains("twitter.com")) {
-    		Logger.warn("Setting licenseStatus to NULL for "+t.title+"("+t.fieldUrl()+")...");
+    		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
     		t.licenseStatus = null;
     		t.update();
     	  } else {
       		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
     	  }
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
+    /**
+     * Used to reset GRANTED entries where we have lost all records of crawl permissions.
+     * 
+     * @return
+     */
+    public static Result removeGrantedInconsistencies() {
+    	List<Target> targets = getTargetsWithoutCrawlPermissions();
+    	for( Target t : targets ) {
+    	  if( t.isGranted() ) {
+    		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
+    		t.licenseStatus = null;
+    		t.update();
+    	  } else {
+      		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
+    	  }
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
+    /**
+     * Used to reset QUEUED entries where we have lost all records of crawl permissions.
+     * 
+     * @return
+     */
+    public static Result removeQueuedInconsistencies() {
+    	List<Target> targets = getTargetsWithoutCrawlPermissions();
+    	for( Target t : targets ) {
+    	  if( t.isQueued() ) {
+    		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
+    		t.licenseStatus = null;
+    		t.update();
+    	  } else {
+      		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
+    	  }
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
+    /**
+     * 
+     * @param id
+     * @return
+     */
+    public static Result resetThisLicenseToNull( Long id ) {
+    	if( id > 0 ) {
+    		Target t = Target.findById(id);
+    		if( t != null ) {
+        		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
+        		t.licenseStatus = null;
+        		t.update();
+    		}
     	}
     	return redirect(routes.ReportController.consistencyChecks());
     }
