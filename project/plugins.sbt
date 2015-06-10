@@ -6,6 +6,7 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 
 // Torqbox
 resolvers += "Torqbox rubygems releases" at "http://rubygems-proxy.torquebox.org/releases"
+resolvers += "Torqbox rubygems releases mirror" at "http://maven.travis-ci.org/nexus/rubygems/maven/releases"
 
 // Local
 // resolvers += "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository"
