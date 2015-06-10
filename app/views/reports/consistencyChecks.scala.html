@@ -1,4 +1,4 @@
-@(user: User, nocp: List[Target])
+@(user: User, nocp: List[Target], nosd: List[Target], nors: List[Target])
 
 @script = {
 }
@@ -46,6 +46,56 @@
 	  		<td><a href="@routes.TargetController.view(t.id)">@t.title</a></td>
 	  		<td>@t.fieldUrl()</td>
 	  		<td>@t.licenseStatus <a class="btn btn-success" role="button" href="@routes.ReportController.resetThisLicenseToNull(t.id)">X</a></td>
+	  		</tr>
+	  	}
+	  </tbody>
+	  </table>
+	  
+	  <!-- ************************* -->
+	
+     <h3>No Start Date</h3>
+	  
+	  <p>The following @nosd.size target(s) have no start date.</p>
+
+	  <table class="table table-striped table-bordered tablesorter">
+	  <thead>
+	  <tr>
+	    <th>Target</th>
+	    <th>URL(s)</th>
+	    <th>Crawl Frequency</th>
+	  </tr>
+	  </thead>
+	  <tbody>
+	    @for( t <- nosd ) {
+	    	<tr>
+	  		<td><a href="@routes.TargetController.view(t.id)">@t.title</a></td>
+	  		<td>@t.fieldUrl()</td>
+	  		<td>@t.crawlFrequency</td>
+	  		</tr>
+	  	}
+	  </tbody>
+	  </table>
+	
+	  <!-- ************************* -->
+	
+     <h3>Not Using Root Scope</h3>
+	  
+	  <p>The following @nosd.size target(s) do not use the 'root' scope.</p>
+
+	  <table class="table table-striped table-bordered tablesorter">
+	  <thead>
+	  <tr>
+	    <th>Target</th>
+	    <th>URL(s)</th>
+	    <th>Crawl Frequency</th>
+	  </tr>
+	  </thead>
+	  <tbody>
+	    @for( t <- nors ) {
+	    	<tr>
+	  		<td><a href="@routes.TargetController.view(t.id)">@t.title</a></td>
+	  		<td>@t.fieldUrl()</td>
+	  		<td>@t.crawlFrequency</td>
 	  		</tr>
 	  	}
 	  </tbody>

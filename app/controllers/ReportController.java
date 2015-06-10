@@ -23,6 +23,7 @@ import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.Const.NpldType;
 import uk.bl.Const.RequestType;
+import uk.bl.Const.ScopeType;
 import uk.bl.api.Utils;
 import uk.bl.exception.ActException;
 import views.html.reports.*;
@@ -464,12 +465,28 @@ public class ReportController extends AbstractController {
     private static List<Target> getTargetsWithoutStartDate() {
     	List<Target> ts = new ArrayList<Target>();
     	for( Target t : Target.findAll() ) {
-    		if( t.crawlStartDate == null ) {
+    		if( (! "".equals(t.crawlFrequency)) && t.crawlStartDate == null ) {
     			ts.add(t);
     		}
     	}
     	return ts;
     }
+    
+    /**
+     * Looks up Targets that have empty start dates:
+     * 
+     * @return
+     */
+    private static List<Target> getTargetsWithoutRootScope() {
+    	List<Target> ts = new ArrayList<Target>();
+    	for( Target t : Target.findAll() ) {
+    		if( ! ScopeType.root.name().equals(t.scope) ) {
+    			ts.add(t);
+    		}
+    	}
+    	return ts;
+    }
+
 
     /**
      * Performs some basic self-consistency checks on the targets etc.
@@ -478,7 +495,7 @@ public class ReportController extends AbstractController {
      */
     public static Result consistencyChecks() {
         User user = User.findByEmail(request().username());
-    	return ok(consistencyChecks.render(user, getTargetsWithoutCrawlPermissions() ));
+    	return ok(consistencyChecks.render(user, getTargetsWithoutCrawlPermissions(), getTargetsWithoutStartDate(), getTargetsWithoutRootScope() ));
     }
     
     /**
