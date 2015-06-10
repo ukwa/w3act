@@ -1241,12 +1241,10 @@ public class TargetController extends AbstractController {
 		    	}
 		        
 		    	
-		    	// Ensure items NOT edited here are re-attached:
+		    	// Ensure items NOT edited herein are re-attached:
 		        Target target = Target.findById(id);
 		        filledForm.get().crawlPermissions = target.crawlPermissions;
 		        Logger.warn("Attempting to repair "+target.crawlPermissions+ "("+target.crawlPermissions.size()+")");
-		        //filledForm.get().licenses = target.licenses;
-		        //filledForm.get().licenseStatus = target.licenseStatus;
 		        filledForm.get().instances = target.instances;
 		        filledForm.get().lookupEntries = target.lookupEntries;
 		    	
@@ -1260,10 +1258,6 @@ public class TargetController extends AbstractController {
 	        }
         }
     	return null;
-    }
-    
-    private static FieldUrl isExistingTarget(String url) {
-    	return Utils.INSTANCE.isExistingTarget(url);
     }
     
 	/**
