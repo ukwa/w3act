@@ -41,7 +41,8 @@ public class OverallLicenseStatus {
 	public OverallLicenseStatus(Target target) {
 		int npldc = 0, lc = 0;
 		for (FieldUrl fieldUrl : target.fieldUrls) {
-			Logger.info("Looking for inherited licensed for "+fieldUrl.url);
+			String nurl = stripWWW(fieldUrl.url);
+			Logger.info("Looking for inherited licensed for "+fieldUrl.url+" as "+nurl);
 			List<Target> tp = Target.findAllTargetsForDomain(fieldUrl.domain);
 			if( tp == null ) {
 				Logger.info("Found no potential matches.");
@@ -56,9 +57,10 @@ public class OverallLicenseStatus {
 				Logger.info("Checking "+t.title);
 				// Check if the scoping of the target applies here:
 				for( FieldUrl pt : t.fieldUrls) {
-					Logger.info("Checking "+pt.url);
+					String pnurl = stripWWW(pt.url);
+					Logger.info("Checking "+pt.url+" as "+pnurl);
 					// If one of the 'parent's' URLs is a prefix of this one:
-					if( fieldUrl.url.startsWith(pt.url) ) {
+					if( nurl.startsWith(pnurl) ) {
 						// Check if this is in scope, but without forcing a full re-check (e.g. whois):
 						boolean isInScope = t.isInScopeAllWithoutLicense();
 						if( isInScope ) {
@@ -95,4 +97,13 @@ public class OverallLicenseStatus {
 		this.inNPLDScope = target.isInScopeAll();
 		this.licensedOrPending = ! target.enableLicenseCreation();
 	}
+	
+	private static String stripWWW( String url ) {
+		String nurl = url.toLowerCase();
+		if( nurl.startsWith("http://www.") || nurl.startsWith("https://www.")) {
+			nurl = nurl.replaceFirst("www\\.", "");
+		}
+		return nurl;
+	}
 }
+
