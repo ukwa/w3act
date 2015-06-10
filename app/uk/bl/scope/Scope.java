@@ -180,6 +180,7 @@ public enum Scope {
 	 * @return
 	 * @throws WhoisException
 	 */
+	/*
 	public boolean check(Target target ) {
 		int i = 0;
 		for( FieldUrl url : target.fieldUrls) {
@@ -190,6 +191,7 @@ public enum Scope {
 		if( i == target.fieldUrls.size() ) return true;
 		return false;
 	}
+	*/
 	
 	/**
 	 * This method comprises rule engine for checking if a given URL is in scope for particular mode

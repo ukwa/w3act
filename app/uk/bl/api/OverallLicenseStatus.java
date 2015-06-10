@@ -59,8 +59,8 @@ public class OverallLicenseStatus {
 					Logger.info("Checking "+pt.url);
 					// If one of the 'parent's' URLs is a prefix of this one:
 					if( fieldUrl.url.startsWith(pt.url) ) {
-						// Check if this is in scope, includes hasLicense check:
-						boolean isInScope = Scope.INSTANCE.check(t);
+						// Check if this is in scope, but without forcing a full re-check (e.g. whois):
+						boolean isInScope = t.isInScopeAllWithoutLicense();
 						if( isInScope ) {
 							Logger.info("Found licensed parent for "+fieldUrl.url+", inScope="+isInScope);
 							NPLDParents.add(t);

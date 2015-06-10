@@ -631,15 +631,6 @@ public class Instance extends UrlModel {
 //	}
 	
 
-	/**
-	 * This method checks whether the passed URL is in scope.
-	 * @param url
-	 * @return result as a flag
-	 */
-    public boolean isInScope(String url, String nidUrl) {
-    	return Scope.INSTANCE.check(url, this.target);
-    }
-    
     /**
      * Return a page of Instance
      *

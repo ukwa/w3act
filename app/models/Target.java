@@ -1883,15 +1883,6 @@ public class Target extends UrlModel {
 		return (this.isTopLevelDomain || this.isUkHosting || this.isUkRegistration);
 	}
 
-//	@JsonIgnore
-//	public static boolean checkScopeIpWithoutLicense(Target target) throws WhoisException {
-//		for (FieldUrl fieldUrl : target.fieldUrls) {
-//			if (!Scope.INSTANCE.checkScopeIpWithoutLicense(target)) return false;
-//		}
-//		return true;
-//	}
-
-
 	/**
 	 * This helper looks at the direct and inherited licenses and returns an object that 
 	 * describes the current state.
