@@ -36,7 +36,14 @@ object ApplicationBuild extends Build {
 	        val newArg = if(ta.framework == Some(TestFrameworks.JUnit)) ta.copy(args = List.empty[String]) else ta
 	      } yield newArg
 	    },
-    	ebeanEnabled := true
+    	ebeanEnabled := true,
+    	
+    	// Torqbox rubegems repository (Travis-CI mirror)
+    	resolvers += "rubygems-releases-mirror" at "http://maven.travis-ci.org/nexus/rubygems/maven/releases/",
+
+		// Torquebox rubygems repository
+		resolvers += "rubygems-releases" at "http://rubygems-proxy.torquebox.org/releases/"
+
     )    
 
 }
