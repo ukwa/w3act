@@ -465,7 +465,8 @@ public class ReportController extends AbstractController {
     private static List<Target> getTargetsWithoutStartDate() {
     	List<Target> ts = new ArrayList<Target>();
     	for( Target t : Target.findAll() ) {
-    		if( (! "".equals(t.crawlFrequency)) && t.crawlStartDate == null ) {
+    		if( (! CrawlFrequency.DOMAINCRAWL.name().equals(t.crawlFrequency))
+    				&& t.crawlStartDate == null ) {
     			ts.add(t);
     		}
     	}
