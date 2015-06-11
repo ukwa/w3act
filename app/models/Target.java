@@ -1446,14 +1446,6 @@ public class Target extends UrlModel {
 		this.isUkHosting = isUkHosting;
 	}
 
-	public String getScope() {
-		return scope;
-	}
-
-	public void setScope(String scope) {
-		this.scope = scope;
-	}
-
 	@SuppressWarnings("rawtypes")
 	public List<Map> getField_url() {
 		return field_url;
