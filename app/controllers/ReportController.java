@@ -447,7 +447,8 @@ public class ReportController extends AbstractController {
     	List<Target> nocp = new ArrayList<Target>();
     	for( Target t : Target.findAll() ) {
     		// Does this target have a license?
-    		if( t.licenseStatus != null && ! "".equals(t.licenseStatus)) {
+    		if( ( t.licenseStatus != null && ! "".equals(t.licenseStatus)) ||
+    				( t.licenses != null && t.licenses.size() > 0 ) ) {
     			// Is there a crawl permission?
     			if( t.crawlPermissions == null || t.crawlPermissions.size() == 0 ) {
     				nocp.add(t);
@@ -472,6 +473,8 @@ public class ReportController extends AbstractController {
     	}
     	return ts;
     }
+    
+    /* --- */
     
     /**
      * Looks up Targets that have empty start dates:
@@ -510,6 +513,9 @@ public class ReportController extends AbstractController {
     	  if( t.fieldUrl().contains("twitter.com")) {
     		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
     		t.licenseStatus = null;
+    		if( t.licenses != null ) {
+    			t.licenses.clear();
+    		}
     		t.update();
     	  } else {
       		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
@@ -529,6 +535,9 @@ public class ReportController extends AbstractController {
     	  if( t.isGranted() ) {
     		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
     		t.licenseStatus = null;
+    		if( t.licenses != null ) {
+    			t.licenses.clear();
+    		}
     		t.update();
     	  } else {
       		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
@@ -548,6 +557,9 @@ public class ReportController extends AbstractController {
     	  if( t.isQueued() ) {
     		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
     		t.licenseStatus = null;
+    		if( t.licenses != null ) {
+    			t.licenses.clear();
+    		}
     		t.update();
     	  } else {
       		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
@@ -567,12 +579,35 @@ public class ReportController extends AbstractController {
     		if( t != null ) {
         		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
         		t.licenseStatus = null;
+        		Logger.warn("Setting licenses to empty for "+t.title+"("+t.fieldUrl()+")...");
+        		if( t.licenses != null ) {
+        			t.licenses.clear();
+        		}
         		t.update();
     		}
     	}
     	return redirect(routes.ReportController.consistencyChecks());
     }
     
-    
+    /**
+     * Used to reset 'resource' and 'plus1' scopes to 'root':
+     * 
+     * @return
+     */
+    public static Result resetBadScopes() {
+    	List<Target> targets = getTargetsWithoutRootScope();
+    	for( Target t : targets ) {
+    	  if( ScopeType.resource.name().equals(t.scope) || 
+    		  ScopeType.plus1.name().equals(t.scope) ) {
+    		Logger.warn("Setting Scope to root for "+t.title+"("+t.fieldUrl()+"), was "+t.scope);
+    		t.scope = ScopeType.root.name();
+    		Logger.info("> is now "+t.scope);
+    		t.update();
+    	  } else {
+      		Logger.debug("Leaving Scope as "+t.scope+" for "+t.title+"("+t.fieldUrl()+")...");
+    	  }
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }    
 }
 

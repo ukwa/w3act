@@ -37,6 +37,7 @@
 	  <tr>
 	    <th>Target</th>
 	    <th>URL(s)</th>
+	    <th>Licenses(s)</th>
 	    <th>License Status</th>
 	  </tr>
 	  </thead>
@@ -45,6 +46,7 @@
 	    	<tr>
 	  		<td><a href="@routes.TargetController.view(t.id)">@t.title</a></td>
 	  		<td>@t.fieldUrl()</td>
+	  		<td>@t.licensesAsString()</td>
 	  		<td>@t.licenseStatus <a class="btn btn-success" role="button" href="@routes.ReportController.resetThisLicenseToNull(t.id)">X</a></td>
 	  		</tr>
 	  	}
@@ -81,13 +83,16 @@
      <h3>Not Using Root Scope</h3>
 	  
 	  <p>The following @nosd.size target(s) do not use the 'root' scope.</p>
+	  <p>
+	  <a class="btn btn-success" role="button" href="@routes.ReportController.resetBadScopes()">Reset 'resource' and 'plus1' scopes to 'root'</a>
+	  </p>
 
 	  <table class="table table-striped table-bordered tablesorter">
 	  <thead>
 	  <tr>
 	    <th>Target</th>
 	    <th>URL(s)</th>
-	    <th>Crawl Frequency</th>
+	    <th>Scope</th>
 	  </tr>
 	  </thead>
 	  <tbody>
