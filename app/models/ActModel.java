@@ -10,6 +10,7 @@ import javax.persistence.Version;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.avaje.ebean.annotation.Transactional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import play.db.ebean.Model;
@@ -34,6 +35,7 @@ abstract class ActModel extends Model {
     public Timestamp updatedAt;
 
     @Override
+    @Transactional
 	public void save() {
     	// need to save to get the ID
     	super.save();

@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
+import play.db.ebean.Transactional;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
@@ -28,6 +29,7 @@ import uk.bl.api.Utils;
 import uk.bl.exception.ActException;
 import views.html.reports.*;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
@@ -594,6 +596,7 @@ public class ReportController extends AbstractController {
      * 
      * @return
      */
+    @Transactional
     public static Result resetBadScopes() {
     	List<Target> targets = getTargetsWithoutRootScope();
     	for( Target t : targets ) {
@@ -601,8 +604,8 @@ public class ReportController extends AbstractController {
     		  ScopeType.plus1.name().equals(t.scope) ) {
     		Logger.warn("Setting Scope to root for "+t.title+"("+t.fieldUrl()+"), was "+t.scope);
     		t.scope = ScopeType.root.name();
-    		Logger.info("> is now "+t.scope);
     		t.update();
+    		Logger.info("> is now "+t.scope);
     	  } else {
       		Logger.debug("Leaving Scope as "+t.scope+" for "+t.title+"("+t.fieldUrl()+")...");
     	  }

@@ -11,7 +11,6 @@ import javax.persistence.Transient;
 
 import play.Logger;
 import play.data.validation.Constraints;
-import uk.bl.api.models.FieldModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,14 +19,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 abstract class UrlModel extends ActModel {
 
 	private static final long serialVersionUID = 2497175981252269093L;
-
-	@JsonIgnore
-	@Transient
-	protected final String GEO_IP_SERVICE  = "GeoLite2-City.mmdb";
-
-	@JsonIgnore
-	@Transient
-	protected final String UK_COUNTRY_CODE = "GB";
 
 	@JsonIgnore
 	@Transient
