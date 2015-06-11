@@ -1,11 +1,17 @@
 package api;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import models.FieldUrl;
+import models.Target;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -15,6 +21,8 @@ import play.libs.F.Callback;
 import play.libs.F.Promise;
 import play.libs.WS;
 import play.test.*;
+import uk.bl.exception.ActException;
+import uk.bl.scope.Scope;
 import static play.test.Helpers.*;
 
 public class APIIntegrationTests {
@@ -26,7 +34,7 @@ public class APIIntegrationTests {
 	private Configuration additionalConfigurations;
 
 	@Before
-	public void initialize(){
+	public void initialize() throws ActException{
 	    Config additionalConfig = ConfigFactory.parseFile(new File("conf/dev.conf"));
 	    additionalConfigurations = new Configuration(additionalConfig);
 	}
@@ -41,7 +49,9 @@ public class APIIntegrationTests {
                 // Send up test data:
             	sendTestData("http://localhost:3333/act");
             }
+			   
         });
+       
     }
     
 
