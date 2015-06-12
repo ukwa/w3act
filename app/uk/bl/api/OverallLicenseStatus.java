@@ -7,7 +7,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.net.InternetDomainName;
+
 import play.Logger;
+import uk.bl.Const.ScopeType;
 import uk.bl.scope.Scope;
 import models.FieldUrl;
 import models.Target;
@@ -41,9 +44,8 @@ public class OverallLicenseStatus {
 	public OverallLicenseStatus(Target target) {
 		int npldc = 0, lc = 0;
 		for (FieldUrl fieldUrl : target.fieldUrls) {
-			String nurl = stripWWW(fieldUrl.url);
-			Logger.info("Looking for inherited licensed for "+fieldUrl.url+" as "+nurl);
-			List<Target> tp = Target.findAllTargetsForDomain(fieldUrl.domain);
+			Logger.info("Looking for inherited licensed for "+fieldUrl.url);
+			List<Target> tp = Target.findAllTargetsForDomainLike("%"+getParentDomain(fieldUrl.domain));
 			if( tp == null ) {
 				Logger.info("Found no potential matches.");
 				continue;
@@ -57,10 +59,9 @@ public class OverallLicenseStatus {
 				Logger.info("Checking "+t.title);
 				// Check if the scoping of the target applies here:
 				for( FieldUrl pt : t.fieldUrls) {
-					String pnurl = stripWWW(pt.url);
-					Logger.info("Checking "+pt.url+" as "+pnurl);
+					Logger.info("Checking "+pt.url);
 					// If one of the 'parent's' URLs is a prefix of this one:
-					if( nurl.startsWith(pnurl) ) {
+					if( inheritsFromTo( pt,t.scope, fieldUrl ) ) {
 						// Check if this is in scope, but without forcing a full re-check (e.g. whois):
 						boolean isInScope = t.isInScopeAllWithoutLicense();
 						if( isInScope ) {
@@ -96,6 +97,44 @@ public class OverallLicenseStatus {
 		// And finally record the direct status:
 		this.inNPLDScope = target.isInScopeAllWithoutLicense();
 		this.licensedOrPending = ! target.enableLicenseCreation();
+	}
+	
+	/**
+	 * Get the parent domain name, in order to find inheritence candidates:
+	 * @param domain
+	 * @return
+	 */
+	private static String getParentDomain(String domain) {
+		domain = stripWWW(domain);
+		InternetDomainName idn = InternetDomainName.from(domain);
+		if( idn.isTopPrivateDomain() ) return idn.name();
+		// Otherwise, strip a subdomain off:
+		return idn.parent().name();
+	}
+
+	/** 
+	 * Checks whether a child URL should inherit from a parent one, given the scope.
+	 * 
+	 * @param parent
+	 * @param scope
+	 * @param child
+	 * @return
+	 */
+	private boolean inheritsFromTo(FieldUrl parent, String scope, FieldUrl child ) {
+		if( ScopeType.root.name().equals(scope) ) {
+			String nurl = stripWWW(child.url);
+			String pnurl = stripWWW(parent.url);
+			Logger.debug("Checking root scope for: "+nurl+" under "+pnurl);
+			return nurl.startsWith(pnurl);
+		} else if( ScopeType.subdomains.name().equals(scope)) {
+			String pdom = parent.domain;
+			pdom = pdom.replaceFirst("^www\\.", "");
+			Logger.debug("Checking domain scope for: "+child.domain+" under "+pdom);
+			return child.domain.endsWith(pdom);
+		} else {
+			Logger.error("UNSUPPORTED SCOPE "+scope);
+		}
+		return false;
 	}
 	
 	private static String stripWWW( String url ) {

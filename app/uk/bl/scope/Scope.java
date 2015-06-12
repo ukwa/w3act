@@ -257,15 +257,18 @@ public enum Scope {
         try {
 			domain = getDomainFromUrl(normalizeUrl(ourl));
 		} catch (ActException e) {
+			Logger.error("Exception when normalising "+ourl, e);
 			return false;
 		}
         
         // Rule 3.1: check domain name ends with an acceptable suffix:
         if ( domain != null ) {
         	domain = domain.toLowerCase();
-	        if ( DOMAINS.contains(domain)) {
-	        	return true;
-	        }
+        	for( String okd : DOMAINS ) {
+        		if ( domain.endsWith(okd)) {
+	        		return true;
+	        	}
+        	}
         }
         return false;
 	}
@@ -320,21 +323,19 @@ public enum Scope {
     	try {
     		System.getProperties().put("JRUBY_OPTS", "--1.9");
         	JRubyWhois whoIs = new JRubyWhois();
-        	Logger.debug("checkWhois: " + whoIs + " " + url);
+        	Logger.debug("checkWhois: " + url);
         	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
         	res = isUKRegistrant(whoIsRes);
         	Logger.debug("isUKRegistrant?: " + res);
         	if( whoIsRes.getRegistrantContacts() != null ) {
         		for( WhoisContact wrc : whoIsRes.getRegistrantContacts()) {
-        			System.out.println("WhoIsRes: "+wrc.getName()+" "+wrc.getCountry()+" "+wrc.getCountry_code());
+        			Logger.debug("WhoIsRes: "+wrc.getName()+" "+wrc.getCountry()+" "+wrc.getCountry_code());
         		}
         	}
 	        if( target != null )
 	        	ScopeLookupEntries.storeInProjectDb(url, "WHOIS", res, target);
     	} catch (Exception e) {
-        	System.err.println("WhoIsRes: "+e);
-        	e.printStackTrace();
-    		Logger.debug("whois lookup message: " + e.getMessage());
+    		Logger.warn("whois lookup message: " + e.getMessage(),e);
 	        if( target != null ) 
 	        	ScopeLookupEntries.storeInProjectDb(url, "WHOIS", false, target);
     	}

@@ -689,6 +689,19 @@ public class Target extends UrlModel {
 	}
 
 	/**
+	 * This method finds all targets similar to a domain
+	 */
+	public static List<Target> findAllTargetsForDomainLike(String domainLike) {
+		Logger.debug("Looking for domains like:"+domainLike);
+		List<Target> res = new ArrayList<Target>();
+		ExpressionList<Target> ll = find.where()
+				.eq(Const.ACTIVE, true)
+				.like("fieldUrls.domain", domainLike);
+		res = ll.findList();
+		return res;
+	}
+
+	/**
 	 * This method evaluates if element is in a list separated by list delimiter
 	 * e.g. ', '.
 	 * 
@@ -1807,10 +1820,32 @@ public class Target extends UrlModel {
 	public boolean isInScopeAllWithoutLicense() {
 		Logger.debug("isInScopeAllWithoutLicense()");
 		
+		// Manual scope:
 		if (this.checkManualScope())
 		    return true;
 
-		return (this.isTopLevelDomain || this.isUkHosting || this.isUkRegistration);
+		// Cached values for other allowed mechanisms:
+		if (this.isTopLevelDomain || this.isUkHosting || this.isUkRegistration)
+			return true;
+		
+		// Otherwise, nope:
+		return false;
+	}
+	
+	@JsonIgnore
+	public boolean isInScopeAllOrInheritedWithoutLicense() {
+		Logger.debug("isInScopeAllOrInheritedWithoutLicense()");
+		
+		// Manual scope:
+		if (this.isInScopeAllWithoutLicense())
+		    return true;
+
+		// Possibly inherited scope:
+		if (this.hasInheritedNpldScope())
+			return true;
+
+		// Otherwise, nope:
+		return false;
 	}
 
 	/**
@@ -1838,13 +1873,18 @@ public class Target extends UrlModel {
 	}
 
 	@JsonIgnore
-    public boolean indicateNpldStatus() throws ActException {
+    public boolean hasInheritedNpldScope() {
 		OverallLicenseStatus ols = getOverallLicenseStatus();
 		return ols.inheritedNPLDScope;
     }
 
 	@JsonIgnore
-	public Set<Target> getNpldStatusList() throws ActException {
+    public boolean indicateNpldStatus() {
+		return hasInheritedNpldScope();
+    }
+
+	@JsonIgnore
+	public Set<Target> getNpldStatusList() {
 		OverallLicenseStatus ols = getOverallLicenseStatus();
 		return ols.NPLDParents;
 	}

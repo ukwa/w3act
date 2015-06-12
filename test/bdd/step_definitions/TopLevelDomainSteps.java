@@ -36,13 +36,13 @@ public class TopLevelDomainSteps {
 		String url = uri.toExternalForm();
         Logger.debug("Normalised " + url);
 		
-        String domain = Scope.INSTANCE.getDomainFromUrl(url);
+        String domain = Scope.getDomainFromUrl(url);
         Logger.debug("domain " + domain);
 		FieldUrl fieldUrl = new FieldUrl(url);
 		fieldUrl.domain = domain;
 		fieldUrls.add(fieldUrl);
 		target.fieldUrls = fieldUrls;
-		this.topLevelDomain = Scope.INSTANCE.isTopLevelDomain(target);
+		this.topLevelDomain = Scope.isTopLevelDomain(target);
 	}
 
 	@Then("^I should see it is \"(.*?)\"$")

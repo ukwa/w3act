@@ -30,6 +30,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import uk.bl.Const;
+import uk.bl.Const.ScopeType;
 import uk.bl.api.FormHelper;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
@@ -41,8 +42,8 @@ public class LicenseInheritanceTest {
 
 	private Target target = null;
 	private List<FieldUrl> fieldUrls;
-//	private String url = "http://www.bl.uk/";
-	private String url = "http://www.parliament.uk/";
+	private String url = "http://www.bl.uk/";
+//	private String url = "http://www.parliament.uk/";
 //	private String url = "https://www.gov.uk/";  
 //	private String url = "http://www.somersetremembers.com/";
 	private Configuration additionalConfigurations;
@@ -64,17 +65,67 @@ public class LicenseInheritanceTest {
 	    additionalConfigurations = new Configuration(additionalConfig);
 	}
 	
-	
-	
-
-	
 		@Test
-	    public void test() {
+	    public void testLicenseInheritance() {
 	        running(fakeApplication(additionalConfigurations.asMap()), new Runnable() {
 	        	
-	        	List<Target> list = new ArrayList<Target>();
+	        	private Target addTarget(String title, String[] urls, ScopeType scope ) {
+	        		Target t = new Target();
+	        		t.title = title;
+	        		t.active = true;
+	        		t.fieldUrls = new ArrayList<FieldUrl>();
+	        		for( String nurl : urls ) {
+	        			try {
+							t.fieldUrls.add(new FieldUrl(nurl));
+						} catch (ActException e) {
+							throw(new RuntimeException(e));
+						} 
+	        		}
+	        		if( scope != null ) 
+	        			t.scope = scope.name();
+	        		// And save it:
+	        		t.save();
+	        		
+	        		// And also return:
+	        		return t;
+	        	}
+
 	        	
-	            public void run() {      
+	            public void run() {
+	            	
+	            	/***************** Add some test data ******************/
+	            	
+					Target bl  = this.addTarget("British Library", new String[]{ "http://www.bl.uk" }, ScopeType.subdomains);
+					Target bln = this.addTarget("British Library News", new String[]{ "http://www.bl.uk/news/" }, ScopeType.subdomains);
+					Target bld = this.addTarget("British Library Datasets", new String[]{ "http://data.bl.uk/" }, null);
+					Target eg  = this.addTarget("Example", new String[]{ "http://example.com/" }, ScopeType.subdomains);
+					Target egs  = this.addTarget("Example Subdomain", new String[]{ "http://subdomain.example.com/" }, null);
+					Target egss = this.addTarget("Example Subsection", new String[]{ "http://example.com/subsection/" }, null);
+	            	
+	            	/***************** Perform some basic tests ******************/
+	            	assertThat(eg.isInScopeAllOrInheritedWithoutLicense()).isFalse();
+	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isFalse();
+	            	assertThat(egss.isInScopeAllOrInheritedWithoutLicense()).isFalse();
+	            	eg.setProfessionalJudgement(true);
+	            	// If it was smarter, it would check that a professional reason was required.
+	            	//assertThat(eg.isInScopeAllWithoutLicense()).isFalse();
+	            	//assertThat(egs.isInScopeAllWithoutLicense()).isFalse();
+	            	//eg.setProfessionalJudgementExp("Because I say so!");
+	            	assertThat(eg.isInScopeAllOrInheritedWithoutLicense()).isTrue();
+	            	// This won't pick up yet:
+	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isFalse();
+	            	assertThat(egss.isInScopeAllOrInheritedWithoutLicense()).isFalse();
+	            	eg.save();
+	            	// Now it should pick up the subdomain inheritance:
+	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isTrue();
+	            	assertThat(egss.isInScopeAllOrInheritedWithoutLicense()).isTrue();
+	            	// Now switch to root scope and check the inheritance is lost:
+	            	eg.scope = ScopeType.root.name();
+	            	eg.save();
+	            	assertThat(egs.isInScopeAllOrInheritedWithoutLicense()).isFalse();
+	            	assertThat(egss.isInScopeAllOrInheritedWithoutLicense()).isTrue();
+	            	
+	            	Logger.info("More fine-grained tests...");
 	            	
 	            	/*****************Checking the NPLD scopes & Licensing of a given URL******************/
 	            	
@@ -83,8 +134,7 @@ public class LicenseInheritanceTest {
 					try {
 						scopeRegistration = target.isUkRegistration();
 					} catch (WhoisException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						throw(new RuntimeException(e));
 					}
 					scopeManual = target.checkManualScope();
 					scopeLicense = target.checkLicense();
@@ -96,7 +146,7 @@ public class LicenseInheritanceTest {
 	        		Logger.info("Scopes and Licensing::::::::::::::: " + target.fieldUrls +  " - " + scopeHosting+ " - " + scopeDomain+ " - " + scopeRegistration+ " - " + scopeManual+ " - " +scopeLicense);
 	        		
 	        		/***********Fetch the child URLs**************************/
-	        		list = Target.filterUrl(url);
+		        	List<Target> list = Target.filterUrl(url);
 	        		Logger.info("Number of child URLs::::::::::::::: " + list.size());
 	        		/****************Check child url scopes if the parent url is in scope*****************/
 	        		
@@ -107,6 +157,7 @@ public class LicenseInheritanceTest {
 	            			Boolean scopeManual = null;
 	            			
 	            	    	for(int i=0; i<list.size(); i++){
+	            	    		Logger.info("Looking at: "+list.get(i).title);
 	            	    		
 	            	    		scopeHosting = list.get(i).isUkHosting();
 	            	    		scopeDomain = list.get(i).isTopLevelDomain();
@@ -144,7 +195,6 @@ public class LicenseInheritanceTest {
 	          });
 	    	}
 
-		
 		@Test
 		public void testWhois() throws ActException {
 			String url = "http://bl.uk/";
