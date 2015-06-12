@@ -30,7 +30,7 @@ public class APIIntegrationTests {
     private static String defaultUser = "wa-sysadm@bl.uk";
 	private static String defaultPw = "sysAdmin";
 	
-	private static long timeout_ms = 20*1000; // in milliseconds
+	private static long timeout_ms = 30*1000; // in milliseconds
 	private Configuration additionalConfigurations;
 
 	@Before
@@ -46,6 +46,10 @@ public class APIIntegrationTests {
                 assertThat(
                     WS.url("http://localhost:3333/act").get().get(timeout_ms).getStatus()
                 ).isEqualTo(OK);
+            	// Clear out any existing data:
+                for( Target t : Target.findAll() ) {
+            		t.delete();
+            	}
                 // Send up test data:
             	sendTestData("http://localhost:3333/act");
             }

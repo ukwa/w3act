@@ -96,6 +96,11 @@ public class LicenseInheritanceTest {
 	            	
 	            	/***************** Add some test data ******************/
 	            	
+	            	// Clear out any existing data from other tests:
+	                for( Target t : Target.findAll() ) {
+	            		t.delete();
+	            	}
+	                // Add some particular targets:
 					Target bl  = this.addTarget("British Library", new String[]{ "http://www.bl.uk" }, ScopeType.subdomains);
 					Target bln = this.addTarget("British Library News", new String[]{ "http://www.bl.uk/news/" }, ScopeType.subdomains);
 					Target bld = this.addTarget("British Library Datasets", new String[]{ "http://data.bl.uk/" }, null);
@@ -202,15 +207,6 @@ public class LicenseInheritanceTest {
 			boolean wr = Scope.INSTANCE.checkWhois(url, null);
 			assertThat(wr).isTrue();
 		}
-		
-		@After
-		public void clearTarget() {
-        	List<Target> list = Target.findAll();
-        	for( Target t : list ) {
-        		t.delete();
-        	}
-		}
-
 
 }
 
