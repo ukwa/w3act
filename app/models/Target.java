@@ -149,7 +149,7 @@ public class Target extends UrlModel {
 	public String summary;
 
 	@JsonProperty("field_special_dispensation")
-	public Boolean specialDispensation;
+	public Boolean specialDispensation = Boolean.FALSE;
 
 	@Column(columnDefinition = "text")
 	@JsonProperty("field_special_dispensation_reaso")
@@ -162,10 +162,10 @@ public class Target extends UrlModel {
 	public Boolean isUkRegistration = Boolean.FALSE;
 	
 	@JsonProperty("field_live_site_status")
-	public String liveSiteStatus;
+	public String liveSiteStatus = Const.SiteStatus.LIVE.name();
 
 	@JsonProperty("field_key_site")
-	public Boolean keySite;
+	public Boolean keySite = Boolean.FALSE;
 
 	@JsonProperty("field_wct_id")
 	public Long wctId;
@@ -226,16 +226,16 @@ public class Target extends UrlModel {
 	public Boolean noLdCriteriaMet;
 
 	@JsonProperty("field_scope")
-	public String scope;
+	public String scope = Const.ScopeType.root.name();
 	
 	@JsonProperty("field_depth")
-	public String depth;
+	public String depth = Const.DepthType.CAPPED.name();
 	
 	@JsonProperty("field_ignore_robots_txt")
-	public Boolean ignoreRobotsTxt;
+	public Boolean ignoreRobotsTxt = Boolean.FALSE;
 	
 	@JsonProperty("field_crawl_frequency")
-	public String crawlFrequency;
+	public String crawlFrequency = Const.CrawlFrequency.DOMAINCRAWL.name();
 
 	@JsonIgnore
 	public Date crawlStartDate;

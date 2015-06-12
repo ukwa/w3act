@@ -90,6 +90,11 @@ public class APIIntegrationTests {
     	populate(host, defaultUser, defaultPw, "anjackson.net news", "http://anjackson.net/news/","resource", "1425790800", 201 );
     	populate(host, defaultUser, defaultPw, "British Library", "http://www.bl.uk","root", "1425790800", 201 );
     	populate(host, defaultUser, defaultPw, "British Library News", "http://www.bl.uk/news/","plus1", "1425790800", 201 );
+    	populate(host, defaultUser, defaultPw, "M&S", "http://marksandspencer.com/","subdomains", "1425790800", 201 );
+    	populate(host, defaultUser, defaultPw, "Example", "http://example.com/","subdomains", "1425790800", 201 );
+    	populate(host, defaultUser, defaultPw, "Example Subdomain", "http://subdomain.example.com/","subdomains", "1425790800", 201 );
+
+ 
     }
     
     /**
