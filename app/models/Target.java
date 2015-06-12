@@ -1351,16 +1351,15 @@ public class Target extends UrlModel {
 		}
 
 		/**
-		 * The resulting list should only include those records where there is
-		 * specific 'UKWA Licensing' (i.e. where field_license is not empty).
+		 * The resulting list should only include everything we are able to crawl.
 		 */
 		List<Target> result = new ArrayList<Target>();
 		Iterator<Target> itr = targets.findList().iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
 			// This includes all, rather than just the licensed stuff:
-			//if (target.isInScopeAllOrInheritedWithoutLicense() || target.indicateLicenses()) {
-			if ( target.indicateLicenses() ) {
+			if (target.isInScopeAllOrInheritedWithoutLicense() || target.indicateLicenses()) {
+			//if ( target.indicateLicenses() ) {
 				result.add(target);
 			}
 		}
