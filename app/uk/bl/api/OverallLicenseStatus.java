@@ -94,7 +94,7 @@ public class OverallLicenseStatus {
 		}
 		
 		// And finally record the direct status:
-		this.inNPLDScope = target.isInScopeAll();
+		this.inNPLDScope = target.isInScopeAllWithoutLicense();
 		this.licensedOrPending = ! target.enableLicenseCreation();
 	}
 	

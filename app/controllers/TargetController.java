@@ -1647,7 +1647,7 @@ public class TargetController extends AbstractController {
     public static Result isInScope(String url) throws WhoisException {
     	Logger.debug("isInScope controller: " + url);
 //    	boolean res = Target.isInScope(url, null);
-		boolean res = Scope.INSTANCE.check(url, null);
+		boolean res = Scope.INSTANCE.check(url, null, false);
 
 //    	Logger.debug("isInScope res: " + res);
     	return ok(Json.toJson(res));

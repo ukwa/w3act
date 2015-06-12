@@ -52,21 +52,21 @@ import com.maxmind.geoip2.model.CityResponse;
  *      (and make it available), even if the Target does not fall under any Legal Deposit criteria.
  *
  *   3. All URLs for this Target meet at least one of the following automated criteria:
- *      3.1 The authority of the URI (i.e. the hostname) end with '.uk'.
+ *      3.1 The authority of the URI (i.e. the hostname) end with '.uk' or other acceptable TLD (e.g. '.scot').
  *      3.2 The IP address associated with the URI is geo-located in the UK 
  *          (using this GeoIP2 database, in a manner similar to our H3 GeoIP module).
- *      3.3 Use whois lookup service to check whether the given domain name is associated with the UK. 
+ *      3.3 Use whois lookup service to check whether the given domain name is associated with a UK registrant. 
  *          
  */
 public enum Scope {
 
 	INSTANCE;
 	
-	public static final String UK_DOMAIN       = ".uk";
-	public static final String LONDON_DOMAIN   = ".london";
-	public static final String SCOT_DOMAIN     = ".scot";
-	public static final String WALES_DOMAIN     = ".wales";
-	public static final String CYMRU_DOMAIN     = ".cymru";
+	private static final String UK_DOMAIN       = ".uk";
+	private static final String LONDON_DOMAIN   = ".london";
+	private static final String SCOT_DOMAIN     = ".scot";
+	private static final String WALES_DOMAIN     = ".wales";
+	private static final String CYMRU_DOMAIN     = ".cymru";
 	
 	public static List<String> DOMAINS;
 
@@ -102,6 +102,87 @@ public enum Scope {
 	}
 	
 	/**
+	 * This method is the rule engine for checking if a given URL is in scope.
+	 * 
+	 * @param url The search URL
+	 * @param nidUrl The identifier URL in the project domain model
+	 * @param whether to include by-permission as acceptable
+	 * 
+	 * @return true if in scope
+	 * @throws WhoisException
+	 */
+	public boolean check(String url, Target target, boolean includedByPermission) {
+        url = normalizeUrl(url);
+        Logger.debug("Scope.check url: " + url);
+        
+        /**
+         * Check if given URL is already in project database in a table LookupEntry. 
+         * If this is in return associated value, otherwise process lookup using expert rules.
+         */
+        /*
+        boolean inProjectDb = false;
+        if (url != null && url.length() > 0) {
+//        	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
+        	LookupEntry resLookupEntry = LookupEntry.findBySiteName(url);   
+        	if (resLookupEntry != null && !resLookupEntry.name.toLowerCase().equals(Const.NONE)) {
+//        	if (lookupEntryCount.size() > 0) {
+        		inProjectDb = true;
+        		res = LookupEntry.getValueByUrl(url);
+        		Logger.debug("check lookup entry for '" + url + "' is in database with value: " + res);
+        	}
+        }
+        return res;
+    	Logger.debug("URL not in database - calculate scope");
+        */
+        
+        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
+        if (target != null && target.checkManualScope() ) {
+        	return true;
+        }
+
+    	// Rule 2: by permission
+        if (includedByPermission && target != null && target.checkLicense() ) {
+        	return true;
+        }
+
+        // Rule 3.1: check domain name
+        if (url != null && url.length() > 0 && checkScopeDomain(url)) {
+        	return true;
+        }
+        
+        // Rule 3.2: check geo IP
+        if ( url != null && url.length() > 0 && checkGeoIp(url) ) {
+        	return true;
+        }
+        
+        // Rule 3.3: check whois lookup service
+        if ( url != null && url.length() > 0 ) {
+        	if(checkWhois(url, target) ) {
+        		return true;
+			}
+        }
+        return false;
+	}
+	
+	/**
+	 * 
+	 * Checks if a Target is in NPLD scope by running each of it's URL fields through the checks.
+	 * 
+	 * @param target
+	 * @return
+	 * @throws WhoisException
+	 */
+	public boolean check(Target target, boolean includedByPermission ) {
+		for( FieldUrl url : target.fieldUrls) {
+			if( ! check( url.url, target, includedByPermission) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	/**
 	 * This method queries geo IP from database
 	 * 
 	 * Synchronized in case the underlying database is not thread-safe.
@@ -133,7 +214,7 @@ public enum Scope {
 	 * @param url The passed URL
 	 * @return normalized URL
 	 */
-	public String normalizeUrl(String url, boolean slash) {
+	public static String normalizeUrl(String url, boolean slash) {
 		String res = url;
 		if (res != null && res.length() > 0) {
 	        if (!res.contains(WWW) && !res.contains(HTTP) && !res.contains(HTTPS)) {
@@ -152,397 +233,16 @@ public enum Scope {
 		return res;
 	}
 
-	public String normalizeUrl(String url) {
+	public static String normalizeUrl(String url) {
 		return normalizeUrl(url, true);
 	}
 
-	public String normalizeUrlNoSlash(String url) {
+	public static String normalizeUrlNoSlash(String url) {
 		return normalizeUrl(url, false);
 	}
+	
+	
 
-	/**
-	 * This method comprises rule engine for checking if a given URL is in scope.
-	 * @param url The search URL
-	 * @param nidUrl The identifier URL in the project domain model
-	 * @param mode The mode of checking
-	 * @return true if in scope
-	 * @throws WhoisException 
-	 */
-	public boolean check(String url, Target target) {
-	    return checkExt(url, target, Const.ScopeCheckType.ALL.name());
-	}
-	
-	/**
-	 * 
-	 * Checks if a Target is in NPLD scope by running each of it's URL fields through the checks.
-	 * 
-	 * @param target
-	 * @return
-	 * @throws WhoisException
-	 */
-	/*
-	public boolean check(Target target ) {
-		int i = 0;
-		for( FieldUrl url : target.fieldUrls) {
-			if( check( url.url, target)) {
-				i++;
-			}
-		}
-		if( i == target.fieldUrls.size() ) return true;
-		return false;
-	}
-	*/
-	
-	/**
-	 * This method comprises rule engine for checking if a given URL is in scope for particular mode
-	 * e.g. ALL, IP or DOMAIN.
-	 * @param url The search URL
-	 * @param nidUrl The identifier URL in the project domain model
-	 * @param mode The mode of checking
-	 * @return true if in scope
-	 * @throws WhoisException
-	 */
-	public boolean isLookupExistsInDb(String url) {
-        boolean res = false;
-        url = normalizeUrlNoSlash(url);        
-        if (url != null && url.length() > 0) {
-        	Logger.debug("normalizeUrl: " + url);
-        	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
-        	if (lookupEntryCount.size() > 0) {
-        		res = true;
-        	}
-        }
-        Logger.debug("isLookupExistsInDb() url: " + url + ", res: " + res);
-        return res;
-	}
-	
-	/**
-	 * This method updates the lookup entry for given URL with
-	 * the new QA status value.
-	 * @param target The target object
-	 * @param newStatus The QA status value
-	 */
-	public void updateLookupEntry(Target target, boolean newStatus) {
-        boolean res = false;
-        Logger.debug("updateLookupEntry() field URL: " + target.fieldUrl() + ", new QA status: " + newStatus);
-        String url = normalizeUrl(target.fieldUrl());
-        
-        /**
-         * Check for fields of target that not yet stored in database.
-         */
-        if (target != null
-        		&& (target.ukPostalAddress 
-        		|| target.viaCorrespondence
-        		|| target.professionalJudgement)) {
-        	Logger.debug("updateLookupEntry(): " + target.ukPostalAddress + ", " + 
-        		target.viaCorrespondence + ", " + target.professionalJudgement);
-        	res = true;
-        }
-        if (target != null && target.noLdCriteriaMet) {
-        	res = false;
-        }
-        
-//        if (target != null 
-//        		&& target.fieldLicense != null 
-//        		&& target.fieldLicense.length() > 0 
-//        		&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
-//        	res = true;
-//        }
-
-        Logger.debug("updateLookupEntry() new scope: " + newStatus + ", fields check: " + res);
-        if (!newStatus && res) {
-        	newStatus = true;
-            Logger.debug("updateLookupEntry() update new scope: " + newStatus);
-        }
-        
-        /**
-         * Check if given URL is already in project database in a table LookupEntry. 
-         * If this is in and its value differs from new value - update value.
-         */
-        boolean inProjectDb = false;
-        if (url != null && url.length() > 0) {
-        	LookupEntry resLookupEntry = LookupEntry.findBySiteName(url);   
-        	if (resLookupEntry != null && !resLookupEntry.name.toLowerCase().equals(Const.NONE)) {
-        		inProjectDb = true;
-        		res = LookupEntry.getValueByUrl(url);
-        		Logger.debug("updateLookupEntry lookup entry for '" + url + "' is in database with value: " + res);
-        		if (newStatus != res) {
-        			resLookupEntry.scopevalue = newStatus;
-            		Logger.debug("updateLookupEntry lookup entry for '" + url + "' changed to value: " + newStatus);
-        			Ebean.update(resLookupEntry);
-        		}
-        	}
-        }
-
-        if (!inProjectDb) {
-	        storeInProjectDb(url, newStatus, target);
-	    }
-	}
-	
-	/**
-	 * This method comprises rule engine for checking if a given URL is in scope for particular mode
-	 * e.g. ALL, IP or DOMAIN.
-	 * @param url The search URL
-	 * @param nidUrl The identifier URL in the project domain model
-	 * @param mode The mode of checking
-	 * @return true if in scope
-	 * @throws WhoisException
-	 */
-	public boolean checkExt(String url, Target target, String mode) {
-        boolean res = false;
-        Logger.debug("check url: " + url);
-        url = normalizeUrl(url);
-        
-        /**
-         * Check if given URL is already in project database in a table LookupEntry. 
-         * If this is in return associated value, otherwise process lookup using expert rules.
-         */
-        boolean inProjectDb = false;
-        if (url != null && url.length() > 0) {
-//        	List<LookupEntry> lookupEntryCount = LookupEntry.filterByName(url);
-        	LookupEntry resLookupEntry = LookupEntry.findBySiteName(url);   
-        	if (resLookupEntry != null && !resLookupEntry.name.toLowerCase().equals(Const.NONE)) {
-//        	if (lookupEntryCount.size() > 0) {
-        		inProjectDb = true;
-        		res = LookupEntry.getValueByUrl(url);
-        		Logger.debug("check lookup entry for '" + url + "' is in database with value: " + res);
-        	}
-        }
-        
-        if (!inProjectDb) {
-        	Logger.debug("URL not in database - calculate scope");
-	        /**
-	         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
-	         *
-	         *  Rule 1.1: "field_uk_domain"
-	         *  Rule 1.2: "field_uk_postal_address"
-	         *  Rule 1.3: "field_via_correspondence"
-	         *  Rule 1.4: "field_professional_judgement"
-	         *  
-	         *  is true - checking result is positive.
-	         *  
-	         *  Rule 1.5: if the field "field_no_ld_criteria_met" is true - checking result is negative
-	         * 
-	         */
-	        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-	        if (target != null 
-	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
-	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
-	        	if (!res) {
-	        		res = target.checkManualScope();
-	        	}
-	        }
-	
-	    	// Rule 2: by permission
-	        if (!res && target != null
-	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
-	    	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
-	        	res = target.checkLicense();
-	        }
-	
-	        // Rule 3.1: check domain name
-	        if (!res && url != null && url.length() > 0
-	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
-	    	        		|| mode.equals(Const.ScopeCheckType.DOMAIN.name()))) {
-		        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN) || url.contains(SCOT_DOMAIN) || url.contains(WALES_DOMAIN) || url.contains(CYMRU_DOMAIN)) {
-		        	res = true;
-		        }
-	        }
-	        
-	        // Rule 3.2: check geo IP
-	        if (!res && url != null && url.length() > 0
-	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
-	    	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
-	        	res = checkGeoIp(url);
-	        }
-	        
-	        // Rule 3.3: check whois lookup service
-	        if (!res && url != null && url.length() > 0
-	        		&& (mode.equals(Const.ScopeCheckType.ALL.name())
-	    	        		|| mode.equals(Const.ScopeCheckType.IP.name()))) {
-	        	try {
-					res = checkWhois(url, target);
-				} catch (WhoisException e) {
-					Logger.error("WHOIS failed!",e);
-					res = false;
-				}
-	        }
-	        // store in project DB
-	        storeInProjectDb(url, res, target);
-        }
-		Logger.debug("lookup entry for '" + url + "' is in database with value: " + res);        
-        return res;
-	}
-	
-	/**
-	 * This method comprises rule engine for checking if a given URL is in scope for rules 
-	 * associated with IP analysis. 
-	 * @param url The search URL
-	 * @param nidUrl The identifier URL in the project domain model
-	 * @return true if in scope
-	 * @throws WhoisException
-	 */
-	public boolean checkScopeIp(String url, Target target) throws WhoisException {
-        boolean res = false;
-        Logger.debug("check for scope IP url: " + url + ", nid: " + target.id);
-        url = normalizeUrl(url);
-        
-        /**
-         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
-         *
-         *  Rule 1.1: "field_uk_domain"
-         *  Rule 1.2: "field_uk_postal_address"
-         *  Rule 1.3: "field_via_correspondence"
-         *  Rule 1.4: "field_professional_judgement"
-         *  
-         *  is true - checking result is positive.
-         *  
-         *  Rule 1.5: if the field "field_no_ld_criteria_met" is true - checking result is negative
-         * 
-         */
-        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-    	if (!res) {
-    		res = target.checkManualScope();
-    		Logger.debug("checkScopeIp() after manual check (fields: field_uk_postal_address, field_via_correspondence and field_professional_judgement): " + res);
-    	}
-
-    	// Rule 2: by permission
-        if (!res && target != null) {
-        	res = target.checkLicense();
-    		Logger.debug("checkScopeIp() after license check (field: field_license): " + res);
-        }
-
-        // Rule 3.2: check geo IP
-        if (!res && url != null && url.length() > 0) {
-        	res = checkGeoIp(url);
-    		Logger.debug("checkScopeIp() after geoIp check: " + res);
-        }
-        
-        // Rule 3.3: check whois lookup service
-        if (!res && url != null && url.length() > 0) {
-        	res = checkWhois(url, target);
-    		Logger.debug("checkScopeIp() after whois check: " + res);
-        }
-        
-        /**
-         * if database entry exists and is different to the current value - replace it
-         */
-        if (url != null && url.length() > 0) {
-        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(url);
-        	if (lookupEntries.size() > 0) {
-        		boolean dbValue = LookupEntry.getValueByUrl(url);
-        		if (dbValue != res) {
-       		        LookupEntry lookupEntry = lookupEntries.get(0);
-       		        lookupEntry.scopevalue = res;
-       		        Ebean.update(lookupEntry);
-            		Logger.debug("updated lookup entry in database for '" + url + "' with value: " + res);
-        		}
-        	} else {
-        		storeInProjectDb(url, res, target);
-        	}
-        }
-        
-		Logger.debug("resulting lookup entry for '" + url + "' is: " + res);        
-        return res;
-	}
-	
-	/**
-	 * This method comprises rule engine for checking if a given URL is in scope for rules 
-	 * associated with IP analysis. This check is without license field.
-	 * @param url The search URL
-	 * @param nidUrl The identifier URL in the project domain model
-	 * @return true if in scope
-	 * @throws WhoisException
-	 */
-	public boolean checkScopeIpWithoutLicense(Target target) throws WhoisException {
-        boolean res = false;
-//        Logger.debug("check for scope IP url: " + url + ", id: " + target.id);
-//        url = normalizeUrl(url);
-//        Logger.debug("normalizeUrl: " + url);
-        
-        /**
-         *  Rule 1: check manual scope settings because they have more severity. If one of the fields:
-         *
-         *  Rule 1.1: "field_uk_domain"
-         *  Rule 1.2: "field_uk_postal_address"
-         *  Rule 1.3: "field_via_correspondence"
-         *  Rule 1.4: "field_professional_judgement"
-         *  
-         *  is true - checking result is positive.
-         *  
-         *  Rule 1.5: if the field "field_no_ld_criteria_met" is true - checking result is negative
-         * 
-         */
-        // read Target fields with manual entries and match to the given NID URL (Rules 1.1 - 1.5)
-        if (target != null) {
-        	if (!res) {
-        		// checking target fields
-        		res = target.checkManualScope();
-        		Logger.debug("checkScopeIp() after manual check ("
-        				+ "fields: field_uk_postal_address, "
-        				+ "field_via_correspondence and "
-        				+ "field_professional_judgement): " + res);
-        	}
-        }
-
-        // Rule 3.2: check geo IP / uk hosting?
-//        if (!res && StringUtils.isNotEmpty(url)) {
-        if (!res) {
-        	// check target.isUkHosting field with SQL
-        	res = target.isUkHosting();
-        	// the above calls the same in the end
-//        	res = checkGeoIp(url);
-    		Logger.debug("checkScopeIp() after geoIp check: " + res);
-        }
-        
-        // Rule 3.3: check whois lookup service / uk registration?
-//        if (!res && StringUtils.isNotEmpty(url)) {
-        if (!res) {
-        	// check target.isUkRegistration field with SQL
-        	res = target.isUkRegistration();
-        	// the above calls the same in the end
-//        	res = checkWhois(url, target);
-    		Logger.debug("checkScopeIp() after whois check: " + res);
-        }
-        
-        /**
-         * if database entry exists and is different to the current value - replace it
-         */
-        for (FieldUrl fieldUrl : target.fieldUrls) {
-        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(fieldUrl.url);
-        	if (lookupEntries.size() > 0) {
-        		boolean dbValue = LookupEntry.getValueByUrl(fieldUrl.url);
-        		if (dbValue != res) {
-       		        LookupEntry lookupEntry = lookupEntries.get(0);
-       		        lookupEntry.scopevalue = res;
-       		        Ebean.update(lookupEntry);
-            		Logger.debug("updated lookup entry in database for '" + fieldUrl.url + "' with value: " + res);
-        		}
-        	} else {
-        		storeInProjectDb(fieldUrl.url, res, target);
-        	}
-        	
-        }
-        
-//        if (StringUtils.isNotEmpty(url)) {
-//        	List<LookupEntry> lookupEntries = LookupEntry.filterByName(url);
-//        	if (lookupEntries.size() > 0) {
-//        		boolean dbValue = LookupEntry.getValueByUrl(url);
-//        		if (dbValue != res) {
-//       		        LookupEntry lookupEntry = lookupEntries.get(0);
-//       		        lookupEntry.scopevalue = res;
-//       		        Ebean.update(lookupEntry);
-//            		Logger.debug("updated lookup entry in database for '" + url + "' with value: " + res);
-//        		}
-//        	} else {
-//        		storeInProjectDb(url, res, target);
-//        	}
-//        }
-//        
-//		Logger.debug("resulting lookup entry for '" + url + "' is: " + res);
-        return res;
-	}
-	
 	/**
 	 * This method comprises rule engine for checking if a given URL is in scope for rules 
 	 * associated with Domain analysis.
@@ -551,20 +251,23 @@ public enum Scope {
 	 * @return true if in scope
 	 * @throws WhoisException
 	 */
-	public boolean checkScopeDomain(String url) throws WhoisException {
-        boolean res = false;
-//        Logger.debug("check for scope Domain url: " + url + ", nid: " + nidUrl);
-        // full domain with protocol
-        url = normalizeUrl(url);
+	public static boolean checkScopeDomain(String ourl) {
+		// Grab the domain part:
+        String domain;
+        try {
+			domain = getDomainFromUrl(normalizeUrl(ourl));
+		} catch (ActException e) {
+			return false;
+		}
         
-        // Rule 3.1: check domain name
-        if (!res && url != null && url.length() > 0) {
-	        if (url.contains(UK_DOMAIN) || url.contains(LONDON_DOMAIN) || url.contains(SCOT_DOMAIN) || url.contains(WALES_DOMAIN) || url.contains(CYMRU_DOMAIN)) {
-	        	res = true;
+        // Rule 3.1: check domain name ends with an acceptable suffix:
+        if ( domain != null ) {
+        	domain = domain.toLowerCase();
+	        if ( DOMAINS.contains(domain)) {
+	        	return true;
 	        }
         }
-//		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);        
-        return res;
+        return false;
 	}
 
 	/**
@@ -612,69 +315,112 @@ public enum Scope {
 	 * @return true if in UK domain
 	 * @throws WhoisException 
 	 */
-	public boolean checkWhois(String url, Target target) throws WhoisException {
+	public boolean checkWhois(String url, Target target) {
 		boolean res = false;
     	try {
+    		System.getProperties().put("JRUBY_OPTS", "--1.9");
         	JRubyWhois whoIs = new JRubyWhois();
         	Logger.debug("checkWhois: " + whoIs + " " + url);
         	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
-        	Logger.debug("whoIsRes: " + whoIsRes);
-//        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl("marksandspencer.com"));
         	res = isUKRegistrant(whoIsRes);
         	Logger.debug("isUKRegistrant?: " + res);
+        	if( whoIsRes.getRegistrantContacts() != null ) {
+        		for( WhoisContact wrc : whoIsRes.getRegistrantContacts()) {
+        			System.out.println("WhoIsRes: "+wrc.getName()+" "+wrc.getCountry()+" "+wrc.getCountry_code());
+        		}
+        	}
+	        if( target != null )
+	        	ScopeLookupEntries.storeInProjectDb(url, "WHOIS", res, target);
     	} catch (Exception e) {
+        	System.err.println("WhoIsRes: "+e);
+        	e.printStackTrace();
     		Logger.debug("whois lookup message: " + e.getMessage());
-	        // store in project DB
-	        storeInProjectDb(url, false, target);
-//    		throw new WhoisException(e);
+	        if( target != null ) 
+	        	ScopeLookupEntries.storeInProjectDb(url, "WHOIS", false, target);
     	}
     	Logger.debug("whois res: " + res);        	
 		return res;
 	}
 	
+	
 	/**
-	 * This method extracts domain name from the given URL and checks country or country code
-	 * in response using whois lookup service.
-	 * @param number The number of targets for which the elapsed time since the last check is greatest
-	 * @return true if in UK domain
-	 * @throws ActException 
-	 * @throws WhoisException 
+	 * This method converts URL to IP address.
+	 * @param url
+	 * @return IP address as a string
 	 */
-	public boolean checkWhoisThread(int number) throws ActException {
-    	Logger.debug("checkWhoisThread: " + number);
-		boolean res = false;
-    	JRubyWhois whoIs = new JRubyWhois();
-    	List<Target> targetList = Target.findLastActive(number);
-    	Logger.debug("targetList: " + targetList.size());
-    	Iterator<Target> itr = targetList.iterator();
-    	while (itr.hasNext()) {
-    		Target target = itr.next();
-    		for (FieldUrl fieldUrl : target.fieldUrls) {
-		        	Logger.debug("checkWhoisThread URL: " + target.fieldUrl() + ", last update: " + String.valueOf(target.updatedAt));
-		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
-		        	Logger.debug("whoIsRes: " + whoIsRes);
-		        	// DOMAIN A UK REGISTRANT?
-		        	res = isUKRegistrant(whoIsRes);
-		        	Logger.debug("isUKRegistrant?: " + res);
-		        	// STORE
-		        	storeInProjectDb(fieldUrl.url, res, target);
-		        	// ASSIGN TO TARGET
-		        	target.isUkRegistration = res;
-
-//		        	Logger.debug("whois lookup message: " + e.getMessage());
-//			        // store in project DB
-//		    		// FAILED - UNCHECKED
-//			        storeInProjectDb(fieldUrl.url, false);
-//			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
-//			        target.isInScopeUkRegistration = false;
-		    
-    		}
-        	Ebean.update(target);
-    	}
-//    	Logger.debug("whois res: " + res);        	
-		return res;
+	public String getIpFromUrl(String url) {
+		String ip = "";
+		InetAddress address;
+		try {
+			address = InetAddress.getByName(new URL(url).getHost());
+			ip = address.getHostAddress();
+		} catch (UnknownHostException e) {
+			Logger.debug("ip calculation unknown host error for url=" + url + ". " + e.getMessage());
+		} catch (MalformedURLException e) {
+			Logger.debug("ip calculation error for url=" + url + ". " + e.getMessage());
+		}
+        return ip;
 	}
 	
+
+	
+	public static String getDomainFromUrl(String url) throws ActException {
+	    URL uri;
+		try {
+			uri = new URL(url);
+			Logger.debug("getDomainFromUrl: "+uri);
+			String domain = uri.getHost();
+			Logger.debug("getDomainFromUrl GOT: "+domain);
+			if (StringUtils.isNotEmpty(domain)) {
+				return domain.startsWith("www.") ? domain.substring(4) : domain;
+			}
+		} catch (MalformedURLException e) {
+			throw new ActException(e);
+		}
+		return null;
+	}
+	
+	public boolean isUkHosting(String url) {
+		if (this.checkGeoIp(url)) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isInScopeUkRegistration(String url, Target target) throws WhoisException {
+		return checkWhois(url, target);
+	}
+
+	//	UK GeoIP
+	public boolean isUkHosting(Target target) {
+		for (FieldUrl fieldUrl : target.fieldUrls) {
+			if (!this.checkGeoIp(fieldUrl.url)) return false;
+		}
+		return true;
+	}
+	
+	//	UK Domain 
+	public static boolean isTopLevelDomain(Target target) {
+		for (FieldUrl fieldUrl : target.fieldUrls) {
+			if( !checkScopeDomain(fieldUrl.url)) return false;
+	    }
+        return true;
+	}
+	
+	
+	public boolean isUkRegistration(Target target) {
+        for (FieldUrl fieldUrl : target.fieldUrls) {
+        	if (!checkWhois(fieldUrl.url, target)) return false;
+        }
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param number
+	 * @return
+	 * @throws WhoisException
+	 */
 	public WhoIsData checkWhois(int number) throws WhoisException {
     	Logger.debug("checkWhoisThread: " + number);
 		boolean res = false;
@@ -700,7 +446,7 @@ public enum Scope {
 	//	        	Logger.debug("isUKRegistrant?: " + res);
 		        	// STORE
 		        	Logger.debug("CHECK TO SAVE " + target.fieldUrl());
-		        	storeInProjectDb(fieldUrl.url, res, target);
+		        	ScopeLookupEntries.storeInProjectDb(fieldUrl.url, "WHOIS", res, target);
 		        	// ASSIGN TO TARGET
 		        	target.isUkRegistration = res;
 		        	ukRegistrantCount++;
@@ -708,7 +454,7 @@ public enum Scope {
 		    		Logger.debug("whois lookup message: " + e.getMessage());
 			        // store in project DB
 		    		// FAILED - UNCHECKED
-			        storeInProjectDb(fieldUrl.url, false, target);
+		    		ScopeLookupEntries.storeInProjectDb(fieldUrl.url, "WHOIS", false, target);
 			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
 			        target.isUkRegistration = false;
 		        	failedCount++;
@@ -747,129 +493,47 @@ public enum Scope {
 	}
 	
 	/**
-	 * This method saves result of scope lookup for given URL if it is 
-	 * not yet in a project database.
-	 * @param url The search URL
-	 * @param res The evaluated result after checking by expert rules
+	 * This method extracts domain name from the given URL and checks country or country code
+	 * in response using whois lookup service.
+	 * @param number The number of targets for which the elapsed time since the last check is greatest
+	 * @return true if in UK domain
+	 * @throws ActException 
+	 * @throws WhoisException 
 	 */
-	public void storeInProjectDb(String url, boolean res, Target target) {
-		boolean stored = isLookupExistsInDb(url);
-		Logger.debug("STORED: " + stored + " - " + url);
-		if (!stored) {
-			LookupEntry lookupEntry = new LookupEntry();
-			lookupEntry.name = url;
-			lookupEntry.scopevalue = res;
-			lookupEntry.target = target;
-	        lookupEntry.save();
-	        Logger.debug("Saved lookup entry " + lookupEntry.toString());
-		}
-    }
-	
-	/**
-	 * This method converts URL to IP address.
-	 * @param url
-	 * @return IP address as a string
-	 */
-	public String getIpFromUrl(String url) {
-		String ip = "";
-		InetAddress address;
-		try {
-			address = InetAddress.getByName(new URL(url).getHost());
-			ip = address.getHostAddress();
-		} catch (UnknownHostException e) {
-			Logger.debug("ip calculation unknown host error for url=" + url + ". " + e.getMessage());
-		} catch (MalformedURLException e) {
-			Logger.debug("ip calculation error for url=" + url + ". " + e.getMessage());
-		}
-        return ip;
-	}
-	
-//	/**
-//	 * This method extracts domain name from the given URL.
-//	 * @param url
-//	 * @return
-//	 */
-//	public String getDomainFromUrl(String url) {
-//		String domain = "";
-//		try {
-////			Logger.debug("get host: " + new URL(url).getHost());
-//			domain = new URL(url).getHost().replace(WWW, "");
-////			Logger.debug("extracted domain: " + domain);
-//		} catch (Exception e) {
-//			Logger.error("domain calculation error for url=" + url + ". " + e.getMessage());
-//			domain = url;
-//		}
-//        return domain;
-//	}
-	
-	public String getDomainFromUrl(String url) throws ActException {
-	    URL uri;
-		try {
-			uri = new URL(url);
-			Logger.debug("getDomainFromUrl: "+uri);
-			String domain = uri.getHost();
-			Logger.debug("getDomainFromUrl GOT: "+domain);
-			if (StringUtils.isNotEmpty(domain)) {
-				return domain.startsWith("www.") ? domain.substring(4) : domain;
-			}
-		} catch (MalformedURLException e) {
-			throw new ActException(e);
-		}
-		return null;
-	}
-	
-	public boolean isUkHosting(String url) {
-		if (this.checkGeoIp(url)) {
-			return true;
-		}
-		return false;
-	}
+	public boolean checkWhoisThread(int number) throws ActException {
+    	Logger.debug("checkWhoisThread: " + number);
+		boolean res = false;
+    	JRubyWhois whoIs = new JRubyWhois();
+    	List<Target> targetList = Target.findLastActive(number);
+    	Logger.debug("targetList: " + targetList.size());
+    	Iterator<Target> itr = targetList.iterator();
+    	while (itr.hasNext()) {
+    		Target target = itr.next();
+    		for (FieldUrl fieldUrl : target.fieldUrls) {
+		        	Logger.debug("checkWhoisThread URL: " + target.fieldUrl() + ", last update: " + String.valueOf(target.updatedAt));
+		        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(fieldUrl.url));
+		        	Logger.debug("whoIsRes: " + whoIsRes);
+		        	// DOMAIN A UK REGISTRANT?
+		        	res = isUKRegistrant(whoIsRes);
+		        	Logger.debug("isUKRegistrant?: " + res);
+		        	// STORE
+		        	ScopeLookupEntries.storeInProjectDb(fieldUrl.url, "WHOIS", res, target);
+		        	// ASSIGN TO TARGET
+		        	target.isUkRegistration = res;
 
-	public boolean isInScopeUkRegistration(String url, Target target) throws WhoisException {
-		return checkWhois(url, target);
-	}
-
-	//	UK GeoIP
-	public boolean isUkHosting(Target target) {
-		for (FieldUrl fieldUrl : target.fieldUrls) {
-			if (!this.checkGeoIp(fieldUrl.url)) return false;
-		}
-		return true;
-	}
-	
-	//	UK Domain 
-	public boolean isTopLevelDomain(Target target) throws ActException {
-		// i.e. terry.com and terry.co.uk - return false;
-		try {
-
-	        for (FieldUrl fieldUrl : target.fieldUrls) {
-	            URL uri;
-					uri = new URI(fieldUrl.url).normalize().toURL();
-	
-				String url = uri.toExternalForm();
-	            Logger.debug("Normalised " + url);
-	            
-	            String domain = getDomainFromUrl(url);
-	
-	            Logger.debug("domain " + domain);
-	
-	            // Rule 3.1: check domain name
-		        if (!domain.endsWith(UK_DOMAIN) && !domain.endsWith(LONDON_DOMAIN) && !domain.endsWith(SCOT_DOMAIN) && !domain.endsWith(WALES_DOMAIN) && !domain.endsWith(CYMRU_DOMAIN)) return false;
-	        }
-//		Logger.debug("lookup entry for '" + url + "' regarding domain has value: " + res);
-		} catch (MalformedURLException | URISyntaxException e) {
-			throw new ActException(e);
-		}
-        return true;
+//		        	Logger.debug("whois lookup message: " + e.getMessage());
+//			        // store in project DB
+//		    		// FAILED - UNCHECKED
+//			        storeInProjectDb(fieldUrl.url, false);
+//			        // FALSE - WHAT'S DIFF BETWEEN THAT AND NON UK? create a transient field?
+//			        target.isInScopeUkRegistration = false;
+		    
+    		}
+        	Ebean.update(target);
+    	}
+//    	Logger.debug("whois res: " + res);        	
+		return res;
 	}
 	
-	
-	public boolean isUkRegistration(Target target) throws WhoisException {
-        for (FieldUrl fieldUrl : target.fieldUrls) {
-        	if (!checkWhois(fieldUrl.url, target)) return false;
-        }
-		return true;
-	}
-
 }
 

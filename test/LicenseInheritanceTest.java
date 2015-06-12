@@ -34,6 +34,8 @@ import uk.bl.api.FormHelper;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
+import uk.bl.wa.whois.JRubyWhois;
+import uk.bl.wa.whois.record.WhoisResult;
 
 public class LicenseInheritanceTest {
 
@@ -52,15 +54,18 @@ public class LicenseInheritanceTest {
 	private static Boolean scopeLicense;
 	
 	@Before
-	public void setUp() throws ActException{	
+	public void setUp() throws ActException {	
 		target = new Target();
 		fieldUrls = new ArrayList<FieldUrl>();
 		fieldUrls.add(new FieldUrl(url)); 
-		target.fieldUrls = fieldUrls;	
+		target.fieldUrls = fieldUrls;
 		// Set up a test configuration;
 	    Config additionalConfig = ConfigFactory.parseFile(new File("conf/dev.conf"));
 	    additionalConfigurations = new Configuration(additionalConfig);
 	}
+	
+	
+	
 
 	
 		@Test
@@ -74,12 +79,7 @@ public class LicenseInheritanceTest {
 	            	/*****************Checking the NPLD scopes & Licensing of a given URL******************/
 	            	
 	            	scopeHosting = target.isUkHosting();
-					try {
-						scopeDomain = target.isTopLevelDomain();
-					} catch (ActException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+	            	scopeDomain = target.isTopLevelDomain();
 					try {
 						scopeRegistration = target.isUkRegistration();
 					} catch (WhoisException e) {
@@ -109,12 +109,8 @@ public class LicenseInheritanceTest {
 	            	    	for(int i=0; i<list.size(); i++){
 	            	    		
 	            	    		scopeHosting = list.get(i).isUkHosting();
-	            	    		try {
-	            	    			scopeDomain = list.get(i).isTopLevelDomain();
-	    						} catch (ActException e) {
-	    							// TODO Auto-generated catch block
-	    							e.printStackTrace();
-	    						}
+	            	    		scopeDomain = list.get(i).isTopLevelDomain();
+	            	    			
 	            	    		try {
 	            	    			scopeRegistration = list.get(i).isUkRegistration();
 	    						} catch (WhoisException e) {
@@ -148,6 +144,13 @@ public class LicenseInheritanceTest {
 	          });
 	    	}
 
+		
+		@Test
+		public void testWhois() throws ActException {
+			String url = "http://bl.uk/";
+			boolean wr = Scope.INSTANCE.checkWhois(url, null);
+			System.out.println("wr: "+wr);
+		}
 
 
 }
