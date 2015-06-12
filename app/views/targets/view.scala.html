@@ -92,14 +92,14 @@
 		   	<li><a href="#metadata" data-toggle="tab">Metadata</a></li>
         	<li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
 			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-				@if(target.isInScopeAllWithoutLicense()) {
+				@if(target.isInScopeAllOrInheritedWithoutLicense()) {
 					<font color="green">(+)</font>
 				} else {
 					<font color="red">(-)</font>
 				}		        
 			</a></li>
 		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing
-		    	@if(target.hasGrantedLicense()) {
+		    	@if(target.indicateLicenses()) {
 					<font color="green">(+)</font>
 				} else {
 				  @if(! target.enableLicenseCreation() ) {
