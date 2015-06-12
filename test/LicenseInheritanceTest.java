@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import models.FieldUrl;
 import models.Target;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -200,6 +201,14 @@ public class LicenseInheritanceTest {
 			String url = "http://bl.uk/";
 			boolean wr = Scope.INSTANCE.checkWhois(url, null);
 			assertThat(wr).isTrue();
+		}
+		
+		@After
+		public void clearTarget() {
+        	List<Target> list = Target.findAll();
+        	for( Target t : list ) {
+        		t.delete();
+        	}
 		}
 
 
