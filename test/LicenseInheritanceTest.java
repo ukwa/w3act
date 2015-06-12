@@ -43,6 +43,7 @@ public class LicenseInheritanceTest {
 	private String url = "http://www.parliament.uk/";
 //	private String url = "https://www.gov.uk/";  
 //	private String url = "http://www.somersetremembers.com/";
+	private Configuration additionalConfigurations;
 	
 	private static Boolean scopeHosting;
 	private static Boolean scopeDomain;
@@ -56,11 +57,15 @@ public class LicenseInheritanceTest {
 		fieldUrls = new ArrayList<FieldUrl>();
 		fieldUrls.add(new FieldUrl(url)); 
 		target.fieldUrls = fieldUrls;	
+		// Set up a test configuration;
+	    Config additionalConfig = ConfigFactory.parseFile(new File("conf/dev.conf"));
+	    additionalConfigurations = new Configuration(additionalConfig);
 	}
+
 	
 		@Test
 	    public void test() {
-	        running(fakeApplication(), new Runnable() {
+	        running(fakeApplication(additionalConfigurations.asMap()), new Runnable() {
 	        	
 	        	List<Target> list = new ArrayList<Target>();
 	        	
