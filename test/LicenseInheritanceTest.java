@@ -149,7 +149,7 @@ public class LicenseInheritanceTest {
 		public void testWhois() throws ActException {
 			String url = "http://bl.uk/";
 			boolean wr = Scope.INSTANCE.checkWhois(url, null);
-			System.out.println("wr: "+wr);
+			assertThat(wr).isTrue();
 		}
 
 
