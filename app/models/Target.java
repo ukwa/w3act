@@ -1326,7 +1326,7 @@ public class Target extends UrlModel {
 		
 		List<Target> result = new ArrayList<Target>();
 		for (Target target : targets.findList()) {
-			if (target.isInScopeAllWithoutLicense()) {
+			if (target.isInScopeAllOrInheritedWithoutLicense()) {
 				result.add(target);
 			}
 		}
@@ -1358,7 +1358,9 @@ public class Target extends UrlModel {
 		Iterator<Target> itr = targets.findList().iterator();
 		while (itr.hasNext()) {
 			Target target = itr.next();
-			if (target.isInScopeAllWithoutLicense() || target.indicateLicenses()) {
+			// This includes all, rather than just the licensed stuff:
+			//if (target.isInScopeAllOrInheritedWithoutLicense() || target.indicateLicenses()) {
+			if ( target.indicateLicenses() ) {
 				result.add(target);
 			}
 		}
