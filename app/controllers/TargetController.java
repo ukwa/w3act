@@ -956,6 +956,8 @@ public class TargetController extends AbstractController {
     	DynamicForm requestData = form().bindFromRequest();
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
         Form<Target> filledForm = form(Target.class).bindFromRequest();
+		User currentUser = User.findByEmail(request().username());
+        Target original = Target.findById(id);
 
         String action = requestData.get("action");
 
@@ -1120,6 +1122,26 @@ public class TargetController extends AbstractController {
 		        if (!crawlFrequency.equals(CrawlFrequency.DOMAINCRAWL.name())) {
 		        	if (StringUtils.isEmpty(crawlStartDate)) {
 			            ValidationError ve = new ValidationError("crawlStartDateText", "Start Date is required when any crawl frequency other than 'Domain Crawl Only' is selected");
+			            filledForm.reject(ve);
+			            return info(filledForm, id);
+		        	}
+		        }
+		        // Don't let non-archivists add or remove NEVERCRAWL status:
+		        if( CrawlFrequency.NEVERCRAWL.name().equals(original.crawlFrequency) ) {
+		        	// Do not remove:
+		        	if( ( ! CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency) )
+		        			&& ! ( currentUser.isArchivist() || currentUser.isSysAdmin() ) 
+		        			) {
+			            ValidationError ve = new ValidationError("crawlFrequency", "Only an archivist can change the crawl frequency from 'never crawl' to something else.");
+			            filledForm.reject(ve);
+			            return info(filledForm, id);
+		        	}
+		        } else {
+		        	// Do not add:
+		        	if( ( CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency) )
+		        			&& ! ( currentUser.isArchivist() || currentUser.isSysAdmin() ) 
+		        			) {
+			            ValidationError ve = new ValidationError("crawlFrequency", "Only an archivist can change the crawl frequency to 'never crawl'.");
 			            filledForm.reject(ve);
 			            return info(filledForm, id);
 		        	}

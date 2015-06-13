@@ -52,18 +52,18 @@ public class LicenseController extends AbstractController {
     
 	@Security.Authenticated(SecuredController.class)
     public static Result view(Long id) {
-//    	License license = License.findById(id);
-//    	if (license != null) {
-//    		if (request().accepts("text/html")) {
-//    			User user = User.findByEmail(request().username());
-////    			return ok(view.render(license, user));
-//    		} else {
-//    			return ok(Json.toJson(license));
-//    		}
-//    	} else {
-//    		return notFound("There is no License with ID "+id);
-//    	}
-		return null;
+    	License license = License.findById(id);
+		Logger.info("License: "+license);
+    	if (license != null) {
+    		if (request().accepts("text/html")) {
+    			User user = User.findByEmail(request().username());
+  				return ok(ukwalicenceview.render("Crawl Permission URL", "URL(s)"));//(license, user));
+    		} else {
+    			return ok(Json.toJson(license));
+    		}
+    	} else {
+    		return notFound("There is no License with ID "+id);
+    	}
     }
     /**
      * This method presents licence form for selected premission request
