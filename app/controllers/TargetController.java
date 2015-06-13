@@ -50,6 +50,7 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.mvc.Security;
+import play.mvc.With;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.api.Utils;
@@ -216,15 +217,6 @@ public class TargetController extends AbstractController {
     		} else {
     			return ok(Json.toJson(target));
     		}
-    	} else {
-    		return notFound("There is no Target with ID "+id);
-    	}
-    }
-    
-    public static Result viewAsJson(Long id) {
-    	Target target = Target.findById(id);
-    	if( target != null) {
-    		return ok(Json.toJson(target));
     	} else {
     		return notFound("There is no Target with ID "+id);
     	}

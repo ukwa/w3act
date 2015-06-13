@@ -1924,38 +1924,47 @@ public class Target extends UrlModel {
 	}
 	
 	// only sys admin and archivist can create
+	@JsonIgnore
 	public boolean hasInvalidLicenses() {
 		return (this.isRefused() || this.isEmailRejected() || this.isSuperseded());
 	}
 	
+	@JsonIgnore
     public boolean hasStatus(String licenseStatus) {
     	return (StringUtils.isNotEmpty(this.licenseStatus) && this.licenseStatus.equals(licenseStatus));
     }
     
+	@JsonIgnore
     public boolean isGranted() {
     	return this.hasStatus(LicenseStatus.GRANTED.name());
     }
     
+	@JsonIgnore
     public boolean isNotInitiated() {
     	return this.hasStatus(LicenseStatus.NOT_INITIATED.name());
     }
     
+	@JsonIgnore
     public boolean isQueued() {
     	return this.hasStatus(LicenseStatus.QUEUED.name());
     }
     
+	@JsonIgnore
     public boolean isPending() {
     	return this.hasStatus(LicenseStatus.PENDING.name());
     }
     
+	@JsonIgnore
     public boolean isRefused() {
     	return this.hasStatus(LicenseStatus.REFUSED.name());
     }
     
+	@JsonIgnore
     public boolean isEmailRejected() {
     	return this.hasStatus(LicenseStatus.EMAIL_REJECTED.name());
     }
     
+	@JsonIgnore
     public boolean isSuperseded() {
     	return this.hasStatus(LicenseStatus.SUPERSEDED.name());
     }
@@ -1976,7 +1985,7 @@ public class Target extends UrlModel {
 		return (target.qaIssue != null);
 	}
 	
-	@JsonProperty("crawl_permission")
+	@JsonIgnore
 	public CrawlPermission getLatestCrawlPermission() {
 		if (crawlPermissions != null && crawlPermissions.size() > 0) {
 			return crawlPermissions.get(crawlPermissions.size() - 1);
