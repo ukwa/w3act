@@ -63,11 +63,14 @@ public class APIIntegrationTests {
             	}
                 // Send up test data:
             	try {
-					sendTestData("http://localhost:3333/act");
+            		String host = "http://localhost:3333/act";
+            		Logger.info("STEP Sending Test Data...");
+					sendTestData(host);
+            		Logger.info("STEP Running API Tests...");
+					runSomeAPITests(host);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
-            	
             }
 			   
         });
@@ -97,25 +100,35 @@ public class APIIntegrationTests {
     /*
      * Method to populate a running system with some test data.
      */
-    private static void populate(String host, String username, String password, String title, String url, String scope, String start_date, int expected) {
+    private static Long populate(String host, String username, String password, String title, String url, String scope, String start_date, int expected) {
     	String one = "{\"title\": \""+title+"\", \"field_urls\": [\""+url+"\"],\"field_scope\": \""+scope+"\",\"field_crawl_start_date\": \""+start_date+"\", \"selector\": 1 }";
     	Promise<WS.Response> result = WS.url(host+"/api/targets").setAuth(username, password).setHeader("Content-Type", "application/json").post(one);
     	WS.Response response = result.get(timeout_ms);
     	Logger.info("GOT "+response.getStatus()+" "+response.getStatusText());
     	assertThat(response.getStatus()).isEqualTo(expected);
+    	String loc = response.getHeader(LOCATION);
+    	Long id = Long.parseLong(loc.substring(loc.lastIndexOf('/')+1));
+    	return id;
     }
     
     private static void sendTestData(String host) throws JsonParseException, JsonMappingException, IOException {
-    	populate(host, defaultUser, defaultPw, "anjackson.net", "http://anjackson.net/","root", "", 201 );
     	populate(host, defaultUser, defaultPw, "anjackson.net news", "http://anjackson.net/news/","resource", "1425790800", 201 );
     	populate(host, defaultUser, defaultPw, "British Library", "http://www.bl.uk","root", "1425790800", 201 );
     	populate(host, defaultUser, defaultPw, "British Library News", "http://www.bl.uk/news/","plus1", "1425790800", 201 );
     	populate(host, defaultUser, defaultPw, "M&S", "http://marksandspencer.com/","subdomains", "1425790800", 201 );
     	populate(host, defaultUser, defaultPw, "Example", "http://example.com/","subdomains", "1425790800", 201 );
     	populate(host, defaultUser, defaultPw, "Example Subdomain", "http://subdomain.example.com/","subdomains", "1425790800", 201 );
+    	
+    }
+    
+    private static void runSomeAPITests(String host) throws JsonParseException, JsonMappingException, IOException {
+    	// Push and entry in:
+		Logger.info("STEP API New Target...");
+    	Long oid = populate(host, defaultUser, defaultPw, "anjackson.net", "http://anjackson.net/","root", "", 201 );
 
-    	// Get one back:
-    	Target target = getTargetByID( host, 1l);
+    	// Get it back:
+		Logger.info("STEP API Get Target...");
+    	Target target = getTargetByID( host, oid);
 		Long tid = target.id;
 		Logger.info("Checking "+target.toString());
 		assertThat(target.title).isEqualTo("anjackson.net");
@@ -123,29 +136,32 @@ public class APIIntegrationTests {
 		assertThat(target.scope).isEqualTo(ScopeType.root.name());
 		assertThat(target.crawlStartDate).isNull();
 		// Now PUT to the same ID, changing some fields:
+		Logger.info("STEP API Update Target (1)...");
 		String update = "{\"id\": "+tid+", \"field_scope\": \"subdomains\", \"field_crawl_frequency\": \"MONTHLY\" }";
-    	Response response = WS.url(host+"/api/targets/1").setAuth(defaultUser, defaultPw).setHeader("Content-Type", "application/json").put(update).get(timeout_ms);
+    	Response response = WS.url(host+"/api/targets/"+oid).setAuth(defaultUser, defaultPw).setHeader("Content-Type", "application/json").put(update).get(timeout_ms);
     	Logger.info(response.getStatus()+" "+response.getStatusText());
     	assertThat(response.getStatus()).isEqualTo(OK);
-    	Target t2 = getTargetByID( host, 1l);
+		Logger.info("STEP API Get Target (1)...");
+    	Target t2 = getTargetByID( host, oid);
 		Logger.info("Now "+t2.toString());
 		// And change scope back, but leave the frequency:
+		Logger.info("STEP API Update Target (2)...");
 		String update2 = "{\"id\": "+tid+", \"field_scope\": \"root\" }";
-    	response = WS.url(host+"/api/targets/1").setAuth(defaultUser, defaultPw).setHeader("Content-Type", "application/json").put(update2).get(timeout_ms);
+    	response = WS.url(host+"/api/targets/"+oid).setAuth(defaultUser, defaultPw).setHeader("Content-Type", "application/json").put(update2).get(timeout_ms);
     	Logger.info(response.getStatus()+" "+response.getStatusText());
     	assertThat(response.getStatus()).isEqualTo(OK);
-    	Target t3 = getTargetByID( host, 1l);
+    	Target t3 = getTargetByID( host, oid);
 		Logger.info("Now "+t2.toString());
 		// Check the default value for the frequency field in the Target class did not override the original value in the merge.
 		assertThat(t3.crawlFrequency).isEqualTo(Const.CrawlFrequency.MONTHLY.name());
     }
     
     private static Target getTargetByID( String host, Long id ) throws JsonParseException, JsonMappingException, IOException {
-    	Response response = WS.url(host+"/api/targets/1").get().get(timeout_ms);
+    	Response response = WS.url(host+"/api/targets/"+id).get().get(timeout_ms);
     	Logger.info(response.getStatus()+" "+response.getStatusText());
     	Logger.debug(response.getBody());
     	assertThat(response.getStatus()).isEqualTo(UNAUTHORIZED);
-    	response = WS.url(host+"/api/targets/1").setAuth(defaultUser, defaultPw).get().get(timeout_ms);
+    	response = WS.url(host+"/api/targets/"+id).setAuth(defaultUser, defaultPw).get().get(timeout_ms);
     	Logger.info(response.getStatus()+" "+response.getStatusText());
     	Logger.debug(response.getBody());
     	assertThat(response.getStatus()).isEqualTo(OK);
