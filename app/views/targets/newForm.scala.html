@@ -736,7 +736,6 @@
 	               					targetForm("scope"), 
 						                options(scopeTypes), 
 						                args = 
-					                	'_default -> "-- None --",
 						                '_label -> "Scope: Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	
@@ -753,7 +752,6 @@
 	               					targetForm("depth"), 
 						                options(depthTypes), 
 						                args = 
-					                	'_default -> "-- None --",					                
 						                '_label -> "Depth: (Determines the depth of the crawl. Most crawls will be capped at 500MB)",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	

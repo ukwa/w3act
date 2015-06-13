@@ -135,6 +135,7 @@ public class APIIntegrationTests {
 		assertThat(target.fieldUrls.get(0).url).isEqualTo("http://anjackson.net/");
 		assertThat(target.scope).isEqualTo(ScopeType.root.name());
 		assertThat(target.crawlStartDate).isNull();
+		
 		// Now PUT to the same ID, changing some fields:
 		Logger.info("STEP API Update Target (1)...");
 		String update = "{\"id\": "+tid+", \"field_scope\": \"subdomains\", \"field_crawl_frequency\": \"MONTHLY\" }";
@@ -144,6 +145,7 @@ public class APIIntegrationTests {
 		Logger.info("STEP API Get Target (1)...");
     	Target t2 = getTargetByID( host, oid);
 		Logger.info("Now "+t2.toString());
+		
 		// And change scope back, but leave the frequency:
 		Logger.info("STEP API Update Target (2)...");
 		String update2 = "{\"id\": "+tid+", \"field_scope\": \"root\" }";
@@ -152,6 +154,7 @@ public class APIIntegrationTests {
     	assertThat(response.getStatus()).isEqualTo(OK);
     	Target t3 = getTargetByID( host, oid);
 		Logger.info("Now "+t2.toString());
+		
 		// Check the default value for the frequency field in the Target class did not override the original value in the merge.
 		assertThat(t3.crawlFrequency).isEqualTo(Const.CrawlFrequency.MONTHLY.name());
     }
