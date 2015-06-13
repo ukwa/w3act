@@ -608,9 +608,8 @@ public final class Const {
     	
     	public static Map<String, String> options() {
             LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-            for(ScopeType s : ScopeType.values()) {
-                options.put(s.name(), s.getValue());
-            }
+            options.put(root.name(), root.getValue());
+            options.put(subdomains.name(), subdomains.getValue());
             return options;
     		
     	}        	
