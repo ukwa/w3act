@@ -95,7 +95,9 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Name: <small class="text-center">(organisation or individual)</small></label>
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.showByUrl(permissionUrl) != null && CrawlPermission.showByUrl(permissionUrl).contactPerson != null ) {
 							<input class="form-control" name="contactPerson" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.name" placeholder="Max Mustermann" type="text" readonly>
+						}
 						</div>
 					</div>
 				</div>
@@ -106,7 +108,9 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Position:</label>
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.showByUrl(permissionUrl) != null && CrawlPermission.showByUrl(permissionUrl).contactPerson != null ) {
 							<input class="form-control" name="position" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.position" type="text" readonly>
+						}
 						</div>
 					</div>
 				</div>
@@ -117,7 +121,9 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.showByUrl(permissionUrl) != null && CrawlPermission.showByUrl(permissionUrl).contactPerson != null ) {					    
 							<input class="form-control" name="email" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.email" placeholder="max.mustermann@@domain.com" type="text" readonly>
+						}
 						</div>
 					</div>
 				</div>
@@ -128,7 +134,9 @@
 					<div class="form-group">
 						<label for="inputContactOrganisation" class="col-sm-6 control-label">Contact Organisation:</label>
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.showByUrl(permissionUrl) != null && CrawlPermission.showByUrl(permissionUrl).contactPerson != null ) {
 		              		<input readonly class="form-control" name="contactOrganisation" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.contactOrganisation" type="text">
+		              	}
 						</div>
 					</div>
 				</div>
@@ -139,7 +147,9 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Phone:</label>
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.showByUrl(permissionUrl) != null && CrawlPermission.showByUrl(permissionUrl).contactPerson != null ) {
 							<input class="form-control" name="phone" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.phone" placeholder="0041889923456" type="text" readonly>
+						}
 						</div>
 					</div>
 				</div>
@@ -150,7 +160,9 @@
 					<div class="form-group">
 						<label for="inputPostalAddress" class="col-sm-6 control-label">Postal Address:</label>
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.showByUrl(permissionUrl) != null && CrawlPermission.showByUrl(permissionUrl).contactPerson != null ) {
 		              		<input readonly class="form-control" name="postalAddress" value="@CrawlPermission.showByUrl(permissionUrl).contactPerson.postalAddress" type="text">
+		              	}
 						</div>
 					</div>
 				</div>
@@ -161,7 +173,9 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Any other information:</label>
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.showByUrl(permissionUrl) != null ) {
 	 						<textarea name="description" value="@CrawlPermission.showByUrl(permissionUrl).anyOtherInformation" cols="100" rows="1" class="form-control" readonly>@CrawlPermission.showByUrl(permissionUrl).anyOtherInformation</textarea>
+	 					}
 						</div>
 					</div>
 				</div>
@@ -180,6 +194,8 @@
 				     	</div>	 
 						 
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.findByUrl(permissionUrl) != null 
+					    	&& CrawlPermission.findByUrl(permissionUrl).thirdPartyContent != null ) {
 							<label class="radio-inline">
 							@if(CrawlPermission.findByUrl(permissionUrl).thirdPartyContent) {
   						            <input name="content" id="radio1" value="1" type="radio" disabled checked> Yes
@@ -194,6 +210,7 @@
 						        <input name="content" id="radio2" value="2" type="radio" checked disabled> No
 						    }
 							</label>
+						}
 						</div>
 					</div>
 				</div>
@@ -212,11 +229,13 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">I / We agree: <font color="red">*</font> Yes</label>
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.findByUrl(permissionUrl) != null ) {
 							@if(CrawlPermission.showByUrl(permissionUrl).agree) {						    
 			                <input type="checkbox" name="agree" checked disabled/>
 			                } else {
 			                <input type="checkbox" name="agree" disabled/>
 			                }
+			            }
 						</div>
 					</div>
 				</div>
@@ -245,20 +264,22 @@
 				     	</div>	 
 						 
 					    <div class="col-sm-6">
+					    @if( CrawlPermission.findByUrl(permissionUrl) != null ) {
 							<label class="radio-inline">
-							@if(CrawlPermission.showByUrl(permissionUrl).publish) {						    
+							@if(CrawlPermission.showByUrl(permissionUrl).publish) {  
   						            <input name="publish" id="radio1" value="1" type="radio" checked disabled> Yes
   						        } else {
   						            <input name="publish" id="radio1" value="1" type="radio" disabled> Yes
   						        }
 							</label>
 							<label class="radio-inline">
-							@if(CrawlPermission.showByUrl(permissionUrl).publish) {						    
+							@if(CrawlPermission.showByUrl(permissionUrl).publish) {
 						        <input name="publish" id="radio2" value="2" type="radio" disabled> No
 						    } else {
 						        <input name="publish" id="radio2" value="2" type="radio" checked disabled> No
 						    }
 							</label>
+						}
 						</div>
 					</div>
 				</div>
