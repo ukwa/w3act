@@ -126,8 +126,8 @@ public enum DataImport {
 				taxonomy.url = Const.ACT_URL + Utils.INSTANCE.createId();
 				if (StringUtils.isNotEmpty(taxonomy.parentName)) {
 					Taxonomy parent = Taxonomy.findByNameAndType(taxonomy.parentName, taxonomy.ttype);
-					Logger.debug("Parent found: " + parent);
 					if (parent != null) {
+						Logger.debug("Parent found: " + parent);
 						if (taxonomy instanceof Collection) {
 							((Collection)taxonomy).parent = (Collection)parent;
 						}

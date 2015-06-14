@@ -24,12 +24,12 @@ fieldUrls:
 
 collections:
   - &collection1 !!models.Collection
-    id:             60
+    id:             600
     name:           UK General Election 2015
     createdAt:      2012-02-01
     
   - &collection2 !!models.Collection
-    id:             105
+    id:             1050
     name:           Election Blogs
     createdAt:      2012-02-01
     parent:         *collection1
