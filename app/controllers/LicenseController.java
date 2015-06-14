@@ -57,7 +57,7 @@ public class LicenseController extends AbstractController {
     	if (license != null) {
     		if (request().accepts("text/html")) {
     			User user = User.findByEmail(request().username());
-  				return ok(ukwalicenceview.render("Crawl Permission URL", "URL(s)"));//(license, user));
+  				return ok(ukwalicenceview.render("Crawl Permission URL", "URL(s)", null, license));
     		} else {
     			return ok(Json.toJson(license));
     		}
@@ -99,7 +99,7 @@ public class LicenseController extends AbstractController {
     	}
     	
 		return ok(
-            ukwalicenceview.render(crawlPermission.url, crawlPermission.target.fieldUrl())
+            ukwalicenceview.render(crawlPermission.url, crawlPermission.target.fieldUrl(),crawlPermission, crawlPermission.license)
         );
     }
     

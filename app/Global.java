@@ -14,9 +14,7 @@ public class Global extends GlobalSettings {
     	// should run in background and return view
     	Boolean useAccounts = play.Play.application().configuration().getBoolean("use.accounts");
     	if (useAccounts) {
-	    	DataImport.INSTANCE.importPermissions();
-	    	DataImport.INSTANCE.importRoles();
-			DataImport.INSTANCE.importAccounts();
+	    	DataImport.INSTANCE.insert();
     	}
     }
     

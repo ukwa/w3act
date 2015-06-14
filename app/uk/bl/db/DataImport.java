@@ -5,22 +5,17 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
-
 import org.apache.commons.lang3.StringUtils;
 
 import models.Collection;
 import models.ContactPerson;
 import models.Flag;
-import models.Instance;
 import models.MailTemplate;
 import models.Organisation;
 import models.Permission;
 import models.Role;
 import models.Subject;
 import models.Tag;
-import models.Target;
 import models.Taxonomy;
 import models.TaxonomyType;
 import models.User;
@@ -30,7 +25,6 @@ import com.avaje.ebean.Ebean;
 import play.Logger;
 import play.libs.Yaml;
 import uk.bl.Const;
-import uk.bl.api.JsonUtils;
 import uk.bl.api.PasswordHash;
 import uk.bl.api.Utils;
 
@@ -40,19 +34,13 @@ public enum DataImport {
 
 	public void insert() {
 		
-    	Boolean importAccounts = play.Play.application().configuration().getBoolean("use.accounts");
-
         try {
-
+            Logger.debug("+++ Importing test data +++");
 			if (Ebean.find(User.class).findRowCount() == 0) {
 	        	this.importPermissions();
 	        	this.importRoles();
-//	        	this.importJsonOrganisations();
 	        	this.importOrganisations();
-//	        	this.importCurators();
-	        	if (importAccounts) {
-//	        		this.importAccounts();
-	        	}
+        		this.importAccounts();
 	        }
 			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {
 	        	this.importMailTemplates();
@@ -60,35 +48,12 @@ public enum DataImport {
 			if (Ebean.find(ContactPerson.class).findRowCount() == 0) {
 	        	this.importContactPersons();
 			}
-			if (Ebean.find(TaxonomyType.class).findRowCount() == 0) {
-//				this.importJsonTaxonomyVocabularies();
-			}
 			if (Ebean.find(Taxonomy.class).findRowCount() == 0) {
-//				this.importJsonTaxonomies();
 				this.importTaxonomies();
 	        	this.importTags();
 	        	this.importFlags();
 			}
-			if (Ebean.find(Target.class).findRowCount() == 0) {
-//	        	this.importTargets();
-			}
-			if (Ebean.find(Instance.class).findRowCount() == 0) {
-//				this.importInstances();
-			}
             Logger.debug("+++ Data import completed +++");
-            
-        	String defaultAdminEmail = play.Play.application().configuration().getString("admin.default.email");
-        	// find the imported admin user from Andy's act
-			User user = User.findByEmail(defaultAdminEmail);
-			String generated = UUID.randomUUID().toString();
-			if (user != null) {
-				user.roles = Role.setRoleByName("sys_admin");
-				user.password = PasswordHash.createHash(generated);
-				user.update();
-			}
-        	
-			//String password = AdminUserImport.INSTANCE.create(defaultAdminEmail);
-			Logger.info("Email: " + user.email + ", ADMIN PASSWORD: " + generated);
             
         } catch (Exception e) {
         	e.printStackTrace();
