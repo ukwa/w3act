@@ -3,10 +3,12 @@ package controllers;
 import static play.data.Form.form;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 import models.Organisation;
 import models.Target;
@@ -596,7 +598,6 @@ public class ReportController extends AbstractController {
      * 
      * @return
      */
-    @Transactional
     public static Result resetBadScopes() {
     	List<Target> targets = getTargetsWithoutRootScope();
     	for( Target t : targets ) {
@@ -611,6 +612,28 @@ public class ReportController extends AbstractController {
     	  }
     	}
     	return redirect(routes.ReportController.consistencyChecks());
-    }    
+    }
+    
+    
+    /**
+     * 
+     * @return
+     */
+    public static Result resetEmptyStartDates() {
+    	List<Target> targets = getTargetsWithoutStartDate();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		sdf.setTimeZone(TimeZone.getTimeZone("UCT"));
+    	for( Target t : targets ) {
+    		try {
+				t.crawlStartDate = sdf.parse("2013-04-06");
+			} catch (Exception e) {
+				throw( new RuntimeException(e));
+			}
+    		t.update();
+    		Logger.info("> is now "+t.crawlStartDate);
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
 }
 

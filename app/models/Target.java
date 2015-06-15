@@ -1800,7 +1800,6 @@ public class Target extends UrlModel {
 		}
 		return crawlEndDateText;
 	}
-
 	
 	public String getCrawlStartDateISO() {
 		if (crawlStartDate != null) {
@@ -2021,7 +2020,7 @@ public class Target extends UrlModel {
 	public boolean isDeletable() {
 		Logger.debug("collections size...." + this.collections.size());
 		Logger.debug("licenses size...." + this.licenses.size());
-		return (!this.indicateLicenses() && CollectionUtils.isEmpty(this.collections));
+		return (!this.checkLicense() && CollectionUtils.isEmpty(this.collections));
 	}
 	
     @PreUpdate

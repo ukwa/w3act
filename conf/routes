@@ -157,6 +157,7 @@ GET    	/reports/consistencyChecks/rgi          controllers.ReportController.rem
 GET    	/reports/consistencyChecks/rqi          controllers.ReportController.removeQueuedInconsistencies()
 GET    	/reports/consistencyChecks/rln          controllers.ReportController.resetThisLicenseToNull(id:Long ?= -1)
 GET    	/reports/consistencyChecks/rbs          controllers.ReportController.resetBadScopes()
+GET    	/reports/consistencyChecks/eds          controllers.ReportController.resetEmptyStartDates()
 GET    	/reports/qa                         	controllers.ReportController.qa()
 GET    	/reportscreation               	        controllers.ReportController.indexCreation() 
 GET    	/reportscreation/search                 controllers.ReportController.searchCreation()

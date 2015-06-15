@@ -101,7 +101,7 @@ public class APIIntegrationTests {
      * Method to populate a running system with some test data.
      */
     private static Long populate(String host, String username, String password, String title, String url, String scope, String start_date, int expected) {
-    	String one = "{\"title\": \""+title+"\", \"field_urls\": [\""+url+"\"],\"field_scope\": \""+scope+"\",\"field_crawl_start_date\": \""+start_date+"\", \"selector\": 1 }";
+    	String one = "{\"title\": \""+title+"\", \"field_urls\": [\""+url+"\"],\"field_scope\": \""+scope+"\",\"field_crawl_start_date\": \""+start_date+"\", \"selector\": 1, \"field_crawl_frequency\": \"MONTHLY\" }";
     	Promise<WS.Response> result = WS.url(host+"/api/targets").setAuth(username, password).setHeader("Content-Type", "application/json").post(one);
     	WS.Response response = result.get(timeout_ms);
     	Logger.info("GOT "+response.getStatus()+" "+response.getStatusText());
@@ -112,7 +112,7 @@ public class APIIntegrationTests {
     }
     
     private static void sendTestData(String host) throws JsonParseException, JsonMappingException, IOException {
-    	populate(host, defaultUser, defaultPw, "anjackson.net news", "http://anjackson.net/news/","resource", "1425790800", 201 );
+    	populate(host, defaultUser, defaultPw, "anjackson.net news", "http://anjackson.net/news/","resource", "", 201 );
     	populate(host, defaultUser, defaultPw, "British Library", "http://www.bl.uk","root", "1425790800", 201 );
     	populate(host, defaultUser, defaultPw, "British Library News", "http://www.bl.uk/news/","plus1", "1425790800", 201 );
     	populate(host, defaultUser, defaultPw, "M&S", "http://marksandspencer.com/","subdomains", "1425790800", 201 );
