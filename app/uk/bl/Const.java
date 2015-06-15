@@ -777,7 +777,7 @@ public final class Const {
 		MONTHLY("Monthly"),
 		WEEKLY("Weekly"),
 		DAILY("Daily"),
-		NEVERCRAWL("Never Crawl");
+		NEVERCRAWL("Blocked (Archivist Use Only)");
 
         private String value;
 
