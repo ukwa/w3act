@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -1782,6 +1783,7 @@ public class Target extends UrlModel {
 	public String getDateOfPublicationText() {
 		if (dateOfPublication != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			dateOfPublicationText = dateFormat.format(dateOfPublication);
 		}
 		return dateOfPublicationText;

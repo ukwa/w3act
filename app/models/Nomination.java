@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -176,6 +177,7 @@ public class Nomination extends ActModel {
 	public String getNominationDateText() {
 		if (nominationDate != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			return dateFormat.format(nominationDate);
 		}
 		return null;

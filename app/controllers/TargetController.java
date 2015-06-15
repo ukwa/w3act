@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -1107,6 +1108,7 @@ public class TargetController extends AbstractController {
 		        String crawlStartDate = requestData.get("crawlStartDateText");
 		    	if (StringUtils.isNotEmpty(crawlStartDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 					try {
 						Date date = formatter.parse(crawlStartDate);
 						filledForm.get().crawlStartDate = date;
@@ -1150,6 +1152,7 @@ public class TargetController extends AbstractController {
 		        String crawlEndDate = requestData.get("endStartDateText");
 		    	if (StringUtils.isNotEmpty(crawlEndDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 					try {
 						Date date = formatter.parse(crawlEndDate);
 						filledForm.get().crawlEndDate = date;
@@ -1245,6 +1248,7 @@ public class TargetController extends AbstractController {
 		        String dateOfPublication = requestData.get("dateOfPublicationText");
 		    	if (StringUtils.isNotEmpty(dateOfPublication)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 					try {
 						Date date = formatter.parse(dateOfPublication);
 						filledForm.get().dateOfPublication = date;
@@ -1420,6 +1424,7 @@ public class TargetController extends AbstractController {
         String crawlStartDate = requestData.get("crawlStartDateText");
     	if (StringUtils.isNotEmpty(crawlStartDate)) {
 			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 			try {
 				Date date = formatter.parse(crawlStartDate);
 				filledForm.get().crawlStartDate = date;
@@ -1441,6 +1446,7 @@ public class TargetController extends AbstractController {
         String crawlEndDate = requestData.get("endStartDateText");
     	if (StringUtils.isNotEmpty(crawlEndDate)) {
 			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 			try {
 				Date date = formatter.parse(crawlEndDate);
 				filledForm.get().crawlEndDate = date;
@@ -1530,6 +1536,7 @@ public class TargetController extends AbstractController {
         String dateOfPublication = requestData.get("dateOfPublicationText");
     	if (StringUtils.isNotEmpty(dateOfPublication)) {
 			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 			try {
 				Date date = formatter.parse(dateOfPublication);
 				filledForm.get().dateOfPublication = date;
