@@ -898,7 +898,7 @@
 									<a class="brand" target="_blank" href="@routes.InstanceController.showByTarget(target.id)">Instances</a>
 						    </li>
 							<li>
-									<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">Search QA Wayback</a>
+									<a class="brand" target="_blank" href="@{routes.WaybackController.wayback("*/" + fieldUrl.url)}">Search QA Wayback</a>
 							</li>
 							<li>
 						        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">Search Open UK Web Archive</a>
