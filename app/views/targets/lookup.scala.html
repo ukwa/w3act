@@ -123,6 +123,9 @@
 	</div>
 		}
 		
+		@if( currentPage.getTotalRowCount > 0 ) {
+		
+		
 		@pagination
     
 		<table class="table table-hover">
@@ -201,13 +204,22 @@
 		</table>
 		 
 		@pagination
+		
+		} else {
+			<p>
+			No targets found.
+			</p>
+		}
 
    </article>
-   
-    <div class="alert alert-info">
-	<h3>Installing the bookmarklet...</h3>
-	To install the W3ACT look-up service in your browser, drag this link to your bookmarks bar:
+
+	<div class="row padding-10">
+	  <div class="col-md-12 col-xs-12 col-sm-12">
+       <div class="well">
+	To install the W3ACT look-up service in your browser as a <a href="https://en.wikipedia.org/wiki/Bookmarklet">bookmarklet</a>, drag this link to your bookmarks bar:
 	<a href="javascript:void(location.href='https://www.webarchive.org.uk/act/targets/lookup?f='+escape(location.href)+'&referrer='+escape(document.referrer))">  Find W3ACT</a>	
+       </div>
+      </div>
     </div>
     
 }

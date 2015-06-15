@@ -11,6 +11,7 @@ import java.util.UUID;
 import models.CommunicationLog;
 import models.ContactPerson;
 import models.CrawlPermission;
+import models.License;
 import models.MailTemplate;
 import models.Target;
 import models.User;
@@ -129,7 +130,7 @@ public class CrawlPermissionController extends AbstractController {
 		Form<CrawlPermission> crawlPermissionForm = Form.form(CrawlPermission.class);
 		crawlPermissionForm = crawlPermissionForm.fill(crawlPermission);
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
-      	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null));
+      	return ok(edit.render(crawlPermissionForm, user, id, crawlPermissionStatuses, null, License.options()));
     }
     
     public static Result view(Long id) {
@@ -346,7 +347,7 @@ public class CrawlPermissionController extends AbstractController {
     	User user = User.findByEmail(request().username());
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
 		Logger.debug("Info contactPerson: " + form.get().contactPerson.name);
-		return badRequest(edit.render(form, user, id, crawlPermissionStatuses, contactName));
+		return badRequest(edit.render(form, user, id, crawlPermissionStatuses, contactName, License.options()));
     }
     
 	public static Result newInfo(Form<CrawlPermission> form, Long targetId, String contactName) {
@@ -425,6 +426,12 @@ public class CrawlPermissionController extends AbstractController {
     	        filledForm.get().target.licenseStatus = filledForm.get().status;
     	        filledForm.get().target.update();
 //    	        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
+
+    	        // Set up the license
+		        String license_id = requestData.get("license_id");
+		        if( license_id != null ) {
+		        	filledForm.get().license = License.findById(Long.parseLong(license_id));
+		        }
     	        
 		        filledForm.get().update(id);
 		        flash("message", "Crawl Permission " + filledForm.get().name + " has been updated");

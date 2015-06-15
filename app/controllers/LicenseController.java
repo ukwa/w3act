@@ -29,7 +29,6 @@ import uk.bl.scope.EmailHelper;
 import views.html.licence.licences;
 import views.html.licence.ukwalicence;
 import views.html.licence.ukwalicenceresult;
-import views.html.licence.ukwalicenceview;
 //import views.html.licence.view;
 
 import com.avaje.ebean.ExpressionList;
@@ -45,9 +44,7 @@ public class LicenseController extends AbstractController {
      */
 	@Security.Authenticated(SecuredController.class)
     public static Result index() {
-		return ok(
-            ukwalicence.render("", "", "", "", "", "", "", "", "", "")
-        );
+		return view(License.findAllLicenses().get(0).id);
     }
     
 	@Security.Authenticated(SecuredController.class)
@@ -57,7 +54,10 @@ public class LicenseController extends AbstractController {
     	if (license != null) {
     		if (request().accepts("text/html")) {
     			User user = User.findByEmail(request().username());
-  				return ok(ukwalicenceview.render("Crawl Permission URL", "URL(s)", null, license));
+    			CrawlPermission cp = new CrawlPermission();
+    			cp.contactPerson = new ContactPerson();
+    			cp.license = license;
+    			return ok(ukwalicence.render(cp, false));
     		} else {
     			return ok(Json.toJson(license));
     		}
@@ -74,13 +74,13 @@ public class LicenseController extends AbstractController {
      */
     public static Result form(String token) throws ActException {
     	CrawlPermission crawlPermission = CrawlPermission.showByToken(token);
+    	
     	if (crawlPermission == null) {
     		throw new ActException("CrawlPermission Not Found found for token: " + token);
     	}
 
 		return ok(
-            ukwalicence.render(crawlPermission.url, crawlPermission.name, 
-            		crawlPermission.target.fieldUrl(), "", "", "", "", "", "", "")
+            ukwalicence.render(crawlPermission, true)
         );
     }
     
@@ -99,7 +99,7 @@ public class LicenseController extends AbstractController {
     	}
     	
 		return ok(
-            ukwalicenceview.render(crawlPermission.url, crawlPermission.target.fieldUrl(),crawlPermission, crawlPermission.license)
+			ukwalicence.render(crawlPermission, false)
         );
     }
     
@@ -182,45 +182,19 @@ public class LicenseController extends AbstractController {
         DynamicForm requestData = Form.form().bindFromRequest();
     	
     	String action = requestData.get("action");
-        
+    	
     	try {
 	    	if (StringUtils.isNotEmpty(action)) {
 	        
 		        if (action.equals("submit")) {
-		        	String actUrl = requestData.get("url");
-		        	CrawlPermission permission = CrawlPermission.findByUrl(actUrl);
+		        	String token = requestData.get("token");
+		        	CrawlPermission permission = CrawlPermission.findByToken(token);
 		        	
-		        	if (StringUtils.isBlank(getFormParam(Const.TARGET)) 
-		        			|| StringUtils.isBlank(getFormParam(Const.NAME))
-		        			|| StringUtils.isBlank(getFormParam(Const.POSITION))
-		        			|| StringUtils.isBlank(getFormParam(Const.CONTACT_PERSON))
-		        			|| StringUtils.isBlank(getFormParam(Const.EMAIL))) {
-		    			Logger.debug("One of the required fields is empty. Please fill out all required fields marked by red star in the form.");
-		    			flash("message", "Please fill out all required fields marked by red star in the form");
-		    			
-		    			return ok(
-		    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
-		    	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 
-		    	   						getFormParam(Const.EMAIL), getFormParam(Const.POSTAL_ADDRESS), 
-		    	   						getFormParam(Const.CONTACT_ORGANISATION), getFormParam(Const.PHONE), 
-		    	   						getFormParam(Const.DESCRIPTION))
-		    		        );
-		        	}  
+		        	// Update the CrawlPermission
 		        	Logger.debug("save UKWA licence - name: " + getFormParam(Const.NAME));
 		    		Logger.debug("agree: " + getFormParam(Const.AGREE));
 		            boolean isAgreed = Utils.INSTANCE.getNormalizeBooleanString(getFormParam(Const.AGREE));
-		    		if (!isAgreed || StringUtils.isBlank(getFormParam(Const.CONTENT)) 
-		        			|| StringUtils.isBlank(getFormParam(Const.PUBLISH))) {
-		    			Logger.debug("The form cannot be submitted without checking the 'I/We agree' box, or without answering the questions about 'Third-Party Content' and 'Publicity for the Web Archive'. Please check your input and try again.");
-		    			flash("message", "The form cannot be submitted without checking the 'I/We agree' box, or without answering the questions about 'Third-Party Content' and 'Publicity for the Web Archive'. Please check your input and try again.");
-		    			return ok(
-		    		            ukwalicence.render(getFormParam(Const.URL), getFormParam(Const.NAME), 
-		    	   						getFormParam(Const.TARGET), getFormParam(Const.CONTACT_PERSON), getFormParam(Const.POSITION), 
-		    	   						getFormParam(Const.EMAIL), getFormParam(Const.POSTAL_ADDRESS), 
-		    	   						getFormParam(Const.CONTACT_ORGANISATION), getFormParam(Const.PHONE), 
-		    	   						getFormParam(Const.DESCRIPTION))
-		    		        );
-		    		}
+		            
 		            boolean noThirdPartyContent = false;
 		            if (getFormParam(Const.CONTENT) != null) {
 		        		Logger.debug("content: " + getFormParam(Const.CONTENT));
@@ -315,7 +289,30 @@ public class LicenseController extends AbstractController {
 	                permission.thirdPartyContent = noThirdPartyContent;
 	                permission.publish = mayPublish;
 	                
-	                
+	                // Perform any validation before saving:
+		        	if (StringUtils.isBlank(getFormParam(Const.TARGET)) 
+		        			|| StringUtils.isBlank(getFormParam(Const.NAME))
+		        			|| StringUtils.isBlank(getFormParam(Const.POSITION))
+		        			|| StringUtils.isBlank(getFormParam(Const.CONTACT_PERSON))
+		        			|| StringUtils.isBlank(getFormParam(Const.EMAIL))) {
+		    			Logger.debug("One of the required fields is empty. Please fill out all required fields marked by red star in the form.");
+		    			flash("message", "Please fill out all required fields marked by red star in the form");
+		    			
+		    			return ok(
+		    		            ukwalicence.render(permission, true)
+		    		        );
+		        	}  
+		    		if (!isAgreed || StringUtils.isBlank(getFormParam(Const.CONTENT)) 
+		        			|| StringUtils.isBlank(getFormParam(Const.PUBLISH))) {
+		    			Logger.debug("The form cannot be submitted without checking the 'I/We agree' box, or without answering the questions about 'Third-Party Content' and 'Publicity for the Web Archive'. Please check your input and try again.");
+		    			flash("message", "The form cannot be submitted without checking the 'I/We agree' box, or without answering the questions about 'Third-Party Content' and 'Publicity for the Web Archive'. Please check your input and try again.");
+		    			return ok(
+		    		            ukwalicence.render(permission, true)
+		    		        );
+		    		}
+
+
+	                // All good, sending email and recording result:	                
 	    	        CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + permission.status, permission, permission.user, Const.UPDATE);
 	    	        log.save();
 	    	        CrawlPermissionController.updateAllByTarget(permission.id, permission.target.id, permission.status);
@@ -342,21 +339,6 @@ public class LicenseController extends AbstractController {
 	                	Logger.debug("Updating Target "+target.id);
 	                	target.update();
 	
-	                	/*
-	                	 * 
-	                	 * FIXME This is not the right moment to be doing this, as it could only ever
-	                	 * fix up targets that exist at the time the license is submitted.
-
-	            		// lookup for all targets with lower level and update licence
-	                	for (FieldUrl fieldUrl : target.fieldUrls) {
-	                    	Set<Target> lowerTargets = FormHelper.getLowerTargets(fieldUrl);
-	                    	for (Target lowerTarget : lowerTargets) {
-	                    		lowerTarget.licenses.add(license);
-	                    		lowerTarget.licenseStatus = permission.status;
-	                    		lowerTarget.update();
-	                    	}
-	                	}
-	                	*/
 	                    	
 	                }
 	                Logger.debug("About to update crawl permission: "+permission);

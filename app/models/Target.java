@@ -1680,6 +1680,15 @@ public class Target extends UrlModel {
 	}
 	
 	@JsonIgnore
+	public String primaryUrl() {
+		if( this.fieldUrls != null && this.fieldUrls.size() > 0 ) {
+			return this.fieldUrls.get(0).url;
+		} else {
+			return null;
+		}
+	}
+	
+	@JsonIgnore
 	public String subjectIdsAsString() {
 		return StringUtils.join(this.subjectIds(), ", ");
 	}
