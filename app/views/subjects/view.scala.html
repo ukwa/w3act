@@ -63,7 +63,9 @@
 				<div class="form-group">
 					<label for="inputDescription" class="col-sm-6 control-label">Description</label>
 				    <div class="col-sm-6">
-		          		@Html(subject.description)
+				    	@if(subject.description != null ) {
+		          			@Html(subject.description)
+		          		}
 					</div>
 				</div>
 			</div>

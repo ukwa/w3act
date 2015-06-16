@@ -134,7 +134,9 @@ public class SubjectController extends AbstractController {
     public static Result edit(Long id) {
     	User user = User.findByEmail(request().username());
 		Subject subject = Subject.findById(id);
-		subject.description = subject.description.replace("<p>", "").replace("</p>", "").replace("<br />", "\n").replace("<br>", "\n");
+		if( subject.description != null ) {
+			subject.description = subject.description.replace("<p>", "").replace("</p>", "").replace("<br />", "\n").replace("<br>", "\n");
+		}
 		List<Subject> thisSubject = new ArrayList<Subject>();
 		thisSubject.add((Subject)subject.parent);
 		JsonNode node = getSubjectsData(thisSubject);
@@ -244,7 +246,6 @@ public class SubjectController extends AbstractController {
 	            }		        
 		        
 	            // Check if the 'publish' field is empty, which corresponds to 'false':
-	            Logger.info("GOTTEN "+filledForm.get().publish);
 	            if( filledForm.get().publish == null ) {
 	            	filledForm.get().publish = false;
 	            }

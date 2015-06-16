@@ -291,7 +291,6 @@ public class CollectionController extends AbstractController {
 	            }
 	            
 	            // Check if the 'publish' field is empty, which corresponds to 'false':
-	            Logger.info("GOTTEN "+filledForm.get().publish);
 	            if( filledForm.get().publish == null ) {
 	            	filledForm.get().publish = false;
 	            }
