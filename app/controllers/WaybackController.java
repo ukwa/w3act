@@ -17,6 +17,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import models.User;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -44,6 +46,12 @@ public class WaybackController extends Controller {
 
 	@Security.Authenticated(SecuredController.class)
 	public static Promise<Result> wayback(String url) throws ActException {
+		
+		User user = User.findByEmail(session().get("email"));
+    	String organisation = user.organisation.field_abbreviation;
+		Logger.debug("organisation ::::::::::::::"+ organisation);
+		if (organisation.equals("BL") || organisation.equals("NLW") || organisation.equals("NLS") || organisation.equals("Bodleian") || organisation.equals("CAM") || organisation.equals("TCD")){
+				
 		String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
 		
 		// Build up the wayback query:
@@ -84,6 +92,13 @@ public class WaybackController extends Controller {
 
 		                    
 		return resultPromise;
+		
+		}else{
+//			Promise<Result> result = status(BAD_REQUEST);
+//			return result;
+			return null;
+		
+		}
 	}
 	
 	public static Promise<Result> waybackRoot() throws ActException {

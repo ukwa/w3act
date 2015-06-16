@@ -94,9 +94,9 @@ public class CollectionController extends AbstractController {
 	        return redirect(routes.CollectionController.list(0, "title", "asc", ""));
     	}
     	
-    	int pageNo = Integer.parseInt(requestData.get("p"));
-    	String sort = requestData.get("s");
-    	String order = requestData.get("o");
+    	int pageNo = Integer.parseInt(requestData.get(Const.PAGE_NO));
+    	String sort = requestData.get(Const.SORT_BY);
+    	String order = requestData.get(Const.ORDER);
 
 
     	if (StringUtils.isEmpty(action)) {
@@ -133,7 +133,7 @@ public class CollectionController extends AbstractController {
 		User user = User.findByEmail(request().username());
 		Collection collection = Collection.findById(id);
 		if( collection != null ) {
-			Logger.debug("" + id+ " " + collection.parent);
+			Logger.debug("id::::" + id+ " parent:::: " + collection.parent);
 			if (request().accepts("text/html")) {
 				Logger.info("Rendering collection: "+collection);
 				return ok(view.render(collection, user));

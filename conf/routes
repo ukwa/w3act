@@ -40,8 +40,8 @@ GET     /collections/:url            		controllers.CollectionController.viewAct(
 GET     /collections/:id/edit       		controllers.CollectionController.edit(id:Long)
 GET     /collections/:id/sites				controllers.CollectionController.sites(id:Long)
 POST    /collections             			controllers.CollectionController.save()
-#POST    /collections/:id             		controllers.CollectionController.update(id:Long)
-PUT     /collections/:id             		controllers.CollectionController.update(id:Long)
+POST    /collections/:id             		controllers.CollectionController.update(id:Long)
+#PUT     /collections/:id             		controllers.CollectionController.update(id:Long)
 
 GET     /subjects                           controllers.SubjectController.index()
 GET    	/subjects/list                  	controllers.SubjectController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
