@@ -57,6 +57,7 @@ public class LicenseController extends AbstractController {
     			CrawlPermission cp = new CrawlPermission();
     			cp.contactPerson = new ContactPerson();
     			cp.license = license;
+    			cp.target = new Target();
     			return ok(ukwalicence.render(cp, false));
     		} else {
     			return ok(Json.toJson(license));
