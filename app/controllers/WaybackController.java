@@ -1,7 +1,6 @@
 package controllers;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -9,14 +8,6 @@ import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import models.User;
 
 import org.w3c.dom.Document;
@@ -51,7 +42,13 @@ public class WaybackController extends Controller {
 		User user = User.findByEmail(session().get("email"));
     	String organisation = user.organisation.field_abbreviation;
 		Logger.debug("organisation ::::::::::::::"+ organisation);
-		if (organisation.equals("BL") || organisation.equals("NLW") || organisation.equals("NLS") || organisation.equals("Bodleian") || organisation.equals("CAM") || organisation.equals("TCD")){
+		if (! ( organisation.equals("BL") || organisation.equals("NLW") || 
+				organisation.equals("NLS") || organisation.equals("Bodleian") || 
+				organisation.equals("CAM") || organisation.equals("TCD")) ) {
+			return F.Promise.pure((Result) unauthorized(
+					"unauthorized - you must be a member of a Legal Deposit library organisation to view the crawled resources")
+			);
+		}
 				
 		String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
 		
@@ -93,11 +90,6 @@ public class WaybackController extends Controller {
 
 		                    
 		return resultPromise;
-		
-		}else{
-			return F.Promise.pure((Result) unauthorized("unauthorized - you must be a member of a Legal Deposit library organisation to view the crawled resources"));
-		
-		}
 	}
 	
 	public static Promise<Result> waybackRoot() throws ActException {
