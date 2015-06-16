@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 
 import play.Logger;
 import play.Play;
+import play.libs.F;
 import play.libs.WS;
 import play.libs.F.Function;
 import play.libs.F.Promise;
@@ -94,9 +95,7 @@ public class WaybackController extends Controller {
 		return resultPromise;
 		
 		}else{
-//			Promise<Result> result = status(BAD_REQUEST);
-//			return result;
-			return null;
+			return F.Promise.pure((Result) unauthorized("unauthorized - you must be a member of a Legal Deposit library organisation to view the crawled resources"));
 		
 		}
 	}
