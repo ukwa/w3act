@@ -288,7 +288,13 @@ public class CollectionController extends AbstractController {
 	    	  			flash("message", "Please select only one parent.");
 	    	  			return info(filledForm, id);
 	                }
-	            }		        
+	            }
+	            
+	            // Check if the 'publish' field is empty, which corresponds to 'false':
+	            Logger.info("GOTTEN "+filledForm.get().publish);
+	            if( filledForm.get().publish == null ) {
+	            	filledForm.get().publish = false;
+	            }
 		        
 		        filledForm.get().update(id);
 		        flash("message", "Collection " + filledForm.get().name + " has been updated");
