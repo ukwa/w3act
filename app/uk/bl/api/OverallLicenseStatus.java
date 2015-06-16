@@ -11,6 +11,7 @@ import com.google.common.net.InternetDomainName;
 
 import play.Logger;
 import uk.bl.Const.ScopeType;
+import uk.bl.exception.ActException;
 import uk.bl.scope.Scope;
 import models.FieldUrl;
 import models.Target;
@@ -45,6 +46,19 @@ public class OverallLicenseStatus {
 		int npldc = 0, lc = 0;
 		for (FieldUrl fieldUrl : target.fieldUrls) {
 			Logger.info("Looking for inherited licensed for "+fieldUrl.url);
+			if( fieldUrl.domain == null && fieldUrl.url != null ) {
+				try {
+					fieldUrl.domain = Scope.getDomainFromUrl(fieldUrl.url);
+				} catch (ActException e) {
+					Logger.warn("Could not parse "+fieldUrl.url);
+				}
+			}
+			// Skip null domains:
+			if( fieldUrl.domain == null) {
+				Logger.error("No fieldUrl.domain for "+fieldUrl.url);
+				continue;
+			}
+			// Look for targets:
 			List<Target> tp = Target.findAllTargetsForDomainLike("%"+getParentDomain(fieldUrl.domain));
 			if( tp == null ) {
 				Logger.info("Found no potential matches.");
