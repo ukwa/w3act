@@ -217,7 +217,7 @@
 	  <div class="col-md-12 col-xs-12 col-sm-12">
        <div class="well">
 	To install the W3ACT look-up service in your browser as a <a href="https://en.wikipedia.org/wiki/Bookmarklet">bookmarklet</a>, drag this link to your bookmarks bar:
-	<a href="javascript:void(location.href='https://www.webarchive.org.uk/act/targets/lookup?f='+escape(location.href)+'&referrer='+escape(document.referrer))">  Find W3ACT</a>	
+	<a href="javascript:void(location.href='@{play.api.Play.current.configuration.getString("server_name")}@{routes.TargetController.lookup()}?f='+escape(location.href)+'&referrer='+escape(document.referrer))">  Find W3ACT</a>	
        </div>
       </div>
     </div>

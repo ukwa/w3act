@@ -107,6 +107,7 @@ public class WaybackController extends Controller {
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Logger.warn("ParserConfigurationException: ", e);
 		}
 		/***Check the http status code***/
 		
@@ -152,7 +153,7 @@ public class WaybackController extends Controller {
 		  NodeList nl = doc.getElementsByTagName("request");
 	      Node n = nl.item(0).getChildNodes().item(9);  
 	      Logger.debug("getTotalCrawledUrls = "+ n.getTextContent());
-	      	     
+	      	   
 	      return n.getTextContent();
 		  
 			}
