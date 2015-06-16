@@ -40,7 +40,10 @@ public class WaybackController extends Controller {
 	public static Promise<Result> wayback(String url) throws ActException {
 		
 		User user = User.findByEmail(session().get("email"));
-    	String organisation = user.organisation.field_abbreviation;
+    	String organisation = "";
+    	if( user.organisation != null ) {
+    		organisation = user.organisation.field_abbreviation;
+    	}
 		Logger.debug("organisation ::::::::::::::"+ organisation);
 		if (! ( organisation.equals("BL") || organisation.equals("NLW") || 
 				organisation.equals("NLS") || organisation.equals("Bodleian") || 
