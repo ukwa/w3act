@@ -707,6 +707,10 @@ public class TargetController extends AbstractController {
     public static Result edit(Long id) {
 		Logger.debug("Targets.edit() id: " + id);
 		Target target = Target.findById(id);
+		
+		// Make sure scope checks are up to date:
+		target.runChecks();
+		
 		target.formUrl = target.fieldUrl();
 		target.subjectSelect = target.subjectIdsAsString();
 		target.collectionSelect = target.collectionIdsAsString();
@@ -1265,6 +1269,9 @@ public class TargetController extends AbstractController {
 		        Logger.warn("Attempting to repair "+target.crawlPermissions+ "("+target.crawlPermissions.size()+")");
 		        filledForm.get().instances = target.instances;
 		        filledForm.get().lookupEntries = target.lookupEntries;
+		        
+		        // Run scoping checks:
+		        filledForm.get().runChecks();
 		    	
 				filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
@@ -1667,10 +1674,8 @@ public class TargetController extends AbstractController {
      */
     public static Result isInScope(String url) throws WhoisException {
     	Logger.debug("isInScope controller: " + url);
-//    	boolean res = Target.isInScope(url, null);
 		boolean res = Scope.INSTANCE.check(url, null, false);
 
-//    	Logger.debug("isInScope res: " + res);
     	return ok(Json.toJson(res));
     }
     

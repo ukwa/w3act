@@ -572,7 +572,7 @@ public class Target extends UrlModel {
 	public String checkScopeStr(String fieldUrl, String url) {
 		String res = "false";
 		if (fieldUrl != null && fieldUrl.length() > 0 && url != null
-				&& url.length() > 0 && this.isInScope(false)) {
+				&& url.length() > 0 && this.isInScopeAllOrInheritedWithoutLicense() ) {
 			res = "true";
 		}
 		return res;
@@ -1748,17 +1748,17 @@ public class Target extends UrlModel {
 	
 	@JsonIgnore
 	public boolean isUkHosting() {
-		return Scope.INSTANCE.isUkHosting(this);
+		return this.isUkHosting;
 	}
 	
 	@JsonIgnore
 	public boolean isTopLevelDomain() {
-		return Scope.isTopLevelDomain(this);
+		return this.isTopLevelDomain;
 	}
 	
 	@JsonIgnore
 	public boolean isUkRegistration() throws WhoisException {
-		return Scope.INSTANCE.isUkRegistration(this);
+		return this.isUkRegistration;
 	}
 	
 	@JsonIgnore
@@ -2027,16 +2027,16 @@ public class Target extends UrlModel {
 	
     @PreUpdate
     @PrePersist
-	public void preSaveChecks() throws ActException, WhoisException {
+	public void preSaveChecks() {
 		Logger.debug("before persist");
 		runChecks();
 		Logger.debug("after persist");
 	}
 
-    public void runChecks() throws ActException, WhoisException {
-		this.isUkHosting = isUkHosting();
-		this.isTopLevelDomain = isTopLevelDomain();
-		this.isUkRegistration = isUkRegistration();
+    public void runChecks() {
+		this.isUkHosting = Scope.INSTANCE.isUkHosting(this);
+		this.isTopLevelDomain = Scope.isTopLevelDomain(this);
+		this.isUkRegistration = Scope.INSTANCE.isUkRegistration(this);
 		Logger.debug("runChecks");
     }
     
