@@ -99,137 +99,79 @@ public class WaybackController extends Controller {
 	
 	/**Method to fetch number of crawled urls**/
 	public static String getTotalCrawledUrls(String url) {
-		  Logger.debug("getTotalCrawledUrls url:"+url);
-		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		  String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
+		Logger.debug("getTotalCrawledUrls url:"+url);
 		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
 			db = dbf.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Logger.warn("ParserConfigurationException: ", e);
-		}
-		/***Check the http status code***/
-		
-		try {
+
+			/***Check the http status code***/
+
 			wayback_url = new URL(wayBackUrl+"/xmlquery.jsp?type=prefixquery&url="+url);
-		} catch (MalformedURLException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		
-		try {
+
 			http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
 			http.connect();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			 statusCode = http.getResponseCode();
-			 Logger.debug("getTotalCrawledUrls statusCode:"+ statusCode);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		/********************************/
-		
-		if(statusCode==200){
-		  try {
-			doc = db.parse(wayback_url.openStream());
-		
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		  
-		  NodeList nl = doc.getElementsByTagName("request");
-	      Node n = nl.item(0).getChildNodes().item(9);  
-	      Logger.debug("getTotalCrawledUrls = "+ n.getTextContent());
-	      	   
-	      return n.getTextContent();
-		  
+
+			statusCode = http.getResponseCode();
+			Logger.debug("getTotalCrawledUrls statusCode:"+ statusCode);
+
+			/********************************/
+
+			if(statusCode==200){
+				Logger.debug("getTotalCrawledUrls parsing XML...");
+				doc = db.parse(http.getInputStream());
+
+				Logger.debug("getTotalCrawledUrls getting values from XML...");
+				NodeList nl = doc.getElementsByTagName("request");
+				Node n = nl.item(0).getChildNodes().item(9);  
+				Logger.debug("getTotalCrawledUrls = "+ n.getTextContent());
+
+				return n.getTextContent();
+
 			}
-			else{
-				String value = "0";
-				return value;
-			}
-		
+		}catch( Exception e ) {
+			Logger.warn("Exception while lookup up getTotalCrawledUrls",e);
 		}
-	
+		
+		return "0";
+	}
+
 	/**Method to fetch number of times the specific url has been crawled**/
 	public static String getTotalCrawledInstances(String url) {
-		  Logger.debug("getTotalCrawledInstances url:"+url);
-		  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		  String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
+		Logger.debug("getTotalCrawledInstances url:"+url);
 		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			String wayBackUrl = Play.application().configuration().getString("application.wayback.url");
 			db = dbf.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		/***Check the http status code***/
-		
-		try {
+
+			/***Check the http status code***/
+
 			wayback_url = new URL(wayBackUrl + "/xmlquery.jsp?type=urlquery&url=" + url);
-		} catch (MalformedURLException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		
-		try {
+
 			http = (HttpURLConnection)wayback_url.openConnection();
 			http.setRequestMethod("GET");
 			http.connect();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			 statusCode = http.getResponseCode();
-			 Logger.debug("getTotalCrawledInstances statusCode:"+ statusCode);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		/********************************/
-		
-		if(statusCode==200){
-		  try {
-			doc = db.parse(wayback_url.openStream());
-		
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		  
-		  NodeList nl = doc.getElementsByTagName("request");
-	      Node n = nl.item(0).getChildNodes().item(9);  
-		
-	      return n.getTextContent();
-		  
-			}
-			else{
-				String value = "0";
-				return value;
-			}
-		
-		}
 
-	
-	
+			statusCode = http.getResponseCode();
+			Logger.debug("getTotalCrawledInstances statusCode:"+ statusCode);
 
+			/********************************/
+
+			if(statusCode==200){
+				doc = db.parse(http.getInputStream());
+
+				NodeList nl = doc.getElementsByTagName("request");
+				Node n = nl.item(0).getChildNodes().item(9);  
+
+				return n.getTextContent();
+
+			}
+		} catch (Exception e) {
+			Logger.warn("Exception while lookup up getTotalCrawledInstances",e);
+		}
+		
+		return "0";
+	}
 }
+
