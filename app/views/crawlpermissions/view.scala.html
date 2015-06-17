@@ -50,7 +50,11 @@
 							</label>
 							
 							<div class="col-sm-6">
+							@if( permission.license != null ) {
 								@permission.license.name
+							} else {
+								<b>SPECIFIC LICENSE NOT DEFINED</b>
+							}
 							</div>
 						</div>
 					</div>

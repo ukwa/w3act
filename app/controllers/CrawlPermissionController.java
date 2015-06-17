@@ -111,14 +111,16 @@ public class CrawlPermissionController extends AbstractController {
         crawlPermission.status = Const.CrawlPermissionStatus.QUEUED.name();
         crawlPermission.user = user;
         crawlPermission.token = UUID.randomUUID().toString();
+        crawlPermission.license = License.findAllLicenses().get(0);
         Exception tracer = new Exception();
         tracer.printStackTrace();
         Logger.info("Created new CrawlPermission from newForm("+targetId+") with UUID "+crawlPermission.token);
 
 		Form<CrawlPermission> filledForm = Form.form(CrawlPermission.class);
 		filledForm = filledForm.fill(crawlPermission);
+		filledForm.data().put("license_id", ""+crawlPermission.license.id);
 		
-        return ok(newForm.render(filledForm, user, crawlPermissionStatuses, targetId, null));
+        return ok(newForm.render(filledForm, user, crawlPermissionStatuses, targetId, null, License.options()));
         
         
     }
@@ -252,35 +254,9 @@ public class CrawlPermissionController extends AbstractController {
      * @return
      */
     public static Result licenceRequestForTarget(Long targetId) {
-    	
-    	
     	return redirect(routes.CrawlPermissionController.newForm(targetId));
     }
-//    	CrawlPermission crawlPermission = new CrawlPermission();
-//        User user = User.findByEmail(request().username());
-//        Target target = Target.findById(targetId);
-//        target.formUrl = target.fieldUrl();
-//    	crawlPermission.name = target.title;
-//        crawlPermission.user = user;
-//        crawlPermission.status = Const.CrawlPermissionStatus.QUEUED.name();
-//        Logger.debug("crawlPermission.mailTemplate.name: " + crawlPermission.mailTemplate.name);
-//        MailTemplate mailTemplate = new MailTemplate();
-//        mailTemplate.name = Const.MailTemplateType.PERMISSION_REQUEST.name();
-//        crawlPermission.mailTemplate = mailTemplate;
-//        crawlPermission.target = target;
-//		ContactPerson contactPerson = new ContactPerson();
-//		crawlPermission.contactPerson = contactPerson;
-//		Logger.debug("add entry with url: " + crawlPermission.url + ", name: " + crawlPermission.name + ", and target: " + crawlPermission.target.title + ", " + user.email);
-//		
-//		Form<CrawlPermission> filledForm = crawlPermissionForm;
-//		filledForm = filledForm.fill(crawlPermission);
-//    	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
-//    	
-//    	Logger.debug("licenceRequestForTarget contactPerson: " + filledForm.get().contactPerson);
-//    	Logger.debug("licenceRequestForTarget user: " + filledForm.get().user);
-//      	return ok(
-//	              newForm.render(filledForm, user, crawlPermissionStatuses, targetId)
-
+    
     public static Form<CrawlPermission> processForm() {
     	return processForm(false);
     }
@@ -353,7 +329,7 @@ public class CrawlPermissionController extends AbstractController {
 	public static Result newInfo(Form<CrawlPermission> form, Long targetId, String contactName) {
     	Map<String,String> crawlPermissionStatuses = CrawlPermissionStatus.options();
 		User user = User.findByEmail(request().username());
-        return badRequest(newForm.render(form, user, crawlPermissionStatuses, targetId, contactName));
+        return badRequest(newForm.render(form, user, crawlPermissionStatuses, targetId, contactName, License.options()));
 	}
 	
     public static Result update(Long id) {
@@ -539,6 +515,13 @@ public class CrawlPermissionController extends AbstractController {
 //		queued etc // no need for this as you can get it using target.crawlpermissions
 //        TargetController.updateQaStatus(filledForm.get().target.title, filledForm.get().status);
         Logger.debug("save user: " + filledForm.get().user);
+        
+        // Set up the license
+        String license_id = requestData.get("license_id");
+        if( license_id != null ) {
+        	filledForm.get().license = License.findById(Long.parseLong(license_id));
+        }
+        
         filledForm.get().save();
         
         return redirect(routes.CrawlPermissionController.view(filledForm.get().id));

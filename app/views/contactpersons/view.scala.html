@@ -16,10 +16,10 @@
 
 	<div class="row padding-10">
     	<div class="col-md-12 col-xs-12 col-sm-12">
-				<h2>Targets</h3>
+				<h2>Crawl Permissions</h3>
               		<ul>
               		@for(cp <- person.getCrawlPermissions){
-              			<li><a href="@routes.TargetController.view(cp.target.id)">@cp.target.title</a></li>
+              			<li><a href="@routes.CrawlPermissionController.view(cp.id)">Crawl Permission For @cp.target.title</a></li>
               		}
               		</ul>
 	    <h2>Contact Information</h2>

@@ -1,4 +1,4 @@
-@(crawlPermissionForm: Form[CrawlPermission], user: User, crawlPermissionStatuses: Map[String,String], targetId: Long, contactName: String)
+@(crawlPermissionForm: Form[CrawlPermission], user: User, crawlPermissionStatuses: Map[String,String], targetId: Long, contactName: String, licenses: Map[String,String])
 
 @import helper._
 @import bootstrap._
@@ -70,6 +70,19 @@
 						)(FieldConstructor(genericMandatoryInput.f), lang)
 					</div>
 				</div>
+	     	</div>
+		          
+	     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label" for="@crawlPermissionForm("license_id").id">
+								License
+							</label>
+							<div class="col-sm-6">
+								@select(crawlPermissionForm("license_id"), options(licenses), '_label -> "")
+							</div>
+						</div>
+					</div>
 	     	</div>
 		          
 			<div class="form-group contactperson">
