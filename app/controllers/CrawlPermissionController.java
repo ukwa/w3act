@@ -413,6 +413,22 @@ public class CrawlPermissionController extends AbstractController {
 			            filledForm.reject(e);
 			            return info(filledForm, id, filledForm.get().contactPerson.name);
 		    		}
+		    		existingContact.name = contactPersonName;
+		    		existingContact.email = contactPersonEmail;
+		    		existingContact.position = filledForm.get().contactPerson.position;
+		    		existingContact.contactOrganisation = filledForm.get().contactPerson.contactOrganisation;
+		    		existingContact.phone = filledForm.get().contactPerson.phone;
+		    		existingContact.postalAddress = filledForm.get().contactPerson.postalAddress;
+		    		boolean found = false;
+		    		for( CrawlPermission cp : existingContact.crawlPermissions ) {
+		    			if( cp.id.equals(id)) {
+		    				found = true;
+		    			}
+		    		}
+		    		if( !found ) {
+		    			existingContact.crawlPermissions.add(filledForm.get());
+		    		}	    		
+		    		existingContact.update();
 		        	filledForm.get().contactPerson = existingContact;
 		    	} else {
 		        	filledForm.get().contactPerson.save();

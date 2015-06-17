@@ -41,7 +41,7 @@ public class APIIntegrationTests {
     private static String defaultUser = "wa-sysadm@bl.uk";
 	private static String defaultPw = "sysAdmin";
 	
-	private static long timeout_ms = 30*1000; // in milliseconds
+	private static long timeout_ms = 60*1000; // in milliseconds
 	private Configuration additionalConfigurations;
 
 	@Before

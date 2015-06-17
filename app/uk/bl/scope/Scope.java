@@ -86,6 +86,8 @@ public enum Scope {
 	public static final String WWW             = "www.";
 	public static final String END_STR         = "/";
 	
+	private static final int   WHOIS_TIMEOUT   = 30; // Whois lookup timeout (seconds)
+	
 	public static DatabaseReader databaseReader;
 	
 	static {
@@ -326,7 +328,7 @@ public enum Scope {
     		System.getProperties().put("JRUBY_OPTS", "--1.9");
         	JRubyWhois whoIs = new JRubyWhois();
         	Logger.debug("checkWhois: " + url);
-        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url));
+        	WhoisResult whoIsRes = whoIs.lookup(getDomainFromUrl(url), WHOIS_TIMEOUT);
         	res = isUKRegistrant(whoIsRes);
         	Logger.debug("isUKRegistrant?: " + res);
         	if( whoIsRes.getRegistrantContacts() != null ) {

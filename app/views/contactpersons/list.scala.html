@@ -51,6 +51,7 @@
 				<tr>
 					<th>Title</th>
 					<th>E-mail</th>
+					<th># Targets</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -58,6 +59,7 @@
 				<tr>
 					<td><a href="@routes.ContactPersonController.view(contactperson.id)">@contactperson.name</a></td>
 					<td>@contactperson.email</td>
+					<td>@contactperson.getCrawlPermissions().size()</td>
 				</tr>
 			}
 			</tbody>
