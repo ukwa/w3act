@@ -175,7 +175,11 @@
 		    	@if(FormHelper.INSTANCE.hasGrantedLicense(id)) {
 					<font color="green">(+)</font>
 				} else {
+				  @if( FormHelper.INSTANCE.licensingUnderway(id) ) {
+					<font color="orange">(~)</font>
+				  } else {
 					<font color="red">(-)</font>
+				  }
 				}		        
 		    </a></li>
 	  	</ul>
@@ -685,7 +689,7 @@
 							}
 						</div>
 					</div>	
-				}
+				} else {
 
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -817,6 +821,7 @@
 						</div>
 					</div>
 		     	</div>
+		     	}
 		     	
 			</div>
 		     	
@@ -965,6 +970,17 @@
 	        
 	        <div class="tab-pane fade" id="licensing">
 			
+				@if(FormHelper.INSTANCE.inheritedLicenceUnderwayOrGranted(id)) {    	
+					<div class="padding-20">
+						<div class="alert alert-info">
+							NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
+							@for(target <- FormHelper.INSTANCE.getUkwaLicenceStatusList(id)) { 
+								<p><a href="@routes.TargetController.view(target.id)">@target.title @target.fieldUrl()</a></p>
+							}
+						</div>
+					</div>	
+				} else {
+		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -997,17 +1013,6 @@
 					</div>
 		     	</div>	
 	
-				@if(FormHelper.INSTANCE.indicateUkwaLicenceStatus(id)) {    	
-					<div class="padding-20">
-						<div class="alert alert-info">
-							NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
-							@for(target <- FormHelper.INSTANCE.getUkwaLicenceStatusList(id)) { 
-								<p><a href="@routes.TargetController.view(target.id)">@target.title @target.fieldUrl()</a></p>
-							}
-						</div>
-					</div>	
-				}	     			     	
-		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -1060,6 +1065,7 @@
 						</div>
 					</div>
 		     	</div>
+		     	}
 		     	
 			</div>		     		        		     
 		

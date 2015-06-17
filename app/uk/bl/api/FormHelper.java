@@ -22,7 +22,7 @@ public enum FormHelper {
 
 	public boolean isInScopeAllWithoutLicense(Long targetId) {
 		Target target = Target.findById(targetId);
-		return target.isInScopeAllWithoutLicense();
+		return target.isInScopeAllOrInheritedWithoutLicense();
 	}
 	
 	public boolean hasGrantedLicense(Long targetId) {
@@ -32,7 +32,7 @@ public enum FormHelper {
 //		this.qaIssue;
 		Target target = Target.findById(targetId);
 
-		return target.hasGrantedLicense();
+		return target.indicateLicenses();
 	}
 
     public boolean indicateNpldStatus(Long targetId) throws ActException {
@@ -44,6 +44,31 @@ public enum FormHelper {
 	public Set<Target> getUkwaLicenceStatusList(Long targetId) {
 		Target target = Target.findById(targetId);
 		return target.getUkwaLicenceStatusList();
+	}
+	
+	/** 
+	 * determine wether this target has a license request underway, either directly or inherited from another target.
+	 * 
+	 * @param targetId
+	 * @return
+	 */
+	public boolean licensingUnderway(Long targetId) {
+		Target target = Target.findById(targetId);
+		OverallLicenseStatus ols = target.getOverallLicenseStatus();
+		if( ols.pendingIncludingInherited ) return true;
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param targetId
+	 * @return
+	 */
+	public boolean inheritedLicenceUnderwayOrGranted(Long targetId) {
+		Target target = Target.findById(targetId);
+		OverallLicenseStatus ols = target.getOverallLicenseStatus();
+		if( ols.inheritedLicensePending || ols.inheritedLicense ) return true;
+		return false;
 	}
 
 	/**

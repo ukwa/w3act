@@ -32,9 +32,19 @@ public class OverallLicenseStatus {
 	
 	public final boolean inNPLDScope;
 	
+	public final boolean licensePending;
+	
 	public final boolean licensedOrPending;
 	
 	public final boolean inheritedLicense;
+	
+	public final boolean inheritedLicensePending;
+	
+	public final boolean inheritedLicenseOrPending;
+	
+	public final boolean licensedOrPendingIncludingInherited;
+	
+	public final boolean pendingIncludingInherited;
 	
 	public final boolean inheritedNPLDScope;
 	
@@ -43,7 +53,7 @@ public class OverallLicenseStatus {
 	public final Set<Target> licenseParents = new LinkedHashSet<Target>();
 
 	public OverallLicenseStatus(Target target) {
-		int npldc = 0, lc = 0;
+		int npldc = 0, lc = 0, total_lc = 0;
 		for (FieldUrl fieldUrl : target.fieldUrls) {
 			Logger.info("Looking for inherited licensed for "+fieldUrl.url);
 			if( fieldUrl.domain == null && fieldUrl.url != null ) {
@@ -88,7 +98,8 @@ public class OverallLicenseStatus {
 						if( midLic ) {
 							Logger.info("Found licensed parent for "+fieldUrl.url+", mid-licensing="+midLic);
 							licenseParents.add(t);
-							lc++;
+							if( t.checkLicense() ) lc++;
+							total_lc++;
 						}
 					} else {
 						Logger.info("Parent license does not apply to "+fieldUrl.url);						
@@ -96,11 +107,23 @@ public class OverallLicenseStatus {
 				}
 			}
 		}
+		
 		// Record if either was sufficient:
-		if(lc == target.fieldUrls.size()) {
-			this.inheritedLicense = true;
+		if(total_lc == target.fieldUrls.size()) {
+			if( lc == target.fieldUrls.size() ) {
+				this.inheritedLicense = true;
+				this.inheritedLicensePending = false;
+			} else {
+				this.inheritedLicense = false;
+				this.inheritedLicensePending = true;
+			}
 		} else {
 			this.inheritedLicense = false;
+			if( lc > 0 ) {
+				this.inheritedLicensePending = true;
+			} else {
+				this.inheritedLicensePending = false;				
+			}
 		}
 		if(npldc == target.fieldUrls.size()) { 
 			this.inheritedNPLDScope = true;
@@ -110,7 +133,22 @@ public class OverallLicenseStatus {
 		
 		// And finally record the direct status:
 		this.inNPLDScope = target.isInScopeAllWithoutLicense();
-		this.licensedOrPending = ! target.enableLicenseCreation();
+		if (target.enableLicenseCreation() == false) {
+			licensedOrPending = true;
+			if( target.checkLicense() ) {
+				licensePending = false;
+			} else {
+				licensePending = true;				
+			}
+		} else {
+			licensedOrPending = false;
+			licensePending = false;
+		}
+		
+		// Overall
+		inheritedLicenseOrPending = (inheritedLicensePending || inheritedLicense);
+		pendingIncludingInherited = (licensePending||inheritedLicensePending);
+		licensedOrPendingIncludingInherited = (licensedOrPending || inheritedLicense || inheritedLicensePending);
 	}
 	
 	/**

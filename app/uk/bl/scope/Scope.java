@@ -320,6 +320,7 @@ public enum Scope {
 	 */
 	public boolean checkWhois(String url, Target target) {
 		Logger.info("Performing whois lookup on "+url);
+		new Exception("WHENCE").printStackTrace();
 		boolean res = false;
     	try {
     		System.getProperties().put("JRUBY_OPTS", "--1.9");
