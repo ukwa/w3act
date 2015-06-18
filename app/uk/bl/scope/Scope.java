@@ -86,7 +86,7 @@ public enum Scope {
 	public static final String WWW             = "www.";
 	public static final String END_STR         = "/";
 	
-	private static final int   WHOIS_TIMEOUT   = 30; // Whois lookup timeout (seconds)
+	private static final int   WHOIS_TIMEOUT   = 15; // Whois lookup timeout (seconds)
 	
 	public static DatabaseReader databaseReader;
 	
