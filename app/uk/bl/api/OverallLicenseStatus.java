@@ -95,7 +95,8 @@ public class OverallLicenseStatus {
 						}
 						// Also check if a license process is underway:
 						boolean midLic = ! t.enableLicenseCreation();
-						if( midLic ) {
+						// Check is mid-licensed or licensed but without a licenseStatus:
+						if( midLic || t.checkLicense() ) {
 							Logger.info("Found licensed parent for "+fieldUrl.url+", mid-licensing="+midLic);
 							licenseParents.add(t);
 							if( t.checkLicense() ) lc++;
