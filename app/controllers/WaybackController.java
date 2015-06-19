@@ -43,6 +43,9 @@ public class WaybackController extends Controller {
     	String organisation = "";
     	if( user.organisation != null ) {
     		organisation = user.organisation.field_abbreviation;
+    	} else if( user.affiliation != null ) {
+    		organisation = user.affiliation;
+    		Logger.warn("Using user.affiliation rather than user.organisation (which is null)...");
     	}
 		Logger.debug("organisation ::::::::::::::"+ organisation);
 		if (! ( organisation.equals("BL") || organisation.equals("NLW") || 
