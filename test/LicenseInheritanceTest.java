@@ -204,6 +204,7 @@ public class LicenseInheritanceTest {
 		@Test
 		public void testWhois() throws ActException {
 			String url = "http://bl.uk/";
+			Scope.WHOIS_ENABLED = true;
 			boolean wr = Scope.INSTANCE.checkWhois(url, null);
 			assertThat(wr).isTrue();
 		}
