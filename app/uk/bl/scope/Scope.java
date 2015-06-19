@@ -87,6 +87,7 @@ public enum Scope {
 	public static final String END_STR         = "/";
 	
 	private static final int   WHOIS_TIMEOUT   = 15; // Whois lookup timeout (seconds)
+	private static boolean     WHOIS_ENABLED   = false; // Should whois be used at all?
 	
 	public static DatabaseReader databaseReader;
 	
@@ -321,8 +322,12 @@ public enum Scope {
 	 * @throws WhoisException 
 	 */
 	public boolean checkWhois(String url, Target target) {
+		if( WHOIS_ENABLED == false ) {
+			Logger.warn("WHOIS is currently disabled!");
+			return false;
+		}
+		// Perform whois check:
 		Logger.info("Performing whois lookup on "+url);
-		new Exception("WHENCE").printStackTrace();
 		boolean res = false;
     	try {
     		System.getProperties().put("JRUBY_OPTS", "--1.9");
