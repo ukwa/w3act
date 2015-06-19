@@ -1096,15 +1096,19 @@ public class TargetController extends AbstractController {
 
 		        if (licenseValues != null) {
 		            for(String licenseValue: licenseValues) {
-		            	Long licenseId = Long.valueOf(licenseValue);
-		            	License license =  License.findById(licenseId);
-		            	// could just use the ID instead
-		            	if (StringUtils.isEmpty(openUkwa) && license.name.equals(Const.OPEN_UKWA_LICENSE)) {
-				            ValidationError ve = new ValidationError("licensesList", "It is not possible to attach an Open UKWA Licence directly to a target in this way. Please initiate the licensing process using the green button below");
-				            filledForm.reject(ve);
-				            return info(filledForm, id);
+		            	try {
+		            		Long licenseId = Long.valueOf(licenseValue);
+		            		License license =  License.findById(licenseId);
+		            		// could just use the ID instead
+		            		if (StringUtils.isEmpty(openUkwa) && license.name.equals(Const.OPEN_UKWA_LICENSE)) {
+		            			ValidationError ve = new ValidationError("licensesList", "It is not possible to attach an Open UKWA Licence directly to a target in this way. Please initiate the licensing process using the green button below");
+		            			filledForm.reject(ve);
+		            			return info(filledForm, id);
+		            		}
+		            		newLicenses.add(license);
+		            	} catch( NumberFormatException e ) {
+		            		Logger.debug("No license selected for "+filledForm.get().title);
 		            	}
-		            	newLicenses.add(license);
 		            }
 		            filledForm.get().licenses = newLicenses;
 		        }
