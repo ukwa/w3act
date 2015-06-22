@@ -997,7 +997,7 @@
 									</select>
 								} else {
 									<select name="licensesList" id="license" class="form-control" multiple>
-									    <option value="">-- None--</option>
+									    <option value="" disabled="disabled">-- None--</option>
 										@for(license <- licenses) {
 											<option disabled value="@license.id" @if(targetLicenses.contains(license)) {selected} >@license.name</option>
 										}
