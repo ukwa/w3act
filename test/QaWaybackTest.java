@@ -50,6 +50,7 @@ public class QaWaybackTest {
 	    	  private User addUser(String name, String abbreviation ) {
 	        		User user = new User();
 	        		user.name = name;
+	        		user.email = name;
 	        		user.affiliation = abbreviation;
 	        		
 	        		// And save it:

@@ -22,7 +22,7 @@ public class SecuredAction extends Action.Simple {
     		return F.Promise.pure((SimpleResult) unauthorized("unauthorized"));
     	}
     	String auth = authorization[0].substring(6);
-    	Logger.debug("auth: " + auth);
+    	Logger.trace("auth: " + auth);
 	    	
         final byte[] decodedAuth = Base64.decode(auth);
         final String[] credentials = new String(decodedAuth, "UTF-8").split(":");
@@ -33,12 +33,19 @@ public class SecuredAction extends Action.Simple {
         
         String email = credentials[0];
         String password = credentials[1];
-
-        User user = User.findByEmail(email.toLowerCase());
-		String userPassword = user.password;
-		boolean result = PasswordHash.validatePassword(password, userPassword);
         
-		Logger.debug("RESULT: " + result);
+		Logger.trace("GOT credentials: "+email+" "+password);
+		
+        User user = User.findByEmail(email.toLowerCase());
+		String userPassword = null;
+		if( user != null ) userPassword = user.password;
+		// And is the PW okay?
+		boolean result = false;
+		if( userPassword != null ) {
+			result = PasswordHash.validatePassword(password, userPassword);
+		}
+        
+		Logger.trace("SecuredAction RESULT: " + result);
 		if (result) {
             ctx.request().setUsername(user.email);
 			return delegate.call(ctx);
