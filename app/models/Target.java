@@ -1053,8 +1053,9 @@ public class Target extends UrlModel {
 		String domexp = "";
 		Iterator<String> tlds = Scope.DOMAINS.iterator();
 		while( tlds.hasNext() ) {
-			notdomexp += "fieldUrls.domain NOT like '%"+ tlds.next() + "'";
-			domexp += "fieldUrls.domain like '%"+ tlds.next() + "'";
+			String tnext = tlds.next();
+			notdomexp += "fieldUrls.domain NOT like '%"+ tnext + "'";
+			domexp += "fieldUrls.domain like '%"+ tnext + "'";
 			if( tlds.hasNext() ){
 				notdomexp += " and ";
 				domexp += " or ";
@@ -2037,7 +2038,7 @@ public class Target extends UrlModel {
 		this.isUkHosting = Scope.INSTANCE.isUkHosting(this);
 		this.isTopLevelDomain = Scope.isTopLevelDomain(this);
 		this.isUkRegistration = Scope.INSTANCE.isUkRegistration(this);
-		Logger.debug("runChecks");
+		Logger.debug("runChecks done: "+this.isUkHosting+" "+this.isTopLevelDomain+" "+this.isUkRegistration);
     }
     
     @JsonIgnore

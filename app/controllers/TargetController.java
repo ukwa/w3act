@@ -710,6 +710,7 @@ public class TargetController extends AbstractController {
 		
 		// Make sure scope checks are up to date:
 		target.runChecks();
+		target.update();
 		
 		target.formUrl = target.fieldUrl();
 		target.subjectSelect = target.subjectIdsAsString();
@@ -1562,6 +1563,8 @@ public class TargetController extends AbstractController {
     	
     	Logger.debug("active: " + filledForm.get().active);
 
+        // Run scoping checks:
+        filledForm.get().runChecks();
     	
     	filledForm.get().save();
         flash("success", "Target " + filledForm.get().title + " has been created");
