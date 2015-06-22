@@ -997,7 +997,7 @@
 									</select>
 								} else {
 									<select name="licensesList" id="license" class="form-control" multiple>
-									    <option value="" disabled="disabled">-- None--</option>
+									    <option disabled value="">-- None--</option>
 										@for(license <- licenses) {
 											<option disabled value="@license.id" @if(targetLicenses.contains(license)) {selected} >@license.name</option>
 										}
@@ -1026,7 +1026,7 @@
 						                options(licenseStatuses), 
 						                args = 
 						                'class -> "form-control",
-					                	'_default -> "-- None --",
+					                	'_default -> "Not Initiated",
 						                '_label -> "License Status - In case something goes wrong with the licensing process.",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericInput.f), lang)
