@@ -111,7 +111,7 @@ public class CrawlPermissionController extends AbstractController {
         crawlPermission.status = Const.CrawlPermissionStatus.QUEUED.name();
         crawlPermission.user = user;
         crawlPermission.token = UUID.randomUUID().toString();
-        crawlPermission.license = License.findAllLicenses().get(0);
+        crawlPermission.license = License.findByName(Const.OPEN_UKWA_LICENSE);
         Exception tracer = new Exception();
         tracer.printStackTrace();
         Logger.info("Created new CrawlPermission from newForm("+targetId+") with UUID "+crawlPermission.token);
