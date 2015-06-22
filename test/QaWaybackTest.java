@@ -64,7 +64,9 @@ public class QaWaybackTest {
 	        	  
 	        	// Clear out any existing data from other tests:
 	                for( User user : User.findAll() ) {
-	                	user.delete();
+	                	// Do not remove admin user
+	                	if( ! user.isSysAdmin() )
+	                		user.delete();
 	            	}
 	                
 	           // Add some users

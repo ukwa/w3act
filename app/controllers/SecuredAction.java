@@ -22,7 +22,7 @@ public class SecuredAction extends Action.Simple {
     		return F.Promise.pure((SimpleResult) unauthorized("unauthorized"));
     	}
     	String auth = authorization[0].substring(6);
-    	Logger.trace("auth: " + auth);
+    	Logger.trace("SecuredAction auth: " + auth);
 	    	
         final byte[] decodedAuth = Base64.decode(auth);
         final String[] credentials = new String(decodedAuth, "UTF-8").split(":");
@@ -34,7 +34,13 @@ public class SecuredAction extends Action.Simple {
         String email = credentials[0];
         String password = credentials[1];
         
-		Logger.trace("GOT credentials: "+email+" "+password);
+		Logger.trace("SecuredAction credentials: "+email+" "+password);
+		
+		if( Logger.isTraceEnabled() ){
+			for( User u : User.findAll() ) {
+				Logger.info("U: "+u);
+			}
+		}
 		
         User user = User.findByEmail(email.toLowerCase());
 		String userPassword = null;
@@ -45,7 +51,7 @@ public class SecuredAction extends Action.Simple {
 			result = PasswordHash.validatePassword(password, userPassword);
 		}
         
-		Logger.trace("SecuredAction RESULT: " + result);
+		Logger.trace("SecuredAction result: " + result);
 		if (result) {
             ctx.request().setUsername(user.email);
 			return delegate.call(ctx);
