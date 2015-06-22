@@ -259,6 +259,7 @@ public enum Scope {
         String domain;
         try {
 			domain = getDomainFromUrl(normalizeUrl(ourl));
+			Logger.debug("Checking domain: "+domain);
 		} catch (ActException e) {
 			Logger.error("Exception when normalising "+ourl, e);
 			return false;

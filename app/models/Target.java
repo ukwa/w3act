@@ -2038,7 +2038,7 @@ public class Target extends UrlModel {
 		this.isUkHosting = Scope.INSTANCE.isUkHosting(this);
 		this.isTopLevelDomain = Scope.isTopLevelDomain(this);
 		this.isUkRegistration = Scope.INSTANCE.isUkRegistration(this);
-		Logger.debug("runChecks");
+		Logger.debug("runChecks done: "+this.isUkHosting+" "+this.isTopLevelDomain+" "+this.isUkRegistration);
     }
     
     @JsonIgnore
