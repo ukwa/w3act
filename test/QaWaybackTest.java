@@ -84,7 +84,7 @@ public class QaWaybackTest {
 	                	
 	                	//This will always give status code 200, I guess alternative approach needed
 	                	try{
-	                	String wayBackUrl = Play.application().configuration().getString("server_name")+Play.application().configuration().getString("application.context");
+	                	String wayBackUrl = additionalConfigurations.getString("server_name")+additionalConfigurations.getString("application.context");
 	                	
 	                	wayback_url = new URL(wayBackUrl+"/wayback/*/"+testURL);
 	                	Logger.debug("wayback_url:::::::::::::::::::::::: "+ wayback_url);
