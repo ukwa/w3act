@@ -134,6 +134,7 @@ public class ApplicationController extends Controller {
      */
     public static Result index() {
     	String email = session().get("email");
+    	Logger.debug("Lookup up email: "+email);
     	User user = User.findByEmail(email);
     	Logger.debug("user: " + user + " - " + email);
     	if (user != null) {

@@ -62,6 +62,7 @@ public class QaWaybackTest {
 	    additionalConfigurations = new Configuration(additionalConfig);
 	}
 	
+
 //	 @Test 
 //	  public void testLogin() {
 //	      running(fakeApplication(additionalConfigurations.asMap()), new Runnable() {
@@ -177,14 +178,6 @@ public class QaWaybackTest {
 //	                   inputUser.affiliation.equals("MNH") ||
 // 	                   inputUser.affiliation.equals("MTCD") || 
 // 	                   inputUser.affiliation.equals("BSCA")){
-//	                	
-//	                	assert(true);
-//	                }
-//	                else
-//	                	assert(false);
-//	                		                
-//	          }
-//	        });
-//	 }
+
 
 }

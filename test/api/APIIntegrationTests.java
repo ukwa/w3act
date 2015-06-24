@@ -54,16 +54,17 @@ public class APIIntegrationTests {
     public void testInServer() {
         running(testServer(3333, fakeApplication(additionalConfigurations.asMap())), new Runnable() {
 			public void run() {
-                assertThat(
-                    WS.url("http://localhost:3333/act").get().get(timeout_ms).getStatus()
-                ).isEqualTo(OK);
+        		String host = "http://localhost:3333/act";
+        		Logger.info("STEP Getting the homepage...");
+        		Response r = WS.url(host+"/login").get().get(timeout_ms);
+                assertThat( r.getStatus() ).isEqualTo(OK);
+        		Logger.info("STEP Clearing out Test Data...");
             	// Clear out any existing data:
                 for( Target t : Target.findAll() ) {
             		t.delete();
             	}
                 // Send up test data:
             	try {
-            		String host = "http://localhost:3333/act";
             		Logger.info("STEP Sending Test Data...");
 					sendTestData(host);
             		Logger.info("STEP Running API Tests...");
