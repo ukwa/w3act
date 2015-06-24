@@ -84,7 +84,7 @@ public class QaWaybackTest {
 //		});
 //	 }
 	
-	@Test
+	//@Test
     public void runInBrowser() {
         running(testServer(3333, fakeApplication(additionalConfigurations.asMap())), HTMLUNIT, new Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
