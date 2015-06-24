@@ -188,3 +188,22 @@ users:
         affiliation:   BL
         #roles:              [*sys_admin]
         roleHolder:         sys_admin
+        
+    - !!models.User
+        email:              niladree.bhattacharj@bl.uk
+        name:               Niladree Bhattacharjee
+        password:           Nil@BL
+        affiliation:   BL
+        #roles:              [*archivist]
+        roleHolder:         archivist
+
+    - !!models.User
+        email:              niladreeb@gmail.com
+        name:               Expert_User_Nil
+        password:           Nil@BL
+        affiliation:   AIT
+        #roles:              [*expert_user]
+        roleHolder:         expert_user
+        
+        
+        

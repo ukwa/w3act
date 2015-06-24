@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import models.Organisation;
+import models.Role;
 import models.Target;
 import models.User;
 
@@ -494,6 +495,21 @@ public class ReportController extends AbstractController {
     	}
     	return ts;
     }
+    
+    /**
+     * Looks up Users those have multiple roles:
+     * 
+     * @return
+     */
+    private static List<User> getUsersWithMultipleRoles() {
+    	List<User> user = new ArrayList<User>();
+    	for( User u : User.findAll() ) {
+    		if( u.roles.size() > 1) {
+    			user.add(u);   			
+    		}
+    	}
+    	return user;
+    }
 
 
     /**
@@ -503,7 +519,7 @@ public class ReportController extends AbstractController {
      */
     public static Result consistencyChecks() {
         User user = User.findByEmail(request().username());
-    	return ok(consistencyChecks.render(user, getTargetsWithoutCrawlPermissions(), getTargetsWithoutStartDate(), getTargetsWithoutRootScope() ));
+    	return ok(consistencyChecks.render(user, getTargetsWithoutCrawlPermissions(), getTargetsWithoutStartDate(), getTargetsWithoutRootScope(), getUsersWithMultipleRoles() ));
     }
     
     /**
@@ -632,6 +648,42 @@ public class ReportController extends AbstractController {
     		t.update();
     		Logger.info("> is now "+t.crawlStartDate);
     	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public static Result removeUnwantedRoles() {
+    	List<User> users = getUsersWithMultipleRoles();	
+    	
+    	if(users.size() !=0 && users != null){
+    	for( User u : users ) {
+    		
+        	int severity = Role.getRoleSeverity(u.roles);
+        	Logger.info("previous size::::::::::::::::::::::::::  "+u.roles.size());
+        	u.roles.clear();
+        	
+            if(severity == 0)
+        		u.roles.add(Role.findByName("sys_admin"));
+            if(severity == 1)
+            	u.roles.add(Role.findByName("archivist"));
+            if(severity == 2)
+            	u.roles.add(Role.findByName("expert_user"));
+            if(severity == 3)
+            	u.roles.add(Role.findByName("user"));
+            if(severity == 4)
+            	u.roles.add(Role.findByName("viewer"));
+    	    if(severity == 5)
+          	u.roles.add(Role.findByName("closed"));
+            
+            Logger.info("present size::::::::::::::::::::::::::  "+u.roles.size()+"  Role:::: "+u.roles.get(0).name);
+            
+        	}
+    	
+    	}
+ 
     	return redirect(routes.ReportController.consistencyChecks());
     }
     
