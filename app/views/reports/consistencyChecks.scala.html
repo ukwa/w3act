@@ -1,4 +1,4 @@
-@(user: User, nocp: List[Target], nosd: List[Target], nors: List[Target])
+@(user: User, nocp: List[Target], nosd: List[Target], nors: List[Target], nomr: List[User])
 
 @script = {
 }
@@ -27,6 +27,7 @@
   	    <li><a href="#mcp">Missing Crawl Permissions</a></li>
 	    <li><a href="#nsd">No Start Date</a></li>
 	    <li><a href="#nurs">Not Using Root Scope</a></li>
+	     <li><a href="#uwmr">Users With Multiple Roles</a></li>
 	  </ul>
 	  
 	  <h3 id="mcp">Missing Crawl Permissions</h3>
@@ -115,6 +116,36 @@
 	  	}
 	  </tbody>
 	  </table>
+	  
+	   <!-- ************************* -->
+	
+     <h3 id="uwmr">Users With Multiple Roles</h3>
+	  
+	  <p>The following @nomr.size user(s) have multiple roles.</p>
+	  <p>
+	  <a class="btn btn-success" role="button" href="@routes.ReportController.removeUnwantedRoles()">Remove unwanted role(s)</a>
+	  </p>
+
+	  <table class="table table-striped table-bordered tablesorter">
+	  <thead>
+	  <tr>
+	    <th>User</th>
+	    <th>Email</th>
+	    <th>Role(s)</th>
+	  </tr>
+	  </thead>
+	  <tbody>
+	    @for( u <- nomr ) {
+	    	<tr>
+	  		<td><a href="@routes.UserController.view(u.id)">@u.name</a></td>
+	  		<td>@u.email</td>
+	  		<td>@UserController.showRoles(u.id)</td>
+	  		</tr>
+	  	}
+	  </tbody>
+	  </table>
+	
+	  <!-- ************************* -->
 	
 	
 	</div>

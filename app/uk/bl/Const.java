@@ -442,7 +442,8 @@ public final class Const {
 		archivist("Archivist"),
 		expert_user("Expert User"),
 		user("User"),
-		viewer("Viewer");
+		viewer("Viewer"),
+		closed("Closed");
         
         private String value;
 
