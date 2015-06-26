@@ -412,7 +412,7 @@ public class APIController extends Controller {
         } catch (IllegalArgumentException e) {
 			return badRequest("URL invalid: " + e);
         } catch (Exception e) {
-        	Logger.error("error: " + e);
+        	Logger.error("error: " + e, e);
             return Results.internalServerError(e.getMessage());
         }
 	}
