@@ -99,7 +99,8 @@
 		<div class="row padding-10">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="form-group">
-					@inputText(contactPersonform("postalAddress"),
+					@textarea(contactPersonform("postalAddress"),
+						'rows -> 5,
 						'_label -> "Postal Address",
 					    'id -> "postalAddress",
 					    'class -> "form-control"

@@ -1,0 +1,35 @@
+{
+    "field_urls": [
+        "http://www.thatplace.com/"
+    ],
+    "field_wct_id": "132884",
+    "title": "Hebridean Whale and Dolphin Trust",
+    "field_collection_cats": [],
+    "field_nominating_org": 1,
+    "field_subjects": [
+        2,
+        70
+    ],
+    "selector": "1",
+    "licenses": [
+        1
+    ],
+    "licenseStatus": "GRANTED",
+    "crawlPermissions": [
+        {
+            "license": {
+                "id": 1
+            },
+            "status": "Granted",
+            "contactPerson": {
+                "name": "A N Other",
+                "phone": "+44 (0) 5555 555 555",
+                "contactOrganisation": "An Org",
+                "postalAddress": "3 The Avenue\nBimble\nUK",
+                "email": "info@thatplace.com",
+                "description": ""
+            },
+            "createdAt": 1202428800
+        }
+    ]
+}

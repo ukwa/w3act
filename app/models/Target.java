@@ -80,7 +80,6 @@ public class Target extends UrlModel {
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<Instance> instances;
 
-	@JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "license_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
@@ -2165,5 +2164,5 @@ public class Target extends UrlModel {
 				+ ", url=" + url + "]";
 	}
 	
-
+	
 }

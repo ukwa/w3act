@@ -15,6 +15,7 @@ import play.db.ebean.Model;
 import uk.bl.Const;
 
 import com.avaje.ebean.ExpressionList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class describes the contact person details.
@@ -29,6 +30,7 @@ public class ContactPerson extends ActModel {
 	private static final long serialVersionUID = -2257099575463302989L;
 
     //bi-directional one-to-many association to CrawlPermission
+	@JsonIgnore
     @OneToMany(mappedBy="contactPerson", cascade=CascadeType.ALL)
     public List<CrawlPermission> crawlPermissions;
 
