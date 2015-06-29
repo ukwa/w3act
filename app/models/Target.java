@@ -1753,16 +1753,19 @@ public class Target extends UrlModel {
 	
 	@JsonIgnore
 	public boolean isUkHosting() {
+		if( this.isUkHosting == null ) return false;
 		return this.isUkHosting;
 	}
 	
 	@JsonIgnore
 	public boolean isTopLevelDomain() {
+		if( this.isTopLevelDomain == null ) return false;
 		return this.isTopLevelDomain;
 	}
 	
 	@JsonIgnore
 	public boolean isUkRegistration() throws WhoisException {
+		if( this.isUkRegistration == null ) return false;
 		return this.isUkRegistration;
 	}
 	
@@ -1841,8 +1844,11 @@ public class Target extends UrlModel {
 		    return true;
 
 		// Cached values for other allowed mechanisms:
-		if (this.isTopLevelDomain || this.isUkHosting || this.isUkRegistration)
+		if ( Boolean.TRUE.equals(this.isTopLevelDomain) || 
+			 Boolean.TRUE.equals(this.isUkHosting) || 
+			 Boolean.TRUE.equals(this.isUkRegistration)) {
 			return true;
+		}
 		
 		// Otherwise, nope:
 		return false;
