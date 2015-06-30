@@ -1263,7 +1263,14 @@ public class TargetController extends AbstractController {
 		        filledForm.get().runChecks();
 
 		        // Check if those checks invalidate the noLDmet:
-		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
+		        if ( (  Boolean.TRUE.equals(filledForm.get().isUkHosting) || 
+		        		Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) || 
+		        		Boolean.TRUE.equals(filledForm.get().isUkRegistration) || 
+		        		Boolean.TRUE.equals(filledForm.get().ukPostalAddress) || 
+		        		Boolean.TRUE.equals(filledForm.get().viaCorrespondence) || 
+		        		Boolean.TRUE.equals(filledForm.get().professionalJudgement))
+		        		&& Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
+		        		) {
 		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
 		            filledForm.reject(ve);
 		            return info(filledForm, id);
@@ -1401,7 +1408,14 @@ public class TargetController extends AbstractController {
         	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
 
-        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
+        if (  ( Boolean.TRUE.equals(filledForm.get().isUkHosting) || 
+        		Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) || 
+        		Boolean.TRUE.equals(filledForm.get().isUkRegistration) || 
+        		Boolean.TRUE.equals(filledForm.get().ukPostalAddress) || 
+        		Boolean.TRUE.equals(filledForm.get().viaCorrespondence) || 
+        		Boolean.TRUE.equals(filledForm.get().professionalJudgement))
+        		&& Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
+        		) {
             ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
             filledForm.reject(ve);
             return newInfo(filledForm);
