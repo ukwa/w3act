@@ -662,6 +662,7 @@ public class TargetController extends AbstractController {
     	User user = User.findByEmail(request().username());
 		Form<Target> filledForm = Form.form(Target.class);
 		Target target = new Target();
+		target.setDefaultValues();
 		if (StringUtils.isNotBlank(title)) {
 			try {
 			  new URL(title);
@@ -1066,27 +1067,10 @@ public class TargetController extends AbstractController {
 		            Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
 		        }    
 		        
-		        try {
-			        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
-					filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
-					filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
-					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
-					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
-					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
-				} catch (WhoisException e) {
-					throw new ActException(e);
-				}
-
 		        Logger.debug("filledForm: " + filledForm.get());
 		        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
 		        if (filledForm.get().noLdCriteriaMet == null) {
 		        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
-		        }
-		        
-		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
-		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
-		            filledForm.reject(ve);
-		            return info(filledForm, id);
 		        }
 		        
 		        List<License> newLicenses = new ArrayList<License>();
@@ -1277,7 +1261,22 @@ public class TargetController extends AbstractController {
 		        
 		        // Run scoping checks:
 		        filledForm.get().runChecks();
-		    	
+
+		        // Check if those checks invalidate the noLDmet:
+		        if ( (  Boolean.TRUE.equals(filledForm.get().isUkHosting) || 
+		        		Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) || 
+		        		Boolean.TRUE.equals(filledForm.get().isUkRegistration) || 
+		        		Boolean.TRUE.equals(filledForm.get().ukPostalAddress) || 
+		        		Boolean.TRUE.equals(filledForm.get().viaCorrespondence) || 
+		        		Boolean.TRUE.equals(filledForm.get().professionalJudgement))
+		        		&& Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
+		        		) {
+		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
+		            filledForm.reject(ve);
+		            return info(filledForm, id);
+		        }
+		        
+
 				filledForm.get().update(id);
 		        flash("message", "Target " + filledForm.get().title + " has been updated");
 		    	return redirect(routes.TargetController.view(filledForm.get().id));
@@ -1409,7 +1408,14 @@ public class TargetController extends AbstractController {
         	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
 
-        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
+        if (  ( Boolean.TRUE.equals(filledForm.get().isUkHosting) || 
+        		Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) || 
+        		Boolean.TRUE.equals(filledForm.get().isUkRegistration) || 
+        		Boolean.TRUE.equals(filledForm.get().ukPostalAddress) || 
+        		Boolean.TRUE.equals(filledForm.get().viaCorrespondence) || 
+        		Boolean.TRUE.equals(filledForm.get().professionalJudgement))
+        		&& Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
+        		) {
             ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
             filledForm.reject(ve);
             return newInfo(filledForm);

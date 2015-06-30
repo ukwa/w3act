@@ -71,7 +71,6 @@ public class Target extends UrlModel {
 	@Column(columnDefinition = "text")
 	public String originatingOrganisation;
 	
-	@JsonIgnore
 	//@JsonProperty("crawl_permissions")
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 //    @OrderBy("createdAt DESC")
@@ -81,7 +80,6 @@ public class Target extends UrlModel {
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<Instance> instances;
 
-	@JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "license_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
@@ -157,16 +155,16 @@ public class Target extends UrlModel {
 	public String specialDispensationReason;
 	
 	@JsonProperty("field_uk_hosting")
-	public Boolean isUkHosting = Boolean.FALSE;
+	public Boolean isUkHosting;
 	
-	public Boolean isTopLevelDomain = Boolean.FALSE;
-	public Boolean isUkRegistration = Boolean.FALSE;
+	public Boolean isTopLevelDomain;
+	public Boolean isUkRegistration;
 	
 	@JsonProperty("field_live_site_status")
-	public String liveSiteStatus = Const.SiteStatus.LIVE.name();
+	public String liveSiteStatus;
 
 	@JsonProperty("field_key_site")
-	public Boolean keySite = Boolean.FALSE;
+	public Boolean keySite;
 
 	@JsonProperty("field_wct_id")
 	public Long wctId;
@@ -207,17 +205,17 @@ public class Target extends UrlModel {
 	public Long legacySiteId;
 	
 	@JsonProperty("field_uk_postal_address")
-	public Boolean ukPostalAddress = Boolean.FALSE;
+	public Boolean ukPostalAddress;
 
 	@Column(columnDefinition = "text")
 	@JsonProperty("uk_postal_address_url")
 	public String ukPostalAddressUrl;
 	
 	@JsonProperty("field_via_correspondence")
-	public Boolean viaCorrespondence = Boolean.FALSE;
+	public Boolean viaCorrespondence;
 	
 	@JsonProperty("field_professional_judgement")
-	public Boolean professionalJudgement = Boolean.FALSE;
+	public Boolean professionalJudgement;
 
 	@Column(columnDefinition = "text")
 	@JsonProperty("field_professional_judgement_exp")
@@ -227,17 +225,17 @@ public class Target extends UrlModel {
 	public Boolean noLdCriteriaMet;
 
 	@JsonProperty("field_scope")
-	public String scope = Const.ScopeType.root.name();
+	public String scope;
 	
 	@JsonProperty("field_depth")
-	public String depth = Const.DepthType.CAPPED.name();
+	public String depth;
 	
 	@JsonProperty("field_ignore_robots_txt")
-	public Boolean ignoreRobotsTxt = Boolean.FALSE;
+	public Boolean ignoreRobotsTxt;
 	
 	@JsonProperty("field_crawl_frequency")
-	public String crawlFrequency = Const.CrawlFrequency.DOMAINCRAWL.name();
-
+	public String crawlFrequency;
+	
 	@JsonIgnore
 	public Date crawlStartDate;
 
@@ -456,8 +454,22 @@ public class Target extends UrlModel {
 //		"revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null
 	
 	public Target() {
+	}
+	
+	public void setDefaultValues() {
+		// Defaults:
 		this.scope = Const.ScopeType.root.name();
 		this.depth = Const.DepthType.CAPPED.name();
+		this.isUkHosting = Boolean.FALSE;
+		this.isTopLevelDomain = Boolean.FALSE;
+		this.isUkRegistration = Boolean.FALSE;
+		this.liveSiteStatus = Const.SiteStatus.LIVE.name();
+		this.keySite = Boolean.FALSE;
+		this.ukPostalAddress = Boolean.FALSE;
+		this.viaCorrespondence = Boolean.FALSE;
+		this.professionalJudgement = Boolean.FALSE;
+		this.ignoreRobotsTxt = Boolean.FALSE;
+		this.crawlFrequency = Const.CrawlFrequency.DOMAINCRAWL.name();
 	}
 
 	public static Model.Finder<Long, Target> find = new Model.Finder<Long, Target>(
@@ -1468,14 +1480,6 @@ public class Target extends UrlModel {
 		this.field_nominating_organisation = field_nominating_organisation;
 	}
 
-	public String getCrawlFrequency() {
-		return crawlFrequency;
-	}
-
-	public void setCrawlFrequency(String crawlFrequency) {
-		this.crawlFrequency = crawlFrequency;
-	}
-
 	public List<FieldModel> getField_suggested_collections() {
 		return field_suggested_collections;
 	}
@@ -1749,16 +1753,19 @@ public class Target extends UrlModel {
 	
 	@JsonIgnore
 	public boolean isUkHosting() {
+		if( this.isUkHosting == null ) return false;
 		return this.isUkHosting;
 	}
 	
 	@JsonIgnore
 	public boolean isTopLevelDomain() {
+		if( this.isTopLevelDomain == null ) return false;
 		return this.isTopLevelDomain;
 	}
 	
 	@JsonIgnore
 	public boolean isUkRegistration() throws WhoisException {
+		if( this.isUkRegistration == null ) return false;
 		return this.isUkRegistration;
 	}
 	
@@ -1837,8 +1844,11 @@ public class Target extends UrlModel {
 		    return true;
 
 		// Cached values for other allowed mechanisms:
-		if (this.isTopLevelDomain || this.isUkHosting || this.isUkRegistration)
+		if ( Boolean.TRUE.equals(this.isTopLevelDomain) || 
+			 Boolean.TRUE.equals(this.isUkHosting) || 
+			 Boolean.TRUE.equals(this.isUkRegistration)) {
 			return true;
+		}
 		
 		// Otherwise, nope:
 		return false;
@@ -2160,5 +2170,5 @@ public class Target extends UrlModel {
 				+ ", url=" + url + "]";
 	}
 	
-
+	
 }

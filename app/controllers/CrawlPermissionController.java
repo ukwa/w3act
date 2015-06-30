@@ -105,15 +105,14 @@ public class CrawlPermissionController extends AbstractController {
     		crawlPermission.name = target.title;
 //    		target.formUrl = target.fieldUrl();
     		crawlPermission.target = target;
-//    		Logger.debug("target.formUrl:" + target.formUrl);    	
+    		Logger.debug("target.crawlFrequency:" + crawlPermission.target.crawlFrequency);
     	}
 		
         crawlPermission.status = Const.CrawlPermissionStatus.QUEUED.name();
         crawlPermission.user = user;
         crawlPermission.token = UUID.randomUUID().toString();
         crawlPermission.license = License.findByName(Const.OPEN_UKWA_LICENSE);
-        Exception tracer = new Exception();
-        tracer.printStackTrace();
+        Exception tracer = new Exception(); tracer.printStackTrace();
         Logger.info("Created new CrawlPermission from newForm("+targetId+") with UUID "+crawlPermission.token);
 
 		Form<CrawlPermission> filledForm = Form.form(CrawlPermission.class);
@@ -507,9 +506,11 @@ public class CrawlPermissionController extends AbstractController {
        	CommunicationLog log = CommunicationLog.logHistory(Const.PERMISSION + " " + filledForm.get().status, filledForm.get(), filledForm.get().user, Const.SAVE);
        	log.save();
 //
+		Logger.debug("target.crawlFrequency:" + filledForm.get().target.crawlFrequency);
         updateAllByTarget(filledForm.get().id, filledForm.get().target.id, filledForm.get().status);
         filledForm.get().target.licenseStatus = filledForm.get().status;    	        
         filledForm.get().target.update();
+		Logger.debug("target.crawlFrequency:" + filledForm.get().target.crawlFrequency);
 
         filledForm.get().contactPerson.save();
 //		queued etc // no need for this as you can get it using target.crawlpermissions

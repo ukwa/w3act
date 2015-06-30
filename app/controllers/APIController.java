@@ -309,7 +309,7 @@ public class APIController extends Controller {
 		            target.subjects = newSubjects;
 				}
 				
-				if (!target.ukPostalAddress) {
+				if (Boolean.FALSE.equals(target.ukPostalAddress)) {
 					target.ukPostalAddressUrl = null;
 				}
 
@@ -398,6 +398,13 @@ public class APIController extends Controller {
 				if (target.ignoreRobotsTxt == null) {
 					target.ignoreRobotsTxt = Boolean.FALSE;
 				}
+				
+				// check any crawl permission
+				for( CrawlPermission cp: target.crawlPermissions ) {
+					Logger.debug("GOT: "+cp);
+					Logger.debug("Checking: "+cp.contactPerson);
+					cp.contactPerson.save();
+				}
 
 	        	target.save();
 				
@@ -412,7 +419,7 @@ public class APIController extends Controller {
         } catch (IllegalArgumentException e) {
 			return badRequest("URL invalid: " + e);
         } catch (Exception e) {
-        	Logger.error("error: " + e);
+        	Logger.error("error: " + e, e);
             return Results.internalServerError(e.getMessage());
         }
 	}
