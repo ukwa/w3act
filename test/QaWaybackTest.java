@@ -75,21 +75,26 @@ public class QaWaybackTest {
     public void runInBrowser() {
         running(testServer(3333, fakeApplication(additionalConfigurations.asMap())), HTMLUNIT, new Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
-            	
+               // Check we cannot access anything yet:
+               browser.goTo("http://localhost:3333/act"+"/wayback/*/"+testURL);
+               assertThat(browser.pageSource()).contains("form action=\"/act/login\"");
+               // Go to login page:
                browser.goTo("http://localhost:3333/test");
                browser.$("a").click();
-               assertThat(browser.url()).isEqualTo("http://localhost:3333/actdev/login");            
+               assertThat(browser.url()).isEqualTo("http://localhost:3333/act/login");            
                assertThat(browser.pageSource()).contains("Email");                          
                assertThat(browser.pageSource()).contains("Password");
+               // Login
                browser.fill("#email").with(email);
           	   browser.fill("#password").with(password);
            	   browser.submit("#submit");
-               assertThat(browser.url()).isEqualTo("http://localhost:3333/actdev");
+               assertThat(browser.url()).isEqualTo("http://localhost:3333/act");
                assertThat(browser.title()).isEqualTo("About :: W3ACT");
                browser.getCookies();
-               browser.goTo("http://localhost:3333/actdev"+"/wayback/*/"+testURL);
-               assertThat(browser.pageSource()).contains("Legal Deposit QA OpenWayback");
-               assertThat(browser.pageSource()).doesNotContain("unauthorized");
+               // Check we can now access Wayback:
+               browser.goTo("http://localhost:3333/act"+"/wayback/*/"+testURL);
+               assertThat(browser.pageSource()).contains("Take Me Back");
+               assertThat(browser.pageSource()).doesNotContain("form action=\"/act/login\"");
 //               Response response = WS.url("http://localhost:3333/actdev"+"/wayback/*/"+testURL).get().get(timeout_ms);
 //               Logger.info(response.getStatus()+" "+response.getStatusText());
 //               assertThat(response.getStatus()).isEqualTo(OK);
