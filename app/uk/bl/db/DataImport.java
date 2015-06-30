@@ -121,7 +121,6 @@ public enum DataImport {
 			Taxonomy lookup = Taxonomy.findByNameAndType(taxonomy.name, taxonomy.ttype);
 			if (lookup == null) {
 				tv = TaxonomyType.findByMachineName(taxonomy.ttype);
-				Logger.debug("ttype: " + taxonomy.ttype + " - " + tv);
 				taxonomy.setTaxonomyType(tv);
 				taxonomy.url = Const.ACT_URL + Utils.INSTANCE.createId();
 				if (StringUtils.isNotEmpty(taxonomy.parentName)) {
