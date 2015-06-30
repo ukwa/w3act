@@ -1,4 +1,5 @@
 import static org.fest.assertions.Assertions.assertThat;
+import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;
 import static play.test.Helpers.testServer;
 
@@ -72,7 +73,7 @@ public class QaWaybackTest {
 
     @Test
     public void runInBrowser() {
-        running(testServer(3333),  HtmlUnitDriver.class, new Callback<TestBrowser>() {
+        running(testServer(3333, fakeApplication(additionalConfigurations.asMap())), HTMLUNIT, new Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
             	
                browser.goTo("http://localhost:3333/test");
