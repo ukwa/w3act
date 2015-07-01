@@ -172,6 +172,13 @@ public class APIController extends Controller {
 				}
 			}
 			
+			// check any crawl permission
+			for( CrawlPermission cp: merged.crawlPermissions ) {
+				Logger.debug("GOT: "+cp);
+				Logger.debug("Checking: "+cp.contactPerson);
+				cp.contactPerson.save();
+			}			
+			
 			merged.runChecks();
 			merged.update();
 			String url = Play.application().configuration().getString("server_name") + Play.application().configuration().getString("application.context") + "/targets/" + merged.id;

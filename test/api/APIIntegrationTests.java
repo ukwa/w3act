@@ -78,25 +78,6 @@ public class APIIntegrationTests {
        
     }
     
-
-    /**
-     * Example from:
-     * 
-     * https://www.playframework.com/documentation/2.2.x/JavaFunctionalTest
-     * 
-     */
-    //@Test
-    public void runInBrowser() {
-        running(testServer(3333, fakeApplication(additionalConfigurations.asMap())), HTMLUNIT, new Callback<TestBrowser>() {
-            public void invoke(TestBrowser browser) {
-               browser.goTo("http://localhost:3333"); 
-               assertThat(browser.$("#title").getTexts().get(0)).isEqualTo("Hello Guest");
-               browser.$("a").click();
-               assertThat(browser.url()).isEqualTo("http://localhost:3333/Coco");
-               assertThat(browser.$("#title", 0).getText()).isEqualTo("Hello Coco");
-            }
-        });
-    }
     
     /*
      * Method to populate a running system with some test data.
@@ -105,7 +86,7 @@ public class APIIntegrationTests {
     	String one = "{\"title\": \""+title+"\", \"field_urls\": [\""+url+"\"],\"field_scope\": \""+scope+"\",\"field_crawl_start_date\": \""+start_date+"\", \"selector\": 1, \"field_crawl_frequency\": \"MONTHLY\" }";
     	Promise<WS.Response> result = WS.url(host+"/api/targets").setAuth(username, password).setHeader("Content-Type", "application/json").post(one);
     	WS.Response response = result.get(timeout_ms);
-    	Logger.info("GOT "+response.getStatus()+" "+response.getStatusText());
+    	Logger.info("populate GOT "+response.getStatus()+" "+response.getStatusText());
     	assertThat(response.getStatus()).isEqualTo(expected);
     	String loc = response.getHeader(LOCATION);
     	Long id = Long.parseLong(loc.substring(loc.lastIndexOf('/')+1));

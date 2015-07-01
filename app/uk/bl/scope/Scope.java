@@ -323,7 +323,7 @@ public enum Scope {
 	 * @throws WhoisException 
 	 */
 	public boolean checkWhois(String url, Target target) {
-		if( WHOIS_ENABLED == false ) {
+		if( WHOIS_ENABLED != true ) {
 			Logger.warn("WHOIS is currently disabled!");
 			return false;
 		}
