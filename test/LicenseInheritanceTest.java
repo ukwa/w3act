@@ -207,6 +207,8 @@ public class LicenseInheritanceTest {
 			Scope.WHOIS_ENABLED = true;
 			boolean wr = Scope.INSTANCE.checkWhois(url, null);
 			assertThat(wr).isTrue();
+			// And clean up:
+			Scope.WHOIS_ENABLED = false;
 		}
 
 }

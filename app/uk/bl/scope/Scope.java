@@ -322,10 +322,9 @@ public enum Scope {
 	 * @return true if in UK domain
 	 * @throws WhoisException 
 	 */
-	@SuppressWarnings("unused")
 	public boolean checkWhois(String url, Target target) {
-		if( (! WHOIS_ENABLED) || true ) {
-			Logger.warn("WHOIS is currently disabled! " + WHOIS_ENABLED );
+		if( WHOIS_ENABLED != true ) {
+			Logger.warn("WHOIS is currently disabled!");
 			return false;
 		}
 		// Perform whois check:
