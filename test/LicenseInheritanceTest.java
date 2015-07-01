@@ -103,10 +103,10 @@ public class LicenseInheritanceTest {
 	                // Add some particular targets:
 					Target bl  = this.addTarget("British Library", new String[]{ "http://www.bl.uk" }, ScopeType.subdomains);
 					Target bln = this.addTarget("British Library News", new String[]{ "http://www.bl.uk/news/" }, ScopeType.subdomains);
-					Target bld = this.addTarget("British Library Datasets", new String[]{ "http://data.bl.uk/" }, null);
+					Target bld = this.addTarget("British Library Datasets", new String[]{ "http://data.bl.uk/" }, ScopeType.root);
 					Target eg  = this.addTarget("Example", new String[]{ "http://example.com/" }, ScopeType.subdomains);
-					Target egs  = this.addTarget("Example Subdomain", new String[]{ "http://subdomain.example.com/" }, null);
-					Target egss = this.addTarget("Example Subsection", new String[]{ "http://example.com/subsection/" }, null);
+					Target egs  = this.addTarget("Example Subdomain", new String[]{ "http://subdomain.example.com/" }, ScopeType.root);
+					Target egss = this.addTarget("Example Subsection", new String[]{ "http://example.com/subsection/" }, ScopeType.root);
 	            	
 	            	/***************** Perform some basic tests ******************/
 	            	assertThat(eg.isInScopeAllOrInheritedWithoutLicense()).isFalse();
