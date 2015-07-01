@@ -22,7 +22,7 @@
 	<div class="row">
 	  <div class="col-md-12 col-sm-12 col-xs-12">
 	  
-	  <h2>Contents</h2>
+	  <h2 id="con">Contents</h2>
 	  <ul>
   	    <li><a href="#mcp">Missing Crawl Permissions</a></li>
 	    <li><a href="#nsd">No Start Date</a></li>
@@ -68,6 +68,7 @@
 	  <p>The following @nosd.size target(s) have no start date.</p>
 	  <p>
 	  <a class="btn btn-success" role="button" href="@routes.ReportController.resetEmptyStartDates()">Set empty start dates to 6th April 2013</a>
+	  <a class="btn btn-success" role="button" href="#con">Top</a>
 	  </p>
 
 	  <table class="table table-striped table-bordered tablesorter">
@@ -96,6 +97,7 @@
 	  <p>The following @nors.size target(s) do not use the 'root' scope.</p>
 	  <p>
 	  <a class="btn btn-success" role="button" href="@routes.ReportController.resetBadScopes()">Reset 'resource' and 'plus1' scopes to 'root'</a>
+	   <a class="btn btn-success" role="button" href="#con">Top</a>
 	  </p>
 
 	  <table class="table table-striped table-bordered tablesorter">
@@ -124,6 +126,7 @@
 	  <p>The following @nomr.size user(s) have multiple roles.</p>
 	  <p>
 	  <a class="btn btn-success" role="button" href="@routes.ReportController.removeUnwantedRoles()">Remove unwanted role(s)</a>
+	  <a class="btn btn-success" role="button" href="#con">Top</a>
 	  </p>
 
 	  <table class="table table-striped table-bordered tablesorter">
