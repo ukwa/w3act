@@ -1,26 +1,20 @@
 import static org.fest.assertions.Assertions.assertThat;
+import static play.test.Helpers.HTMLUNIT;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;
 import static play.test.Helpers.testServer;
 
 import java.io.File;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import models.User;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import play.Configuration;
-import play.Logger;
 import play.libs.F.Callback;
-import play.libs.WS;
-import play.libs.WS.Response;
 import play.test.TestBrowser;
 import uk.bl.exception.ActException;
-import static play.test.Helpers.*;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -31,14 +25,11 @@ import com.typesafe.config.ConfigFactory;
 public class QaWaybackTest {
 		
 	private Configuration additionalConfigurations;
-	private Configuration accountConfigurations;
 	User user = new User();
 	User ldlUser = new User();
-	private static String testURL = "http://www.bl.uk";  
-	private static URL wayback_url;
+	private static String testURL = "http://www.bl.uk"; 
 	private static String email = "niladree.bhattacharj@bl.uk";
 	private static String password = "Nil@BL";
-	private static long timeout_ms = 60*1000; // in milliseconds
 	
 	@Before
 	public void setUp() throws ActException {	
@@ -95,9 +86,7 @@ public class QaWaybackTest {
                browser.goTo("http://localhost:3333/act"+"/wayback/*/"+testURL);
                assertThat(browser.pageSource()).contains("Take Me Back");
                assertThat(browser.pageSource()).doesNotContain("form action=\"/act/login\"");
-//               Response response = WS.url("http://localhost:3333/actdev"+"/wayback/*/"+testURL).get().get(timeout_ms);
-//               Logger.info(response.getStatus()+" "+response.getStatusText());
-//               assertThat(response.getStatus()).isEqualTo(OK);
+
            
             }
         });
