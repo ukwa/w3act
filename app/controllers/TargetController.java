@@ -979,6 +979,14 @@ public class TargetController extends AbstractController {
 		            return info(filledForm, id);
 		        }
 		        
+		        String title = requestData.get("title");
+		        
+		        if (title.trim().length()==0) {
+		        	
+		        	flash("message", "Blank Title");
+		            return info(filledForm, id);
+			  	}    
+		        
 		        String wctId = requestData.get("wctId");
 		        
 		        if (StringUtils.isNotBlank(wctId) && !Utils.INSTANCE.isNumeric(wctId)) {
@@ -1319,6 +1327,14 @@ public class TargetController extends AbstractController {
     		Logger.debug("errors: " + filledForm.errors());
             return newInfo(filledForm);
         }
+        
+        String title = requestData.get("title");
+        
+        if (title.trim().length()==0) {
+        	
+        	flash("message", "Blank Title");
+            return newInfo(filledForm);
+	  	}    
         
         String wctId = requestData.get("wctId");
         
