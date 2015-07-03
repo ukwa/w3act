@@ -68,6 +68,11 @@ public class OverallLicenseStatus {
 				Logger.error("No fieldUrl.domain for "+fieldUrl.url);
 				continue;
 			}
+			// Skip invalid domains:
+						if( fieldUrl.domain == null) {
+							Logger.error("Invalid fieldUrl.domain for "+fieldUrl.url);
+							continue;
+						}
 			// Look for targets:
 			List<Target> tp = Target.findAllTargetsForDomainLike("%"+getParentDomain(fieldUrl.domain));
 			if( tp == null ) {

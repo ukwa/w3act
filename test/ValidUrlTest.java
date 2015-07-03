@@ -13,7 +13,7 @@ public class ValidUrlTest {
 
 	@Test
 	public void test() {
-		String url = "https://democracy.kent.gov.uk/ieListMeetings.aspx?CId=706&Year=2012";
+		String url = "https://democracy.kent.gov.uk/ieListMeetings.aspx?CId=706&Year=2012";		
     	Logger.debug("url: " + url.trim());
 //			uri = new URI(url.trim()).normalize().toURL();
 //			String extFormUrl = uri.toExternalForm();
