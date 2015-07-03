@@ -724,6 +724,13 @@ public enum Utils {
 //        return m.matches();
     	
     }
+    
+    public boolean validDomain(String domain) {
+
+        String domainRegex = "^((?!-)[a-z0-9-]{1,63}(?<!-)\\.)+[a-z]{2,6}$";
+    	return domain.matches(domainRegex);
+
+    }
 
     public String convertToDateString(Date date) {
     	String formatted = null;
