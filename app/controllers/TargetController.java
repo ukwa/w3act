@@ -1024,28 +1024,16 @@ public class TargetController extends AbstractController {
 		            		
 		            		Logger.debug("trimmed " + trimmed);
 		            		
-		            		 URL uri;
-								try {
-					            	Logger.debug("url: " + trimmed);
-									uri = new URI(trimmed).normalize().toURL();
-				        			String extFormUrl = uri.toExternalForm();
-				        			
-				        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
-				        			Logger.debug("valid? " + isValidUrl);
-				        			if (!isValidUrl) {
-				        				throw new ActException("Invalid URL");
-				        				
-				        			}
-				        			
-					            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
-					            	fu.domain = Scope.INSTANCE.getDomainFromUrl(extFormUrl.trim());
-					            	Logger.debug("extFormUrl: " + extFormUrl);
-					            	fieldUrls.add(fu);
-								} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
-						            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+		            		boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
+		        			Logger.debug("valid? " + isValidUrl);
+		        			if (!isValidUrl) {
+		        				 ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
 						            filledForm.reject(ve);
-						            return info(filledForm, id);
-						        }
+						            flash("message", "Invalid URL.");
+					    	    	return redirect(routes.TargetController.edit(id));
+		        				
+		        			}
+		            		
 		            		
 			            	FieldUrl isExistingFieldUrl = FieldUrl.hasDuplicate(trimmed);
 			            	
@@ -1063,7 +1051,28 @@ public class TargetController extends AbstractController {
 			            	}
 		            	
 		            	} 
-		            	
+		            	 URL uri;
+							try {
+				            	Logger.debug("url: " + trimmed);
+								uri = new URI(trimmed).normalize().toURL();
+			        			String extFormUrl = uri.toExternalForm();
+			        			
+			        			boolean isValidUrl = Utils.INSTANCE.validUrl(trimmed);
+			        			Logger.debug("valid? " + isValidUrl);
+			        			if (!isValidUrl) {
+			        				throw new ActException("Invalid URL");
+			        				
+			        			}
+			        			
+				            	FieldUrl fu = new FieldUrl(extFormUrl.trim());
+				            	fu.domain = Scope.INSTANCE.getDomainFromUrl(extFormUrl.trim());
+				            	Logger.debug("extFormUrl: " + extFormUrl);
+				            	fieldUrls.add(fu);
+							} catch (MalformedURLException | URISyntaxException | IllegalArgumentException | ActException e) {
+					            ValidationError ve = new ValidationError("formUrl", "The URL entered is not valid. Please check and correct it, and click Save again");
+					            filledForm.reject(ve);
+					            return info(filledForm, id);
+					        }
 
 		            }
 		            filledForm.get().fieldUrls = fieldUrls;
