@@ -63,11 +63,18 @@ public class OverallLicenseStatus {
 					Logger.warn("Could not parse "+fieldUrl.url);
 				}
 			}
-			// Skip null domains:
+			// Skip null domains:			
 			if( fieldUrl.domain == null) {
 				Logger.error("No fieldUrl.domain for "+fieldUrl.url);
 				continue;
 			}
+			// Skip invalid domains:
+			boolean isValidDomain = Utils.INSTANCE.validDomain(fieldUrl.domain);
+			
+			if(isValidDomain==false) {
+				Logger.error("Invalid fieldUrl.domain "+fieldUrl.domain);
+				continue;
+				}
 			// Look for targets:
 			List<Target> tp = Target.findAllTargetsForDomainLike("%"+getParentDomain(fieldUrl.domain));
 			if( tp == null ) {

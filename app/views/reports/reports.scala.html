@@ -1,4 +1,4 @@
-@(title: String, user: User, permissions: List[Target], permissionsGranted: List[Target], permissionsRefused: List[Target], curatorId: Long, organisationId: Long, startDate: String, endDate: String, requestType: String, users: List[User], organisations: List[Organisation], requestTypes: Array[uk.bl.Const.RequestType])
+@(title: String, user: User, permissions: List[Target], permissionsGranted: List[Target], permissionsRefused: List[Target], curatorId: Long, organisationId: Long, startDate: String, endDate: String, requestType: String, grantedDate: String, users: List[User], organisations: List[Organisation], requestTypes: Array[uk.bl.Const.RequestType])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -148,6 +148,19 @@
 													</select>
 												</div>
 											</div>
+										</div>
+							     	</div>	     
+										
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+											<div class="form-group">
+								              	<label class="col-sm-6 control-label">Filter by date Granted</label>
+											    <div class="col-sm-6">
+													<div class="input-group">
+							 							<input type="text" name="grantedDate" value="@grantedDate" size="30" maxlength="2048" class="form-control target-form-control" id="granted-date"/>
+							 						</div>
+												</div>											
 										</div>
 							     	</div>	     
 										

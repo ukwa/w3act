@@ -1028,6 +1028,8 @@ public class Target extends UrlModel {
 	 *            The start date for filtering
 	 * @param endDate
 	 *            The end date for filtering
+	 * @param grantedDate
+	 *            The granted date for filtering
 	 * @param npld
 	 *            The selection of NPLD scope rule for filtering
 	 * @param crawlFrequency
@@ -1039,14 +1041,14 @@ public class Target extends UrlModel {
 	 */
 	public static Page<Target> pageReportsCreation(int page, int pageSize,
 			String sortBy, String order, Long curatorId,
-			Long organisationId, String startDate, String endDate,
+			Long organisationId, String startDate, String endDate, String grantedDate,
 			String npld, String crawlFrequencyName, String tld) throws ActException {
 
 		ExpressionList<Target> exp = Target.find.fetch("fieldUrls").fetch("flags").fetch("licenses").fetch("subjects").fetch("collections").where();
 		Page<Target> res = null;
 		exp = exp.eq(Const.ACTIVE, true);
 		
-		Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + npld + ", " + crawlFrequencyName + ", " + tld);
+		Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + grantedDate + ", " + npld + ", " + crawlFrequencyName + ", " + tld);
 		if (curatorId != -1) {
 			exp = exp.eq("authorUser.id", curatorId);
 		}
@@ -1065,6 +1067,11 @@ public class Target extends UrlModel {
 			if (StringUtils.isNotEmpty(endDate)) {
 				Date date = Utils.INSTANCE.convertDate(endDate);
 				exp = exp.le("createdAt", date);
+			}
+			
+			if (StringUtils.isNotEmpty(grantedDate)) {
+				Date date = Utils.INSTANCE.convertDate(grantedDate);
+				exp = exp.eq("createdAt", date);
 			}
 		} catch (ParseException e) {
 			throw new ActException(e);
