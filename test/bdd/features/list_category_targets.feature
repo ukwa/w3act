@@ -4,7 +4,7 @@ Feature: List only the Targets for Collection Category
   So that I can view the results
 
 Scenario: Get me only the targets for a collection category
-  Given I have a collection category ID of 60
+  Given I have a collection category ID of 600
   When I choose to see to get the targets
   Then I should see a target with the title "BBC Target title"
   And should only be 1 target returned

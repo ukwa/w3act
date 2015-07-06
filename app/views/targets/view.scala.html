@@ -60,7 +60,7 @@
     </style>
 }
     
-@main("", user, script, style) {
+@main("Target %s".format(target.title), user, script, style) {
    	<div class="page-header">
 	    <h1><a href="@routes.TargetController.index()">Targets > </a>Target @target.title</h1>
 	</div>
@@ -94,17 +94,21 @@
 		   	<li><a href="#metadata" data-toggle="tab">Metadata</a></li>
         	<li><a href="#crawlpolicy" data-toggle="tab">Crawl policy and Schedule</a></li>
 			<li><a href="#crawlpermission" data-toggle="tab">NPLD scope 
-				@if(target.isInScopeAllWithoutLicense()) {
+				@if(target.isInScopeAllOrInheritedWithoutLicense()) {
 					<font color="green">(+)</font>
 				} else {
 					<font color="red">(-)</font>
 				}		        
 			</a></li>
 		    <li><a href="#licensing" data-toggle="tab">UKWA Licensing
-		    	@if(target.hasGrantedLicense()) {
+		    	@if(target.indicateLicenses()) {
 					<font color="green">(+)</font>
 				} else {
+				  @if( target.getOverallLicenseStatus().pendingIncludingInherited ) {
+					<font color="orange">(~)</font>
+				  } else {
 					<font color="red">(-)</font>
+				  }
 				}		        
 		    </a></li>
 		    <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
@@ -157,7 +161,7 @@
 								UK Hosting (automated check)
 							</label>
 						    <div class="col-sm-6">
-								@if(target.isUkHosting) {
+								@if(Boolean.TRUE.equals(target.isUkHosting)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -174,7 +178,7 @@
 								UK top-level domain (Includes .uk, .london, .scot, .wales and .cymru domains) (automated check)
 							</label>
 						    <div class="col-sm-6">
-								@if(target.isTopLevelDomain) {
+								@if(Boolean.TRUE.equals(target.isTopLevelDomain)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -191,7 +195,7 @@
 								UK Registration (automated check)
 							</label>
 						    <div class="col-sm-6">
-								@if(target.isUkRegistration) {
+								@if(Boolean.TRUE.equals(target.isUkRegistration)) {
 					            	<font id="isInScope" style="color: green">yes</font>
 								} else {
 									<font id="isInScope" style="color: red">no</font>
@@ -538,7 +542,7 @@
 						}
 					</div>
 				</div>	
-			}	     	
+			} else {
     		<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="form-group">
@@ -595,7 +599,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">UK Postal Address <small class="text-center">(The 'about us' or other contact page contains a UK address for a significant part of the organisation (e.g. it is not just a PO box))</small></label>
 					    <div class="col-sm-6">
-			                @if(target.ukPostalAddress) {             
+			                @if(Boolean.TRUE.equals(target.ukPostalAddress)) {
 				                yes
 			                } else {
 				                no
@@ -621,7 +625,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Via Correspondence <small class="text-center">(Previous correspondence with the web site owner by a Curator contains evidence of a UK address)</small></label>
 					    <div class="col-sm-6">
-			                @if(target.viaCorrespondence != null && target.viaCorrespondence) {             
+			                @if(Boolean.TRUE.equals(target.viaCorrespondence)) {             
 				                yes
 			                } else {
 				                no
@@ -647,7 +651,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">Professional Judgement <small class="text-center">(In your professional judgement, does this site qualify as a UK Publication under the terms of the Legal Deposit Legislation. Please provide details of evidence used in the box below)</small></label>
 					    <div class="col-sm-6">
-			                @if(target.professionalJudgement != null && target.professionalJudgement) {             
+			                @if(Boolean.TRUE.equals(target.professionalJudgement)) {             
 				                yes
 			                } else {
 				                no
@@ -673,7 +677,7 @@
 					<div class="form-group">
 						<label class="col-sm-6 control-label">No LD Criteria Met <small class="text-center">(Use this to indicate that no LD criteria apply, and so this site cannot be archived under Legal Deposit)</small></label>
 					    <div class="col-sm-6">
-			                @if(target.noLdCriteriaMet != null && target.noLdCriteriaMet) {             
+			                @if(Boolean.TRUE.equals(target.noLdCriteriaMet)) {             
 				                yes
 			                } else {
 			                	no
@@ -681,7 +685,8 @@
                 		</div>
 					</div>
 				</div>
-	     	</div>				
+	     	</div>
+	     	}
 	</div>	
         
         <div class="tab-pane fade" id="crawlpolicy">
@@ -805,6 +810,20 @@
         </div>
 	        
 		<div class="tab-pane fade padding-20" id="licensing">
+		
+				@if(target.getOverallLicenseStatus().inheritedLicenseOrPending) {
+					
+					<div class="padding-20">
+						<div class="alert alert-info">
+							NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
+							@for(target <- target.getUkwaLicenceStatusList) { 
+								<p><a href="@routes.TargetController.view(target.id)">@target.id - @target.fieldUrl()</a></p>
+							}
+						</div>
+					</div>	
+				
+				} else {
+				
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -815,18 +834,7 @@
 						</div>
 					</div>
 		     	</div>	
-
-				@if(target.indicateUkwaLicenceStatus) {    	
-					<div class="padding-20">
-						<div class="alert alert-info">
-							NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
-							@for(target <- target.getUkwaLicenceStatusList) { 
-								<p><a href="@routes.TargetController.view(target.id)">@target.id - @target.fieldUrl()</a></p>
-							}
-						</div>
-					</div>	
-				}	     			     	
-		     	
+				
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -839,6 +847,7 @@
 						</div>
 					</div>
 		     	</div>
+		     	}
 		</div>
 		
 		<div class="tab-pane fade" id="watchedTarget">
@@ -985,7 +994,7 @@
 									<a class="brand" target="_blank" href="@routes.InstanceController.showByTarget(target.id)">Instances</a>
 						    </li>
 							<li>
-									<a class="brand" target="_blank" href="@play.api.Play.current.configuration.getString("server_name")@play.api.Play.current.configuration.getString("application.context")/wayback/*/@fieldUrl.url">Search QA Wayback</a>
+									<a class="brand" target="_blank" href="@{routes.WaybackController.wayback("*/" + fieldUrl.url)}">Search QA Wayback</a>
 							</li>
 							<li>
 						        	<a class="brand" target="_blank" href="http://www.webarchive.org.uk/wayback/archive/*/@fieldUrl.url">Search Open UK Web Archive</a>

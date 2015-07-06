@@ -147,7 +147,7 @@
     </style>
 }
 
-@main("", user, scripts, styles) {
+@main("Editing %s".format(targetForm("title").value), user, scripts, styles) {
     
    	<div class="page-header">
 	    <h1><a href="@routes.TargetController.index()">Targets > </a>Target @targetForm("title").value</h1>
@@ -180,7 +180,11 @@
 		    	@if(FormHelper.INSTANCE.hasGrantedLicense(id)) {
 					<font color="green">(+)</font>
 				} else {
+				  @if( FormHelper.INSTANCE.licensingUnderway(id) ) {
+					<font color="orange">(~)</font>
+				  } else {
 					<font color="red">(-)</font>
+				  }
 				}		        
 		    </a></li>
 		    <li><a href="#watchedTarget" data-toggle="tab">Watched Target</a></li>
@@ -678,7 +682,7 @@
 							}
 						</div>
 					</div>	
-				}
+				} else {
 
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -810,6 +814,7 @@
 						</div>
 					</div>
 		     	</div>
+		     	}
 		     	
 			</div>
 		     	
@@ -823,7 +828,6 @@
 	               					targetForm("scope"), 
 						                options(scopeTypes), 
 						                args = 
-					                	'_default -> "-- None --",
 						                '_label -> "Scope: Determines the scope of the crawl around this URL. To capture a whole site, specify the homepage and select 'All URLs that start like this'. To include all subdomains (e.g. example.co.uk but also anything like www.example.co.uk, images.example.co.uk, etc.) then select the 'any subdomains' option)",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	
@@ -838,7 +842,6 @@
 	               					targetForm("depth"), 
 						                options(depthTypes), 
 						                args = 
-					                	'_default -> "-- None --",					                
 						                '_label -> "Depth: (Determines the depth of the crawl. Most crawls will be capped at 500MB)",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericMandatoryInput.f), lang)	
@@ -846,8 +849,7 @@
 						</div>
 			     	</div>	
 				}
-				
-				@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
+					@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
@@ -858,9 +860,7 @@
 							</div>
 						</div>
 			     	</div>	
-		     	}
-		     	
-				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+		     			
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">
@@ -961,6 +961,17 @@
 	        
 	        <div class="tab-pane fade" id="licensing">
 			
+				@if(FormHelper.INSTANCE.inheritedLicenceUnderwayOrGranted(id)) {    	
+					<div class="padding-20">
+						<div class="alert alert-info">
+							NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
+							@for(target <- FormHelper.INSTANCE.getUkwaLicenceStatusList(id)) { 
+								<p><a href="@routes.TargetController.view(target.id)">@target.title @target.fieldUrl()</a></p>
+							}
+						</div>
+					</div>	
+				} else {
+		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -969,18 +980,15 @@
 							</label>
 							<div class="col-sm-6">
 								@if(user.hasRole("sys_admin") || user.hasRole("archivist")) {
-									<select name="licensesList" id="license" class="form-control">
-										<option value="">None</option>
+									<select name="licensesList" id="license" class="form-control" multiple>
+									    <option value="">-- None--</option>
 										@for(license <- licenses) {
 											<option value="@license.id" @if(targetLicenses.contains(license)) {selected} >@license.name</option>
 										}
 									</select>
 								} else {
-									@if(!targetLicenses.isEmpty) {
-										<input type="hidden" name="licensesList" value="@targetLicenses(0).id">
-									}
-									<select id="license" class="form-control">
-										<option disabled value="">None</option>
+									<select name="licensesList" id="license" class="form-control" multiple>
+									    <option disabled value="">-- None--</option>
 										@for(license <- licenses) {
 											<option disabled value="@license.id" @if(targetLicenses.contains(license)) {selected} >@license.name</option>
 										}
@@ -996,17 +1004,6 @@
 					</div>
 		     	</div>	
 	
-				@if(FormHelper.INSTANCE.indicateUkwaLicenceStatus(id)) {    	
-					<div class="padding-20">
-						<div class="alert alert-info">
-							NB. There is already a licence request either pending, or granted, or refused, for a target at a higher level in this domain. There is no need to request another one.
-							@for(target <- FormHelper.INSTANCE.getUkwaLicenceStatusList(id)) { 
-								<p><a href="@routes.TargetController.view(target.id)">@target.title @target.fieldUrl()</a></p>
-							}
-						</div>
-					</div>	
-				}	     			     	
-		     	
 	    		<div class="row padding-10">
 		     		<div class="col-md-12 col-xs-12 col-sm-12">
 						<div class="form-group">
@@ -1020,7 +1017,7 @@
 						                options(licenseStatuses), 
 						                args = 
 						                'class -> "form-control",
-					                	'_default -> "-- None --",
+					                	'_default -> "Not Initiated",
 						                '_label -> "License Status - In case something goes wrong with the licensing process.",
 						                '_showConstraints -> false
 					            )(FieldConstructor(genericInput.f), lang)
@@ -1059,6 +1056,7 @@
 						</div>
 					</div>
 		     	</div>
+		     	}
 		     	
 			</div>
 	        

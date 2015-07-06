@@ -19,12 +19,6 @@ import uk.bl.scope.Scope;
 
 public class TopLevelDomainTest {
 
-	public static final String UK_DOMAIN       = ".uk";
-	public static final String LONDON_DOMAIN   = ".london";
-	public static final String SCOT_DOMAIN     = ".scot";
-	public static final String WALES_DOMAIN     = ".wales";
-	public static final String CYMRU_DOMAIN     = ".cymru";
-	
 	Target target = null;
 	List<FieldUrl> fieldUrls;
 	
@@ -39,12 +33,12 @@ public class TopLevelDomainTest {
 
 	@Test
 	public void test() throws ActException  {
-		Boolean pass = Scope.INSTANCE.isTopLevelDomain(target);
+		Boolean pass = Scope.isTopLevelDomain(target);
 		System.out.println("fieldUrls with valid top level domains: " + target.fieldUrls + " - " + pass);
 		assertTrue(pass);
 		FieldUrl newFieldUrl = new FieldUrl("http://www.gov.com");
 		target.fieldUrls.add(newFieldUrl);
-		Boolean fail = Scope.INSTANCE.isTopLevelDomain(target);
+		Boolean fail = Scope.isTopLevelDomain(target);
 		System.out.println("fieldUrls with invalid top level domains (.com): " + target.fieldUrls + " - " + fail);
 		assertFalse(fail);
 		
@@ -61,11 +55,11 @@ public class TopLevelDomainTest {
 		}
 		url = uri.toExternalForm();
 		System.out.println("extForm: " + url);
-    	String domain = Scope.INSTANCE.getDomainFromUrl(url);
+    	String domain = Scope.getDomainFromUrl(url);
 		System.out.println("domain: " + domain);
 
 		target.fieldUrls.add(ukFieldUrl);
-		Boolean failedAgain = Scope.INSTANCE.isTopLevelDomain(target);
+		Boolean failedAgain = Scope.isTopLevelDomain(target);
 		System.out.println("fieldUrls with invalid top level domains (.org): " + target.fieldUrls + " - " + failedAgain);
 		assertFalse(failedAgain);
 	}

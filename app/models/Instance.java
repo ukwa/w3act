@@ -129,6 +129,7 @@ public class Instance extends UrlModel {
 //same	"comment_count_new":"0",
 //same	"feed_nid":null}
 	
+	@Transient
     public String log;
 
 
@@ -630,20 +631,6 @@ public class Instance extends UrlModel {
 //	}
 	
 
-	/**
-	 * This method checks whether the passed URL is in scope.
-	 * @param url
-	 * @return result as a flag
-	 */
-    public boolean isInScope(String url, String nidUrl) {
-    	try {
-    		return Scope.INSTANCE.check(url, this.target);
-    	} catch (WhoisException ex) {
-    		Logger.debug("Exception: " + ex);
-    		return false;
-    	}
-    }
-    
     /**
      * Return a page of Instance
      *

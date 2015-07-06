@@ -1,5 +1,3 @@
-import static org.junit.Assert.*;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ import play.test.WithApplication;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
 import uk.bl.wa.whois.JRubyWhois;
-import uk.bl.wa.whois.WhoisResult;
+import uk.bl.wa.whois.record.WhoisResult;
 
 
 public class UkRegistrationTest extends WithApplication {
@@ -59,9 +57,9 @@ public class UkRegistrationTest extends WithApplication {
 			}
 	    	System.out.println("checkWhois: " + whoIs + " " + domain);
 	    	WhoisResult whoIsRes = whoIs.lookup(domain);
-	    	res = whoIsRes.isUKRegistrant();
+	    	res = Scope.isUKRegistrant(whoIsRes);
 	    	System.out.println("isUKRegistrant: " + res);
-	    	res = whoIsRes.isUKRegistrant();
+	    	res = Scope.isUKRegistrant(whoIsRes);
 		} catch (org.jruby.embed.EvalFailedException | URISyntaxException  e) {
 //			e.printStackTrace();
 		}

@@ -7,11 +7,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,6 +41,7 @@ import play.db.ebean.Model;
 import scala.NotImplementedError;
 import uk.bl.Const;
 import uk.bl.api.FormHelper;
+import uk.bl.api.OverallLicenseStatus;
 import uk.bl.api.Utils;
 import uk.bl.api.models.FieldModel;
 import uk.bl.exception.ActException;
@@ -69,7 +72,6 @@ public class Target extends UrlModel {
 	@Column(columnDefinition = "text")
 	public String originatingOrganisation;
 	
-	@JsonIgnore
 	//@JsonProperty("crawl_permissions")
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 //    @OrderBy("createdAt DESC")
@@ -79,7 +81,6 @@ public class Target extends UrlModel {
 	@OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
 	public List<Instance> instances;
 
-	@JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "license_target", joinColumns = { @JoinColumn(name = "target_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "license_id", referencedColumnName="id") }) 
@@ -148,17 +149,17 @@ public class Target extends UrlModel {
 	public String summary;
 
 	@JsonProperty("field_special_dispensation")
-	public Boolean specialDispensation;
+	public Boolean specialDispensation = Boolean.FALSE;
 
 	@Column(columnDefinition = "text")
 	@JsonProperty("field_special_dispensation_reaso")
 	public String specialDispensationReason;
 	
 	@JsonProperty("field_uk_hosting")
-	public Boolean isUkHosting = Boolean.FALSE;
+	public Boolean isUkHosting;
 	
-	public Boolean isTopLevelDomain = Boolean.FALSE;
-	public Boolean isUkRegistration = Boolean.FALSE;
+	public Boolean isTopLevelDomain;
+	public Boolean isUkRegistration;
 	
 	@JsonProperty("field_live_site_status")
 	public String liveSiteStatus;
@@ -205,17 +206,17 @@ public class Target extends UrlModel {
 	public Long legacySiteId;
 	
 	@JsonProperty("field_uk_postal_address")
-	public Boolean ukPostalAddress = Boolean.FALSE;
+	public Boolean ukPostalAddress;
 
 	@Column(columnDefinition = "text")
 	@JsonProperty("uk_postal_address_url")
 	public String ukPostalAddressUrl;
 	
 	@JsonProperty("field_via_correspondence")
-	public Boolean viaCorrespondence = Boolean.FALSE;
+	public Boolean viaCorrespondence;
 	
 	@JsonProperty("field_professional_judgement")
-	public Boolean professionalJudgement = Boolean.FALSE;
+	public Boolean professionalJudgement;
 
 	@Column(columnDefinition = "text")
 	@JsonProperty("field_professional_judgement_exp")
@@ -235,7 +236,7 @@ public class Target extends UrlModel {
 	
 	@JsonProperty("field_crawl_frequency")
 	public String crawlFrequency;
-
+	
 	@JsonIgnore
 	public Date crawlStartDate;
 
@@ -464,8 +465,22 @@ public class Target extends UrlModel {
 //		"revision":null,"comment":"2","comments":[],"comment_count":"0","comment_count_new":"0","feed_nid":null
 	
 	public Target() {
+	}
+	
+	public void setDefaultValues() {
+		// Defaults:
 		this.scope = Const.ScopeType.root.name();
 		this.depth = Const.DepthType.CAPPED.name();
+		this.isUkHosting = Boolean.FALSE;
+		this.isTopLevelDomain = Boolean.FALSE;
+		this.isUkRegistration = Boolean.FALSE;
+		this.liveSiteStatus = Const.SiteStatus.LIVE.name();
+		this.keySite = Boolean.FALSE;
+		this.ukPostalAddress = Boolean.FALSE;
+		this.viaCorrespondence = Boolean.FALSE;
+		this.professionalJudgement = Boolean.FALSE;
+		this.ignoreRobotsTxt = Boolean.FALSE;
+		this.crawlFrequency = Const.CrawlFrequency.DOMAINCRAWL.name();
 	}
 
 	public static Model.Finder<Long, Target> find = new Model.Finder<>(Long.class, Target.class);
@@ -475,11 +490,10 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * This method returns all Targets that comprise link to given collection
+	 * Count total number of records that rely on whois?
 	 * 
-	 * @param collectionUrl
-	 *            - The collection identifier
-	 * @return Targets list
+	 * @param value
+	 * @return
 	 */
 	public static int findWhoIsCount(boolean value) {
 		int count = 0;
@@ -580,41 +594,15 @@ public class Target extends UrlModel {
 	public String checkScopeStr(String fieldUrl, String url) {
 		String res = "false";
 		if (fieldUrl != null && fieldUrl.length() > 0 && url != null
-				&& url.length() > 0 && this.isInScopeAll()) {
+				&& url.length() > 0 && this.isInScopeAllOrInheritedWithoutLicense() ) {
 			res = "true";
 		}
 		return res;
 	}
 
-	/**
-	 * This method checks whether the passed URL is in scope for rules
-	 * associated with scope IP.
-	 * 
-	 * @param url
-	 *            The search URL
-	 * @param nidUrl
-	 *            The identifier URL in the project domain model
-	 * @return result as a flag
-	 */
-	@JsonIgnore
-	public boolean isInScopeAll() {
-		try {
-			boolean isInScope = false;
-			for (FieldUrl fieldUrl : this.fieldUrls) {
-				isInScope = isInScopeIp(fieldUrl.url);
-			}
-			if (!isInScope) {
-				isInScope = this.isTopLevelDomain();
-			}
-			return isInScope;
-		} catch (Exception ex) {
-			Logger.debug("isInScopeAll() Exception: " + ex);
-			return false;
-		}
-	}
 
 	/**
-	 * This method checks whether the passed URL is in scope for rules
+	 * This method checks whether all the URLs are in scope for rules
 	 * associated with scope IP.
 	 * 
 	 * @param url
@@ -624,31 +612,15 @@ public class Target extends UrlModel {
 	 * @return result as a flag
 	 */
 	@JsonIgnore
-	public boolean isInScopeIp(String url) {
-		try {
-			for (FieldUrl fieldUrl : this.fieldUrls) {
-				return Scope.INSTANCE.checkScopeIp(fieldUrl.url, this);
+	public boolean isInScope( boolean includedByPermission ) {
+		for (FieldUrl fieldUrl : this.fieldUrls) {
+			if( Scope.INSTANCE.check(fieldUrl.url, this, includedByPermission) == false ) {
+				return false;
 			}
-		} catch (WhoisException ex) {
-			Logger.debug("Exception: " + ex);
 		}
-		return false;
+		return true;
 	}
 	
-	/**
-	 * This method checks whether the passed URL is in scope.
-	 * 
-	 * @param url
-	 * @return result as a String
-	 */
-	public String checkScope(String url) {
-		String res = "false";
-		if (url.contains(".uk")) {
-			res = "true";
-		}
-		return res;
-	}
-
 	/**
 	 * This method analyzes manual scope settings for Target with given URL
 	 * 
@@ -668,9 +640,6 @@ public class Target extends UrlModel {
 			Logger.debug("checkManualScope(): " + this.ukPostalAddress + ", " + this.viaCorrespondence + ", "+ this.professionalJudgement);
 			res = true;
 		}
-//		if (BooleanUtils.isTrue(this.noLdCriteriaMet)) {
-//			res = false;
-//		}
 		return res;
 	}
 
@@ -698,34 +667,9 @@ public class Target extends UrlModel {
 	 * @return result as a flag
 	 */
 	public boolean isInScope(String url) {
-		try {
-			return Scope.INSTANCE.check(url, this);
-		} catch (WhoisException ex) {
-			Logger.debug("Exception: " + ex);
-			return false;
-		}
+		return Scope.INSTANCE.check(url, this, false);
 	}
 
-	/**
-	 * This method checks whether the passed URL is in scope for particular mode
-	 * e.g. IP or DOMAIN.
-	 * 
-	 * @param url
-	 *            The search URL
-	 * @param nidUrl
-	 *            The identifier URL in the project domain model
-	 * @param mode
-	 *            The mode of checking
-	 * @return result as a flag
-	 */
-	public static boolean isInScopeExt(String url, Target target, String mode) {
-		try {
-			return Scope.INSTANCE.checkExt(url, target, mode);
-		} catch (WhoisException ex) {
-			Logger.debug("Exception: " + ex);
-			return false;
-		}
-	}
 
 	/**
 	 * This method returns the latest version of Target objects.
@@ -756,14 +700,26 @@ public class Target extends UrlModel {
 	}
 
 	/**
-	 * This method finds all targets that have higher level domain containing in
-	 * their path on order to extend licence obtained for higher level to the
-	 * lower levels.
+	 * This method finds all targets that share a domain.
 	 */
-	public static List<Target> findAllTargetsWithLowerLevel(String target) {
+	public static List<Target> findAllTargetsForDomain(String domain) {
 		List<Target> res = new ArrayList<Target>();
 		ExpressionList<Target> ll = find.where()
-				.icontains(Const.FIELD_URL_NODE, target).eq(Const.ACTIVE, true);
+				.eq(Const.ACTIVE, true)
+				.ieq("fieldUrls.domain", domain);
+		res = ll.findList();
+		return res;
+	}
+
+	/**
+	 * This method finds all targets similar to a domain
+	 */
+	public static List<Target> findAllTargetsForDomainLike(String domainLike) {
+		Logger.debug("Looking for domains like:"+domainLike);
+		List<Target> res = new ArrayList<Target>();
+		ExpressionList<Target> ll = find.where()
+				.eq(Const.ACTIVE, true)
+				.like("fieldUrls.domain", domainLike);
 		res = ll.findList();
 		return res;
 	}
@@ -1113,6 +1069,20 @@ public class Target extends UrlModel {
 		} catch (ParseException e) {
 			throw new ActException(e);
 		}
+		
+		// Create raw expr for matching domains:
+		String notdomexp = "";
+		String domexp = "";
+		Iterator<String> tlds = Scope.DOMAINS.iterator();
+		while( tlds.hasNext() ) {
+			String tnext = tlds.next();
+			notdomexp += "fieldUrls.domain NOT like '%"+ tnext + "'";
+			domexp += "fieldUrls.domain like '%"+ tnext + "'";
+			if( tlds.hasNext() ){
+				notdomexp += " and ";
+				domexp += " or ";
+			}
+		}		
 
 		// new stuff
 		if (npld.equals(Const.NpldType.UK_POSTAL_ADDRESS.name())) {
@@ -1130,23 +1100,9 @@ public class Target extends UrlModel {
 			exp = exp.eq("isUkHosting", false);
 			exp = exp.eq("isUkRegistration", false);
 			exp = exp.eq("viaCorrespondence", false);
-			exp = exp.add(Expr.raw("fieldUrls.url NOT like '%"
-					+ Scope.UK_DOMAIN + "%' or fieldUrl NOT like '%"
-					+ Scope.LONDON_DOMAIN + "%' or fieldUrl NOT like '%"
-					+ Scope.WALES_DOMAIN + "%' or fieldUrl NOT like '%"
-					+ Scope.CYMRU_DOMAIN + "%' or fieldUrl NOT like '%"
-					+ Scope.SCOT_DOMAIN + "%'"));
+			exp = exp.add(Expr.raw(notdomexp));
 		} else if (npld.equals(Const.NpldType.UK_TOP_LEVEL_DOMAIN.name())) {
-			// Expression ex = Expr.or(Expr.icontains("field_url",
-			// Scope.UK_DOMAIN), Expr.icontains("field_url",
-			// Scope.LONDON_DOMAIN));
-			// exp.add(Expr.or(ex, Expr.icontains("field_url",
-			// Scope.SCOT_DOMAIN)));
-			exp = exp.add(Expr.raw("fieldUrls.url like '%" + Scope.UK_DOMAIN
-					+ "%' or fieldUrls.url like '%" + Scope.LONDON_DOMAIN
-					+ "%' or fieldUrls.url like '%" + Scope.WALES_DOMAIN
-					+ "%' or fieldUrls.url like '%" + Scope.CYMRU_DOMAIN
-					+ "%' or fieldUrls.url like '%" + Scope.SCOT_DOMAIN + "%'"));
+			exp = exp.add(Expr.raw(domexp));
 		} else if (npld.equals(Const.NpldType.UK_HOSTING.name())) {
 			// uk hosting
 			exp = exp.eq("isUkHosting", true);
@@ -1360,49 +1316,17 @@ public class Target extends UrlModel {
 
 		return pages;
 	}
-
-	/**
-	 * This method provides data exports for given crawl-frequency. Method
-	 * returns a list of Targets and associated crawl metadata.
-	 * 
-	 * @param frequency
-	 *            The crawl frequency e.g. 'daily'
-	 * @return list of Target objects
-	 */
-	public static List<Target> exportByFrequency(String frequency) {
-		ExpressionList<Target> targets = find.fetch("licenses").where().eq(Const.ACTIVE, true).isNotNull("licenses");
-		if (!frequency.equalsIgnoreCase("all")) {
-			targets = targets.ieq("crawlFrequency", frequency);
-		} else {
-			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
-		}
-
-		/**
-		 * The resulting list should only include those records where there is
-		 * specific 'UKWA Licensing' (i.e. where field_license is not empty).
-		 */
-//		Iterator<Target> itr = targets.findList().iterator();
-//		while (itr.hasNext()) {
-//			Target target = itr.next();
-//			if (target != null && target.fieldLicense != null && target.fieldLicense.length() > 0
-//					&& !target.fieldLicense.toLowerCase().contains(Const.NONE)) {
-//				res.add(target);
-//			}
-//		}
-		Logger.debug("exportByFrequency() resulting list size: " + targets.findRowCount());
-		return targets.findList();
-	}
 	
 //	checkScopeIpWithoutLicense
 	public static boolean isInScope(Target target) throws WhoisException {
 		for (FieldUrl fieldUrl : target.fieldUrls) {
-			if(!Scope.INSTANCE.checkScopeIp(fieldUrl.url, target)) return false;
+			if(!Scope.INSTANCE.check(fieldUrl.url, target, false)) return false;
 		}
 		return true;
 	}
 
 	public static boolean isInScopeDomain(Target target) throws ActException {
-		 return Scope.INSTANCE.isTopLevelDomain(target);
+		 return Scope.isTopLevelDomain(target);
 	}
 	
 	/**
@@ -1417,7 +1341,7 @@ public class Target extends UrlModel {
 	 * @throws MalformedURLException 
 	 */
 	public static List<Target> exportLdFrequency(String frequency) throws WhoisException, MalformedURLException, URISyntaxException {
-		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true).eq("noLdCriteriaMet", Boolean.FALSE);
+		ExpressionList<Target> targets = find.fetch("fieldUrls").where().eq(Const.ACTIVE, true);
 		if (!frequency.equalsIgnoreCase("all")) {
 			targets = targets.ieq("crawlFrequency", frequency);
 		} else {
@@ -1426,7 +1350,7 @@ public class Target extends UrlModel {
 		
 		List<Target> result = new ArrayList<Target>();
 		for (Target target : targets.findList()) {
-			if (target.isInScopeAllWithoutLicense()) {
+			if (target.isInScopeAllOrInheritedWithoutLicense()) {
 				result.add(target);
 			}
 		}
@@ -1434,7 +1358,39 @@ public class Target extends UrlModel {
 		return result;
 	}
 
+	/**
+	 * This method provides data exports for given crawl-frequency. Method
+	 * returns a list of Targets and associated crawl metadata.
+	 * 
+	 * @param frequency
+	 *            The crawl frequency e.g. 'daily'
+	 * @return list of Target objects
+	 */
+	public static List<Target> exportByFrequency(String frequency) {
+		ExpressionList<Target> targets = find.fetch("licenses").where().eq(Const.ACTIVE, true);
+		if (!frequency.equalsIgnoreCase("all")) {
+			targets = targets.ieq("crawlFrequency", frequency);
+		} else {
+			targets = targets.ne("crawlFrequency", Const.CrawlFrequency.NEVERCRAWL.name());
+		}
 
+		/**
+		 * The resulting list should only include everything we are able to crawl.
+		 */
+		List<Target> result = new ArrayList<Target>();
+		Iterator<Target> itr = targets.findList().iterator();
+		while (itr.hasNext()) {
+			Target target = itr.next();
+			// This includes all, rather than just the licensed stuff:
+			if (target.isInScopeAllOrInheritedWithoutLicense() || target.indicateLicenses()) {
+			//if ( target.indicateLicenses() ) {
+				result.add(target);
+			}
+		}
+		Logger.debug("exportByFrequency() resulting list size: " + result.size());
+		return result;
+	}
+	
 	/**
 	 * This method evaluates the latest created target from the passed unsorted
 	 * list.
@@ -1464,14 +1420,6 @@ public class Target extends UrlModel {
 
 	public void setIsUkHosting(Boolean isUkHosting) {
 		this.isUkHosting = isUkHosting;
-	}
-
-	public String getScope() {
-		return scope;
-	}
-
-	public void setScope(String scope) {
-		this.scope = scope;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -1540,14 +1488,6 @@ public class Target extends UrlModel {
 	public void setField_nominating_organisation(
 			FieldModel field_nominating_organisation) {
 		this.field_nominating_organisation = field_nominating_organisation;
-	}
-
-	public String getCrawlFrequency() {
-		return crawlFrequency;
-	}
-
-	public void setCrawlFrequency(String crawlFrequency) {
-		this.crawlFrequency = crawlFrequency;
 	}
 
 	public List<FieldModel> getField_suggested_collections() {
@@ -1756,6 +1696,15 @@ public class Target extends UrlModel {
 	}
 	
 	@JsonIgnore
+	public String primaryUrl() {
+		if( this.fieldUrls != null && this.fieldUrls.size() > 0 ) {
+			return this.fieldUrls.get(0).url;
+		} else {
+			return null;
+		}
+	}
+	
+	@JsonIgnore
 	public String subjectIdsAsString() {
 		return StringUtils.join(this.subjectIds(), ", ");
 	}
@@ -1814,17 +1763,20 @@ public class Target extends UrlModel {
 	
 	@JsonIgnore
 	public boolean isUkHosting() {
-		return Scope.INSTANCE.isUkHosting(this);
+		if( this.isUkHosting == null ) return false;
+		return this.isUkHosting;
 	}
 	
 	@JsonIgnore
-	public boolean isTopLevelDomain() throws ActException {
-		return Scope.INSTANCE.isTopLevelDomain(this);
+	public boolean isTopLevelDomain() {
+		if( this.isTopLevelDomain == null ) return false;
+		return this.isTopLevelDomain;
 	}
 	
 	@JsonIgnore
 	public boolean isUkRegistration() throws WhoisException {
-		return Scope.INSTANCE.isUkRegistration(this);
+		if( this.isUkRegistration == null ) return false;
+		return this.isUkRegistration;
 	}
 	
 	@JsonIgnore
@@ -1849,6 +1801,7 @@ public class Target extends UrlModel {
 	public String getDateOfPublicationText() {
 		if (dateOfPublication != null) {
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			dateOfPublicationText = dateFormat.format(dateOfPublication);
 		}
 		return dateOfPublicationText;
@@ -1867,7 +1820,6 @@ public class Target extends UrlModel {
 		}
 		return crawlEndDateText;
 	}
-
 	
 	public String getCrawlStartDateISO() {
 		if (crawlStartDate != null) {
@@ -1897,128 +1849,81 @@ public class Target extends UrlModel {
 	public boolean isInScopeAllWithoutLicense() {
 		Logger.debug("isInScopeAllWithoutLicense()");
 		
+		// Manual scope:
 		if (this.checkManualScope())
 		    return true;
 
-		return (this.isTopLevelDomain || this.isUkHosting || this.isUkRegistration);
-	}
-
-//	@JsonIgnore
-//	public static boolean checkScopeIpWithoutLicense(Target target) throws WhoisException {
-//		for (FieldUrl fieldUrl : target.fieldUrls) {
-//			if (!Scope.INSTANCE.checkScopeIpWithoutLicense(target)) return false;
-//		}
-//		return true;
-//	}
-
-	@JsonIgnore
-    public boolean indicateNpldStatus() throws ActException {
-    	return (getNpldStatusList().size() > 0);
-    }
-
-	/**
-	 * This method evaluates the Target list where NPLD status of (i) one or
-	 * more of the 'UK Postal Address', 'Via Correspondence', and/or
-	 * 'Professional Judgment' fields is not null in any other target record at
-	 * a higher level within the same domain AND (ii) where both 'UK hosting'
-	 * and 'UK top-level domain' = No.
-	 * 
-	 * @return target list
-	 * @throws ActException 
-	 */
-	@JsonIgnore
-	public List<Target> getNpldStatusList() throws ActException {
-		
-		List<Target> res = new ArrayList<Target>();
-		List<Target> unsorted = new ArrayList<Target>();
-		
-		List<Target> targets = new ArrayList<Target>();
-		
-		for (FieldUrl fieldUrl : this.fieldUrls) {
-//			String url = this.normalizeUrl(fieldUrl.url);
-			String domain = fieldUrl.domain;
-			Logger.debug("getNpldStatusList() domain: " + domain);
-		
-			
-			// higher level again
-			Set<Target> higherTargets = FormHelper.getHigherTargetsForNpld(fieldUrl);
-			targets.addAll(higherTargets);
-		}
-
-		Logger.debug("getNpldStatusList() targets list size: " + targets.size());
-
-		/**
-		 * Check that UK top level domain is false, one of mentioned flags is
-		 * true and the domain is of higher level.
-		 */
-		for (Target target : targets) {
-			
-			if (!target.isUkHosting() && !target.isTopLevelDomain()) {
-				unsorted.add(target);
-				 if (unsorted.size() == Const.MAX_NPLD_LIST_SIZE) {
-					 break;
-				 }
-			}
+		// Cached values for other allowed mechanisms:
+		if ( Boolean.TRUE.equals(this.isTopLevelDomain) || 
+			 Boolean.TRUE.equals(this.isUkHosting) || 
+			 Boolean.TRUE.equals(this.isUkRegistration)) {
+			return true;
 		}
 		
-		Logger.debug("getNpldStatusList() targets unsorted result list size: " + unsorted.size());
-
-		/**
-		 * Check that UK top level domain is false, one of mentioned flags is
-		 * true and the domain is of higher level.
-		 */
-		for (int i = 0; i < Const.MAX_NPLD_LIST_SIZE; i++) {
-			if (i < unsorted.size()) {
-				Target target = getLatestCreatedTarget(unsorted);
-				if (target != null) {
-					res.add(i, target);
-					unsorted.remove(target);
-				}
-			}
-		}
-		Logger.debug("getNpldStatusList() targets result list size: " + res.size());
-		return res;
+		// Otherwise, nope:
+		return false;
 	}
-
+	
 	@JsonIgnore
-	public boolean hasLicenses() {
-		return (this.licenses != null && !this.licenses.isEmpty());
-	}
+	public boolean isInScopeAllOrInheritedWithoutLicense() {
+		Logger.debug("isInScopeAllOrInheritedWithoutLicense()");
+		
+		// Manual scope:
+		if (this.isInScopeAllWithoutLicense())
+		    return true;
 
-	@JsonIgnore
-	public boolean hasHigherLicense() {
-		// Open UKWA Licence at higher level - disabled
-		// Other license at higher level - disabled
-//		Target higherTarget = this.getHigherLevelTarget();
-//		if (higherTarget != null) {
-//			return (indicateLicenses(higherTarget.fieldLicense));
-//		}
-		for (FieldUrl fieldUrl : this.fieldUrls) {
-			if (FormHelper.getHigherLevelTargetLicense(fieldUrl) != null) {
-				return true;
-			}
-		} 
+		// Possibly inherited scope:
+		if (this.hasInheritedNpldScope())
+			return true;
+
+		// Otherwise, nope:
 		return false;
 	}
 
-	public boolean indicateLicenses() {
-		// removed indicateUkwaLicenceStatus() check as this was the one that check qastatus
-		return (hasLicenses() || hasHigherLicense());
-	}    
-    
-	public boolean indicateUkwaLicenceStatus() {
-		// include what RGRAF implemented
-		return this.getUkwaLicenceStatusList().size() > 0;
-	}
-
-	// Cannot create
-	public boolean enableLicenseCreation() {
-		return (StringUtils.isBlank(this.licenseStatus) || this.isNotInitiated());
+	/**
+	 * This helper looks at the direct and inherited licenses and returns an object that 
+	 * describes the current state.
+	 * 
+	 * @param targetId
+	 * @return
+	 */
+	@JsonIgnore
+	public OverallLicenseStatus getOverallLicenseStatus() {
+		return new OverallLicenseStatus(this);
 	}
 	
-	// only sys admin and archivist can create
-	public boolean hasInvalidLicenses() {
-		return (this.isRefused() || this.isEmailRejected() || this.isSuperseded());
+
+	/**
+	 * Simple boolean check build on presence of a license.
+	 * 
+	 * @return
+	 */
+	@JsonIgnore
+	public boolean hasInheritedLicense() {
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.inheritedLicense;
+	}
+
+	@JsonIgnore
+    public boolean hasInheritedNpldScope() {
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.inheritedNPLDScope;
+    }
+
+	@JsonIgnore
+    public boolean indicateNpldStatus() {
+		return hasInheritedNpldScope();
+    }
+
+	@JsonIgnore
+	public Set<Target> getNpldStatusList() {
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.NPLDParents;
+	}
+
+	public boolean indicateUkwaLicenceStatus() {
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.licensedOrPending;
 	}
 	
 	/**
@@ -2031,71 +1936,66 @@ public class Target extends UrlModel {
 	 */
 	@JsonIgnore
 	public Set<Target> getUkwaLicenceStatusList() {
-		// Open UKWA Licence at higher level - disabled
-		// Open UKWA licence for target being edited - disabled
-		
-		// url is similar but less in characters
-		// has a license
-		// has a qaIssue
-		Set<Target> results = new LinkedHashSet<Target>();
-		// first aggregate a list of active targets for associated URL
-			// TODO: KL REDO THIS
-//			this.fieldUrl = Scope.normalizeUrl(this.fieldUrl());
-		for (FieldUrl thisFieldUrl : this.fieldUrls) {
-			Logger.debug("getUkwaLicenceStatusList() domain: " + thisFieldUrl.domain);
-
-			// all the target/urls that are shorter than me with a license and qa
-
-			// Then for each target from selected list look if ‘qa_status’
-			// field is not empty. If it is not empty then we know a crawl
-			// permission request has already been sent.
-			// also check if this target has a valid license too
-			// Then look if it is a target of a higher level domain
-			// analyzing given URL.
-			
-			// license field checked as required in issue 176.
-			// higher level domain and has a license or higher level domain
-			// and has pending qa status
-
-			Set<Target> higherTargets = FormHelper.getHigherTargetsWithLicenseAndQaIssue(thisFieldUrl);
-			
-			Logger.debug("higherTargets: " + higherTargets.size());
-			
-			results.addAll(higherTargets);
-		}
-
-		return results;
-		
+		OverallLicenseStatus ols = getOverallLicenseStatus();
+		return ols.licenseParents;
 	}
 	
+	@JsonIgnore
+	public boolean hasLicenses() {
+		return (this.licenses != null && !this.licenses.isEmpty());
+	}
+
+	public boolean indicateLicenses() {
+		return (hasLicenses() || hasInheritedLicense());
+	}    
+    
+	// Cannot create
+	public boolean enableLicenseCreation() {
+		return (StringUtils.isBlank(this.licenseStatus) || this.isNotInitiated());
+	}
+	
+	// only sys admin and archivist can create
+	@JsonIgnore
+	public boolean hasInvalidLicenses() {
+		return (this.isRefused() || this.isEmailRejected() || this.isSuperseded());
+	}
+	
+	@JsonIgnore
     public boolean hasStatus(String licenseStatus) {
     	return (StringUtils.isNotEmpty(this.licenseStatus) && this.licenseStatus.equals(licenseStatus));
     }
     
+	@JsonIgnore
     public boolean isGranted() {
     	return this.hasStatus(LicenseStatus.GRANTED.name());
     }
     
+	@JsonIgnore
     public boolean isNotInitiated() {
     	return this.hasStatus(LicenseStatus.NOT_INITIATED.name());
     }
     
+	@JsonIgnore
     public boolean isQueued() {
     	return this.hasStatus(LicenseStatus.QUEUED.name());
     }
     
+	@JsonIgnore
     public boolean isPending() {
     	return this.hasStatus(LicenseStatus.PENDING.name());
     }
     
+	@JsonIgnore
     public boolean isRefused() {
     	return this.hasStatus(LicenseStatus.REFUSED.name());
     }
     
+	@JsonIgnore
     public boolean isEmailRejected() {
     	return this.hasStatus(LicenseStatus.EMAIL_REJECTED.name());
     }
     
+	@JsonIgnore
     public boolean isSuperseded() {
     	return this.hasStatus(LicenseStatus.SUPERSEDED.name());
     }
@@ -2104,14 +2004,7 @@ public class Target extends UrlModel {
 	@JsonIgnore
 	public boolean hasGrantedLicense() {
 		Logger.debug("hasGrantedLicense");
-//		if QAStatus is granted 
-//		this.crawlPermissions;
-//		this.qaIssue;
 		return (this.hasLicenses());
-		
-//		if (this.qaIssue != null && this.qaIssue.equals(Const.CrawlPermissionStatus.GRANTED.name())) {
-//			return true;
-//		}
 	}
 
 	public boolean hasQaIssue() {
@@ -2123,7 +2016,7 @@ public class Target extends UrlModel {
 		return (target.qaIssue != null);
 	}
 	
-	@JsonProperty("crawl_permission")
+	@JsonIgnore
 	public CrawlPermission getLatestCrawlPermission() {
 		if (crawlPermissions != null && crawlPermissions.size() > 0) {
 			return crawlPermissions.get(crawlPermissions.size() - 1);
@@ -2150,22 +2043,22 @@ public class Target extends UrlModel {
 	public boolean isDeletable() {
 		Logger.debug("collections size...." + this.collections.size());
 		Logger.debug("licenses size...." + this.licenses.size());
-		return (!this.indicateLicenses() && CollectionUtils.isEmpty(this.collections));
+		return (!this.checkLicense() && CollectionUtils.isEmpty(this.collections));
 	}
 	
     @PreUpdate
     @PrePersist
-	public void preSaveChecks() throws ActException, WhoisException {
+	public void preSaveChecks() {
 		Logger.debug("before persist");
 		runChecks();
 		Logger.debug("after persist");
 	}
 
-    public void runChecks() throws ActException, WhoisException {
-		this.isUkHosting = isUkHosting();
-		this.isTopLevelDomain = isTopLevelDomain();
-		this.isUkRegistration = isUkRegistration();
-		Logger.debug("runChecks");
+    public void runChecks() {
+		this.isUkHosting = Scope.INSTANCE.isUkHosting(this);
+		this.isTopLevelDomain = Scope.isTopLevelDomain(this);
+		this.isUkRegistration = Scope.INSTANCE.isUkRegistration(this);
+		Logger.debug("runChecks done: "+this.isUkHosting+" "+this.isTopLevelDomain+" "+this.isUkRegistration);
     }
     
     @JsonIgnore
@@ -2287,5 +2180,5 @@ public class Target extends UrlModel {
 				+ ", url=" + url + "]";
 	}
 	
-
+	
 }

@@ -36,6 +36,7 @@ public class Role extends ActModel {
 	inverseJoinColumns = { @JoinColumn(name = "permission_id", referencedColumnName="id") }) 
 	public List<Permission> permissions = new ArrayList<>();
 	
+    @JsonIgnore
     @ManyToMany
 	@JoinTable(name = "role_user", joinColumns = { @JoinColumn(name = "role_id", referencedColumnName="id") },
 		inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName="id") }) 

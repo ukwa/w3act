@@ -3,12 +3,15 @@ package controllers;
 import static play.data.Form.form;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 import models.Organisation;
+import models.Role;
 import models.Target;
 import models.User;
 
@@ -17,16 +20,19 @@ import org.apache.commons.lang3.StringUtils;
 
 import play.Logger;
 import play.data.DynamicForm;
+import play.db.ebean.Transactional;
 import play.mvc.Result;
 import play.mvc.Security;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.Const.NpldType;
 import uk.bl.Const.RequestType;
+import uk.bl.Const.ScopeType;
 import uk.bl.api.Utils;
 import uk.bl.exception.ActException;
 import views.html.reports.*;
 
+import com.avaje.ebean.Ebean;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 
@@ -434,6 +440,78 @@ public class ReportController extends AbstractController {
     			"", "", "", "", "either"));
     }
 
+    
+    /* ----- CONSISTENCY CHECK CODE ---
+    
+    /**
+     * Looks up Targets that are missing a Crawl Permission.
+     * 
+     * @return
+     */
+    private static List<Target> getTargetsWithoutCrawlPermissions() {
+    	List<Target> nocp = new ArrayList<Target>();
+    	for( Target t : Target.findAll() ) {
+    		// Does this target have a license?
+    		if( ( t.licenseStatus != null && ! "".equals(t.licenseStatus)) ||
+    				( t.licenses != null && t.licenses.size() > 0 ) ) {
+    			// Is there a crawl permission?
+    			if( t.crawlPermissions == null || t.crawlPermissions.size() == 0 ) {
+    				nocp.add(t);
+    			}
+    		}
+    	}
+    	return nocp;
+    }
+
+    /**
+     * Looks up Targets that have empty start dates:
+     * 
+     * @return
+     */
+    private static List<Target> getTargetsWithoutStartDate() {
+    	List<Target> ts = new ArrayList<Target>();
+    	for( Target t : Target.findAll() ) {
+    		if( (! CrawlFrequency.DOMAINCRAWL.name().equals(t.crawlFrequency))
+    				&& t.crawlStartDate == null ) {
+    			ts.add(t);
+    		}
+    	}
+    	return ts;
+    }
+    
+    /* --- */
+    
+    /**
+     * Looks up Targets that have empty start dates:
+     * 
+     * @return
+     */
+    private static List<Target> getTargetsWithoutRootScope() {
+    	List<Target> ts = new ArrayList<Target>();
+    	for( Target t : Target.findAll() ) {
+    		if( ! ScopeType.root.name().equals(t.scope) ) {
+    			ts.add(t);
+    		}
+    	}
+    	return ts;
+    }
+    
+    /**
+     * Looks up Users those have multiple roles:
+     * 
+     * @return
+     */
+    private static List<User> getUsersWithMultipleRoles() {
+    	List<User> user = new ArrayList<User>();
+    	for( User u : User.findAll() ) {
+    		if( u.roles.size() > 1) {
+    			user.add(u);   			
+    		}
+    	}
+    	return user;
+    }
+
+
     /**
      * Performs some basic self-consistency checks on the targets etc.
      * 
@@ -441,18 +519,173 @@ public class ReportController extends AbstractController {
      */
     public static Result consistencyChecks() {
         User user = User.findByEmail(request().username());
-        //
-    	List<Target> nocp = new ArrayList<Target>();
-    	for( Target t : Target.findAll() ) {
-    		// Does this target have a license?
-    		if( t.licenseStatus != null && ! "".equals(t.licenseStatus)) {
-    			// Is there a crawl permission?
-    			if( t.crawlPermissions == null || t.crawlPermissions.size() == 0 ) {
-    				nocp.add(t);
-    			}
+    	return ok(consistencyChecks.render(user, getTargetsWithoutCrawlPermissions(), getTargetsWithoutStartDate(), getTargetsWithoutRootScope(), getUsersWithMultipleRoles() ));
+    }
+    
+    /**
+     * Used to reset twitter entries where we have lost all records of crawl permissions.
+     * 
+     * @return
+     */
+    public static Result removeTwitterInconsistencies() {
+    	List<Target> targets = getTargetsWithoutCrawlPermissions();
+    	for( Target t : targets ) {
+    	  if( t.fieldUrl().contains("twitter.com")) {
+    		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
+    		t.licenseStatus = null;
+    		if( t.licenses != null ) {
+    			t.licenses.clear();
+    		}
+    		t.update();
+    	  } else {
+      		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
+    	  }
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
+    /**
+     * Used to reset GRANTED entries where we have lost all records of crawl permissions.
+     * 
+     * @return
+     */
+    public static Result removeGrantedInconsistencies() {
+    	List<Target> targets = getTargetsWithoutCrawlPermissions();
+    	for( Target t : targets ) {
+    	  if( t.isGranted() ) {
+    		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
+    		t.licenseStatus = null;
+    		if( t.licenses != null ) {
+    			t.licenses.clear();
+    		}
+    		t.update();
+    	  } else {
+      		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
+    	  }
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
+    /**
+     * Used to reset QUEUED entries where we have lost all records of crawl permissions.
+     * 
+     * @return
+     */
+    public static Result removeQueuedInconsistencies() {
+    	List<Target> targets = getTargetsWithoutCrawlPermissions();
+    	for( Target t : targets ) {
+    	  if( t.isQueued() ) {
+    		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
+    		t.licenseStatus = null;
+    		if( t.licenses != null ) {
+    			t.licenses.clear();
+    		}
+    		t.update();
+    	  } else {
+      		Logger.debug("Leaving licenseStatus as "+t.licenseStatus+" for "+t.title+"("+t.fieldUrl()+")...");
+    	  }
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
+    /**
+     * 
+     * @param id
+     * @return
+     */
+    public static Result resetThisLicenseToNull( Long id ) {
+    	if( id > 0 ) {
+    		Target t = Target.findById(id);
+    		if( t != null ) {
+        		Logger.warn("Setting licenseStatus to null for "+t.title+"("+t.fieldUrl()+")...");
+        		t.licenseStatus = null;
+        		Logger.warn("Setting licenses to empty for "+t.title+"("+t.fieldUrl()+")...");
+        		if( t.licenses != null ) {
+        			t.licenses.clear();
+        		}
+        		t.update();
     		}
     	}
-    	return ok(consistencyChecks.render(user, nocp));
+    	return redirect(routes.ReportController.consistencyChecks());
     }
+    
+    /**
+     * Used to reset 'resource' and 'plus1' scopes to 'root':
+     * 
+     * @return
+     */
+    public static Result resetBadScopes() {
+    	List<Target> targets = getTargetsWithoutRootScope();
+    	for( Target t : targets ) {
+    	  if( ScopeType.resource.name().equals(t.scope) || 
+    		  ScopeType.plus1.name().equals(t.scope) ) {
+    		Logger.warn("Setting Scope to root for "+t.title+"("+t.fieldUrl()+"), was "+t.scope);
+    		t.scope = ScopeType.root.name();
+    		t.update();
+    		Logger.info("> is now "+t.scope);
+    	  } else {
+      		Logger.debug("Leaving Scope as "+t.scope+" for "+t.title+"("+t.fieldUrl()+")...");
+    	  }
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
+    
+    /**
+     * 
+     * @return
+     */
+    public static Result resetEmptyStartDates() {
+    	List<Target> targets = getTargetsWithoutStartDate();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		sdf.setTimeZone(TimeZone.getTimeZone("UCT"));
+    	for( Target t : targets ) {
+    		try {
+				t.crawlStartDate = sdf.parse("2013-04-06");
+			} catch (Exception e) {
+				throw( new RuntimeException(e));
+			}
+    		t.update();
+    		Logger.info("> is now "+t.crawlStartDate);
+    	}
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public static Result removeUnwantedRoles() {
+    	List<User> users = getUsersWithMultipleRoles();	
+    	
+    	if(users.size() !=0 && users != null){
+    	for( User u : users ) {
+    		
+        	int severity = Role.getRoleSeverity(u.roles);
+        	Logger.info("previous size::::::::::::::::::::::::::  "+u.roles.size());
+        	u.roles.clear();
+        	
+            if(severity == 0)
+        		u.roles.add(Role.findByName("sys_admin"));
+            if(severity == 1)
+            	u.roles.add(Role.findByName("archivist"));
+            if(severity == 2)
+            	u.roles.add(Role.findByName("expert_user"));
+            if(severity == 3)
+            	u.roles.add(Role.findByName("user"));
+            if(severity == 4)
+            	u.roles.add(Role.findByName("viewer"));
+    	    if(severity == 5)
+          	u.roles.add(Role.findByName("closed"));
+            
+            Logger.info("present size::::::::::::::::::::::::::  "+u.roles.size()+"  Role:::: "+u.roles.get(0).name);
+            
+        	}
+    	
+    	}
+ 
+    	return redirect(routes.ReportController.consistencyChecks());
+    }
+    
 }
 

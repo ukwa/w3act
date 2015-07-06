@@ -219,7 +219,9 @@ public class ContactPersonController extends AbstractController {
     	            filledForm.reject(e);
     	  			return info(filledForm, id);
             	}
-		        
+		        if( existingContact.id == id) {
+		        	filledForm.get().crawlPermissions = existingContact.crawlPermissions;
+		        }
 		        filledForm.get().update(id);
 		        flash("message", "Contact Person " + filledForm.get().name + " has been updated");
 		        return redirect(routes.ContactPersonController.view(filledForm.get().id));

@@ -55,7 +55,6 @@ public enum Utils {
 	 */
 	public Long createId() {
         UUID id = UUID.randomUUID();
-        Logger.debug("id: " + id.toString());
         Long res = id.getMostSignificantBits();
         if (res < 0) {
         	res = res*(-1);

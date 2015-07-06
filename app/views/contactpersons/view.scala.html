@@ -16,6 +16,19 @@
 
 	<div class="row padding-10">
     	<div class="col-md-12 col-xs-12 col-sm-12">
+				<h2>Crawl Permissions</h3>
+              		<ul>
+              		@for(cp <- person.getCrawlPermissions){
+              			<li><a href="@routes.CrawlPermissionController.view(cp.id)">Crawl Permission For @cp.target.title</a></li>
+              		}
+              		</ul>
+	    <h2>Contact Information</h2>
+
+    </div>
+          
+
+	<div class="row padding-10">
+    	<div class="col-md-12 col-xs-12 col-sm-12">
 			<div class="form-group">
 				<label for="inputName" class="col-sm-6 control-label">Name</label>
 			    <div class="col-sm-6">
@@ -74,7 +87,7 @@
 			<div class="form-group">
 				<label for="inputPostalAddress" class="col-sm-6 control-label">Postal Address</label>
 			    <div class="col-sm-6">
-              		<input class="form-control" name="postalAddress" id="postalAddress" value="@person.postalAddress" type="text" readonly>
+              		<textarea rows="5" class="form-control" name="postalAddress" id="postalAddress" readonly>@person.postalAddress</textarea>
 				</div>
 			</div>
 		</div>

@@ -33,7 +33,7 @@ public class ExportAuthTest {
 	@Test
 	public void testAuth() {
 		try {
-			String outputPath = "instanceres.txt";
+			String outputPath = "target/instanceres.txt";
 			String urlString = "http://www.webarchive.org.uk/act/node.json?type=instance";
 	        URL url = new URL(urlString);
 	        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -72,7 +72,7 @@ public class ExportAuthTest {
 	@Test
 	public void testInstance() {
 		try {
-			String outputPath = "instancesingle.txt";
+			String outputPath = "target/instancesingle.txt";
 			String urlString = "http://www.webarchive.org.uk/act/node/12873.json";
 	        URL url = new URL(urlString);
 	        HttpURLConnection connection = (HttpURLConnection) url.openConnection();

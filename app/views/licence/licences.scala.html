@@ -53,7 +53,7 @@
 			@if(licenceList != null) {
 				@for(license <- licenceList) {		              
 					<tr>
-						<td><a href="@routes.LicenseController.index()">@license.name</a></td>
+						<td><a href="@routes.LicenseController.view(license.id)">@license.name</a></td>
 						<td>@license.description</td>
 					</tr>
 				}

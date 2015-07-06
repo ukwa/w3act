@@ -24,6 +24,7 @@ GET     /assets/*file                       controllers.Assets.at(path="/public"
 GET     /ukwa/licenses                      controllers.LicenseController.index()
 POST    /ukwa/licenses/submit               controllers.LicenseController.submit()
 GET     /ukwa/licenses/result               controllers.LicenseController.result()
+GET     /ukwa/license/view/:id              controllers.LicenseController.view(id:Long)
 GET     /ukwa/licenseform/:token            controllers.LicenseController.form(token)
 GET     /ukwa/licenseformview/:token        controllers.LicenseController.formview(token)
 
@@ -43,8 +44,8 @@ GET     /collections/:url            		controllers.CollectionController.viewAct(
 GET     /collections/:id/edit       		controllers.CollectionController.edit(id:Long)
 GET     /collections/:id/sites				controllers.CollectionController.sites(id:Long)
 POST    /collections             			controllers.CollectionController.save()
-#POST    /collections/:id             		controllers.CollectionController.update(id:Long)
-PUT     /collections/:id             		controllers.CollectionController.update(id:Long)
+POST    /collections/:id             		controllers.CollectionController.update(id:Long)
+#PUT     /collections/:id             		controllers.CollectionController.update(id:Long)
 
 GET     /subjects                           controllers.SubjectController.index()
 GET    	/subjects/list                  	controllers.SubjectController.list(p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
@@ -206,6 +207,13 @@ GET    	/reports/summary     		            controllers.ReportController.summary(
 GET    	/reports/openLicences    	            controllers.ReportController.openLicences()
 GET    	/reports/recordCreation        		    controllers.ReportController.recordCreation()
 GET    	/reports/consistencyChecks              controllers.ReportController.consistencyChecks()
+GET    	/reports/consistencyChecks/rti          controllers.ReportController.removeTwitterInconsistencies()
+GET    	/reports/consistencyChecks/rgi          controllers.ReportController.removeGrantedInconsistencies()
+GET    	/reports/consistencyChecks/rqi          controllers.ReportController.removeQueuedInconsistencies()
+GET    	/reports/consistencyChecks/rln          controllers.ReportController.resetThisLicenseToNull(id:Long ?= -1)
+GET    	/reports/consistencyChecks/rbs          controllers.ReportController.resetBadScopes()
+GET    	/reports/consistencyChecks/eds          controllers.ReportController.resetEmptyStartDates()
+GET     /reports/consistencyChecks/rur          controllers.ReportController.removeUnwantedRoles()
 GET    	/reports/qa                         	controllers.ReportController.qa()
 GET    	/reportscreation               	        controllers.ReportController.indexCreation() 
 GET    	/reportscreation/search                 controllers.ReportController.searchCreation()
@@ -346,7 +354,6 @@ POST    /nominations/:id              		controllers.NominationController.update(
 
 # JSON API
 GET     /api/scope/:url                      controllers.TargetController.isInScope(url)
-#GET     /api/scopeintance/:url               controllers.InstanceController.isInScope(url)
 GET     /api/licence/:url                    controllers.CrawlPermissionController.crawlPermissionExist(url)
 GET     /api/licencelevel/:url               controllers.CrawlPermissionController.crawlPermissionExistAtHigherLevel(url)
 GET     /api/licenceprompthigherlevel/:url   controllers.CrawlPermissionController.checkForHigherLevelPrompt(url)
@@ -358,11 +365,11 @@ GET     /api/subjects_instance/:url          controllers.InstanceController.getS
 GET     /api/suggested_collections_instance/:url      controllers.InstanceController.getSuggestedCollections(url)
 #GET     /api/qa/dashboard/collections/:url   controllers.QAController.getCollections(url)
 
-GET     /api/targets/:id                  	controllers.TargetController.viewAsJson(id:Long)
+POST    /api/targets						controllers.APIController.bulkImport()
+GET     /api/targets/:id                  	controllers.APIController.viewAsJson(id:Long)
+PUT		/api/targets/:id					controllers.APIController.targetUpdate(id:Long)
 GET     /api/targets/:id/instances       	controllers.InstanceController.byTargetAsJson(id:Long)
 GET    	/api/targets/bycollection/:id       controllers.TargetController.collectionTargetsAsJson(id:Long)
-POST    /api/targets						controllers.ApplicationController.bulkImport()
-PUT		/api/targets/:id					controllers.ApplicationController.targetUpdate(id:Long)
 GET    	/api/targets/:id/categories        	controllers.TargetController.getTargetCategories(id:Long)
 
 GET		/api/collections					controllers.CollectionController.getByJson()

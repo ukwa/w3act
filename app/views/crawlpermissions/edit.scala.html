@@ -1,4 +1,4 @@
-@(crawlPermissionForm: Form[CrawlPermission], user: User, id: Long, crawlPermissionStatuses: Map[String,String], contactName: String)
+@(crawlPermissionForm: Form[CrawlPermission], user: User, id: Long, crawlPermissionStatuses: Map[String,String], contactName: String, licenses: Map[String,String])
 
 @import helper._
 @import bootstrap._
@@ -52,6 +52,7 @@
 			<input type="hidden" name="id" value="@id">
 			<input type="hidden" id="target_id" name="target.id" value="@crawlPermissionForm("target.id").value">
 			<input type="hidden" id="user_id" name="user.id" value="@crawlPermissionForm("user.id").value">
+			<input type="hidden" id="token" name="token" value="@crawlPermissionForm("token").value">
 
 			<div class="row padding-10">
 	     		<div class="col-md-12 col-xs-12 col-sm-12">
@@ -77,6 +78,19 @@
 						)(FieldConstructor(genericMandatoryInput.f), lang)
 					</div>
 				</div>
+	     	</div>
+	     	
+	     	<div class="row padding-10">
+		     		<div class="col-md-12 col-xs-12 col-sm-12">
+						<div class="form-group">
+							<label class="col-sm-6 control-label" for="@crawlPermissionForm("license_id").id">
+								License
+							</label>
+							<div class="col-sm-6">
+								@select(crawlPermissionForm("license_id"), options(licenses), '_label -> "")
+							</div>
+						</div>
+					</div>
 	     	</div>
 		          
 			<div class="form-group contactperson">

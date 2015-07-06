@@ -275,6 +275,7 @@ public class User extends ActModel {
      * Retrieve a User from email.
      */
     public static User findByEmail(String email) {
+    	if( email == null ) return null;
         return find.where().ieq("email", email).findUnique();
     }
     

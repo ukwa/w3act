@@ -45,7 +45,7 @@
 			<p>It is not possible to delete that object because it is referenced by another object in the database</p>
 		} else {
 			<p>@t.getMessage</p>
-			<pre>@for(se <- t.getStackTrace) {   @se
+			<pre>@for(se <- org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseStackTrace(t)) {   @se
 }</pre>
 		}
 		</blockquote>

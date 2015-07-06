@@ -1,4 +1,9 @@
-@(permissionUrl: String, curName: String, curTarget: String, curContactPerson: String, curPosition: String, curEmail: String, curPostalAddress: String, curContactOrganisation: String, curTel: String, curDescription: String)
+@(cp: CrawlPermission, enabled: Boolean)
+
+
+@disabler() = @{
+	if( ! enabled ) { "disabled" }
+}
 
 <html>
     <head>
@@ -39,11 +44,11 @@
 			We select and archive sites to represent aspects of UK documentary heritage and as a result, they will remain available to researchers in the future. The British Library works closely with leading UK institutions to collect and permanently preserve the UK web, and our archive can be seen at www.webarchive.org.uk.<br><br>
 			For more information about copyright and how your archived website will be made available, please see the FAQs. Alternatively, if you have any queries or need further information, please do not hesitate to contact us. 
 		</div>
-	</div>	
+	</div>
 
 	@helper.form(action=routes.LicenseController.submit) {
 		@warningmessage(flash)            	
-   		<input type="hidden" name="url" value="@permissionUrl">    
+   		<input type="hidden" name="token" value="@cp.token">
    		        	
 		<div id="myTabContent" class="tab-content">
 			<div class="tab-pane padding-20 fade active in" id="basicinformation">
@@ -58,7 +63,11 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">License:</label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="license" value="Open UKWA Licence (2014-)" type="text" readonly>
+						    @if( cp.license != null ) {
+								<input class="form-control" name="license" value="@cp.license.name" type="text" readonly>
+							} else {
+								<b>WARNING! License is unset (i.e. set to NULL for this crawl permission)</b>
+							}
 							</div>
 						</div>
 					</div>
@@ -69,7 +78,7 @@
 						<div class="form-group">
 							<label for="name" class="col-sm-6 control-label">Title of Website: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" value="@curName" type="text">
+				              <input class="form-control" name="name" id="name" placeholder="London Business Forum" value="@cp.name" type="text" @disabler>
 							</div>
 						</div>
 					</div>
@@ -80,7 +89,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Web Address (URL): <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="target" value="@curTarget" placeholder="http://www.londonbusinessforum.com/" type="text">
+								<input class="form-control" name="target" value="@cp.target.primaryUrl" placeholder="http://www.londonbusinessforum.com/" type="text" @disabler>
 							</div>
 						</div>
 					</div>
@@ -99,7 +108,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Name: <font color="red">*</font><small class="text-center">(organisation or individual)</small></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="contactPerson" type="text" value="@curContactPerson">
+								<input class="form-control" name="contactPerson" type="text" value="@cp.contactPerson.name" @disabler>
 							</div>
 						</div>
 					</div>
@@ -110,7 +119,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Position: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="position" type="text" value="@curPosition">
+								<input class="form-control" name="position" type="text" value="@cp.contactPerson.position" @disabler>
 							</div>
 						</div>
 					</div>
@@ -121,7 +130,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">E-mail: <font color="red">*</font></label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="email" type="text" value="@curEmail">
+								<input class="form-control" name="email" type="text" value="@cp.contactPerson.email" @disabler>
 							</div>
 						</div>
 					</div>
@@ -132,7 +141,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Postal Address: </label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="postalAddress" type="text" value="@curPostalAddress">
+								<input class="form-control" name="postalAddress" type="text" value="@cp.contactPerson.postalAddress" @disabler>
 							</div>
 						</div>
 					</div>
@@ -143,7 +152,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Contact Organisation: </label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="contactOrganisation" type="text" value="@curContactOrganisation">
+								<input class="form-control" name="contactOrganisation" type="text" value="@cp.contactPerson.contactOrganisation" @disabler>
 							</div>
 						</div>
 					</div>
@@ -154,7 +163,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Tel:</label>
 						    <div class="col-sm-6">
-								<input class="form-control" name="phone" type="text" value="@curTel">
+								<input class="form-control" name="phone" type="text" value="@cp.contactPerson.phone" @disabler>
 							</div>
 						</div>
 					</div>
@@ -165,7 +174,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Any other information:</label>
 						    <div class="col-sm-6">
-		 						<textarea name="description" cols="100" rows="1" class="form-control">@curDescription</textarea>
+		 						<textarea name="description" cols="100" rows="1" class="form-control" @disabler>@cp.description</textarea>
 							</div>
 						</div>
 					</div>
@@ -185,10 +194,10 @@
 							 
 						    <div class="col-sm-6">
 								<label class="radio-inline">
-   						            <input name="content" id="radio1" value="1" type="radio"> Yes
+   						            <input name="content" id="radio1" value="1" type="radio" @disabler> Yes
 								</label>
 								<label class="radio-inline">
-							        <input name="content" id="radio2" value="2" type="radio"> No
+							        <input name="content" id="radio2" value="2" type="radio" @disabler> No
 								</label>
 							</div>
 						</div>
@@ -208,7 +217,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">I / We agree: <font color="red">*</font> Yes</label>
 						    <div class="col-sm-6">
-				                <input type="checkbox" name="agree"/>
+				                <input type="checkbox" name="agree" @disabler/>
 							</div>
 						</div>
 					</div>
@@ -219,7 +228,7 @@
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Date</label>
 						    <div class="col-sm-6">
-		 						<input type="text" name="log-date" class="form-control" id="log-date" value="@LicenseController.getCurrentDate()"/>
+		 						<input type="text" name="log-date" class="form-control" id="log-date" value="@LicenseController.getCurrentDate()" readonly/>
 	                		</div>
 						</div>
 					</div>
@@ -238,10 +247,10 @@
 							 
 						    <div class="col-sm-6">
 								<label class="radio-inline">
-   						            <input name="publish" id="radio1" value="1" type="radio"> Yes
+   						            <input name="publish" id="radio1" value="1" type="radio" @disabler> Yes
 								</label>
 								<label class="radio-inline">
-							        <input name="publish" id="radio2" value="2" type="radio"> No
+							        <input name="publish" id="radio2" value="2" type="radio" @disabler> No
 								</label>
 							</div>
 						</div>
@@ -267,7 +276,7 @@
 		<div class="row padding-10 pull-right">
      		<div class="col-md-12 col-xs-12 col-sm-12">
 				<div class="btn-group">
-					<button type="submit" class="btn btn-primary" name="action" value="submit" id="submit">Submit</button>
+					<button type="submit" class="btn btn-primary" name="action" value="submit" id="submit" @disabler>Submit</button>
 		       </div>
 			</div>
 		</div>

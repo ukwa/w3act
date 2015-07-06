@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import play.db.ebean.Model;
@@ -21,6 +22,34 @@ public class License extends Taxonomy {
 
 	private static final long serialVersionUID = 1L;
 
+    // Opposite is @JsonValue
+	@JsonCreator
+	public static License findById(Long id) {
+    	License license = find.byId(id);
+    	return license;
+    }
+	
+    public static License findByUrl(String url) {
+    	License license = find.where().eq(Const.URL, url).findUnique();
+    	return license;
+    }
+    
+    public static License findByName(String name) {
+    	return find.where().eq("name", name).findUnique();
+    }
+    
+    public static List<License> findAllLicenses() {
+    	return find.all();
+    }
+    
+	public static Map<String,String> options() {
+        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
+        for(License t: License.findAllLicenses()) {
+            options.put(t.id.toString(), t.name);
+        }
+        return options;		
+	}
+		
 	public enum LicenseStatus {
 
 		GRANTED("Granted"),
@@ -85,32 +114,6 @@ public class License extends Taxonomy {
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Model.Finder<Long,License> find = new Model.Finder(Long.class, License.class);
     
-    public static License findById(Long id) {
-    	License license = find.byId(id);
-    	return license;
-    }
-    
-    public static License findByUrl(String url) {
-    	License license = find.where().eq(Const.URL, url).findUnique();
-    	return license;
-    }
-    
-    public static License findByName(String name) {
-    	return find.where().eq("name", name).findUnique();
-    }
-    
-    public static List<License> findAllLicenses() {
-    	return find.all();
-    }
-    
-	public static Map<String,String> options() {
-        LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-        for(License t: License.findAllLicenses()) {
-            options.put(t.id.toString(), t.name);
-        }
-        return options;		
-	}
-	
 	@JsonIgnore
 	public boolean isGranted() {
 		return (status.equals(LicenseStatus.GRANTED.name()));

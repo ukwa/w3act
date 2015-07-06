@@ -182,7 +182,11 @@
 							}			                
 						</td>
 						<td>
-			                @permission.contactPerson.name
+						    @if( permission.contactPerson != null ) {
+				                @permission.contactPerson.name
+				            } else {
+				                <i>CONTACT PERSON NOT SET!</i>
+				            }
 						</td>
 						<td>
 			                @permission.status
@@ -191,7 +195,7 @@
 			                <a href="@routes.CommunicationLogController.showLogs(permission.token)">View Log</a>
 						</td>
 						<td>
-						    @if(permission.status.equals("GRANTED")) {
+						    @if( "GRANTED".equals(permission.status) ) {
 				                <a href="@routes.LicenseController.formview(permission.token)" target="_blank">View</a>
 			                } else {
 				                <a href="@routes.LicenseController.formview(permission.token)" target="_blank">View</a>

@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -50,6 +51,7 @@ import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.mvc.Security;
+import play.mvc.With;
 import uk.bl.Const;
 import uk.bl.Const.CrawlFrequency;
 import uk.bl.api.Utils;
@@ -119,7 +121,7 @@ public class TargetController extends AbstractController {
     	
         return ok(
         	lookup.render(
-        			"Lookup", 
+        			"Lookup "+filter, 
         			User.findByEmail(request().username()), 
         			filter, 
         			pages, 
@@ -217,15 +219,6 @@ public class TargetController extends AbstractController {
     		} else {
     			return ok(Json.toJson(target));
     		}
-    	} else {
-    		return notFound("There is no Target with ID "+id);
-    	}
-    }
-    
-    public static Result viewAsJson(Long id) {
-    	Target target = Target.findById(id);
-    	if( target != null) {
-    		return ok(Json.toJson(target));
     	} else {
     		return notFound("There is no Target with ID "+id);
     	}
@@ -670,6 +663,7 @@ public class TargetController extends AbstractController {
     	User user = User.findByEmail(request().username());
 		Form<Target> filledForm = Form.form(Target.class);
 		Target target = new Target();
+		target.setDefaultValues();
 		if (StringUtils.isNotBlank(title)) {
 			try {
 			  new URL(title);
@@ -715,6 +709,11 @@ public class TargetController extends AbstractController {
     public static Result edit(Long id) {
 		Logger.debug("Targets.edit() id: " + id);
 		Target target = Target.findById(id);
+		
+		// Make sure scope checks are up to date:
+		target.runChecks();
+		target.update();
+		
 		target.formUrl = target.fieldUrl();
 		target.subjectSelect = target.subjectIdsAsString();
 		target.collectionSelect = target.collectionIdsAsString();
@@ -977,6 +976,8 @@ public class TargetController extends AbstractController {
     	DynamicForm requestData = form().bindFromRequest();
 	    Map<String, String[]> formParams = request().body().asFormUrlEncoded();
         Form<Target> filledForm = form(Target.class).bindFromRequest();
+		User currentUser = User.findByEmail(request().username());
+        Target original = Target.findById(id);
 
         String action = requestData.get("action");
 
@@ -1079,27 +1080,10 @@ public class TargetController extends AbstractController {
 		            Logger.debug("fieldUrls: " + filledForm.get().fieldUrls);
 		        }
 		        
-		        try {
-			        filledForm.get().isUkHosting = filledForm.get().isUkHosting();
-					filledForm.get().isTopLevelDomain = filledForm.get().isTopLevelDomain();
-					filledForm.get().isUkRegistration = filledForm.get().isUkRegistration();
-					Logger.debug("isUkHosting: " + filledForm.get().isUkHosting);
-					Logger.debug("isTopLevelDomain: " + filledForm.get().isTopLevelDomain);
-					Logger.debug("isUkRegistration: " + filledForm.get().isUkRegistration);
-				} catch (WhoisException e) {
-					throw new ActException(e);
-				}
-
 		        Logger.debug("filledForm: " + filledForm.get());
 		        Logger.debug("noLdCriteriaMet: " + filledForm.get().noLdCriteriaMet);
 		        if (filledForm.get().noLdCriteriaMet == null) {
 		        	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
-		        }
-		        
-		        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
-		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
-		            filledForm.reject(ve);
-		            return info(filledForm, id);
 		        }
 		        
 		        List<License> newLicenses = new ArrayList<License>();
@@ -1110,16 +1094,18 @@ public class TargetController extends AbstractController {
 
 		        if (licenseValues != null) {
 		            for(String licenseValue: licenseValues) {
-		            	if (!licenseValue.equals("")) {
-			            	Long licenseId = Long.valueOf(licenseValue);
-			            	License license =  License.findById(licenseId);
-			            	// could just use the ID instead
-			            	if (StringUtils.isEmpty(openUkwa) && license.name.equals(Const.OPEN_UKWA_LICENSE)) {
-					            ValidationError ve = new ValidationError("licensesList", "It is not possible to attach an Open UKWA Licence directly to a target in this way. Please initiate the licensing process using the green button below");
-					            filledForm.reject(ve);
-					            return info(filledForm, id);
-			            	}
-			            	newLicenses.add(license);
+		            	try {
+		            		Long licenseId = Long.valueOf(licenseValue);
+		            		License license =  License.findById(licenseId);
+		            		// could just use the ID instead
+		            		if (StringUtils.isEmpty(openUkwa) && license.name.equals(Const.OPEN_UKWA_LICENSE)) {
+		            			ValidationError ve = new ValidationError("licensesList", "It is not possible to attach an Open UKWA Licence directly to a target in this way. Please initiate the licensing process using the green button below");
+		            			filledForm.reject(ve);
+		            			return info(filledForm, id);
+		            		}
+		            		newLicenses.add(license);
+		            	} catch( NumberFormatException e ) {
+		            		Logger.debug("No license selected for "+filledForm.get().title);
 		            	}
 		            }
 		            filledForm.get().licenses = newLicenses;
@@ -1128,6 +1114,7 @@ public class TargetController extends AbstractController {
 		        String crawlStartDate = requestData.get("crawlStartDateText");
 		    	if (StringUtils.isNotEmpty(crawlStartDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 					try {
 						Date date = formatter.parse(crawlStartDate);
 						filledForm.get().crawlStartDate = date;
@@ -1142,7 +1129,27 @@ public class TargetController extends AbstractController {
 	        	Logger.debug("crawlStartDate: " + crawlStartDate);
 		        if (!crawlFrequency.equals(CrawlFrequency.DOMAINCRAWL.name())) {
 		        	if (StringUtils.isEmpty(crawlStartDate)) {
-			            ValidationError ve = new ValidationError("crawlStartDateText", "Start Date is required when 'Domain Crawl Only' is selected");
+			            ValidationError ve = new ValidationError("crawlStartDateText", "Start Date is required when any crawl frequency other than 'Domain Crawl Only' is selected");
+			            filledForm.reject(ve);
+			            return info(filledForm, id);
+		        	}
+		        }
+		        // Don't let non-archivists add or remove NEVERCRAWL status:
+		        if( CrawlFrequency.NEVERCRAWL.name().equals(original.crawlFrequency) ) {
+		        	// Do not remove:
+		        	if( ( ! CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency) )
+		        			&& ! ( currentUser.isArchivist() || currentUser.isSysAdmin() ) 
+		        			) {
+			            ValidationError ve = new ValidationError("crawlFrequency", "Only an archivist can change the crawl frequency from 'never crawl' to something else.");
+			            filledForm.reject(ve);
+			            return info(filledForm, id);
+		        	}
+		        } else {
+		        	// Do not add:
+		        	if( ( CrawlFrequency.NEVERCRAWL.name().equals(crawlFrequency) )
+		        			&& ! ( currentUser.isArchivist() || currentUser.isSysAdmin() ) 
+		        			) {
+			            ValidationError ve = new ValidationError("crawlFrequency", "Only an archivist can change the crawl frequency to 'never crawl'.");
 			            filledForm.reject(ve);
 			            return info(filledForm, id);
 		        	}
@@ -1151,6 +1158,7 @@ public class TargetController extends AbstractController {
 		        String crawlEndDate = requestData.get("crawlEndDateText");
 		    	if (StringUtils.isNotEmpty(crawlEndDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 					try {
 						Date date = formatter.parse(crawlEndDate);
 						filledForm.get().crawlEndDate = date;
@@ -1258,6 +1266,7 @@ public class TargetController extends AbstractController {
 		        String dateOfPublication = requestData.get("dateOfPublicationText");
 		    	if (StringUtils.isNotEmpty(dateOfPublication)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 					try {
 						Date date = formatter.parse(dateOfPublication);
 						filledForm.get().dateOfPublication = date;
@@ -1268,14 +1277,31 @@ public class TargetController extends AbstractController {
 		    	}
 		        
 		    	
-		    	// Ensure items NOT edited here are re-attached:
+		    	// Ensure items NOT edited herein are re-attached:
+		        Target target = Target.findById(id);
 		        filledForm.get().crawlPermissions = target.crawlPermissions;
 		        Logger.warn("Attempting to repair "+target.crawlPermissions+ "("+target.crawlPermissions.size()+")");
-		        //filledForm.get().licenses = target.licenses;
-		        //filledForm.get().licenseStatus = target.licenseStatus;
 		        filledForm.get().instances = target.instances;
 		        filledForm.get().lookupEntries = target.lookupEntries;
-		    	
+		        
+		        // Run scoping checks:
+		        filledForm.get().runChecks();
+
+		        // Check if those checks invalidate the noLDmet:
+		        if ( (  Boolean.TRUE.equals(filledForm.get().isUkHosting) || 
+		        		Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) || 
+		        		Boolean.TRUE.equals(filledForm.get().isUkRegistration) || 
+		        		Boolean.TRUE.equals(filledForm.get().ukPostalAddress) || 
+		        		Boolean.TRUE.equals(filledForm.get().viaCorrespondence) || 
+		        		Boolean.TRUE.equals(filledForm.get().professionalJudgement))
+		        		&& Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
+		        		) {
+		            ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
+		            filledForm.reject(ve);
+		            return info(filledForm, id);
+		        }
+		        
+
 				filledForm.get().update(id);
 				
 				boolean watched = getFormParam("watched") != null;
@@ -1303,10 +1329,6 @@ public class TargetController extends AbstractController {
 	        }
         }
     	return null;
-    }
-    
-    private static FieldUrl isExistingTarget(String url) {
-    	return Utils.INSTANCE.isExistingTarget(url);
     }
     
 	/**
@@ -1428,7 +1450,14 @@ public class TargetController extends AbstractController {
         	filledForm.get().noLdCriteriaMet = Boolean.FALSE;
         }
 
-        if ((filledForm.get().isUkHosting || filledForm.get().isTopLevelDomain || filledForm.get().isUkRegistration || filledForm.get().ukPostalAddress || filledForm.get().viaCorrespondence || filledForm.get().professionalJudgement) && (filledForm.get().noLdCriteriaMet != null && filledForm.get().noLdCriteriaMet)) {
+        if (  ( Boolean.TRUE.equals(filledForm.get().isUkHosting) || 
+        		Boolean.TRUE.equals(filledForm.get().isTopLevelDomain) || 
+        		Boolean.TRUE.equals(filledForm.get().isUkRegistration) || 
+        		Boolean.TRUE.equals(filledForm.get().ukPostalAddress) || 
+        		Boolean.TRUE.equals(filledForm.get().viaCorrespondence) || 
+        		Boolean.TRUE.equals(filledForm.get().professionalJudgement))
+        		&& Boolean.TRUE.equals(filledForm.get().noLdCriteriaMet)
+        		) {
             ValidationError ve = new ValidationError("noLdCriteriaMet", "One of the automated checks for NPLD permission has been passed. Please unselect the 'No LD Criteria Met' field and save again");
             filledForm.reject(ve);
             return newInfo(filledForm);
@@ -1457,6 +1486,7 @@ public class TargetController extends AbstractController {
         String crawlStartDate = requestData.get("crawlStartDateText");
     	if (StringUtils.isNotEmpty(crawlStartDate)) {
 			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 			try {
 				Date date = formatter.parse(crawlStartDate);
 				filledForm.get().crawlStartDate = date;
@@ -1478,6 +1508,7 @@ public class TargetController extends AbstractController {
         String crawlEndDate = requestData.get("crawlEndDateText");
     	if (StringUtils.isNotEmpty(crawlEndDate)) {
 			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 			try {
 				Date date = formatter.parse(crawlEndDate);
 				filledForm.get().crawlEndDate = date;
@@ -1567,6 +1598,7 @@ public class TargetController extends AbstractController {
         String dateOfPublication = requestData.get("dateOfPublicationText");
     	if (StringUtils.isNotEmpty(dateOfPublication)) {
 			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 			try {
 				Date date = formatter.parse(dateOfPublication);
 				filledForm.get().dateOfPublication = date;
@@ -1581,6 +1613,8 @@ public class TargetController extends AbstractController {
     	
     	Logger.debug("active: " + filledForm.get().active);
 
+        // Run scoping checks:
+        filledForm.get().runChecks();
     	
     	filledForm.get().save();
     	
@@ -1707,10 +1741,8 @@ public class TargetController extends AbstractController {
      */
     public static Result isInScope(String url) throws WhoisException {
     	Logger.debug("isInScope controller: " + url);
-//    	boolean res = Target.isInScope(url, null);
-		boolean res = Scope.INSTANCE.check(url, null);
+		boolean res = Scope.INSTANCE.check(url, null, false);
 
-//    	Logger.debug("isInScope res: " + res);
     	return ok(Json.toJson(res));
     }
     

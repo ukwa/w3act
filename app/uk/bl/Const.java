@@ -457,7 +457,8 @@ public final class Const {
 		archivist("Archivist"),
 		expert_user("Expert User"),
 		user("User"),
-		viewer("Viewer");
+		viewer("Viewer"),
+		closed("Closed");
         
         private String value;
 
@@ -623,9 +624,8 @@ public final class Const {
     	
     	public static Map<String, String> options() {
             LinkedHashMap<String,String> options = new LinkedHashMap<String,String>();
-            for(ScopeType s : ScopeType.values()) {
-                options.put(s.name(), s.getValue());
-            }
+            options.put(root.name(), root.getValue());
+            options.put(subdomains.name(), subdomains.getValue());
             return options;
     		
     	}        	
@@ -791,10 +791,9 @@ public final class Const {
 		SIXMONTHLY("Six-monthly"),
 		QUARTERLY("Quarterly"),
 		MONTHLY("Monthly"),
-		OLD_MONTHLY_DO_NOT_USE("Old-Monthly-DO-NOT-USE"),
 		WEEKLY("Weekly"),
 		DAILY("Daily"),
-		NEVERCRAWL("Never Crawl");
+		NEVERCRAWL("Blocked (Archivist Use Only)");
 
         private String value;
 

@@ -106,6 +106,24 @@ public class ContactPerson extends ActModel {
     public void setCrawlPermissions(List<CrawlPermission> crawlPermissions) {
     	this.crawlPermissions = crawlPermissions;
     }    
+    
+    /**
+     * Check for disconnected ones:
+     * 
+     * @return
+     */
+    public List<CrawlPermission> scanForAllCrawlPermissions() {
+    	List<CrawlPermission> match = new ArrayList<CrawlPermission>();
+    	List<CrawlPermission> allcp = CrawlPermission.findAll();
+    	for( CrawlPermission cp : allcp ) {
+    		if( cp.contactPerson.id != null && cp.contactPerson.id.equals(id)){
+    			match.add(cp);
+    		}
+    	}
+    	return match;
+    }
+    
+
 
     public static ContactPerson findByName(String name)
     {
@@ -178,7 +196,14 @@ public class ContactPerson extends ActModel {
 	}
 	
 	public static ContactPerson findByEmail(String email) {
-		return find.where().ieq("email", email).findUnique();
+		List<ContactPerson> cps = find.where().ieq("email", email).findList();
+		if( cps == null || cps.size() == 0) {
+			return null;
+		}
+		if( cps.size() > 1 ) {
+			Logger.warn("Multiple entries found for Contact Persons with email address: "+email);
+		}
+		return cps.get(0);
 	}
         
     /**
