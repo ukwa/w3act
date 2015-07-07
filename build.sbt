@@ -1,10 +1,10 @@
 name := "w3act"
 
-version := "1.0"
+version := "2.0.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.1"
 
 libraryDependencies ++= Seq(
   javaJdbc,
@@ -24,5 +24,17 @@ libraryDependencies ++= Seq(
   "org.jsoup" % "jsoup" % "1.8.1",
   "info.cukes" % "cucumber-java" % "1.2.2",
   "info.cukes" % "cucumber-junit" % "1.2.2",
-  "net.sourceforge.htmlunit" % "htmlunit" % "2.15"
+  "net.sourceforge.htmlunit" % "htmlunit" % "2.15",
+  "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2"
 )
+
+{
+  if( sys.env.contains("TRAVIS") && sys.env("TRAVIS") == "true" )
+    // Torqbox rubegems repository (Travis-CI mirror)
+    resolvers  += "rubygems-releases-mirror" at "http://maven.travis-ci.org/nexus/rubygems/maven/releases/"
+  else
+    // Torquebox rubygems repository
+    resolvers += "rubygems-releases" at "http://rubygems-proxy.torquebox.org/releases/"
+}
+
+

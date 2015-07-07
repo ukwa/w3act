@@ -1298,7 +1298,6 @@ public class TargetController extends AbstractController {
 		        
 		    	
 		    	// Ensure items NOT edited herein are re-attached:
-		        Target target = Target.findById(id);
 		        filledForm.get().crawlPermissions = target.crawlPermissions;
 		        Logger.warn("Attempting to repair "+target.crawlPermissions+ "("+target.crawlPermissions.size()+")");
 		        filledForm.get().instances = target.instances;

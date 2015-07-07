@@ -243,6 +243,24 @@ public class User extends ActModel {
     public boolean hasArchivistRights() { return isSysAdmin() || isArchivist(); }
     public boolean hasExpertUserRights() { return hasArchivistRights() || isExpertUser(); }
     public boolean hasUserRights() { return hasExpertUserRights() || isUser(); }
+    
+    public boolean isLDLMember() {
+    	String orgstr = "";
+    	if( organisation != null ) {
+    		orgstr = organisation.field_abbreviation;
+    	} else if( affiliation != null ) {
+    		orgstr = affiliation;
+    		Logger.warn("Using user.affiliation rather than user.organisation (which is null)...");
+    	}
+		Logger.debug("organisation ::::::::::::::"+ orgstr);
+		if ( orgstr.equals("BL") || orgstr.equals("NLW") || 
+				orgstr.equals("NLS") || orgstr.equals("Bodleian") || 
+				orgstr.equals("CAM") || orgstr.equals("TCD") ) {
+			return true;
+		}
+
+    	return false;
+    }
 
     /**
      * This method checks whether user has a role by its name.

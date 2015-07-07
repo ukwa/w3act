@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 import play.Logger;
 import play.Play;
 import play.libs.F;
-import play.libs.WS;
+import play.libs.ws.WS;
 import play.libs.F.Function;
 import play.libs.F.Promise;
 import play.libs.ws.WSResponse;
@@ -40,17 +40,7 @@ public class WaybackController extends Controller {
 	public static Promise<Result> wayback(String url) throws ActException {
 		
 		User user = User.findByEmail(session().get("email"));
-    	String organisation = "";
-    	if( user.organisation != null ) {
-    		organisation = user.organisation.field_abbreviation;
-    	} else if( user.affiliation != null ) {
-    		organisation = user.affiliation;
-    		Logger.warn("Using user.affiliation rather than user.organisation (which is null)...");
-    	}
-		Logger.debug("organisation ::::::::::::::"+ organisation);
-		if (! ( organisation.equals("BL") || organisation.equals("NLW") || 
-				organisation.equals("NLS") || organisation.equals("Bodleian") || 
-				organisation.equals("CAM") || organisation.equals("TCD")) ) {
+		if( ! user.isLDLMember() ) {
 			return F.Promise.pure((Result) unauthorized(
 					"unauthorized - you must be a member of a Legal Deposit library organisation to view the crawled resources")
 			);
@@ -68,7 +58,7 @@ public class WaybackController extends Controller {
 		}
 
 		// GET
-		Promise<Response> responsePromise = holder.get();
+		Promise<WSResponse> responsePromise = holder.get();
 
 		final Promise<Result> resultPromise = responsePromise.map(
 
