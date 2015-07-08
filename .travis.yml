@@ -3,7 +3,7 @@ language: scala
 scala:
   - 2.11.2
 
-sbt_args: -Dconfig.file=conf/travis-ci.conf
+sbt_args: -Dconfig.file=conf/travis-ci.conf -XX:+CMSClassUnloadingEnabled -XX:PermSize=512M -XX:MaxPermSize=1024M
 
 script:
 - sbt test

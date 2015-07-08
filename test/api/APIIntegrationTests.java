@@ -27,8 +27,8 @@ import play.Configuration;
 import play.Logger;
 import play.libs.F.Callback;
 import play.libs.F.Promise;
-import play.libs.WS;
-import play.libs.WS.Response;
+import play.libs.ws.WS;
+import play.libs.ws.WSResponse;
 import play.test.*;
 import uk.bl.Const;
 import uk.bl.Const.ScopeType;
@@ -56,7 +56,7 @@ public class APIIntegrationTests {
 			public void run() {
         		String host = "http://localhost:3333/act";
         		Logger.info("STEP Getting the homepage...");
-        		Response r = WS.url(host+"/login").get().get(timeout_ms);
+        		WSResponse r = WS.url(host+"/login").get().get(timeout_ms);
                 assertThat( r.getStatus() ).isEqualTo(OK);
         		Logger.info("STEP Clearing out Test Data...");
             	// Clear out any existing data:
@@ -84,8 +84,8 @@ public class APIIntegrationTests {
      */
     private static Long populate(String host, String username, String password, String title, String url, String scope, String start_date, int expected) {
     	String one = "{\"title\": \""+title+"\", \"field_urls\": [\""+url+"\"],\"field_scope\": \""+scope+"\",\"field_crawl_start_date\": \""+start_date+"\", \"selector\": 1, \"field_crawl_frequency\": \"MONTHLY\" }";
-    	Promise<WS.Response> result = WS.url(host+"/api/targets").setAuth(username, password).setHeader("Content-Type", "application/json").post(one);
-    	WS.Response response = result.get(timeout_ms);
+    	Promise<WSResponse> result = WS.url(host+"/api/targets").setAuth(username, password).setHeader("Content-Type", "application/json").post(one);
+    	WSResponse response = result.get(timeout_ms);
     	Logger.info("populate GOT "+response.getStatus()+" "+response.getStatusText());
     	assertThat(response.getStatus()).isEqualTo(expected);
     	String loc = response.getHeader(LOCATION);
@@ -121,7 +121,7 @@ public class APIIntegrationTests {
 		// Now PUT to the same ID, changing some fields:
 		Logger.info("STEP API Update Target (1)...");
 		String update = "{\"id\": "+tid+", \"field_scope\": \"subdomains\", \"field_crawl_frequency\": \"MONTHLY\" }";
-    	Response response = WS.url(host+"/api/targets/"+oid).setAuth(defaultUser, defaultPw).setHeader("Content-Type", "application/json").put(update).get(timeout_ms);
+    	WSResponse response = WS.url(host+"/api/targets/"+oid).setAuth(defaultUser, defaultPw).setHeader("Content-Type", "application/json").put(update).get(timeout_ms);
     	Logger.info(response.getStatus()+" "+response.getStatusText());
     	assertThat(response.getStatus()).isEqualTo(OK);
 		Logger.info("STEP API Get Target (1)...");
@@ -142,7 +142,7 @@ public class APIIntegrationTests {
     }
     
     private static Target getTargetByID( String host, Long id ) throws JsonParseException, JsonMappingException, IOException {
-    	Response response = WS.url(host+"/api/targets/"+id).get().get(timeout_ms);
+    	WSResponse response = WS.url(host+"/api/targets/"+id).get().get(timeout_ms);
     	Logger.info(response.getStatus()+" "+response.getStatusText());
     	Logger.debug(response.getBody());
     	assertThat(response.getStatus()).isEqualTo(UNAUTHORIZED);

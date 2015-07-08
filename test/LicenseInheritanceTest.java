@@ -1,43 +1,24 @@
 import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.*;
-import static play.mvc.Http.Status.OK;
-import static play.test.Helpers.HTMLUNIT;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;
-import static play.test.Helpers.testServer;
-
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-
 import models.FieldUrl;
 import models.Target;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import play.Configuration;
 import play.Logger;
-import play.libs.WS;
-import play.libs.F.Callback;
-import play.mvc.Result;
-import play.test.TestBrowser;
-
-import com.avaje.ebean.ExpressionList;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import uk.bl.Const;
 import uk.bl.Const.ScopeType;
-import uk.bl.api.FormHelper;
 import uk.bl.exception.ActException;
 import uk.bl.exception.WhoisException;
 import uk.bl.scope.Scope;
-import uk.bl.wa.whois.JRubyWhois;
-import uk.bl.wa.whois.record.WhoisResult;
 
 public class LicenseInheritanceTest {
 

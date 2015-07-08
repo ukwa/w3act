@@ -28,7 +28,7 @@ libraryDependencies ++= Seq(
   "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2"
 )
 
-travisResolvers := {
+{
   if( sys.env.contains("TRAVIS") ) {
     // Torqbox rubegems repository (Travis-CI mirror)
     resolvers  += "rubygems-releases-mirror" at "http://maven.travis-ci.org/nexus/rubygems/maven/releases/"

@@ -377,13 +377,16 @@ public class Target extends UrlModel {
 	@JsonProperty
 	private String selector;
 	
+	@JsonIgnore
 	@OneToOne(mappedBy="target", cascade=CascadeType.REMOVE)
 	public WatchedTarget watchedTarget;
 	
+	@JsonIgnore
 	public boolean isWatched() {
 		return watchedTarget != null;
 	}
 	
+	@JsonIgnore
 	public boolean hasDocuments() {
 		return isWatched() && !watchedTarget.documents.isEmpty();
 	}

@@ -79,7 +79,7 @@ public class QaWaybackTest {
                browser.fill("#email").with(email);
           	   browser.fill("#password").with(password);
            	   browser.submit("#submit");
-               assertThat(browser.url()).isEqualTo("http://localhost:3333/act");
+               assertThat(browser.url()).isEqualTo("http://localhost:3333/act/about");
                assertThat(browser.title()).isEqualTo("About :: W3ACT");
                browser.getCookies();
                // Check we can now access Wayback:

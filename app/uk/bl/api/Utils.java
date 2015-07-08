@@ -889,7 +889,7 @@ public enum Utils {
 				builder.append(Const.CSV_SEPARATOR);
 				builder.append(target.crawlFrequency);
 				builder.append(Const.CSV_SEPARATOR);
-				builder.append(String.valueOf(target.createdAt));
+				builder.append(convertToDateTimeISO(target.createdAt));
 				builder.append(Const.CSV_LINE_END);
  	    	}
  	    }
