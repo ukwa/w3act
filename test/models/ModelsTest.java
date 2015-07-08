@@ -10,6 +10,8 @@ import com.avaje.ebean.Ebean;
 
 import static org.junit.Assert.*;
 import play.Logger;
+import play.test.FakeApplication;
+import play.test.Helpers;
 import play.test.WithApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.fakeApplication;
@@ -19,21 +21,14 @@ public class ModelsTest extends WithApplication {
 	private final Long TEST_NID = 7777L;
 	private final String TEST_EMAIL = "max.muster@ait.ac.at";
 	private final String TEST_PASSWORD = "secret2";
-			
-	Map<String, String> conf = new HashMap<String, String>();
+
 	
-    @Before
-    public void setUp() {
-    	/* use this settings to connect to postgresql database */
-//        conf.put("db.default.driver", "org.postgresql.Driver");
-//        conf.put("db.default.url", "postgres://training:training@127.0.0.1/w3act");
-//        conf.put("db.default.driver", "org.h2.Driver");
-//        conf.put("db.default.url", "jdbc:h2:mem:play;DB_CLOSE_DELAY=-1");
-//        start(fakeApplication(conf));
-//        start(fakeApplication(inMemoryDatabase()));
+    protected FakeApplication provideFakeApplication() {
+        return Helpers.fakeApplication(inMemoryDatabase());
     }
     
-    @Test
+    
+//    @Test
     public void createAndRetrieveTarget() {
 //        Target targetNew = new Target("My title", "http://target.at");
 //        targetNew.id = Long.valueOf(TEST_NID);
@@ -44,7 +39,8 @@ public class ModelsTest extends WithApplication {
 //        Target.find.ref(TEST_NID).delete();
 //        assertNull(Target.find.where().eq("title", "My title").findUnique());
     }
-    
+
+//
     @Test
     public void createAndRetrieveTargetWithItem() {
 //        Target targetNew = new Target("My title", "http://target.at");
@@ -64,7 +60,8 @@ public class ModelsTest extends WithApplication {
 //        Target.find.ref(TEST_NID).delete();
 //        assertNull(Target.find.where().eq("title", "My title").findUnique());
     }
-    
+
+//
     @Test
     public void tryAuthenticateUser() {
 //        User user = new User("Max Muster", TEST_EMAIL, TEST_PASSWORD);
