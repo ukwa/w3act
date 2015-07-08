@@ -182,7 +182,7 @@ public class LicenseInheritanceTest {
 	          });
 	    	}
 
-//		@Test
+//		Test
 		public void testWhois() throws ActException {
 			String url = "http://bl.uk/";
 			Scope.WHOIS_ENABLED = true;
