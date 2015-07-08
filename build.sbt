@@ -28,16 +28,13 @@ libraryDependencies ++= Seq(
   "uk.bl.wa.whois" % "jruby-whois" % "3.5.9.2"
 )
 
+resolvers += "rubygems-releases" at "http://rubygems-proxy.torquebox.org/releases/"
+
 resolvers += {
   println("TRAVIS "+sys.env.getOrElse("TRAVIS", default = "false"));
   if( sys.env.getOrElse("TRAVIS", default = "false").equals("true") ) {
     // Torqbox rubegems repository (Travis-CI mirror)
     println("Using TORQ MIRROR");
     "rubygems-releases-mirror" at "http://maven.travis-ci.org/nexus/rubygems/maven/releases/"
-  } else {
-    // Torquebox rubygems repository
-    println("Using TORQ DIRECT");
-    "rubygems-releases" at "http://rubygems-proxy.torquebox.org/releases/"
   }
 }
-
