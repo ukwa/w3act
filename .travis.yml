@@ -5,5 +5,8 @@ scala:
 
 sbt_args: -Dconfig.file=conf/travis-ci.conf
 
+script:
+- sbt test
+
 notifications:
   slack: ukwebarchive:oqbYOo0bd09bnSXn4hGR1aUk
