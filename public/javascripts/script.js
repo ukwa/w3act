@@ -1,6 +1,8 @@
 $(function () {
 	$("#start-date").datepicker({ dateFormat: "dd-mm-yy" });
 	$("#end-date").datepicker({ dateFormat: "dd-mm-yy" });
+	$("#granted-from-date").datepicker({ dateFormat: "dd-mm-yy" });
+	$("#granted-to-date").datepicker({ dateFormat: "dd-mm-yy" });
 	$("#refusal-date").datepicker({ dateFormat: "dd-mm-yy" });
 	$("#date_of_publication").datepicker({ dateFormat: "dd-mm-yy" });
 	$('a[rel="external"]').attr('target', '_blank');

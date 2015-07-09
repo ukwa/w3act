@@ -162,7 +162,7 @@ GET     /reports/consistencyChecks/rur          controllers.ReportController.rem
 GET    	/reports/qa                         	controllers.ReportController.qa()
 GET    	/reportscreation               	        controllers.ReportController.indexCreation() 
 GET    	/reportscreation/search                 controllers.ReportController.searchCreation()
-GET    	/reportscreation/targets/               controllers.ReportController.targets(p:Int ?= 0, s ?= "name", o ?= "asc", curator:Long ?= 0, organisation:Long ?= 0, startDate ?= "", endDate ?= "", grantedDate ?= "", npld ?= "", crawlFrequency ?= "", tld ?= "")
+GET    	/reportscreation/targets/               controllers.ReportController.targets(p:Int ?= 0, s ?= "name", o ?= "asc", curator:Long ?= 0, organisation:Long ?= 0, startDate ?= "", endDate ?= "", grantedFromDate ?= "", grantedToDate ?= "", npld ?= "", crawlFrequency ?= "", tld ?= "")
 GET    	/reportsqa                  	        controllers.ReportQaController.index() 
 GET    	/reportsqa/search            	        controllers.ReportQaController.search()
 GET    	/reportsqa/switchReportQaTab/:name      controllers.ReportQaController.switchReportQaTab(name) 
