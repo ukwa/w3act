@@ -1180,7 +1180,6 @@ public class TargetController extends AbstractController {
 		        }
 		        
 		        String crawlEndDate = requestData.get("crawlEndDateText");
-		        String crawlEndDate = requestData.get("endStartDateText");		       
 		    	if (StringUtils.isNotEmpty(crawlEndDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
