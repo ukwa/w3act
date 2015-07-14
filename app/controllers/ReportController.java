@@ -93,11 +93,11 @@ public class ReportController extends AbstractController {
         String endDate = requestData.get("endDate");
         String grantedFromDate = requestData.get("grantedFromDate");
         String grantedToDate = requestData.get("grantedToDate");
-    	Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + grantedFromDate + ", " + grantedToDate);
+    	Logger.debug("Parameters: " + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + grantedFromDate + ", " + grantedToDate);
 
-        List<Target> resListRequest = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, startDate, endDate, grantedFromDate,grantedToDate);
-        List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, startDate, endDate, grantedFromDate,grantedToDate);
-        List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, startDate, endDate, grantedFromDate,grantedToDate);
+        List<Target> resListRequest = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, startDate, endDate, grantedFromDate, grantedToDate);
+        List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, startDate, endDate, grantedFromDate, grantedToDate);
+        List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, startDate, endDate, grantedFromDate, grantedToDate);
 
         Logger.debug("resListRequest: " + resListRequest);
         Logger.debug("resListRequest");
@@ -382,6 +382,8 @@ public class ReportController extends AbstractController {
                 	organisationId, 
                 	startDate, 
                 	endDate,
+          //      	grantedFromDate,
+          //      	grantedToDate,
                 	npld, 
                 	crawlFrequency, 
                 	tld,

@@ -1812,6 +1812,9 @@ public class Target extends UrlModel {
 	public String getCrawlStartDateText() {
 		if (crawlStartDate != null) {
 			crawlStartDateText = Utils.INSTANCE.convertToDateTime(crawlStartDate);
+		}else{
+			
+			crawlStartDateText = "";
 		}
 		return crawlStartDateText;
 	}
@@ -1819,6 +1822,8 @@ public class Target extends UrlModel {
 	public String getCrawlEndDateText() {
 		if (crawlEndDate != null) {
 			crawlEndDateText = Utils.INSTANCE.convertToDateTime(crawlEndDate);
+		}else{
+			crawlEndDateText = "";
 		}
 		return crawlEndDateText;
 	}
