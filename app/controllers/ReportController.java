@@ -47,9 +47,9 @@ public class ReportController extends AbstractController {
      * @throws ActException 
      */
     public static Result index() throws ActException {
-        List<Target> resList = processFilterReports(null, null, Const.CrawlPermissionStatus.PENDING.name(), "", "", "","");
-        List<Target> resListGranted = processFilterReports(null, null, Const.CrawlPermissionStatus.GRANTED.name(), "", "", "","");
-        List<Target> resListRefused = processFilterReports(null, null, Const.CrawlPermissionStatus.REFUSED.name(), "", "", "","");
+        List<Target> resList = processFilterReports(null, null, Const.CrawlPermissionStatus.PENDING.name(),"","","","","");
+        List<Target> resListGranted = processFilterReports(null, null, Const.CrawlPermissionStatus.GRANTED.name(),"","","","","");
+        List<Target> resListRefused = processFilterReports(null, null, Const.CrawlPermissionStatus.REFUSED.name(),"","","","","");
         User user = User.findByEmail(request().username());
         List<User> users = User.findAll();
         List<Organisation> organisations = Organisation.findAllSorted();
@@ -57,7 +57,7 @@ public class ReportController extends AbstractController {
         
         return ok(
                 reports.render(
-                    "Reports", user, resList, resListGranted, resListRefused, null, null, "", "", "", "", users, organisations, requestTypes
+                    "Reports", user, resList, resListGranted, resListRefused, null, null, "", "", "", "", "", users, organisations, requestTypes
                 )
             );
     }
@@ -91,12 +91,13 @@ public class ReportController extends AbstractController {
 //    	} 
         String startDate = requestData.get("startDate");
         String endDate = requestData.get("endDate");
-        String grantedDate = requestData.get("grantedDate");
-    	Logger.debug("" + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + grantedDate);
+        String grantedFromDate = requestData.get("grantedFromDate");
+        String grantedToDate = requestData.get("grantedToDate");
+    	Logger.debug("Parameters: " + curatorId + ", " + organisationId + ", " + startDate + ", " + endDate + ", " + grantedFromDate + ", " + grantedToDate);
 
-        List<Target> resListRequest = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, startDate, endDate, grantedDate);
-        List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, startDate, endDate, grantedDate);
-        List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, startDate, endDate, grantedDate);
+        List<Target> resListRequest = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.PENDING.name(), request, startDate, endDate, grantedFromDate, grantedToDate);
+        List<Target> resListGranted = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.GRANTED.name(), request, startDate, endDate, grantedFromDate, grantedToDate);
+        List<Target> resListRefused = processFilterReports(curatorId, organisationId, Const.CrawlPermissionStatus.REFUSED.name(), request, startDate, endDate, grantedFromDate, grantedToDate);
 
         Logger.debug("resListRequest: " + resListRequest);
         Logger.debug("resListRequest");
@@ -119,7 +120,7 @@ public class ReportController extends AbstractController {
     			return ok(
                 		reports.render(
                             "Reports", user, resListRequest, resListGranted,
-                            resListRefused, curatorId, organisationId, startDate, endDate, request, grantedDate, users, organisations, requestTypes
+                            resListRefused, curatorId, organisationId, startDate, endDate, request, grantedFromDate, grantedToDate, users, organisations, requestTypes
                         )
                     );
 		    } else if (action.equals("export")) {
@@ -152,7 +153,7 @@ public class ReportController extends AbstractController {
         			return ok(
                     		reports.render(
                                 "Reports", user, resListRequest, resListGranted,
-                                resListRefused, curatorId, organisationId, startDate, endDate, request, grantedDate, users, organisations, requestTypes
+                                resListRefused, curatorId, organisationId, startDate, endDate, request, grantedFromDate, grantedToDate, users, organisations, requestTypes
                             )
                         );
         		}
@@ -219,7 +220,7 @@ public class ReportController extends AbstractController {
      * @throws ActException 
      */
     public static List<Target> processFilterReports(Long curatorId, Long organisationId, 
-    		String crawlPermissionsStatus, String request, String startDate, String endDate, String grantedDate) throws ActException {
+    		String crawlPermissionsStatus, String request, String startDate, String endDate, String grantedFromDate, String grantedToDate) throws ActException {
 //    	boolean isProcessed = false;
 		ExpressionList<Target> exp = Target.find.fetch("crawlPermissions").where();
 		exp = exp.eq("active", true);
@@ -230,7 +231,8 @@ public class ReportController extends AbstractController {
 		Logger.debug("request: " + request);
 		Logger.debug("startDate: " + startDate);
 		Logger.debug("endDate: " + endDate);
-		Logger.debug("grantedDate: " + grantedDate);
+		Logger.debug("grantedFromDate: " + grantedFromDate);
+		Logger.debug("grantedToDate: " + grantedToDate);
 		
 		if (curatorId != null) {
 			exp = exp.eq("authorUser.id", curatorId);
@@ -260,10 +262,19 @@ public class ReportController extends AbstractController {
 			}
     	}
     	
-    	if (StringUtils.isNotEmpty(grantedDate)) {
+    	if (StringUtils.isNotEmpty(grantedFromDate)) {
 			try {
-	    		Date date = Utils.INSTANCE.convertDate(grantedDate);
-	    		exp = exp.eq(Const.CREATED_AT, date);
+	    		Date date = Utils.INSTANCE.convertDate(grantedFromDate);
+	    		exp = exp.eq(Const.UPDATED_AT, date);
+			} catch (ParseException e) {
+				throw new ActException(e);
+			}
+    	}
+    	
+    	if (StringUtils.isNotEmpty(grantedToDate)) {
+			try {
+	    		Date date = Utils.INSTANCE.convertDate(grantedToDate);
+	    		exp = exp.eq(Const.UPDATED_AT, date);
 			} catch (ParseException e) {
 				throw new ActException(e);
 			}
@@ -340,18 +351,19 @@ public class ReportController extends AbstractController {
      * @param organisation The author's organisation
      * @param startDate The start date for filtering
      * @param endDate The end date for filtering
-     * @param grantedDate The granted date for filtering
+     * @param grantedFromDate The granted from date for filtering
+     * @param grantedToDate The granted to date for filtering
      * @param npld The selection of NPLD scope rule for filtering
      * @param crawlFrequency The crawl frequency value for filtering
      * @param tld The top level domain setting for filtering
      */
     public static Result targets(int pageNo, String sortBy, String order, Long curatorId,
-    		Long organisationId, String startDate, String endDate, String grantedDate, String npld, String crawlFrequency, String tld) throws ActException {
+    		Long organisationId, String startDate, String endDate, String grantedFromDate, String grantedToDate, String npld, String crawlFrequency, String tld) throws ActException {
     	Logger.debug("ReportsCreation.targets()");
     	
     	User user = User.findByEmail(request().username());
     	Page<Target> pages = Target.pageReportsCreation(pageNo, 10, sortBy, order, curatorId, organisationId, 
-				startDate, endDate, grantedDate, npld, crawlFrequency, tld);
+				startDate, endDate, grantedFromDate, grantedToDate, npld, crawlFrequency, tld);
     	
 
 		List<User> users = User.findAll();
@@ -370,6 +382,8 @@ public class ReportController extends AbstractController {
                 	organisationId, 
                 	startDate, 
                 	endDate,
+          //      	grantedFromDate,
+          //      	grantedToDate,
                 	npld, 
                 	crawlFrequency, 
                 	tld,
@@ -402,7 +416,8 @@ public class ReportController extends AbstractController {
         Logger.debug("startDate: " + startDate);
 
         String endDate = requestData.get("endDate");
-        String grantedDate = requestData.get("grantedDate");
+        String grantedFromDate = requestData.get("grantedFromDate");
+        String grantedToDate = requestData.get("grantedToDate");
 
     	String npld = requestData.get("npld");
 
@@ -424,11 +439,11 @@ public class ReportController extends AbstractController {
     	} else {
     		if (action.equals("export")) {
     			List<Target> exportTargets = new ArrayList<Target>();
-    	    	Page<Target> page = Target.pageReportsCreation(pageNo, 10, sort, order, curatorId, organisationId, startDate, endDate, grantedDate, npld, crawlFrequencyName, tld);
+    	    	Page<Target> page = Target.pageReportsCreation(pageNo, 10, sort, order, curatorId, organisationId, startDate, endDate, grantedFromDate, grantedToDate, npld, crawlFrequencyName, tld);
     	    	
     			int rowCount = page.getTotalRowCount();
     			
-    	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, startDate, endDate, grantedDate, npld, crawlFrequencyName, tld);
+    	    	Page<Target> pageAll = Target.pageReportsCreation(pageNo, rowCount, sort, order, curatorId, organisationId, startDate, endDate, grantedFromDate, grantedToDate, npld, crawlFrequencyName, tld);
     			exportTargets.addAll(pageAll.getList());
 				Logger.debug("export report creation size: " + exportTargets.size());
     			String file = export(exportTargets);
@@ -437,7 +452,7 @@ public class ReportController extends AbstractController {
     	        return ok(file);
     		} else if (action.equals("search")) {
     	    	return redirect(routes.ReportController.targets(pageNo, sort, order, curatorId, organisationId, 
-    	    			startDate, endDate, grantedDate, npld, crawlFrequencyName, tld));
+    	    			startDate, endDate, grantedFromDate, grantedToDate, npld, crawlFrequencyName, tld));
 		    } else {
 		    	return badRequest("This action is not allowed");
 		    }
@@ -449,7 +464,7 @@ public class ReportController extends AbstractController {
      */
     public static Result indexCreation() {
     	return redirect(routes.ReportController.targets(0, "createdAt", "desc", -1l, -1l, 
-    			"", "", "", "", "", "either"));
+    			"", "", "", "", "", "", "either"));
     }
 
     

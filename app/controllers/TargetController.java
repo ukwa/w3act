@@ -294,7 +294,7 @@ public class TargetController extends AbstractController {
         String subjectSelect = requestData.get("subjectSelect").replace("\"", "");
         String collectionSelect = requestData.get("collectionSelect").replace("\"", "");
     	
-    	Logger.debug(filter + " " + pageNo + " " + sort + " " + order + " " + pageSize + " " + curatorId + " " + curatorId + " " + licenseId + " " + depthName + " " + crawlFrequencyName + " " + flagId + " " + collectionSelect + " " + subjectSelect);
+    	Logger.debug(filter + " " + pageNo + " " + sort + " " + order + " " + pageSize + " " + curatorId + " " + organisationId + " " + licenseId + " " + depthName + " " + crawlFrequencyName + " " + flagId + " " + collectionSelect + " " + subjectSelect);
 
     	if (StringUtils.isEmpty(action)) {
     		return badRequest("You must provide a valid action");
@@ -1138,10 +1138,14 @@ public class TargetController extends AbstractController {
 					try {
 						Date date = formatter.parse(crawlStartDate);
 						filledForm.get().crawlStartDate = date;
+						 Logger.debug("crawlStartDate:::::::: " + date);
 					} catch (ParseException e) {
 						e.printStackTrace();
 			            return info(filledForm, id);
 					}
+		    	}else{
+		    		 Ebean.createUpdate(Target.class, "update target SET crawl_start_date=null where id=:id")
+                     .setParameter("id", id).execute();
 		    	}
 		    	
 		        String crawlFrequency = filledForm.get().crawlFrequency;
@@ -1176,19 +1180,21 @@ public class TargetController extends AbstractController {
 		        }
 		        
 		        String crawlEndDate = requestData.get("crawlEndDateText");
+		        String crawlEndDate = requestData.get("endStartDateText");		       
 		    	if (StringUtils.isNotEmpty(crawlEndDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-					try {
+					try {						
 						Date date = formatter.parse(crawlEndDate);
 						filledForm.get().crawlEndDate = date;
+						 Logger.debug("crawlEndDate in date:::::::: " + date);
 					} catch (ParseException e) {
 						e.printStackTrace();
 			            return info(filledForm, id);
 					}
-		    	} else {
-		    		Ebean.createUpdate(Target.class, "update target SET crawl_end_date=null where id=:id")
-						.setParameter("id", id).execute();
+		    	}else{
+		    		  Ebean.createUpdate(Target.class, "update target SET crawl_end_date=null where id=:id")
+                      .setParameter("id", id).execute();
 		    	}
 		        
 		//        String qaIssueId = requestData.get("qaIssueId");
