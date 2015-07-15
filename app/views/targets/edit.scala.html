@@ -60,7 +60,6 @@
 		})();	
 	
 		$(document).ready(function() {
-		          
 			// Restarts the keyboard-idleness timeout
 			var restartIdleTimeout = function(text) {
 				if (idle_timeout) {
@@ -132,6 +131,8 @@
 			targetDateTime();
 			wayBackLoader();
 		});		
+		
+		
 	</script>
 }
 
@@ -892,7 +893,7 @@
 					</div>			  	
 			  	}
 			  	
-				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {
+				@if(user.hasRole("sys_admin") || user.hasRole("archivist") || user.hasRole("expert_user")) {					
 					<div class="row padding-10">
 			     		<div class="col-md-12 col-xs-12 col-sm-12">
 							<div class="form-group">

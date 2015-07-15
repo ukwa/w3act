@@ -460,6 +460,7 @@ function targetDateTime() {
             var d = new Date(); // for now
             var datetext = d.getDate() + "-" + (d.getMonth()+1) + "-" + d.getFullYear() + " 09:00";
             $('#start-date-time').val(datetext);
+            $('#start-date-time').attr('readonly','readonly');
 		} else {
     		$("#start-date-time").val('');
 		}
