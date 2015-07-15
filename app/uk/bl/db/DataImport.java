@@ -42,10 +42,16 @@ public enum DataImport {
         	}
         	
             Logger.debug("+++ Importing test data +++");
-			if (Ebean.find(User.class).findRowCount() == 0) {
+			if (Ebean.find(Permission.class).findRowCount() == 0) {
 	        	this.importPermissions();
+	        }
+			if (Ebean.find(Role.class).findRowCount() == 0) {
 	        	this.importRoles();
+	        }
+			if (Ebean.find(Organisation.class).findRowCount() == 0) {
 	        	this.importOrganisations();
+	        }
+			if (Ebean.find(User.class).findRowCount() == 0) {
         		this.importAccounts();
 	        }
 			if (Ebean.find(MailTemplate.class).findRowCount() == 0) {

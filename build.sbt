@@ -30,6 +30,7 @@ libraryDependencies ++= Seq(
 
 resolvers += "rubygems-releases" at "http://rubygems-proxy.torquebox.org/releases/"
 
-
 javaOptions ++= collection.JavaConversions.propertiesAsScalaMap(System.getProperties).map{ case (key,value) => "-D" + key + "=" +value }.toSeq
+
+parallelExecution in Test := false
 
