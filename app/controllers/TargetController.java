@@ -706,10 +706,9 @@ public class TargetController extends AbstractController {
      * Display the target edit panel for this URL.
      * @param url The target identifier URL
      */
-    public static Result edit(Long id) {
-		Logger.debug("Targets.edit() id::::: " + id);
+    public static Result edit(Long id) {		
 		Target target = Target.findById(id);
-		
+		Logger.debug("Targets.edit() id::::: " + id);
 		// Make sure scope checks are up to date:
 		target.runChecks();
 		target.update();
@@ -739,14 +738,15 @@ public class TargetController extends AbstractController {
 		Map<String,String> siteStatuses = Const.SiteStatus.options();
 		Map<String,String> organisations = Organisation.options();
 		target.fieldUrl = target.fieldUrl();
-		DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-		formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-		try {
-			Date date = formatter.parse(target.getCrawlEndDateText());
-			filledForm.get().crawlEndDate = date;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+//		Logger.debug("DATE::::::::::::::::::::::::::::: "+filledForm.get().crawlEndDate.toString());
+//		DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+//		formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+//		try {
+//			Date date = formatter.parse(filledForm.get().crawlEndDate.toString());
+//			filledForm.get().crawlEndDate = date;
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
 		
 		Logger.debug("collections: " + target.collections.size());
 		return ok(edit.render(filledForm, user, id, collectionData, subjectData, authors, tags, flags, qaIssues, languages, selectionTypes, scopeTypes, depthTypes, licenses, licenseStatuses, crawlFrequencies, siteStatuses, organisations, null, targetTags, targetFlags, targetLicenses));
@@ -1175,7 +1175,7 @@ public class TargetController extends AbstractController {
 		        	}
 		        }
 		        
-		        String crawlEndDate = requestData.get("endStartDateText");		       
+		        String crawlEndDate = requestData.get("crawlEndDateText");
 		    	if (StringUtils.isNotEmpty(crawlEndDate)) {
 					DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 					formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
