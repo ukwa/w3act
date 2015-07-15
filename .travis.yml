@@ -6,7 +6,7 @@ scala:
 sbt_args: -XX:+CMSClassUnloadingEnabled -XX:PermSize=512M -XX:MaxPermSize=1024M
 
 script:
-- sbt -Dconfig.file=conf/travis-ci.conf test
+- sbt -Dconfig.file=conf/dev.conf test
 
 notifications:
   slack: ukwebarchive:oqbYOo0bd09bnSXn4hGR1aUk

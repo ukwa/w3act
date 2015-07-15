@@ -5,7 +5,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.log.Log;
 
 import models.Collection;
 import models.ContactPerson;
@@ -47,6 +49,10 @@ public enum DataImport {
 	        }
 			if (Ebean.find(Role.class).findRowCount() == 0) {
 	        	this.importRoles();
+	        } else {
+	        	for( Role role : Ebean.find(Role.class).findList()) {
+	        		Logger.info("Role "+role+" already exists...");
+	        	}
 	        }
 			if (Ebean.find(Organisation.class).findRowCount() == 0) {
 	        	this.importOrganisations();
@@ -117,7 +123,10 @@ public enum DataImport {
 					user.createdAt = new Date();
 					String roleHolder = user.roleHolder;
 					Role role = Role.findByName(roleHolder);
-					user.roles.add(role);
+					if( role != null ) {
+						user.roles.add(role);
+					}
+					Logger.debug("Saving "+user);
 					user.save();
 				}
 			}

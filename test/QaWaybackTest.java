@@ -24,19 +24,12 @@ import com.typesafe.config.ConfigFactory;
 
 public class QaWaybackTest {
 		
-	private Configuration additionalConfigurations;
-	User user = new User();
-	User ldlUser = new User();
 	private static String testURL = "http://www.bl.uk"; 
 	private static String email = "niladree.bhattacharj@bl.uk";
 	private static String password = "Nil@BL";
 	
 	@Before
 	public void setUp() throws ActException {	
-		
-		// Set up a test configuration;
-	    Config additionalConfig = ConfigFactory.parseFile(new File("conf/dev.conf"));
-	    additionalConfigurations = new Configuration(additionalConfig);
 	}
 	
 
@@ -64,7 +57,7 @@ public class QaWaybackTest {
 
     @Test
     public void runInBrowser() {
-        running(testServer(3333, fakeApplication(additionalConfigurations.asMap())), HTMLUNIT, new Callback<TestBrowser>() {
+        running(testServer(3333, fakeApplication()), HTMLUNIT, new Callback<TestBrowser>() {
             public void invoke(TestBrowser browser) {
                // Check we cannot access anything yet:
                browser.goTo("http://localhost:3333/act"+"/wayback/*/"+testURL);

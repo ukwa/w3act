@@ -42,17 +42,14 @@ public class APIIntegrationTests {
 	private static String defaultPw = "sysAdmin";
 	
 	private static long timeout_ms = 60*1000; // in milliseconds
-	private Configuration additionalConfigurations;
 
 	@Before
 	public void initialize() throws ActException{
-	    Config additionalConfig = ConfigFactory.parseFile(new File("conf/dev.conf"));
-	    additionalConfigurations = new Configuration(additionalConfig);
 	}
 
     @Test
     public void testInServer() {
-        running(testServer(3333, fakeApplication(additionalConfigurations.asMap())), new Runnable() {
+        running(testServer(3333, fakeApplication()), new Runnable() {
 			public void run() {
         		String host = "http://localhost:3333/act";
         		Logger.info("STEP Getting the homepage...");

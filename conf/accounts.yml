@@ -177,7 +177,6 @@ roles:
         url:                act-6
         name:               closed
         permissions:        []
-    
 
 # Users
 users:
@@ -188,7 +187,7 @@ users:
         affiliation:   BL
         #roles:              [*sys_admin]
         roleHolder:         sys_admin
-        
+
     - !!models.User
         email:              niladree.bhattacharj@bl.uk
         name:               Niladree Bhattacharjee
@@ -204,6 +203,3 @@ users:
         affiliation:   AIT
         #roles:              [*expert_user]
         roleHolder:         expert_user
-        
-        
-        
